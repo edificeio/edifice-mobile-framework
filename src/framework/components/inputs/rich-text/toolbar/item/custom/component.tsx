@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { RichToolbarItem } from '~/framework/components/inputs/rich-text/toolbar/item/component';
-
 import { RichToolbarCustomItemProps } from './types';
+
+import { RichToolbarItem } from '~/framework/components/inputs/rich-text/toolbar/item/component';
 
 export const RichToolbarCustomItem = (props: RichToolbarCustomItemProps) => {
   const handleSelected = () => {

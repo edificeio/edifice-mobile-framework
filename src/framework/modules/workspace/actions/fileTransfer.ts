@@ -1,12 +1,13 @@
 import { Platform } from 'react-native';
+
 import Share from 'react-native-share';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { Filter, IFile, actionTypes } from '~/framework/modules/workspace/reducer';
-import workspaceService, { IWorkspaceUploadParams, factoryRootFolder } from '~/framework/modules/workspace/service';
+import { actionTypes, Filter, IFile } from '~/framework/modules/workspace/reducer';
+import workspaceService, { factoryRootFolder, IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import type { IUploadCallbaks } from '~/framework/util/fileHandler/service';
@@ -176,10 +177,10 @@ export const renameWorkspaceFileAction = (file: IFile, name: string) => async (d
 
 export const convertIFileToIDistantFile = (file: IFile) => {
   return {
-    url: urlSigner.getAbsoluteUrl(file.url),
     filename: file.name,
     filesize: file.size,
     filetype: file.contentType,
+    url: urlSigner.getAbsoluteUrl(file.url),
   } as IDistantFile;
 };
 
@@ -210,9 +211,9 @@ export const downloadThenShareWorkspaceFileAction = (file: IFile) => async (disp
     const distanteFile = convertIFileToIDistantFile(file);
     const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
     await Share.open({
+      showAppsToView: true,
       type: syncedFile.filetype || 'text/html',
       url: Platform.OS === 'android' ? 'file://' + syncedFile.filepath : syncedFile.filepath,
-      showAppsToView: true,
     });
     dispatch(workspaceShareActionsCreators.receipt(syncedFile));
   } catch (e) {
@@ -240,7 +241,7 @@ export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch,
     Toast.showSuccess(
       files.length > 1
         ? I18n.get('workspace-filetransfer-downloadsuccess-all')
-        : I18n.get('workspace-filetransfer-downloadsuccess-name', { name: files[0].name }),
+        : I18n.get('workspace-filetransfer-downloadsuccess-name', { name: files[0].name })
     );
   } catch (e) {
     dispatch(workspaceDownloadActionsCreators.error(e as Error));

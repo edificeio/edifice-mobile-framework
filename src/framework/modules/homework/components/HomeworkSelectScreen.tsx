@@ -1,5 +1,6 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -51,7 +52,7 @@ export const computeNavBar = ({
 
 export class HomeworkSelectScreen extends React.PureComponent<HomeworkSelectScreenProps> {
   onPressDiary = (diary: IHomeworkDiary) => {
-    const { onSelect, navigation } = this.props;
+    const { navigation, onSelect } = this.props;
     onSelect(diary.id);
     navigation.navigate(homeworkRouteNames.homeworkCreate);
     Trackers.trackEvent('Homework', 'SELECT');
@@ -82,7 +83,7 @@ export class HomeworkSelectScreen extends React.PureComponent<HomeworkSelectScre
         emptyComponent={this.renderEmptyDiaryList}
         onRefresh={onRefresh}
         onPressItem={this.onPressDiary}
-        defaultThumbnail={{ name: 'homework1D', fill: moduleColor.regular, background: moduleColor.pale }}
+        defaultThumbnail={{ background: moduleColor.pale, fill: moduleColor.regular, name: 'homework1D' }}
       />
     );
   }

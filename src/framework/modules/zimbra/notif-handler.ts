@@ -1,15 +1,15 @@
 import { CommonActions } from '@react-navigation/native';
 
+import moduleConfig from './module-config';
+import { zimbraRouteNames } from './navigation';
+
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceIdNotification } from '~/framework/util/notifications';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
-
-import moduleConfig from './module-config';
-import { zimbraRouteNames } from './navigation';
 
 const handleZimbraNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation, allowSwitchTab) => async (dispatch, getState) => {
@@ -25,12 +25,12 @@ const handleZimbraNotificationAction: NotifHandlerThunkAction =
               name: computeTabRouteName(moduleConfig.routeName),
               params: {
                 initial: true,
-                screen: zimbraRouteNames.mail,
                 params: {
                   folderPath: '/Inbox',
                   id: notif.resource.id,
                   subject: notif.backupData.params.subject,
                 },
+                screen: zimbraRouteNames.mail,
               },
             }
           : {
@@ -40,7 +40,7 @@ const handleZimbraNotificationAction: NotifHandlerThunkAction =
                 id: notif.resource.id,
                 subject: notif.backupData.params.subject,
               },
-            },
+            }
       );
 
       handleNotificationNavigationAction(navAction);
@@ -57,8 +57,8 @@ const handleZimbraNotificationAction: NotifHandlerThunkAction =
 export default () =>
   registerNotifHandlers([
     {
-      type: 'MESSAGERIE',
       'event-type': 'SEND-MESSAGE',
-      notifHandlerAction: handleZimbraNotificationAction,
+      'notifHandlerAction': handleZimbraNotificationAction,
+      'type': 'MESSAGERIE',
     },
   ]);

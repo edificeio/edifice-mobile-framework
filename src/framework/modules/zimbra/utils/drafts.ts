@@ -10,8 +10,8 @@ const getRecipientName = (displayNames: string[][], id: string): string =>
   displayNames.find(displayName => displayName[0] === id)?.[1] ?? '';
 
 const getRecipient = (displayNames: string[][], id: string): IRecipient => ({
-  id,
   displayName: getRecipientName(displayNames, id),
+  id,
 });
 
 const deleteHtmlContent = (text: string): string => {
@@ -58,31 +58,31 @@ export const initDraftFromMail = (mail: IMail, draftType: DraftType): Partial<ID
   switch (draftType) {
     case DraftType.REPLY: {
       return {
-        to: [getRecipient(mail.displayNames, mail.from)],
+        inReplyTo: mail.id,
         subject: REPLY_PREFIX + mail.subject,
         threadBody: getThreadBody(mail),
-        inReplyTo: mail.id,
+        to: [getRecipient(mail.displayNames, mail.from)],
       };
     }
     case DraftType.REPLY_ALL: {
       return {
+        cc: mail.cc.filter(id => id !== mail.from).map(id => getRecipient(mail.displayNames, id)),
+        inReplyTo: mail.id,
+        subject: REPLY_PREFIX + mail.subject,
+        threadBody: getThreadBody(mail),
         to: [
           getRecipient(mail.displayNames, mail.from),
           ...mail.to.filter(id => id !== getSession()?.user.id).map(id => getRecipient(mail.displayNames, id)),
         ],
-        cc: mail.cc.filter(id => id !== mail.from).map(id => getRecipient(mail.displayNames, id)),
-        subject: REPLY_PREFIX + mail.subject,
-        threadBody: getThreadBody(mail),
-        inReplyTo: mail.id,
       };
     }
     case DraftType.FORWARD: {
       return {
-        subject: FORWARD_PREFIX + mail.subject,
-        body: '',
-        threadBody: getThreadBody(mail),
         attachments: mail.attachments,
+        body: '',
         inReplyTo: mail.id,
+        subject: FORWARD_PREFIX + mail.subject,
+        threadBody: getThreadBody(mail),
       };
     }
     case DraftType.DRAFT: {
@@ -96,14 +96,14 @@ export const initDraftFromMail = (mail: IMail, draftType: DraftType): Partial<ID
         }
       }
       return {
-        to: mail.to.map(id => getRecipient(mail.displayNames, id)),
-        cc: mail.cc.map(id => getRecipient(mail.displayNames, id)),
-        bcc: mail.bcc.map(id => getRecipient(mail.displayNames, id)),
-        subject: mail.subject,
-        body: deleteHtmlContent(mail.body),
-        threadBody,
         attachments: mail.attachments,
+        bcc: mail.bcc.map(id => getRecipient(mail.displayNames, id)),
+        body: deleteHtmlContent(mail.body),
+        cc: mail.cc.map(id => getRecipient(mail.displayNames, id)),
         id: mail.id,
+        subject: mail.subject,
+        threadBody,
+        to: mail.to.map(id => getRecipient(mail.displayNames, id)),
       };
     }
     default:

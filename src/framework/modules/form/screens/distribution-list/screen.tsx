@@ -1,14 +1,18 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import styles from './styles';
+import { FormDistributionListScreenDispatchProps, FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
+
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -21,9 +25,6 @@ import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import styles from './styles';
-import { FormDistributionListScreenDispatchProps, FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -112,11 +113,11 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
     modalBoxRef.current?.doDismissModal();
     setTimeout(() => {
       props.navigation.navigate(formRouteNames.distribution, {
+        editable: form.editable,
+        formId: form.id,
         id,
         status,
-        formId: form.id,
         title: form.title,
-        editable: form.editable,
       });
     }, 500); // prevent freeze due to navigation when modal is not dismissed
   };
@@ -230,6 +231,6 @@ export default connect(
         tryFetchDistributions: tryAction(fetchFormDistributionsAction),
         tryFetchForms: tryAction(fetchFormsReceivedAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(FormDistributionListScreen);

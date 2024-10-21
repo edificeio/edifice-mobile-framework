@@ -1,10 +1,14 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { NavigationState, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -40,9 +44,6 @@ import { addTime, subtractTime } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import styles from './styles';
-import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -58,8 +59,8 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const [isInitialized, setInitialized] = React.useState(true);
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'statistics', title: I18n.get('presences-history-tab-statistics'), icon: 'ui-trending-up' },
-    { key: 'history', title: I18n.get('presences-history-tab-history'), icon: 'ui-forgoing' },
+    { icon: 'ui-trending-up', key: 'statistics', title: I18n.get('presences-history-tab-statistics') },
+    { icon: 'ui-forgoing', key: 'history', title: I18n.get('presences-history-tab-history') },
   ]);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -80,13 +81,13 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         setInitialized(false);
         throw new Error();
       }
-      const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
+      const { endDate, startDate } = await props.tryFetchSchoolYear(structureId);
       await props.tryFetchStatistics(studentId, structureId, startDate, endDate);
       await props.tryFetchAbsenceStatements(
         studentId,
         structureId,
         subtractTime(moment(), 1, 'month'),
-        addTime(moment(), 1, 'month'),
+        addTime(moment(), 1, 'month')
       );
       let groupId = classes?.[0];
       if (userType === AccountType.Relative) {
@@ -187,18 +188,18 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   };
 
   const renderTabBar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> }
   ) => {
     return (
       <TabBar
-        renderLabel={({ route, focused }) =>
+        renderLabel={({ focused, route }) =>
           focused ? (
             <SmallBoldText style={styles.tabBarLabelFocused}>{route.title}</SmallBoldText>
           ) : (
             <SmallText style={styles.tabBarLabel}>{route.title}</SmallText>
           )
         }
-        renderIcon={({ route, focused }) => (
+        renderIcon={({ focused, route }) => (
           <NamedSVG
             name={route.icon}
             fill={focused ? theme.palette.primary.regular : theme.palette.grey.black}
@@ -293,6 +294,6 @@ export default connect(
         tryFetchTerms: tryAction(fetchPresencesTermsAction),
         tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(PresencesHistoryScreen);

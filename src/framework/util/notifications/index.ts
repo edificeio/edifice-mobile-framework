@@ -2,21 +2,22 @@
  * Notifications
  * Types and tools for managing Notification data
  */
+import { ImageURISource } from 'react-native';
+
 import { decode } from 'html-entities';
 import moment, { Moment } from 'moment';
-import { ImageURISource } from 'react-native';
 
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 
 // Types
 
 export interface IEntcoreAbstractNotification {
-  type: string;
+  'type': string;
   'event-type': string;
-  resource?: string;
+  'resource'?: string;
   'sub-resource'?: string;
-  sender?: string;
-  params: {
+  'sender'?: string;
+  'params': {
     uri?: string;
     resourceUri?: string;
     resourceName?: string;
@@ -42,9 +43,9 @@ export interface IEntcoreTimelineNotification extends IEntcoreAbstractNotificati
 }
 
 export interface IAbstractNotification {
-  type: string; // Type referring notifDefinitions
+  'type': string; // Type referring notifDefinitions
   'event-type': string; // Custom event-type, in sense of a subtype
-  backupData: IEntcoreTimelineNotification; // Original notification data as is
+  'backupData': IEntcoreTimelineNotification; // Original notification data as is
 }
 
 export interface ITimelineNotification extends IAbstractNotification {
@@ -130,9 +131,9 @@ export const isMyNotification = (n: ISenderNotification, u: AuthLoggedAccount) =
 
 export const notificationAdapter = (n: IEntcoreAbstractNotification) => {
   const ret = {
-    type: n.type,
+    'backupData': n,
     'event-type': n['event-type'],
-    backupData: n,
+    'type': n.type,
   };
   if ((n as IEntcoreTimelineNotification)._id) {
     (ret as ITimelineNotification).id = (n as IEntcoreTimelineNotification)._id;
@@ -145,8 +146,8 @@ export const notificationAdapter = (n: IEntcoreAbstractNotification) => {
   }
   if (n.sender && n.params.username) {
     (ret as ISenderNotification).sender = {
-      id: n.sender,
       displayName: n.params.username!,
+      id: n.sender,
     };
   }
   if (n.params.resourceUri) {
@@ -156,22 +157,22 @@ export const notificationAdapter = (n: IEntcoreAbstractNotification) => {
   }
   if (n.params.resourceUri && n.resource) {
     (ret as IResourceIdNotification).resource = {
-      uri: n.params.resourceUri!,
       id: n.resource,
+      uri: n.params.resourceUri!,
     };
   }
   if (n.params.resourceUri && n.resource && n.params.resourceName) {
     (ret as INamedResourceNotification).resource = {
-      uri: n.params.resourceUri!,
       id: n.resource,
       name: n.params.resourceName!,
+      uri: n.params.resourceUri!,
     };
   }
   if ((n as IEntcoreTimelineNotification).preview) {
     (ret as IEnrichedNotification).preview = {
-      text: decode((n as IEntcoreTimelineNotification).preview!.text),
       images: (n as IEntcoreTimelineNotification).preview!.images,
       media: (n as IEntcoreTimelineNotification).preview!.medias,
+      text: decode((n as IEntcoreTimelineNotification).preview!.text),
     };
   }
   // ToDo Modules this with registered modules map

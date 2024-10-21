@@ -47,32 +47,37 @@ export const infoPersonAdapter = (n: BackendInfoPerson) => {
   });
 
   const ret = {
+    displayName: n.displayName,
     id: n.id,
     login: n.login,
-    displayName: n.displayName,
-    type: n.type[0] as AccountType,
-    visibleInfos: n.visibleInfos,
-    schools: n.schools,
-    relatedName: n.relatedName,
-    relatedId: n.relatedId,
-    relatedType: n.relatedType,
-    userId: n.userId,
-    motto: n.motto,
-    photo: n.photo,
     mood: n.mood,
-    health: n.health,
+    motto: n.motto,
     address: n.address,
+    relatedId: n.relatedId,
     email: n.email,
-    tel: n.tel,
-    mobile: n.mobile,
+    relatedName: n.relatedName,
+    health: n.health,
+    schools: n.schools,
     birthdate: n.birthdate ? moment(n.birthdate) : null,
+    type: n.type[0] as AccountType,
     hobbies: orderedHobbies,
+    visibleInfos: n.visibleInfos,
+    mobile: n.mobile,
+    photo: n.photo,
+    relatedType: n.relatedType,
+    tel: n.tel,
+    userId: n.userId,
   };
   return ret as InfoPerson;
 };
 
 export const userService = {
   person: {
+    editHealthVisibility: async (visibility: 'prive' | 'public') => {
+      const api = `/userbook/api/edit-user-info-visibility?info=health&state=${visibility}`;
+
+      return fetchJSONWithCache(api);
+    },
     get: async (id?: string) => {
       const api = id ? `/userbook/api/person?id=${id}` : `/userbook/api/person`;
       const backendPerson = (await fetchJSONWithCache(api)) as BackendPerson;
@@ -84,14 +89,9 @@ export const userService = {
       const api = `/directory/userbook/${userId}`;
 
       return signedFetchJsonRelative(`${api}`, {
-        method: 'PUT',
         body,
+        method: 'PUT',
       });
-    },
-    editHealthVisibility: async (visibility: 'prive' | 'public') => {
-      const api = `/userbook/api/edit-user-info-visibility?info=health&state=${visibility}`;
-
-      return fetchJSONWithCache(api);
     },
   },
 };

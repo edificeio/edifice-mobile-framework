@@ -12,7 +12,7 @@ export const uploadSupportTicketAttachmentsAction =
     return dispatch(
       workspaceFileTransferActions.uploadFilesAction(attachments, {
         parent: 'protected',
-      }),
+      })
     );
   };
 

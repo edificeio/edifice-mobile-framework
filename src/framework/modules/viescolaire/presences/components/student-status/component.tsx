@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
+import EventButton from './event-button';
+import styles from './styles';
+import type { StudentStatusProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -9,20 +13,16 @@ import { BodyText, SmallText } from '~/framework/components/text';
 import { CallEventType } from '~/framework/modules/viescolaire/presences/model';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import EventButton from './event-button';
-import styles from './styles';
-import type { StudentStatusProps } from './types';
-
 export default function StudentStatus({
-  hasAbsenceViewAccess,
-  student,
-  style,
-  exemption_attendance,
-  lastCourseAbsent,
   createAbsence,
   deleteAbsence,
   dismissBottomSheet,
+  exemption_attendance,
+  hasAbsenceViewAccess,
+  lastCourseAbsent,
   openEvent,
+  student,
+  style,
 }: StudentStatusProps) {
   if (!student) return null;
   const isAbsent = student.events.some(event => event.typeId === CallEventType.ABSENCE);
@@ -66,7 +66,7 @@ export default function StudentStatus({
             {I18n.get(
               exemption_attendance
                 ? 'presences-call-studentstatus-info-exemptionattendance'
-                : 'presences-call-studentstatus-info-lastcourseabsent',
+                : 'presences-call-studentstatus-info-lastcourseabsent'
             )}
           </SmallText>
         </View>

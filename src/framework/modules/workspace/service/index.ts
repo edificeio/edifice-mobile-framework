@@ -16,7 +16,7 @@ import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 
 const implicitWorkspaceUploadParams = {
   owner: {}, // Exists BackEnd side but not useed yet!
-  protected: { protected: 'true', application: 'media-library' },
+  protected: { application: 'media-library', protected: 'true' },
   root: {}, // Exists BackEnd side but not useed yet! // Exists BackEnd side but not useed yet!
   shared: {}, // Exists BackEnd side but not useed yet!
   trash: {}, // Exists BackEnd side but not useed yet!
@@ -32,12 +32,12 @@ type IEntcoreWorkspaceDocument = {
   _id: string;
   name: string;
   metadata: {
-    name: 'file';
-    filename: string;
+    'name': 'file';
+    'filename': string;
     'content-type': string;
     'content-transfer-encoding': string;
-    charset: 'UTF-8';
-    size: number;
+    'charset': 'UTF-8';
+    'size': number;
   };
   deleted: boolean;
   eParent: string | null;
@@ -80,8 +80,8 @@ const workspaceFileAdapter = (file: IEntcoreWorkspaceDocument | IEntcoreWorkspac
         contentType: file.metadata['content-type'],
         date: moment(file.modified, 'YYYY-MM-DD HH:mm.ss.SSS').toDate().getTime(),
         id: file._id,
-        key: file._id,
         isFolder: false,
+        key: file._id,
         name: file.name,
         owner: file.owner as Filter,
         ownerName: file.ownerName,
@@ -91,8 +91,8 @@ const workspaceFileAdapter = (file: IEntcoreWorkspaceDocument | IEntcoreWorkspac
     : {
         date: moment(file.modified, 'YYYY-MM-DD HH:mm.ss.SSS').toDate().getTime(),
         id: file._id,
-        key: file._id,
         isFolder: true,
+        key: file._id,
         name: file.name,
         owner: file.owner as Filter,
         ownerName: file.ownerName,
@@ -110,10 +110,10 @@ const i18nFolderName = {
 
 export const factoryRootFolder = (filter: Filter): IFile => {
   return {
-    id: filter,
-    key: filter,
     date: 0,
+    id: filter,
     isFolder: true,
+    key: filter,
     name: I18n.get(i18nFolderName[filter]),
     owner: '',
     ownerName: '',
@@ -148,7 +148,67 @@ const getThumbnailWorkspaceUploadParams = () => {
 };
 
 const workspaceService = {
+  file: {
+    rename: async (session: AuthLoggedAccount, id: string, name: string) => {
+      const api = `/workspace/rename/${id}`;
+      const body = JSON.stringify({ name });
+      return signedFetchJson(`${session?.platform.url}${api}`, {
+        body,
+        method: 'PUT',
+      });
+    },
+    startUploadFile: (session: AuthLoggedAccount, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
+      const api = '/workspace/document';
+      const queryParams = params.public
+        ? {
+            application: 'media-library',
+            public: true,
+            quality: 1,
+          }
+        : {
+            parent: params.parent,
+            ...getImplicitWorkspaceUploadParams(params),
+            //...getThumbnailWorkspaceUploadParams(),
+          };
+      const url = queryString.stringifyUrl({
+        query: queryParams,
+        url: api,
+      });
+      const adapter = (data: any) => {
+        const datajson = JSON.parse(data) as IEntcoreWorkspaceDocument;
+        const id = datajson._id;
+        return {
+          ...file,
+          filename: datajson.name || file.filename,
+          filesize: datajson.metadata?.size,
+          id,
+          url: datajson.public ? `/workspace/pub/document/${id}` : `/workspace/document/${id}`,
+        };
+      };
+      return fileTransferService.startUploadFile<SyncedFileWithId>(session, file, { ...params, url }, adapter, callbacks);
+    },
+    uploadFile: (session: AuthLoggedAccount, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
+      return workspaceService.file.startUploadFile(session, file, params, callbacks).promise;
+    },
+  },
   files: {
+    copy: async (session: AuthLoggedAccount, parentId: string, ids: string[], destinationId: string) => {
+      destinationId = destinationId === 'owner' ? 'root' : destinationId;
+      const api = `/workspace/documents/copy/${destinationId}`;
+      const body = JSON.stringify({ ids, parentId });
+      return signedFetchJson(`${session?.platform.url}${api}`, {
+        body,
+        method: 'POST',
+      });
+    },
+    delete: async (session: AuthLoggedAccount, parentId: string, ids: string[]) => {
+      const api = '/workspace/documents';
+      const body = JSON.stringify({ ids, parentId });
+      return signedFetchJson(`${session?.platform.url}${api}`, {
+        body,
+        method: 'DELETE',
+      });
+    },
     get: async (session: AuthLoggedAccount, filter: Filter, parentId: string) => {
       let params = `?filter=${filter}`;
 
@@ -163,125 +223,58 @@ const workspaceService = {
       const files = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFileList;
       return files.map(file => workspaceFileAdapter(file)).sort(compareFiles) as IFile[];
     },
-    copy: async (session: AuthLoggedAccount, parentId: string, ids: string[], destinationId: string) => {
-      destinationId = destinationId === 'owner' ? 'root' : destinationId;
-      const api = `/workspace/documents/copy/${destinationId}`;
-      const body = JSON.stringify({ parentId, ids });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
-        method: 'POST',
-        body,
-      });
-    },
     move: async (session: AuthLoggedAccount, parentId: string, ids: string[], destinationId: string) => {
       destinationId = destinationId === 'owner' ? 'root' : destinationId;
       const api = `/workspace/documents/move/${destinationId}`;
-      const body = JSON.stringify({ parentId, ids });
+      const body = JSON.stringify({ ids, parentId });
       return signedFetchJson(`${session?.platform.url}${api}`, {
-        method: 'PUT',
         body,
+        method: 'PUT',
       });
     },
     restore: async (session: AuthLoggedAccount, parentId: string, ids: string[]) => {
       const api = '/workspace/documents/restore';
-      const body = JSON.stringify({ parentId, ids });
+      const body = JSON.stringify({ ids, parentId });
       return signedFetchJson(`${session?.platform.url}${api}`, {
+        body,
         method: 'PUT',
-        body,
-      });
-    },
-    trash: async (session: AuthLoggedAccount, ids: string[], parentId?: string) => {
-      const api = '/workspace/documents/trash';
-      const body = JSON.stringify({ parentId, ids });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
-        method: 'PUT',
-        body,
-      });
-    },
-    delete: async (session: AuthLoggedAccount, parentId: string, ids: string[]) => {
-      const api = '/workspace/documents';
-      const body = JSON.stringify({ parentId, ids });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
-        method: 'DELETE',
-        body,
       });
     },
     startUploadFiles: (
       session: AuthLoggedAccount,
       files: LocalFile[],
       params: IWorkspaceUploadParams,
-      callbacks?: IUploadCallbaks,
+      callbacks?: IUploadCallbaks
     ) => {
       return files.map(f => workspaceService.file.startUploadFile(session, f, params, callbacks));
     },
+    trash: async (session: AuthLoggedAccount, ids: string[], parentId?: string) => {
+      const api = '/workspace/documents/trash';
+      const body = JSON.stringify({ ids, parentId });
+      return signedFetchJson(`${session?.platform.url}${api}`, {
+        body,
+        method: 'PUT',
+      });
+    },
     uploadFiles: (session: AuthLoggedAccount, files: LocalFile[], params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
       return Promise.all(workspaceService.files.startUploadFiles(session, files, params, callbacks).map(j => j.promise));
-    },
-  },
-  file: {
-    rename: async (session: AuthLoggedAccount, id: string, name: string) => {
-      const api = `/workspace/rename/${id}`;
-      const body = JSON.stringify({ name });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
-        method: 'PUT',
-        body,
-      });
-    },
-    startUploadFile: (session: AuthLoggedAccount, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
-      const api = '/workspace/document';
-      const queryParams = params.public
-        ? {
-            application: 'media-library',
-            quality: 1,
-            public: true,
-          }
-        : {
-            parent: params.parent,
-            ...getImplicitWorkspaceUploadParams(params),
-            //...getThumbnailWorkspaceUploadParams(),
-          };
-      const url = queryString.stringifyUrl({
-        url: api,
-        query: queryParams,
-      });
-      const adapter = (data: any) => {
-        const datajson = JSON.parse(data) as IEntcoreWorkspaceDocument;
-        const id = datajson._id;
-        return {
-          ...file,
-          id,
-          url: datajson.public ? `/workspace/pub/document/${id}` : `/workspace/document/${id}`,
-          filesize: datajson.metadata?.size,
-          filename: datajson.name || file.filename,
-        };
-      };
-      return fileTransferService.startUploadFile<SyncedFileWithId>(session, file, { ...params, url }, adapter, callbacks);
-    },
-    uploadFile: (session: AuthLoggedAccount, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
-      return workspaceService.file.startUploadFile(session, file, params, callbacks).promise;
-    },
-  },
-  folders: {
-    list: async (session: AuthLoggedAccount) => {
-      const api = '/workspace/folders/list?filter=owner&hierarchical=true';
-      const folders = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFolder[];
-      return workspaceFolderListAdapter(folders);
     },
   },
   folder: {
     create: async (session: AuthLoggedAccount, name: string, parentId: string) => {
       const api = '/workspace/folder';
       const body = queryString.stringify({
-        name,
         externalId: '',
+        name,
         ...(parentId !== 'owner' ? { parentFolderId: parentId } : {}),
       });
       const headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       };
       const folder = (await signedFetchJson(`${session?.platform.url}${api}`, {
-        method: 'POST',
         body,
         headers,
+        method: 'POST',
       })) as Promise<IEntcoreWorkspaceFolder>;
       return workspaceFileAdapter(folder);
     },
@@ -289,9 +282,16 @@ const workspaceService = {
       const api = `/workspace/folder/rename/${id}`;
       const body = JSON.stringify({ name });
       return signedFetchJson(`${session?.platform.url}${api}`, {
-        method: 'PUT',
         body,
+        method: 'PUT',
       });
+    },
+  },
+  folders: {
+    list: async (session: AuthLoggedAccount) => {
+      const api = '/workspace/folders/list?filter=owner&hierarchical=true';
+      const folders = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFolder[];
+      return workspaceFolderListAdapter(folders);
     },
   },
 };

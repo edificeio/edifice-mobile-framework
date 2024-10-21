@@ -1,8 +1,13 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import ChangePasswordFormModel from './form-model';
+import styles from './styles';
+import { ChangePasswordScreenPrivateProps, ChangePasswordScreenProps, ChangePasswordScreenStoreProps, IFields } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -26,10 +31,10 @@ import {
   AuthActiveAccountWithCredentials,
   AuthCredentials,
   AuthSavedLoggedOutAccountWithCredentials,
+  createChangePasswordError,
   IChangePasswordError,
   IChangePasswordPayload,
   PlatformAuthContext,
-  createChangePasswordError,
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
@@ -37,13 +42,9 @@ import { Error } from '~/framework/util/error';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';
 
-import ChangePasswordFormModel from './form-model';
-import styles from './styles';
-import { ChangePasswordScreenPrivateProps, ChangePasswordScreenProps, ChangePasswordScreenStoreProps, IFields } from './types';
-
-const keyboardPageViewScrollViewProps = { showsVerticalScrollIndicator: false, bounces: false };
+const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
 const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { context: PlatformAuthContext }) => {
-  const { navigation, route, session, context, tryLogout, trySubmit } = props;
+  const { context, navigation, route, session, tryLogout, trySubmit } = props;
 
   const platform = route.params.platform ?? session?.platform;
 
@@ -52,7 +53,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
       route.params.forceChange ? (
         <AlertCard style={styles.alert} type="warning" text={I18n.get('auth-changepassword-warning')} />
       ) : null,
-    [route.params.forceChange],
+    [route.params.forceChange]
   );
 
   const passwordRules = React.useMemo(
@@ -65,7 +66,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
           </SmallText>
         </View>
       ) : null,
-    [context.passwordRegexI18n],
+    [context.passwordRegexI18n]
   );
 
   const [oldPassword, setOldPassword] = React.useState(route.params.useResetCode ? (route.params.credentials?.username ?? '') : '');
@@ -88,10 +89,10 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }
       const payload: IChangePasswordPayload = {
-        oldPassword,
-        newPassword,
         confirm,
         login,
+        newPassword,
+        oldPassword,
       };
       if (route.params.useResetCode) {
         payload.resetCode = (route.params.credentials as AuthCredentials).password;
@@ -149,20 +150,20 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
   const formModel = React.useMemo(
     () =>
       new ChangePasswordFormModel({
-        passwordRegex: context.passwordRegex,
-        oldPassword: () => oldPassword,
         newPassword: () => newPassword,
+        oldPassword: () => oldPassword,
+        passwordRegex: context.passwordRegex,
       }),
-    [context.passwordRegex, newPassword, oldPassword],
+    [context.passwordRegex, newPassword, oldPassword]
   );
 
   const isNotValid = React.useMemo(
-    () => !formModel.validate({ oldPassword, newPassword, confirm }),
-    [confirm, formModel, newPassword, oldPassword],
+    () => !formModel.validate({ confirm, newPassword, oldPassword }),
+    [confirm, formModel, newPassword, oldPassword]
   );
   const errorKey = React.useMemo(
-    () => formModel.firstErrorKey({ oldPassword, newPassword, confirm }),
-    [confirm, formModel, newPassword, oldPassword],
+    () => formModel.firstErrorKey({ confirm, newPassword, oldPassword }),
+    [confirm, formModel, newPassword, oldPassword]
   );
   const errorText = React.useMemo(() => (errorKey ? I18n.get(errorKey) : typing ? undefined : error), [error, errorKey, typing]);
   const isSubmitLoading = submitState === 'RUNNING';
@@ -195,9 +196,9 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
         {passwordRules}
         <InputContainer
           label={{
-            text: isResetMode ? I18n.get('auth-changepassword-login') : I18n.get('auth-changepassword-password-old'),
             icon: isResetMode ? 'ui-user' : 'ui-lock',
             testID: 'change-password-actual-label',
+            text: isResetMode ? I18n.get('auth-changepassword-login') : I18n.get('auth-changepassword-password-old'),
           }}
           input={
             isResetMode ? (
@@ -235,9 +236,9 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
         <InputContainer
           style={styles.inputNewPassword}
           label={{
-            text: I18n.get('auth-changepassword-password-new'),
             icon: 'ui-lock',
             testID: 'change-password-new-label',
+            text: I18n.get('auth-changepassword-password-new'),
           }}
           input={
             <PasswordInput
@@ -258,9 +259,9 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
         />
         <InputContainer
           label={{
-            text: I18n.get('auth-changepassword-password-new-confirm'),
             icon: 'ui-lock',
             testID: 'change-password-confirmed-label',
+            text: I18n.get('auth-changepassword-password-new-confirm'),
           }}
           input={
             <PasswordInput
@@ -308,11 +309,11 @@ export const mapStateToProps: (
       | typeof authRouteNames.changePassword
       | typeof authRouteNames.changePasswordModal
       | typeof authRouteNames.addAccountChangePassword
-    >,
+    >
 ) => ChangePasswordScreenStoreProps = (state, props) => {
   return {
-    session: getSession(),
     context: props.route.params.platform ? getPlatformContextOf(props.route.params.platform) : getPlatformContext(),
+    session: getSession(),
   };
 };
 
@@ -327,7 +328,7 @@ export const mapStateToProps: (
 // };
 
 const ChangePasswordScreenLoader = (props: ChangePasswordScreenPrivateProps) => {
-  const { context, session, route } = props;
+  const { context, route, session } = props;
   const platform = route.params.platform ?? session?.platform;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 

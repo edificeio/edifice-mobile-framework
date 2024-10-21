@@ -1,5 +1,6 @@
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Platform } from 'react-native';
+
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 let currentBadgeValue: number;
 

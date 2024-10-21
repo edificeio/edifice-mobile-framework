@@ -1,19 +1,15 @@
 import * as React from 'react';
 
+import { UserNavigationParams, userRouteNames } from './';
+
 import moduleConfig from '~/framework/modules/user/module-config';
-import PushNotifsItemsListScreen, {
-  computeNavBar as pushNotifsItemsListNavBar,
-} from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
-import PushNotifsTopicsListScreen, {
-  computeNavBar as pushNotifsTopicsListNavBar,
-} from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
 import {
-  DetailedScreen,
-  LogScreen,
-  NetworkScreen,
   computeNavBar as debugNavBar,
   detailedNavBar,
+  DetailedScreen,
   logNavBar,
+  LogScreen,
+  NetworkScreen,
 } from '~/framework/modules/user/screens/debug';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
@@ -27,13 +23,17 @@ import UserEditMoodMottoScreen, {
   computeNavBar as editMoodMottoNavBar,
 } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import UserStructuresScreen, { computeNavBar as structuresNavBar } from '~/framework/modules/user/screens/profile/structures';
+import PushNotifsItemsListScreen, {
+  computeNavBar as pushNotifsItemsListNavBar,
+} from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
+import PushNotifsTopicsListScreen, {
+  computeNavBar as pushNotifsTopicsListNavBar,
+} from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
 import UserXmasScreen, { computeNavBar as xmasNavBar } from '~/framework/modules/user/screens/xmas';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { UserNavigationParams, userRouteNames } from './';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (

@@ -5,10 +5,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.card,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     overflow: 'hidden',
   },
   leftContainer: {
@@ -17,14 +17,14 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
     rowGap: UI_SIZES.spacing.minor,
   },
-  rowContainer: {
-    flexDirection: 'row',
-    flexShrink: 1,
-    alignItems: 'center',
-    columnGap: UI_SIZES.spacing.minor,
-  },
   roomText: {
     color: theme.ui.text.light,
+  },
+  rowContainer: {
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
+    flexShrink: 1,
   },
   statusContainer: {
     justifyContent: 'center',

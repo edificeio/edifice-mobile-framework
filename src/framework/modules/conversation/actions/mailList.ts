@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 
 import { mailListService } from '~/framework/modules/conversation/service/mailList';
-import { IMailList, actionTypes } from '~/framework/modules/conversation/state/mailList';
+import { actionTypes, IMailList } from '~/framework/modules/conversation/state/mailList';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 
 // ACTION LIST ------------------------------------------------------------------------------------

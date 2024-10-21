@@ -9,17 +9,17 @@ export default StyleSheet.create({
     flexGrow: 1,
   },
   navBarCountText: {
+    color: theme.ui.text.inverse,
     textAlign: 'center',
     textAlignVertical: 'center',
-    color: theme.ui.text.inverse,
   },
   uploadIndicatorContainer: {
     alignSelf: 'center',
-    position: 'absolute',
-    width: 75,
-    height: 75,
-    top: '40%',
     backgroundColor: theme.palette.grey.fog,
     borderRadius: UI_SIZES.radius.mediumPlus,
+    height: 75,
+    position: 'absolute',
+    top: '40%',
+    width: 75,
   },
 });

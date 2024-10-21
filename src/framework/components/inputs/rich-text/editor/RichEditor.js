@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
+
 import { WebView } from 'react-native-webview';
+
+import { actions, messages } from './const';
+import { createHTML } from './editor';
 
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
@@ -9,19 +13,16 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
 import { urlSigner } from '~/infra/oauth';
 
-import { actions, messages } from './const';
-import { createHTML } from './editor';
-
 const PlatformIOS = Platform.OS === 'ios';
 
 const styles = StyleSheet.create({
   _input: {
+    bottom: -999,
+    height: 1,
+    left: -999,
     position: 'absolute',
     width: 1,
-    height: 1,
     zIndex: -999,
-    bottom: -999,
-    left: -999,
   },
   webview: {
     backgroundColor: theme.palette.grey.white,
@@ -30,20 +31,20 @@ const styles = StyleSheet.create({
 
 export default class RichEditor extends Component {
   static defaultProps = {
+    autoCapitalize: 'off',
     contentInset: {},
-    style: {},
-    placeholder: '',
+    defaultParagraphSeparator: 'div',
+    disabled: false,
+    editorInitializedCallback: () => {},
     initialContentHTML: '',
     initialFocus: false,
-    disabled: false,
-    useContainer: true,
-    pasteAsPlainText: false,
-    autoCapitalize: 'off',
-    defaultParagraphSeparator: 'div',
-    editorInitializedCallback: () => {},
     initialHeight: 0,
     oneSessionId: undefined,
+    placeholder: '',
     onLoad: undefined,
+    style: {},
+    pasteAsPlainText: false,
+    useContainer: true,
   };
 
   constructor(props) {
@@ -72,47 +73,47 @@ export default class RichEditor extends Component {
     that._onLinkTouched = that._onLinkTouched.bind(that);
     that._onVideoTouched = that._onVideoTouched.bind(that);
     const {
-      html,
-      pasteAsPlainText,
-      onPaste,
-      onKeyUp,
-      onKeyDown,
-      onInput,
-      enterKeyHint,
       autoCapitalize,
       autoCorrect,
       defaultParagraphSeparator,
-      firstFocusEnd,
-      useContainer,
-      initialHeight,
-      initialFocus,
       disabled,
+      enterKeyHint,
+      firstFocusEnd,
+      html,
+      initialFocus,
+      initialHeight,
+      onInput,
+      onKeyDown,
+      onKeyUp,
+      onPaste,
+      pasteAsPlainText,
       styleWithCSS,
       useComposition,
+      useContainer,
     } = props;
     that.state = {
+      height: initialHeight,
       html: {
+        baseUrl: that.pfUrl,
         html:
           html ||
           createHTML({
-            pasteAsPlainText,
-            pasteListener: !!onPaste,
-            keyUpListener: !!onKeyUp,
-            keyDownListener: !!onKeyDown,
-            inputListener: !!onInput,
-            enterKeyHint,
             autoCapitalize,
             autoCorrect,
-            initialFocus: initialFocus && !disabled,
             defaultParagraphSeparator,
+            inputListener: !!onInput,
+            enterKeyHint,
+            keyUpListener: !!onKeyUp,
             firstFocusEnd,
-            useContainer,
+            pasteAsPlainText,
+            initialFocus: initialFocus && !disabled,
+            pasteListener: !!onPaste,
+            keyDownListener: !!onKeyDown,
             styleWithCSS,
             useComposition,
+            useContainer,
           }),
-        baseUrl: that.pfUrl,
       },
-      height: initialHeight,
       keyboardHeight: 0,
     };
     that.focusListeners = [];
@@ -139,7 +140,7 @@ export default class RichEditor extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { editorStyle, disabled, placeholder, initialContentHTML, editorInitializedCallback } = this.props;
+    const { disabled, editorInitializedCallback, editorStyle, initialContentHTML, placeholder } = this.props;
     if (editorStyle && prevProps.editorStyle !== editorStyle) {
       this.setContentStyle(editorStyle);
     }
@@ -181,8 +182,8 @@ export default class RichEditor extends Component {
     const { disabled } = this.props;
     if (disabled)
       openMediaPlayer({
-        type: MediaType.AUDIO,
         source: urlSigner.signURISource(url),
+        type: MediaType.AUDIO,
       });
   }
 
@@ -190,8 +191,8 @@ export default class RichEditor extends Component {
     const { disabled } = this.props;
     if (disabled) {
       const images = imagesUrls.map(imgSrc => ({
-        type: 'image',
         src: { uri: imgSrc },
+        type: 'image',
       }));
       openCarousel({ data: images, startIndex: imagesUrls.indexOf(url) });
     }
@@ -214,14 +215,14 @@ export default class RichEditor extends Component {
     const { disabled } = this.props;
     if (disabled)
       openMediaPlayer({
-        type: MediaType.VIDEO,
         source: urlSigner.signURISource(url),
+        type: MediaType.VIDEO,
       });
   }
 
   onMessage(event) {
     const that = this;
-    const { onFocus, onBlur, onChange, onPaste, onKeyUp, onKeyDown, onInput, onMessage, onCursorPosition } = that.props;
+    const { onBlur, onChange, onCursorPosition, onFocus, onInput, onKeyDown, onKeyUp, onMessage, onPaste } = that.props;
     try {
       const message = JSON.parse(event.nativeEvent.data);
       const data = message.data;
@@ -244,7 +245,6 @@ export default class RichEditor extends Component {
           console.debug('FROM EDIT:', ...data);
           break;
         case messages.SELECTION_CHANGE:
-          // eslint-disable-next-line no-case-declarations
           const items = message.data;
           that.selectionChangeListeners.map(listener => {
             listener(items);
@@ -278,7 +278,6 @@ export default class RichEditor extends Component {
           that.setWebHeight(data);
           break;
         case messages.OFFSET_Y:
-          // eslint-disable-next-line no-case-declarations
           const offsetY = Number.parseInt(Number.parseInt(data, 10) + that.layout.y || 0, 10);
           if (offsetY > 0) onCursorPosition(offsetY);
           break;
@@ -308,7 +307,7 @@ export default class RichEditor extends Component {
   }
 
   setWebHeight(height) {
-    const { onHeightChange, useContainer, initialHeight, onLoad } = this.props;
+    const { initialHeight, onHeightChange, onLoad, useContainer } = this.props;
     if (height !== this.state.height) {
       const maxHeight = Math.max(height, initialHeight);
       if (!this.unmount && useContainer && maxHeight >= initialHeight) {
@@ -322,7 +321,7 @@ export default class RichEditor extends Component {
   }
 
   sendAction(type, action, data, options) {
-    const jsonString = JSON.stringify({ type, name: action, data, options });
+    const jsonString = JSON.stringify({ data, name: action, options, type });
     if (!this.unmount && this.webviewBridge) {
       this.webviewBridge.postMessage(jsonString);
     }
@@ -334,11 +333,10 @@ export default class RichEditor extends Component {
 
   renderWebView() {
     const that = this;
-    const { html, editorStyle, useContainer, style, onLink, ...rest } = that.props;
+    const { editorStyle, html, onLink, style, useContainer, ...rest } = that.props;
     const { html: viewHTML } = that.state;
     const js = `document.cookie="oneSessionId=${this.props.oneSessionId?.value}"; true;`;
     return (
-      // eslint-disable-next-line react/jsx-filename-extension
       <>
         <WebView
           injectedJavaScriptBeforeContentLoaded={js}
@@ -377,7 +375,7 @@ export default class RichEditor extends Component {
   }
 
   render() {
-    const { useContainer, style } = this.props;
+    const { style, useContainer } = this.props;
     // if (!oneSessionId) return <EmptyConnectionScreen />;
     // useContainer is an optional prop with default value of true
     // If set to true, it will use a View wrapper with styles and height.
@@ -510,7 +508,7 @@ export default class RichEditor extends Component {
 
   init() {
     const that = this;
-    const { initialFocus, initialContentHTML, placeholder, editorInitializedCallback, disabled } = that.props;
+    const { disabled, editorInitializedCallback, initialContentHTML, initialFocus, placeholder } = that.props;
     if (initialContentHTML) that.setContentHTML(initialContentHTML);
     if (placeholder) that.setPlaceholder(placeholder);
     that.setDisable(disabled);

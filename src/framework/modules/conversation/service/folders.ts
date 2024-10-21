@@ -11,17 +11,6 @@ export type FoldersBackend = {
 }[];
 
 export const foldersService = {
-  post: async (name: string, parentId: string | null = null) => {
-    const body = {
-      name,
-    } as any;
-    if (parentId) body.parentId = parentId;
-    const response = await fetchJSONWithCache(`/conversation/folder`, {
-      method: 'post',
-      body: JSON.stringify(body),
-    });
-    return response;
-  },
   count: async () => {
     const ids = ['INBOX', 'DRAFT'];
     const promises: Promise<any>[] = [];
@@ -35,5 +24,16 @@ export const foldersService = {
       return newAcc;
     }, {});
     return ret;
+  },
+  post: async (name: string, parentId: string | null = null) => {
+    const body = {
+      name,
+    } as any;
+    if (parentId) body.parentId = parentId;
+    const response = await fetchJSONWithCache(`/conversation/folder`, {
+      body: JSON.stringify(body),
+      method: 'post',
+    });
+    return response;
   },
 };

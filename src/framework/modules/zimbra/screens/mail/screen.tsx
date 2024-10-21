@@ -1,17 +1,21 @@
-import { CommonActions } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, Platform, RefreshControl, ScrollView, View } from 'react-native';
+
+import { CommonActions } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import styles from './styles';
+import { ZimbraMailScreenDispatchProps, ZimbraMailScreenPrivateProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
@@ -29,9 +33,6 @@ import fileTransferService from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import HtmlContentView from '~/ui/HtmlContentView';
-
-import styles from './styles';
-import { ZimbraMailScreenDispatchProps, ZimbraMailScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -157,13 +158,13 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
   const alertPermanentDeletion = () => {
     Alert.alert(I18n.get('zimbra-mail-deletealert-title'), I18n.get('zimbra-mail-deletealert-message'), [
       {
-        text: I18n.get('common-cancel'),
         style: 'default',
+        text: I18n.get('common-cancel'),
       },
       {
-        text: I18n.get('common-delete'),
         onPress: deleteMail,
         style: 'destructive',
+        text: I18n.get('common-delete'),
       },
     ]);
   };
@@ -183,8 +184,8 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       return Alert.alert(I18n.get('zimbra-mail-storagealert-title'), I18n.get('zimbra-mail-storagealert-message'));
     }
     navigation.navigate(zimbraRouteNames.composer, {
-      type,
       mailId: id,
+      type,
     });
   };
 
@@ -196,44 +197,44 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       ...(folderPath.startsWith('/Inbox') || folderPath === '/Junk'
         ? [
             {
-              title: I18n.get('zimbra-mail-menuactions-markunread'),
               action: markAsUnread,
               icon: {
-                ios: 'eye.slash',
                 android: 'ic_visibility_off',
+                ios: 'eye.slash',
               },
+              title: I18n.get('zimbra-mail-menuactions-markunread'),
             },
             {
-              title: I18n.get('zimbra-mail-menuactions-move'),
               action: () => moveModalRef.current?.doShowModal(),
               icon: {
-                ios: 'arrow.up.square',
                 android: 'ic_move_to_inbox',
+                ios: 'arrow.up.square',
               },
+              title: I18n.get('zimbra-mail-menuactions-move'),
             },
           ]
         : []),
       ...(folderPath === '/Trash'
         ? [
             {
-              title: I18n.get('zimbra-mail-menuactions-restore'),
               action: () => moveModalRef.current?.doShowModal(),
               icon: {
-                ios: 'arrow.uturn.backward.circle',
                 android: 'ic_restore',
+                ios: 'arrow.uturn.backward.circle',
               },
+              title: I18n.get('zimbra-mail-menuactions-restore'),
             },
           ]
         : []),
       ...(mail?.hasAttachment && Platform.OS === 'android'
         ? [
             {
-              title: I18n.get('zimbra-mail-menuactions-downloadattachments'),
               action: downloadAttachments,
               icon: {
-                ios: 'square.and.arrow.down',
                 android: 'ic_download',
+                ios: 'square.and.arrow.down',
               },
+              title: I18n.get('zimbra-mail-menuactions-downloadattachments'),
             },
           ]
         : []),
@@ -247,7 +248,6 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     if (loadingState !== AsyncPagedLoadingState.DONE || !mail) return;
     const actions = getMenuActions();
     navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <PopupMenu actions={actions}>
           <NavBarAction icon="ui-options" />
@@ -347,6 +347,6 @@ export default connect(
         tryFetchQuota: tryAction(fetchZimbraQuotaAction),
         tryFetchRootFolders: tryAction(fetchZimbraRootFoldersAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(ZimbraMailScreen);

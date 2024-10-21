@@ -1,20 +1,20 @@
 import i18n from 'i18next';
 import moment from 'moment';
 
+import { readSplashadsData, writeSplashadsData } from './storage';
+
 import { I18n } from '~/app/i18n';
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { showSplashads } from '~/framework/modules/splashads/screen';
 import { Platform } from '~/framework/util/appConf';
 
-import { readSplashadsData, writeSplashadsData } from './storage';
-
 const splahadsLocales = {
   co: I18n.fallbackLng,
+  default: I18n.fallbackLng,
   en: 'en',
   es: 'es',
   fr: 'fr',
   it: I18n.fallbackLng,
-  default: I18n.fallbackLng,
 };
 
 const getSplashadsLocale = () => {

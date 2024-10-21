@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ColorValue, StyleSheet, View } from 'react-native';
 
-import theme from '~/app/theme';
-
 import { UI_SIZES } from './constants';
 import { NamedSVG, Picture, PictureProps } from './picture';
 import { CaptionBoldText } from './text';
+
+import theme from '~/app/theme';
 
 export interface IBadgeProps {
   content: number | string | PictureProps;
@@ -16,15 +16,15 @@ const styles = StyleSheet.create({
   badge: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    justifyContent: 'center',
-    height: UI_SIZES.dimensions.height.large,
-    width: UI_SIZES.dimensions.height.large,
     borderRadius: UI_SIZES.dimensions.height.large / 2,
+    height: UI_SIZES.dimensions.height.large,
+    justifyContent: 'center',
+    width: UI_SIZES.dimensions.height.large,
   },
-  badgePicture: { width: 16, height: 16 },
+  badgePicture: { height: 16, width: 16 },
 });
 
-export const Badge = ({ content, color }: IBadgeProps) => {
+export const Badge = ({ color, content }: IBadgeProps) => {
   const picture = React.useMemo(() => {
     if (!content) {
       return null;

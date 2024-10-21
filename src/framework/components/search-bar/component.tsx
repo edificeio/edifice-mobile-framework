@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { Platform, TextInput, TouchableOpacity } from 'react-native';
 
+import styles from './styles';
+import { SearchBarProps } from './types';
+
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { NamedSVG } from '~/framework/components/picture';
-
-import styles from './styles';
-import { SearchBarProps } from './types';
 
 export const SearchBar = (props: SearchBarProps) => {
   const inputRef = useRef<TextInput>(null);

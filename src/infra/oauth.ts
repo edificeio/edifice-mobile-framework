@@ -1,11 +1,12 @@
 /**
  * OAuth2 client for Ressource Owner Password Grant type flow.
  */
+import { ImageRequireSource, ImageURISource } from 'react-native';
+
 import CookieManager from '@react-native-cookies/cookies';
 import { encode as btoa } from 'base-64';
 import moment from 'moment';
 import querystring from 'querystring';
-import { ImageRequireSource, ImageURISource } from 'react-native';
 import DeviceInfo, { getDeviceId } from 'react-native-device-info';
 import { Source } from 'react-native-fast-image';
 
@@ -91,7 +92,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private static DEFAULT_HEADERS = {
     // tslint:disable-next-line:prettier
-    Accept: 'application/json, application/x-www-form-urlencoded',
+    'Accept': 'application/json, application/x-www-form-urlencoded',
     'Content-Type': 'application/x-www-form-urlencoded',
     'X-Device-Id': uniqueId,
   };
@@ -132,12 +133,12 @@ export class OAuth2RessourceOwnerPasswordClient {
   public authErrorFactory(
     type: Error.ErrorTypes<typeof Error.OAuth2Error>,
     error: string,
-    cause?: Error,
+    cause?: Error
   ): InstanceType<typeof Error.OAuth2Error>;
   public authErrorFactory(
     bodyOrType: { error: string; error_description?: string } | Error.ErrorTypes<typeof Error.OAuth2Error>,
     error?: string,
-    cause?: Error,
+    cause?: Error
   ): InstanceType<typeof Error.OAuth2Error> {
     let type: Error.ErrorTypes<typeof Error.OAuth2Error> | undefined;
 
@@ -208,7 +209,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers: {
           ...init?.headers,
           'Accept-Language': I18n.getLanguage(),
-          Authorization: 'Bearer ' + token.access_token,
+          'Authorization': 'Bearer ' + token.access_token,
           'X-APP': 'mobile',
           'X-APP-NAME': DeviceInfo.getApplicationName(),
           'X-APP-VERSION': DeviceInfo.getReadableVersion(),
@@ -219,7 +220,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     } else {
       throw new Error.FetchError(
         Error.FetchErrorType.NOT_AUTHENTICATED,
-        'EAUTH: Only Bearer token type supported. Given ' + token.token_type,
+        'EAUTH: Only Bearer token type supported. Given ' + token.token_type
       );
     }
   }
@@ -228,7 +229,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     if (!this.hasToken) {
       throw new Error.FetchError(
         Error.FetchErrorType.NOT_AUTHENTICATED,
-        'EAUTH: Unable to sign request without active access token.',
+        'EAUTH: Unable to sign request without active access token.'
       );
     }
 
@@ -349,7 +350,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Get a fresh new access token with owner credentials
    */
   public async getNewTokenWithUserAndPassword(username: string, password: string, saveToken: boolean = true): Promise<IOAuthToken> {
-    return this.getNewToken('password', { username, password }, saveToken);
+    return this.getNewToken('password', { password, username }, saveToken);
   }
 
   /**
@@ -404,7 +405,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   public exportToken(): AuthTokenSet {
     if (!this.token) throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth] exportToken : no token');
     return {
-      access: { value: this.token.access_token, type: 'Bearer', expiresAt: this.token.expires_at.toString() },
+      access: { expiresAt: this.token.expires_at.toString(), type: 'Bearer', value: this.token.access_token },
       refresh: { value: this.token.refresh_token },
       scope: this.token.scope.split(' '),
     };
@@ -415,9 +416,9 @@ export class OAuth2RessourceOwnerPasswordClient {
       access_token: token.access.value,
       expires_at: new Date(token.access.expiresAt),
       expires_in: 0,
-      token_type: token.access.type,
       refresh_token: token.refresh.value,
       scope: token.scope.join(' '),
+      token_type: token.access.type,
     };
   }
 
@@ -602,9 +603,9 @@ export class OAuth2RessourceOwnerPasswordClient {
           headers: urlSigner.getAuthHeader(),
         });
         currentQueryParamToken = {
+          expiresAt: OAuth2RessourceOwnerPasswordClient.getExpirationMoment(data.expires_in).format(),
           type: 'QueryParam',
           value: data.access_token,
-          expiresAt: OAuth2RessourceOwnerPasswordClient.getExpirationMoment(data.expires_in).format(),
         };
         getStore().dispatch(authActions.setQueryParamToken(session.user.id, currentQueryParamToken));
       }
@@ -672,13 +673,27 @@ export const urlSigner = {
   },
 
   /**
-   * Remove domain, protocol & searchParams from url
-   * @param absoluteUrl
-   * @returns
+   * Returns an headers object containing only the authorisation header.
+   * Caution: That header is read-only, use its just before sending the requests.
    */
-  getRelativeUrl: (absoluteUrl?: string) => {
-    const pf = assertSession().platform;
-    return absoluteUrl && absoluteUrl.replace(pf.url, '').split('?')[0];
+  getAuthHeader: () => {
+    const ret = { Authorization: urlSigner.getDummySignedRequest().headers.get('Authorization') };
+    if (!ret.Authorization)
+      throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth2] urlSigner.getAuthHeader: empty auth header');
+    return ret as { Authorization: string };
+  },
+
+  /**
+   * Returns an empty signed request, just to get the authorisation header.
+   * Caution: That request and its properties are read-only.
+   */
+  getDummySignedRequest: () => {
+    if (!OAuth2RessourceOwnerPasswordClient.connection)
+      throw new Error.FetchError(
+        Error.FetchErrorType.NOT_AUTHENTICATED,
+        '[oAuth2] urlSigner.getDummySignedRequest: no active token'
+      );
+    return OAuth2RessourceOwnerPasswordClient.connection.signRequest('<dummy request>');
   },
 
   /**
@@ -692,27 +707,17 @@ export const urlSigner = {
   },
 
   /**
-   * Returns an empty signed request, just to get the authorisation header.
-   * Caution: That request and its properties are read-only.
+   * Remove domain, protocol & searchParams from url
+   * @param absoluteUrl
+   * @returns
    */
-  getDummySignedRequest: () => {
-    if (!OAuth2RessourceOwnerPasswordClient.connection)
-      throw new Error.FetchError(
-        Error.FetchErrorType.NOT_AUTHENTICATED,
-        '[oAuth2] urlSigner.getDummySignedRequest: no active token',
-      );
-    return OAuth2RessourceOwnerPasswordClient.connection.signRequest('<dummy request>');
+  getRelativeUrl: (absoluteUrl?: string) => {
+    const pf = assertSession().platform;
+    return absoluteUrl && absoluteUrl.replace(pf.url, '').split('?')[0];
   },
 
-  /**
-   * Returns an headers object containing only the authorisation header.
-   * Caution: That header is read-only, use its just before sending the requests.
-   */
-  getAuthHeader: () => {
-    const ret = { Authorization: urlSigner.getDummySignedRequest().headers.get('Authorization') };
-    if (!ret.Authorization)
-      throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth2] urlSigner.getAuthHeader: empty auth header');
-    return ret as { Authorization: string };
+  getSourceURIAsString(URISource: ImageURISource | string) {
+    return typeof URISource === 'string' ? URISource : URISource.uri;
   },
 
   /**
@@ -744,7 +749,7 @@ export const urlSigner = {
       | ImageRequireSource
       | (ImageURISource & { isLocal?: boolean })[]
       | (Source & { isLocal?: boolean })
-      | undefined,
+      | undefined
   ) => {
     if (URISource === undefined) return URISource;
     if (typeof URISource === 'number') return URISource;
@@ -759,7 +764,7 @@ export const urlSigner = {
       if (URISource.isLocal) return URISource;
       const absUri = urlSigner.getAbsoluteUrl(URISource.uri)!;
       if (urlSigner.getIsUrlSignable(absUri)) {
-        return { ...URISource, uri: absUri, headers: { ...URISource.headers, ...urlSigner.getAuthHeader() } };
+        return { ...URISource, headers: { ...URISource.headers, ...urlSigner.getAuthHeader() }, uri: absUri };
       } else {
         return { ...URISource, uri: absUri };
       }
@@ -767,7 +772,7 @@ export const urlSigner = {
       /* URISource is string */
       const absUri = urlSigner.getAbsoluteUrl(URISource);
       if (urlSigner.getIsUrlSignable(absUri)) {
-        return { uri: absUri, headers: urlSigner.getAuthHeader() };
+        return { headers: urlSigner.getAuthHeader(), uri: absUri };
       } else {
         return { uri: absUri };
       }
@@ -781,10 +786,6 @@ export const urlSigner = {
   signURISourceArray: (URISources: { src: ImageURISource | string }[]) => {
     return URISources.map(URISource => ({ ...URISource, src: urlSigner.signURISource(URISource.src) }));
   },
-
-  getSourceURIAsString(URISource: ImageURISource | string) {
-    return typeof URISource === 'string' ? URISource : URISource.uri;
-  },
 };
 
 export function initOAuth2(platform: Platform) {
@@ -792,7 +793,7 @@ export function initOAuth2(platform: Platform) {
     `${platform.url}/auth/oauth2/token`,
     platform.oauth.client_id,
     platform.oauth.client_secret,
-    createAppScopesLegacy(),
+    createAppScopesLegacy()
   );
 }
 

@@ -1,13 +1,14 @@
 import * as React from 'react';
 
+import DrawerNavigator from './drawer-navigator';
+
+import { ZimbraNavigationParams, zimbraRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import ZimbraComposerScreen, { computeNavBar as composerNavBar } from '~/framework/modules/zimbra/screens/composer';
 import ZimbraMailScreen, { computeNavBar as mailNavBar } from '~/framework/modules/zimbra/screens/mail';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { ZimbraNavigationParams, zimbraRouteNames } from '.';
-import DrawerNavigator from './drawer-navigator';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ZimbraNavigationParams>(moduleConfig.name, Stack => (

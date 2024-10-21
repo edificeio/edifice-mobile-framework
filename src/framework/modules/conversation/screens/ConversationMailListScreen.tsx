@@ -1,6 +1,7 @@
+import * as React from 'react';
+
 import { Route, StackNavigationState } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -24,8 +25,8 @@ import MailList from '~/framework/modules/conversation/components/MailList';
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation/index';
 import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
-import { ICountMailboxes, getCountListState } from '~/framework/modules/conversation/state/count';
-import { IFolder, IInitMail, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
+import { getCountListState, ICountMailboxes } from '~/framework/modules/conversation/state/count';
+import { getInitMailListState, IFolder, IInitMail } from '~/framework/modules/conversation/state/initMails';
 import { getMailListState } from '~/framework/modules/conversation/state/mailList';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
@@ -112,31 +113,31 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
     super(props);
 
     this.state = {
+      fetchRequested: false,
+      firstFetch: false,
+      folders: [
+        {
+          depth: 0,
+          folderName: '',
+          folders: [],
+          id: '',
+          parent_id: '',
+          skip_uniq: false,
+          trashed: false,
+          unread: 0,
+          user_id: '',
+        },
+      ],
+      isChangingFolder: false,
+      mailboxesCount: {},
       unsubscribe: this.props.navigation.addListener('focus', () => {
         this.forceUpdate();
       }),
-      fetchRequested: false,
-      firstFetch: false,
-      isChangingFolder: false,
-      mailboxesCount: {},
-      folders: [
-        {
-          id: '',
-          folderName: '',
-          unread: 0,
-          folders: [],
-          parent_id: '',
-          user_id: '',
-          depth: 0,
-          trashed: false,
-          skip_uniq: false,
-        },
-      ],
     };
   }
 
   private fetchMails = (page = 0) => {
-    const { route, fetchMailList, fetchMailFromFolder } = this.props;
+    const { fetchMailFromFolder, fetchMailList, route } = this.props;
     const key = route.params.key;
     const folderName = route.params.folderName;
     const folderId = route.params.folderId;
@@ -151,33 +152,33 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   };
 
   public componentDidMount() {
-    const { route, fetchInit, fetchCount, navigation } = this.props;
+    const { fetchCount, fetchInit, navigation, route } = this.props;
 
     fetchInit();
     fetchCount();
     if (!route.params.key) {
       this.setState({ firstFetch: true });
-      navigation.setParams({ key: 'inbox', folderName: undefined, folderId: undefined });
+      navigation.setParams({ folderId: undefined, folderName: undefined, key: 'inbox' });
     }
     this.fetchMails();
   }
 
   componentDidUpdate(prevProps) {
-    const { route, init, count, isFetching, isFocused, navigation } = this.props;
-    const { firstFetch, fetchRequested, isChangingFolder } = this.state;
+    const { count, init, isFetching, isFocused, navigation, route } = this.props;
+    const { fetchRequested, firstFetch, isChangingFolder } = this.state;
     const key = route.params.key;
     navigation.setOptions({
       // React Navigation 6 uses this syntax to setup nav options
-      // eslint-disable-next-line react/no-unstable-nested-components
+
       headerRight: () => (
         <NavBarAction
           icon="ui-plus"
           onPress={() => {
             Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
             navigation.navigate(conversationRouteNames.newMail, {
-              type: DraftType.NEW,
-              mailId: undefined,
               currentFolder: getActiveRouteState(navigation.getState()).key,
+              mailId: undefined,
+              type: DraftType.NEW,
             });
           }}
         />
@@ -204,7 +205,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
 
   public render() {
     const { route } = this.props;
-    const { firstFetch, fetchRequested } = this.state;
+    const { fetchRequested, firstFetch } = this.state;
     return (
       <MailList
         {...this.props}
@@ -223,7 +224,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps = (state: IGlobalState) => {
-  const { isPristine, isFetching, data } = getMailListState(state);
+  const { data, isFetching, isPristine } = getMailListState(state);
 
   if (data?.length > 0) {
     for (let i = 0; i <= data.length - 1; i++) {
@@ -237,12 +238,12 @@ const mapStateToProps = (state: IGlobalState) => {
 
   // Format props
   return {
-    isPristine,
-    isFetching,
-    notifications: data,
+    count,
     folders,
     init,
-    count,
+    isFetching,
+    isPristine,
+    notifications: data,
   };
 };
 
@@ -251,15 +252,6 @@ const mapStateToProps = (state: IGlobalState) => {
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
-      fetchMailList: fetchMailListAction,
-      fetchMailFromFolder: fetchMailListFromFolderAction,
-      fetchInit: fetchInitAction,
-      fetchCount: fetchCountAction,
-      trashMails: tryActionLegacy(trashMailsAction, [
-        moduleConfig,
-        'Supprimer',
-        'Inbox/Dossier/Outbox - Balayage - Mettre à la corbeille',
-      ]),
       deleteDrafts: tryActionLegacy(deleteDraftsAction, [
         moduleConfig,
         'Supprimer',
@@ -270,17 +262,26 @@ const mapDispatchToProps = dispatch => {
         'Supprimer',
         'Corbeille - Balayage - Supprimer définitivement',
       ]),
+      fetchCount: fetchCountAction,
+      fetchInit: fetchInitAction,
+      fetchMailFromFolder: fetchMailListFromFolderAction,
+      fetchMailList: fetchMailListAction,
+      moveToFolder: tryActionLegacy(moveMailsToFolderAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Balayage - Déplacer']),
+      moveToInbox: tryActionLegacy(moveMailsToInboxAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Balayage - Déplacer']),
+      restoreToFolder: tryActionLegacy(restoreMailsToFolderAction, [moduleConfig, 'Restaurer', 'Corbeille - Balayage - Restaurer']),
+      restoreToInbox: tryActionLegacy(restoreMailsToInboxAction, [moduleConfig, 'Restaurer', 'Corbeille - Balayage - Restaurer']),
       toggleRead: tryActionLegacy(toggleReadAction, (mailsIds, read) => [
         moduleConfig,
         'Marquer lu/non-lu',
         `Inbox/Dossier - Balayage - Marquer ${read ? 'lu' : 'non-lu'}`,
       ]),
-      moveToFolder: tryActionLegacy(moveMailsToFolderAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Balayage - Déplacer']),
-      moveToInbox: tryActionLegacy(moveMailsToInboxAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Balayage - Déplacer']),
-      restoreToFolder: tryActionLegacy(restoreMailsToFolderAction, [moduleConfig, 'Restaurer', 'Corbeille - Balayage - Restaurer']),
-      restoreToInbox: tryActionLegacy(restoreMailsToInboxAction, [moduleConfig, 'Restaurer', 'Corbeille - Balayage - Restaurer']),
+      trashMails: tryActionLegacy(trashMailsAction, [
+        moduleConfig,
+        'Supprimer',
+        'Inbox/Dossier/Outbox - Balayage - Mettre à la corbeille',
+      ]),
     },
-    dispatch,
+    dispatch
   );
 };
 
@@ -308,5 +309,5 @@ registerCustomRouteTracking(
       }
     };
     return `${moduleConfig.routeName}/${getValue()}`;
-  },
+  }
 );

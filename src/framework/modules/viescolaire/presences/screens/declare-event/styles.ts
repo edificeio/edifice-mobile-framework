@@ -5,11 +5,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   backdropContainer: {
+    height: UI_SIZES.screen.height,
+    left: 0,
     position: 'absolute',
     top: 0,
-    left: 0,
     width: UI_SIZES.screen.width,
-    height: UI_SIZES.screen.height,
   },
   container: {
     flexGrow: 1,
@@ -23,19 +23,19 @@ export default StyleSheet.create({
     rowGap: UI_SIZES.spacing.minor,
   },
   headingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.small,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   headingNameContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     flexShrink: 1,
   },
   headingNameText: {
-    marginLeft: UI_SIZES.spacing.small,
     flexShrink: 1,
+    marginLeft: UI_SIZES.spacing.small,
   },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,

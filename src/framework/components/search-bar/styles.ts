@@ -11,22 +11,22 @@ export default StyleSheet.create({
     paddingRight: UI_SIZES.spacing.small,
   },
   container: {
-    flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.input,
     borderWidth: UI_SIZES.border.thin,
+    flex: 1,
+    flexDirection: 'row',
   },
   searchIcon: {
     marginLeft: UI_SIZES.spacing.small,
   },
   textInput: {
+    color: theme.ui.text.regular,
     flex: 1,
     marginLeft: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
-    color: theme.ui.text.regular,
     ...TextSizeStyle.Medium,
   },
   textInputIOS: {

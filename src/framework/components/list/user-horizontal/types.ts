@@ -1,5 +1,6 @@
 import type * as React from 'react';
 import { DimensionValue, GestureResponderEvent, ListRenderItemInfo } from 'react-native';
+
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
 import { HorizontalListProps } from '~/framework/components/list/horizontal/types';

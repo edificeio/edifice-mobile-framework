@@ -1,6 +1,7 @@
-import CookieManager from '@react-native-cookies/cookies';
 import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
+
+import CookieManager from '@react-native-cookies/cookies';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
@@ -10,6 +11,9 @@ import {
   WebViewNavigation,
   WebViewNavigationEvent,
 } from 'react-native-webview/lib/WebViewTypes';
+
+import styles from './styles';
+import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -27,9 +31,6 @@ import { Error } from '~/framework/util/error';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
-
-import styles from './styles';
-import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Used to post HTML content and retrieve it via onMessage
@@ -195,7 +196,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           scalesPageToFit
           setSupportMultipleWindows={false}
           showsHorizontalScrollIndicator={false}
-          source={{ uri: this.wayfUrl!, headers: { 'X-APP': 'mobile' } }}
+          source={{ headers: { 'X-APP': 'mobile' }, uri: this.wayfUrl! }}
           startInLoadingState
           style={styles.webview}
           webviewDebuggingEnabled={__DEV__}
@@ -210,7 +211,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.authUrl = pfConf?.auth;
     this.pfUrl = pfConf?.url;
     this.wayfUrl = pfConf?.wayf;
-    this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW, errkey: Error.generateErrorKey() };
+    this.state = { dropdownOpened: false, errkey: Error.generateErrorKey(), mode: WAYFPageMode.WEBVIEW };
     this.backActions.forEach(action => {
       action.bind(this);
     });
@@ -233,7 +234,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     // Update page title
     this.props.navigation.setOptions({
       headerTitle: navBarTitle(
-        I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'auth-wayf-select-title' : 'auth-wayf-main-title'),
+        I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'auth-wayf-select-title' : 'auth-wayf-main-title')
       ),
     });
   }
@@ -487,13 +488,13 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         if (this.pfUrl && url.startsWith(this.pfUrl)) {
           if (this.samlResponse) {
             console.debug(
-              'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with SAML token\n' + this.samlResponse,
+              'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with SAML token\n' + this.samlResponse
             );
             this.loginWithSaml();
           } else if (this.oidResponse) {
             console.debug(
               'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with OpenID custom token\n' +
-                this.oidResponse,
+                this.oidResponse
             );
             this.loginWithOpenID();
           } else {

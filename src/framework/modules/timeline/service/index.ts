@@ -37,7 +37,7 @@ export const notificationsService = {
       page,
       type: filters,
     };
-    const api = queryString.stringifyUrl({ url, query });
+    const api = queryString.stringifyUrl({ query, url });
     const headers = {
       Accept: 'application/json;version=3.0',
     };
@@ -62,13 +62,13 @@ export const notificationsService = {
 // Flash Messages
 
 export const flashMessagesService = {
-  list: async (session: AuthLoggedAccount) => {
-    const api = '/timeline/flashmsg/listuser';
-    return fetchJSONWithCache(api) as Promise<IEntcoreFlashMessage[]>;
-  },
   dismiss: async (session: AuthLoggedAccount, flashMessageId: number) => {
     const api = `/timeline/flashmsg/${flashMessageId}/markasread`;
     return fetchJSONWithCache(api, { method: 'PUT' }) as any;
+  },
+  list: async (session: AuthLoggedAccount) => {
+    const api = '/timeline/flashmsg/listuser';
+    return fetchJSONWithCache(api) as Promise<IEntcoreFlashMessage[]>;
   },
 };
 
@@ -81,14 +81,14 @@ export interface IEntcoreTimelinePreferenceContent {
   config:
     | {
         [notifKey: string]: {
-          defaultFrequency: string;
-          type?: string;
+          'defaultFrequency': string;
+          'type'?: string;
           'event-type'?: string;
           'app-name'?: string;
           'app-address'?: string;
-          key?: string;
+          'key'?: string;
           'push-notif'?: boolean;
-          restriction?: string;
+          'restriction'?: string;
         };
       }
     | undefined;
@@ -97,15 +97,15 @@ export interface IEntcoreTimelinePreferenceContent {
 }
 
 export const pushNotifsService = {
+  _getConfig: async (session: AuthLoggedAccount) => {
+    const prefs = await pushNotifsService._getPrefs(session);
+    return prefs?.config ?? {};
+  },
   _getPrefs: async (session: AuthLoggedAccount) => {
     const api = '/userbook/preference/timeline';
     const response = (await fetchJSONWithCache(api)) as IEntcoreTimelinePreference;
     const prefs = JSON.parse(response.preference) as IEntcoreTimelinePreferenceContent | null;
     return prefs;
-  },
-  _getConfig: async (session: AuthLoggedAccount) => {
-    const prefs = await pushNotifsService._getPrefs(session);
-    return prefs?.config ?? {};
   },
   list: async (session: AuthLoggedAccount) => {
     const notifPrefs = {} as IPushNotifsSettings;
@@ -130,8 +130,8 @@ export const pushNotifsService = {
     const prefsUpdated = { config: notifPrefs };
     const payload = { ...prefsOriginal, ...prefsUpdated };
     const responseJson = await signedFetchJson(`${session.platform.url}${api}`, {
-      method,
       body: JSON.stringify(payload),
+      method,
     });
     return responseJson;
   },

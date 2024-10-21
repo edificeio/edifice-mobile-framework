@@ -93,7 +93,7 @@ export class HtmlConverterText extends HtmlConverter {
   public getExcerpt(
     maxSize = HtmlConverterText.SHORT_TEXT_MAX_SIZE,
     maxLines = HtmlConverterText.SHORT_TEXT_MAX_LINES,
-    newLineChar = HtmlConverterText.NEW_LINE_CHARACTER,
+    newLineChar = HtmlConverterText.NEW_LINE_CHARACTER
   ): { content: string; cropped: boolean } {
     const text = this._render;
     const firstLines = text.split(newLineChar, maxLines);
@@ -106,7 +106,7 @@ export class HtmlConverterText extends HtmlConverter {
     let trimmedFirstLines = (firstLines.join('\n') + ' ').substr(0, maxSize);
     trimmedFirstLines = trimmedFirstLines.substr(
       0,
-      Math.min(trimmedFirstLines.length, Math.max(trimmedFirstLines.lastIndexOf(' '), trimmedFirstLines.lastIndexOf(newLineChar))),
+      Math.min(trimmedFirstLines.length, Math.max(trimmedFirstLines.lastIndexOf(' '), trimmedFirstLines.lastIndexOf(newLineChar)))
     );
     trimmedFirstLines = trimmedFirstLines.trim();
     const cropped = trimmedFirstLines.length !== text.length;

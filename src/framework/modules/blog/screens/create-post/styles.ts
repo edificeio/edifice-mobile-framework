@@ -6,13 +6,13 @@ import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
   inputTitle: {
-    paddingHorizontal: 0,
-    paddingTop: 0,
-    paddingBottom: UI_SIZES.spacing.small,
+    borderBottomWidth: 1,
     borderRadius: 0,
     borderWidth: 0,
-    borderBottomWidth: 1,
     minHeight: TextSizeStyle.Big.lineHeight + UI_SIZES.spacing.small,
+    paddingBottom: UI_SIZES.spacing.small,
+    paddingHorizontal: 0,
+    paddingTop: 0,
     ...TextSizeStyle.Big,
     ...TextFontStyle.Bold,
     color: theme.palette.grey.black,

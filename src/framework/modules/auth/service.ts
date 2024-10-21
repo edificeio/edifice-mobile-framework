@@ -168,7 +168,7 @@ export interface UserPersonDataBackend {
 
 export function formatStructuresWithClasses(
   structureNodes?: StructureNode[],
-  structuresWithClasses?: UserPersonDataStructureWithClasses[],
+  structuresWithClasses?: UserPersonDataStructureWithClasses[]
 ) {
   return structureNodes?.map(structure => ({
     ...structure,
@@ -189,17 +189,17 @@ export async function createSession(platform: Platform, credentials: AuthCredent
     await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
       credentials.username,
       credentials.password,
-      false, // Do not save token until login is completely successful
+      false // Do not save token until login is completely successful
     );
   } else if (credentialsAreSaml(credentials)) {
     await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithSAML(
       credentials.saml,
-      false, // Do not save token until login is completely successful
+      false // Do not save token until login is completely successful
     );
   } else if (credentialsAreCustomToken(credentials)) {
     await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithCustomToken(
       credentials.customToken,
-      false, // Do not save token until login is completely successful
+      false // Do not save token until login is completely successful
     );
   } else {
     throw new global.Error(`[auth.createSession] given credentials are not recognisable.`);
@@ -240,7 +240,7 @@ export function formatSession(
   method?: InitialAuthenticationMethod,
   userPrivateData?: UserPrivateData,
   userPublicInfo?: UserPersonDataBackend,
-  rememberMe?: boolean,
+  rememberMe?: boolean
 ): AuthActiveAccount {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
@@ -260,21 +260,21 @@ export function formatSession(
     throw new Error.LoginError(Error.FetchErrorType.BAD_RESPONSE, 'Missing data in user info');
   }
   const user: Partial<AuthActiveUserInfo> = {
+    avatar: userPublicInfo?.photo,
+    birthDate: userinfo.birthDate ? moment(userinfo.birthDate) : undefined,
     classes: userinfo.classes,
     displayName: userinfo.username,
-    avatar: userPublicInfo?.photo,
-    firstName: userinfo.firstName,
     email: userPrivateData?.email,
+    firstName: userinfo.firstName,
     groups: userinfo.groupsIds,
-    birthDate: userinfo.birthDate ? moment(userinfo.birthDate) : undefined,
-    id: userinfo.userId,
     homePhone: userPrivateData?.homePhone,
-    login: userinfo.login,
+    id: userinfo.userId,
     lastName: userinfo.lastName,
+    login: userinfo.login,
     loginUsed,
     mobile: userPrivateData?.mobile,
-    type: userinfo.type,
     structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
+    type: userinfo.type,
     uniqueId: userinfo.uniqueId,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
@@ -362,7 +362,7 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
         password: credentials.password,
       }),
       headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Device-Id': uniqueId(),
       },
@@ -392,7 +392,7 @@ export async function ensureCredentialsMatchPwdRenewCode(platform: Platform, cre
         password: credentials.password,
       }),
       headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Device-Id': uniqueId(),
       },
@@ -520,7 +520,7 @@ export class FcmService {
         `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
         {
           method: 'delete',
-        },
+        }
       );
 
       await fetch(req);
@@ -620,7 +620,7 @@ export async function getAuthTranslationKeys(platform: Platform, language: I18n.
       if (authTranslationKeys) {
         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
           authTranslationKeys['auth.charter'] || I18n.get('user-legalurl-usercharter'),
-          platform,
+          platform
         );
       }
       return legalUrls;
@@ -695,7 +695,7 @@ export async function getEmailValidationInfos(platformUrl: string) {
       '/directory/user/mailstate',
       {},
       true,
-      platformUrl,
+      platformUrl
     )) as IEntcoreEmailValidationInfos;
     return emailValidationInfos;
   } catch (e) {
@@ -767,7 +767,7 @@ export async function fetchUserInfo(platform: Platform) {
         },
       },
       true,
-      platform.url,
+      platform.url
     )) as any;
 
     // Legacy app names for eventual compatibility
@@ -859,7 +859,7 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
   const res = await fetch(`${platform.url}/auth/activation/no-login`, {
     body: formdata,
     headers: {
-      Accept: 'application/json',
+      'Accept': 'application/json',
       'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'multipart/form-data',
       'X-APP': 'mobile',
@@ -887,13 +887,13 @@ export async function forgot<Mode extends 'id'>(
   platform: Platform,
   mode: Mode,
   payload: { mail: string } | { mail: string; firstName: string; structureId: string },
-  deviceId: string,
+  deviceId: string
 );
 export async function forgot<Mode extends ForgotMode>(
   platform: Platform,
   mode: Mode,
   payload: { login: string } | { mail: string } | { mail: string; firstName: string; structureId: string },
-  deviceId: string,
+  deviceId: string
 ) {
   const realPayload = { ...payload, service: 'mail' };
   const api = mode === 'id' ? `${platform.url}/auth/forgot-id` : `${platform.url}/auth/forgot-password`;

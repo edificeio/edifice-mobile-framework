@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { LayoutChangeEvent, View } from 'react-native';
+
 import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
 
 import { I18n } from '~/app/i18n';
@@ -26,14 +27,14 @@ interface ITextPreviewState {
 
 export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPreviewState> {
   state = {
-    longText: false,
     isExpanded: false,
+    longText: false,
   };
 
   static defaultProps = {
     expandMessage: I18n.get('textpreview-readmore'),
-    numberOfLines: 5,
     expansionTextStyle: { color: theme.palette.complementary.blue.regular },
+    numberOfLines: 5,
     textStyle: { marginTop: UI_SIZES.spacing.tiny },
   };
 
@@ -51,18 +52,18 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
   };
 
   public showExpansionLabels() {
-    const { textContent, numberOfLines, isCollapsable } = this.props;
-    const { longText, isExpanded } = this.state;
+    const { isCollapsable, numberOfLines, textContent } = this.props;
+    const { isExpanded, longText } = this.state;
     return !numberOfLines ? textContent.endsWith('...') : longText && (isCollapsable || !isExpanded);
   }
 
   public renderExpansionLabels() {
     const {
-      numberOfLines, // don't include "numberOfLines" prop when "textContent" is already cropped (HTML)
-      onExpand, // must include if no "numberOfLines" prop (no expansion possible)
-      expandMessage,
-      collapseMessage,
+      collapseMessage, // don't include "numberOfLines" prop when "textContent" is already cropped (HTML)
+      expandMessage, // must include if no "numberOfLines" prop (no expansion possible)
       expansionTextStyle,
+      numberOfLines,
+      onExpand,
     } = this.props;
     const { isExpanded } = this.state;
     const expand = expandMessage || I18n.get('textpreview-seemore');
@@ -80,7 +81,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
   }
 
   public render() {
-    const { textContent, textStyle, numberOfLines, additionalText } = this.props;
+    const { additionalText, numberOfLines, textContent, textStyle } = this.props;
     const { isExpanded } = this.state;
     return (
       <View>
@@ -97,7 +98,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
           )}
           {!numberOfLines && this.renderExpansionLabels()}
         </CaptionText>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
           {additionalText && this.showExpansionLabels() && (
             <>
               {additionalText}

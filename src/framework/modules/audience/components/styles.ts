@@ -9,49 +9,54 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingVertical: UI_SIZES.spacing.minor,
   },
-  reactions: {
-    borderColor: theme.palette.grey.cloudy,
-    borderWidth: UI_SIZES.border.thin,
-    borderRadius: UI_SIZES.radius.medium,
-    padding: UI_SIZES.spacing.minor,
-    alignSelf: 'flex-start',
+  //PLACEHOLDER
+  h24: {
+    height: 24,
+  },
+
+  h30: {
+    height: 30,
+  },
+
+  mb0: {
+    marginBottom: 0,
+  },
+
+  placeholderRow: {
+    columnGap: UI_SIZES.spacing.small,
     flexDirection: 'row',
+  },
+
+  reactions: {
+    alignSelf: 'flex-start',
+    backgroundColor: theme.palette.grey.white,
+    borderColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: UI_SIZES.border.thin,
     columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
+    padding: UI_SIZES.spacing.minor,
     position: 'absolute',
     top: 0,
-    backgroundColor: theme.palette.grey.white,
   },
+
   stats: {
-    flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.small,
     alignItems: 'center',
+    columnGap: UI_SIZES.spacing.small,
+    flexDirection: 'row',
     marginBottom: UI_SIZES.spacing.minor,
   },
   statsItem: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   statsItemText: {
     color: theme.palette.grey.graphite,
     marginRight: UI_SIZES.spacing.minor,
   },
   statsReactions: {
-    flexDirection: 'row',
     columnGap: -UI_SIZES.spacing.minor,
-  },
-  //PLACEHOLDER
-  h24: {
-    height: 24,
-  },
-  h30: {
-    height: 30,
-  },
-  mb0: {
-    marginBottom: 0,
-  },
-  placeholderRow: {
     flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.small,
   },
 });
 

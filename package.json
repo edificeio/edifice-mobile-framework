@@ -275,9 +275,11 @@
     "__tests__",
     "__overrides__",
     "__stashSpec__",
+    "cli/",
+    "gen/",
     "lib/",
     "node_modules/",
-    "scaffolder",
+    "scaffolder/",
     "src/app/override"
   ],
   "lint-staged": {

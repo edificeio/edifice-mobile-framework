@@ -1,11 +1,15 @@
-import { CommonActions } from '@react-navigation/native';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Platform, ScrollView, TextInput, View } from 'react-native';
+
+import { CommonActions } from '@react-navigation/native';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -27,9 +31,6 @@ import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
-
-import styles from './styles';
-import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -177,12 +178,12 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
   };
 
   usePreventBack({
-    title: I18n.get('support-createticket-leavealert-title'),
-    text: I18n.get('support-createticket-leavealert-title'),
     showAlert: !!(subject || description) && !isSending,
+    text: I18n.get('support-createticket-leavealert-title'),
+    title: I18n.get('support-createticket-leavealert-title'),
   });
 
-  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
   return <PageComponent>{renderPage()}</PageComponent>;
 };
@@ -222,9 +223,9 @@ export default connect(
         uploadAttachments: tryActionLegacy(
           uploadSupportTicketAttachmentsAction,
           undefined,
-          true,
+          true
         ) as unknown as ISupportCreateTicketScreenEventProps['uploadAttachments'],
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(SupportCreateTicketScreen);

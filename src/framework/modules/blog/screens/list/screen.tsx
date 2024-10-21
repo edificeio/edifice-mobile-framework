@@ -1,13 +1,17 @@
 /**
  * Blog post list
  */
+import React from 'react';
+import { RefreshControl, ScrollView, View } from 'react-native';
+
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import React from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import { styles } from './styles';
+import { BlogPostListScreenDataProps, BlogPostListScreenEventProps, BlogPostListScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -30,9 +34,6 @@ import { blogService } from '~/framework/modules/blog/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import { styles } from './styles';
-import { BlogPostListScreenDataProps, BlogPostListScreenEventProps, BlogPostListScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -48,8 +49,8 @@ const BlogPostListItem = ({ blog, post, session }: { blog: Blog; post: BlogPostW
   const navigation = useNavigation<NavigationProp<BlogNavigationParams, typeof blogRouteNames.blogPostList>>();
   const onOpenBlogPost = React.useCallback(() => {
     navigation.navigate(blogRouteNames.blogPostDetails, {
-      blogPost: post,
       blog,
+      blogPost: post,
     });
   }, [blog, navigation, post]);
 
@@ -95,12 +96,12 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
       const viewsForPosts = await audienceService.view.getSummary(
         'blog',
         'post',
-        newBlogPosts.map(p => p._id),
+        newBlogPosts.map(p => p._id)
       );
       const reactionsForPosts = await audienceService.reaction.getSummary(
         'blog',
         'post',
-        newBlogPosts.map(p => p._id),
+        newBlogPosts.map(p => p._id)
       );
       return newBlogPosts.map(p => {
         const views = viewsForPosts[p._id];
@@ -108,12 +109,12 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         return {
           ...p,
           audience: {
-            views,
             reactions: {
               total: reactions?.totalReactionsCounter ?? 0,
               types: reactions?.reactionTypes ?? [],
               userReaction: reactions?.userReaction ?? null,
             },
+            views,
           },
         };
       });
@@ -167,14 +168,14 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         throw new Error();
       }
     },
-    [blogPosts, fetchAudience, nextPageToFetchState, pagingSizeState, props.session, selectedBlog.visibility],
+    [blogPosts, fetchAudience, nextPageToFetchState, pagingSizeState, props.session, selectedBlog.visibility]
   );
 
   const fetchFromStart = React.useCallback(
     async (blogId: string) => {
       return fetchPage(blogId, 0, true);
     },
-    [fetchPage],
+    [fetchPage]
   );
 
   const init = (selectedBlog_Id: string) => {
@@ -195,7 +196,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
       }
     },
-    [fetchFromStart],
+    [fetchFromStart]
   );
 
   const refresh = React.useCallback(
@@ -207,7 +208,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
       }
     },
-    [fetchFromStart],
+    [fetchFromStart]
   );
   const refreshSilent = React.useCallback(
     (selectedBlog_Id: string) => {
@@ -218,7 +219,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
       }
     },
-    [fetchFromStart],
+    [fetchFromStart]
   );
   const fetchNextPage = React.useCallback(
     (selectedBlog_Id: string) => {
@@ -229,7 +230,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
       }
     },
-    [fetchPage],
+    [fetchPage]
   );
 
   const onGoToPostCreationScreen = React.useCallback(
@@ -238,7 +239,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         blog: selectedBlog,
         referrer: `${moduleConfig.routeName}/posts`,
       }),
-    [props.navigation, selectedBlog],
+    [props.navigation, selectedBlog]
   );
 
   React.useEffect(() => {
@@ -254,8 +255,6 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     const hasError =
       !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
     props.navigation.setOptions({
-      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog-appname')),
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         hasBlogPostCreationRights && !hasError ? (
           <NavBarAction
@@ -265,6 +264,8 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
             }}
           />
         ) : null,
+
+      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog-appname')),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -274,15 +275,15 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
       <EmptyScreen
         svgImage="empty-blog"
         title={I18n.get(
-          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-title' : 'blog-postlist-emptyscreen-title-nocreationrights',
+          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-title' : 'blog-postlist-emptyscreen-title-nocreationrights'
         )}
         text={I18n.get(
-          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-text' : 'blog-postlist-emptyscreen-text-nocreationrights',
+          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-text' : 'blog-postlist-emptyscreen-text-nocreationrights'
         )}
         {...(hasBlogPostCreationRights
           ? {
-              buttonText: I18n.get('blog-postlist-emptyscreen-button'),
               buttonAction: onGoToPostCreationScreen,
+              buttonText: I18n.get('blog-postlist-emptyscreen-button'),
             }
           : {})}
       />
@@ -302,7 +303,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
 
   const renderItem = React.useCallback(
     ({ item }) => <BlogPostListItem blog={selectedBlog} post={item} session={props.session!} />,
-    [props.session, selectedBlog],
+    [props.session, selectedBlog]
   );
 
   const keyExtractor = React.useCallback((item: BlogPostWithAudience) => item._id, []);
@@ -319,12 +320,12 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
       </>
     ),
-    [loadingState],
+    [loadingState]
   );
 
   const refreshControl = React.useMemo(
     () => <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />,
-    [loadingState, refresh, selectedBlogId],
+    [loadingState, refresh, selectedBlogId]
   );
 
   const renderBlogPostList = () => {
@@ -373,13 +374,13 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
 };
 
 const mapStateToProps: (s: IGlobalState) => BlogPostListScreenDataProps = s => ({
-  session: getSession(),
   initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+  session: getSession(),
 });
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => BlogPostListScreenEventProps = (
   dispatch,
-  getState,
+  getState
 ) => ({
   dispatch,
 });

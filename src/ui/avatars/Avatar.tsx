@@ -1,6 +1,7 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ImageProps, ImageURISource, View } from 'react-native';
+
+import styled from '@emotion/native';
 import { Grayscale } from 'react-native-color-matrix-image-filters';
 import { connect } from 'react-redux';
 
@@ -32,14 +33,17 @@ export enum Status {
 }
 
 const SelectedView = styled(View)({
-  position: 'absolute',
   borderColor: theme.palette.primary.regular,
+  borderRadius: 26,
   borderWidth: 4,
+
+  height: 52,
+
+  left: -2,
+
+  position: 'absolute',
   // increase width & height 2px to center border (2px outside & inside)
   top: -2,
-  left: -2,
-  borderRadius: 26,
-  height: 52,
   width: 52,
 });
 
@@ -72,32 +76,32 @@ const LargeImage = props => {
 
 const AlignedContainer = styled.View(
   {
+    backgroundColor: theme.palette.grey.pearl,
     borderRadius: 16,
     height: 29,
-    marginRight: -UI_SIZES.spacing.tiny,
     marginLeft: -UI_SIZES.spacing.tiny,
+    marginRight: -UI_SIZES.spacing.tiny,
     width: 29,
-    backgroundColor: theme.palette.grey.pearl,
   },
   ({ index }) => ({
     zIndex: 100 - index,
-  }),
+  })
 );
 
 const VLContainer = styled.View({
   alignSelf: 'center',
+  backgroundColor: theme.palette.grey.pearl,
   borderRadius: 35,
   height: 71,
-  width: 71,
   margin: 0,
-  backgroundColor: theme.palette.grey.pearl,
+  width: 71,
 });
 
 const LargeContainer = styled.View({
+  backgroundColor: theme.palette.grey.pearl,
   borderRadius: 24,
   height: 45,
   width: 45,
-  backgroundColor: theme.palette.grey.pearl,
 });
 
 const alignedImageStyle = {
@@ -131,8 +135,8 @@ const veryLargeImageStyle = {
   alignSelf: 'center',
   borderRadius: 35,
   height: 71,
-  width: 71,
   margin: 0,
+  width: 71,
 };
 
 const VeryLargeImageBase = styled(FastImage)(veryLargeImageStyle);
@@ -158,21 +162,21 @@ const VeryLargeImage = props => {
 
 const xxlImageStyle = {
   alignSelf: 'center',
-  borderRadius: UI_SIZES.elements.avatar.xxl / 2,
-  width: UI_SIZES.elements.avatar.xxl,
   aspectRatio: UI_SIZES.aspectRatios.square,
+  borderRadius: UI_SIZES.elements.avatar.xxl / 2,
   margin: 0,
+  width: UI_SIZES.elements.avatar.xxl,
 };
 
 const XxlImageBase = styled(FastImage)(xxlImageStyle);
 
 const XXLContainer = styled.View({
   alignSelf: 'center',
-  borderRadius: UI_SIZES.elements.avatar.xxl / 2,
-  width: UI_SIZES.elements.avatar.xxl,
   aspectRatio: UI_SIZES.aspectRatios.square,
-  margin: 0,
   backgroundColor: theme.palette.grey.pearl,
+  borderRadius: UI_SIZES.elements.avatar.xxl / 2,
+  margin: 0,
+  width: UI_SIZES.elements.avatar.xxl,
 });
 
 const XxlImage = props => {
@@ -226,8 +230,8 @@ const SmallImage = props => {
 
 const SmallContainer = styled.View<{ count: number; index: number }>(
   {
-    position: 'absolute',
     backgroundColor: theme.palette.grey.pearl,
+    position: 'absolute',
   },
   ({ count, index }) => ({
     borderRadius: count === 1 ? 22 : count === 2 ? 15 : 10,
@@ -235,7 +239,7 @@ const SmallContainer = styled.View<{ count: number; index: number }>(
     left: count === 2 ? (index === 0 ? 0 : 15) : index === 0 || (index === 2 && count === 4) ? 0 : index === 2 ? 14 : 25,
     top: count === 2 ? (index === 0 ? 0 : 15) : index < 2 ? 0 : 25,
     width: count === 1 ? 45 : count === 2 ? 31 : 22,
-  }),
+  })
 );
 
 export interface IAvatarProps {
@@ -296,8 +300,8 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
     const noAvatarImage = this.props.fallback || require('ASSETS/images/no-avatar.png');
     if (this.props.size === Size.large || this.count === 1) {
       return (
-        <LargeContainer style={{ width, height: width }}>
-          <LargeImage status={this.props.status} style={{ width, height: width }} source={noAvatarImage} />
+        <LargeContainer style={{ height: width, width }}>
+          <LargeImage status={this.props.status} style={{ height: width, width }} source={noAvatarImage} />
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {
@@ -330,10 +334,10 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
   renderIsGroup(width) {
     if (this.props.size === Size.large || this.count === 1) {
       return (
-        <LargeContainer style={{ width, height: width }}>
+        <LargeContainer style={{ height: width, width }}>
           <LargeImage
             status={this.props.status}
-            style={{ width, height: width }}
+            style={{ height: width, width }}
             source={require('ASSETS/images/group-avatar.png')}
           />
         </LargeContainer>
@@ -393,11 +397,11 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
       onError: () => {
         this.setState({ status: 'failed' });
       },
-      onLoadStart: () => {
-        this.setState({ status: 'loading' });
-      },
       onLoad: () => {
         this.setState({ status: 'success' });
+      },
+      onLoadStart: () => {
+        this.setState({ status: 'loading' });
       },
     };
     let source =
@@ -420,11 +424,11 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
     //in case of success,initial,loading status...
     if (this.props.size === Size.large || this.count === 1) {
       return (
-        <LargeContainer style={{ width, height: width }}>
+        <LargeContainer style={{ height: width, width }}>
           <LargeImage
             {...sharedProps}
             source={source}
-            style={{ width, height: width }}
+            style={{ height: width, width }}
             status={this.props.status}
             key={isSelf ? selfAvatarUniqueKey : source.uri}
           />

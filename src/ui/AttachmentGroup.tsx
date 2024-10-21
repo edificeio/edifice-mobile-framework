@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { FlatList, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
+
+import Attachment, { IRemoteAttachment } from './Attachment';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -9,19 +12,17 @@ import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { markViewAudience } from '~/framework/modules/audience';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 
-import Attachment, { IRemoteAttachment } from './Attachment';
-
 const styles = StyleSheet.create({
   container: {
-    padding: UI_SIZES.spacing.small,
     backgroundColor: theme.palette.grey.fog,
+    borderColor: theme.palette.grey.pearl,
     borderRadius: UI_SIZES.radius.newCard,
     borderWidth: UI_SIZES.elements.border.thin,
-    borderColor: theme.palette.grey.pearl,
+    padding: UI_SIZES.spacing.small,
   },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: UI_SIZES.spacing.small,
   },
@@ -53,7 +54,7 @@ export class AttachmentGroup extends React.PureComponent<
   }
 
   public render() {
-    const { attachments, editMode, containerStyle, onRemove, onDownload, onDownloadAll, onError, onOpen } = this.props;
+    const { attachments, containerStyle, editMode, onDownload, onDownloadAll, onError, onOpen, onRemove } = this.props;
     const { downloadAll } = this.state;
     return (
       <TouchableOpacity activeOpacity={1} style={[styles.container, containerStyle]}>
@@ -75,16 +76,16 @@ export class AttachmentGroup extends React.PureComponent<
         <View
           style={{
             flex: 0,
-            paddingVertical: UI_SIZES.spacing.tiny / 2,
-            marginTop: 0,
             marginBottom: 0,
+            marginTop: 0,
             maxHeight: editMode ? 150 : undefined,
+            paddingVertical: UI_SIZES.spacing.tiny / 2,
           }}>
           <SafeAreaView>
             <FlatList
               style={{ flex: 0 }}
               data={attachments}
-              renderItem={({ item, index }) => (
+              renderItem={({ index, item }) => (
                 <View onStartShouldSetResponder={() => true}>
                   <Attachment
                     key={index}

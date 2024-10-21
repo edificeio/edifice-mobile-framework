@@ -11,6 +11,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.palette.primary.dark,
   },
+  descriptionContainer: {
+    backgroundColor: theme.ui.background.card,
+    borderBottomLeftRadius: UI_SIZES.radius.card,
+    borderBottomRightRadius: UI_SIZES.radius.card,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
+  },
   titleContainer: {
     alignItems: 'center',
     paddingHorizontal: UI_SIZES.spacing.medium,
@@ -18,13 +25,6 @@ const styles = StyleSheet.create({
   },
   titleText: {
     color: theme.ui.text.inverse,
-  },
-  descriptionContainer: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.small,
-    backgroundColor: theme.ui.background.card,
-    borderBottomLeftRadius: UI_SIZES.radius.card,
-    borderBottomRightRadius: UI_SIZES.radius.card,
   },
 });
 
@@ -35,7 +35,7 @@ interface IFormSectionCardProps {
 
 export class FormSectionCard extends React.PureComponent<IFormSectionCardProps> {
   public render() {
-    const { title, description } = this.props;
+    const { description, title } = this.props;
     return (
       <CardWithoutPadding style={styles.container}>
         <View style={styles.titleContainer}>

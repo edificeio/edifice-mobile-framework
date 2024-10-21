@@ -123,7 +123,7 @@ export function splitWords(
   nbLines: number,
   separator: string | RegExp = /(\s+)/g,
   newLine: string = '\n',
-  minLength: number = 2,
+  minLength: number = 2
 ) {
   if (nbLines <= 0) throw new Error(`splitWords lines cannot be zero or negatives`);
   let regex = typeof separator === 'string' ? new RegExp(separator.replace(/([-/\\^$*+?.()|[\]{}])/g, '\\$&')) : separator;

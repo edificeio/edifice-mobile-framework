@@ -1,14 +1,15 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment, { Moment } from 'moment';
 import React from 'react';
 import { ColorValue, Platform, StyleSheet, ViewStyle } from 'react-native';
 
-import theme from '~/app/theme';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment, { Moment } from 'moment';
 
 import { TouchCardWithoutPadding } from './card/base';
 import { UI_SIZES } from './constants';
 import { NamedSVG } from './picture';
 import { SmallText } from './text';
+
+import theme from '~/app/theme';
 
 export interface DateTimePickerProps {
   mode: 'date' | 'time';
@@ -23,8 +24,8 @@ export interface DateTimePickerProps {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     padding: UI_SIZES.spacing.minor,
   },
   buttonText: {

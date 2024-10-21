@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
+import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -15,8 +15,8 @@ import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
 
 const styles = StyleSheet.create({
   listContainer: {
-    maxHeight: 400,
     marginVertical: UI_SIZES.spacing.medium,
+    maxHeight: 400,
   },
 });
 
@@ -60,7 +60,7 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
     if (mailFolders.includes('DRAFT')) systemFolders.push('/Drafts');
     return props.folders
       .filter(f => systemFolders.includes(f.path))
-      .map(f => ({ ...f, name: getFolderName(f.name), folders: [] }) as IFolder)
+      .map(f => ({ ...f, folders: [], name: getFolderName(f.name) }) as IFolder)
       .concat(props.folders.find(f => f.path === '/Inbox')?.folders ?? []);
   };
 

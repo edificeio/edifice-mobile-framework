@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { FormPicture } from './FormPicture';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ContentCardHeader, TouchableResourceCard } from '~/framework/components/card';
@@ -8,8 +10,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { DistributionStatus } from '~/framework/modules/form/model';
 import { IFormDistributions } from '~/framework/modules/form/screens/distribution-list/types';
-
-import { FormPicture } from './FormPicture';
 
 const styles = StyleSheet.create({
   statusText: {
@@ -34,7 +34,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
 
     if (formDistributions.multiple) {
       const count = formDistributions.distributions.filter(
-        distribution => distribution.status === DistributionStatus.FINISHED,
+        distribution => distribution.status === DistributionStatus.FINISHED
       ).length;
       const color = count ? theme.palette.status.success.regular : theme.palette.status.failure.regular;
       return (
@@ -43,7 +43,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
         </SmallBoldText>
       );
     }
-    const { status, dateResponse } = formDistributions.distributions[0];
+    const { dateResponse, status } = formDistributions.distributions[0];
     const color = status === DistributionStatus.TO_DO ? theme.palette.status.failure.regular : theme.palette.status.success.regular;
     return (
       <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
@@ -53,7 +53,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
             : 'form-distributionlist-formcard-answerdate',
           {
             date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
-          },
+          }
         )}
       </SmallBoldText>
     );

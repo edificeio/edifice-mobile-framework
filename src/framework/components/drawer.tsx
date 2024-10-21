@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Animated, StyleSheet, TextStyle, TouchableWithoutFeedback, View } from 'react-native';
+
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
+
+import { TextFontStyle, TextSizeStyle } from './text';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-
-import { TextFontStyle, TextSizeStyle } from './text';
 
 const ITEM_HEIGHT = 45;
 const LIST_RADIUS = 20;
@@ -67,8 +68,9 @@ const styles = StyleSheet.create({
     color: theme.palette.secondary.regular,
   },
   style: {
-    borderColor: theme.ui.border.listItem, // Must specifiy borderColor to override package value
+    // Must specifiy borderColor to override package value
     borderBottomWidth: 1,
+    borderColor: theme.ui.border.listItem,
     borderRadius: undefined,
     borderWidth: undefined,
     height: ITEM_HEIGHT,
@@ -138,7 +140,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   }
 
   closeWhenFocus() {
-    this.setState({ drawerOpen: false, backdropHeight: 0 });
+    this.setState({ backdropHeight: 0, drawerOpen: false });
   }
 
   // Open dropdown list
@@ -176,8 +178,8 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
         const itemLabel = `${item.name}${itemCount}`;
         const formattedItem: ItemType = {
           label: itemLabel,
-          value: item.value,
           labelStyle: item.labelStyle || {},
+          value: item.value,
         };
         const color = isItemSelected ? theme.palette.secondary.regular : theme.ui.text.regular;
         formattedItem.labelStyle = { ...formattedItem.labelStyle, color };
@@ -213,8 +215,8 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           textStyle={styles.text}
           labelStyle={styles.label}
           flatListProps={{
-            showsVerticalScrollIndicator: false,
             alwaysBounceVertical: false,
+            showsVerticalScrollIndicator: false,
           }}
           style={styles.style}
           dropDownContainerStyle={styles.dropDownContainer}

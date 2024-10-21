@@ -21,35 +21,35 @@ export default StyleSheet.create({
     paddingTop: UI_SIZES.screen.topInset + UI_SIZES.spacing.big,
   },
   swiper: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
     backgroundColor: theme.ui.background.page,
     borderColor: theme.palette.primary.regular,
+    borderRadius: 8,
     borderWidth: 1.5,
+    height: 16,
+    width: 16,
   },
   swiperActive: {
     backgroundColor: theme.palette.primary.regular,
     borderWidth: 0,
   },
   swiperItem: {
-    justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
     flex: 1,
+    justifyContent: 'center',
     paddingBottom: 80,
   },
   swiperItemImage: {
-    width: pictureSize,
     height: pictureSize,
     marginVertical: UI_SIZES.spacing.large,
+    width: pictureSize,
   },
   swiperItemText: {
-    textAlign: 'center',
     paddingHorizontal: UI_SIZES.spacing.large,
+    textAlign: 'center',
   },
   title: {
-    color: theme.palette.primary.regular,
     alignSelf: 'center',
+    color: theme.palette.primary.regular,
   },
 });

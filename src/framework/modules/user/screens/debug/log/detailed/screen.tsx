@@ -1,14 +1,15 @@
+import * as React from 'react';
+
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ReactJSXElement } from 'node_modules/@emotion/react/dist/declarations/types/jsx-namespace';
-import * as React from 'react';
+
+import styles from './styles';
 
 import ScrollView from '~/framework/components/scrollView';
 import { BodyText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { DetailedScreenPrivateProps } from '~/framework/modules/user/screens/debug/log/detailed/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import styles from './styles';
 
 export const computeNavBar = ({
   navigation,

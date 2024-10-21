@@ -1,9 +1,9 @@
-import { blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { Module } from '~/framework/util/moduleTool';
-
 import config from './module-config';
 import { audienceService } from './service';
 import { AudienceParameter, AudienceReferer } from './types';
+
+import { blogUriCaptureFunction } from '~/framework/modules/blog/service';
+import { Module } from '~/framework/util/moduleTool';
 
 export default new Module({ config, reducer: () => null });
 
@@ -13,8 +13,8 @@ export const computeAudienceRefererFromResourceUri = (uri: string): AudienceRefe
   if (ret && ret.postId) {
     return {
       module: 'blog',
-      resourceType: 'post',
       resourceId: ret.postId,
+      resourceType: 'post',
     };
   }
 };

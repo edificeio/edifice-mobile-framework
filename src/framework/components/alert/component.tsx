@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Platform, View } from 'react-native';
 
+import { toastConfigColor } from './model';
+import styles from './styles';
+import { AlertCardProps } from './types';
+
 import theme, { IShades } from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -8,15 +12,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 
-import { toastConfigColor } from './model';
-import styles from './styles';
-import { AlertCardProps } from './types';
-
 const toastDefaultPictureProps = {
-  success: 'ui-success_outline',
-  info: 'ui-infoCircle',
-  warning: 'ui-alert-triangle',
   error: 'ui-error',
+  info: 'ui-infoCircle',
+  success: 'ui-success_outline',
+  warning: 'ui-alert-triangle',
 };
 
 /**
@@ -31,8 +31,8 @@ function autoFillPicture(picture: PictureProps, shades: IShades) {
   return {
     ...picture,
     fill: picture.fill ?? shades.regular,
-    width: picture.width !== undefined && picture.height !== undefined ? picture.width : UI_SIZES.elements.icon.default,
     height: picture.width !== undefined && picture.height !== undefined ? picture.height : UI_SIZES.elements.icon.default,
+    width: picture.width !== undefined && picture.height !== undefined ? picture.width : UI_SIZES.elements.icon.default,
   };
 }
 
@@ -44,30 +44,31 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
     () => [
       {
         backgroundColor: Platform.select({
-          ios: colorShades.pale, // On iOS we set the coloured background to make pixel-perfect rounded corners.
-          default: undefined, // Android sucks to render translucent views with subviews, we have to minimise backgrounded views.
+          // On iOS we set the coloured background to make pixel-perfect rounded corners.
+          default: undefined,
+          ios: colorShades.pale, // Android sucks to render translucent views with subviews, we have to minimise backgrounded views.
         }),
       },
       styles.cardShadowContainer,
     ],
-    [colorShades.pale],
+    [colorShades.pale]
   );
   const pictureWithColor = React.useMemo(
     () => ({
       ...(picture
         ? autoFillPicture(picture, colorShades)
         : ({
-            type: 'NamedSvg',
-            name: toastDefaultPictureProps[type],
             fill: colorShades.regular,
-            width: UI_SIZES.elements.icon.default,
             height: UI_SIZES.elements.icon.default,
+            name: toastDefaultPictureProps[type],
+            type: 'NamedSvg',
+            width: UI_SIZES.elements.icon.default,
           } as PictureProps)),
     }),
-    [colorShades, picture, type],
+    [colorShades, picture, type]
   );
 
-  return { colorShades, cardBorderStyle, cardContentStyle, cardShadowContainerStyle, pictureWithColor };
+  return { cardBorderStyle, cardContentStyle, cardShadowContainerStyle, colorShades, pictureWithColor };
 }
 
 const defaultRenderCloseButton: Required<AlertCardProps>['renderCloseButton'] = (shades, onClose) =>
@@ -75,19 +76,19 @@ const defaultRenderCloseButton: Required<AlertCardProps>['renderCloseButton'] = 
 
 export function AlertCard(props: AlertCardProps) {
   const {
-    type,
+    containerProps,
     icon,
-    text,
     label,
-    onLabelPress,
     onClose,
+    onLabelPress,
     renderCloseButton = defaultRenderCloseButton,
     shadow,
-    containerProps,
     style,
     testID,
+    text,
+    type,
   } = props;
-  const { colorShades, cardBorderStyle, cardContentStyle, cardShadowContainerStyle, pictureWithColor } = useToastStyles(type, icon);
+  const { cardBorderStyle, cardContentStyle, cardShadowContainerStyle, colorShades, pictureWithColor } = useToastStyles(type, icon);
 
   const closeButton = React.useMemo(() => renderCloseButton(colorShades, onClose), [colorShades, onClose, renderCloseButton]);
 
@@ -100,7 +101,7 @@ export function AlertCard(props: AlertCardProps) {
         {closeButton}
       </>
     ),
-    [label, onLabelPress, pictureWithColor, closeButton, text],
+    [label, onLabelPress, pictureWithColor, closeButton, text]
   );
 
   /* must decompose card and shadow because of overflow:hidden */
@@ -111,11 +112,11 @@ export function AlertCard(props: AlertCardProps) {
         <View style={cardContentStyle}>{cardContent}</View>
       </View>
     ),
-    [cardBorderStyle, cardContent, cardContentStyle, containerProps, style, testID],
+    [cardBorderStyle, cardContent, cardContentStyle, containerProps, style, testID]
   );
 
   return React.useMemo(
     () => (shadow ? <View style={[cardShadowContainerStyle, style]}>{cardContainer}</View> : cardContainer),
-    [cardContainer, cardShadowContainerStyle, shadow, style],
+    [cardContainer, cardShadowContainerStyle, shadow, style]
   );
 }

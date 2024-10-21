@@ -1,6 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { ResourceListProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -10,17 +13,14 @@ import { BodyText } from '~/framework/components/text';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 
-import styles from './styles';
-import { ResourceListProps } from './types';
-
 const ResourceList: React.FunctionComponent<ResourceListProps> = ({
-  resources,
-  type,
   iconName,
   isResourceFavorite,
   onAddFavorite,
   onRemoveFavorite,
   openResourceList,
+  resources,
+  type,
 }) => {
   const renderResource = ({ item }: { item: Resource }) => (
     <ResourceCard

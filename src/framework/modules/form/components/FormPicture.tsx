@@ -7,11 +7,11 @@ import { Image } from '~/framework/util/media';
 
 const styles = StyleSheet.create({
   container: {
-    width: 75,
-    height: 75,
     borderRadius: UI_SIZES.radius.medium,
-    overflow: 'hidden',
+    height: 75,
     marginRight: UI_SIZES.spacing.minor,
+    overflow: 'hidden',
+    width: 75,
   },
 });
 
@@ -28,7 +28,7 @@ export const FormPicture = ({ pictureUri }: IFormPictureProps) => {
       {!pictureUri || loadingFailed ? (
         <NamedSVG name="form-default" width={75} height={75} />
       ) : (
-        <Image source={{ uri: pictureUri, width: 75, height: 75 }} onError={onError} />
+        <Image source={{ height: 75, uri: pictureUri, width: 75 }} onError={onError} />
       )}
     </View>
   );

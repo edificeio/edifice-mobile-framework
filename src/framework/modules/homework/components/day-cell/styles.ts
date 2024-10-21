@@ -5,12 +5,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    justifyContent: 'center',
     alignItems: 'center',
-    height: UI_SIZES.dimensions.width.huge,
-    width: UI_SIZES.dimensions.width.hug,
+    borderColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.small,
     borderWidth: UI_SIZES.border.thin,
-    borderColor: theme.palette.grey.cloudy,
+    height: UI_SIZES.dimensions.width.huge,
+    justifyContent: 'center',
+    width: UI_SIZES.dimensions.width.hug,
   },
 });

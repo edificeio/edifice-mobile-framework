@@ -1,7 +1,7 @@
 import { Resource, ResourceFilter, ResourceFilters, Source } from '~/framework/modules/mediacentre/model';
 
 const getUniqueValues = (values: string[]): ResourceFilter[] =>
-  [...new Set(values)].map(value => ({ name: value, isActive: false })).sort((a, b) => a.name.localeCompare(b.name));
+  [...new Set(values)].map(value => ({ isActive: false, name: value })).sort((a, b) => a.name.localeCompare(b.name));
 
 export const getSourceFilter = (resource: Resource): string => {
   switch (resource.source) {

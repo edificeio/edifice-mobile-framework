@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { IconButtonProps } from './types';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
-
-import styles from './styles';
-import { IconButtonProps } from './types';
 
 const IconButton = (props: IconButtonProps) => {
   const Component = props.action ? TouchableOpacity : View;

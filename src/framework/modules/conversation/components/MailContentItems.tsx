@@ -1,6 +1,7 @@
-import moment from 'moment';
 import * as React from 'react';
 import { ColorValue, Platform, StyleSheet, View } from 'react-native';
+
+import moment from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -16,8 +17,8 @@ import { getUserColor } from '~/framework/modules/conversation/utils/userColor';
 import { displayPastDate } from '~/framework/util/date';
 import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const styles = StyleSheet.create({
   additionalInfos: { flex: 0, flexDirection: 'row' },
@@ -29,61 +30,61 @@ const styles = StyleSheet.create({
   contactNameSubContainer: { flex: 0, flexDirection: 'row' },
   containerMail: {
     backgroundColor: theme.ui.background.card,
-    flexDirection: 'column',
     flex: 0,
+    flexDirection: 'column',
   },
   dotReceiverColor: {
-    width: 8,
-    height: 8,
     borderRadius: 4,
+    height: 8,
     marginRight: UI_SIZES.spacing.tiny,
     overflow: 'hidden',
+    width: 8,
   },
   fileIcon: { flex: 0 },
   footerButtonContainer: {
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
-  gridButtonTextPJnb: {
-    color: theme.palette.primary.regular,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    textAlign: 'right',
-  },
-  gridButtonTextPJnames: {
-    color: theme.palette.primary.regular,
-    marginLeft: UI_SIZES.spacing.tiny,
-    flex: 1,
-  },
   greyColor: {
     color: theme.palette.grey.graphite,
   },
   gridAvatarsContainer: { alignSelf: 'flex-start', marginTop: UI_SIZES.spacing.medium + UI_SIZES.spacing.tiny },
-  headerMailSubContainer: { paddingVertical: UI_SIZES.spacing.small, borderBottomWidth: 0 },
-  mailInfos: {
-    paddingLeft: UI_SIZES.spacing.small,
+  gridButtonTextPJnames: {
+    color: theme.palette.primary.regular,
     flex: 1,
-    alignSelf: 'flex-start',
+    marginLeft: UI_SIZES.spacing.tiny,
   },
-  mailDate: {
-    textAlign: 'right',
-    alignItems: 'center',
+  gridButtonTextPJnb: {
+    alignItems: 'flex-end',
+    color: theme.palette.primary.regular,
     justifyContent: 'flex-end',
+    textAlign: 'right',
+  },
+  headerMailSubContainer: { borderBottomWidth: 0, paddingVertical: UI_SIZES.spacing.small },
+  mailDate: {
+    alignItems: 'center',
     color: theme.ui.text.light,
+    justifyContent: 'flex-end',
+    textAlign: 'right',
   },
   mailIndicator: {
-    flexDirection: 'row',
-    textAlign: 'center',
     alignItems: 'flex-start',
+    flex: 0,
+    flexDirection: 'row',
     justifyContent: 'flex-end',
     paddingHorizontal: UI_SIZES.spacing.small,
-    flex: 0,
+    textAlign: 'center',
   },
-  sendersCollapsed: { marginTop: UI_SIZES.spacing.tiny, flex: 0 },
+  mailInfos: {
+    alignSelf: 'flex-start',
+    flex: 1,
+    paddingLeft: UI_SIZES.spacing.small,
+  },
+  sendersCollapsed: { flex: 0, marginTop: UI_SIZES.spacing.tiny },
   sendersContainer: { flex: 1 },
-  userContainer: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'center' },
+  userContainer: { alignItems: 'center', flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny },
   users: { flexDirection: 'row', flexWrap: 'wrap' },
-  usersContainer: { flexDirection: 'row', alignItems: 'center' },
+  usersContainer: { alignItems: 'center', flexDirection: 'row' },
 });
 
 const User = ({ userId, userName }) => {
@@ -97,7 +98,7 @@ const User = ({ userId, userName }) => {
   );
 };
 
-const SendersDetails = ({ mailInfos, inInbox }) => {
+const SendersDetails = ({ inInbox, mailInfos }) => {
   const contacts = getMailPeople(mailInfos);
   return (
     <View style={{ marginTop: UI_SIZES.spacing.tiny }} testID="message-read-to">
@@ -141,7 +142,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
 
 // EXPORTED COMPONENTS
 
-export const HeaderMail = ({ mailInfos, currentFolder }) => {
+export const HeaderMail = ({ currentFolder, mailInfos }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const isFolderInbox = currentFolder === 'inbox';
   const mailContacts = getMailPeople(mailInfos);
@@ -207,7 +208,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   );
 };
 
-export const FooterButton = ({ icon, text, onPress, testID }) => {
+export const FooterButton = ({ icon, onPress, testID, text }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.footerButtonContainer} testID={testID}>
       <Icon name={icon} size={24} style={{ color: theme.ui.text.light }} />
@@ -218,8 +219,8 @@ export const FooterButton = ({ icon, text, onPress, testID }) => {
 
 export const RenderPJs = ({
   attachments,
-  mailId,
   dispatch,
+  mailId,
 }: {
   attachments: any[];
   mailId: string;
@@ -231,11 +232,11 @@ export const RenderPJs = ({
     <View style={styles.containerMail}>
       {displayedAttachments.map((item, index) => {
         const df: IDistantFileWithId = {
-          url: `/conversation/message/${mailId}/attachment/${item.id}`,
-          id: item.id,
           filename: item.filename,
           filesize: item.size,
           filetype: item.contentType,
+          id: item.id,
+          url: `/conversation/message/${mailId}/attachment/${item.id}`,
         };
         return (
           <TouchableOpacity

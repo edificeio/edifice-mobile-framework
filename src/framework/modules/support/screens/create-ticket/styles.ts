@@ -5,25 +5,43 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
+  actionText: {
+    marginRight: UI_SIZES.spacing.minor,
+    textAlign: 'center',
+  },
+  attachmentsContainer: {
+    backgroundColor: theme.ui.background.card,
+    borderColor: theme.ui.border.input,
+    borderRadius: 5,
+    borderWidth: 1,
+    marginBottom: UI_SIZES.spacing.medium,
+  },
   container: {
-    padding: pageGutterSize,
     flexGrow: 1,
     justifyContent: 'space-between',
+    padding: pageGutterSize,
   },
-  titleText: {
-    marginBottom: UI_SIZES.spacing.minor,
-  },
-  informationText: {
+  descriptionInput: {
+    backgroundColor: theme.ui.background.card,
+    borderColor: theme.ui.border.input,
+    borderRadius: 5,
+    borderWidth: 1,
+    color: theme.ui.text.regular,
+    height: 100,
     marginBottom: UI_SIZES.spacing.medium,
-    color: theme.ui.text.light,
+    padding: UI_SIZES.spacing.small,
   },
   dropdownContainer: {
-    marginBottom: UI_SIZES.spacing.medium,
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   dropdownText: {
     color: theme.ui.text.regular,
+  },
+  informationText: {
+    color: theme.ui.text.light,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   inputLabelText: {
     marginBottom: UI_SIZES.spacing.minor,
@@ -32,43 +50,25 @@ export default StyleSheet.create({
     color: theme.palette.complementary.red.regular,
   },
   subjectInput: {
+    backgroundColor: theme.ui.background.card,
+    borderColor: theme.ui.border.input,
+    borderRadius: 5,
+    borderWidth: 1,
+    color: theme.ui.text.regular,
     marginBottom: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.small,
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-    color: theme.ui.text.regular,
-  },
-  descriptionInput: {
-    marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.small,
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-    height: 100,
-    color: theme.ui.text.regular,
-  },
-  attachmentsContainer: {
-    marginBottom: UI_SIZES.spacing.medium,
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
   },
   textIconContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: UI_SIZES.spacing.big,
     marginRight: UI_SIZES.spacing.minor,
+    marginVertical: UI_SIZES.spacing.big,
   },
   textIconContainerSmallerMargin: {
     marginVertical: UI_SIZES.spacing.small,
   },
-  actionText: {
-    textAlign: 'center',
-    marginRight: UI_SIZES.spacing.minor,
+  titleText: {
+    marginBottom: UI_SIZES.spacing.minor,
   },
 });

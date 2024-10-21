@@ -1,6 +1,7 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ActivityIndicator, Animated, View } from 'react-native';
+
+import styled from '@emotion/native';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -14,14 +15,14 @@ import { getState as getConnectionTrackerState } from '~/infra/reducers/connecti
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const TrackingContainer = styled(TouchableOpacity)({
-  flexDirection: 'row',
   flex: 1,
+  flexDirection: 'row',
 });
 
 const container = {
-  width: '100%',
-  elevation: 4,
   backgroundColor: theme.ui.background.card,
+  elevation: 4,
+  width: '100%',
 };
 
 export class DEPRECATED_ConnectionTrackingBar extends React.Component<
@@ -52,14 +53,14 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
       if (this.props.visible && !this.previousVisible) {
         this.previousVisible = true;
         Animated.timing(this.state.fadeAnim, {
-          toValue: 1,
           duration: 500,
+          toValue: 1,
           useNativeDriver: false,
         }).start();
 
         Animated.timing(this.state.slideAnim, {
-          toValue: 40,
           duration: 500,
+          toValue: 40,
           useNativeDriver: false,
         }).start();
       }
@@ -67,14 +68,14 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
       if (!this.props.visible && this.previousVisible && this.props.connected) {
         this.previousVisible = false;
         Animated.timing(this.state.fadeAnim, {
-          toValue: 0,
           duration: 500,
+          toValue: 0,
           useNativeDriver: false,
         }).start();
 
         Animated.timing(this.state.slideAnim, {
-          toValue: 0,
           duration: 500,
+          toValue: 0,
           useNativeDriver: false,
         }).start();
       }
@@ -122,17 +123,17 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
         style={{
           ...container,
           ...this.props.style,
-          opacity: fadeAnim,
           height: slideAnim,
+          opacity: fadeAnim,
         }}>
         <TrackingContainer style={{ backgroundColor: this.barColor }} onPress={() => this.props.check()}>
-          <View style={{ flexDirection: 'row', flex: 1 }}>
+          <View style={{ flex: 1, flexDirection: 'row' }}>
             <SmallInverseText
               style={{
-                flex: 1,
-                textAlign: 'center',
-                marginLeft: UI_SIZES.spacing.large,
                 alignSelf: 'center',
+                flex: 1,
+                marginLeft: UI_SIZES.spacing.large,
+                textAlign: 'center',
               }}>
               {I18n.get(this.text)}
             </SmallInverseText>
@@ -156,7 +157,7 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
 export default connect(
   (state: IGlobalState) => getConnectionTrackerState(state),
   dispatch => ({
-    watch: () => watchConnection(dispatch)(),
     check: () => checkConnection(dispatch)(),
-  }),
+    watch: () => watchConnection(dispatch)(),
+  })
 )(DEPRECATED_ConnectionTrackingBar);

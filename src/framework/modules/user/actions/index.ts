@@ -1,8 +1,9 @@
 /**
  * Thunk actions for user module
  */
-import { Moment } from 'moment';
 import { EmitterSubscription, Vibration } from 'react-native';
+
+import { Moment } from 'moment';
 import RNShake from 'react-native-shake';
 import Sound from 'react-native-sound';
 import { AnyAction, Dispatch } from 'redux';
@@ -39,8 +40,8 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
       const userId = session.user.id;
       const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.avatar } : newValues;
       const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
-        method: 'PUT',
         body: JSON.stringify(updatedValues),
+        method: 'PUT',
       });
       if ((reponse as any).error) {
         throw new Error((reponse as any).error);

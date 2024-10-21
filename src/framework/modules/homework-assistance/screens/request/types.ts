@@ -27,7 +27,7 @@ export interface HomeworkAssistanceRequestScreenProps {
     student: UserChild | null,
     structureName: string,
     className: string,
-    information: string,
+    information: string
   ) => Promise<unknown>;
   fetchConfig: () => Promise<IConfig>;
   fetchServices: () => Promise<IService[]>;

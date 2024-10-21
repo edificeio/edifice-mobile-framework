@@ -1,15 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import styles from './styles';
+import { CardTopContentProps } from './types';
+
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 
-import styles from './styles';
-import { CardTopContentProps } from './types';
-
 export default function CardTopContent(props: CardTopContentProps) {
-  const { statusText, statusColor, statusIcon, text, textColor, image, bold, style } = props;
+  const { bold, image, statusColor, statusIcon, statusText, style, text, textColor } = props;
 
   const Text = bold ? SmallBoldText : SmallText;
 

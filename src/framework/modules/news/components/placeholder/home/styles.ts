@@ -5,58 +5,68 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { WIDTH_THUMBNAIL_THREAD_ITEM } from '~/framework/modules/news/components/thread-item';
 
 export default StyleSheet.create({
-  //GLOBAL
-  h18: {
-    height: 18,
+  cardNews: {
+    backgroundColor: theme.palette.grey.white,
+    borderColor: theme.palette.grey.pearl,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: 1,
+    marginBottom: UI_SIZES.spacing.big,
+    padding: UI_SIZES.spacing.small,
   },
+
+  cardNews_thumbnail: {
+    marginRight: UI_SIZES.spacing.minor,
+  },
+
   h14: {
     height: 14,
   },
-  pearl: {
-    backgroundColor: theme.palette.grey.pearl,
+
+  cardNews_date: {
+    marginBottom: 16,
   },
-  //DETAILS
-  page: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
+
+  
+cardNews_lastLine: {
+    marginBottom: 0,
   },
-  threads: {
-    paddingTop: UI_SIZES.spacing.medium,
-    marginBottom: UI_SIZES.spacing.big,
-    flexDirection: 'row',
+
+  //GLOBAL
+h18: {
+    height: 18,
   },
+
+  cardNews_threadText: {
+    marginBottom: 0,
+  },
+
   itemThread: {
     alignItems: 'center',
     marginRight: UI_SIZES.spacing.big,
   },
-  itemThread_media: {
-    width: WIDTH_THUMBNAIL_THREAD_ITEM,
-    aspectRatio: UI_SIZES.aspectRatios.thumbnail,
-    marginBottom: UI_SIZES.spacing.minor,
-    borderRadius: UI_SIZES.radius.medium,
-  },
-  cardNews: {
-    backgroundColor: theme.palette.grey.white,
-    padding: UI_SIZES.spacing.small,
-    marginBottom: UI_SIZES.spacing.big,
-    borderRadius: UI_SIZES.radius.medium,
-    borderWidth: 1,
-    borderColor: theme.palette.grey.pearl,
-  },
+
   cardNews_top: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginBottom: UI_SIZES.spacing.small,
   },
-  cardNews_thumbnail: {
-    marginRight: UI_SIZES.spacing.minor,
+  
+itemThread_media: {
+    aspectRatio: UI_SIZES.aspectRatios.thumbnail,
+    width: WIDTH_THUMBNAIL_THREAD_ITEM,
+    borderRadius: UI_SIZES.radius.medium,
+    marginBottom: UI_SIZES.spacing.minor,
   },
-  cardNews_threadText: {
-    marginBottom: 0,
+  //DETAILS
+page: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
-  cardNews_date: {
-    marginBottom: 16,
+  pearl: {
+    backgroundColor: theme.palette.grey.pearl,
   },
-  cardNews_lastLine: {
-    marginBottom: 0,
+  threads: {
+    flexDirection: 'row',
+    marginBottom: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.medium,
   },
 });

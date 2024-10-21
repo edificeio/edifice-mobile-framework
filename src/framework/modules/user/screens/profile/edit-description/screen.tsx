@@ -1,6 +1,10 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Platform } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import styles from './styles';
+import type { UserEditDescriptionScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -16,9 +20,6 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import styles from './styles';
-import type { UserEditDescriptionScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -31,15 +32,15 @@ export const computeNavBar = ({
 });
 
 const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
-  const { route, navigation } = props;
-  const { userId, mood, motto, hobbies } = route.params;
+  const { navigation, route } = props;
+  const { hobbies, mood, motto, userId } = route.params;
 
   const [description, setDescription] = React.useState<string>();
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [visibility, setVisibility] = React.useState<boolean>(route.params.visibility ?? false);
 
   const PageComponent = React.useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
   }, []);
 
   const onChangeVisibility = () => {
@@ -58,9 +59,9 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
       navigation.navigate(userRouteNames.profile, {
         newDescription: description?.trim(),
         newDescriptionVisibility: visibility,
+        newHobbies: hobbies,
         newMood: mood,
         newMotto: motto,
-        newHobbies: hobbies,
       });
       Toast.showSuccess(I18n.get('user-profile-toast-editAboutSuccess'));
     } catch {
@@ -71,14 +72,13 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
   };
 
   usePreventBack({
-    title: I18n.get('user-profile-preventremove-title'),
-    text: I18n.get('user-profile-preventremove-text'),
     showAlert: route.params.description !== description && !isSending,
+    text: I18n.get('user-profile-preventremove-text'),
+    title: I18n.get('user-profile-preventremove-title'),
   });
 
   React.useEffect(() => {
     navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => <NavBarAction icon="ui-check" onPress={onSaveDescription} />,
     });
   });

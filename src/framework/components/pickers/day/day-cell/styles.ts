@@ -5,11 +5,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export const styles = StyleSheet.create({
   absoluteContainer: {
-    position: 'absolute',
-    zIndex: 1,
+    borderColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.border.thin,
-    borderColor: theme.palette.grey.cloudy,
+    position: 'absolute',
+    zIndex: 1,
   },
   container: {
     borderRadius: UI_SIZES.radius.medium,

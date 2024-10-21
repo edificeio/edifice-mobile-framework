@@ -1,9 +1,13 @@
-import styled from '@emotion/native';
-import { Picker } from '@react-native-picker/picker';
 import * as React from 'react';
 import { ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+
+import styled from '@emotion/native';
+import { Picker } from '@react-native-picker/picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { ForgotScreenPrivateProps, IForgotPageEventProps, IForgotScreenState } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -17,9 +21,6 @@ import { containsKey } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { ValidatorBuilder } from '~/utils/form';
-
-import styles from './styles';
-import { ForgotScreenPrivateProps, IForgotPageEventProps, IForgotScreenState } from './types';
 
 const FormPage = styled.View({
   backgroundColor: theme.ui.background.card,
@@ -35,36 +36,36 @@ const FormContainer = styled.View({
   paddingTop: UI_SIZES.spacing.huge,
 });
 const LogoWrapper = styled.View({
-  flexGrow: 2,
   alignItems: 'center',
+  flexGrow: 2,
   justifyContent: 'center',
 });
 
 export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IForgotScreenState> {
   // fully controlled component
   public state: IForgotScreenState = {
+    editing: false,
+    forgotState: 'IDLE',
     login: this.props.route.params.login ?? '',
     showStructurePicker: false,
-    editing: false,
     structures: [],
-    forgotState: 'IDLE',
   };
 
   private doSubmit = async () => {
     try {
       this.setState({ editing: false, forgotState: 'RUNNING' });
       const { route } = this.props;
-      const { login, firstName, structureName, structures } = this.state;
+      const { firstName, login, structureName, structures } = this.state;
       const forgotMode = route.params.mode;
       const selectedStructure = structures && structures.find(structure => structure.structureName === structureName);
       const structureId = selectedStructure && selectedStructure.structureId;
-      const result = await this.props.trySubmit(route.params.platform, { login, firstName, structureId }, forgotMode);
+      const result = await this.props.trySubmit(route.params.platform, { firstName, login, structureId }, forgotMode);
       this.setState({ editing: false, forgotState: 'DONE', result });
     } catch (e) {
       console.error(e);
       this.setState({
-        forgotState: 'IDLE',
         editing: false,
+        forgotState: 'IDLE',
         result: undefined,
       });
     }
@@ -87,7 +88,7 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
 
   public render() {
     const { route } = this.props;
-    const { result, editing, login, firstName, structureName, showStructurePicker, structures } = this.state;
+    const { editing, firstName, login, result, showStructurePicker, structureName, structures } = this.state;
     const forgotMode = route.params.mode;
     const hasStructures = structures.length > 0;
     const isError = result && containsKey(result, 'error');
@@ -133,8 +134,8 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
                     placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email' : 'auth-forgot-login')}
                     onChange={({ nativeEvent: { text } }) => {
                       this.setState({
-                        login: text,
                         editing: true,
+                        login: text,
                       });
                     }}
                     value={login}
@@ -167,8 +168,8 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
                       hasError={(isError && !editing) ?? false}
                       onChange={({ nativeEvent: { text } }) => {
                         this.setState({
-                          firstName: text,
                           editing: true,
+                          firstName: text,
                         });
                       }}
                     />
@@ -178,13 +179,13 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
                         // eslint-disable-next-line react-native/no-inline-styles
                         {
                           backgroundColor: structureName ? theme.palette.complementary.blue.regular : undefined,
-                          borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
                           borderBottomColor:
                             isError && !editing
                               ? theme.palette.status.failure.regular
                               : showStructurePicker
                                 ? theme.palette.complementary.blue.regular
                                 : theme.palette.grey.grey,
+                          borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
                         },
                       ]}>
                       <TextInputLine
@@ -193,7 +194,7 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
                         inputRef={this.setInputLoginRef}
                         placeholder={I18n.get('auth-forgot-school')}
                         value={structureName}
-                        style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
+                        style={{ borderBottomColor: undefined, borderBottomWidth: undefined }}
                         // inputStyle={styles.inputLine}
                       />
                       <Icon
@@ -213,7 +214,7 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
                       <Picker
                         selectedValue={structureName}
                         style={styles.picker}
-                        onValueChange={itemValue => this.setState({ structureName: itemValue, editing: true })}>
+                        onValueChange={itemValue => this.setState({ editing: true, structureName: itemValue })}>
                         <Picker.Item label="" value={null} />
                         {structures &&
                           structures.map(structure => (
@@ -261,6 +262,6 @@ export default connect(undefined, dispatch =>
     {
       trySubmit: tryAction(forgotAction),
     },
-    dispatch,
-  ),
+    dispatch
+  )
 )(ForgotPage);

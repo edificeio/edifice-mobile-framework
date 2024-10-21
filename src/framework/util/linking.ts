@@ -29,7 +29,7 @@ export async function openUrl(
   customLabels?: OpenUrlCustomLabels,
   generateException?: boolean,
   showConfirmation: boolean = true,
-  autoLogin: boolean = true,
+  autoLogin: boolean = true
 ): Promise<void> {
   try {
     if (!url) {
@@ -60,18 +60,18 @@ export async function openUrl(
         customLabels?.message ?? I18n.get('linking-redirectbrowser-message'),
         [
           {
-            text: customLabels?.cancel ?? I18n.get('common-cancel'),
             style: 'cancel',
+            text: customLabels?.cancel ?? I18n.get('common-cancel'),
           },
           {
-            text: customLabels?.continue ?? I18n.get('common-continue'),
             onPress: () => verifyAndOpenUrl(finalUrl!),
             style: 'default',
+            text: customLabels?.continue ?? I18n.get('common-continue'),
           },
         ],
         {
           cancelable: true,
-        },
+        }
       );
     } else verifyAndOpenUrl(finalUrl!);
   } catch (e) {

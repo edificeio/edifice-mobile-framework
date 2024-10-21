@@ -18,10 +18,10 @@ export const getMailPeople = mailInfos => {
   }
 
   return {
-    from: mailInfos.from ? mailInfos.displayNames.find(item => item[0] === mailInfos.from) : [undefined, mailInfos.fromName, false],
-    to,
     cc,
     cci,
+    from: mailInfos.from ? mailInfos.displayNames.find(item => item[0] === mailInfos.from) : [undefined, mailInfos.fromName, false],
+    to,
   } as {
     from: [string | undefined, string, boolean];
     to: [string | undefined, string, boolean][];

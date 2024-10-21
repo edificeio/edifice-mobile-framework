@@ -9,30 +9,30 @@ import { SmallText } from '~/framework/components/text';
 import { IFile, IFolder } from '~/framework/modules/workspace/reducer';
 
 const styles = StyleSheet.create({
-  rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 30,
-    paddingHorizontal: UI_SIZES.spacing.tiny,
-    marginBottom: UI_SIZES.spacing.tiny / 2,
-    borderRadius: 5,
+  listContainer: {
+    marginBottom: UI_SIZES.spacing.medium,
+    maxHeight: UI_SIZES.screen.height - 250,
   },
   nameText: {
     marginLeft: UI_SIZES.spacing.tiny,
   },
+  rowContainer: {
+    alignItems: 'center',
+    borderRadius: 5,
+    flexDirection: 'row',
+    height: 30,
+    marginBottom: UI_SIZES.spacing.tiny / 2,
+    paddingHorizontal: UI_SIZES.spacing.tiny,
+  },
   searchBarInput: {
-    marginTop: UI_SIZES.spacing.medium,
-    marginBottom: UI_SIZES.spacing.small,
-    padding: UI_SIZES.spacing.minor,
     backgroundColor: theme.palette.grey.fog,
     borderColor: theme.ui.border.input,
-    borderWidth: 1,
     borderRadius: 5,
+    borderWidth: 1,
     color: theme.ui.text.regular,
-  },
-  listContainer: {
-    maxHeight: UI_SIZES.screen.height - 250,
-    marginBottom: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
+    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.minor,
   },
 });
 

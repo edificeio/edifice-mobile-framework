@@ -143,21 +143,21 @@ export const edtService = {
       startDate: Moment,
       endDate: Moment,
       groupIds: string[],
-      groupNames: string[],
+      groupNames: string[]
     ) => {
       const startDateString = startDate.format('YYYY-MM-DD');
       const endDateString = endDate.format('YYYY-MM-DD');
       const api = `/edt/structures/${structureId}/common/courses/${startDateString}/${endDateString}`;
       const body = JSON.stringify({
-        teacherIds: [],
-        union: true,
         groupExternalIds: [],
         groupIds,
         groupNames,
+        teacherIds: [],
+        union: true,
       });
       const courses = (await fetchJSONWithCache(api, {
-        method: 'POST',
         body,
+        method: 'POST',
       })) as IBackendCourseList;
       return courses.map(courseAdapter);
     },
@@ -166,21 +166,21 @@ export const edtService = {
       structureId: string,
       startDate: Moment,
       endDate: Moment,
-      teacherId: string,
+      teacherId: string
     ) => {
       const startDateString = startDate.format('YYYY-MM-DD');
       const endDateString = endDate.format('YYYY-MM-DD');
       const api = `/edt/structures/${structureId}/common/courses/${startDateString}/${endDateString}`;
       const body = JSON.stringify({
-        teacherIds: [teacherId],
-        union: true,
         groupExternalIds: [],
         groupIds: [],
         groupNames: [],
+        teacherIds: [teacherId],
+        union: true,
       });
       const courses = (await fetchJSONWithCache(api, {
-        method: 'POST',
         body,
+        method: 'POST',
       })) as IBackendCourseList;
       return courses.map(courseAdapter);
     },

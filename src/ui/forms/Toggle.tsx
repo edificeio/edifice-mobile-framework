@@ -1,55 +1,54 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+
+import styled from '@emotion/native';
 
 import theme from '~/app/theme';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const styles = StyleSheet.create({
   container: {
-    width: 40,
     height: 22,
+    width: 40,
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
   {
-    borderRadius: 14,
-    justifyContent: 'center',
     alignItems: 'center',
-    width: 22,
-    height: 22,
     backgroundColor: theme.ui.background.card,
-    position: 'absolute',
-    left: 0,
-    top: 0,
+    borderRadius: 14,
     borderWidth: 1,
     elevation: 2,
+    height: 22,
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: 22,
   },
   ({ checked = false }) => ({
     borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
-  }),
+  })
 );
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const Container = styled(TouchableOpacity)<{ checked: boolean }>(
   {
-    borderRadius: 14,
-    justifyContent: 'center',
     alignItems: 'center',
-    width: 40,
-    height: 22,
     borderColor: theme.palette.grey.cloudy,
-    position: 'absolute',
+    borderRadius: 14,
+    height: 22,
+    justifyContent: 'center',
     left: 0,
+    position: 'absolute',
     top: 0,
+    width: 40,
   },
   ({ checked = false }) => ({
     backgroundColor: checked ? theme.palette.primary.regular : theme.palette.grey.cloudy,
     borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
     borderWidth: checked ? 0 : 1,
-  }),
+  })
 );
 
 export class Toggle extends React.Component<
@@ -67,8 +66,8 @@ export class Toggle extends React.Component<
   componentDidUpdate(prevProps) {
     if (this.props.checked !== prevProps.checked) {
       Animated.timing(this.state.positionAnim, {
-        toValue: this.props.checked ? 20 : 0,
         duration: 500,
+        toValue: this.props.checked ? 20 : 0,
         useNativeDriver: false,
       }).start();
     }

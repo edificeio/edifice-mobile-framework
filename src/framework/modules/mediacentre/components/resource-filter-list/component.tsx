@@ -1,20 +1,20 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import FilterButton from './filter-button';
+import styles from './styles';
+import { ResourceFilterListProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture';
 import { ResourceFilter } from '~/framework/modules/mediacentre/model';
 
-import FilterButton from './filter-button';
-import styles from './styles';
-import { ResourceFilterListProps } from './types';
-
 const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
   filters,
-  showThemeFilters = true,
   onChange,
   openFilter,
+  showThemeFilters = true,
 }) => {
   const hasFilter = Object.values(filters).some(v => v.length >= 2);
 
@@ -36,9 +36,9 @@ const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
           text={I18n.get('mediacentre-resourcelist-filter-sources')}
           action={() =>
             openFilter({
-              title: I18n.get('mediacentre-resourcelist-filter-sources'),
               filters: filters.sources,
               onChange: handleChangeSources,
+              title: I18n.get('mediacentre-resourcelist-filter-sources'),
             })
           }
         />
@@ -48,9 +48,9 @@ const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
           text={I18n.get('mediacentre-resourcelist-filter-types')}
           action={() =>
             openFilter({
-              title: I18n.get('mediacentre-resourcelist-filter-types'),
               filters: filters.types,
               onChange: handleChangeTypes,
+              title: I18n.get('mediacentre-resourcelist-filter-types'),
             })
           }
         />
@@ -60,9 +60,9 @@ const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
           text={I18n.get('mediacentre-resourcelist-filter-themes')}
           action={() =>
             openFilter({
-              title: I18n.get('mediacentre-resourcelist-filter-themes'),
               filters: filters.themes,
               onChange: handleChangeThemes,
+              title: I18n.get('mediacentre-resourcelist-filter-themes'),
             })
           }
         />
@@ -72,9 +72,9 @@ const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
           text={I18n.get('mediacentre-resourcelist-filter-levels')}
           action={() =>
             openFilter({
-              title: I18n.get('mediacentre-resourcelist-filter-levels'),
               filters: filters.levels,
               onChange: handleChangeLevels,
+              title: I18n.get('mediacentre-resourcelist-filter-levels'),
             })
           }
         />
@@ -84,9 +84,9 @@ const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
           text={I18n.get('mediacentre-resourcelist-filter-disciplines')}
           action={() =>
             openFilter({
-              title: I18n.get('mediacentre-resourcelist-filter-disciplines'),
               filters: filters.disciplines,
               onChange: handleChangeDisciplines,
+              title: I18n.get('mediacentre-resourcelist-filter-disciplines'),
             })
           }
         />

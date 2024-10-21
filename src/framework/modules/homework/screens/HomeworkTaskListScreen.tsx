@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { connect } from 'react-redux';
 
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -26,8 +27,8 @@ const mapStateToProps: (state: any) => IHomeworkTaskListScreenDataProps = state 
         didInvalidate: true,
         isFetching: true,
         lastUpdated: undefined,
-        tasksByDay: undefined,
         session,
+        tasksByDay: undefined,
       };
     else {
       return {
@@ -36,11 +37,11 @@ const mapStateToProps: (state: any) => IHomeworkTaskListScreenDataProps = state 
         didInvalidate: true,
         isFetching: false,
         lastUpdated: undefined,
-        tasksByDay: undefined,
         session,
+        tasksByDay: undefined,
       };
     }
-  const { didInvalidate, isFetching, lastUpdated, error, errmsg } = currentDiaryTasks;
+  const { didInvalidate, errmsg, error, isFetching, lastUpdated } = currentDiaryTasks;
 
   // Flatten two-dimensional IOrderedArrayById
   const tasksByDay = currentDiaryTasks.data.ids.map(diaryId => ({
@@ -52,15 +53,15 @@ const mapStateToProps: (state: any) => IHomeworkTaskListScreenDataProps = state 
   // Format props
   return {
     diaryId: selectedDiaryId,
+    diaryInformation,
+    diaryListData,
     didInvalidate,
+    errmsg,
+    error,
     isFetching,
     lastUpdated,
-    error,
-    errmsg,
-    tasksByDay,
-    diaryListData,
-    diaryInformation,
     session,
+    tasksByDay,
   };
 };
 

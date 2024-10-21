@@ -1,4 +1,3 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import {
   ActivityIndicator,
@@ -10,15 +9,17 @@ import {
   TextLayoutEventData,
   View,
 } from 'react-native';
+
+import styled from '@emotion/native';
 import { connect } from 'react-redux';
+
+import type { NotifierState } from './reducer';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallInverseText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-
-import type { NotifierState } from './reducer';
 
 const NotifierWrapper = styled(TouchableOpacity)({
   flex: 1,
@@ -45,15 +46,15 @@ class Notifier extends React.Component<
 
   state = {
     fadeAnim: new Animated.Value(0),
-    slideAnim: new Animated.Value(0),
-    measuredText: false,
     longText: false,
+    measuredText: false,
     notifierHeight: 0,
+    slideAnim: new Animated.Value(0),
   };
 
   animate() {
     const { id } = this.props;
-    const { notifierHeight, fadeAnim, slideAnim } = this.state;
+    const { fadeAnim, notifierHeight, slideAnim } = this.state;
     const notifier = this.props.notifiers[id];
     const visible = notifier && notifier.visible;
 
@@ -62,14 +63,14 @@ class Notifier extends React.Component<
         if (visible && !this.previousVisible) {
           this.previousVisible = true;
           Animated.timing(fadeAnim, {
-            toValue: 1,
             duration: 500,
+            toValue: 1,
             useNativeDriver: false,
           }).start();
 
           Animated.timing(slideAnim, {
-            toValue: notifierHeight,
             duration: 500,
+            toValue: notifierHeight,
             useNativeDriver: false,
           }).start();
         }
@@ -77,14 +78,14 @@ class Notifier extends React.Component<
         if (!visible && this.previousVisible) {
           this.previousVisible = false;
           Animated.timing(fadeAnim, {
-            toValue: 0,
             duration: 500,
+            toValue: 0,
             useNativeDriver: false,
           }).start();
 
           Animated.timing(slideAnim, {
-            toValue: 0,
             duration: 500,
+            toValue: 0,
             useNativeDriver: false,
           }).start();
         }
@@ -98,19 +99,19 @@ class Notifier extends React.Component<
     const type = (notifier && notifier.notifierType) || 'info';
 
     return {
+      error: theme.palette.status.failure.regular,
       info: theme.palette.complementary.blue.regular,
       success: theme.palette.status.success.regular,
       warning: theme.palette.status.warning.regular,
-      error: theme.palette.status.failure.regular,
     }[type];
   }
 
   public measureText = (evt: NativeSyntheticEvent<TextLayoutEventData>) => {
     const textBlockHeight = evt.nativeEvent.lines[0].height * evt.nativeEvent.lines.length;
     if (evt.nativeEvent.lines.length > 1) {
-      this.setState({ measuredText: true, longText: true, notifierHeight: textBlockHeight + 40 });
+      this.setState({ longText: true, measuredText: true, notifierHeight: textBlockHeight + 40 });
     } else {
-      this.setState({ measuredText: true, longText: false, notifierHeight: 40 });
+      this.setState({ longText: false, measuredText: true, notifierHeight: 40 });
     }
   };
 
@@ -123,8 +124,8 @@ class Notifier extends React.Component<
   }
 
   public render() {
-    const { style, id } = this.props;
-    const { fadeAnim, slideAnim, measuredText, longText, notifierHeight } = this.state;
+    const { id, style } = this.props;
+    const { fadeAnim, longText, measuredText, notifierHeight, slideAnim } = this.state;
     const notifier = this.props.notifiers[id];
 
     if (!notifier) return null;
@@ -137,24 +138,24 @@ class Notifier extends React.Component<
     const marginLeft = !icon && !loading ? undefined : UI_SIZES.spacing.large;
 
     const styles = StyleSheet.create({
+      alignCenter: { alignItems: 'center' },
+      innerAnimatedView: { flex: 1, flexDirection: 'row', ...style },
       outerAnimatedView: {
         ...style,
-        width: '100%',
         backgroundColor: theme.palette.grey.white,
         elevation: 6,
-        opacity: fadeAnim,
         height: slideAnim,
+        opacity: fadeAnim,
+        width: '100%',
       },
-      innerAnimatedView: { flexDirection: 'row', flex: 1, ...style },
-      alignCenter: { alignItems: 'center' },
       textAnimated: {
-        flex: 1,
-        textAlign: longText ? 'left' : 'center',
         alignSelf: 'center',
+        flex: 1,
         height,
         marginLeft,
-        paddingTop: longText ? UI_SIZES.spacing.medium : undefined,
         paddingBottom: longText ? UI_SIZES.spacing.medium : undefined,
+        paddingTop: longText ? UI_SIZES.spacing.medium : undefined,
+        textAlign: longText ? 'left' : 'center',
       },
     });
 

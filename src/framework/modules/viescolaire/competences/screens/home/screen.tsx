@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { FlatList, Platform, RefreshControl, ScrollView, Switch, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import type { CompetencesHomeScreenDispatchProps, CompetencesHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -37,9 +41,6 @@ import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-co
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import styles from './styles';
-import type { CompetencesHomeScreenDispatchProps, CompetencesHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -168,7 +169,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
   };
 
   const renderHeader = () => {
-    const { terms, subjects } = props.dropdownItems;
+    const { subjects, terms } = props.dropdownItems;
     const displaySubjectAverages = term !== 'default' && subject === 'default';
     const showColorSwitch = !displaySubjectAverages && props.devoirs.some(devoir => !isNaN(Number(devoir.note)));
 
@@ -303,18 +304,11 @@ export default connect(
 
     return {
       averages: competencesState.averages.data,
-      classes: session?.user.classes,
       childId: userType === AccountType.Student ? userId : dashboardState.selectedChildId,
+      classes: session?.user.classes,
       competences: competencesState.competences.data,
       devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       dropdownItems: {
-        terms: [
-          { label: I18n.get('competences-home-term'), value: 'default' },
-          ...competencesState.terms.data.map(term => ({
-            label: `${I18n.get('competences-home-term-' + term.type)} ${term.order}`,
-            value: term.typeId.toString(),
-          })),
-        ],
         subjects: [
           { label: I18n.get('competences-home-subject'), value: 'default' },
           ...competencesState.subjects.data
@@ -323,6 +317,13 @@ export default connect(
               label: subject.name,
               value: subject.id,
             })),
+        ],
+        terms: [
+          { label: I18n.get('competences-home-term'), value: 'default' },
+          ...competencesState.terms.data.map(term => ({
+            label: `${I18n.get('competences-home-term-' + term.type)} ${term.order}`,
+            value: term.typeId.toString(),
+          })),
         ],
       },
       initialLoadingState:
@@ -348,6 +349,6 @@ export default connect(
         tryFetchTerms: tryAction(fetchCompetencesTermsAction),
         tryFetchUserChildren: tryAction(fetchCompetencesUserChildrenAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(CompetencesHomeScreen);

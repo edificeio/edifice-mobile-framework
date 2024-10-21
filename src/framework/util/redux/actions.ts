@@ -2,7 +2,7 @@ import type { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { DoTrackArgLegacy, TrackEventOfModuleArgs, Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
+import { DoTrackArgLegacy, Trackers, TrackEventOfModuleArgs, trackingActionAddSuffix } from '~/framework/util/tracker';
 
 export interface TryActionOptions<Args extends any[], ReturnType, TrackEventArgs = TrackEventOfModuleArgs> {
   track?: TrackEventArgs | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackEventArgs | undefined);
@@ -32,7 +32,7 @@ declare module 'redux' {
 function performAction<Args extends any[], R, E>(
   action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
   onCatch: (e: unknown) => void,
-  opts?: TryActionOptions<Args, R>,
+  opts?: TryActionOptions<Args, R>
 ) {
   return ((...args: Args) =>
     async (dispatch: ThunkDispatch<IGlobalState, E, AnyAction>) => {
@@ -77,7 +77,7 @@ function performAction<Args extends any[], R, E>(
  */
 export function tryAction<Args extends any[], R, E>(
   action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
-  opts?: TryActionOptions<Args, R>,
+  opts?: TryActionOptions<Args, R>
 ) {
   return performAction(
     action,
@@ -85,7 +85,7 @@ export function tryAction<Args extends any[], R, E>(
       console.error(action.name, e);
       throw e;
     },
-    opts,
+    opts
   );
 }
 
@@ -99,14 +99,14 @@ export function tryAction<Args extends any[], R, E>(
  */
 export function handleAction<Args extends any[], R, E>(
   action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
-  opts?: TryActionOptions<Args, R>,
+  opts?: TryActionOptions<Args, R>
 ) {
   return performAction(
     action,
     e => {
       console.error(action.name, e);
     },
-    opts,
+    opts
   );
 }
 
@@ -122,7 +122,7 @@ export const tryActionLegacy =
   <Args extends any[], R, E>(
     action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
     trackInfo?: DoTrackArgLegacy | ((...args: Args) => DoTrackArgLegacy),
-    throwback?: boolean,
+    throwback?: boolean
   ) =>
   (...args: Args) =>
   async (dispatch: ThunkDispatch<IGlobalState, E, AnyAction>) => {

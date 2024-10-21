@@ -1,6 +1,10 @@
-import moment, { Moment } from 'moment';
 import React from 'react';
 import { View } from 'react-native';
+
+import moment, { Moment } from 'moment';
+
+import styles from './styles';
+import type { AbsenceDatesSelectorProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import IconButton from '~/framework/components/buttons/icon';
@@ -9,9 +13,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import Label from '~/framework/components/inputs/container/label';
 import { SmallText } from '~/framework/components/text';
-
-import styles from './styles';
-import type { AbsenceDatesSelectorProps } from './types';
 
 export default function AbsenceDatesSelector(props: AbsenceDatesSelectorProps) {
   const [isSingleDay, setSingleDay] = React.useState(true);

@@ -12,8 +12,8 @@ export default StyleSheet.create({
     width: '100%',
   },
   scrollViewContentContainer: {
-    rowGap: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.medium,
+    rowGap: UI_SIZES.spacing.medium,
   },
   subtitle: {
     color: theme.palette.grey.stone,

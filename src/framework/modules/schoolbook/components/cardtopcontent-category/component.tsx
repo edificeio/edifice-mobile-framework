@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
+import styles from './styles';
+import { CardTopContentCategoryProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import CardTopContent from '~/framework/components/card/top-content';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
-
-import styles from './styles';
-import { CardTopContentCategoryProps } from './types';
 
 export const CardTopContentCategory = (props: CardTopContentCategoryProps) => {
   const { category } = props;

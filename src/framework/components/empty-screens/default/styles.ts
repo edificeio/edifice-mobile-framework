@@ -6,12 +6,12 @@ export default StyleSheet.create({
   icon: {
     alignSelf: 'center',
   },
-  title: {
-    textAlign: 'center',
-    marginTop: UI_SIZES.spacing.large,
-  },
   text: {
-    textAlign: 'center',
     marginTop: UI_SIZES.spacing.small,
+    textAlign: 'center',
+  },
+  title: {
+    marginTop: UI_SIZES.spacing.large,
+    textAlign: 'center',
   },
 });

@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { PronoteNavigationParams, pronoteRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/pronote/module-config';
 import PronoteCarnetDeBordScreen, { computeNavBar as carnetDeBordNavBar } from '~/framework/modules/pronote/screens/carnet-de-bord';
 import PronoteCarnetDeBordDetailsScreen, {
@@ -13,8 +15,6 @@ import PronoteConnectorSelectorScreen, {
 } from '~/framework/modules/pronote/screens/connector-selector';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { PronoteNavigationParams, pronoteRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<PronoteNavigationParams>(moduleConfig.name, Stack => {
@@ -42,7 +42,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={PronoteCarnetDeBordDetailsScreen}
           options={carnetDeBordDetailsNavBar}
           initialParams={{}}
-        />,
+        />
       );
       moduleConfig.routeName = pronoteRouteNames.carnetDeBord;
     }
@@ -56,7 +56,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={PronoteConnectorSelectorScreen}
           options={connectorSelectorNavBar}
           initialParams={{ connectors: apps }}
-        />,
+        />
       );
       moduleConfig.routeName = pronoteRouteNames.connectorSelector;
     } /* !hasCarnetDeBord && !hasMultipleConnectors */ else {
@@ -77,7 +77,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
               }
             : undefined
         }
-      />,
+      />
     );
 
     return <>{screens}</>;

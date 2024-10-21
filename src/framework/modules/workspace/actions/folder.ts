@@ -1,7 +1,7 @@
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { IFolder, actionTypes } from '~/framework/modules/workspace/reducer';
+import { actionTypes, IFolder } from '~/framework/modules/workspace/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
@@ -13,11 +13,11 @@ export const listWorkspaceFoldersAction = () => async (dispatch, getState) => {
   try {
     const folders: IFolder[] = [
       {
+        children: [],
         id: 'owner',
         name: I18n.get('workspace-filelist-owner'),
         parentId: '0',
         sortNo: 'owner',
-        children: [],
       },
     ];
     const session = assertSession();

@@ -1,6 +1,7 @@
-import { MenuView } from '@react-native-menu/menu';
 import * as React from 'react';
 import { Platform, View } from 'react-native';
+
+import { MenuView } from '@react-native-menu/menu';
 
 import { MenuProps } from '~/framework/components/menus/types/types';
 
@@ -9,12 +10,12 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
   const actionsPopup = props.actions.map(action => {
     id++;
     return {
-      id: id.toString(),
-      title: action.title,
-      image: action.icon ? action.icon[Platform.OS] : '',
       attributes: {
         destructive: action.destructive ?? false,
       },
+      id: id.toString(),
+      image: action.icon ? action.icon[Platform.OS] : '',
+      title: action.title,
     };
   });
 

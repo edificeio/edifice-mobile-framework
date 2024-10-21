@@ -21,7 +21,7 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
-import { Image, formatMediaSourceArray, formatSource } from '~/framework/util/media';
+import { formatMediaSourceArray, formatSource, Image } from '~/framework/util/media';
 import Images from '~/ui/Images';
 
 export enum HtmlParserJsxTextVariant {
@@ -112,7 +112,7 @@ export function renderNuggets(
     [HtmlParserNuggetTypes.Iframe]: ViewStyle;
     [HtmlParserNuggetTypes.Audio]: ViewStyle;
     [HtmlParserNuggetTypes.Video]: ViewStyle;
-  },
+  }
 ): JSX.Element {
   return (
     <View>
@@ -171,7 +171,7 @@ function renderParseText(
     [HtmlParserJsxTextVariant.Link]?: TextStyle;
   },
   nested: boolean = false,
-  selectable: boolean = false,
+  selectable: boolean = false
 ): JSX.Element {
   // -1 - Default opts
   textStyles = {
@@ -336,7 +336,7 @@ function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle 
 function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = {}): JSX.Element {
   if (!nugget.src) {
     return (
-      <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
+      <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, padding: UI_SIZES.spacing.small, width: '100%' }}>
         {I18n.get('htmlparser-audio-notavailable')}
       </BodyItalicText>
     );
@@ -357,7 +357,7 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
 function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = {}): JSX.Element {
   if (!nugget.src) {
     return (
-      <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
+      <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, padding: UI_SIZES.spacing.small, width: '100%' }}>
         {I18n.get('htmlparser-video-notavailable')}
       </BodyItalicText>
     );

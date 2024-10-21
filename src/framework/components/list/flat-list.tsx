@@ -1,6 +1,7 @@
-import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import { FlatList as RNFlatList, FlatListProps as RNFlatListProps, View } from 'react-native';
+
+import { useScrollToTop } from '@react-navigation/native';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { ScrollContext } from '~/framework/components/scrollView';

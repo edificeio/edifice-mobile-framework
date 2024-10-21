@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
+import styles from './style';
+
 import { I18n } from '~/app/i18n';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
@@ -11,8 +13,6 @@ import type { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reduce
 import { hasPermissionManager } from '~/framework/modules/blog/rights';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 
-import styles from './style';
-
 interface BlogPostDetailsProps {
   blog: DisplayedBlog | Blog;
   post: BlogPostWithAudience;
@@ -21,7 +21,7 @@ interface BlogPostDetailsProps {
 }
 
 export function BlogPostDetails(props: BlogPostDetailsProps) {
-  const { blog, post, session, onReady } = props;
+  const { blog, onReady, post, session } = props;
 
   const richContent = React.useMemo(() => {
     return <RichEditorViewer content={post.content} onLoad={onReady} />;
@@ -54,7 +54,7 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
           nbComments={post.comments?.length}
           nbViews={post.audience?.views}
           infosReactions={post.audience?.reactions}
-          referer={{ module: 'blog', resourceType: 'post', resourceId: post._id }}
+          referer={{ module: 'blog', resourceId: post._id, resourceType: 'post' }}
           session={props.session}
           isManager={session && hasPermissionManager(blog, session)}
         />

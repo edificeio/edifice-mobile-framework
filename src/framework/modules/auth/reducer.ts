@@ -1,8 +1,11 @@
-import { IGlobalState, Reducers, getStore } from '~/app/store';
+import type { AuthStorageData } from './storage';
+
+import { getStore, IGlobalState, Reducers } from '~/app/store';
 import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
 import {
-  ANONYMOUS_ACCOUNT_ID,
+  accountIsActive,
   AccountType,
+  ANONYMOUS_ACCOUNT_ID,
   AuthActiveAccount,
   AuthLoggedAccount,
   AuthLoggedAccountMap,
@@ -11,17 +14,14 @@ import {
   AuthRequirement,
   AuthSavedLoggedInAccount,
   AuthTokenSet,
-  LegalUrls,
-  PlatformAuthContext,
-  accountIsActive,
   getSerializedLoggedInAccountInfo,
   getSerializedLoggedOutAccountInfo,
+  LegalUrls,
+  PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { Platform } from '~/framework/util/appConf';
 import createReducer from '~/framework/util/redux/reducerFactory';
-
-import type { AuthStorageData } from './storage';
 
 export interface AuthPendingRestore {
   redirect: undefined;
@@ -75,41 +75,41 @@ export interface IAuthState {
 // Initial state
 export const initialState: IAuthState = {
   accounts: {},
-  showOnboarding: true,
-  platformContexts: {},
-  platformLegalUrls: {},
-  validReactionTypes: [],
   deviceInfo: {},
   lastAddAccount: 0,
+  platformContexts: {},
+  platformLegalUrls: {},
+  showOnboarding: true,
+  validReactionTypes: [],
 };
 
 // Actions definitions
 export const actionTypes = {
-  authInit: moduleConfig.namespaceActionType('INIT'),
-  loadPfContext: moduleConfig.namespaceActionType('LOAD_PF_CONTEXT'),
-  loadPfLegalUrls: moduleConfig.namespaceActionType('LOAD_PF_LEGAL_URLS'),
-  loadPfValidReactionTypes: moduleConfig.namespaceActionType('LOAD_PF_VALID_REACTION_TYPES'),
   addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
   addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
-  removeAccount: moduleConfig.namespaceActionType('REMOVE_ACCOUNT'),
-  replaceAccount: moduleConfig.namespaceActionType('REPLACE_ACCOUNT'),
-  replaceAccountRequirement: moduleConfig.namespaceActionType('REPLACE_ACCOUNT_REQUIREMENT'),
-  updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
-  refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
-  setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
-  setOneSessionId: moduleConfig.namespaceActionType('SET_ONE_SESSION_ID'),
+  authInit: moduleConfig.namespaceActionType('INIT'),
+  loadPfContext: moduleConfig.namespaceActionType('LOAD_PF_CONTEXT'),
   authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
-  logout: moduleConfig.namespaceActionType('LOGOUT'),
+  loadPfLegalUrls: moduleConfig.namespaceActionType('LOAD_PF_LEGAL_URLS'),
   deactivate: moduleConfig.namespaceActionType('DEACTIVATE'),
-  redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
-  redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
-  redirectCancel: moduleConfig.namespaceActionType('REDIRECT_CANCEL'),
-  addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
+  loadPfValidReactionTypes: moduleConfig.namespaceActionType('LOAD_PF_VALID_REACTION_TYPES'),
+  logout: moduleConfig.namespaceActionType('LOGOUT'),
+  refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
   addAccountActivation: moduleConfig.namespaceActionType('ADD_ACCOUNT_ACTIVATION'),
+  removeAccount: moduleConfig.namespaceActionType('REMOVE_ACCOUNT'),
+  addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
+  replaceAccount: moduleConfig.namespaceActionType('REPLACE_ACCOUNT'),
   addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
+  replaceAccountRequirement: moduleConfig.namespaceActionType('REPLACE_ACCOUNT_REQUIREMENT'),
   addAccountRedirectCancel: moduleConfig.namespaceActionType('ADD_ACCOUNT_REDIRECT_CANCEL'),
-  profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
+  setOneSessionId: moduleConfig.namespaceActionType('SET_ONE_SESSION_ID'),
   invalidate: moduleConfig.namespaceActionType('INVALIDATE'),
+  updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
+  profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
+  setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
+  redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
+  redirectCancel: moduleConfig.namespaceActionType('REDIRECT_CANCEL'),
+  redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
 };
 
 export const ERASE_ALL_ACCOUNTS = Symbol('ERASE_ALL_ACCOUNTS');
@@ -168,57 +168,119 @@ export interface ActionPayloads {
 }
 
 export const actions = {
+  addAccount: (account: AuthLoggedAccount) => ({
+    account,
+    type: actionTypes.addAccount,
+  }),
+
+  addAccountRequirement: (account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
+    account,
+    context,
+    requirement,
+    type: actionTypes.addAccountRequirement,
+  }),
+
   authInit: (
     startup: AuthStorageData['startup'],
     accounts: AuthStorageData['accounts'],
     showOnboarding: AuthStorageData['show-onboarding'],
-    deviceId: IAuthState['deviceInfo']['uniqueId'],
-  ) => ({ type: actionTypes.authInit, startup, accounts, showOnboarding, deviceId }),
+    deviceId: IAuthState['deviceInfo']['uniqueId']
+  ) => ({ accounts, deviceId, showOnboarding, startup, type: actionTypes.authInit }),
 
-  loadPfContext: (name: Platform['name'], context: PlatformAuthContext) => ({ type: actionTypes.loadPfContext, name, context }),
+  loadPfContext: (name: Platform['name'], context: PlatformAuthContext) => ({ context, name, type: actionTypes.loadPfContext }),
 
-  loadPfLegalUrls: (name: Platform['name'], legalUrls: LegalUrls) => ({ type: actionTypes.loadPfLegalUrls, name, legalUrls }),
+  authError: (error: NonNullable<IAuthState['error']>, account?: string) => ({
+    account,
+    type: actionTypes.authError,
+    error,
+  }),
+
+  loadPfLegalUrls: (name: Platform['name'], legalUrls: LegalUrls) => ({ legalUrls, name, type: actionTypes.loadPfLegalUrls }),
+
+  deactivate: () => ({
+    type: actionTypes.deactivate,
+  }),
 
   loadPfValidReactionTypes: (validReactionTypes: AudienceValidReactionTypes) => ({
     type: actionTypes.loadPfValidReactionTypes,
     validReactionTypes,
   }),
 
-  addAccount: (account: AuthLoggedAccount) => ({
-    type: actionTypes.addAccount,
-    account,
+  logout: () => ({
+    type: actionTypes.logout,
+  }),
+  refreshToken: (id: string, tokens: AuthTokenSet) => ({
+    id,
+    tokens,
+    type: actionTypes.refreshToken,
   }),
 
-  addAccountRequirement: (account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
-    type: actionTypes.addAccountRequirement,
-    account,
-    requirement,
-    context,
+  addAccountInit: () => ({
+    type: actionTypes.addAccountInit,
   }),
 
   removeAccount: (id: keyof IAuthState['accounts']) => ({
-    type: actionTypes.removeAccount,
     id,
+    type: actionTypes.removeAccount,
+  }),
+
+  addAccountActivation: (platformName: Platform['name'], login: string, code: string) => ({
+    platformName,
+    type: actionTypes.addAccountActivation,
+    code,
+    login,
   }),
 
   replaceAccount: (id: string | typeof ERASE_ALL_ACCOUNTS, account: AuthLoggedAccount) => ({
-    type: actionTypes.replaceAccount,
-    id,
     account,
+    id,
+    type: actionTypes.replaceAccount,
+  }),
+
+  addAccountPasswordRenew: (
+    platformName: Platform['name'],
+    login: string,
+    code: string,
+    accountId?: keyof IAuthState['accounts'],
+    accountTimestamp?: number
+  ) => ({
+    platformName,
+    code,
+    type: actionTypes.addAccountPasswordRenew,
+    accountId,
+    login,
+    accountTimestamp,
   }),
 
   replaceAccountRequirement: (
     id: string | typeof ERASE_ALL_ACCOUNTS,
     account: AuthLoggedAccount,
     requirement: AuthRequirement,
-    context: PlatformAuthContext,
+    context: PlatformAuthContext
   ) => ({
-    type: actionTypes.replaceAccountRequirement,
-    id,
     account,
-    requirement,
+    id,
     context,
+    type: actionTypes.replaceAccountRequirement,
+    requirement,
   }),
+
+  addAccountRedirectCancel: (platformName: Platform['name'], login: string) => ({
+    login,
+    platformName,
+    type: actionTypes.addAccountRedirectCancel,
+  }),
+
+  setOneSessionId: (id: string, token: AuthTokenSet['oneSessionId']) => ({
+    id,
+    type: actionTypes.setOneSessionId,
+    token,
+  }),
+
+  invalidate: () => ({
+    type: actionTypes.invalidate,
+  }),
+
   updateRequirement: (requirement: AuthRequirement | undefined, account: AuthLoggedAccount, context?: PlatformAuthContext) => ({
     type: actionTypes.updateRequirement,
     requirement,
@@ -226,10 +288,10 @@ export const actions = {
     context,
   }),
 
-  refreshToken: (id: string, tokens: AuthTokenSet) => ({
-    type: actionTypes.refreshToken,
+  profileUpdate: (id: string, user: Partial<AuthLoggedAccount['user']>) => ({
     id,
-    tokens,
+    type: actionTypes.profileUpdate,
+    user,
   }),
 
   setQueryParamToken: (id: string, token: AuthTokenSet['queryParam']) => ({
@@ -238,31 +300,24 @@ export const actions = {
     token,
   }),
 
-  setOneSessionId: (id: string, token: AuthTokenSet['oneSessionId']) => ({
-    type: actionTypes.setOneSessionId,
-    id,
-    token,
-  }),
-
-  authError: (error: NonNullable<IAuthState['error']>, account?: string) => ({
-    type: actionTypes.authError,
-    account,
-    error,
-  }),
-
-  logout: () => ({
-    type: actionTypes.logout,
-  }),
-
-  deactivate: () => ({
-    type: actionTypes.deactivate,
-  }),
-
   redirectActivation: (platformName: Platform['name'], login: string, code: string) => ({
-    type: actionTypes.redirectActivation,
-    platformName,
-    login,
     code,
+    login,
+    platformName,
+    type: actionTypes.redirectActivation,
+  }),
+
+  redirectCancel: (
+    platformName: Platform['name'],
+    login: string,
+    accountId?: keyof IAuthState['accounts'],
+    accountTimestamp?: number
+  ) => ({
+    accountId,
+    platformName,
+    accountTimestamp,
+    type: actionTypes.redirectCancel,
+    login,
   }),
 
   redirectPasswordRenew: (
@@ -270,75 +325,20 @@ export const actions = {
     login: string,
     code: string,
     accountId?: keyof IAuthState['accounts'],
-    accountTimestamp?: number,
+    accountTimestamp?: number
   ) => ({
+    code,
+    platformName,
+    accountId,
     type: actionTypes.redirectPasswordRenew,
-    platformName,
-    login,
-    code,
-    accountId,
     accountTimestamp,
-  }),
-
-  redirectCancel: (
-    platformName: Platform['name'],
-    login: string,
-    accountId?: keyof IAuthState['accounts'],
-    accountTimestamp?: number,
-  ) => ({
-    type: actionTypes.redirectCancel,
-    platformName,
     login,
-    accountId,
-    accountTimestamp,
-  }),
-
-  profileUpdate: (id: string, user: Partial<AuthLoggedAccount['user']>) => ({
-    type: actionTypes.profileUpdate,
-    id,
-    user,
-  }),
-
-  addAccountInit: () => ({
-    type: actionTypes.addAccountInit,
-  }),
-
-  addAccountActivation: (platformName: Platform['name'], login: string, code: string) => ({
-    type: actionTypes.addAccountActivation,
-    platformName,
-    login,
-    code,
-  }),
-
-  addAccountPasswordRenew: (
-    platformName: Platform['name'],
-    login: string,
-    code: string,
-    accountId?: keyof IAuthState['accounts'],
-    accountTimestamp?: number,
-  ) => ({
-    type: actionTypes.addAccountPasswordRenew,
-    platformName,
-    login,
-    code,
-    accountId,
-    accountTimestamp,
-  }),
-
-  addAccountRedirectCancel: (platformName: Platform['name'], login: string) => ({
-    type: actionTypes.addAccountRedirectCancel,
-    platformName,
-    login,
-  }),
-
-  invalidate: () => ({
-    type: actionTypes.invalidate,
   }),
 };
 
 const reducer = createReducer(initialState, {
   [actionTypes.authInit]: (state, action) => {
-    const { accounts, startup, showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
+    const { accounts, deviceId, showOnboarding, startup } = action as unknown as ActionPayloads['authInit'];
     let realAccounts = { ...accounts };
     const pending: AuthPendingRestore | undefined = startup.platform
       ? { platform: startup.platform, redirect: undefined }
@@ -351,40 +351,40 @@ const reducer = createReducer(initialState, {
       realAccounts = {
         ...realAccounts,
         [ANONYMOUS_ACCOUNT_ID]: {
-          platform: pending.platform,
+          addTimestamp: 0,
           method: undefined,
-          user: { displayName: '', id: ANONYMOUS_ACCOUNT_ID, loginUsed: '', type: AccountType.Guest },
+          platform: pending.platform,
           tokens: {
             access: {
+              expiresAt: startup.anonymousToken.expires_at.toString(),
               type: startup.anonymousToken.token_type as 'Bearer',
               value: startup.anonymousToken.access_token,
-              expiresAt: startup.anonymousToken.expires_at.toString(),
             },
             refresh: {
               value: startup.anonymousToken.refresh_token,
             },
             scope: startup.anonymousToken.scope.split(' '),
           },
-          addTimestamp: 0,
+          user: { displayName: '', id: ANONYMOUS_ACCOUNT_ID, loginUsed: '', type: AccountType.Guest },
         },
       };
     }
     return {
       ...initialState,
       accounts: realAccounts,
-      showOnboarding,
-      pending,
       deviceInfo: { ...state.deviceInfo, uniqueId: deviceId },
+      pending,
+      showOnboarding,
     };
   },
 
   [actionTypes.loadPfContext]: (state, action) => {
-    const { name, context } = action as unknown as ActionPayloads['loadPfContext'];
+    const { context, name } = action as unknown as ActionPayloads['loadPfContext'];
     return { ...state, platformContexts: { ...state.platformContexts, [name]: context } };
   },
 
   [actionTypes.loadPfLegalUrls]: (state, action) => {
-    const { name, legalUrls } = action as unknown as ActionPayloads['loadPfLegalUrls'];
+    const { legalUrls, name } = action as unknown as ActionPayloads['loadPfLegalUrls'];
     return { ...state, platformLegalUrls: { ...state.platformLegalUrls, [name]: legalUrls } };
   },
 
@@ -399,22 +399,22 @@ const reducer = createReducer(initialState, {
       ...state,
       accounts: { ...state.accounts, [account.user.id]: account },
       connected: account.user.id,
-      showOnboarding: false,
-      requirement: undefined,
       lastAddAccount: Date.now(),
+      requirement: undefined,
+      showOnboarding: false,
     };
   },
 
   [actionTypes.addAccountRequirement]: (state, action) => {
-    const { account, requirement, context } = action as unknown as ActionPayloads['addAccountRequirement'];
+    const { account, context, requirement } = action as unknown as ActionPayloads['addAccountRequirement'];
     return {
       ...state,
       accounts: { ...state.accounts, [account.user.id]: account },
       connected: account.user.id,
-      showOnboarding: false,
-      requirement,
-      platformContexts: { ...state.platformContexts, [account.platform.name]: context },
       lastAddAccount: Date.now(),
+      platformContexts: { ...state.platformContexts, [account.platform.name]: context },
+      requirement,
+      showOnboarding: false,
     };
   },
 
@@ -431,42 +431,42 @@ const reducer = createReducer(initialState, {
   },
 
   [actionTypes.replaceAccount]: (state, action) => {
-    const { id, account } = action as unknown as ActionPayloads['replaceAccount'];
+    const { account, id } = action as unknown as ActionPayloads['replaceAccount'];
     const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
     if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
     return {
       ...state,
       accounts: { ...newAccounts, [account.user.id]: account },
       connected: account.user.id,
-      showOnboarding: false,
       requirement: undefined,
+      showOnboarding: false,
     };
   },
 
   [actionTypes.replaceAccountRequirement]: (state, action) => {
-    const { id, account, requirement, context } = action as unknown as ActionPayloads['replaceAccountRequirement'];
+    const { account, context, id, requirement } = action as unknown as ActionPayloads['replaceAccountRequirement'];
     const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
     if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
     return {
       ...state,
       accounts: { ...newAccounts, [account.user.id]: account },
       connected: account.user.id,
-      showOnboarding: false,
-      requirement,
       platformContexts: { ...state.platformContexts, [account.platform.name]: context },
+      requirement,
+      showOnboarding: false,
     };
   },
 
   [actionTypes.updateRequirement]: (state, action) => {
     if (!state.connected) return state;
-    const { requirement, context, account } = action as unknown as ActionPayloads['updateRequirement'];
+    const { account, context, requirement } = action as unknown as ActionPayloads['updateRequirement'];
     const id = account.user.id;
     if (context)
       return {
         ...state,
         accounts: { ...state.accounts, [id]: account },
-        requirement,
         platformContexts: { ...state.platformContexts, [account.platform.name]: context },
+        requirement,
       };
     else return { ...state, accounts: { ...state.accounts, [id]: account }, requirement };
   },
@@ -523,11 +523,11 @@ const reducer = createReducer(initialState, {
     return {
       ...state,
       accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedOutAccountInfo(currentAccount) },
-      requirement: undefined,
       connected: undefined,
-      pending: undefined,
       error: undefined,
       lastDeletedAccount: undefined,
+      pending: undefined,
+      requirement: undefined,
     };
   },
 
@@ -537,61 +537,61 @@ const reducer = createReducer(initialState, {
     return {
       ...state,
       accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedInAccountInfo(currentAccount) },
-      requirement: undefined,
       connected: undefined,
-      pending: undefined,
       error: undefined,
       lastDeletedAccount: undefined,
+      pending: undefined,
+      requirement: undefined,
     };
   },
 
   [actionTypes.redirectActivation]: (state, action) => {
-    const { platformName, login, code } = action as unknown as ActionPayloads['redirectActivation'];
+    const { code, login, platformName } = action as unknown as ActionPayloads['redirectActivation'];
     return {
       ...state,
-      requirement: undefined,
       connected: undefined,
       error: undefined,
       pending: {
-        redirect: AuthPendingRedirection.ACTIVATE as const,
-        platform: platformName,
-        loginUsed: login,
         code,
+        loginUsed: login,
+        platform: platformName,
+        redirect: AuthPendingRedirection.ACTIVATE as const,
       },
+      requirement: undefined,
     };
   },
 
   [actionTypes.redirectPasswordRenew]: (state, action) => {
-    const { platformName, login, code, accountId, accountTimestamp } = action as unknown as ActionPayloads['redirectPasswordRenew'];
+    const { accountId, accountTimestamp, code, login, platformName } = action as unknown as ActionPayloads['redirectPasswordRenew'];
     return {
       ...state,
-      requirement: undefined,
       connected: undefined,
       error: undefined,
       pending: {
-        redirect: AuthPendingRedirection.RENEW_PASSWORD as const,
-        platform: platformName,
-        loginUsed: login,
-        code,
         accountId,
         accountTimestamp,
+        code,
+        loginUsed: login,
+        platform: platformName,
+        redirect: AuthPendingRedirection.RENEW_PASSWORD as const,
       },
+      requirement: undefined,
     };
   },
 
   [actionTypes.redirectCancel]: (state, action) => {
-    const { platformName, login, accountId, accountTimestamp } = action as unknown as ActionPayloads['redirectCancel'];
+    const { accountId, accountTimestamp, login, platformName } = action as unknown as ActionPayloads['redirectCancel'];
     return {
       ...state,
-      requirement: undefined,
       connected: undefined,
       pending: {
-        redirect: undefined,
-        platform: platformName,
-        loginUsed: login,
         accountId,
         accountTimestamp,
+        loginUsed: login,
+        platform: platformName,
+        redirect: undefined,
       },
+      requirement: undefined,
     };
   },
 
@@ -604,51 +604,51 @@ const reducer = createReducer(initialState, {
   },
 
   [actionTypes.addAccountInit]: (state, action) => {
-    return { ...state, pendingAddAccount: undefined, error: undefined };
+    return { ...state, error: undefined, pendingAddAccount: undefined };
   },
 
   [actionTypes.addAccountActivation]: (state, action) => {
-    const { platformName, login, code } = action as unknown as ActionPayloads['redirectActivation'];
+    const { code, login, platformName } = action as unknown as ActionPayloads['redirectActivation'];
     return {
       ...state,
-      requirement: undefined,
       error: undefined,
       pendingAddAccount: {
-        redirect: AuthPendingRedirection.ACTIVATE as const,
-        platform: platformName,
-        loginUsed: login,
         code,
+        loginUsed: login,
+        platform: platformName,
+        redirect: AuthPendingRedirection.ACTIVATE as const,
       },
+      requirement: undefined,
     };
   },
 
   [actionTypes.addAccountPasswordRenew]: (state, action) => {
-    const { platformName, login, code, accountId, accountTimestamp } = action as unknown as ActionPayloads['redirectPasswordRenew'];
+    const { accountId, accountTimestamp, code, login, platformName } = action as unknown as ActionPayloads['redirectPasswordRenew'];
     return {
       ...state,
-      requirement: undefined,
       error: undefined,
       pendingAddAccount: {
-        redirect: AuthPendingRedirection.RENEW_PASSWORD as const,
-        platform: platformName,
-        loginUsed: login,
-        code,
         accountId,
         accountTimestamp,
+        code,
+        loginUsed: login,
+        platform: platformName,
+        redirect: AuthPendingRedirection.RENEW_PASSWORD as const,
       },
+      requirement: undefined,
     };
   },
 
   [actionTypes.addAccountRedirectCancel]: (state, action) => {
-    const { platformName, login } = action as unknown as ActionPayloads['addAccountRedirectCancel'];
+    const { login, platformName } = action as unknown as ActionPayloads['addAccountRedirectCancel'];
     return {
       ...state,
-      requirement: undefined,
       pendingAddAccount: {
-        redirect: undefined,
-        platform: platformName,
         loginUsed: login,
+        platform: platformName,
+        redirect: undefined,
       },
+      requirement: undefined,
     };
   },
 
@@ -658,10 +658,10 @@ const reducer = createReducer(initialState, {
     return {
       ...state,
       accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedOutAccountInfo(currentAccount) },
-      requirement: undefined,
       connected: undefined,
-      pending: { redirect: undefined, account: currentAccount.user.id, platform: currentAccount.platform.name },
       lastDeletedAccount: undefined,
+      pending: { account: currentAccount.user.id, platform: currentAccount.platform.name, redirect: undefined },
+      requirement: undefined,
     };
   },
 });

@@ -1,6 +1,10 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { ColorValue, View } from 'react-native';
+
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import styles from './styles';
+import { AudienceViewsScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -16,9 +20,6 @@ import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigatio
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
-import styles from './styles';
-import { AudienceViewsScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -31,7 +32,7 @@ export const computeNavBar = ({
 });
 
 const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
-  const { module, resourceType, resourceId } = props.route.params.referer;
+  const { module, resourceId, resourceType } = props.route.params.referer;
 
   const [nbViews, setNbViews] = React.useState<number>(0);
   const [nbUniqueViews, setNbUniqueViews] = React.useState<number>(0);
@@ -39,7 +40,7 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
 
   const loadData = React.useCallback(async () => {
     try {
-      const dt = await audienceService.view.getDetails({ module, resourceType, resourceId });
+      const dt = await audienceService.view.getDetails({ module, resourceId, resourceType });
       setNbViews(dt.viewsCounter);
       setNbUniqueViews(dt.uniqueViewsCounter);
       setViewsPerProfile(dt.uniqueViewsPerProfile);
@@ -50,11 +51,11 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
   }, [module, resourceId, resourceType]);
 
   const renderItem = ({
-    nb,
-    label,
-    icon,
     color,
+    icon,
+    label,
     last,
+    nb,
   }: {
     nb: number;
     label: string;
@@ -81,17 +82,17 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
   const renderContent = () => {
     return (
       <PageView style={styles.container} showNetworkBar={false}>
-        {renderItem({ nb: nbViews, label: I18n.get('audience-views-views'), icon: 'ui-see' })}
-        {renderItem({ nb: nbUniqueViews, label: I18n.get('audience-views-uniqueviews'), icon: 'ui-users' })}
+        {renderItem({ icon: 'ui-see', label: I18n.get('audience-views-views'), nb: nbViews })}
+        {renderItem({ icon: 'ui-users', label: I18n.get('audience-views-uniqueviews'), nb: nbUniqueViews })}
         <View style={styles.subItems}>
           {viewsPerProfile.map((item, index) =>
             renderItem({
-              nb: item.counter,
-              label: accountTypeInfos[item.profile].text,
-              icon: accountTypeInfos[item.profile].icon,
               color: accountTypeInfos[item.profile].color.regular,
+              icon: accountTypeInfos[item.profile].icon,
+              label: accountTypeInfos[item.profile].text,
               last: index === viewsPerProfile.length - 1,
-            }),
+              nb: item.counter,
+            })
           )}
         </View>
       </PageView>

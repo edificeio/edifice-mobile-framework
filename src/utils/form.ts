@@ -79,11 +79,11 @@ export class ValidatorBuilder {
       return valid;
     };
     return {
-      isValid,
-      isNotValid: value => !isValid(value),
       changeCallback(onChange: ValueChange<T>) {
-        return value => onChange({ value, valid: isValid(value) });
+        return value => onChange({ valid: isValid(value), value });
       },
+      isNotValid: value => !isValid(value),
+      isValid,
     };
   }
 }

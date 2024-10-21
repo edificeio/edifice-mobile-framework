@@ -16,8 +16,8 @@ export const initialState = {};
 
 // Action types
 export const notifierActionTypes = {
-  show: 'NOTIFIER_SHOW',
   hide: 'NOTIFIER_HIDE',
+  show: 'NOTIFIER_SHOW',
 };
 
 export default createReducer(initialState, {

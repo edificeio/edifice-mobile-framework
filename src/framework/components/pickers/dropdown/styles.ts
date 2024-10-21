@@ -1,10 +1,10 @@
 import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 
+import { DropdownSize, DropdownVariant } from './types';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
-
-import { DropdownSize, DropdownVariant } from './types';
 
 const styles = StyleSheet.create({
   bigPaddingGhost: {
@@ -16,24 +16,24 @@ const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
   },
   bodyContainer: {
-    flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.minor,
+    flex: 1,
+    flexDirection: 'row',
   },
   // eslint-disable-next-line react-native/no-color-literals
   containerGhost: {
-    minHeight: 0,
     backgroundColor: 'transparent',
-    borderWidth: 0,
     borderRadius: UI_SIZES.radius.medium,
+    borderWidth: 0,
+    minHeight: 0,
   },
   containerOutline: {
-    minHeight: 0,
     backgroundColor: theme.palette.grey.white,
-    borderWidth: 1,
     borderColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.medium,
+    borderWidth: 1,
+    minHeight: 0,
   },
   disabledContainerGhost: {
     backgroundColor: theme.palette.grey.white,
@@ -46,20 +46,20 @@ const styles = StyleSheet.create({
     color: theme.palette.grey.stone,
   },
   dropdownContainer: {
-    maxHeight: 300,
     backgroundColor: theme.palette.grey.white,
-    borderWidth: 0,
     borderRadius: UI_SIZES.radius.mediumPlus,
+    borderWidth: 0,
+    elevation: 10,
+    maxHeight: 300,
+    overflow: 'visible',
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { height: 4, width: 0 },
     shadowOpacity: 0.15,
     shadowRadius: 10,
-    elevation: 10,
-    overflow: 'visible',
   },
   dropdownItemContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   dropdownListContainer: {
     borderRadius: UI_SIZES.radius.mediumPlus,
@@ -87,10 +87,11 @@ export const getToggleStyle = (
   size: DropdownSize,
   isOpened: boolean,
   isItemSelected: boolean,
-  style?: StyleProp<ViewStyle>,
+  style?: StyleProp<ViewStyle>
 ) => {
   if (type === 'outlined') {
     return {
+      disabledStyle: styles.disabledContainerOutline,
       style: [
         styles.containerOutline,
         size === 'big' ? styles.bigPaddingOutline : styles.mediumPaddingOutline,
@@ -103,12 +104,11 @@ export const getToggleStyle = (
         },
         style,
       ],
-      disabledStyle: styles.disabledContainerOutline,
     };
   } else {
     return {
-      style: [styles.containerGhost, styles.bigPaddingGhost, isOpened && styles.selectedContainerGhost, style],
       disabledStyle: styles.disabledContainerGhost,
+      style: [styles.containerGhost, styles.bigPaddingGhost, isOpened && styles.selectedContainerGhost, style],
     };
   }
 };

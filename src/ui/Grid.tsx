@@ -1,7 +1,8 @@
 /* @flow */
-import styled from '@emotion/native';
 import * as React from 'react';
 import { FlexAlignType, View } from 'react-native';
+
+import styled from '@emotion/native';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -35,7 +36,7 @@ export interface NewProps {
 }
 
 export const Col = (props: ColProperties) => {
-  const { size = null, width = null, disabled = null, paddingVertical = null, pv = null } = props;
+  const { disabled = null, paddingVertical = null, pv = null, size = null, width = null } = props;
   const newProps: NewProps = {
     flex: size ? size : width ? 0 : 1,
     flexDirection: 'column',
@@ -85,7 +86,7 @@ export const Line = styled.View({
 
 // deprecated, too many props. Use Line and add new components for specific cases (touchable, grid, ...)
 export const Row = (props: RowProperties) => {
-  const { disabled = null, size = null, height = null } = props;
+  const { disabled = null, height = null, size = null } = props;
   const newProps: NewProps = {
     flex: size ? size : height ? 0 : 1,
     flexDirection: 'row',

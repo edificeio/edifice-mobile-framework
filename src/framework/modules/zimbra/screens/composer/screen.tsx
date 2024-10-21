@@ -1,17 +1,21 @@
-import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
+
+import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { ZimbraComposerScreenDispatchProps, ZimbraComposerScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { DocumentPicked, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import { cameraAction, deleteAction, documentAction, DocumentPicked, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
@@ -29,13 +33,10 @@ import { initDraftFromMail } from '~/framework/modules/zimbra/utils/drafts';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { Asset } from '~/framework/util/fileHandler/types';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
-
-import { Asset } from '~/framework/util/fileHandler/types';
-import styles from './styles';
-import { ZimbraComposerScreenDispatchProps, ZimbraComposerScreenPrivateProps } from './types';
 
 interface ZimbraComposerScreenState {
   draft: IDraft;
@@ -78,13 +79,13 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 
     this.state = {
       draft: {
-        to: [],
-        cc: [],
-        bcc: [],
-        subject: '',
-        body: '',
-        threadBody: '',
         attachments: [],
+        bcc: [],
+        body: '',
+        cc: [],
+        subject: '',
+        threadBody: '',
+        to: [],
       },
       isDeleted: false,
       isSending: false,
@@ -201,7 +202,6 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       I18n.get(isSaved ? 'zimbra-composer-savealert-message-saved' : 'zimbra-composer-savealert-message-new'),
       [
         {
-          text: I18n.get('zimbra-composer-savealert-delete'),
           onPress: async () => {
             if (session && id) {
               await zimbraService.mails.trash(session, [id]);
@@ -209,25 +209,26 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
             goBack();
           },
           style: 'destructive',
+          text: I18n.get('zimbra-composer-savealert-delete'),
         },
         ...(isSaved
           ? [
               {
-                text: I18n.get('zimbra-composer-savealert-cancelchanges'),
                 onPress: goBack,
+                text: I18n.get('zimbra-composer-savealert-cancelchanges'),
               },
             ]
           : []),
         {
-          text: I18n.get(isSaved ? 'zimbra-composer-savealert-savechanges' : 'zimbra-composer-savealert-save'),
           onPress: async () => {
             await this.saveDraft();
             Toast.showInfo(I18n.get(isSaved ? 'zimbra-composer-draft-updated' : 'zimbra-composer-draft-created'));
             goBack();
           },
           style: 'default',
+          text: I18n.get(isSaved ? 'zimbra-composer-savealert-savechanges' : 'zimbra-composer-savealert-save'),
         },
-      ],
+      ]
     );
   };
 
@@ -258,12 +259,12 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
     body += draft.threadBody;
     return {
-      to: draft.to.map(recipient => recipient.id),
-      cc: draft.cc.map(recipient => recipient.id),
-      bcc: draft.bcc.map(recipient => recipient.id),
-      subject: draft.subject,
-      body,
       attachments: includeAttachments ? draft.attachments : [],
+      bcc: draft.bcc.map(recipient => recipient.id),
+      body,
+      cc: draft.cc.map(recipient => recipient.id),
+      subject: draft.subject,
+      to: draft.to.map(recipient => recipient.id),
     };
   };
 
@@ -306,13 +307,13 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   alertPermanentDeletion = () => {
     Alert.alert(I18n.get('zimbra-composer-deletealert-title'), I18n.get('zimbra-composer-deletealert-message'), [
       {
-        text: I18n.get('common-cancel'),
         style: 'default',
+        text: I18n.get('common-cancel'),
       },
       {
-        text: I18n.get('common-delete'),
         onPress: this.deleteDraft,
         style: 'destructive',
+        text: I18n.get('common-delete'),
       },
     ]);
   };
@@ -346,18 +347,17 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     const { isTrashed } = this.props.route.params;
     const menuActions = [
       {
-        title: I18n.get('zimbra-composer-menuactions-addsignature'),
         action: () => this.state.signatureModalRef.current?.doShowModal(),
         icon: {
-          ios: 'pencil',
           android: 'ic_pencil',
+          ios: 'pencil',
         },
+        title: I18n.get('zimbra-composer-menuactions-addsignature'),
       },
       deleteAction({ action: isTrashed ? this.alertPermanentDeletion : this.trashDraft }),
     ];
 
     navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <View style={styles.navBarActionsContainer}>
           <PopupMenu
@@ -387,7 +387,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     const { hasZimbraSendExternalRight, isFetching, session } = this.props;
     const { draft, isPrefilling, signature, tempAttachment, useSignature } = this.state;
     const attachments = tempAttachment ? [...draft.attachments, tempAttachment] : draft.attachments;
-    const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+    const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
     return (
       <>
@@ -483,6 +483,6 @@ export default connect(
         tryFetchMail: tryAction(fetchZimbraMailAction),
         tryFetchSignature: tryAction(fetchZimbraSignatureAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(ZimbraComposerScreen);

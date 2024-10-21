@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { HomeworkAssistanceNavigationParams, homeworkAssistanceRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/homework-assistance/module-config';
 import HomeworkAssistanceHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/homework-assistance/screens/home';
 import HomeworkAssistanceRequestScreen, {
@@ -7,8 +9,6 @@ import HomeworkAssistanceRequestScreen, {
 } from '~/framework/modules/homework-assistance/screens/request';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { HomeworkAssistanceNavigationParams, homeworkAssistanceRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<HomeworkAssistanceNavigationParams>(moduleConfig.name, Stack => (

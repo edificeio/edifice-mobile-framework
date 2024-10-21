@@ -2,13 +2,13 @@ import NetInfo from '@react-native-community/netinfo';
 import CookieManager from '@react-native-cookies/cookies';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { CACHE_KEY_PREFIX } from './cache';
+import { OAuth2RessourceOwnerPasswordClient } from './oauth';
+
 import { getStore } from '~/app/store';
 import { invalidateSessionAction } from '~/framework/modules/auth/actions';
 import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
 import { OldStorageFunctions } from '~/framework/util/storage';
-
-import { CACHE_KEY_PREFIX } from './cache';
-import { OAuth2RessourceOwnerPasswordClient } from './oauth';
 
 /** singleton boolean to prevent logout multiple time when parallel fetchs fails */
 let isFailing: boolean = false;
@@ -108,7 +108,7 @@ export async function fetchWithCache(
   forceSync: boolean = true,
   platform: string | undefined = assertSession().platform.url,
   getBody: (r: Response) => any = r => r.text(),
-  getCacheResult = (cr: any) => new Response(...cr),
+  getCacheResult = (cr: any) => new Response(...cr)
 ) {
   const isConnected = await NetInfo.fetch().then(state => state.isConnected);
   // Continue if connected and if sync wanted
@@ -151,7 +151,7 @@ export async function fetchJSONWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string | undefined = assertSession().platform.url,
+  platform: string | undefined = assertSession().platform.url
 ) {
   return fetchWithCache(
     path,
@@ -159,6 +159,6 @@ export async function fetchJSONWithCache(
     forceSync,
     platform,
     r => r.json(),
-    cr => cr.body,
+    cr => cr.body
   ) as Promise<any>;
 }

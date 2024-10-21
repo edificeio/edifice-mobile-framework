@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import { Animated, TouchableOpacity, View } from 'react-native';
 
-import theme from '~/app/theme';
-import IconButton from '~/framework/components/buttons/icon';
-import { UI_SIZES } from '~/framework/components/constants';
-import type RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
-import { actions } from '~/framework/components/inputs/rich-text/editor/const';
-import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text/toolbar/list';
-import { NamedSVG } from '~/framework/components/picture';
-
 import { RichToolbarActionItem } from './item/action/component';
 import { RichToolbarCustomItem } from './item/custom/component';
 import { RichToolbarSeparator } from './item/separator';
 import styles from './styles';
 import { RichToolbarProps, RichToolbarState } from './types';
+
+import theme from '~/app/theme';
+import IconButton from '~/framework/components/buttons/icon';
+import { UI_SIZES } from '~/framework/components/constants';
+import { actions } from '~/framework/components/inputs/rich-text/editor/const';
+import type RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
+import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text/toolbar/list';
+import { NamedSVG } from '~/framework/components/picture';
 
 const toolbarTextOptions = [
   actions.setBold,
@@ -30,11 +30,11 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
   editor: RichEditor | undefined = undefined;
 
   state = {
-    selectedItems: [],
     animatedValueEnter: new Animated.Value(0),
     animatedValueExit: new Animated.Value(0),
-    animatedValueOpacityExit: new Animated.Value(0),
     animatedValueOpacityEnter: new Animated.Value(0),
+    animatedValueOpacityExit: new Animated.Value(0),
+    selectedItems: [],
   };
 
   constructor(props) {
@@ -65,23 +65,23 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
   animate(inverse: boolean) {
     Animated.parallel([
       Animated.timing(this.state.animatedValueExit, {
-        toValue: inverse ? 0 : 1,
         duration: animationDuration,
+        toValue: inverse ? 0 : 1,
         useNativeDriver: false,
       }),
       Animated.timing(this.state.animatedValueEnter, {
-        toValue: inverse ? 0 : 1,
         duration: animationDuration,
+        toValue: inverse ? 0 : 1,
         useNativeDriver: false,
       }),
       Animated.timing(this.state.animatedValueOpacityExit, {
-        toValue: inverse ? 1 : 0,
         duration: animationDuration,
+        toValue: inverse ? 1 : 0,
         useNativeDriver: false,
       }),
       Animated.timing(this.state.animatedValueOpacityEnter, {
-        toValue: inverse ? 0 : 1,
         duration: animationDuration,
+        toValue: inverse ? 0 : 1,
         useNativeDriver: false,
       }),
     ]).start();
@@ -123,8 +123,8 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
     });
 
     const animatedStyleEnter = {
-      transform: [{ translateY: interpolatedValueEnter }],
       opacity: interpolatedValueOpacityEnter,
+      transform: [{ translateY: interpolatedValueEnter }],
     };
 
     const interpolatedValueExit = this.state.animatedValueExit.interpolate({
@@ -138,8 +138,8 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
     });
 
     const animatedStyleExit = {
-      transform: [{ translateY: interpolatedValueExit }],
       opacity: interpolatedValueOpacityExit,
+      transform: [{ translateY: interpolatedValueExit }],
     };
 
     const isSelected = (action: string) => {

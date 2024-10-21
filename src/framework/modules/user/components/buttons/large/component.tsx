@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { LargeButtonProps } from './types';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 
-import styles from './styles';
-import { LargeButtonProps } from './types';
-
-export const LargeButton = ({ action, icon, text, style }: LargeButtonProps) => {
+export const LargeButton = ({ action, icon, style, text }: LargeButtonProps) => {
   return (
     <TouchableOpacity onPress={action} style={[styles.container, style]}>
       <View style={styles.iconContainer}>

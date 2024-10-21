@@ -1,6 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, Image, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import styles from './styles';
+import type { UserEditMoodMottoScreenProps } from './types';
+
+import { renderMoodPicture } from '.';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -16,10 +22,6 @@ import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 
-import { renderMoodPicture } from '.';
-import styles from './styles';
-import type { UserEditMoodMottoScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -32,15 +34,15 @@ export const computeNavBar = ({
 });
 
 const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
-  const { route, navigation } = props;
-  const { userId, description, descriptionVisibility, hobbies } = route.params;
+  const { navigation, route } = props;
+  const { description, descriptionVisibility, hobbies, userId } = route.params;
 
   const [mood, setMood] = React.useState<string>();
   const [motto, setMotto] = React.useState<string>();
   const [isSending, setIsSending] = React.useState<boolean>(false);
 
   const PageComponent = React.useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
   }, []);
 
   const scrollViewRef = React.useRef<ScrollView>(null);
@@ -57,11 +59,11 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
       const body = JSON.stringify({ mood, motto: motto?.trim() });
       await userService.person.put(userId, body);
       navigation.navigate(userRouteNames.profile, {
+        newDescription: description,
+        newDescriptionVisibility: descriptionVisibility,
+        newHobbies: hobbies,
         newMood: mood,
         newMotto: motto?.trim(),
-        newDescriptionVisibility: descriptionVisibility,
-        newDescription: description,
-        newHobbies: hobbies,
       });
       Toast.showSuccess(I18n.get('user-profile-toast-editMoodMottoSuccess'));
     } catch {
@@ -74,8 +76,8 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
   const onFocusMottoInput = () => {
     Alert.alert(I18n.get('user-profile-editMoodMotto-alerttitle'), I18n.get('user-profile-editMoodMotto-alerttext'), [
       {
-        text: I18n.get('user-profile-editMoodMotto-alertbutton'),
         onPress: () => setTimeout(() => scrollViewRef.current?.scrollToEnd(), 500),
+        text: I18n.get('user-profile-editMoodMotto-alertbutton'),
       },
     ]);
   };
@@ -93,14 +95,13 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
   };
 
   usePreventBack({
-    title: I18n.get('user-profile-preventremove-title'),
-    text: I18n.get('user-profile-preventremove-text'),
     showAlert: (route.params.mood !== mood || route.params.motto !== motto) && !isSending,
+    text: I18n.get('user-profile-preventremove-text'),
+    title: I18n.get('user-profile-preventremove-title'),
   });
 
   React.useEffect(() => {
     navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => <NavBarAction icon="ui-check" onPress={onSaveMoodMotto} />,
     });
   });

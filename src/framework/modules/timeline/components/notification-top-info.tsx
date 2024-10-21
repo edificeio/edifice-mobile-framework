@@ -2,6 +2,7 @@
  * Information about a timeline notification. Displayed in the header.
  */
 import * as React from 'react';
+
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -13,10 +14,10 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { APPBADGES } from '~/framework/modules/timeline/app-badges';
 import appConf from '~/framework/util/appConf';
 import {
-  INamedResourceNotification,
-  ITimelineNotification,
   getAsNamedResourceNotification,
   getAsSenderNotification,
+  INamedResourceNotification,
+  ITimelineNotification,
 } from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
 
@@ -38,19 +39,19 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
     if (isSenderMe)
       formattedMessage = formattedMessage.replace(
         sender && sender.displayName,
-        `${sender.displayName} ${I18n.get('timeline-meindicator')} `,
+        `${sender.displayName} ${I18n.get('timeline-meindicator')} `
       );
     if (notification.type === 'USERBOOK_MOTTO')
       formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get('timeline-notiftype-motto')}`;
     if (notification.type === 'USERBOOK_MOOD')
       formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get(
-        `timeline-notiftype-mood-${notification.backupData.params.moodImg}-${degre}`,
+        `timeline-notiftype-mood-${notification.backupData.params.moodImg}-${degre}`
       )}`;
   }
 
   const badgeInfo = {
-    icon: APPBADGES[type] && APPBADGES[type].icon,
     color: APPBADGES[type] && APPBADGES[type].color,
+    icon: APPBADGES[type] && APPBADGES[type].icon,
   };
 
   return (
@@ -61,21 +62,21 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
         <HtmlContentView
           html={formattedMessage}
           opts={{
-            hyperlinks: false,
-            textFormatting: false,
-            textColor: false,
             audio: false,
-            video: false,
-            iframes: false,
-            images: false,
-            ignoreLineBreaks: true,
             globalTextStyle: {
               ...TextFontStyle.Regular,
               ...TextSizeStyle.Normal,
             },
+            hyperlinks: false,
+            iframes: false,
+            ignoreLineBreaks: true,
+            images: false,
             linkTextStyle: {
               ...TextFontStyle.Bold,
             },
+            textColor: false,
+            textFormatting: false,
+            video: false,
           }}
         />
       }

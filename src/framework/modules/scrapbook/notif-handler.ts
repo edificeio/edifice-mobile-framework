@@ -5,8 +5,8 @@ import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
@@ -19,8 +19,8 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<IScrapbookNotificati
         name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
           initial: false,
-          screen: scrapbookRouteNames.details,
           params: { resourceUri: notification.resource.uri },
+          screen: scrapbookRouteNames.details,
         },
       });
 
@@ -38,8 +38,8 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<IScrapbookNotificati
 export default () =>
   registerNotifHandlers([
     {
-      type: 'SCRAPBOOK',
       'event-type': ['SHARE', 'MODIFIED'],
-      notifHandlerAction: handleSomeNotificationAction,
+      'notifHandlerAction': handleSomeNotificationAction,
+      'type': 'SCRAPBOOK',
     },
   ]);

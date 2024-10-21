@@ -1,10 +1,14 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import { NavigationState, SceneMap, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -39,9 +43,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import styles from './styles';
-import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -67,10 +68,10 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     { key: 'saturday', title: I18n.get('date-saturday') },
   ]);
   const [startDate, setStartDate] = React.useState<Moment>(
-    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day'),
+    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day')
   );
   const [selectedDate, setSelectedDate] = React.useState<Moment>(
-    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day'),
+    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day')
   );
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -251,11 +252,11 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   }, [selectedDate]);
 
   const renderTabbar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> }
   ) => {
     return (
       <TabBar
-        renderLabel={({ route, focused }) => (
+        renderLabel={({ focused, route }) => (
           <View
             style={[
               styles.tabBarItem,
@@ -309,12 +310,12 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
           onIndexChange={setIndex}
           animationEnabled={false}
           renderScene={SceneMap({
+            friday: () => renderScrollView(weekdays[4]),
             monday: () => renderScrollView(weekdays[0]),
+            saturday: () => renderScrollView(weekdays[5]),
+            thursday: () => renderScrollView(weekdays[3]),
             tuesday: () => renderScrollView(weekdays[1]),
             wednesday: () => renderScrollView(weekdays[2]),
-            thursday: () => renderScrollView(weekdays[3]),
-            friday: () => renderScrollView(weekdays[4]),
-            saturday: () => renderScrollView(weekdays[5]),
           })}
           renderTabBar={renderTabbar}
         />
@@ -386,6 +387,6 @@ export default connect(
         tryFetchTeachers: tryAction(fetchEdtTeachersAction),
         tryFetchUserChildren: tryAction(fetchEdtUserChildrenAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(EdtHomeScreen);

@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 
 import { initMailService } from '~/framework/modules/conversation/service/initMails';
-import { IInitMail, actionTypes } from '~/framework/modules/conversation/state/initMails';
+import { actionTypes, IInitMail } from '~/framework/modules/conversation/state/initMails';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 
 export const dataActions = createAsyncActionCreators<IInitMail>(actionTypes);

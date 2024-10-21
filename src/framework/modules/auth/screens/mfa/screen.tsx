@@ -1,11 +1,23 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import LottieView from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import LottieView from 'lottie-react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import {
+  AuthMFAScreenDispatchProps,
+  AuthMFAScreenPrivateProps,
+  AuthMFAScreenStoreProps,
+  CodeState,
+  MFATestIds,
+  PageTexts,
+  ResendResponse,
+} from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -20,10 +32,10 @@ import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
+  getMFAValidationInfos,
   IEntcoreEmailValidationState,
   IEntcoreMFAValidationState,
   IEntcoreMobileValidationState,
-  getMFAValidationInfos,
   requestEmailVerificationCode,
   requestMobileVerificationCode,
   verifyEmailCode,
@@ -35,17 +47,6 @@ import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import styles from './styles';
-import {
-  AuthMFAScreenDispatchProps,
-  AuthMFAScreenPrivateProps,
-  AuthMFAScreenStoreProps,
-  CodeState,
-  MFATestIds,
-  PageTexts,
-  ResendResponse,
-} from './types';
 
 const animationSources = {
   [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
@@ -78,6 +79,11 @@ export const computeNavBar = ({
 };
 
 const feedbackTexts = {
+  mfa: {
+    [CodeState.CODE_CORRECT]: 'auth-mfa-feedback-codecorrect',
+    [CodeState.CODE_EXPIRED]: 'auth-mfa-feedback-codeexpired',
+    [CodeState.CODE_WRONG]: 'auth-mfa-feedback-codewrong',
+  },
   mfaEmail: {
     [CodeState.CODE_CORRECT]: 'auth-mfa-email-feedback-codecorrect',
     [CodeState.CODE_EXPIRED]: 'auth-mfa-email-feedback-codeexpired',
@@ -88,15 +94,10 @@ const feedbackTexts = {
     [CodeState.CODE_EXPIRED]: 'auth-mfa-mobile-feedback-codeexpired',
     [CodeState.CODE_WRONG]: 'auth-mfa-mobile-feedback-codewrong',
   },
-  mfa: {
-    [CodeState.CODE_CORRECT]: 'auth-mfa-feedback-codecorrect',
-    [CodeState.CODE_EXPIRED]: 'auth-mfa-feedback-codeexpired',
-    [CodeState.CODE_WRONG]: 'auth-mfa-feedback-codewrong',
-  },
 };
 
 const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
-  const { tryRefreshRequirements, tryUpdateProfile, navigation, route } = props;
+  const { navigation, route, tryRefreshRequirements, tryUpdateProfile } = props;
 
   const platform = props.route.params.platform;
   const modificationType = route.params.modificationType;
@@ -119,10 +120,10 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const [animationSource, setAnimationSource] = useState(animationSources[CodeState.CODE_CORRECT]);
   const animationRef = useRef<LottieView>(null);
 
-  const codeFieldRef = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
+  const codeFieldRef = useBlurOnFulfill({ cellCount: CELL_COUNT, value: code });
   const [codeFieldProps, getCellOnLayoutHandler] = useClearByFocusCell({
-    value: code,
     setValue: setCode,
+    value: code,
   });
 
   const isCodeComplete = code.length === CELL_COUNT;
@@ -161,29 +162,29 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const testIds: MFATestIds = isEmailMFA
     ? {
-        title: 'email-code-title',
-        subtitle: 'email-code-subtitle',
         code: 'email-code',
         codeError: 'email-code-error',
         codeIssues: 'email-code-issues',
         resend: 'email-code-send-again',
+        subtitle: 'email-code-subtitle',
+        title: 'email-code-title',
       }
     : isMobileMFA
       ? {
-          title: 'phone-code-title',
-          subtitle: 'phone-code-subtitle',
           code: 'phone-code',
           codeError: 'phone-code-error',
           codeIssues: 'phone-code-issues',
           resend: 'phone-code-send-again',
+          subtitle: 'phone-code-subtitle',
+          title: 'phone-code-title',
         }
       : {
-          title: '',
-          subtitle: '',
           code: '',
           codeError: '',
           codeIssues: '',
           resend: '',
+          subtitle: '',
+          title: '',
         };
 
   const setResendTimer = () => {
@@ -228,7 +229,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         setIsVerifyingCode(false);
       }
     },
-    [codeState, isEmailMFA, isMobileMFA],
+    [codeState, isEmailMFA, isMobileMFA]
   );
 
   const verifyTypedCode = useCallback(() => {
@@ -274,7 +275,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const redirectMFA = useCallback(() => {
     if (isCodeCorrect) {
-      const params = { navBarTitle: route.params.navBarTitle, modificationType, platform };
+      const params = { modificationType, navBarTitle: route.params.navBarTitle, platform };
       navigation.replace(mfaRedirectionRoute!, params);
     }
   }, [isCodeCorrect, modificationType, navigation, platform, route.params.navBarTitle, mfaRedirectionRoute]);
@@ -353,7 +354,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
               cellCount={CELL_COUNT}
               keyboardType="number-pad"
               textContentType="oneTimeCode"
-              renderCell={({ index, symbol, isFocused }) => (
+              renderCell={({ index, isFocused, symbol }) => (
                 <HeadingLText
                   key={index}
                   style={[
@@ -434,7 +435,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScr
       tryRefreshRequirements: tryAction(refreshRequirementsAction),
       tryUpdateProfile: tryAction(profileUpdateAction),
     },
-    dispatch,
+    dispatch
   );
 };
 

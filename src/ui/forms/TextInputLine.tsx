@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ColorValue, StyleProp, StyleSheet, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+
 import { TextField } from 'rn-material-ui-textfield';
 
 import theme from '~/app/theme';
@@ -40,27 +41,27 @@ export class TextInputLine extends React.Component<
   } & TextInputProps
 > {
   public render() {
-    const { hasError, style, inputStyle, inputRef, isPasswordField, onBlur, onFocus, placeholderTextColor, textColor } = this.props;
+    const { hasError, inputRef, inputStyle, isPasswordField, onBlur, onFocus, placeholderTextColor, style, textColor } = this.props;
     const inputProps = {
       ...this.props,
       ...TextFontStyle.Regular,
       ...TextSizeStyle.Medium,
+      activeLineWidth: 2,
+      autoCapitalize: 'none',
+      baseColor: hasError ? theme.palette.status.failure.regular : theme.ui.border.input,
+      containerStyle: style,
       innerRef: r => inputRef(r),
+      inputContainerStyle: inputStyle,
+      invertVisibilityIcon: true,
       onBlur: () => onBlur && onBlur(),
+      lineWidth: hasError ? 2 : 1,
       onFocus: () => onFocus && onFocus(),
       placeholderTextColor: placeholderTextColor || theme.ui.text.light,
       textColor: textColor || theme.ui.text.regular,
-      underlineColorAndroid: 'transparent',
-      autoCapitalize: 'none',
-      containerStyle: style,
-      inputContainerStyle: inputStyle,
-      lineWidth: hasError ? 2 : 1,
-      activeLineWidth: 2,
-      baseColor: hasError ? theme.palette.status.failure.regular : theme.ui.border.input,
       tintColor: hasError ? theme.palette.status.failure.regular : theme.palette.primary.regular,
-      invertVisibilityIcon: true,
+      underlineColorAndroid: 'transparent',
     };
-    // eslint-disable-next-line @typescript-eslint/naming-convention
+
     const TextComponent = isPasswordField ? PasswordInput : TextField;
     return (
       <View style={styles.container}>

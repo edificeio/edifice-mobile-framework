@@ -2,11 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNConfigReader from 'react-native-config-reader';
 import { MMKV } from 'react-native-mmkv';
 
-import { getOverrideName } from '~/framework/util/string';
-import { Trackers } from '~/framework/util/tracker';
-
 import { StorageHandler } from './handler';
 import type { IStorageBackend } from './types';
+
+import { getOverrideName } from '~/framework/util/string';
+import { Trackers } from '~/framework/util/tracker';
 
 const MIGRATION_KEYS_IGNORE: RegExp[] = [/^@phrase_/];
 
@@ -35,7 +35,7 @@ const migrateFromAsyncStorage = async (storage: IStorageBackend) => {
         console.error(
           `[Storage] migrateFromAsyncStorage: failed to migrate items ${
             error instanceof Error ? `: ${(error as Error).message}` : ''
-          }`,
+          }`
         );
       }
     }
@@ -43,8 +43,8 @@ const migrateFromAsyncStorage = async (storage: IStorageBackend) => {
 };
 
 const mmkvInstance = new MMKV({
-  id: getOverrideName(),
   encryptionKey: RNConfigReader.CFBundleIdentifier,
+  id: getOverrideName(),
 }) satisfies IStorageBackend;
 
 export const mmkvHandler = new StorageHandler(mmkvInstance, 'mmkv').setAppInit(async function () {

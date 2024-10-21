@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { ConversationNavigationParams, conversationRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import ConversationMailContentScreen, {
   computeNavBar as conversationMailContentNavBar,
@@ -13,8 +15,6 @@ import ConversationNewMailScreen, {
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { ConversationNavigationParams, conversationRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ConversationNavigationParams>(moduleConfig.name, Stack => (

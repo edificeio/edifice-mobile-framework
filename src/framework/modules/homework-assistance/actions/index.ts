@@ -59,7 +59,7 @@ export const postHomeworkAssistanceRequestAction =
     student: UserChild | null,
     structureName: string,
     className: string,
-    information: string,
+    information: string
   ) =>
   async (dispatch, getState) => {
     try {
@@ -76,7 +76,7 @@ export const postHomeworkAssistanceRequestAction =
         lastName,
         structureName,
         className,
-        information,
+        information
       );
       if (response.status === 'OK') {
         Promise.resolve();

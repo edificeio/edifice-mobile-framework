@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { ILocalAttachment } from './Attachment';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES } from '~/framework/components/constants';
-import { ImagePicked, cameraAction, galleryAction } from '~/framework/components/menus/actions';
+import { cameraAction, galleryAction, ImagePicked } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, TextSizeStyle } from '~/framework/components/text';
-import { Image, formatSource } from '~/framework/util/media';
+import { formatSource, Image } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
-
-import { ILocalAttachment } from './Attachment';
 
 const itemWidth =
   // The items' width is computed by substracting spacings from the screen's width
@@ -33,33 +33,33 @@ const styles = StyleSheet.create({
   attachPhotosAdded: { ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.tiny },
   attachPhotosContainer: { alignItems: 'center', justifyContent: 'center' },
   attachPhotosContainerAdded: {
-    borderColor: theme.palette.primary.regular,
-    borderWidth: UI_SIZES.border.thin,
-    borderRadius: UI_SIZES.radius.medium,
     aspectRatio: UI_SIZES.aspectRatios.square,
+    borderColor: theme.palette.primary.regular,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: UI_SIZES.border.thin,
     width: itemWidth,
-  },
-  iconButton: {
-    borderRadius: UI_SIZES.radius.huge,
-    backgroundColor: theme.palette.primary.regular,
-    width: UI_SIZES.dimensions.height.large,
-    height: UI_SIZES.dimensions.height.large,
-    right: -UI_SIZES.spacing._LEGACY_small,
-    top: -UI_SIZES.spacing.minor,
-    position: 'absolute',
   },
   container: {
     borderColor: theme.ui.border.input,
-    borderWidth: UI_SIZES.border.thin,
     borderRadius: UI_SIZES.radius.selector,
+    borderWidth: UI_SIZES.border.thin,
   },
   containerAdded: { borderColor: theme.palette.grey.stone },
   contentContainer: {
-    paddingVertical: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
+    paddingVertical: UI_SIZES.spacing.medium,
   },
   contentContainerAdded: {
     alignItems: 'center',
+  },
+  iconButton: {
+    backgroundColor: theme.palette.primary.regular,
+    borderRadius: UI_SIZES.radius.huge,
+    height: UI_SIZES.dimensions.height.large,
+    position: 'absolute',
+    right: -UI_SIZES.spacing._LEGACY_small,
+    top: -UI_SIZES.spacing.minor,
+    width: UI_SIZES.dimensions.height.large,
   },
   itemSeperator: { paddingVertical: UI_SIZES.spacing.small },
   photo: {
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     borderRadius: UI_SIZES.radius.medium,
     width: itemWidth,
   },
-  photoContainer: { marginRight: UI_SIZES.spacing.big, borderRadius: UI_SIZES.radius.medium },
+  photoContainer: { borderRadius: UI_SIZES.radius.medium, marginRight: UI_SIZES.spacing.big },
 });
 
 export class AttachmentGroupImages extends React.PureComponent<{
@@ -83,7 +83,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
 
   public onOpenImage = () => {
     const { images, moduleName } = this.props;
-    const carouselImages = images.map(image => ({ src: { uri: image.uri }, type: 'image' as const, alt: 'image' }));
+    const carouselImages = images.map(image => ({ alt: 'image', src: { uri: image.uri }, type: 'image' as const }));
     Trackers.trackEvent(moduleName, 'OPEN ATTACHMENT', 'Edit mode');
     openCarousel({ data: carouselImages });
   };
@@ -112,7 +112,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
     );
   }
 
-  public renderItem = ({ item, index }) => {
+  public renderItem = ({ index, item }) => {
     const { onRemove } = this.props;
     if (isEmpty(item)) return this.AddPhotosButton();
     return (

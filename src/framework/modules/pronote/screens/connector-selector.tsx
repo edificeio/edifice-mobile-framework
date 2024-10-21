@@ -1,5 +1,6 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -52,15 +53,15 @@ class ConnectorSelectorScreen extends React.PureComponent<IConnectorSelectorScre
           message={I18n.get('pronote-connectorselector-title')}
           dropDownPickerProps={{
             items,
-            showTickIcon: false,
             placeholder: I18n.get('pronote-connectorselector-placeholder'),
+            showTickIcon: false,
           }}
           button={{
-            text: I18n.get('pronote-connectorselector-action'),
             action: v => {
               if (v && this.props.session) redirect(this.props.session, v as string);
             },
             iconRight: 'pictos-external-link',
+            text: I18n.get('pronote-connectorselector-action'),
           }}
         />
       </PageView>
@@ -72,5 +73,5 @@ export default connect(
   (state: IGlobalState) => ({
     session: getSession(),
   }),
-  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
+  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch)
 )(ConnectorSelectorScreen);

@@ -1,5 +1,6 @@
-import type { Route } from '@react-navigation/native';
 import * as React from 'react';
+
+import type { Route } from '@react-navigation/native';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { stopItSnowAction } from '~/framework/modules/user/actions';
@@ -10,7 +11,7 @@ const customRouteNameLogicMap: { [key: string]: (route: Route<string, any>) => s
 const stopSnowIfNeeded = async (
   dispatch: ThunkDispatch<any, any, any>,
   routeNameRef: React.MutableRefObject<string | undefined>,
-  path?: string,
+  path?: string
 ) => {
   const previousRouteName = routeNameRef.current;
   const route = navigationRef.getCurrentRoute();

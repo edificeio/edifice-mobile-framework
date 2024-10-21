@@ -1,8 +1,9 @@
+import React from 'react';
+import { Alert, AlertButton, Keyboard, Platform, StyleSheet } from 'react-native';
+
 import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import React from 'react';
-import { Alert, AlertButton, Keyboard, Platform, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -10,7 +11,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import { cameraAction, documentAction, DocumentPicked, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
@@ -33,7 +34,7 @@ import NewMailComponent from '~/framework/modules/conversation/components/NewMai
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
-import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
+import { getMailContentState, IMail } from '~/framework/modules/conversation/state/mailContent';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
@@ -135,15 +136,15 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     super(props);
 
     this.state = {
-      mail: { to: [], cc: [], cci: [], subject: '', body: '', attachments: [] },
+      isSending: false,
+      mail: { attachments: [], body: '', cc: [], cci: [], subject: '', to: [] },
       prevBody: '',
       webDraftWarning: false,
-      isSending: false,
     };
   }
 
   componentDidMount = () => {
-    const { fetchMailContent, route, navigation, clearContent, setup } = this.props;
+    const { clearContent, fetchMailContent, navigation, route, setup } = this.props;
     const { id } = this.state;
     const draftType = route.params.type;
     const mailId = route.params.mailId;
@@ -177,12 +178,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const sendDraft = this.navigationHeaderFunction.getSendDraft;
 
     navigation.setOptions({
-      headerTitle: navBarTitle(
-        I18n.get(isSavedDraft ? 'conversation-newmail-draft' : 'conversation-newmail-newmessage'),
-        styles.title,
-      ),
       // React Navigation 6 uses this syntax to setup nav options
-      // eslint-disable-next-line react/no-unstable-nested-components
+
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
@@ -210,6 +207,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           ]}
         />
       ),
+
+      headerTitle: navBarTitle(
+        I18n.get(isSavedDraft ? 'conversation-newmail-draft' : 'conversation-newmail-newmessage'),
+        styles.title
+      ),
     });
 
     if (prevProps.mail !== mail) {
@@ -220,8 +222,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       this.setState(prevState => ({
         ...prevState,
         ...rest,
-        mail: { ...prevState.mail, ...(prefilledMail as IMail) },
         isPrefilling: false,
+        mail: { ...prevState.mail, ...(prefilledMail as IMail) },
       }));
     } else if (route.params.mailId && !id && route.params.type === DraftType.DRAFT)
       if ((route.params.type ?? DraftType.NEW) === DraftType.DRAFT && !webDraftWarning) {
@@ -239,18 +241,18 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
             I18n.get('conversation-newmail-warning-webdraft-text'),
             [
               {
-                text: I18n.get('common-quit'),
                 onPress: async () => {
                   this.props.navigation.goBack();
                 },
                 style: 'cancel',
+                text: I18n.get('common-quit'),
               },
               {
-                text: I18n.get('common-continue'),
                 onPress: async () => {},
                 style: 'default',
+                text: I18n.get('common-continue'),
               },
-            ],
+            ]
           );
         }
       }
@@ -262,8 +264,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         'Rédaction mail - Insérer - Pièce jointe - ' +
         ({
           camera: 'Caméra',
-          gallery: 'Galerie',
           document: 'Document',
+          gallery: 'Galerie',
         }[sourceType] ?? 'Source inconnue');
       try {
         await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
@@ -271,6 +273,139 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       } catch {
         Toast.showError('pickfile-error-storageaccess');
         Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Échec');
+      }
+    },
+    getDeleteDraft: async () => {
+      const { deleteMessage, navigation, trashMessage } = this.props;
+      const { id } = this.state;
+      if (id) {
+        try {
+          await trashMessage([id]);
+          await deleteMessage([id]);
+          navigation.goBack();
+          Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Succès');
+          Toast.showSuccess(I18n.get('conversation-newmail-messagedeleted'));
+        } catch {
+          Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
+        }
+      }
+      navigation.goBack();
+    },
+    getGoBack: async backAction => {
+      const { deleteMessage, route, trashMessage } = this.props;
+      const { id, mail, tempAttachment } = this.state;
+      const { attachments, body, cc, cci, subject, to } = mail;
+      const mailId = route.params.mailId;
+      const draftType = route.params.type;
+      const isNewDraft = draftType === DraftType.NEW;
+      const isSavedDraft = draftType === DraftType.DRAFT;
+      const isUploadingAttachment = tempAttachment && tempAttachment !== null;
+      const isDraftEmpty =
+        to.length === 0 && cc.length === 0 && cci.length === 0 && subject === '' && body === '' && attachments.length === 0;
+
+      if (isUploadingAttachment) {
+        Keyboard.dismiss();
+        Toast.showInfo(I18n.get('conversation-newmail-sendattachment-progress'));
+      } else if (!isDraftEmpty) {
+        const textToDisplay = {
+          text: isSavedDraft ? 'conversation-newmail-saveagaindraft-message' : 'conversation-newmail-savedraft-message',
+          title: 'conversation-newmail-savedraft-title',
+        };
+        const options = [
+          ...(isSavedDraft
+            ? [
+                {
+                  onPress: async () => {
+                    try {
+                      if (id) {
+                        await trashMessage([id]);
+                        await deleteMessage([id]);
+                      }
+                      Trackers.trackEventOfModule(
+                        moduleConfig,
+                        'Ecrire un mail',
+                        'Rédaction mail - Sortir - Supprimer le brouillon - Succès'
+                      );
+                    } catch {
+                      Trackers.trackEventOfModule(
+                        moduleConfig,
+                        'Ecrire un mail',
+                        'Rédaction mail - Sortir - Supprimer le brouillon - Échec'
+                      );
+                    }
+                    backAction();
+                  },
+                  style: 'destructive',
+                  text: isSavedDraft ? I18n.get('conversation-newmail-deletedraft') : I18n.get('common-delete'),
+                },
+              ]
+            : []),
+          {
+            onPress: async () => {
+              try {
+                if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
+                  await trashMessage([id]);
+                  await deleteMessage([id]);
+                }
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  isSavedDraft
+                    ? 'Rédaction mail - Sortir - Annuler les modifications - Succès'
+                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès'
+                );
+              } catch {
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  isSavedDraft
+                    ? 'Rédaction mail - Sortir - Annuler les modifications - Échec'
+                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec'
+                );
+              }
+              backAction();
+            },
+            style: isSavedDraft ? 'default' : 'destructive',
+            text: isSavedDraft ? I18n.get('conversation-newmail-cancelmodifications') : I18n.get('common-delete'),
+          },
+          {
+            onPress: async () => {
+              try {
+                await this.saveDraft();
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Succès'
+                );
+              } catch {
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec'
+                );
+              }
+              backAction();
+            },
+            style: 'default',
+            text: isSavedDraft ? I18n.get('conversation-newmail-savemodifications') : I18n.get('common-save'),
+          },
+        ] as AlertButton[];
+        Alert.alert(
+          I18n.get(textToDisplay.title),
+          I18n.get(textToDisplay.text),
+          Platform.select({
+            android: options,
+            ios: [...options].reverse(),
+          })
+        );
+      } else {
+        if ((isNewDraft && id) || (!isNewDraft && !isSavedDraft && id && id !== mailId)) {
+          await trashMessage([id]);
+          deleteMessage([id]);
+        } else if (isSavedDraft) {
+          await this.saveDraft();
+        }
+        backAction();
       }
     },
     getSendDraft: async () => {
@@ -290,151 +425,18 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           I18n.get(!mail.body ? 'conversation-newmail-missingbody-message' : 'conversation-newmail-missingsubject-message'),
           [
             {
-              text: I18n.get('common-send'),
               onPress: () => this.sendDraft(),
+              text: I18n.get('common-send'),
             },
             {
-              text: I18n.get('common-cancel'),
               style: 'cancel',
+              text: I18n.get('common-cancel'),
             },
-          ],
+          ]
         );
         return;
       }
       this.sendDraft();
-    },
-    getDeleteDraft: async () => {
-      const { trashMessage, deleteMessage, navigation } = this.props;
-      const { id } = this.state;
-      if (id) {
-        try {
-          await trashMessage([id]);
-          await deleteMessage([id]);
-          navigation.goBack();
-          Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Succès');
-          Toast.showSuccess(I18n.get('conversation-newmail-messagedeleted'));
-        } catch {
-          Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
-        }
-      }
-      navigation.goBack();
-    },
-    getGoBack: async backAction => {
-      const { trashMessage, deleteMessage, route } = this.props;
-      const { tempAttachment, mail, id } = this.state;
-      const { to, cc, cci, subject, body, attachments } = mail;
-      const mailId = route.params.mailId;
-      const draftType = route.params.type;
-      const isNewDraft = draftType === DraftType.NEW;
-      const isSavedDraft = draftType === DraftType.DRAFT;
-      const isUploadingAttachment = tempAttachment && tempAttachment !== null;
-      const isDraftEmpty =
-        to.length === 0 && cc.length === 0 && cci.length === 0 && subject === '' && body === '' && attachments.length === 0;
-
-      if (isUploadingAttachment) {
-        Keyboard.dismiss();
-        Toast.showInfo(I18n.get('conversation-newmail-sendattachment-progress'));
-      } else if (!isDraftEmpty) {
-        const textToDisplay = {
-          title: 'conversation-newmail-savedraft-title',
-          text: isSavedDraft ? 'conversation-newmail-saveagaindraft-message' : 'conversation-newmail-savedraft-message',
-        };
-        const options = [
-          ...(isSavedDraft
-            ? [
-                {
-                  text: isSavedDraft ? I18n.get('conversation-newmail-deletedraft') : I18n.get('common-delete'),
-                  onPress: async () => {
-                    try {
-                      if (id) {
-                        await trashMessage([id]);
-                        await deleteMessage([id]);
-                      }
-                      Trackers.trackEventOfModule(
-                        moduleConfig,
-                        'Ecrire un mail',
-                        'Rédaction mail - Sortir - Supprimer le brouillon - Succès',
-                      );
-                    } catch {
-                      Trackers.trackEventOfModule(
-                        moduleConfig,
-                        'Ecrire un mail',
-                        'Rédaction mail - Sortir - Supprimer le brouillon - Échec',
-                      );
-                    }
-                    backAction();
-                  },
-                  style: 'destructive',
-                },
-              ]
-            : []),
-          {
-            text: isSavedDraft ? I18n.get('conversation-newmail-cancelmodifications') : I18n.get('common-delete'),
-            onPress: async () => {
-              try {
-                if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
-                  await trashMessage([id]);
-                  await deleteMessage([id]);
-                }
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  isSavedDraft
-                    ? 'Rédaction mail - Sortir - Annuler les modifications - Succès'
-                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
-                );
-              } catch {
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  isSavedDraft
-                    ? 'Rédaction mail - Sortir - Annuler les modifications - Échec'
-                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
-                );
-              }
-              backAction();
-            },
-            style: isSavedDraft ? 'default' : 'destructive',
-          },
-          {
-            text: isSavedDraft ? I18n.get('conversation-newmail-savemodifications') : I18n.get('common-save'),
-            onPress: async () => {
-              try {
-                await this.saveDraft();
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Succès',
-                );
-              } catch {
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec',
-                );
-              }
-              backAction();
-            },
-            style: 'default',
-          },
-        ] as AlertButton[];
-        Alert.alert(
-          I18n.get(textToDisplay.title),
-          I18n.get(textToDisplay.text),
-          Platform.select({
-            ios: [...options].reverse(),
-            android: options,
-          }),
-        );
-      } else {
-        if ((isNewDraft && id) || (!isNewDraft && !isSavedDraft && id && id !== mailId)) {
-          await trashMessage([id]);
-          deleteMessage([id]);
-        } else if (isSavedDraft) {
-          await this.saveDraft();
-        }
-        backAction();
-      }
     },
   };
 
@@ -443,7 +445,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     if (!mail || (mail as unknown as []).length === 0) return undefined;
     const draftType = route.params.type ?? DraftType.NEW;
     const getDisplayName = (id: string) => mail.displayNames.find(([userId]) => userId === id)?.[1];
-    const getUser = (id: string) => ({ id, displayName: getDisplayName(id) });
+    const getUser = (id: string) => ({ displayName: getDisplayName(id), id });
 
     const getPrevBody = () => {
       const getUserArrayToString = users => users.map(getDisplayName).join(', ');
@@ -501,12 +503,12 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     switch (draftType) {
       case DraftType.REPLY: {
         return {
-          replyTo: mail.id,
-          prevBody: getPrevBody(),
           mail: {
-            to: route.params.currentFolder === 'sendMessages' ? mail.to.map(getUser) : [mail.from].map(getUser),
             subject: I18n.get('conversation-newmail-replysubject') + mail.subject,
+            to: route.params.currentFolder === 'sendMessages' ? mail.to.map(getUser) : [mail.from].map(getUser),
           },
+          prevBody: getPrevBody(),
+          replyTo: mail.id,
         };
       }
       case DraftType.REPLY_ALL: {
@@ -541,25 +543,25 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           if (id !== mail.from) cci.push(getUser(id));
         }
         return {
-          replyTo: mail.id,
-          prevBody: getPrevBody(),
           mail: {
-            to,
             cc,
             cci,
             subject: I18n.get('conversation-newmail-replysubject') + mail.subject,
+            to,
           },
+          prevBody: getPrevBody(),
+          replyTo: mail.id,
         };
       }
       case DraftType.FORWARD: {
         return {
-          replyTo: mail.id,
-          prevBody: getPrevBody(),
           mail: {
-            subject: I18n.get('conversation-newmail-forwardsubject') + mail.subject,
-            body: '',
             attachments: mail.attachments,
+            body: '',
+            subject: I18n.get('conversation-newmail-forwardsubject') + mail.subject,
           },
+          prevBody: getPrevBody(),
+          replyTo: mail.id,
         };
       }
       case DraftType.DRAFT: {
@@ -570,15 +572,15 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         const currentBody = mail.body.split('<hr class="ng-scope">')[0];
 
         return {
-          prevBody: prevbody,
           mail: {
-            to: mail.to.map(getUser),
+            attachments: mail.attachments,
+            body: currentBody,
             cc: mail.cc.map(getUser),
             cci: mail.cci.map(getUser),
             subject: mail.subject,
-            body: currentBody,
-            attachments: mail.attachments,
+            to: mail.to.map(getUser),
           },
+          prevBody: prevbody,
         };
       }
     }
@@ -691,7 +693,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
   public render() {
     const { deleteAttachment, isFetching, route } = this.props;
-    const { id, isPrefilling, isSending, mail, tempAttachment, prevBody } = this.state;
+    const { id, isPrefilling, isSending, mail, prevBody, tempAttachment } = this.state;
     const draftType = route.params.type;
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
@@ -721,10 +723,10 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 }
 
 const mapStateToProps = (state: IGlobalState) => {
-  const { isFetching, data } = getMailContentState(state);
+  const { data, isFetching } = getMailContentState(state);
   return {
-    mail: data,
     isFetching,
+    mail: data,
     session: getSession(),
   };
 };
@@ -732,19 +734,19 @@ const mapStateToProps = (state: IGlobalState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
-      setup: fetchVisiblesAction,
-      sendMail: sendMailAction,
-      forwardMail: forwardMailAction,
-      makeDraft: makeDraftMailAction,
-      updateDraft: updateDraftMailAction,
-      trashMessage: trashMailsAction,
-      deleteMessage: deleteMailsAction,
       addAttachment: addAttachmentAction,
-      deleteAttachment: deleteAttachmentAction,
       clearContent: clearMailContentAction,
+      deleteAttachment: deleteAttachmentAction,
+      deleteMessage: deleteMailsAction,
+      forwardMail: forwardMailAction,
       fetchMailContent: fetchMailContentAction,
+      makeDraft: makeDraftMailAction,
+      sendMail: sendMailAction,
+      setup: fetchVisiblesAction,
+      trashMessage: trashMailsAction,
+      updateDraft: updateDraftMailAction,
     },
-    dispatch,
+    dispatch
   );
 };
 

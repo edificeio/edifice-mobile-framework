@@ -10,12 +10,12 @@ import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/compo
 
 const styles = StyleSheet.create({
   competenceRound: {
-    justifyContent: 'center',
     alignItems: 'center',
-    width: 50,
-    height: 50,
     backgroundColor: theme.palette.grey.white,
     borderRadius: 25,
+    elevation: 3,
+    height: 50,
+    justifyContent: 'center',
     shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
@@ -23,18 +23,18 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 2,
-    elevation: 3,
+    width: 50,
   },
   denseDevoirListContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   denseDevoirListMatiereContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '70%',
     padding: UI_SIZES.spacing.minor,
+    width: '70%',
   },
   denseDevoirListMatiereText: {
     maxWidth: '65%',
@@ -57,8 +57,8 @@ export const CompetenceRound = ({ onPress }: { onPress: () => void }) => {
 export const DashboardAssessmentCard = ({
   devoir,
   hasCompetences,
-  subject,
   openAssessment,
+  subject,
 }: {
   devoir: IDevoir;
   hasCompetences: boolean;

@@ -77,6 +77,7 @@ const initialState: PresencesReduxStateData = {
       events: [],
       total: 0,
     },
+    recoveryMethod: null,
     REGULARIZED: {
       events: [],
       total: 0,
@@ -85,7 +86,6 @@ const initialState: PresencesReduxStateData = {
       events: [],
       total: 0,
     },
-    recoveryMethod: null,
   },
   terms: [],
   userChildren: [],

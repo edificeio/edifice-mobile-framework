@@ -1,12 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import styles from './styles';
+import type { EventPictoProps, EventPictoStyle } from './types';
+
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture';
 import { EventType } from '~/framework/modules/viescolaire/presences/model';
-
-import styles from './styles';
-import type { EventPictoProps, EventPictoStyle } from './types';
 
 export default function EventPicto(props: EventPictoProps) {
   const getStyle = (): EventPictoStyle => {

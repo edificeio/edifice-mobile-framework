@@ -1,9 +1,13 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { View } from 'react-native';
+
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { NavigationState, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { AudienceReactionsScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -24,9 +28,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { accountTypeInfos } from '~/framework/util/accountType';
 import { isEmpty } from '~/framework/util/object';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import styles from './styles';
-import { AudienceReactionsScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -73,7 +74,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
         <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
       </>
     ),
-    [loadingState],
+    [loadingState]
   );
 
   const loadData = React.useCallback(async () => {
@@ -82,11 +83,11 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
       const dt = (await audienceService.reaction.getDetails(
         {
           module,
-          resourceType,
           resourceId,
+          resourceType,
         },
         nextPageToFetchState,
-        PAGE_SIZE,
+        PAGE_SIZE
       )) as AudienceReactions;
       setNextPageToFetch(dt.userReactions.length === 0 ? -1 : nextPageToFetchState + 1);
       setUserReactions([...userReactions, ...dt.userReactions]);
@@ -114,7 +115,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
           <View style={styles.item}>
             <BadgeAvatar
               userId={item.userId}
-              badgeContent={{ type: 'NamedSvg', name: `${item.reactionType.toLowerCase()}-round` }}
+              badgeContent={{ name: `${item.reactionType.toLowerCase()}-round`, type: 'NamedSvg' }}
               badgePosition={BadgePosition.bottom}
             />
             <View>
@@ -142,11 +143,11 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
     );
   };
   const renderTabBar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> }
   ) => {
     return (
       <TabBar
-        renderLabel={({ route, focused }) => renderTabReaction(route.key, countByType![route.key] ?? 0, focused)}
+        renderLabel={({ focused, route }) => renderTabReaction(route.key, countByType![route.key] ?? 0, focused)}
         indicatorStyle={styles.tabBarIndicatorContainer}
         style={styles.tabBarContainer}
         {...tabBarProps}
@@ -176,5 +177,5 @@ export default connect(
   },
   (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => () => ({
     dispatch,
-  }),
+  })
 )(AudienceReactionsScreen);

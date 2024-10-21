@@ -4,13 +4,13 @@
 import IncludedModules from '~/app/override/modules';
 import {
   AnyModule,
+  dynamiclyRegisterModules,
   IEntcoreApp,
   IEntcoreWidget,
+  loadModules,
   ModuleArray,
   NavigableModule,
   NavigableModuleArray,
-  dynamiclyRegisterModules,
-  loadModules,
 } from '~/framework/util/moduleTool';
 
 // We first imports all modules and their code hierarchy. Registrations are executed,

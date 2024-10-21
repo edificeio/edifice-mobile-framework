@@ -19,18 +19,18 @@ const styles = StyleSheet.create({
     marginTop: UI_SIZES.spacing.small,
   },
   dotReceiverColor: {
+    borderRadius: 4,
+    height: 8,
     marginRight: UI_SIZES.spacing.tiny,
     width: 8,
-    height: 8,
-    borderRadius: 4,
   },
   headerPrefixText: {
     color: theme.ui.text.light,
   },
   primaryContainer: {
+    alignItems: 'center',
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
     marginTop: UI_SIZES.spacing.small,
   },
   primaryInfoContainer: {
@@ -38,26 +38,26 @@ const styles = StyleSheet.create({
     marginLeft: UI_SIZES.spacing.small,
   },
   recipientsContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   recipientsText: {
+    color: theme.ui.text.light,
     flexShrink: 1,
     marginRight: UI_SIZES.spacing.tiny,
-    color: theme.ui.text.light,
   },
   rowContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   senderText: {
     flexShrink: 1,
     marginRight: UI_SIZES.spacing.tiny,
   },
   userContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginLeft: UI_SIZES.spacing.tiny,
   },
   userListContainer: {

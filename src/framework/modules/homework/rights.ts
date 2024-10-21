@@ -3,6 +3,11 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
+import { fetchHomeworkDiaryList } from './actions/diaryList';
+import { homeworkDiarySelected } from './actions/selectedDiary';
+import { homeworkRouteNames } from './navigation';
+import { IHomeworkDiary } from './reducers/diaryList';
+
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
@@ -10,11 +15,6 @@ import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-
-import { fetchHomeworkDiaryList } from './actions/diaryList';
-import { homeworkDiarySelected } from './actions/selectedDiary';
-import { homeworkRouteNames } from './navigation';
-import { IHomeworkDiary } from './reducers/diaryList';
 
 export const deleteHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|deleteEntry';
 export const modifyHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|modifyEntry';
@@ -31,10 +31,12 @@ export const getHomeworkWorkflowInformation = (session: AuthLoggedAccount) => {
   const isRelativeOrStudent = userType === AccountType.Relative || userType === AccountType.Student;
 
   return {
-    view: session.rights.authorizedActions.some(a => a.name === viewHomeworkResourceRight),
-    create: session.rights.authorizedActions.some(a => a.name === createHomeworkResourceRight),
     //Todo: replace with resourceRight from backend
     check: isRelativeOrStudent,
+
+    create: session.rights.authorizedActions.some(a => a.name === createHomeworkResourceRight),
+
+    view: session.rights.authorizedActions.some(a => a.name === viewHomeworkResourceRight),
   };
 };
 
@@ -43,7 +45,6 @@ export default () =>
     const wk = getHomeworkWorkflowInformation(session);
     return (
       wk.create && {
-        title: I18n.get('homework-resourcename'),
         action: async () => {
           try {
             await (getStore().dispatch as ThunkDispatch<any, any, any>)(fetchHomeworkDiaryList());
@@ -52,13 +53,13 @@ export default () =>
             const flatDiaryList = diaryIdsList?.map(diaryId => ({
               id: diaryId,
               name: diaryList[diaryId].name,
-              title: diaryList[diaryId].title,
-              thumbnail: diaryList[diaryId].thumbnail,
-              shared: diaryList[diaryId].shared,
               owner: diaryList[diaryId].owner,
+              shared: diaryList[diaryId].shared,
+              thumbnail: diaryList[diaryId].thumbnail,
+              title: diaryList[diaryId].title,
             }));
             const diaryListWithCreationRight = flatDiaryList?.filter(diary =>
-              hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session),
+              hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session)
             );
             const hasOneDiary = diaryListWithCreationRight?.length === 1;
 
@@ -70,6 +71,7 @@ export default () =>
             Toast.showError(I18n.get('homework-rights-error-text'));
           }
         },
+        title: I18n.get('homework-resourcename'),
       }
     );
   });

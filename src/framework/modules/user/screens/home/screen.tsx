@@ -1,12 +1,16 @@
+import * as React from 'react';
+import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
+
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as React from 'react';
-import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -23,13 +27,13 @@ import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/componen
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
+  accountIsLoggable,
   AccountType,
   AuthLoggedAccount,
   AuthSavedLoggedInAccount,
+  getOrderedAccounts,
   InitialAuthenticationMethod,
   PlatformAuthContext,
-  accountIsLoggable,
-  getOrderedAccounts,
 } from '~/framework/modules/auth/model';
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
@@ -59,9 +63,6 @@ import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
-import styles from './styles';
-import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -85,7 +86,7 @@ function useCurvedNavBarFeature() {
   // SVG size management
   const svgDisplayWidth = UI_SIZES.screen.width;
   const svgDisplayHeight = Math.ceil(
-    svgDisplayWidth * (useCurvedNavBarFeature.svgOriginalHeight / useCurvedNavBarFeature.svgOriginalWidth),
+    svgDisplayWidth * (useCurvedNavBarFeature.svgOriginalHeight / useCurvedNavBarFeature.svgOriginalWidth)
   );
   const svgDisplayTopOffset =
     Math.ceil(navBarHeight * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth)) -
@@ -165,7 +166,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         />
       </>
     ),
-    [navigation, session?.user.displayName, session?.user.type],
+    [navigation, session?.user.displayName, session?.user.type]
   );
 }
 
@@ -207,20 +208,20 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         let routeName = routeNames[modificationType];
         const params = {
           [ModificationType.EMAIL]: {
-            navBarTitle: I18n.get('user-page-editemail'),
             modificationType: ModificationType.EMAIL,
+            navBarTitle: I18n.get('user-page-editemail'),
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeEmailScreenNavParams,
           [ModificationType.MOBILE]: {
-            navBarTitle: I18n.get('user-page-editmobile'),
             modificationType: ModificationType.MOBILE,
+            navBarTitle: I18n.get('user-page-editmobile'),
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeMobileScreenNavParams,
           [ModificationType.PASSWORD]: {
-            platform: session?.platform,
             context: authContextRef?.current,
             credentials: { username: session?.user.loginUsed ?? session?.user.login },
             navCallback: CommonActions.goBack(),
+            platform: session?.platform,
           } as ChangePasswordScreenNavParams,
         };
         const routeParams = params[modificationType];
@@ -243,7 +244,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       session?.platform,
       session?.user.login,
       session?.user.loginUsed,
-    ],
+    ]
   );
 
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
@@ -286,9 +287,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     if (showHelpCenter)
       try {
         await zendesk?.openHelpCenter({
-          labels: [],
-          groupType: 'section',
           groupIds: appConf.zendeskSections!,
+          groupType: 'section',
+          labels: [],
           showContactOptions: false,
         });
       } catch (error) {
@@ -423,7 +424,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       editUserInformation,
       openHelpCenter,
       splashads,
-    ],
+    ]
   );
 }
 
@@ -437,7 +438,7 @@ function useAccountsFeature(
   session: UserHomeScreenPrivateProps['session'],
   accounts: UserHomeScreenPrivateProps['accounts'],
   trySwitch: UserHomeScreenPrivateProps['trySwitch'],
-  tryRemoveAccount: UserHomeScreenPrivateProps['tryRemoveAccount'],
+  tryRemoveAccount: UserHomeScreenPrivateProps['tryRemoveAccount']
 ) {
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
@@ -488,7 +489,7 @@ function useAccountsFeature(
         redirect(item);
       }
     },
-    [accounts, loadingState, navigation, trySwitch],
+    [accounts, loadingState, navigation, trySwitch]
   );
 
   const onDeleteItem = React.useCallback(
@@ -502,7 +503,7 @@ function useAccountsFeature(
         console.error(e);
       }
     },
-    [accounts, session?.user.id, tryRemoveAccount],
+    [accounts, session?.user.id, tryRemoveAccount]
   );
 
   return React.useMemo(() => {
@@ -541,13 +542,13 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
   const doLogout = React.useCallback(() => {
     Alert.alert('', I18n.get('auth-disconnect-confirm'), [
       {
-        text: I18n.get('common-cancel'),
         style: 'default',
+        text: I18n.get('common-cancel'),
       },
       {
-        text: I18n.get('user-page-disconnect'),
-        style: 'destructive',
         onPress: logout,
+        style: 'destructive',
+        text: I18n.get('user-page-disconnect'),
       },
     ]);
   }, [logout]);
@@ -653,7 +654,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const [debugVisible, setDebugVisible] = React.useState<boolean>(false);
-  const { handleLogout, trySwitch, tryRemoveAccount, session, accounts } = props;
+  const { accounts, handleLogout, session, tryRemoveAccount, trySwitch } = props;
 
   const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
@@ -666,7 +667,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
       return () => {
         focusedRef.current = false;
       };
-    }, []),
+    }, [])
   );
 
   const navBarDecoration = useCurvedNavBarFeature();
@@ -706,19 +707,19 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
 export default connect(
   (state: IGlobalState) => {
     return {
-      session: getSession(),
       accounts: getAuthState(state).accounts,
+      session: getSession(),
     };
   },
   dispatch =>
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
         handleLogout: handleAction(manualLogoutAction, { track: track.logout }),
+        tryRemoveAccount: handleAction(removeAccountAction),
         trySwitch: tryAction(switchAccountAction, {
           track: track.loginRestore,
         }),
-        tryRemoveAccount: handleAction(removeAccountAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(UserHomeScreen);

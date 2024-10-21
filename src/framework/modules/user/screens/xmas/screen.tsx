@@ -1,10 +1,14 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { View } from 'react-native';
+
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { UserXmasScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -16,9 +20,6 @@ import { Toggle } from '~/framework/components/toggle';
 import { setXmasMusicAction, setXmasThemeAction } from '~/framework/modules/user/actions';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import styles from './styles';
-import { UserXmasScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -69,7 +70,7 @@ const XmasScreenConnected = connect(
     onSetXmasTheme(xmasTheme: boolean) {
       dispatch(setXmasThemeAction(xmasTheme));
     },
-  }),
+  })
 )(XmasScreen);
 
 export default XmasScreenConnected;

@@ -1,24 +1,25 @@
 // Permission handler
 import { Platform } from 'react-native';
+
 import DeviceInfo from 'react-native-device-info';
-import { PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request } from 'react-native-permissions';
+import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
 
 const permissionsScenarios = {
-  'documents.read': Platform.select<true | Permission>({
-    ios: true,
-    android: DeviceInfo.getApiLevelSync() >= 33 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
-  })!,
-  'galery.read': Platform.select<true | Permission>({
-    ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
-    android: DeviceInfo.getApiLevelSync() >= 33 ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
-  })!,
-  camera: Platform.select<true | Permission>({
-    ios: PERMISSIONS.IOS.CAMERA,
+  'camera': Platform.select<true | Permission>({
     android: PERMISSIONS.ANDROID.CAMERA,
+    ios: PERMISSIONS.IOS.CAMERA,
+  })!,
+  'documents.read': Platform.select<true | Permission>({
+    android: DeviceInfo.getApiLevelSync() >= 33 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    ios: true,
   })!,
   'documents.write': Platform.select<true | Permission>({
-    ios: true,
     android: DeviceInfo.getApiLevelSync() >= 33 ? true : PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+    ios: true,
+  })!,
+  'galery.read': Platform.select<true | Permission>({
+    android: DeviceInfo.getApiLevelSync() >= 33 ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
 };
 

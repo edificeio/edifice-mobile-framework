@@ -1,5 +1,9 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import styles from './styles';
+import { SplashadsScreenProps } from './types';
 
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
@@ -10,25 +14,22 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { urlSigner } from '~/infra/oauth';
 
-import styles from './styles';
-import { SplashadsScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
 }: NativeStackScreenProps<IModalsNavigationParams, typeof ModalsRouteNames.SplashAds>): NativeStackNavigationOptions => ({
   ...navBarOptions({
+    backButtonTestID: 'splash-ads-close',
     navigation,
     route,
     title: '',
-    backButtonTestID: 'splash-ads-close',
   }),
+  headerShadowVisible: false,
   headerStyle: {
     backgroundColor: theme.palette.grey.white,
     elevation: 0,
     shadowOpacity: 0,
   },
-  headerShadowVisible: false,
 });
 
 const SplashadsScreen = (props: SplashadsScreenProps) => {

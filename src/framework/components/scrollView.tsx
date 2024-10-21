@@ -1,10 +1,11 @@
-import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import { FlatList as RNFlatList, ScrollView as RNScrollView, ScrollViewProps as RNScrollViewProps } from 'react-native';
 
-import { useSyncRef } from '~/framework/hooks/ref';
+import { useScrollToTop } from '@react-navigation/native';
 
 import { UI_SIZES } from './constants';
+
+import { useSyncRef } from '~/framework/hooks/ref';
 
 export interface ScrollViewProps extends RNScrollViewProps {
   bottomInset?: boolean;

@@ -12,16 +12,16 @@ export default StyleSheet.create({
   },
   toggleContainer: {
     flexDirection: 'row',
-    marginTop: UI_SIZES.spacing.medium,
     justifyContent: 'space-between',
+    marginTop: UI_SIZES.spacing.medium,
   },
   wishTextContainer: {
     flex: 1,
     justifyContent: 'center',
   },
   xmasTree: {
-    position: 'absolute',
     bottom: UI_SIZES.spacing.minor,
+    position: 'absolute',
     right: -UI_SIZES.spacing.small,
   },
   xmasTreeContainer: {

@@ -1,14 +1,15 @@
+import * as React from 'react';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
 import { Moment } from 'moment';
-import * as React from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
-import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
+import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -31,12 +32,12 @@ import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const dayImages = {
+  friday: 'days-friday',
   monday: 'days-monday',
+  saturday: 'days-saturday',
+  thursday: 'days-thursday',
   tuesday: 'days-tuesday',
   wednesday: 'days-wednesday',
-  thursday: 'days-thursday',
-  friday: 'days-friday',
-  saturday: 'days-saturday',
 };
 
 export interface HomeworkTaskDetailsScreenDataProps {
@@ -56,16 +57,13 @@ export type IHomeworkTaskDetailsScreenProps = HomeworkTaskDetailsScreenDataProps
   NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkTaskDetails>;
 
 const styles = StyleSheet.create({
-  page: {
-    backgroundColor: theme.ui.background.card,
-  },
   banner: {
+    alignItems: 'flex-end',
+    aspectRatio: 3,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.minor,
-    aspectRatio: 3,
   },
   checkboxButtonContainer: {
     alignItems: 'center',
@@ -75,10 +73,10 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   confettiContainer: {
-    position: 'absolute',
     bottom: -getScaleHeight(28),
-    width: '100%',
     height: getScaleHeight(180),
+    position: 'absolute',
+    width: '100%',
   },
   content: {
     ...TextSizeStyle.Medium,
@@ -88,8 +86,11 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.medium,
   },
   dayImage: {
-    height: '100%',
     aspectRatio: 1,
+    height: '100%',
+  },
+  page: {
+    backgroundColor: theme.ui.background.card,
   },
 });
 
@@ -116,7 +117,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
 
   async doToggleDiaryEntryStatus(finished: boolean) {
     try {
-      const { handleToggleHomeworkEntryStatus, handleGetHomeworkTasks, route } = this.props;
+      const { handleGetHomeworkTasks, handleToggleHomeworkEntryStatus, route } = this.props;
       const { checked } = this.state;
       const diaryId = route.params.diaryId;
       const taskId = route.params.task.taskId;
@@ -137,7 +138,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
   }
 
   updateNavBarTitle() {
-    const { diaryInformation, route, navigation, session } = this.props;
+    const { diaryInformation, navigation, route, session } = this.props;
     const hasDeletionRight =
       session &&
       (hasPermissionManager(diaryInformation!, deleteHomeworkEntryResourceRight, session) ||
@@ -151,15 +152,15 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
         action: () => {
           Alert.alert(I18n.get('homework-taskdetails-deletion-title'), I18n.get('homework-taskdetails-deletion-text'), [
             {
-              text: I18n.get('common-cancel'),
               style: 'default',
+              text: I18n.get('common-cancel'),
             },
             {
-              text: I18n.get('common-delete'),
-              style: 'destructive',
               onPress: () => {
                 this.doDeleteDiaryEntry(diaryId, taskId, date);
               },
+              style: 'destructive',
+              text: I18n.get('common-delete'),
             },
           ]);
         },
@@ -167,7 +168,6 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     ];
 
     navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         hasDeletionRight ? (
           <PopupMenu actions={menuData}>
@@ -184,7 +184,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
   render() {
     const { route, session } = this.props;
     const { checked, playAnimation } = this.state;
-    const { date, title, content } = route.params.task;
+    const { content, date, title } = route.params.task;
     const dayOfTheWeek = getDayOfTheWeek(date);
     const dayColor = theme.color.homework.days[dayOfTheWeek].background;
     const opacity = 80;

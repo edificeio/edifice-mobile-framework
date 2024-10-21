@@ -1,8 +1,13 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
+
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
+
+import AudienceReactButton from './button';
+import styles from './styles';
+import { AudienceAllProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -12,10 +17,6 @@ import { audienceService } from '~/framework/modules/audience/service';
 import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { isEmpty } from '~/framework/util/object';
-
-import AudienceReactButton from './button';
-import styles from './styles';
-import { AudienceAllProps } from './types';
 
 const Audience = (props: AudienceAllProps) => {
   const [totalReactions, setTotalReactions] = React.useState<number>(0);

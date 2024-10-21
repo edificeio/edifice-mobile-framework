@@ -1,13 +1,14 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Linking, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import { ConnectorNavigationParams, ConnectorRedirectScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-
-import { ConnectorNavigationParams, ConnectorRedirectScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -29,8 +30,8 @@ function ConnectorRedirectScreen(props: ConnectorRedirectScreenPrivateProps) {
         const isAppInstalled = await Linking.canOpenURL(appUrl);
         if (isAppInstalled) {
           openUrl(appUrl, {
-            title: I18n.get('linking-redirectapp-title'),
             message: I18n.get('linking-redirectapp-message'),
+            title: I18n.get('linking-redirectapp-title'),
           });
           return;
         }

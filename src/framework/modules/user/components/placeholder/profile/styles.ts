@@ -4,19 +4,40 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  avatar: {
+    borderRadius: UI_SIZES.radius.huge,
+    marginRight: UI_SIZES.spacing.minor,
+  },
+
+  bloc: {
+    padding: UI_SIZES.spacing.medium,
+  },
+
+  h18: {
+    height: 18,
+  },
+
+  h20: {
+    height: 20,
+  },
   //GLOBAL
   h24: {
     height: 24,
   },
-  h20: {
-    height: 20,
+
+  icon: {
+    marginRight: UI_SIZES.spacing.minor,
   },
-  h18: {
-    height: 18,
+
+  lineIconText: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
+
   mb0: {
     marginBottom: 0,
   },
+
   mb12: {
     marginBottom: UI_SIZES.spacing.small,
   },
@@ -24,32 +45,18 @@ export default StyleSheet.create({
   page: {
     position: 'relative',
   },
-  topContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: UI_SIZES.spacing.medium,
-  },
-  avatar: {
-    marginRight: UI_SIZES.spacing.minor,
-    borderRadius: UI_SIZES.radius.huge,
+  table: {
+    backgroundColor: theme.palette.grey.pearl,
+    height: 150,
+    width: '100%',
   },
   textMiddle: {
     marginBottom: UI_SIZES.spacing.small,
     marginTop: UI_SIZES.spacing.minor,
   },
-  bloc: {
-    padding: UI_SIZES.spacing.medium,
-  },
-  lineIconText: {
-    flexDirection: 'row',
+  topContent: {
     alignItems: 'center',
-  },
-  icon: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  table: {
-    width: '100%',
-    height: 150,
-    backgroundColor: theme.palette.grey.pearl,
+    flexDirection: 'row',
+    padding: UI_SIZES.spacing.medium,
   },
 });

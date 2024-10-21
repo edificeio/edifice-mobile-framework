@@ -1,5 +1,10 @@
-import { CommonActions } from '@react-navigation/native';
 import { Alert } from 'react-native';
+
+import { CommonActions } from '@react-navigation/native';
+
+import { DistributionStatus } from './model';
+import { formRouteNames } from './navigation';
+import { formService } from './service';
 
 import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -7,14 +12,10 @@ import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
-
-import { DistributionStatus } from './model';
-import { formRouteNames } from './navigation';
-import { formService } from './service';
 
 const handleNewFormNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation) => async (dispatch, getState) => {
@@ -46,21 +47,21 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
           form.multiple && (distributions.length > 1 || distributions[0]?.status !== DistributionStatus.TO_DO)
             ? {
                 initial: false,
-                screen: formRouteNames.home,
                 params: {
                   notificationFormId: form.id,
                 },
+                screen: formRouteNames.home,
               }
             : {
                 initial: false,
-                screen: formRouteNames.distribution,
                 params: {
+                  editable: form.editable,
+                  formId: form.id,
                   id: distributions[0].id,
                   status: distributions[0].status,
-                  formId: form.id,
                   title: form.title,
-                  editable: form.editable,
                 },
+                screen: formRouteNames.distribution,
               },
       });
 
@@ -91,13 +92,13 @@ const handleFormResponseNotificationAction: NotifHandlerThunkAction = notificati
 export default () =>
   registerNotifHandlers([
     {
-      type: 'FORMULAIRE',
       'event-type': 'NEW_FORM_NOTIFICATION',
-      notifHandlerAction: handleNewFormNotificationAction,
+      'notifHandlerAction': handleNewFormNotificationAction,
+      'type': 'FORMULAIRE',
     },
     {
-      type: 'FORMULAIRE',
       'event-type': 'RESPONSE_NOTIFICATION',
-      notifHandlerAction: handleFormResponseNotificationAction,
+      'notifHandlerAction': handleFormResponseNotificationAction,
+      'type': 'FORMULAIRE',
     },
   ]);

@@ -4,35 +4,35 @@
 import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
+import moduleConfig from './module-config';
+import { createBlogPostResourceRight } from './rights';
+
 import { Reducers } from '~/app/store';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { resourceRightFilter } from '~/framework/util/resourceRights';
 
-import moduleConfig from './module-config';
-import { createBlogPostResourceRight } from './rights';
-
 // Types
 
 export interface Blog {
-  id: string;
-  visibility: string;
-  title: string;
-  thumbnail?: string;
-  trashed?: boolean;
+  'id': string;
+  'visibility': string;
+  'title': string;
+  'thumbnail'?: string;
+  'trashed'?: boolean;
   'comment-type': string;
   'publish-type': string;
-  description?: string;
-  created: Moment;
-  modified: Moment;
-  author: { userId: string; username: string; login: string };
-  shared?: ({
+  'description'?: string;
+  'created': Moment;
+  'modified': Moment;
+  'author': { userId: string; username: string; login: string };
+  'shared'?: ({
     [key: string]: boolean | string | undefined;
   } & {
     [key in 'userId' | 'groupId']: string;
   })[];
-  fetchPosts: Omit<BlogPost, 'content'>[];
+  'fetchPosts': Omit<BlogPost, 'content'>[];
 }
 export type BlogList = Blog[];
 
@@ -124,8 +124,8 @@ const initialState: BlogStateData = {
   blogs: [],
   folders: [],
   tree: {
-    resources: [],
     folders: [],
+    resources: [],
   },
 };
 
@@ -147,7 +147,7 @@ export const actionTypes = {
  */
 export const computeFoldersHierarchy = <FolderType extends BlogFolder = BlogFolder>(
   folders: BlogFolder[],
-  callback?: (f: BlogFolder) => FolderType,
+  callback?: (f: BlogFolder) => FolderType
 ) => {
   const ret = [] as (BlogFolderWithChildren & FolderType)[];
   const cleanFolders = folders.map(f => {
@@ -227,13 +227,13 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends BlogFolder = Blo
           ...((f.children as ({ depth?: number } & BlogFolderWithChildren & FolderType)[])?.filter(ff => ff.depth === undefined) ||
             []),
         ] as typeof allHierarchy.folders,
-      [] as typeof allHierarchy.folders,
+      [] as typeof allHierarchy.folders
     );
     ++depth;
   } while (!done);
   return {
-    resources: allHierarchy.resources,
     folders: allHierarchy.folders as ({ depth: number } & BlogFolderWithResources & BlogFolderWithChildren & FolderType)[],
+    resources: allHierarchy.resources,
   };
 };
 
@@ -241,7 +241,7 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends BlogFolder = Blo
 
 export const getPublishableBlogs = (session: AuthLoggedAccount, blogs: BlogList) => {
   const publishableBlogs = (resourceRightFilter(blogs, createBlogPostResourceRight, session) as BlogList).filter(
-    (blog: Blog) => !blog.trashed,
+    (blog: Blog) => !blog.trashed
   );
   return publishableBlogs;
 };
@@ -262,7 +262,6 @@ const reducer = combineReducers({
   blogs: createSessionAsyncReducer(initialState.blogs, actionTypes.blogs),
   folders: createSessionAsyncReducer(initialState.folders, actionTypes.folders),
   tree: createSessionReducer(initialState.tree, {
-    // eslint-disable-next-line @typescript-eslint/default-param-last
     [actionTypes.tree.compute]: (state = initialState.tree, action) => {
       const a = action as unknown as { blogs: Blog[]; folders: BlogFolder[] };
       return computeAllBlogsFlatHierarchy(a.folders, a.blogs);

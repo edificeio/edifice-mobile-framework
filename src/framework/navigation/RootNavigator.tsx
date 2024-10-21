@@ -2,13 +2,20 @@
  * Startup is a conditionnaly rendered content based on app startup status.
  * It can render the SplashScreen, auth flow or main flow in function of token loading and status.
  */
-import inAppMessaging from '@react-native-firebase/in-app-messaging';
-import { NavigationContainer, NavigationState } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
+
+import inAppMessaging from '@react-native-firebase/in-app-messaging';
+import { NavigationContainer, NavigationState } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+
+import { navigationRef } from './helper';
+import { useMainNavigation } from './mainNavigation';
+import modals from './modals/navigator';
+import { getTypedRootStack } from './navigators';
+import { getState as getAppStartupState, StartupState } from './redux';
 
 import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
@@ -18,16 +25,10 @@ import { RootToastHandler } from '~/framework/components/toast';
 import type { AuthLoggedAccountMap } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getAuthNavigationState, getFirstTabRoute } from '~/framework/modules/auth/navigation/main-account/router';
-import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { getState as getAuthState, IAuthState } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
-
-import { navigationRef } from './helper';
-import { useMainNavigation } from './mainNavigation';
-import modals from './modals/navigator';
-import { getTypedRootStack } from './navigators';
-import { StartupState, getState as getAppStartupState } from './redux';
 
 function SplashScreenComponent() {
   React.useEffect(() => {
@@ -55,7 +56,7 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 const RootStack = getTypedRootStack();
 
 function RootNavigator(props: RootNavigatorProps) {
-  const { accounts, pending, showOnboarding, dispatch, appReady, requirement, connected, lastAddAccount, lastDeletedAccount } =
+  const { accounts, appReady, connected, dispatch, lastAddAccount, lastDeletedAccount, pending, requirement, showOnboarding } =
     props;
 
   React.useEffect(() => {
@@ -77,7 +78,7 @@ function RootNavigator(props: RootNavigatorProps) {
       appReady && !isMainNavigationAccessible
         ? getAuthNavigationState(accounts, pending, showOnboarding, requirement, lastDeletedAccount)
         : getFirstTabRoute(),
-    [accounts, appReady, isMainNavigationAccessible, lastDeletedAccount, pending, requirement, showOnboarding],
+    [accounts, appReady, isMainNavigationAccessible, lastDeletedAccount, pending, requirement, showOnboarding]
   );
   const navStateJSON = JSON.stringify(navigationState);
 
@@ -110,7 +111,7 @@ function RootNavigator(props: RootNavigatorProps) {
       trackNavState(state);
       manageNavSnow();
     },
-    [manageNavSnow, trackNavState],
+    [manageNavSnow, trackNavState]
   );
 
   const screenOptions = React.useMemo(() => ({ headerShown: true }), []);
@@ -143,12 +144,12 @@ function RootNavigator(props: RootNavigatorProps) {
 }
 
 export default connect((state: IGlobalState) => ({
-  appReady: getAppStartupState(state).isReady,
-  pending: getAuthState(state).pending,
-  showOnboarding: getAuthState(state).showOnboarding,
   accounts: getAuthState(state).accounts,
+  appReady: getAppStartupState(state).isReady,
   connected: getAuthState(state).connected,
-  requirement: getAuthState(state).requirement,
   lastAddAccount: getAuthState(state).lastAddAccount,
   lastDeletedAccount: getAuthState(state).lastDeletedAccount,
+  pending: getAuthState(state).pending,
+  requirement: getAuthState(state).requirement,
+  showOnboarding: getAuthState(state).showOnboarding,
 }))(RootNavigator);

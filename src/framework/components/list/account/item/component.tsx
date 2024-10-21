@@ -12,16 +12,16 @@ import { i18nAccountTypes } from '~/framework/components/text/account-type';
 import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 
 const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
-  selected,
   getAvatarSource,
+  index,
   item,
   item: {
-    user: { type, id, displayName, loginUsed },
+    user: { displayName, id, loginUsed, type },
   },
-  index,
-  separators,
-  onPress,
   onDelete,
+  onPress,
+  selected,
+  separators,
 }: AccountListItemProps<ItemT>) => {
   const containerBackgroundColor = { backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card };
   const typeColor = { color: theme.color.profileTypes[type] };
@@ -34,9 +34,9 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
   const onRemoveAccount = () => {
     Alert.alert(I18n.get('accountlistitem-removealert-title'), I18n.get('accountlistitem-removealert-description'), [
       {
-        text: I18n.get('common-delete'),
-        style: 'destructive',
         onPress: () => onDelete?.(item, index),
+        style: 'destructive',
+        text: I18n.get('common-delete'),
       },
       {
         text: I18n.get('common-cancel'),
@@ -45,8 +45,8 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
   };
 
   const avatarProps = React.useMemo(
-    () => (getAvatarSource ? { source: getAvatarSource({ item, index, separators }) } : { userId: id }),
-    [getAvatarSource, id, index, item, separators],
+    () => (getAvatarSource ? { source: getAvatarSource({ index, item, separators }) } : { userId: id }),
+    [getAvatarSource, id, index, item, separators]
   );
 
   return (

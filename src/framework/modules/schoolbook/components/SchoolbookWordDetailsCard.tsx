@@ -1,24 +1,25 @@
 import * as React from 'react';
 import { EmitterSubscription, Keyboard, Platform, TouchableOpacity, View } from 'react-native';
+
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
+
+import CardTopContentCategory from './cardtopcontent-category';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
-import ModalBox from '~/framework/components/ModalBox';
-import UserList from '~/framework/components/UserList';
 import { ContentCardHeader, ResourceView } from '~/framework/components/card';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';
+import ModalBox from '~/framework/components/ModalBox';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import UserList from '~/framework/components/UserList';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { AccountType } from '~/framework/modules/auth/model';
 import {
-  IConcernedStudent,
-  IWordReport,
   getHasSingleRecipientForTeacher,
   getIsWordAcknowledgedForParent,
   getIsWordAcknowledgedForStudent,
@@ -26,11 +27,11 @@ import {
   getIsWordRepliedToForParent,
   getReportByStudentForParent,
   getStudentsForTeacher,
+  IConcernedStudent,
+  IWordReport,
 } from '~/framework/modules/schoolbook/reducer';
-import HtmlContentView from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
-import CardTopContentCategory from './cardtopcontent-category';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.get(ackNumber === 1 ? 'schoolbook-worddetails-acknowledgement' : 'schoolbook-worddetails-acknowledgements').toLowerCase()}`;
@@ -59,44 +60,44 @@ export interface ISchoolBookWordDetailsCardProps {
 
 //FIXME: create/move to styles.ts
 const styles = {
-  acknowledgementsContainer: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  acknowledgementsContainer: { alignItems: 'center', flex: 1, flexDirection: 'row' },
   from: { flex: 1, marginLeft: UI_SIZES.spacing.minor },
-  fromContainer: { marginTop: UI_SIZES.spacing.medium, flexDirection: 'row', alignItems: 'center' },
+  fromContainer: { alignItems: 'center', flexDirection: 'row', marginTop: UI_SIZES.spacing.medium },
   headerIndicatorStyle: { justifyContent: 'center' },
   headerStyle: {
     backgroundColor: theme.palette.grey.fog,
-    paddingVertical: UI_SIZES.spacing.minor,
     borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: UI_SIZES.dimensions.width.tiny,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   modalBoxContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight + Platform.select({ ios: 8, default: 48 }), // Still magic numbers here
+    paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight + Platform.select({ default: 48, ios: 8 }), // Still magic numbers here
   },
   responsesContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
     marginVertical: -UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
-  unacknowledged: { marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning.regular },
+  unacknowledged: { alignSelf: 'center', color: theme.palette.status.warning.regular, marginTop: UI_SIZES.spacing.small },
   userListContentContainer: { flexGrow: 1 },
 };
 
 const SchoolbookWordDetailsCard = (
   {
     action,
-    onPublishReply,
-    onEditComment,
-    isPublishingReply,
     isAcknowledgingWord,
-    userType,
-    userId,
-    studentId,
+    isPublishingReply,
+    onEditComment,
+    onPublishReply,
     schoolbookWord,
+    studentId,
+    userId,
+    userType,
   }: ISchoolBookWordDetailsCardProps,
-  ref,
+  ref
 ) => {
   const flatListRef = React.useRef<typeof FlatList>();
   const flatListModalRef = React.useRef<typeof FlatList>();
@@ -109,7 +110,7 @@ const SchoolbookWordDetailsCard = (
   const [viewHeight, setViewHeight] = React.useState(0);
 
   const usersTextMaxLines = 1;
-  const { word, report } = schoolbookWord;
+  const { report, word } = schoolbookWord;
   const schoolbookWordOwnerId = word?.ownerId;
   const schoolbookWordResponsesNumber = word?.respNumber;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
@@ -137,9 +138,9 @@ const SchoolbookWordDetailsCard = (
   const editorOffsetRef = React.useRef<number>(0);
 
   usePreventBack({
-    title: I18n.get('schoolbook-worddetails-alertAcknowledge-title'),
-    text: I18n.get('schoolbook-worddetails-alertAcknowledge-text'),
     showAlert: isParent && !isWordAcknowledgedForParent,
+    text: I18n.get('schoolbook-worddetails-alertAcknowledge-text'),
+    title: I18n.get('schoolbook-worddetails-alertAcknowledge-title'),
   });
 
   const scrollToEnd = () => {
@@ -152,9 +153,9 @@ const SchoolbookWordDetailsCard = (
   const cardBottomEditorSheetRef = () => bottomEditorSheetRef?.current;
   const cardSelectedCommentFieldRef = () => commentFieldRefs[editedCommentId];
   React.useImperativeHandle(ref, () => ({
-    scrollToEnd,
     cardBottomEditorSheetRef,
     cardSelectedCommentFieldRef,
+    scrollToEnd,
   }));
 
   const showSubscriptionRef = React.useRef<EmitterSubscription>();
@@ -166,19 +167,19 @@ const SchoolbookWordDetailsCard = (
           if (Platform.OS === 'ios') {
             flatListRef?.current?.scrollToIndex({
               index: commentIndex,
-              viewPosition: 1,
               viewOffset: -UI_SIZES.spacing.medium,
+              viewPosition: 1,
             });
           } else {
             flatListRef.current?.scrollToIndex({
               index: commentIndex,
-              viewPosition: 0,
               viewOffset:
                 UI_SIZES.screen.height -
                 UI_SIZES.elements.navbarHeight -
                 event.endCoordinates.height -
                 (editorOffsetRef.current ?? 0) -
                 UI_SIZES.spacing.medium,
+              viewPosition: 0,
             });
           }
         }
@@ -194,8 +195,8 @@ const SchoolbookWordDetailsCard = (
       <ResourceView
         style={{
           backgroundColor: theme.ui.background.card,
-          borderBottomWidth: UI_SIZES.dimensions.width.tiny,
           borderBottomColor: theme.palette.grey.pearl,
+          borderBottomWidth: UI_SIZES.dimensions.width.tiny,
           paddingBottom:
             UI_SIZES.spacing.tiny + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus * 2 : 0),
         }}
@@ -294,7 +295,7 @@ const SchoolbookWordDetailsCard = (
         ) : null}
         {word?.title ? <HeadingSText style={{ marginTop: UI_SIZES.spacing.small }}>{word?.title}</HeadingSText> : null}
         {word?.text ? (
-          <View style={{ marginTop: UI_SIZES.spacing.minor, marginBottom: UI_SIZES.spacing.small }}>
+          <View style={{ marginBottom: UI_SIZES.spacing.small, marginTop: UI_SIZES.spacing.minor }}>
             <HtmlContentView html={word?.text} opts={{ globalTextStyle: { ...TextSizeStyle.Medium } }} />
           </View>
         ) : null}
@@ -320,12 +321,12 @@ const SchoolbookWordDetailsCard = (
       word?.text,
       word?.title,
       word?.total,
-    ],
+    ]
   );
 
   const ListComponent = Platform.select<typeof FlatList | typeof KeyboardAvoidingFlatList>({
-    ios: FlatList,
     android: KeyboardAvoidingFlatList,
+    ios: FlatList,
   })!;
 
   const refSetup = React.useCallback(listComponentRef => {
@@ -337,7 +338,7 @@ const SchoolbookWordDetailsCard = (
   }, []);
 
   const renderItem = React.useCallback(
-    ({ item, index }) => {
+    ({ index, item }) => {
       const isFirstItem = index === 0;
       return (
         <View style={{ marginTop: isFirstItem ? UI_SIZES.spacing.medium : undefined }}>
@@ -369,7 +370,7 @@ const SchoolbookWordDetailsCard = (
         </View>
       );
     },
-    [isPublishingReply, onEditComment, onPublishReply, responses],
+    [isPublishingReply, onEditComment, onPublishReply, responses]
   );
 
   const keyExtractor = React.useCallback(item => item.id?.toString(), []);
@@ -380,15 +381,15 @@ const SchoolbookWordDetailsCard = (
     () => ({
       marginBottom: doesContentExceedView && isBottomSheetVisible ? -UI_SIZES.radius.mediumPlus : undefined,
     }),
-    [doesContentExceedView, isBottomSheetVisible],
+    [doesContentExceedView, isBottomSheetVisible]
   );
 
   const scrollIndicatorInsets = React.useMemo(
     () => ({
-      right: 0.001,
       bottom: doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus : undefined,
+      right: 0.001,
     }),
-    [doesContentExceedView, isBottomSheetVisible],
+    [doesContentExceedView, isBottomSheetVisible]
   );
 
   const onPublishComment = React.useCallback((comment: string) => onPublishReply(comment), [onPublishReply]);
@@ -437,7 +438,7 @@ const SchoolbookWordDetailsCard = (
             <HeadingSText style={{ marginBottom: UI_SIZES.spacing.tiny }}>
               {I18n.get('schoolbook-worddetails-recipientsmodal-title')}
             </HeadingSText>
-            <SmallText style={{ marginBottom: UI_SIZES.spacing.medium, color: theme.palette.grey.graphite }}>
+            <SmallText style={{ color: theme.palette.grey.graphite, marginBottom: UI_SIZES.spacing.medium }}>
               {I18n.get('schoolbook-worddetails-recipientsmodal-text')}
             </SmallText>
             <UserList
@@ -447,9 +448,9 @@ const SchoolbookWordDetailsCard = (
               contentContainerStyle={styles.userListContentContainer}
               initialNumToRender={15}
               viewabilityConfig={{
-                waitForInteraction: false,
-                viewAreaCoveragePercentThreshold: 0,
                 minimumViewTime: -1,
+                viewAreaCoveragePercentThreshold: 0,
+                waitForInteraction: false,
               }}
               alwaysBounceVertical={false}
               persistentScrollbar

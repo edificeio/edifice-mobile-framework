@@ -47,8 +47,8 @@ type IBackendHomeworkAssistanceServices = {
 
 const homeworkAssistanceExclusionAdapter = (exclusion: IBackendHomeworkAssistanceExclusion) => {
   return {
-    start: moment(exclusion.start, 'DD/MM/YYYY'),
     end: moment(exclusion.start, 'DD/MM/YYYY'),
+    start: moment(exclusion.start, 'DD/MM/YYYY'),
   } as IExclusion;
 };
 
@@ -64,17 +64,17 @@ const homeworkAssistanceConfigAdapter = (config: IBackendHomeworkAssistanceConfi
     settings: {
       exclusions: config.settings.exclusions.map(exclusion => homeworkAssistanceExclusionAdapter(exclusion)),
       openingDays: {
-        monday: config.settings.opening_days.monday,
-        tuesday: config.settings.opening_days.tuesday,
-        wednesday: config.settings.opening_days.wednesday,
-        thursday: config.settings.opening_days.thursday,
         friday: config.settings.opening_days.friday,
+        monday: config.settings.opening_days.monday,
         saturday: config.settings.opening_days.saturday,
         sunday: config.settings.opening_days.sunday,
+        thursday: config.settings.opening_days.thursday,
+        tuesday: config.settings.opening_days.tuesday,
+        wednesday: config.settings.opening_days.wednesday,
       },
       openingTime: {
-        start: moment(`${config.settings.opening_time.start.hour}:${config.settings.opening_time.start.minute}`, 'HH:mm'),
         end: moment(`${config.settings.opening_time.end.hour}:${config.settings.opening_time.end.minute}`, 'HH:mm'),
+        start: moment(`${config.settings.opening_time.start.hour}:${config.settings.opening_time.start.minute}`, 'HH:mm'),
       },
     },
   } as IConfig;
@@ -97,13 +97,6 @@ export const homeworkAssistanceService = {
       return homeworkAssistanceConfigAdapter(config) as IConfig;
     },
   },
-  services: {
-    get: async (session: AuthLoggedAccount) => {
-      const api = '/homework-assistance/services/all';
-      const services = (await fetchJSONWithCache(api)) as IBackendHomeworkAssistanceServices;
-      return homeworkAssistanceServicesAdapter(services);
-    },
-  },
   service: {
     addRequest: async (
       session: AuthLoggedAccount,
@@ -115,31 +108,38 @@ export const homeworkAssistanceService = {
       lastName: string,
       structure: string,
       className: string,
-      information: string,
+      information: string
     ) => {
       const api = `/homework-assistance/services/${service.value}/callback`;
       const body = JSON.stringify({
-        destination: phoneNumber,
         callback_date: date.format(),
         callback_time: {
           hour: time.format('HH'),
           minute: Number(time.format('mm')),
         },
+        destination: phoneNumber,
+        informations_complementaires: information,
         userdata: {
-          prenom: firstName,
-          nom: lastName,
-          etablissement: structure,
           classe: className,
+          etablissement: structure,
           matiere: service.label,
+          nom: lastName,
+          prenom: firstName,
           service: service.value,
         },
-        informations_complementaires: information,
       });
       const response = (await signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'POST',
         body,
+        method: 'POST',
       })) as { status: string };
       return response;
+    },
+  },
+  services: {
+    get: async (session: AuthLoggedAccount) => {
+      const api = '/homework-assistance/services/all';
+      const services = (await fetchJSONWithCache(api)) as IBackendHomeworkAssistanceServices;
+      return homeworkAssistanceServicesAdapter(services);
     },
   },
 };

@@ -1,6 +1,9 @@
-import Slider from '@react-native-community/slider';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import Slider from '@react-native-community/slider';
+
+import { FormAnswerText } from './FormAnswerText';
 
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
@@ -8,32 +11,30 @@ import { CaptionText, SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/framework/modules/form/model';
 
-import { FormAnswerText } from './FormAnswerText';
-
 const styles = StyleSheet.create({
+  labelContainer: {
+    maxWidth: '30%',
+  },
+  labelText: {
+    color: theme.ui.text.light,
+    textAlign: 'center',
+  },
   rowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  sliderMargin: {
-    paddingTop: UI_SIZES.spacing.medium,
-  },
-  valueContainer: {
-    position: 'absolute',
-    alignItems: 'center',
-    width: 100,
-    top: -25,
   },
   sliderContainer: {
     flex: 1,
     marginHorizontal: UI_SIZES.spacing.minor,
   },
-  labelContainer: {
-    maxWidth: '30%',
+  sliderMargin: {
+    paddingTop: UI_SIZES.spacing.medium,
   },
-  labelText: {
-    textAlign: 'center',
-    color: theme.ui.text.light,
+  valueContainer: {
+    alignItems: 'center',
+    position: 'absolute',
+    top: -25,
+    width: 100,
   },
 });
 
@@ -50,10 +51,10 @@ const getDefaultValue = (min: number, max: number, step: number) => {
   return (half / step) * step;
 };
 
-export const FormSliderCard = ({ isDisabled, question, responses, onChangeAnswer, onEditQuestion }: IFormSliderCardProps) => {
-  const { title, mandatory, cursorMinVal = 0, cursorMaxVal = 100, cursorStep = 1, cursorMinLabel, cursorMaxLabel } = question;
+export const FormSliderCard = ({ isDisabled, onChangeAnswer, onEditQuestion, question, responses }: IFormSliderCardProps) => {
+  const { cursorMaxLabel, cursorMaxVal = 100, cursorMinLabel, cursorMinVal = 0, cursorStep = 1, mandatory, title } = question;
   const [value, setValue] = React.useState(
-    responses[0]?.answer ? Number(responses[0]?.answer) : getDefaultValue(cursorMinVal, cursorMaxVal, cursorStep),
+    responses[0]?.answer ? Number(responses[0]?.answer) : getDefaultValue(cursorMinVal, cursorMaxVal, cursorStep)
   );
   const [isLabelExpanded, setLabelExpanded] = React.useState(false);
   const position = ((value - cursorMinVal) / (cursorMaxVal - cursorMinVal)) * 100;
@@ -67,8 +68,8 @@ export const FormSliderCard = ({ isDisabled, question, responses, onChangeAnswer
       responses[0].answer = value.toString();
     } else {
       responses.push({
-        questionId: question.id,
         answer: value.toString(),
+        questionId: question.id,
       });
     }
     onChangeAnswer(question.id, responses);

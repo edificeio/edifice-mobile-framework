@@ -1,11 +1,15 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, ScrollView, TextInput, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { HomeworkAssistanceRequestScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -34,9 +38,6 @@ import {
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import styles from './styles';
-import { HomeworkAssistanceRequestScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -101,7 +102,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
 
   const sendRequest = async () => {
     try {
-      const { services, children, structureName, className } = props;
+      const { children, className, services, structureName } = props;
       const selectedService = services.find(s => s.value === service);
 
       if (!selectedService) throw new Error();
@@ -227,7 +228,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
     }
   };
 
-  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
   return <PageComponent>{renderPage()}</PageComponent>;
 };
@@ -241,8 +242,8 @@ export default connect(
       children:
         session?.user.type === AccountType.Relative
           ? getFlattenedChildren(session?.user.children)?.map(child => ({
-              value: child.id,
               label: `${child.firstName} ${child.lastName}`,
+              value: child.id,
               ...child,
             }))
           : undefined,
@@ -263,19 +264,19 @@ export default connect(
         addRequest: tryActionLegacy(
           postHomeworkAssistanceRequestAction,
           undefined,
-          true,
+          true
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['addRequest'],
         fetchConfig: tryActionLegacy(
           fetchHomeworkAssistanceConfigAction,
           undefined,
-          true,
+          true
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchConfig'],
         fetchServices: tryActionLegacy(
           fetchHomeworkAssistanceServicesAction,
           undefined,
-          true,
+          true
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchServices'],
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(HomeworkAssistanceRequestScreen);

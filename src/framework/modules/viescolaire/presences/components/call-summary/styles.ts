@@ -21,13 +21,13 @@ export default StyleSheet.create({
     minWidth: '50%',
   },
   rowContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   secondaryEventContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.tiny,
+    flexDirection: 'row',
   },
   secondaryEventText: {
     color: theme.palette.status.warning.regular,

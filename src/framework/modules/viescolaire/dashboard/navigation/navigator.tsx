@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { DashboardNavigationParams, dashboardRouteNames } from '.';
+
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
@@ -10,8 +12,6 @@ import DashboardStudentScreen, { computeNavBar as studentNavBar } from '~/framew
 import DashboardTeacherScreen, { computeNavBar as teacherNavBar } from '~/framework/modules/viescolaire/dashboard/screens/teacher';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { DashboardNavigationParams, dashboardRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<DashboardNavigationParams>(moduleConfig.name, Stack => {
@@ -30,7 +30,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={DashboardStudentScreen}
           options={studentNavBar}
           initialParams={{}}
-        />,
+        />
       );
       moduleConfig.routeName = dashboardRouteNames.student;
     } else if (userType === AccountType.Relative) {
@@ -40,7 +40,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={DashboardRelativeScreen}
           options={relativeNavBar}
           initialParams={{}}
-        />,
+        />
       );
       moduleConfig.routeName = dashboardRouteNames.relative;
     } else {
@@ -50,7 +50,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={DashboardTeacherScreen}
           options={teacherNavBar}
           initialParams={{}}
-        />,
+        />
       );
       moduleConfig.routeName = dashboardRouteNames.teacher;
     }

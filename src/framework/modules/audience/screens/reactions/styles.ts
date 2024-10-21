@@ -12,35 +12,35 @@ const styles = StyleSheet.create({
     paddingTop: UI_SIZES.spacing.medium,
   },
   headerItem: {
-    flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.minor,
     alignItems: 'center',
+    columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
   },
   headerItemTextFocused: {
     color: theme.palette.primary.regular,
   },
   item: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.small,
     columnGap: UI_SIZES.spacing.small,
-  },
-  noReactionView: {
-    backgroundColor: theme.palette.grey.white,
+    flexDirection: 'row',
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   noReactionTitle: {
     color: theme.palette.grey.black,
   },
+  noReactionView: {
+    backgroundColor: theme.palette.grey.white,
+  },
   tabBarContainer: {
     backgroundColor: theme.palette.grey.white,
-    borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,
+    borderBottomWidth: UI_SIZES.border.thin,
   },
 
   tabBarIndicatorContainer: {
-    height: 2,
     backgroundColor: theme.palette.primary.regular,
+    height: 2,
   },
 });
 

@@ -5,12 +5,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    marginHorizontal: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.small,
-    marginHorizontal: UI_SIZES.spacing.minor,
   },
   containerSelected: {
     backgroundColor: theme.palette.primary.pale,
@@ -20,16 +20,16 @@ export default StyleSheet.create({
     marginRight: UI_SIZES.spacing.small,
   },
   leftContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     flexShrink: 1,
   },
   nameText: {
-    marginHorizontal: UI_SIZES.spacing.small,
     flexShrink: 1,
+    marginHorizontal: UI_SIZES.spacing.small,
   },
   statusesContainer: {
-    flexDirection: 'row',
     columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
   },
 });

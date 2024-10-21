@@ -7,17 +7,18 @@ import { Icon } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
-  gridButtonContainer: {
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.tiny,
-  },
   gridButton: {
     borderRadius: 5,
   },
-  viewButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: UI_SIZES.spacing.minor,
+  gridButtonAllModules: {
+    justifyContent: 'flex-start',
+  },
+  gridButtonContainer: {
+    paddingHorizontal: UI_SIZES.spacing.tiny,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
+  gridButtonLineModules: {
+    justifyContent: 'center',
   },
   gridButtonText: {
     marginLeft: UI_SIZES.spacing.minor,
@@ -29,11 +30,10 @@ const styles = StyleSheet.create({
   gridButtonTextWidthHalf: {
     width: '50%',
   },
-  gridButtonAllModules: {
-    justifyContent: 'flex-start',
-  },
-  gridButtonLineModules: {
-    justifyContent: 'center',
+  viewButton: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: UI_SIZES.spacing.minor,
   },
 });
 
@@ -45,7 +45,7 @@ interface ModuleIconButtonProps {
   onPress: () => void;
 }
 
-export const ModuleIconButton = ({ color, icon, nbModules, text, onPress }: ModuleIconButtonProps) => {
+export const ModuleIconButton = ({ color, icon, nbModules, onPress, text }: ModuleIconButtonProps) => {
   return (
     <View style={[styles.gridButtonContainer, nbModules === 4 ? styles.gridButtonTextWidthHalf : styles.gridButtonTextWidthFull]}>
       <TouchableOpacity onPress={onPress} style={[styles.gridButton, { backgroundColor: color }]}>

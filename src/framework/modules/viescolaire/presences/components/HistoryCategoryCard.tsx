@@ -18,16 +18,16 @@ import { IForgottenNotebook, IHistoryEvent, IIncident, IPunishment } from '~/fra
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: UI_SIZES.spacing.medium,
     borderBottomWidth: 12,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   emptyEventsText: {
     alignSelf: 'center',
     color: theme.palette.grey.grey,
   },
   eventContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginVertical: UI_SIZES.spacing.tiny,
   },
   eventListContainer: {
@@ -47,9 +47,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   totalContainer: {
+    alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 
@@ -201,7 +201,7 @@ export const renderPunishment = (event: IPunishment) => {
           if (startExcludeDate && endExcludeDate) {
             return startExcludeDate === endExcludeDate
               ? startExcludeDate
-              : I18n.get('presences-history-categorycard-dates', { start: startExcludeDate, end: endExcludeDate });
+              : I18n.get('presences-history-categorycard-dates', { end: endExcludeDate, start: startExcludeDate });
           } else {
             return ' ';
           }

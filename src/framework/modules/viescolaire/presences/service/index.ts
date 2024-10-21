@@ -394,11 +394,11 @@ const callAdapter = (data: BackendCall): Call => {
 const courseAdapter = (data: BackendCourse): Course => {
   return {
     callId: data.registerId,
-    classes: data.classes,
-    groups: data.groups,
-    endDate: moment(data.endDate),
-    id: data.id,
     callStateId: data.registerStateId,
+    classes: data.classes,
+    endDate: moment(data.endDate),
+    groups: data.groups,
+    id: data.id,
     roomLabels: data.roomLabels,
     startDate: moment(data.startDate),
     structureId: data.structureId,
@@ -451,6 +451,7 @@ const historyEventsAdapter = (data: BackendHistoryEvents): Omit<Statistics, 'FOR
       events: data.all.NO_REASON.map(event => historyEventAdapter(event, EventType.NO_REASON)),
       total: data.totals.NO_REASON,
     },
+    recoveryMethod: data.recovery_method,
     REGULARIZED: {
       events: data.all.REGULARIZED.map(event => historyEventAdapter(event, EventType.REGULARIZED)),
       total: data.totals.REGULARIZED,
@@ -459,7 +460,6 @@ const historyEventsAdapter = (data: BackendHistoryEvents): Omit<Statistics, 'FOR
       events: data.all.UNREGULARIZED.map(event => historyEventAdapter(event, EventType.UNREGULARIZED)),
       total: data.totals.UNREGULARIZED,
     },
-    recoveryMethod: data.recovery_method,
   };
 };
 
@@ -527,7 +527,7 @@ const studentsEventsAdapter = (data: BackendStudentsEvents): { [key: string]: Ch
           REGULARIZED: value.all.REGULARIZED.map(eventAdapter),
           UNREGULARIZED: value.all.UNREGULARIZED.map(eventAdapter),
         },
-      ]),
+      ])
   );
 };
 
@@ -543,13 +543,6 @@ const userChildAdapter = (data: BackendUserChild): PresencesUserChild => {
 };
 
 export const presencesService = {
-  absences: {
-    get: async (session: AuthLoggedAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
-      const api = `/presences/statements/absences?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&student_id=${studentId}`;
-      const absences = (await fetchJSONWithCache(api)) as BackendAbsences;
-      return absencesAdapter(absences);
-    },
-  },
   absence: {
     create: async (
       session: AuthLoggedAccount,
@@ -557,7 +550,7 @@ export const presencesService = {
       studentId: string,
       startDate: Moment,
       endDate: Moment,
-      description: string,
+      description: string
     ) => {
       const api = '/presences/statements/absences';
       const formData = new FormData();
@@ -567,8 +560,8 @@ export const presencesService = {
       formData.append('end_at', endDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('description', description);
       await signedFetch(`${session.platform.url}${api}`, {
-        method: 'POST',
         body: formData,
+        method: 'POST',
       });
     },
     createWithFile: async (
@@ -578,53 +571,60 @@ export const presencesService = {
       startDate: Moment,
       endDate: Moment,
       description: string,
-      file: LocalFile,
+      file: LocalFile
     ) => {
       const api = '/presences/statements/absences/attachment';
       const fields = {
+        description,
+        end_at: endDate.format('YYYY-MM-DD HH:mm:ss'),
+        start_at: startDate.format('YYYY-MM-DD HH:mm:ss'),
         structure_id: structureId,
         student_id: studentId,
-        start_at: startDate.format('YYYY-MM-DD HH:mm:ss'),
-        end_at: endDate.format('YYYY-MM-DD HH:mm:ss'),
-        description,
       };
       await fileTransferService.uploadFile(
         session,
         file,
         {
-          url: api,
           fields,
+          url: api,
         },
         res => {
           return res.id;
-        },
+        }
       );
     },
   },
+  absences: {
+    get: async (session: AuthLoggedAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/presences/statements/absences?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&student_id=${studentId}`;
+      const absences = (await fetchJSONWithCache(api)) as BackendAbsences;
+      return absencesAdapter(absences);
+    },
+  },
   call: {
+    create: async (session: AuthLoggedAccount, course: Course, teacherId: string, allowMultipleSlots?: boolean) => {
+      const api = '/presences/registers';
+      const body = JSON.stringify({
+        classes: course.classes ?? course.groups,
+        course_id: course.id,
+        end_date: course.endDate.format('YYYY-MM-DD HH:mm:ss'),
+        groups: course.groups,
+        split_slot: allowMultipleSlots,
+        start_date: course.startDate.format('YYYY-MM-DD HH:mm:ss'),
+        structure_id: course.structureId,
+        subject_id: course.subjectId,
+        teacherIds: [teacherId],
+      });
+      const call = (await fetchJSONWithCache(api, {
+        body,
+        method: 'POST',
+      })) as { id: number };
+      return call.id;
+    },
     get: async (session: AuthLoggedAccount, id: number) => {
       const api = `/presences/registers/${id}`;
       const call = (await fetchJSONWithCache(api)) as BackendCall;
       return callAdapter(call);
-    },
-    create: async (session: AuthLoggedAccount, course: Course, teacherId: string, allowMultipleSlots?: boolean) => {
-      const api = '/presences/registers';
-      const body = JSON.stringify({
-        course_id: course.id,
-        structure_id: course.structureId,
-        start_date: course.startDate.format('YYYY-MM-DD HH:mm:ss'),
-        end_date: course.endDate.format('YYYY-MM-DD HH:mm:ss'),
-        subject_id: course.subjectId,
-        groups: course.groups,
-        classes: course.classes ?? course.groups,
-        teacherIds: [teacherId],
-        split_slot: allowMultipleSlots,
-      });
-      const call = (await fetchJSONWithCache(api, {
-        method: 'POST',
-        body,
-      })) as { id: number };
-      return call.id;
     },
     updateState: async (session: AuthLoggedAccount, id: number, state: CallState) => {
       const api = `/presences/registers/${id}/status`;
@@ -632,8 +632,8 @@ export const presencesService = {
         state_id: state,
       });
       await fetchWithCache(api, {
-        method: 'PUT',
         body,
+        method: 'PUT',
       });
     },
   },
@@ -644,50 +644,21 @@ export const presencesService = {
       structureId: string,
       startDate: string,
       endDate: string,
-      allowMultipleSlots?: boolean,
+      allowMultipleSlots?: boolean
     ) => {
       const api = `/presences/courses?${querystring.stringify({
-        teacher: teacherId,
-        structure: structureId,
-        start: startDate,
         end: endDate,
         forgotten_registers: false,
         multiple_slot: allowMultipleSlots,
+        start: startDate,
+        structure: structureId,
+        teacher: teacherId,
       })}`;
       const courses = (await fetchJSONWithCache(api)) as BackendCourseList;
       return courses
         .filter(course => course.allowRegister)
         .map(courseAdapter)
         .sort((a, b) => a.startDate.diff(b.startDate));
-    },
-  },
-  events: {
-    get: async (session: AuthLoggedAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
-      const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
-      const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
-      return historyEventsAdapter(events);
-    },
-    getForgottenNotebooks: async (
-      session: AuthLoggedAccount,
-      studentId: string,
-      structureId: string,
-      startDate: string,
-      endDate: string,
-    ) => {
-      const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
-      const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
-      return forgottenNotebooksAdapter(forgottenNotebooks);
-    },
-    getIncidents: async (
-      session: AuthLoggedAccount,
-      studentId: string,
-      structureId: string,
-      startDate: string,
-      endDate: string,
-    ) => {
-      const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
-      const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
-      return incidentsAdapter(incidents);
     },
   },
   event: {
@@ -699,21 +670,21 @@ export const presencesService = {
       startDate: Moment,
       endDate: Moment,
       reasonId: number | null,
-      comment?: string,
+      comment?: string
     ) => {
       const api = '/presences/events';
       const body = JSON.stringify({
-        student_id: studentId,
-        register_id: callId,
-        type_id: type as number,
-        start_date: startDate.format('YYYY-MM-DD HH:mm:ss'),
+        comment,
         end_date: endDate.format('YYYY-MM-DD HH:mm:ss'),
         reason_id: reasonId,
-        comment,
+        register_id: callId,
+        start_date: startDate.format('YYYY-MM-DD HH:mm:ss'),
+        student_id: studentId,
+        type_id: type as number,
       });
       const event = (await fetchJSONWithCache(api, {
-        method: 'POST',
         body,
+        method: 'POST',
       })) as BackendEvent;
       return eventAdapter(event);
     },
@@ -732,29 +703,22 @@ export const presencesService = {
       startDate: Moment,
       endDate: Moment,
       reasonId: number | null,
-      comment?: string,
+      comment?: string
     ) => {
       const api = `/presences/events/${id}`;
       const body = JSON.stringify({
-        student_id: studentId,
-        register_id: callId,
-        type_id: type as number,
-        start_date: startDate.format('YYYY-MM-DD HH:mm:ss'),
+        comment,
         end_date: endDate.format('YYYY-MM-DD HH:mm:ss'),
         reason_id: reasonId,
-        comment,
+        register_id: callId,
+        start_date: startDate.format('YYYY-MM-DD HH:mm:ss'),
+        student_id: studentId,
+        type_id: type as number,
       });
       await fetchWithCache(api, {
-        method: 'PUT',
         body,
+        method: 'PUT',
       });
-    },
-  },
-  eventReasons: {
-    get: async (session: AuthLoggedAccount, structureId: string) => {
-      const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
-      const eventReasons = (await fetchJSONWithCache(api)) as BackendEventReasonList;
-      return eventReasons.filter(reason => !reason.hidden && reason.id >= 0).map(eventReasonAdapter);
     },
   },
   eventReason: {
@@ -767,30 +731,66 @@ export const presencesService = {
       type: CallEventType,
       startDate: Moment,
       endDate: Moment,
-      reasonId: number | null,
+      reasonId: number | null
     ) => {
       const api = '/presences/events/reason';
       const body = JSON.stringify({
         events: [
           {
-            register_id: callId,
-            student_id: studentId,
-            start_date: startDate,
-            end_date: endDate,
-            type_id: type,
-            id,
             counsellor_input: true,
+            end_date: endDate,
+            id,
             reason_id: reasonId,
+            register_id: callId,
+            start_date: startDate,
+            student_id: studentId,
+            type_id: type,
           },
         ],
         reasonId,
-        student_id: studentId,
         structure_id: structureId,
+        student_id: studentId,
       });
       await fetchWithCache(api, {
-        method: 'PUT',
         body,
+        method: 'PUT',
       });
+    },
+  },
+  eventReasons: {
+    get: async (session: AuthLoggedAccount, structureId: string) => {
+      const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
+      const eventReasons = (await fetchJSONWithCache(api)) as BackendEventReasonList;
+      return eventReasons.filter(reason => !reason.hidden && reason.id >= 0).map(eventReasonAdapter);
+    },
+  },
+  events: {
+    get: async (session: AuthLoggedAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
+      const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
+      return historyEventsAdapter(events);
+    },
+    getForgottenNotebooks: async (
+      session: AuthLoggedAccount,
+      studentId: string,
+      structureId: string,
+      startDate: string,
+      endDate: string
+    ) => {
+      const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
+      const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
+      return forgottenNotebooksAdapter(forgottenNotebooks);
+    },
+    getIncidents: async (
+      session: AuthLoggedAccount,
+      studentId: string,
+      structureId: string,
+      startDate: string,
+      endDate: string
+    ) => {
+      const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
+      const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
+      return incidentsAdapter(incidents);
     },
   },
   initialization: {
@@ -818,14 +818,14 @@ export const presencesService = {
     get: async (session: AuthLoggedAccount, structureId: string, studentIds: string[]) => {
       const api = `/presences/structures/${structureId}/students/events`;
       const body = JSON.stringify({
+        end_at: moment().format('YYYY-MM-DD'),
+        start_at: moment().format('YYYY-MM-DD'),
         student_ids: studentIds,
         types: ['NO_REASON', 'UNREGULARIZED', 'REGULARIZED', 'LATENESS', 'DEPARTURE'],
-        start_at: moment().format('YYYY-MM-DD'),
-        end_at: moment().format('YYYY-MM-DD'),
       });
       const events = (await fetchJSONWithCache(api, {
-        method: 'POST',
         body,
+        method: 'POST',
       })) as BackendStudentsEvents;
       return studentsEventsAdapter(events);
     },

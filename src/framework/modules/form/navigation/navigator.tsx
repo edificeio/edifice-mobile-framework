@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { FormNavigationParams, formRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/form/module-config';
 import FormDistributionScreen, { computeNavBar as distributionNavBar } from '~/framework/modules/form/screens/distribution';
 import FormDistributionListScreen, {
@@ -7,8 +9,6 @@ import FormDistributionListScreen, {
 } from '~/framework/modules/form/screens/distribution-list';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { FormNavigationParams, formRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<FormNavigationParams>(moduleConfig.name, Stack => (

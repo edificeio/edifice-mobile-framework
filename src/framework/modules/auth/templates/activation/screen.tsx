@@ -1,9 +1,12 @@
-/* eslint-disable react/jsx-max-depth */
-import styled from '@emotion/native';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform as RNPlatform, SafeAreaView, ScrollView, View } from 'react-native';
+
+import styled from '@emotion/native';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { ActivationScreenProps, ActivationScreenState, IFields } from './types';
 
 import { I18n } from '~/app/i18n';
 import AlertCard from '~/framework/components/alert';
@@ -28,9 +31,6 @@ import {
 import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { Loading } from '~/ui/Loading';
 
-import styles from './styles';
-import { ActivationScreenProps, ActivationScreenState, IFields } from './types';
-
 const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
 const FormWrapper = styled.View({ flex: 1 });
 const FormContainer = styled.View({
@@ -42,8 +42,8 @@ const FormContainer = styled.View({
   marginTop: UI_SIZES.spacing.huge,
 });
 const LogoWrapper = styled.View({
-  flexGrow: 2,
   alignItems: 'center',
+  flexGrow: 2,
   justifyContent: 'center',
 });
 const ButtonWrapper = styled.View<{ error: any; typing: boolean }>({
@@ -61,24 +61,24 @@ export class ActivationScreen extends React.PureComponent<
 
   // fully controller component
   public state: ActivationScreenState = {
-    typing: false,
     acceptCGU: false,
-    activationState: 'IDLE',
     activationCode: this.props.route.params.credentials.password,
-    login: this.props.route.params.credentials.username,
-    password: '',
+    activationState: 'IDLE',
     confirmPassword: '',
+    login: this.props.route.params.credentials.username,
     mail: '',
+    password: '',
     phone: '',
+    typing: false,
   };
 
   private doActivation = async () => {
     try {
-      this.setState({ typing: false, activationState: 'RUNNING', error: undefined });
+      this.setState({ activationState: 'RUNNING', error: undefined, typing: false });
       await this.props.trySubmit(this.props.route.params.platform, this.state);
     } catch (e) {
       const activationError = e as IActivationError;
-      if (this.mounted) this.setState({ typing: false, error: activationError.error, activationState: 'IDLE' });
+      if (this.mounted) this.setState({ activationState: 'IDLE', error: activationError.error, typing: false });
     }
   };
 
@@ -97,14 +97,14 @@ export class ActivationScreen extends React.PureComponent<
   };
 
   public render() {
-    const { password, confirmPassword, mail, phone, acceptCGU, typing, error, activationState } = this.state;
+    const { acceptCGU, activationState, confirmPassword, error, mail, password, phone, typing } = this.state;
     const { platform } = this.props.route.params;
     const { context } = this.props;
     const formModel = new ActivationFormModel({
       ...context,
-      phoneRequired: context?.mandatory?.phone ?? false,
       emailRequired: context?.mandatory?.mail ?? false,
       password: () => password,
+      phoneRequired: context?.mandatory?.phone ?? false,
     });
     const isNotValid = !acceptCGU || !formModel.validate({ ...this.state });
     const errorKey = formModel.firstErrorKey({ ...this.state });
@@ -190,7 +190,7 @@ export class ActivationScreen extends React.PureComponent<
 }
 
 const ActivationScreenLoader = (props: ActivationScreenProps) => {
-  const { context, legalUrls, validReactionTypes, route } = props;
+  const { context, legalUrls, route, validReactionTypes } = props;
 
   const platform = route.params.platform;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();

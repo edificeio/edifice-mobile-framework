@@ -1,7 +1,8 @@
-import { NavigationProp, ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
+
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -15,7 +16,7 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { PageView, pageGutterSize } from '~/framework/components/page';
+import { pageGutterSize, PageView } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -43,13 +44,13 @@ import { openUrl } from '~/framework/util/linking';
 import {
   IAbstractNotification,
   IResourceUriNotification,
-  ITimelineNotification,
   isResourceUriNotification,
+  ITimelineNotification,
 } from '~/framework/util/notifications';
 import {
-  NotifHandlerThunkAction,
   defaultNotificationActionStack,
   handleNotificationAction,
+  NotifHandlerThunkAction,
 } from '~/framework/util/notifications/routing';
 
 // TYPES ==========================================================================================
@@ -67,7 +68,7 @@ export interface ITimelineScreenEventProps {
   handleOpenNotification(
     n: IAbstractNotification,
     fallback: NotifHandlerThunkAction,
-    navigation: NavigationProp<ParamListBase>,
+    navigation: NavigationProp<ParamListBase>
   ): Promise<void>;
 }
 export type ITimelineScreenProps = ITimelineScreenDataProps &
@@ -105,11 +106,11 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
   const ret = [] as (ITimelineItem & { key: string })[];
   for (const fm of msgs) {
     if (!fm.dismiss) {
-      ret.push({ type: ITimelineItemType.FLASHMSG, data: fm, key: fm.id.toString() });
+      ret.push({ data: fm, key: fm.id.toString(), type: ITimelineItemType.FLASHMSG });
     }
   }
   for (const n of notifs) {
-    ret.push({ type: ITimelineItemType.NOTIFICATION, data: n, key: n.id });
+    ret.push({ data: n, key: n.id, type: ITimelineItemType.NOTIFICATION });
   }
   return ret;
 };
@@ -138,9 +139,9 @@ export const computeNavBar = ({
 // COMPONENT ======================================================================================
 
 function NotificationItem({
-  notification,
-  doOpenNotification,
   doOpenMoodMottoNotification,
+  doOpenNotification,
+  notification,
   notificationTestID,
 }: {
   notification: ITimelineNotification;
@@ -158,7 +159,7 @@ function NotificationItem({
     },
     // Since notifications are immutable, we can memoize them only by id safely.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [notification.id, doOpenNotification],
+    [notification.id, doOpenNotification]
   );
   return (
     <TimelineNotification
@@ -235,8 +236,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                   } // Do nothing, just to prevent error
                 },
                 actionColor: theme.palette.status.warning.regular,
-                actionText: I18n.get('timeline-reportaction-button'),
                 actionIcon: 'ui-warning',
+                actionText: I18n.get('timeline-reportaction-button'),
               },
             ]
           : item.type === ITimelineItemType.FLASHMSG
@@ -251,8 +252,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                     } // Do nothing, just to prevent error
                   },
                   actionColor: theme.palette.status.failure.regular,
-                  actionText: I18n.get('timeline-close'),
                   actionIcon: 'ui-close',
+                  actionText: I18n.get('timeline-close'),
                 },
               ]
             : undefined
@@ -344,7 +345,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     }
     if (workflows.length) {
       this.props.navigation.setOptions({
-        // eslint-disable-next-line react/no-unstable-nested-components
         headerRight: () => (
           <PopupMenu actions={workflows}>
             <NavBarAction icon="ui-plus" />
@@ -419,7 +419,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       if (!this.rights.notification.report) reject(this.rights.notification.report);
       Alert.alert(I18n.get('timeline-reportaction-title'), I18n.get('timeline-reportaction-description'), [
         {
-          text: I18n.get('timeline-reportaction-submit'),
           onPress: async () => {
             try {
               await notificationsService.report(this.props.session, notif.id);
@@ -431,13 +430,14 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             }
           },
           style: 'destructive',
+          text: I18n.get('timeline-reportaction-submit'),
         },
         {
-          text: I18n.get('common-cancel'),
           onPress: () => {
             resolve(false);
           },
           style: 'cancel',
+          text: I18n.get('common-cancel'),
         },
       ]);
     });
@@ -459,15 +459,10 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps = (
   dispatch,
-  getState,
+  getState
 ) => ({
   dispatch,
-  handleInitTimeline: async () => {
-    await dispatch(startLoadNotificationsAction());
-  },
-  handleNextPage: async () => {
-    return dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>;
-  }, // TS BUG: await is needed here and type is correct
+  // TS BUG: await is needed here and type is correct
   handleDismissFlashMessage: async (flashMessageId: number) => {
     try {
       await dispatch(dismissFlashMessageAction(flashMessageId));
@@ -475,10 +470,17 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
       Toast.showError(I18n.get('timeline-flashmessage-dismisserror-text'));
     }
   },
+
+  handleInitTimeline: async () => {
+    await dispatch(startLoadNotificationsAction());
+  },
+  handleNextPage: async () => {
+    return dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>;
+  },
   handleOpenNotification: async (
     n: IAbstractNotification,
     fallback: NotifHandlerThunkAction,
-    navigation: NavigationProp<ParamListBase, keyof ParamListBase, string>,
+    navigation: NavigationProp<ParamListBase, keyof ParamListBase, string>
   ) => {
     dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Timeline Notification', false));
   },

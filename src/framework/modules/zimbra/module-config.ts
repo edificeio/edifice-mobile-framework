@@ -1,17 +1,17 @@
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-
 import type { IZimbraReduxState } from './reducer';
 
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+
 export default new NavigableModuleConfig<'zimbra', IZimbraReduxState>({
-  name: 'zimbra',
+  displayAs: 'tabModule',
+  displayI18n: 'zimbra-moduleconfig-tabname',
+  displayOrder: 1,
+  displayPicture: { name: 'messagerie-off', type: 'Icon' },
+
+  displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },
   entcoreScope: ['zimbra'],
   matchEntcoreApp: '/zimbra/zimbra',
+  name: 'zimbra',
   storageName: 'zimbra',
-
-  displayI18n: 'zimbra-moduleconfig-tabname',
-  displayAs: 'tabModule',
-  displayOrder: 1,
-  displayPicture: { type: 'Icon', name: 'messagerie-off' },
-  displayPictureFocus: { type: 'Icon', name: 'messagerie-on' },
   testID: 'tabbar-zimbra',
 });

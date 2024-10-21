@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { WorkspaceNavigationParams, workspaceRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/workspace/module-config';
 import { Filter } from '~/framework/modules/workspace/reducer';
 import WorkspaceFileListScreen, { computeNavBar as WorkspaceFileListNavBar } from '~/framework/modules/workspace/screens/file-list';
@@ -8,8 +10,6 @@ import WorkspaceFilePreviewScreen, {
 } from '~/framework/modules/workspace/screens/file-preview';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { WorkspaceNavigationParams, workspaceRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<WorkspaceNavigationParams>(moduleConfig.name, Stack => (

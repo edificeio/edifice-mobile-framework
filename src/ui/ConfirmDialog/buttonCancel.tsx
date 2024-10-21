@@ -8,13 +8,13 @@ import { SmallText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   buttonContainer: {
+    alignItems: 'center',
     backgroundColor: theme.palette.grey.grey,
     borderRadius: UI_SIZES.radius.small,
+    justifyContent: 'center',
     marginLeft: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.tiny,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   text: {
     color: theme.ui.text.inverse,
@@ -27,7 +27,7 @@ interface IDialogButtonCancelProps {
   onPress: () => void;
 }
 
-export const DialogButtonCancel = ({ style, textStyle, onPress }: IDialogButtonCancelProps) => (
+export const DialogButtonCancel = ({ onPress, style, textStyle }: IDialogButtonCancelProps) => (
   <TouchableOpacity style={[styles.buttonContainer, style]} onPress={onPress}>
     <SmallText style={[styles.text, textStyle]}>{I18n.get('common-cancel')}</SmallText>
   </TouchableOpacity>

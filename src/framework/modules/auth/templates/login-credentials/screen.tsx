@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
 
+import styles from './styles';
+import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
@@ -18,22 +21,19 @@ import { getAccountById } from '~/framework/modules/auth/reducer';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 
-import styles from './styles';
-import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
-
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const {
-    route,
-    navigation,
     error,
-    forgotPasswordRoute,
     forgotIdRoute,
+    forgotPasswordRoute,
     handleConsumeError,
+    lockLogin,
+    navigation,
+    route,
     tryLoginAdd,
     tryLoginReplace,
-    lockLogin,
   } = props;
-  const { platform, accountId } = route.params;
+  const { accountId, platform } = route.params;
   const account = getAccountById(accountId);
 
   const initialLogin =
@@ -44,7 +44,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
 
-  const { errmsg, errtype, errkey, errclear } = useErrorWithKey<typeof Error.LoginError>(platform.url, error, handleConsumeError);
+  const { errclear, errkey, errmsg, errtype } = useErrorWithKey<typeof Error.LoginError>(platform.url, error, handleConsumeError);
 
   const inputLogin = React.useRef<any>(null);
   const inputPassword = React.useRef<any>(null);
@@ -64,8 +64,8 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     setLoginState(LoginState.RUNNING);
     try {
       const loginCredentials = {
-        username: login,
         password: password.trim(),
+        username: login,
       };
 
       if (accountId) {
@@ -107,7 +107,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
       setLogin(value.trim().toLowerCase());
       onTextChange();
     },
-    [onTextChange],
+    [onTextChange]
   );
 
   const onPasswordChanged = React.useCallback(
@@ -115,7 +115,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
       setPassword(value);
       onTextChange();
     },
-    [onTextChange],
+    [onTextChange]
   );
 
   const onSubmitEditingLogin = React.useCallback(() => {
@@ -164,7 +164,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     return (
       <View style={styles.boxInputs}>
         <InputContainer
-          label={{ text: I18n.get('auth-login-login'), icon: 'ui-user' }}
+          label={{ icon: 'ui-user', text: I18n.get('auth-login-login') }}
           input={
             <TextInput
               placeholder={I18n.get('auth-login-inputLogin')}
@@ -185,7 +185,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         />
         <InputContainer
           style={styles.inputPassword}
-          label={{ text: I18n.get('auth-login-password'), icon: 'ui-lock' }}
+          label={{ icon: 'ui-lock', text: I18n.get('auth-login-password') }}
           input={
             <PasswordInput
               placeholder={I18n.get('auth-login-inputPassword')}

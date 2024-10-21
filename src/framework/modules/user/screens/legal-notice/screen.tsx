@@ -1,8 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import type { LegalItem, UserLegalNoticeScreenPrivateProps, UserLegalNoticeScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -20,19 +24,16 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Loading } from '~/ui/Loading';
 
-import styles from './styles';
-import type { LegalItem, UserLegalNoticeScreenPrivateProps, UserLegalNoticeScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
 }: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.legalNotice>): NativeStackNavigationOptions => ({
   ...navBarOptions({
+    backButtonTestID: 'legal-back',
     navigation,
     route,
     title: I18n.get('user-legalnotice-title'),
     titleTestID: 'legal-title',
-    backButtonTestID: 'legal-back',
   }),
 });
 
@@ -44,15 +45,15 @@ const LEGAL_ITEMS: LegalItem[] = [
 ];
 
 function UserLegalNoticeScreen(
-  props: UserLegalNoticeScreenPrivateProps & Pick<Required<UserLegalNoticeScreenPrivateProps>, 'legalUrls'>,
+  props: UserLegalNoticeScreenPrivateProps & Pick<Required<UserLegalNoticeScreenPrivateProps>, 'legalUrls'>
 ) {
   const openLegalItem = React.useCallback(
     (legalItem: string) => {
       const selectedLegalTitle = I18n.get(`user-legalnotice-${legalItem.toLowerCase()}`);
       const selectedLegalUrl = props.legalUrls[legalItem];
-      openPDFReader({ title: selectedLegalTitle, src: selectedLegalUrl });
+      openPDFReader({ src: selectedLegalUrl, title: selectedLegalTitle });
     },
-    [props.legalUrls],
+    [props.legalUrls]
   );
 
   const renderLegalItem = React.useCallback(
@@ -65,7 +66,7 @@ function UserLegalNoticeScreen(
         />
       </TouchableOpacity>
     ),
-    [openLegalItem],
+    [openLegalItem]
   );
 
   return <PageView>{LEGAL_ITEMS.map(legalItem => renderLegalItem(legalItem))}</PageView>;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { LayoutChangeEvent, ScrollView as RNScrollView, StyleSheet, View } from 'react-native';
+
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { I18n } from '~/app/i18n';
@@ -23,82 +24,82 @@ interface ITimelineFlashMessageState {
 }
 
 const flashMessageColors: Record<NonNullable<IEntcoreFlashMessage['color']>, Pick<IShades, 'pale' | 'light' | 'regular'>> = {
-  red: theme.palette.complementary.red,
-  blue: theme.palette.complementary.blue,
-  green: theme.palette.complementary.green,
-  orange: theme.palette.complementary.orange,
+  'blue': theme.palette.complementary.blue,
+  'green': theme.palette.complementary.green,
   'grey-dark': {
-    pale: theme.palette.grey.pearl,
     light: theme.palette.grey.cloudy,
+    pale: theme.palette.grey.pearl,
     regular: theme.palette.grey.stone,
   },
+  'orange': theme.palette.complementary.orange,
+  'red': theme.palette.complementary.red,
 };
 
 const styles = StyleSheet.create({
-  shadowWrapper: {
-    borderRadius: UI_SIZES.radius.medium,
-    paddingLeft: UI_SIZES.spacing.tiny,
-    paddingBottom: UI_SIZES.spacing.tiny,
-    marginHorizontal: UI_SIZES.spacing.medium,
-    marginBottom: UI_SIZES.spacing.medium,
-    marginTop: UI_SIZES.spacing.minor,
-  },
-  contentWrapper: {
-    paddingTop: getScaleWidth(36),
-    paddingHorizontal: getScaleWidth(24),
-    paddingBottom: getScaleWidth(24),
-    borderTopLeftRadius: UI_SIZES.radius.medium,
-    borderTopRightRadius: UI_SIZES.radius.medium,
-    borderBottomLeftRadius: UI_SIZES.radius.small,
-    borderBottomRightRadius: UI_SIZES.radius.medium,
-  },
-  iconShadow: {
-    position: 'absolute',
-    top: -getScaleWidth(20),
-    left: getScaleWidth(24),
-    width: getScaleWidth(52),
-    height: getScaleWidth(52),
-    borderRadius: getScaleWidth(52) / 2,
-    padding: UI_SIZES.spacing.tiny,
-  },
-  iconWrapper: {
-    width: getScaleWidth(52) - 2 * UI_SIZES.spacing.tiny,
-    height: getScaleWidth(52) - 2 * UI_SIZES.spacing.tiny,
-    borderRadius: (getScaleWidth(52) - 2 * UI_SIZES.spacing.tiny) / 2,
-    borderWidth: getScaleWidth(4),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  closeButton: {
+  buttonGradient: {
+    height: '100%',
+    left: -getScaleWidth(64),
     position: 'absolute',
     top: 0,
-    right: 0,
+    width: getScaleWidth(64),
+  },
+  closeButton: {
     padding: UI_SIZES.spacing.minor,
+    position: 'absolute',
+    right: 0,
+    top: 0,
   },
-  signature: {
-    marginTop: getScaleFontSize(22),
+  contentWrapper: {
+    borderBottomLeftRadius: UI_SIZES.radius.small,
+    borderBottomRightRadius: UI_SIZES.radius.medium,
+    borderTopLeftRadius: UI_SIZES.radius.medium,
+    borderTopRightRadius: UI_SIZES.radius.medium,
+    paddingBottom: getScaleWidth(24),
+    paddingHorizontal: getScaleWidth(24),
+    paddingTop: getScaleWidth(36),
   },
-  postContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  iconShadow: {
+    borderRadius: getScaleWidth(52) / 2,
+    height: getScaleWidth(52),
+    left: getScaleWidth(24),
+    padding: UI_SIZES.spacing.tiny,
+    position: 'absolute',
+    top: -getScaleWidth(20),
+    width: getScaleWidth(52),
   },
-  moreLessButton: {
-    paddingVertical: 0,
+  iconWrapper: {
+    alignItems: 'center',
+    borderRadius: (getScaleWidth(52) - 2 * UI_SIZES.spacing.tiny) / 2,
+    borderWidth: getScaleWidth(4),
+    height: getScaleWidth(52) - 2 * UI_SIZES.spacing.tiny,
+    justifyContent: 'center',
+    width: getScaleWidth(52) - 2 * UI_SIZES.spacing.tiny,
   },
   lessButton: {
     alignSelf: 'flex-end',
   },
   moreButtonWrapper: {
-    position: 'absolute',
     bottom: getScaleWidth(24),
+    position: 'absolute',
     right: getScaleWidth(24),
   },
-  buttonGradient: {
-    position: 'absolute',
-    left: -getScaleWidth(64),
-    top: 0,
-    height: '100%',
-    width: getScaleWidth(64),
+  moreLessButton: {
+    paddingVertical: 0,
+  },
+  postContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  shadowWrapper: {
+    borderRadius: UI_SIZES.radius.medium,
+    marginBottom: UI_SIZES.spacing.medium,
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.minor,
+    paddingBottom: UI_SIZES.spacing.tiny,
+    paddingLeft: UI_SIZES.spacing.tiny,
+  },
+  signature: {
+    marginTop: getScaleFontSize(22),
   },
 });
 
@@ -162,14 +163,14 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
             <HtmlContentView
               html={flashMessageHtml}
               opts={{
+                audio: false,
+                iframes: false,
+                images: false,
                 linkTextStyle: {
                   ...TextFontStyle.Bold,
                   textDecorationLine: 'underline',
                 },
                 textColor: false,
-                images: false,
-                iframes: false,
-                audio: false,
                 video: false,
               }}
             />
@@ -217,7 +218,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
           action={flashMessageAction.bind(this)}
         />
         <View style={[styles.iconShadow, { backgroundColor: messageTint.pale }]}>
-          <View style={[styles.iconWrapper, { borderColor: messageTint.light, backgroundColor: messageTint.regular }]}>
+          <View style={[styles.iconWrapper, { backgroundColor: messageTint.regular, borderColor: messageTint.light }]}>
             <NamedSVG
               name={messageIcon}
               fill={theme.palette.grey.white}

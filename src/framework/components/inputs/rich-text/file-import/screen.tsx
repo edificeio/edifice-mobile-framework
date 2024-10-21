@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { ActivityIndicator, Alert, View } from 'react-native';
+
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
+
+import styles from './styles';
+import { FileImportScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -9,7 +13,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { UploadFile, UploadStatus } from '~/framework/components/inputs/rich-text/form/types';
 import FlatList from '~/framework/components/list/flat-list';
-import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
+import { cameraAction, galleryAction, ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
@@ -20,9 +24,6 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Image } from '~/framework/util/media';
-
-import styles from './styles';
-import { FileImportScreenProps } from './types';
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness,
@@ -36,24 +37,24 @@ export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, 
     title: I18n.get('import-title'),
   }),
   headerStyle: {
-    position: 'absolute',
     backgroundColor: theme.ui.background.page,
-    zIndex: 100,
-    top: 0,
-    left: 0,
-    right: 0,
-    elevation: 0,
-    shadowOpacity: 0,
     borderBottomWidth: 0,
+    elevation: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    shadowOpacity: 0,
+    top: 0,
+    zIndex: 100,
   },
   headerTitleStyle,
 });
 
 const formatFile = (pic: ImagePicked) =>
   ({
+    error: undefined as string | undefined,
     localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
     status: UploadStatus.IDLE,
-    error: undefined as string | undefined,
     workspaceID: undefined as string | undefined,
   }) as UploadFile;
 
@@ -112,13 +113,13 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   const MAX_PARALLEL_UPLOADS_TASKS = 6;
 
   const updateFileStatusAndID = React.useCallback(
-    ({ file, status, id, error }: { file: UploadFile; status: UploadStatus; id?: string; error?: string }) => {
+    ({ error, file, id, status }: { file: UploadFile; status: UploadStatus; id?: string; error?: string }) => {
       file.status = status;
       if (id) file.workspaceID = id;
       if (error) file.error = error;
       setListReady(val => val + 1); // Update view
     },
-    [],
+    []
   );
 
   const uploadFile = React.useCallback(
@@ -133,17 +134,17 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       workspaceService.file
         .uploadFile(session, file.localFile, route.params.uploadParams)
         .then(resp => {
-          updateFileStatusAndID({ file, status: UploadStatus.OK, id: resp.df.id });
+          updateFileStatusAndID({ file, id: resp.df.id, status: UploadStatus.OK });
         })
         .catch(error => {
           console.error(`Import File Upload Failed: ${error}`);
-          updateFileStatusAndID({ file, status: UploadStatus.KO, error: textErrorUploadFile(error) });
+          updateFileStatusAndID({ error: textErrorUploadFile(error), file, status: UploadStatus.KO });
         })
         .finally(() => {
           uploadingTasksRef.current.delete(file);
         });
     },
-    [route.params.uploadParams, session, updateFileStatusAndID],
+    [route.params.uploadParams, session, updateFileStatusAndID]
   );
 
   const uploadFiles = React.useCallback(() => {
@@ -165,21 +166,21 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       setListReady(val => val + 1);
       uploadFiles();
     },
-    [uploadFiles, navigation],
+    [uploadFiles, navigation]
   );
 
   const removeAllFiles = React.useCallback(() => {
     workspaceService.files.trash(
       session!,
-      filesRef.current.map(f => f.workspaceID!),
+      filesRef.current.map(f => f.workspaceID!)
     );
   }, [session]);
 
   usePreventBack({
-    title: I18n.get('import-back-confirm-title'),
-    text: I18n.get('import-back-confirm-text'),
-    showAlert: filesRef.current.length > 0 && !validateImport,
     actionOnBack: removeAllFiles,
+    showAlert: filesRef.current.length > 0 && !validateImport,
+    text: I18n.get('import-back-confirm-text'),
+    title: I18n.get('import-back-confirm-title'),
   });
 
   // Manage nav bar actions
@@ -187,7 +188,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
     const fileCount = filesRef.current.length;
     navigation.setOptions({
       // navigation.setOptions() requires to define the component on demand.
-      // eslint-disable-next-line react/no-unstable-nested-components
+
       headerRight: () =>
         filesRef.current.some(upload => upload.status === UploadStatus.PENDING) ? (
           <ActivityIndicator size={UI_SIZES.elements.navbarIconSize} color={theme.palette.grey.black} />
@@ -202,7 +203,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
               !listReady ||
               (fileCount > 0 &&
                 filesRef.current.some(
-                  f => f.status === UploadStatus.PENDING || f.status === UploadStatus.IDLE || f.status === UploadStatus.KO,
+                  f => f.status === UploadStatus.PENDING || f.status === UploadStatus.IDLE || f.status === UploadStatus.KO
                 ))
             }
           />
@@ -266,12 +267,10 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       if (index >= filesRef.current.length) return;
       Alert.alert(I18n.get('richeditor-showfilesresult-deletefiletitle'), I18n.get('richeditor-showfilesresult-deletefiletext'), [
         {
-          text: I18n.get('common-cancel'),
           onPress: () => {},
+          text: I18n.get('common-cancel'),
         },
         {
-          text: I18n.get('common-delete'),
-          style: 'destructive',
           onPress: () => {
             const file = filesRef.current[index];
             if (file.workspaceID === undefined) {
@@ -287,10 +286,12 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
                 });
             }
           },
+          style: 'destructive',
+          text: I18n.get('common-delete'),
         },
       ]);
     },
-    [session, setFiles],
+    [session, setFiles]
   );
 
   const retryFile = async (index: number) => {
@@ -344,7 +345,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
           data={filesRef.current}
           contentContainerStyle={styles.addFilesResults}
           alwaysBounceVertical={false}
-          renderItem={({ item, index }) => (
+          renderItem={({ index, item }) => (
             <View key={index} style={styles.addFilesResultsItem}>
               {renderThumbnail(item)}
               <View style={styles.addFilesResultsFile}>

@@ -5,8 +5,8 @@ import { CompetencesAssessmentScreenNavParams } from '~/framework/modules/viesco
 import { CompetencesHomeScreenNavParams } from '~/framework/modules/viescolaire/competences/screens/home';
 
 export const competencesRouteNames = {
-  home: `${moduleConfig.routeName}` as 'home',
   assessment: `${moduleConfig.routeName}/assessment` as 'assessment',
+  home: `${moduleConfig.routeName}` as 'home',
 };
 export interface CompetencesNavigationParams extends ParamListBase {
   home: CompetencesHomeScreenNavParams;

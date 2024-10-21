@@ -5,10 +5,10 @@
 import * as React from 'react';
 import { ActivityIndicator, ColorValue, View, ViewStyle } from 'react-native';
 
-import theme from '~/app/theme';
-
 import { UI_SIZES } from './constants';
 import { pageGutterSize } from './page';
+
+import theme from '~/app/theme';
 
 interface LoadingProps {
   small?: boolean;
@@ -17,14 +17,14 @@ interface LoadingProps {
   withVerticalMargins?: boolean;
 }
 
-export const LoadingIndicator = ({ small, customColor, customStyle, withVerticalMargins }: LoadingProps) => (
+export const LoadingIndicator = ({ customColor, customStyle, small, withVerticalMargins }: LoadingProps) => (
   <View
     style={
       customStyle || {
-        flex: 1,
         alignItems: 'center',
+        flex: 1,
         justifyContent: 'center',
-        ...(withVerticalMargins ? { marginTop: UI_SIZES.spacing.minor, marginBottom: pageGutterSize } : {}),
+        ...(withVerticalMargins ? { marginBottom: pageGutterSize, marginTop: UI_SIZES.spacing.minor } : {}),
       }
     }>
     <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.palette.primary.regular} />

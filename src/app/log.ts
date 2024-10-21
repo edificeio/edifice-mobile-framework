@@ -1,4 +1,5 @@
 import { InteractionManager } from 'react-native';
+
 import RNFS from 'react-native-fs';
 import { consoleTransport, fileAsyncTransport, logger } from 'react-native-logs';
 import Share from 'react-native-share';
@@ -20,25 +21,25 @@ export namespace Log {
           asyncFunc: InteractionManager.runAfterInteractions,
           levels: {
             debug: 0,
+            error: 3,
             info: 1,
             warn: 2,
-            error: 3,
           },
           transport: [consoleTransport, fileAsyncTransport],
           transportOptions: {
             colors: {
               debug: 'white',
+              error: 'redBright',
               info: 'blueBright',
               warn: 'yellowBright',
-              error: 'redBright',
             },
             fileName: logFileName,
             FS: RNFS,
             mapLevels: {
               debug: 'log',
+              error: 'error',
               info: 'info',
               warn: 'warn',
-              error: 'error',
             },
           },
         });

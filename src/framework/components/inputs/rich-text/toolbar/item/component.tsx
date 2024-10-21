@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
+import styles from './styles';
+import { RichToolbarItemProps } from './types';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
-
-import styles from './styles';
-import { RichToolbarItemProps } from './types';
 
 export const RichToolbarItem = (props: RichToolbarItemProps) => {
   const renderColor = () => {

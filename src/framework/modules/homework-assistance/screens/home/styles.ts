@@ -9,10 +9,10 @@ export default StyleSheet.create({
     borderColor: theme.palette.secondary.regular,
   },
   backgroundImage: {
-    position: 'absolute',
-    right: -UI_SIZES.spacing.major,
     bottom: 80,
     maxHeight: 300,
+    position: 'absolute',
+    right: -UI_SIZES.spacing.major,
   },
   container: {
     flexGrow: 1,
@@ -24,8 +24,8 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
   rowContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     height: 40,
   },
   secondaryText: {

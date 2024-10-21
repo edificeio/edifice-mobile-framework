@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const HomeworkItem = ({ title, subtitle, checked, disabled, onChange, hideCheckbox }: any) => (
+export const HomeworkItem = ({ checked, disabled, hideCheckbox, onChange, subtitle, title }: any) => (
   <LeftColoredItem shadow={!checked} style={styles.homeworkLeftColoredItem} color={theme.palette.complementary.orange.regular}>
     <View style={styles.homeworkView}>
       <SmallBoldText>{title}</SmallBoldText>

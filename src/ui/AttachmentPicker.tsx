@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 
-import { ImagePicked } from '~/framework/components/menus/actions';
-import { Trackers } from '~/framework/util/tracker';
-import { ContentUri } from '~/types/contentUri';
+import { connect } from 'react-redux';
 
 import { ILocalAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 import { AttachmentGroupImages } from './AttachmentGroupImages';
+
+import { ImagePicked } from '~/framework/components/menus/actions';
+import { Trackers } from '~/framework/util/tracker';
+import { ContentUri } from '~/types/contentUri';
 
 class AttachmentPicker_Unconnected extends React.PureComponent<{
   attachments: ContentUri[] | ILocalAttachment[];
@@ -26,7 +27,7 @@ class AttachmentPicker_Unconnected extends React.PureComponent<{
   }
 
   public render() {
-    const { onlyImages, attachments, isContainerHalfScreen, attachmentsHeightHalfScreen, imageCallback, notifierId } = this.props;
+    const { attachments, attachmentsHeightHalfScreen, imageCallback, isContainerHalfScreen, notifierId, onlyImages } = this.props;
     return onlyImages ? (
       <AttachmentGroupImages
         imageCallback={imageCallback}

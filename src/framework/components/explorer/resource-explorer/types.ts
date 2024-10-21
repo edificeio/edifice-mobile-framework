@@ -1,6 +1,7 @@
-import { Moment } from 'moment';
 import * as React from 'react';
 import { ColorValue, FlatListProps, ImageSourcePropType, TextProps, TextStyle, ViewStyle } from 'react-native';
+
+import { Moment } from 'moment';
 
 import { PictureProps } from '~/framework/components/picture';
 
@@ -43,7 +44,7 @@ export interface ResourceExplorerProps<FolderType extends object, ResourceType e
     item:
       | (ResourceExplorerFolderItem & FolderType)
       | (ResourceExplorerItemWithImage & ResourceType)
-      | (ResourceExplorerItemWithIcon & ResourceType),
+      | (ResourceExplorerItemWithIcon & ResourceType)
   ) => void;
   folders?: (Omit<ResourceExplorerFolderItem, 'type'> & FolderType)[];
   resources?: (Omit<ResourceExplorerItemWithImage | ResourceExplorerItemWithIcon, 'type'> & ResourceType)[];

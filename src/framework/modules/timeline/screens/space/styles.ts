@@ -1,68 +1,68 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   animation: {
-    width: UI_SIZES.screen.width - UI_SIZES.spacing.big * 2,
     height: 80,
+    left: UI_SIZES.spacing.large,
     position: 'absolute',
     top: 0,
-    left: UI_SIZES.spacing.large,
+    width: UI_SIZES.screen.width - UI_SIZES.spacing.big * 2,
+  },
+  button: {
+    marginBottom: UI_SIZES.spacing.huge * 2,
   },
   content: {
     backgroundColor: '#1C1C73',
   },
   pic: {
-    width: getScaleWidth(120),
-    height: getScaleWidth(120),
     alignSelf: 'center',
+    height: getScaleWidth(120),
     marginTop: UI_SIZES.spacing.major,
-  },
-  title: {
-    color: theme.palette.grey.white,
-    marginVertical: UI_SIZES.spacing.large,
-    alignSelf: 'stretch',
-    paddingHorizontal: UI_SIZES.spacing.large,
-  },
-  text: {
-    color: theme.palette.grey.white,
-    marginBottom: UI_SIZES.spacing.large,
-    paddingHorizontal: UI_SIZES.spacing.large,
-  },
-  button: {
-    marginBottom: UI_SIZES.spacing.huge * 2,
+    width: getScaleWidth(120),
   },
   svgEdi: {
-    position: 'absolute',
-    bottom: 0,
-    zIndex: -1,
     alignSelf: 'center',
-  },
-  svgRocket: {
+    bottom: 0,
     position: 'absolute',
-    right: 0,
-    top: 0,
+    zIndex: -1,
   },
   svgMoon: {
     position: 'absolute',
     right: 0,
     top: getScaleWidth(340),
   },
-  svgStar1: {
-    position: 'absolute',
-    left: 0,
-    bottom: getScaleWidth(68),
-  },
-  svgStar2: {
-    position: 'absolute',
-    left: UI_SIZES.spacing.large,
-    bottom: getScaleWidth(24),
-  },
-  svgStar3: {
+  svgRocket: {
     position: 'absolute',
     right: 0,
+    top: 0,
+  },
+  svgStar1: {
+    bottom: getScaleWidth(68),
+    left: 0,
+    position: 'absolute',
+  },
+  svgStar2: {
+    bottom: getScaleWidth(24),
+    left: UI_SIZES.spacing.large,
+    position: 'absolute',
+  },
+  svgStar3: {
     bottom: getScaleWidth(110),
+    position: 'absolute',
+    right: 0,
+  },
+  text: {
+    color: theme.palette.grey.white,
+    marginBottom: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.large,
+  },
+  title: {
+    alignSelf: 'stretch',
+    color: theme.palette.grey.white,
+    marginVertical: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.large,
   },
 });

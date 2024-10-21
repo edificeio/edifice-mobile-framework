@@ -4,6 +4,9 @@
  *
  * navBar shows up with the RootSTack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
  */
+import * as React from 'react';
+import { Platform } from 'react-native';
+
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   CommonActions,
@@ -15,9 +18,15 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
-import * as React from 'react';
-import { Platform } from 'react-native';
 import { connect } from 'react-redux';
+
+import { handleCloseModalActions } from './helper';
+import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
+import modals from './modals/navigator';
+import { ModuleScreens } from './moduleScreens';
+import { getTypedRootStack } from './navigators';
+import { setConfirmQuitAction } from './nextTabJump';
+import { computeTabRouteName, tabModules } from './tabModules';
 
 import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
@@ -30,14 +39,6 @@ import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { handleCloseModalActions } from './helper';
-import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
-import modals from './modals/navigator';
-import { ModuleScreens } from './moduleScreens';
-import { getTypedRootStack } from './navigators';
-import { setConfirmQuitAction } from './nextTabJump';
-import { computeTabRouteName, tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
 //      888           888      8888b   888                   Y8P                   888
@@ -56,19 +57,19 @@ const Tab = createBottomTabNavigator();
 const PictureWithXmas = connect((state: IGlobalState) => ({
   isXmas: getIsXmasActive(state),
 }))((props: PictureProps & IconProps & { isXmas?: boolean; focused: boolean }) => {
-  const { name, isXmas, ...other } = props;
+  const { isXmas, name, ...other } = props;
   return <Picture {...other} name={`${isXmas ? 'xmas-' : ''}${name}`} />;
 });
 
 const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
-  props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
+  props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0]
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPicture };
   props.size = UI_SIZES.elements.tabbarIconSize;
 
   if (dp.type === 'Image') {
-    dp.style = [dp.style, { width: props.size, height: props.size }];
+    dp.style = [dp.style, { height: props.size, width: props.size }];
   } else if (dp.type === 'Icon') {
     dp.size = dp.size ?? props.size;
     dp.color = dp.color ?? props.color;
@@ -89,10 +90,10 @@ const createTabIcon = (
 
 const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
   return {
-    tabBarLabel: I18n.get(moduleConfig.displayI18n),
     tabBarIcon: props => {
       return createTabIcon(moduleConfig, props);
     },
+    tabBarLabel: I18n.get(moduleConfig.displayI18n),
     tabBarTestID: moduleConfig.testID ?? '',
   } as BottomTabNavigationOptions;
 };
@@ -161,7 +162,7 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
   const tabModulesCache = tabModules.get();
   const moduleTabStackCache = React.useMemo(
     () => tabModulesCache.map(module => <TabStack module={module} key={module.config.name} />),
-    [tabModulesCache],
+    [tabModulesCache]
   );
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
@@ -171,7 +172,7 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
         .filterAvailables(apps ?? [])
         .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [appsJson],
+    [appsJson]
   );
   const tabRoutes = React.useMemo(() => {
     return availableTabModules.map(module => {
@@ -192,11 +193,31 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appsJson]);
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
-    React.useCallback(({ route, navigation }) => {
+    React.useCallback(({ navigation, route }) => {
       return {
-        lazy: false, // Prevent navBar flickering with this option
+        // Prevent navBar flickering with this option
         freezeOnBlur: true,
         headerShown: false,
+        lazy: false,
+        tabBarActiveTintColor: theme.palette.primary.regular.toString(),
+        // 😡 F U React Nav 6, using plain string instead of ColorValue
+        tabBarHideOnKeyboard: Platform.select({ android: true, ios: false }),
+
+        tabBarIconStyle: {
+          height: UI_SIZES.elements.tabbarIconSize,
+          marginTop: UI_SIZES.elements.tabbarLabelMarginTop,
+          width: UI_SIZES.elements.tabbarIconSize,
+        },
+
+        // 😡 F U React Nav 6, using plain string instead of ColorValue
+        tabBarInactiveTintColor: theme.ui.text.light.toString(),
+
+        tabBarLabelStyle: {
+          fontSize: 12,
+          lineHeight: undefined,
+          marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom,
+        },
+
         tabBarStyle: {
           backgroundColor: theme.ui.background.card,
           borderTopColor: theme.palette.grey.cloudy,
@@ -205,19 +226,6 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
           height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
           ...getAndroidTabBarStyleForNavState(navigation.getState()),
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          lineHeight: undefined,
-          marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom,
-        },
-        tabBarIconStyle: {
-          marginTop: UI_SIZES.elements.tabbarLabelMarginTop,
-          height: UI_SIZES.elements.tabbarIconSize,
-          width: UI_SIZES.elements.tabbarIconSize,
-        },
-        tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
-        tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
-        tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),
       };
     }, []);
   return React.useMemo(() => {

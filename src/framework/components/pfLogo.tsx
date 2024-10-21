@@ -2,8 +2,9 @@
  * ODE Mobile UI - Logo
  * Display current platform logo
  */
-import styled from '@emotion/native';
 import React from 'react';
+
+import styled from '@emotion/native';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';

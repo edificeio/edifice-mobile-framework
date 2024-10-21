@@ -1,8 +1,9 @@
+import * as React from 'react';
+import { StatusBar, View } from 'react-native';
+
 import CookieManager from '@react-native-cookies/cookies';
 import { ParamListBase, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as React from 'react';
-import { StatusBar, View } from 'react-native';
 import Orientation, {
   LANDSCAPE_LEFT,
   LANDSCAPE_RIGHT,
@@ -13,6 +14,9 @@ import Orientation, {
 } from 'react-native-orientation-locker';
 import { OnShouldStartLoadWithRequest, WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
+
+import styles from './styles';
+import { WebResourceViewerPrivateProps, WebResourceViewerStoreProps } from './types';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -28,9 +32,6 @@ import { getCurrentQueryParamToken, getPlatform } from '~/framework/modules/auth
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
-
-import styles from './styles';
-import { WebResourceViewerPrivateProps, WebResourceViewerStoreProps } from './types';
 
 export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<ParamListBase>): NativeStackNavigationOptions => ({
   ...navBarOptions({
@@ -52,7 +53,7 @@ const useScreenUnlockOrientation = () => {
       return () => {
         Orientation.lockToPortrait();
       };
-    }, []),
+    }, [])
   );
 
   const onDeviceOrientationChange = React.useCallback((o: OrientationType) => {
@@ -80,7 +81,7 @@ const useScreenUnlockOrientation = () => {
 };
 
 const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<WebResourceViewerStoreProps>) => {
-  const { navigation, platform, source, fetchResource, queryParamToken, injectSearchParams = {} } = props;
+  const { fetchResource, injectSearchParams = {}, navigation, platform, queryParamToken, source } = props;
   const sourceObject: WebViewSourceUri = React.useMemo(() => {
     let uri = typeof source === 'string' ? urlSigner.getAbsoluteUrl(source)! : urlSigner.getAbsoluteUrl(source.uri)!;
     const uriObj = new URL(uri);
@@ -123,7 +124,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
       }
       return true;
     },
-    [platform.url],
+    [platform.url]
   );
 
   useConstructor(() => {
@@ -148,7 +149,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
     ),
-    [onError, onLoad, onShouldStartLoadWithRequest, sourceObject],
+    [onError, onLoad, onShouldStartLoadWithRequest, sourceObject]
   );
 
   const closeButton = React.useMemo(
@@ -161,7 +162,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         style={styles.closeButton}
       />
     ),
-    [navigation.goBack],
+    [navigation.goBack]
   );
 
   const renderContent = React.useCallback(
@@ -180,7 +181,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         {orientation === OrientationType.PORTRAIT ? closeButton : null}
       </PageView>
     ),
-    [closeButton, orientation, orientationElement, toggleOrientation, webviewElement],
+    [closeButton, orientation, orientationElement, toggleOrientation, webviewElement]
   );
 
   const renderEmpty = React.useCallback(
@@ -191,7 +192,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         {closeButton}
       </PageView>
     ),
-    [webviewError, closeButton],
+    [webviewError, closeButton]
   );
 
   const loadContent = React.useCallback(async () => {

@@ -1,8 +1,12 @@
-import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { Animated, Easing, LayoutChangeEvent } from 'react-native';
+
+import { useRoute } from '@react-navigation/native';
 import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+
+import styles from './styles';
+import { ToastParams, ToastProps } from './types';
 
 import theme, { IShades } from '~/app/theme';
 import AlertCard, { AlertCardProps } from '~/framework/components/alert';
@@ -10,9 +14,6 @@ import { toastConfigColor } from '~/framework/components/alert/model';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
-
-import styles from './styles';
-import { ToastParams, ToastProps } from './types';
 
 // Config constants for Toasts
 
@@ -24,8 +25,8 @@ const TOAST_PROGESS_ANIMATION_START_VALUE = 1;
 const TOAST_PROGESS_ANIMATION_END_VALUE = 0;
 
 export const DEFAULTS = {
-  visibilityTime: TOAST_DURATION + TOAST_PROGESS_ANIMATION_DELAY,
   offset: TOAST_TOP_MARGIN,
+  visibilityTime: TOAST_DURATION + TOAST_PROGESS_ANIMATION_DELAY,
 };
 
 function useToastShades(type: ToastParams['type']) {
@@ -44,13 +45,13 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
   const progressAnimation = React.useMemo(
     () =>
       Animated.timing(progressValue, {
-        toValue: TOAST_PROGESS_ANIMATION_END_VALUE,
         delay: TOAST_PROGESS_ANIMATION_DELAY,
-        easing: TOAST_PROGESS_ANIMATION_EASING,
         duration: duration - TOAST_PROGESS_ANIMATION_DELAY,
+        easing: TOAST_PROGESS_ANIMATION_EASING,
+        toValue: TOAST_PROGESS_ANIMATION_END_VALUE,
         useNativeDriver: false,
       }),
-    [duration, progressValue],
+    [duration, progressValue]
   );
   const progressStyle = React.useMemo(() => {
     return [
@@ -71,9 +72,9 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
   const onResume = React.useCallback(() => {
     progressTimeStart.current = Date.now();
     const progressResumeAnimation = Animated.timing(progressValue, {
-      toValue: TOAST_PROGESS_ANIMATION_END_VALUE,
-      easing: TOAST_PROGESS_ANIMATION_EASING,
       duration: remainingTime.current,
+      easing: TOAST_PROGESS_ANIMATION_EASING,
+      toValue: TOAST_PROGESS_ANIMATION_END_VALUE,
       useNativeDriver: false,
     });
     progressResumeAnimation.start();
@@ -89,7 +90,7 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
     remainingTime.current = duration;
   }, [duration, progressAnimation]);
 
-  return { onStart, onPause, onResume, measureProgressLayout, progressStyle };
+  return { measureProgressLayout, onPause, onResume, onStart, progressStyle };
 }
 
 function ToastCard(params: ToastParams) {
@@ -99,7 +100,7 @@ function ToastCard(params: ToastParams) {
     ToastMessage.hide();
   }, []);
 
-  const { onStart, onPause, onResume, measureProgressLayout, progressStyle } = useToastProgress(params.props.duration, colorShades);
+  const { measureProgressLayout, onPause, onResume, onStart, progressStyle } = useToastProgress(params.props.duration, colorShades);
   // Refresh start effect when toastId is renewed (= when new toast is triggered)
   React.useLayoutEffect(onStart, [onStart, params.props.toastId]);
 
@@ -110,16 +111,16 @@ function ToastCard(params: ToastParams) {
       ) : (
         <IconButton icon="ui-close" action={closeCallback!} />
       ),
-    [measureProgressLayout, params.props.duration, progressStyle],
+    [measureProgressLayout, params.props.duration, progressStyle]
   );
 
   const containerProps = React.useMemo(
     () => ({
-      onTouchStart: onPause,
       onTouchEnd: onResume,
+      onTouchStart: onPause,
       testID: params.props.testID,
     }),
-    [onPause, onResume, params.props.testID],
+    [onPause, onResume, params.props.testID]
   );
 
   return (
@@ -140,10 +141,10 @@ function ToastCard(params: ToastParams) {
 }
 
 const config: ToastConfig = {
+  error: props => <ToastCard {...props} />,
+  info: props => <ToastCard {...props} />,
   success: props => <ToastCard {...props} />,
   warning: props => <ToastCard {...props} />,
-  info: props => <ToastCard {...props} />,
-  error: props => <ToastCard {...props} />,
 };
 
 //

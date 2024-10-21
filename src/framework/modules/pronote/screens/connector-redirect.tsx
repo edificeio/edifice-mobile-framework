@@ -1,6 +1,7 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -62,5 +63,5 @@ export default connect(
   (state: IGlobalState) => ({
     session: getSession(),
   }),
-  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
+  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch)
 )(ConnectorRedirectScreen);

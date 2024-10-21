@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { DiaryNavigationParams, diaryRouteNames } from '.';
+
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
@@ -11,8 +13,6 @@ import DiarySessionScreen, { computeNavBar as sessionNavBar } from '~/framework/
 import DiaryTimetableScreen, { computeNavBar as timetableNavBar } from '~/framework/modules/viescolaire/diary/screens/timetable';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { DiaryNavigationParams, diaryRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<DiaryNavigationParams>(moduleConfig.name, Stack => {
@@ -32,7 +32,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={DiaryTimetableScreen}
           options={timetableNavBar}
           initialParams={{}}
-        />,
+        />
       );
       moduleConfig.routeName = diaryRouteNames.timetable;
     } else {
@@ -43,7 +43,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={DiaryHomeworkListScreen}
           options={homeworkListNavBar}
           initialParams={{}}
-        />,
+        />
       );
       moduleConfig.routeName = diaryRouteNames.homeworkList;
     }
@@ -62,7 +62,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         component={DiarySessionScreen}
         options={sessionNavBar}
         initialParams={{}}
-      />,
+      />
     );
 
     return <>{screens}</>;

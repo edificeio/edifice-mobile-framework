@@ -79,18 +79,18 @@ const resourceAdapter = (data: BackendResource): Resource => {
 
 export const mediacentreService = {
   favorites: {
+    add: async (session: AuthActiveAccount, resource: Resource) => {
+      const api = `/mediacentre/favorites?id=${resource.id}`;
+      return signedFetch(`${session.platform.url}${api}`, {
+        body: JSON.stringify(resource),
+        method: 'POST',
+      }) as Promise<any>;
+    },
     get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/favorites';
       const { data: favorites } = (await fetchJSONWithCache(api)) as { data: BackendResource[] };
       if (!Array.isArray(favorites)) return [];
       return favorites.map(resourceAdapter);
-    },
-    add: async (session: AuthActiveAccount, resource: Resource) => {
-      const api = `/mediacentre/favorites?id=${resource.id}`;
-      return signedFetch(`${session.platform.url}${api}`, {
-        method: 'POST',
-        body: JSON.stringify(resource),
-      }) as Promise<any>;
     },
     remove: async (session: AuthActiveAccount, id: string, source: Source) => {
       const api = `/mediacentre/favorites?id=${id}&source=${source}`;
@@ -117,12 +117,12 @@ export const mediacentreService = {
   search: {
     getSimple: async (session: AuthActiveAccount, sources: Source[], query: string) => {
       const jsondata = {
-        event: 'search',
-        state: 'PLAIN_TEXT',
-        sources,
         data: {
           query,
         },
+        event: 'search',
+        sources,
+        state: 'PLAIN_TEXT',
       };
       const api = `/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`;
       const response = (await fetchJSONWithCache(api)) as BackendSearch;
@@ -142,8 +142,8 @@ export const mediacentreService = {
     update: async (session: AuthActiveAccount, id: string) => {
       const api = `/userbook/preference/selectedStructure`;
       return signedFetch(`${session.platform.url}${api}`, {
-        method: 'PUT',
         body: JSON.stringify(id),
+        method: 'PUT',
       }) as Promise<any>;
     },
   },

@@ -1,8 +1,8 @@
+import { TrackEventOfModuleArgs, trackingActionAddSuffix } from '.';
+
 import { Error } from '~/framework/util/error';
 import { IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { TryActionOptions } from '~/framework/util/redux/actions';
-
-import { TrackEventOfModuleArgs, trackingActionAddSuffix } from '.';
 
 export const TRACK_ERROR = Symbol('TRACK_ERROR');
 export const TRACK_DEFAULT = Symbol('TRACK_DEFAULT');
@@ -23,7 +23,7 @@ export interface TrackValuesMap {
 export const makeTrackOption =
   <Args extends any[], ReturnType>(
     mConf: Pick<IAnyModuleConfig, 'trackingName'>,
-    trackValues: TrackValuesMap | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackValuesMap),
+    trackValues: TrackValuesMap | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackValuesMap)
   ): TryActionOptions<Args, ReturnType>['track'] =>
   (returnedValue: Awaited<ReturnType> | Error, ...args: Args) => {
     const values = typeof trackValues === 'function' ? trackValues(returnedValue, ...args) : trackValues;
@@ -67,7 +67,7 @@ export const trackScenarios = <Scenarios>(items: { [name in keyof Scenarios]: Om
     (Object.entries(items) as [keyof Scenarios, Omit<TrackValuesMap, typeof TRACK_NAME>][]).map(([k, v]) => [
       k,
       trackScenario<Scenarios>(k, v),
-    ]),
+    ])
   ) as {
     [name in keyof typeof items]: ReturnType<typeof trackScenario>;
   };

@@ -9,16 +9,16 @@ import { SmallText } from '~/framework/components/text';
 import { getFileIcon } from '~/framework/modules/zimbra/utils/fileIcon';
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   iconContainer: {
-    width: 48,
+    alignItems: 'center',
     height: 42,
     justifyContent: 'center',
+    width: 48,
+  },
+  mainContainer: {
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
@@ -29,7 +29,7 @@ interface IAttachmentProps {
   onRemove?: () => void;
 }
 
-export const Attachment = ({ name, type, uploadSuccess = true, onRemove }: IAttachmentProps) => {
+export const Attachment = ({ name, onRemove, type, uploadSuccess = true }: IAttachmentProps) => {
   const iconName = getFileIcon(type);
   return (
     <View style={styles.mainContainer}>

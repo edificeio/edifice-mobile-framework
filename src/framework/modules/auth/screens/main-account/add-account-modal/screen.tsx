@@ -1,7 +1,10 @@
-import { NavigationContainer, NavigationState, createNavigationContainerRef } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import { createNavigationContainerRef, NavigationContainer, NavigationState } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
+
+import type { AuthAddAccountModalScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { useConstructor } from '~/framework/hooks/constructor';
@@ -14,8 +17,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
-
-import type { AuthAddAccountModalScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -55,7 +56,7 @@ export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScre
       trackNavState(state);
       manageNavSnow();
     },
-    [manageNavSnow, trackNavState],
+    [manageNavSnow, trackNavState]
   );
   const navigator = React.useMemo(
     () => (
@@ -63,7 +64,7 @@ export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScre
         <RootStack.Navigator screenOptions={{ headerShown: false }}>{routes}</RootStack.Navigator>
       </NavigationContainer>
     ),
-    [navigationState, onStateChange, RootStack, routes],
+    [navigationState, onStateChange, RootStack, routes]
   );
   return navigator;
 }

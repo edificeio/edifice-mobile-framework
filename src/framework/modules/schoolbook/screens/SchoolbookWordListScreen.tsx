@@ -1,16 +1,16 @@
 /**
  * Schoolbook word list
  */
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import UserList from '~/framework/components/UserList';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
@@ -19,6 +19,7 @@ import { linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
+import UserList from '~/framework/components/UserList';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { SchoolbookWordSummaryCard } from '~/framework/modules/schoolbook/components/SchoolbookWordSummaryCard';
@@ -79,7 +80,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   // EVENTS =====================================================================================
 
   const [schoolbookWords, setSchoolbookWords] = React.useState(
-    isParent ? ({} as { [key: string]: IStudentAndParentWordList }) : ([] as ITeacherWordList | IStudentAndParentWordList),
+    isParent ? ({} as { [key: string]: IStudentAndParentWordList }) : ([] as ITeacherWordList | IStudentAndParentWordList)
   );
   const [children, setChildren] = React.useState([] as IChildrenWithUnacknowledgedWordsCount);
   const [selectedChildId, setSelectedChildId] = React.useState('');
@@ -157,12 +158,12 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         });
       }
     },
-    [isParent, isTeacher, nextPageToFetch, pagingSize, schoolbookWords, selectedChildId, session, userId],
+    [isParent, isTeacher, nextPageToFetch, pagingSize, schoolbookWords, selectedChildId, session, userId]
   );
 
   const getChildIdWithNewestWord = (
     childrenWithUnacknowledgedWordsCount: IChildrenWithUnacknowledgedWordsCount,
-    childrenWordLists: IStudentAndParentWordList[],
+    childrenWordLists: IStudentAndParentWordList[]
   ) => {
     const newestWordDates = childrenWordLists
       ?.map((childWordList, index) => ({
@@ -191,7 +192,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
             name: child.displayName && removeFirstWord(child.displayName),
           }));
           const wordsCountPromises = formattedAllChildren?.map(child =>
-            schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id),
+            schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id)
           );
           const childrenUnacknowledgedWordsCount = wordsCountPromises && (await Promise.all(wordsCountPromises));
           const childrenWithUnacknowledgedWordsCount = formattedAllChildren?.map((child, index) => ({
@@ -218,7 +219,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         }
       } else await fetchPage(true, true);
     },
-    [fetchPage, isParent, session, userId],
+    [fetchPage, isParent, session, userId]
   );
 
   const openSchoolbookWord = (schoolbookWordId: string) =>
@@ -260,14 +261,13 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   React.useEffect(() => {
     props.navigation.setOptions({
       // React Navigation 6 uses this syntax to setup nav options
-      // eslint-disable-next-line react/no-unstable-nested-components
+
       headerRight: () =>
         hasSchoolbookWordCreationRights &&
         (loadingState === AsyncPagedLoadingState.DONE || loadingState === AsyncPagedLoadingState.REFRESH) ? (
           <PopupMenu
             actions={[
               linkAction({
-                title: I18n.get('schoolbook-wordlist-wordcreate'),
                 action: () => {
                   //TODO: get session.platform from redux
                   if (!session?.platform) {
@@ -276,6 +276,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
                   const url = `${session?.platform!.url}/schoolbook#/list`;
                   openUrl(url);
                 },
+                title: I18n.get('schoolbook-wordlist-wordcreate'),
               }),
             ]}>
             <NavBarAction icon="ui-options" />
@@ -316,12 +317,12 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         title={I18n.get(
           hasSchoolbookWordCreationRights
             ? 'schoolbook-wordlist-emptyscreen-title'
-            : 'schoolbook-wordlist-emptyscreen-title-nocreationrights',
+            : 'schoolbook-wordlist-emptyscreen-title-nocreationrights'
         )}
         text={I18n.get(
           hasSchoolbookWordCreationRights
             ? 'schoolbook-wordlist-emptyscreen-text'
-            : 'schoolbook-wordlist-emptyscreen-text-nocreationrights',
+            : 'schoolbook-wordlist-emptyscreen-text-nocreationrights'
         )}
         {...(hasSchoolbookWordCreationRights
           ? {
@@ -351,7 +352,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
       <UserList
         data={children}
         style={{ padding: UI_SIZES.spacing.medium }}
-        renderBadge={user => ({ badgeContent: user.unacknowledgedWordsCount, badgeColor: theme.ui.notificationBadge })}
+        renderBadge={user => ({ badgeColor: theme.ui.notificationBadge, badgeContent: user.unacknowledgedWordsCount })}
         onSelect={id => setSelectedChildId(id)}
         selectedId={selectedChildId}
         horizontal
@@ -414,6 +415,6 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
 // MAPPING ========================================================================================
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(),
   initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+  session: getSession(),
 }))(SchoolbookWordListScreen);

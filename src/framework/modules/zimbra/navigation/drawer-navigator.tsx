@@ -1,11 +1,12 @@
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as React from 'react';
+
+import { createDrawerNavigator } from '@react-navigation/drawer';
+
+import { zimbraRouteNames } from '.';
 
 import DrawerContent from '~/framework/modules/zimbra/components/DrawerContent';
 import { SystemFolder } from '~/framework/modules/zimbra/model';
 import ZimbraMailListScreen, { computeNavBar as mailListNavBar } from '~/framework/modules/zimbra/screens/mail-list';
-
-import { zimbraRouteNames } from '.';
 
 export default () => {
   const Drawer = createDrawerNavigator();

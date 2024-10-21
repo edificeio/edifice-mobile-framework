@@ -135,18 +135,18 @@ type IBackendSessionList = IBackendSession[];
 
 const homeworkAdapter = (data: IBackendHomework): IHomework => {
   return {
-    id: data.id.toString(),
-    is_published: data.is_published,
-    due_date: moment(data.due_date),
-    type: data.type,
-    subject_id: data.subject_id,
-    subject: data.subject,
-    exceptional_label: data.exceptional_label,
-    progress: data.progress,
+    audience: data.audience,
     description: data.description,
     created_date: moment(data.created),
-    audience: data.audience,
+    due_date: moment(data.due_date),
+    exceptional_label: data.exceptional_label,
+    id: data.id.toString(),
+    is_published: data.is_published,
+    progress: data.progress,
     session_id: data.session_id?.toString() ?? null,
+    subject: data.subject,
+    subject_id: data.subject_id,
+    type: data.type,
   };
 };
 
@@ -176,21 +176,21 @@ const homeworksAdapter = (data: IBackendHomeworkList): IHomeworkMap => {
 
 const sessionAdapter = (data: IBackendSession): IDiarySession => {
   return {
-    id: data.id.toString(),
-    is_published: data.is_published,
-    is_empty: data.is_empty,
     date: moment(data.date),
-    subject_id: data.subject_id,
-    subject: data.subject,
-    exceptional_label: data.exceptional_label,
-    start_time: data.start_time,
-    end_time: data.end_time,
-    teacher_id: data.teacher_id,
     description: data.description,
-    title: data.title,
+    end_time: data.end_time,
+    exceptional_label: data.exceptional_label,
     homeworks: data.homeworks.map(homeworkAdapter),
-    course_id: data.course_id,
     audience: data.audience,
+    id: data.id.toString(),
+    course_id: data.course_id,
+    is_empty: data.is_empty,
+    is_published: data.is_published,
+    start_time: data.start_time,
+    subject: data.subject,
+    subject_id: data.subject_id,
+    teacher_id: data.teacher_id,
+    title: data.title,
   };
 };
 
@@ -204,6 +204,16 @@ export const diaryService = {
       return courses.map(courseAdapter);
     },
   },
+  homework: {
+    updateProgress: async (session: AuthLoggedAccount, homeworkId: number, isDone: boolean) => {
+      const status = isDone ? 'done' : 'todo';
+      const api = `/diary/homework/progress/${homeworkId}/${status}`;
+      await fetchJSONWithCache(api, {
+        method: 'POST',
+      });
+      return { homeworkId, status };
+    },
+  },
   homeworks: {
     get: async (session: AuthLoggedAccount, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/homeworks/own/${startDate}/${endDate}/${structureId}`;
@@ -214,16 +224,6 @@ export const diaryService = {
       const api = `/diary/homeworks/child/${startDate}/${endDate}/${childId}/${structureId}`;
       const homeworks = (await fetchJSONWithCache(api)) as IBackendHomeworkList;
       return homeworksAdapter(homeworks);
-    },
-  },
-  homework: {
-    updateProgress: async (session: AuthLoggedAccount, homeworkId: number, isDone: boolean) => {
-      const status = isDone ? 'done' : 'todo';
-      const api = `/diary/homework/progress/${homeworkId}/${status}`;
-      await fetchJSONWithCache(api, {
-        method: 'POST',
-      });
-      return { homeworkId, status };
     },
   },
   sessions: {

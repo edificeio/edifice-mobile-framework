@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { CompetenceRound } from './Item';
+
 import theme from '~/app/theme';
 import { CardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeadingSText, NestedText, SmallBoldText, SmallInverseText, SmallText } from '~/framework/components/text';
 import { IDevoir, ISubject } from '~/framework/modules/viescolaire/competences/model';
-
-import { CompetenceRound } from './Item';
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -15,23 +15,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   gradeText: {
-    textAlign: 'center',
-    marginBottom: UI_SIZES.spacing.minor,
     color: theme.ui.text.inverse,
+    marginBottom: UI_SIZES.spacing.minor,
+    textAlign: 'center',
   },
   leftContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    flexDirection: 'row',
     flexGrow: 1,
-    width: '70%',
+    justifyContent: 'space-between',
     padding: UI_SIZES.spacing.small,
+    width: '70%',
   },
   rightContainer: {
-    justifyContent: 'center',
-    width: '30%',
-    padding: UI_SIZES.spacing.small,
     borderRadius: UI_SIZES.radius.card,
+    justifyContent: 'center',
+    padding: UI_SIZES.spacing.small,
+    width: '30%',
   },
 });
 
@@ -54,14 +54,14 @@ export class AssessmentCard extends React.PureComponent<IAssessmentCardProps> {
   };
 
   public render() {
-    const { assessment, hasCompetences, subject, showAverageColor } = this.props;
+    const { assessment, hasCompetences, showAverageColor, subject } = this.props;
     const isAssessmentGraded = 'note' in assessment;
     const color =
       showAverageColor && isAssessmentGraded
         ? this.getScoreColor(
             parseFloat(assessment.note.replace(/\./g, ',').replace(',', '.')),
             parseFloat(assessment.moyenne.replace(/\./g, ',').replace(',', '.')),
-            assessment.diviseur,
+            assessment.diviseur
           )
         : theme.palette.complementary.blue.regular;
 

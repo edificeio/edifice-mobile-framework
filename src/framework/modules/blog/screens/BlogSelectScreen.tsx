@@ -1,5 +1,6 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -84,7 +85,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
         emptyComponent={this.renderEmptyBlogList}
         onRefresh={this.doGetPublishableBlogList}
         onPressItem={this.onPressBlog}
-        defaultThumbnail={{ name: 'blog', fill: moduleColor.regular, background: moduleColor.pale }}
+        defaultThumbnail={{ background: moduleColor.pale, fill: moduleColor.regular, name: 'blog' }}
       />
     );
   }
@@ -94,7 +95,7 @@ const mapStateToProps: (s: IGlobalState) => BlogSelectScreenDataProps = s => ({ 
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
+  getState: () => IGlobalState
 ) => BlogSelectScreenEventProps = dispatch => ({
   handleGetPublishableBlogList: async () => {
     const blogs = (await dispatch(getPublishableBlogListAction())) as unknown as BlogList;

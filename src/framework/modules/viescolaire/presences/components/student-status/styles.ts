@@ -12,19 +12,19 @@ export default StyleSheet.create({
     rowGap: UI_SIZES.spacing.small,
   },
   info: {
-    flexDirection: 'row',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
     marginTop: UI_SIZES.spacing.minor,
   },
   nameContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.small,
+    flexDirection: 'row',
   },
   separatorContainer: {
+    backgroundColor: theme.palette.grey.cloudy,
     height: 1,
     marginHorizontal: UI_SIZES.spacing.minor,
-    backgroundColor: theme.palette.grey.cloudy,
   },
 });

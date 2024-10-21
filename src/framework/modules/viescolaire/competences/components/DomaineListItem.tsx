@@ -8,16 +8,16 @@ import { ICompetence, IDomaine, ILevel } from '~/framework/modules/viescolaire/c
 
 const styles = StyleSheet.create({
   competenceContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     marginVertical: UI_SIZES.spacing.minor,
   },
   levelColorContainer: {
-    marginLeft: UI_SIZES.spacing.small,
-    height: 25,
-    width: 25,
     borderRadius: UI_SIZES.spacing.medium,
+    height: 25,
+    marginLeft: UI_SIZES.spacing.small,
+    width: 25,
   },
 });
 

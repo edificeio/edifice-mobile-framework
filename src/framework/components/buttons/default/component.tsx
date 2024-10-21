@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useState } from 'react';
 import { ActivityIndicator, TouchableOpacity } from 'react-native';
 
+import styles, { BUTTON_ICON_SIZE } from './styles';
+import { DefaultButtonProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture';
@@ -9,24 +12,21 @@ import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { openUrl } from '~/framework/util/linking';
 
-import styles, { BUTTON_ICON_SIZE } from './styles';
-import { DefaultButtonProps } from './types';
-
 export const DefaultButton = (props: DefaultButtonProps) => {
   const {
-    text,
+    action,
+    contentColor,
+    disabled,
     iconLeft,
     iconRight,
-    url,
-    showConfirmation = true,
-    requireSession = true,
     loading,
-    contentColor,
-    testID,
-    disabled,
-    style,
+    requireSession = true,
     round,
-    action,
+    showConfirmation = true,
+    style,
+    testID,
+    text,
+    url,
   } = props;
   const [layoutWidth, setLayoutWidth] = useState(0);
   const [layoutHeight, setLayoutHeight] = useState(0);
@@ -91,7 +91,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
       style={[
         styles.commonView,
         style,
-        { ...(loading || loadingButton ? { width: layoutWidth, height: layoutHeight } : undefined) },
+        { ...(loading || loadingButton ? { height: layoutHeight, width: layoutWidth } : undefined) },
       ]}
       onPress={onPressAction}
       {...(loading || disabled ? { disabled: true } : {})}

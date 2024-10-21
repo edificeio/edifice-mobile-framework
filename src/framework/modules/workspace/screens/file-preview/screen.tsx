@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Platform, TouchableOpacity, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { IWorkspaceFilePreviewScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -19,9 +23,6 @@ import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modu
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { ButtonIconText } from '~/ui/ButtonIconText';
-
-import styles from './styles';
-import { IWorkspaceFilePreviewScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -86,19 +87,19 @@ export default connect(
         downloadFile: tryActionLegacy(
           downloadWorkspaceFilesAction,
           undefined,
-          true,
+          true
         ) as unknown as IWorkspaceFilePreviewScreenProps['downloadFile'],
         previewFile: tryActionLegacy(
           downloadThenOpenWorkspaceFileAction,
           undefined,
-          true,
+          true
         ) as unknown as IWorkspaceFilePreviewScreenProps['previewFile'],
         shareFile: tryActionLegacy(
           downloadThenShareWorkspaceFileAction,
           undefined,
-          true,
+          true
         ) as unknown as IWorkspaceFilePreviewScreenProps['shareFile'],
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(WorkspaceFilePreviewScreen);

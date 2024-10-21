@@ -3,23 +3,23 @@ import { StyleSheet } from 'react-native';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  navBarActionWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  navBarActionWrapperIcon: {
-    justifyContent: 'center',
-    height: UI_SIZES.elements.navbarButtonSize,
-    width: UI_SIZES.elements.navbarButtonSize,
-  },
-  navBarActionText: {
-    padding: UI_SIZES.spacing.tiny,
-    marginHorizontal: -UI_SIZES.spacing.tiny,
+  navBarActionDisabled: {
+    opacity: 0.618,
   },
   navBarActionIcon: {
     height: UI_SIZES.elements.icon.default,
   },
-  navBarActionDisabled: {
-    opacity: 0.618,
+  navBarActionText: {
+    marginHorizontal: -UI_SIZES.spacing.tiny,
+    padding: UI_SIZES.spacing.tiny,
+  },
+  navBarActionWrapper: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  navBarActionWrapperIcon: {
+    height: UI_SIZES.elements.navbarButtonSize,
+    justifyContent: 'center',
+    width: UI_SIZES.elements.navbarButtonSize,
   },
 });

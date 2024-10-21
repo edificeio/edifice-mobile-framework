@@ -17,20 +17,20 @@ export default StyleSheet.create({
     rowGap: UI_SIZES.spacing.big,
   },
   dayPickerContainer: {
+    borderBottomColor: theme.palette.grey.cloudy,
+    borderBottomWidth: UI_SIZES.border.thin,
     paddingHorizontal: UI_SIZES.spacing.large,
     paddingVertical: UI_SIZES.spacing.medium,
-    borderBottomWidth: UI_SIZES.border.thin,
-    borderBottomColor: theme.palette.grey.cloudy,
   },
   emptyScreenContainer: {
+    backgroundColor: theme.palette.grey.white,
     justifyContent: 'center',
     paddingTop: 0,
-    backgroundColor: theme.palette.grey.white,
   },
   listContentContainer: {
-    rowGap: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.medium,
   },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,

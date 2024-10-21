@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { HomeworkNavigationParams, homeworkRouteNames } from '.';
+
 import { I18n } from '~/app/i18n';
 import { computeNavBar as homeworkCreateNavBar } from '~/framework/modules/homework/components/HomeworkCreateScreen';
 import { computeNavBar as homeworkExplorerNavBar } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
@@ -16,8 +18,6 @@ import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid'
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { HomeworkNavigationParams, homeworkRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<HomeworkNavigationParams>(moduleConfig.name, Stack => (

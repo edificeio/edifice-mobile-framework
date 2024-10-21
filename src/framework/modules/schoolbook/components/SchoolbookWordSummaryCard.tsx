@@ -1,6 +1,9 @@
-import { Moment } from 'moment';
 import * as React from 'react';
 import { View } from 'react-native';
+
+import { Moment } from 'moment';
+
+import CardTopContentCategory from './cardtopcontent-category';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -11,17 +14,15 @@ import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionItalicText, CaptionText, SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import {
-  IAcknowledgment,
-  IResponse,
   getIsWordAcknowledgedForParent,
   getIsWordAcknowledgedForStudent,
   getIsWordAcknowledgedForTeacher,
+  IAcknowledgment,
+  IResponse,
 } from '~/framework/modules/schoolbook/reducer';
 import { displayPastDate } from '~/framework/util/date';
-import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
-import CardTopContentCategory from './cardtopcontent-category';
+import { ArticleContainer } from '~/ui/ContainerContent';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.get(ackNumber === 1 ? 'schoolbook-wordlist-acknowledgement' : 'schoolbook-wordlist-acknowledgements').toLowerCase()}`;
@@ -49,19 +50,19 @@ export interface ISchoolbookWordSummaryCardProps {
 }
 
 export const SchoolbookWordSummaryCard = ({
-  action,
-  userType,
-  userId,
   acknowledgments,
+  ackNumber,
+  action,
+  category,
   owner,
   ownerName,
-  responses,
-  ackNumber,
-  category,
   respNumber,
+  responses,
   sendingDate,
   title,
   total,
+  userId,
+  userType,
 }: ISchoolbookWordSummaryCardProps) => {
   const usersTextMaxLines = 1;
   const isParent = userType === AccountType.Relative;
@@ -79,12 +80,12 @@ export const SchoolbookWordSummaryCard = ({
   //FIXME: create/move to styles.ts
   const styles = {
     headerStyle: {
-      paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.minor,
+      backgroundColor: theme.palette.grey.fog,
       borderTopLeftRadius: UI_SIZES.radius.medium,
       borderTopRightRadius: UI_SIZES.radius.medium,
-      backgroundColor: theme.palette.grey.fog,
+      paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.minor,
     },
-    responsesContainer: { flexDirection: 'row', alignItems: 'center' },
+    responsesContainer: { alignItems: 'center', flexDirection: 'row' },
     topContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: UI_SIZES.spacing.minor },
   };
 
@@ -143,7 +144,7 @@ export const SchoolbookWordSummaryCard = ({
           </CaptionItalicText>
         ) : null}
         {title ? (
-          <ContentCardTitle style={{ marginVertical: UI_SIZES.spacing.tiny, color: theme.ui.text.regular }}>
+          <ContentCardTitle style={{ color: theme.ui.text.regular, marginVertical: UI_SIZES.spacing.tiny }}>
             {title}
           </ContentCardTitle>
         ) : null}

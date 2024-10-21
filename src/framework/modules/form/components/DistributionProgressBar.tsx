@@ -8,16 +8,16 @@ import { CaptionText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   barContainer: {
-    width: '100%',
-    height: 16,
     backgroundColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.medium,
+    height: 16,
+    width: '100%',
   },
   barFilledContainer: {
-    maxWidth: '100%',
-    height: '100%',
     backgroundColor: theme.palette.primary.dark,
     borderRadius: UI_SIZES.radius.medium,
+    height: '100%',
+    maxWidth: '100%',
   },
   container: {
     alignItems: 'center',

@@ -1,10 +1,12 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 
+import { FormAnswerText } from './FormAnswerText';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import { cameraAction, documentAction, DocumentPicked, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallActionText } from '~/framework/components/text';
@@ -12,30 +14,28 @@ import { FormQuestionCard } from '~/framework/modules/form/components/FormQuesti
 import { IQuestion, IQuestionResponse, IResponseFile } from '~/framework/modules/form/model';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { LocalFile } from '~/framework/util/fileHandler';
-
 import { Asset } from '~/framework/util/fileHandler/types';
-import { FormAnswerText } from './FormAnswerText';
 
 const styles = StyleSheet.create({
+  actionText: {
+    marginRight: UI_SIZES.spacing.minor,
+    textAlign: 'center',
+  },
   container: {
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
-    borderWidth: 1,
     borderRadius: 5,
+    borderWidth: 1,
   },
   textIconContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: UI_SIZES.spacing.big,
     marginRight: UI_SIZES.spacing.minor,
+    marginVertical: UI_SIZES.spacing.big,
   },
   textIconContainerSmallerMargin: {
     marginVertical: UI_SIZES.spacing.small,
-  },
-  actionText: {
-    textAlign: 'center',
-    marginRight: UI_SIZES.spacing.minor,
   },
 });
 
@@ -47,9 +47,9 @@ interface IFormFileCardProps {
   onEditQuestion?: () => void;
 }
 
-export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, onEditQuestion }: IFormFileCardProps) => {
+export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, question, responses }: IFormFileCardProps) => {
   const [files, setFiles] = React.useState<IResponseFile[]>(responses[0]?.files ?? []);
-  const { title, mandatory } = question;
+  const { mandatory, title } = question;
   const filesAdded = files.length > 0;
 
   React.useEffect(() => {
@@ -60,9 +60,9 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
       responses[0].files = files;
     } else {
       responses.push({
-        questionId: question.id,
         answer,
         files,
+        questionId: question.id,
       });
     }
     onChangeAnswer(question.id, responses);
@@ -71,10 +71,10 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
 
   const addFile = (lf: LocalFile) => {
     const file = {
-      id: null,
       filename: lf.filename,
-      type: lf.filetype,
+      id: null,
       lf,
+      type: lf.filetype,
     } as IResponseFile;
 
     setFiles(previousFiles => [...previousFiles, file]);
@@ -91,7 +91,7 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
         filepath: img.uri as string,
         filetype: img.type as string,
       },
-      { _needIOSReleaseSecureAccess: false },
+      { _needIOSReleaseSecureAccess: false }
     );
 
   return (

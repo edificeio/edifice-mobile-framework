@@ -1,14 +1,13 @@
 import * as React from 'react';
 
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-
 import styles from './styles';
 import { PictureButtonProps } from './types';
 
+import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
+import { UI_SIZES } from '~/framework/components/constants';
 
-const PictureButton = ({ iconName, action, disabled, loading, pictureFill }: PictureButtonProps) => {
+const PictureButton = ({ action, disabled, iconName, loading, pictureFill }: PictureButtonProps) => {
   return (
     <ActionButton
       text=""

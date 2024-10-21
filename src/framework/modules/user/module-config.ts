@@ -1,18 +1,27 @@
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-
 import type { UserState } from './reducer';
 
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+
 export default new NavigableModuleConfig<'user', UserState>({
-  name: 'user',
-  entcoreScope: [],
-  matchEntcoreApp: () => false, // There is no corresponding backend app
-  hasRight: () => true, // By the way, this module must always be available
-  storageName: 'user',
+  displayAs: 'tabModule',
 
   displayI18n: 'user-moduleconfig-myaccount',
-  displayAs: 'tabModule',
+
   displayOrder: 5,
-  displayPicture: { type: 'Icon', name: 'profile-off' },
-  displayPictureFocus: { type: 'Icon', name: 'profile-on' },
+
+  displayPicture: { name: 'profile-off', type: 'Icon' },
+
+  entcoreScope: [],
+
+  displayPictureFocus: { name: 'profile-on', type: 'Icon' },
+
+  // There is no corresponding backend app
+  hasRight: () => true,
+
+  matchEntcoreApp: () => false,
+
+  name: 'user',
+  // By the way, this module must always be available
+  storageName: 'user',
   testID: 'tabbar-account',
 });

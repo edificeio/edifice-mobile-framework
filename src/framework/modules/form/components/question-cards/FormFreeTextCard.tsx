@@ -9,6 +9,6 @@ interface IFormFreeTextCardProps {
 }
 
 export const FormFreeTextCard = ({ question }: IFormFreeTextCardProps) => {
-  const { title, statement } = question;
+  const { statement, title } = question;
   return <FormQuestionCard title={title}>{statement ? <HtmlContentView html={question.statement} /> : null}</FormQuestionCard>;
 };

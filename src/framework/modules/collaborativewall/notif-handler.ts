@@ -7,18 +7,18 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
+import { collaborativewallUriParser } from './service';
+
 import { collaborativewallRouteNames } from '~/framework/modules/collaborativewall/navigation';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import appConf from '~/framework/util/appConf';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
-
-import { collaborativewallUriParser } from './service';
 
 const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
   try {
@@ -32,10 +32,10 @@ const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = notif
       name: computeTabRouteName(timelineModuleConfig.routeName),
       params: {
         initial: false,
-        screen: collaborativewallRouteNames.viewer,
         params: {
           id: cwallId,
         },
+        screen: collaborativewallRouteNames.viewer,
       },
     });
 
@@ -55,10 +55,10 @@ export default () =>
     appConf.isDevOrAlpha // Remove this line when this modules goes in production !
       ? [
           {
-            type: 'COLLABORATIVEWALL',
             'event-type': 'SHARE',
-            notifHandlerAction: handleCollaborativeWallNotificationAction,
+            'notifHandlerAction': handleCollaborativeWallNotificationAction,
+            'type': 'COLLABORATIVEWALL',
           },
         ]
-      : [],
+      : []
   );

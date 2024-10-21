@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { SafeAreaView, View } from 'react-native';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import {
+  LoginWayfScreenDispatchProps,
+  LoginWayfScreenPrivateProps,
+  LoginWayfScreenState,
+  LoginWayfScreenStoreProps,
+} from './types';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -12,14 +21,6 @@ import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Error } from '~/framework/util/error';
 import { handleAction } from '~/framework/util/redux/actions';
-
-import styles from './styles';
-import {
-  LoginWayfScreenDispatchProps,
-  LoginWayfScreenPrivateProps,
-  LoginWayfScreenState,
-  LoginWayfScreenStoreProps,
-} from './types';
 
 export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, LoginWayfScreenState> {
   private mounted = false;
@@ -49,7 +50,7 @@ export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, 
   }
 
   public render() {
-    const { navigation, route, error, wayfRoute } = this.props;
+    const { error, navigation, route, wayfRoute } = this.props;
     return (
       <PageView>
         <SafeAreaView style={styles.safeArea}>
@@ -61,7 +62,7 @@ export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, 
                 ? error.key === undefined || error.key === this.state.errkey
                   ? Error.getAuthErrorText<Error.ErrorTypes<typeof Error.LoginError>>(
                       Error.getDeepErrorType(error),
-                      route.params.platform.url,
+                      route.params.platform.url
                     )
                   : ''
                 : ''}
@@ -91,6 +92,6 @@ export default connect(
       {
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(LoginWAYFPage);

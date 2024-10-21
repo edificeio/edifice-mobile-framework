@@ -3,10 +3,10 @@
 */
 import { combineReducers } from 'redux';
 
+import carnetDeBord from './carnet-de-bord';
+
 import { Reducers } from '~/app/store';
 import moduleConfig from '~/framework/modules/pronote/module-config';
-
-import carnetDeBord from './carnet-de-bord';
 
 const reducer = combineReducers({
   carnetDeBord,

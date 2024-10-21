@@ -1,7 +1,11 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { ColorValue, FlatList, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
+
+import styles from './styles';
+import type { PresencesEventListScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -20,9 +24,6 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
-
-import styles from './styles';
-import type { PresencesEventListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -53,7 +54,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
           <NestedBoldText>
             {isSingleDay
               ? startDate.format(format)
-              : I18n.get('presences-statistics-card-dates', { start: startDate.format('D'), end: endDate.format(format) })}
+              : I18n.get('presences-statistics-card-dates', { end: endDate.format(format), start: startDate.format('D') })}
           </NestedBoldText>
           {isLatenessOrDeparture
             ? ` (${I18n.get('presences-history-eventcard-lateness-duration', { duration })})`
@@ -86,7 +87,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
           theme.palette.complementary.pink.regular,
           (item as CommonEvent).startDate,
           (item as CommonEvent).endDate,
-          true,
+          true
         );
       case EventType.FORGOTTEN_NOTEBOOK:
         return renderSimpleEvent(theme.palette.complementary.indigo.regular, (item as ForgottenNotebook).date);
@@ -97,7 +98,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
           theme.palette.complementary.purple.regular,
           (item as CommonEvent).startDate,
           (item as CommonEvent).endDate,
-          true,
+          true
         );
       case EventType.NO_REASON:
         return renderEvent(theme.palette.complementary.red.regular, (item as CommonEvent).startDate, (item as CommonEvent).endDate);
@@ -107,14 +108,14 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
         return renderEvent(
           theme.palette.complementary.green.regular,
           (item as CommonEvent).startDate,
-          (item as CommonEvent).endDate,
+          (item as CommonEvent).endDate
         );
       case EventType.STATEMENT_ABSENCE:
       case EventType.UNREGULARIZED:
         return renderEvent(
           theme.palette.complementary.orange.regular,
           (item as CommonEvent).startDate,
-          (item as CommonEvent).endDate,
+          (item as CommonEvent).endDate
         );
     }
   };

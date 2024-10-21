@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import MoveToFolderModalComponent from '~/framework/modules/conversation/components/MoveToFolderModal';
-import { IFolder, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
+import { getInitMailListState, IFolder } from '~/framework/modules/conversation/state/initMails';
 
 interface ConversationMoveToFolderModalEventProps {
   closeModal: () => any;
@@ -44,7 +45,7 @@ class ConversationMoveToFolderModal extends React.Component<
   };
 
   confirm = async () => {
-    const { currentFolder, moveToFolder, moveToInbox, restoreToInbox, restoreToFolder, mail, successCallback, closeModal } =
+    const { closeModal, currentFolder, mail, moveToFolder, moveToInbox, restoreToFolder, restoreToInbox, successCallback } =
       this.props;
     const { selectedFolder } = this.state;
     closeModal();

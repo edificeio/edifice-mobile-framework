@@ -1,9 +1,10 @@
 /**
  * All the logic needed for printing the snow flakes on screen
  */
-import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { Animated } from 'react-native';
+
+import { useIsFocused } from '@react-navigation/native';
 import Snow from 'react-native-snow-bg';
 import { connect } from 'react-redux';
 
@@ -17,7 +18,7 @@ interface SnowFlakesReduxProps {
   isFlakesFalling: boolean;
 }
 
-const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesReduxProps) => {
+const SnowFlakes = ({ isFlakesFalling, isXmasActivated, session }: SnowFlakesReduxProps) => {
   // Determine xmas theme setting here & if snow must be falling
   const [snowfall, setSnowfall] = React.useState(false);
   const [fadeAnim, setFadeAnim] = React.useState(new Animated.Value(1));
@@ -47,8 +48,8 @@ const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesRed
         // stop snow if needed without condition
         wasFlaskesFalling.current = false;
         Animated.timing(fadeAnimation, {
-          toValue: 0,
           duration: 1000,
+          toValue: 0,
           useNativeDriver: false,
         }).start(() => {
           if (!wasFlaskesFalling.current) {
@@ -58,7 +59,7 @@ const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesRed
         });
       }
     },
-    [isFlakesFalling],
+    [isFlakesFalling]
   );
   React.useEffect(() => {
     getShouldSnowFall(fadeAnim);
@@ -67,7 +68,7 @@ const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesRed
   }, [isXmasActivated, isFlakesFalling]);
 
   const isFocused = useIsFocused();
-  const snowStyle = React.useMemo(() => ({ position: 'absolute' as const, opacity: fadeAnim }), [fadeAnim]);
+  const snowStyle = React.useMemo(() => ({ opacity: fadeAnim, position: 'absolute' as const }), [fadeAnim]);
   const isSnowEligible = isXmasActivated && isFocused && session?.user?.id; // No session, no flakes !
 
   return snowfall && isSnowEligible ? (
@@ -78,14 +79,14 @@ const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesRed
 };
 
 const SnowFlakesConnected = connect((state: IGlobalState) => ({
-  session: getSession(),
-  isXmasActivated: state.user.xmasTheme,
   isFlakesFalling: state.user.flakesFalling,
+  isXmasActivated: state.user.xmasTheme,
+  session: getSession(),
 }))(SnowFlakes);
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(),
   isXmasActivated: state.user.xmasTheme,
+  session: getSession(),
 }))(({ isXmasActivated, session }: { isXmasActivated?: boolean; session?: AuthActiveAccount }) => {
   return session?.user?.id ? <SnowFlakesConnected key={isXmasActivated ? isXmasActivated.toString() : 'undefined'} /> : null;
 });

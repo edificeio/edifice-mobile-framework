@@ -1,12 +1,13 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { I18n } from '~/app/i18n';
-import GridList from '~/framework/components/GridList';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
+import GridList from '~/framework/components/GridList';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
@@ -24,9 +25,9 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
 
 const styles = StyleSheet.create({
   container: { flexGrow: 1 },
+  flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
   image: { height: 64, width: '100%' },
   otherModules: { paddingBottom: UI_SIZES.spacing.major },
-  flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
   otherModulesTitle: {
     marginBottom: UI_SIZES.spacing.small,
     marginTop: UI_SIZES.spacing.small,
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   const renderGrid = () => {
     const allModules = (props.modules ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n))
     ) as NavigableModuleArray;
 
     const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
@@ -54,13 +55,13 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
                   ? { ...item.config.displayPicture }
                   : /* item.config.displayPicture.type === 'Icon' */ { ...item.config.displayPicture, size: 64 }
               : {
+                  color: item.config.iconColor,
+
+                  name: item.config.iconName,
+
+                  size: 64,
                   // Fallback on legacy moduleConfig properties
                   type: 'Icon',
-                  // eslint-disable-next-line @typescript-eslint/dot-notation
-                  color: item.config['iconColor'],
-                  // eslint-disable-next-line @typescript-eslint/dot-notation
-                  name: item.config['iconName'],
-                  size: 64,
                 }
           }
           pictureStyle={item.config.displayPicture?.type === 'Image' ? styles.image : {}}
@@ -86,10 +87,10 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   const renderOtherModules = () => {
     if (isEmpty(props.secondaryModules) && isEmpty(props.connectors)) return null;
     const secondaryModules = (props.secondaryModules ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n))
     ) as NavigableModuleArray;
     const connectors = (props.connectors ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n))
     ) as NavigableModuleArray;
     return (
       <View style={styles.otherModules}>

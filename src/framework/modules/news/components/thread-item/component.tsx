@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
-import { CaptionBoldText, CaptionText } from '~/framework/components/text';
-import ThumbnailThread from '~/framework/modules/news/components/thumbnail-thread';
-
 import styles from './styles';
 import { ThreadItemProps, ThreadItemStatus } from './types';
+
+import { CaptionBoldText, CaptionText } from '~/framework/components/text';
+import ThumbnailThread from '~/framework/modules/news/components/thumbnail-thread';
 
 export default function ThreadItem(props: ThreadItemProps) {
   const { status, thread } = props;

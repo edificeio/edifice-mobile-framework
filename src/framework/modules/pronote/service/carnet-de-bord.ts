@@ -6,6 +6,8 @@ import CookieManager from '@react-native-cookies/cookies';
 import { XMLParser } from 'fast-xml-parser';
 import moment from 'moment';
 
+import redirect from './redirect';
+
 import { AuthLoggedAccount, UserChildrenFlattened } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import {
@@ -27,8 +29,6 @@ import {
 } from '~/framework/modules/pronote/model/carnet-de-bord';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 import { fetchWithCache } from '~/infra/fetchWithCache';
-
-import redirect from './redirect';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
   xmlResponse: string;
@@ -67,8 +67,8 @@ const parseCompetencesItem = (itemTag, item) => {
 function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): ICarnetDeBord {
   const now = moment();
   const ret = {
-    structureId: connector.structureId,
     address: connector.address,
+    structureId: connector.structureId,
   };
 
   for (const tag of data) {
@@ -348,7 +348,7 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
 function carnetDeBordAdapterParent(
   eleve: any,
   connector: IPronoteConnectorInfo,
-  children: UserChildrenFlattened,
+  children: UserChildrenFlattened
 ): ICarnetDeBord | undefined {
   const found = {} as { firstName?: string; lastName?: string; idPronote?: string };
   for (const tag of eleve) {
@@ -368,9 +368,9 @@ function carnetDeBordAdapterParent(
     ...carnetDeBordAdapterEleve(eleve, connector),
     displayName: correspondsTo.displayName,
     firstName: correspondsTo.firstName,
-    lastName: correspondsTo.lastName,
     id: correspondsTo.id,
     idPronote: (found as Required<typeof found>).idPronote,
+    lastName: correspondsTo.lastName,
   };
   return ret;
 }
@@ -385,9 +385,9 @@ function carnetDeBordAdapter(data: ICarnetDeBordBackend, children: UserChildrenF
   data.forEach(cdb => {
     const parser = new XMLParser({
       allowBooleanAttributes: true,
+      ignoreAttributes: false,
       ignoreDeclaration: true,
       preserveOrder: true,
-      ignoreAttributes: false,
     });
     cdb.xmlResponse = parser.parse(cdb.xmlResponse);
 
@@ -407,9 +407,9 @@ function carnetDeBordAdapter(data: ICarnetDeBordBackend, children: UserChildrenF
           ...parsedEleve,
           displayName: session.user.displayName,
           firstName: session.user.firstName,
-          lastName: session.user.lastName,
           id: session.user.id,
-          idPronote: session.user.id, // Yes it's not really the Pronote ID but in this case we have to mock it.
+          idPronote: session.user.id,
+          lastName: session.user.lastName, // Yes it's not really the Pronote ID but in this case we have to mock it.
         };
     } else {
       throw new Error(`Malformed xml. Do not contain either Parent or Eleve tag.`);
@@ -430,7 +430,7 @@ export default {
           const url = await redirect(session, app.address, undefined, true);
           if (url) await fetch(url);
           CookieManager.clearAll(); // No signature needed here, it's external url containing a custom ticket
-        }),
+        })
       );
       // Then, retry
       data = await fetchWithCache(api, undefined, undefined, undefined, async r => r);

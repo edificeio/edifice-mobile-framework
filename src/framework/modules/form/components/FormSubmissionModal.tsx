@@ -1,32 +1,33 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
+import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { BodyText, NestedText, SmallText } from '~/framework/components/text';
 import { DistributionStatus } from '~/framework/modules/form/model';
 
 const styles = StyleSheet.create({
-  topMargin: {
-    marginTop: UI_SIZES.spacing.small,
-  },
   dropdown: {
-    marginTop: UI_SIZES.spacing.small,
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
+    marginTop: UI_SIZES.spacing.small,
   },
   dropdownContainer: {
-    marginTop: UI_SIZES.spacing.small,
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
+    marginTop: UI_SIZES.spacing.small,
     maxHeight: 120,
   },
   dropdownText: {
     color: theme.ui.text.regular,
+  },
+  topMargin: {
+    marginTop: UI_SIZES.spacing.small,
   },
 });
 
@@ -73,7 +74,7 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
                   ? 'form-distribution-submissionmodal-lowertext-replace'
                   : props.editable
                     ? 'form-distribution-submissionmodal-lowertext-editable'
-                    : 'form-distribution-submissionmodal-lowertext-default',
+                    : 'form-distribution-submissionmodal-lowertext-default'
               )}
             </SmallText>
             <PrimaryButton

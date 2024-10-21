@@ -6,8 +6,8 @@ import type { ZimbraMailScreenNavParams } from '~/framework/modules/zimbra/scree
 import type { ZimbraMailListScreenNavParams } from '~/framework/modules/zimbra/screens/mail-list';
 
 export const zimbraRouteNames = {
-  home: moduleConfig.routeName as 'home',
   composer: `${moduleConfig.routeName}/composer` as 'composer',
+  home: moduleConfig.routeName as 'home',
   mail: `${moduleConfig.routeName}/mail` as 'mail',
   mailList: `${moduleConfig.routeName}/mail-list` as 'mailList',
 };

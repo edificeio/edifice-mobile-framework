@@ -1,7 +1,11 @@
-import React, { ReactChild, ReactElement, forwardRef } from 'react';
+import React, { forwardRef, ReactChild, ReactElement } from 'react';
 import { Alert, Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
+
 import { KeyboardAvoidingScrollView } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
+
+import Attachment from './Attachment';
+import { FoundList, Input, SelectedList } from './SearchUserMail';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -11,10 +15,10 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import { ISearchUsers, IUser } from '~/framework/modules/conversation/service/newMail';
 import {
-  IVisibleGroup,
-  IVisibleUser,
-  IVisiblesState,
   getVisiblesState,
+  IVisibleGroup,
+  IVisiblesState,
+  IVisibleUser,
   searchVisibles,
 } from '~/framework/modules/conversation/state/visibles';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
@@ -22,9 +26,6 @@ import HtmlToText from '~/infra/htmlConverter/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import HtmlContentView from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
-
-import Attachment from './Attachment';
-import { FoundList, Input, SelectedList } from './SearchUserMail';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -55,31 +56,31 @@ export type ConversationNewMailComponentProps = ConversationNewMailComponentEven
 const styles = StyleSheet.create({
   attachments: { zIndex: 2 },
   attachmentsAdditionalStyle: { padding: 0 },
-  body: { zIndex: 1, flex: 1 },
+  body: { flex: 1, zIndex: 1 },
   bodyAdditionalStyle: { flexGrow: 1 },
   bodyInput: { flexGrow: 1 },
-  commonFieldsContainer: { flex: 1, backgroundColor: theme.ui.background.card },
+  commonFieldsContainer: { backgroundColor: theme.ui.background.card, flex: 1 },
   foundListContainer: { flexGrow: 1 },
   mailContactFieldContainer: { flexGrow: 1 },
-  mailContactFieldInputContainer: { overflow: 'visible', marginHorizontal: UI_SIZES.spacing.tiny, flex: 1 },
+  mailContactFieldInputContainer: { flex: 1, marginHorizontal: UI_SIZES.spacing.tiny, overflow: 'visible' },
   mailContactFieldInputSubWrapper: {
-    flexDirection: 'row',
     alignItems: 'stretch',
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.minor,
+    backgroundColor: theme.ui.background.card,
     borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 2,
-    backgroundColor: theme.ui.background.card,
     flex: 0,
+    flexDirection: 'row',
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
-  mailContactFieldInputWrapper: { flex: 0, alignItems: 'stretch' },
+  mailContactFieldInputWrapper: { alignItems: 'stretch', flex: 0 },
   mailContactFieldTitle: { color: theme.ui.text.light, paddingVertical: UI_SIZES.spacing.tiny },
   mailPart: {
-    padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
+    padding: UI_SIZES.spacing.small,
   },
-  newMailContentStyle: { flexGrow: 1 },
   newMailContentContainerStyle: { flexGrow: 1 },
+  newMailContentStyle: { flexGrow: 1 },
   newMailStyle: {
     flexGrow: 1,
   },
@@ -89,16 +90,16 @@ const styles = StyleSheet.create({
 const MailContactField = connect((state: IGlobalState) => ({
   visibles: getVisiblesState(state),
 }))(({
+  autoFocus,
+  children,
+  key,
+  onChange,
+  onOpenSearch,
+  rightComponent,
   style,
   title,
   value,
-  onChange,
-  children,
-  autoFocus,
-  rightComponent,
-  onOpenSearch,
   visibles,
-  key,
 }: {
   style?: ViewStyle;
   title: string;
@@ -161,7 +162,7 @@ const MailContactField = connect((state: IGlobalState) => ({
     if (text) {
       Alert.alert(
         I18n.get('conversation-newmail-erroruser-title', { user: text }),
-        I18n.get('conversation-newmail-erroruser-text'),
+        I18n.get('conversation-newmail-erroruser-text')
       );
     }
     onUserType('');
@@ -203,11 +204,11 @@ const MailContactField = connect((state: IGlobalState) => ({
 });
 
 const HeaderSubject = ({
+  onChange,
+  onEndEditing,
   style,
   title,
-  onChange,
   value,
-  onEndEditing,
 }: React.PropsWithChildren<{
   style?: ViewStyle;
   title: string;
@@ -217,18 +218,18 @@ const HeaderSubject = ({
   onEndEditing?: () => void;
 }>) => {
   const headerStyle = {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: UI_SIZES.spacing.small,
+    backgroundColor: theme.ui.background.card,
     borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 2,
-    backgroundColor: theme.ui.background.card,
+    flexDirection: 'row',
+    paddingHorizontal: UI_SIZES.spacing.small,
   } as ViewStyle;
 
   const inputStyle = {
+    color: theme.ui.text.regular,
     flex: 1,
     height: 40,
-    color: theme.ui.text.regular,
   } as ViewStyle;
 
   const [currentValue, updateCurrentValue] = React.useState(value);
@@ -252,11 +253,11 @@ const HeaderSubject = ({
 };
 
 const Attachments = ({
-  style,
   attachments,
   onChange,
   onDelete,
   onSave,
+  style,
 }: {
   style;
   attachments: IDistantFileWithId[];
@@ -287,7 +288,7 @@ const Attachments = ({
   );
 };
 
-const Body = forwardRef<TextInput>(({ style, value, onChange, autofocus }, ref) => {
+const Body = forwardRef<TextInput>(({ autofocus, onChange, style, value }, ref) => {
   const br2nl = (text: string) => {
     return text?.replace(/<br\/?>/gm, '\n').replace(/<div>\s*?<\/div>/gm, '\n');
   };
@@ -334,20 +335,20 @@ const PrevBody = ({ prevBody }) => {
 };
 
 const Fields = ({
-  headers,
-  onHeaderChange,
-  showExtraFields,
-  toggleExtraFields,
-  setIsSearchingUsers,
-  isSearchingUsersFinal,
   attachments,
+  body,
+  headers,
+  isReplyDraft,
+  isSearchingUsersFinal,
   onAttachmentChange,
   onAttachmentDelete,
-  onDraftSave,
-  prevBody,
-  isReplyDraft,
-  body,
   onBodyChange,
+  onDraftSave,
+  onHeaderChange,
+  prevBody,
+  setIsSearchingUsers,
+  showExtraFields,
+  toggleExtraFields,
 }: {
   headers: HeadersProps;
   onHeaderChange: (header: HeadersProps) => void;
@@ -427,7 +428,7 @@ const Fields = ({
 };
 
 export default (props: ConversationNewMailComponentProps) => {
-  const [isSearchingUsers, toggleIsSearchingUsers] = React.useState({ to: false, cc: false, cci: false });
+  const [isSearchingUsers, toggleIsSearchingUsers] = React.useState({ cc: false, cci: false, to: false });
   const [keyboardHeight, setkeyboardHeight] = React.useState(0);
   const [showExtraFields, toggleExtraFields] = React.useState(false);
 
@@ -459,7 +460,7 @@ export default (props: ConversationNewMailComponentProps) => {
       contentContainerStyle={styles.newMailContentContainerStyle}
       style={[
         styles.newMailStyle,
-        { marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.screen.bottomInset, default: 0 }) },
+        { marginBottom: Platform.select({ default: 0, ios: keyboardHeight - UI_SIZES.screen.bottomInset }) },
       ]}>
       <View style={styles.newMailContentStyle}>
         {props.isFetching ? (

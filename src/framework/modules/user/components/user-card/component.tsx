@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { IUserCardProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -8,23 +11,20 @@ import { cameraAction, galleryAction } from '~/framework/components/menus/action
 import BottomMenu from '~/framework/components/menus/bottom';
 import { HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { i18nAccountTypes } from '~/framework/components/text/account-type';
+import Avatar, { Size } from '~/ui/avatars/Avatar';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
-import Avatar, { Size } from '~/ui/avatars/Avatar';
-
-import styles from './styles';
-import { IUserCardProps } from './types';
 
 export const UserCard = ({
-  id,
-  displayName,
-  type,
   canEdit = false,
+  displayName,
   hasAvatar,
-  updatingAvatar,
-  onPressInlineButton,
+  id,
   onChangeAvatar,
   onDeleteAvatar,
+  onPressInlineButton,
+  type,
+  updatingAvatar,
 }: IUserCardProps) => {
   const renderActions = (avatar: boolean, changeAvatar: (image) => void, deleteAvatar: () => void) => (
     <View style={styles.buttonsActionAvatar}>

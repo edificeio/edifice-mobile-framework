@@ -1,10 +1,11 @@
 /**
  * ModuleScreens is a collection used to register screens that are rendered in the main StackNavigator.
  */
-import type { ParamListBase } from '@react-navigation/native';
 import * as React from 'react';
 
-import { TypedNativeStackNavigator, getTypedRootStack } from './navigators';
+import type { ParamListBase } from '@react-navigation/native';
+
+import { getTypedRootStack, TypedNativeStackNavigator } from './navigators';
 
 export class ModuleScreens {
   static $items: { [key: string]: React.ReactNode } = {};
@@ -41,7 +42,7 @@ export class ModuleScreens {
 
 export function createModuleNavigator<ParamList extends ParamListBase>(
   moduleName: string,
-  renderScreens: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode,
+  renderScreens: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode
 ) {
   const TypedRootStack = getTypedRootStack<ParamList>();
   if (renderScreens) {

@@ -4,21 +4,21 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  eventContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: UI_SIZES.spacing.minor,
-    marginLeft: UI_SIZES.spacing.medium,
-  },
   eventBulletContainer: {
-    width: 6,
-    height: 6,
     backgroundColor: theme.palette.grey.black,
     borderRadius: 3,
+    height: 6,
+    width: 6,
+  },
+  eventContainer: {
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
+    marginLeft: UI_SIZES.spacing.medium,
   },
   headingText: {
-    marginBottom: UI_SIZES.spacing.medium,
     color: theme.ui.text.light,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   listContentContainer: {
     paddingHorizontal: UI_SIZES.spacing.medium,

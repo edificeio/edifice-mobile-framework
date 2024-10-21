@@ -2,21 +2,21 @@ import * as React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
+import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { BodyText, SmallText } from '~/framework/components/text';
 import { ILevel } from '~/framework/modules/viescolaire/competences/model';
 
 const styles = StyleSheet.create({
   levelColorContainer: {
-    height: 25,
-    width: 25,
-    marginRight: UI_SIZES.spacing.small,
     borderRadius: UI_SIZES.spacing.medium,
+    height: 25,
+    marginRight: UI_SIZES.spacing.small,
+    width: 25,
   },
   levelContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginTop: UI_SIZES.spacing.minor,
   },
 });

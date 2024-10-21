@@ -1,11 +1,22 @@
+import * as React from 'react';
+import { Alert, EmitterSubscription, Keyboard, Platform, RefreshControl, View } from 'react-native';
+
 import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
-import * as React from 'react';
-import { Alert, EmitterSubscription, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import {
+  BlogPostCommentLoadingState,
+  BlogPostDetailsLoadingState,
+  BlogPostDetailsScreenDataProps,
+  BlogPostDetailsScreenEventProps,
+  BlogPostDetailsScreenProps,
+  BlogPostDetailsScreenState,
+} from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -50,16 +61,6 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
-import styles from './styles';
-import {
-  BlogPostCommentLoadingState,
-  BlogPostDetailsLoadingState,
-  BlogPostDetailsScreenDataProps,
-  BlogPostDetailsScreenEventProps,
-  BlogPostDetailsScreenProps,
-  BlogPostDetailsScreenState,
-} from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -74,22 +75,22 @@ export const computeNavBar = ({
 function PreventBack(props: { infoComment: InfoCommentField }) {
   const { infoComment } = props;
   usePreventBack({
+    showAlert: infoComment.changed,
+    text: I18n.get(
+      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`
+    ),
     title: I18n.get(
       infoComment.isPublication
         ? 'blog-postdetails-confirmation-unsaved-publication'
-        : 'blog-postdetails-confirmation-unsaved-modification',
+        : 'blog-postdetails-confirmation-unsaved-modification'
     ),
-    text: I18n.get(
-      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
-    ),
-    showAlert: infoComment.changed,
   });
   return null;
 }
 
 const ListComponent = Platform.select<React.ComponentType<any>>({
-  ios: FlatList,
   android: KeyboardAvoidingFlatList,
+  ios: FlatList,
 })!;
 
 function BlogPostDetailsFlatList(props: {
@@ -133,9 +134,9 @@ function BlogPostDetailsFlatList(props: {
           style={styles.contentStyle2}
           onContentSizeChange={props.onContentSizeChange}
           onLayout={props.onLayout}
-          {...React.useMemo(() => Platform.select({ ios: {}, android: { stickyFooter: props.footer } }), [props.footer])}
+          {...React.useMemo(() => Platform.select({ android: { stickyFooter: props.footer }, ios: {} }), [props.footer])}
         />
-        {React.useMemo(() => Platform.select({ ios: props.footer, android: null }), [props.footer])}
+        {React.useMemo(() => Platform.select({ android: null, ios: props.footer }), [props.footer])}
       </>
     </Viewport.Tracker>
   );
@@ -161,19 +162,19 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   editorOffsetRef = React.createRef<number | null>() as React.MutableRefObject<number | null>;
 
   state: BlogPostDetailsScreenState = {
-    loadingState: BlogPostDetailsLoadingState.PRISTINE,
-    publishCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
-    updateCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
     blogInfos: undefined,
     blogPostData: undefined,
     errorState: false,
-    isCommentFieldFocused: false,
     infoComment: {
-      type: '',
-      isPublication: false,
       changed: false,
+      isPublication: false,
+      type: '',
       value: '',
     },
+    isCommentFieldFocused: false,
+    loadingState: BlogPostDetailsLoadingState.PRISTINE,
+    publishCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
+    updateCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
   };
 
   listHeight = 0;
@@ -190,7 +191,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
       if (this.state.blogPostData?._id)
-        markViewAudience({ module: 'blog', resourceType: 'post', resourceId: this.state.blogPostData._id });
+        markViewAudience({ module: 'blog', resourceId: this.state.blogPostData._id, resourceType: 'post' });
       else {
         console.warn(`[Audience] cannot recieve blog post id.`);
       }
@@ -254,12 +255,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       const newBlogPostData = {
         ...this.state.blogPostData,
         audience: {
-          views: views[blogPostId],
           reactions: {
             total: reactions.reactionsByResource[blogPostId].totalReactionsCounter ?? 0,
             types: reactions.reactionsByResource[blogPostId].reactionTypes,
             userReaction: reactions.reactionsByResource[blogPostId].userReaction ?? null,
           },
+          views: views[blogPostId],
         },
       } as BlogPostWithAudience;
       this.setState(prevState => ({ ...prevState, blogPostData: newBlogPostData }));
@@ -270,7 +271,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   async doGetBlogPostDetails() {
     try {
-      const { route, handleGetBlogPostDetails } = this.props;
+      const { handleGetBlogPostDetails, route } = this.props;
       const notification = route.params.notification;
       const useNotification = route.params.useNotification ?? true;
       const ids = this.getBlogPostIds();
@@ -372,8 +373,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   }
 
   setActionNavbar = () => {
-    const { route, navigation, session } = this.props;
-    const { blogPostData, blogInfos, errorState } = this.state;
+    const { navigation, route, session } = this.props;
+    const { blogInfos, blogPostData, errorState } = this.state;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
     const blogId = route.params.blog?.id;
     let resourceUri = notification && notification?.resource.uri;
@@ -385,35 +386,35 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       session && (hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id)
         ? [
             {
-              title: I18n.get('common-edit'),
-              icon: {
-                ios: 'pencil',
-                android: 'ic_edit',
-              },
               action: () =>
                 navigation.navigate(blogRouteNames.blogEditPost, {
                   blog: this.state.blogInfos,
-                  title: this.state.blogPostData.title,
                   content: this.state.blogPostData?.content,
                   postId: this.state.blogPostData?._id,
                   postState: this.state.blogPostData?.state,
+                  title: this.state.blogPostData.title,
                 }),
+              icon: {
+                android: 'ic_edit',
+                ios: 'pencil',
+              },
+              title: I18n.get('common-edit'),
             },
             deleteAction({
               action: () => {
                 Alert.alert(I18n.get('blog-postdetails-deletion-title'), I18n.get('blog-postdetails-deletion-text'), [
                   {
-                    text: I18n.get('common-cancel'),
                     style: 'default',
+                    text: I18n.get('common-cancel'),
                   },
                   {
-                    text: I18n.get('common-delete'),
-                    style: 'destructive',
                     onPress: () => {
                       this.doDeleteBlogPost(blogPostData!._id).then(() => {
                         navigation.dispatch(CommonActions.goBack());
                       });
                     },
+                    style: 'destructive',
+                    text: I18n.get('common-delete'),
                   },
                 ]);
               },
@@ -429,7 +430,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       headerTitle: navBarTitle(blogPostData?.title),
       ...(menuData.length
         ? {
-            // eslint-disable-next-line react/no-unstable-nested-components
             headerRight: () =>
               resourceUri && !errorState ? (
                 <PopupMenu actions={menuData}>
@@ -454,7 +454,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         blogPostData: blogPost,
         loadingState: BlogPostDetailsLoadingState.DONE,
       });
-      markViewAudience({ module: 'blog', resourceType: 'post', resourceId: blogPost._id });
+      markViewAudience({ module: 'blog', resourceId: blogPost._id, resourceType: 'post' });
       this.doGetAudienceInfos();
     } else this.doInit();
 
@@ -472,7 +472,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     if (prevState.blogPostData !== blogPostData) {
       this.showSubscription?.remove();
       this.showSubscription = Keyboard.addListener(
-        Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!,
+        Platform.select({ android: 'keyboardDidShow', ios: 'keyboardDidShow' })!,
         event => {
           if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
             this.setState({ isCommentFieldFocused: true });
@@ -488,25 +488,25 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               } else {
                 (this.flatListRef.current as FlatList)?.scrollToIndex({
                   index: commentIndex,
-                  viewPosition: 0,
                   viewOffset:
                     UI_SIZES.screen.height -
                     UI_SIZES.elements.navbarHeight -
                     event.endCoordinates.height -
                     (this.editorOffsetRef.current ?? 0),
+                  viewPosition: 0,
                 });
               }
             }
           }, 50);
-        },
+        }
       );
 
       this.hideSubscription = Keyboard.addListener(
-        Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!,
+        Platform.select({ android: 'keyboardDidHide', ios: 'keyboardWillHide' })!,
         () => {
           if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
             this.setState({ isCommentFieldFocused: false });
-        },
+        }
       );
     }
   }
@@ -529,7 +529,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     this.flatListRef.current = node;
   }
 
-  contentRenderItem({ item, index }) {
+  contentRenderItem({ index, item }) {
     return this.renderComment(item, index);
   }
 
@@ -559,7 +559,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   renderContent() {
     const { session } = this.props;
-    const { loadingState, publishCommentLoadingState, blogPostData, blogInfos } = this.state;
+    const { blogInfos, blogPostData, loadingState, publishCommentLoadingState } = this.state;
     const blogPostComments = blogPostData?.comments;
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
@@ -589,7 +589,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   }
 
   renderFooter(isPublishingComment: boolean, hasCommentBlogPostRight: boolean, hasPublishBlogPostRight: boolean) {
-    const { blogPostData, blogInfos, isCommentFieldFocused } = this.state;
+    const { blogInfos, blogPostData, isCommentFieldFocused } = this.state;
     return blogPostData?.state === 'PUBLISHED' ? (
       hasCommentBlogPostRight && !isCommentFieldFocused ? (
         <BottomEditorSheet
@@ -662,13 +662,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             ? () => {
                 Alert.alert(I18n.get('blog-postdetails-deletion'), I18n.get('blog-postdetails-deleteconfirmation'), [
                   {
-                    text: I18n.get('common-cancel'),
                     style: 'default',
+                    text: I18n.get('common-cancel'),
                   },
                   {
-                    text: I18n.get('common-delete'),
-                    style: 'destructive',
                     onPress: () => this.doDeleteComment(blogPostComment.id),
+                    style: 'destructive',
+                    text: I18n.get('common-delete'),
                   },
                 ]);
               }
@@ -698,7 +698,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   render() {
     const { route, session } = this.props;
-    const { loadingState, errorState, blogPostData, blogInfos } = this.state;
+    const { blogInfos, blogPostData, errorState, loadingState } = this.state;
 
     const blogId = blogInfos?.id;
     const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
@@ -710,12 +710,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
 
-    const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+    const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
     return (
       <>
         <PreventBack infoComment={this.state.infoComment} />
-        <PageComponent {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}>
+        <PageComponent {...Platform.select({ android: {}, ios: { safeArea: !isBottomSheetVisible } })}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState)
             ? null
             : errorState
@@ -737,30 +737,41 @@ const mapStateToProps: (s: IGlobalState) => BlogPostDetailsScreenDataProps = s =
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
+  getState: () => IGlobalState
 ) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
-  handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => {
-    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPostWithAudience | undefined;
-  }, // TS BUG: dispatch mishandled
-  handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string) => {
-    return (await dispatch(publishBlogPostCommentAction(blogPostId, comment))) as unknown as number | undefined;
-  }, // TS BUG: dispatch mishandled
-  handleUpdateBlogPostComment: async (
-    blogPostCommentId: { blogId: string; postId: string; commentId: string },
-    comment: string,
-  ) => {
-    return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
-  }, // TS BUG: dispatch mishandled
-  handleDeleteBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
-    return (await dispatch(deleteBlogPostCommentAction(blogPostCommentId))) as unknown as number | undefined;
-  }, // TS BUG: dispatch mishandled
+  dispatch,
+
+  // TS BUG: dispatch mishandled
   handleDeleteBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
     return (await dispatch(deleteBlogPostAction(blogPostId))) as unknown as number | undefined;
-  }, // TS BUG: dispatch mishandled
+  },
+
+  // TS BUG: dispatch mishandled
+  handleDeleteBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
+    return (await dispatch(deleteBlogPostCommentAction(blogPostCommentId))) as unknown as number | undefined;
+  },
+
+  handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => {
+    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPostWithAudience | undefined;
+  },
+
+  // TS BUG: dispatch mishandled
   handlePublishBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
     return dispatch(publishBlogPostAction(blogPostId.blogId, blogPostId.postId));
   },
-  dispatch,
+
+  // TS BUG: dispatch mishandled
+  handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string) => {
+    return (await dispatch(publishBlogPostCommentAction(blogPostId, comment))) as unknown as number | undefined;
+  },
+
+  // TS BUG: dispatch mishandled
+  handleUpdateBlogPostComment: async (
+    blogPostCommentId: { blogId: string; postId: string; commentId: string },
+    comment: string
+  ) => {
+    return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
+  },
 });
 
 const BlogPostDetailsScreenConnected = connect(mapStateToProps, mapDispatchToProps)(BlogPostDetailsScreen);

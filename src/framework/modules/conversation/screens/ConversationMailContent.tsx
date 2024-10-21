@@ -1,8 +1,9 @@
+import * as React from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+
 import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
-import * as React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -84,25 +85,25 @@ export const computeNavBar = ({
   typeof conversationRouteNames.mailContent
 >): NativeStackNavigationOptions => ({
   ...navBarOptions({
+    backButtonTestID: 'message-read-back',
     navigation,
     route,
-    backButtonTestID: 'message-read-back',
   }),
 });
 
 const styles = StyleSheet.create({
   containerFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
+    flexDirection: 'row',
     height: UI_SIZES.elements.tabbarHeight,
+    justifyContent: 'space-around',
   },
   footerAreaView: {
     backgroundColor: theme.ui.background.card,
     borderTopColor: theme.ui.border.listItem,
     borderTopWidth: 1,
   },
-  mailContentContainer: { flexGrow: 1, padding: UI_SIZES.spacing.small, backgroundColor: theme.ui.background.card },
+  mailContentContainer: { backgroundColor: theme.ui.background.card, flexGrow: 1, padding: UI_SIZES.spacing.small },
   scrollView: { flex: 1 },
 });
 
@@ -113,42 +114,41 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
     super(props);
     const { route } = this.props;
     this.state = {
-      mailId: route.params.mailId,
-      showModal: false,
-      showHeaderSubject: false,
       htmlError: false,
+      mailId: route.params.mailId,
+      showHeaderSubject: false,
+      showModal: false,
     };
   }
 
   public componentDidMount() {
-    const { error, route, navigation, isFetching, clearContent, fetchMailContent } = this.props;
+    const { clearContent, error, fetchMailContent, isFetching, navigation, route } = this.props;
     const { htmlError, showHeaderSubject } = this.state;
     const currentFolder = route.params.currentFolder;
     const isCurrentFolderTrash = currentFolder === 'trash';
     const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
     const popupActionsMenu = [
       {
-        title: I18n.get('conversation-mailcontent-markunread'),
         action: () => this.markAsRead(),
         icon: {
-          ios: 'eye.slash',
           android: 'ic_visibility_off',
+          ios: 'eye.slash',
         },
+        title: I18n.get('conversation-mailcontent-markunread'),
       },
       {
-        title: I18n.get(isCurrentFolderTrash ? 'conversation-mailcontent-restore' : 'conversation-mailcontent-move'),
         action: () => this.showModal(),
         icon: {
-          ios: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
           android: `${isCurrentFolderTrash ? 'ic_restore' : 'ic_move_to_inbox'}`,
+          ios: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
         },
+        title: I18n.get(isCurrentFolderTrash ? 'conversation-mailcontent-restore' : 'conversation-mailcontent-move'),
       },
       deleteAction({ action: () => this.delete() }),
     ];
     navigation.setOptions({
-      headerTitle: navBarTitle(showHeaderSubject ? route.params.subject : ''),
       // React Navigation 6 uses this syntax to setup nav options
-      // eslint-disable-next-line react/no-unstable-nested-components
+
       headerRight: () =>
         isFetching || error || htmlError ? undefined : (
           <PopupMenu
@@ -162,6 +162,8 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
             <NavBarAction icon="ui-options" testID="message-read-settings" />
           </PopupMenu>
         ),
+
+      headerTitle: navBarTitle(showHeaderSubject ? route.params.subject : ''),
     });
     clearContent();
     fetchMailContent(route.params.mailId);
@@ -196,18 +198,18 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   markAsRead = async () => {
-    const { toggleRead, mail, navigation } = this.props;
+    const { mail, navigation, toggleRead } = this.props;
     await toggleRead([mail.id], false);
     navigation.dispatch(CommonActions.goBack());
   };
 
   move = () => {
-    const { moveToInbox, mail } = this.props;
+    const { mail, moveToInbox } = this.props;
     moveToInbox([mail.id]);
   };
 
   delete = async () => {
-    const { deleteMails, trashMails, mail, route, navigation } = this.props;
+    const { deleteMails, mail, navigation, route, trashMails } = this.props;
     const mailId = mail.id;
     const currentFolder = route.params.currentFolder;
     const isFolderDrafts = currentFolder === 'drafts';
@@ -222,7 +224,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
       } else await trashMails([mailId]);
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(
-        I18n.get(isTrashedOrDrafts ? 'conversation-mailcontent-messagedeleted' : 'conversation-mailcontent-messagetrashed'),
+        I18n.get(isTrashedOrDrafts ? 'conversation-mailcontent-messagedeleted' : 'conversation-mailcontent-messagetrashed')
       );
     } catch {
       // TODO: Manage error
@@ -230,8 +232,8 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   public render() {
-    const { route, mail, error, isFetching, moveToFolder, moveToInbox, restoreToFolder, restoreToInbox } = this.props;
-    const { showModal, htmlError } = this.state;
+    const { error, isFetching, mail, moveToFolder, moveToInbox, restoreToFolder, restoreToInbox, route } = this.props;
+    const { htmlError, showModal } = this.state;
     const currentFolder = route.params.currentFolder;
     const ViewportAwareSubject = Viewport.Aware(View);
 
@@ -249,7 +251,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                   <ScrollView style={styles.scrollView} scrollEventThrottle={16}>
                     {mail.id && this.mailHeader()}
                     <ViewportAwareSubject
-                      style={{ marginHorizontal: UI_SIZES.spacing.medium, backgroundColor: theme.ui.background.card }}
+                      style={{ backgroundColor: theme.ui.background.card, marginHorizontal: UI_SIZES.spacing.medium }}
                       onViewportEnter={() => this.updateVisible(true)}
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>
@@ -291,9 +293,9 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre');
               else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Répondre');
               navigation.navigate(conversationRouteNames.newMail, {
-                type: DraftType.REPLY,
-                mailId: mail.id,
                 currentFolder: route.params.currentFolder,
+                mailId: mail.id,
+                type: DraftType.REPLY,
               });
             }}
             testID="message-read-reply"
@@ -306,9 +308,9 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre à tous');
               else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Répondre à tous');
               navigation.navigate(conversationRouteNames.newMail, {
-                type: DraftType.REPLY_ALL,
-                mailId: mail.id,
                 currentFolder: route.params.currentFolder,
+                mailId: mail.id,
+                type: DraftType.REPLY_ALL,
               });
             }}
             testID="message-read-reply-all"
@@ -321,8 +323,8 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Transférer');
               else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Transférer');
               navigation.navigate(conversationRouteNames.newMail, {
-                type: DraftType.FORWARD,
                 mailId: mail.id,
+                type: DraftType.FORWARD,
               });
             }}
             testID="message-read-reply-transfer"
@@ -339,7 +341,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   }
 
   private mailContent() {
-    const { mail, dispatch } = this.props;
+    const { dispatch, mail } = this.props;
     return (
       <View style={styles.mailContentContainer}>
         {mail.body !== undefined && (
@@ -370,12 +372,12 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
 }
 
 const mapStateToProps: (state: IGlobalState) => any = state => {
-  const { isPristine, isFetching, data, error } = getMailContentState(state);
+  const { data, error, isFetching, isPristine } = getMailContentState(state);
 
   return {
-    isPristine,
-    isFetching,
     error,
+    isFetching,
+    isPristine,
     mail: data,
   };
 };
@@ -384,15 +386,9 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return {
     ...bindActionCreators(
       {
-        fetchMailContent: fetchMailContentAction,
         clearContent: clearMailContentAction,
-        toggleRead: tryActionLegacy(toggleReadAction, (mailIds, read) => [
-          moduleConfig,
-          'Marquer lu/non-lu',
-          `Mail - Options - Marquer ${read ? 'lu' : 'non-lu'}`,
-        ]),
-        trashMails: tryActionLegacy(trashMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Mettre à la corbeille`]),
         deleteMails: tryActionLegacy(deleteMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Supprimer définitivement`]),
+        fetchMailContent: fetchMailContentAction,
         moveToFolder: tryActionLegacy(moveMailsToFolderAction, [
           moduleConfig,
           'Déplacer',
@@ -413,8 +409,14 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
           'Restaurer',
           'Corbeille - Mail - Options - Restaurer',
         ]),
+        toggleRead: tryActionLegacy(toggleReadAction, (mailIds, read) => [
+          moduleConfig,
+          'Marquer lu/non-lu',
+          `Mail - Options - Marquer ${read ? 'lu' : 'non-lu'}`,
+        ]),
+        trashMails: tryActionLegacy(trashMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Mettre à la corbeille`]),
       },
-      dispatch,
+      dispatch
     ),
     dispatch,
   };

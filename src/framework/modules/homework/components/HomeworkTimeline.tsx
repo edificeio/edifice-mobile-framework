@@ -12,9 +12,9 @@ export interface IHomeworkTimelineProps {
 
 const styles = StyleSheet.create({
   timeline: {
-    width: UI_SIZES.dimensions.width.tiny,
-    position: 'absolute',
     height: '100%',
+    position: 'absolute',
+    width: UI_SIZES.dimensions.width.tiny,
   },
 });
 

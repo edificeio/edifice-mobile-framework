@@ -9,42 +9,42 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
   },
   logMessageContainer: {
-    width: '80%',
     paddingLeft: UI_SIZES.spacing.tiny,
+    width: '80%',
   },
   logSeverity: {
     fontWeight: 'bold',
   },
   logTimeAndSeverityContainer: {
-    flexDirection: 'column',
     alignItems: 'center',
+    flexDirection: 'column',
     width: '20%',
   },
   page: {
     backgroundColor: theme.palette.grey.white,
   },
   pausedBanner: {
+    alignItems: 'center',
     backgroundColor: defaultTheme.palette.status.failure.regular,
     padding: UI_SIZES.spacing.minor,
-    alignItems: 'center',
   },
   searchBar: {
-    height: UI_SIZES.dimensions.height.huge,
     borderColor: theme.palette.grey.cloudy,
-    borderWidth: UI_SIZES.border.thin,
     borderRadius: UI_SIZES.radius.medium,
-    paddingHorizontal: UI_SIZES.spacing.minor,
+    borderWidth: UI_SIZES.border.thin,
+    height: UI_SIZES.dimensions.height.huge,
     marginBottom: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.minor,
   },
   searchBarContainer: {
     margin: UI_SIZES.spacing.small,
   },
   separator: {
-    height: UI_SIZES.border.thin,
     backgroundColor: theme.palette.grey.cloudy,
+    height: UI_SIZES.border.thin,
   },
   separatorContainer: {
-    paddingVertical: UI_SIZES.spacing.small,
     paddingHorizontal: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.small,
   },
 });

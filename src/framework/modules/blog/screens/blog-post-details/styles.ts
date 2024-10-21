@@ -5,8 +5,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   content: {
-    flexGrow: 1,
     backgroundColor: theme.ui.background.page,
+    flexGrow: 1,
   },
   contentStyle2: {
     backgroundColor: theme.ui.background.page,
@@ -15,11 +15,11 @@ export default StyleSheet.create({
   detailsMain: {
     backgroundColor: theme.ui.background.card,
   },
-  detailsPost: {
-    marginTop: UI_SIZES.spacing.medium,
-  },
   detailsNeedValidation: {
     color: theme.palette.status.warning.regular,
+  },
+  detailsPost: {
+    marginTop: UI_SIZES.spacing.medium,
   },
   detailsTitleBlog: {
     color: theme.ui.text.light,
@@ -27,24 +27,24 @@ export default StyleSheet.create({
   detailsTitlePost: {
     marginBottom: UI_SIZES.spacing.medium,
   },
-  footerNoComment: {
-    height: 0,
-  },
   footer: {
     padding: UI_SIZES.spacing.medium,
     paddingTop: 0,
+  },
+  footerNoComment: {
+    height: 0,
   },
   footerWaitingValidation: {
     color: theme.palette.secondary.regular,
   },
   loader: {
-    position: 'absolute',
-    zIndex: 1000,
-    pointerEvents: 'none',
+    backgroundColor: theme.ui.background.page,
     flex: 1,
-    width: '100%',
     height: '100%',
     opacity: 0.999,
-    backgroundColor: theme.ui.background.page,
+    pointerEvents: 'none',
+    position: 'absolute',
+    width: '100%',
+    zIndex: 1000,
   },
 });

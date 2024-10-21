@@ -3,18 +3,18 @@
  */
 import { combineReducers } from 'redux';
 
-import { Reducers } from '~/app/store';
-import { createSessionAsyncReducer } from '~/framework/util/redux/async';
-import { createAsyncActionTypes } from '~/infra/redux/async2';
-
 import moduleConfig from './module-config';
 import { ICountListState, initialState as initialCountListState } from './state/count';
 import { IFolderListState, initialState as initialFolderListState } from './state/folders';
 import { IInitMailState, initialState as initialInitMailState } from './state/initMails';
 import { IMailContentState, initialState as initialMailContentState } from './state/mailContent';
 import { IMailListState, initialState as initialMailListState } from './state/mailList';
-import { ISignatureState, initialState as initialSignatureState } from './state/signature';
-import { IVisiblesState, initialState as initialVisiblesState } from './state/visibles';
+import { initialState as initialSignatureState, ISignatureState } from './state/signature';
+import { initialState as initialVisiblesState, IVisiblesState } from './state/visibles';
+
+import { Reducers } from '~/app/store';
+import { createSessionAsyncReducer } from '~/framework/util/redux/async';
+import { createAsyncActionTypes } from '~/infra/redux/async2';
 
 // Types
 

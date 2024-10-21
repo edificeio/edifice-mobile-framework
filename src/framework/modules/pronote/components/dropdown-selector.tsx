@@ -6,6 +6,7 @@
  */
 import * as React from 'react';
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+
 import DropDownPicker, { DropDownPickerProps } from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
@@ -38,26 +39,26 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flex: 1,
-    justifyContent: 'space-around',
-    paddingHorizontal: UI_SIZES.spacing.large,
-    paddingVertical: UI_SIZES.spacing.huge,
     flexBasis: '66%',
     flexGrow: 0,
     flexShrink: 1,
+    justifyContent: 'space-around',
+    paddingHorizontal: UI_SIZES.spacing.large,
+    paddingVertical: UI_SIZES.spacing.huge,
   },
   select: { borderColor: theme.palette.primary.regular, borderWidth: 1, marginVertical: UI_SIZES.spacing.large },
   selectBackDrop: { flex: 1 },
   selectContainer: {
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
-    maxHeight: 120,
     marginVertical: UI_SIZES.spacing.large,
+    maxHeight: 120,
   },
   selectPlaceholder: { color: theme.ui.text.light },
   selectText: { color: theme.ui.text.light },
   text: {
-    textAlign: 'center',
     marginVertical: UI_SIZES.spacing.large,
+    textAlign: 'center',
   },
 });
 
@@ -65,14 +66,14 @@ export default function DropdownSelectorTemplate(props: DropdownSelectorTemplate
   const [dropdownOpen, setDropdownOpened] = React.useState<boolean>(false);
   const [selected, setSelected] = React.useState<DropDownPickerProps<any>['value']>(props.dropDownPickerProps.value);
   const {
+    dropDownContainerStyle,
     open,
-    value,
+    placeholderStyle,
+    setOpen,
     setValue,
     style,
-    setOpen,
     textStyle,
-    dropDownContainerStyle,
-    placeholderStyle,
+    value,
     ...otherDropdownPickerProps
   } = props.dropDownPickerProps;
 
@@ -107,9 +108,9 @@ export default function DropdownSelectorTemplate(props: DropdownSelectorTemplate
 
 DropdownSelectorTemplate.renderButton = (
   buttonProps: Required<DropdownSelectorTemplateProps>['button'],
-  selected: DropDownPickerProps<any>['value'],
+  selected: DropDownPickerProps<any>['value']
 ) => {
-  const { action, url, disabled, ...otherButtonProps } = buttonProps;
+  const { action, disabled, url, ...otherButtonProps } = buttonProps;
   return (
     <PrimaryButton
       action={typeof action === 'function' ? () => action(selected) : action}

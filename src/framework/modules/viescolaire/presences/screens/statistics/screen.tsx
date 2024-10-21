@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import type { PresencesStatisticsScreenDispatchProps, PresencesStatisticsScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -27,9 +31,6 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import styles from './styles';
-import type { PresencesStatisticsScreenDispatchProps, PresencesStatisticsScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -59,7 +60,7 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
         const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
-      const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
+      const { endDate, startDate } = await props.tryFetchSchoolYear(structureId);
       await props.tryFetchStatistics(studentId, structureId, startDate, endDate);
       const terms = await props.tryFetchTerms(structureId, groupId ?? '');
       const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
@@ -77,13 +78,13 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
     return {
       DEPARTURE: {
         events: statistics.DEPARTURE.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
         ),
       },
       FORGOTTEN_NOTEBOOK: {
         events:
           statistics.FORGOTTEN_NOTEBOOK?.events.filter(
-            e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate),
+            e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate)
           ) ?? [],
       },
       INCIDENT: {
@@ -93,28 +94,28 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
       },
       LATENESS: {
         events: statistics.LATENESS.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
         ),
       },
       NO_REASON: {
         events: statistics.NO_REASON.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
         ),
       },
       PUNISHMENT: {
         events:
           statistics.PUNISHMENT?.events.filter(
-            e => e.createdAt.isSameOrAfter(term.startDate) && e.createdAt.isSameOrBefore(term.endDate),
+            e => e.createdAt.isSameOrAfter(term.startDate) && e.createdAt.isSameOrBefore(term.endDate)
           ) ?? [],
       },
       REGULARIZED: {
         events: statistics.REGULARIZED.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
         ),
       },
       UNREGULARIZED: {
         events: statistics.UNREGULARIZED.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
         ),
       },
     };
@@ -201,6 +202,6 @@ export default connect(
         tryFetchTerms: tryAction(fetchPresencesTermsAction),
         tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(PresencesStatisticsScreen);

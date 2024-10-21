@@ -1,5 +1,6 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -47,9 +48,9 @@ export const computeNavBar = ({
 
 function PreventBack(props: { onPreventBack: boolean }) {
   usePreventBack({
-    title: I18n.get('timeline-filters-leavealert-title'),
-    text: I18n.get('timeline-filters-leavealert-text'),
     showAlert: props.onPreventBack,
+    text: I18n.get('timeline-filters-leavealert-text'),
+    title: I18n.get('timeline-filters-leavealert-title'),
   });
   return null;
 }
@@ -146,7 +147,6 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     const areFiltersUnchanged = shallowEqual(notifFilterSettings, selectedFilters);
     const noneSet = Object.values(selectedFilters).every(value => !value);
     this.props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarAction
           icon="ui-check"
@@ -161,17 +161,17 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
 const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s => {
   const ts = moduleConfig.getState(s) as TimelineState;
   return {
-    notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
     notifFilters:
       ts?.notifDefinitions?.notifFilters?.data?.sort((a, b) =>
-        I18n.get(a.i18n).localeCompare(I18n.get(b.i18n), I18n.getLanguage()),
+        I18n.get(a.i18n).localeCompare(I18n.get(b.i18n), I18n.getLanguage())
       ) || [],
+    notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
   };
 };
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
+  getState: () => IGlobalState
 ) => ITimelineFiltersScreenEventProps = (dispatch, getState) => ({
   handleSetFilters: async (selectedFilters: INotifFilterSettings) => {
     await dispatch(setFiltersAction(selectedFilters));

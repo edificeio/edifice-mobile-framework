@@ -4,15 +4,16 @@
  */
 import React from 'react';
 import { ColorValue } from 'react-native';
+
 import type { Reducer } from 'redux';
+
+import type { StorageSlice } from './storage/slice';
+import type { StorageTypeMap } from './storage/types';
 
 import { IGlobalState } from '~/app/store';
 import type { PictureProps } from '~/framework/components/picture';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
-
-import type { StorageSlice } from './storage/slice';
-import type { StorageTypeMap } from './storage/types';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -147,15 +148,15 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
 
   constructor(decl: IModuleConfigDeclaration<Name>) {
     const {
-      name,
+      actionTypesPrefix,
       entcoreScope,
+      hasRight,
       matchEntcoreApp,
       matchEntcoreWidget,
-      hasRight,
-      actionTypesPrefix,
+      name,
       reducerName,
-      trackingName,
       storageName,
+      trackingName,
       ...rest
     } = decl;
     // Base
@@ -265,7 +266,7 @@ export class Module<
   preferences?: StorageSlice<ModulePreferencesSliceTypeMap> | undefined;
 
   constructor(
-    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
+    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
   ) {
     this.config = moduleDeclaration.config;
     this.reducer = moduleDeclaration.reducer;
@@ -399,7 +400,7 @@ export class NavigableModuleConfig<Name extends string, State>
   #displayBadges?: INavigableModuleConfig<Name, State>['displayBadges'];
 
   constructor(decl: INavigableModuleConfigDeclaration<Name>) {
-    const { displayI18n, displayAs, displayOrder, displayPicture, displayPictureFocus, displayBadges, routeName, ...rest } = decl;
+    const { displayAs, displayBadges, displayI18n, displayOrder, displayPicture, displayPictureFocus, routeName, ...rest } = decl;
     super(rest);
     this.#_displayI18n = displayI18n;
     this.#_displayAs = displayAs;
@@ -459,7 +460,7 @@ export class NavigableModuleConfig<Name extends string, State>
   }
 
   assignValues(values: Partial<INavigableModuleConfigDeclaration<any>>) {
-    const { displayI18n, displayAs, displayOrder, displayPicture, displayPictureFocus, displayBadges, routeName, ...rest } = values;
+    const { displayAs, displayBadges, displayI18n, displayOrder, displayPicture, displayPictureFocus, routeName, ...rest } = values;
     super.assignValues(rest);
     if (displayAs) this.#_displayAs = displayAs;
     if (displayBadges) this.#_displayBadges = displayBadges;
@@ -540,7 +541,7 @@ export class NavigableModule<
       Root,
       ModuleStorageSliceTypeMap,
       ModulePreferencesSliceTypeMap
-    >,
+    >
   ) {
     const { getRoot } = moduleDeclaration;
     super(moduleDeclaration);
@@ -605,9 +606,9 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
       ...this.filter(m =>
         m.config.hasRight(
           m.config.getMatchingEntcoreApps(availableApps),
-          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
-        ),
-      ),
+          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets)
+        )
+      )
     );
   }
 
@@ -617,7 +618,7 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
         acc[m.config.reducerName] = m.reducer;
         return acc;
       },
-      {} as { [key: string]: Reducer<unknown> },
+      {} as { [key: string]: Reducer<unknown> }
     );
   }
 
@@ -657,9 +658,9 @@ export class NavigableModuleArray<
       ...this.filter(m =>
         m.config.hasRight(
           m.config.getMatchingEntcoreApps(availableApps),
-          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
-        ),
-      ),
+          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets)
+        )
+      )
     );
   }
 }
@@ -757,7 +758,7 @@ export const getGlobalRegister = <RegisterType extends CustomRegister<unknown, u
  * @returns
  */
 export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule = AnyNavigableModule>(
-  modules: ModuleArray<ModuleType>,
+  modules: ModuleArray<ModuleType>
 ) => {
   // 1. Clear previous data
   const registers = new Set<CustomRegister<any, any>>();

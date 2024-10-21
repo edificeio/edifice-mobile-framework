@@ -224,7 +224,7 @@ export const findLongestPathInFormElement = (elementId: number, formElements: IF
 const findLongestPathInQuestionChoices = (
   choices: IQuestionChoice[],
   currentFormElement: IFormElement,
-  formElements: IFormElement[],
+  formElements: IFormElement[]
 ): number => {
   if (!choices.length) {
     const nextElementId = formElements.find(node => node.position === currentFormElement.position! + 1)?.id;

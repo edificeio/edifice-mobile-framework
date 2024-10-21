@@ -13,17 +13,17 @@ export interface UserState {
 // Initial state value
 
 export const initialState: UserState = {
+  flakesFalling: false,
   xmasMusic: false,
   xmasTheme: true,
-  flakesFalling: false,
 };
 
 // Actions definitions
 
 export const actionTypes = {
+  setFlakes: moduleConfig.namespaceActionType('SET_FLAKES'),
   toggleXmasMusic: moduleConfig.namespaceActionType('TOGGLE_XMAS_MUSIC'),
   toggleXmasTheme: moduleConfig.namespaceActionType('TOGGLE_XMAS_THEME'),
-  setFlakes: moduleConfig.namespaceActionType('SET_FLAKES'),
 };
 
 export interface ActionPayloads {}

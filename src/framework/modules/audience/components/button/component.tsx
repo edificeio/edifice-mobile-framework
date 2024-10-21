@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Animated, Modal, PanResponder, TouchableOpacity, View } from 'react-native';
+
 import { connect } from 'react-redux';
+
+import styles from './styles';
+import { AudienceReactButtonAllProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -10,9 +14,6 @@ import { ScrollContext } from '~/framework/components/scrollView';
 import { CaptionBoldText } from '~/framework/components/text';
 import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
 import Feedback from '~/framework/util/feedback/feedback';
-
-import styles from './styles';
-import { AudienceReactButtonAllProps } from './types';
 
 const REACTION_ICON_SIZE = 30;
 const HEIGHT_VIEW_REACTIONS = REACTION_ICON_SIZE + styles.reactionsIcon.paddingVertical * 2 + styles.reactions.borderWidth * 2;
@@ -35,15 +36,19 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const animationReactions = props.validReactionTypes.reduce((acc, reaction) => {
     acc[reaction] = {
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      transform: React.useRef(new Animated.Value(-100)).current,
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       opacity: React.useRef(new Animated.Value(0)).current,
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      scale: React.useRef(new Animated.Value(1)).current,
+
       // eslint-disable-next-line react-hooks/rules-of-hooks
       rotate: React.useRef(new Animated.Value(0)).current,
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      scale: React.useRef(new Animated.Value(1)).current,
+
       // eslint-disable-next-line react-hooks/rules-of-hooks
       textOpacity: React.useRef(new Animated.Value(0)).current,
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      transform: React.useRef(new Animated.Value(-100)).current,
     };
     return acc;
   }, {});
@@ -52,22 +57,22 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     setIsOpen(true);
 
     Animated.timing(opacityBlocReactions, {
-      toValue: 1,
       duration: 150,
+      toValue: 1,
       useNativeDriver: true,
     }).start();
     props.validReactionTypes.forEach((reaction, index) => {
       Animated.parallel([
         Animated.timing(animationReactions[reaction].transform, {
-          toValue: 0,
-          duration: 150,
           delay: 50 * index,
+          duration: 150,
+          toValue: 0,
           useNativeDriver: true,
         }),
         Animated.timing(animationReactions[reaction].opacity, {
-          toValue: 1,
-          duration: 150,
           delay: 50 * index,
+          duration: 150,
+          toValue: 1,
           useNativeDriver: true,
         }),
       ]).start();
@@ -79,23 +84,23 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     props.validReactionTypes.forEach((reaction, index) => {
       Animated.parallel([
         Animated.timing(animationReactions[reaction].transform, {
-          toValue: -100,
-          duration: 150,
           delay: 50 * index,
+          duration: 150,
+          toValue: -100,
           useNativeDriver: true,
         }),
         Animated.timing(animationReactions[reaction].opacity, {
-          toValue: 0,
-          duration: 150,
           delay: 50 * index,
+          duration: 150,
+          toValue: 0,
           useNativeDriver: true,
         }),
       ]).start();
     });
     setTimeout(() => {
       Animated.timing(opacityBlocReactions, {
-        toValue: 0,
         duration: 150,
+        toValue: 0,
         useNativeDriver: true,
       }).start();
     }, 200);
@@ -105,13 +110,13 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const animReactButton = () => {
     Animated.sequence([
       Animated.timing(scaleReactionButton, {
-        toValue: 1.5,
         duration: 150,
+        toValue: 1.5,
         useNativeDriver: true,
       }),
       Animated.timing(scaleReactionButton, {
-        toValue: 1,
         duration: 150,
+        toValue: 1,
         useNativeDriver: true,
       }),
     ]).start();
@@ -146,19 +151,19 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const removeZoomOnSelectedItem = () => {
     if (itemSelected) {
       Animated.timing(animationReactions[itemSelected].textOpacity, {
-        toValue: 0,
         duration: 120,
+        toValue: 0,
         useNativeDriver: true,
       }).start();
       Animated.timing(animationReactions[itemSelected].rotate, {
-        toValue: 0,
         duration: 150,
+        toValue: 0,
         useNativeDriver: true,
       }).start();
       Object.keys(animationReactions).forEach(itemAnim => {
         Animated.timing(animationReactions[itemAnim].scale, {
-          toValue: 1,
           duration: 250,
+          toValue: 1,
           useNativeDriver: true,
         }).start();
       });
@@ -174,38 +179,38 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
       Object.keys(animationReactions).forEach(itemAnim => {
         if (itemAnim === reaction) {
           Animated.timing(animationReactions[reaction].scale, {
-            toValue: 1.8,
             duration: 250,
+            toValue: 1.8,
             useNativeDriver: true,
           }).start();
           Animated.timing(animationReactions[reaction].textOpacity, {
-            toValue: 1,
             duration: 120,
+            toValue: 1,
             useNativeDriver: true,
           }).start();
           Animated.loop(
             Animated.sequence([
               Animated.timing(animationReactions[reaction].rotate, {
+                duration: 150,
                 toValue: 6,
-                duration: 150,
                 useNativeDriver: true,
               }),
               Animated.timing(animationReactions[reaction].rotate, {
-                toValue: -6,
                 duration: 300,
+                toValue: -6,
                 useNativeDriver: true,
               }),
               Animated.timing(animationReactions[reaction].rotate, {
-                toValue: 0,
                 duration: 150,
+                toValue: 0,
                 useNativeDriver: true,
               }),
-            ]),
+            ])
           ).start();
         } else {
           Animated.timing(animationReactions[itemAnim].scale, {
-            toValue: 0.8,
             duration: 250,
+            toValue: 0.8,
             useNativeDriver: true,
           }).start();
         }
@@ -214,14 +219,11 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   };
 
   const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: (evt, gestureState) => true,
-    onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
     onMoveShouldSetPanResponder: (evt, gestureState) => true,
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
     onPanResponderGrant: (evt, gestureState) => {
       if (scrollRef?.current) scrollRef.current.setNativeProps({ scrollEnabled: false });
     },
-
     onPanResponderMove: (evt, gestureState) => {
       if (
         gestureState.moveY >= cPageY &&
@@ -237,9 +239,6 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
         removeZoomOnSelectedItem();
       }
     },
-    onPanResponderTerminationRequest: (evt, gestureState) => {
-      return false;
-    },
     onPanResponderRelease: (evt, gestureState) => {
       if (itemSelected) {
         postReaction(itemSelected);
@@ -247,6 +246,12 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
       }
       if (scrollRef?.current) scrollRef.current.setNativeProps({ scrollEnabled: true });
     },
+
+    onPanResponderTerminationRequest: (evt, gestureState) => {
+      return false;
+    },
+    onStartShouldSetPanResponder: (evt, gestureState) => true,
+    onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
   });
 
   const onTouchStartButton = () => {
@@ -294,9 +299,9 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
             style={[
               styles.reactions,
               {
+                left: cPageX,
                 opacity: opacityBlocReactions,
                 top: cPageY,
-                left: cPageX,
               },
             ]}>
             {props.validReactionTypes.map((reaction, i) => {
@@ -319,12 +324,12 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
                   <Animated.View
                     key={reaction}
                     style={{
+                      opacity: animationReactions[reaction].opacity,
                       transform: [
                         { translateY: animationReactions[reaction].transform },
                         { scale: animationReactions[reaction].scale },
                         { rotate },
                       ],
-                      opacity: animationReactions[reaction].opacity,
                     }}>
                     <TouchableOpacity style={styles.reactionsIcon} onPress={() => postReaction(reaction)}>
                       <NamedSVG name={reaction.toLowerCase()} width={REACTION_ICON_SIZE} height={REACTION_ICON_SIZE} />

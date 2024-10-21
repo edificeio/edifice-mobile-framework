@@ -4,8 +4,8 @@ import theme from '~/app/theme';
 
 export default StyleSheet.create({
   logMessageContainer: {
-    padding: 8,
     justifyContent: 'center',
+    padding: 8,
   },
   page: {
     backgroundColor: theme.palette.grey.white,

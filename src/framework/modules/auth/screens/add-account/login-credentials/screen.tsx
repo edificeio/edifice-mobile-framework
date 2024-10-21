@@ -1,8 +1,11 @@
+import * as React from 'react';
+
 import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import type { AuthLoginCredentialsScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -19,18 +22,16 @@ import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 
-import type { AuthLoginCredentialsScreenPrivateProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
 }: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginCredentials>): NativeStackNavigationOptions => ({
   ...navBarOptions({
+    backButtonTestID: 'login-back',
     navigation,
     route,
     title: I18n.get('auth-login-title'),
     titleTestID: 'login-title',
-    backButtonTestID: 'login-back',
   }),
 });
 
@@ -41,12 +42,12 @@ function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProp
       forgotPasswordRoute={(login?: string) =>
         CommonActions.navigate({
           name: authRouteNames.addAccountForgot,
-          params: { platform: props.route.params.platform, mode: 'password', login },
+          params: { login, mode: 'password', platform: props.route.params.platform },
         })
       }
       forgotIdRoute={CommonActions.navigate({
         name: authRouteNames.addAccountForgot,
-        params: { platform: props.route.params.platform, mode: 'id' },
+        params: { mode: 'id', platform: props.route.params.platform },
       })}
     />
   );
@@ -61,11 +62,13 @@ export default connect(
   dispatch =>
     bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
+        handleConsumeError: handleAction(consumeAuthErrorAction),
+
         tryLoginAdd: tryAction(
           tryAction(loginCredentialsActionAddAnotherAccount, {
             track: track.loginCredentials,
           }),
-          { track: track.addAccount },
+          { track: track.addAccount }
         ),
         // Usually, tryLoginReplace is useless in this case.
         // ToDo : fix it like in wayfscreen
@@ -73,10 +76,9 @@ export default connect(
           tryAction(loginCredentialsActionReplaceAccount, {
             track: track.loginCredentials,
           }),
-          { track: track.addAccount },
+          { track: track.addAccount }
         ),
-        handleConsumeError: handleAction(consumeAuthErrorAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(AuthLoginCredentialsScreen);

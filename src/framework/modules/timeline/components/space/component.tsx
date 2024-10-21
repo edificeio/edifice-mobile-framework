@@ -1,17 +1,18 @@
+import * as React from 'react';
+import { TouchableOpacity, View } from 'react-native';
+
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import moment from 'moment';
-import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+
+import styles from './styles';
+import { TimelineSpaceProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { NamedSVG } from '~/framework/components/picture';
 import { HeadingXSText, HeadingXXSText } from '~/framework/components/text';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import appConf from '~/framework/util/appConf';
-
-import styles from './styles';
-import { TimelineSpaceProps } from './types';
 
 const animationSpaceSource = require('ASSETS/animations/space/card.json');
 

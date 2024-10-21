@@ -4,6 +4,8 @@
 import FileViewer from 'react-native-file-viewer';
 import type { ThunkDispatch } from 'redux-thunk';
 
+import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
+
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -16,15 +18,13 @@ import fileTransferService, {
 import type { IMedia } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
-import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
-
 export const startUploadFileAction =
   <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -37,7 +37,7 @@ export const startUploadFilesAction =
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -50,7 +50,7 @@ export const uploadFileAction =
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -63,7 +63,7 @@ export const uploadFilesAction =
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -75,7 +75,7 @@ export const startDownloadFileAction =
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -87,7 +87,7 @@ export const startDownloadFilesAction =
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -99,7 +99,7 @@ export const downloadFileAction =
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -111,7 +111,7 @@ export const downloadFilesAction =
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -146,9 +146,9 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia) 
       localFile = syncedFile.lf;
     } else {
       onlineMedia = {
-        type: mediaType,
-        src: document.url,
         mime: document.filetype,
+        src: document.url,
+        type: mediaType,
       };
     }
   } else if (document instanceof LocalFile) {
@@ -164,32 +164,32 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia) 
       openCarousel({
         data: [
           onlineMedia ?? {
-            type: 'image',
-            src: localFile?.filepath!,
             mime: localFile?.filetype,
+            src: localFile?.filepath!,
+            type: 'image',
           },
         ],
       });
       break;
     case 'audio':
       openMediaPlayer({
-        type: MediaType.AUDIO,
-        source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
         filetype: document.filetype,
+        source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
+        type: MediaType.AUDIO,
       });
       break;
     case 'video':
       openMediaPlayer({
-        type: MediaType.VIDEO,
-        source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
         filetype: document.filetype,
+        source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
+        type: MediaType.VIDEO,
       });
       break;
     default:
       if (localFile) {
         await FileViewer.open(localFile.filepath, {
-          showOpenWithDialog: true,
           showAppsSuggestions: true,
+          showOpenWithDialog: true,
         });
       }
   }

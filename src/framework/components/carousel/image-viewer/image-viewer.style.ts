@@ -3,13 +3,38 @@ import { TextStyle, ViewStyle } from 'react-native';
 export default (
   width: number,
   height: number,
-  backgroundColor: string,
+  backgroundColor: string
 ): {
   [x: string]: ViewStyle | TextStyle;
 } => {
   return {
-    modalContainer: { backgroundColor, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
-    watchOrigin: { position: 'absolute', width, bottom: 20, justifyContent: 'center', alignItems: 'center' },
+    container: { backgroundColor },
+    imageStyle: {},
+    menuContainer: { bottom: 0, height, left: 0, position: 'absolute', width, zIndex: 12 },
+    loadingTouchable: { height, width },
+    menuContent: { left: 0, bottom: 0, position: 'absolute', width, zIndex: 11 },
+    menuShadow: {
+      height,
+      backgroundColor: 'black',
+      position: 'absolute',
+      bottom: 0,
+      width,
+      left: 0,
+      opacity: 0.2,
+      zIndex: 10,
+    },
+    modalContainer: { alignItems: 'center', backgroundColor, justifyContent: 'center', overflow: 'hidden' },
+
+    arrowLeftContainer: { bottom: 0, justifyContent: 'center', position: 'absolute', left: 0, top: 0, zIndex: 13 },
+
+    watchOrigin: { bottom: 20, alignItems: 'center', position: 'absolute', justifyContent: 'center', width },
+
+    arrowRightContainer: { bottom: 0, justifyContent: 'center', position: 'absolute', right: 0, top: 0, zIndex: 13 },
+
+    watchOriginText: { backgroundColor: 'transparent', color: 'white' },
+
+    loadingContainer: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+
     watchOriginTouchable: {
       paddingLeft: 10,
       paddingRight: 10,
@@ -20,35 +45,17 @@ export default (
       borderWidth: 0.5,
       backgroundColor: 'rgba(0, 0, 0, 0.1)',
     },
-    watchOriginText: { color: 'white', backgroundColor: 'transparent' },
-    imageStyle: {},
-    container: { backgroundColor }, // 多图浏览需要调整整体位置的盒子
-    moveBox: { flexDirection: 'row', alignItems: 'center' },
-    menuContainer: { position: 'absolute', width, height, left: 0, bottom: 0, zIndex: 12 },
-    menuShadow: {
-      position: 'absolute',
-      width,
-      height,
-      backgroundColor: 'black',
-      left: 0,
-      bottom: 0,
-      opacity: 0.2,
-      zIndex: 10,
-    },
-    menuContent: { position: 'absolute', width, left: 0, bottom: 0, zIndex: 11 },
+    // 多图浏览需要调整整体位置的盒子
+    moveBox: { alignItems: 'center', flexDirection: 'row' },
     operateContainer: {
-      justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'white',
-      height: 40,
       borderBottomColor: '#ccc',
       borderBottomWidth: 1,
+      height: 40,
+      justifyContent: 'center',
     },
     operateText: { color: '#333' },
-    loadingTouchable: { width, height },
-    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    arrowLeftContainer: { position: 'absolute', top: 0, bottom: 0, left: 0, justifyContent: 'center', zIndex: 13 },
-    arrowRightContainer: { position: 'absolute', top: 0, bottom: 0, right: 0, justifyContent: 'center', zIndex: 13 },
   };
 };
 
@@ -56,23 +63,23 @@ export const simpleStyle: {
   [x: string]: ViewStyle | TextStyle;
 } = {
   count: {
-    position: 'absolute',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
     left: 0,
+    position: 'absolute',
     right: 0,
     top: 38,
     zIndex: 13,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
   },
   countText: {
+    backgroundColor: 'transparent',
     color: 'white',
     fontSize: 16,
-    backgroundColor: 'transparent',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: {
-      width: 0,
       height: 0.5,
+      width: 0,
     },
     textShadowRadius: 0,
   },

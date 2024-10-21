@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { PresencesNavigationParams, presencesRouteNames } from '.';
+
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
@@ -20,8 +22,6 @@ import PresencesHistoryScreen, { computeNavBar as historyNavBar } from '~/framew
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import { PresencesNavigationParams, presencesRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<PresencesNavigationParams>(moduleConfig.name, Stack => {
@@ -56,7 +56,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             options={declareEventNavBar}
             initialParams={{}}
           />
-        </Stack.Group>,
+        </Stack.Group>
       );
       moduleConfig.routeName = presencesRouteNames.callList;
     } else {
@@ -76,7 +76,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             options={eventListNavBar}
             initialParams={{}}
           />
-        </Stack.Group>,
+        </Stack.Group>
       );
       if (session?.user.type === AccountType.Relative) {
         screens.push(
@@ -88,7 +88,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
               options={declareAbsenceNavBar}
               initialParams={{}}
             />
-          </Stack.Group>,
+          </Stack.Group>
         );
       }
       moduleConfig.routeName = presencesRouteNames.history;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ImageProps, ImageURISource, Image as RNImage, StyleSheet, View } from 'react-native';
+
 import { FastImageProps, default as RNFastImage } from 'react-native-fast-image';
 
 import theme from '~/app/theme';

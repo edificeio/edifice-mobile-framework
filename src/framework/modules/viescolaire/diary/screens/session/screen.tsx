@@ -1,5 +1,6 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
 import { PageView } from '~/framework/components/page';

@@ -1,6 +1,10 @@
-import { useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
+
+import { useNavigation } from '@react-navigation/native';
+
+import styles from './styles';
+import { OtherModuleElementProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -8,9 +12,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media';
-
-import styles from './styles';
-import { OtherModuleElementProps } from './types';
 
 export const OtherModuleElement = (props: OtherModuleElementProps) => {
   const { item, type } = props;

@@ -1,6 +1,7 @@
-import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
+
+import moment from 'moment';
 import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
 import { I18n } from '~/app/i18n';
@@ -15,28 +16,28 @@ import { PageContainer } from '~/ui/ContainerContent';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const styles = StyleSheet.create({
-  mainView: {
-    flex: 1,
-  },
-  sessionPart: {
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
-  sessionInfoBar: {
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
+  course: {
+    textTransform: 'uppercase',
+    marginLeft: UI_SIZES.spacing.minor,
   },
   LeftColoredItemInfoBar: {
     alignItems: 'center',
     flexDirection: 'row',
   },
+  mainView: {
+    flex: 1,
+  },
   pageTitle: {
     color: theme.palette.grey.stone,
     textTransform: 'uppercase',
   },
-  course: {
-    textTransform: 'uppercase',
-    marginLeft: UI_SIZES.spacing.minor,
+  sessionInfoBar: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  sessionPart: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
 });
 
@@ -67,7 +68,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
       const index = sessionList.findIndex(item =>
         this.state.indexSelectedSession
           ? item.id === sessionList[this.state.indexSelectedSession].id
-          : item.id === this.props.session.id,
+          : item.id === this.props.session.id
       );
       this.setState({ indexSelectedSession: index, isRemovedDescription: false });
     }
@@ -80,7 +81,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
       const index = sessionList.findIndex(item =>
         this.state.indexSelectedSession
           ? item.id === sessionList[this.state.indexSelectedSession].id
-          : item.id === this.props.session.id,
+          : item.id === this.props.session.id
       );
       this.setState({ indexSelectedSession: index });
     } else if (this.state.isRemovedDescription) {

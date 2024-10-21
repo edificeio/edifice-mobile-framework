@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import { useEffect, useRef } from 'react';
 
 // usage : in componentDidUpdate(prevProps, prevState) :

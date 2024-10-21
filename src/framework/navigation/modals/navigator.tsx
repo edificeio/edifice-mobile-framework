@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { IModalsNavigationParams, ModalsRouteNames } from '.';
+
 import CarouselScreen from '~/framework/components/carousel';
 import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
@@ -10,8 +12,6 @@ import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/fra
 import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
-
-import { IModalsNavigationParams, ModalsRouteNames } from '.';
 
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (

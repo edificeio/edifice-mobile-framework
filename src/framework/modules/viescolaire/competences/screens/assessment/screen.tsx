@@ -1,13 +1,17 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import styles from './styles';
+import type { CompetencesAssessmentScreenDispatchProps, CompetencesAssessmentScreenPrivateProps } from './types';
+
 import { IGlobalState } from '~/app/store';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -26,9 +30,6 @@ import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-co
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import styles from './styles';
-import type { CompetencesAssessmentScreenDispatchProps, CompetencesAssessmentScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -89,7 +90,6 @@ const CompetencesAssessmentScreen = (props: CompetencesAssessmentScreenPrivatePr
 
     if (loadingState !== AsyncPagedLoadingState.DONE || !levels.length) return;
     navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => <NavBarAction icon="ui-infoCircle" onPress={() => legendModalRef.current?.doShowModal()} />,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -174,6 +174,6 @@ export default connect(
         tryFetchDomaines: tryAction(fetchCompetencesDomainesAction),
         tryFetchLevels: tryAction(fetchCompetencesLevelsAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(CompetencesAssessmentScreen);

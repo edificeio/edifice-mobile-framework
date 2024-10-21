@@ -23,11 +23,11 @@ export function homeworkDeleteEntryRequested() {
 }
 
 export function homeworkDeleteEntryDeleted() {
-  return { type: actionTypes.received, deletedAt: Date.now() };
+  return { deletedAt: Date.now(), type: actionTypes.received };
 }
 
 export function homeworkDeleteEntryError(errmsg: string) {
-  return { type: actionTypes.fetchError, error: true, errmsg };
+  return { errmsg, error: true, type: actionTypes.fetchError };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
@@ -43,11 +43,11 @@ export function deleteHomeworkDiaryEntry(diaryId: string, entryId: string, date:
     dispatch(homeworkDeleteEntryRequested());
     try {
       await signedFetch(`${session?.platform.url}/homeworks/${diaryId}/entry/delete`, {
-        method: 'PUT',
         body: JSON.stringify({
           date: date?.format('YYYY-MM-DD'),
           entryid: entryId,
         }),
+        method: 'PUT',
       });
       dispatch(homeworkDeleteEntryDeleted());
     } catch (error) {

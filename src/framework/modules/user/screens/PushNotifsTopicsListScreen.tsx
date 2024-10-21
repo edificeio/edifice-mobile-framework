@@ -1,10 +1,11 @@
 /**
  * Index page for push-notifs settings.
  */
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import deepmerge from 'deepmerge';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -24,10 +25,10 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import {
-  IPushNotifsSettingsByType,
-  TimelineState,
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
+  IPushNotifsSettingsByType,
+  TimelineState,
 } from '~/framework/modules/timeline/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
@@ -123,7 +124,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
       Object.entries(items).filter(item => {
         const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.data.find(tf => tf.type === item[0]);
         return this.props.session?.rights.apps.find(app => !app.name || app.name === notifFilter?.['app-name']);
-      }),
+      })
     );
     const mainListData =
       Object.entries(items) && Object.entries(items).length > 0
@@ -168,7 +169,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
                   {
                     count: totalOn,
                     total,
-                  },
+                  }
                 )}
               </SmallActionText>
               <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.iconItem} />
@@ -201,14 +202,14 @@ const mapStateToProps: (s: IGlobalState) => IPushNotifsTopicsListScreenDataProps
   const timelineState = timelineModuleConfig.getState(s) as TimelineState;
   const session = getSession()!;
   return {
-    timelineState,
     session,
+    timelineState,
   };
 };
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
+  getState: () => IGlobalState
 ) => IPushNotifsTopicsListScreenEventProps = (dispatch, getState) => ({
   handleInitPushNotifsSettings: async () => {
     await dispatch(loadPushNotifsSettingsAction());

@@ -4,50 +4,56 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  h14: {
+    height: 14,
+  },
+
+  content: {
+    width: '100%',
+    height: 750,
+    backgroundColor: theme.palette.grey.fog,
+  },
+  
+  h16: {
+    height: 14,
+  },
   //GLOBAL
   h18: {
     height: 18,
   },
-  h16: {
-    height: 14,
+
+  mainContent: {
+    backgroundColor: theme.palette.grey.white,
+    padding: UI_SIZES.spacing.medium,
   },
-  h14: {
-    height: 14,
-  },
+
   mb0: {
     marginBottom: 0,
   },
-  roundMedia: {
-    borderRadius: UI_SIZES.radius.huge,
+
+  owner: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginVertical: UI_SIZES.spacing.medium,
+  },
+
+  ownerAvatar: {
+    marginRight: UI_SIZES.spacing.minor,
   },
   //ELEMENTS
   page: {
     position: 'relative',
   },
-  topContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+  roundMedia: {
+    borderRadius: UI_SIZES.radius.huge,
   },
   thumbnailThread: {
     marginRight: UI_SIZES.spacing.minor,
   },
-  mainContent: {
-    padding: UI_SIZES.spacing.medium,
-    backgroundColor: theme.palette.grey.white,
-  },
-  owner: {
-    flexDirection: 'row',
+  topContent: {
     alignItems: 'center',
-    marginVertical: UI_SIZES.spacing.medium,
-  },
-  ownerAvatar: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  content: {
-    width: '100%',
-    height: 750,
-    backgroundColor: theme.palette.grey.fog,
+    flexDirection: 'row',
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
 });

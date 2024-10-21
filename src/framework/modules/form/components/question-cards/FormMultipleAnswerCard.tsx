@@ -1,6 +1,9 @@
 import React from 'react';
 import { FlatList, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
+import { FormAnswerText } from './FormAnswerText';
+import { FormCheckbox } from './FormCheckbox';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
@@ -10,24 +13,21 @@ import { FormQuestionCard } from '~/framework/modules/form/components/FormQuesti
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
 import { urlSigner } from '~/infra/oauth';
 
-import { FormAnswerText } from './FormAnswerText';
-import { FormCheckbox } from './FormCheckbox';
-
 const styles = StyleSheet.create({
   choiceContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   containerMargin: {
     marginTop: UI_SIZES.spacing.minor,
   },
   customAnswerInput: {
+    borderBottomColor: theme.palette.grey.grey,
+    borderBottomWidth: 1,
+    color: theme.ui.text.regular,
     flex: 1,
     marginLeft: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.tiny,
-    color: theme.ui.text.regular,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.palette.grey.grey,
   },
   imageContainer: {
     marginLeft: UI_SIZES.spacing.minor,
@@ -47,14 +47,14 @@ interface IFormMultipleAnswerCardProps {
 
 export const FormMultipleAnswerCard = ({
   isDisabled,
-  question,
-  responses,
   onChangeAnswer,
   onEditQuestion,
+  question,
+  responses,
 }: IFormMultipleAnswerCardProps) => {
   const [selectedChoices, setSelectedChoices] = React.useState<number[]>(responses.map(response => response.choiceId!));
   const [customAnswer, setCustomAnswer] = React.useState<string>(responses.find(r => r.customAnswer?.length)?.customAnswer ?? '');
-  const { title, mandatory, choices } = question;
+  const { choices, mandatory, title } = question;
 
   const onSelectChoice = (choice: IQuestionChoice) => {
     const { id, value } = choice;
@@ -67,10 +67,10 @@ export const FormMultipleAnswerCard = ({
       setSelectedChoices([...selectedChoices, id]);
       responses = responses.filter(r => r.choiceId);
       responses.push({
-        questionId: question.id,
         answer: value,
         choiceId: id,
         customAnswer: choice.isCustom ? customAnswer : undefined,
+        questionId: question.id,
       });
     }
     onChangeAnswer(question.id, responses);
@@ -97,7 +97,7 @@ export const FormMultipleAnswerCard = ({
         <FlatList
           data={choices}
           keyExtractor={choice => choice.id.toString()}
-          renderItem={({ item, index }) => (
+          renderItem={({ index, item }) => (
             <TouchableOpacity
               onPress={() => onSelectChoice(item)}
               disabled={isDisabled}
@@ -115,9 +115,9 @@ export const FormMultipleAnswerCard = ({
               ) : null}
               {item.image ? (
                 <TouchableOpacity
-                  onPress={() => openCarousel({ data: [{ type: 'image', src: item.image }] })}
+                  onPress={() => openCarousel({ data: [{ src: item.image, type: 'image' }] })}
                   style={styles.imageContainer}>
-                  <Image source={{ uri: item.image, headers: urlSigner.getAuthHeader(), width: 75, height: 75 }} />
+                  <Image source={{ headers: urlSigner.getAuthHeader(), height: 75, uri: item.image, width: 75 }} />
                 </TouchableOpacity>
               ) : null}
             </TouchableOpacity>

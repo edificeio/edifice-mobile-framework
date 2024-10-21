@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import type { DashboardStudentScreenDispatchProps, DashboardStudentScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -42,9 +46,6 @@ import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import styles from './styles';
-import type { DashboardStudentScreenDispatchProps, DashboardStudentScreenPrivateProps } from './types';
-
 type IHomeworkByDateList = {
   [key: string]: IHomework[];
 };
@@ -70,7 +71,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         this.props.tryFetchHomeworks(
           structureId,
           moment().add(1, 'days').format('YYYY-MM-DD'),
-          moment().add(1, 'month').format('YYYY-MM-DD'),
+          moment().add(1, 'month').format('YYYY-MM-DD')
         );
         this.props.tryFetchCompetences(userId, classes[0]);
         this.props.tryFetchDevoirs(structureId, userId);
@@ -263,6 +264,6 @@ export default connect(
         tryFetchTeachers: tryAction(fetchDiaryTeachersAction),
         tryUpdateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(DashboardStudentScreen);

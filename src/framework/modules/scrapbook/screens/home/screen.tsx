@@ -1,9 +1,12 @@
-import { useHeaderHeight } from '@react-navigation/elements';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { View } from 'react-native';
+
+import { useHeaderHeight } from '@react-navigation/elements';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import { ScrapbookHomeScreenDataProps, ScrapbookHomeScreenEventProps, ScrapbookHomeScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -23,8 +26,6 @@ import { scrapbookService } from '~/framework/modules/scrapbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
-
-import { ScrapbookHomeScreenDataProps, ScrapbookHomeScreenEventProps, ScrapbookHomeScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -47,8 +48,8 @@ const ScrapbookHomeScreen = (props: ScrapbookHomeScreenProps) => {
 
   const onOpenScrapbook = item => {
     props.navigation.navigate(scrapbookRouteNames.details, {
-      resourceUri: `/scrapbook#/view-scrapbook/${item.id}`,
       headerHeight,
+      resourceUri: `/scrapbook#/view-scrapbook/${item.id}`,
     });
   };
 
@@ -100,7 +101,7 @@ const mapStateToProps: (s: IGlobalState) => ScrapbookHomeScreenDataProps = s => 
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
+  getState: () => IGlobalState
 ) => ScrapbookHomeScreenEventProps = (dispatch, getState) => ({});
 
 const ScrapbookHomeScreenConnected = connect(mapStateToProps, mapDispatchToProps)(ScrapbookHomeScreen);

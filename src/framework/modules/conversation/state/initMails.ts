@@ -25,15 +25,15 @@ export interface IInitMail {
 export const initialState: IInitMail = {
   folders: [
     {
-      id: '',
-      folderName: '',
-      unread: 0,
-      folders: [],
-      parent_id: '',
-      user_id: '',
       depth: 0,
-      trashed: false,
+      folderName: '',
+      folders: [],
+      id: '',
+      parent_id: '',
       skip_uniq: false,
+      trashed: false,
+      unread: 0,
+      user_id: '',
     },
   ],
 };

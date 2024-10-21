@@ -1,9 +1,12 @@
+import * as React from 'react';
+
 import { StackActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import { AuthWayfScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { buildLoginFederationActionReplaceAccount, loginFederationActionAddFirstAccount } from '~/framework/modules/auth/actions';
@@ -13,8 +16,6 @@ import WayfScreen, { WAYFScreenDispatchProps } from '~/framework/modules/auth/te
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import { AuthWayfScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -30,8 +31,8 @@ export const computeNavBar = ({
 export default connect(
   (state: any, props: any) => {
     return {
-      session: getSession(),
       auth: getAuthState(state),
+      session: getSession(),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>, props: any) =>
@@ -43,17 +44,17 @@ export default connect(
             : loginFederationActionAddFirstAccount,
           {
             track: track.loginFederation,
-          },
+          }
         ),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(function AuthWayfScreen(props: AuthWayfScreenPrivateProps) {
   return (
     <WayfScreen
       loginCredentialsNavAction={StackActions.replace(authRouteNames.loginCredentials, {
-        platform: props.route.params.platform,
         accountId: props.route.params.accountId,
+        platform: props.route.params.platform,
       })}
       {...props}
     />

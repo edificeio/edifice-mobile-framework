@@ -1,15 +1,19 @@
-import { useHeaderHeight } from '@react-navigation/elements';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { connect } from 'react-redux';
+
+import styles from './styles';
+import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
-import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
+import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
@@ -18,9 +22,6 @@ import { BodyText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-
-import styles from './styles';
-import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
@@ -58,7 +59,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     if (idx < toAdd.length) {
       const file = toAdd[idx];
       richText.current?.insertHTML(
-        `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`,
+        `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`
       );
       setTimeout(() => {
         addFile(toAdd, idx + 1);
@@ -72,14 +73,14 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     (filesToAdd: UploadFile[]) => {
       addFile(
         filesToAdd.filter(file => file.status === UploadStatus.OK),
-        0,
+        0
       );
       richText.current?.finalizeInsertion();
       richText?.current?.unlockContentEditor();
       hideAddFilesResults();
       richText.current?.focusContentEditor();
     },
-    [addFile, hideAddFilesResults],
+    [addFile, hideAddFilesResults]
   );
 
   const handleAddFiles = React.useCallback(
@@ -88,13 +89,13 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       if (nbErrorFiles === filesToAdd.length) {
         Alert.alert(I18n.get('richeditor-showfilesresult-canceltitle'), I18n.get('richeditor-showfilesresult-canceltext'), [
           {
-            text: I18n.get('common-cancel'),
             onPress: () => {},
+            text: I18n.get('common-cancel'),
           },
           {
-            text: I18n.get('common-quit'),
-            style: 'destructive',
             onPress: hideAddFilesResults,
+            style: 'destructive',
+            text: I18n.get('common-quit'),
           },
         ]);
         return;
@@ -104,30 +105,30 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           I18n.get(
             nbErrorFiles > 1
               ? 'richeditor-showfilesresult-addfileswitherrorstitle'
-              : 'richeditor-showfilesresult-addfileswitherrortitle',
+              : 'richeditor-showfilesresult-addfileswitherrortitle'
           ),
           I18n.get(
             nbErrorFiles > 1
               ? 'richeditor-showfilesresult-addfileswitherrorstext'
               : 'richeditor-showfilesresult-addfileswitherrortext',
-            { nb: nbErrorFiles },
+            { nb: nbErrorFiles }
           ),
           [
             {
-              text: I18n.get('common-cancel'),
               onPress: () => {},
+              text: I18n.get('common-cancel'),
             },
             {
-              text: I18n.get('common-ok'),
               onPress: () => addFiles(filesToAdd),
+              text: I18n.get('common-ok'),
             },
-          ],
+          ]
         );
         return;
       }
       addFiles(filesToAdd);
     },
-    [addFiles, hideAddFilesResults],
+    [addFiles, hideAddFilesResults]
   );
 
   React.useEffect(() => {
@@ -165,9 +166,9 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
-          uploadParams: props.uploadParams,
           redirectTo: route,
           source: 'galery',
+          uploadParams: props.uploadParams,
         },
       });
     }, OPEN_FILE_IMPORT_TIMEOUT);
@@ -180,9 +181,9 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
-          uploadParams: props.uploadParams,
           redirectTo: route,
           source: 'camera',
+          uploadParams: props.uploadParams,
         },
       });
     }, OPEN_FILE_IMPORT_TIMEOUT);
@@ -241,7 +242,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         }),
       ]).start();
     },
-    [toolbarOpacity, toolbarYPos],
+    [toolbarOpacity, toolbarYPos]
   );
 
   const toolbar = () => {
@@ -270,11 +271,11 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       props.onChangeText(html);
       if (!isContentModified) setIsContentModified(true);
     },
-    [props, isContentModified],
+    [props, isContentModified]
   );
 
   const handleCursorPosition = React.useCallback((scrollY: number) => {
-    scrollRef.current?.scrollTo({ y: scrollY - 30, animated: true });
+    scrollRef.current?.scrollTo({ animated: true, y: scrollY - 30 });
   }, []);
 
   const handleFocus = React.useCallback(() => {
@@ -283,9 +284,9 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   }, [animateToolbar]);
 
   usePreventBack({
-    title: I18n.get(props.preventBackI18n?.title ?? 'richeditor-generic-alert-title'),
-    text: I18n.get(props.preventBackI18n?.text ?? 'richeditor-generic-alert-text'),
     showAlert: isContentModified && !props.saving,
+    text: I18n.get(props.preventBackI18n?.text ?? 'richeditor-generic-alert-text'),
+    title: I18n.get(props.preventBackI18n?.title ?? 'richeditor-generic-alert-title'),
   });
 
   const { topForm } = props;
@@ -293,7 +294,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   const realTopForm = React.useMemo(
     () =>
       React.isValidElement(topForm) ? topForm : typeof topForm === 'function' ? topForm(() => setIsContentModified(true)) : null,
-    [topForm],
+    [topForm]
   );
 
   return (

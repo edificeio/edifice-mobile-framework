@@ -1,8 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Keyboard } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -27,9 +31,6 @@ import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
 
-import styles from './styles';
-import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -43,8 +44,8 @@ export const computeNavBar = ({
 });
 
 const preventBackI18n = {
-  title: 'blog-createpost-confirmation-unsavedpublication',
   text: 'blog-createpost-unsavedpublication',
+  title: 'blog-createpost-confirmation-unsavedpublication',
 };
 
 const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
@@ -53,7 +54,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const [content, setContent] = React.useState('');
   const [saving, setSaving] = React.useState(false);
 
-  const { route, navigation, session, handleSendBlogPost, handleInitTimeline } = props;
+  const { handleInitTimeline, handleSendBlogPost, navigation, route, session } = props;
   const blog = route.params.blog;
 
   const doSendPost = async () => {
@@ -77,15 +78,15 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
       const blogPostDisplayRight = blogPostRight.displayRight;
       const event = {
         [createBlogPostResourceRight]: 'Enregistrer',
-        [submitBlogPostResourceRight]: 'Soumettre',
         [publishBlogPostResourceRight]: 'Publier',
+        [submitBlogPostResourceRight]: 'Soumettre',
       }[blogPostDisplayRight];
       const eventName = `Rédaction blog - ${event}`;
       const eventCategory = route.params.referrer ? 'Blog' : 'Timeline';
       const toastSuccessText = {
         [createBlogPostResourceRight]: I18n.get('blog-createpost-create-success'),
-        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit-success'),
         [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish-success'),
+        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit-success'),
       }[blogPostDisplayRight];
 
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
@@ -118,7 +119,6 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
@@ -149,7 +149,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         value={title}
       />
     ),
-    [title],
+    [title]
   );
 
   const renderPostInfos = () => {
@@ -183,13 +183,13 @@ const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s =>
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogCreatePostScreenEventProps = dispatch => ({
-  handleSendBlogPost: async (blog: Blog, title: string, content: string) => {
-    return (await dispatch(sendBlogPostAction(blog, title, content))) as unknown as string | undefined;
-  },
+  dispatch,
   handleInitTimeline: async () => {
     await dispatch(startLoadNotificationsAction());
   },
-  dispatch,
+  handleSendBlogPost: async (blog: Blog, title: string, content: string) => {
+    return (await dispatch(sendBlogPostAction(blog, title, content))) as unknown as string | undefined;
+  },
 });
 
 const BlogCreatePostScreenConnected = connect(mapStateToProps, mapDispatchToProps)(BlogCreatePostScreen);

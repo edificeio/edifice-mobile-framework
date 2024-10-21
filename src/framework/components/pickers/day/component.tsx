@@ -1,6 +1,10 @@
-import { Moment } from 'moment';
 import * as React from 'react';
 import { AppState, AppStateStatus, View } from 'react-native';
+
+import { Moment } from 'moment';
+
+import styles from './styles';
+import { DayPickerProps } from './types';
 
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
@@ -8,21 +12,18 @@ import { deviceFontScale, genericHitSlop } from '~/framework/components/constant
 import DayCell from '~/framework/components/pickers/day/day-cell';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import {
+  addTime,
   DayOfTheWeek,
   DayReference,
-  addTime,
   displayWeekRange,
   isDateGivenWeekday,
   subtractTime,
   today,
 } from '~/framework/util/date';
 
-import styles from './styles';
-import { DayPickerProps } from './types';
-
 export const defaultSelectedDate = today().day() === 6 ? addTime(today(), 2, 'day') : addTime(today(), 1, 'day');
 
-const DayPicker = ({ initialSelectedDate = defaultSelectedDate, maximumWeeks = 8, style, onDateChange }: DayPickerProps) => {
+const DayPicker = ({ initialSelectedDate = defaultSelectedDate, maximumWeeks = 8, onDateChange, style }: DayPickerProps) => {
   const initialStartWeek = initialSelectedDate.clone().day(1);
 
   const [selectedDate, setSelectedDate] = React.useState(initialSelectedDate);
@@ -63,7 +64,7 @@ const DayPicker = ({ initialSelectedDate = defaultSelectedDate, maximumWeeks = 8
         setCurrentFontScale(newFontScale);
       }
     },
-    [currentFontScale],
+    [currentFontScale]
   );
   React.useEffect(() => {
     const appStateListener = AppState.addEventListener('change', handleAppStateChange);

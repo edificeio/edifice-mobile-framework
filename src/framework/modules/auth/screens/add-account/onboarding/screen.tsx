@@ -1,13 +1,14 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import type { AuthOnboardingAddAccountScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getAddAccountOnboardingNextScreen } from '~/framework/modules/auth/navigation/add-account/router';
 import AuthIntroductionScreen from '~/framework/modules/auth/templates/introduction';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import type { AuthOnboardingAddAccountScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

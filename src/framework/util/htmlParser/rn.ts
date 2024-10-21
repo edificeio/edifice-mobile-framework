@@ -24,11 +24,6 @@
  */
 import { TextStyle } from 'react-native';
 
-import { getSession } from '~/framework/modules/auth/reducer';
-import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
-import { Platform } from '~/framework/util/appConf';
-import { formatSource } from '~/framework/util/media';
-
 import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
 import { extractVideoResolution } from './content';
 import {
@@ -46,6 +41,11 @@ import {
   IVideoNugget,
   renderNuggets,
 } from './nuggetRenderer';
+
+import { getSession } from '~/framework/modules/auth/reducer';
+import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
+import { Platform } from '~/framework/util/appConf';
+import { formatSource } from '~/framework/util/media';
 
 export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   textFormatting?: boolean;
@@ -69,17 +69,17 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
   public static defaultOpts: IHtmlParserRNOptions = {
     ...HtmlParserAbstract.defaultOpts,
     audio: true,
-    video: true,
+    boldTextStyle: {},
     globalTextStyle: {},
     hyperlinks: true,
     iframes: true,
+    ignoreLineBreaks: false,
     images: true,
     linkTextStyle: {},
-    boldTextStyle: {},
+    selectable: false,
     textColor: true,
     textFormatting: true,
-    ignoreLineBreaks: false,
-    selectable: false,
+    video: true,
   };
 
   /**

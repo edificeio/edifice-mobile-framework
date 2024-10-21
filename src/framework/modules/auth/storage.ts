@@ -1,13 +1,13 @@
-import { Storage } from '~/framework/util/storage';
-import type { IOAuthToken } from '~/infra/oauth';
-
 import { AuthActiveAccount, AuthSavedAccount, AuthSavedLoggedInAccount, getSerializedLoggedInAccountInfo } from './model';
 import moduleConfig from './module-config';
 import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
 
+import { Storage } from '~/framework/util/storage';
+import type { IOAuthToken } from '~/infra/oauth';
+
 export interface AuthStorageData {
-  accounts: Record<string, AuthSavedAccount>;
-  startup: {
+  'accounts': Record<string, AuthSavedAccount>;
+  'startup': {
     account?: string;
     platform?: string;
     /** used to migrate pre-1.12 automatic connections */
@@ -42,8 +42,8 @@ export const writeCreateAccount = (account: AuthActiveAccount, showOnboarding: b
     [account.user.id]: savedAccount,
   };
   const startup: AuthStorageData['startup'] = {
-    platform: account.platform.name,
     account: account.user.id,
+    platform: account.platform.name,
   };
   storage.setJSON('accounts', savedAccounts);
   storage.setJSON('startup', startup);
@@ -58,15 +58,15 @@ export const writeCreateAccount = (account: AuthActiveAccount, showOnboarding: b
 export const writeReplaceAccount = (
   id: string | typeof ERASE_ALL_ACCOUNTS,
   account: AuthActiveAccount,
-  showOnboarding: boolean = false,
+  showOnboarding: boolean = false
 ) => {
   const savedAccount = getSerializedLoggedInAccountInfo(account);
   const savedAccounts = id === ERASE_ALL_ACCOUNTS ? {} : readSavedAccounts();
   if (id !== ERASE_ALL_ACCOUNTS) delete savedAccounts[id];
   savedAccounts[account.user.id] = savedAccount;
   const startup: AuthStorageData['startup'] = {
-    platform: account.platform.name,
     account: account.user.id,
+    platform: account.platform.name,
   };
   storage.setJSON('accounts', savedAccounts);
   storage.setJSON('startup', startup);

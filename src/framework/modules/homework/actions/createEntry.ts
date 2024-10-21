@@ -26,11 +26,11 @@ export function homeworkCreateEntryRequested() {
 }
 
 export function homeworkCreateEntryReceived() {
-  return { type: actionTypes.received, receivedAt: Date.now() };
+  return { receivedAt: Date.now(), type: actionTypes.received };
 }
 
 export function homeworkCreateEntryFetchError(errmsg: string) {
-  return { type: actionTypes.fetchError, error: true, errmsg };
+  return { errmsg, error: true, type: actionTypes.fetchError };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ export function uploadHomeworkDiaryEntryImages(images: LocalFile[]) {
     return dispatch(
       workspaceFileTransferActions.uploadFilesAction(images, {
         parent: 'protected',
-      }),
+      })
     );
   };
 }
@@ -58,7 +58,7 @@ export function createHomeworkDiaryEntry(
   date: Moment,
   title: string,
   content: string,
-  uploadedImages?: IDistantFile[],
+  uploadedImages?: IDistantFile[]
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -81,13 +81,13 @@ export function createHomeworkDiaryEntry(
       }
 
       await signedFetch(`${session?.platform.url}/homeworks/${diaryId}/entry`, {
-        method: 'PUT',
         body: JSON.stringify({
           date: date?.format('YYYY-MM-DD'),
           entryid: entryId,
           title,
           value: contentHtml,
         }),
+        method: 'PUT',
       });
       dispatch(homeworkCreateEntryReceived());
       return entryId;

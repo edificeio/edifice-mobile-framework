@@ -80,11 +80,11 @@ export namespace I18n {
 
   const momentLocales = {
     co: 'fr',
+    default: fallbackLng,
     en: 'en',
     es: 'es',
     fr: 'fr',
     it: 'it',
-    default: fallbackLng,
   };
 
   // Phrase stuff
@@ -174,8 +174,8 @@ export namespace I18n {
           es: 'user-lang-dropdownvalue-es',
           fr: 'user-lang-dropdownvalue-fr',
           it: 'user-lang-dropdownvalue-it',
-        }).map(([lng, i18nKey]) => [lng, get(i18nKey, { lng, fallbackLng })]),
-      ),
+        }).map(([lng, i18nKey]) => [lng, get(i18nKey, { fallbackLng, lng })])
+      )
     );
   };
 

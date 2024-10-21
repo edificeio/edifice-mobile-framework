@@ -1,10 +1,13 @@
+import * as React from 'react';
+import { ColorValue, TextInput, TouchableOpacity, View } from 'react-native';
+
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ReactJSXElement } from 'node_modules/@emotion/react/dist/declarations/types/jsx-namespace';
-import * as React from 'react';
-import { ColorValue, TextInput, TouchableOpacity, View } from 'react-native';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
+
+import styles from './styles';
 
 import { Log } from '~/app/log';
 import { defaultTheme } from '~/app/theme';
@@ -14,10 +17,8 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { BodyText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
-import { LogData, MenuData, LogScreenPrivateProps } from '~/framework/modules/user/screens/debug/log/types';
+import { LogData, LogScreenPrivateProps, MenuData } from '~/framework/modules/user/screens/debug/log/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import styles from './styles';
 
 const exportLogFile = async () => {
   try {
@@ -39,7 +40,7 @@ const exportLogFile = async () => {
 
 export const computeNavBar = (
   { navigation, route }: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.log>,
-  menuData: MenuData[],
+  menuData: MenuData[]
 ): NativeStackNavigationOptions => {
   const hasMenuData = Array.isArray(menuData) && menuData.length > 0;
 
@@ -86,7 +87,7 @@ export const getSeverityColor = (severity: string): ColorValue => {
 
 const LogCard = ({ item }): ReactJSXElement => {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
-  const { time, severity, message } = item;
+  const { message, severity, time } = item;
 
   return (
     <TouchableOpacity style={styles.logContainer} onPress={() => navigation.navigate(userRouteNames.detailed, { logData: item })}>
@@ -127,11 +128,11 @@ const LogScreen = (props: LogScreenPrivateProps) => {
 
   const menuData: MenuData[] = React.useMemo(
     () => [
-      { title: isPaused ? 'Resume' : 'Pause', action: togglePauseResume },
-      { title: 'Clear log', action: clearLog },
-      { title: 'Export log', action: exportLogFile },
+      { action: togglePauseResume, title: isPaused ? 'Resume' : 'Pause' },
+      { action: clearLog, title: 'Clear log' },
+      { action: exportLogFile, title: 'Export log' },
     ],
-    [isPaused],
+    [isPaused]
   );
 
   React.useEffect(() => {
@@ -153,7 +154,7 @@ const LogScreen = (props: LogScreenPrivateProps) => {
         log =>
           log.message?.toLowerCase().includes(lowerCaseQuery) ||
           log.time?.toLowerCase().includes(lowerCaseQuery) ||
-          log.severity?.toLowerCase().includes(lowerCaseQuery),
+          log.severity?.toLowerCase().includes(lowerCaseQuery)
       );
       setFilteredData(filtered);
     }
@@ -171,10 +172,10 @@ const LogScreen = (props: LogScreenPrivateProps) => {
 
     if (match) {
       const [_, time, severity, message] = match;
-      return { time, severity, message };
+      return { message, severity, time };
     }
 
-    return { time: null, severity: null, message: log };
+    return { message: log, severity: null, time: null };
   };
 
   return (

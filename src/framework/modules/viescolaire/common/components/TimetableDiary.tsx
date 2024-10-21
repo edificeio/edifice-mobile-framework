@@ -1,35 +1,36 @@
-import moment, { Moment } from 'moment';
 import React from 'react';
 import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
-import theme from '~/app/theme';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { SmallText } from '~/framework/components/text';
-import { ISlot } from '~/framework/modules/viescolaire/edt/model';
+import moment, { Moment } from 'moment';
+import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
 import {
   COURSE_WIDTH,
   DEFAULT_SLOT_COUNT,
   ITimetableCourse,
   LINE_HEIGHT,
+  minutes,
   SLOT_HEIGHT,
   TIME_COLUMN_WIDTH,
   TimeSlotLine,
-  minutes,
 } from './Timetable';
+
+import theme from '~/app/theme';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { SmallText } from '~/framework/components/text';
+import { ISlot } from '~/framework/modules/viescolaire/edt/model';
 
 const styles = StyleSheet.create({
   courseContainer: {
-    position: 'absolute',
     overflow: 'hidden',
     padding: UI_SIZES.spacing.tiny / 2,
+    position: 'absolute',
   },
   weekdayContainer: {
     alignItems: 'center',
+    borderRadius: 10,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.tiny,
-    borderRadius: 10,
   },
   weekdayListContainer: {
     flexDirection: 'row',
@@ -87,7 +88,7 @@ export default class TimetableDiary extends React.PureComponent<ITimetableDiaryP
   }
 
   componentDidUpdate(prevProps) {
-    const { startDate, displaySunday, initialSelectedDate } = this.props;
+    const { displaySunday, initialSelectedDate, startDate } = this.props;
 
     /* on week change */
     if (!prevProps.startDate.isSame(startDate, 'd')) {
@@ -124,12 +125,12 @@ export default class TimetableDiary extends React.PureComponent<ITimetableDiaryP
         m =>
           JSON.stringify(m) !== JSON.stringify(course) &&
           m.startDate.isSame(course.startDate) &&
-          (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate)),
+          (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate))
       );
       // event m starts and ends at the same time as d
       const isSameTime = courses.findIndex(
         m =>
-          JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate),
+          JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate)
       );
 
       if ((isSameTime > -1 || iStartSameEndMiddle > -1) && col === 0) {
@@ -161,10 +162,10 @@ export default class TimetableDiary extends React.PureComponent<ITimetableDiaryP
 
     for (let index = 0; index < DEFAULT_SLOT_COUNT; index += 1) {
       slots.push({
-        startHour: startTime.clone().add(index, 'hour'),
         endHour: startTime.clone().add(index + 1, 'hour'),
         id: index.toString(),
         name: index.toString(),
+        startHour: startTime.clone().add(index, 'hour'),
       });
     }
     return slots;
@@ -227,11 +228,11 @@ export default class TimetableDiary extends React.PureComponent<ITimetableDiaryP
       LINE_HEIGHT / 2;
 
     const positionStyle = {
+      height: bottom - top,
       left: side !== 'r' ? TIME_COLUMN_WIDTH : undefined,
       right: side === 'r' ? UI_SIZES.spacing.minor : undefined,
       top,
       width: side ? COURSE_WIDTH / 2 : COURSE_WIDTH,
-      height: bottom - top,
     };
 
     return <View style={[styles.courseContainer, positionStyle]}>{renderCourse(course)}</View>;

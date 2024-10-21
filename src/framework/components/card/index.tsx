@@ -1,5 +1,3 @@
-import styled from '@emotion/native';
-import { Moment } from 'moment';
 import * as React from 'react';
 import {
   ColorValue,
@@ -13,6 +11,19 @@ import {
   ViewStyle,
 } from 'react-native';
 
+import styled from '@emotion/native';
+import { Moment } from 'moment';
+
+import {
+  cardPadding,
+  cardPaddingEqual,
+  cardPaddingMerging,
+  cardPaddingSmall,
+  CardWithoutPadding,
+  TouchCardWithoutPadding,
+} from './base';
+import { OverviewCardProps } from './pictureCard';
+
 import theme from '~/app/theme';
 import { Badge } from '~/framework/components/badge';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
@@ -20,18 +31,8 @@ import { Icon, NamedSVG, Picture, PictureProps } from '~/framework/components/pi
 import { BodyText, CaptionItalicText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media';
-import HtmlContentView from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-
-import {
-  CardWithoutPadding,
-  TouchCardWithoutPadding,
-  cardPadding,
-  cardPaddingEqual,
-  cardPaddingMerging,
-  cardPaddingSmall,
-} from './base';
-import { OverviewCardProps } from './pictureCard';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 export interface IContentCardProps extends ViewProps {
   header?: React.ReactElement;
@@ -49,9 +50,9 @@ interface IContentCardPropsBase extends IContentCardProps, ITouchableContentCard
 }
 
 const FooterSeparator = styled.View({
+  backgroundColor: theme.palette.grey.pearl,
   height: 1,
   width: '100%',
-  backgroundColor: theme.palette.grey.pearl,
 });
 const HeaderFlexView = styled.View({
   flexDirection: 'row',
@@ -66,20 +67,20 @@ const FooterFlexView = styled.View({
 const ContentCardBase = (props: IContentCardPropsBase) => {
   const CC = props.cardComponent ?? CardWithoutPadding;
   const {
-    header,
-    footer,
-    children,
-    headerIndicator,
     cardComponent,
-    withoutPadding,
-    customHeaderStyle,
+    children,
     customHeaderIndicatorStyle,
+    customHeaderStyle,
+    footer,
+    header,
+    headerIndicator,
+    withoutPadding,
     ...viewProps
   } = props;
   const HeaderFlexViewWithPadding = styled(HeaderFlexView)(
     cardPadding,
     withoutPadding && { paddingHorizontal: 0 },
-    customHeaderStyle,
+    customHeaderStyle
   );
   const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
   const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });
@@ -113,8 +114,8 @@ export const TouchableContentCard = (props: ITouchableContentCardProps) => {
       name="arrow_right"
       color={theme.palette.primary.regular}
       style={{
-        paddingVertical: UI_SIZES.spacing.minor,
         paddingLeft: UI_SIZES.spacing.minor,
+        paddingVertical: UI_SIZES.spacing.minor,
       }}
     />
   );
@@ -144,7 +145,7 @@ export interface IContentCardIconProps {
 /** A Header layout for ContentCard */
 export const ContentCardHeader = (props: IContentCardHeaderProps) => {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <View style={{ alignItems: 'center', flexDirection: 'row' }}>
       {props.icon ? <View style={[UI_STYLES.flex0, { marginRight: UI_SIZES.spacing.small }]}>{props.icon}</View> : null}
       <View style={UI_STYLES.flex1}>
         {props.text ? typeof props.text === 'string' ? <SmallText>{props.text}</SmallText> : props.text : null}
@@ -165,7 +166,7 @@ export const ContentCardIcon = (props: IContentCardIconProps) => {
     <View>
       {img}
       {props.badge ? (
-        <View style={[{ position: 'absolute', bottom: 0, right: 0 }, props.badge.style]}>
+        <View style={[{ bottom: 0, position: 'absolute', right: 0 }, props.badge.style]}>
           <Badge content={props.badge.icon} color={props.badge.color} />
         </View>
       ) : null}
@@ -187,7 +188,7 @@ export interface IResourceCardProps_base extends IResourceCardProps {
   withoutPadding?: boolean;
 }
 const ResourceCard_base = (props: IResourceCardProps_base) => {
-  const { CC, children, icon, date, header, title, headerHtml, footer, ...otherProps } = props;
+  const { CC, children, date, footer, header, headerHtml, icon, title, ...otherProps } = props;
   const metaDataComponent =
     typeof header === 'string' ? (
       <ContentCardHeader
@@ -199,21 +200,21 @@ const ResourceCard_base = (props: IResourceCardProps_base) => {
             <HtmlContentView
               html={headerHtml}
               opts={{
-                hyperlinks: false,
-                textFormatting: false,
-                textColor: false,
                 audio: false,
-                video: false,
-                iframes: false,
-                images: false,
-                ignoreLineBreaks: true,
                 globalTextStyle: {
                   ...TextFontStyle.Regular,
                   ...TextSizeStyle.Small,
                 },
+                hyperlinks: false,
+                iframes: false,
+                ignoreLineBreaks: true,
+                images: false,
                 linkTextStyle: {
                   ...TextFontStyle.Bold,
                 },
+                textColor: false,
+                textFormatting: false,
+                video: false,
               }}
             />
           ) : undefined)
@@ -245,7 +246,7 @@ export const ResourceCard = (props: IResourceCardProps) => {
   return <ResourceCard_base {...props} CC={ContentCard} />;
 };
 export const TouchableResourceCard = (
-  props: IResourceCardProps & TouchableOpacityProps & Omit<ITouchableContentCardProps, 'header'>,
+  props: IResourceCardProps & TouchableOpacityProps & Omit<ITouchableContentCardProps, 'header'>
 ) => {
   return <ResourceCard_base {...props} CC={TouchableContentCard} />;
 };
@@ -255,7 +256,7 @@ export const ResourceView = (props: IResourceCardProps) => {
 };
 
 function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.ComponentType<IContentCardProps> }) {
-  const { cardComponent, children, title, style, picture, pictureStyle, pictureWrapperStyle, ...rest } = props;
+  const { cardComponent, children, picture, pictureStyle, pictureWrapperStyle, style, title, ...rest } = props;
   if (picture) {
     if (picture.type === 'Image') picture.resizeMode = 'contain';
     if (picture.type === 'NamedSvg') {
@@ -292,17 +293,17 @@ OverviewCardBase.styles = StyleSheet.create({
     flexDirection: 'row',
   },
   picture: {
-    width: 16,
     height: 16,
+    width: 16,
   },
   pictureWrapper: {
-    width: 24,
-    height: 24,
     backgroundColor: theme.palette.primary.regular,
     borderRadius: 12,
+    height: 24,
+    marginRight: UI_SIZES.spacing.minor,
     overflow: 'hidden',
     padding: UI_SIZES.spacing.tiny,
-    marginRight: UI_SIZES.spacing.minor,
+    width: 24,
   },
 });
 export function OverviewCard(props: OverviewCardProps) {

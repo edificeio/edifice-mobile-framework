@@ -1,8 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps, Section } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -29,9 +33,6 @@ import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import styles from './styles';
-import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps, Section } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -175,11 +176,11 @@ export default connect(
     return {
       favoriteUids: favorites.data.map(r => r.uid),
       sections: [
-        { type: SectionType.PINS, resources: resources.data.pins, iconName: 'ui-flag' },
-        { type: SectionType.FAVORITES, resources: favorites.data, iconName: 'ui-star-filled' },
-        { type: SectionType.TEXTBOOKS, resources: resources.data.textbooks, iconName: 'ui-toga' },
-        { type: SectionType.EXTERNAL_RESOURCES, resources: resources.data.externals, iconName: 'ui-laptop' },
-        { type: SectionType.SIGNETS, resources: resources.data.signets, iconName: 'ui-bookmark' },
+        { iconName: 'ui-flag', resources: resources.data.pins, type: SectionType.PINS },
+        { iconName: 'ui-star-filled', resources: favorites.data, type: SectionType.FAVORITES },
+        { iconName: 'ui-toga', resources: resources.data.textbooks, type: SectionType.TEXTBOOKS },
+        { iconName: 'ui-laptop', resources: resources.data.externals, type: SectionType.EXTERNAL_RESOURCES },
+        { iconName: 'ui-bookmark', resources: resources.data.signets, type: SectionType.SIGNETS },
       ].filter(section => section.resources.length),
       selectedStructure: selectedStructure.data,
       session,
@@ -197,6 +198,6 @@ export default connect(
         trySearchResources: tryAction(searchResourcesAction),
         trySelectStructure: tryAction(editSelectedStructureAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(MediacentreHomeScreen);

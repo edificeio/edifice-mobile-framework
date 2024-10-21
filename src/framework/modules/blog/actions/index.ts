@@ -4,7 +4,7 @@
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { Blog, BlogFolder, BlogPost, actionTypes, getPublishableBlogs } from '~/framework/modules/blog/reducer';
+import { actionTypes, Blog, BlogFolder, BlogPost, getPublishableBlogs } from '~/framework/modules/blog/reducer';
 import {
   createBlogPostResourceRight,
   getBlogPostRight,
@@ -94,8 +94,8 @@ export const uploadBlogPostImagesAction =
             }
           : {
               parent: 'protected',
-            },
-      ),
+            }
+      )
     );
   };
 
@@ -184,8 +184,8 @@ export const sendBlogPostAction =
     const blogPostActionRight = blogPostRight.actionRight;
     const shareAction = {
       [createBlogPostResourceRight]: undefined,
-      [submitBlogPostResourceRight]: () => dispatch(submitBlogPostAction(blogId, postId)) as unknown as Promise<string>,
       [publishBlogPostResourceRight]: () => dispatch(publishBlogPostAction(blogId, postId)) as unknown as Promise<string>,
+      [submitBlogPostResourceRight]: () => dispatch(submitBlogPostAction(blogId, postId)) as unknown as Promise<string>,
     }[blogPostActionRight];
     if (shareAction) await shareAction();
   };
@@ -281,6 +281,6 @@ export const fetchBlogsAndFoldersAction =
   (): ThunkAction<Promise<[Blog[], BlogFolder[]]>, any, any, any> => async (dispatch, getState) => {
     const data = await Promise.all([dispatch(fetchBlogsAction()), dispatch(fetchBlogFoldersAction())]);
     // ToDo : call line below when tha case of trashed blogs will be handled
-    await dispatch({ type: actionTypes.tree.compute, blogs: data[0], folders: data[1] });
+    await dispatch({ blogs: data[0], folders: data[1], type: actionTypes.tree.compute });
     return data;
   };

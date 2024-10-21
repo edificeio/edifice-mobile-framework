@@ -14,21 +14,21 @@ const initialState: FavoritesStateData = [];
 
 export const actionTypes = {
   ...createAsyncActionTypes(moduleConfig.namespaceActionType('FAVORITES')),
-  addRequest: moduleConfig.namespaceActionType('FAVORITE_ADD_REQUEST'),
-  addReceipt: moduleConfig.namespaceActionType('FAVORITE_ADD_RECEIPT'),
   addError: moduleConfig.namespaceActionType('FAVORITE_ADD_ERROR'),
-  removeRequest: moduleConfig.namespaceActionType('FAVORITE_REMOVE_REQUEST'),
-  removeReceipt: moduleConfig.namespaceActionType('FAVORITE_REMOVE_RECEIPT'),
+  addReceipt: moduleConfig.namespaceActionType('FAVORITE_ADD_RECEIPT'),
+  addRequest: moduleConfig.namespaceActionType('FAVORITE_ADD_REQUEST'),
   removeError: moduleConfig.namespaceActionType('FAVORITE_REMOVE_ERROR'),
+  removeReceipt: moduleConfig.namespaceActionType('FAVORITE_REMOVE_RECEIPT'),
+  removeRequest: moduleConfig.namespaceActionType('FAVORITE_REMOVE_REQUEST'),
 };
 export const actions = {
   ...createAsyncActionCreators<FavoritesStateData>(actionTypes),
+  addError: (error: Error) => ({ error, type: actionTypes.addError }),
+  addReceipt: (resource: Resource) => ({ resource, type: actionTypes.addReceipt }),
   addRequest: () => ({ type: actionTypes.addRequest }),
-  addReceipt: (resource: Resource) => ({ type: actionTypes.addReceipt, resource }),
-  addError: (error: Error) => ({ type: actionTypes.addError, error }),
+  removeError: (error: Error) => ({ error, type: actionTypes.removeError }),
+  removeReceipt: (resource: Resource) => ({ resource, type: actionTypes.removeReceipt }),
   removeRequest: () => ({ type: actionTypes.removeRequest }),
-  removeReceipt: (resource: Resource) => ({ type: actionTypes.removeReceipt, resource }),
-  removeError: (error: Error) => ({ type: actionTypes.removeError, error }),
 };
 
 const editFavoritesHandlerMap = {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,16 +15,16 @@ import { handleAction, tryAction } from '~/framework/util/redux/actions';
 
 const styles = StyleSheet.create({
   container: {
-    padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
-    borderBottomRightRadius: UI_SIZES.radius.large,
     borderBottomLeftRadius: UI_SIZES.radius.large,
-    zIndex: 100,
+    borderBottomRightRadius: UI_SIZES.radius.large,
+    elevation: 2,
+    padding: UI_SIZES.spacing.small,
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { height: 1, width: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 1,
-    elevation: 2,
+    zIndex: 100,
   },
   dropdown: {
     borderColor: theme.palette.primary.regular,
@@ -102,6 +103,6 @@ export default connect(
         handleSelectStructure: handleAction(selectStructureAction),
         tryLoadStoredStructure: tryAction(loadStoredStructureAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(StructurePicker);

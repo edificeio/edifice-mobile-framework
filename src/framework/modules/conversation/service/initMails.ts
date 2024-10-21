@@ -17,16 +17,18 @@ const initMailListAdapter: (rootFoldersList: IInitMailListBackend) => IInitMail 
   let result = {} as IInitMail;
   if (!rootFoldersList) return result;
   const folders = rootFoldersList.map(rootFolder => ({
-    id: rootFolder.id,
+    depth: rootFolder.depth,
     folderName: rootFolder.name,
-    unread: rootFolder.nbUnread,
     folders: [],
+
+    id: rootFolder.id,
+
     // Extra data
     parent_id: rootFolder.parent_id,
-    user_id: rootFolder.user_id,
-    depth: rootFolder.depth,
-    trashed: rootFolder.trashed,
     skip_uniq: rootFolder.skip_uniq,
+    trashed: rootFolder.trashed,
+    unread: rootFolder.nbUnread,
+    user_id: rootFolder.user_id,
   }));
 
   result = {

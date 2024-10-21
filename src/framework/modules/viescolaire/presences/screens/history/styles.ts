@@ -18,13 +18,13 @@ export default StyleSheet.create({
   },
   tabBarContainer: {
     backgroundColor: theme.palette.grey.white,
-    borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,
+    borderBottomWidth: UI_SIZES.border.thin,
     elevation: 0,
   },
   tabBarIndicatorContainer: {
-    height: 2,
     backgroundColor: theme.palette.primary.regular,
+    height: 2,
   },
   tabBarLabel: {
     paddingRight: UI_SIZES.spacing.minor, // fix to android trimming last character
@@ -33,8 +33,8 @@ export default StyleSheet.create({
     color: theme.palette.primary.regular,
   },
   tabBarTabContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
   },
 });

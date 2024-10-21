@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
+
 import { I18n } from '~/app/i18n';
 import moduleConfig from '~/framework/modules/myAppMenu/module-config';
 import { myAppsConnector, myAppsModules, myAppsSecondaryModules } from '~/framework/modules/myAppMenu/myAppsModules';
@@ -7,8 +9,6 @@ import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeSc
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/util/moduleTool';
-
-import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
   const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(apps, widgets));

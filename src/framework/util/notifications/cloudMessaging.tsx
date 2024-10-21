@@ -2,25 +2,27 @@
  * CloudMessgaging
  * All tools to manage push-notifications opening
  */
+import React, { PropsWithChildren, useEffect, useState } from 'react';
+
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
-import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import { defaultNotificationActionStack, handleNotificationAction } from './routing';
+
+import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 
 import { IGlobalState } from '~/app/store';
 import { accountIsActive } from '~/framework/modules/auth/model';
 import * as selectors from '~/framework/modules/auth/redux/selectors';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 
-import { IEntcoreTimelineNotification, notificationAdapter } from '.';
-import { defaultNotificationActionStack, handleNotificationAction } from './routing';
-
 function AppPushNotificationHandlerComponentUnconnected(
   props: PropsWithChildren<{
     isLoggedIn: boolean;
     dispatch: ThunkDispatch<any, any, any>;
-  }>,
+  }>
 ) {
   const [notification, setNotification] = useState<FirebaseMessagingTypes.RemoteMessage | undefined>(undefined);
 
@@ -42,7 +44,7 @@ function AppPushNotificationHandlerComponentUnconnected(
   }, []);
 
   const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
-  const { isLoggedIn, dispatch } = props;
+  const { dispatch, isLoggedIn } = props;
   useEffect(() => {
     if (notification && isLoggedIn) {
       if (notification.data) {
@@ -74,5 +76,5 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>) => ({
 
 export const AppPushNotificationHandlerComponent = connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AppPushNotificationHandlerComponentUnconnected);

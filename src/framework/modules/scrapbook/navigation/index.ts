@@ -5,8 +5,8 @@ import type { ScrapbookDetailsScreenNavParams } from '~/framework/modules/scrapb
 import type { ScrapbookHomeScreenNavParams } from '~/framework/modules/scrapbook/screens/home';
 
 export const scrapbookRouteNames = {
-  home: `${moduleConfig.routeName}` as 'home',
   details: `${moduleConfig.routeName}/details` as 'details',
+  home: `${moduleConfig.routeName}` as 'home',
 };
 export interface ScrapbookNavigationParams extends ParamListBase {
   home: ScrapbookHomeScreenNavParams;

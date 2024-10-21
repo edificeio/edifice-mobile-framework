@@ -3,7 +3,7 @@
  * @param something
  * @param key
  */
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
+
 export const containsKey = (something: object, key: string): boolean => !isEmpty(something) && Object.keys(something).includes(key);
 
 /**
@@ -12,7 +12,6 @@ export const containsKey = (something: object, key: string): boolean => !isEmpty
  * @param key
  */
 export const containsValue = (something: object, value: any): boolean =>
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   !isEmpty(something) && Object.values(something).includes(value);
 
 /**

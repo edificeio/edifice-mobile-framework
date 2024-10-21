@@ -9,14 +9,14 @@ import {
 // State definition
 
 export interface IEntcoreNotificationType {
-  type: string;
+  'type': string;
   'event-type': string;
   'app-name': string | null;
   'app-address': string | null;
-  defaultFrequency: string;
-  restriction: string;
+  'defaultFrequency': string;
+  'restriction': string;
   'push-notif': boolean;
-  key: string;
+  'key': string;
 }
 
 export type NotifTypesStateData = IEntcoreNotificationType[];

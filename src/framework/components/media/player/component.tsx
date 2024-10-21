@@ -1,11 +1,15 @@
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import { AppState, BackHandler, Platform, StatusBar, View } from 'react-native';
+
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
+
+import styles from './styles';
+import { MediaPlayerProps, MediaType } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -16,23 +20,20 @@ import { PageView } from '~/framework/components/page';
 import { markViewAudience } from '~/framework/modules/audience';
 import { getSession } from '~/framework/modules/auth/reducer';
 
-import styles from './styles';
-import { MediaPlayerProps, MediaType } from './types';
-
 const ERRORS_I18N = {
-  connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
   AVFoundationErrorDomain: ['mediaplayer-error-notsupported-title', 'mediaplayer-error-notsupported-text'],
+  connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
   default: ['mediaplayer-error-content-title', 'mediaplayer-error-content-text'],
 };
 
-const DELAY_STATUS_HIDE = Platform.select({ ios: 250, default: 0 });
+const DELAY_STATUS_HIDE = Platform.select({ default: 0, ios: 250 });
 
 export const ANIMATION_AUDIO = require('ASSETS/animations/audio/disque.json');
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const { route, navigation, connected, session } = props;
+  const { connected, navigation, route, session } = props;
 
-  const { source, type, filetype } = route.params;
+  const { filetype, source, type } = route.params;
 
   const animationRef = React.useRef<LottieView>(null);
 
@@ -53,7 +54,7 @@ function MediaPlayer(props: MediaPlayerProps) {
         setOrientation(newOrientation);
       }
     },
-    [orientation],
+    [orientation]
   );
 
   useDeviceOrientationChange(handleOrientationChange);
@@ -184,7 +185,6 @@ function MediaPlayer(props: MediaPlayerProps) {
         </>
       );
     else {
-      // eslint-disable-next-line react/no-unstable-nested-components
       navigation.setOptions({ headerLeft: () => <View /> });
       return (
         <VideoPlayer
@@ -254,7 +254,7 @@ function MediaPlayer(props: MediaPlayerProps) {
         height: isPortrait ? UI_SIZES.screen.height : UI_SIZES.screen.width,
       },
     ],
-    [isPortrait],
+    [isPortrait]
   );
 
   const [hideStatusBar, setHideStatusBar] = React.useState<boolean | undefined>(undefined);
@@ -263,7 +263,7 @@ function MediaPlayer(props: MediaPlayerProps) {
       setTimeout(() => {
         setHideStatusBar(!error);
       }, DELAY_STATUS_HIDE);
-    }, [error]),
+    }, [error])
   );
   React.useEffect(() => {
     if (hideStatusBar !== undefined) setHideStatusBar(!error);
@@ -275,7 +275,7 @@ function MediaPlayer(props: MediaPlayerProps) {
       if (route.params.referer) {
         markViewAudience(route.params.referer);
       }
-    }, [route.params.referer]),
+    }, [route.params.referer])
   );
 
   return (

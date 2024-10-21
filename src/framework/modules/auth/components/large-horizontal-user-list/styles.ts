@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 
-import { UI_SIZES } from '~/framework/components/constants';
-
 import type { AccountSelectListContentContainerStyleProp } from './types';
+
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   accountContentContainer: {
@@ -10,13 +10,13 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.big, // /!\ Keep real number value here as it is used in component to compute item width
   } as AccountSelectListContentContainerStyleProp,
   accountItem: {
+    alignItems: 'center',
     padding: UI_SIZES.spacing.minor,
     rowGap: UI_SIZES.spacing.small,
-    alignItems: 'center',
   },
   accountItemDetails: {
-    flexGrow: 1,
     alignItems: 'stretch',
+    flexGrow: 1,
     gap: UI_SIZES.spacing.tiny,
     justifyContent: 'center',
   },

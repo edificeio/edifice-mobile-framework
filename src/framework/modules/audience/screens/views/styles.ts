@@ -8,15 +8,15 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.medium,
   },
   icon: {
-    padding: UI_SIZES.spacing.minor,
     borderRadius: UI_SIZES.radius.medium,
+    padding: UI_SIZES.spacing.minor,
   },
   item: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: UI_SIZES.spacing.small,
     borderBottomWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.grey.cloudy,
+    flexDirection: 'row',
+    paddingVertical: UI_SIZES.spacing.small,
   },
   lastItem: {
     borderBottomWidth: 0,

@@ -6,6 +6,8 @@ import { NavigationAction, NavigationProp, ParamListBase, StackActions } from '@
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
+import { getAsResourceUriNotification, IAbstractNotification } from '.';
+
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navigate, navigationRef } from '~/framework/navigation/helper';
@@ -14,8 +16,6 @@ import { setConfirmQuitAction, setModalCloseAction } from '~/framework/navigatio
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
-
-import { IAbstractNotification, getAsResourceUriNotification } from '.';
 
 // Module Map
 
@@ -33,13 +33,13 @@ export type NotifHandlerThunkAction<NotifType extends IAbstractNotification = IA
   notification: NotifType,
   trackCategory: false | string,
   navigation: NavigationProp<ParamListBase>,
-  allowSwitchTab?: boolean,
+  allowSwitchTab?: boolean
 ) => NotifHandlerThunk;
 
 export interface INotifHandlerDefinition<NotifType extends IAbstractNotification = IAbstractNotification> {
-  type: string;
+  'type': string;
   'event-type'?: string | string[];
-  notifHandlerAction: NotifHandlerThunkAction<NotifType>;
+  'notifHandlerAction': NotifHandlerThunkAction<NotifType>;
 }
 
 export type IAnyNotification = IAbstractNotification & any;
@@ -69,11 +69,24 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
         if (trackCategory && ret.trackInfo)
           Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n['event-type']}`, ret.trackInfo.value);
         return ret;
-      }),
+      })
     );
     return {
       managed: rets.reduce((total, ret) => total + (ret ? ret.managed : 0), 0),
     };
+  },
+
+  // Only redirect to the timeline
+  timelineRedirection: (n, trackCategory) => async (dispatch, getState) => {
+    if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
+    navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+      initial: true,
+      params: {
+        notification: n,
+      },
+      screen: timelineRouteNames.Home,
+    });
+    return { managed: 1 };
   },
 
   // Redirect the user to the timeline + go to native browser
@@ -86,25 +99,12 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     // We want to navigate on timeline even if this is a web redirection.
     navigate(computeTabRouteName(timelineModuleConfig.routeName), {
       initial: true,
-      screen: timelineRouteNames.Home,
       params: {
         notification: n,
       },
+      screen: timelineRouteNames.Home,
     });
     openUrl(notifWithUri.resource.uri);
-    return { managed: 1 };
-  },
-
-  // Only redirect to the timeline
-  timelineRedirection: (n, trackCategory) => async (dispatch, getState) => {
-    if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-    navigate(computeTabRouteName(timelineModuleConfig.routeName), {
-      initial: true,
-      screen: timelineRouteNames.Home,
-      params: {
-        notification: n,
-      },
-    });
     return { managed: 1 };
   },
 };
@@ -121,14 +121,14 @@ export const handleNotificationAction =
     actionStack: NotifHandlerThunkAction[],
     navigation: NavigationProp<ParamListBase>,
     trackCategory: false | string = false,
-    allowSwitchTab?: boolean,
+    allowSwitchTab?: boolean
   ) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     let manageCount = 0;
     for (const action of actionStack) {
       if (manageCount) return;
       const ret = (await dispatch(
-        action(notification, trackCategory, navigation, allowSwitchTab),
+        action(notification, trackCategory, navigation, allowSwitchTab)
       )) as unknown as INotifHandlerReturnType;
       manageCount += ret.managed;
       if (ret.trackInfo && trackCategory)

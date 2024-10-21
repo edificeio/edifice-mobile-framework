@@ -1,6 +1,7 @@
-import moment, { Moment } from 'moment';
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
+
+import moment, { Moment } from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
@@ -16,26 +17,26 @@ export const COURSE_WIDTH = UI_SIZES.screen.width - TIME_COLUMN_WIDTH - UI_SIZES
 
 const styles = StyleSheet.create({
   courseContainer: {
-    position: 'absolute',
     overflow: 'hidden',
     padding: UI_SIZES.spacing.tiny / 2,
+    position: 'absolute',
   },
   timeSlotLineContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
+    height: LINE_HEIGHT,
     position: 'absolute',
     width: '100%',
-    height: LINE_HEIGHT,
   },
   timeSlotSeparatorContainer: {
-    width: COURSE_WIDTH,
-    height: 1,
     backgroundColor: theme.palette.grey.cloudy,
+    height: 1,
+    width: COURSE_WIDTH,
   },
   timeSlotText: {
-    width: TIME_COLUMN_WIDTH,
-    textAlign: 'center',
     color: theme.palette.grey.graphite,
+    textAlign: 'center',
+    width: TIME_COLUMN_WIDTH,
   },
 });
 
@@ -110,12 +111,12 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
         m =>
           JSON.stringify(m) !== JSON.stringify(course) &&
           m.startDate.isSame(course.startDate) &&
-          (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate)),
+          (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate))
       );
       // event m starts and ends at the same time as d
       const isSameTime = courses.findIndex(
         m =>
-          JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate),
+          JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate)
       );
 
       if ((isSameTime > -1 || iStartSameEndMiddle > -1) && col === 0) {
@@ -137,10 +138,10 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
 
     for (let index = 0; index < DEFAULT_SLOT_COUNT; index += 1) {
       slots.push({
-        startHour: startTime.clone().add(index, 'hour'),
         endHour: startTime.clone().add(index + 1, 'hour'),
         id: index.toString(),
         name: index.toString(),
+        startHour: startTime.clone().add(index, 'hour'),
       });
     }
     return slots;
@@ -203,11 +204,11 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
       LINE_HEIGHT / 2;
 
     const positionStyle = {
+      height: bottom - top,
       left: side !== 'r' ? TIME_COLUMN_WIDTH : undefined,
       right: side === 'r' ? UI_SIZES.spacing.minor : undefined,
       top,
       width: side ? COURSE_WIDTH / 2 : COURSE_WIDTH,
-      height: bottom - top,
     };
 
     return <View style={[styles.courseContainer, positionStyle]}>{renderCourse(course)}</View>;
@@ -223,7 +224,7 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ height: SLOT_HEIGHT * slots.length + SLOT_HEIGHT / 2, backgroundColor: theme.palette.grey.fog }}>
+        contentContainerStyle={{ backgroundColor: theme.palette.grey.fog, height: SLOT_HEIGHT * slots.length + SLOT_HEIGHT / 2 }}>
         {slots.map((slot, index) => (
           <TimeSlotLine key={index} text={slot.startHour.format('HH:mm')} style={{ top: SLOT_HEIGHT * index }} />
         ))}

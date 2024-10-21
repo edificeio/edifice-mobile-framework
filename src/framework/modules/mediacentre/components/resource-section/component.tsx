@@ -1,6 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { ResourceSectionProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -10,18 +13,15 @@ import { BodyText } from '~/framework/components/text';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 
-import styles from './styles';
-import { ResourceSectionProps } from './types';
-
 const ResourceSection: React.FunctionComponent<ResourceSectionProps> = ({
   disableShowAll = false,
-  resources,
-  type,
   iconName,
   isResourceFavorite,
   onAddFavorite,
   onRemoveFavorite,
   openResourceList,
+  resources,
+  type,
 }) => {
   const headingColor = disableShowAll ? theme.ui.text.regular : theme.palette.primary.regular;
 

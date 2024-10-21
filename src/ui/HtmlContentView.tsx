@@ -7,7 +7,11 @@
  */
 import * as React from 'react';
 import { View, ViewProps } from 'react-native';
+
 import { connect } from 'react-redux';
+
+import { IRemoteAttachment } from './Attachment';
+import { AttachmentGroup } from './AttachmentGroup';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -18,9 +22,6 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { Loading } from '~/ui/Loading';
-
-import { IRemoteAttachment } from './Attachment';
-import { AttachmentGroup } from './AttachmentGroup';
 
 export interface IHtmlContentViewProps extends ViewProps {
   session?: AuthLoggedAccount;
@@ -51,12 +52,12 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
   public constructor(props: IHtmlContentViewProps | Readonly<IHtmlContentViewProps>) {
     super(props);
     this.state = {
-      loading: false,
+      attachments: [],
       done: false,
       error: false,
       html: this.props.html ?? undefined,
-      attachments: [],
       jsx: undefined,
+      loading: false,
     };
   }
 
@@ -88,8 +89,8 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
         const attUrl = attHtml.match(/href="(.*?)"/g);
         const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
         return {
-          url: attUrl && `${session?.platform?.url}${attUrl[0].replace('href="', '').replace('"', '')}`,
           displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, '').replace(/<\/a>/g, ''),
+          url: attUrl && `${session?.platform?.url}${attUrl[0].replace('href="', '').replace('"', '')}`,
         } as IRemoteAttachment;
       });
     html = html.replace(attachmentGroupRegex, '');
@@ -98,8 +99,8 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
   }
 
   public async compute() {
-    const { loading, done, html, jsx } = this.state;
-    const { getContentFromResource, source, opts, onHtmlError } = this.props;
+    const { done, html, jsx, loading } = this.state;
+    const { getContentFromResource, onHtmlError, opts, source } = this.props;
     const hasAttachments = html && html.includes('<div class="download-attachments">');
     if (done) return;
     this.setState({ loading: true });
@@ -108,7 +109,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
       // If there is no Html, try to load it
       if (!getContentFromResource || !source)
         throw new Error(
-          "HtmlContentView: When the html prop isn't provided, you must provide both the `getContentFromResource` and `source` props.",
+          "HtmlContentView: When the html prop isn't provided, you must provide both the `getContentFromResource` and `source` props."
         );
       if (loading) return;
 
@@ -134,8 +135,8 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
   }
 
   public render() {
-    const { error, jsx, attachments, loading } = this.state;
-    const { loadingComp, emptyMessage, onDownload, onError, onDownloadAll, onOpen } = this.props;
+    const { attachments, error, jsx, loading } = this.state;
+    const { emptyMessage, loadingComp, onDownload, onDownloadAll, onError, onOpen } = this.props;
     const hasContent = jsx && jsx.props.children.some((child: any) => child !== undefined && child != null);
     const loadingComponent = loadingComp || <Loading />;
     const hasAttachments = attachments && attachments.length;

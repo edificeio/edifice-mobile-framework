@@ -6,17 +6,17 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
   container: {
-    padding: UI_SIZES.spacing.minor,
-    marginVertical: UI_SIZES.spacing.tiny,
     backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.card,
+    marginVertical: UI_SIZES.spacing.tiny,
+    padding: UI_SIZES.spacing.minor,
   },
   containerShadow: {
+    elevation: 1,
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { height: 1, width: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 1,
-    elevation: 1,
   },
 });
 
@@ -38,8 +38,8 @@ enum SidedComponentDirection {
 
 type SidedItemProps = ItemProps & { shadow?: boolean; side: SidedComponentDirection };
 
-export const Item: React.FunctionComponent<ItemProps> = ({ children, color, disabled, selected, style, onPress }) => {
-  const selectedStyle = color && selected ? { borderWidth: 2, borderColor: color } : {};
+export const Item: React.FunctionComponent<ItemProps> = ({ children, color, disabled, onPress, selected, style }) => {
+  const selectedStyle = color && selected ? { borderColor: color, borderWidth: 2 } : {};
 
   return (
     <TouchableOpacity disabled={onPress == null || disabled} style={[styles.container, selectedStyle, style]} onPress={onPress}>

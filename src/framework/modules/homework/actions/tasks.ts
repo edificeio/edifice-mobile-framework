@@ -5,8 +5,8 @@
 import moment from 'moment';
 
 import homeworkConfig from '~/framework/modules/homework/module-config';
-import { IHomeworkDay, IHomeworkTaskStatuses, IHomeworkTasks } from '~/framework/modules/homework/reducers/tasks';
-import { IState, asyncActionTypes, asyncFetchIfNeeded, asyncGetJson } from '~/infra/redux/async';
+import { IHomeworkDay, IHomeworkTasks, IHomeworkTaskStatuses } from '~/framework/modules/homework/reducers/tasks';
+import { asyncActionTypes, asyncFetchIfNeeded, asyncGetJson, IState } from '~/infra/redux/async';
 
 /** Retuns the local state (global state -> homework -> tasks). Give the global state as parameter. */
 const localState = globalState => homeworkConfig.getState(globalState).tasks;
@@ -52,8 +52,8 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
   const dataDays = data.data;
   const ret: IHomeworkTasks = {
     byId: {},
-    ids: [],
     diaryInfo: {},
+    ids: [],
   };
   if (!data.data) return { byId: {}, ids: [] };
   // Now it's time to iterate over the days.
@@ -76,10 +76,10 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
       homeworkDay.tasks.ids.push(indextask.toString());
       homeworkDay.tasks.byId[indextask] = {
         content: itemtask.value,
-        id: indextask.toString(),
-        title: itemtask.title,
-        taskId: itemtask._id,
         finished: false,
+        id: indextask.toString(),
+        taskId: itemtask._id,
+        title: itemtask.title,
       };
     });
     // Now we put the homeworkDay into the return value
@@ -89,12 +89,14 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
   // Sorting days of tasks by ascending date
   ret.ids.sort(); // As the used ID from date is YYYY-MM-DD, we can sort it lexically.
   ret.diaryInfo = {
-    title: data.title,
-    name: data.title, // What is name ??? Baby don't hurt me ! title duplicate ?
+    // What is name ??? Baby don't hurt me ! title duplicate ?
     id: data._id,
-    thumbnail: data.thumbnail,
+
+    name: data.title,
     owner: data.owner,
     shared: data.shared,
+    thumbnail: data.thumbnail,
+    title: data.title,
   };
   return ret;
 };
@@ -131,25 +133,25 @@ const homeworkTasksData = (tasksData: IHomeworkTasks, taskStatusesData: IHomewor
 export const actionTypes = asyncActionTypes(homeworkConfig.namespaceActionType('TASKS'));
 
 export function homeworkTasksInvalidated(diaryId: string) {
-  return { type: actionTypes.invalidated, diaryId };
+  return { diaryId, type: actionTypes.invalidated };
 }
 
 export function homeworkTasksRequested(diaryId: string) {
-  return { type: actionTypes.requested, diaryId };
+  return { diaryId, type: actionTypes.requested };
 }
 
 export function homeworkTasksReceived(diaryId: string, data: IHomeworkTasks) {
   return {
-    type: actionTypes.received,
-
     data,
+
     diaryId,
     receivedAt: Date.now(),
+    type: actionTypes.received,
   };
 }
 
 export function homeworkTasksFetchError(diaryId: string, errmsg: string) {
-  return { type: actionTypes.fetchError, error: true, errmsg, diaryId };
+  return { diaryId, errmsg, error: true, type: actionTypes.fetchError };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
@@ -172,7 +174,7 @@ export function fetchHomeworkTasks(diaryId: string, entryId?: string, repeatId?:
       };
       const taskStatusesData = await asyncGetJson(
         `/homeworks/${diaryId}/entry/status${getTaskStatusesQueryParams()}`,
-        homeworkTaskStatusesAdapter,
+        homeworkTaskStatusesAdapter
       );
       const tasksData = await asyncGetJson(`/homeworks/get/${diaryId}`, homeworkTasksAdapter);
       const data = homeworkTasksData(tasksData, taskStatusesData);
@@ -192,6 +194,6 @@ export function fetchHomeworkTasksIfNeeded(diaryId: string) {
       return localState(gs)[diaryId];
     },
     fetchHomeworkTasks,
-    diaryId,
+    diaryId
   );
 }

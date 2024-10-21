@@ -1,5 +1,9 @@
-import moment from 'moment';
 import * as React from 'react';
+
+import moment from 'moment';
+
+import styles from './styles';
+import { NewsCardProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -12,9 +16,6 @@ import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { commentsString } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
-
-import styles from './styles';
-import { NewsCardProps } from './types';
 
 export default function NewsCard(props: NewsCardProps) {
   const { news, thread } = props;
@@ -29,7 +30,7 @@ export default function NewsCard(props: NewsCardProps) {
           <CardTopContent
             image={<ThumbnailThread icon={thread.icon} square />}
             text={thread.title}
-            {...(news.headline ? { statusIcon: 'ui-star-filled', statusColor: theme.palette.complementary.orange.regular } : null)}
+            {...(news.headline ? { statusColor: theme.palette.complementary.orange.regular, statusIcon: 'ui-star-filled' } : null)}
           />
         ) : null}
         <CaptionItalicText style={styles.date}>

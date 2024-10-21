@@ -1,22 +1,22 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ImageProps, ImageURISource, View, ViewStyle } from 'react-native';
-import RNFastImage from 'react-native-fast-image';
 
-import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
-import { NamedSVG } from '~/framework/components/picture';
-import { SmallInverseText } from '~/framework/components/text';
-import { IMAGE_MAX_DIMENSION } from '~/framework/util/fileHandler';
-import { FastImage } from '~/framework/util/media';
-import { urlSigner } from '~/infra/oauth';
+import styled from '@emotion/native';
+import RNFastImage from 'react-native-fast-image';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
 import ImageOptional from './ImageOptional';
 
+import theme from '~/app/theme';
+import { openCarousel } from '~/framework/components/carousel/openCarousel';
+import { getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
+import { NamedSVG } from '~/framework/components/picture';
+import { SmallInverseText } from '~/framework/components/text';
 import { AudienceParameter } from '~/framework/modules/core/audience/types';
+import { IMAGE_MAX_DIMENSION } from '~/framework/util/fileHandler';
+import { FastImage } from '~/framework/util/media';
+import { urlSigner } from '~/infra/oauth';
 
 const ContainerImage = styled.View({});
 
@@ -32,12 +32,12 @@ const QuarterImage = styled(TouchableOpacity)({
 
 const Overlay = styled(TouchableOpacity)({
   backgroundColor: theme.palette.grey.black,
-  opacity: 0.6,
+  borderRadius: UI_SIZES.radius.small,
   bottom: 0,
+  opacity: 0.6,
   position: 'absolute',
   right: 0,
   width: '100%',
-  borderRadius: UI_SIZES.radius.small,
 });
 
 const Column = styled.View({
@@ -47,11 +47,11 @@ const Column = styled.View({
 
 const BubbleView = styled.View({
   backgroundColor: theme.palette.grey.black,
-  opacity: 0.8,
   borderRadius: 15,
   height: 30,
   left: '50%',
   marginLeft: -UI_SIZES.spacing.small,
+  opacity: 0.8,
   padding: UI_SIZES.spacing.tiny,
   position: 'absolute',
   width: 30,
@@ -68,13 +68,13 @@ const UnavailableImage = (props: { big?: boolean }) => (
   <View
     style={{
       backgroundColor: theme.palette.grey.pearl,
+      borderRadius: UI_SIZES.radius.small,
+      flex: 1,
       height: '100%',
+      justifyContent: 'space-around',
       paddingHorizontal: UI_SIZES.spacing.minor,
       paddingVertical: UI_SIZES.spacing.minor,
       width: '100%',
-      flex: 1,
-      justifyContent: 'space-around',
-      borderRadius: UI_SIZES.radius.small,
     }}>
     <NamedSVG
       style={{ alignSelf: 'center', flex: 0, marginVertical: UI_SIZES.spacing.minor }}
@@ -94,9 +94,9 @@ const StretchImage = (props: ImageProps & { big?: boolean }) => {
       imageComponent={FastImage}
       errorComponent={<UnavailableImage big={big} />}
       style={{
+        borderRadius: UI_SIZES.radius.small,
         height: '100%',
         width: '100%',
-        borderRadius: UI_SIZES.radius.small,
       }}
       resizeMode={RNFastImage.resizeMode.cover}
     />
@@ -114,12 +114,12 @@ class Images extends React.Component<
   public openImage(startIndex: any) {
     const { images } = this.props;
     const data = images.map(img => ({
-      type: 'image' as const,
       src: img.src,
+      type: 'image' as const,
       ...(img.alt ? { alt: img.alt } : undefined),
       ...(img.linkTo ? { link: img.linkTo } : undefined),
     }));
-    openCarousel({ data, startIndex, referer: this.props.referer });
+    openCarousel({ data, referer: this.props.referer, startIndex });
   }
 
   public images() {
@@ -196,7 +196,7 @@ class Images extends React.Component<
             {images.length > 4 && (
               <BubbleView style={{ bottom: imageHeight / 4 - 15, justifyContent: 'center' }}>
                 <SmallInverseText
-                  style={{ marginHorizontal: -UI_SIZES.spacing.small, textAlign: 'center', lineHeight: undefined }}
+                  style={{ lineHeight: undefined, marginHorizontal: -UI_SIZES.spacing.small, textAlign: 'center' }}
                   onPress={() => this.openImage(3)}>
                   +
                   {

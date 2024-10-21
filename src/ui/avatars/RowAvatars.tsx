@@ -1,22 +1,23 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ImageURISource, View } from 'react-native';
+
+import styled from '@emotion/native';
 import Carousel from 'react-native-snap-carousel';
+
+import Avatar, { Size } from './Avatar';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CaptionText } from '~/framework/components/text';
 
-import Avatar, { Size } from './Avatar';
-
 const SkippedContainer = styled.View({
+  alignItems: 'center',
+  backgroundColor: theme.ui.background.card,
   borderRadius: 15,
   height: 29,
-  width: 29,
-  alignItems: 'center',
   justifyContent: 'center',
   marginLeft: -UI_SIZES.spacing.tiny,
-  backgroundColor: theme.ui.background.card,
+  width: 29,
 });
 
 export interface IAvatarsProps {
@@ -49,7 +50,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
     slideIndex: 0,
   };
 
-  private renderItem({ item, index }) {
+  private renderItem({ index, item }) {
     return (
       <Slide>
         <Avatar size={Size.verylarge} index={index} sourceOrId={item} />
@@ -63,8 +64,8 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
   }
 
   public render() {
-    const { size = Size.verylarge, images } = this.props;
-    const { width, height } = UI_SIZES.screen;
+    const { images, size = Size.verylarge } = this.props;
+    const { height, width } = UI_SIZES.screen;
 
     let skipped = 0;
     if (images.length > 4 && size !== Size.verylarge) {

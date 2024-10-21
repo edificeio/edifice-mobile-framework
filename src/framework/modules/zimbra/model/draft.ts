@@ -1,6 +1,6 @@
-import { IDistantFileWithId } from '~/framework/util/fileHandler';
-
 import { IRecipient } from '.';
+
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
 export interface IDraft {
   to: IRecipient[];

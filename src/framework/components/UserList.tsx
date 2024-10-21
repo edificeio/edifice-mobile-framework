@@ -6,13 +6,13 @@
 import * as React from 'react';
 import { ListRenderItemInfo, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
+import { TextSizeStyle } from './text';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList, { FlatListProps } from '~/framework/components/list/flat-list';
 import { BadgeAvatarProps, TextAvatar } from '~/framework/components/textAvatar';
 import { Status } from '~/ui/avatars/Avatar';
-
-import { TextSizeStyle } from './text';
 
 export interface IUserListItem {
   id: string;
@@ -38,22 +38,22 @@ const styles = StyleSheet.create({
 });
 
 function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserListProps<ItemType>, ref) {
-  const { selectedId, onSelect, renderBadge, avatarSize, data, customItemStyle, withSeparator, horizontal, style, ...otherProps } =
+  const { avatarSize, customItemStyle, data, horizontal, onSelect, renderBadge, selectedId, style, withSeparator, ...otherProps } =
     props;
   const renderItem: FlatListProps<ItemType>['renderItem'] = React.useCallback(
     info =>
       UserList.renderItem({
+        avatarSize,
+        customItemStyle,
+        data,
+        horizontal,
         info,
         onSelect,
         renderBadge,
-        avatarSize,
         selectedId,
-        horizontal,
-        data,
-        customItemStyle,
         withSeparator,
       }),
-    [onSelect, renderBadge, avatarSize, selectedId, horizontal, data, customItemStyle, withSeparator],
+    [onSelect, renderBadge, avatarSize, selectedId, horizontal, data, customItemStyle, withSeparator]
   );
   return (
     <FlatList
@@ -72,14 +72,14 @@ function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserLis
 }
 UserList.keyExtractor = <ItemType extends IUserListItem>(item: ItemType) => item.id;
 UserList.renderItem = <ItemType extends IUserListItem>({
+  avatarSize,
+  customItemStyle,
+  data,
+  horizontal,
   info,
   onSelect,
   renderBadge,
-  avatarSize,
   selectedId,
-  horizontal,
-  data,
-  customItemStyle,
   withSeparator,
 }: { info: ListRenderItemInfo<ItemType> } & Pick<
   UserListProps<ItemType>,
@@ -93,9 +93,9 @@ UserList.renderItem = <ItemType extends IUserListItem>({
         horizontal
           ? { marginRight: isLastItem ? UI_SIZES.spacing.tiny : UI_SIZES.spacing.big }
           : {
-              marginBottom: isLastItem ? undefined : UI_SIZES.spacing.medium,
-              borderBottomWidth: !withSeparator || isLastItem ? 0 : 1,
               borderBottomColor: theme.palette.grey.cloudy,
+              borderBottomWidth: !withSeparator || isLastItem ? 0 : 1,
+              marginBottom: isLastItem ? undefined : UI_SIZES.spacing.medium,
             },
         { marginLeft: isFirstItem ? 2 : undefined },
         customItemStyle,

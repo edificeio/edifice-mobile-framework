@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { Image, ImageProps } from 'react-native';
 
-import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
-import appConf, { Platform } from '~/framework/util/appConf';
-import { urlSigner } from '~/infra/oauth';
-
 import { AvatarSizes } from './styles';
 import {
   CommonSingleAvatarProps,
@@ -21,17 +17,21 @@ import {
   SingleUserAvatarSpecificProps,
 } from './types';
 
+import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
+import appConf, { Platform } from '~/framework/util/appConf';
+import { urlSigner } from '~/infra/oauth';
+
 const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
   return React.useMemo(
     () => [
       props.style,
       {
-        width: AvatarSizes[props.size],
-        height: AvatarSizes[props.size],
         borderRadius: AvatarSizes[props.size] / 2,
+        height: AvatarSizes[props.size],
+        width: AvatarSizes[props.size],
       },
     ],
-    [props.size, props.style],
+    [props.size, props.style]
   );
 };
 
@@ -71,7 +71,7 @@ const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): I
       if (typeof source === 'number') {
         return source;
       } else {
-        return { uri: source.uri, headers: source.headers, ...commonSourceAttributes };
+        return { headers: source.headers, uri: source.uri, ...commonSourceAttributes };
       }
     } else {
       return fallbackSource;
@@ -83,7 +83,7 @@ const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): I
 
 const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
   props: SpecificProps,
-  error: boolean,
+  error: boolean
 ): ImageProps['source'] =>
   React.useMemo(
     () => getAvatarImage(props as SingleAvatarOnlySpecificProps, error),
@@ -99,11 +99,11 @@ const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
       (props as SingleAvatarUnknownSpecificProps).userId,
       error,
-    ],
+    ]
   );
 
 const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatarProps => {
-  const { id, source, svg, group, ...commonProps } = props as SingleAvatarProps &
+  const { group, id, source, svg, ...commonProps } = props as SingleAvatarProps &
     SingleSourceAvatarProps &
     SingleSvgAvatarProps &
     SingleDefaultAvatarProps &

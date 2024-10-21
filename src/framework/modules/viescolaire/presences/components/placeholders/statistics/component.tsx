@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
-import StatisticsCardPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/statistics-card';
-
 import styles from './styles';
+
+import StatisticsCardPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/statistics-card';
 
 export default function StatisticsPlaceholder() {
   return (

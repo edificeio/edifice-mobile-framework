@@ -3,10 +3,10 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
+import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { BodyText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -15,23 +15,23 @@ import { zimbraService } from '~/framework/modules/zimbra/service';
 
 const styles = StyleSheet.create({
   isGlobalContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginBottom: UI_SIZES.spacing.medium,
   },
   isGlobalText: {
     marginLeft: UI_SIZES.spacing.minor,
   },
   textInput: {
-    marginVertical: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.minor,
     backgroundColor: theme.palette.grey.fog,
     borderColor: theme.ui.border.input,
-    borderWidth: 1,
     borderRadius: 5,
+    borderWidth: 1,
     color: theme.ui.text.regular,
-    minHeight: 70,
+    marginVertical: UI_SIZES.spacing.medium,
     maxHeight: 140,
+    minHeight: 70,
+    padding: UI_SIZES.spacing.minor,
   },
 });
 

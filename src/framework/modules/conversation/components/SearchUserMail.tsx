@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
+import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { newMailService } from '~/framework/modules/conversation/service/newMail';
@@ -13,20 +14,20 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 const styles = StyleSheet.create({
   displayName: { flex: 1, marginLeft: UI_SIZES.spacing.small },
   foundUserOrGroupContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
     marginLeft: UI_SIZES.spacing.minor,
+    marginVertical: UI_SIZES.spacing.minor,
   },
-  selectedListContainer: { flexDirection: 'row', flexWrap: 'wrap', flex: 0 },
+  selectedListContainer: { flex: 0, flexDirection: 'row', flexWrap: 'wrap' },
   userOrGroupSearch: {
-    overflow: 'visible',
-    marginHorizontal: UI_SIZES.spacing.minor,
     flex: 1,
+    marginHorizontal: UI_SIZES.spacing.minor,
+    overflow: 'visible',
   },
 });
 
-const FoundUserOrGroup = ({ id, displayName, onPress }) => {
+const FoundUserOrGroup = ({ displayName, id, onPress }) => {
   return (
     <TouchableOpacity style={styles.foundUserOrGroupContainer} onPress={onPress}>
       <SingleAvatar size={undefined} status={undefined} userId={id} />
@@ -37,7 +38,7 @@ const FoundUserOrGroup = ({ id, displayName, onPress }) => {
   );
 };
 
-export const FoundList = ({ foundUserOrGroup, addUser }) => {
+export const FoundList = ({ addUser, foundUserOrGroup }) => {
   const insets = useSafeAreaInsets();
   const absoluteListStyle = {
     backgroundColor: theme.ui.background.card,
@@ -77,16 +78,19 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
   );
 };
 
-export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key, onEndEditing = () => {} }) => {
+export const Input = ({ autoFocus, inputRef, key, onChangeText, onEndEditing = () => {}, onSubmit, value }) => {
   const textInputStyle = {
     ...TextFontStyle.Regular,
     ...TextSizeStyle.Normal,
-    lineHeight: undefined,
-    flex: 0,
-    paddingVertical: UI_SIZES.spacing.tiny,
     color: theme.ui.text.regular,
-    marginVertical: 2, // Hack to compensate the position of TextInput baseline compared to regular text.
-    height: getScaleFontSize(20) * 1.5, // Some magic here.
+    flex: 0,
+    // Hack to compensate the position of TextInput baseline compared to regular text.
+    height: getScaleFontSize(20) * 1.5,
+
+    lineHeight: undefined,
+
+    marginVertical: 2,
+    paddingVertical: UI_SIZES.spacing.tiny, // Some magic here.
   } as ViewStyle;
 
   return (
@@ -112,16 +116,16 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key,
 
 //Selected Item
 
-const SelectedUserOrGroup = ({ onClick, displayName }) => {
+const SelectedUserOrGroup = ({ displayName, onClick }) => {
   const itemStyle = {
+    alignItems: 'center',
     backgroundColor: theme.palette.complementary.blue.pale,
     borderRadius: 3,
-    paddingVertical: UI_SIZES.spacing.tiny,
-    paddingHorizontal: UI_SIZES.spacing.tiny,
-    marginRight: UI_SIZES.spacing.tiny,
     flex: 0,
     flexDirection: 'row',
-    alignItems: 'center',
+    marginRight: UI_SIZES.spacing.tiny,
+    paddingHorizontal: UI_SIZES.spacing.tiny,
+    paddingVertical: UI_SIZES.spacing.tiny,
   } as ViewStyle;
 
   const userLabel = { color: theme.palette.complementary.blue.regular, textAlignVertical: 'center' } as ViewStyle;
@@ -138,7 +142,7 @@ const SelectedUserOrGroup = ({ onClick, displayName }) => {
     </TouchableOpacity>
   );
 };
-export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
+export const SelectedList = ({ onItemClick, selectedUsersOrGroups }) => {
   return selectedUsersOrGroups.length > 0 ? (
     <View style={styles.selectedListContainer}>
       {selectedUsersOrGroups.map(userOrGroup => (
@@ -154,7 +158,7 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
   );
 };
 
-export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
+export const UserOrGroupSearch = ({ autoFocus, onChange, selectedUsersOrGroups }) => {
   const [search, updateSearch] = React.useState('');
   const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<any[]>([]);
   const searchTimeout = React.useRef<NodeJS.Timeout>();

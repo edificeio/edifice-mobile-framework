@@ -252,7 +252,7 @@ export const accountIsActive = (account: AuthActiveAccount | AuthSavedAccount | 
 };
 
 export const accountIsLoggable = (
-  account: AuthActiveAccount | AuthSavedAccount | undefined,
+  account: AuthActiveAccount | AuthSavedAccount | undefined
 ): account is AuthSavedLoggedInAccount => {
   // account that have rights object is currenty logged in.
   return account !== undefined && (account as Partial<AuthSavedLoggedInAccount>).tokens !== undefined;
@@ -495,16 +495,16 @@ export function getFlattenedChildren(children: ILoggedUser['children']): UserChi
 /** Converts an actual logged account into a serialisable saved account information */
 export const getSerializedLoggedOutAccountInfo = (account: AuthActiveAccount) => {
   return {
+    addTimestamp: account.addTimestamp,
     method: account.method,
     platform: account.platform.name,
     user: {
       displayName: account.user.displayName,
       id: account.user.id,
       ...(account.method === InitialAuthenticationMethod.LOGIN_PASSWORD ? { loginUsed: account.user.loginUsed } : undefined),
-      type: account.user.type,
       avatar: account.user.avatar,
+      type: account.user.type,
     },
-    addTimestamp: account.addTimestamp,
   } as AuthSavedLoggedOutAccount;
 };
 

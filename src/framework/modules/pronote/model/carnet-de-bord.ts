@@ -113,10 +113,10 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
   DateString?: string;
 };
 const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
-  abs: 'pronote-transcript-value-absent',
-  disp: 'pronote-transcript-value-exempted',
+  'abs': 'pronote-transcript-value-absent',
+  'disp': 'pronote-transcript-value-exempted',
+  'inap': 'pronote-transcript-value-unfit',
   'n.not': 'pronote-transcript-value-unrated',
-  inap: 'pronote-transcript-value-unfit',
   'n.rdu': 'pronote-transcript-value-unreturned',
 };
 export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
@@ -127,8 +127,8 @@ export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | 
   } else
     return bareme
       ? I18n.get('pronote-transcript-note', {
-          note,
           bareme,
+          note,
         })
       : note.toString();
 }
@@ -184,7 +184,7 @@ export type ICarnetDeBordVieScolaireObservation = {
 
 export function sortCarnetDeBordItems<T extends { Date?: moment.Moment; DateDebut?: moment.Moment; PourLe?: moment.Moment }>(
   items: T[],
-  reverse?: boolean,
+  reverse?: boolean
 ) {
   return items.sort((a, b) => {
     const aDate = a.Date ?? a.DateDebut ?? a.PourLe;
@@ -205,11 +205,11 @@ export function getSummaryItem<T>(itemsPast?: T[], itemsFuture?: T[]) {
 
 const carnetDeBordVieScolaireTypeI18n = {
   Absence: 'pronote-viescolaire-type-absence',
-  Retard: 'pronote-viescolaire-type-lateness',
+  Observation: 'pronote-viescolaire-type-observation',
   PassageInfirmerie: 'pronote-viescolaire-type-infirmary',
   Punition: 'pronote-viescolaire-type-punishment',
+  Retard: 'pronote-viescolaire-type-lateness',
   Sanction: 'pronote-viescolaire-type-sanction',
-  Observation: 'pronote-viescolaire-type-observation',
 };
 
 export function formatCarnetDeBordVieScolaireType(type?: string) {

@@ -1,6 +1,7 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ColorValue, StyleSheet, View } from 'react-native';
+
+import styled from '@emotion/native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -9,7 +10,7 @@ import { SmallBoldText } from '~/framework/components/text';
 const styles = StyleSheet.create({
   buttonWithShadow: {
     elevation: 5,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { height: 2, width: 0 },
     shadowOpacity: 0.25,
     shadowRadius: 3.8,
   },
@@ -21,11 +22,11 @@ const styles = StyleSheet.create({
 
 const TouchableOpacity = styled.TouchableOpacity({
   alignItems: 'center',
+  backgroundColor: theme.palette.secondary.regular,
+  borderRadius: 25,
+  height: 50,
   justifyContent: 'center',
   width: 50,
-  height: 50,
-  borderRadius: 25,
-  backgroundColor: theme.palette.secondary.regular,
 });
 
 interface IButtonTextIconProps {
@@ -38,13 +39,13 @@ interface IButtonTextIconProps {
   onPress: () => any;
 }
 
-export const ButtonIcon = ({ name, size, style, color = theme.ui.text.inverse, onPress }: IButtonTextIconProps) => (
+export const ButtonIcon = ({ color = theme.ui.text.inverse, name, onPress, size, style }: IButtonTextIconProps) => (
   <TouchableOpacity onPress={onPress} style={[styles.buttonWithShadow, style]}>
     <Icon color={color} size={size ?? 24} name={name} />
   </TouchableOpacity>
 );
 
-export const ButtonIconText = ({ style, children, colorText = theme.ui.text.regular as string, ...rest }: IButtonTextIconProps) => (
+export const ButtonIconText = ({ children, colorText = theme.ui.text.regular as string, style, ...rest }: IButtonTextIconProps) => (
   <View style={styles.mainContainer}>
     <ButtonIcon {...rest} style={[styles.buttonWithShadow, style]} />
     <SmallBoldText style={{ color: colorText }}>{children}</SmallBoldText>
@@ -55,7 +56,7 @@ export function getMenuShadow() {
   return {
     elevation: 5,
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { height: 2, width: 0 },
     shadowOpacity: 0.25,
     shadowRadius: 3.8,
   };

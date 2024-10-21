@@ -3,6 +3,8 @@
  */
 import * as React from 'react';
 
+import { AuthNavigationParams, authRouteNames } from '..';
+
 import { I18n } from '~/app/i18n';
 import AuthActivationAddAccountScreen, {
   computeNavBar as authActivationAddAccountNavBar,
@@ -27,8 +29,6 @@ import AuthPlatformsAddAccountScreen, {
 import AuthWayfAddAccountScreen, { computeNavBar as wayfNavBar } from '~/framework/modules/auth/screens/add-account/wayf';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
-
-import { AuthNavigationParams, authRouteNames } from '..';
 
 const Stack = getTypedRootStack<AuthNavigationParams>();
 
@@ -75,7 +75,7 @@ export default function () {
         component={AuthForgotAddAccountScreen}
         options={({ route }) => ({
           headerTitle: navBarTitle(
-            route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+            route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password')
           ),
         })}
       />

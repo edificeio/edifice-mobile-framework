@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import { I18n } from '~/app/i18n';
@@ -36,13 +37,13 @@ export default class MoveToFolderModal extends React.Component<
   constructor(props) {
     super(props);
     this.state = {
-      openDropdown: false,
       dropdownWidth: undefined,
+      openDropdown: false,
     };
   }
 
   public render() {
-    const { show, folders, closeModal, confirm, currentFolder, selectFolder, selectedFolder } = this.props;
+    const { closeModal, confirm, currentFolder, folders, selectedFolder, selectFolder, show } = this.props;
     const { openDropdown } = this.state;
     const isCurrentFolderInbox = currentFolder === 'inbox';
     const isCurrentFolderTrash = currentFolder === 'trash';
@@ -74,10 +75,10 @@ export default class MoveToFolderModal extends React.Component<
       modalBoxContainer: { alignItems: 'stretch' },
       modalContent: {
         height: 250,
+        justifyContent: 'space-between',
         padding: UI_SIZES.spacing.big,
         paddingTop: undefined,
         width: undefined,
-        justifyContent: 'space-between',
       },
       text: { textAlign: 'center' },
     });

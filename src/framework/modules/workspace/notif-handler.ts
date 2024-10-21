@@ -3,17 +3,17 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
+import { workspaceRouteNames } from './navigation';
+import { Filter } from './reducer';
+
 import { I18n } from '~/app/i18n';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
-
-import { workspaceRouteNames } from './navigation';
-import { Filter } from './reducer';
 
 const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation) => async (dispatch, getState) => {
@@ -30,12 +30,12 @@ const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
         name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
           initial: false,
-          screen: workspaceRouteNames.home,
           params: {
             filter: Filter.SHARED,
             parentId,
             title: notification.backupData.params.resourceName ?? '',
           },
+          screen: workspaceRouteNames.home,
         },
       });
 
@@ -70,12 +70,12 @@ const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
         name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
           initial: false,
-          screen: workspaceRouteNames.home,
           params: {
             filter: Filter.SHARED,
             parentId,
             title,
           },
+          screen: workspaceRouteNames.home,
         },
       });
 
@@ -95,13 +95,13 @@ const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
 export default () =>
   registerNotifHandlers([
     {
-      type: 'WORKSPACE',
       'event-type': ['SHARE-FOLDER', 'CONTRIB-FOLDER'],
-      notifHandlerAction: handleWorkspaceShareFolderNotificationAction,
+      'notifHandlerAction': handleWorkspaceShareFolderNotificationAction,
+      'type': 'WORKSPACE',
     },
     {
-      type: 'WORKSPACE',
       'event-type': 'SHARE',
-      notifHandlerAction: handleWorkspaceShareNotificationAction,
+      'notifHandlerAction': handleWorkspaceShareNotificationAction,
+      'type': 'WORKSPACE',
     },
   ]);

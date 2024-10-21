@@ -8,15 +8,15 @@ import { SmallText } from '~/framework/components/text';
 import { getFileIcon } from '~/framework/modules/conversation/utils/fileIcon';
 
 const attachmentStyle = {
+  alignItems: 'center',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  alignItems: 'center',
 } as ViewStyle;
 
-const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemove }) => {
+const Attachment = ({ fileName, fileType, onRemove, uploadProgress, uploadSuccess }) => {
   //FIXME: create/move to styles.ts
   const styles = StyleSheet.create({
-    fileName: { flex: 1, color: theme.palette.complementary.blue.regular },
+    fileName: { color: theme.palette.complementary.blue.regular, flex: 1 },
     uploadBar: {
       backgroundColor: theme.palette.complementary.blue.pale,
       right: undefined,

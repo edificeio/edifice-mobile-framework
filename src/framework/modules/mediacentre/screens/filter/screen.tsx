@@ -1,6 +1,9 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
+
+import { MediacentreFilterScreenPrivateProps } from './types';
 
 import { IGlobalState } from '~/app/store';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
@@ -11,8 +14,6 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { ResourceFilter } from '~/framework/modules/mediacentre/model';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import { MediacentreFilterScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -36,7 +37,6 @@ const MediacentreFilterScreen = (props: MediacentreFilterScreenPrivateProps) => 
 
   useEffect(() => {
     props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => <NavBarAction icon="ui-check" onPress={handleSaveChanges} />,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,6 +1,3 @@
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { fetchJSONWithCache, signedFetch, signedFetchRelative } from '~/infra/fetchWithCache';
-
 import {
   AudienceReactions,
   AudienceReferer,
@@ -10,12 +7,16 @@ import {
   AudienceViews,
 } from './types';
 
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { fetchJSONWithCache, signedFetch, signedFetchRelative } from '~/infra/fetchWithCache';
+
 export const audienceService = {
   reaction: {
-    getValidReactionTypes: async () => {
-      const api = `/audience/conf/public`;
-      const validReactionTypes = await fetchJSONWithCache(api);
-      return validReactionTypes as AudienceValidReactionTypes;
+    delete: async (session: AuthActiveAccount, referer: AudienceReferer) => {
+      const api = `/audience/reactions/${referer.module}/${referer.resourceType}/${referer.resourceId}`;
+      return signedFetch(`${session.platform.url}${api}`, {
+        method: 'DELETE',
+      }) as Promise<Response>;
     },
     getDetails: async (referer: AudienceReferer, page: number, size: number) => {
       const api = `/audience/reactions/${referer.module}/${referer.resourceType}/${referer.resourceId}?page=${page}&size=${size}`;
@@ -27,33 +28,32 @@ export const audienceService = {
       const audienceSummaryReactions = await fetchJSONWithCache(api);
       return audienceSummaryReactions as AudienceSummaryReactions;
     },
+    getValidReactionTypes: async () => {
+      const api = `/audience/conf/public`;
+      const validReactionTypes = await fetchJSONWithCache(api);
+      return validReactionTypes as AudienceValidReactionTypes;
+    },
     post: async (session: AuthActiveAccount, referer: AudienceReferer, reaction: string) => {
       const api = `/audience/reactions/${referer.module}/${referer.resourceType}`;
       const body = JSON.stringify({
-        resourceId: referer.resourceId,
         reactionType: reaction,
+        resourceId: referer.resourceId,
       });
       return signedFetch(`${session.platform.url}${api}`, {
-        method: 'POST',
         body,
+        method: 'POST',
       }) as Promise<any>;
     },
     update: async (session: AuthActiveAccount, referer: AudienceReferer, reaction: string) => {
       const api = `/audience/reactions/${referer.module}/${referer.resourceType}`;
       const body = JSON.stringify({
-        resourceId: referer.resourceId,
         reactionType: reaction,
+        resourceId: referer.resourceId,
       });
       return signedFetch(`${session.platform.url}${api}`, {
-        method: 'PUT',
         body,
+        method: 'PUT',
       }) as Promise<any>;
-    },
-    delete: async (session: AuthActiveAccount, referer: AudienceReferer) => {
-      const api = `/audience/reactions/${referer.module}/${referer.resourceType}/${referer.resourceId}`;
-      return signedFetch(`${session.platform.url}${api}`, {
-        method: 'DELETE',
-      }) as Promise<Response>;
     },
   },
   view: {

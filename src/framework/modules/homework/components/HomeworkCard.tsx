@@ -1,6 +1,7 @@
-import { Moment } from 'moment';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+
+import { Moment } from 'moment';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -21,15 +22,15 @@ export interface IHomeworkCardProps {
 
 const styles = StyleSheet.create({
   item: {
-    flexDirection: 'row',
+    backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.card,
+    elevation: 7,
+    flexDirection: 'row',
+    marginLeft: UI_SIZES.spacing.big,
     marginTop: UI_SIZES.spacing.small,
     padding: UI_SIZES.spacing.medium,
-    marginLeft: UI_SIZES.spacing.big,
-    backgroundColor: theme.ui.background.card,
-    elevation: 7,
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { height: 4, width: 0 },
     shadowOpacity: 0.15,
     shadowRadius: 5,
   },
@@ -44,12 +45,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   viewTitle: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
 });
 
-const HomeworkCard = ({ title, content, finished, onPress, date, style }: IHomeworkCardProps) => {
+const HomeworkCard = ({ content, date, finished, onPress, style, title }: IHomeworkCardProps) => {
   const isPastDate = date.isBefore(today(), 'day');
   const dayOfTheWeek = getDayOfTheWeek(date);
   const dayColor = theme.color.homework.days[dayOfTheWeek]?.accent ?? theme.palette.grey.stone;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -25,20 +26,20 @@ const mapStateToProps: (state: IGlobalState) => HomeworkSelectScreenDataProps = 
   const flatHomeworkDiaryList = Object.getOwnPropertyNames(homeworkDiaryList.data).map(diaryId => ({
     id: diaryId,
     name: homeworkDiaryList.data[diaryId].name,
-    title: homeworkDiaryList.data[diaryId].title,
-    thumbnail: homeworkDiaryList.data[diaryId].thumbnail,
-    shared: homeworkDiaryList.data[diaryId].shared,
     owner: homeworkDiaryList.data[diaryId].owner,
+    shared: homeworkDiaryList.data[diaryId].shared,
+    thumbnail: homeworkDiaryList.data[diaryId].thumbnail,
+    title: homeworkDiaryList.data[diaryId].title,
   }));
   const diaryListWithCreationRight = flatHomeworkDiaryList.filter(diary =>
-    hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session),
+    hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session)
   );
 
   return {
-    session,
     diaryList: diaryListWithCreationRight,
-    isFetching: homeworkDiaryList.isFetching,
     didInvalidate: homeworkDiaryList.didInvalidate,
+    isFetching: homeworkDiaryList.isFetching,
+    session,
   };
 };
 

@@ -1,6 +1,7 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
+
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Pdf from 'react-native-pdf';
 
 import theme from '~/app/theme';
@@ -17,7 +18,7 @@ export interface PDFReaderState {
 }
 
 const styles = StyleSheet.create({
-  pdf: { flex: 1, backgroundColor: theme.palette.grey.fog },
+  pdf: { backgroundColor: theme.palette.grey.fog, flex: 1 },
 });
 
 export const computeNavBar = ({
@@ -40,7 +41,7 @@ export class PDFReader extends React.PureComponent<
   };
 
   handlePressLink(
-    uri: string | ((session: AuthLoggedAccount) => string | false | Promise<string | false | undefined> | undefined) | undefined,
+    uri: string | ((session: AuthLoggedAccount) => string | false | Promise<string | false | undefined> | undefined) | undefined
   ) {
     openUrl(uri);
   }

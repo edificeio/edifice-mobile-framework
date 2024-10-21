@@ -23,8 +23,8 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
   },
   section: {
-    marginHorizontal: UI_SIZES.spacing.medium,
     marginBottom: UI_SIZES.spacing.big,
+    marginHorizontal: UI_SIZES.spacing.medium,
   },
   sectionBottom: {
     marginTop: UI_SIZES.spacing.large,
@@ -42,34 +42,34 @@ export default StyleSheet.create({
     paddingTop: UI_SIZES.spacing.minor,
   },
   space: {
-    marginHorizontal: UI_SIZES.spacing.medium,
     backgroundColor: theme.palette.secondary.dark,
-    marginBottom: UI_SIZES.spacing.large,
     borderRadius: UI_SIZES.radius.mediumPlus,
+    marginBottom: UI_SIZES.spacing.large,
+    marginHorizontal: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.medium,
   },
   spaceAnim: {
-    width: 100,
     height: 100,
     position: 'absolute',
-    top: -UI_SIZES.spacing.big,
     right: 0,
+    top: -UI_SIZES.spacing.big,
+    width: 100,
   },
   spaceBadge: {
+    alignSelf: 'flex-start',
     backgroundColor: theme.palette.primary.regular,
-    paddingHorizontal: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing._LEGACY_tiny,
     borderRadius: UI_SIZES.radius.huge,
     marginBottom: UI_SIZES.spacing.medium,
-    alignSelf: 'flex-start',
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing._LEGACY_tiny,
   },
   spaceBadgeText: {
     color: theme.palette.grey.white,
   },
   spaceSvg: {
+    bottom: 0,
     position: 'absolute',
     right: 0,
-    bottom: 0,
   },
   spaceText: {
     color: theme.palette.grey.white,
@@ -84,7 +84,7 @@ export default StyleSheet.create({
   },
   version: {
     color: theme.palette.grey.graphite,
-    textAlign: 'center',
     margin: UI_SIZES.spacing.medium,
+    textAlign: 'center',
   },
 });

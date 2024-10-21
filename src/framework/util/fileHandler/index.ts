@@ -1,22 +1,23 @@
 /**
  * File Manager
  */
+import { Alert, Platform } from 'react-native';
+
 import ImageResizer, { Response } from '@bam.tech/react-native-image-resizer';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
-import { Alert, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
-import { DownloadDirectoryPath, UploadFileItem, copyFile, exists } from 'react-native-fs';
+import { copyFile, DownloadDirectoryPath, exists, UploadFileItem } from 'react-native-fs';
 import ImagePicker, { Image } from 'react-native-image-crop-picker';
-import { assertPermissions } from '~/framework/util/permissions';
+
+import { openDocument } from './actions';
 import { Asset } from './types';
 
 import { I18n } from '~/app/i18n';
 import { ImagePicked } from '~/framework/components/menus/actions';
 import toast from '~/framework/components/toast';
-
-import { openDocument } from './actions';
+import { assertPermissions } from '~/framework/util/permissions';
 
 export interface IPickOptions {
   source: 'documents' | 'galery' | 'camera';
@@ -47,15 +48,15 @@ const processImage = async (pic: Image) => {
       {
         mode: 'contain',
         onlyScaleDown: false,
-      },
+      }
     );
     return {
       ...response,
-      fileSize: response.size,
       fileName: `${moment().format('YYYYMMDD-HHmmss')}.jpg`,
+      fileSize: response.size,
       name: `${moment().format('YYYYMMDD-HHmmss')}.jpg`,
-      type: 'image/jpeg',
       originalPath: response.path,
+      type: 'image/jpeg',
     } as Asset;
   } catch (err) {
     console.error('Image resizing failed: ', (err as Error).message);
@@ -94,7 +95,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           android: getPath(file.uri),
           default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
         });
-        const fileData = { fileName: file.name!, fileSize: file.size!, uri: file.uri, type: file.type };
+        const fileData = { fileName: file.name!, fileSize: file.size!, type: file.type, uri: file.uri };
         if (synchrone) await callback!(fileData);
         else callback!(fileData);
       }
@@ -107,15 +108,15 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     try {
       await assertPermissions('documents.read');
       DocumentPicker.pick({
-        type: DocumentPicker.types.allFiles,
         presentationStyle: 'fullScreen',
+        type: DocumentPicker.types.allFiles,
       }).then(files => {
         this.documentCallback(files, callback, synchrone);
       });
     } catch {
       Alert.alert(
         I18n.get('document-permissionblocked-title'),
-        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() })
       );
     }
   }
@@ -146,7 +147,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       console.error(e);
       Alert.alert(
         I18n.get('gallery-readpermissionblocked-title'),
-        I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() })
       );
     }
   }
@@ -165,7 +166,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     } catch {
       Alert.alert(
         I18n.get('camera-permissionblocked-title'),
-        I18n.get('camera-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('camera-permissionblocked-text', { appName: DeviceInfo.getApplicationName() })
       );
     }
   }
@@ -188,7 +189,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     file: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem,
     opts: {
       _needIOSReleaseSecureAccess: boolean;
-    },
+    }
   ) {
     this._needIOSReleaseSecureAccess = opts._needIOSReleaseSecureAccess;
     this.filename =
@@ -230,8 +231,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
   static formatUrlForUpload = (url: string) =>
     Platform.select({
-      ios: decodeURI(LocalFile.removeProtocol(url)),
       default: decodeURI(LocalFile.removeProtocol(getPath(url))),
+      ios: decodeURI(LocalFile.removeProtocol(url)),
     }) || url;
 
   /**

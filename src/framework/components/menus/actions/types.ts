@@ -1,4 +1,5 @@
 import { DocumentPickerResponse } from 'react-native-document-picker';
+
 import { Asset } from '~/framework/util/fileHandler/types';
 
 export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
@@ -27,6 +28,6 @@ export interface MenuActionProps {
 export interface MenuPickerActionProps {
   callback: (
     document: ImagePicked | DocumentPicked | (ImagePicked | DocumentPicked)[],
-    sourceType?: string,
+    sourceType?: string
   ) => Promise<void> | void;
 }

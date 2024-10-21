@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { ColorValue, StyleProp, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
-import Modal from 'react-native-modal';
 
-import theme from '~/app/theme';
+import Modal from 'react-native-modal';
 
 import { UI_SIZES } from './constants';
 import { SmallBoldText } from './text';
+
+import theme from '~/app/theme';
 
 export interface IBackdropModalProps {
   content: JSX.Element;
@@ -22,8 +23,8 @@ export interface IBackdropModalProps {
 export const BackdropModal = ({
   content,
   contentStyle,
-  handleOpen,
   handleClose,
+  handleOpen,
   headerColor,
   indicatorColor,
   propagateSwipe,

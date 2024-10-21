@@ -1,11 +1,11 @@
+import * as React from 'react';
+
 import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import * as React from 'react';
 
 import styles from './styles';
 import type { CustomBottomSheetModalProps } from './types';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention, react/display-name
 export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
   (props: CustomBottomSheetModalProps, ref) => {
     const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
@@ -24,5 +24,5 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         <BottomSheetView style={styles.contentContainer}>{props.children}</BottomSheetView>
       </BottomSheetModal>
     );
-  },
+  }
 );

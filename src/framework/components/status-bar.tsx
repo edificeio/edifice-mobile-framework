@@ -11,18 +11,18 @@ export const StatusBar = (props: StatusBarProps) => {
   return Platform.select(
     props.type === 'primary'
       ? {
-          ios: <RNStatusBar barStyle="light-content" />,
           android: <RNStatusBar backgroundColor={theme.palette.primary.regular} barStyle="light-content" />,
+          ios: <RNStatusBar barStyle="light-content" />,
         }
       : props.type === 'light'
         ? {
-            ios: <RNStatusBar barStyle="dark-content" />,
             android: <RNStatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
+            ios: <RNStatusBar barStyle="dark-content" />,
           }
         : /* props.type === 'dark' */ {
-            ios: <RNStatusBar barStyle="light-content" />,
             android: <RNStatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
-          },
+            ios: <RNStatusBar barStyle="light-content" />,
+          }
   );
 };
 
