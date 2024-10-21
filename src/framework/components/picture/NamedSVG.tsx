@@ -44,11 +44,11 @@ const imports = {
   'ui-christmas': async () => import('ASSETS/icons/uiIcons/christmas.svg'),
   'ui-class': async () => import('ASSETS/icons/uiIcons/class.svg'),
   'ui-clock': async () => import('ASSETS/icons/uiIcons/clock.svg'),
-  'ui-cottage': async () => import('ASSETS/icons/uiIcons/cottage.svg'),
   'ui-clock-alert': async () => import('ASSETS/icons/uiIcons/clock-alert.svg'),
   'ui-close': async () => import('ASSETS/icons/uiIcons/close.svg'),
   'ui-closeFullScreen': async () => import('ASSETS/icons/uiIcons/closeFullScreen.svg'),
   'ui-copy': async () => import('ASSETS/icons/uiIcons/copy.svg'),
+  'ui-cottage': async () => import('ASSETS/icons/uiIcons/cottage.svg'),
   'ui-cut': async () => import('ASSETS/icons/uiIcons/cut.svg'),
   'ui-delete': async () => import('ASSETS/icons/uiIcons/delete.svg'),
   'ui-depositeInbox': async () => import('ASSETS/icons/uiIcons/depositeInbox.svg'),
@@ -141,108 +141,128 @@ const imports = {
   'ui-teacher': async () => import('ASSETS/icons/uiIcons/teacher.svg'),
   'ui-text-options': async () => import('ASSETS/icons/uiIcons/textOptions.svg'),
   'ui-text-size': async () => import('ASSETS/icons/uiIcons/text-size.svg'),
-  'ui-text-typo': async () => import('ASSETS/icons/uiIcons/text-typo.svg'),
-  'ui-textPage': async () => import('ASSETS/icons/uiIcons/textPage.svg'),
-  'ui-toga': async () => import('ASSETS/icons/uiIcons/toga.svg'),
-  'ui-tool': async () => import('ASSETS/icons/uiIcons/tool.svg'),
-  'ui-trash': async () => import('ASSETS/icons/uiIcons/trash.svg'),
-  'ui-trending-up': async () => import('ASSETS/icons/uiIcons/trending-up.svg'),
-  'ui-unarchive': async () => import('ASSETS/icons/uiIcons/unarchive.svg'),
-  'ui-underline': async () => import('ASSETS/icons/uiIcons/underline.svg'),
-  'ui-undo': async () => import('ASSETS/icons/uiIcons/undo.svg'),
-  'ui-unorderedList': async () => import('ASSETS/icons/uiIcons/unorderedList.svg'),
   // ModuleIcons
 admin: async () => import('ASSETS/icons/moduleIcons/admin.svg'),
   
-'ui-upcoming': async () => import('ASSETS/icons/uiIcons/upcoming.svg'),
+'ui-text-typo': async () => import('ASSETS/icons/uiIcons/text-typo.svg'),
 
-  'ui-upload': async () => import('ASSETS/icons/uiIcons/upload.svg'),
+  'ui-textPage': async () => import('ASSETS/icons/uiIcons/textPage.svg'),
 
   'adressBook': async () => import('ASSETS/icons/moduleIcons/adressBook.svg'),
 
-  'ui-user': async () => import('ASSETS/icons/uiIcons/user.svg'),
+  'ui-toga': async () => import('ASSETS/icons/uiIcons/toga.svg'),
 
   'archives': async () => import('ASSETS/icons/moduleIcons/archives.svg'),
 
-  'ui-users': async () => import('ASSETS/icons/uiIcons/users.svg'),
+  'ui-tool': async () => import('ASSETS/icons/uiIcons/tool.svg'),
 
   'blog': async () => import('ASSETS/icons/moduleIcons/blog.svg'),
 
-  'ui-userSearch': async () => import('ASSETS/icons/uiIcons/userSearch.svg'),
+  'ui-trash': async () => import('ASSETS/icons/uiIcons/trash.svg'),
 
   'calendar': async () => import('ASSETS/icons/moduleIcons/calendar.svg'),
 
-  'ui-video': async () => import('ASSETS/icons/uiIcons/video.svg'),
+  'ui-trending-up': async () => import('ASSETS/icons/uiIcons/trending-up.svg'),
+
   'collaborativeWall': async () => import('ASSETS/icons/moduleIcons/collaborativeWall.svg'),
-  'ui-walk': async () => import('ASSETS/icons/uiIcons/walk.svg'),
+
+  'ui-unarchive': async () => import('ASSETS/icons/uiIcons/unarchive.svg'),
+
   'community': async () => import('ASSETS/icons/moduleIcons/community.svg'),
-  'ui-warning': async () => import('ASSETS/icons/uiIcons/warning.svg'),
+
+  'ui-underline': async () => import('ASSETS/icons/uiIcons/underline.svg'),
+
   'competences': async () => import('ASSETS/icons/moduleIcons/competences.svg'),
-  'ui-wavering': async () => import('ASSETS/icons/uiIcons/wavering.svg'),
+
+  'ui-undo': async () => import('ASSETS/icons/uiIcons/undo.svg'),
+
   'diary': async () => import('ASSETS/icons/moduleIcons/diary.svg'),
+
+  'ui-unorderedList': async () => import('ASSETS/icons/uiIcons/unorderedList.svg'),
+
   'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
-  'ui-write': async () => import('ASSETS/icons/uiIcons/write.svg'),
+
+  'ui-upcoming': async () => import('ASSETS/icons/uiIcons/upcoming.svg'),
   'element': async () => import('ASSETS/icons/moduleIcons/element.svg'),
+  'ui-upload': async () => import('ASSETS/icons/uiIcons/upload.svg'),
   'exercices': async () => import('ASSETS/icons/moduleIcons/exercices.svg'),
+  'ui-user': async () => import('ASSETS/icons/uiIcons/user.svg'),
   'files': async () => import('ASSETS/icons/moduleIcons/files.svg'),
+  'ui-users': async () => import('ASSETS/icons/uiIcons/users.svg'),
   'form': async () => import('ASSETS/icons/moduleIcons/form.svg'),
+  'ui-userSearch': async () => import('ASSETS/icons/uiIcons/userSearch.svg'),
   'forum': async () => import('ASSETS/icons/moduleIcons/forum.svg'),
+  'ui-video': async () => import('ASSETS/icons/uiIcons/video.svg'),
   'homeLiaisonDiary': async () => import('ASSETS/icons/moduleIcons/homeLiaisonDiary.svg'),
+  'ui-walk': async () => import('ASSETS/icons/uiIcons/walk.svg'),
   'homework1D': async () => import('ASSETS/icons/moduleIcons/homework1D.svg'),
+  'ui-warning': async () => import('ASSETS/icons/uiIcons/warning.svg'),
   'homework2D': async () => import('ASSETS/icons/moduleIcons/homework2D.svg'),
+  'ui-wavering': async () => import('ASSETS/icons/uiIcons/wavering.svg'),
   'homeworkAssistance': async () => import('ASSETS/icons/moduleIcons/homeworkAssistance.svg'),
   'lvs': async () => import('ASSETS/icons/moduleIcons/lvs.svg'),
+  'ui-write': async () => import('ASSETS/icons/uiIcons/write.svg'),
   'mediacentre': async () => import('ASSETS/icons/moduleIcons/mediacentre.svg'),
   'messages': async () => import('ASSETS/icons/moduleIcons/messages.svg'),
   'moodle': async () => import('ASSETS/icons/moduleIcons/moodle.svg'),
-  'newsFeed': async () => import('ASSETS/icons/moduleIcons/newsFeed.svg'),
-  'pad': async () => import('ASSETS/icons/moduleIcons/pad.svg'),
-  'pages': async () => import('ASSETS/icons/moduleIcons/pages.svg'),
-  'peertube': async () => import('ASSETS/icons/moduleIcons/peertube.svg'),
-  'poll': async () => import('ASSETS/icons/moduleIcons/poll.svg'),
-  'presences': async () => import('ASSETS/icons/moduleIcons/presences.svg'),
-  'rack:': async () => import('ASSETS/icons/moduleIcons/rack.svg'),
-  'rbs': async () => import('ASSETS/icons/moduleIcons/rbs.svg'),
-  'report': async () => import('ASSETS/icons/moduleIcons/report.svg'),
-  'scrapbook': async () => import('ASSETS/icons/moduleIcons/scrapbook.svg'),
   // Images
 'days-monday': async () => import('ASSETS/images/days/monday.svg'),
   
-'shareBigFiles': async () => import('ASSETS/icons/moduleIcons/shareBigFiles.svg'),
+'newsFeed': async () => import('ASSETS/icons/moduleIcons/newsFeed.svg'),
 
-  'siteMap': async () => import('ASSETS/icons/moduleIcons/siteMap.svg'),
+  'pad': async () => import('ASSETS/icons/moduleIcons/pad.svg'),
 
   'days-thursday': async () => import('ASSETS/images/days/thursday.svg'),
 
-  'skills': async () => import('ASSETS/icons/moduleIcons/skills.svg'),
+  'pages': async () => import('ASSETS/icons/moduleIcons/pages.svg'),
 
   'days-friday': async () => import('ASSETS/images/days/friday.svg'),
 
-  'stats': async () => import('ASSETS/icons/moduleIcons/stats.svg'),
+  'peertube': async () => import('ASSETS/icons/moduleIcons/peertube.svg'),
 
   'days-saturday': async () => import('ASSETS/images/days/saturday.svg'),
 
-  'support': async () => import('ASSETS/icons/moduleIcons/support.svg'),
+  'poll': async () => import('ASSETS/icons/moduleIcons/poll.svg'),
 
   'days-tuesday': async () => import('ASSETS/images/days/tuesday.svg'),
-  'timeLineGenerator': async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
+
+  'presences': async () => import('ASSETS/icons/moduleIcons/presences.svg'),
+
   'days-wednesday': async () => import('ASSETS/images/days/wednesday.svg'),
-  'user': async () => import('ASSETS/icons/moduleIcons/user.svg'),
+
+  'rack:': async () => import('ASSETS/icons/moduleIcons/rack.svg'),
+
   'empty-blog': async () => import('ASSETS/images/empty-screen/empty-blog.svg'),
-  'wekan': async () => import('ASSETS/icons/moduleIcons/wekan.svg'),
+
+  'rbs': async () => import('ASSETS/icons/moduleIcons/rbs.svg'),
+
   'empty-content': async () => import('ASSETS/images/empty-screen/empty-content.svg'),
+
+  'report': async () => import('ASSETS/icons/moduleIcons/report.svg'),
+
   'empty-conversation': async () => import('ASSETS/images/empty-screen/empty-conversation.svg'),
-  'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
+
+  'scrapbook': async () => import('ASSETS/icons/moduleIcons/scrapbook.svg'),
+
   'empty-eula': async () => import('ASSETS/images/empty-screen/empty-eula.svg'),
+  'shareBigFiles': async () => import('ASSETS/icons/moduleIcons/shareBigFiles.svg'),
   'empty-evaluations': async () => import('ASSETS/images/empty-screen/empty-evaluations.svg'),
+  'siteMap': async () => import('ASSETS/icons/moduleIcons/siteMap.svg'),
   'empty-form': async () => import('ASSETS/images/empty-screen/empty-form.svg'),
+  'skills': async () => import('ASSETS/icons/moduleIcons/skills.svg'),
   'empty-form-access': async () => import('ASSETS/images/empty-screen/empty-form-access.svg'),
+  'stats': async () => import('ASSETS/icons/moduleIcons/stats.svg'),
   'empty-hammock': async () => import('ASSETS/images/empty-screen/empty-hammock.svg'),
+  'support': async () => import('ASSETS/icons/moduleIcons/support.svg'),
   'empty-homework': async () => import('ASSETS/images/empty-screen/empty-homework.svg'),
+  'timeLineGenerator': async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
   'empty-light': async () => import('ASSETS/images/empty-screen/empty-light.svg'),
+  'user': async () => import('ASSETS/icons/moduleIcons/user.svg'),
   'empty-mediacentre': async () => import('ASSETS/images/empty-screen/empty-mediacentre.svg'),
+  'wekan': async () => import('ASSETS/icons/moduleIcons/wekan.svg'),
   'empty-news': async () => import('ASSETS/images/empty-screen/empty-news.svg'),
   'empty-presences': async () => import('ASSETS/images/empty-screen/empty-presences.svg'),
+  'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
   'empty-pronote-uri': async () => import('ASSETS/images/empty-screen/pronote-error-uri.svg'),
   'empty-schoolbook': async () => import('ASSETS/images/empty-screen/empty-schoolbook.svg'),
   'empty-search': async () => import('ASSETS/images/empty-screen/empty-search.svg'),

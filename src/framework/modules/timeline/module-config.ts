@@ -7,9 +7,9 @@ export default new NavigableModuleConfig<'timeline', TimelineState>({
   displayI18n: 'timeline-tabname',
   displayOrder: 0,
   displayPicture: { name: 'nouveautes-off', type: 'Icon' },
-  entcoreScope: ['timeline', 'userbook'],
-
   displayPictureFocus: { name: 'nouveautes-on', type: 'Icon' },
+
+  entcoreScope: ['timeline', 'userbook'],
 
   hasRight: () => true,
 

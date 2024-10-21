@@ -86,30 +86,30 @@ export const initialState: IAuthState = {
 // Actions definitions
 export const actionTypes = {
   addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
+  addAccountActivation: moduleConfig.namespaceActionType('ADD_ACCOUNT_ACTIVATION'),
+  addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
   addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
-  authInit: moduleConfig.namespaceActionType('INIT'),
-  loadPfContext: moduleConfig.namespaceActionType('LOAD_PF_CONTEXT'),
+  addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
   authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
-  loadPfLegalUrls: moduleConfig.namespaceActionType('LOAD_PF_LEGAL_URLS'),
+  addAccountRedirectCancel: moduleConfig.namespaceActionType('ADD_ACCOUNT_REDIRECT_CANCEL'),
+  authInit: moduleConfig.namespaceActionType('INIT'),
   deactivate: moduleConfig.namespaceActionType('DEACTIVATE'),
+  invalidate: moduleConfig.namespaceActionType('INVALIDATE'),
+  loadPfContext: moduleConfig.namespaceActionType('LOAD_PF_CONTEXT'),
+  loadPfLegalUrls: moduleConfig.namespaceActionType('LOAD_PF_LEGAL_URLS'),
   loadPfValidReactionTypes: moduleConfig.namespaceActionType('LOAD_PF_VALID_REACTION_TYPES'),
   logout: moduleConfig.namespaceActionType('LOGOUT'),
-  refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
-  addAccountActivation: moduleConfig.namespaceActionType('ADD_ACCOUNT_ACTIVATION'),
-  removeAccount: moduleConfig.namespaceActionType('REMOVE_ACCOUNT'),
-  addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
-  replaceAccount: moduleConfig.namespaceActionType('REPLACE_ACCOUNT'),
-  addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
-  replaceAccountRequirement: moduleConfig.namespaceActionType('REPLACE_ACCOUNT_REQUIREMENT'),
-  addAccountRedirectCancel: moduleConfig.namespaceActionType('ADD_ACCOUNT_REDIRECT_CANCEL'),
-  setOneSessionId: moduleConfig.namespaceActionType('SET_ONE_SESSION_ID'),
-  invalidate: moduleConfig.namespaceActionType('INVALIDATE'),
-  updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
   profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
-  setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
   redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
   redirectCancel: moduleConfig.namespaceActionType('REDIRECT_CANCEL'),
   redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
+  refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
+  removeAccount: moduleConfig.namespaceActionType('REMOVE_ACCOUNT'),
+  replaceAccount: moduleConfig.namespaceActionType('REPLACE_ACCOUNT'),
+  replaceAccountRequirement: moduleConfig.namespaceActionType('REPLACE_ACCOUNT_REQUIREMENT'),
+  setOneSessionId: moduleConfig.namespaceActionType('SET_ONE_SESSION_ID'),
+  setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
+  updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
 };
 
 export const ERASE_ALL_ACCOUNTS = Symbol('ERASE_ALL_ACCOUNTS');
@@ -173,55 +173,8 @@ export const actions = {
     type: actionTypes.addAccount,
   }),
 
-  addAccountRequirement: (account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
-    account,
-    context,
-    requirement,
-    type: actionTypes.addAccountRequirement,
-  }),
-
-  authInit: (
-    startup: AuthStorageData['startup'],
-    accounts: AuthStorageData['accounts'],
-    showOnboarding: AuthStorageData['show-onboarding'],
-    deviceId: IAuthState['deviceInfo']['uniqueId']
-  ) => ({ accounts, deviceId, showOnboarding, startup, type: actionTypes.authInit }),
-
-  loadPfContext: (name: Platform['name'], context: PlatformAuthContext) => ({ context, name, type: actionTypes.loadPfContext }),
-
-  authError: (error: NonNullable<IAuthState['error']>, account?: string) => ({
-    account,
-    type: actionTypes.authError,
-    error,
-  }),
-
-  loadPfLegalUrls: (name: Platform['name'], legalUrls: LegalUrls) => ({ legalUrls, name, type: actionTypes.loadPfLegalUrls }),
-
-  deactivate: () => ({
-    type: actionTypes.deactivate,
-  }),
-
-  loadPfValidReactionTypes: (validReactionTypes: AudienceValidReactionTypes) => ({
-    type: actionTypes.loadPfValidReactionTypes,
-    validReactionTypes,
-  }),
-
-  logout: () => ({
-    type: actionTypes.logout,
-  }),
-  refreshToken: (id: string, tokens: AuthTokenSet) => ({
-    id,
-    tokens,
-    type: actionTypes.refreshToken,
-  }),
-
   addAccountInit: () => ({
     type: actionTypes.addAccountInit,
-  }),
-
-  removeAccount: (id: keyof IAuthState['accounts']) => ({
-    id,
-    type: actionTypes.removeAccount,
   }),
 
   addAccountActivation: (platformName: Platform['name'], login: string, code: string) => ({
@@ -231,10 +184,11 @@ export const actions = {
     login,
   }),
 
-  replaceAccount: (id: string | typeof ERASE_ALL_ACCOUNTS, account: AuthLoggedAccount) => ({
+  addAccountRequirement: (account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
     account,
-    id,
-    type: actionTypes.replaceAccount,
+    context,
+    requirement,
+    type: actionTypes.addAccountRequirement,
   }),
 
   addAccountPasswordRenew: (
@@ -252,17 +206,10 @@ export const actions = {
     accountTimestamp,
   }),
 
-  replaceAccountRequirement: (
-    id: string | typeof ERASE_ALL_ACCOUNTS,
-    account: AuthLoggedAccount,
-    requirement: AuthRequirement,
-    context: PlatformAuthContext
-  ) => ({
+  authError: (error: NonNullable<IAuthState['error']>, account?: string) => ({
     account,
-    id,
-    context,
-    type: actionTypes.replaceAccountRequirement,
-    requirement,
+    error,
+    type: actionTypes.authError,
   }),
 
   addAccountRedirectCancel: (platformName: Platform['name'], login: string) => ({
@@ -271,33 +218,37 @@ export const actions = {
     type: actionTypes.addAccountRedirectCancel,
   }),
 
-  setOneSessionId: (id: string, token: AuthTokenSet['oneSessionId']) => ({
-    id,
-    type: actionTypes.setOneSessionId,
-    token,
-  }),
+  authInit: (
+    startup: AuthStorageData['startup'],
+    accounts: AuthStorageData['accounts'],
+    showOnboarding: AuthStorageData['show-onboarding'],
+    deviceId: IAuthState['deviceInfo']['uniqueId']
+  ) => ({ accounts, deviceId, showOnboarding, startup, type: actionTypes.authInit }),
 
+  deactivate: () => ({
+    type: actionTypes.deactivate,
+  }),
   invalidate: () => ({
     type: actionTypes.invalidate,
   }),
 
-  updateRequirement: (requirement: AuthRequirement | undefined, account: AuthLoggedAccount, context?: PlatformAuthContext) => ({
-    type: actionTypes.updateRequirement,
-    requirement,
-    account,
-    context,
+  loadPfContext: (name: Platform['name'], context: PlatformAuthContext) => ({ context, name, type: actionTypes.loadPfContext }),
+
+  loadPfLegalUrls: (name: Platform['name'], legalUrls: LegalUrls) => ({ legalUrls, name, type: actionTypes.loadPfLegalUrls }),
+
+  loadPfValidReactionTypes: (validReactionTypes: AudienceValidReactionTypes) => ({
+    type: actionTypes.loadPfValidReactionTypes,
+    validReactionTypes,
+  }),
+
+  logout: () => ({
+    type: actionTypes.logout,
   }),
 
   profileUpdate: (id: string, user: Partial<AuthLoggedAccount['user']>) => ({
     id,
     type: actionTypes.profileUpdate,
     user,
-  }),
-
-  setQueryParamToken: (id: string, token: AuthTokenSet['queryParam']) => ({
-    type: actionTypes.setQueryParamToken,
-    id,
-    token,
   }),
 
   redirectActivation: (platformName: Platform['name'], login: string, code: string) => ({
@@ -314,10 +265,10 @@ export const actions = {
     accountTimestamp?: number
   ) => ({
     accountId,
-    platformName,
     accountTimestamp,
-    type: actionTypes.redirectCancel,
     login,
+    platformName,
+    type: actionTypes.redirectCancel,
   }),
 
   redirectPasswordRenew: (
@@ -327,12 +278,61 @@ export const actions = {
     accountId?: keyof IAuthState['accounts'],
     accountTimestamp?: number
   ) => ({
-    code,
-    platformName,
     accountId,
-    type: actionTypes.redirectPasswordRenew,
     accountTimestamp,
+    code,
     login,
+    platformName,
+    type: actionTypes.redirectPasswordRenew,
+  }),
+
+  refreshToken: (id: string, tokens: AuthTokenSet) => ({
+    id,
+    tokens,
+    type: actionTypes.refreshToken,
+  }),
+
+  removeAccount: (id: keyof IAuthState['accounts']) => ({
+    id,
+    type: actionTypes.removeAccount,
+  }),
+
+  replaceAccount: (id: string | typeof ERASE_ALL_ACCOUNTS, account: AuthLoggedAccount) => ({
+    account,
+    id,
+    type: actionTypes.replaceAccount,
+  }),
+
+  replaceAccountRequirement: (
+    id: string | typeof ERASE_ALL_ACCOUNTS,
+    account: AuthLoggedAccount,
+    requirement: AuthRequirement,
+    context: PlatformAuthContext
+  ) => ({
+    account,
+    context,
+    id,
+    requirement,
+    type: actionTypes.replaceAccountRequirement,
+  }),
+
+  setOneSessionId: (id: string, token: AuthTokenSet['oneSessionId']) => ({
+    id,
+    token,
+    type: actionTypes.setOneSessionId,
+  }),
+
+  setQueryParamToken: (id: string, token: AuthTokenSet['queryParam']) => ({
+    id,
+    token,
+    type: actionTypes.setQueryParamToken,
+  }),
+
+  updateRequirement: (requirement: AuthRequirement | undefined, account: AuthLoggedAccount, context?: PlatformAuthContext) => ({
+    account,
+    context,
+    requirement,
+    type: actionTypes.updateRequirement,
   }),
 };
 

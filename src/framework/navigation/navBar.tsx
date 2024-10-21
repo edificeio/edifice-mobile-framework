@@ -52,11 +52,12 @@ export const navBarOptions: (props: {
   backButtonTestID?: string;
 }) => NativeStackNavigationOptions = ({ backButtonTestID, navigation, route, title, titleStyle, titleTestID }) =>
   ({
-    headerBackButtonMenuEnabled: false,
     // Since headerLeft replaces native back, we cannot use this.
-freezeOnBlur: true,
-    
-headerBackVisible: false,
+    freezeOnBlur: true,
+
+    headerBackButtonMenuEnabled: false,
+
+    headerBackVisible: false,
 
     headerLeft: props => {
       const navState = navigation.getState();
@@ -88,16 +89,15 @@ headerBackVisible: false,
     },
 
     // Since headerLeft replaces native back, we don't want him to show when there's no headerLeft
-headerShadowVisible: true,
+    headerShadowVisible: true,
 
-    
-headerStyle: {
+    headerStyle: {
       backgroundColor: theme.palette.primary.regular,
     },
 
-    headerTitle: navBarTitle(title, titleStyle, titleTestID),
-
     headerTintColor: theme.ui.text.inverse,
+
+    headerTitle: navBarTitle(title, titleStyle, titleTestID),
 
     headerTitleAlign: 'center',
 

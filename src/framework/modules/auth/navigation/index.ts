@@ -24,56 +24,64 @@ import type { Platform } from '~/framework/util/appConf';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
-  activation: `${moduleConfig.name}/activation` as 'activation',
-
   accounts: `${moduleConfig.name}/accounts` as 'accounts',
 
-  changePassword: `${moduleConfig.name}/changePassword` as 'changePassword',
-
-  // This screen is exclusive to normal login stack
-// Login stack (add account version)
-addAccountOnboarding: `${moduleConfig.name}/add-account/onboarding` as 'addAccountOnboarding',
-
-  
-
-loginCredentials: `${moduleConfig.name}/login/credentials` as 'loginCredentials',
-
-  loginRedirect: `${moduleConfig.name}/login/redirect` as 'loginRedirect',
+  activation: `${moduleConfig.name}/activation` as 'activation',
 
   addAccountLoginCredentials: `${moduleConfig.name}/add-account/login/credentials` as 'addAccountLoginCredentials',
 
-  
-addAccountLoginWayf: `${moduleConfig.name}/add-account/login/wayf` as 'addAccountLoginWayf',
-  // Login stack (normal version)
-onboarding: `${moduleConfig.name}/onboarding` as 'onboarding',
+  addAccountActivation: `${moduleConfig.name}/add-account/activation` as 'addAccountActivation',
 
   addAccountLoginRedirect: `${moduleConfig.name}/add-account/redirect` as 'addAccountLoginRedirect',
 
-  platforms: `${moduleConfig.name}/platforms` as 'platforms',
-  addAccountActivation: `${moduleConfig.name}/add-account/activation` as 'addAccountActivation',
-  loginWayf: `${moduleConfig.name}/login/wayf` as 'loginWayf',
   addAccountChangePassword: `${moduleConfig.name}/add-account/changePassword` as 'addAccountChangePassword',
+
+  addAccountLoginWayf: `${moduleConfig.name}/add-account/login/wayf` as 'addAccountLoginWayf',
+
   addAccountForgot: `${moduleConfig.name}/add-account/forgot` as 'addAccountForgot',
-  wayf: `${moduleConfig.name}/wayf` as 'wayf',
-  // Exclusive logged screen (normal auth stack)
-  addAccountModal: `${moduleConfig.name}/add-account/modal` as 'addAccountModal',
+
+  
+
+// Exclusive logged screen (normal auth stack)
+addAccountModal: `${moduleConfig.name}/add-account/modal` as 'addAccountModal',
+
+  
+// This screen is exclusive to normal login stack
+// Login stack (add account version)
+addAccountOnboarding: `${moduleConfig.name}/add-account/onboarding` as 'addAccountOnboarding',
+
+  changePassword: `${moduleConfig.name}/changePassword` as 'changePassword',
 
   addAccountPlatforms: `${moduleConfig.name}/add-account/platforms` as 'addAccountPlatforms',
 
-  forgot: `${moduleConfig.name}/forgot` as 'forgot',
+  loginCredentials: `${moduleConfig.name}/login/credentials` as 'loginCredentials',
 
   addAccountWayf: `${moduleConfig.name}/add-account/wayf` as 'addAccountWayf',
+
+  loginRedirect: `${moduleConfig.name}/login/redirect` as 'loginRedirect',
+
   changeEmail: `${moduleConfig.name}/changeEmail` as 'changeEmail',
 
-  changeMobile: `${moduleConfig.name}/changeMobile` as 'changeMobile',
+  
+changeMobile: `${moduleConfig.name}/changeMobile` as 'changeMobile',
+
+  // Login stack (normal version)
+onboarding: `${moduleConfig.name}/onboarding` as 'onboarding',
 
   changePasswordModal: `${moduleConfig.name}/changePasswordModal` as 'changePasswordModal',
 
+  platforms: `${moduleConfig.name}/platforms` as 'platforms',
   discoveryClass: `${moduleConfig.name}/discovery-class` as 'discoveryClass',
+
+  forgot: `${moduleConfig.name}/forgot` as 'forgot',
+
+  loginWayf: `${moduleConfig.name}/login/wayf` as 'loginWayf',
 
   mfa: `${moduleConfig.name}/mfa` as 'mfa',
 
   mfaModal: `${moduleConfig.name}/mfaModal` as 'mfaModal',
+
+  wayf: `${moduleConfig.name}/wayf` as 'wayf',
   // This is the add acount stack parent screen.
   revalidateTerms: `${moduleConfig.name}/revalidateTerms` as 'revalidateTerms',
 };

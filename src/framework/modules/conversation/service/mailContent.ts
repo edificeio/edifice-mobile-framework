@@ -34,27 +34,28 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
     body: data.body,
     cc: data.cc,
     cci: data.cci,
+    cciName: data.cciName,
+    ccName: data.ccName,
     date: moment(data.date),
+
     displayNames: data.displayNames,
+
     from: data.from,
+
     // Extra data
     fromName: data.fromName,
-
-    ccName: data.ccName,
 
     id: data.id,
 
     language: data.language,
 
-    state: data.state,
-
-    cciName: data.cciName,
-
     parent_id: data.parent_id,
-    to: data.to,
+
+    state: data.state,
     subject: data.subject,
     text_searchable: data.text_searchable,
     thread_id: data.thread_id,
+    to: data.to,
     toName: data.toName,
   };
   return result;

@@ -134,22 +134,6 @@ export const OldStorageFunctions = {
   },
 
   /**
-   * Set item JSON
-   * - Convert data into JSON string
-   * - Save data and key within storage
-   */
-  setItem: async <T extends string | number | boolean>(key: string, data: T) => {
-    try {
-      Storage.global.set(key, data);
-    } catch (error) {
-      console.error(
-        `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`
-      );
-      Trackers.trackDebugEvent('Storage', 'setItem ERROR', (error as Error | null)?.message || '');
-    }
-  },
-
-  /**
    * Remove item
    * - Find stored item via key
    * - Remove item from storage
@@ -166,7 +150,6 @@ export const OldStorageFunctions = {
   },
 
   //
-
   /**
    * Remove items
    * - Find all items via provided keys
@@ -182,6 +165,22 @@ export const OldStorageFunctions = {
         `[Storage] removeItems: failed to remove items ${error instanceof Error ? `: ${(error as Error).message}` : ''}`
       );
       Trackers.trackDebugEvent('Storage', 'removeItems ERROR', (error as Error | null)?.message || '');
+    }
+  },
+
+  /**
+   * Set item JSON
+   * - Convert data into JSON string
+   * - Save data and key within storage
+   */
+  setItem: async <T extends string | number | boolean>(key: string, data: T) => {
+    try {
+      Storage.global.set(key, data);
+    } catch (error) {
+      console.error(
+        `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`
+      );
+      Trackers.trackDebugEvent('Storage', 'setItem ERROR', (error as Error | null)?.message || '');
     }
   },
 

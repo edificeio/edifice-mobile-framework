@@ -17,14 +17,14 @@ export default StyleSheet.create({
     marginRight: UI_SIZES.spacing.minor,
   },
 
-  h18: {
-    height: 18,
-  },
-
   cardBlog_top: {
     alignItems: 'center',
     flexDirection: 'row',
     marginBottom: UI_SIZES.spacing.small,
+  },
+
+  h18: {
+    height: 18,
   },
 
   h22: {

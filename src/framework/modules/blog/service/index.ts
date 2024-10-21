@@ -112,23 +112,23 @@ export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>
 
 export const blogAdapter = (blog: IEntcoreBlog) => {
   const ret = {
-    'comment-type': blog['comment-type'],
-    'created': moment(blog.created.$date),
-    'description': blog.description,
     'author': {
       login: blog.author.login,
       userId: blog.author.userId,
       username: blog.author.username,
     },
-    'id': blog._id,
+    'comment-type': blog['comment-type'],
+    'created': moment(blog.created.$date),
+    'description': blog.description,
     'fetchPosts': blog.fetchPosts?.map(bp => blogFetchPostAdapter(bp)),
-    'thumbnail': blog.thumbnail,
+    'id': blog._id,
     'modified': moment(blog.modified.$date),
-    'title': blog.title,
     'publish-type': blog['publish-type'],
-    'visibility': blog.visibility,
     'shared': blog.shared,
+    'thumbnail': blog.thumbnail,
+    'title': blog.title,
     'trashed': blog.trashed,
+    'visibility': blog.visibility,
   };
   return ret as Blog;
 };

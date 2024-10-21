@@ -14,35 +14,20 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.small,
   },
 
-  cardNews_thumbnail: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-
-  h14: {
-    height: 14,
-  },
-
   cardNews_date: {
     marginBottom: 16,
   },
 
-  
-cardNews_lastLine: {
+  cardNews_lastLine: {
     marginBottom: 0,
-  },
-
-  //GLOBAL
-h18: {
-    height: 18,
   },
 
   cardNews_threadText: {
     marginBottom: 0,
   },
 
-  itemThread: {
-    alignItems: 'center',
-    marginRight: UI_SIZES.spacing.big,
+  cardNews_thumbnail: {
+    marginRight: UI_SIZES.spacing.minor,
   },
 
   cardNews_top: {
@@ -50,15 +35,29 @@ h18: {
     flexDirection: 'row',
     marginBottom: UI_SIZES.spacing.small,
   },
-  
-itemThread_media: {
+
+  h14: {
+    height: 14,
+  },
+
+  //GLOBAL
+  h18: {
+    height: 18,
+  },
+
+  itemThread: {
+    alignItems: 'center',
+    marginRight: UI_SIZES.spacing.big,
+  },
+
+  itemThread_media: {
     aspectRatio: UI_SIZES.aspectRatios.thumbnail,
-    width: WIDTH_THUMBNAIL_THREAD_ITEM,
     borderRadius: UI_SIZES.radius.medium,
     marginBottom: UI_SIZES.spacing.minor,
+    width: WIDTH_THUMBNAIL_THREAD_ITEM,
   },
   //DETAILS
-page: {
+  page: {
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   pearl: {

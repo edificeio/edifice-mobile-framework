@@ -178,7 +178,6 @@ const fileTransferService = {
     return newJob;
   },
 
-  
   startDownloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: AuthLoggedAccount,
     files: IDistantFile[],
@@ -190,7 +189,7 @@ const fileTransferService = {
   },
 
   /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
-startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
+  startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: AuthLoggedAccount,
     file: LocalFile,
     params: IUploadParams,
@@ -200,9 +199,9 @@ startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFil
   ) => {
     const url = session.platform.url + params.url;
     const job = RNFS.uploadFiles({
+      begin: callbacks?.onBegin,
       binaryStreamOnly: params.binaryStreamOnly,
       fields: { ...params.fields },
-      begin: callbacks?.onBegin,
       files: [{ ...file, name: 'file' }],
       headers: { ...urlSigner.getAuthHeader(), ...params.headers },
       method: 'POST',

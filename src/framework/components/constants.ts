@@ -69,16 +69,16 @@ export const UI_SIZES = {
   dimensions: {
     height: {
       hug: 32,
-      large: 22,
       huge: 38,
-      larger: 24,
+      large: 22,
       largePlus: 36,
-      medium: 18,
+      larger: 24,
       largerPlus: 28,
-      small: 2,
+      medium: 18,
       mediumPlus: 20,
-      tiny: 1,
+      small: 2,
       smallPlus: 16,
+      tiny: 1,
     },
     width: {
       hug: 32,
@@ -94,6 +94,13 @@ export const UI_SIZES = {
     },
   },
   elements: {
+    avatar: {
+      lg: getScaleWidth(48),
+      md: getScaleWidth(36),
+      sm: getScaleWidth(24),
+      xl: getScaleWidth(64),
+      xxl: getScaleWidth(88),
+    },
     border: {
       default: 2,
       large: 4,
@@ -110,18 +117,12 @@ export const UI_SIZES = {
       xsmall: getScaleWidth(16),
       xxsmall: getScaleWidth(12),
     },
+
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
 
     navbarButtonSize: 32,
     /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
     navbarHeight: Platform.select({ default: 56, ios: 44 }),
-    avatar: {
-      sm: getScaleWidth(24),
-      md: getScaleWidth(36),
-      lg: getScaleWidth(48),
-      xl: getScaleWidth(64),
-      xxl: getScaleWidth(88),
-    },
     navbarIconSize: 24,
     navbarMargin: 16,
     statusbarHeight: Platform.select({ default: 0, ios: 19 }),
@@ -144,17 +145,17 @@ export const UI_SIZES = {
     );
   },
   radius: {
+    big: getScaleWidth(32),
     card: getScaleWidth(8),
     extraLarge: getScaleWidth(24),
-    big: getScaleWidth(32),
-    input: getScaleWidth(12),
     huge: getScaleWidth(48),
-    medium: getScaleWidth(8),
+    input: getScaleWidth(12),
     large: getScaleWidth(21),
+    medium: getScaleWidth(8),
     mediumPlus: getScaleWidth(16),
     newCard: getScaleWidth(12),
-    small: getScaleWidth(4),
     selector: getScaleWidth(12),
+    small: getScaleWidth(4),
   },
   screen: {
     bottomInset: Platform.select({

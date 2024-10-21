@@ -47,26 +47,26 @@ export const infoPersonAdapter = (n: BackendInfoPerson) => {
   });
 
   const ret = {
+    address: n.address,
+    birthdate: n.birthdate ? moment(n.birthdate) : null,
     displayName: n.displayName,
+    email: n.email,
+    health: n.health,
+    hobbies: orderedHobbies,
     id: n.id,
     login: n.login,
+    mobile: n.mobile,
     mood: n.mood,
     motto: n.motto,
-    address: n.address,
-    relatedId: n.relatedId,
-    email: n.email,
-    relatedName: n.relatedName,
-    health: n.health,
-    schools: n.schools,
-    birthdate: n.birthdate ? moment(n.birthdate) : null,
-    type: n.type[0] as AccountType,
-    hobbies: orderedHobbies,
-    visibleInfos: n.visibleInfos,
-    mobile: n.mobile,
     photo: n.photo,
+    relatedId: n.relatedId,
+    relatedName: n.relatedName,
     relatedType: n.relatedType,
+    schools: n.schools,
     tel: n.tel,
+    type: n.type[0] as AccountType,
     userId: n.userId,
+    visibleInfos: n.visibleInfos,
   };
   return ret as InfoPerson;
 };

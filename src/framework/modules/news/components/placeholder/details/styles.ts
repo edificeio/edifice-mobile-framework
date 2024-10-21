@@ -4,16 +4,16 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  content: {
+    backgroundColor: theme.palette.grey.fog,
+    height: 750,
+    width: '100%',
+  },
+
   h14: {
     height: 14,
   },
 
-  content: {
-    width: '100%',
-    height: 750,
-    backgroundColor: theme.palette.grey.fog,
-  },
-  
   h16: {
     height: 14,
   },

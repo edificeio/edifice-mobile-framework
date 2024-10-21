@@ -136,8 +136,8 @@ type IBackendSessionList = IBackendSession[];
 const homeworkAdapter = (data: IBackendHomework): IHomework => {
   return {
     audience: data.audience,
-    description: data.description,
     created_date: moment(data.created),
+    description: data.description,
     due_date: moment(data.due_date),
     exceptional_label: data.exceptional_label,
     id: data.id.toString(),
@@ -176,14 +176,14 @@ const homeworksAdapter = (data: IBackendHomeworkList): IHomeworkMap => {
 
 const sessionAdapter = (data: IBackendSession): IDiarySession => {
   return {
+    audience: data.audience,
+    course_id: data.course_id,
     date: moment(data.date),
     description: data.description,
     end_time: data.end_time,
     exceptional_label: data.exceptional_label,
     homeworks: data.homeworks.map(homeworkAdapter),
-    audience: data.audience,
     id: data.id.toString(),
-    course_id: data.course_id,
     is_empty: data.is_empty,
     is_published: data.is_published,
     start_time: data.start_time,

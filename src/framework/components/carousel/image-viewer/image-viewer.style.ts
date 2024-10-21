@@ -8,45 +8,32 @@ export default (
   [x: string]: ViewStyle | TextStyle;
 } => {
   return {
+    arrowLeftContainer: { bottom: 0, justifyContent: 'center', left: 0, position: 'absolute', top: 0, zIndex: 13 },
+    arrowRightContainer: { bottom: 0, justifyContent: 'center', position: 'absolute', right: 0, top: 0, zIndex: 13 },
     container: { backgroundColor },
     imageStyle: {},
-    menuContainer: { bottom: 0, height, left: 0, position: 'absolute', width, zIndex: 12 },
+    loadingContainer: { alignItems: 'center', flex: 1, justifyContent: 'center' },
     loadingTouchable: { height, width },
-    menuContent: { left: 0, bottom: 0, position: 'absolute', width, zIndex: 11 },
+    menuContainer: { bottom: 0, height, left: 0, position: 'absolute', width, zIndex: 12 },
+
+    menuContent: { bottom: 0, left: 0, position: 'absolute', width, zIndex: 11 },
+
     menuShadow: {
-      height,
       backgroundColor: 'black',
-      position: 'absolute',
       bottom: 0,
-      width,
+      height,
       left: 0,
       opacity: 0.2,
+      position: 'absolute',
+      width,
       zIndex: 10,
     },
+
     modalContainer: { alignItems: 'center', backgroundColor, justifyContent: 'center', overflow: 'hidden' },
 
-    arrowLeftContainer: { bottom: 0, justifyContent: 'center', position: 'absolute', left: 0, top: 0, zIndex: 13 },
-
-    watchOrigin: { bottom: 20, alignItems: 'center', position: 'absolute', justifyContent: 'center', width },
-
-    arrowRightContainer: { bottom: 0, justifyContent: 'center', position: 'absolute', right: 0, top: 0, zIndex: 13 },
-
-    watchOriginText: { backgroundColor: 'transparent', color: 'white' },
-
-    loadingContainer: { alignItems: 'center', flex: 1, justifyContent: 'center' },
-
-    watchOriginTouchable: {
-      paddingLeft: 10,
-      paddingRight: 10,
-      paddingTop: 5,
-      paddingBottom: 5,
-      borderRadius: 30,
-      borderColor: 'white',
-      borderWidth: 0.5,
-      backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    },
     // 多图浏览需要调整整体位置的盒子
     moveBox: { alignItems: 'center', flexDirection: 'row' },
+
     operateContainer: {
       alignItems: 'center',
       backgroundColor: 'white',
@@ -55,7 +42,21 @@ export default (
       height: 40,
       justifyContent: 'center',
     },
+
     operateText: { color: '#333' },
+
+    watchOrigin: { alignItems: 'center', bottom: 20, justifyContent: 'center', position: 'absolute', width },
+    watchOriginText: { backgroundColor: 'transparent', color: 'white' },
+    watchOriginTouchable: {
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      borderColor: 'white',
+      borderRadius: 30,
+      paddingBottom: 5,
+      borderWidth: 0.5,
+      paddingLeft: 10,
+      paddingRight: 10,
+      paddingTop: 5,
+    },
   };
 };
 

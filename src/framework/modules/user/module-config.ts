@@ -11,9 +11,9 @@ export default new NavigableModuleConfig<'user', UserState>({
 
   displayPicture: { name: 'profile-off', type: 'Icon' },
 
-  entcoreScope: [],
-
   displayPictureFocus: { name: 'profile-on', type: 'Icon' },
+
+  entcoreScope: [],
 
   // There is no corresponding backend app
   hasRight: () => true,

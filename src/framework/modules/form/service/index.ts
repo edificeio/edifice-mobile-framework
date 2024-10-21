@@ -130,8 +130,8 @@ type IBackendSectionList = IBackendSection[];
 const distributionAdapter = (data: IBackendDistribution): IDistribution => {
   return {
     active: data.active,
-    dateSending: moment(data.date_sending),
     dateResponse: moment(data.date_response),
+    dateSending: moment(data.date_sending),
     formId: data.form_id,
     id: data.id,
     originalId: data.original_id,
@@ -159,22 +159,22 @@ const formAdapter = (data: IBackendForm): IForm => {
 
 const questionAdapter = (data: IBackendQuestion): IQuestion => {
   return {
-    conditional: data.conditional,
-    cursorMinVal: data.cursor_min_val,
-    formId: data.form_id,
-    cursorMaxVal: data.cursor_max_val,
-    id: data.id,
-    cursorMinLabel: data.cursor_min_label,
-    mandatory: data.mandatory,
     choices: [],
-    position: data.position,
+    conditional: data.conditional,
     cursorMaxLabel: data.cursor_max_label,
-    statement: data.statement,
+    cursorMaxVal: data.cursor_max_val,
+    cursorMinLabel: data.cursor_min_label,
+    cursorMinVal: data.cursor_min_val,
     cursorStep: data.cursor_step,
-    title: data.title,
+    formId: data.form_id,
+    id: data.id,
+    mandatory: data.mandatory,
     placeholder: data.placeholder,
-    type: data.question_type,
+    position: data.position,
     sectionId: data.section_id,
+    statement: data.statement,
+    title: data.title,
+    type: data.question_type,
   };
 };
 
