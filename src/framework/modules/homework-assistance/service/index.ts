@@ -108,7 +108,7 @@ export const homeworkAssistanceService = {
       lastName: string,
       structure: string,
       className: string,
-      information: string
+      information: string,
     ) => {
       const api = `/homework-assistance/services/${service.value}/callback`;
       const body = JSON.stringify({

@@ -44,11 +44,11 @@ export default connect(
             : loginFederationActionAddFirstAccount,
           {
             track: track.loginFederation,
-          }
+          },
         ),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(function AuthWayfScreen(props: AuthWayfScreenPrivateProps) {
   return (
     <WayfScreen

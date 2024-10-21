@@ -288,6 +288,6 @@ export interface ISaxTagClose {
 export function autoCloseVoidTags(html: string): string {
   const voidTagRegex = new RegExp(`<(\s*(${htmlVoidElements.join('|')})( [^>]*)?)>`, 'g');
   return html.replace(voidTagRegex, (match: string, p1: string, p2: string, offset: number, str: string) =>
-    p1.endsWith('/') ? `<${p1}>` : `<${p1}/>`
+    p1.endsWith('/') ? `<${p1}>` : `<${p1}/>`,
   );
 }

@@ -40,7 +40,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['EVENT-CREATION', 'EVENT-UPDATE'],
-      'notifHandlerAction': handlePresencesEventNotificationAction,
-      'type': 'PRESENCES',
+      notifHandlerAction: handlePresencesEventNotificationAction,
+      type: 'PRESENCES',
     },
   ]);

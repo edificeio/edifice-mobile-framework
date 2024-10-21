@@ -108,7 +108,7 @@ export abstract class AbstractTracker<OptionsType> {
     moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
     action: string,
     name?: string,
-    value?: number
+    value?: number,
   ) {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
@@ -284,7 +284,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
         new Request(`${platform!.url}/infra/event/mobile/store`, {
           body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
           method: 'POST',
-        })
+        }),
       );
       this.lastModulename = moduleName;
       willLog = moduleAccessMap[moduleName];
@@ -349,7 +349,7 @@ export class ConcreteTrackerSet {
 export const Trackers = new ConcreteTrackerSet(
   new ConcreteMatomoTracker('Matomo', appConf.matomo),
   new ConcreteAppCenterTracker('AppCenter', undefined),
-  new ConcreteEntcoreTracker('Entcore', undefined)
+  new ConcreteEntcoreTracker('Entcore', undefined),
 );
 
 export const TRACKING_ACTION_SUFFIX_SUCCESS = 'Succès';

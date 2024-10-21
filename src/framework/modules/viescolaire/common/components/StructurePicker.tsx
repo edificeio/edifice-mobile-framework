@@ -103,6 +103,6 @@ export default connect(
         handleSelectStructure: handleAction(selectStructureAction),
         tryLoadStoredStructure: tryAction(loadStoredStructureAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(StructurePicker);

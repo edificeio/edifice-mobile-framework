@@ -29,7 +29,7 @@ const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
   },
   ({ checked = false }) => ({
     borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
-  })
+  }),
 );
 
 const Container = styled(TouchableOpacity)<{ checked: boolean }>(
@@ -48,7 +48,7 @@ const Container = styled(TouchableOpacity)<{ checked: boolean }>(
     backgroundColor: checked ? theme.palette.primary.regular : theme.palette.grey.cloudy,
     borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
     borderWidth: checked ? 0 : 1,
-  })
+  }),
 );
 
 export class Toggle extends React.Component<

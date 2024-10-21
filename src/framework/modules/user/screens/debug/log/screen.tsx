@@ -40,7 +40,7 @@ const exportLogFile = async () => {
 
 export const computeNavBar = (
   { navigation, route }: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.log>,
-  menuData: MenuData[]
+  menuData: MenuData[],
 ): NativeStackNavigationOptions => {
   const hasMenuData = Array.isArray(menuData) && menuData.length > 0;
 
@@ -132,7 +132,7 @@ const LogScreen = (props: LogScreenPrivateProps) => {
       { action: clearLog, title: 'Clear log' },
       { action: exportLogFile, title: 'Export log' },
     ],
-    [isPaused]
+    [isPaused],
   );
 
   React.useEffect(() => {
@@ -154,7 +154,7 @@ const LogScreen = (props: LogScreenPrivateProps) => {
         log =>
           log.message?.toLowerCase().includes(lowerCaseQuery) ||
           log.time?.toLowerCase().includes(lowerCaseQuery) ||
-          log.severity?.toLowerCase().includes(lowerCaseQuery)
+          log.severity?.toLowerCase().includes(lowerCaseQuery),
       );
       setFilteredData(filtered);
     }

@@ -151,7 +151,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         return false;
       }
     },
-    [region]
+    [region],
   );
 
   const doRequestMobileVerificationCode = useCallback(
@@ -189,7 +189,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         setIsSendingCode(false);
       }
     },
-    [getIsValidMobileNumberForRegion, isCheckMobile, modificationType, navigation, platform, props, region, route]
+    [getIsValidMobileNumberForRegion, isCheckMobile, modificationType, navigation, platform, props, region, route],
   );
 
   const sendSMS = useCallback(async () => {
@@ -202,7 +202,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       if (mobileState !== MobileState.STALE) setMobileState(MobileState.STALE);
       setMobile(number);
     },
-    [mobileState]
+    [mobileState],
   );
 
   const refuseMobileVerification = useCallback(async () => {
@@ -346,7 +346,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChange
       tryLogout: tryAction(manualLogoutAction),
       trySaveNewMobile: tryAction(profileUpdateAction),
     },
-    dispatch
+    dispatch,
   );
 };
 

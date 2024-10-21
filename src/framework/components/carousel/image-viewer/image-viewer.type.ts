@@ -168,12 +168,12 @@ export class Props {
   public renderIndicator?: (
     currentIndex?: number,
     allSize?: number,
-    imageStatus?: 'loading' | 'success' | 'fail' | undefined
+    imageStatus?: 'loading' | 'success' | 'fail' | undefined,
   ) => React.ReactElement<any> = (currentIndex?: number, allSize?: number) => {
     return React.createElement(
       View,
       { style: simpleStyle.count },
-      React.createElement(Text, { style: simpleStyle.countText }, currentIndex + '/' + allSize)
+      React.createElement(Text, { style: simpleStyle.countText }, currentIndex + '/' + allSize),
     );
   };
 

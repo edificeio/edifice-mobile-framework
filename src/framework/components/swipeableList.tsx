@@ -60,7 +60,7 @@ import theme from '~/app/theme';
 // Redecalare forwardRef @see https://fettblog.eu/typescript-react-generic-forward-refs/#option-3%3A-augment-forwardref
 declare module 'react' {
   function forwardRef<T, P = object>(
-    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
+    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null,
   ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
 }
 
@@ -106,7 +106,7 @@ const SwipeAction = <ItemT extends { key: string }>(
     animatedRefs?: { [key: string]: Animated.Value };
     swipeActionWidth: number;
     direction: 'left' | 'right';
-  }
+  },
 ) => {
   const wrapperStyle = [styles.swipeActionWrapper];
   const widthStyle = React.useMemo(() => ({ width: props.swipeActionWidth }), [props.swipeActionWidth]);
@@ -126,7 +126,7 @@ const SwipeAction = <ItemT extends { key: string }>(
           }}
         />
       ) : null,
-    [overlapWidth, props.backgroundColor, props.direction, props.isFirstAction]
+    [overlapWidth, props.backgroundColor, props.direction, props.isFirstAction],
   );
   return (
     <View style={wrapperStyle}>
@@ -148,7 +148,7 @@ const SwipeAction = <ItemT extends { key: string }>(
             widthStyle,
             React.useMemo(
               () => (props.backgroundColor ? { backgroundColor: props.backgroundColor, height: '100%' } : {}),
-              [props.backgroundColor]
+              [props.backgroundColor],
             ),
           ]}>
           {overlapElement}
@@ -192,7 +192,7 @@ export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<Swipe
       scrollToTop: () => {
         listRef?.current?.scrollToTop();
       },
-    })
+    }),
   );
   return null;
 };
@@ -200,7 +200,7 @@ export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<Swipe
 export default React.forwardRef(
   <ItemT extends { key: string }>( // need to write "extends" because we're in a tsx file
     props: SwipeableListProps<ItemT> & FlatListProps<ItemT>,
-    ref: React.Ref<SwipeListView<ItemT>>
+    ref: React.Ref<SwipeListView<ItemT>>,
   ) => {
     const {
       bottomInset,
@@ -269,7 +269,7 @@ export default React.forwardRef(
           </View>
         );
       },
-      [hiddenItemStyle, hiddenRowStyle, itemSwipeActionProps, props.swipeActionWidth, swipeActionWidth]
+      [hiddenItemStyle, hiddenRowStyle, itemSwipeActionProps, props.swipeActionWidth, swipeActionWidth],
     );
 
     const getTouchPreventerStyle = (active: boolean) =>
@@ -305,7 +305,7 @@ export default React.forwardRef(
         isScrollingWhileTouchSwipeAction = true;
         onScrollBeginDrag?.(event);
       },
-      [onScrollBeginDrag]
+      [onScrollBeginDrag],
     );
 
     const realRenderItem = React.useCallback(
@@ -350,7 +350,7 @@ export default React.forwardRef(
         );
         return row;
       },
-      [itemSwipeActionProps, props.swipeActionWidth, renderHiddenItem, renderItem, swipeActionWidth]
+      [itemSwipeActionProps, props.swipeActionWidth, renderHiddenItem, renderItem, swipeActionWidth],
     );
 
     if (!renderItem) {
@@ -375,5 +375,5 @@ export default React.forwardRef(
         <ScrollToTopHandler listRef={ref as React.RefObject<SwipeListView<any>>} />
       </>
     );
-  }
+  },
 );

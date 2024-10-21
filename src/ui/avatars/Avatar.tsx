@@ -85,7 +85,7 @@ const AlignedContainer = styled.View(
   },
   ({ index }) => ({
     zIndex: 100 - index,
-  })
+  }),
 );
 
 const VLContainer = styled.View({
@@ -239,7 +239,7 @@ const SmallContainer = styled.View<{ count: number; index: number }>(
     left: count === 2 ? (index === 0 ? 0 : 15) : index === 0 || (index === 2 && count === 4) ? 0 : index === 2 ? 14 : 25,
     top: count === 2 ? (index === 0 ? 0 : 15) : index < 2 ? 0 : 25,
     width: count === 1 ? 45 : count === 2 ? 31 : 22,
-  })
+  }),
 );
 
 export interface IAvatarProps {

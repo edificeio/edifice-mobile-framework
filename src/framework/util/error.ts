@@ -144,7 +144,7 @@ export namespace Error {
 
   export const getAuthErrorText = <ErrorClass = ErrorWithType>(
     type: Error.ErrorTypes<ErrorClass> | undefined,
-    platformUrl: string
+    platformUrl: string,
   ) => {
     switch (type) {
       case Error.FetchErrorType.NOT_AUTHENTICATED:
@@ -250,7 +250,7 @@ export namespace Error {
 export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
   platformUrl: string,
   error?: Error.ErrorWithKey,
-  consumeError?: (errorKey: number) => void
+  consumeError?: (errorKey: number) => void,
 ) => {
   const [errkey, setErrkey] = React.useState(Error.generateErrorKey);
   const showError = error?.key === errkey || error?.key === undefined;
@@ -261,7 +261,7 @@ export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
   const errmsg = React.useMemo(
     () =>
       showError && error ? Error.getAuthErrorText<ErrorClass>(errtype as Error.ErrorTypes<ErrorClass>, platformUrl) : undefined,
-    [error, errtype, platformUrl, showError]
+    [error, errtype, platformUrl, showError],
   );
   React.useEffect(() => {
     if (error?.key === undefined) {

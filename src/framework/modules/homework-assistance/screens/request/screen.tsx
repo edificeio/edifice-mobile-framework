@@ -264,19 +264,19 @@ export default connect(
         addRequest: tryActionLegacy(
           postHomeworkAssistanceRequestAction,
           undefined,
-          true
+          true,
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['addRequest'],
         fetchConfig: tryActionLegacy(
           fetchHomeworkAssistanceConfigAction,
           undefined,
-          true
+          true,
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchConfig'],
         fetchServices: tryActionLegacy(
           fetchHomeworkAssistanceServicesAction,
           undefined,
-          true
+          true,
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchServices'],
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(HomeworkAssistanceRequestScreen);

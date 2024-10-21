@@ -56,8 +56,8 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
         I18n.get(
           folderAlreadyExists
             ? 'conversation-createfolder-createdirectoryerror-folderexists'
-            : 'conversation-createfolder-error-text'
-        )
+            : 'conversation-createfolder-error-text',
+        ),
       );
     } finally {
       this.setState({ name: '' });
@@ -113,7 +113,7 @@ const mapDispatchToProps = (dispatch: any) => {
       createFolder: postFolderAction,
       fetchInit: fetchInitAction,
     },
-    dispatch
+    dispatch,
   );
 };
 

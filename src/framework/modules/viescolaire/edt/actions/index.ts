@@ -60,7 +60,7 @@ export const fetchEdtCoursesAction =
     structureId: string,
     startDate: Moment,
     endDate: Moment,
-    classGroups: IClassGroups[]
+    classGroups: IClassGroups[],
   ): ThunkAction<Promise<IEdtCourse[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {

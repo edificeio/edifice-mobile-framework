@@ -8,7 +8,7 @@ import FlatList from '~/framework/components/list/flat-list';
 
 export const HorizontalList = React.forwardRef(function <ItemT>(
   props: HorizontalListProps<ItemT>,
-  ref: React.Ref<RNFlatList<ItemT>> | null | undefined
+  ref: React.Ref<RNFlatList<ItemT>> | null | undefined,
 ) {
   const { style, ...listProps } = props;
   const realStyle = React.useMemo(() => [styles.list, style], [style]);

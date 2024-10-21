@@ -245,7 +245,7 @@ export default (props: HomeworkListProps) => {
             onSessionTap={session =>
               props.navigation.navigate(
                 diaryRouteNames.session,
-                sessionListDetailsAdapter(session, props.personnel, props.sessions)
+                sessionListDetailsAdapter(session, props.personnel, props.sessions),
               )
             }
             personnelList={props.personnel}

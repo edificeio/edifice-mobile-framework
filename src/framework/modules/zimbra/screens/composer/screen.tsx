@@ -228,7 +228,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
           style: 'default',
           text: I18n.get(isSaved ? 'zimbra-composer-savealert-savechanges' : 'zimbra-composer-savealert-save'),
         },
-      ]
+      ],
     );
   };
 
@@ -483,6 +483,6 @@ export default connect(
         tryFetchMail: tryAction(fetchZimbraMailAction),
         tryFetchSignature: tryAction(fetchZimbraSignatureAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(ZimbraComposerScreen);

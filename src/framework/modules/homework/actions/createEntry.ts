@@ -44,7 +44,7 @@ export function uploadHomeworkDiaryEntryImages(images: LocalFile[]) {
     return dispatch(
       workspaceFileTransferActions.uploadFilesAction(images, {
         parent: 'protected',
-      })
+      }),
     );
   };
 }
@@ -58,7 +58,7 @@ export function createHomeworkDiaryEntry(
   date: Moment,
   title: string,
   content: string,
-  uploadedImages?: IDistantFile[]
+  uploadedImages?: IDistantFile[],
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();

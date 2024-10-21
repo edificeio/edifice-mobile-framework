@@ -119,7 +119,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       if (error) file.error = error;
       setListReady(val => val + 1); // Update view
     },
-    []
+    [],
   );
 
   const uploadFile = React.useCallback(
@@ -144,7 +144,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
           uploadingTasksRef.current.delete(file);
         });
     },
-    [route.params.uploadParams, session, updateFileStatusAndID]
+    [route.params.uploadParams, session, updateFileStatusAndID],
   );
 
   const uploadFiles = React.useCallback(() => {
@@ -166,13 +166,13 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       setListReady(val => val + 1);
       uploadFiles();
     },
-    [uploadFiles, navigation]
+    [uploadFiles, navigation],
   );
 
   const removeAllFiles = React.useCallback(() => {
     workspaceService.files.trash(
       session!,
-      filesRef.current.map(f => f.workspaceID!)
+      filesRef.current.map(f => f.workspaceID!),
     );
   }, [session]);
 
@@ -203,7 +203,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
               !listReady ||
               (fileCount > 0 &&
                 filesRef.current.some(
-                  f => f.status === UploadStatus.PENDING || f.status === UploadStatus.IDLE || f.status === UploadStatus.KO
+                  f => f.status === UploadStatus.PENDING || f.status === UploadStatus.IDLE || f.status === UploadStatus.KO,
                 ))
             }
           />
@@ -291,7 +291,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         },
       ]);
     },
-    [session, setFiles]
+    [session, setFiles],
   );
 
   const retryFile = async (index: number) => {

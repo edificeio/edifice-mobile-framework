@@ -44,7 +44,7 @@ export interface ResourceExplorerProps<FolderType extends object, ResourceType e
     item:
       | (ResourceExplorerFolderItem & FolderType)
       | (ResourceExplorerItemWithImage & ResourceType)
-      | (ResourceExplorerItemWithIcon & ResourceType)
+      | (ResourceExplorerItemWithIcon & ResourceType),
   ) => void;
   folders?: (Omit<ResourceExplorerFolderItem, 'type'> & FolderType)[];
   resources?: (Omit<ResourceExplorerItemWithImage | ResourceExplorerItemWithIcon, 'type'> & ResourceType)[];

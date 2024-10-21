@@ -79,7 +79,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
       const word = await schoolbookService.word.get(session, wordId);
       setSchoolbookWord(word);
     },
-    [session]
+    [session],
   );
 
   const sendSchoolbookWordReminder = async () => {
@@ -117,7 +117,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
         .then(() =>
           props.navigation.setOptions({
             headerTitle: navBarTitle(schoolbookWord?.word?.title || I18n.get('schoolbook-wordreport-appname')),
-          })
+          }),
         )
         .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
         .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
@@ -154,11 +154,11 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
       `${ackNumber}/${total} ${I18n.get(ackNumber === 1 ? 'schoolbook-wordreport-acknowledgement' : 'schoolbook-wordreport-acknowledgements').toLowerCase()}`;
     const unacknowledgementsString = (ackNumber: number, total: number) =>
       `${total - ackNumber}/${total} ${I18n.get(
-        total - ackNumber === 1 ? 'schoolbook-wordreport-unacknowledgement' : 'schoolbook-wordreport-unacknowledgements'
+        total - ackNumber === 1 ? 'schoolbook-wordreport-unacknowledgement' : 'schoolbook-wordreport-unacknowledgements',
       ).toLowerCase()}`;
     const acknowledgedByString = (acknowledgments: IAcknowledgment[]) =>
       `${I18n.get('schoolbook-wordreport-acknowledgedby')}${acknowledgments?.map(
-        acknowledgment => ` ${acknowledgment.parentName}`
+        acknowledgment => ` ${acknowledgment.parentName}`,
       )}`;
 
     const acknowledgedByTextMaxLines = 1;

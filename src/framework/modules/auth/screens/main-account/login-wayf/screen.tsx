@@ -42,8 +42,8 @@ export default connect(
       {
         handleConsumeError: tryAction(consumeAuthErrorAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(function AuthLoginWayfScreen(props: AuthLoginWayfScreenPrivateProps) {
   return (
     <LoginWAYFScreen

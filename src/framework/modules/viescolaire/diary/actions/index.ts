@@ -23,7 +23,7 @@ export const fetchDiaryCoursesAction =
     structureId: string,
     teacherId: string,
     startDate: Moment,
-    endDate: Moment
+    endDate: Moment,
   ): ThunkAction<Promise<IDiaryCourse[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {

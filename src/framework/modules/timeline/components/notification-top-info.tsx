@@ -39,13 +39,13 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
     if (isSenderMe)
       formattedMessage = formattedMessage.replace(
         sender && sender.displayName,
-        `${sender.displayName} ${I18n.get('timeline-meindicator')} `
+        `${sender.displayName} ${I18n.get('timeline-meindicator')} `,
       );
     if (notification.type === 'USERBOOK_MOTTO')
       formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get('timeline-notiftype-motto')}`;
     if (notification.type === 'USERBOOK_MOOD')
       formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get(
-        `timeline-notiftype-mood-${notification.backupData.params.moodImg}-${degre}`
+        `timeline-notiftype-mood-${notification.backupData.params.moodImg}-${degre}`,
       )}`;
   }
 

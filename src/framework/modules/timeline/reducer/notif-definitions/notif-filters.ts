@@ -8,10 +8,10 @@ import {
 } from '~/framework/util/redux/async';
 
 export interface NotificationFilter {
-  'type': string;
+  type: string;
   'app-name': string | null;
   'app-address': string | null;
-  'i18n': string;
+  i18n: string;
 }
 
 export type NotifFiltersStateData = NotificationFilter[];

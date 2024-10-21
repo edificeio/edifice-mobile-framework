@@ -97,7 +97,7 @@ const SchoolbookWordDetailsCard = (
     userId,
     userType,
   }: ISchoolBookWordDetailsCardProps,
-  ref
+  ref,
 ) => {
   const flatListRef = React.useRef<typeof FlatList>();
   const flatListModalRef = React.useRef<typeof FlatList>();
@@ -321,7 +321,7 @@ const SchoolbookWordDetailsCard = (
       word?.text,
       word?.title,
       word?.total,
-    ]
+    ],
   );
 
   const ListComponent = Platform.select<typeof FlatList | typeof KeyboardAvoidingFlatList>({
@@ -370,7 +370,7 @@ const SchoolbookWordDetailsCard = (
         </View>
       );
     },
-    [isPublishingReply, onEditComment, onPublishReply, responses]
+    [isPublishingReply, onEditComment, onPublishReply, responses],
   );
 
   const keyExtractor = React.useCallback(item => item.id?.toString(), []);
@@ -381,7 +381,7 @@ const SchoolbookWordDetailsCard = (
     () => ({
       marginBottom: doesContentExceedView && isBottomSheetVisible ? -UI_SIZES.radius.mediumPlus : undefined,
     }),
-    [doesContentExceedView, isBottomSheetVisible]
+    [doesContentExceedView, isBottomSheetVisible],
   );
 
   const scrollIndicatorInsets = React.useMemo(
@@ -389,7 +389,7 @@ const SchoolbookWordDetailsCard = (
       bottom: doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus : undefined,
       right: 0.001,
     }),
-    [doesContentExceedView, isBottomSheetVisible]
+    [doesContentExceedView, isBottomSheetVisible],
   );
 
   const onPublishComment = React.useCallback((comment: string) => onPublishReply(comment), [onPublishReply]);

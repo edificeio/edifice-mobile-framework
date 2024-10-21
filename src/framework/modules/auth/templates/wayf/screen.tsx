@@ -234,7 +234,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     // Update page title
     this.props.navigation.setOptions({
       headerTitle: navBarTitle(
-        I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'auth-wayf-select-title' : 'auth-wayf-main-title')
+        I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'auth-wayf-select-title' : 'auth-wayf-main-title'),
       ),
     });
   }
@@ -488,13 +488,13 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         if (this.pfUrl && url.startsWith(this.pfUrl)) {
           if (this.samlResponse) {
             console.debug(
-              'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with SAML token\n' + this.samlResponse
+              'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with SAML token\n' + this.samlResponse,
             );
             this.loginWithSaml();
           } else if (this.oidResponse) {
             console.debug(
               'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with OpenID custom token\n' +
-                this.oidResponse
+                this.oidResponse,
             );
             this.loginWithOpenID();
           } else {

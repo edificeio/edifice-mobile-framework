@@ -48,7 +48,7 @@ export const homeworkListDetailsAdapter = (homework: IHomework, homeworkList?: I
   const reformatedHomeworkArray = [] as Homework[];
   homeworksArray.forEach(item => reformatedHomeworkArray.push(homeworkDetailsAdapter(item)));
   reformatedHomeworkArray.sort(
-    (a, b) => moment(a.due_date).diff(moment(b.due_date)) || moment(a.created_date).diff(moment(b.created_date))
+    (a, b) => moment(a.due_date).diff(moment(b.due_date)) || moment(a.created_date).diff(moment(b.created_date)),
   );
 
   return {

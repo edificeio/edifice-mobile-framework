@@ -87,7 +87,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         studentId,
         structureId,
         subtractTime(moment(), 1, 'month'),
-        addTime(moment(), 1, 'month')
+        addTime(moment(), 1, 'month'),
       );
       let groupId = classes?.[0];
       if (userType === AccountType.Relative) {
@@ -188,7 +188,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   };
 
   const renderTabBar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> }
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
   ) => {
     return (
       <TabBar
@@ -294,6 +294,6 @@ export default connect(
         tryFetchTerms: tryAction(fetchPresencesTermsAction),
         tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(PresencesHistoryScreen);

@@ -262,6 +262,6 @@ export default connect(undefined, dispatch =>
     {
       trySubmit: tryAction(forgotAction),
     },
-    dispatch
-  )
+    dispatch,
+  ),
 )(ForgotPage);

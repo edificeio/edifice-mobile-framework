@@ -80,7 +80,7 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
   const HeaderFlexViewWithPadding = styled(HeaderFlexView)(
     cardPadding,
     withoutPadding && { paddingHorizontal: 0 },
-    customHeaderStyle
+    customHeaderStyle,
   );
   const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
   const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });
@@ -246,7 +246,7 @@ export const ResourceCard = (props: IResourceCardProps) => {
   return <ResourceCard_base {...props} CC={ContentCard} />;
 };
 export const TouchableResourceCard = (
-  props: IResourceCardProps & TouchableOpacityProps & Omit<ITouchableContentCardProps, 'header'>
+  props: IResourceCardProps & TouchableOpacityProps & Omit<ITouchableContentCardProps, 'header'>,
 ) => {
   return <ResourceCard_base {...props} CC={TouchableContentCard} />;
 };

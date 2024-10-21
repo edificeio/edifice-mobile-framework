@@ -87,7 +87,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
           theme.palette.complementary.pink.regular,
           (item as CommonEvent).startDate,
           (item as CommonEvent).endDate,
-          true
+          true,
         );
       case EventType.FORGOTTEN_NOTEBOOK:
         return renderSimpleEvent(theme.palette.complementary.indigo.regular, (item as ForgottenNotebook).date);
@@ -98,7 +98,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
           theme.palette.complementary.purple.regular,
           (item as CommonEvent).startDate,
           (item as CommonEvent).endDate,
-          true
+          true,
         );
       case EventType.NO_REASON:
         return renderEvent(theme.palette.complementary.red.regular, (item as CommonEvent).startDate, (item as CommonEvent).endDate);
@@ -108,14 +108,14 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
         return renderEvent(
           theme.palette.complementary.green.regular,
           (item as CommonEvent).startDate,
-          (item as CommonEvent).endDate
+          (item as CommonEvent).endDate,
         );
       case EventType.STATEMENT_ABSENCE:
       case EventType.UNREGULARIZED:
         return renderEvent(
           theme.palette.complementary.orange.regular,
           (item as CommonEvent).startDate,
-          (item as CommonEvent).endDate
+          (item as CommonEvent).endDate,
         );
     }
   };

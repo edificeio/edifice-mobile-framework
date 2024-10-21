@@ -101,7 +101,7 @@ const mapStateToProps: (s: IGlobalState) => ScrapbookHomeScreenDataProps = s => 
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
+  getState: () => IGlobalState,
 ) => ScrapbookHomeScreenEventProps = (dispatch, getState) => ({});
 
 const ScrapbookHomeScreenConnected = connect(mapStateToProps, mapDispatchToProps)(ScrapbookHomeScreen);

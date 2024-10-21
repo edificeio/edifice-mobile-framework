@@ -62,7 +62,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['PUBLISH', 'WORD-SHARED', 'WORD-RESEND', 'ACKNOWLEDGE', 'RESPONSE', 'MODIFYRESPONSE'],
-      'notifHandlerAction': handleSchoolbookNotificationAction,
-      'type': 'SCHOOLBOOK',
+      notifHandlerAction: handleSchoolbookNotificationAction,
+      type: 'SCHOOLBOOK',
     },
   ]);

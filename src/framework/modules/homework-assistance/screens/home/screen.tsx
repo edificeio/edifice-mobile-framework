@@ -146,9 +146,9 @@ export default connect(
         fetchConfig: tryActionLegacy(
           fetchHomeworkAssistanceConfigAction,
           undefined,
-          true
+          true,
         ) as unknown as HomeworkAssistanceHomeScreenPrivateProps['fetchConfig'],
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(HomeworkAssistanceHomeScreen);

@@ -78,7 +78,7 @@ function RootNavigator(props: RootNavigatorProps) {
       appReady && !isMainNavigationAccessible
         ? getAuthNavigationState(accounts, pending, showOnboarding, requirement, lastDeletedAccount)
         : getFirstTabRoute(),
-    [accounts, appReady, isMainNavigationAccessible, lastDeletedAccount, pending, requirement, showOnboarding]
+    [accounts, appReady, isMainNavigationAccessible, lastDeletedAccount, pending, requirement, showOnboarding],
   );
   const navStateJSON = JSON.stringify(navigationState);
 
@@ -111,7 +111,7 @@ function RootNavigator(props: RootNavigatorProps) {
       trackNavState(state);
       manageNavSnow();
     },
-    [manageNavSnow, trackNavState]
+    [manageNavSnow, trackNavState],
   );
 
   const screenOptions = React.useMemo(() => ({ headerShown: true }), []);

@@ -228,7 +228,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
             )}
             <PrimaryButton
               text={I18n.get(
-                isValidated ? 'presences-calllist-bottomsheet-action-edit' : 'presences-calllist-bottomsheet-action-new'
+                isValidated ? 'presences-calllist-bottomsheet-action-edit' : 'presences-calllist-bottomsheet-action-new',
               )}
               iconLeft={isValidated ? 'ui-edit' : 'presences'}
               action={() => openCall(course)}
@@ -314,6 +314,6 @@ export default connect(
         tryFetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction),
         tryFetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(PresencesCallListScreen);

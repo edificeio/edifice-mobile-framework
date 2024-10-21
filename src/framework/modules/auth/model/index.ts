@@ -252,7 +252,7 @@ export const accountIsActive = (account: AuthActiveAccount | AuthSavedAccount | 
 };
 
 export const accountIsLoggable = (
-  account: AuthActiveAccount | AuthSavedAccount | undefined
+  account: AuthActiveAccount | AuthSavedAccount | undefined,
 ): account is AuthSavedLoggedInAccount => {
   // account that have rights object is currenty logged in.
   return account !== undefined && (account as Partial<AuthSavedLoggedInAccount>).tokens !== undefined;

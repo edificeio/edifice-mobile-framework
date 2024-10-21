@@ -56,7 +56,7 @@ export const newMailService = {
         };
       },
       callbacks,
-      SyncedFileWithId
+      SyncedFileWithId,
     );
     return uploadedFile;
   },
@@ -93,7 +93,7 @@ export const newMailService = {
   },
   sendMail: async (session: AuthLoggedAccount, mailDatas, draftId, inReplyTo) => {
     const params = {
-      'id': draftId,
+      id: draftId,
       'In-Reply-To': inReplyTo,
     };
     const paramsUrl = Object.entries(params)

@@ -56,9 +56,9 @@ export default () =>
       ? [
           {
             'event-type': 'SHARE',
-            'notifHandlerAction': handleCollaborativeWallNotificationAction,
-            'type': 'COLLABORATIVEWALL',
+            notifHandlerAction: handleCollaborativeWallNotificationAction,
+            type: 'COLLABORATIVEWALL',
           },
         ]
-      : []
+      : [],
   );

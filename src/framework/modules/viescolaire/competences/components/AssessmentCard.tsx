@@ -61,7 +61,7 @@ export class AssessmentCard extends React.PureComponent<IAssessmentCardProps> {
         ? this.getScoreColor(
             parseFloat(assessment.note.replace(/\./g, ',').replace(',', '.')),
             parseFloat(assessment.moyenne.replace(/\./g, ',').replace(',', '.')),
-            assessment.diviseur
+            assessment.diviseur,
           )
         : theme.palette.complementary.blue.regular;
 

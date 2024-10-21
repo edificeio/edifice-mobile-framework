@@ -63,7 +63,7 @@ const getInitialDate = (course: Course, eventType: CallEventType, event?: CallEv
 const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {
   const [isEventAlreadyExisting] = React.useState<boolean>(props.route.params.event !== undefined);
   const [date, setDate] = React.useState<Moment>(
-    getInitialDate(props.route.params.course, props.route.params.type, props.route.params.event)
+    getInitialDate(props.route.params.course, props.route.params.type, props.route.params.event),
   );
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [reasonId, setReasonId] = React.useState<number | null>(props.route.params.event?.reasonId ?? null);
@@ -106,7 +106,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             type,
             start,
             end,
-            reasonId
+            reasonId,
           );
         } else {
           await presencesService.event.update(session, event.id, student.id, callId, type, start, end, reasonId, comment);

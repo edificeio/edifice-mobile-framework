@@ -30,13 +30,13 @@ const UserExternalListItem = <
   ItemT extends DisplayUserPublicWithType & Pick<Partial<AuthLoggedAccount>, 'platform'> = DisplayUserPublicWithType &
     Pick<Partial<AuthLoggedAccount>, 'platform'>,
 >(
-  props: UserListItemProps<ItemT>
+  props: UserListItemProps<ItemT>,
 ) => {
   const { renderUserDetails, style, ...info } = props;
   const { id, platform } = info.item;
   const avatarProps: SingleAvatarProps = React.useMemo(
     () => (platform ? { size: 'xxl', source: { uri: `${platform.url}${buildRelativeUserAvatarUrl(id)}` } } : { size: 'xxl' }),
-    [platform, id]
+    [platform, id],
   );
   return (
     <View style={style}>
@@ -52,12 +52,12 @@ export const LargeHorizontalUserList = React.forwardRef(
       Pick<Partial<AuthLoggedAccount>, 'platform'>,
   >(
     props: AccountSelectListProps<ItemT>,
-    ref: React.Ref<RNFlatList<ItemT>> | null | undefined
+    ref: React.Ref<RNFlatList<ItemT>> | null | undefined,
   ) => {
     const { contentContainerStyle, itemContainerStyle, ...listProps } = props;
     const computedStyle = React.useMemo(
       () => StyleSheet.flatten([styles.accountContentContainer, contentContainerStyle]) as ViewStyle,
-      [contentContainerStyle]
+      [contentContainerStyle],
     );
     const gap = React.useMemo(() => {
       return computedStyle.columnGap ?? computedStyle.gap ?? 0;
@@ -71,11 +71,11 @@ export const LargeHorizontalUserList = React.forwardRef(
           width: (UI_SIZES.screen.width - gap) / 2 - padding,
         },
       ],
-      [gap, padding]
+      [gap, padding],
     );
     const realContentContainerStyle = React.useMemo(
       () => [styles.accountContentContainer, contentContainerStyle],
-      [contentContainerStyle]
+      [contentContainerStyle],
     );
     const realItemContainerStyle = React.useMemo(() => [itemStyle, itemContainerStyle], [itemStyle, itemContainerStyle]);
     return (
@@ -88,5 +88,5 @@ export const LargeHorizontalUserList = React.forwardRef(
         userItemComponent={UserExternalListItem}
       />
     );
-  }
+  },
 );

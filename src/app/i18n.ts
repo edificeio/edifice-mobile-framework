@@ -174,8 +174,8 @@ export namespace I18n {
           es: 'user-lang-dropdownvalue-es',
           fr: 'user-lang-dropdownvalue-fr',
           it: 'user-lang-dropdownvalue-it',
-        }).map(([lng, i18nKey]) => [lng, get(i18nKey, { fallbackLng, lng })])
-      )
+        }).map(([lng, i18nKey]) => [lng, get(i18nKey, { fallbackLng, lng })]),
+      ),
     );
   };
 

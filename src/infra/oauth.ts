@@ -92,7 +92,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private static DEFAULT_HEADERS = {
     // tslint:disable-next-line:prettier
-    'Accept': 'application/json, application/x-www-form-urlencoded',
+    Accept: 'application/json, application/x-www-form-urlencoded',
     'Content-Type': 'application/x-www-form-urlencoded',
     'X-Device-Id': uniqueId,
   };
@@ -133,12 +133,12 @@ export class OAuth2RessourceOwnerPasswordClient {
   public authErrorFactory(
     type: Error.ErrorTypes<typeof Error.OAuth2Error>,
     error: string,
-    cause?: Error
+    cause?: Error,
   ): InstanceType<typeof Error.OAuth2Error>;
   public authErrorFactory(
     bodyOrType: { error: string; error_description?: string } | Error.ErrorTypes<typeof Error.OAuth2Error>,
     error?: string,
-    cause?: Error
+    cause?: Error,
   ): InstanceType<typeof Error.OAuth2Error> {
     let type: Error.ErrorTypes<typeof Error.OAuth2Error> | undefined;
 
@@ -209,7 +209,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers: {
           ...init?.headers,
           'Accept-Language': I18n.getLanguage(),
-          'Authorization': 'Bearer ' + token.access_token,
+          Authorization: 'Bearer ' + token.access_token,
           'X-APP': 'mobile',
           'X-APP-NAME': DeviceInfo.getApplicationName(),
           'X-APP-VERSION': DeviceInfo.getReadableVersion(),
@@ -220,7 +220,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     } else {
       throw new Error.FetchError(
         Error.FetchErrorType.NOT_AUTHENTICATED,
-        'EAUTH: Only Bearer token type supported. Given ' + token.token_type
+        'EAUTH: Only Bearer token type supported. Given ' + token.token_type,
       );
     }
   }
@@ -229,7 +229,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     if (!this.hasToken) {
       throw new Error.FetchError(
         Error.FetchErrorType.NOT_AUTHENTICATED,
-        'EAUTH: Unable to sign request without active access token.'
+        'EAUTH: Unable to sign request without active access token.',
       );
     }
 
@@ -691,7 +691,7 @@ export const urlSigner = {
     if (!OAuth2RessourceOwnerPasswordClient.connection)
       throw new Error.FetchError(
         Error.FetchErrorType.NOT_AUTHENTICATED,
-        '[oAuth2] urlSigner.getDummySignedRequest: no active token'
+        '[oAuth2] urlSigner.getDummySignedRequest: no active token',
       );
     return OAuth2RessourceOwnerPasswordClient.connection.signRequest('<dummy request>');
   },
@@ -749,7 +749,7 @@ export const urlSigner = {
       | ImageRequireSource
       | (ImageURISource & { isLocal?: boolean })[]
       | (Source & { isLocal?: boolean })
-      | undefined
+      | undefined,
   ) => {
     if (URISource === undefined) return URISource;
     if (typeof URISource === 'number') return URISource;
@@ -793,7 +793,7 @@ export function initOAuth2(platform: Platform) {
     `${platform.url}/auth/oauth2/token`,
     platform.oauth.client_id,
     platform.oauth.client_secret,
-    createAppScopesLegacy()
+    createAppScopesLegacy(),
   );
 }
 

@@ -210,7 +210,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
       headerTitle: navBarTitle(
         I18n.get(isSavedDraft ? 'conversation-newmail-draft' : 'conversation-newmail-newmessage'),
-        styles.title
+        styles.title,
       ),
     });
 
@@ -252,7 +252,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                 style: 'default',
                 text: I18n.get('common-continue'),
               },
-            ]
+            ],
           );
         }
       }
@@ -324,13 +324,13 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                       Trackers.trackEventOfModule(
                         moduleConfig,
                         'Ecrire un mail',
-                        'Rédaction mail - Sortir - Supprimer le brouillon - Succès'
+                        'Rédaction mail - Sortir - Supprimer le brouillon - Succès',
                       );
                     } catch {
                       Trackers.trackEventOfModule(
                         moduleConfig,
                         'Ecrire un mail',
-                        'Rédaction mail - Sortir - Supprimer le brouillon - Échec'
+                        'Rédaction mail - Sortir - Supprimer le brouillon - Échec',
                       );
                     }
                     backAction();
@@ -352,7 +352,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                   'Ecrire un mail',
                   isSavedDraft
                     ? 'Rédaction mail - Sortir - Annuler les modifications - Succès'
-                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès'
+                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
                 );
               } catch {
                 Trackers.trackEventOfModule(
@@ -360,7 +360,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                   'Ecrire un mail',
                   isSavedDraft
                     ? 'Rédaction mail - Sortir - Annuler les modifications - Échec'
-                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec'
+                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
                 );
               }
               backAction();
@@ -375,13 +375,13 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
-                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Succès'
+                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Succès',
                 );
               } catch {
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
-                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec'
+                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec',
                 );
               }
               backAction();
@@ -396,7 +396,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           Platform.select({
             android: options,
             ios: [...options].reverse(),
-          })
+          }),
         );
       } else {
         if ((isNewDraft && id) || (!isNewDraft && !isSavedDraft && id && id !== mailId)) {
@@ -432,7 +432,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
               style: 'cancel',
               text: I18n.get('common-cancel'),
             },
-          ]
+          ],
         );
         return;
       }
@@ -746,7 +746,7 @@ const mapDispatchToProps = (dispatch: any) => {
       trashMessage: trashMailsAction,
       updateDraft: updateDraftMailAction,
     },
-    dispatch
+    dispatch,
   );
 };
 

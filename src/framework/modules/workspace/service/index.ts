@@ -32,12 +32,12 @@ type IEntcoreWorkspaceDocument = {
   _id: string;
   name: string;
   metadata: {
-    'name': 'file';
-    'filename': string;
+    name: 'file';
+    filename: string;
     'content-type': string;
     'content-transfer-encoding': string;
-    'charset': 'UTF-8';
-    'size': number;
+    charset: 'UTF-8';
+    size: number;
   };
   deleted: boolean;
   eParent: string | null;
@@ -244,7 +244,7 @@ const workspaceService = {
       session: AuthLoggedAccount,
       files: LocalFile[],
       params: IWorkspaceUploadParams,
-      callbacks?: IUploadCallbaks
+      callbacks?: IUploadCallbaks,
     ) => {
       return files.map(f => workspaceService.file.startUploadFile(session, f, params, callbacks));
     },

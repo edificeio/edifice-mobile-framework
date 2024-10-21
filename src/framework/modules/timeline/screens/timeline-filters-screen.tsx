@@ -163,7 +163,7 @@ const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s 
   return {
     notifFilters:
       ts?.notifDefinitions?.notifFilters?.data?.sort((a, b) =>
-        I18n.get(a.i18n).localeCompare(I18n.get(b.i18n), I18n.getLanguage())
+        I18n.get(a.i18n).localeCompare(I18n.get(b.i18n), I18n.getLanguage()),
       ) || [],
     notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
   };
@@ -171,7 +171,7 @@ const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s 
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
+  getState: () => IGlobalState,
 ) => ITimelineFiltersScreenEventProps = (dispatch, getState) => ({
   handleSetFilters: async (selectedFilters: INotifFilterSettings) => {
     await dispatch(setFiltersAction(selectedFilters));

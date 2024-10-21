@@ -13,6 +13,6 @@ export const useSyncRef = <T extends any>(...refs: React.Ref<T>[]) => {
         }
       });
     },
-    [refs]
+    [refs],
   );
 };

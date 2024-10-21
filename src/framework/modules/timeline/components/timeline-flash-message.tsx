@@ -24,15 +24,15 @@ interface ITimelineFlashMessageState {
 }
 
 const flashMessageColors: Record<NonNullable<IEntcoreFlashMessage['color']>, Pick<IShades, 'pale' | 'light' | 'regular'>> = {
-  'blue': theme.palette.complementary.blue,
-  'green': theme.palette.complementary.green,
+  blue: theme.palette.complementary.blue,
+  green: theme.palette.complementary.green,
   'grey-dark': {
     light: theme.palette.grey.cloudy,
     pale: theme.palette.grey.pearl,
     regular: theme.palette.grey.stone,
   },
-  'orange': theme.palette.complementary.orange,
-  'red': theme.palette.complementary.red,
+  orange: theme.palette.complementary.orange,
+  red: theme.palette.complementary.red,
 };
 
 const styles = StyleSheet.create({

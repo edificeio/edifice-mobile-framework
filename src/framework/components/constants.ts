@@ -25,10 +25,10 @@ const getScaleDimension = (dimension: number, type: ScaleDimensionType) =>
           type === ScaleDimensionType.HEIGHT
             ? screenDimensions.height / standardScreenDimensions.height
             : screenDimensions.width / standardScreenDimensions.width,
-          SCALE_DIMENSION_MAX
+          SCALE_DIMENSION_MAX,
         ),
-        SCALE_DIMENSION_MIN
-      )
+        SCALE_DIMENSION_MIN,
+      ),
   );
 
 export const getScaleFontSize = (size: number) => getScaleDimension(size, ScaleDimensionType.FONT);

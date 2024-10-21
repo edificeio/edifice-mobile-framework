@@ -16,23 +16,23 @@ import { resourceRightFilter } from '~/framework/util/resourceRights';
 // Types
 
 export interface Blog {
-  'id': string;
-  'visibility': string;
-  'title': string;
-  'thumbnail'?: string;
-  'trashed'?: boolean;
+  id: string;
+  visibility: string;
+  title: string;
+  thumbnail?: string;
+  trashed?: boolean;
   'comment-type': string;
   'publish-type': string;
-  'description'?: string;
-  'created': Moment;
-  'modified': Moment;
-  'author': { userId: string; username: string; login: string };
-  'shared'?: ({
+  description?: string;
+  created: Moment;
+  modified: Moment;
+  author: { userId: string; username: string; login: string };
+  shared?: ({
     [key: string]: boolean | string | undefined;
   } & {
     [key in 'userId' | 'groupId']: string;
   })[];
-  'fetchPosts': Omit<BlogPost, 'content'>[];
+  fetchPosts: Omit<BlogPost, 'content'>[];
 }
 export type BlogList = Blog[];
 
@@ -147,7 +147,7 @@ export const actionTypes = {
  */
 export const computeFoldersHierarchy = <FolderType extends BlogFolder = BlogFolder>(
   folders: BlogFolder[],
-  callback?: (f: BlogFolder) => FolderType
+  callback?: (f: BlogFolder) => FolderType,
 ) => {
   const ret = [] as (BlogFolderWithChildren & FolderType)[];
   const cleanFolders = folders.map(f => {
@@ -227,7 +227,7 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends BlogFolder = Blo
           ...((f.children as ({ depth?: number } & BlogFolderWithChildren & FolderType)[])?.filter(ff => ff.depth === undefined) ||
             []),
         ] as typeof allHierarchy.folders,
-      [] as typeof allHierarchy.folders
+      [] as typeof allHierarchy.folders,
     );
     ++depth;
   } while (!done);
@@ -241,7 +241,7 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends BlogFolder = Blo
 
 export const getPublishableBlogs = (session: AuthLoggedAccount, blogs: BlogList) => {
   const publishableBlogs = (resourceRightFilter(blogs, createBlogPostResourceRight, session) as BlogList).filter(
-    (blog: Blog) => !blog.trashed
+    (blog: Blog) => !blog.trashed,
   );
   return publishableBlogs;
 };

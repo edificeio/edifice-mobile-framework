@@ -43,6 +43,6 @@ export default connect(
       {
         // @scaffolder add dispatchProps here. Name must start with 'handle'.
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(UserNotifPrefsScreen);

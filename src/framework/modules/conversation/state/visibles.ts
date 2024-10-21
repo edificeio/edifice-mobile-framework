@@ -41,7 +41,7 @@ export const searchVisibles = (
   query: string,
   omitResults?: (IVisibleGroup | IVisibleUser)[],
   limit?: number,
-  threshold?: number
+  threshold?: number,
 ) => {
   const queryWords = computeSearchQuery(query);
   const computeScoreString = (s: string) =>

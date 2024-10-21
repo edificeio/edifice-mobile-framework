@@ -24,7 +24,7 @@ export const startUploadFileAction =
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -37,7 +37,7 @@ export const startUploadFilesAction =
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -50,7 +50,7 @@ export const uploadFileAction =
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -63,7 +63,7 @@ export const uploadFilesAction =
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -75,7 +75,7 @@ export const startDownloadFileAction =
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -87,7 +87,7 @@ export const startDownloadFilesAction =
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -99,7 +99,7 @@ export const downloadFileAction =
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
@@ -111,7 +111,7 @@ export const downloadFilesAction =
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();

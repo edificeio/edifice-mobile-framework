@@ -41,7 +41,7 @@ export class PDFReader extends React.PureComponent<
   };
 
   handlePressLink(
-    uri: string | ((session: AuthLoggedAccount) => string | false | Promise<string | false | undefined> | undefined) | undefined
+    uri: string | ((session: AuthLoggedAccount) => string | false | Promise<string | false | undefined> | undefined) | undefined,
   ) {
     openUrl(uri);
   }

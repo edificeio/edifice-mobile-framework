@@ -51,7 +51,7 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
         toValue: TOAST_PROGESS_ANIMATION_END_VALUE,
         useNativeDriver: false,
       }),
-    [duration, progressValue]
+    [duration, progressValue],
   );
   const progressStyle = React.useMemo(() => {
     return [
@@ -111,7 +111,7 @@ function ToastCard(params: ToastParams) {
       ) : (
         <IconButton icon="ui-close" action={closeCallback!} />
       ),
-    [measureProgressLayout, params.props.duration, progressStyle]
+    [measureProgressLayout, params.props.duration, progressStyle],
   );
 
   const containerProps = React.useMemo(
@@ -120,7 +120,7 @@ function ToastCard(params: ToastParams) {
       onTouchStart: onPause,
       testID: params.props.testID,
     }),
-    [onPause, onResume, params.props.testID]
+    [onPause, onResume, params.props.testID],
   );
 
   return (

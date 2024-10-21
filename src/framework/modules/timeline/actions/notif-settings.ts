@@ -95,7 +95,7 @@ export const updatePushNotifsSettingsAction =
           id: 'timeline/push-notifications',
           text: I18n.get('timeline-notifsettings-error-text'),
           type: 'error',
-        })
+        }),
       );
     }
   };

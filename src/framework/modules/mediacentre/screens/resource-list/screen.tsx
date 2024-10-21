@@ -165,6 +165,6 @@ export default connect(
         tryRemoveFavorite: tryAction(removeFavoriteAction),
         trySearchResources: tryAction(searchResourcesAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(MediacentreResourceListScreen);

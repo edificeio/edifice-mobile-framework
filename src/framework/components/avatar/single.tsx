@@ -31,7 +31,7 @@ const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
         width: AvatarSizes[props.size],
       },
     ],
-    [props.size, props.style]
+    [props.size, props.style],
   );
 };
 
@@ -83,7 +83,7 @@ const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): I
 
 const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
   props: SpecificProps,
-  error: boolean
+  error: boolean,
 ): ImageProps['source'] =>
   React.useMemo(
     () => getAvatarImage(props as SingleAvatarOnlySpecificProps, error),
@@ -99,7 +99,7 @@ const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
       (props as SingleAvatarUnknownSpecificProps).userId,
       error,
-    ]
+    ],
   );
 
 const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatarProps => {

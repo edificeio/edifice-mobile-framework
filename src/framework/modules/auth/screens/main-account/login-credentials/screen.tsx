@@ -70,6 +70,6 @@ export default connect(
           track: track.loginCredentials,
         }),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(AuthLoginCredentialsScreen);

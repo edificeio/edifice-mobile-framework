@@ -530,64 +530,64 @@ export default connect(
         createFolder: tryActionLegacy(
           createWorkspaceFolderAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['createFolder'],
         deleteFiles: tryActionLegacy(
           deleteWorkspaceFilesAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['deleteFiles'],
         downloadFiles: tryActionLegacy(
           downloadWorkspaceFilesAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['downloadFiles'],
         duplicateFiles: tryActionLegacy(
           copyWorkspaceFilesAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['duplicateFiles'],
         fetchFiles: tryActionLegacy(
           fetchWorkspaceFilesAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['fetchFiles'],
         listFolders: tryActionLegacy(
           listWorkspaceFoldersAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['listFolders'],
         moveFiles: tryActionLegacy(
           moveWorkspaceFilesAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['moveFiles'],
         previewFile: tryActionLegacy(
           downloadThenOpenWorkspaceFileAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['previewFile'],
         renameFile: tryActionLegacy(
           renameWorkspaceFileAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['renameFile'],
         restoreFiles: tryActionLegacy(
           restoreWorkspaceFilesAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['restoreFiles'],
         trashFiles: tryActionLegacy(
           trashWorkspaceFilesAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['trashFiles'],
         uploadFile: tryActionLegacy(
           uploadWorkspaceFileAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFileListScreenProps['uploadFile'],
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(WorkspaceFileListScreen);

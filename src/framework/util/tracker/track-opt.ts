@@ -23,7 +23,7 @@ export interface TrackValuesMap {
 export const makeTrackOption =
   <Args extends any[], ReturnType>(
     mConf: Pick<IAnyModuleConfig, 'trackingName'>,
-    trackValues: TrackValuesMap | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackValuesMap)
+    trackValues: TrackValuesMap | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackValuesMap),
   ): TryActionOptions<Args, ReturnType>['track'] =>
   (returnedValue: Awaited<ReturnType> | Error, ...args: Args) => {
     const values = typeof trackValues === 'function' ? trackValues(returnedValue, ...args) : trackValues;
@@ -67,7 +67,7 @@ export const trackScenarios = <Scenarios>(items: { [name in keyof Scenarios]: Om
     (Object.entries(items) as [keyof Scenarios, Omit<TrackValuesMap, typeof TRACK_NAME>][]).map(([k, v]) => [
       k,
       trackScenario<Scenarios>(k, v),
-    ])
+    ]),
   ) as {
     [name in keyof typeof items]: ReturnType<typeof trackScenario>;
   };

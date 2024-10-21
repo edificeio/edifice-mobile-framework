@@ -40,11 +40,11 @@ export default connect(
           tryAction(loginFederationActionAddAnotherAccount, {
             track: track.loginFederation,
           }),
-          { track: track.addAccount }
+          { track: track.addAccount },
         ),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(function AuthWayfAddAccountScreen(props: AuthWayfAddAccountScreenPrivateProps) {
   return (
     <WayfScreen

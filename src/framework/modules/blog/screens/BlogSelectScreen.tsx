@@ -95,7 +95,7 @@ const mapStateToProps: (s: IGlobalState) => BlogSelectScreenDataProps = s => ({ 
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
+  getState: () => IGlobalState,
 ) => BlogSelectScreenEventProps = dispatch => ({
   handleGetPublishableBlogList: async () => {
     const blogs = (await dispatch(getPublishableBlogListAction())) as unknown as BlogList;

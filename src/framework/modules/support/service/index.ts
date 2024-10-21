@@ -23,7 +23,7 @@ export const supportService = {
       structure: string,
       subject: string,
       description: string,
-      attachments?: SyncedFileWithId[]
+      attachments?: SyncedFileWithId[],
     ) => {
       const api = '/support/ticket';
       const body = JSON.stringify({

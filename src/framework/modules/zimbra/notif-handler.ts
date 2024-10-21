@@ -40,7 +40,7 @@ const handleZimbraNotificationAction: NotifHandlerThunkAction =
                 id: notif.resource.id,
                 subject: notif.backupData.params.subject,
               },
-            }
+            },
       );
 
       handleNotificationNavigationAction(navAction);
@@ -58,7 +58,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': 'SEND-MESSAGE',
-      'notifHandlerAction': handleZimbraNotificationAction,
-      'type': 'MESSAGERIE',
+      notifHandlerAction: handleZimbraNotificationAction,
+      type: 'MESSAGERIE',
     },
   ]);

@@ -74,7 +74,7 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
                   ? 'form-distribution-submissionmodal-lowertext-replace'
                   : props.editable
                     ? 'form-distribution-submissionmodal-lowertext-editable'
-                    : 'form-distribution-submissionmodal-lowertext-default'
+                    : 'form-distribution-submissionmodal-lowertext-default',
               )}
             </SmallText>
             <PrimaryButton

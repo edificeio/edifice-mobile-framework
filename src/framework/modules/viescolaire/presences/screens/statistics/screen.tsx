@@ -78,13 +78,13 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
     return {
       DEPARTURE: {
         events: statistics.DEPARTURE.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
         ),
       },
       FORGOTTEN_NOTEBOOK: {
         events:
           statistics.FORGOTTEN_NOTEBOOK?.events.filter(
-            e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate)
+            e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate),
           ) ?? [],
       },
       INCIDENT: {
@@ -94,28 +94,28 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
       },
       LATENESS: {
         events: statistics.LATENESS.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
         ),
       },
       NO_REASON: {
         events: statistics.NO_REASON.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
         ),
       },
       PUNISHMENT: {
         events:
           statistics.PUNISHMENT?.events.filter(
-            e => e.createdAt.isSameOrAfter(term.startDate) && e.createdAt.isSameOrBefore(term.endDate)
+            e => e.createdAt.isSameOrAfter(term.startDate) && e.createdAt.isSameOrBefore(term.endDate),
           ) ?? [],
       },
       REGULARIZED: {
         events: statistics.REGULARIZED.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
         ),
       },
       UNREGULARIZED: {
         events: statistics.UNREGULARIZED.events.filter(
-          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate)
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
         ),
       },
     };
@@ -202,6 +202,6 @@ export default connect(
         tryFetchTerms: tryAction(fetchPresencesTermsAction),
         tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(PresencesStatisticsScreen);

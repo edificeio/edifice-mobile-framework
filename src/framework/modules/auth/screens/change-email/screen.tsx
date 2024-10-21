@@ -104,7 +104,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         setIsSendingCode(false);
       }
     },
-    [isModifyingEmail, modificationType, navigation, platform, route]
+    [isModifyingEmail, modificationType, navigation, platform, route],
   );
 
   const sendEmail = useCallback(async () => {
@@ -117,7 +117,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
       setEmail(text);
     },
-    [isEmailStatePristine]
+    [isEmailStatePristine],
   );
 
   const refuseEmailVerification = useCallback(async () => {
@@ -208,7 +208,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChange
     {
       tryLogout: tryAction(manualLogoutAction),
     },
-    dispatch
+    dispatch,
   );
 };
 

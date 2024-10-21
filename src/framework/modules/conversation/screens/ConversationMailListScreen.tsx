@@ -281,7 +281,7 @@ const mapDispatchToProps = dispatch => {
         'Inbox/Dossier/Outbox - Balayage - Mettre à la corbeille',
       ]),
     },
-    dispatch
+    dispatch,
   );
 };
 
@@ -309,5 +309,5 @@ registerCustomRouteTracking(
       }
     };
     return `${moduleConfig.routeName}/${getValue()}`;
-  }
+  },
 );

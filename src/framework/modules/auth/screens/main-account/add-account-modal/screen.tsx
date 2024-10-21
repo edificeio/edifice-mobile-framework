@@ -56,7 +56,7 @@ export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScre
       trackNavState(state);
       manageNavSnow();
     },
-    [manageNavSnow, trackNavState]
+    [manageNavSnow, trackNavState],
   );
   const navigator = React.useMemo(
     () => (
@@ -64,7 +64,7 @@ export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScre
         <RootStack.Navigator screenOptions={{ headerShown: false }}>{routes}</RootStack.Navigator>
       </NavigationContainer>
     ),
-    [navigationState, onStateChange, RootStack, routes]
+    [navigationState, onStateChange, RootStack, routes],
   );
   return navigator;
 }

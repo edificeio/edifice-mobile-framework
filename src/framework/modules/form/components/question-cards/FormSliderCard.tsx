@@ -54,7 +54,7 @@ const getDefaultValue = (min: number, max: number, step: number) => {
 export const FormSliderCard = ({ isDisabled, onChangeAnswer, onEditQuestion, question, responses }: IFormSliderCardProps) => {
   const { cursorMaxLabel, cursorMaxVal = 100, cursorMinLabel, cursorMinVal = 0, cursorStep = 1, mandatory, title } = question;
   const [value, setValue] = React.useState(
-    responses[0]?.answer ? Number(responses[0]?.answer) : getDefaultValue(cursorMinVal, cursorMaxVal, cursorStep)
+    responses[0]?.answer ? Number(responses[0]?.answer) : getDefaultValue(cursorMinVal, cursorMaxVal, cursorStep),
   );
   const [isLabelExpanded, setLabelExpanded] = React.useState(false);
   const position = ((value - cursorMinVal) / (cursorMaxVal - cursorMinVal)) * 100;

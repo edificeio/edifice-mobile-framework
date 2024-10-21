@@ -73,5 +73,5 @@ export default connect(
   (state: IGlobalState) => ({
     session: getSession(),
   }),
-  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch)
+  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
 )(ConnectorSelectorScreen);

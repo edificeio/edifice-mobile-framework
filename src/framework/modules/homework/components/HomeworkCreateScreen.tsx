@@ -40,7 +40,7 @@ export interface HomeworkCreateScreenEventProps {
     date: Moment,
     title: string,
     content: string,
-    uploadedEntryImages?: SyncedFile[]
+    uploadedEntryImages?: SyncedFile[],
   ): Promise<string | undefined>;
   handleGetHomeworkTasks(diaryId: string): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;

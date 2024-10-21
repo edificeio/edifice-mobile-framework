@@ -174,6 +174,6 @@ export default connect(
         tryFetchDomaines: tryAction(fetchCompetencesDomainesAction),
         tryFetchLevels: tryAction(fetchCompetencesLevelsAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(CompetencesAssessmentScreen);

@@ -265,7 +265,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       await this.refreshMailList();
       await fetchInit();
       Toast.showSuccess(
-        I18n.get(isTrashedOrDraft ? 'conversation-maillist-messagedeleted' : 'conversation-maillist-messagetrashed')
+        I18n.get(isTrashedOrDraft ? 'conversation-maillist-messagedeleted' : 'conversation-maillist-messagetrashed'),
       );
     } catch {
       // TODO: Manage error
@@ -536,7 +536,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                               },
                               actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
                               actionText: I18n.get(
-                                item.unread ? 'conversation-maillist-markread' : 'conversation-maillist-markunread'
+                                item.unread ? 'conversation-maillist-markread' : 'conversation-maillist-markunread',
                               ),
                               backgroundColor: theme.palette.secondary.regular,
                             },

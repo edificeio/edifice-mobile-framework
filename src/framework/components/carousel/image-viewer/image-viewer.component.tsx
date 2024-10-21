@@ -115,7 +115,7 @@ export default class ImageViewer extends React.Component<Props, State> {
           toValue: 1,
           useNativeDriver: false,
         }).start();
-      }
+      },
     );
   }
 
@@ -342,7 +342,7 @@ export default class ImageViewer extends React.Component<Props, State> {
         if (this.props.onChange) {
           this.props.onChange(this.state.currentShowIndex);
         }
-      }
+      },
     );
   };
 
@@ -375,7 +375,7 @@ export default class ImageViewer extends React.Component<Props, State> {
         if (this.props.onChange) {
           this.props.onChange(this.state.currentShowIndex);
         }
-      }
+      },
     );
   };
 
@@ -634,7 +634,7 @@ export default class ImageViewer extends React.Component<Props, State> {
           {this!.props!.renderIndicator!(
             (this.state.currentShowIndex || 0) + 1,
             this.props.imageUrls.length,
-            this.state.imageSizes?.[this.state.currentShowIndex || 0]?.status
+            this.state.imageSizes?.[this.state.currentShowIndex || 0]?.status,
           )}
 
           {this.props.imageUrls[this.state.currentShowIndex || 0] &&
@@ -664,7 +664,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     } else {
       this.props.onSave(
         this.props.imageUrls[this.state.currentShowIndex || 0].url ||
-          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source
+          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source,
       );
     }
 
@@ -675,7 +675,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     if (this.props.onShare) {
       this.props.onShare(
         this.props.imageUrls[this.state.currentShowIndex || 0].url ||
-          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source
+          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source,
       );
     }
 

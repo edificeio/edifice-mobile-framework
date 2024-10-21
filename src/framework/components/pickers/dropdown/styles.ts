@@ -87,7 +87,7 @@ export const getToggleStyle = (
   size: DropdownSize,
   isOpened: boolean,
   isItemSelected: boolean,
-  style?: StyleProp<ViewStyle>
+  style?: StyleProp<ViewStyle>,
 ) => {
   if (type === 'outlined') {
     return {

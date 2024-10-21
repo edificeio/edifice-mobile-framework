@@ -107,7 +107,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
       setLogin(value.trim().toLowerCase());
       onTextChange();
     },
-    [onTextChange]
+    [onTextChange],
   );
 
   const onPasswordChanged = React.useCallback(
@@ -115,7 +115,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
       setPassword(value);
       onTextChange();
     },
-    [onTextChange]
+    [onTextChange],
   );
 
   const onSubmitEditingLogin = React.useCallback(() => {

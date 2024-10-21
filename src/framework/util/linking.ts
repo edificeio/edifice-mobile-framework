@@ -29,7 +29,7 @@ export async function openUrl(
   customLabels?: OpenUrlCustomLabels,
   generateException?: boolean,
   showConfirmation: boolean = true,
-  autoLogin: boolean = true
+  autoLogin: boolean = true,
 ): Promise<void> {
   try {
     if (!url) {
@@ -71,7 +71,7 @@ export async function openUrl(
         ],
         {
           cancelable: true,
-        }
+        },
       );
     } else verifyAndOpenUrl(finalUrl!);
   } catch (e) {

@@ -63,7 +63,7 @@ const PictureWithXmas = connect((state: IGlobalState) => ({
 
 const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
-  props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0]
+  props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPicture };
   props.size = UI_SIZES.elements.tabbarIconSize;
@@ -162,7 +162,7 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
   const tabModulesCache = tabModules.get();
   const moduleTabStackCache = React.useMemo(
     () => tabModulesCache.map(module => <TabStack module={module} key={module.config.name} />),
-    [tabModulesCache]
+    [tabModulesCache],
   );
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
@@ -172,7 +172,7 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
         .filterAvailables(apps ?? [])
         .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [appsJson]
+    [appsJson],
   );
   const tabRoutes = React.useMemo(() => {
     return availableTabModules.map(module => {

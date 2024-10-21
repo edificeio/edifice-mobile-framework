@@ -14,7 +14,7 @@ export const imagePickedToLocalFile = (img: ImagePicked) =>
       filepath: img.uri as string,
       filetype: img.type as string,
     },
-    { _needIOSReleaseSecureAccess: false }
+    { _needIOSReleaseSecureAccess: false },
   );
 
 export { MenuAction, DocumentPicked, ImagePicked, cameraAction, deleteAction, documentAction, galleryAction, linkAction };

@@ -48,7 +48,7 @@ export default () =>
     {
       'event-type': ['INFO-SHARED', 'NEWS-PUBLISHED', 'NEWS-COMMENT', 'NEWS-UPDATE'],
       // Replace this with the backend notification event-type
-      'notifHandlerAction': handleSomeNotificationAction,
-      'type': 'NEWS',
+      notifHandlerAction: handleSomeNotificationAction,
+      type: 'NEWS',
     },
   ]);

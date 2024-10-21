@@ -14,7 +14,7 @@ export interface IReducerActionsHandlerMap<StateType> {
 
 export default function createReducer<StateType>(
   initialState: StateType,
-  reducerActionsHandlerMap: IReducerActionsHandlerMap<StateType>
+  reducerActionsHandlerMap: IReducerActionsHandlerMap<StateType>,
 ): Reducer<StateType, AnyAction> {
   return (state: StateType = initialState, action: AnyAction = { type: undefined }) => {
     return reducerActionsHandlerMap[action.type] ? reducerActionsHandlerMap[action.type](state, action) : state;
@@ -31,7 +31,7 @@ export const createEndSessionActionType = (sessionNameUppercase: string = 'SESSI
 export function createSessionReducer<StateType>(
   initialState: StateType,
   reducerActionsHandlerMap: IReducerActionsHandlerMap<StateType>,
-  sessionNamesUppercase: string[] = ['SESSION']
+  sessionNamesUppercase: string[] = ['SESSION'],
 ): Reducer<StateType, AnyAction> {
   const sessionActions = {};
   for (const sessionName of sessionNamesUppercase) {

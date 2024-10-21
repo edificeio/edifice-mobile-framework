@@ -59,7 +59,7 @@ export default () =>
               title: diaryList[diaryId].title,
             }));
             const diaryListWithCreationRight = flatDiaryList?.filter(diary =>
-              hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session)
+              hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session),
             );
             const hasOneDiary = diaryListWithCreationRight?.length === 1;
 

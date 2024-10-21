@@ -153,7 +153,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
     const navigateToHomeworks = () => {
       this.props.navigation.navigate(
         diaryRouteNames.homework,
-        homeworkListDetailsTeacherAdapter(isHomeworksInSession ? course.session.homeworks : course.homeworks, course.subject.name)
+        homeworkListDetailsTeacherAdapter(isHomeworksInSession ? course.session.homeworks : course.homeworks, course.subject.name),
       );
     };
     return (

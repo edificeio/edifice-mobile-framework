@@ -21,7 +21,7 @@ const DayCell = ({ dayOfTheWeek, dayReference, isSelected, onPress }: DayCellPro
         setCurrentFontScale(newFontScale);
       }
     },
-    [currentFontScale]
+    [currentFontScale],
   );
   React.useEffect(() => {
     const appStateListener = AppState.addEventListener('change', handleAppStateChange);

@@ -113,9 +113,9 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
   DateString?: string;
 };
 const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
-  'abs': 'pronote-transcript-value-absent',
-  'disp': 'pronote-transcript-value-exempted',
-  'inap': 'pronote-transcript-value-unfit',
+  abs: 'pronote-transcript-value-absent',
+  disp: 'pronote-transcript-value-exempted',
+  inap: 'pronote-transcript-value-unfit',
   'n.not': 'pronote-transcript-value-unrated',
   'n.rdu': 'pronote-transcript-value-unreturned',
 };
@@ -184,7 +184,7 @@ export type ICarnetDeBordVieScolaireObservation = {
 
 export function sortCarnetDeBordItems<T extends { Date?: moment.Moment; DateDebut?: moment.Moment; PourLe?: moment.Moment }>(
   items: T[],
-  reverse?: boolean
+  reverse?: boolean,
 ) {
   return items.sort((a, b) => {
     const aDate = a.Date ?? a.DateDebut ?? a.PourLe;

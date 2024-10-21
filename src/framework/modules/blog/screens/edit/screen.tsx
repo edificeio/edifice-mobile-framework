@@ -119,7 +119,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
         value={title}
       />
     ),
-    [title]
+    [title],
   );
 
   const renderPostInfos = () => {

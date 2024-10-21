@@ -204,6 +204,6 @@ export default connect(
         tryFetchQuota: tryAction(fetchZimbraQuotaAction),
         tryFetchRootFolders: tryAction(fetchZimbraRootFoldersAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(DrawerContent);

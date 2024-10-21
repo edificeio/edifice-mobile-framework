@@ -34,7 +34,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkCr
     date: Moment,
     title: string,
     content: string,
-    uploadedEntryImages?: SyncedFile[]
+    uploadedEntryImages?: SyncedFile[],
   ) => {
     return (await dispatch(createHomeworkDiaryEntry(diaryId, date, title, content, uploadedEntryImages))) as unknown as
       | string

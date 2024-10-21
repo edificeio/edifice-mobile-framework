@@ -14,7 +14,7 @@ const BottomEditorSheet = (
     onChangeText,
     onPublishComment,
   }: CommentFieldProps & Omit<BottomSheetProps, 'content'>,
-  ref
+  ref,
 ) => {
   const session = useSelector(() => getSession());
   const commentFieldRef: { current: any } = React.createRef();

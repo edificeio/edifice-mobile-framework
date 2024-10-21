@@ -65,7 +65,7 @@ export default function () {
         component={AuthForgotScreen}
         options={({ route }) => ({
           headerTitle: navBarTitle(
-            route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password')
+            route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
           ),
         })}
       />

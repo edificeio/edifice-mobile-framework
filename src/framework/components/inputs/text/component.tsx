@@ -35,7 +35,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
   const isShowIconCallback = useMemo(
     () => (showError || showSuccess) && showIconCallback,
-    [showError, showSuccess, showIconCallback]
+    [showError, showSuccess, showIconCallback],
   );
 
   // padding right input management if have icon success || error or if have toggle icon or both :)
@@ -48,7 +48,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
           : isShowIconCallback
             ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor
             : UI_SIZES.spacing.medium,
-    [toggleIconOn, toggleIconOff, isShowIconCallback]
+    [toggleIconOn, toggleIconOff, isShowIconCallback],
   );
   // position icon success || error management if have toggle icon or not
   const positionIconCallbackInput = useMemo(
@@ -56,7 +56,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       toggleIconOn && toggleIconOff
         ? UI_SIZES.spacing.medium + 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE
         : UI_SIZES.spacing.medium,
-    [toggleIconOn, toggleIconOff]
+    [toggleIconOn, toggleIconOff],
   );
 
   const colorStatus = useCallback((): ColorValue => {
@@ -73,7 +73,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       setIsFocused(true);
       if (onFocus) onFocus(e);
     },
-    [onFocus]
+    [onFocus],
   );
 
   const handleBlur = useCallback(
@@ -81,7 +81,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       setIsFocused(false);
       if (onBlur) onBlur(e);
     },
-    [onBlur]
+    [onBlur],
   );
 
   const handleToggle = useCallback(() => {

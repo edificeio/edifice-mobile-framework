@@ -152,7 +152,7 @@ export const WorkspaceModal = React.forwardRef<ModalBoxHandle, IWorkspaceModalPr
         }
       />
     );
-  }
+  },
 );
 
 export default WorkspaceModal;

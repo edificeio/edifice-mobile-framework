@@ -86,7 +86,7 @@ function useCurvedNavBarFeature() {
   // SVG size management
   const svgDisplayWidth = UI_SIZES.screen.width;
   const svgDisplayHeight = Math.ceil(
-    svgDisplayWidth * (useCurvedNavBarFeature.svgOriginalHeight / useCurvedNavBarFeature.svgOriginalWidth)
+    svgDisplayWidth * (useCurvedNavBarFeature.svgOriginalHeight / useCurvedNavBarFeature.svgOriginalWidth),
   );
   const svgDisplayTopOffset =
     Math.ceil(navBarHeight * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth)) -
@@ -166,7 +166,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         />
       </>
     ),
-    [navigation, session?.user.displayName, session?.user.type]
+    [navigation, session?.user.displayName, session?.user.type],
   );
 }
 
@@ -244,7 +244,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       session?.platform,
       session?.user.login,
       session?.user.loginUsed,
-    ]
+    ],
   );
 
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
@@ -424,7 +424,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       editUserInformation,
       openHelpCenter,
       splashads,
-    ]
+    ],
   );
 }
 
@@ -438,7 +438,7 @@ function useAccountsFeature(
   session: UserHomeScreenPrivateProps['session'],
   accounts: UserHomeScreenPrivateProps['accounts'],
   trySwitch: UserHomeScreenPrivateProps['trySwitch'],
-  tryRemoveAccount: UserHomeScreenPrivateProps['tryRemoveAccount']
+  tryRemoveAccount: UserHomeScreenPrivateProps['tryRemoveAccount'],
 ) {
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
@@ -489,7 +489,7 @@ function useAccountsFeature(
         redirect(item);
       }
     },
-    [accounts, loadingState, navigation, trySwitch]
+    [accounts, loadingState, navigation, trySwitch],
   );
 
   const onDeleteItem = React.useCallback(
@@ -503,7 +503,7 @@ function useAccountsFeature(
         console.error(e);
       }
     },
-    [accounts, session?.user.id, tryRemoveAccount]
+    [accounts, session?.user.id, tryRemoveAccount],
   );
 
   return React.useMemo(() => {
@@ -667,7 +667,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
       return () => {
         focusedRef.current = false;
       };
-    }, [])
+    }, []),
   );
 
   const navBarDecoration = useCurvedNavBarFeature();
@@ -720,6 +720,6 @@ export default connect(
           track: track.loginRestore,
         }),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(UserHomeScreen);

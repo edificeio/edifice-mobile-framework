@@ -23,7 +23,7 @@ const BottomMenu = (props: React.PropsWithChildren<MenuProps & { title?: string 
       },
       index => {
         props.actions[index].action();
-      }
+      },
     );
   };
 

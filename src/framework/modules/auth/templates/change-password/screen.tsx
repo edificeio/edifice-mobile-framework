@@ -53,7 +53,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
       route.params.forceChange ? (
         <AlertCard style={styles.alert} type="warning" text={I18n.get('auth-changepassword-warning')} />
       ) : null,
-    [route.params.forceChange]
+    [route.params.forceChange],
   );
 
   const passwordRules = React.useMemo(
@@ -66,7 +66,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
           </SmallText>
         </View>
       ) : null,
-    [context.passwordRegexI18n]
+    [context.passwordRegexI18n],
   );
 
   const [oldPassword, setOldPassword] = React.useState(route.params.useResetCode ? (route.params.credentials?.username ?? '') : '');
@@ -154,16 +154,16 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
         oldPassword: () => oldPassword,
         passwordRegex: context.passwordRegex,
       }),
-    [context.passwordRegex, newPassword, oldPassword]
+    [context.passwordRegex, newPassword, oldPassword],
   );
 
   const isNotValid = React.useMemo(
     () => !formModel.validate({ confirm, newPassword, oldPassword }),
-    [confirm, formModel, newPassword, oldPassword]
+    [confirm, formModel, newPassword, oldPassword],
   );
   const errorKey = React.useMemo(
     () => formModel.firstErrorKey({ confirm, newPassword, oldPassword }),
-    [confirm, formModel, newPassword, oldPassword]
+    [confirm, formModel, newPassword, oldPassword],
   );
   const errorText = React.useMemo(() => (errorKey ? I18n.get(errorKey) : typing ? undefined : error), [error, errorKey, typing]);
   const isSubmitLoading = submitState === 'RUNNING';
@@ -309,7 +309,7 @@ export const mapStateToProps: (
       | typeof authRouteNames.changePassword
       | typeof authRouteNames.changePasswordModal
       | typeof authRouteNames.addAccountChangePassword
-    >
+    >,
 ) => ChangePasswordScreenStoreProps = (state, props) => {
   return {
     context: props.route.params.platform ? getPlatformContextOf(props.route.params.platform) : getPlatformContext(),

@@ -149,7 +149,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         value={title}
       />
     ),
-    [title]
+    [title],
   );
 
   const renderPostInfos = () => {

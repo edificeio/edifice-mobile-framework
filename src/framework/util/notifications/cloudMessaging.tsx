@@ -22,7 +22,7 @@ function AppPushNotificationHandlerComponentUnconnected(
   props: PropsWithChildren<{
     isLoggedIn: boolean;
     dispatch: ThunkDispatch<any, any, any>;
-  }>
+  }>,
 ) {
   const [notification, setNotification] = useState<FirebaseMessagingTypes.RemoteMessage | undefined>(undefined);
 
@@ -76,5 +76,5 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>) => ({
 
 export const AppPushNotificationHandlerComponent = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AppPushNotificationHandlerComponentUnconnected);

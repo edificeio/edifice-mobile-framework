@@ -92,7 +92,7 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
               label: accountTypeInfos[item.profile].text,
               last: index === viewsPerProfile.length - 1,
               nb: item.counter,
-            })
+            }),
           )}
         </View>
       </PageView>

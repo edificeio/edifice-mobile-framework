@@ -201,7 +201,7 @@ export const zimbraService = {
         data => {
           attachments = JSON.parse(data).attachments as IBackendAttachment[];
           return attachments as any;
-        }
+        },
       );
       return attachments.map(attachment => attachmentAdapter(attachment, session.platform.url, draftId));
     },

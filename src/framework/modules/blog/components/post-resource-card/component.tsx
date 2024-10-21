@@ -84,5 +84,5 @@ export const BlogPostResourceCard = React.memo(
         </TouchableResourceCard>
       </ArticleContainer>
     );
-  }
+  },
 );

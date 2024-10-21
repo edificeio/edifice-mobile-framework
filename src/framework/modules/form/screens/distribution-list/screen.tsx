@@ -231,6 +231,6 @@ export default connect(
         tryFetchDistributions: tryAction(fetchFormDistributionsAction),
         tryFetchForms: tryAction(fetchFormsReceivedAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(FormDistributionListScreen);

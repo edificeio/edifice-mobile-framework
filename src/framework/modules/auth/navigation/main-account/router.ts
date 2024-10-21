@@ -27,7 +27,7 @@ const getNavRoutesForLoginRedirection = (
   account?: Pick<AuthSavedAccount | AuthActiveAccount, 'method'> & {
     user: Pick<(AuthSavedAccount | AuthActiveAccount)['user'], 'id'>;
   },
-  loginUsed?: string
+  loginUsed?: string,
 ) => {
   if (platform.redirect)
     return [
@@ -92,7 +92,7 @@ export const getNavActionsForLoginRedirection = (
   account?: Pick<AuthSavedAccount | AuthActiveAccount, 'method'> & {
     user: Pick<(AuthSavedAccount | AuthActiveAccount)['user'], 'id'>;
   },
-  loginUsed?: string
+  loginUsed?: string,
 ) => {
   return getNavRoutesForLoginRedirection(platform, account, loginUsed).map(r => CommonActions.navigate(r));
 };
@@ -122,7 +122,7 @@ export const getNavActionForOnboarding = () => {
  * @returns
  */
 export const getNavActionForAccountSwitch = (
-  account: Pick<AuthSavedAccount | AuthActiveAccount, 'platform' | 'method' | 'user'>
+  account: Pick<AuthSavedAccount | AuthActiveAccount, 'platform' | 'method' | 'user'>,
 ) => {
   const platform = appConf.getExpandedPlatform(account.platform);
   if (!platform) return undefined;
@@ -150,7 +150,7 @@ export const getNavActionForAccountLoad = (account: {
  */
 export const navigationDispatchMultiple = (
   navigation: NavigationProp<ParamListBase>,
-  actions: (CommonActions.Action | StackNavigationAction)[] | CommonActions.Action | StackNavigationAction
+  actions: (CommonActions.Action | StackNavigationAction)[] | CommonActions.Action | StackNavigationAction,
 ) => {
   if (Array.isArray(actions)) {
     actions.forEach(a => {
@@ -249,7 +249,7 @@ export const getAuthNavigationState = (
   pending: IAuthState['pending'],
   showOnboarding: IAuthState['showOnboarding'],
   requirement: IAuthState['requirement'],
-  lastDeletedAccount: IAuthState['lastDeletedAccount']
+  lastDeletedAccount: IAuthState['lastDeletedAccount'],
 ) => {
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;

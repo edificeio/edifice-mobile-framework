@@ -109,7 +109,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
       // If there is no Html, try to load it
       if (!getContentFromResource || !source)
         throw new Error(
-          "HtmlContentView: When the html prop isn't provided, you must provide both the `getContentFromResource` and `source` props."
+          "HtmlContentView: When the html prop isn't provided, you must provide both the `getContentFromResource` and `source` props.",
         );
       if (loading) return;
 

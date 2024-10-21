@@ -94,8 +94,8 @@ export const uploadBlogPostImagesAction =
             }
           : {
               parent: 'protected',
-            }
-      )
+            },
+      ),
     );
   };
 

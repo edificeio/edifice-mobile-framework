@@ -25,7 +25,7 @@ export const resetNavigation = (routes: RouteStack, index?: number) => {
     CommonActions.reset({
       index: index ?? 0,
       routes,
-    })
+    }),
   );
 };
 

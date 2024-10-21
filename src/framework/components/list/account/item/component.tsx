@@ -46,7 +46,7 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
 
   const avatarProps = React.useMemo(
     () => (getAvatarSource ? { source: getAvatarSource({ index, item, separators }) } : { userId: id }),
-    [getAvatarSource, id, index, item, separators]
+    [getAvatarSource, id, index, item, separators],
   );
 
   return (

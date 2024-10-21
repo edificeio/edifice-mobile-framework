@@ -112,7 +112,7 @@ export function renderNuggets(
     [HtmlParserNuggetTypes.Iframe]: ViewStyle;
     [HtmlParserNuggetTypes.Audio]: ViewStyle;
     [HtmlParserNuggetTypes.Video]: ViewStyle;
-  }
+  },
 ): JSX.Element {
   return (
     <View>
@@ -171,7 +171,7 @@ function renderParseText(
     [HtmlParserJsxTextVariant.Link]?: TextStyle;
   },
   nested: boolean = false,
-  selectable: boolean = false
+  selectable: boolean = false,
 ): JSX.Element {
   // -1 - Default opts
   textStyles = {

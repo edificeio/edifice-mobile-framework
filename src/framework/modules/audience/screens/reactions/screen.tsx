@@ -74,7 +74,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
         <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
       </>
     ),
-    [loadingState]
+    [loadingState],
   );
 
   const loadData = React.useCallback(async () => {
@@ -87,7 +87,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
           resourceType,
         },
         nextPageToFetchState,
-        PAGE_SIZE
+        PAGE_SIZE,
       )) as AudienceReactions;
       setNextPageToFetch(dt.userReactions.length === 0 ? -1 : nextPageToFetchState + 1);
       setUserReactions([...userReactions, ...dt.userReactions]);
@@ -143,7 +143,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
     );
   };
   const renderTabBar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> }
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
   ) => {
     return (
       <TabBar
@@ -177,5 +177,5 @@ export default connect(
   },
   (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => () => ({
     dispatch,
-  })
+  }),
 )(AudienceReactionsScreen);

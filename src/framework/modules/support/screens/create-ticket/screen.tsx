@@ -223,9 +223,9 @@ export default connect(
         uploadAttachments: tryActionLegacy(
           uploadSupportTicketAttachmentsAction,
           undefined,
-          true
+          true,
         ) as unknown as ISupportCreateTicketScreenEventProps['uploadAttachments'],
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(SupportCreateTicketScreen);

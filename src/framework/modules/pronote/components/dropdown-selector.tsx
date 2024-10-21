@@ -108,7 +108,7 @@ export default function DropdownSelectorTemplate(props: DropdownSelectorTemplate
 
 DropdownSelectorTemplate.renderButton = (
   buttonProps: Required<DropdownSelectorTemplateProps>['button'],
-  selected: DropDownPickerProps<any>['value']
+  selected: DropDownPickerProps<any>['value'],
 ) => {
   const { action, disabled, url, ...otherButtonProps } = buttonProps;
   return (

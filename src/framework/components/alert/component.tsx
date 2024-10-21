@@ -51,7 +51,7 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
       },
       styles.cardShadowContainer,
     ],
-    [colorShades.pale]
+    [colorShades.pale],
   );
   const pictureWithColor = React.useMemo(
     () => ({
@@ -65,7 +65,7 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
             width: UI_SIZES.elements.icon.default,
           } as PictureProps)),
     }),
-    [colorShades, picture, type]
+    [colorShades, picture, type],
   );
 
   return { cardBorderStyle, cardContentStyle, cardShadowContainerStyle, colorShades, pictureWithColor };
@@ -101,7 +101,7 @@ export function AlertCard(props: AlertCardProps) {
         {closeButton}
       </>
     ),
-    [label, onLabelPress, pictureWithColor, closeButton, text]
+    [label, onLabelPress, pictureWithColor, closeButton, text],
   );
 
   /* must decompose card and shadow because of overflow:hidden */
@@ -112,11 +112,11 @@ export function AlertCard(props: AlertCardProps) {
         <View style={cardContentStyle}>{cardContent}</View>
       </View>
     ),
-    [cardBorderStyle, cardContent, cardContentStyle, containerProps, style, testID]
+    [cardBorderStyle, cardContent, cardContentStyle, containerProps, style, testID],
   );
 
   return React.useMemo(
     () => (shadow ? <View style={[cardShadowContainerStyle, style]}>{cardContainer}</View> : cardContainer),
-    [cardContainer, cardShadowContainerStyle, shadow, style]
+    [cardContainer, cardShadowContainerStyle, shadow, style],
   );
 }

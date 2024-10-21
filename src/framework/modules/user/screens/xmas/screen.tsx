@@ -70,7 +70,7 @@ const XmasScreenConnected = connect(
     onSetXmasTheme(xmasTheme: boolean) {
       dispatch(setXmasThemeAction(xmasTheme));
     },
-  })
+  }),
 )(XmasScreen);
 
 export default XmasScreenConnected;

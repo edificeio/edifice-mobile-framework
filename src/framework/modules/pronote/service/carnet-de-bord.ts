@@ -348,7 +348,7 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
 function carnetDeBordAdapterParent(
   eleve: any,
   connector: IPronoteConnectorInfo,
-  children: UserChildrenFlattened
+  children: UserChildrenFlattened,
 ): ICarnetDeBord | undefined {
   const found = {} as { firstName?: string; lastName?: string; idPronote?: string };
   for (const tag of eleve) {
@@ -430,7 +430,7 @@ export default {
           const url = await redirect(session, app.address, undefined, true);
           if (url) await fetch(url);
           CookieManager.clearAll(); // No signature needed here, it's external url containing a custom ticket
-        })
+        }),
       );
       // Then, retry
       data = await fetchWithCache(api, undefined, undefined, undefined, async r => r);

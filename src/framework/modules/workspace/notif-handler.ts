@@ -96,12 +96,12 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['SHARE-FOLDER', 'CONTRIB-FOLDER'],
-      'notifHandlerAction': handleWorkspaceShareFolderNotificationAction,
-      'type': 'WORKSPACE',
+      notifHandlerAction: handleWorkspaceShareFolderNotificationAction,
+      type: 'WORKSPACE',
     },
     {
       'event-type': 'SHARE',
-      'notifHandlerAction': handleWorkspaceShareNotificationAction,
-      'type': 'WORKSPACE',
+      notifHandlerAction: handleWorkspaceShareNotificationAction,
+      type: 'WORKSPACE',
     },
   ]);

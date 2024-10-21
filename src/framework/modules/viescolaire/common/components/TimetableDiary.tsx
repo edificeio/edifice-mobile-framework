@@ -125,12 +125,12 @@ export default class TimetableDiary extends React.PureComponent<ITimetableDiaryP
         m =>
           JSON.stringify(m) !== JSON.stringify(course) &&
           m.startDate.isSame(course.startDate) &&
-          (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate))
+          (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate)),
       );
       // event m starts and ends at the same time as d
       const isSameTime = courses.findIndex(
         m =>
-          JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate)
+          JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate),
       );
 
       if ((isSameTime > -1 || iStartSameEndMiddle > -1) && col === 0) {

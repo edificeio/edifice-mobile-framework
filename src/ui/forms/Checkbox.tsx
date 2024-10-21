@@ -19,7 +19,7 @@ const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
     backgroundColor: checked ? theme.palette.primary.regular : theme.ui.text.inverse,
     borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
     borderWidth: checked ? 0 : 2,
-  })
+  }),
 );
 
 export const Checkbox = ({ checked, onCheck, onUncheck }: { checked: boolean; onUncheck?: () => void; onCheck?: () => void }) => (

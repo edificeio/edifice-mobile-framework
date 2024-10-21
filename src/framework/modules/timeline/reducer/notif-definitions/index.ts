@@ -32,8 +32,8 @@ const getFilterDetail = (filter: string, notifTypesToFilter: IEntcoreNotificatio
     ? {
         'app-address': matchingNotifType['app-address'],
         'app-name': matchingNotifType['app-name'],
-        'i18n': `timeline-apptype-${filter}`.toLowerCase().replaceAll('_', '-'),
-        'type': filter,
+        i18n: `timeline-apptype-${filter}`.toLowerCase().replaceAll('_', '-'),
+        type: filter,
       }
     : undefined;
 };

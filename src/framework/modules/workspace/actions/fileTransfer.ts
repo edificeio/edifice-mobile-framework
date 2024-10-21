@@ -241,7 +241,7 @@ export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch,
     Toast.showSuccess(
       files.length > 1
         ? I18n.get('workspace-filetransfer-downloadsuccess-all')
-        : I18n.get('workspace-filetransfer-downloadsuccess-name', { name: files[0].name })
+        : I18n.get('workspace-filetransfer-downloadsuccess-name', { name: files[0].name }),
     );
   } catch (e) {
     dispatch(workspaceDownloadActionsCreators.error(e as Error));

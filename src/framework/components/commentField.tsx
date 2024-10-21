@@ -125,7 +125,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         });
       setComment(value);
     },
-    [props.onChangeText, props.isResponse, props.commentId, props.comment]
+    [props.onChangeText, props.isResponse, props.commentId, props.comment],
   );
   const setIsEditingFalse = () => {
     if (props.comment) {
@@ -164,7 +164,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         onEditableLayoutHeight?.(event.nativeEvent.layout.height ?? 0);
       }
     },
-    [isEditing, onEditableLayoutHeight]
+    [isEditing, onEditableLayoutHeight],
   );
 
   const wrapperStyle = React.useMemo(
@@ -177,7 +177,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         padding: props.commentId ? UI_SIZES.spacing.medium : undefined,
       },
     ],
-    [isFirstComment, props.commentId]
+    [isFirstComment, props.commentId],
   );
 
   const textInputStyle = React.useMemo(
@@ -194,7 +194,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
           : 0,
       },
     ],
-    [isIdleExistingComment]
+    [isIdleExistingComment],
   );
 
   const textInputComponent = React.useMemo(
@@ -214,7 +214,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         })}
       />
     ),
-    [comment, isIdleExistingComment, onChangeText, props.isPublishingComment, props.isResponse, textInputStyle]
+    [comment, isIdleExistingComment, onChangeText, props.isPublishingComment, props.isResponse, textInputStyle],
   );
 
   return (

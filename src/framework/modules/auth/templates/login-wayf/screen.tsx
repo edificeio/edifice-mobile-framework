@@ -62,7 +62,7 @@ export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, 
                 ? error.key === undefined || error.key === this.state.errkey
                   ? Error.getAuthErrorText<Error.ErrorTypes<typeof Error.LoginError>>(
                       Error.getDeepErrorType(error),
-                      route.params.platform.url
+                      route.params.platform.url,
                     )
                   : ''
                 : ''}
@@ -92,6 +92,6 @@ export default connect(
       {
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(LoginWAYFPage);

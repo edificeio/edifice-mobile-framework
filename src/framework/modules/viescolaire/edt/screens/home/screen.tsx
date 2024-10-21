@@ -68,10 +68,10 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     { key: 'saturday', title: I18n.get('date-saturday') },
   ]);
   const [startDate, setStartDate] = React.useState<Moment>(
-    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day')
+    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day'),
   );
   const [selectedDate, setSelectedDate] = React.useState<Moment>(
-    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day')
+    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day'),
   );
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -252,7 +252,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   }, [selectedDate]);
 
   const renderTabbar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> }
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
   ) => {
     return (
       <TabBar
@@ -387,6 +387,6 @@ export default connect(
         tryFetchTeachers: tryAction(fetchEdtTeachersAction),
         tryFetchUserChildren: tryAction(fetchEdtUserChildrenAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(EdtHomeScreen);

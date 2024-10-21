@@ -71,7 +71,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         this.props.tryFetchHomeworks(
           structureId,
           moment().add(1, 'days').format('YYYY-MM-DD'),
-          moment().add(1, 'month').format('YYYY-MM-DD')
+          moment().add(1, 'month').format('YYYY-MM-DD'),
         );
         this.props.tryFetchCompetences(userId, classes[0]);
         this.props.tryFetchDevoirs(structureId, userId);
@@ -264,6 +264,6 @@ export default connect(
         tryFetchTeachers: tryAction(fetchDiaryTeachersAction),
         tryUpdateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(DashboardStudentScreen);

@@ -89,7 +89,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   const isThreadManager = useMemo(
     () => thread?.sharedRights.includes(NewsThreadItemRights.MANAGER) || session!.user.id === thread?.ownerId,
-    [thread, session]
+    [thread, session],
   );
   const hasPermissionDelete = useMemo(() => {
     return session!.user.id === news?.owner.id || isThreadManager;
@@ -117,7 +117,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
       const newsItemComments = await handleGetNewsItemComments(newsInfo.id);
       setComments(newsItemComments);
     },
-    [handleGetNewsItemComments]
+    [handleGetNewsItemComments],
   );
 
   const onRefresh = useCallback(
@@ -132,7 +132,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         throw new Error();
       }
     },
-    [getComments, handleGetNewsItem]
+    [getComments, handleGetNewsItem],
   );
 
   const init = useCallback(async () => {
@@ -203,7 +203,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         },
       ]);
     },
-    [getComments, handleDeleteComment, indexEditingComment, news, showAlertError]
+    [getComments, handleDeleteComment, indexEditingComment, news, showAlertError],
   );
 
   const doPublishComment = useCallback(
@@ -221,7 +221,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         showAlertError();
       }
     },
-    [getComments, handlePublishComment, listHeight, showAlertError]
+    [getComments, handlePublishComment, listHeight, showAlertError],
   );
 
   const doEditComment = useCallback(
@@ -234,7 +234,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         showAlertError();
       }
     },
-    [getComments, handleEditComment, showAlertError]
+    [getComments, handleEditComment, showAlertError],
   );
 
   const renderError = useCallback(() => {
@@ -331,7 +331,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         />
       );
     },
-    [commentFieldRefs, comments, doDeleteComment, doEditComment, infoComment.value, isThreadManager, news]
+    [commentFieldRefs, comments, doDeleteComment, doEditComment, infoComment.value, isThreadManager, news],
   );
 
   const renderPage = useCallback(() => {
@@ -412,10 +412,10 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
       I18n.get(
         infoComment.isPublication
           ? 'news-details-confirmation-unsaved-publication'
-          : 'news-details-confirmation-unsaved-modification'
+          : 'news-details-confirmation-unsaved-modification',
       ),
       I18n.get(
-        `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`
+        `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
       ),
       [
         {
@@ -432,7 +432,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           style: 'default',
           text: I18n.get('common-continue'),
         },
-      ]
+      ],
     );
   });
 
@@ -449,7 +449,7 @@ const mapStateToProps: (s: IGlobalState) => NewsDetailsScreenDataProps = s => ({
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => NewsDetailsScreenEventProps = (
   dispatch,
-  getState
+  getState,
 ) => ({
   handleDeleteComment: async (infoId, commentId) => {
     return (await dispatch(deleteCommentNewsItemAction(infoId, commentId))) as unknown as number | undefined;

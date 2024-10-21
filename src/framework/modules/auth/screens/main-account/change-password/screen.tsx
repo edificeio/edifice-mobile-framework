@@ -62,12 +62,12 @@ export default connect(
 
               return d(action(...args));
             },
-          props.route.params.useResetCode ? { track: track.passwordRenew } : undefined
+          props.route.params.useResetCode ? { track: track.passwordRenew } : undefined,
         ),
       },
-      dispatch
+      dispatch,
     );
-  }
+  },
 )(function AuthChangePasswordScreen(props: AuthChangePasswordScreenPrivateProps) {
   return <ChangePasswordScreen {...props} />;
 });

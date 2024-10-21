@@ -80,7 +80,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   // EVENTS =====================================================================================
 
   const [schoolbookWords, setSchoolbookWords] = React.useState(
-    isParent ? ({} as { [key: string]: IStudentAndParentWordList }) : ([] as ITeacherWordList | IStudentAndParentWordList)
+    isParent ? ({} as { [key: string]: IStudentAndParentWordList }) : ([] as ITeacherWordList | IStudentAndParentWordList),
   );
   const [children, setChildren] = React.useState([] as IChildrenWithUnacknowledgedWordsCount);
   const [selectedChildId, setSelectedChildId] = React.useState('');
@@ -158,12 +158,12 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         });
       }
     },
-    [isParent, isTeacher, nextPageToFetch, pagingSize, schoolbookWords, selectedChildId, session, userId]
+    [isParent, isTeacher, nextPageToFetch, pagingSize, schoolbookWords, selectedChildId, session, userId],
   );
 
   const getChildIdWithNewestWord = (
     childrenWithUnacknowledgedWordsCount: IChildrenWithUnacknowledgedWordsCount,
-    childrenWordLists: IStudentAndParentWordList[]
+    childrenWordLists: IStudentAndParentWordList[],
   ) => {
     const newestWordDates = childrenWordLists
       ?.map((childWordList, index) => ({
@@ -192,7 +192,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
             name: child.displayName && removeFirstWord(child.displayName),
           }));
           const wordsCountPromises = formattedAllChildren?.map(child =>
-            schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id)
+            schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id),
           );
           const childrenUnacknowledgedWordsCount = wordsCountPromises && (await Promise.all(wordsCountPromises));
           const childrenWithUnacknowledgedWordsCount = formattedAllChildren?.map((child, index) => ({
@@ -219,7 +219,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         }
       } else await fetchPage(true, true);
     },
-    [fetchPage, isParent, session, userId]
+    [fetchPage, isParent, session, userId],
   );
 
   const openSchoolbookWord = (schoolbookWordId: string) =>
@@ -317,12 +317,12 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         title={I18n.get(
           hasSchoolbookWordCreationRights
             ? 'schoolbook-wordlist-emptyscreen-title'
-            : 'schoolbook-wordlist-emptyscreen-title-nocreationrights'
+            : 'schoolbook-wordlist-emptyscreen-title-nocreationrights',
         )}
         text={I18n.get(
           hasSchoolbookWordCreationRights
             ? 'schoolbook-wordlist-emptyscreen-text'
-            : 'schoolbook-wordlist-emptyscreen-text-nocreationrights'
+            : 'schoolbook-wordlist-emptyscreen-text-nocreationrights',
         )}
         {...(hasSchoolbookWordCreationRights
           ? {

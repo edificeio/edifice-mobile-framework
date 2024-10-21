@@ -69,7 +69,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         platform: appConf.getExpandedPlatform(account.platform),
         type: account.user.type,
       })),
-    [data]
+    [data],
   );
 
   const onItemPress = React.useCallback(
@@ -99,7 +99,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         redirect(item);
       }
     },
-    [accounts, loadingState, navigation, tryRestore]
+    [accounts, loadingState, navigation, tryRestore],
   );
 
   const onDeleteItem = React.useCallback(
@@ -114,14 +114,14 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         console.error(e);
       }
     },
-    [accounts, tryRemoveAccount]
+    [accounts, tryRemoveAccount],
   );
 
   const onAddAccount = React.useCallback(async () => navigation.navigate(authRouteNames.addAccountModal, {}), [navigation]);
 
   const keyExtractor: FlatListProps<(typeof dataforList)[0]>['keyExtractor'] = React.useCallback(
     (item: (typeof dataforList)[0]) => item.id,
-    []
+    [],
   );
 
   return (
@@ -180,6 +180,6 @@ export default connect(
           track: track.loginRestore,
         }),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(AccountSelectionScreen);

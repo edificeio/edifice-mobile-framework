@@ -33,7 +33,7 @@ export const fetchPresencesAbsenceStatementsAction =
         studentId,
         structureId,
         startDate.format('YYYY-MM-DD'),
-        endDate.format('YYYY-MM-DD')
+        endDate.format('YYYY-MM-DD'),
       );
       dispatch(presencesAbsenceStatementsActionsCreators.receipt(absences));
       return absences;
@@ -81,7 +81,7 @@ export const fetchPresencesCoursesAction =
     teacherId: string,
     structureIds: string[],
     date: Moment,
-    allowMultipleSlots?: boolean
+    allowMultipleSlots?: boolean,
   ): ThunkAction<Promise<Course[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
@@ -92,7 +92,7 @@ export const fetchPresencesCoursesAction =
       dispatch(presencesCoursesActionsCreators.request());
       for (const structureId of structureIds) {
         courses = courses.concat(
-          await presencesService.courses.get(session, teacherId, structureId, dateStr, dateStr, allowMultipleSlots)
+          await presencesService.courses.get(session, teacherId, structureId, dateStr, dateStr, allowMultipleSlots),
         );
       }
       dispatch(presencesCoursesActionsCreators.receipt({ ...state.presences.courses.data, [dateStr]: courses }));

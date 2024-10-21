@@ -58,10 +58,10 @@ export interface ITheme {
     };
     flashMessages: {
       'grey-dark': ColorValue;
-      'red': ColorValue;
-      'orange': ColorValue;
-      'green': ColorValue;
-      'blue': ColorValue;
+      red: ColorValue;
+      orange: ColorValue;
+      green: ColorValue;
+      blue: ColorValue;
     };
   };
   // UI usage of the color palette
@@ -100,12 +100,12 @@ export interface ITheme {
       acknowledge: ColorValue;
       acknowledged: ColorValue;
       categories: {
-        'canteen': ColorValue;
-        'event': ColorValue;
+        canteen: ColorValue;
+        event: ColorValue;
         'last-minute': ColorValue;
-        'leisure': ColorValue;
-        'outing': ColorValue;
-        'various': ColorValue;
+        leisure: ColorValue;
+        outing: ColorValue;
+        various: ColorValue;
       };
     };
     profileTypes: {
@@ -212,12 +212,12 @@ export const defaultTheme: ThemeInitializer = {
         acknowledge: this.palette.status.warning.regular,
         acknowledged: this.palette.status.success.regular,
         categories: {
-          'canteen': this.palette.complementary.blue.regular,
-          'event': this.palette.complementary.purple.regular,
+          canteen: this.palette.complementary.blue.regular,
+          event: this.palette.complementary.purple.regular,
           'last-minute': this.palette.complementary.red.regular,
-          'leisure': this.palette.complementary.yellow.regular,
-          'outing': this.palette.complementary.green.regular,
-          'various': this.palette.complementary.indigo.regular,
+          leisure: this.palette.complementary.yellow.regular,
+          outing: this.palette.complementary.green.regular,
+          various: this.palette.complementary.indigo.regular,
         },
       },
     };
@@ -305,11 +305,11 @@ export const defaultTheme: ThemeInitializer = {
       },
     },
     flashMessages: {
-      'blue': '#2a9cc8',
-      'green': '#3cb371',
+      blue: '#2a9cc8',
+      green: '#3cb371',
       'grey-dark': '#5b6472',
-      'orange': '#ff9057',
-      'red': '#c74848',
+      orange: '#ff9057',
+      red: '#c74848',
     },
     grey: {
       black: '#4a4a4a',

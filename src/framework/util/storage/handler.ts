@@ -5,7 +5,7 @@ import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 export class StorageHandler {
   constructor(
     protected storage: StorageHandler | IStorageBackend,
-    public name?: string
+    public name?: string,
   ) {}
 
   private static storageListWithAppInit: StorageHandler[] = [];

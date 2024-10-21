@@ -59,7 +59,7 @@ const SnowFlakes = ({ isFlakesFalling, isXmasActivated, session }: SnowFlakesRed
         });
       }
     },
-    [isFlakesFalling]
+    [isFlakesFalling],
   );
   React.useEffect(() => {
     getShouldSnowFall(fadeAnim);

@@ -211,6 +211,6 @@ export default connect(
         tryFetchCourses: tryAction(fetchPresencesCoursesAction),
         tryLoadStoredStructure: tryAction(loadStoredStructureAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(DashboardTeacherScreen);

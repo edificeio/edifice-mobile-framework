@@ -60,7 +60,7 @@ export const FormOrderCard = ({ isDisabled, onChangeAnswer, onEditQuestion, ques
         choiceId: choice.id,
         choicePosition: index + 1,
         questionId: question.id,
-      }))
+      })),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [choices]);

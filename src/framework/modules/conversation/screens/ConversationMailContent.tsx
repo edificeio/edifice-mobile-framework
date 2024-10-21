@@ -224,7 +224,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
       } else await trashMails([mailId]);
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(
-        I18n.get(isTrashedOrDrafts ? 'conversation-mailcontent-messagedeleted' : 'conversation-mailcontent-messagetrashed')
+        I18n.get(isTrashedOrDrafts ? 'conversation-mailcontent-messagedeleted' : 'conversation-mailcontent-messagetrashed'),
       );
     } catch {
       // TODO: Manage error
@@ -416,7 +416,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
         ]),
         trashMails: tryActionLegacy(trashMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Mettre à la corbeille`]),
       },
-      dispatch
+      dispatch,
     ),
     dispatch,
   };

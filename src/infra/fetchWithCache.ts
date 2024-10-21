@@ -108,7 +108,7 @@ export async function fetchWithCache(
   forceSync: boolean = true,
   platform: string | undefined = assertSession().platform.url,
   getBody: (r: Response) => any = r => r.text(),
-  getCacheResult = (cr: any) => new Response(...cr)
+  getCacheResult = (cr: any) => new Response(...cr),
 ) {
   const isConnected = await NetInfo.fetch().then(state => state.isConnected);
   // Continue if connected and if sync wanted
@@ -151,7 +151,7 @@ export async function fetchJSONWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string | undefined = assertSession().platform.url
+  platform: string | undefined = assertSession().platform.url,
 ) {
   return fetchWithCache(
     path,
@@ -159,6 +159,6 @@ export async function fetchJSONWithCache(
     forceSync,
     platform,
     r => r.json(),
-    cr => cr.body
+    cr => cr.body,
   ) as Promise<any>;
 }

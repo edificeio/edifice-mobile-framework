@@ -21,7 +21,7 @@ const ItemSeparator = () => (
 
 const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
   { data, description, onDelete, onPress, title }: AccountListProps<ItemT>,
-  ref
+  ref,
 ) => {
   const currentAccount = useSelector(state => getSession());
   const renderItem: FlatListProps<ArrayElement<typeof data>>['renderItem'] = info => (

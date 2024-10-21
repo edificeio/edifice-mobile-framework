@@ -104,7 +104,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
         selectedChildId,
         structureId,
         moment().add(1, 'day').format('YYYY-MM-DD'),
-        moment().add(1, 'month').format('YYYY-MM-DD')
+        moment().add(1, 'month').format('YYYY-MM-DD'),
       );
       await props.tryFetchTeachers(structureId);
       await props.tryFetchDevoirs(structureId, selectedChildId);
@@ -112,7 +112,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
       const children = await props.tryFetchUserChildren(structureId, userId);
       await props.tryFetchChildrenEvents(
         structureId,
-        children.map(child => child.id)
+        children.map(child => child.id),
       );
       const childClasses = children.find(c => c.id === selectedChildId)?.classId;
       await props.tryFetchCompetences(selectedChildId, childClasses ?? '');
@@ -129,7 +129,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
       const children = await props.tryFetchUserChildren(structureId, userId);
       await props.tryFetchChildrenEvents(
         structureId,
-        children.map(c => c.id)
+        children.map(c => c.id),
       );
     } catch {
       throw new Error();
@@ -368,6 +368,6 @@ export default connect(
         tryFetchTeachers: tryAction(fetchDiaryTeachersAction),
         tryFetchUserChildren: tryAction(fetchCompetencesUserChildrenAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(DashboardRelativeScreen);

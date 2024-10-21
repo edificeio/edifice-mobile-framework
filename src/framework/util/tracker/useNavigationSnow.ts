@@ -11,7 +11,7 @@ const customRouteNameLogicMap: { [key: string]: (route: Route<string, any>) => s
 const stopSnowIfNeeded = async (
   dispatch: ThunkDispatch<any, any, any>,
   routeNameRef: React.MutableRefObject<string | undefined>,
-  path?: string
+  path?: string,
 ) => {
   const previousRouteName = routeNameRef.current;
   const route = navigationRef.getCurrentRoute();

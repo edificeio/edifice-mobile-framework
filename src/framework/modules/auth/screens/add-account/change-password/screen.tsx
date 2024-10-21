@@ -41,12 +41,12 @@ export default connect(
         tryLogout: tryAction(manualLogoutAction),
         trySubmit: tryAction(
           changePasswordActionAddAnotherAccount,
-          props.route.params.useResetCode ? { track: track.passwordRenew } : undefined
+          props.route.params.useResetCode ? { track: track.passwordRenew } : undefined,
         ),
       },
-      dispatch
+      dispatch,
     );
-  }
+  },
 )(function AuthChangePasswordScreen(props: AuthChangePasswordScreenPrivateProps) {
   return <ChangePasswordScreen {...props} />;
 });

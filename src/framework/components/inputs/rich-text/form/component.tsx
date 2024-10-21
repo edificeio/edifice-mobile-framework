@@ -59,7 +59,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     if (idx < toAdd.length) {
       const file = toAdd[idx];
       richText.current?.insertHTML(
-        `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`
+        `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`,
       );
       setTimeout(() => {
         addFile(toAdd, idx + 1);
@@ -73,14 +73,14 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     (filesToAdd: UploadFile[]) => {
       addFile(
         filesToAdd.filter(file => file.status === UploadStatus.OK),
-        0
+        0,
       );
       richText.current?.finalizeInsertion();
       richText?.current?.unlockContentEditor();
       hideAddFilesResults();
       richText.current?.focusContentEditor();
     },
-    [addFile, hideAddFilesResults]
+    [addFile, hideAddFilesResults],
   );
 
   const handleAddFiles = React.useCallback(
@@ -105,13 +105,13 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           I18n.get(
             nbErrorFiles > 1
               ? 'richeditor-showfilesresult-addfileswitherrorstitle'
-              : 'richeditor-showfilesresult-addfileswitherrortitle'
+              : 'richeditor-showfilesresult-addfileswitherrortitle',
           ),
           I18n.get(
             nbErrorFiles > 1
               ? 'richeditor-showfilesresult-addfileswitherrorstext'
               : 'richeditor-showfilesresult-addfileswitherrortext',
-            { nb: nbErrorFiles }
+            { nb: nbErrorFiles },
           ),
           [
             {
@@ -122,13 +122,13 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
               onPress: () => addFiles(filesToAdd),
               text: I18n.get('common-ok'),
             },
-          ]
+          ],
         );
         return;
       }
       addFiles(filesToAdd);
     },
-    [addFiles, hideAddFilesResults]
+    [addFiles, hideAddFilesResults],
   );
 
   React.useEffect(() => {
@@ -242,7 +242,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         }),
       ]).start();
     },
-    [toolbarOpacity, toolbarYPos]
+    [toolbarOpacity, toolbarYPos],
   );
 
   const toolbar = () => {
@@ -271,7 +271,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       props.onChangeText(html);
       if (!isContentModified) setIsContentModified(true);
     },
-    [props, isContentModified]
+    [props, isContentModified],
   );
 
   const handleCursorPosition = React.useCallback((scrollY: number) => {
@@ -294,7 +294,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   const realTopForm = React.useMemo(
     () =>
       React.isValidElement(topForm) ? topForm : typeof topForm === 'function' ? topForm(() => setIsContentModified(true)) : null,
-    [topForm]
+    [topForm],
   );
 
   return (

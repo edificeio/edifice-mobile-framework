@@ -95,7 +95,7 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
   // UserList info & selected user
   const getUsers = React.useCallback(
     (_data: typeof data) => _data.map(cdb => ({ avatarId: cdb.id, id: cdb.idPronote ?? cdb.id, name: cdb.firstName })),
-    []
+    [],
   );
   const users = React.useMemo(() => getUsers(data), [getUsers, data]);
   const usersRef = React.useRef(users);
@@ -109,7 +109,7 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
   }, []);
   const isUserListShown = React.useMemo(
     () => /* session.user.type === UserType.Relative || */ users.length > 1,
-    [/*session, */ users]
+    [/*session, */ users],
   );
 
   // Data & content
@@ -137,9 +137,9 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
         isStructureShown,
         navigation,
         structures,
-        session
+        session,
       ),
-    [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, structures, session]
+    [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, structures, session],
   );
 
   const is50xError = React.useMemo(() => error instanceof PronoteCdbInitError, [error]);
@@ -182,7 +182,7 @@ CarnetDeBordScreen.getRenderContent =
     isStructureShown: boolean,
     navigation: CarnetDeBordScreenProps['navigation'],
     structures: CarnetDeBordScreenProps['structures'],
-    session?: AuthLoggedAccount
+    session?: AuthLoggedAccount,
   ) =>
   (refreshControl: ScrollViewProps['refreshControl']) => {
     return (
@@ -212,7 +212,7 @@ CarnetDeBordScreen.getRenderContent =
               {...(() => {
                 const taf = getSummaryItem(
                   data.PageCahierDeTextes?.TravailAFairePast,
-                  data.PageCahierDeTextes?.TravailAFaireFuture
+                  data.PageCahierDeTextes?.TravailAFaireFuture,
                 );
                 return taf
                   ? {
@@ -387,6 +387,6 @@ export default connect(
       {
         handleLoadData: tryActionLegacy(loadCarnetDeBordAction, undefined, true) as unknown as () => Promise<ICarnetDeBord[]>, // Some TS issue with ThunkDispatch
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(CarnetDeBordScreen);

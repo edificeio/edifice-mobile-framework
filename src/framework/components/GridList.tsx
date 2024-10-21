@@ -26,7 +26,7 @@ export default React.forwardRef(function GridList<ItemT>(props: GridListProps<It
   const realGapOutside = gapOutside ?? 0,
     realGapOutsideHV = React.useMemo(
       () => (typeof realGapOutside === 'number' ? [realGapOutside, realGapOutside] : realGapOutside),
-      [realGapOutside]
+      [realGapOutside],
     );
   const gridListItemWrapperStyleCustom = {
     flexBasis: `${100 / realNumColumns}%`,
@@ -40,7 +40,7 @@ export default React.forwardRef(function GridList<ItemT>(props: GridListProps<It
           : 0,
       paddingTop: info.index < realNumColumns ? realGapOutsideHV[1] : realGapHV[1],
     }),
-    [props.data?.length, realGapHV, realGapOutsideHV, realNumColumns]
+    [props.data?.length, realGapHV, realGapOutsideHV, realNumColumns],
   );
   const realColumnWrapperStyle: StyleProp<ViewStyle> = [
     {

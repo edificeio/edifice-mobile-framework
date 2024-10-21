@@ -27,7 +27,7 @@ export const resourceRightFilter = (
     author: { userId: string; username: string; login: string };
   }[],
   key: string,
-  session: AuthLoggedAccount
+  session: AuthLoggedAccount,
 ) => {
   return resources.filter(resource => resourceHasRight(resource, key, session));
 };

@@ -16,7 +16,7 @@ export interface BlogPostDetailsScreenEventProps {
   handlePublishBlogPostComment(blogPostId: { blogId: string; postId: string }, comment: string): Promise<number | undefined>;
   handleUpdateBlogPostComment(
     blogPostCommentId: { blogId: string; postId: string; commentId: string },
-    comment: string
+    comment: string,
   ): Promise<number | undefined>;
   handleDeleteBlogPostComment(blogPostCommentId: {
     blogId: string;

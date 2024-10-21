@@ -23,7 +23,7 @@ export class ActivationFormModel {
   phone: IValidatorContext<string>;
 
   constructor(
-    private args: { passwordRegex: string; password: ValueGetter<string>; emailRequired: boolean; phoneRequired: boolean }
+    private args: { passwordRegex: string; password: ValueGetter<string>; emailRequired: boolean; phoneRequired: boolean },
   ) {
     this.login = new ValidatorBuilder().withRequired(true).build<string>();
     this.password = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).build<string>();

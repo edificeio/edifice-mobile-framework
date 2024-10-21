@@ -68,7 +68,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
       const index = sessionList.findIndex(item =>
         this.state.indexSelectedSession
           ? item.id === sessionList[this.state.indexSelectedSession].id
-          : item.id === this.props.session.id
+          : item.id === this.props.session.id,
       );
       this.setState({ indexSelectedSession: index, isRemovedDescription: false });
     }
@@ -81,7 +81,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
       const index = sessionList.findIndex(item =>
         this.state.indexSelectedSession
           ? item.id === sessionList[this.state.indexSelectedSession].id
-          : item.id === this.props.session.id
+          : item.id === this.props.session.id,
       );
       this.setState({ indexSelectedSession: index });
     } else if (this.state.isRemovedDescription) {

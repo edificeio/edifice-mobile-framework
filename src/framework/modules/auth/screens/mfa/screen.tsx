@@ -229,7 +229,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         setIsVerifyingCode(false);
       }
     },
-    [codeState, isEmailMFA, isMobileMFA]
+    [codeState, isEmailMFA, isMobileMFA],
   );
 
   const verifyTypedCode = useCallback(() => {
@@ -435,7 +435,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScr
       tryRefreshRequirements: tryAction(refreshRequirementsAction),
       tryUpdateProfile: tryAction(profileUpdateAction),
     },
-    dispatch
+    dispatch,
   );
 };
 

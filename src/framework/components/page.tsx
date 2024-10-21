@@ -69,12 +69,12 @@ export const PageView = (props: PageViewProps) => {
       flex: 1,
       ...getPageGutterStyle(gutters ?? 'none'),
     }),
-    [gutters]
+    [gutters],
   );
 
   const statusBarComponent = React.useMemo(
     () => (statusBar !== 'none' ? <StatusBar type={statusBar ?? 'primary'} /> : null),
-    [statusBar]
+    [statusBar],
   );
 
   const isModal = isModalModeOnThisRoute(route.name);
@@ -101,7 +101,7 @@ export const KeyboardPageView = (
       safeArea?: boolean;
       scrollViewProps?: ScrollViewProps;
     }
-  >
+  >,
 ) => {
   const keyboardAvoidingViewBehavior = Platform.select({
     android: undefined,

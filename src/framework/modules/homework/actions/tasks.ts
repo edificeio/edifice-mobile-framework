@@ -174,7 +174,7 @@ export function fetchHomeworkTasks(diaryId: string, entryId?: string, repeatId?:
       };
       const taskStatusesData = await asyncGetJson(
         `/homeworks/${diaryId}/entry/status${getTaskStatusesQueryParams()}`,
-        homeworkTaskStatusesAdapter
+        homeworkTaskStatusesAdapter,
       );
       const tasksData = await asyncGetJson(`/homeworks/get/${diaryId}`, homeworkTasksAdapter);
       const data = homeworkTasksData(tasksData, taskStatusesData);
@@ -194,6 +194,6 @@ export function fetchHomeworkTasksIfNeeded(diaryId: string) {
       return localState(gs)[diaryId];
     },
     fetchHomeworkTasks,
-    diaryId
+    diaryId,
   );
 }

@@ -44,7 +44,7 @@ const handleConversationNotificationAction: NotifHandlerThunkAction =
                 mailId: notif.resource.id,
                 notification: notif,
               },
-            }
+            },
       );
 
       handleNotificationNavigationAction(navAction);
@@ -62,7 +62,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': 'SEND-MESSAGE',
-      'notifHandlerAction': handleConversationNotificationAction,
-      'type': 'MESSAGERIE',
+      notifHandlerAction: handleConversationNotificationAction,
+      type: 'MESSAGERIE',
     },
   ]);

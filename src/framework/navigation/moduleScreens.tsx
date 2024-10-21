@@ -42,7 +42,7 @@ export class ModuleScreens {
 
 export function createModuleNavigator<ParamList extends ParamListBase>(
   moduleName: string,
-  renderScreens: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode
+  renderScreens: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode,
 ) {
   const TypedRootStack = getTypedRootStack<ParamList>();
   if (renderScreens) {

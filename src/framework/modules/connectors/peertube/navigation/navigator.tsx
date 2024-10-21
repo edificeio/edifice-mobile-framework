@@ -18,8 +18,8 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           url: apps[0].address.startsWith('/auth')
             ? encodeURIComponent(
                 `https://mon.lyceeconnecte.fr/auth/oauth2/auth?response_type=code&scope=directory&client_id=peertube&state=state&redirect_uri=${encodeURIComponent(
-                  'https://peertube.lyceeconnecte.fr/proxy'
-                )}`
+                  'https://peertube.lyceeconnecte.fr/proxy',
+                )}`,
               )
             : apps[0].address,
         }}

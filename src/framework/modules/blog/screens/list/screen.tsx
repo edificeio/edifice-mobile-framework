@@ -96,12 +96,12 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
       const viewsForPosts = await audienceService.view.getSummary(
         'blog',
         'post',
-        newBlogPosts.map(p => p._id)
+        newBlogPosts.map(p => p._id),
       );
       const reactionsForPosts = await audienceService.reaction.getSummary(
         'blog',
         'post',
-        newBlogPosts.map(p => p._id)
+        newBlogPosts.map(p => p._id),
       );
       return newBlogPosts.map(p => {
         const views = viewsForPosts[p._id];
@@ -168,14 +168,14 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         throw new Error();
       }
     },
-    [blogPosts, fetchAudience, nextPageToFetchState, pagingSizeState, props.session, selectedBlog.visibility]
+    [blogPosts, fetchAudience, nextPageToFetchState, pagingSizeState, props.session, selectedBlog.visibility],
   );
 
   const fetchFromStart = React.useCallback(
     async (blogId: string) => {
       return fetchPage(blogId, 0, true);
     },
-    [fetchPage]
+    [fetchPage],
   );
 
   const init = (selectedBlog_Id: string) => {
@@ -196,7 +196,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
       }
     },
-    [fetchFromStart]
+    [fetchFromStart],
   );
 
   const refresh = React.useCallback(
@@ -208,7 +208,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
       }
     },
-    [fetchFromStart]
+    [fetchFromStart],
   );
   const refreshSilent = React.useCallback(
     (selectedBlog_Id: string) => {
@@ -219,7 +219,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
       }
     },
-    [fetchFromStart]
+    [fetchFromStart],
   );
   const fetchNextPage = React.useCallback(
     (selectedBlog_Id: string) => {
@@ -230,7 +230,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
       }
     },
-    [fetchPage]
+    [fetchPage],
   );
 
   const onGoToPostCreationScreen = React.useCallback(
@@ -239,7 +239,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         blog: selectedBlog,
         referrer: `${moduleConfig.routeName}/posts`,
       }),
-    [props.navigation, selectedBlog]
+    [props.navigation, selectedBlog],
   );
 
   React.useEffect(() => {
@@ -275,10 +275,10 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
       <EmptyScreen
         svgImage="empty-blog"
         title={I18n.get(
-          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-title' : 'blog-postlist-emptyscreen-title-nocreationrights'
+          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-title' : 'blog-postlist-emptyscreen-title-nocreationrights',
         )}
         text={I18n.get(
-          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-text' : 'blog-postlist-emptyscreen-text-nocreationrights'
+          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-text' : 'blog-postlist-emptyscreen-text-nocreationrights',
         )}
         {...(hasBlogPostCreationRights
           ? {
@@ -303,7 +303,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
 
   const renderItem = React.useCallback(
     ({ item }) => <BlogPostListItem blog={selectedBlog} post={item} session={props.session!} />,
-    [props.session, selectedBlog]
+    [props.session, selectedBlog],
   );
 
   const keyExtractor = React.useCallback((item: BlogPostWithAudience) => item._id, []);
@@ -320,12 +320,12 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
       </>
     ),
-    [loadingState]
+    [loadingState],
   );
 
   const refreshControl = React.useMemo(
     () => <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />,
-    [loadingState, refresh, selectedBlogId]
+    [loadingState, refresh, selectedBlogId],
   );
 
   const renderBlogPostList = () => {
@@ -380,7 +380,7 @@ const mapStateToProps: (s: IGlobalState) => BlogPostListScreenDataProps = s => (
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => BlogPostListScreenEventProps = (
   dispatch,
-  getState
+  getState,
 ) => ({
   dispatch,
 });

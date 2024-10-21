@@ -32,7 +32,7 @@ export function AuthPlatformGridScreen(props: AuthPlatformGridScreenPrivateProps
   const { getNextRoute, navigation } = props;
   const onOpenItem = React.useCallback(
     (item: Platform) => navigationDispatchMultiple(navigation, getNextRoute(item)),
-    [getNextRoute, navigation]
+    [getNextRoute, navigation],
   );
   return (
     <PageView statusBar="none">

@@ -159,5 +159,5 @@ export default connect(
   dispatch => ({
     check: () => checkConnection(dispatch)(),
     watch: () => watchConnection(dispatch)(),
-  })
+  }),
 )(DEPRECATED_ConnectionTrackingBar);

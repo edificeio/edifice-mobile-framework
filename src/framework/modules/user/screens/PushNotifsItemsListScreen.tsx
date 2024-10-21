@@ -112,7 +112,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
 
   componentDidUpdate() {
     const pendingForType = Object.fromEntries(
-      Object.entries(this.state.pendingPrefsChanges).filter(([k, v]) => this.prefKeysArray.includes(k))
+      Object.entries(this.state.pendingPrefsChanges).filter(([k, v]) => this.prefKeysArray.includes(k)),
     );
     const items = deepmerge<IPushNotifsSettings>(this.initialItems, pendingForType);
     this.setState({
@@ -160,7 +160,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
     let items = deepmerge<IPushNotifsSettings>(defaultsForType, settingsForType);
     const prefKeysArray = Object.keys(items);
     const pendingForType = Object.fromEntries(
-      Object.entries(this.state.pendingPrefsChanges).filter(([k, v]) => prefKeysArray.includes(k))
+      Object.entries(this.state.pendingPrefsChanges).filter(([k, v]) => prefKeysArray.includes(k)),
     );
     items = deepmerge<IPushNotifsSettings>(items, pendingForType);
     const areAllChecked = Object.values(items).every(v => v);
@@ -169,8 +169,8 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
       Object.entries(items) && Object.entries(items).length > 0
         ? Object.entries(items).sort((a, b) =>
             I18n.get(formatI18nNotifType(`timeline-notiftype-${a[0]}`)).localeCompare(
-              I18n.get(formatI18nNotifType(`timeline-notiftype-${b[0]}`))
-            )
+              I18n.get(formatI18nNotifType(`timeline-notiftype-${b[0]}`)),
+            ),
           )
         : [];
     const hasEmptySubListData = subListData.length === 0;
@@ -256,7 +256,7 @@ const mapStateToProps: (s: IGlobalState) => IPushNotifsItemsListScreenDataProps 
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
+  getState: () => IGlobalState,
 ) => IPushNotifsItemsListScreenEventProps = (dispatch, getState) => ({
   handleUpdatePushNotifSettings: async (changes: IPushNotifsSettings) => {
     await dispatch(updatePushNotifsSettingsAction(changes));

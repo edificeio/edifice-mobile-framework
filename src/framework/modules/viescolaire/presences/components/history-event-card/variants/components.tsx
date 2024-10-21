@@ -23,7 +23,7 @@ const formatAbsenceDates = (startDate: Moment, endDate: Moment): string => {
     return I18n.get('presences-history-eventcard-fromdate', { end: endDate.format('D MMMM'), start: startDate.format('D') });
   } else if (appConf.is1d) {
     const timeLabel = I18n.get(
-      startDate.get('hour') < 12 ? 'presences-history-eventcard-morning' : 'presences-history-eventcard-afternoon'
+      startDate.get('hour') < 12 ? 'presences-history-eventcard-morning' : 'presences-history-eventcard-afternoon',
     );
     return `${startDate.format('D MMMM')} (${timeLabel})`;
   } else {
@@ -46,7 +46,7 @@ export const AbsenceCard = ({ event }: { event: CommonEvent }) => {
       case EventType.UNREGULARIZED:
       default:
         return I18n.get(
-          appConf.is1d ? 'presences-history-eventcard-unregularized-1d' : 'presences-history-eventcard-unregularized-2d'
+          appConf.is1d ? 'presences-history-eventcard-unregularized-1d' : 'presences-history-eventcard-unregularized-2d',
         );
     }
   };

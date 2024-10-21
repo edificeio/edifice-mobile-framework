@@ -253,9 +253,9 @@ export const concatDevoirs = (devoirs: IDevoir[], competences: ICompetence[]): I
               id: c.devoirId,
               subjectId: c.subjectId,
               teacher: c.ownerName,
-            }) as IDevoir
+            }) as IDevoir,
         )
-        .filter((devoir, index, array) => array.findIndex(d => d.id === devoir.id) === index)
+        .filter((devoir, index, array) => array.findIndex(d => d.id === devoir.id) === index),
     )
     .sort(compareDevoirs);
 };

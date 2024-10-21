@@ -162,7 +162,7 @@ const MailContactField = connect((state: IGlobalState) => ({
     if (text) {
       Alert.alert(
         I18n.get('conversation-newmail-erroruser-title', { user: text }),
-        I18n.get('conversation-newmail-erroruser-text')
+        I18n.get('conversation-newmail-erroruser-text'),
       );
     }
     onUserType('');

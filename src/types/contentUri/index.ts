@@ -15,5 +15,5 @@ export const contentUriToLocalFile = (ct: ContentUri) =>
       filetype: ct.mime,
       name: ct.name,
     },
-    { _needIOSReleaseSecureAccess: false }
+    { _needIOSReleaseSecureAccess: false },
   );

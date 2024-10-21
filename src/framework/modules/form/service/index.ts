@@ -340,7 +340,7 @@ export const formService = {
       choiceId: number | null,
       answer: string,
       customAnswer: string | null,
-      choicePosition: number | null
+      choicePosition: number | null,
     ) => {
       const api = `/formulaire/questions/${questionId}/responses`;
       const body = JSON.stringify({
@@ -416,7 +416,7 @@ export const formService = {
           };
         },
         undefined,
-        SyncedFileWithId
+        SyncedFileWithId,
       );
     },
     deleteFiles: async (session: AuthLoggedAccount, responseId: number) => {
@@ -437,7 +437,7 @@ export const formService = {
       questionId: number,
       choiceId: number | null,
       answer: string,
-      customAnswer: string | null
+      customAnswer: string | null,
     ) => {
       const api = `/formulaire/responses/${responseId}`;
       const body = JSON.stringify({
@@ -467,7 +467,7 @@ export const formService = {
             id: r.id,
             question_id: r.questionId,
           } as IBackendQuestionResponse;
-        })
+        }),
       );
       return fetchWithCache(api, {
         body,

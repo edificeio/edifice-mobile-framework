@@ -47,7 +47,7 @@ const UserListItem = <ItemT extends DisplayUserPublic = DisplayUserPublic>(props
 export const UserList = React.forwardRef(
   <ItemT extends DisplayUserPublic = DisplayUserPublic>(
     props: UserListProps<ItemT>,
-    ref: React.Ref<RNFlatList<ItemT>> | null | undefined
+    ref: React.Ref<RNFlatList<ItemT>> | null | undefined,
   ) => {
     const {
       centered,
@@ -64,7 +64,7 @@ export const UserList = React.forwardRef(
 
     const realContentContainerStyle = React.useMemo(
       () => [styles.contentContainer, contentContainerStyle],
-      [contentContainerStyle]
+      [contentContainerStyle],
     );
 
     const realItemContainerStyle = React.useMemo(() => [styles.item, itemContainerStyle], [itemContainerStyle]);
@@ -86,7 +86,7 @@ export const UserList = React.forwardRef(
           </ItemTouchWrapper>
         );
       },
-      [ItemTouchWrapper, UserListItemComponent, onItemPress, realItemContainerStyle, renderUserDetails]
+      [ItemTouchWrapper, UserListItemComponent, onItemPress, realItemContainerStyle, renderUserDetails],
     );
     return (
       <HorizontalList
@@ -98,5 +98,5 @@ export const UserList = React.forwardRef(
         contentContainerStyle={realContentContainerStyle}
       />
     );
-  }
+  },
 );

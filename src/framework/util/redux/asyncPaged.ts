@@ -39,7 +39,7 @@ export const createAsyncPagedActionTypes: (prefixUpperCase: string) => AsyncPage
   }) as AsyncPagedActionTypes;
 
 export const createAsyncPagedActionCreators: <DataType extends any[]>(
-  actionTypes: AsyncPagedActionTypes
+  actionTypes: AsyncPagedActionTypes,
 ) => AsyncPagedActionCreators<DataType> = <DataType>(actionTypes: AsyncPagedActionTypes) => ({
   clear: () => ({ type: actionTypes.clear }),
   error: (error: Error) => ({ error, type: actionTypes.error }),
@@ -78,7 +78,7 @@ function _createAsyncPagedReducer<DataType extends any[]>(
     reducerActionsHandlerMap: IReducerActionsHandlerMap<StateType>,
     ...args: any[]
   ) => Reducer<StateType, AnyAction>,
-  createReducerFunctionAdditionalArgs: any[] = []
+  createReducerFunctionAdditionalArgs: any[] = [],
 ): Reducer<AsyncState<DataType>> {
   const asyncInitialState = createInitialAsyncPagedState(initialState);
   const dataReducer = createReducer(initialState, reducerActionsHandlerMap);
@@ -105,7 +105,7 @@ function _createAsyncPagedReducer<DataType extends any[]>(
       }),
       [actionTypes.clear]: () => asyncInitialState,
     } as IReducerActionsHandlerMap<AsyncState<DataType>>,
-    ...createReducerFunctionAdditionalArgs
+    ...createReducerFunctionAdditionalArgs,
   );
 
   return (state = asyncInitialState, action) => {
@@ -119,7 +119,7 @@ export function createAsyncPagedReducer<DataType extends any[]>(
   initialState: DataType,
   actionTypes: AsyncPagedActionTypes,
   pageSize: number,
-  reducerActionsHandlerMap?: IReducerActionsHandlerMap<DataType>
+  reducerActionsHandlerMap?: IReducerActionsHandlerMap<DataType>,
 ): Reducer<AsyncState<DataType>> {
   return _createAsyncPagedReducer(initialState, actionTypes, pageSize, reducerActionsHandlerMap, createReducer);
 }
@@ -129,7 +129,7 @@ export function createSessionAsyncPagedReducer<DataType extends any[]>(
   actionTypes: AsyncPagedActionTypes,
   pageSize: number,
   reducerActionsHandlerMap?: IReducerActionsHandlerMap<DataType>,
-  sessionNamesUppercase?: string[]
+  sessionNamesUppercase?: string[],
 ): Reducer<AsyncState<DataType>> {
   return _createAsyncPagedReducer(initialState, actionTypes, pageSize, reducerActionsHandlerMap, createSessionReducer, [
     sessionNamesUppercase,

@@ -75,7 +75,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
    * @returns
    */
   getBoolean(
-    key: KeysWithValueOfType<StorageTypes, boolean>
+    key: KeysWithValueOfType<StorageTypes, boolean>,
   ): StorageTypes[KeysWithValueOfType<StorageTypes, boolean>] | undefined {
     return this.storage instanceof StorageSlice
       ? this.storage.#getBoolean(this.computeKey(key))
@@ -137,7 +137,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
    * @returns
    */
   getJSON<KeyType extends KeysWithValueNotOfType<StorageTypes, boolean | number | string>>(
-    key: KeyType
+    key: KeyType,
   ): StorageTypes[typeof key] | undefined {
     return this.storage instanceof StorageSlice ? this.storage.#getJSON(this.computeKey(key)) : this.#getJSON(this.computeKey(key));
   }
@@ -167,7 +167,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
         : this.#set(this.computeKey(key as Exclude<typeof key, unknown>), value);
     } else {
       throw new Error(
-        `[Storage] ${this.name || this.constructor.name}#set : failed to write value that type is unknown : ${value}`
+        `[Storage] ${this.name || this.constructor.name}#set : failed to write value that type is unknown : ${value}`,
       );
     }
   }
@@ -188,7 +188,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
    */
   setJSON<KeyType extends KeysWithValueNotOfType<StorageTypes, boolean | number | string>>(
     key: KeyType,
-    value: StorageTypes[typeof key]
+    value: StorageTypes[typeof key],
   ): void {
     return this.storage instanceof StorageSlice
       ? this.storage.#setJSON(this.computeKey(key), value)
@@ -226,7 +226,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
       console.warn(
         `[Storage] Do not use setPrefix() or withModule() more than once, nor together. That mutates the storage '${
           this.name || this.constructor.name
-        }' view.`
+        }' view.`,
       );
     }
     this.setPrefix(module.storageName);

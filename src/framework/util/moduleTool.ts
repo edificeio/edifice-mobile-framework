@@ -266,7 +266,7 @@ export class Module<
   preferences?: StorageSlice<ModulePreferencesSliceTypeMap> | undefined;
 
   constructor(
-    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
+    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
   ) {
     this.config = moduleDeclaration.config;
     this.reducer = moduleDeclaration.reducer;
@@ -541,7 +541,7 @@ export class NavigableModule<
       Root,
       ModuleStorageSliceTypeMap,
       ModulePreferencesSliceTypeMap
-    >
+    >,
   ) {
     const { getRoot } = moduleDeclaration;
     super(moduleDeclaration);
@@ -606,9 +606,9 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
       ...this.filter(m =>
         m.config.hasRight(
           m.config.getMatchingEntcoreApps(availableApps),
-          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets)
-        )
-      )
+          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
+        ),
+      ),
     );
   }
 
@@ -618,7 +618,7 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
         acc[m.config.reducerName] = m.reducer;
         return acc;
       },
-      {} as { [key: string]: Reducer<unknown> }
+      {} as { [key: string]: Reducer<unknown> },
     );
   }
 
@@ -658,9 +658,9 @@ export class NavigableModuleArray<
       ...this.filter(m =>
         m.config.hasRight(
           m.config.getMatchingEntcoreApps(availableApps),
-          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets)
-        )
-      )
+          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
+        ),
+      ),
     );
   }
 }
@@ -758,7 +758,7 @@ export const getGlobalRegister = <RegisterType extends CustomRegister<unknown, u
  * @returns
  */
 export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule = AnyNavigableModule>(
-  modules: ModuleArray<ModuleType>
+  modules: ModuleArray<ModuleType>,
 ) => {
   // 1. Clear previous data
   const registers = new Set<CustomRegister<any, any>>();

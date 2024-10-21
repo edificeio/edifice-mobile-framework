@@ -68,11 +68,11 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
         ? !isEmpty(threadsInfosReduce[idThreadSelected].sharedRights) ||
           threadsInfosReduce[idThreadSelected].ownerId === session?.user.id
         : false,
-    [idThreadSelected, threadsInfosReduce, session]
+    [idThreadSelected, threadsInfosReduce, session],
   );
   const canCreateNewsForOneThread: boolean = React.useMemo(
     () => threads?.some(thread => !isEmpty(thread.sharedRights) || thread.owner.id === session?.user.id),
-    [threads, session]
+    [threads, session],
   );
 
   const isFocused = useIsFocused();
@@ -85,7 +85,7 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
         thread,
       });
     },
-    [navigation, page]
+    [navigation, page],
   );
 
   const onFilter = useCallback(
@@ -105,7 +105,7 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
         setIsFiltering(false);
       }
     },
-    [handleGetNewsItems, isFiltering]
+    [handleGetNewsItems, isFiltering],
   );
 
   const init = useCallback(async () => {
@@ -151,7 +151,7 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
         throw new Error();
       }
     },
-    [handleGetNewsItems, news, page]
+    [handleGetNewsItems, news, page],
   );
 
   const renderPage = useCallback(() => {
@@ -221,7 +221,7 @@ const mapStateToProps: (s: IGlobalState) => NewsHomeScreenDataProps = s => ({
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => NewsHomeScreenEventProps = (
   dispatch,
-  getState
+  getState,
 ) => ({
   handleGetNewsItems: async (page: number, threadId?: number, isRefresh?: boolean) => {
     return (await dispatch(getNewsItemsAction(page, threadId, isRefresh))) as NewsItem[];

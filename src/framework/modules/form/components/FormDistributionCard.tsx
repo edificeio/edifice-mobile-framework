@@ -34,7 +34,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
 
     if (formDistributions.multiple) {
       const count = formDistributions.distributions.filter(
-        distribution => distribution.status === DistributionStatus.FINISHED
+        distribution => distribution.status === DistributionStatus.FINISHED,
       ).length;
       const color = count ? theme.palette.status.success.regular : theme.palette.status.failure.regular;
       return (
@@ -53,7 +53,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
             : 'form-distributionlist-formcard-answerdate',
           {
             date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
-          }
+          },
         )}
       </SmallBoldText>
     );

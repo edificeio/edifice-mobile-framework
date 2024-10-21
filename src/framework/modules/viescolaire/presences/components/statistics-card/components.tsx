@@ -39,7 +39,7 @@ export default function StatisticsCard(props: StatisticsCardProps) {
     }
     const absenceDates = events.reduce((acc: string[], event: Event) => {
       const date = ('startDate' in event ? event.startDate : event.date).format(
-        recoveryMethod === 'HALF_DAY' ? 'YYYY-MM-DD A' : 'YYYY-MM-DD'
+        recoveryMethod === 'HALF_DAY' ? 'YYYY-MM-DD A' : 'YYYY-MM-DD',
       );
       if (acc.includes(date)) return acc;
       acc.push(date);

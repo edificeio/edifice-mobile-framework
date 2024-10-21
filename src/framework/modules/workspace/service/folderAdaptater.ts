@@ -21,7 +21,7 @@ function mapObject(item: IEntcoreWorkspaceFolder): IFolder {
 function findParent(treeItems: IFolder[], parentId: string): IFolder | null {
   return treeItems.reduce(
     (acc, item) => (acc ? acc : item.id === parentId ? item : item.children ? findParent(item.children, parentId) : acc),
-    null as IFolder | null
+    null as IFolder | null,
   );
 }
 

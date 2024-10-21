@@ -93,12 +93,12 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': 'NEW_FORM_NOTIFICATION',
-      'notifHandlerAction': handleNewFormNotificationAction,
-      'type': 'FORMULAIRE',
+      notifHandlerAction: handleNewFormNotificationAction,
+      type: 'FORMULAIRE',
     },
     {
       'event-type': 'RESPONSE_NOTIFICATION',
-      'notifHandlerAction': handleFormResponseNotificationAction,
-      'type': 'FORMULAIRE',
+      notifHandlerAction: handleFormResponseNotificationAction,
+      type: 'FORMULAIRE',
     },
   ]);

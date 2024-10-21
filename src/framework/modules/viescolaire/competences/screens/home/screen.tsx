@@ -349,6 +349,6 @@ export default connect(
         tryFetchTerms: tryAction(fetchCompetencesTermsAction),
         tryFetchUserChildren: tryAction(fetchCompetencesUserChildrenAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(CompetencesHomeScreen);

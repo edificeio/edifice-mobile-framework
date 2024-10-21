@@ -20,7 +20,7 @@ export default function NavBarAction(props: {
   const opacityIconStyle = React.useMemo(() => (props.disabled ? styles.navBarActionDisabled : undefined), [props.disabled]);
   const opacityTextStyle = React.useMemo(
     () => (props.disabled ? [styles.navBarActionText, styles.navBarActionDisabled] : styles.navBarActionText),
-    [props.disabled]
+    [props.disabled],
   );
 
   const Component = props.onPress ? TouchableOpacity : View;

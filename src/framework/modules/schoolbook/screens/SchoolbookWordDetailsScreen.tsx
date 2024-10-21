@@ -116,7 +116,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       const word = await schoolbookService.word.get(session, wordId);
       setSchoolbookWord(word);
     },
-    [session]
+    [session],
   );
 
   const refreshSilent = React.useCallback(() => {
@@ -235,12 +235,12 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     text: I18n.get(
       infoComment.isPublication
         ? `schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-publication`
-        : `schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-modification`
+        : `schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-modification`,
     ),
     title: I18n.get(
       infoComment.isPublication
         ? 'schoolbook-worddetails-confirmation-unsaved-publication'
-        : 'schoolbook-worddetails-confirmation-unsaved-modification'
+        : 'schoolbook-worddetails-confirmation-unsaved-modification',
     ),
   });
 
@@ -279,7 +279,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     (comment, commentId) => {
       replyToSchoolbookWord(comment, commentId);
     },
-    [replyToSchoolbookWord]
+    [replyToSchoolbookWord],
   );
 
   const onEditComment = React.useCallback(data => {
@@ -288,7 +288,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 
   const action = React.useCallback(
     () => (isTeacher ? openSchoolbookWordReport() : isParent ? acknowledgeSchoolbookWord() : undefined),
-    [acknowledgeSchoolbookWord, isParent, isTeacher, openSchoolbookWordReport]
+    [acknowledgeSchoolbookWord, isParent, isTeacher, openSchoolbookWordReport],
   );
 
   const renderSchoolbookWordDetails = () => {

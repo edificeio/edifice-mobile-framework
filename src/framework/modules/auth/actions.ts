@@ -179,7 +179,7 @@ const withErrorTracking = <Fn extends (...args: any[]) => any>(
   category: string,
   action: string,
   name?: string,
-  value?: number
+  value?: number,
 ) => {
   return (async (...args: any) => {
     try {
@@ -213,7 +213,7 @@ const raceTimeoutAction = <ReturnType>(fn: ThunkAction<ReturnType, any, any, any
         actions.authError({
           info: e as Error,
           key,
-        })
+        }),
       );
       console.error('[Auth] Login Timeout exceeded', e);
       throw e;
@@ -239,7 +239,7 @@ export const loginSteps = {
       } catch (e) {
         if (e instanceof AggregateError) {
           const ee = e.errors.find(
-            eee => Error.getDeepErrorType<typeof Error.LoginError>(eee as Error) !== Error.OAuth2ErrorType.CREDENTIALS_MISMATCH
+            eee => Error.getDeepErrorType<typeof Error.LoginError>(eee as Error) !== Error.OAuth2ErrorType.CREDENTIALS_MISMATCH,
           );
           if (ee) throw ee;
           else throw e.errors.at(0);
@@ -248,7 +248,7 @@ export const loginSteps = {
     }, 'checkActivationAndRenew'),
     'Auth',
     'LOGIN ERROR',
-    'loginSteps.checkActivationAndRenew'
+    'loginSteps.checkActivationAndRenew',
   ),
 
   /**
@@ -263,7 +263,7 @@ export const loginSteps = {
         loginUsed: string | undefined,
         userInfo: IUserInfoBackend,
         publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
-        method: InitialAuthenticationMethod | undefined
+        method: InitialAuthenticationMethod | undefined,
       ) => {
         await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
         const { userData, userPublicInfo } = publicInfo;
@@ -274,11 +274,11 @@ export const loginSteps = {
         Trackers.setCustomDimension(3, 'Project', new URL(sessionInfo.platform.url).hostname);
         return sessionInfo;
       },
-      'finalizeSession'
+      'finalizeSession',
     ),
     'Auth',
     'LOGIN ERROR',
-    'loginSteps.confirmLogin'
+    'loginSteps.confirmLogin',
   ),
 
   /**
@@ -291,7 +291,7 @@ export const loginSteps = {
     }, 'getNewToken'),
     'Auth',
     'LOGIN ERROR',
-    'loginSteps.getToken'
+    'loginSteps.getToken',
   ),
 
   /**
@@ -305,7 +305,7 @@ export const loginSteps = {
     }, 'getRequirement'),
     'Auth',
     'LOGIN ERROR',
-    'loginSteps.getRequirements'
+    'loginSteps.getRequirements',
   ),
 
   /**
@@ -329,7 +329,7 @@ export const loginSteps = {
     }, 'getUserData'),
     'Auth',
     'LOGIN ERROR',
-    'loginSteps.getUserData'
+    'loginSteps.getUserData',
   ),
 
   /**
@@ -342,7 +342,7 @@ export const loginSteps = {
     }, 'loadToken'),
     'Auth',
     'LOGIN ERROR',
-    'loginSteps.loadToken'
+    'loginSteps.loadToken',
   ),
 };
 
@@ -455,7 +455,7 @@ const performLogin = async (
   platform: Platform,
   loginUsed: string | undefined,
   method: InitialAuthenticationMethod | undefined,
-  dispatch: AuthDispatch
+  dispatch: AuthDispatch,
 ) => {
   assertCancelLogin();
   const requirement = await loginSteps.getRequirement(platform);
@@ -468,7 +468,7 @@ const performLogin = async (
     loginUsed,
     user.infos,
     user.publicInfos,
-    method
+    method,
   );
   if (requirement) {
     const context = await authService.getAuthContext(platform);
@@ -508,7 +508,7 @@ const loginCredentialsAction = (functions: AuthLoginFunctions, platform: Platfor
             platform,
             credentials.username,
             InitialAuthenticationMethod.LOGIN_PASSWORD,
-            dispatch
+            dispatch,
           );
           functions.writeStorage(session, getAuthState(getState()).showOnboarding);
           return session;
@@ -529,13 +529,13 @@ const loginCredentialsAction = (functions: AuthLoginFunctions, platform: Platfor
           actions.authError({
             info: e as Error,
             key,
-          })
+          }),
         );
         throw e;
       }
     },
     MAX_AUTH_TIMEOUT,
-    key
+    key,
   );
 
 /**
@@ -565,7 +565,7 @@ export const loginCredentialsActionReplaceAccount = (
   timestamp: number,
   platform: Platform,
   credentials: AuthCredentials,
-  key?: number
+  key?: number,
 ) => loginCredentialsAction(getLoginFunctions.replaceAccount(accountId, timestamp), platform, credentials, key);
 
 export const loginCredentialsActionAddAnotherAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
@@ -582,7 +582,7 @@ const loginFederationAction = (
   functions: AuthLoginFunctions,
   platform: Platform,
   credentials: AuthFederationCredentials,
-  key?: number
+  key?: number,
 ) =>
   raceTimeoutAction(
     async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
@@ -604,13 +604,13 @@ const loginFederationAction = (
           actions.authError({
             info: error as Error,
             key,
-          })
+          }),
         );
         throw error;
       }
     },
     MAX_AUTH_TIMEOUT,
-    key
+    key,
   );
 
 export const loginFederationActionAddFirstAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
@@ -621,7 +621,7 @@ export const loginFederationActionReplaceAccount = (
   timestamp: number,
   platform: Platform,
   credentials: AuthFederationCredentials,
-  key?: number
+  key?: number,
 ) => loginFederationAction(getLoginFunctions.replaceAccount(accountId, timestamp), platform, credentials, key);
 
 export const loginFederationActionAddAnotherAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
@@ -649,7 +649,7 @@ const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedLogg
         appConf.assertPlatformOfName(accountToRestore.platform),
         (accountToRestore.user as Partial<AuthSavedLoggedInAccountWithCredentials['user']>).loginUsed,
         account.method,
-        dispatch
+        dispatch,
       );
       writeReplaceAccount(account.user.id, session, getAuthState(getState()).showOnboarding);
       return session;
@@ -659,7 +659,7 @@ const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedLogg
         actions.authError({
           info: e as Error,
           key: undefined,
-        })
+        }),
       );
       throw e;
     }
@@ -698,7 +698,7 @@ export const refreshRequirementsAction = () => async (dispatch: AuthDispatch) =>
     user.infos,
     session.method,
     user.publicInfos.userData,
-    user.publicInfos.userPublicInfo
+    user.publicInfos.userPublicInfo,
   );
   let context: PlatformAuthContext | undefined;
   if (requirement) {
@@ -731,7 +731,7 @@ const activateAccountAction =
         loginCredentialsAction(reduxActions, platform, {
           password: model.password,
           username: model.login,
-        })
+        }),
       );
     } catch (e) {
       if (activationWasDone) {
@@ -770,7 +770,7 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
           mail: userInfo.login,
           structureId: userInfo.structureId,
         },
-        deviceId
+        deviceId,
       );
     } else {
       return authService.forgot<'password'>(
@@ -779,7 +779,7 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
         {
           login: userInfo.login,
         },
-        deviceId
+        deviceId,
       );
     }
   };
@@ -858,7 +858,7 @@ function changePasswordAction(
   platform: Platform,
   p: IChangePasswordPayload,
   forceChange?: boolean,
-  rememberMe?: boolean
+  rememberMe?: boolean,
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
@@ -884,7 +884,7 @@ function changePasswordAction(
       const res = await fetch(`${platform.url}/auth/reset`, {
         body: formdata,
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Accept-Language': I18n.getLanguage(),
           'Content-Type': 'multipart/form-data',
           'X-APP': 'mobile',
@@ -919,7 +919,7 @@ function changePasswordAction(
           'change password',
           I18n.get('auth-changepassword-error-submit'),
           undefined,
-          e instanceof global.Error ? e : undefined
+          e instanceof global.Error ? e : undefined,
         );
     }
 
@@ -941,7 +941,7 @@ export const changePasswordActionAddFirstAccount = (
   platform: Platform,
   p: IChangePasswordPayload,
   forceChange?: boolean,
-  rememberMe?: boolean
+  rememberMe?: boolean,
 ) => changePasswordAction(getLoginFunctions.addFirstAccount(), platform, p, forceChange, rememberMe);
 
 export const changePasswordActionReplaceAccount = (
@@ -950,7 +950,7 @@ export const changePasswordActionReplaceAccount = (
   platform: Platform,
   p: IChangePasswordPayload,
   forceChange?: boolean,
-  rememberMe?: boolean
+  rememberMe?: boolean,
 ) => changePasswordAction(getLoginFunctions.replaceAccount(accountId, timestamp), platform, p, forceChange, rememberMe);
 
 export const buildChangePasswordActionReplaceAccount =
@@ -967,5 +967,5 @@ export const changePasswordActionAddAnotherAccount = (
   platform: Platform,
   p: IChangePasswordPayload,
   forceChange?: boolean,
-  rememberMe?: boolean
+  rememberMe?: boolean,
 ) => changePasswordAction(getLoginFunctions.addAnotherAccount(), platform, p, forceChange, rememberMe);

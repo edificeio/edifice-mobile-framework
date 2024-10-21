@@ -3,7 +3,7 @@ import { TextStyle, ViewStyle } from 'react-native';
 export default (
   width: number,
   height: number,
-  backgroundColor: string
+  backgroundColor: string,
 ): {
   [x: string]: ViewStyle | TextStyle;
 } => {

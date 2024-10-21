@@ -79,7 +79,7 @@ export const loadNotificationsPageAction =
       // Load notifications at the specified page, no reset
       dispatch(notificationsActions.request());
       const filters = Object.keys(state.notifSettings.notifFilterSettings.data).filter(
-        filter => state.notifSettings.notifFilterSettings.data[filter]
+        filter => state.notifSettings.notifFilterSettings.data[filter],
       );
       const notifications = await notificationsService.page(session, page, filters);
       dispatch(notificationsActions.receipt(notifications, page));

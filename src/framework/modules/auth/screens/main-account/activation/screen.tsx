@@ -42,9 +42,9 @@ export default connect(
           track: track.activation,
         }),
       },
-      dispatch
+      dispatch,
     );
-  }
+  },
 )(function AuthActivationScreen(props: AuthActivationScreenPrivateProps) {
   return <ActivationScreen {...props} />;
 });

@@ -15,7 +15,7 @@ export default class ChangePasswordFormModel {
       passwordRegex: RegExp | string;
       oldPassword: ValueGetter<string>;
       newPassword: ValueGetter<string>;
-    }
+    },
   ) {
     this.oldPassword = new ValidatorBuilder().withRequired(true).build<string>();
     this.newPassword = new ValidatorBuilder()

@@ -24,5 +24,5 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         <BottomSheetView style={styles.contentContainer}>{props.children}</BottomSheetView>
       </BottomSheetModal>
     );
-  }
+  },
 );

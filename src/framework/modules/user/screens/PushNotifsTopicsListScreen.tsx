@@ -124,7 +124,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
       Object.entries(items).filter(item => {
         const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.data.find(tf => tf.type === item[0]);
         return this.props.session?.rights.apps.find(app => !app.name || app.name === notifFilter?.['app-name']);
-      })
+      }),
     );
     const mainListData =
       Object.entries(items) && Object.entries(items).length > 0
@@ -169,7 +169,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
                   {
                     count: totalOn,
                     total,
-                  }
+                  },
                 )}
               </SmallActionText>
               <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.iconItem} />
@@ -209,7 +209,7 @@ const mapStateToProps: (s: IGlobalState) => IPushNotifsTopicsListScreenDataProps
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
+  getState: () => IGlobalState,
 ) => IPushNotifsTopicsListScreenEventProps = (dispatch, getState) => ({
   handleInitPushNotifsSettings: async () => {
     await dispatch(loadPushNotifsSettingsAction());

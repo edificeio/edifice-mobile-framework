@@ -151,6 +151,6 @@ export default connect(
         tryLogout: tryAction(manualLogoutAction),
         tryRevalidate: tryAction(revalidateTermsAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(RevalidateTermsScreen);

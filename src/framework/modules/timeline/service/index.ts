@@ -81,14 +81,14 @@ export interface IEntcoreTimelinePreferenceContent {
   config:
     | {
         [notifKey: string]: {
-          'defaultFrequency': string;
-          'type'?: string;
+          defaultFrequency: string;
+          type?: string;
           'event-type'?: string;
           'app-name'?: string;
           'app-address'?: string;
-          'key'?: string;
+          key?: string;
           'push-notif'?: boolean;
-          'restriction'?: string;
+          restriction?: string;
         };
       }
     | undefined;

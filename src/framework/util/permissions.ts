@@ -5,7 +5,7 @@ import DeviceInfo from 'react-native-device-info';
 import { check, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
 
 const permissionsScenarios = {
-  'camera': Platform.select<true | Permission>({
+  camera: Platform.select<true | Permission>({
     android: PERMISSIONS.ANDROID.CAMERA,
     ios: PERMISSIONS.IOS.CAMERA,
   })!,

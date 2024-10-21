@@ -68,7 +68,7 @@ export default connect(
           tryAction(loginCredentialsActionAddAnotherAccount, {
             track: track.loginCredentials,
           }),
-          { track: track.addAccount }
+          { track: track.addAccount },
         ),
         // Usually, tryLoginReplace is useless in this case.
         // ToDo : fix it like in wayfscreen
@@ -76,9 +76,9 @@ export default connect(
           tryAction(loginCredentialsActionReplaceAccount, {
             track: track.loginCredentials,
           }),
-          { track: track.addAccount }
+          { track: track.addAccount },
         ),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(AuthLoginCredentialsScreen);

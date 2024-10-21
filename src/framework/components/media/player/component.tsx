@@ -54,7 +54,7 @@ function MediaPlayer(props: MediaPlayerProps) {
         setOrientation(newOrientation);
       }
     },
-    [orientation]
+    [orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
@@ -254,7 +254,7 @@ function MediaPlayer(props: MediaPlayerProps) {
         height: isPortrait ? UI_SIZES.screen.height : UI_SIZES.screen.width,
       },
     ],
-    [isPortrait]
+    [isPortrait],
   );
 
   const [hideStatusBar, setHideStatusBar] = React.useState<boolean | undefined>(undefined);
@@ -263,7 +263,7 @@ function MediaPlayer(props: MediaPlayerProps) {
       setTimeout(() => {
         setHideStatusBar(!error);
       }, DELAY_STATUS_HIDE);
-    }, [error])
+    }, [error]),
   );
   React.useEffect(() => {
     if (hideStatusBar !== undefined) setHideStatusBar(!error);
@@ -275,7 +275,7 @@ function MediaPlayer(props: MediaPlayerProps) {
       if (route.params.referer) {
         markViewAudience(route.params.referer);
       }
-    }, [route.params.referer])
+    }, [route.params.referer]),
   );
 
   return (

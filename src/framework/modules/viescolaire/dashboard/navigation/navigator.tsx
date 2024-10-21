@@ -30,7 +30,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={DashboardStudentScreen}
           options={studentNavBar}
           initialParams={{}}
-        />
+        />,
       );
       moduleConfig.routeName = dashboardRouteNames.student;
     } else if (userType === AccountType.Relative) {
@@ -40,7 +40,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={DashboardRelativeScreen}
           options={relativeNavBar}
           initialParams={{}}
-        />
+        />,
       );
       moduleConfig.routeName = dashboardRouteNames.relative;
     } else {
@@ -50,7 +50,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={DashboardTeacherScreen}
           options={teacherNavBar}
           initialParams={{}}
-        />
+        />,
       );
       moduleConfig.routeName = dashboardRouteNames.teacher;
     }

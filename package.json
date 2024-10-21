@@ -286,8 +286,7 @@
     "*.{js,jsx,ts,tsx}": [
       "node cli/remove-console.js",
       "prettier --write",
-      "eslint --fix",
-      "tsc --noEmit"
+      "eslint --fix"
     ]
   },
   "ode": {

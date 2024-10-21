@@ -143,7 +143,7 @@ export const edtService = {
       startDate: Moment,
       endDate: Moment,
       groupIds: string[],
-      groupNames: string[]
+      groupNames: string[],
     ) => {
       const startDateString = startDate.format('YYYY-MM-DD');
       const endDateString = endDate.format('YYYY-MM-DD');
@@ -166,7 +166,7 @@ export const edtService = {
       structureId: string,
       startDate: Moment,
       endDate: Moment,
-      teacherId: string
+      teacherId: string,
     ) => {
       const startDateString = startDate.format('YYYY-MM-DD');
       const endDateString = endDate.format('YYYY-MM-DD');

@@ -66,7 +66,7 @@ export default function StudentStatus({
             {I18n.get(
               exemption_attendance
                 ? 'presences-call-studentstatus-info-exemptionattendance'
-                : 'presences-call-studentstatus-info-lastcourseabsent'
+                : 'presences-call-studentstatus-info-lastcourseabsent',
             )}
           </SmallText>
         </View>

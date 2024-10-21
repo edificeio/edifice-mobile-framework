@@ -103,6 +103,6 @@ export default connect(
         tryFetchTeachers: tryAction(fetchDiaryTeachersAction),
         updateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(DiaryHomeworkListScreen);

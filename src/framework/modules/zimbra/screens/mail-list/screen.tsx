@@ -255,7 +255,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         mails.map(mail => ({
           ...mail,
           unread: ids.includes(mail.id) ? unread : mail.unread,
-        }))
+        })),
       );
     } catch {
       Toast.showError(I18n.get('zimbra-maillist-error-text'));
@@ -533,6 +533,6 @@ export default connect(
       {
         tryFetchMailsFromFolder: tryAction(fetchZimbraMailsFromFolderAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(ZimbraMailListScreen);

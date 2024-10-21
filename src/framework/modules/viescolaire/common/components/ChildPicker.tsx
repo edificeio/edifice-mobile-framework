@@ -62,6 +62,6 @@ export default connect(
         handleSelectChild: handleAction(selectChildAction),
         tryLoadStoredChild: tryAction(loadStoredChildAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(ChildPicker);

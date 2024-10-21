@@ -178,7 +178,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
                 response.questionId,
                 response.choiceId ?? null,
                 response.answer,
-                response.customAnswer ?? null
+                response.customAnswer ?? null,
               );
             } else {
               return formService.question
@@ -189,11 +189,11 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
                   response.choiceId ?? null,
                   response.answer,
                   response.customAnswer ?? null,
-                  response.choicePosition ?? null
+                  response.choicePosition ?? null,
                 )
                 .then(r => (response.id = r.id));
             }
-          })
+          }),
         );
         if (question.type === QuestionType.FILE && res[0]?.files?.some(f => f.lf)) {
           const response = res[0];
@@ -203,7 +203,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
               if (file.lf) {
                 return formService.response.addFile(session, response.id!, file.lf);
               }
-            })
+            }),
           );
         }
         // Add empty response to unanswered question
@@ -223,13 +223,13 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
                   null,
                   response.answer,
                   response.customAnswer ?? null,
-                  response.choicePosition ?? null
+                  response.choicePosition ?? null,
                 )
                 .then(r => {
                   response.id = r.id;
                   updateQuestionResponses(id, [response]);
                 });
-            })
+            }),
           );
         }
       }
@@ -446,7 +446,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
           text: I18n.get('common-quit'),
         },
       ]);
-    }
+    },
   );
 
   const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
@@ -479,6 +479,6 @@ export default connect(
         tryFetchDistributionResponses: tryAction(fetchDistributionResponsesAction),
         tryFetchFormContent: tryAction(fetchFormContentAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(FormDistributionScreen);

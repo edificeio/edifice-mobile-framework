@@ -46,7 +46,7 @@ function useAppState() {
         // Track background state
       }
     },
-    [currentLocale]
+    [currentLocale],
   );
   React.useEffect(() => {
     const appStateListener = AppState.addEventListener('change', handleAppStateChange);

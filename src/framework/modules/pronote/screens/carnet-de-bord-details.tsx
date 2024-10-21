@@ -178,7 +178,7 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
           }),
           description: taf.Descriptif || `<p>${I18n.get('pronote-noinfo')}</p>`,
           label: taf.Matiere || I18n.get('pronote-noinfo'),
-        })
+        }),
       );
     }
     case CarnetDeBordSection.NOTES: {
@@ -239,5 +239,5 @@ export default connect(
   (state: IGlobalState) => ({
     session: getSession(),
   }),
-  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch)
+  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
 )(CarnetDeBordDetailsScreen);

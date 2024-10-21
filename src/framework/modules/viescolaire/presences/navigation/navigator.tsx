@@ -56,7 +56,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             options={declareEventNavBar}
             initialParams={{}}
           />
-        </Stack.Group>
+        </Stack.Group>,
       );
       moduleConfig.routeName = presencesRouteNames.callList;
     } else {
@@ -76,7 +76,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             options={eventListNavBar}
             initialParams={{}}
           />
-        </Stack.Group>
+        </Stack.Group>,
       );
       if (session?.user.type === AccountType.Relative) {
         screens.push(
@@ -88,7 +88,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
               options={declareAbsenceNavBar}
               initialParams={{}}
             />
-          </Stack.Group>
+          </Stack.Group>,
         );
       }
       moduleConfig.routeName = presencesRouteNames.history;

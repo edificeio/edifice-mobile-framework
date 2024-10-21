@@ -53,7 +53,7 @@ function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserLis
         selectedId,
         withSeparator,
       }),
-    [onSelect, renderBadge, avatarSize, selectedId, horizontal, data, customItemStyle, withSeparator]
+    [onSelect, renderBadge, avatarSize, selectedId, horizontal, data, customItemStyle, withSeparator],
   );
   return (
     <FlatList

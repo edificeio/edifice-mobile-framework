@@ -150,7 +150,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       Trackers.trackEvent('Présences', 'faire-appel', event());
 
       Toast.showSuccess(
-        I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups })
+        I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups }),
       );
     } catch {
       setValidating(false);
@@ -278,6 +278,6 @@ export default connect(
         tryFetchCall: tryAction(fetchPresencesCallAction),
         tryFetchEventReasons: tryAction(fetchPresencesEventReasonsAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(PresencesCallScreen);

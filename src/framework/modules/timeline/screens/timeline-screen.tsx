@@ -68,7 +68,7 @@ export interface ITimelineScreenEventProps {
   handleOpenNotification(
     n: IAbstractNotification,
     fallback: NotifHandlerThunkAction,
-    navigation: NavigationProp<ParamListBase>
+    navigation: NavigationProp<ParamListBase>,
   ): Promise<void>;
 }
 export type ITimelineScreenProps = ITimelineScreenDataProps &
@@ -159,7 +159,7 @@ function NotificationItem({
     },
     // Since notifications are immutable, we can memoize them only by id safely.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [notification.id, doOpenNotification]
+    [notification.id, doOpenNotification],
   );
   return (
     <TimelineNotification
@@ -459,7 +459,7 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps = (
   dispatch,
-  getState
+  getState,
 ) => ({
   dispatch,
   // TS BUG: await is needed here and type is correct
@@ -480,7 +480,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   handleOpenNotification: async (
     n: IAbstractNotification,
     fallback: NotifHandlerThunkAction,
-    navigation: NavigationProp<ParamListBase, keyof ParamListBase, string>
+    navigation: NavigationProp<ParamListBase, keyof ParamListBase, string>,
   ) => {
     dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Timeline Notification', false));
   },

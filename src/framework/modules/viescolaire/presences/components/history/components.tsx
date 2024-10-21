@@ -62,7 +62,7 @@ const History = (props: HistoryProps) => {
             {I18n.get(
               props.userType === AccountType.Relative
                 ? 'presences-history-description-relative'
-                : 'presences-history-description-student'
+                : 'presences-history-description-student',
             )}
           </SmallText>
         ) : null
@@ -74,7 +74,7 @@ const History = (props: HistoryProps) => {
           text={I18n.get(
             props.userType === AccountType.Relative
               ? 'presences-history-emptyscreen-default-text-relative'
-              : 'presences-history-emptyscreen-default-text-student'
+              : 'presences-history-emptyscreen-default-text-student',
           )}
           customStyle={styles.emptyScreenContainer}
           customTitleStyle={styles.emptyScreenTitle}

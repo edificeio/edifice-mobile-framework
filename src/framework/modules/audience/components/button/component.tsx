@@ -205,7 +205,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
                 toValue: 0,
                 useNativeDriver: true,
               }),
-            ])
+            ]),
           ).start();
         } else {
           Animated.timing(animationReactions[itemAnim].scale, {

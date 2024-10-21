@@ -129,7 +129,7 @@ export interface AuthNavigationParams extends ParamListBase {
  */
 export const simulateNavAction = (
   action: StackNavigationAction,
-  state: Parameters<Router<StackNavigationState<ParamListBase>, StackNavigationAction>['getRehydratedState']>[0]
+  state: Parameters<Router<StackNavigationState<ParamListBase>, StackNavigationAction>['getRehydratedState']>[0],
 ) => {
   // We must instaciate a throwaway StackRouter to perform the action on the state and get the resulting one.
   const router = StackRouter({});

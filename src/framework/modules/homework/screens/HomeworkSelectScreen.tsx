@@ -32,7 +32,7 @@ const mapStateToProps: (state: IGlobalState) => HomeworkSelectScreenDataProps = 
     title: homeworkDiaryList.data[diaryId].title,
   }));
   const diaryListWithCreationRight = flatHomeworkDiaryList.filter(diary =>
-    hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session)
+    hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session),
   );
 
   return {

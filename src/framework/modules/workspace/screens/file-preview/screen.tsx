@@ -87,19 +87,19 @@ export default connect(
         downloadFile: tryActionLegacy(
           downloadWorkspaceFilesAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFilePreviewScreenProps['downloadFile'],
         previewFile: tryActionLegacy(
           downloadThenOpenWorkspaceFileAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFilePreviewScreenProps['previewFile'],
         shareFile: tryActionLegacy(
           downloadThenShareWorkspaceFileAction,
           undefined,
-          true
+          true,
         ) as unknown as IWorkspaceFilePreviewScreenProps['shareFile'],
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(WorkspaceFilePreviewScreen);

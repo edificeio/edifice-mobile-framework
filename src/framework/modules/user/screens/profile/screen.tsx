@@ -96,7 +96,7 @@ const showBottomMenu = (actions: MenuAction[]) => {
     },
     index => {
       actions[index].action();
-    }
+    },
   );
 };
 
@@ -134,7 +134,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
           filepath: image.uri as string,
           filetype: image.type as string,
         },
-        { _needIOSReleaseSecureAccess: false }
+        { _needIOSReleaseSecureAccess: false },
       );
       setUpdatingAvatar(true);
       const sc = await onUploadAvatar(lc);
@@ -510,7 +510,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 <SmallText>{`${renderEmoji[hobbie.category]} `}</SmallText>
                 <SmallText style={styles.hobbieValue}>{`${hobbie.values}`}</SmallText>
               </View>
-            ) : null
+            ) : null,
           )}
           {!isEmpty(emptyHobbie) ? (
             <View style={styles.hobbie}>
@@ -576,7 +576,7 @@ const UserProfileScreenConnected = connect(
       dispatch(profileUpdateAction({ avatar: imageWorkspaceUrl })) as unknown as Promise<void>,
     onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
     onUploadAvatarError: () => dispatch(uploadAvatarError()),
-  })
+  }),
 )(UserProfileScreen);
 
 export default UserProfileScreenConnected;

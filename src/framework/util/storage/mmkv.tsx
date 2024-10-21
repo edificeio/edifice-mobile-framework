@@ -35,7 +35,7 @@ const migrateFromAsyncStorage = async (storage: IStorageBackend) => {
         console.error(
           `[Storage] migrateFromAsyncStorage: failed to migrate items ${
             error instanceof Error ? `: ${(error as Error).message}` : ''
-          }`
+          }`,
         );
       }
     }

@@ -50,14 +50,14 @@ export const actions = {
 const dismissFlashMessageActionsHandlerMap = {
   [actionTypes.dismissRequest]: (state: FlashMessagesStateData, action) => {
     return state.map(flashMessage =>
-      flashMessage.id === action.flashMessageId ? { ...flashMessage, dismiss: true } : flashMessage
+      flashMessage.id === action.flashMessageId ? { ...flashMessage, dismiss: true } : flashMessage,
     );
   },
   [actionTypes.dismissReceipt]: (state: FlashMessagesStateData, action) =>
     state.filter(flashMessage => flashMessage.id !== action.flashMessageId),
   [actionTypes.dismissError]: (state: FlashMessagesStateData, action) => {
     return state.map(flashMessage =>
-      flashMessage.id === action.flashMessageId ? { ...flashMessage, dismiss: false } : flashMessage
+      flashMessage.id === action.flashMessageId ? { ...flashMessage, dismiss: false } : flashMessage,
     );
   },
 };

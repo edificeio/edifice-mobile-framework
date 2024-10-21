@@ -42,7 +42,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={PronoteCarnetDeBordDetailsScreen}
           options={carnetDeBordDetailsNavBar}
           initialParams={{}}
-        />
+        />,
       );
       moduleConfig.routeName = pronoteRouteNames.carnetDeBord;
     }
@@ -56,7 +56,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={PronoteConnectorSelectorScreen}
           options={connectorSelectorNavBar}
           initialParams={{ connectors: apps }}
-        />
+        />,
       );
       moduleConfig.routeName = pronoteRouteNames.connectorSelector;
     } /* !hasCarnetDeBord && !hasMultipleConnectors */ else {
@@ -77,7 +77,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
               }
             : undefined
         }
-      />
+      />,
     );
 
     return <>{screens}</>;

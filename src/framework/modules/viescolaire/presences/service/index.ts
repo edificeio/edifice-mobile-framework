@@ -527,7 +527,7 @@ const studentsEventsAdapter = (data: BackendStudentsEvents): { [key: string]: Ch
           REGULARIZED: value.all.REGULARIZED.map(eventAdapter),
           UNREGULARIZED: value.all.UNREGULARIZED.map(eventAdapter),
         },
-      ])
+      ]),
   );
 };
 
@@ -550,7 +550,7 @@ export const presencesService = {
       studentId: string,
       startDate: Moment,
       endDate: Moment,
-      description: string
+      description: string,
     ) => {
       const api = '/presences/statements/absences';
       const formData = new FormData();
@@ -571,7 +571,7 @@ export const presencesService = {
       startDate: Moment,
       endDate: Moment,
       description: string,
-      file: LocalFile
+      file: LocalFile,
     ) => {
       const api = '/presences/statements/absences/attachment';
       const fields = {
@@ -590,7 +590,7 @@ export const presencesService = {
         },
         res => {
           return res.id;
-        }
+        },
       );
     },
   },
@@ -644,7 +644,7 @@ export const presencesService = {
       structureId: string,
       startDate: string,
       endDate: string,
-      allowMultipleSlots?: boolean
+      allowMultipleSlots?: boolean,
     ) => {
       const api = `/presences/courses?${querystring.stringify({
         end: endDate,
@@ -670,7 +670,7 @@ export const presencesService = {
       startDate: Moment,
       endDate: Moment,
       reasonId: number | null,
-      comment?: string
+      comment?: string,
     ) => {
       const api = '/presences/events';
       const body = JSON.stringify({
@@ -703,7 +703,7 @@ export const presencesService = {
       startDate: Moment,
       endDate: Moment,
       reasonId: number | null,
-      comment?: string
+      comment?: string,
     ) => {
       const api = `/presences/events/${id}`;
       const body = JSON.stringify({
@@ -731,7 +731,7 @@ export const presencesService = {
       type: CallEventType,
       startDate: Moment,
       endDate: Moment,
-      reasonId: number | null
+      reasonId: number | null,
     ) => {
       const api = '/presences/events/reason';
       const body = JSON.stringify({
@@ -775,7 +775,7 @@ export const presencesService = {
       studentId: string,
       structureId: string,
       startDate: string,
-      endDate: string
+      endDate: string,
     ) => {
       const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
       const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
@@ -786,7 +786,7 @@ export const presencesService = {
       studentId: string,
       structureId: string,
       startDate: string,
-      endDate: string
+      endDate: string,
     ) => {
       const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
       const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;

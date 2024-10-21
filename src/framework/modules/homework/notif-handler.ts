@@ -50,7 +50,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['SHARE', 'ENTRIES.MODIFIED'],
-      'notifHandlerAction': homeworkNotificationAction,
-      'type': 'HOMEWORKS',
+      notifHandlerAction: homeworkNotificationAction,
+      type: 'HOMEWORKS',
     },
   ]);

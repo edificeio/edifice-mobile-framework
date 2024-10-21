@@ -123,6 +123,6 @@ export default connect(
         tryFetchSessions: tryAction(fetchDiarySessionsAction),
         tryFetchSlots: tryAction(fetchDiarySlotsAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(DiaryTimetableScreen);

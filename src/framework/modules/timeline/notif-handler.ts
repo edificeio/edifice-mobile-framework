@@ -45,7 +45,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': 'SEND-FLASH-MESSAGE-PUSH',
-      'notifHandlerAction': handleFlashMsgNotificationAction,
-      'type': 'TIMELINE',
+      notifHandlerAction: handleFlashMsgNotificationAction,
+      type: 'TIMELINE',
     },
   ]);

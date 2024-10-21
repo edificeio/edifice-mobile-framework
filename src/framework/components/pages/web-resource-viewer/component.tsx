@@ -53,7 +53,7 @@ const useScreenUnlockOrientation = () => {
       return () => {
         Orientation.lockToPortrait();
       };
-    }, [])
+    }, []),
   );
 
   const onDeviceOrientationChange = React.useCallback((o: OrientationType) => {
@@ -124,7 +124,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
       }
       return true;
     },
-    [platform.url]
+    [platform.url],
   );
 
   useConstructor(() => {
@@ -149,7 +149,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
     ),
-    [onError, onLoad, onShouldStartLoadWithRequest, sourceObject]
+    [onError, onLoad, onShouldStartLoadWithRequest, sourceObject],
   );
 
   const closeButton = React.useMemo(
@@ -162,7 +162,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         style={styles.closeButton}
       />
     ),
-    [navigation.goBack]
+    [navigation.goBack],
   );
 
   const renderContent = React.useCallback(
@@ -181,7 +181,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         {orientation === OrientationType.PORTRAIT ? closeButton : null}
       </PageView>
     ),
-    [closeButton, orientation, orientationElement, toggleOrientation, webviewElement]
+    [closeButton, orientation, orientationElement, toggleOrientation, webviewElement],
   );
 
   const renderEmpty = React.useCallback(
@@ -192,7 +192,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         {closeButton}
       </PageView>
     ),
-    [webviewError, closeButton]
+    [webviewError, closeButton],
   );
 
   const loadContent = React.useCallback(async () => {

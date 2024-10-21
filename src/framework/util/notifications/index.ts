@@ -12,12 +12,12 @@ import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 // Types
 
 export interface IEntcoreAbstractNotification {
-  'type': string;
+  type: string;
   'event-type': string;
-  'resource'?: string;
+  resource?: string;
   'sub-resource'?: string;
-  'sender'?: string;
-  'params': {
+  sender?: string;
+  params: {
     uri?: string;
     resourceUri?: string;
     resourceName?: string;
@@ -43,9 +43,9 @@ export interface IEntcoreTimelineNotification extends IEntcoreAbstractNotificati
 }
 
 export interface IAbstractNotification {
-  'type': string; // Type referring notifDefinitions
+  type: string; // Type referring notifDefinitions
   'event-type': string; // Custom event-type, in sense of a subtype
-  'backupData': IEntcoreTimelineNotification; // Original notification data as is
+  backupData: IEntcoreTimelineNotification; // Original notification data as is
 }
 
 export interface ITimelineNotification extends IAbstractNotification {
@@ -131,9 +131,9 @@ export const isMyNotification = (n: ISenderNotification, u: AuthLoggedAccount) =
 
 export const notificationAdapter = (n: IEntcoreAbstractNotification) => {
   const ret = {
-    'backupData': n,
+    backupData: n,
     'event-type': n['event-type'],
-    'type': n.type,
+    type: n.type,
   };
   if ((n as IEntcoreTimelineNotification)._id) {
     (ret as ITimelineNotification).id = (n as IEntcoreTimelineNotification)._id;

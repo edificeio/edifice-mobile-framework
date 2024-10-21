@@ -91,7 +91,7 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
         filepath: img.uri as string,
         filetype: img.type as string,
       },
-      { _needIOSReleaseSecureAccess: false }
+      { _needIOSReleaseSecureAccess: false },
     );
 
   return (

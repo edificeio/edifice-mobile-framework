@@ -108,7 +108,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     item:
       | (ResourceExplorerFolderItem & BlogFolder)
       | (ResourceExplorerItemWithImage & DisplayedBlog)
-      | (ResourceExplorerItemWithIcon & DisplayedBlog)
+      | (ResourceExplorerItemWithIcon & DisplayedBlog),
   ) => {
     if (item.type === 'folder') {
       onOpenFolder(item);
@@ -144,7 +144,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
         svgImage="empty-search"
         title={I18n.get('blog-explorer-emptyscreen-title')}
         text={I18n.get(
-          hasBlogCreationRights ? 'blog-explorer-emptyscreen-text' : 'blog-explorer-emptyscreen-text-nocreationrights'
+          hasBlogCreationRights ? 'blog-explorer-emptyscreen-text' : 'blog-explorer-emptyscreen-text-nocreationrights',
         )}
         buttonText={hasBlogCreationRights ? I18n.get('blog-explorer-emptyscreen-button') : undefined}
         buttonUrl="/blog#/edit/new"
@@ -191,7 +191,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
                 b.fetchPosts?.[0]?.created ??
                 b.modified ??
                 b.created,
-              b.modified ?? b.created
+              b.modified ?? b.created,
             ),
             icon: 'bullhorn',
             ...(thumbnail && { thumbnail: formatSource(thumbnail) }),
@@ -254,6 +254,6 @@ export default connect(
       {
         tryFetch: tryAction(fetchBlogsAndFoldersAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(BlogExplorerScreen);

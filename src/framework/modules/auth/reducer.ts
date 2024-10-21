@@ -189,7 +189,7 @@ export const actions = {
     login: string,
     code: string,
     accountId?: keyof IAuthState['accounts'],
-    accountTimestamp?: number
+    accountTimestamp?: number,
   ) => ({
     accountId,
     accountTimestamp,
@@ -222,7 +222,7 @@ export const actions = {
     startup: AuthStorageData['startup'],
     accounts: AuthStorageData['accounts'],
     showOnboarding: AuthStorageData['show-onboarding'],
-    deviceId: IAuthState['deviceInfo']['uniqueId']
+    deviceId: IAuthState['deviceInfo']['uniqueId'],
   ) => ({ accounts, deviceId, showOnboarding, startup, type: actionTypes.authInit }),
 
   deactivate: () => ({
@@ -262,7 +262,7 @@ export const actions = {
     platformName: Platform['name'],
     login: string,
     accountId?: keyof IAuthState['accounts'],
-    accountTimestamp?: number
+    accountTimestamp?: number,
   ) => ({
     accountId,
     accountTimestamp,
@@ -276,7 +276,7 @@ export const actions = {
     login: string,
     code: string,
     accountId?: keyof IAuthState['accounts'],
-    accountTimestamp?: number
+    accountTimestamp?: number,
   ) => ({
     accountId,
     accountTimestamp,
@@ -307,7 +307,7 @@ export const actions = {
     id: string | typeof ERASE_ALL_ACCOUNTS,
     account: AuthLoggedAccount,
     requirement: AuthRequirement,
-    context: PlatformAuthContext
+    context: PlatformAuthContext,
   ) => ({
     account,
     context,

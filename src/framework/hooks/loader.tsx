@@ -93,5 +93,5 @@ export const ContentLoader = React.forwardRef<ContentLoaderHandle, ContentLoader
           ))
         )(<RefreshControl refreshing={loadingState === LoadingState.RETRY} onRefresh={() => reload()} />);
     }
-  }
+  },
 );

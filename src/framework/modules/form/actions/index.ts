@@ -94,7 +94,7 @@ export const fetchFormContentAction =
             }
           }
           return element;
-        })
+        }),
       );
       dispatch(formFormContentActionsCreators.receipt(formContent));
       return formContent;
@@ -118,7 +118,7 @@ export const fetchDistributionResponsesAction =
           if (response.answer === 'Fichier déposé' && response.id) {
             response.files = await formService.response.getFiles(session, response.id);
           }
-        })
+        }),
       );
       return responses;
     } catch {
@@ -139,7 +139,7 @@ export const fetchResponseFilesAction =
         responseIds.map(async responseId => {
           const responseFiles = await formService.response.getFiles(session, responseId);
           files.concat(responseFiles);
-        })
+        }),
       );
       return files;
     } catch {

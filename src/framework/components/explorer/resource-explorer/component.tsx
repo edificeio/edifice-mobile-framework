@@ -108,7 +108,7 @@ const renderItem = <FolderType extends object, ResourceType extends object>(
     | (ResourceExplorerItemWithImage & ResourceType)
     | (ResourceExplorerItemWithIcon & ResourceType)
     | ResourceExplorerEmptyItem,
-  onItemPress: ResourceExplorerProps<FolderType, ResourceType>['onItemPress']
+  onItemPress: ResourceExplorerProps<FolderType, ResourceType>['onItemPress'],
 ) => {
   if (item.type === 'empty')
     return (
@@ -166,7 +166,7 @@ export default <FolderType extends object, ResourceType extends object>(props: R
       f =>
         ({ ...f, type: 'resource' }) as
           | (ResourceExplorerItemWithImage & ResourceType)
-          | (ResourceExplorerItemWithIcon & ResourceType)
+          | (ResourceExplorerItemWithIcon & ResourceType),
     ),
     ...(data ?? []),
   ];

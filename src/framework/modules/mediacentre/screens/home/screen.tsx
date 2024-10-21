@@ -198,6 +198,6 @@ export default connect(
         trySearchResources: tryAction(searchResourcesAction),
         trySelectStructure: tryAction(editSelectedStructureAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(MediacentreHomeScreen);

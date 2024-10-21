@@ -64,7 +64,7 @@ const DayPicker = ({ initialSelectedDate = defaultSelectedDate, maximumWeeks = 8
         setCurrentFontScale(newFontScale);
       }
     },
-    [currentFontScale]
+    [currentFontScale],
   );
   React.useEffect(() => {
     const appStateListener = AppState.addEventListener('change', handleAppStateChange);

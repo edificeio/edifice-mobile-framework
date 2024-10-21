@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   const renderGrid = () => {
     const allModules = (props.modules ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n))
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
     ) as NavigableModuleArray;
 
     const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
@@ -87,10 +87,10 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   const renderOtherModules = () => {
     if (isEmpty(props.secondaryModules) && isEmpty(props.connectors)) return null;
     const secondaryModules = (props.secondaryModules ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n))
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
     ) as NavigableModuleArray;
     const connectors = (props.connectors ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n))
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
     ) as NavigableModuleArray;
     return (
       <View style={styles.otherModules}>

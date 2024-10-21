@@ -45,7 +45,7 @@ const LEGAL_ITEMS: LegalItem[] = [
 ];
 
 function UserLegalNoticeScreen(
-  props: UserLegalNoticeScreenPrivateProps & Pick<Required<UserLegalNoticeScreenPrivateProps>, 'legalUrls'>
+  props: UserLegalNoticeScreenPrivateProps & Pick<Required<UserLegalNoticeScreenPrivateProps>, 'legalUrls'>,
 ) {
   const openLegalItem = React.useCallback(
     (legalItem: string) => {
@@ -53,7 +53,7 @@ function UserLegalNoticeScreen(
       const selectedLegalUrl = props.legalUrls[legalItem];
       openPDFReader({ src: selectedLegalUrl, title: selectedLegalTitle });
     },
-    [props.legalUrls]
+    [props.legalUrls],
   );
 
   const renderLegalItem = React.useCallback(
@@ -66,7 +66,7 @@ function UserLegalNoticeScreen(
         />
       </TouchableOpacity>
     ),
-    [openLegalItem]
+    [openLegalItem],
   );
 
   return <PageView>{LEGAL_ITEMS.map(legalItem => renderLegalItem(legalItem))}</PageView>;

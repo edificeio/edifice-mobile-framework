@@ -22,7 +22,7 @@ export const StatusBar = (props: StatusBarProps) => {
         : /* props.type === 'dark' */ {
             android: <RNStatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
             ios: <RNStatusBar barStyle="light-content" />,
-          }
+          },
   );
 };
 
