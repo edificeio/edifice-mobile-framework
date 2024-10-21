@@ -83,10 +83,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: getScaleWidth(24),
   },
-  // original
-  // moreLessButton: {
-  //   paddingVertical: 0,
-  // },
   moreLessButton: {
     paddingBottom: 0,
   },
