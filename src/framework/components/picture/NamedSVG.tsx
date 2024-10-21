@@ -108,191 +108,245 @@ const imports = {
   'ui-print': async () => import('ASSETS/icons/uiIcons/print.svg'),
   'ui-question': async () => import('ASSETS/icons/uiIcons/question.svg'),
   'ui-radio-checked': async () => import('ASSETS/icons/uiIcons/radio-checked.svg'),
-  'ui-radio-unchecked': async () => import('ASSETS/icons/uiIcons/radio-unchecked.svg'),
+  // ModuleIcons
+admin: async () => import('ASSETS/icons/moduleIcons/admin.svg'),
+  
+'ui-radio-unchecked': async () => import('ASSETS/icons/uiIcons/radio-unchecked.svg'),
+
   'ui-rafterDown': async () => import('ASSETS/icons/uiIcons/rafterDown.svg'),
+
+  'adressBook': async () => import('ASSETS/icons/moduleIcons/adressBook.svg'),
+
   'ui-rafterLeft': async () => import('ASSETS/icons/uiIcons/rafterLeft.svg'),
+
+  'archives': async () => import('ASSETS/icons/moduleIcons/archives.svg'),
+
   'ui-rafterRight': async () => import('ASSETS/icons/uiIcons/rafterRight.svg'),
+
+  'blog': async () => import('ASSETS/icons/moduleIcons/blog.svg'),
+
   'ui-rafterUp': async () => import('ASSETS/icons/uiIcons/rafterUp.svg'),
+
+  'calendar': async () => import('ASSETS/icons/moduleIcons/calendar.svg'),
+
   'ui-reaction': async () => import('ASSETS/icons/uiIcons/reaction.svg'),
+
+  'collaborativeWall': async () => import('ASSETS/icons/moduleIcons/collaborativeWall.svg'),
+
   'ui-recordVideo': async () => import('ASSETS/icons/uiIcons/recordVideo.svg'),
+
+  'community': async () => import('ASSETS/icons/moduleIcons/community.svg'),
+
   'ui-recordVoice': async () => import('ASSETS/icons/uiIcons/recordVoice.svg'),
+
+  'competences': async () => import('ASSETS/icons/moduleIcons/competences.svg'),
+
   'ui-redo': async () => import('ASSETS/icons/uiIcons/redo.svg'),
+
+  'diary': async () => import('ASSETS/icons/moduleIcons/diary.svg'),
+
   'ui-refresh': async () => import('ASSETS/icons/uiIcons/refresh.svg'),
+
+  'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
+
   'ui-restore': async () => import('ASSETS/icons/uiIcons/restore.svg'),
+
+  'element': async () => import('ASSETS/icons/moduleIcons/element.svg'),
+
   'ui-save': async () => import('ASSETS/icons/uiIcons/save.svg'),
+
+  'exercices': async () => import('ASSETS/icons/moduleIcons/exercices.svg'),
+
   'ui-school': async () => import('ASSETS/icons/uiIcons/school.svg'),
+
+  'files': async () => import('ASSETS/icons/moduleIcons/files.svg'),
+
   'ui-search': async () => import('ASSETS/icons/uiIcons/search.svg'),
+
+  'form': async () => import('ASSETS/icons/moduleIcons/form.svg'),
+
   'ui-see': async () => import('ASSETS/icons/uiIcons/see.svg'),
+
+  'forum': async () => import('ASSETS/icons/moduleIcons/forum.svg'),
+
   'ui-send': async () => import('ASSETS/icons/uiIcons/send.svg'),
+
+  'homeLiaisonDiary': async () => import('ASSETS/icons/moduleIcons/homeLiaisonDiary.svg'),
+
   'ui-settings': async () => import('ASSETS/icons/uiIcons/settings.svg'),
+
+  'homework1D': async () => import('ASSETS/icons/moduleIcons/homework1D.svg'),
+
   'ui-share': Platform.select({
     android: async () => import('ASSETS/icons/uiIcons/shareAOS.svg'),
     ios: async () => import('ASSETS/icons/uiIcons/shareIOS.svg'),
   }),
-  'ui-skills': async () => import('ASSETS/icons/uiIcons/skills.svg'),
-  'ui-smartphone': async () => import('ASSETS/icons/uiIcons/smartphone.svg'),
-  'ui-sparkle': async () => import('ASSETS/icons/uiIcons/sparkle.svg'),
-  'ui-star-filled': async () => import('ASSETS/icons/uiIcons/star-filled.svg'),
-  'ui-subscript': async () => import('ASSETS/icons/uiIcons/subscript.svg'),
-  'ui-success': async () => import('ASSETS/icons/uiIcons/success.svg'),
-  'ui-success_fill': async () => import('ASSETS/icons/uiIcons/success_fill.svg'),
-  'ui-success_outline': async () => import('ASSETS/icons/uiIcons/success_outline.svg'),
-  'ui-superscript': async () => import('ASSETS/icons/uiIcons/superscript.svg'),
-  'ui-teacher': async () => import('ASSETS/icons/uiIcons/teacher.svg'),
-  'ui-text-options': async () => import('ASSETS/icons/uiIcons/textOptions.svg'),
-  'ui-text-size': async () => import('ASSETS/icons/uiIcons/text-size.svg'),
-  // ModuleIcons
-admin: async () => import('ASSETS/icons/moduleIcons/admin.svg'),
-  
-'ui-text-typo': async () => import('ASSETS/icons/uiIcons/text-typo.svg'),
 
-  'ui-textPage': async () => import('ASSETS/icons/uiIcons/textPage.svg'),
-
-  'adressBook': async () => import('ASSETS/icons/moduleIcons/adressBook.svg'),
-
-  'ui-toga': async () => import('ASSETS/icons/uiIcons/toga.svg'),
-
-  'archives': async () => import('ASSETS/icons/moduleIcons/archives.svg'),
-
-  'ui-tool': async () => import('ASSETS/icons/uiIcons/tool.svg'),
-
-  'blog': async () => import('ASSETS/icons/moduleIcons/blog.svg'),
-
-  'ui-trash': async () => import('ASSETS/icons/uiIcons/trash.svg'),
-
-  'calendar': async () => import('ASSETS/icons/moduleIcons/calendar.svg'),
-
-  'ui-trending-up': async () => import('ASSETS/icons/uiIcons/trending-up.svg'),
-
-  'collaborativeWall': async () => import('ASSETS/icons/moduleIcons/collaborativeWall.svg'),
-
-  'ui-unarchive': async () => import('ASSETS/icons/uiIcons/unarchive.svg'),
-
-  'community': async () => import('ASSETS/icons/moduleIcons/community.svg'),
-
-  'ui-underline': async () => import('ASSETS/icons/uiIcons/underline.svg'),
-
-  'competences': async () => import('ASSETS/icons/moduleIcons/competences.svg'),
-
-  'ui-undo': async () => import('ASSETS/icons/uiIcons/undo.svg'),
-
-  'diary': async () => import('ASSETS/icons/moduleIcons/diary.svg'),
-
-  'ui-unorderedList': async () => import('ASSETS/icons/uiIcons/unorderedList.svg'),
-
-  'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
-
-  'ui-upcoming': async () => import('ASSETS/icons/uiIcons/upcoming.svg'),
-  'element': async () => import('ASSETS/icons/moduleIcons/element.svg'),
-  'ui-upload': async () => import('ASSETS/icons/uiIcons/upload.svg'),
-  'exercices': async () => import('ASSETS/icons/moduleIcons/exercices.svg'),
-  'ui-user': async () => import('ASSETS/icons/uiIcons/user.svg'),
-  'files': async () => import('ASSETS/icons/moduleIcons/files.svg'),
-  'ui-users': async () => import('ASSETS/icons/uiIcons/users.svg'),
-  'form': async () => import('ASSETS/icons/moduleIcons/form.svg'),
-  'ui-userSearch': async () => import('ASSETS/icons/uiIcons/userSearch.svg'),
-  'forum': async () => import('ASSETS/icons/moduleIcons/forum.svg'),
-  'ui-video': async () => import('ASSETS/icons/uiIcons/video.svg'),
-  'homeLiaisonDiary': async () => import('ASSETS/icons/moduleIcons/homeLiaisonDiary.svg'),
-  'ui-walk': async () => import('ASSETS/icons/uiIcons/walk.svg'),
-  'homework1D': async () => import('ASSETS/icons/moduleIcons/homework1D.svg'),
-  'ui-warning': async () => import('ASSETS/icons/uiIcons/warning.svg'),
   'homework2D': async () => import('ASSETS/icons/moduleIcons/homework2D.svg'),
-  'ui-wavering': async () => import('ASSETS/icons/uiIcons/wavering.svg'),
+
+  'ui-skills': async () => import('ASSETS/icons/uiIcons/skills.svg'),
+
   'homeworkAssistance': async () => import('ASSETS/icons/moduleIcons/homeworkAssistance.svg'),
+
+  'ui-smartphone': async () => import('ASSETS/icons/uiIcons/smartphone.svg'),
+
   'lvs': async () => import('ASSETS/icons/moduleIcons/lvs.svg'),
-  'ui-write': async () => import('ASSETS/icons/uiIcons/write.svg'),
+
+  'ui-sparkle': async () => import('ASSETS/icons/uiIcons/sparkle.svg'),
+
   'mediacentre': async () => import('ASSETS/icons/moduleIcons/mediacentre.svg'),
+
+  'ui-star-filled': async () => import('ASSETS/icons/uiIcons/star-filled.svg'),
+
   'messages': async () => import('ASSETS/icons/moduleIcons/messages.svg'),
-  'moodle': async () => import('ASSETS/icons/moduleIcons/moodle.svg'),
+
+  'ui-subscript': async () => import('ASSETS/icons/uiIcons/subscript.svg'),
+
   // Images
 'days-monday': async () => import('ASSETS/images/days/monday.svg'),
-  
-'newsFeed': async () => import('ASSETS/icons/moduleIcons/newsFeed.svg'),
 
-  'pad': async () => import('ASSETS/icons/moduleIcons/pad.svg'),
+  
+'ui-success': async () => import('ASSETS/icons/uiIcons/success.svg'),
+
+  'ui-success_fill': async () => import('ASSETS/icons/uiIcons/success_fill.svg'),
 
   'days-thursday': async () => import('ASSETS/images/days/thursday.svg'),
 
-  'pages': async () => import('ASSETS/icons/moduleIcons/pages.svg'),
+  'ui-success_outline': async () => import('ASSETS/icons/uiIcons/success_outline.svg'),
 
   'days-friday': async () => import('ASSETS/images/days/friday.svg'),
 
-  'peertube': async () => import('ASSETS/icons/moduleIcons/peertube.svg'),
+  'ui-superscript': async () => import('ASSETS/icons/uiIcons/superscript.svg'),
 
   'days-saturday': async () => import('ASSETS/images/days/saturday.svg'),
 
-  'poll': async () => import('ASSETS/icons/moduleIcons/poll.svg'),
+  'ui-teacher': async () => import('ASSETS/icons/uiIcons/teacher.svg'),
 
   'days-tuesday': async () => import('ASSETS/images/days/tuesday.svg'),
 
-  'presences': async () => import('ASSETS/icons/moduleIcons/presences.svg'),
+  'ui-text-options': async () => import('ASSETS/icons/uiIcons/textOptions.svg'),
 
   'days-wednesday': async () => import('ASSETS/images/days/wednesday.svg'),
 
-  'rack:': async () => import('ASSETS/icons/moduleIcons/rack.svg'),
+  'ui-text-size': async () => import('ASSETS/icons/uiIcons/text-size.svg'),
 
   'empty-blog': async () => import('ASSETS/images/empty-screen/empty-blog.svg'),
 
-  'rbs': async () => import('ASSETS/icons/moduleIcons/rbs.svg'),
+  'ui-text-typo': async () => import('ASSETS/icons/uiIcons/text-typo.svg'),
 
   'empty-content': async () => import('ASSETS/images/empty-screen/empty-content.svg'),
 
-  'report': async () => import('ASSETS/icons/moduleIcons/report.svg'),
+  'ui-textPage': async () => import('ASSETS/icons/uiIcons/textPage.svg'),
 
   'empty-conversation': async () => import('ASSETS/images/empty-screen/empty-conversation.svg'),
 
-  'scrapbook': async () => import('ASSETS/icons/moduleIcons/scrapbook.svg'),
+  'ui-toga': async () => import('ASSETS/icons/uiIcons/toga.svg'),
 
   'empty-eula': async () => import('ASSETS/images/empty-screen/empty-eula.svg'),
-  'shareBigFiles': async () => import('ASSETS/icons/moduleIcons/shareBigFiles.svg'),
+
+  'ui-tool': async () => import('ASSETS/icons/uiIcons/tool.svg'),
+
   'empty-evaluations': async () => import('ASSETS/images/empty-screen/empty-evaluations.svg'),
-  'siteMap': async () => import('ASSETS/icons/moduleIcons/siteMap.svg'),
+
+  'ui-trash': async () => import('ASSETS/icons/uiIcons/trash.svg'),
+
   'empty-form': async () => import('ASSETS/images/empty-screen/empty-form.svg'),
-  'skills': async () => import('ASSETS/icons/moduleIcons/skills.svg'),
+
+  'ui-trending-up': async () => import('ASSETS/icons/uiIcons/trending-up.svg'),
+
   'empty-form-access': async () => import('ASSETS/images/empty-screen/empty-form-access.svg'),
-  'stats': async () => import('ASSETS/icons/moduleIcons/stats.svg'),
+
+  'ui-unarchive': async () => import('ASSETS/icons/uiIcons/unarchive.svg'),
+
   'empty-hammock': async () => import('ASSETS/images/empty-screen/empty-hammock.svg'),
-  'support': async () => import('ASSETS/icons/moduleIcons/support.svg'),
+
+  'ui-underline': async () => import('ASSETS/icons/uiIcons/underline.svg'),
+
   'empty-homework': async () => import('ASSETS/images/empty-screen/empty-homework.svg'),
-  'timeLineGenerator': async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
+
+  'ui-undo': async () => import('ASSETS/icons/uiIcons/undo.svg'),
+
   'empty-light': async () => import('ASSETS/images/empty-screen/empty-light.svg'),
-  'user': async () => import('ASSETS/icons/moduleIcons/user.svg'),
+
+  'ui-unorderedList': async () => import('ASSETS/icons/uiIcons/unorderedList.svg'),
+
   'empty-mediacentre': async () => import('ASSETS/images/empty-screen/empty-mediacentre.svg'),
-  'wekan': async () => import('ASSETS/icons/moduleIcons/wekan.svg'),
+
+  'ui-upcoming': async () => import('ASSETS/icons/uiIcons/upcoming.svg'),
+
   'empty-news': async () => import('ASSETS/images/empty-screen/empty-news.svg'),
+
+  'ui-upload': async () => import('ASSETS/icons/uiIcons/upload.svg'),
+
   'empty-presences': async () => import('ASSETS/images/empty-screen/empty-presences.svg'),
-  'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
+
+  'ui-user': async () => import('ASSETS/icons/uiIcons/user.svg'),
+
   'empty-pronote-uri': async () => import('ASSETS/images/empty-screen/pronote-error-uri.svg'),
+
+  'ui-users': async () => import('ASSETS/icons/uiIcons/users.svg'),
+
   'empty-schoolbook': async () => import('ASSETS/images/empty-screen/empty-schoolbook.svg'),
+
+  'ui-userSearch': async () => import('ASSETS/icons/uiIcons/userSearch.svg'),
+
   'empty-search': async () => import('ASSETS/images/empty-screen/empty-search.svg'),
+
+  'ui-video': async () => import('ASSETS/icons/uiIcons/video.svg'),
+
   'empty-support': async () => import('ASSETS/images/empty-screen/empty-support.svg'),
+
+  'ui-walk': async () => import('ASSETS/icons/uiIcons/walk.svg'),
+
   'empty-timeline': async () => import('ASSETS/images/empty-screen/empty-timeline.svg'),
+  'ui-warning': async () => import('ASSETS/icons/uiIcons/warning.svg'),
   'empty-trash': async () => import('ASSETS/images/empty-screen/empty-trash.svg'),
   'empty-viesco': async () => import('ASSETS/images/empty-screen/empty-viesco.svg'),
+  'ui-wavering': async () => import('ASSETS/icons/uiIcons/wavering.svg'),
   'empty-workspace': async () => import('ASSETS/images/empty-screen/empty-workspace.svg'),
   'empty-zimbra': async () => import('ASSETS/images/empty-screen/empty-zimbra.svg'),
+  'ui-write': async () => import('ASSETS/icons/uiIcons/write.svg'),
   'form-default': async () => import('ASSETS/images/form-default.svg'),
+  'moodle': async () => import('ASSETS/icons/moduleIcons/moodle.svg'),
   'homework-assistance-home': async () => import('ASSETS/images/homework-assistance-home.svg'),
+  'newsFeed': async () => import('ASSETS/icons/moduleIcons/newsFeed.svg'),
   'image-not-found': async () => import('ASSETS/images/empty-screen/image-not-found.svg'),
+  'pad': async () => import('ASSETS/icons/moduleIcons/pad.svg'),
   'multi-account': async () => import('ASSETS/images/multi-account.svg'),
+  'pages': async () => import('ASSETS/icons/moduleIcons/pages.svg'),
+  'peertube': async () => import('ASSETS/icons/moduleIcons/peertube.svg'),
   'pictos-answer': async () => import('ASSETS/images/pictos/answer.svg'),
   'pictos-arrow-right': async () => import('ASSETS/images/pictos/arrow-right.svg'),
+  'poll': async () => import('ASSETS/icons/moduleIcons/poll.svg'),
   'pictos-close': async () => import('ASSETS/images/pictos/close.svg'),
+  'presences': async () => import('ASSETS/icons/moduleIcons/presences.svg'),
   'pictos-error': async () => import('ASSETS/images/pictos/error.svg'),
+  'rack:': async () => import('ASSETS/icons/moduleIcons/rack.svg'),
   'pictos-external-link': async () => import('ASSETS/images/pictos/external-link.svg'),
+  'rbs': async () => import('ASSETS/icons/moduleIcons/rbs.svg'),
   'pictos-mail': async () => import('ASSETS/images/pictos/mail.svg'),
+  'report': async () => import('ASSETS/icons/moduleIcons/report.svg'),
   'pictos-redo': async () => import('ASSETS/images/pictos/redo.svg'),
+  'scrapbook': async () => import('ASSETS/icons/moduleIcons/scrapbook.svg'),
   'pictos-save': async () => import('ASSETS/images/pictos/save.svg'),
+  'shareBigFiles': async () => import('ASSETS/icons/moduleIcons/shareBigFiles.svg'),
   'pictos-send': async () => import('ASSETS/images/pictos/send.svg'),
+  'siteMap': async () => import('ASSETS/icons/moduleIcons/siteMap.svg'),
   'pictos-smartphone': async () => import('ASSETS/images/pictos/smartphone.svg'),
+  'skills': async () => import('ASSETS/icons/moduleIcons/skills.svg'),
   'pictos-success-outline': async () => import('ASSETS/images/pictos/success-outline.svg'),
+  'stats': async () => import('ASSETS/icons/moduleIcons/stats.svg'),
   'reaction_1': async () => import('ASSETS/images/reactions/reaction1.svg'),
+  'support': async () => import('ASSETS/icons/moduleIcons/support.svg'),
   'reaction_1-round': async () => import('ASSETS/images/reactions/reaction1_round.svg'),
+  'timeLineGenerator': async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
   'reaction_2': async () => import('ASSETS/images/reactions/reaction2.svg'),
+  'user': async () => import('ASSETS/icons/moduleIcons/user.svg'),
   'reaction_2-round': async () => import('ASSETS/images/reactions/reaction2_round.svg'),
+  'wekan': async () => import('ASSETS/icons/moduleIcons/wekan.svg'),
   'reaction_3': async () => import('ASSETS/images/reactions/reaction3.svg'),
   'reaction_3-round': async () => import('ASSETS/images/reactions/reaction3_round.svg'),
+  'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
   'reaction_4': async () => import('ASSETS/images/reactions/reaction4.svg'),
   'reaction_4-round': async () => import('ASSETS/images/reactions/reaction4_round.svg'),
   'schoolbook-canteen': async () => import('ASSETS/images/schoolbook/canteen.svg'),

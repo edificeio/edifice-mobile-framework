@@ -57,7 +57,7 @@ module.exports = {
         pathGroupsExcludedImportTypes: ['internal', 'react'],
       },
     ],
-    'no-console': ['error'],
+    'no-console': ['error', { allow: ['debug', 'error', 'info', 'warn'] }],
     'no-inline-styles/no-inline-styles': 2,
     'no-restricted-imports': [
       'error',

@@ -88,10 +88,10 @@ export const actionTypes = {
   addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
   addAccountActivation: moduleConfig.namespaceActionType('ADD_ACCOUNT_ACTIVATION'),
   addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
-  addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
   addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
-  authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
   addAccountRedirectCancel: moduleConfig.namespaceActionType('ADD_ACCOUNT_REDIRECT_CANCEL'),
+  addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
+  authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
   authInit: moduleConfig.namespaceActionType('INIT'),
   deactivate: moduleConfig.namespaceActionType('DEACTIVATE'),
   invalidate: moduleConfig.namespaceActionType('INVALIDATE'),
@@ -173,22 +173,15 @@ export const actions = {
     type: actionTypes.addAccount,
   }),
 
-  addAccountInit: () => ({
-    type: actionTypes.addAccountInit,
-  }),
-
   addAccountActivation: (platformName: Platform['name'], login: string, code: string) => ({
-    platformName,
-    type: actionTypes.addAccountActivation,
     code,
     login,
+    platformName,
+    type: actionTypes.addAccountActivation,
   }),
 
-  addAccountRequirement: (account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
-    account,
-    context,
-    requirement,
-    type: actionTypes.addAccountRequirement,
+  addAccountInit: () => ({
+    type: actionTypes.addAccountInit,
   }),
 
   addAccountPasswordRenew: (
@@ -198,24 +191,31 @@ export const actions = {
     accountId?: keyof IAuthState['accounts'],
     accountTimestamp?: number
   ) => ({
-    platformName,
-    code,
-    type: actionTypes.addAccountPasswordRenew,
     accountId,
-    login,
     accountTimestamp,
-  }),
-
-  authError: (error: NonNullable<IAuthState['error']>, account?: string) => ({
-    account,
-    error,
-    type: actionTypes.authError,
+    code,
+    login,
+    platformName,
+    type: actionTypes.addAccountPasswordRenew,
   }),
 
   addAccountRedirectCancel: (platformName: Platform['name'], login: string) => ({
     login,
     platformName,
     type: actionTypes.addAccountRedirectCancel,
+  }),
+
+  addAccountRequirement: (account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
+    account,
+    context,
+    requirement,
+    type: actionTypes.addAccountRequirement,
+  }),
+
+  authError: (error: NonNullable<IAuthState['error']>, account?: string) => ({
+    account,
+    error,
+    type: actionTypes.authError,
   }),
 
   authInit: (
