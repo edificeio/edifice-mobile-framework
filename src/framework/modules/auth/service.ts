@@ -1,19 +1,11 @@
+import { Platform as RNPlatform } from 'react-native';
+
 import CookieManager from '@react-native-cookies/cookies';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
-import { Platform as RNPlatform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
-
-import { I18n } from '~/app/i18n';
-import appConf, { Platform } from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { OldStorageFunctions, Storage } from '~/framework/util/storage';
-import { Connection } from '~/infra/Connection';
-import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-import { OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
+import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 
 import {
   AccountType,
@@ -30,6 +22,10 @@ import {
   AuthPendingRedirection,
   AuthRequirement,
   AuthTokenSet,
+  createActivationError,
+  credentialsAreCustomToken,
+  credentialsAreLoginPassword,
+  credentialsAreSaml,
   ForgotMode,
   InitialAuthenticationMethod,
   LegalUrls,
@@ -38,11 +34,16 @@ import {
   StructureNode,
   UserChild,
   UserChildren,
-  createActivationError,
-  credentialsAreCustomToken,
-  credentialsAreLoginPassword,
-  credentialsAreSaml,
 } from './model';
+
+import { I18n } from '~/app/i18n';
+import appConf, { Platform } from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
+import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { OldStorageFunctions, Storage } from '~/framework/util/storage';
+import { Connection } from '~/infra/Connection';
+import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
+import { initOAuth2, OAuth2RessourceOwnerPasswordClient, uniqueId, urlSigner } from '~/infra/oauth';
 
 export interface IUserRequirements {
   forceChangePassword?: boolean;
@@ -259,22 +260,22 @@ export function formatSession(
     throw new Error.LoginError(Error.FetchErrorType.BAD_RESPONSE, 'Missing data in user info');
   }
   const user: Partial<AuthActiveUserInfo> = {
-    id: userinfo.userId,
-    login: userinfo.login,
-    loginUsed,
-    type: userinfo.type,
-    displayName: userinfo.username,
-    firstName: userinfo.firstName,
-    lastName: userinfo.lastName,
-    groups: userinfo.groupsIds,
     classes: userinfo.classes,
+    displayName: userinfo.username,
+    avatar: userPublicInfo?.photo,
+    firstName: userinfo.firstName,
+    email: userPrivateData?.email,
+    groups: userinfo.groupsIds,
+    birthDate: userinfo.birthDate ? moment(userinfo.birthDate) : undefined,
+    id: userinfo.userId,
+    homePhone: userPrivateData?.homePhone,
+    login: userinfo.login,
+    lastName: userinfo.lastName,
+    loginUsed,
+    mobile: userPrivateData?.mobile,
+    type: userinfo.type,
     structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
     uniqueId: userinfo.uniqueId,
-    avatar: userPublicInfo?.photo,
-    mobile: userPrivateData?.mobile,
-    email: userPrivateData?.email,
-    homePhone: userPrivateData?.homePhone,
-    birthDate: userinfo.birthDate ? moment(userinfo.birthDate) : undefined,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
   // compute here detailed data about children (laborious)
@@ -300,17 +301,17 @@ export function formatSession(
     (user as AuthActiveUserInfoStudent).relatives = userPrivateData.parents;
   }
   return {
+    addTimestamp,
+    method,
+    persist: rememberMe ? SessionPersistence.PERMANENT : SessionPersistence.TEMPORARY,
     platform,
-    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
-    user: user as AuthActiveUserInfo,
     rights: {
       apps: userinfo.apps,
-      widgets: userinfo.widgets,
       authorizedActions: userinfo.authorizedActions,
+      widgets: userinfo.widgets,
     },
-    persist: rememberMe ? SessionPersistence.PERMANENT : SessionPersistence.TEMPORARY,
-    method,
-    addTimestamp,
+    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
+    user: user as AuthActiveUserInfo,
   } as AuthActiveAccountWithCredentials | AuthActiveAccountWithSaml;
 }
 
@@ -598,17 +599,7 @@ export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount)
   try {
     const fcm = new FcmService(account.platform);
     console.debug('removeFirebaseTokenWithAccount - unregisterFCMToken');
-    if (RNPlatform.OS === 'android') {
-      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
-      if (result === RESULTS.GRANTED) {
-        await fcm.unregisterFCMTokenWithAccount(account);
-      }
-    } else {
-      const authorizationStatus = await messaging().requestPermission();
-      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-        await fcm.unregisterFCMTokenWithAccount(account);
-      }
-    }
+    await fcm.unregisterFCMTokenWithAccount(account);
   } catch (err) {
     if (err instanceof Error.ErrorWithType) throw err;
     else throw new global.Error('Firebase unregister error', { cause: err });
@@ -623,8 +614,8 @@ export async function getAuthTranslationKeys(platform: Platform, language: I18n.
       const authTranslationKeys = await res.json();
       const legalUrls: LegalUrls = {
         cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
-        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
         cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
       };
       if (authTranslationKeys) {
         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
@@ -658,8 +649,8 @@ export async function getMFAValidationInfos() {
 export async function verifyMFACode(key: string) {
   try {
     const mfaValidationState = (await fetchJSONWithCache('/auth/user/mfa/code', {
-      method: 'POST',
       body: JSON.stringify({ key }),
+      method: 'POST',
     })) as IEntcoreMFAValidationState;
     return mfaValidationState;
   } catch (e) {
@@ -679,16 +670,16 @@ export async function getMobileValidationInfos(platformUrl: string) {
 
 export async function requestMobileVerificationCode(platform: Platform, mobile: string) {
   await signedFetch(platform.url + '/directory/user/mobilestate', {
-    method: 'PUT',
     body: JSON.stringify({ mobile }),
+    method: 'PUT',
   });
 }
 
 export async function verifyMobileCode(key: string) {
   try {
     const mobileValidationState = (await fetchJSONWithCache('/directory/user/mobilestate', {
-      method: 'POST',
       body: JSON.stringify({ key }),
+      method: 'POST',
     })) as IEntcoreMobileValidationState;
     return mobileValidationState;
   } catch (e) {
@@ -715,16 +706,16 @@ export async function getEmailValidationInfos(platformUrl: string) {
 
 export async function requestEmailVerificationCode(platform: Platform, email: string) {
   await signedFetch(platform.url + '/directory/user/mailstate', {
-    method: 'PUT',
     body: JSON.stringify({ email }),
+    method: 'PUT',
   });
 }
 
 export async function verifyEmailCode(key: string) {
   try {
     const emailValidationState = (await fetchJSONWithCache('/directory/user/mailstate', {
-      method: 'POST',
       body: JSON.stringify({ key }),
+      method: 'POST',
     })) as IEntcoreEmailValidationState;
     return emailValidationState;
   } catch (e) {
@@ -854,10 +845,10 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
     acceptCGU: true,
     activationCode: model.activationCode,
     callBack: '',
-    login: model.login,
-    password: model.password,
     confirmPassword: model.confirmPassword,
+    login: model.login,
     mail: model.mail || '',
+    password: model.password,
     phone: model.phone,
     theme,
   };
@@ -908,7 +899,6 @@ export async function forgot<Mode extends ForgotMode>(
   const api = mode === 'id' ? `${platform.url}/auth/forgot-id` : `${platform.url}/auth/forgot-password`;
   const res = await fetch(api, {
     body: JSON.stringify(realPayload),
-    method: 'POST',
     headers: {
       'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'application/json',
@@ -917,6 +907,7 @@ export async function forgot<Mode extends ForgotMode>(
       'X-APP-VERSION': DeviceInfo.getReadableVersion(),
       'X-Device-Id': uniqueId(),
     },
+    method: 'POST',
   });
   const resStatus = res.status;
   const resJson = await res.json();
