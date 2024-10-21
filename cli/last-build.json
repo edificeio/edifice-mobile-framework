@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-10-18 13:19:36",
-  "notes": "fix(push): review firebase token removal\nfix(mediacentre): AMV2-647 set 5s timeout to search\nfix(push): MB-2961, avoid calling permissions when unregistering FCM token\nfix(mediacentre): AMV2-646 change condition to fetch global resources\nrelease: 1.13.5-rc.1(1130505)",
-  "version": "1.13.5-rc.2(1130506)"
+  "last": "2024-10-21 20:57:15",
+  "notes": "fix(fcm): MB-2961, fcm token not unregistered fix\nrelease: 1.13.5-rc.2(1130506)",
+  "version": "1.13.5-rc.3(1130507)"
 }
