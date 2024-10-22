@@ -1,4 +1,5 @@
 import type { Moment } from 'moment';
+import { CountryCode } from 'react-native-phone-number-input';
 
 import type { IAuthorizedAction, UserPrivateData } from '~/framework/modules/auth/service';
 import { Platform } from '~/framework/util/appConf';
@@ -395,6 +396,8 @@ export interface PlatformAuthContext {
   };
 }
 
+type MobileState = 'MOBILE_FORMAT_INVALID' | 'PRISTINE' | 'STALE';
+
 export interface IActivationPayload {
   activationCode: string;
   login: string;
@@ -403,6 +406,8 @@ export interface IActivationPayload {
   mail: string;
   phone: string;
   acceptCGU: boolean;
+  phoneCountry: CountryCode;
+  phoneState: MobileState;
 }
 
 export interface IActivationError extends Error {
