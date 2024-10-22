@@ -397,6 +397,7 @@ export interface PlatformAuthContext {
 }
 
 type MobileState = 'MOBILE_FORMAT_INVALID' | 'PRISTINE' | 'STALE';
+type EmailState = 'EMAIL_FORMAT_INVALID' | 'PRISTINE' | 'EMAIL_ALREADY_VERIFIED';
 
 export interface IActivationPayload {
   activationCode: string;
@@ -404,6 +405,7 @@ export interface IActivationPayload {
   password: string;
   confirmPassword: string;
   mail: string;
+  mailState: EmailState;
   phone: string;
   acceptCGU: boolean;
   phoneCountry: CountryCode;
