@@ -238,10 +238,6 @@ export class ActivationScreen extends React.PureComponent<
             }}
             input={
               <EmailInput
-                style={[
-                  styles.emailInput,
-                  { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
-                ]}
                 annotation={isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
                 onBlur={this.onMailInputBlur}
                 onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
