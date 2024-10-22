@@ -24,6 +24,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import EmailInput from '~/framework/components/inputs/email/component';
+import PasswordInput from '~/framework/components/inputs/password';
 import { KeyboardPageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { PFLogo } from '~/framework/components/pfLogo';
@@ -31,12 +32,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import { CaptionItalicText, SmallActionText, SmallText } from '~/framework/components/text';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
-import {
-  ActivationFormModel,
-  InputPassword,
-  InputPasswordConfirm,
-  ValueChangeArgs,
-} from '~/framework/modules/auth/components/ActivationForm';
+import { ActivationFormModel, ValueChangeArgs } from '~/framework/modules/auth/components/ActivationForm';
 import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { Loading } from '~/ui/Loading';
 import { ValidatorBuilder } from '~/utils/form';
@@ -175,13 +171,13 @@ export class ActivationScreen extends React.PureComponent<
       phoneRequired: context?.mandatory?.phone ?? false,
     });
     const isNotValid = !acceptCGU || !formModel.validate({ ...this.state });
-    const errorKey = formModel.firstErrorKey({ ...this.state });
+    const errorKey = typing ? formModel.firstErrorKey({ ...this.state }) : undefined;
     const errorText = errorKey ? I18n.get(errorKey) : error;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = activationState === 'RUNNING';
     const cguUrl = this.props.legalUrls?.cgu;
     const usercharterUrl = this.props.legalUrls?.userCharter;
-    const isMobileStateClean = this.state.phoneState === 'PRISTINE' || 'STALE';
+    const isMobileStateClean = this.state.phoneState === 'PRISTINE';
     const isEmailStatePristine = this.state.mailState === 'PRISTINE';
 
     return (
@@ -190,12 +186,49 @@ export class ActivationScreen extends React.PureComponent<
           <LogoWrapper>
             <PFLogo pf={platform} />
           </LogoWrapper>
-          {/* <InputLogin login={login} form={formModel} onChange={this.onChange('login')} /> */}
           {context.passwordRegexI18nActivation?.[I18n.getLanguage()] ? (
             <AlertCard type="info" text={context.passwordRegexI18nActivation[I18n.getLanguage()]} style={styles.alertCard} />
           ) : null}
-          <InputPassword password={password} form={formModel} onChange={this.onFieldChange('password')} />
-          <InputPasswordConfirm confirm={confirmPassword} form={formModel} onChange={this.onFieldChange('confirmPassword')} />
+          <InputContainer
+            label={{
+              // clé i18N
+              icon: 'ui-lock',
+              text: 'Mot de passe',
+            }}
+            input={
+              <PasswordInput
+                annotation={formModel.showPasswordError(password) ? errorText : ''}
+                onChangeText={formModel.password.changeCallback(this.onFieldChange('password'))}
+                placeholder={I18n.get('auth-changepassword-placeholder')} // clé i18n
+                showError={formModel.showPasswordError(password)}
+                showIconCallback
+                testID="activation-password"
+                testIDToggle="activation-see-password"
+                value={password}
+              />
+            }
+          />
+
+          <InputContainer
+            style={styles.inputContainer}
+            label={{
+              // clé i18N
+              icon: 'ui-lock',
+              text: 'Confirmer le mot de passe',
+            }}
+            input={
+              <PasswordInput
+                annotation={formModel.showConfirmError(confirmPassword) ? errorText : ''}
+                onChangeText={formModel.confirm.changeCallback(this.onFieldChange('confirmPassword'))}
+                placeholder={I18n.get('auth-changepassword-placeholder')} // clé i18n
+                showError={formModel.showConfirmError(confirmPassword)}
+                showIconCallback
+                testID="activation-confirmed-password"
+                testIDToggle="activation-see-confirmed-password"
+                value={confirmPassword}
+              />
+            }
+          />
 
           <InputContainer
             label={{
@@ -204,23 +237,19 @@ export class ActivationScreen extends React.PureComponent<
               text: 'Adresse mail',
             }}
             input={
-              <>
-                <EmailInput
-                  style={[
-                    styles.emailInput,
-                    { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
-                  ]}
-                  value={mail}
-                  onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
-                  placeholder="Saisir l'adresse mail"
-                  onBlur={this.onMailInputBlur}
-                  testID="activation-email"
-                />
-                <CaptionItalicText style={styles.errorText}>
-                  {/** clé i18n a changer */}
-                  {isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
-                </CaptionItalicText>
-              </>
+              <EmailInput
+                style={[
+                  styles.emailInput,
+                  { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
+                ]}
+                annotation={isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
+                onBlur={this.onMailInputBlur}
+                onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
+                placeholder="Saisir l'adresse mail"
+                showError={formModel.showEmailError(mail)}
+                testID="activation-email"
+                value={mail}
+              />
             }
           />
 
