@@ -23,6 +23,7 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
+import EmailInput from '~/framework/components/inputs/email/component';
 import { KeyboardPageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { PFLogo } from '~/framework/components/pfLogo';
@@ -32,13 +33,13 @@ import { useConstructor } from '~/framework/hooks/constructor';
 import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
 import {
   ActivationFormModel,
-  InputEmail,
   InputPassword,
   InputPasswordConfirm,
   ValueChangeArgs,
 } from '~/framework/modules/auth/components/ActivationForm';
 import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { Loading } from '~/ui/Loading';
+import { ValidatorBuilder } from '~/utils/form';
 
 const countryListLanguages = {
   DEFAULT: 'common',
@@ -70,6 +71,7 @@ export class ActivationScreen extends React.PureComponent<
     confirmPassword: '',
     login: this.props.route.params.credentials.username,
     mail: '',
+    mailState: 'PRISTINE',
     password: '',
     phone: '',
     phoneCountry: 'FR',
@@ -97,8 +99,14 @@ export class ActivationScreen extends React.PureComponent<
     };
   };
 
-  private doOpenLegalUrls = (title: string, url?: string) => {
-    openPDFReader({ src: url, title });
+  private onMailInputBlur = () => {
+    const { mail } = this.state;
+    this.verifyEmail(mail);
+  };
+
+  private onPhoneInputBlur = () => {
+    const { phone } = this.state;
+    this.verifyAndFormatPhoneNumber(phone);
   };
 
   private onSetCountry = (newCountry: Country): void => {
@@ -106,9 +114,8 @@ export class ActivationScreen extends React.PureComponent<
     this.setState({ phoneCountry: country });
   };
 
-  private onPhoneInputBlur = () => {
-    const { phone } = this.state;
-    this.verifyAndFormatPhoneNumber(phone);
+  private doOpenLegalUrls = (title: string, url?: string) => {
+    openPDFReader({ src: url, title });
   };
 
   private getIsValidMobileNumberForRegion = (toVerify: string) => {
@@ -142,6 +149,21 @@ export class ActivationScreen extends React.PureComponent<
     }
   };
 
+  private verifyEmail = (toVerify: string) => {
+    const verifiedEmail = new ValidatorBuilder().withEmail().build<string>().isValid(toVerify);
+    if (verifiedEmail) {
+      this.setState(prevState => ({
+        ...prevState,
+        mailState: 'PRISTINE',
+      }));
+      return true;
+    }
+    if (!verifiedEmail) {
+      this.setState({ mailState: 'EMAIL_FORMAT_INVALID' });
+      return false;
+    }
+  };
+
   public render() {
     const { acceptCGU, activationState, confirmPassword, error, mail, password, phone, typing } = this.state;
     const { platform } = this.props.route.params;
@@ -159,7 +181,8 @@ export class ActivationScreen extends React.PureComponent<
     const isSubmitLoading = activationState === 'RUNNING';
     const cguUrl = this.props.legalUrls?.cgu;
     const usercharterUrl = this.props.legalUrls?.userCharter;
-    const isMobileStateClean = this.state.phoneState === 'PRISTINE';
+    const isMobileStateClean = this.state.phoneState === 'PRISTINE' || 'STALE';
+    const isEmailStatePristine = this.state.mailState === 'PRISTINE';
 
     return (
       <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
@@ -173,9 +196,33 @@ export class ActivationScreen extends React.PureComponent<
           ) : null}
           <InputPassword password={password} form={formModel} onChange={this.onFieldChange('password')} />
           <InputPasswordConfirm confirm={confirmPassword} form={formModel} onChange={this.onFieldChange('confirmPassword')} />
-          <InputEmail email={mail} form={formModel} onChange={this.onFieldChange('mail')} />
 
-          {/* <InputPhone phone={phone} form={formModel} onChange={this.onFieldChange('phone')} /> */}
+          <InputContainer
+            label={{
+              // clé i18N
+              icon: 'ui-mail',
+              text: 'Adresse mail',
+            }}
+            input={
+              <>
+                <EmailInput
+                  style={[
+                    styles.emailInput,
+                    { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
+                  ]}
+                  value={mail}
+                  onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
+                  placeholder="Saisir l'adresse mail"
+                  onBlur={this.onMailInputBlur}
+                  testID="activation-email"
+                />
+                <CaptionItalicText style={styles.errorText}>
+                  {/** clé i18n a changer */}
+                  {isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
+                </CaptionItalicText>
+              </>
+            }
+          />
 
           <InputContainer
             style={styles.phoneInputContainer}
