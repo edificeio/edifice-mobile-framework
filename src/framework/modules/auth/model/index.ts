@@ -2,6 +2,7 @@ import type { Moment } from 'moment';
 import { CountryCode } from 'react-native-phone-number-input';
 
 import type { IAuthorizedAction, UserPrivateData } from '~/framework/modules/auth/service';
+import { EmailState, MobileState } from '~/framework/modules/auth/templates/activation';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -396,8 +397,8 @@ export interface PlatformAuthContext {
   };
 }
 
-type MobileState = 'MOBILE_FORMAT_INVALID' | 'PRISTINE' | 'STALE';
-type EmailState = 'EMAIL_FORMAT_INVALID' | 'PRISTINE' | 'EMAIL_ALREADY_VERIFIED';
+// type MobileState = 'MOBILE_FORMAT_INVALID' | 'PRISTINE' | 'STALE';
+// type EmailState = 'EMAIL_FORMAT_INVALID' | 'PRISTINE';
 
 export interface IActivationPayload {
   activationCode: string;

@@ -30,12 +30,35 @@ import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { NamedSVG } from '~/framework/components/picture';
 import { CaptionItalicText, SmallActionText, SmallText } from '~/framework/components/text';
+import toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
 import { ActivationFormModel, ValueChangeArgs } from '~/framework/modules/auth/components/ActivationForm';
 import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { Loading } from '~/ui/Loading';
 import { ValidatorBuilder } from '~/utils/form';
+
+const ActivationScreenLoader = (props: ActivationScreenProps) => {
+  const { context, legalUrls, route, validReactionTypes } = props;
+
+  const platform = route.params.platform;
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  useConstructor(async () => {
+    if (!context && platform) {
+      dispatch(loadAuthContextAction(platform));
+    }
+    if (!legalUrls && platform) {
+      dispatch(loadPlatformLegalUrlsAction(platform));
+    }
+  });
+
+  if (!platform) return <EmptyConnectionScreen />;
+  if (!context || !legalUrls || !validReactionTypes) return <Loading />;
+  else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} />;
+};
+
+export default ActivationScreenLoader;
 
 const countryListLanguages = {
   DEFAULT: 'common',
@@ -75,12 +98,21 @@ export class ActivationScreen extends React.PureComponent<
     typing: false,
   };
 
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount(): void {
+    this.mounted = false;
+  }
+
   private doActivation = async () => {
     try {
       this.setState({ activationState: 'RUNNING', error: undefined, typing: false });
       await this.props.trySubmit(this.props.route.params.platform, this.state);
     } catch (e) {
       const activationError = e as IActivationError;
+      toast.showError("Nous n'avons pas pu procéder à l'activation du compte, merci de réessayer ultérieurement"); // clé i18n
       if (this.mounted) this.setState({ activationState: 'IDLE', error: activationError.error, typing: false });
     }
   };
@@ -238,11 +270,11 @@ export class ActivationScreen extends React.PureComponent<
             }}
             input={
               <EmailInput
-                annotation={isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
+                annotation={isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')} // I18N
                 onBlur={this.onMailInputBlur}
                 onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
-                placeholder="Saisir l'adresse mail"
-                showError={formModel.showEmailError(mail)}
+                placeholder="Saisir l'adresse mail" // i18N
+                showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
                 testID="activation-email"
                 value={mail}
               />
@@ -353,34 +385,4 @@ export class ActivationScreen extends React.PureComponent<
       </KeyboardPageView>
     );
   }
-
-  componentDidMount() {
-    this.mounted = true;
-  }
-
-  componentWillUnmount(): void {
-    this.mounted = false;
-  }
 }
-
-const ActivationScreenLoader = (props: ActivationScreenProps) => {
-  const { context, legalUrls, route, validReactionTypes } = props;
-
-  const platform = route.params.platform;
-  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-
-  useConstructor(async () => {
-    if (!context && platform) {
-      dispatch(loadAuthContextAction(platform));
-    }
-    if (!legalUrls && platform) {
-      dispatch(loadPlatformLegalUrlsAction(platform));
-    }
-  });
-
-  if (!platform) return <EmptyConnectionScreen />;
-  if (!context || !legalUrls || !validReactionTypes) return <Loading />;
-  else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} />;
-};
-
-export default ActivationScreenLoader;
