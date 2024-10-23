@@ -226,22 +226,20 @@ export class ActivationScreen extends React.PureComponent<
             {/** clés i18n titre + renommer image + comment on gère une icone a 3 couleurs */}
             <NamedSVG name="ui-userSearchColor" />
             <HeadingSText style={styles.infosText}>Bienvenue sur NEO !</HeadingSText>
-            <SmallText style={styles.infosSubText}>
-              Choisissez votre mot de passe et renseigner vos données personnelles pour sécuriser votre compte.
-            </SmallText>
+            {/* <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome-neo')}</HeadingSText> */}
+            <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-password-rules')}</SmallText>
           </View>
           {passwordRules}
           <InputContainer
             label={{
-              // clé i18N
               icon: 'ui-lock',
-              text: 'Mot de passe',
+              text: I18n.get('auth-activation-password'),
             }}
             input={
               <PasswordInput
                 annotation={formModel.showPasswordError(password) ? errorText : ''}
                 onChangeText={formModel.password.changeCallback(this.onFieldChange('password'))}
-                placeholder={I18n.get('auth-changepassword-placeholder')} // clé i18n
+                placeholder={I18n.get('auth-activation-password-placeholder')}
                 showError={formModel.showPasswordError(password)}
                 showIconCallback
                 testID="activation-password"
@@ -254,15 +252,14 @@ export class ActivationScreen extends React.PureComponent<
           <InputContainer
             style={styles.inputContainer}
             label={{
-              // clé i18N
               icon: 'ui-lock',
-              text: 'Confirmer le mot de passe',
+              text: I18n.get('auth-activation-password-confirmation'),
             }}
             input={
               <PasswordInput
                 annotation={formModel.showConfirmError(confirmPassword) ? errorText : ''}
                 onChangeText={formModel.confirm.changeCallback(this.onFieldChange('confirmPassword'))}
-                placeholder={I18n.get('auth-changepassword-placeholder')} // clé i18n
+                placeholder={I18n.get('auth-activation-password-placeholder')}
                 showError={formModel.showConfirmError(confirmPassword)}
                 showIconCallback
                 testID="activation-confirmed-password"
@@ -274,16 +271,15 @@ export class ActivationScreen extends React.PureComponent<
 
           <InputContainer
             label={{
-              // clé i18N
               icon: 'ui-mail',
-              text: 'Adresse mail',
+              text: I18n.get('auth-activation-email-address'),
             }}
             input={
               <EmailInput
-                annotation={isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')} // I18N
+                annotation={isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-activation-email-error-invalid')}
                 onBlur={this.onMailInputBlur}
                 onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
-                placeholder="Saisir l'adresse mail" // i18N
+                placeholder={I18n.get('auth-activation-email-placeholder')}
                 showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
                 testID="activation-email"
                 value={mail}
@@ -294,14 +290,13 @@ export class ActivationScreen extends React.PureComponent<
           <InputContainer
             style={styles.phoneInputContainer}
             label={{
-              // clé i18N
               icon: 'ui-smartphone',
-              text: 'Téléphone mobile',
+              text: I18n.get('auth-activation-mobile'),
             }}
             input={
               <>
                 <PhoneInput
-                  placeholder={I18n.get('auth-change-mobile-placeholder')}
+                  placeholder={I18n.get('auth-activation-mobile-placeholder')}
                   value={phone}
                   defaultCode={this.state.phoneCountry}
                   layout="third"
@@ -338,7 +333,7 @@ export class ActivationScreen extends React.PureComponent<
                   countryPickerProps={{
                     filterProps: {
                       autoFocus: true,
-                      placeholder: I18n.get('auth-change-mobile-country-placeholder'),
+                      placeholder: I18n.get('auth-change-mobile-country-placeholder'), // change
                     },
                     language: countryListLanguages[I18n.getLanguage()] ?? countryListLanguages.DEFAULT,
                   }}
