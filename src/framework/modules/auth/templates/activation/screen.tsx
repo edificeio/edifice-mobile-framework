@@ -27,9 +27,8 @@ import EmailInput from '~/framework/components/inputs/email/component';
 import PasswordInput from '~/framework/components/inputs/password';
 import { KeyboardPageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
-import { PFLogo } from '~/framework/components/pfLogo';
 import { NamedSVG } from '~/framework/components/picture';
-import { CaptionItalicText, SmallActionText, SmallText } from '~/framework/components/text';
+import { CaptionItalicText, HeadingSText, SmallActionText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
@@ -66,12 +65,6 @@ const countryListLanguages = {
   es: 'spa',
   fr: 'fra',
 } as const;
-
-const LogoWrapper = styled.View({
-  alignItems: 'center',
-  flexGrow: 2,
-  justifyContent: 'center',
-});
 
 const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
 const ButtonWrapper = styled.View<{ error: any; typing: boolean }>();
@@ -194,7 +187,6 @@ export class ActivationScreen extends React.PureComponent<
 
   public render() {
     const { acceptCGU, activationState, confirmPassword, error, mail, password, phone, typing } = this.state;
-    const { platform } = this.props.route.params;
     const { context } = this.props;
     const formModel = new ActivationFormModel({
       ...context,
@@ -212,15 +204,33 @@ export class ActivationScreen extends React.PureComponent<
     const isMobileStateClean = this.state.phoneState === 'PRISTINE';
     const isEmailStatePristine = this.state.mailState === 'PRISTINE';
 
+    const passwordRules = (
+      <>
+        {context.passwordRegexI18nActivation?.[I18n.getLanguage()] ? (
+          <AlertCard
+            type="info"
+            // clé i18n a ajouter ici
+            // text={context.passwordRegexI18nActivation[I18n.getLanguage()]}
+            text={'Le mot de passe doit contenir au moins 8 caractères dont au moins une majuscule, une minuscule et un chiffre.'}
+            style={styles.alertCard}
+            testID="activation-password-rules"
+          />
+        ) : null}
+      </>
+    );
+
     return (
       <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
-          <LogoWrapper>
-            <PFLogo pf={platform} />
-          </LogoWrapper>
-          {context.passwordRegexI18nActivation?.[I18n.getLanguage()] ? (
-            <AlertCard type="info" text={context.passwordRegexI18nActivation[I18n.getLanguage()]} style={styles.alertCard} />
-          ) : null}
+          <View style={styles.infos}>
+            {/** clés i18n titre + renommer image + comment on gère une icone a 3 couleurs */}
+            <NamedSVG name="ui-userSearchColor" />
+            <HeadingSText style={styles.infosText}>Bienvenue sur NEO !</HeadingSText>
+            <SmallText style={styles.infosSubText}>
+              Choisissez votre mot de passe et renseigner vos données personnelles pour sécuriser votre compte.
+            </SmallText>
+          </View>
+          {passwordRules}
           <InputContainer
             label={{
               // clé i18N
