@@ -60,6 +60,7 @@
   "auth-activation-mobile": "Téléphone mobile",
   "auth-activation-mobile-placeholder": "Saisir le numéro",
   "auth-activation-email-error-invalid": "Format d'email invalide.",
+  "auth-activation-mobile-country-placeholder": "Rechercher un pays",
   "auth-add-account-modal-title": "Ajouter un compte",
   "auth-change-email-discard": "Abandonner",
   "auth-change-email-edit-alert-message": "Votre adresse e-mail ne sera pas modifiée. Êtes-vous sûr d'abandonner ?",

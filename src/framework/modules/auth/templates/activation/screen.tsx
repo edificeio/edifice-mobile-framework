@@ -337,7 +337,7 @@ export class ActivationScreen extends React.PureComponent<
                   countryPickerProps={{
                     filterProps: {
                       autoFocus: true,
-                      placeholder: I18n.get('auth-change-mobile-country-placeholder'), // change
+                      placeholder: I18n.get('auth-activation-mobile-country-placeholder'),
                     },
                     language: countryListLanguages[I18n.getLanguage()] ?? countryListLanguages.DEFAULT,
                   }}
