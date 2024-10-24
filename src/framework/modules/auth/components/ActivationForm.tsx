@@ -51,13 +51,11 @@ export class ActivationFormModel {
 
   errors(model: IActivationPayload) {
     const errors: string[] = [];
-    // auth-changepassword-error-regex ---> exemple from change password à refaire pour toutes les erreurs
-    // + voir pb d'attribution des erreurs à l'input
     this.check(errors, this.login.isValid(model.login));
-    this.check(errors, this.password.isValid(model.password), 'auth-changepassword-error-regex');
-    this.check(errors, this.confirm.isValid(model.confirmPassword), 'auth-changepassword-error-confirm');
-    this.check(errors, this.email.isValid(model.mail), 'erreur mail');
-    this.check(errors, this.phone.isValid(model.phone), 'erreur phone');
+    this.check(errors, this.password.isValid(model.password), 'auth-activation-password-error');
+    this.check(errors, this.confirm.isValid(model.confirmPassword), 'auth-activation-confirm-password-error');
+    this.check(errors, this.email.isValid(model.mail));
+    this.check(errors, this.phone.isValid(model.phone));
     return errors;
   }
 

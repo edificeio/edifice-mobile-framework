@@ -49,6 +49,8 @@
   "auth-activation-password-confirm": "Confirmation du mot de passe",
   "auth-activation-password-confirmation": "Confirmer le mot de passe",
   "auth-activation-password-placeholder": "Saisir le mot de passe",
+  "auth-activation-password-error": "Le nouveau mot de passe ne correspond pas aux critères de sécurité.",
+  "auth-activation-confirm-password-error": "Les mots de passe doivent être identiques.",
   "auth-activation-usercharter": "charte d'utilisation",
   "auth-activation-welcome-neo": "Bienvenue sur NEO !",
   "auth-activation-welcome-one": "Bienvenue sur ONE !",

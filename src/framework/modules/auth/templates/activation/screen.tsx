@@ -224,7 +224,6 @@ export class ActivationScreen extends React.PureComponent<
       <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
           <View style={styles.infos}>
-            {/** clés i18n titre + renommer image + comment on gère une icone a 3 couleurs */}
             <NamedSVG name="ui-userSearchColor" />
             <HeadingSText style={styles.infosText}>Bienvenue sur NEO !</HeadingSText>
             {/* <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome-neo')}</HeadingSText> */}
