@@ -23,6 +23,7 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
+import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import EmailInput from '~/framework/components/inputs/email/component';
 import PasswordInput from '~/framework/components/inputs/password';
 import { KeyboardPageView } from '~/framework/components/page';
@@ -203,6 +204,8 @@ export class ActivationScreen extends React.PureComponent<
     const usercharterUrl = this.props.legalUrls?.userCharter;
     const isMobileStateClean = this.state.phoneState === 'PRISTINE';
     const isEmailStatePristine = this.state.mailState === 'PRISTINE';
+    const isEmailRequired = context.mandatory?.mail === true;
+    const isPhoneRequired = context.mandatory?.phone === true;
 
     const passwordRules = (
       <>
@@ -231,6 +234,7 @@ export class ActivationScreen extends React.PureComponent<
           <InputContainer
             label={{
               icon: 'ui-lock',
+              indicator: LabelIndicator.REQUIRED,
               text: I18n.get('auth-activation-password'),
             }}
             input={
@@ -251,6 +255,7 @@ export class ActivationScreen extends React.PureComponent<
             style={styles.inputContainer}
             label={{
               icon: 'ui-lock',
+              indicator: LabelIndicator.REQUIRED,
               text: I18n.get('auth-activation-password-confirmation'),
             }}
             input={
@@ -270,6 +275,7 @@ export class ActivationScreen extends React.PureComponent<
           <InputContainer
             label={{
               icon: 'ui-mail',
+              indicator: isEmailRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
               text: I18n.get('auth-activation-email-address'),
             }}
             input={
@@ -289,6 +295,7 @@ export class ActivationScreen extends React.PureComponent<
             style={styles.phoneInputContainer}
             label={{
               icon: 'ui-smartphone',
+              indicator: isPhoneRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
               text: I18n.get('auth-activation-mobile'),
             }}
             input={
