@@ -89,7 +89,9 @@ export default StyleSheet.create({
 
   page: {
     backgroundColor: theme.palette.grey.white,
-    padding: UI_SIZES.spacing.big,
+    paddingBottom: -UI_SIZES.elements.tabbarHeight,
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.big,
   },
 
   phoneInput: {
