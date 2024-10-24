@@ -397,9 +397,6 @@ export interface PlatformAuthContext {
   };
 }
 
-// type MobileState = 'MOBILE_FORMAT_INVALID' | 'PRISTINE' | 'STALE';
-// type EmailState = 'EMAIL_FORMAT_INVALID' | 'PRISTINE';
-
 export interface IActivationPayload {
   activationCode: string;
   login: string;

@@ -12,7 +12,7 @@ import PhoneInput, {
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './newStyles';
+import styles from './styles';
 import { ActivationScreenProps, ActivationScreenState, IFields } from './types';
 
 import { I18n } from '~/app/i18n';
@@ -24,7 +24,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
-import EmailInput from '~/framework/components/inputs/email/component';
+import EmailInput from '~/framework/components/inputs/email/';
 import PasswordInput from '~/framework/components/inputs/password';
 import { KeyboardPageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
