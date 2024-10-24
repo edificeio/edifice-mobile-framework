@@ -1,8 +1,8 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import type { MediacentreReduxState } from './reducer';
+import type { IMediacentreReduxState } from './reducer';
 
-export default new NavigableModuleConfig<'mediacentre', MediacentreReduxState>({
+export default new NavigableModuleConfig<'mediacentre', IMediacentreReduxState>({
   name: 'mediacentre',
   entcoreScope: ['mediacentre'],
   matchEntcoreApp: '/mediacentre',
