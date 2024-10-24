@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-10-03 19:37:55",
-  "notes": "fix(push): MB-2957, add UNAVAILABLE to possible POST_NOTIFICATIONS permission request\nfix(timeline): MOZO-2955 fix signatue flickering when reload flash messages on android\nchore(flash-message): fix i18n wordings\nfix(audience): MB-2883, MB-2954, fix scroll bug in audience and clean code\nfix(user): MB-2952, always show version details\nrelease: 1.13.4-rc.3(1130404)",
-  "version": "1.13.4-rc.4(1130405)"
+  "last": "2024-10-21 20:57:15",
+  "notes": "fix(fcm): MB-2961, fcm token not unregistered fix\nrelease: 1.13.5-rc.2(1130506)",
+  "version": "1.13.5-rc.3(1130507)"
 }

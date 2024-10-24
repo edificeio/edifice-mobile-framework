@@ -43,6 +43,7 @@ import {
   credentialsAreLoginPassword,
   credentialsAreSaml,
 } from './model';
+import { getSession } from './reducer';
 
 export interface IUserRequirements {
   forceChangePassword?: boolean;
@@ -485,17 +486,30 @@ export class FcmService {
 
   async unregisterFCMToken(token: string | null = null) {
     try {
+      const account = getSession();
+      if (!account) {
+        console.error('FcmService - unregisterFCMToken - ERROR - No account');
+        return;
+      }
       if (!token) {
         token = await messaging().getToken();
       }
-      await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
-        method: 'delete',
-      });
-      this._removeTokenFromDeleteQueue(token);
-      console.debug('FcmService - unregisterFCMToken - OK - ', token);
+      if (token) {
+        const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
+          OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
+          `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+          {
+            method: 'delete',
+          },
+        );
+        await fetch(req);
+        this._removeTokenFromDeleteQueue(token);
+        console.debug('FcmService - unregisterFCMToken - OK - ', token);
+      } else {
+        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ');
+      }
     } catch (err) {
-      console.error('FcmService - unregisterFCMToken - ERROR - ', token);
-      console.error((err as Error).message);
+      console.error('FcmService - unregisterFCMToken - ERROR - ', (err as Error).message);
       //unregistering fcm token should not crash the login process
       if (!Connection.isOnline) {
         //when no connection => get it from property
@@ -510,20 +524,22 @@ export class FcmService {
       if (!token) {
         token = await messaging().getToken();
       }
-      const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
-        OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
-        `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
-        {
-          method: 'delete',
-        },
-      );
-
-      await fetch(req);
-      this._removeTokenFromDeleteQueue(token);
-      console.debug('FcmService - unregisterFCMTokenWithAccount - OK - ', token);
+      if (token) {
+        const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
+          OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
+          `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+          {
+            method: 'delete',
+          },
+        );
+        await fetch(req);
+        this._removeTokenFromDeleteQueue(token);
+        console.debug('FcmService - unregisterFCMTokenWithAccount - OK - ', token);
+      } else {
+        console.debug('FcmService - unregisterFCMToken - NO TOKEN');
+      }
     } catch (err) {
-      console.error('FcmService - unregisterFCMTokenWithAccount - ERROR - ', token);
-      console.error((err as Error).message);
+      console.error('FcmService - unregisterFCMTokenWithAccount - ERROR - ', (err as Error).message);
       //unregistering fcm token should not crash the login process
       if (!Connection.isOnline) {
         //when no connection => get it from property
@@ -583,17 +599,7 @@ export async function removeFirebaseToken(platform: Platform) {
   try {
     const fcm = new FcmService(platform);
     console.debug('removeFirebaseToken - unregisterFCMToken');
-    if (RNPlatform.OS === 'android') {
-      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
-      if (result === RESULTS.GRANTED) {
-        await fcm.unregisterFCMToken();
-      }
-    } else {
-      const authorizationStatus = await messaging().requestPermission();
-      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-        await fcm.unregisterFCMToken();
-      }
-    }
+    fcm.unregisterFCMToken();
   } catch (err) {
     if (err instanceof Error.ErrorWithType) throw err;
     else throw new global.Error('Firebase unregister error', { cause: err });
@@ -604,17 +610,7 @@ export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount)
   try {
     const fcm = new FcmService(account.platform);
     console.debug('removeFirebaseTokenWithAccount - unregisterFCMToken');
-    if (RNPlatform.OS === 'android') {
-      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
-      if (result === RESULTS.GRANTED) {
-        await fcm.unregisterFCMTokenWithAccount(account);
-      }
-    } else {
-      const authorizationStatus = await messaging().requestPermission();
-      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-        await fcm.unregisterFCMTokenWithAccount(account);
-      }
-    }
+    await fcm.unregisterFCMTokenWithAccount(account);
   } catch (err) {
     if (err instanceof Error.ErrorWithType) throw err;
     else throw new global.Error('Firebase unregister error', { cause: err });
