@@ -523,3 +523,10 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
 
 export const getOrderedAccounts = (accounts: AuthMixedAccountMap) =>
   Object.values(accounts).sort((a, b) => a.addTimestamp - b.addTimestamp);
+
+export interface LegalUrls {
+  cgu: string;
+  personalDataProtection: string;
+  cookies: string;
+  userCharter: string;
+}
