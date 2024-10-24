@@ -24,6 +24,8 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     showIconCallback,
     showSuccess,
     style,
+    testID,
+    testIDCaption,
     testIDToggle,
     toggleIconOff,
     toggleIconOn,
@@ -121,7 +123,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
   const renderInput = useCallback(() => {
     return (
-      <View style={styles.viewInput}>
+      <View style={styles.viewInput} testID={testID ?? ''}>
         <RNTextInput
           {...props}
           onFocus={e => handleFocus(e)}
@@ -141,7 +143,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
         {renderToggle()}
       </View>
     );
-  }, [props, ref, disabled, paddingRight, colorStatus, style, renderIconInput, renderToggle, handleFocus, handleBlur]);
+  }, [props, ref, disabled, paddingRight, colorStatus, style, renderIconInput, renderToggle, handleFocus, handleBlur, testID]);
 
   const renderAnnotation = useCallback(() => {
     if (annotation)
@@ -152,11 +154,11 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
             props.annotationStyle,
             { ...(showError ? styles.annotationError : showSuccess ? styles.annotationSuccess : null) },
           ]}
-          testID={props.testIDCaption}>
+          testID={testIDCaption ?? ''}>
           {annotation}
         </CaptionItalicText>
       );
-  }, [annotation, props.annotationStyle, showError, showSuccess]);
+  }, [annotation, props.annotationStyle, showError, showSuccess, testIDCaption]);
 
   return (
     <View>

@@ -118,8 +118,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     } catch (e) {
       const changePwdError = e as IChangePasswordError;
       // We don't show toaster if it's login error since that case is handled by redirecting the user to the login page, with error displayed.
-      if (!(e instanceof Error.LoginError))
-        Toast.showError(I18n.get('toast-error-text'), { testID: 'change-password-confirmed-error' });
+      if (!(e instanceof Error.LoginError)) Toast.showError(I18n.get('toast-error-text'), { testID: 'toaster-error-password' });
       setError(changePwdError.error);
       setSumitState('IDLE');
       setTyping(false);
@@ -276,6 +275,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
               onSubmitEditing={isNotValid ? () => {} : () => doSubmit()}
               testID="change-password-confirmed-field"
               testIDToggle="change-password-confirmed-see"
+              testIDCaption="change-password-confirmed-error"
             />
           }
         />
