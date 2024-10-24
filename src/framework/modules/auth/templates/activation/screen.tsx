@@ -283,6 +283,7 @@ export class ActivationScreen extends React.PureComponent<
                 onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
                 placeholder={I18n.get('auth-activation-email-placeholder')}
                 showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
+                showIconCallback
                 testID="activation-email"
                 value={mail}
               />
