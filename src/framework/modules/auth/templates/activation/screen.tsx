@@ -106,7 +106,7 @@ export class ActivationScreen extends React.PureComponent<
       await this.props.trySubmit(this.props.route.params.platform, this.state);
     } catch (e) {
       const activationError = e as IActivationError;
-      toast.showError("Nous n'avons pas pu procéder à l'activation du compte, merci de réessayer ultérieurement"); // clé i18n
+      toast.showError(I18n.get('auth-activation-error-generic'));
       if (this.mounted) this.setState({ activationState: 'IDLE', error: activationError.error, typing: false });
     }
   };
@@ -225,8 +225,7 @@ export class ActivationScreen extends React.PureComponent<
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
           <View style={styles.infos}>
             <NamedSVG name="ui-userSearchColor" />
-            <HeadingSText style={styles.infosText}>Bienvenue sur NEO !</HeadingSText>
-            {/* <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome-neo')}</HeadingSText> */}
+            <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome')}</HeadingSText>
             <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-form-infos')}</SmallText>
           </View>
           {passwordRules}
