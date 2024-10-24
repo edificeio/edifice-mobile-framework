@@ -367,14 +367,19 @@ export class ActivationScreen extends React.PureComponent<
               checked={acceptCGU}
               onPress={() => this.setState({ acceptCGU: !acceptCGU })}
               customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
+              testID="activation-accept-legal-condition"
             />
-            <View style={styles.cguText}>
+            <View style={styles.cguText} testID="activation-legal-condition">
               <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
-              <SmallActionText onPress={() => this.doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}>
+              <SmallActionText
+                onPress={() => this.doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}
+                testID="activation-user-charter">
                 {I18n.get('auth-activation-usercharter')}
               </SmallActionText>
               <SmallText>{I18n.get('auth-activation-cgu-accept-and')}</SmallText>
-              <SmallActionText onPress={() => this.doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}>
+              <SmallActionText
+                onPress={() => this.doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}
+                testID="activation-cgu">
                 {I18n.get('auth-activation-cgu')}
               </SmallActionText>
             </View>
@@ -382,7 +387,7 @@ export class ActivationScreen extends React.PureComponent<
           <SmallText style={styles.errorMsg}>
             {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
           </SmallText>
-          <ButtonWrapper error={hasErrorKey} typing={typing} style={styles.buttonWrapper}>
+          <ButtonWrapper error={hasErrorKey} typing={typing} style={styles.buttonWrapper} testID="activation-activate">
             <PrimaryButton
               action={() => this.doActivation()}
               disabled={isNotValid}
