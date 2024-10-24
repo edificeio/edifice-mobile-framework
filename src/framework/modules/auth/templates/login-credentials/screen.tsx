@@ -142,7 +142,9 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
-        <BodyText style={styles.userTextError}>{errmsg}</BodyText>
+        <BodyText style={styles.userTextError} testID="login-error">
+          {errmsg}
+        </BodyText>
       </View>
     );
   }, [errmsg]);
