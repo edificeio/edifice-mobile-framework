@@ -209,9 +209,7 @@ export class ActivationScreen extends React.PureComponent<
         {context.passwordRegexI18nActivation?.[I18n.getLanguage()] ? (
           <AlertCard
             type="info"
-            // clé i18n a ajouter ici
-            // text={context.passwordRegexI18nActivation[I18n.getLanguage()]}
-            text={'Le mot de passe doit contenir au moins 8 caractères dont au moins une majuscule, une minuscule et un chiffre.'}
+            text={context.passwordRegexI18nActivation[I18n.getLanguage()]}
             style={styles.alertCard}
             testID="activation-password-rules"
           />
@@ -227,7 +225,7 @@ export class ActivationScreen extends React.PureComponent<
             <NamedSVG name="ui-userSearchColor" />
             <HeadingSText style={styles.infosText}>Bienvenue sur NEO !</HeadingSText>
             {/* <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome-neo')}</HeadingSText> */}
-            <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-password-rules')}</SmallText>
+            <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-form-infos')}</SmallText>
           </View>
           {passwordRules}
           <InputContainer
@@ -353,7 +351,7 @@ export class ActivationScreen extends React.PureComponent<
                   }}
                 />
                 <CaptionItalicText style={styles.errorText}>
-                  {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
+                  {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-error-activation-mobile-invalid')}
                 </CaptionItalicText>
               </>
             }
