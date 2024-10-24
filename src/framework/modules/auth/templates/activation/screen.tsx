@@ -382,7 +382,7 @@ export class ActivationScreen extends React.PureComponent<
           <SmallText style={styles.errorMsg}>
             {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
           </SmallText>
-          <ButtonWrapper error={hasErrorKey} typing={typing}>
+          <ButtonWrapper error={hasErrorKey} typing={typing} style={styles.buttonWrapper}>
             <PrimaryButton
               action={() => this.doActivation()}
               disabled={isNotValid}
