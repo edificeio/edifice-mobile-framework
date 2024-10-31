@@ -8,9 +8,8 @@ import HomeworkAssistanceRequestScreen, {
   computeNavBar as requestNavBar,
 } from '~/framework/modules/homework-assistance/screens/request';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<HomeworkAssistanceNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={homeworkAssistanceRouteNames.home} component={HomeworkAssistanceHomeScreen} options={homeNavBar} />

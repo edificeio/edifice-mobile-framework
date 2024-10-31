@@ -8,9 +8,8 @@ import FormDistributionListScreen, {
   computeNavBar as distributionListNavBar,
 } from '~/framework/modules/form/screens/distribution-list';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<FormNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen

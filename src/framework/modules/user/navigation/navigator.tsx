@@ -33,9 +33,8 @@ import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework
 import UserXmasScreen, { computeNavBar as xmasNavBar } from '~/framework/modules/user/screens/xmas';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={userRouteNames.detailed} component={DetailedScreen} options={detailedNavBar} initialParams={{}} />

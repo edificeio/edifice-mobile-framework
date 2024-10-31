@@ -8,9 +8,8 @@ import CompetencesAssessmentScreen, {
 } from '~/framework/modules/viescolaire/competences/screens/assessment';
 import CompetencesHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/viescolaire/competences/screens/home';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<CompetencesNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={competencesRouteNames.home} component={CompetencesHomeScreen} options={homeNavBar} initialParams={{}} />

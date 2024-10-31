@@ -8,9 +8,8 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import ZimbraComposerScreen, { computeNavBar as composerNavBar } from '~/framework/modules/zimbra/screens/composer';
 import ZimbraMailScreen, { computeNavBar as mailNavBar } from '~/framework/modules/zimbra/screens/mail';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<ZimbraNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={zimbraRouteNames.home} component={DrawerNavigator} options={{ headerShown: false }} />

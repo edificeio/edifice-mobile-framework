@@ -10,9 +10,8 @@ import TimelineFiltersScreen, {
 import TimelineScreen, { computeNavBar as TimelineNavBar } from '~/framework/modules/timeline/screens/timeline-screen';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<ITimelineNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={timelineRouteNames.Home} component={TimelineScreen} options={TimelineNavBar} initialParams={{}} />
