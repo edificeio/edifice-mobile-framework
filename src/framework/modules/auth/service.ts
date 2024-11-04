@@ -120,7 +120,6 @@ export interface IUserInfoBackend {
   login?: string;
   type?: AccountType;
   deletePending?: boolean;
-  hasApp?: boolean;
   forceChangePassword?: boolean;
   needRevalidateTerms?: boolean;
   apps?: IEntcoreApp[];
@@ -799,9 +798,7 @@ export async function fetchUserInfo(platform: Platform) {
  */
 export function ensureUserValidity(userinfo: IUserInfoBackend) {
   if (userinfo.deletePending) {
-    throw new Error.LoginError(Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED);
-  } else if (!userinfo.hasApp) {
-    throw new Error.LoginError(Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM);
+    throw createAuthError(RuntimeAuthErrorCode.PRE_DELETED, '', 'User is predeleted');
   }
 }
 
