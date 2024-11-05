@@ -12,8 +12,12 @@ import { SmallBoldText, SmallText } from '~/framework/components/text';
 export const MailsFolderItem = (props: MailsFolderItemProps) => {
   const TextComponent = props.selected ? SmallBoldText : SmallText;
 
+  const onPress = () => {
+    props.onPress();
+  };
+
   return (
-    <TouchableOpacity style={[styles.container, props.selected ? styles.containerUnread : {}]}>
+    <TouchableOpacity style={[styles.container, props.selected ? styles.containerUnread : {}]} onPress={onPress}>
       <NamedSVG
         name={props.icon}
         fill={theme.palette.grey.black}

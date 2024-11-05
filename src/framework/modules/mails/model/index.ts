@@ -1,3 +1,10 @@
+export enum MailsDefaultFolders {
+  DRAFTS = 'drafts',
+  INBOX = 'inbox',
+  OUTBOX = 'outbox',
+  TRASH = 'trash',
+}
+
 export interface IMailsMailContent {
   attachments: {
     charset: string;
