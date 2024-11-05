@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -16,6 +16,7 @@ import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import BottomSheetSeparator from '~/framework/components/modals/bottom-sheet/separator';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
@@ -208,7 +209,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           />
           <BodyText>{I18n.get('pickfile-take')}</BodyText>
         </TouchableOpacity>
-        <View style={styles.choosePicsMenuSeparator} />
+        <BottomSheetSeparator />
         <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleChoosePics}>
           <NamedSVG
             height={UI_SIZES.elements.icon.default}
