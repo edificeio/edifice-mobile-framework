@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -12,6 +12,7 @@ import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -32,7 +33,7 @@ const UserStructuresScreen = (props: UserStructuresScreenPrivateProps) => {
   const { route } = props;
   return (
     <PageView style={styles.page}>
-      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView bounces={false}>
         {route.params.structures.map(structure => (
           <View style={styles.section} key={structure.id}>
             <View style={styles.title}>

@@ -10,10 +10,11 @@ import type { MailsListScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
+import { UI_SIZES } from '~/framework/components/constants';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import BottomSheetSeparator from '~/framework/components/modals/bottom-sheet/separator';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
+import Separator from '~/framework/components/separator';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
 import { mailsListData } from '~/framework/modules/mails/data';
@@ -83,6 +84,10 @@ export default function MailsListScreen(props: MailsListScreenPrivateProps) {
     bottomSheetModalRef.current?.dismiss();
   };
 
+  const onPressItem = () => {
+    navigation.navigate(mailsRouteNames.details, {});
+  };
+
   const renderBottomSheetFolders = () => {
     return (
       <BottomSheetModal ref={bottomSheetModalRef}>
@@ -97,7 +102,7 @@ export default function MailsListScreen(props: MailsListScreenPrivateProps) {
             />
           ))}
         </View>
-        <BottomSheetSeparator />
+        <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.medium} />
         <TertiaryButton
           style={styles.newFolderButton}
           iconLeft="ui-plus"
@@ -113,7 +118,7 @@ export default function MailsListScreen(props: MailsListScreenPrivateProps) {
       <FlashList
         data={mailsListData}
         renderItem={mail => {
-          return <MailsMailPreview data={mail.item} />;
+          return <MailsMailPreview data={mail.item} onPress={onPressItem} />;
         }}
       />
       {renderBottomSheetFolders()}

@@ -16,9 +16,9 @@ import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import BottomSheetSeparator from '~/framework/components/modals/bottom-sheet/separator';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
+import Separator from '~/framework/components/separator';
 import { BodyText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
@@ -209,7 +209,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           />
           <BodyText>{I18n.get('pickfile-take')}</BodyText>
         </TouchableOpacity>
-        <BottomSheetSeparator />
+        <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.minor} />
         <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleChoosePics}>
           <NamedSVG
             height={UI_SIZES.elements.icon.default}

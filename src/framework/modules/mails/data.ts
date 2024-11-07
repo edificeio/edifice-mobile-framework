@@ -20,7 +20,7 @@ export const mailsListData = [
       },
     ],
     type: '',
-    unread: true,
+    unread: false,
   },
   {
     cc: [],
@@ -69,3 +69,23 @@ export const mailsListData = [
     unread: true,
   },
 ];
+
+export const mailsDetailsData = {
+  attachments: [],
+  body: '<div class="ng-scope">Bonjour, je vous envoie un message pour vous prévenir que Ginny est malade.</div><div>Je lemmène chez le médecin ce matin. Je vous recontacte très vite.&nbsp;</div><div>​</div><div>Bonne journée</div><div class="signature new-signature ng-scope"></div>',
+  cc: [],
+  cci: [],
+  date: 1692257569338,
+  from: { displayName: 'WEASLEY molly', id: '6ed2b8a3-3868-44cc-a6fb-49b2f6ff9f66', type: 'Relative' },
+  id: 'b7ddb093-598d-423f-85b3-ddac9357b277',
+  language: 'fr',
+  parent_id: null,
+  state: 'SENT',
+  subject: 'Absence de Ginny',
+  text_searchable: '',
+  thread_id: 'b7ddb093-598d-423f-85b3-ddac9357b277',
+  to: [
+    { displayName: 'Albus Prod', id: '0afae690-7a12-4419-bbb5-ae6ebaed4fe0', type: 'Teacher' },
+    { displayName: 'Rogue Severus', id: '0afae690-7a12-4419-bbb5-ae6ebaed4fe0', type: 'Teacher' },
+  ],
+};

@@ -35,6 +35,8 @@ function ScrollView(props: ScrollViewProps, ref) {
         {...otherProps}
         contentContainerStyle={realContentContainerStyle}
         scrollIndicatorInsets={scrollIndicatorInsets || ScrollView.scrollIndicatorInsets} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
       />
     </ScrollContext.Provider>
   );

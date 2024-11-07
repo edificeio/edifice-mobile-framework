@@ -16,8 +16,12 @@ import Avatar, { Size } from '~/ui/avatars/Avatar';
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const TextComponent = props.data.unread ? SmallBoldText : SmallText;
 
+  const onPress = () => {
+    props.onPress();
+  };
+
   return (
-    <TouchableOpacity style={[styles.container, props.data.unread ? styles.containerUnread : {}]}>
+    <TouchableOpacity style={[styles.container, props.data.unread ? styles.containerUnread : {}]} onPress={onPress}>
       <Avatar size={Size.large} sourceOrId={props.data.from.id} id="" />
       {props.data.type === 'ANSWERED' ? (
         <View style={styles.responseIcon}>
