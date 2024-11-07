@@ -1,5 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { MailsDefaultFolders } from '~/framework/modules/mails/model';
 import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
 
 export interface MailsDetailsScreenProps {
@@ -7,7 +8,7 @@ export interface MailsDetailsScreenProps {
 }
 
 export interface MailsDetailsScreenNavParams {
-  // @scaffolder add nav params here
+  from: MailsDefaultFolders | { name: string; id: string };
 }
 
 export interface MailsDetailsScreenPrivateProps

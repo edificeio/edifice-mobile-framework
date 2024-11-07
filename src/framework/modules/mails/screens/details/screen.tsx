@@ -12,12 +12,15 @@ import Attachments from '~/framework/components/attachments';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
+import { deleteAction } from '~/framework/components/menus/actions';
+import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import Separator from '~/framework/components/separator';
 import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { mailsDetailsData } from '~/framework/modules/mails/data';
+import { MailsDefaultFolders } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
@@ -47,9 +50,52 @@ const recipientPrefixsI18n = {
 };
 
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
+  const allPopupActionsMenu = [
+    {
+      action: () => console.log('mark unread'),
+      icon: {
+        android: 'ic_visibility_off',
+        ios: 'eye.slash',
+      },
+      title: I18n.get('mails-details-markunread'),
+    },
+    {
+      action: () => console.log('move'),
+      icon: {
+        android: 'ic_move_to_inbox',
+        ios: 'arrow.up.square',
+      },
+      title: I18n.get('mails-details-move'),
+    },
+    {
+      action: () => console.log('restore'),
+      icon: {
+        android: 'ic_restore',
+        ios: 'arrow.uturn.backward.circle',
+      },
+      title: I18n.get('mails-details-restore'),
+    },
+    deleteAction({ action: () => console.log('delete') }),
+  ];
+
+  const popupActionsMenu = () => {
+    if (props.route.params.from === MailsDefaultFolders.OUTBOX) return allPopupActionsMenu.slice(-1);
+    if (props.route.params.from === MailsDefaultFolders.TRASH) return allPopupActionsMenu.slice(-2);
+    return [...allPopupActionsMenu.slice(0, 2), ...allPopupActionsMenu.slice(3)];
+  };
+
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerRight: () => <NavBarActionsGroup elements={[<NavBarAction icon="ui-undo" />, <NavBarAction icon="ui-options" />]} />,
+      headerRight: () => (
+        <NavBarActionsGroup
+          elements={[
+            <NavBarAction icon="ui-undo" />,
+            <PopupMenu actions={popupActionsMenu()}>
+              <NavBarAction icon="ui-options" />
+            </PopupMenu>,
+          ]}
+        />
+      ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

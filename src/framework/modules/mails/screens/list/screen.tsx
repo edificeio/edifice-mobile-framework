@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
 
@@ -54,7 +53,7 @@ const defaultFoldersInfos = {
 
 export default function MailsListScreen(props: MailsListScreenPrivateProps) {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const navigation = useNavigation();
+  const navigation = props.navigation;
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | string>(MailsDefaultFolders.INBOX);
 
   React.useEffect(() => {
@@ -85,7 +84,7 @@ export default function MailsListScreen(props: MailsListScreenPrivateProps) {
   };
 
   const onPressItem = () => {
-    navigation.navigate(mailsRouteNames.details, {});
+    navigation.navigate(mailsRouteNames.details, { from: MailsDefaultFolders.INBOX });
   };
 
   const renderBottomSheetFolders = () => {
