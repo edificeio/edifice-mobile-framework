@@ -1,7 +1,15 @@
+import { IMailsFolder } from './model';
+
 export const mailsListData = [
   {
     cc: [],
-    cci: [],
+    cci: [
+      {
+        displayName: 'Wesley Ron',
+        id: '0afae690-7a12-4419-bbb5-ae6ebaed4fe0',
+        type: 'Teacher',
+      },
+    ],
     date: 1730195314943,
     from: {
       displayName: 'Rusard Argus',
@@ -10,11 +18,16 @@ export const mailsListData = [
     },
     hasAttachment: true,
     id: '88bee480-66ff-44e1-a7f5-532bb0aa4f2c',
-    state: 'SENT',
+    state: 'DRAFT',
     subject: "Tr: Okay j'ai pigé",
     to: [
       {
         displayName: 'Albus Prod poudlard',
+        id: '0afae690-7a12-4419-bbb5-ae6ebaed4fe0',
+        type: 'Teacher',
+      },
+      {
+        displayName: 'Wesley Molly',
         id: '0afae690-7a12-4419-bbb5-ae6ebaed4fe0',
         type: 'Teacher',
       },
@@ -43,7 +56,7 @@ export const mailsListData = [
       },
     ],
     type: 'ANSWERED',
-    unread: true,
+    unread: false,
   },
   {
     cc: [],
@@ -67,6 +80,63 @@ export const mailsListData = [
     ],
     type: '',
     unread: true,
+  },
+];
+
+export const mailsFoldersData: IMailsFolder[] = [
+  {
+    depth: 1,
+    id: 'test',
+    name: 'Dossier 1',
+    nbUnread: 29,
+    parent_id: null,
+    skip_uniq: false,
+    subfolders: [
+      {
+        depth: 2,
+        id: 'test-4',
+        name: 'Sous-dossier 1',
+        nbUnread: 29,
+        parent_id: 'test',
+        skip_uniq: false,
+        subfolders: [
+          {
+            depth: 3,
+            id: 'test-10',
+            name: 'Sous-dossier 10',
+            nbUnread: 29,
+            parent_id: null,
+            skip_uniq: false,
+            trashed: false,
+            user_id: 'user-id',
+          },
+        ],
+        trashed: false,
+        user_id: 'user-id',
+      },
+      {
+        depth: 2,
+        id: 'test-20',
+        name: 'Sous-dossier 5 dhezhjdezhjndjezndjezndjezn jdnez jdnejznd jz',
+        nbUnread: 29,
+        parent_id: 'test',
+        skip_uniq: false,
+        trashed: false,
+        user_id: 'user-id',
+      },
+    ],
+    trashed: false,
+    user_id: 'user-id',
+  },
+  {
+    depth: 1,
+    id: 'test-2',
+    name: 'Dossier 2',
+    nbUnread: 29,
+    parent_id: null,
+    skip_uniq: false,
+    trashed: false,
+    user_id: 'user-id',
   },
 ];
 

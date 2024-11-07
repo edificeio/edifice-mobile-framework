@@ -43,3 +43,20 @@ export interface IMailsMailPreview {
   type: string;
   unread: boolean;
 }
+
+export interface IMailsFolder {
+  depth: number;
+  id: string;
+  name: string;
+  nbUnread: number;
+  parent_id: string | null;
+  skip_uniq: boolean;
+  trashed: boolean;
+  user_id: string;
+  subfolders?: IMailsFolder[];
+}
+
+export interface MailsFolderInfo {
+  id: string;
+  name: string;
+}

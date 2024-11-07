@@ -16,6 +16,12 @@ export default StyleSheet.create({
   date: {
     color: theme.palette.grey.graphite,
   },
+  draftText: {
+    color: theme.palette.status.failure.regular,
+  },
+  firstText: {
+    flexShrink: 1,
+  },
   line: {
     alignItems: 'center',
     flex: 1,

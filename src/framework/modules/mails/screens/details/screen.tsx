@@ -44,9 +44,9 @@ enum RecipientsType {
 }
 
 const recipientPrefixsI18n = {
-  [RecipientsType.TO]: 'mails-details-to',
-  [RecipientsType.CC]: 'mails-details-cc',
-  [RecipientsType.CCI]: 'mails-details-cci',
+  [RecipientsType.TO]: 'mails-prefixto',
+  [RecipientsType.CC]: 'mails-prefixcc',
+  [RecipientsType.CCI]: 'mails-prefixcci',
 };
 
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
