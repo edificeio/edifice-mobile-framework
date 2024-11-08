@@ -32,8 +32,6 @@ export class ActivationFormModel {
     this.phone = new ValidatorBuilder().withRequired(this.args.phoneRequired).withPhone().build<string>();
   }
 
-  //
-
   inputLogin?: TextInput;
 
   inputPassword?: TextInput;
@@ -43,7 +41,6 @@ export class ActivationFormModel {
   inputEmail?: TextInput;
 
   inputPhone?: TextInput;
-  //
 
   private check(errors: string[], valid: boolean, errorKey: string = '') {
     if (!valid) {
@@ -55,8 +52,8 @@ export class ActivationFormModel {
   errors(model: IActivationPayload) {
     const errors: string[] = [];
     this.check(errors, this.login.isValid(model.login));
-    this.check(errors, this.password.isValid(model.password));
-    this.check(errors, this.confirm.isValid(model.confirmPassword));
+    this.check(errors, this.password.isValid(model.password), 'auth-activation-password-error');
+    this.check(errors, this.confirm.isValid(model.confirmPassword), 'auth-activation-confirm-password-error');
     this.check(errors, this.email.isValid(model.mail));
     this.check(errors, this.phone.isValid(model.phone));
     return errors;

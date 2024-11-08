@@ -14,6 +14,7 @@ import { IGlobalState } from '~/app/store';
 import type { PictureProps } from '~/framework/components/picture';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
+import type { AuthActiveAccount } from '../modules/auth/model';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -74,7 +75,7 @@ interface IModuleConfigBase<Name extends string> {
 interface IModuleConfigRights {
   matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[]) => boolean;
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
-  hasRight: (matchingApps: IEntcoreApp[], matchingWidgets?: IEntcoreWidget[]) => boolean;
+  hasRight: (params: { matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[], session: AuthActiveAccount }) => boolean;
   getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
   getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
@@ -103,7 +104,7 @@ export type IModuleConfig<Name extends string, State> = IModuleConfigBase<Name> 
   IModuleConfigRedux<State> &
   IModuleConfigTracking &
   IModuleConfigStorage & {
-    init: (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => void;
+    init: (params: { session: AuthActiveAccount, matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[] }) => void;
     isReady: boolean;
     assignValues: (values: IModuleConfigDeclaration<Name>) => void;
   };
@@ -168,7 +169,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
         ? (entcoreApp: IEntcoreApp) => entcoreApp.address === matchEntcoreApp
         : matchEntcoreApp) || (() => true);
     this.matchEntcoreWidget = matchEntcoreWidget ?? (() => false);
-    this.hasRight = hasRight ?? ((matchingApps, matchingWidgets) => matchingApps.length > 0);
+    this.hasRight = hasRight ?? (({ matchingApps }) => matchingApps.length > 0);
     this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => this.matchEntcoreApp(app, allEntcoreApps));
     this.getMatchingEntcoreWidgets = allEntcoreWidgets =>
       allEntcoreWidgets.filter(wig => this.matchEntcoreWidget(wig, allEntcoreWidgets));
@@ -187,12 +188,12 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
 
   isReady: boolean = false;
 
-  init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
-    this.handleInit(matchingApps, matchingWidgets);
+  init(params: { session: AuthActiveAccount, matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[] }) {
+    this.handleInit(params);
     this.isReady = true;
   }
 
-  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {}
+  handleInit(params: { session: AuthActiveAccount, matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[] }) { }
 
   assignValues(values: Partial<IModuleConfigDeclaration<any>>) {
     Object.assign(this, values);
@@ -228,8 +229,8 @@ export interface IModule<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
 > extends IModuleBase<Name, ConfigType, State>,
-    IModuleRedux<State>,
-    IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {
+  IModuleRedux<State>,
+  IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {
   // ToDo add Module methods here
 }
 
@@ -240,8 +241,8 @@ export interface IModuleDeclaration<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
 > extends IModuleBase<Name, ConfigType, State>,
-    IModuleRedux<State>,
-    IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {}
+  IModuleRedux<State>,
+  IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> { }
 
 /**
  * Use this class constructor to init a module from its definition.
@@ -254,8 +255,7 @@ export class Module<
   State,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-> implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
-{
+> implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
   // Gathered from declaration
   config: ConfigType;
 
@@ -274,14 +274,14 @@ export class Module<
     this.preferences = moduleDeclaration.preferences;
   }
 
-  init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+  init(params: { session: AuthActiveAccount, matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[] }) {
     if (!this.config.isReady) throw new Error(`Try to init module with non-initialized config '${this.config.name}'`);
     // Debug : Uncomment the following line to print every module init phase and know which one is generating warnings/errors.
     // console.debug('[Module] init module', this.config.name);
-    this.handleInit(matchingApps, matchingWidgets);
+    this.handleInit(params);
   }
 
-  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {}
+  handleInit(params: { session: AuthActiveAccount, matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[] }) { }
 
   get isReady() {
     return true;
@@ -331,23 +331,23 @@ interface INavigableModuleConfigDisplay {
 }
 interface IModuleConfigDeclarationDisplay {
   displayI18n:
-    | INavigableModuleConfigDisplay['displayI18n']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayI18n']);
+  | INavigableModuleConfigDisplay['displayI18n']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayI18n']);
   displayAs?:
-    | INavigableModuleConfigDisplay['displayAs']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayAs']);
+  | INavigableModuleConfigDisplay['displayAs']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayAs']);
   displayOrder?:
-    | INavigableModuleConfigDisplay['displayOrder']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayOrder']);
+  | INavigableModuleConfigDisplay['displayOrder']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayOrder']);
   displayPicture?:
-    | INavigableModuleConfigDisplay['displayPicture']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPicture']);
+  | INavigableModuleConfigDisplay['displayPicture']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPicture']);
   displayPictureFocus?:
-    | INavigableModuleConfigDisplay['displayPictureFocus']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureFocus']);
+  | INavigableModuleConfigDisplay['displayPictureFocus']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureFocus']);
   displayBadges?:
-    | INavigableModuleConfigDisplay['displayBadges']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
+  | INavigableModuleConfigDisplay['displayBadges']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
   routeName?: INavigableModuleConfigDisplay['routeName'];
   testID?: string;
 }
@@ -365,8 +365,7 @@ export type AnyNavigableModuleConfig = INavigableModuleConfig<string, any>;
 
 export class NavigableModuleConfig<Name extends string, State>
   extends ModuleConfig<Name, State>
-  implements INavigableModuleConfig<Name, State>
-{
+  implements INavigableModuleConfig<Name, State> {
   // gathered from declaration
 
   routeName: INavigableModuleConfig<Name, State>['routeName'];
@@ -411,7 +410,7 @@ export class NavigableModuleConfig<Name extends string, State>
     this.routeName = routeName ?? this.name;
   }
 
-  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+  handleInit({ matchingApps, matchingWidgets }) {
     this.#displayI18n =
       typeof this.#_displayI18n === 'function' ? this.#_displayI18n(matchingApps, matchingWidgets) : this.#_displayI18n;
     this.#displayAs = typeof this.#_displayAs === 'function' ? this.#_displayAs(matchingApps, matchingWidgets) : this.#_displayAs;
@@ -491,7 +490,7 @@ export interface INavigableModuleBase<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
 > extends IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
-  getRoot(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]): Root;
+  getRoot(params: { session: AuthActiveAccount, matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[] }): Root;
 }
 export interface INavigableModule<
   Name extends string,
@@ -512,19 +511,18 @@ export interface INavigableModuleDeclaration<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
 > extends INavigableModuleBase<Name, ConfigType, State, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
-    IModuleRedux<State> {}
+  IModuleRedux<State> { }
 
 export class NavigableModule<
-    Name extends string,
-    ConfigType extends INavigableModuleConfig<Name, State>,
-    State,
-    Root extends React.ReactElement,
-    ModuleStorageSliceTypeMap extends StorageTypeMap = object,
-    ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-  >
+  Name extends string,
+  ConfigType extends INavigableModuleConfig<Name, State>,
+  State,
+  Root extends React.ReactElement,
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
+>
   extends Module<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
-  implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
-{
+  implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
   // Gathered from declaration
 
   getRoot: INavigableModule<Name, ConfigType, State, Root>['getRoot'];
@@ -548,9 +546,9 @@ export class NavigableModule<
     this.getRoot = getRoot;
   }
 
-  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
-    super.handleInit(matchingApps, matchingWidgets);
-    this.#root = this.getRoot(matchingApps, matchingWidgets);
+  handleInit(params: { session: AuthActiveAccount, matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[] }) {
+    super.handleInit(params);
+    this.#root = this.getRoot(params);
     if (this.config.displayBadges) {
       updateAppBadges(this.config.displayBadges);
     }
@@ -601,14 +599,15 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     Object.setPrototypeOf(this, ModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
 
-  filterAvailables(availableApps: IEntcoreApp[], availableWidgets?: IEntcoreWidget[]) {
+  filterAvailables(session: AuthActiveAccount) {
     return new ModuleArray<ModuleType>(
-      ...this.filter(m =>
-        m.config.hasRight(
-          m.config.getMatchingEntcoreApps(availableApps),
-          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
-        ),
-      ),
+      ...this.filter(m => {
+        return m.config.hasRight({
+          matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
+          matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
+          session,
+        })
+      }),
     );
   }
 
@@ -630,16 +629,26 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     return scopes;
   }
 
-  initModules(allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
+  initModules(session: AuthActiveAccount) {
     this.forEach(m => {
-      m.init(m.config.getMatchingEntcoreApps(allEntcoreApps), m.config.getMatchingEntcoreWidgets(allEntcoreWidgets));
+      m.init({
+        session,
+        matchingApps:
+          m.config.getMatchingEntcoreApps(session.rights.apps),
+        matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets)
+      });
     });
     return this;
   }
 
-  initModuleConfigs(allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
+  initModuleConfigs(session: AuthActiveAccount) {
     this.forEach(m => {
-      m.config.init(m.config.getMatchingEntcoreApps(allEntcoreApps), m.config.getMatchingEntcoreWidgets(allEntcoreWidgets));
+      m.config.init({
+        session,
+        matchingApps:
+          m.config.getMatchingEntcoreApps(session.rights.apps),
+        matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets)
+      });
     });
     return this;
   }
@@ -653,13 +662,14 @@ export class NavigableModuleArray<
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
 
-  filterAvailables(availableApps: IEntcoreApp[], availableWidgets?: IEntcoreWidget[]) {
+  filterAvailables(session: AuthActiveAccount) {
     return new NavigableModuleArray<ModuleType>(
       ...this.filter(m =>
-        m.config.hasRight(
-          m.config.getMatchingEntcoreApps(availableApps),
-          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
-        ),
+        m.config.hasRight({
+          matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
+          matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
+          session: session,
+        }),
       ),
     );
   }
@@ -778,5 +788,6 @@ export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule =
       getGlobalRegister(module.config.displayAs)?.register(module, module.config.displayOrder);
     }
   });
+
   return modules; // Allow chaining
 };

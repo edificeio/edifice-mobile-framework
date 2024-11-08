@@ -4,7 +4,7 @@
  * Do not use default React Native <Text> component, please use this one instead.
  * Don't forget to use <NestedText> instead of <Text> for nested text styles.
  */
-import { Platform, Text as RNText, TextStyle } from 'react-native';
+import { PixelRatio, Platform, Text as RNText, TextStyle } from 'react-native';
 
 import styled from '@emotion/native';
 
@@ -58,37 +58,56 @@ export const HeadingFontStyle = Platform.select({
   },
 })! as { [key in HeadingFontStyleKey]: TextStyle };
 
-type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Bigger' | 'Huge' | 'Giant';
+export type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Bigger' | 'Huge' | 'Giant';
+
+const getNormalizedLineHeight = (fontSize: number): number => {
+  return Platform.OS === 'android' ? getScaleFontSize(fontSize) * PixelRatio.getFontScale() : getScaleFontSize(fontSize);
+};
+
 export const TextSizeStyle = {
   Big: {
     fontSize: getScaleFontSize(18),
-    lineHeight: getScaleFontSize(26),
+    lineHeight: getNormalizedLineHeight(26),
   },
   Bigger: {
     fontSize: getScaleFontSize(22),
-    lineHeight: getScaleFontSize(30),
+    lineHeight: getNormalizedLineHeight(30),
   },
   Giant: {
     fontSize: getScaleFontSize(32),
-    lineHeight: getScaleFontSize(38),
+    lineHeight: getNormalizedLineHeight(38),
   },
   Huge: {
     fontSize: getScaleFontSize(26),
-    lineHeight: getScaleFontSize(34),
+    lineHeight: getNormalizedLineHeight(34),
   },
   Medium: {
     fontSize: getScaleFontSize(16),
-    lineHeight: getScaleFontSize(24),
+    lineHeight: getNormalizedLineHeight(24),
   },
   Normal: {
     fontSize: getScaleFontSize(14),
-    lineHeight: getScaleFontSize(22),
+    lineHeight: getNormalizedLineHeight(22),
   },
   Small: {
     fontSize: getScaleFontSize(12),
-    lineHeight: getScaleFontSize(20),
+    lineHeight: getNormalizedLineHeight(20),
   },
 } as { [key in TextSizeStyleKey]: Required<Pick<TextStyle, 'fontSize' | 'lineHeight'>> };
+
+/**
+ * @param textSizeKey : contains the lineHeight and fontSize being used
+ * @returns : line height adjusted to minimize iOS's interlines spacing
+ */
+export const getLineHeight = (textSizeKey: TextSizeStyleKey): number => {
+  const defaultStyle = TextSizeStyle[textSizeKey];
+  let lineHeightFix: number;
+  Platform.OS === 'ios'
+    ? (lineHeightFix = defaultStyle.lineHeight * PixelRatio.getFontScale())
+    : (lineHeightFix = defaultStyle.lineHeight);
+
+  return lineHeightFix;
+};
 
 /**
  * Heading

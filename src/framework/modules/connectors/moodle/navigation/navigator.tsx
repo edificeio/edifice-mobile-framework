@@ -5,9 +5,8 @@ import { MoodleNavigationParams, moodleRouteNames } from '.';
 import ConnectorRedirectScreen, { computeNavBar as homeNavBar } from '~/framework/modules/connectors/common/redirect-screen';
 import moduleConfig from '~/framework/modules/connectors/moodle/module-config';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<MoodleNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen

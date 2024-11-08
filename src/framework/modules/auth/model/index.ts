@@ -1,6 +1,8 @@
 import type { Moment } from 'moment';
+import { CountryCode } from 'react-native-phone-number-input';
 
 import type { IAuthorizedAction, UserPrivateData } from '~/framework/modules/auth/service';
+import { EmailState, MobileState } from '~/framework/modules/auth/templates/activation';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -401,8 +403,11 @@ export interface IActivationPayload {
   password: string;
   confirmPassword: string;
   mail: string;
+  mailState: EmailState;
   phone: string;
   acceptCGU: boolean;
+  phoneCountry: CountryCode;
+  phoneState: MobileState;
 }
 
 export interface IActivationError extends Error {
@@ -518,3 +523,10 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
 
 export const getOrderedAccounts = (accounts: AuthMixedAccountMap) =>
   Object.values(accounts).sort((a, b) => a.addTimestamp - b.addTimestamp);
+
+export interface LegalUrls {
+  cgu: string;
+  personalDataProtection: string;
+  cookies: string;
+  userCharter: string;
+}

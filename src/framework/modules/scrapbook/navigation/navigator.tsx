@@ -7,9 +7,8 @@ import ScrapbookDetailsScreen, { computeNavBar as detailsNavBar } from '~/framew
 import ScrapbookHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/scrapbook/screens/home';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<ScrapbookNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={scrapbookRouteNames.home} component={ScrapbookHomeScreen} options={homeNavBar} initialParams={{}} />

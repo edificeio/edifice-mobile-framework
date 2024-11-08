@@ -8,12 +8,12 @@ import { myAppsConnector, myAppsModules, myAppsSecondaryModules } from '~/framew
 import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { navBarTitle } from '~/framework/navigation/navBar';
-import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
-  const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(apps, widgets));
-  const secondaryModules = new NavigableModuleArray(...myAppsSecondaryModules.get().filterAvailables(apps, widgets));
-  const connectors = new NavigableModuleArray(...myAppsConnector.get().filterAvailables(apps, widgets));
+export default (({ session }) => {
+  const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(session));
+  const secondaryModules = new NavigableModuleArray(...myAppsSecondaryModules.get().filterAvailables(session));
+  const connectors = new NavigableModuleArray(...myAppsConnector.get().filterAvailables(session));
   const MyAppsContainer = props => (
     <MyAppsHomeScreen {...props} modules={modules} secondaryModules={secondaryModules} connectors={connectors} />
   );
@@ -29,4 +29,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
       />
     </>
   ));
-};
+}) as AnyNavigableModule['getRoot'];

@@ -9,9 +9,8 @@ import WorkspaceFilePreviewScreen, {
   computeNavBar as WorkspaceFilePreviewNavBar,
 } from '~/framework/modules/workspace/screens/file-preview';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<WorkspaceNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen
