@@ -504,9 +504,9 @@ export class FcmService {
         );
         await fetch(req);
         this._removeTokenFromDeleteQueue(token);
-        console.debug('FcmService - unregisterFCMToken - OK - ', token);
+        console.debug(`FcmService - unregisterFCMToken - OK - ${account?.user?.login} - ${token}`);
       } else {
-        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ');
+        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ', account?.user?.login);
       }
     } catch (err) {
       console.error('FcmService - unregisterFCMToken - ERROR - ', (err as Error).message);
@@ -534,9 +534,9 @@ export class FcmService {
         );
         await fetch(req);
         this._removeTokenFromDeleteQueue(token);
-        console.debug('FcmService - unregisterFCMTokenWithAccount - OK - ', token);
+        console.debug(`FcmService - unregisterFCMToken - OK - ${account?.user?.login} - ${token}`);
       } else {
-        console.debug('FcmService - unregisterFCMToken - NO TOKEN');
+        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ', account?.user?.login);
       }
     } catch (err) {
       console.error('FcmService - unregisterFCMTokenWithAccount - ERROR - ', (err as Error).message);

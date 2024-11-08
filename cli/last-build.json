@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-10-21 20:57:15",
-  "notes": "fix(fcm): MB-2961, fcm token not unregistered fix\nrelease: 1.13.5-rc.2(1130506)",
-  "version": "1.13.5-rc.3(1130507)"
+  "last": "2024-11-04 18:48:01",
+  "notes": "fix(fcm): MB-2961, fcm token not unregistered fix\nrelease: 1.13.6-rc.1(1130603)",
+  "version": "1.13.6-rc.2(1130604)"
 }
