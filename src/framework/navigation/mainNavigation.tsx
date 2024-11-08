@@ -38,7 +38,8 @@ import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/
 import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
-import { AnyNavigableModule, AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { AuthActiveAccount } from '../modules/auth/model';
 
 //  88888888888       888      888b    888                   d8b                   888
 //      888           888      8888b   888                   Y8P                   888
@@ -154,10 +155,10 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
   );
 }
 
-export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   // Simple Hack : session can be recreated with same values.
   // By using JSON-stringified version for useMemo() deps, we ensure that the navigation will be re-rendered only if necessary.
-  const appsJson = JSON.stringify(apps);
+  const appsJson = JSON.stringify(sessionIfExists?.rights.apps);
 
   const tabModulesCache = tabModules.get();
   const moduleTabStackCache = React.useMemo(
@@ -167,10 +168,12 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
     () =>
-      tabModules
-        .get()
-        .filterAvailables(apps ?? [])
-        .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
+      sessionIfExists
+        ? tabModules
+            .get()
+            .filterAvailables(sessionIfExists)
+            .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
+        : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [appsJson],
   );
@@ -256,10 +259,10 @@ export enum MainRouteNames {
  * @param widgets available widgets for the user
  * @returns
  */
-export function useMainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+export function useMainNavigation(sessionIfExists?: AuthActiveAccount) {
   const RootStack = getTypedRootStack();
-  setUpModulesAccess(apps ?? [], widgets ?? []);
-  const MainTabNavigator = useTabNavigator(apps, widgets);
+  setUpModulesAccess(sessionIfExists);
+  const MainTabNavigator = useTabNavigator(sessionIfExists);
   const renderMainTabNavigator = React.useCallback(() => {
     return MainTabNavigator;
   }, [MainTabNavigator]);

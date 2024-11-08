@@ -7,7 +7,7 @@ export default new NavigableModuleConfig<'collaborativewall', null>({
 
   entcoreScope: ['collaborativewall'],
 
-  hasRight: (matchingApps, matchingWidgets) => appConf.isDevOrAlpha && matchingApps.length > 0,
+  hasRight: ({ matchingApps }) => appConf.isDevOrAlpha && matchingApps.length > 0,
 
   matchEntcoreApp: '/collaborativewall',
 

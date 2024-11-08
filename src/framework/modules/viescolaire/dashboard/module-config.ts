@@ -1,6 +1,5 @@
 import type { IDashboardReduxState } from './reducer';
 
-import { getSession } from '~/framework/modules/auth/reducer';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 function hasViescoApp(entcoreApp: IEntcoreApp): boolean {
@@ -15,7 +14,7 @@ export default new NavigableModuleConfig<'dashboard', IDashboardReduxState>({
   displayPicture: { name: 'school', type: 'Icon' },
   entcoreScope: ['viescolaire'],
 
-  hasRight: matchingApps => matchingApps.length > 0 && getSession()?.platform.showVieScolaireDashboard === true,
+  hasRight: ({ session, matchingApps }) => matchingApps.length > 0 && session.platform.showVieScolaireDashboard === true,
   matchEntcoreApp: entcoreApp => hasViescoApp(entcoreApp),
   name: 'dashboard',
   storageName: 'dashboard',

@@ -14,9 +14,8 @@ import ConversationNewMailScreen, {
 } from '~/framework/modules/conversation/screens/ConversationNewMail';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<ConversationNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen

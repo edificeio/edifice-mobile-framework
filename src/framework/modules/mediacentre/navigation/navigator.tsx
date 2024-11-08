@@ -10,9 +10,8 @@ import MediacentreResourceListScreen, {
 } from '~/framework/modules/mediacentre/screens/resource-list';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<MediacentreNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={mediacentreRouteNames.home} component={MediacentreHomeScreen} options={homeNavBar} initialParams={{}} />

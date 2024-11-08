@@ -1,11 +1,10 @@
-import { Platform as RNPlatform } from 'react-native';
+import { PermissionsAndroid, Platform as RNPlatform } from 'react-native';
 
 import CookieManager from '@react-native-cookies/cookies';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
-import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 
 import {
   AccountType,
@@ -120,7 +119,6 @@ export interface IUserInfoBackend {
   login?: string;
   type?: AccountType;
   deletePending?: boolean;
-  hasApp?: boolean;
   forceChangePassword?: boolean;
   needRevalidateTerms?: boolean;
   apps?: IEntcoreApp[];
@@ -505,9 +503,9 @@ export class FcmService {
         );
         await fetch(req);
         this._removeTokenFromDeleteQueue(token);
-        console.debug('FcmService - unregisterFCMToken - OK - ', token);
+        console.debug(`FcmService - unregisterFCMToken - OK - ${account?.user?.login} - ${token}`);
       } else {
-        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ');
+        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ', account?.user?.login);
       }
     } catch (err) {
       console.error('FcmService - unregisterFCMToken - ERROR - ', (err as Error).message);
@@ -534,9 +532,9 @@ export class FcmService {
       );
       await fetch(req);
       this._removeTokenFromDeleteQueue(token);
-      console.debug('FcmService - unregisterFCMTokenWithAccount - OK - ', token);
+      console.debug(`FcmService - unregisterFCMToken - OK - ${account?.user?.login} - ${token}`);
     } catch (err) {
-      console.error('FcmService - unregisterFCMTokenWithAccount - ERROR - ', token);
+      console.debug('FcmService - unregisterFCMToken - NO TOKEN - ', account?.user?.login);
       console.error((err as Error).message);
       //unregistering fcm token should not crash the login process
       if (!Connection.isOnline) {
@@ -577,8 +575,8 @@ export async function manageFirebaseToken(platform: Platform) {
     const fcm = new FcmService(platform);
     console.debug('manageFirebaseToken - registerFCMToken');
     if (RNPlatform.OS === 'android') {
-      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
-      if (result === RESULTS.GRANTED || result === RESULTS.UNAVAILABLE) {
+      const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      if (result === PermissionsAndroid.RESULTS.GRANTED) {
         await fcm.registerFCMToken();
       }
     } else {
@@ -799,9 +797,7 @@ export async function fetchUserInfo(platform: Platform) {
  */
 export function ensureUserValidity(userinfo: IUserInfoBackend) {
   if (userinfo.deletePending) {
-    throw new Error.LoginError(Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED);
-  } else if (!userinfo.hasApp) {
-    throw new Error.LoginError(Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM);
+    throw createAuthError(RuntimeAuthErrorCode.PRE_DELETED, '', 'User is predeleted');
   }
 }
 

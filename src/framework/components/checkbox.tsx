@@ -10,6 +10,7 @@ export interface CheckboxProps {
   checked: boolean;
   partialyChecked?: boolean;
   customContainerStyle?: ViewStyle;
+  testID?: string;
 }
 
 const styles = StyleSheet.create({
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Checkbox = ({ checked, customContainerStyle, onPress, partialyChecked }: CheckboxProps) => {
+export const Checkbox = ({ checked, customContainerStyle, onPress, partialyChecked, testID }: CheckboxProps) => {
   const checkedContainerStyle = {
     backgroundColor: checked ? theme.palette.primary.regular : theme.ui.background.card,
     borderColor: checked || partialyChecked ? theme.palette.primary.regular : theme.palette.grey.graphite,
@@ -52,7 +53,7 @@ export const Checkbox = ({ checked, customContainerStyle, onPress, partialyCheck
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, checkedContainerStyle, customContainerStyle]}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, checkedContainerStyle, customContainerStyle]} testID={testID}>
       {renderStatus()}
     </TouchableOpacity>
   );

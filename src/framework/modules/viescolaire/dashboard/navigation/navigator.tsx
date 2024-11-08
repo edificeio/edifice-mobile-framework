@@ -11,9 +11,8 @@ import DashboardRelativeScreen, {
 import DashboardStudentScreen, { computeNavBar as studentNavBar } from '~/framework/modules/viescolaire/dashboard/screens/student';
 import DashboardTeacherScreen, { computeNavBar as teacherNavBar } from '~/framework/modules/viescolaire/dashboard/screens/teacher';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<DashboardNavigationParams>(moduleConfig.name, Stack => {
     /**
      * This module has no fixed home screen. We dynamically update `moduleConfig.routeName` to point to the "home" depending of user type.

@@ -17,9 +17,8 @@ import HomeworkTaskListScreen from '~/framework/modules/homework/screens/Homewor
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { navBarTitle } from '~/framework/navigation/navBar';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<HomeworkNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={homeworkRouteNames.home} component={HomeworkInitialScreen} options={{}} initialParams={undefined} />

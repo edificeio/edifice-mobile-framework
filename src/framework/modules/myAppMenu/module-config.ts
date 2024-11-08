@@ -10,8 +10,8 @@ export default new NavigableModuleConfig<'myapps', null>({
   displayPictureFocus: { name: 'icon-apps-on', type: 'Icon' },
 
   entcoreScope: [],
-  hasRight: (matchingApps, matchingWidgets) => {
-    const modules = myAppsModules.get().filterAvailables(matchingApps);
+  hasRight: ({ session }) => {
+    const modules = myAppsModules.get().filterAvailables(session);
     return modules.length > 0;
   },
   matchEntcoreApp: () => true,
