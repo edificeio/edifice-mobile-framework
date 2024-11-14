@@ -1,0 +1,346 @@
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/results.bin b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/results.bin
+new file mode 100644
+index 0000000..7ed749e
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/results.bin
+@@ -0,0 +1 @@
++o/bundleLibRuntimeToDirDebug
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/BuildConfig.dex b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/BuildConfig.dex
+new file mode 100644
+index 0000000..7a3b810
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/BuildConfig.dex differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizer.dex b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizer.dex
+new file mode 100644
+index 0000000..3f1dff3
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizer.dex differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerModule$1.dex b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerModule$1.dex
+new file mode 100644
+index 0000000..139d884
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerModule$1.dex differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerModule.dex b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerModule.dex
+new file mode 100644
+index 0000000..5af31fe
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerModule.dex differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerPackage.dex b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerPackage.dex
+new file mode 100644
+index 0000000..f4aaaee
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerPackage.dex differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerSpec.dex b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerSpec.dex
+new file mode 100644
+index 0000000..70b6f55
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativeimageresizer/ImageResizerSpec.dex differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin
+new file mode 100644
+index 0000000..0bc1d7d
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/504052e1bd891b0192d9194d139dbe1e/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/786445b35f319ed44f9ffd56cb888eaa/results.bin b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/786445b35f319ed44f9ffd56cb888eaa/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/786445b35f319ed44f9ffd56cb888eaa/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/786445b35f319ed44f9ffd56cb888eaa/transformed/classes/classes_dex/classes.dex b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/786445b35f319ed44f9ffd56cb888eaa/transformed/classes/classes_dex/classes.dex
+new file mode 100644
+index 0000000..a0b3dd8
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/.transforms/786445b35f319ed44f9ffd56cb888eaa/transformed/classes/classes_dex/classes.dex differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/generated/source/buildConfig/debug/com/reactnativeimageresizer/BuildConfig.java b/node_modules/@bam.tech/react-native-image-resizer/android/build/generated/source/buildConfig/debug/com/reactnativeimageresizer/BuildConfig.java
+new file mode 100644
+index 0000000..74b92b9
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/generated/source/buildConfig/debug/com/reactnativeimageresizer/BuildConfig.java
+@@ -0,0 +1,12 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package com.reactnativeimageresizer;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = Boolean.parseBoolean("true");
++  public static final String LIBRARY_PACKAGE_NAME = "com.reactnativeimageresizer";
++  public static final String BUILD_TYPE = "debug";
++  // Field from default config.
++  public static final boolean IS_NEW_ARCHITECTURE_ENABLED = false;
++}
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..fec7c50
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnativeimageresizer" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..d338b06
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.reactnativeimageresizer",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar
+new file mode 100644
+index 0000000..f51c6b2
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar
+new file mode 100644
+index 0000000..5880394
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..7aa9ac5
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Wed Nov 06 10:11:27 CET 2024
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..efe7192
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/build/generated/res/resValues/debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+new file mode 100644
+index 0000000..65400f9
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/debug/jniLibs"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+new file mode 100644
+index 0000000..ba861db
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/debug/shaders"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/packageDebugAssets/merger.xml b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/packageDebugAssets/merger.xml
+new file mode 100644
+index 0000000..a0cbd6e
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/incremental/packageDebugAssets/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/assets"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/debug/assets"/></dataSet><dataSet config="generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/shader_assets/debug/compileDebugShaders/out"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/BuildConfig.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/BuildConfig.class
+new file mode 100644
+index 0000000..2a499e2
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/BuildConfig.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizer.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizer.class
+new file mode 100644
+index 0000000..94f5f7d
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizer.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerModule$1.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerModule$1.class
+new file mode 100644
+index 0000000..6342a4f
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerModule$1.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerModule.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerModule.class
+new file mode 100644
+index 0000000..a95e9cc
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerModule.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerPackage.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerPackage.class
+new file mode 100644
+index 0000000..f0bd5e4
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerPackage.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerSpec.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerSpec.class
+new file mode 100644
+index 0000000..d9ce9e1
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativeimageresizer/ImageResizerSpec.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+@@ -0,0 +1,2 @@
++R_DEF: Internal format may change without notice
++local
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..65d42e8
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,7 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.reactnativeimageresizer" >
++4
++5    <uses-sdk android:minSdkVersion="24" />
++6
++7</manifest>
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..fec7c50
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnativeimageresizer" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/BuildConfig.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/BuildConfig.class
+new file mode 100644
+index 0000000..2a499e2
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/BuildConfig.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizer.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizer.class
+new file mode 100644
+index 0000000..94f5f7d
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizer.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerModule$1.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerModule$1.class
+new file mode 100644
+index 0000000..6342a4f
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerModule$1.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerModule.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerModule.class
+new file mode 100644
+index 0000000..a95e9cc
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerModule.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerPackage.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerPackage.class
+new file mode 100644
+index 0000000..f0bd5e4
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerPackage.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerSpec.class b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerSpec.class
+new file mode 100644
+index 0000000..d9ce9e1
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativeimageresizer/ImageResizerSpec.class differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar
+new file mode 100644
+index 0000000..3c5d36b
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..92e94e8
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+@@ -0,0 +1 @@
++com.reactnativeimageresizer
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/@bam.tech/react-native-image-resizer/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..244bd1a
+--- /dev/null
++++ b/node_modules/@bam.tech/react-native-image-resizer/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,17 @@
++-- Merging decision tree log ---
++manifest
++ADDED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml:1:1-3:12
++INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml:1:1-3:12
++	package
++		ADDED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml:1:70-107
++		INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml
++	xmlns:android
++		ADDED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml:1:11-69
++uses-sdk
++INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml
++INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.1137/node_modules/@bam.tech/react-native-image-resizer/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/@bam.tech/react-native-image-resizer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
+new file mode 100644
+index 0000000..7edd762
+Binary files /dev/null and b/node_modules/@bam.tech/react-native-image-resizer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/package.json b/node_modules/@bam.tech/react-native-image-resizer/package.json
+index 7a73b6e..2033e59 100644
+--- a/node_modules/@bam.tech/react-native-image-resizer/package.json
++++ b/node_modules/@bam.tech/react-native-image-resizer/package.json
+@@ -169,12 +169,8 @@
+     ]
+   },
+   "codegenConfig": {
+-    "libraries": [
+-      {
+-        "name": "RNImageResizerSpec",
+-        "type": "modules",
+-        "jsSrcsDir": "src"
+-      }
+-    ]
++    "name": "RNImageResizerSpec",
++    "type": "modules",
++    "jsSrcsDir": "src"
+   }
+ }
+diff --git a/node_modules/@bam.tech/react-native-image-resizer/react-native-image-resizer.podspec b/node_modules/@bam.tech/react-native-image-resizer/react-native-image-resizer.podspec
+index c7ba7d9..7498032 100644
+--- a/node_modules/@bam.tech/react-native-image-resizer/react-native-image-resizer.podspec
++++ b/node_modules/@bam.tech/react-native-image-resizer/react-native-image-resizer.podspec
+@@ -32,6 +32,7 @@ Pod::Spec.new do |s|
+     s.dependency "RCTRequired"
+     s.dependency "RCTTypeSafety"
+     s.dependency "ReactCommon/turbomodule/core"
++    install_modules_dependencies(s)
+   end
+ end
+ 
