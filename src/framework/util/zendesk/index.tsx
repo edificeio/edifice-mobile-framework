@@ -143,12 +143,7 @@ interface ZendeskContextProps {
  * @param zendeskConfig The {@link ZendeskConfig} to initialize the {@link Zendesk} instance with.
  */
 export function ZendeskProvider({ children, zendeskConfig }: ZendeskContextProps) {
-  console.debug('Zendesk - ZendeskProvider - ', zendeskConfig);
   const ZendeskInstance = new Zendesk(zendeskConfig);
-  console.debug('Zendesk - ZendeskProvider - ', ZendeskInstance);
-
-  console.debug('Zendesk - ZendeskProvider - ', ZendeskContext.Provider);
-
   return <ZendeskContext.Provider value={ZendeskInstance}>{children}</ZendeskContext.Provider>;
 }
 
