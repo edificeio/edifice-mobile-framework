@@ -459,7 +459,7 @@ function useAccountsFeature(
   const onPressItem = React.useCallback(
     async (item: (typeof data)[0], index: number) => {
       const activeSession = assertSession();
-      // await authService.removeFirebaseToken(account.platform);
+
       accountListRef.current?.dismiss();
 
       if (activeSession.user.id === item.user.id) return;
