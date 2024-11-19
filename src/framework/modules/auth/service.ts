@@ -161,6 +161,14 @@ export interface UserPersonDataBackend {
   schools?: UserPersonDataStructureWithClasses[];
 }
 
+export namespace API {
+  export interface AuthForgotResponse {
+    ok: boolean;
+    structures?: any[];
+    error?: string;
+  }
+}
+
 export function formatStructuresWithClasses(
   structureNodes?: StructureNode[],
   structuresWithClasses?: UserPersonDataStructureWithClasses[],
@@ -693,19 +701,24 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
 }
 
 // ToDo : type def for response type
-export async function forgot<Mode extends 'password'>(platform: Platform, mode: Mode, payload: { login: string }, deviceId: string);
+export async function forgot<Mode extends 'password'>(
+  platform: Platform,
+  mode: Mode,
+  payload: { login: string },
+  deviceId: string,
+): Promise<API.AuthForgotResponse>;
 export async function forgot<Mode extends 'id'>(
   platform: Platform,
   mode: Mode,
   payload: { mail: string } | { mail: string; firstName: string; structureId: string },
   deviceId: string,
-);
+): Promise<API.AuthForgotResponse>;
 export async function forgot<Mode extends ForgotMode>(
   platform: Platform,
   mode: Mode,
   payload: { login: string } | { mail: string } | { mail: string; firstName: string; structureId: string },
   deviceId: string,
-) {
+): Promise<API.AuthForgotResponse> {
   const realPayload = { ...payload, service: 'mail' };
   const api = mode === 'id' ? `${platform.url}/auth/forgot-id` : `${platform.url}/auth/forgot-password`;
   const res = await fetch(api, {

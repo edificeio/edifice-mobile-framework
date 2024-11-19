@@ -7,15 +7,21 @@ import { Platform } from '~/framework/util/appConf';
 
 export interface ForgotScreenProps {}
 
+type ForgotScreenStructure = {
+  structureId: string;
+  structureName: string;
+};
+
 export type IForgotScreenState = {
-  login: string;
-  firstName?: string;
-  structureName?: string;
-  showStructurePicker: boolean;
+  dropdownOpened: boolean;
   editing: boolean;
-  structures: any[];
-  result?: { ok: boolean; structures?: any[]; error?: string };
+  firstName?: string;
   forgotState: 'IDLE' | 'RUNNING' | 'DONE';
+  login: string;
+  result?: { ok: boolean; structures?: any[]; error?: string };
+  structures: ForgotScreenStructure[];
+  structureName?: string;
+  structureId?: string;
 };
 
 export interface IForgotPageEventProps {
