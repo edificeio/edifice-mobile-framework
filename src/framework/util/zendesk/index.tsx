@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import React, { createContext, useContext } from 'react';
-import { NativeModules, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 import type {
   OpenHelpCenterOptions,
@@ -12,12 +12,11 @@ import type {
   ZendeskConfig,
 } from './types';
 
-export class Zendesk {
-  private ZendeskUnified = NativeModules.ZendeskUnified;
+import ZendeskUnified from './spec/ZendeskUnified';
 
+export class Zendesk {
   constructor(config: ZendeskConfig) {
-    console.debug('Zendesk - Initialize - ', this.ZendeskUnified);
-    this.ZendeskUnified.initialize(config);
+    ZendeskUnified?.initialize(config);
   }
 
   /**
@@ -26,14 +25,14 @@ export class Zendesk {
    * If the module is not working correctly, an error will be returned.
    */
   public async healthCheck(): Promise<string> {
-    return this.ZendeskUnified.healthCheck();
+    return ZendeskUnified?.healthCheck();
   }
 
   /**
    * Sets an anonymous identity for the user using an email and/or name.
    */
   public async setAnonymousIdentity(options: SetAnonymousIdentityOptions): Promise<boolean> {
-    return this.ZendeskUnified.setAnonymousIdentity(options);
+    return ZendeskUnified?.setAnonymousIdentity(options);
   }
 
   /**
@@ -41,14 +40,14 @@ export class Zendesk {
    * @param jwt The JWT to use for the identity.
    */
   public async setIdentity(jwt: string): Promise<boolean> {
-    return this.ZendeskUnified.setIdentity(jwt);
+    return ZendeskUnified?.setIdentity(jwt);
   }
 
   /**
    * Opens the Zendesk Help Center.
    */
   public async openHelpCenter(options: OpenHelpCenterOptions) {
-    await this.ZendeskUnified.openHelpCenter(options);
+    ZendeskUnified?.openHelpCenter(options);
   }
 
   /**
@@ -56,21 +55,21 @@ export class Zendesk {
    * @param ticketId The ID of the ticket to open.
    */
   public async openTicket(ticketId: string) {
-    await this.ZendeskUnified.openTicket(ticketId);
+    ZendeskUnified?.openTicket(ticketId);
   }
 
   /**
    * Opens the ticket creation screen.
    */
   public async openNewTicket(options: OpenNewTicketOptions) {
-    await this.ZendeskUnified.openNewTicket(options);
+    ZendeskUnified?.openNewTicket(options);
   }
 
   /**
    * Lets you show a list of the user's tickets. The user can review and update their tickets.
    */
   public async listTickets() {
-    await this.ZendeskUnified.listTickets();
+    ZendeskUnified?.listTickets();
   }
 
   /**
@@ -78,7 +77,7 @@ export class Zendesk {
    * @param articleId The ID of the article to open.
    */
   public async openArticle(articleId: number) {
-    await this.ZendeskUnified.openArticle(Platform.OS === 'ios' ? articleId.toString() : articleId);
+    ZendeskUnified?.openArticle(Platform.OS === 'ios' ? articleId.toString() : articleId);
   }
 
   /**
@@ -86,7 +85,7 @@ export class Zendesk {
    * @param locale
    */
   public async setHelpCenterLocaleOverride(locale: string) {
-    await this.ZendeskUnified.setHelpCenterLocaleOverride(locale);
+    ZendeskUnified?.setHelpCenterLocaleOverride(locale);
   }
 
   /**
@@ -94,7 +93,7 @@ export class Zendesk {
    * @param color The color to change the theme to.
    **/
   public async changeTheme(color: string) {
-    await this.ZendeskUnified.changeTheme(color);
+    ZendeskUnified?.changeTheme(color);
   }
 
   /**
@@ -102,21 +101,21 @@ export class Zendesk {
    * @param accountKey The Zendesk account key.
    */
   public async initializeChat(accountKey: string) {
-    await this.ZendeskUnified.initializeChat(accountKey);
+    ZendeskUnified?.initializeChat(accountKey);
   }
 
   /**
    * Opens the Zendesk Chat screen.
    */
   public async startChat(options?: StartChatOptions) {
-    await this.ZendeskUnified.startChat(options);
+    ZendeskUnified?.startChat(options);
   }
 
   /**
    * Opens the Zendesk Answer Bot screen.
    */
   public async startAnswerBot() {
-    await this.ZendeskUnified.startAnswerBot();
+    ZendeskUnified?.startAnswerBot();
   }
 }
 

@@ -5,6 +5,11 @@
   "engines": {
     "node": ">=18"
   },
+  "codegenConfig": {
+    "name": "ZendeskUnified",
+    "type": "modules",
+    "jsSrcsDir": "src/framework/util/zendesk/spec"
+  },
   "scripts": {
     "add-dev": "yarn add --dev --exact",
     "add-dep": "yarn add --exact",
