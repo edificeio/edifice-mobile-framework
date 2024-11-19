@@ -299,7 +299,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   );
 
   return (
-    <PageView style={styles.page}>
+    <PageView style={[styles.page, props.pageStyle]}>
       <KeyboardAvoidingView
         keyboardVerticalOffset={headerHeight}
         style={styles.container}

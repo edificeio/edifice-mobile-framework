@@ -50,8 +50,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexGrow: 1,
-    padding: UI_SIZES.spacing.medium,
-    paddingBottom: 0,
   },
   toolbar: { marginTop: -UI_SIZES.elements.editor.toolbarHeight },
 });

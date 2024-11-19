@@ -9,12 +9,14 @@ import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
+import { HeadingXSText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
@@ -57,6 +59,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const navigation = props.navigation;
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
+  const [isInModalCreation, setIsInModalCreation] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -110,9 +113,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     navigation.navigate(mailsRouteNames.details, { from: MailsDefaultFolders.INBOX });
   };
 
-  const renderBottomSheetFolders = () => {
+  const onDismissBottomSheet = () => {
+    if (isInModalCreation) setIsInModalCreation(false);
+  };
+
+  const renderFolders = () => {
     return (
-      <BottomSheetModal ref={bottomSheetModalRef}>
+      <View>
         <View style={styles.defaultFolders}>
           {Object.keys(defaultFoldersInfos).map(folder => (
             <MailsFolderItem
@@ -141,8 +148,25 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           style={styles.newFolderButton}
           iconLeft="ui-plus"
           text={I18n.get('mails-list-newfolder')}
-          action={() => console.log('create folder')}
+          action={() => setIsInModalCreation(true)}
         />
+      </View>
+    );
+  };
+
+  const renderCreateNewFolder = () => {
+    return (
+      <View>
+        <PrimaryButton text="retour" action={() => setIsInModalCreation(false)} />
+        <HeadingXSText>Créer un nouveau dossier</HeadingXSText>
+      </View>
+    );
+  };
+
+  const renderBottomSheetFolders = () => {
+    return (
+      <BottomSheetModal ref={bottomSheetModalRef} onDismiss={onDismissBottomSheet}>
+        {isInModalCreation ? renderCreateNewFolder() : renderFolders()}
       </BottomSheetModal>
     );
   };

@@ -1,8 +1,22 @@
+import { AccountType } from '~/framework/modules/auth/model';
+
 export enum MailsDefaultFolders {
   DRAFTS = 'drafts',
   INBOX = 'inbox',
   OUTBOX = 'outbox',
   TRASH = 'trash',
+}
+
+export enum MailsRecipientsType {
+  TO = 'to',
+  CC = 'cc',
+  CCI = 'cci',
+}
+
+export interface MailsRecipientInfo {
+  id: string;
+  displayName: string;
+  type: AccountType;
 }
 
 export interface IMailsMailContent {
@@ -16,10 +30,10 @@ export interface IMailsMailContent {
     size: number;
   }[];
   body: string;
-  cc: { id: string; displayName: string; type: string }[];
-  cci: { id: string; displayName: string; type: string }[];
+  cc: MailsRecipientInfo[];
+  cci: MailsRecipientInfo[];
   date: number;
-  from: { id: string; displayName: string; type: string };
+  from: MailsRecipientInfo;
   id: string;
   language: string;
   parent_id: string;
@@ -27,19 +41,19 @@ export interface IMailsMailContent {
   subject: string;
   text_searchable: string;
   thread_id: string;
-  to: { id: string; displayName: string; type: string }[];
+  to: MailsRecipientInfo[];
 }
 
 export interface IMailsMailPreview {
-  cc: { id: string; displayName: string; type: string }[];
-  cci: { id: string; displayName: string; type: string }[];
+  cc: MailsRecipientInfo[];
+  cci: MailsRecipientInfo[];
   date: number;
-  from: { id: string; displayName: string; type: string };
+  from: MailsRecipientInfo;
   hasAttachment: boolean;
   id: string;
   state: string;
   subject: string;
-  to: { id: string; displayName: string; type: string }[];
+  to: MailsRecipientInfo[];
   type: string;
   unread: boolean;
 }

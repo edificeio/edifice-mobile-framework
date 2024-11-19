@@ -19,9 +19,11 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import Separator from '~/framework/components/separator';
 import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { mailsDetailsData } from '~/framework/modules/mails/data';
-import { MailsDefaultFolders } from '~/framework/modules/mails/model';
+import { MailsDefaultFolders, MailsRecipientsType } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
@@ -37,22 +39,30 @@ export const computeNavBar = ({
   }),
 });
 
-enum RecipientsType {
-  TO = 'to',
-  CC = 'cc',
-  CCI = 'cci',
-}
-
-const recipientPrefixsI18n = {
-  [RecipientsType.TO]: 'mails-prefixto',
-  [RecipientsType.CC]: 'mails-prefixcc',
-  [RecipientsType.CCI]: 'mails-prefixcci',
-};
-
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
+  const onMarkUnread = () => {
+    props.navigation.goBack();
+    console.log('mark unread');
+    Toast.showSuccess(I18n.get('mails-details-toastsuccessunread'));
+  };
+
+  const onMove = () => {
+    console.log('move');
+  };
+
+  const onRestore = () => {
+    console.log('restore');
+  };
+
+  const onDelete = () => {
+    props.navigation.goBack();
+    console.log('delete');
+    Toast.showSuccess(I18n.get('mails-details-toastsuccessdelete'));
+  };
+
   const allPopupActionsMenu = [
     {
-      action: () => console.log('mark unread'),
+      action: onMarkUnread,
       icon: {
         android: 'ic_visibility_off',
         ios: 'eye.slash',
@@ -60,7 +70,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       title: I18n.get('mails-details-markunread'),
     },
     {
-      action: () => console.log('move'),
+      action: onMove,
       icon: {
         android: 'ic_move_to_inbox',
         ios: 'arrow.up.square',
@@ -68,14 +78,14 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       title: I18n.get('mails-details-move'),
     },
     {
-      action: () => console.log('restore'),
+      action: onRestore,
       icon: {
         android: 'ic_restore',
         ios: 'arrow.uturn.backward.circle',
       },
       title: I18n.get('mails-details-restore'),
     },
-    deleteAction({ action: () => console.log('delete') }),
+    deleteAction({ action: onDelete }),
   ];
 
   const popupActionsMenu = () => {
@@ -89,7 +99,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
-            <NavBarAction icon="ui-undo" />,
+            <NavBarAction icon="ui-undo" onPress={() => console.log('reply')} />,
             <PopupMenu actions={popupActionsMenu()}>
               <NavBarAction icon="ui-options" />
             </PopupMenu>,
@@ -101,12 +111,12 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
   }, []);
 
   const renderRecipients = () => {
-    return Object.keys(RecipientsType).map(recipientTypeKey => {
-      const recipientType = RecipientsType[recipientTypeKey];
+    return Object.keys(MailsRecipientsType).map(recipientTypeKey => {
+      const recipientType = MailsRecipientsType[recipientTypeKey];
       if (mailsDetailsData[recipientType].length === 0) return;
       return (
         <View style={styles.recipientsItem}>
-          <SmallText>{I18n.get(recipientPrefixsI18n[recipientType])}</SmallText>
+          <SmallText>{I18n.get(MailsRecipientPrefixsI18n[recipientType].name)}</SmallText>
           <SmallText style={styles.recipientsText}>
             {mailsDetailsData[recipientType].map(recipient => recipient.displayName).join(', ')}
           </SmallText>

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ViewStyle } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -14,6 +15,7 @@ export interface RichEditorFormProps {
   uploadParams: IWorkspaceUploadParams;
   preventBackI18n?: { title: string; text: string };
   saving?: boolean;
+  pageStyle?: ViewStyle;
 }
 
 export interface RichEditorFormReduxProps {

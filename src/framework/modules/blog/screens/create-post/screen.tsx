@@ -169,6 +169,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         onChangeText={value => setContent(value)}
         preventBackI18n={preventBackI18n}
         saving={saving}
+        pageStyle={styles.page}
       />
     );
   };

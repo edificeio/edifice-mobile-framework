@@ -139,6 +139,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
         onChangeText={value => setContent(value)}
         preventBackI18n={preventBackI18n}
         saving={saving}
+        pageStyle={styles.page}
       />
     );
   };

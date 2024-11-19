@@ -17,4 +17,8 @@ export default StyleSheet.create({
     ...TextFontStyle.Bold,
     color: theme.palette.grey.black,
   },
+  page: {
+    padding: UI_SIZES.spacing.medium,
+    paddingBottom: 0,
+  },
 });

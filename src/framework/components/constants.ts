@@ -181,6 +181,7 @@ export const UI_SIZES = {
     minor: getScaleWidth(8),
     small: getScaleWidth(12),
     tiny: getScaleWidth(4),
+    tinyExtra: getScaleWidth(2),
   },
   standardScreen: standardScreenDimensions,
 };
