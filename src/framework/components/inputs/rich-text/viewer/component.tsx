@@ -11,6 +11,7 @@ import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 export const RichEditorViewer = connect(state => ({
   oneSessionId: authSelectors.oneSessionId(state),
 }))((props: RichEditorViewerProps & { oneSessionId: AuthActiveAccount['tokens']['oneSessionId'] }) => {
+  console.debug('[RichEditorViewer] Rendering with content:', props.content);
   return (
     <RichEditor disabled useContainer initialContentHTML={props.content} oneSessionId={props.oneSessionId} onLoad={props.onLoad} />
   );
