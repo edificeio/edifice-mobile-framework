@@ -1,6 +1,7 @@
 import type { AuthActiveAccount, AuthSavedLoggedInAccount } from "~/framework/modules/auth/model";
 import { getSession } from "~/framework/modules/auth/reducer";
-import { isTokenExpired, refreshTokenForAccount } from "../oauth2";
+import { isTokenExpired, refreshTokenForAccount } from "~/framework/util/oauth2";
+
 import { FetchError, FetchErrorCode } from "./error";
 import { parseFetchArguments } from "./fetch";
 import { RequestBuilder, _fetch, _parseJson } from "./request-builder";

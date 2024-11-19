@@ -1,4 +1,5 @@
-import { Platform } from "../appConf";
+import { Platform } from "~/framework/util/appConf";
+
 import { parseFetchArguments } from "./fetch";
 import { RequestBuilder, _fetch, _parseJson } from "./request-builder";
 

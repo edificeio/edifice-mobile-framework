@@ -1,9 +1,11 @@
 import CookieManager from "@react-native-cookies/cookies";
 import DeviceInfo from "react-native-device-info";
+
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from "~/framework/modules/auth/model";
 import { getDeviceId } from "~/framework/modules/auth/reducer";
+import appConf, { Platform } from "~/framework/util/appConf";
 import { Error } from '~/framework/util/error';
-import appConf, { Platform } from "../appConf";
+
 import { FetchError, FetchErrorCode, HTTPError } from "./error";
 
 export class RequestBuilder {

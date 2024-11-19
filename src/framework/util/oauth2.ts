@@ -1,15 +1,15 @@
 import moment from "moment";
 import { getStore } from "~/app/store";
+import { accountIsActive, AuthActiveAccount, AuthCredentials, AuthSavedLoggedInAccount, AuthTokenSet, DateTimeString, getSerializedLoggedInAccountInfo, isSerializedLoggedInAccount } from "~/framework/modules/auth/model";
+import { AccountError, AccountErrorCode } from "~/framework/modules/auth/model/error";
 import { actions as authActions } from '~/framework/modules/auth/reducer';
+import { writeUpdateAccount } from "~/framework/modules/auth/storage";
+import appConf, { Platform } from "~/framework/util/appConf";
+import { Error } from "~/framework/util/error";
+import http, { HTTPError } from "~/framework/util/http";
+import { FetchError, FetchErrorCode } from "~/framework/util/http/error";
+import { ModuleArray } from "~/framework/util/moduleTool";
 import { IOAuthCustomToken, OAuth2RessourceOwnerPasswordClient } from "~/infra/oauth";
-import { accountIsActive, AuthActiveAccount, AuthCredentials, AuthSavedLoggedInAccount, AuthTokenSet, DateTimeString, getSerializedLoggedInAccountInfo, isSerializedLoggedInAccount } from "../modules/auth/model";
-import { AccountError, AccountErrorCode } from "../modules/auth/model/error";
-import { writeUpdateAccount } from "../modules/auth/storage";
-import appConf, { Platform } from "./appConf";
-import { Error } from "./error";
-import http, { HTTPError } from "./http";
-import { FetchError, FetchErrorCode } from "./http/error";
-import { ModuleArray } from "./moduleTool";
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
 // ToDo: find a better way to handle this.
