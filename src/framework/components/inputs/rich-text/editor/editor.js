@@ -828,22 +828,36 @@ function createHTML(options = {}) {
                 postAction({type: 'SELECTION_CHANGE', data: []});
                 postAction({type: 'CONTENT_BLUR'});
             }
-            function handleClick(event){
-                var ele = event.target;
+            function handleClickElement(event, ele){
+                // _postMessage({type: 'LOG', data: ['TOUCH', ele.nodeName, JSON.stringify(ele)]});
                 if (ele.nodeName === 'INPUT' && ele.type === 'checkbox'){
                     // Set whether the checkbox is selected by default
                     if (ele.checked) ele.setAttribute('checked', '');
                     else ele.removeAttribute('checked');
+                    return false;
                 } else if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
+                    return false;
                 } else if (ele.getAttribute('class') === 'audio-wrapper') {
                     var audioSrc = ele.querySelector('audio').getAttribute('src');
                     postAction({type: 'AUDIO_TOUCHED', data: audioSrc}, true);
+                    return false;
                 } else if (ele.nodeName === 'IMG' && ele.getAttribute('src') && ele.getAttribute('class') !== 'play-button') {
                     postAction({type: 'IMAGE_TOUCHED', data: ele.getAttribute('src')}, true);
+                    return false;
                 } else if (ele.nodeName === 'VIDEO' && ele.getAttribute('src')) {
                     postAction({type: 'VIDEO_TOUCHED', data: ele.getAttribute('src')}, true);
+                    return false;
                 }
+                return true;
+            }
+            function handleClick(event){
+              let ele = event.target;
+              let continueBubbling = true;
+              do {
+                continueBubbling = handleClickElement(event, ele);
+                ele = ele.parentNode;
+              } while (continueBubbling && ele && ele !== editor.content);
             }
             addEventListener(content, 'touchcancel', handleSelecting);
             addEventListener(content, 'mouseup', handleSelecting);
@@ -936,4 +950,5 @@ function createHTML(options = {}) {
 }
 
 const HTML = createHTML();
-export { HTML, createHTML, initEditor };
+export { createHTML, HTML, initEditor };
+

@@ -60,15 +60,7 @@ export default function () {
       <Stack.Screen name={authRouteNames.loginRedirect} component={AuthLoginRedirectScreen} options={loginRedirectNavBar} />
       <Stack.Screen name={authRouteNames.wayf} component={AuthWayfScreen} options={wayfNavBar} />
       <Stack.Screen name={authRouteNames.activation} component={AuthActivationScreen} options={authActivationNavBar} />
-      <Stack.Screen
-        name={authRouteNames.forgot}
-        component={AuthForgotScreen}
-        options={({ route }) => ({
-          headerTitle: navBarTitle(
-            route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
-          ),
-        })}
-      />
+
       <Stack.Screen
         name={authRouteNames.revalidateTerms}
         component={RevalidateTermsScreen}
@@ -111,6 +103,15 @@ export default function () {
           options={addAccountModalNavBar}
           initialParams={undefined}
         />
+        <Stack.Screen
+          name={authRouteNames.forgot}
+          component={AuthForgotScreen}
+          options={({ route }) => ({
+            headerTitle: navBarTitle(
+              route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+            ),
+          })}
+        />
       </Stack.Group>
       {appConf.onboarding.showDiscoveryClass ? (
         <Stack.Screen
@@ -124,4 +125,9 @@ export default function () {
   );
 }
 
-setModalModeForRoutes([authRouteNames.changePasswordModal, authRouteNames.mfaModal, authRouteNames.addAccountModal]);
+setModalModeForRoutes([
+  authRouteNames.changePasswordModal,
+  authRouteNames.mfaModal,
+  authRouteNames.addAccountModal,
+  authRouteNames.forgot,
+]);

@@ -1,8 +1,4 @@
-import { PermissionsAndroid, Platform as RNPlatform } from 'react-native';
-
 import CookieManager from '@react-native-cookies/cookies';
-import firebase from '@react-native-firebase/app';
-import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 
@@ -34,16 +30,16 @@ import {
   UserChild,
   UserChildren,
 } from './model';
-import { getSession } from './reducer';
 
 import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { OldStorageFunctions, Storage } from '~/framework/util/storage';
-import { Connection } from '~/infra/Connection';
+import { OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { Storage } from '~/framework/util/storage';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 import { initOAuth2, OAuth2RessourceOwnerPasswordClient, uniqueId, urlSigner } from '~/infra/oauth';
+import { AccountError, AccountErrorCode } from './model/error';
 
 export interface IUserRequirements {
   forceChangePassword?: boolean;
@@ -165,6 +161,14 @@ export interface UserPersonDataBackend {
   schools?: UserPersonDataStructureWithClasses[];
 }
 
+export namespace API {
+  export interface AuthForgotResponse {
+    ok: boolean;
+    structures?: any[];
+    error?: string;
+  }
+}
+
 export function formatStructuresWithClasses(
   structureNodes?: StructureNode[],
   structuresWithClasses?: UserPersonDataStructureWithClasses[],
@@ -181,7 +185,7 @@ export async function createSession(platform: Platform, credentials: AuthCredent
   }
   initOAuth2(platform);
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
   }
 
   if (credentialsAreLoginPassword(credentials)) {
@@ -208,7 +212,7 @@ export async function createSession(platform: Platform, credentials: AuthCredent
 export async function restoreSession(platform: Platform, token: AuthTokenSet) {
   initOAuth2(platform);
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
   }
   OAuth2RessourceOwnerPasswordClient.connection.importToken(token);
   if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
@@ -223,7 +227,7 @@ export async function restoreSession(platform: Platform, token: AuthTokenSet) {
 export async function forgetPreviousSession() {
   try {
     if (!OAuth2RessourceOwnerPasswordClient.connection) {
-      throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+      throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
     }
     await OAuth2RessourceOwnerPasswordClient.connection.forgetToken();
   } catch (err) {
@@ -242,7 +246,7 @@ export function formatSession(
   rememberMe?: boolean,
 ): AuthActiveAccount {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
   }
   if (
     !userinfo.apps ||
@@ -372,7 +376,7 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
     }
     const body = await res.json();
     if (!body.match) {
-      throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
+      throw new Error.LoginError(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
     }
     return AuthPendingRedirection.ACTIVATE;
   } catch (activationErr) {
@@ -402,7 +406,7 @@ export async function ensureCredentialsMatchPwdRenewCode(platform: Platform, cre
     }
     const body = await res.json();
     if (!body.match) {
-      throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
+      throw new Error.LoginError(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
     }
     return AuthPendingRedirection.RENEW_PASSWORD;
   } catch (err) {
@@ -421,196 +425,6 @@ export async function getAuthContext(platform: Platform) {
   }
   const activationContext: PlatformAuthContext = await res.json();
   return activationContext;
-}
-
-export class FcmService {
-  static FCM_TOKEN_TODELETE_KEY = 'users.fcmtokens.todelete';
-
-  lastRegisteredToken?: string;
-
-  pendingRegistration: 'initial' | 'delayed' | 'registered' = 'initial';
-
-  platform: Platform;
-
-  constructor(platform: Platform) {
-    this.platform = platform;
-    // Network Connection Listener
-    Connection.onEachNetworkBack(async () => {
-      if (this.pendingRegistration === 'delayed') {
-        console.debug('FcmService - onEachNetworkBack - registerFCMToken');
-        await this.registerFCMToken();
-      }
-      this._cleanQueue();
-    });
-    // FCM Token Listener
-    firebase.messaging().onTokenRefresh(async (token: string) => {
-      console.debug('FcmService - onEachNetworkBack - registerFCMToken');
-      await this.registerFCMToken(token);
-    });
-  }
-
-  private async _cleanQueue() {
-    const tokens = await this._getTokenToDeleteQueue();
-    tokens.forEach(token => {
-      console.debug('FcmService - _cleanQueue - unregisterFCMToken');
-      this.unregisterFCMToken(token);
-    });
-  }
-
-  private async _getTokenToDeleteQueue(): Promise<string[]> {
-    try {
-      const tokensCached = await OldStorageFunctions.getItemJson(FcmService.FCM_TOKEN_TODELETE_KEY);
-      if (!tokensCached) return [];
-      const tokens = tokensCached as string[];
-      if (tokens instanceof Array) {
-        return tokens;
-      } else {
-        console.debug('not an array?', tokens);
-      }
-    } catch {
-      // TODO: Manage error
-    }
-    return [];
-  }
-
-  private async _removeTokenFromDeleteQueue(token: string) {
-    if (!token) {
-      return;
-    }
-    //merge is not supported by all implementation
-    let tokens = await this._getTokenToDeleteQueue();
-    tokens = tokens.filter(t => t !== token);
-    await OldStorageFunctions.setItemJson(FcmService.FCM_TOKEN_TODELETE_KEY, tokens);
-  }
-
-  async unregisterFCMToken(token: string | null = null) {
-    try {
-      const account = getSession();
-      if (!account) {
-        console.error('FcmService - unregisterFCMToken - ERROR - No account');
-        return;
-      }
-      if (!token) {
-        token = await messaging().getToken();
-      }
-      if (token) {
-        const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
-          OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
-          `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
-          {
-            method: 'delete',
-          },
-        );
-        await fetch(req);
-        this._removeTokenFromDeleteQueue(token);
-        console.debug(`FcmService - unregisterFCMToken - OK - ${account?.user?.login} - ${token}`);
-      } else {
-        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ', account?.user?.login);
-      }
-    } catch (err) {
-      console.error('FcmService - unregisterFCMToken - ERROR - ', (err as Error).message);
-      //unregistering fcm token should not crash the login process
-      if (!Connection.isOnline) {
-        //when no connection => get it from property
-        const tokenToUnregister = token || this.lastRegisteredToken;
-        if (tokenToUnregister) this._removeTokenFromDeleteQueue(tokenToUnregister);
-      }
-    }
-  }
-
-  async unregisterFCMTokenWithAccount(account: AuthLoggedAccount, token: string | null = null) {
-    try {
-      if (!token) {
-        token = await messaging().getToken();
-      }
-      const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
-        OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
-        `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
-        {
-          method: 'delete',
-        },
-      );
-      await fetch(req);
-      this._removeTokenFromDeleteQueue(token);
-      console.debug(`FcmService - unregisterFCMToken - OK - ${account?.user?.login} - ${token}`);
-    } catch (err) {
-      console.debug('FcmService - unregisterFCMToken - NO TOKEN - ', account?.user?.login);
-      console.error((err as Error).message);
-      //unregistering fcm token should not crash the login process
-      if (!Connection.isOnline) {
-        //when no connection => get it from property
-        const tokenToUnregister = token || this.lastRegisteredToken;
-        if (tokenToUnregister) this._removeTokenFromDeleteQueue(tokenToUnregister);
-      }
-    }
-  }
-
-  async registerFCMToken(token: string | null = null) {
-    try {
-      this.pendingRegistration = 'initial';
-      if (!token) {
-        token = await messaging().getToken();
-      }
-      this.lastRegisteredToken = token;
-      await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
-        method: 'put',
-      });
-      this.pendingRegistration = 'registered';
-      console.debug('FcmService - registerFCMToken - OK - ', token);
-      //try to unregister queue
-      this._cleanQueue(); //clean queue on login
-    } catch (err) {
-      console.error('FcmService - registerFCMToken - ERROR - ', token);
-      console.error((err as Error).message);
-      //registering fcm token should not crash the login process
-      if (!Connection.isOnline) {
-        this.pendingRegistration = 'delayed';
-      }
-    }
-  }
-}
-
-export async function manageFirebaseToken(platform: Platform) {
-  try {
-    const fcm = new FcmService(platform);
-    console.debug('manageFirebaseToken - registerFCMToken');
-    if (RNPlatform.OS === 'android') {
-      const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-      if (result === PermissionsAndroid.RESULTS.GRANTED) {
-        await fcm.registerFCMToken();
-      }
-    } else {
-      const authorizationStatus = await messaging().requestPermission();
-      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-        await fcm.registerFCMToken();
-      }
-    }
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('Firebase register error', { cause: err });
-  }
-}
-
-export async function removeFirebaseToken(platform: Platform) {
-  try {
-    const fcm = new FcmService(platform);
-    console.debug('removeFirebaseToken - unregisterFCMToken');
-    fcm.unregisterFCMToken();
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('Firebase unregister error', { cause: err });
-  }
-}
-
-export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount) {
-  try {
-    const fcm = new FcmService(account.platform);
-    console.debug('removeFirebaseTokenWithAccount - unregisterFCMToken');
-    await fcm.unregisterFCMTokenWithAccount(account);
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('Firebase unregister error', { cause: err });
-  }
 }
 
 export async function getAuthTranslationKeys(platform: Platform, language: I18n.SupportedLocales) {
@@ -797,7 +611,7 @@ export async function fetchUserInfo(platform: Platform) {
  */
 export function ensureUserValidity(userinfo: IUserInfoBackend) {
   if (userinfo.deletePending) {
-    throw createAuthError(RuntimeAuthErrorCode.PRE_DELETED, '', 'User is predeleted');
+    throw new AccountError(AccountErrorCode.ACCOUNT_INELIGIBLE_PRE_DELETED, 'User is predeleted');
   }
 }
 
@@ -887,19 +701,24 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
 }
 
 // ToDo : type def for response type
-export async function forgot<Mode extends 'password'>(platform: Platform, mode: Mode, payload: { login: string }, deviceId: string);
+export async function forgot<Mode extends 'password'>(
+  platform: Platform,
+  mode: Mode,
+  payload: { login: string },
+  deviceId: string,
+): Promise<API.AuthForgotResponse>;
 export async function forgot<Mode extends 'id'>(
   platform: Platform,
   mode: Mode,
   payload: { mail: string } | { mail: string; firstName: string; structureId: string },
   deviceId: string,
-);
+): Promise<API.AuthForgotResponse>;
 export async function forgot<Mode extends ForgotMode>(
   platform: Platform,
   mode: Mode,
   payload: { login: string } | { mail: string } | { mail: string; firstName: string; structureId: string },
   deviceId: string,
-) {
+): Promise<API.AuthForgotResponse> {
   const realPayload = { ...payload, service: 'mail' };
   const api = mode === 'id' ? `${platform.url}/auth/forgot-id` : `${platform.url}/auth/forgot-password`;
   const res = await fetch(api, {
