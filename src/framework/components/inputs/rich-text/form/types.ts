@@ -11,11 +11,13 @@ import { LocalFile } from '~/framework/util/fileHandler';
 export interface RichEditorFormProps {
   initialContentHtml: string;
   topForm: ReactNode | ((onChange: () => void) => ReactNode);
+  bottomForm?: ReactNode;
   onChangeText: (html: string) => void;
   uploadParams: IWorkspaceUploadParams;
   preventBackI18n?: { title: string; text: string };
   saving?: boolean;
   pageStyle?: ViewStyle;
+  editorStyle?: ViewStyle;
 }
 
 export interface RichEditorFormReduxProps {

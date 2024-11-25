@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, ViewStyle } from 'react-native';
 
 import Attachment from './attachment';
@@ -11,17 +11,21 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 export default function Attachments(props: AttachmentsProps) {
   const addAttachments = () => console.log('add attachments');
 
+  const [attachments, setAttachments] = useState<{ name: string; uri: string }[]>(props.attachments ?? []);
+
   const suppContainerStyle: ViewStyle = {
     borderStyle: props.isEditing ? 'dashed' : 'solid',
   };
 
   return (
     <View style={[styles.container, suppContainerStyle]}>
-      <View style={styles.attachments}>
-        {props.attachments.map(attachment => (
-          <Attachment name={attachment.name} isEditing={props.isEditing} />
-        ))}
-      </View>
+      {attachments ? (
+        <View style={styles.attachments}>
+          {attachments.map(attachment => (
+            <Attachment name={attachment.name} isEditing={props.isEditing} />
+          ))}
+        </View>
+      ) : null}
 
       {props.isEditing ? (
         <TertiaryButton

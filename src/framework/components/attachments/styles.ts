@@ -14,13 +14,12 @@ export default StyleSheet.create({
     alignSelf: 'baseline',
   },
   container: {
-    alignContent: 'center',
+    alignItems: 'center',
     backgroundColor: theme.palette.grey.fog,
-    borderColor: theme.palette.primary.pale,
+    borderColor: theme.palette.primary.light,
     borderRadius: UI_SIZES.radius.selector,
     borderStyle: 'dashed',
     borderWidth: UI_SIZES.border.thin,
     padding: UI_SIZES.spacing.minor,
-    rowGap: UI_SIZES.spacing.minor,
   },
 });

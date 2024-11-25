@@ -1,9 +1,12 @@
 import * as React from 'react';
+import { View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import styles from './styles';
 import type { MailsEditScreenPrivateProps } from './types';
 
+import Attachments from '~/framework/components/attachments';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { NavBarAction } from '~/framework/components/navigation';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -36,39 +39,51 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
 
   const toggleMoreRecipientsFields = () => setMoreRecipientsFields(!moreRecipientsFields);
 
+  const renderTopForm = () => {
+    return (
+      <>
+        <MailsContactField
+          type={MailsRecipientsType.TO}
+          recipients={[
+            { displayName: 'Léa DE AMORIM', id: 'test-1', type: AccountType.Student },
+            { displayName: 'Junior BERNARD', id: 'test-2', type: AccountType.Teacher },
+            { displayName: 'Marius ESTAQUE', id: 'test-3', type: AccountType.Relative },
+          ]}
+          onDelete={() => console.log('onDelete recipient')}
+          isOpenMoreRecipientsFields={moreRecipientsFields}
+          onToggleMoreRecipientsFields={toggleMoreRecipientsFields}
+        />
+        {moreRecipientsFields ? (
+          <>
+            <MailsContactField
+              type={MailsRecipientsType.CC}
+              recipients={[]}
+              onDelete={() => console.log('onDelete recipient cc')}
+            />
+            <MailsContactField
+              type={MailsRecipientsType.CCI}
+              recipients={[]}
+              onDelete={() => console.log('onDelete recipient cci')}
+            />
+          </>
+        ) : null}
+        <MailsObjectField />
+      </>
+    );
+  };
+
+  const renderBottomForm = () => (
+    <View style={styles.bottomForm}>
+      <Attachments isEditing />
+    </View>
+  );
+
   return (
     <RichEditorForm
-      topForm={
-        <>
-          <MailsContactField
-            type={MailsRecipientsType.TO}
-            recipients={[
-              { displayName: 'Léa DE AMORIM', id: 'test-1', type: AccountType.Student },
-              { displayName: 'Junior BERNARD', id: 'test-2', type: AccountType.Teacher },
-              { displayName: 'Marius ESTAQUE', id: 'test-3', type: AccountType.Relative },
-            ]}
-            onDelete={() => console.log('onDelete recipient')}
-            isOpenMoreRecipientsFields={moreRecipientsFields}
-            onToggleMoreRecipientsFields={toggleMoreRecipientsFields}
-          />
-          {moreRecipientsFields ? (
-            <>
-              <MailsContactField
-                type={MailsRecipientsType.CC}
-                recipients={[]}
-                onDelete={() => console.log('onDelete recipient cc')}
-              />
-              <MailsContactField
-                type={MailsRecipientsType.CCI}
-                recipients={[]}
-                onDelete={() => console.log('onDelete recipient cci')}
-              />
-            </>
-          ) : null}
-          <MailsObjectField />
-        </>
-      }
+      topForm={renderTopForm}
       initialContentHtml=""
+      editorStyle={styles.editor}
+      bottomForm={renderBottomForm()}
       onChangeText={value => setContent(value)}
     />
   );

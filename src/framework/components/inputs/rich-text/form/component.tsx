@@ -290,7 +290,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     title: I18n.get(props.preventBackI18n?.title ?? 'richeditor-generic-alert-title'),
   });
 
-  const { topForm } = props;
+  const { bottomForm, topForm } = props;
 
   const realTopForm = React.useMemo(
     () =>
@@ -323,7 +323,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
             pasteAsPlainText
             placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
             ref={richText}
-            style={styles.richEditor}
+            style={[styles.richEditor, props.editorStyle]}
             useContainer
             useComposition={false}
             onBlur={handleBlur}
@@ -334,6 +334,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
             autoCapitalize
             oneSessionId={props.oneSessionId}
           />
+          {bottomForm}
         </ScrollView>
         {isFocused ? toolbar() : null}
         {choosePicsMenu()}

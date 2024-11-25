@@ -31,6 +31,18 @@ export default StyleSheet.create({
   responseIcon: {
     marginLeft: UI_SIZES.spacing.small,
   },
+  swipeAction: {
+    alignItems: 'center',
+    height: '100%',
+    justifyContent: 'center',
+    width: 80,
+  },
+  swipeLeftAction: {
+    backgroundColor: theme.palette.status.warning.regular,
+  },
+  swipeRightAction: {
+    backgroundColor: theme.palette.status.failure.regular,
+  },
   texts: {
     flex: 1,
     marginLeft: UI_SIZES.spacing.small,
