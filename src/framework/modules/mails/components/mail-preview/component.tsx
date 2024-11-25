@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-raw-text */
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 
 import moment from 'moment';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -26,14 +26,14 @@ const unreadSwipeLeftAction = (prog: SharedValue<number>, drag: SharedValue<numb
 
   return (
     <Reanimated.View style={styleAnimation}>
-      <View style={[styles.swipeAction, styles.swipeLeftAction]}>
+      <TouchableOpacity onPress={() => Alert.alert('unread')} style={[styles.swipeAction, styles.swipeLeftAction]}>
         <NamedSVG
           name="ui-eyeSlash"
           fill={theme.palette.grey.white}
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
-      </View>
+      </TouchableOpacity>
     </Reanimated.View>
   );
 };
@@ -47,14 +47,14 @@ const deleteSwipeRightAction = (prog: SharedValue<number>, drag: SharedValue<num
 
   return (
     <Reanimated.View style={styleAnimation}>
-      <View style={[styles.swipeAction, styles.swipeRightAction]}>
+      <TouchableOpacity onPress={() => Alert.alert('delete')} style={[styles.swipeAction, styles.swipeRightAction]}>
         <NamedSVG
           name="ui-delete"
           fill={theme.palette.grey.white}
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
-      </View>
+      </TouchableOpacity>
     </Reanimated.View>
   );
 };
