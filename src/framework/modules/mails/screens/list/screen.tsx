@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
@@ -9,6 +9,7 @@ import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
@@ -17,8 +18,9 @@ import TextInput from '~/framework/components/inputs/text';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
+import { NamedSVG } from '~/framework/components/picture';
 import Separator from '~/framework/components/separator';
-import { BodyText } from '~/framework/components/text';
+import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
@@ -57,11 +59,26 @@ const defaultFoldersInfos = {
   },
 };
 
+const flattenFolders = (folders: IMailsFolder[]) => {
+  const result: IMailsFolder[] = [];
+
+  folders.forEach(folder => {
+    result.push(folder);
+    if (folder.subfolders) {
+      result.push(...flattenFolders(folder.subfolders));
+    }
+  });
+
+  return result;
+};
+
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const navigation = props.navigation;
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
   const [isInModalCreation, setIsInModalCreation] = React.useState<boolean>(false);
+
+  const flattenedFolders = flattenFolders(mailsFoldersData);
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -91,28 +108,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolder]);
 
-  const flattenFolders = (folders: IMailsFolder[]) => {
-    const result: IMailsFolder[] = [];
-
-    folders.forEach(folder => {
-      result.push(folder);
-      if (folder.subfolders) {
-        result.push(...flattenFolders(folder.subfolders));
-      }
-    });
-
-    return result;
-  };
-
-  const flattenedFolders = flattenFolders(mailsFoldersData);
-
   const switchFolder = (folder: MailsDefaultFolders | MailsFolderInfo) => {
     setSelectedFolder(folder);
     bottomSheetModalRef.current?.dismiss();
   };
 
   const onPressItem = () => {
-    navigation.navigate(mailsRouteNames.details, { from: MailsDefaultFolders.INBOX });
+    navigation.navigate(mailsRouteNames.details, { from: selectedFolder });
   };
 
   const onDismissBottomSheet = () => {
@@ -159,6 +161,17 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderCreateNewFolder = () => {
     return (
       <View>
+        <View style={styles.newFolderHeader}>
+          <TouchableOpacity onPress={() => setIsInModalCreation(false)}>
+            <NamedSVG
+              name="ui-rafterLeft"
+              fill={theme.palette.grey.black}
+              width={UI_SIZES.elements.icon.small}
+              height={UI_SIZES.elements.icon.small}
+            />
+          </TouchableOpacity>
+          <HeadingXSText>{I18n.get('mails-list-newfolder')}</HeadingXSText>
+        </View>
         <InputContainer
           label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
           input={<TextInput placeholder={I18n.get('mails-list-newfolderplaceholder')} />}

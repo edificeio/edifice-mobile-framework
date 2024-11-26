@@ -5,5 +5,5 @@ export interface MailsContactItemProps {
   type: AccountType;
   id: string;
   isEditing: boolean;
-  onDelete: () => void;
+  onDelete: (id: string) => void;
 }

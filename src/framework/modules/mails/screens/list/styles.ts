@@ -14,4 +14,10 @@ export default StyleSheet.create({
     alignSelf: 'baseline',
     marginLeft: UI_SIZES.spacing.minor,
   },
+  newFolderHeader: {
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.small,
+    flexDirection: 'row',
+    marginBottom: UI_SIZES.spacing.big,
+  },
 });

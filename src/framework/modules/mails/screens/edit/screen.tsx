@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -49,22 +49,14 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
             { displayName: 'Junior BERNARD', id: 'test-2', type: AccountType.Teacher },
             { displayName: 'Marius ESTAQUE', id: 'test-3', type: AccountType.Relative },
           ]}
-          onDelete={() => console.log('onDelete recipient')}
+          onDelete={id => Alert.alert(`delete ${id} (to)`)}
           isOpenMoreRecipientsFields={moreRecipientsFields}
           onToggleMoreRecipientsFields={toggleMoreRecipientsFields}
         />
         {moreRecipientsFields ? (
           <>
-            <MailsContactField
-              type={MailsRecipientsType.CC}
-              recipients={[]}
-              onDelete={() => console.log('onDelete recipient cc')}
-            />
-            <MailsContactField
-              type={MailsRecipientsType.CCI}
-              recipients={[]}
-              onDelete={() => console.log('onDelete recipient cci')}
-            />
+            <MailsContactField type={MailsRecipientsType.CC} recipients={[]} onDelete={id => Alert.alert(`delete ${id} (cc)`)} />
+            <MailsContactField type={MailsRecipientsType.CCI} recipients={[]} onDelete={id => Alert.alert(`delete ${id} (cci)`)} />
           </>
         ) : null}
         <MailsObjectField />

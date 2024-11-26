@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
@@ -42,21 +42,21 @@ export const computeNavBar = ({
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
   const onMarkUnread = () => {
     props.navigation.goBack();
-    console.log('mark unread');
+    Alert.alert('mark unread');
     Toast.showSuccess(I18n.get('mails-details-toastsuccessunread'));
   };
 
   const onMove = () => {
-    console.log('move');
+    Alert.alert('move');
   };
 
   const onRestore = () => {
-    console.log('restore');
+    Alert.alert('restore');
   };
 
   const onDelete = () => {
     props.navigation.goBack();
-    console.log('delete');
+    Alert.alert('delete');
     Toast.showSuccess(I18n.get('mails-details-toastsuccessdelete'));
   };
 
@@ -99,7 +99,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
-            <NavBarAction icon="ui-undo" onPress={() => console.log('reply')} />,
+            <NavBarAction icon="ui-undo" onPress={() => Alert.alert('reply')} />,
             <PopupMenu actions={popupActionsMenu()}>
               <NavBarAction icon="ui-options" />
             </PopupMenu>,
@@ -154,8 +154,8 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
         />
         <Separator marginVertical={UI_SIZES.spacing.big} />
         <View style={styles.buttons}>
-          <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-forward')} action={() => console.log('transférer')} />
-          <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-reply')} action={() => console.log('répondre')} />
+          <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-forward')} action={() => Alert.alert('forward')} />
+          <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />
         </View>
       </ScrollView>
     </PageView>

@@ -12,7 +12,7 @@ import { accountTypeInfos } from '~/framework/util/accountType';
 
 export const MailsContactItem = (props: MailsContactItemProps) => {
   const onDelete = () => {
-    props.onDelete();
+    props.onDelete(props.id);
   };
 
   return (

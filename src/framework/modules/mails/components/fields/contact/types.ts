@@ -4,6 +4,6 @@ export interface MailsContactFieldProps {
   type: MailsRecipientsType;
   recipients: MailsRecipientInfo[];
   isOpenMoreRecipientsFields?: boolean;
-  onDelete: () => void;
+  onDelete: (id: string) => void;
   onToggleMoreRecipientsFields?: () => void;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
 import { AttachmentProps } from './types';
@@ -10,8 +10,8 @@ import { NamedSVG } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 
 export default function Attachment(props: AttachmentProps) {
-  const onDownload = () => console.log('download');
-  const onDelete = () => console.log('delete');
+  const onDownload = () => Alert.alert('download');
+  const onDelete = () => Alert.alert('delete');
 
   const renderActionIcon = () => {
     return (

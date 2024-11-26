@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ViewStyle } from 'react-native';
+import { Alert, View, ViewStyle } from 'react-native';
 
 import Attachment from './attachment';
 import styles from './styles';
@@ -9,7 +9,7 @@ import { I18n } from '~/app/i18n';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 
 export default function Attachments(props: AttachmentsProps) {
-  const addAttachments = () => console.log('add attachments');
+  const addAttachments = () => Alert.alert('add attachments');
 
   const [attachments, setAttachments] = useState<{ name: string; uri: string }[]>(props.attachments ?? []);
 
