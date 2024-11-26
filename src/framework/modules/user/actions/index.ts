@@ -89,7 +89,7 @@ const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: num
   return isWithinXmasPeriod;
 };
 
-export const isWithinXmasPeriod = getIsWithinXmasPeriod(1, 11, 5, 1);
+export const isWithinXmasPeriod = getIsWithinXmasPeriod(1, 12, 5, 1);
 
 export const getIsXmasActive = (state: IGlobalState) => isWithinXmasPeriod && state.user.xmasTheme;
 export const getIsXmasMusicActive = (state: IGlobalState) => state.user.xmasMusic;
