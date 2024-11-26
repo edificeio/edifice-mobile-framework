@@ -483,12 +483,12 @@ const reducer = createReducer(initialState, {
       : undefined;
     return tokens
       ? {
-          ...state,
-          accounts: {
-            ...state.accounts,
-            [id]: { ...state.accounts[id], tokens },
-          },
-        }
+        ...state,
+        accounts: {
+          ...state.accounts,
+          [id]: { ...state.accounts[id], tokens },
+        },
+      }
       : state;
   },
 
@@ -499,12 +499,12 @@ const reducer = createReducer(initialState, {
       : undefined;
     return tokens
       ? {
-          ...state,
-          accounts: {
-            ...state.accounts,
-            [id]: { ...state.accounts[id], tokens },
-          },
-        }
+        ...state,
+        accounts: {
+          ...state.accounts,
+          [id]: { ...state.accounts[id], tokens },
+        },
+      }
       : state;
   },
 
@@ -733,6 +733,8 @@ export function getAccountById(id?: keyof IAuthState['accounts']) {
   const state = getState(getStore().getState());
   return id ? state.accounts[id] : undefined;
 }
+
+export function getDeviceId() { return getState(getStore().getState()).deviceInfo.uniqueId; }
 
 /**
  * Gets the currently stored query param token. Do NOT refresh it if expired.

@@ -76,7 +76,7 @@ export const writeReplaceAccount = (
  * Update the given account information in the storage
  * @param account
  */
-export const updateAccount = (savedAccount: AuthSavedAccount) => {
+export const writeUpdateAccount = (savedAccount: AuthSavedAccount) => {
   const savedAccounts = readSavedAccounts();
   savedAccounts[savedAccount.user.id] = savedAccount;
   storage.setJSON('accounts', savedAccounts);

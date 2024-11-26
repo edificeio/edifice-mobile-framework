@@ -20,6 +20,7 @@ import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredenti
 import { getAccountById } from '~/framework/modules/auth/reducer';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
+import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const {
@@ -178,7 +179,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               autoCorrect={false}
               spellCheck={false}
               testID="login-identifier"
-              showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
+              showError={errmsg ? errtype === OAuth2ErrorCode.CREDENTIALS_MISMATCH : false}
               onSubmitEditing={onSubmitEditingLogin}
               returnKeyType="next"
               disabled={lockLogin && !!initialLogin} // lock Login only if login is provided.
@@ -194,7 +195,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               ref={inputPassword}
               onChangeText={onPasswordChanged.bind(this)}
               value={password}
-              showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
+              showError={errmsg ? errtype === OAuth2ErrorCode.CREDENTIALS_MISMATCH : false}
               testID="login-password"
               onSubmitEditing={onSubmitEditingPassword}
               returnKeyType="send"

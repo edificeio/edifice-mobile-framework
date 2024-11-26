@@ -19,6 +19,7 @@ import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import Navigation from '~/framework/navigation/RootNavigator';
 import appConf from '~/framework/util/appConf';
 import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
+import { AppModules as AllModulesBackup2 } from '~/framework/util/oauth2';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { ZendeskProvider } from '~/framework/util/zendesk';
@@ -120,6 +121,7 @@ function App(props: AppProps) {
 
 // Hack to generate scopes without circular deps. ToDo: fix it !
 AllModulesBackup.value = AppModules();
+AllModulesBackup2.value = AppModules();
 
 // Hack : Flatten reducers to prevent misordring of module execution
 Reducers.register('startup', navigationReducer);
