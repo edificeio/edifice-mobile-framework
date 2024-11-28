@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
   },
   callbackIndicator: {
     position: 'absolute',
+    color: theme.palette.grey.graphite,
   },
   input: {
     ...TextSizeStyle.Medium,

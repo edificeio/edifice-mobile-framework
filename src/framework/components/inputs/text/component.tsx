@@ -5,7 +5,7 @@ import styles from './styles';
 import { TextInputProps } from './types';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { CaptionItalicText } from '~/framework/components/text';
 
@@ -30,10 +30,12 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     toggleIconOff,
     toggleIconOn,
     value,
+    maxLength,
   } = props;
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isToggle, setIsToggle] = useState<boolean>(false);
+  const [length, setLength] = useState<number>(0);
 
   const isShowIconCallback = useMemo(
     () => (showError || showSuccess) && showIconCallback,
@@ -41,25 +43,26 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
   );
 
   // padding right input management if have icon success || error or if have toggle icon or both :)
-  const paddingRight = useMemo(
-    () =>
-      toggleIconOn && toggleIconOff && isShowIconCallback
-        ? UI_SIZES.spacing.medium + 2 * ICON_INPUT_SIZE + UI_SIZES.spacing.minor + 2 * UI_SIZES.spacing.small
-        : toggleIconOn && toggleIconOff
-          ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small
-          : isShowIconCallback
-            ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor
-            : UI_SIZES.spacing.medium,
-    [toggleIconOn, toggleIconOff, isShowIconCallback],
-  );
+  const paddingRight = useMemo(() => {
+    let value = UI_SIZES.spacing.medium;
+    if (toggleIconOn && toggleIconOff) value += ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small;
+    if (isShowIconCallback) value += ICON_INPUT_SIZE + UI_SIZES.spacing.minor;
+    if (maxLength) value += getScaleWidth(36) + UI_SIZES.spacing.minor;
+    return value;
+  }, [toggleIconOn, toggleIconOff, isShowIconCallback, maxLength]);
   // position icon success || error management if have toggle icon or not
-  const positionIconCallbackInput = useMemo(
-    () =>
-      toggleIconOn && toggleIconOff
-        ? UI_SIZES.spacing.medium + 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE
-        : UI_SIZES.spacing.medium,
-    [toggleIconOn, toggleIconOff],
-  );
+  const positionIconCallbackInput = useMemo(() => {
+    let value = UI_SIZES.spacing.medium;
+    if (toggleIconOn && toggleIconOff) value += 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE;
+    return value;
+  }, [toggleIconOn, toggleIconOff]);
+
+  const positionMaxLengthInput = useMemo(() => {
+    let value = UI_SIZES.spacing.medium;
+    if (toggleIconOn && toggleIconOff) value += 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE;
+    if (isShowIconCallback) value += ICON_INPUT_SIZE + UI_SIZES.spacing.minor;
+    return value;
+  }, [toggleIconOn, toggleIconOff, showIconCallback]);
 
   const colorStatus = useCallback((): ColorValue => {
     if (showError) return theme.palette.status.failure.regular;
@@ -91,6 +94,14 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     if (onToggle) onToggle();
   }, [isToggle, onToggle]);
 
+  const handleChangeText = useCallback(
+    text => {
+      setLength(text.length);
+      if (props.onChangeText) props.onChangeText(text);
+    },
+    [props],
+  );
+
   const renderIconInput = useCallback(() => {
     if (isShowIconCallback)
       return (
@@ -121,6 +132,14 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       );
   }, [toggleIconOn, toggleIconOff, colorStatus, testIDToggle, isToggle, disabled, handleToggle]);
 
+  const renderMaxLength = useCallback(() => {
+    if (maxLength)
+      return (
+        <CaptionItalicText
+          style={[styles.callbackIndicator, { right: positionMaxLengthInput }]}>{`${length}/${maxLength}`}</CaptionItalicText>
+      );
+  }, [maxLength, length]);
+
   const renderInput = useCallback(() => {
     return (
       <View style={styles.viewInput} testID={testID ?? ''}>
@@ -128,6 +147,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
           {...props}
           onFocus={e => handleFocus(e)}
           onBlur={e => handleBlur(e)}
+          onChangeText={handleChangeText}
           placeholderTextColor={theme.palette.grey.stone}
           ref={ref}
           {...(disabled ? { editable: false, placeholderTextColor: theme.palette.grey.graphite } : null)}
@@ -138,12 +158,26 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
             style,
           ]}
         />
-
+        {renderMaxLength()}
         {renderIconInput()}
         {renderToggle()}
       </View>
     );
-  }, [props, ref, disabled, paddingRight, colorStatus, style, renderIconInput, renderToggle, handleFocus, handleBlur, testID]);
+  }, [
+    props,
+    ref,
+    disabled,
+    paddingRight,
+    colorStatus,
+    style,
+    renderIconInput,
+    renderToggle,
+    handleFocus,
+    handleBlur,
+    testID,
+    length,
+    maxLength,
+  ]);
 
   const renderAnnotation = useCallback(() => {
     if (annotation)

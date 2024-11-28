@@ -174,7 +174,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         </View>
         <InputContainer
           label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
-          input={<TextInput placeholder={I18n.get('mails-list-newfolderplaceholder')} />}
+          input={<TextInput placeholder={I18n.get('mails-list-newfolderplaceholder')} maxLength={50} />}
         />
         <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
         <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
@@ -184,7 +184,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderBottomSheetFolders = () => {
     return (
-      <BottomSheetModal ref={bottomSheetModalRef} onDismiss={onDismissBottomSheet}>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        onDismiss={onDismissBottomSheet}
+        snapPoints={['90%']}
+        enableDynamicSizing={isInModalCreation ? false : true}>
         {isInModalCreation ? renderCreateNewFolder() : renderFolders()}
       </BottomSheetModal>
     );

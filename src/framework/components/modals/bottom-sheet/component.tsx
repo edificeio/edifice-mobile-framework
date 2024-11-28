@@ -1,13 +1,18 @@
 import * as React from 'react';
 
-import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetModalProps,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import styles from './styles';
-import type { CustomBottomSheetModalProps } from './types';
 
-export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
-  (props: CustomBottomSheetModalProps, ref) => {
+export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, BottomSheetModalProps>(
+  (props: BottomSheetModalProps, ref) => {
     const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
       return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
     };
