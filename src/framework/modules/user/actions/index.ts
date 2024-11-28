@@ -122,7 +122,7 @@ export const stopItSnowAction = () => async (dispatch: ThunkDispatch<any, any, a
 
 let shakeListener: EmitterSubscription | undefined;
 
-const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
+export const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
     if (!shakeListener && getIsXmasActive(getState())) {
       shakeListener = RNShake.addListener(() => {
@@ -167,37 +167,5 @@ export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: Thunk
   } catch {
     // If error, we disable theme for now
     dispatch({ type: actionTypes.toggleXmasTheme, value: false });
-  }
-};
-
-export const importXmasAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
-  try {
-    let xmasThemeSetting;
-    let xmasMusicSetting;
-    xmasThemeSetting = (await OldStorageFunctions.getItemJson(xmasThemeStorageKey)) as boolean | undefined;
-    xmasMusicSetting = (await OldStorageFunctions.getItemJson(xmasMusicStorageKey)) as boolean | undefined;
-    // These settings are undefined on first launch (by default, we set the theme on and the music off)
-    if (xmasThemeSetting === undefined) {
-      await OldStorageFunctions.setItemJson(xmasThemeStorageKey, true);
-      xmasThemeSetting = true;
-    }
-    if (xmasMusicSetting === undefined) {
-      await OldStorageFunctions.setItemJson(xmasMusicStorageKey, false);
-      xmasMusicSetting = false;
-    }
-
-    const xmasTheme = xmasThemeSetting && isWithinXmasPeriod;
-    dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
-    dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusicSetting });
-
-    // We make sure the app is ready to display the snowflakes on first launch
-    setTimeout(() => {
-      if (xmasTheme) dispatch(letItSnowAction());
-    }, snowFirstLaunchWait);
-    dispatch(updateShakeListenerAction());
-  } catch {
-    // If error, we reset to the inital behavior => theme on
-    dispatch({ type: actionTypes.toggleXmasTheme, value: true });
-    return true;
   }
 };
