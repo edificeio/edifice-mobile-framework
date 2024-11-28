@@ -125,6 +125,10 @@ let shakeListener: EmitterSubscription | undefined;
 export const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
     if (!shakeListener && getIsXmasActive(getState())) {
+      setTimeout(() => {
+        dispatch(letItSnowAction());
+        if (getIsXmasMusicActive(getState())) jingleBells.play();
+      }, 10);
       shakeListener = RNShake.addListener(() => {
         Vibration.vibrate();
         dispatch(letItSnowAction());
@@ -159,10 +163,7 @@ export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: Thunk
   try {
     await OldStorageFunctions.setItemJson(xmasThemeStorageKey, xmasTheme);
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
-    if (xmasTheme) {
-      dispatch(letItSnowAction());
-      if (getIsXmasMusicActive(getState())) jingleBells.play();
-    } else jingleBells.stop();
+    if (!xmasTheme) jingleBells.stop();
     dispatch(updateShakeListenerAction());
   } catch {
     // If error, we disable theme for now
