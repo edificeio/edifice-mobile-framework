@@ -8,7 +8,6 @@ import { useConstructor } from '~/framework/hooks/constructor';
 import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
 import track from '~/framework/modules/auth/tracking';
-import { updateShakeListenerAction } from '~/framework/modules/user/actions';
 import { appReadyAction } from '~/framework/navigation/redux';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Storage } from '~/framework/util/storage';
@@ -36,7 +35,6 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
       if (startupAccount && accountIsLoggable(startupAccount)) {
         await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAccountAction>>); // TS-issue with dispatch async
       }
-      dispatch(updateShakeListenerAction());
     } catch (e) {
       console.error('[Startup] Startup failed. Cause :', e);
     } finally {
