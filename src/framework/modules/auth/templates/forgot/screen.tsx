@@ -210,6 +210,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
           styles.buttonWrapper,
           {
             marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
+            zIndex: -1,
           },
         ]}>
         {(!isSuccess || editing) && (
