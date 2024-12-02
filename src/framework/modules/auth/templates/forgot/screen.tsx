@@ -51,10 +51,13 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
   const hasStructures = structures.length > 0;
   const isError = result && containsKey(result, 'error');
   const errorMsg = isError ? (result as { error: string }).error : null;
-  const canSubmit =
-    forgotMode === 'id' && hasStructures
-      ? !firstName || !selectedStructureName || !login
-      : !login || (forgotMode === 'id' && !isValidEmail) || (isError && !editing);
+  const canSubmit = React.useMemo(
+    () =>
+      forgotMode === 'password'
+        ? !login || (isError && !editing)
+        : !isValidEmail || (hasStructures && (!firstName || !selectedSructureId)),
+    [forgotMode, login, isValidEmail, hasStructures, firstName, selectedSructureId],
+  );
   const errorText = hasStructures
     ? I18n.get('auth-forgot-severalemails')
     : errorMsg
@@ -138,7 +141,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
               editable={!hasStructures}
               returnKeyLabel={I18n.get('auth-forgot-submit')}
               returnKeyType="done"
-              onSubmitEditing={() => doSubmit()}
+              onSubmitEditing={() => !canSubmit && doSubmit()}
               autoCapitalize="none"
               autoCorrect={false}
               spellCheck={false}
