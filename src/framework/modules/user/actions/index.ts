@@ -13,8 +13,8 @@ import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
 import { actionTypes } from '~/framework/modules/user/reducer';
+import { writeXmasMusic, writeXmasTheme } from '~/framework/modules/user/storage';
 import { addTime, today } from '~/framework/util/date';
-import { OldStorageFunctions } from '~/framework/util/storage';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
@@ -60,10 +60,7 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
   };
 }
 
-const xmasThemeStorageKey = 'xmasThemeSetting';
-const xmasMusicStorageKey = 'xmasMusicSetting';
 const snowFallDuration = 35000;
-const snowFirstLaunchWait = 1000;
 let snowfallTimer: NodeJS.Timeout;
 
 Sound.setCategory('Playback');
@@ -145,7 +142,7 @@ export const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<an
 
 export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await OldStorageFunctions.setItemJson(xmasMusicStorageKey, xmasMusic);
+    writeXmasMusic(xmasMusic);
     dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusic });
     if (xmasMusic) {
       jingleBells.play();
@@ -161,7 +158,7 @@ export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: Thunk
 
 export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await OldStorageFunctions.setItemJson(xmasThemeStorageKey, xmasTheme);
+    writeXmasTheme(xmasTheme);
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
     if (!xmasTheme) jingleBells.stop();
     dispatch(updateShakeListenerAction());
