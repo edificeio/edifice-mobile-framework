@@ -5,8 +5,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
+  alertCard: {
+    marginBottom: UI_SIZES.spacing.big,
+    marginTop: UI_SIZES.spacing.tiny,
+  },
   buttonWrapper: {
-    marginTop: UI_SIZES.spacing.major,
     marginBottom: UI_SIZES.spacing.big,
   },
   container: {
@@ -43,16 +46,12 @@ export default StyleSheet.create({
   infos: {
     alignItems: 'center',
   },
-  img: {
-    height: UI_SIZES.elements.thumbnail,
-    width: UI_SIZES.elements.thumbnail,
-  },
   infosText: {
-    marginTop: UI_SIZES.spacing.large,
+    marginTop: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny,
     textAlign: 'center',
   },
   inputContainer: {
-    marginTop: UI_SIZES.spacing.major,
+    marginTop: UI_SIZES.spacing.big,
   },
   page: {
     backgroundColor: theme.palette.grey.white,
@@ -60,6 +59,18 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.big,
     flexDirection: 'column',
     display: 'flex',
+  },
+  platform: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny,
+    width: '100%',
+  },
+  platformLogo: {
+    height: UI_SIZES.elements.logoSize.height,
+  },
+  platformName: {
+    marginTop: UI_SIZES.spacing.medium,
   },
   select: {
     borderColor: theme.palette.primary.regular,
