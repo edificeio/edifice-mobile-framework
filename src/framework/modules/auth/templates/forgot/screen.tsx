@@ -4,14 +4,14 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
+import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
-import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
-import { SmallText } from '~/framework/components/text';
+import { PFLogo } from '~/framework/components/pfLogo';
+import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { forgotAction } from '~/framework/modules/auth/actions';
 import { API } from '~/framework/modules/auth/service.ts';
 import { containsKey } from '~/framework/util/object';
@@ -24,6 +24,7 @@ const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollInd
 
 export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScreenPrivateProps) => {
   const { navigation, route } = props;
+  const platform = route.params.platform;
   const [dropDownOpened, setDropDownOpened] = React.useState<boolean>(false);
   const [editing, setEditing] = React.useState<boolean>(false);
   const [firstName, setFirstName] = React.useState<string>('');
@@ -68,6 +69,24 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
     (result as { ok: boolean }).ok === true;
   const hasError = isError && !editing && !(hasStructures && errorMsg);
 
+  const renderPlatform = React.useCallback(() => {
+    const logoStyle = {
+      ...styles.platformLogo,
+    };
+    if (platform.logoStyle) Object.assign(logoStyle, platform.logoStyle);
+    return (
+      <View style={styles.platform}>
+        <PFLogo pf={platform} />
+        <HeadingXSText style={styles.platformName}>{platform.displayName}</HeadingXSText>
+      </View>
+    );
+  }, [platform]);
+
+  const multiAccountError = React.useCallback(() => {
+    if ((hasStructures && !isSuccess) || (isError && !editing))
+      return <AlertCard type="info" text={errorText} style={styles.alertCard} />;
+  }, [hasStructures, isSuccess, isError, editing]);
+
   const doSubmit = React.useCallback(async () => {
     try {
       setEditing(false);
@@ -111,7 +130,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
   return (
     <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
       <View style={styles.infos}>
-        <NamedSVG name="user-email" style={styles.img} />
+        {renderPlatform()}
         {!isSuccess ? (
           <SmallText style={styles.infosText}>
             {I18n.get(forgotMode === 'id' ? 'auth-forgot-id-instructions' : 'auth-forgot-password-instructions')}
@@ -123,30 +142,29 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
           style={styles.inputContainer}
           label={{
             icon: forgotMode === 'id' ? 'ui-mail' : 'ui-user',
-            indicator: LabelIndicator.REQUIRED,
             text: forgotMode === 'id' ? I18n.get('auth-forgot-email') : I18n.get('auth-forgot-login'),
           }}
           input={
             <TextInput
               annotation={hasError ? errorText : I18n.get('common-space')}
-              onChange={({ nativeEvent: { text } }) => handleInputChange('login', text)}
-              placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email' : 'auth-forgot-login')}
-              showError={hasError}
-              showIconCallback
-              value={login}
-              keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
-              editable={!hasStructures}
-              returnKeyLabel={I18n.get('auth-forgot-submit')}
-              returnKeyType="done"
-              onSubmitEditing={() => doSubmit()}
               autoCapitalize="none"
               autoCorrect={false}
+              editable={!hasStructures}
+              keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
+              onChange={({ nativeEvent: { text } }) => handleInputChange('login', text)}
+              onSubmitEditing={() => doSubmit()}
+              placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email' : 'auth-forgot-login')}
+              returnKeyLabel={I18n.get('auth-forgot-submit')}
+              returnKeyType="done"
+              showError={hasError}
+              showIconCallback
               spellCheck={false}
+              value={login}
             />
           }
         />
       ) : null}
-      {(hasStructures && !isSuccess) || (isError && !editing) ? <SmallText style={styles.errorMsg}>{errorText}</SmallText> : null}
+      {multiAccountError()}
       {isSuccess ? (
         <SmallText style={styles.successMsg}>{editing ? '' : isSuccess && I18n.get(`auth-forgot-success-${forgotMode}`)}</SmallText>
       ) : null}
@@ -158,36 +176,36 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
             }}
             label={{
               icon: 'ui-user',
-              indicator: LabelIndicator.REQUIRED,
               text: I18n.get('user-profile-firstname'),
             }}
             input={
               <TextInput
                 annotation={hasError ? errorText : I18n.get('common-space')}
+                autoCapitalize="none"
+                autoCorrect={false}
                 onChange={({ nativeEvent: { text } }) => {
                   handleInputChange('firstName', text);
                 }}
-                placeholder={I18n.get('user-profile-firstname')}
-                showError={hasError}
-                value={firstName}
+                onSubmitEditing={() => doSubmit()}
                 returnKeyLabel={I18n.get('auth-forgot-submit')}
                 returnKeyType="done"
-                onSubmitEditing={() => doSubmit()}
-                autoCapitalize="none"
-                autoCorrect={false}
+                placeholder={I18n.get('user-profile-firstname')}
+                showError={hasError}
                 spellCheck={false}
+                value={firstName}
               />
             }
           />
           <InputContainer
             label={{
-              icon: 'ui-home',
-              indicator: LabelIndicator.REQUIRED,
+              icon: 'ui-school',
               text: I18n.get('auth-forgot-school'),
             }}
+            style={{ justifyContent: 'center' }}
             input={
               <View style={styles.container}>
                 <DropDownPicker
+                  dropDownContainerStyle={styles.dropdownItems}
                   items={dropdownItems}
                   open={dropDownOpened}
                   placeholder={selectedStructureName ? selectedStructureName : I18n.get('auth-forgot-structure')}
@@ -195,7 +213,6 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
                   setOpen={toggleDropDown}
                   setValue={setCurrentStructure}
                   showTickIcon={false}
-                  dropDownContainerStyle={styles.dropdownItems}
                   style={[styles.select, styles.dropdownInput]}
                   textStyle={styles.selectText}
                   value={selectedSructureId}
@@ -210,6 +227,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
           styles.buttonWrapper,
           {
             marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
+            zIndex: -1,
           },
         ]}>
         {(!isSuccess || editing) && (
