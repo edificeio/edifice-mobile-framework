@@ -58,7 +58,6 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
     paddingBottom: -UI_SIZES.elements.tabbarHeight,
     paddingHorizontal: UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.spacing.big,
     flexDirection: 'column',
     display: 'flex',
   },
