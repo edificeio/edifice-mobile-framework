@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-12-03 10:04:16",
-  "notes": "update(yarn): update yarn cache\nfix(auth): MB-2996, fixing unwanted submit on first name input\nfix(auth): MB-2996, fixing dropdown ui\nUpdated translations from Phrase (#173)\nfix(xmas) persist data in redux thanks to storage\nfix(xmas) show snowflackes after login\nfix(xmas) fall snowflakes when open app for the first time\nfix(xmas): MB-3001, fix xmas animation when shake on app first load && remove importXmasAction\nfix: WB2-2134 bad cache handling + cleanup for carousel\nupdate(yarn): update yarn cache\nRevert \"update(stack): minor updates\"\nupdate(stack): minor updates\nupdate(stack): minor updates && rnscreens downgrade due to navigation bug\nfix(blog): WB2-2132 handle correct public documents url after import\nfeat(xmas): MB-3004 play jinglebells song when is activate\nMerge branch 'dev/1.13.7' of https://github.com/edificeio/edifice-mobile-framework into dev/1.13.7\nupdate cache\nupdate(yarn): yarn cache update\nupdate(yarn): yarn cache update\nupdate(stack): yarn cache update.\nrelease: 1.13.7-rc.1(1130701)",
-  "version": "1.13.7-rc.2(1130702)"
+  "last": "2024-12-03 12:35:52",
+  "notes": "Updated translations from Phrase (#174)\nfix(xmas): MB-3007, make wording dynamic to show good year\nrelease: 1.13.7-rc.2(1130702)",
+  "version": "1.13.7-rc.3(1130703)"
 }
