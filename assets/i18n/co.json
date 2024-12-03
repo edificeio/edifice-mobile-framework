@@ -1592,7 +1592,7 @@
   "user-xmas-activate-music": "Attivà a musica",
   "user-xmas-activate-theme": "Attivà u tema di Natali",
   "user-xmas-description-hint": "Astuzia da sapè : scuzzuleti u vosciu telefonu par avè nivi è musica.",
-  "user-xmas-description-temporary": "Stu tema sarà dispunibuli sin'à u principiu di ghjinnaghju 2024 !",
+  "user-xmas-description-temporary": "Stu tema sarà dispunibuli sin'à u principiu di ghjinnaghju {{nextYear}}!",
   "user-xmas-description-wish": "Tutta a squatra di {{appName}} vi augura un bon Natali.",
   "user-xmas-title": "Configurate u tema di Natale",
   "wekan-moduleconfig-appname": "Wekan",
