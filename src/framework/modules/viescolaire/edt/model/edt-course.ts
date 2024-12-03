@@ -1,10 +1,12 @@
-import { ITimetableCourse } from '../../common/components/Timetable';
+import type { Moment } from 'moment';
 
-export interface IEdtCourse extends ITimetableCourse {
+export interface IEdtCourse {
   classes: string[];
+  endDate: Moment;
   groups: string[];
   id: string;
   roomLabels: string[];
+  startDate: Moment;
   subject: {
     id: string;
     name: string;
