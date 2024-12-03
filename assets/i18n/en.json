@@ -1592,7 +1592,7 @@
   "user-xmas-activate-music": "Turn on music",
   "user-xmas-activate-theme": "Activate the Christmas theme",
   "user-xmas-description-hint": "Quick tip: shake your phone to get snow and music",
-  "user-xmas-description-temporary": "This theme will be available until the beginning of January 2024!",
+  "user-xmas-description-temporary": "This theme will be available until the beginning of January {{nextYear}}!",
   "user-xmas-description-wish": "The {{appName}} team wishes you a Merry Christmas.",
   "user-xmas-title": "Configure Christmas theme",
   "wekan-moduleconfig-appname": "Wekan",
