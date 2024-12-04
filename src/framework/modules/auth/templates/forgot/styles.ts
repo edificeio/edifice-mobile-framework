@@ -9,6 +9,9 @@ export default StyleSheet.create({
     marginBottom: UI_SIZES.spacing.big,
     marginTop: UI_SIZES.spacing.tiny,
   },
+  alertCardSuccess: {
+    marginBottom: UI_SIZES.spacing.big,
+  },
   buttonWrapper: {
     marginBottom: UI_SIZES.spacing.big,
   },
@@ -46,12 +49,12 @@ export default StyleSheet.create({
   infos: {
     alignItems: 'center',
   },
-  infosText: {
-    marginTop: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny,
-    textAlign: 'center',
-  },
   inputContainer: {
     marginTop: UI_SIZES.spacing.big,
+  },
+  instructions: {
+    marginTop: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny,
+    textAlign: 'center',
   },
   page: {
     backgroundColor: theme.palette.grey.white,
@@ -78,11 +81,4 @@ export default StyleSheet.create({
   },
   selectPlaceholder: { color: theme.ui.text.light },
   selectText: { color: theme.ui.text.light },
-  successMsg: {
-    alignSelf: 'center',
-    marginTop: UI_SIZES.spacing.major,
-    marginBottom: UI_SIZES.spacing.large,
-    padding: UI_SIZES.spacing.tiny,
-    textAlign: 'center',
-  },
 });
