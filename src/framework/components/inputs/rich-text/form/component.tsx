@@ -56,19 +56,25 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     focusRichText();
   }, []);
 
-  const addFile = React.useCallback((toAdd: UploadFile[], idx: number) => {
-    if (idx < toAdd.length) {
-      const file = toAdd[idx];
-      richText.current?.insertHTML(
-        `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`,
-      );
-      setTimeout(() => {
-        addFile(toAdd, idx + 1);
-      }, ui.insertElementTimeout);
-    } else {
-      richText.current?.insertHTML('<br>');
-    }
-  }, []);
+  const addFile = React.useCallback(
+    (toAdd: UploadFile[], idx: number) => {
+      if (idx < toAdd.length) {
+        const file = toAdd[idx];
+        const fileUrl = props.uploadParams.public
+          ? `/workspace/pub/document/${file.workspaceID}`
+          : `/workspace/document/${file.workspaceID}`;
+        richText.current?.insertHTML(
+          `<img class="${ui.image.class}" src="${fileUrl}" width="${ui.image.width}" height="${ui.image.height}">`,
+        );
+        setTimeout(() => {
+          addFile(toAdd, idx + 1);
+        }, ui.insertElementTimeout);
+      } else {
+        richText.current?.insertHTML('<br>');
+      }
+    },
+    [props.uploadParams.public],
+  );
 
   const addFiles = React.useCallback(
     (filesToAdd: UploadFile[]) => {

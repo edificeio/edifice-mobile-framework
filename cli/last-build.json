@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-11-26 11:28:32",
-  "notes": "update cache\nreplace console.log by alert\nadd action in swipe\nadd swipe\nMerge branch 'feat/mails' of https://github.com/edificeio/edifice-mobile-framework into feat/mails\nadd components\nupdate(yarn): update yarn cache\nSquashed commit of the following:\nadd folders in modal & render first text in mail preview list\nadd popupmenu in details screen\nadd details screen\nadd edit screen\nadd changes\nfeat(mails): add module to framework\nrelease: 1.14.0(1140000)\nfix(auth): MB-2902 fixing testIDs and props passing\nfix(auth): MB-2905 fixing login-error testID\nupdate(stack): update some packages\nrelease: 1.13.7(1130700)\nRevert \"release: 1.14.0(1140000)\"\nRevert \"release: 1.15.0(1150000)\"\nrelease: 1.15.0(1150000)\nrelease: 1.14.0(1140000)\nchore: update caches\nupdate(stack): update some packages\nfix(fcm): MB-2961, fcm token not unregistered fix\nchore(prettier): prettier errors fixes\nchore(lint): lint errors fixes\nchore(lint): lint errors fixes\nchore(lint): lint errors fixes\nchore(lint): lint errors fixes\nchore(lint): lint errors fixes\nchore(lint): lint errors fixes\nfix(push): MB-2961, avoid calling permissions when unregistering FCM token\nchore(build): rename one command\nchore(build): add/change some commands\nchore(build): review eslint && prettier rules && configuration\nupdate(stack): update stack && fix bottom sheet modal crash\nchore: comment zendest build in podfile\nSquashed commit of the following:\nrelease: 1.13.6-alpha.2(1130602)",
-  "version": "1.14.0-alpha.1(1140001)"
+  "last": "2024-12-03 12:35:52",
+  "notes": "Updated translations from Phrase (#174)\nfix(xmas): MB-3007, make wording dynamic to show good year\nrelease: 1.13.7-rc.2(1130702)",
+  "version": "1.13.7-rc.3(1130703)"
 }

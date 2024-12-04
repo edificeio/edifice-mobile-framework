@@ -172,9 +172,9 @@ export function Carousel(props: ICarouselProps) {
         uri.searchParams.delete('thumbnail');
         uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x0`);
         source.uri = uri.toString();
+        source.cache = 'web';
         return {
           props: { source },
-          url: '',
         };
       }),
     [data],
@@ -302,7 +302,9 @@ export function Carousel(props: ICarouselProps) {
   const loadingComponent = React.useMemo(() => <Loading />, []);
   const renderLoading = React.useCallback(() => loadingComponent, [loadingComponent]);
 
-  const renderImage = React.useCallback(imageProps => <FastImage {...imageProps} />, []);
+  const renderImage = React.useCallback(imageProps => {
+    return <FastImage {...imageProps} />;
+  }, []);
 
   const renderFailImage = React.useCallback(imageProps => {
     return (
@@ -364,6 +366,14 @@ export function Carousel(props: ICarouselProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const onClick = React.useCallback(() => setNavBarVisible(!isNavBarVisible), [isNavBarVisible]);
+
+  const renderIndicator = React.useCallback((index?: number, total?: number, imageStatus?: IImageSize['status']) => {
+    if (index !== undefined) setIndexDisplay(index);
+    if (imageStatus !== undefined) setImageState(imageStatus);
+    return <></>;
+  }, []);
+
   const imageViewer = React.useMemo(
     () => (
       <ImageViewer
@@ -372,21 +382,16 @@ export function Carousel(props: ICarouselProps) {
         show
         imageUrls={dataAsImages}
         index={startIndex}
-        onCancel={() => {
-          navigation.goBack();
-        }}
+        onCancel={navigation.goBack}
         onSave={onSave}
         onShare={onShare}
         renderImage={renderImage}
         loadingRender={renderLoading}
         loadWindow={1}
         saveToLocalByLongPress={false}
-        onClick={() => setNavBarVisible(!isNavBarVisible)}
+        onClick={onClick}
         renderFailImage={renderFailImage}
-        renderIndicator={(index?: number, total?: number, imageStatus?: IImageSize['status']) => {
-          if (index !== undefined) setIndexDisplay(index);
-          if (imageStatus !== undefined) setImageState(imageStatus);
-        }}
+        renderIndicator={renderIndicator}
       />
     ),
     // We want to remove `navigation` and `startIndex` from the dependencies here to avoid re-rendering when navState changes

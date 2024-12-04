@@ -28,6 +28,7 @@ import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
+import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
@@ -227,7 +228,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       errorType?.length &&
       errorType?.length > 0 &&
       errorType !== this.error &&
-      errorType !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
+      errorType !== OAuth2ErrorCode.SAML_MULTIPLE_VECTOR
     ) {
       this.displayError(errorType);
     }
@@ -303,7 +304,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         await this.props.tryLogin(this.props.route.params.platform, { saml }, this.state.errkey);
       } catch (error) {
         const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
-        if (error instanceof Error.SamlMultipleVectorError && errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR) {
+        if (error instanceof Error.SamlMultipleVectorError && errtype === OAuth2ErrorCode.SAML_MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
             (error.data.users as OAuthCustomTokens).forEach(token => {

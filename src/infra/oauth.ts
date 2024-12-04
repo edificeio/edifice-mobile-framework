@@ -21,10 +21,11 @@ import {
   getSession,
   getState,
 } from '~/framework/modules/auth/reducer';
-import { updateAccount } from '~/framework/modules/auth/storage';
+import { writeUpdateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
+import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 import { isEmpty } from '~/framework/util/object';
 import { OldStorageFunctions } from '~/framework/util/storage';
 
@@ -144,31 +145,31 @@ export class OAuth2RessourceOwnerPasswordClient {
 
     if (bodyOrType && typeof bodyOrType === 'object' && Object.hasOwn(bodyOrType, 'error')) {
       if (bodyOrType.error === 'invalid_client') {
-        type = Error.OAuth2ErrorType.OAUTH2_INVALID_CLIENT;
+        type = OAuth2ErrorCode.OAUTH2_INVALID_CLIENT;
       } else if (bodyOrType.error === 'invalid_grant') {
-        type = Error.OAuth2ErrorType.OAUTH2_INVALID_GRANT;
+        type = OAuth2ErrorCode.OAUTH2_INVALID_GRANT;
       } else if (bodyOrType.error === 'access_denied') {
         if (bodyOrType.error_description === 'auth.error.authenticationFailed') {
-          type = Error.OAuth2ErrorType.CREDENTIALS_MISMATCH;
+          type = OAuth2ErrorCode.CREDENTIALS_MISMATCH;
         } else if (bodyOrType.error_description === 'auth.error.blockedUser') {
-          type = Error.OAuth2ErrorType.ACCOUNT_BLOCKED;
+          type = OAuth2ErrorCode.ACCOUNT_BLOCKED;
         } else if (bodyOrType.error_description === 'auth.error.blockedProfileType') {
-          type = Error.OAuth2ErrorType.PLATFORM_BLOCKED_TYPE;
+          type = OAuth2ErrorCode.PLATFORM_BLOCKED_TYPE;
         } else if (bodyOrType.error_description === 'auth.error.global') {
-          type = Error.OAuth2ErrorType.PLATFORM_UNAVAILABLE;
+          type = OAuth2ErrorCode.PLATFORM_UNAVAILABLE;
         } else if (bodyOrType.error_description === 'auth.error.ban') {
-          type = Error.OAuth2ErrorType.SECURITY_TOO_MANY_TRIES;
+          type = OAuth2ErrorCode.SECURITY_TOO_MANY_TRIES;
         } else if (bodyOrType.error_description === 'auth.error.activation.code') {
-          type = Error.OAuth2ErrorType.ACTIVATION_CODE;
+          type = OAuth2ErrorCode.ACTIVATION_CODE;
         } else if (bodyOrType.error_description === 'auth.error.password.reset') {
-          type = Error.OAuth2ErrorType.PASSWORD_RESET;
+          type = OAuth2ErrorCode.PASSWORD_RESET;
         } else {
-          type = Error.OAuth2ErrorType.UNKNOWN_DENIED;
+          type = OAuth2ErrorCode.UNKNOWN_DENIED;
         }
       } else if (bodyOrType.error === 'quota_overflow') {
-        type = Error.OAuth2ErrorType.PLATFORM_TOO_LOAD;
+        type = OAuth2ErrorCode.PLATFORM_TOO_LOAD;
       } else if (bodyOrType.error === 'multiple_vector_choice') {
-        type = Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR;
+        type = OAuth2ErrorCode.SAML_MULTIPLE_VECTOR;
         if (bodyOrType.error_description) {
           const vectors = JSON.parse(bodyOrType.error_description);
           return new Error.SamlMultipleVectorError(vectors, error, cause);
@@ -294,7 +295,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private async getNewToken(grantType: string, parms: any, saveToken: boolean = true): Promise<IOAuthToken> {
     if (!this.clientInfo) {
-      throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+      throw new Error.OAuth2Error(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
     }
     // 1: Build request
     const body = {
@@ -405,7 +406,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   public exportToken(): AuthTokenSet {
     if (!this.token) throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth] exportToken : no token');
     return {
-      access: { expiresAt: this.token.expires_at.toString(), type: 'Bearer', value: this.token.access_token },
+      access: { expiresAt: this.token.expires_at.toISOString(), type: 'Bearer', value: this.token.access_token },
       refresh: { value: this.token.refresh_token },
       scope: this.token.scope.split(' '),
     };
@@ -434,7 +435,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     if (typeof account.platform === 'object') {
       account = getSerializedLoggedInAccountInfo(account as AuthLoggedAccount); // Get saved accoutn info if it's logged account
     }
-    updateAccount(account as AuthSavedAccount); // Update Storage
+    writeUpdateAccount(account as AuthSavedAccount); // Update Storage
     this.importToken(token); // Update OAuth2 client
     return token;
   }
@@ -444,12 +445,12 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public async refreshToken(userId: AuthSavedAccount['user']['id'], updateRedux?: boolean): Promise<IOAuthToken> {
     if (!this.clientInfo) {
-      throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+      throw new Error.OAuth2Error(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
     }
     if (!this.token) {
       throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth] refreshToken : no token');
     }
-    if (!this.token.refresh_token) throw new Error.OAuth2Error(Error.OAuth2ErrorType.REFRESH_INVALID);
+    if (!this.token.refresh_token) throw new Error.OAuth2Error(OAuth2ErrorCode.REFRESH_INVALID);
 
     // 1: Build request
     const body = {
@@ -788,6 +789,11 @@ export const urlSigner = {
   },
 };
 
+/**
+ * Initialize the old stateful oauth2 client for signed requests client.
+ * @deprecated Use new http/oAuth2 client instead.
+ * @param platform 
+ */
 export function initOAuth2(platform: Platform) {
   OAuth2RessourceOwnerPasswordClient.connection = new OAuth2RessourceOwnerPasswordClient(
     `${platform.url}/auth/oauth2/token`,
@@ -797,6 +803,10 @@ export function initOAuth2(platform: Platform) {
   );
 }
 
+/**
+ * @deprecated
+ * @returns 
+ */
 export function destroyOAuth2Legacy() {
   return OAuth2RessourceOwnerPasswordClient.connection?.eraseToken();
 }

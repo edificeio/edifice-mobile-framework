@@ -8,7 +8,10 @@ import * as React from 'react';
 import DeviceInfo from 'react-native-device-info';
 
 import { I18n } from '~/app/i18n';
+import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 import { IOAuthCustomToken } from '~/infra/oauth';
+import { AccountErrorCode } from '../modules/auth/model/error';
+import { FetchErrorCode } from './http/error';
 
 export namespace Error {
   //  8888888888                                                      d8b 888    888            888
@@ -26,9 +29,27 @@ export namespace Error {
   /**
    * Represents an Error and its generation key.
    * It depends on the screen that led to its generation so that it can be displayed only once on the correct screen. */
-  export interface ErrorWithKey {
+  export interface WithKey {
     info: Error;
     key?: number;
+  }
+
+  export interface WithCode<CodeType> extends Error {
+    code: CodeType;
+  }
+
+  /**
+   * Retrieves the deepest cause of an error by traversing the `cause` property.
+   *
+   * @param e - The error object or unknown value to inspect.
+   * @returns The deepest error object or the original value if no deeper cause is found.
+   */
+  export const getDeepError = (e: typeof global.Error | unknown) => {
+    let currentError = e;
+    while (currentError instanceof global.Error && currentError.cause !== undefined) {
+      currentError = currentError.cause;
+    }
+    return currentError;
   }
 
   /**
@@ -49,7 +70,7 @@ export namespace Error {
   //                                                                                                   Y8b d88P 888
   //                                                                                                    "Y88P"  888
 
-  export enum AnyErrorType {}
+  export enum AnyErrorType { }
 
   export class ErrorWithType<Types = AnyErrorType> extends global.Error {
     constructor(
@@ -67,8 +88,8 @@ export namespace Error {
    * @param error
    * @returns
    */
-  export const getDeepErrorType = <ErrorClass = ErrorWithType>(error?: ErrorWithKey | Error) => {
-    let currentError = (error as ErrorWithKey)?.info ?? error;
+  export const getDeepErrorType = <ErrorClass = ErrorWithType>(error?: WithKey | Error) => {
+    let currentError = (error as WithKey)?.info ?? error;
     let type: Error.ErrorTypes<ErrorClass> | undefined;
     do {
       if (currentError instanceof Error.ErrorWithType) type = currentError.type as Error.ErrorTypes<ErrorClass>;
@@ -103,34 +124,7 @@ export namespace Error {
 
   export const FetchError = ErrorWithType<FetchErrorType>;
 
-  export enum OAuth2ErrorType {
-    // App config related
-    OAUTH2_MISSING_CLIENT = 'OAUTH2_MISSING_CLIENT', // clientID / clientSecret not intialized
-    OAUTH2_INVALID_CLIENT = 'OAUTH2_INVALID_CLIENT', // Invalid OAuth2 clientID / clientSecret
-    OAUTH2_INVALID_GRANT = 'OAUTH2_INVALID_GRANT', // Invalid OAuth2 grant (ex scope)
-    // Credentials (login/pwd) related
-    CREDENTIALS_MISMATCH = 'CREDENTIALS_MISMATCH', // Invalid login/pwd pair
-    // Refresh token related
-    REFRESH_INVALID = 'REFRESH_INVALID', // Invalid refresh token
-    // SAML (Federation)
-    SAML_INVALID = 'SAML_INVALID', // Invalid saml token
-    SAML_MULTIPLE_VECTOR = 'SAML_MULTIPLE_VECTOR', // saml token corresponds to multiple accounts, need to login with given custom token
-    // Security related
-    SECURITY_TOO_MANY_TRIES = 'SECURITY_TOO_MANY_TRIES', // Brute-force prevention
-    // Account related
-    ACCOUNT_BLOCKED = 'ACCOUNT_BLOCKED', // Specified account is blocked
-    // Platform availability related
-    PLATFORM_UNAVAILABLE = 'PLATFORM_UNAVAILABLE', // Distant backend is in maintenance
-    PLATFORM_TOO_LOAD = 'PLATFORM_TOO_LOAD', // Distant platform has quota overflow
-    PLATFORM_BLOCKED_TYPE = 'PLATFORM_BLOCKED_TYPE', // Distant platform refuses certain account types
-    // Unknown reason
-    UNKNOWN_DENIED = 'UNKNOWN_DENIED', // User denied for non-specified reason
-
-    ACTIVATION_CODE = 'ACTIVATION_CODE',
-    PASSWORD_RESET = 'PASSWORD_RESET',
-  }
-
-  export const OAuth2Error = ErrorWithType<OAuth2ErrorType | ErrorTypes<typeof FetchError>>;
+  export const OAuth2Error = ErrorWithType<OAuth2ErrorCode | ErrorTypes<typeof FetchError>>;
 
   export enum LoginErrorType {
     NO_SPECIFIED_PLATFORM = 'NO_SPECIFIED_PLATFORM',
@@ -148,54 +142,59 @@ export namespace Error {
   ) => {
     switch (type) {
       case Error.FetchErrorType.NOT_AUTHENTICATED:
+      case FetchErrorCode.NOT_LOGGED:
         return I18n.get('auth-error-notinitilized');
       case Error.FetchErrorType.BAD_RESPONSE:
+      case FetchErrorCode.PARSE_ERROR:
+      case FetchErrorCode.BAD_RESPONSE:
         return I18n.get('auth-error-badresponse');
       case Error.FetchErrorType.NETWORK_ERROR:
+      case FetchErrorCode.NETWORK_ERROR:
         return I18n.get('auth-error-networkerror');
       case Error.FetchErrorType.NOT_OK:
+      case FetchErrorCode.NOT_OK:
         return I18n.get('auth-error-unknownresponse');
       case Error.FetchErrorType.TIMEOUT:
+      case FetchErrorCode.TIMEOUT:
         return I18n.get('auth-error-networkerror');
 
-      case Error.OAuth2ErrorType.OAUTH2_INVALID_CLIENT:
+      case OAuth2ErrorCode.OAUTH2_INVALID_CLIENT:
         return I18n.get('auth-error-invalidclient', { version: DeviceInfo.getVersion() });
-      case Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT:
-        return I18n.get('auth-error-notinitilized');
-      case Error.OAuth2ErrorType.OAUTH2_INVALID_GRANT:
+      case OAuth2ErrorCode.OAUTH2_INVALID_GRANT:
         return I18n.get('auth-error-invalidgrant');
-      case Error.OAuth2ErrorType.PLATFORM_TOO_LOAD:
+      case OAuth2ErrorCode.PLATFORM_TOO_LOAD:
         return I18n.get('auth-error-tooload');
-      case Error.OAuth2ErrorType.PLATFORM_UNAVAILABLE:
+      case OAuth2ErrorCode.PLATFORM_UNAVAILABLE:
         return I18n.get('auth-error-platformunavailable');
-      case Error.OAuth2ErrorType.REFRESH_INVALID:
+      case OAuth2ErrorCode.REFRESH_INVALID:
         return I18n.get('auth-error-restorefail');
-      case Error.OAuth2ErrorType.SECURITY_TOO_MANY_TRIES:
+      case OAuth2ErrorCode.SECURITY_TOO_MANY_TRIES:
         return I18n.get('auth-error-toomanytries');
-      case Error.OAuth2ErrorType.UNKNOWN_DENIED:
+      case OAuth2ErrorCode.UNKNOWN_DENIED:
         return I18n.get('auth-error-unknowndenied');
-      case Error.OAuth2ErrorType.CREDENTIALS_MISMATCH:
+      case OAuth2ErrorCode.CREDENTIALS_MISMATCH:
         return I18n.get('auth-error-badcredentials');
-      case Error.OAuth2ErrorType.SAML_INVALID:
+      case OAuth2ErrorCode.SAML_INVALID:
         return I18n.get('auth-error-badsaml');
-      case Error.OAuth2ErrorType.PLATFORM_BLOCKED_TYPE:
+      case OAuth2ErrorCode.PLATFORM_BLOCKED_TYPE:
         return I18n.get('auth-error-blockedtype');
-      case Error.OAuth2ErrorType.ACCOUNT_BLOCKED:
+      case OAuth2ErrorCode.ACCOUNT_BLOCKED:
         return I18n.get('auth-error-blockeduser');
-      case Error.OAuth2ErrorType.ACTIVATION_CODE:
+      case OAuth2ErrorCode.ACTIVATION_CODE:
         return I18n.get('auth-error-activationcode');
-      case Error.OAuth2ErrorType.PASSWORD_RESET:
+      case OAuth2ErrorCode.PASSWORD_RESET:
         return I18n.get('auth-error-passwordreset');
 
       case Error.LoginErrorType.NO_SPECIFIED_PLATFORM:
       case Error.LoginErrorType.INVALID_PLATFORM:
+      case AccountErrorCode.INVALID_PLATFORM_CONFIG:
         return I18n.get('auth-error-runtimeerror');
       case Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM:
         return I18n.get('auth-error-notpremium');
       case Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED:
         return I18n.get('auth-error-predeleted', { currentplatform: platformUrl });
 
-      case Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR:
+      case OAuth2ErrorCode.SAML_MULTIPLE_VECTOR:
       default:
         return I18n.get('auth-error-unknownerror');
     }
@@ -213,12 +212,12 @@ export namespace Error {
   //
   //
 
-  export class SamlMultipleVectorError extends Error.ErrorWithType<Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR> {
+  export class SamlMultipleVectorError extends Error.ErrorWithType<OAuth2ErrorCode.SAML_MULTIPLE_VECTOR> {
     constructor(
       public data: { users: IOAuthCustomToken[] },
       ...args: ConstructorParameters<typeof global.Error>
     ) {
-      super(Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR, ...args); // Note: built-in Error class break the prototype chain when extending it like this...
+      super(OAuth2ErrorCode.SAML_MULTIPLE_VECTOR, ...args); // Note: built-in Error class break the prototype chain when extending it like this...
       Object.setPrototypeOf(this, new.target.prototype); // ... So, we need to restore the prototype chain like this.
       // @see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#example
     }
@@ -249,7 +248,7 @@ export namespace Error {
  */
 export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
   platformUrl: string,
-  error?: Error.ErrorWithKey,
+  error?: Error.WithKey,
   consumeError?: (errorKey: number) => void,
 ) => {
   const [errkey, setErrkey] = React.useState(Error.generateErrorKey);
