@@ -85,7 +85,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
     );
   }, [platform]);
 
-  const multiAccountError = React.useCallback(() => {
+  const multiAccountInfo = React.useCallback(() => {
     if ((hasStructures && !isSuccess) || (isError && !editing))
       return <AlertCard type="info" text={errorText} style={styles.alertCard} />;
   }, [hasStructures, isSuccess, isError, editing]);
@@ -166,7 +166,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
               keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
               onChange={({ nativeEvent: { text } }) => handleInputChange('login', text)}
               onSubmitEditing={() => doSubmit()}
-              placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email' : 'auth-forgot-login')}
+              placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email-placeholder' : 'auth-forgot-login-placeholder')}
               returnKeyLabel={I18n.get('auth-forgot-submit')}
               returnKeyType="done"
               showError={hasError}
@@ -177,7 +177,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
           }
         />
       ) : null}
-      {multiAccountError()}
+      {multiAccountInfo()}
       {isSuccess ? (
         <SmallText style={styles.successMsg}>{editing ? '' : isSuccess && I18n.get(`auth-forgot-success-${forgotMode}`)}</SmallText>
       ) : null}
@@ -189,7 +189,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
             }}
             label={{
               icon: 'ui-user',
-              text: I18n.get('user-profile-firstname'),
+              text: I18n.get('auth-forgot-firstname'),
             }}
             input={
               <TextInput
@@ -202,7 +202,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
                 onSubmitEditing={() => doSubmit()}
                 returnKeyLabel={I18n.get('auth-forgot-submit')}
                 returnKeyType="done"
-                placeholder={I18n.get('user-profile-firstname')}
+                placeholder={I18n.get('auth-forgot-firstname-placeholder')}
                 showError={hasError}
                 spellCheck={false}
                 value={firstName}
@@ -251,7 +251,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
             loading={forgotState === 'RUNNING'}
           />
         )}
-        {isSuccess && !editing && <PrimaryButton action={() => navigation.goBack()} text={I18n.get('auth-navigation-goback')} />}
+        {isSuccess && !editing && <PrimaryButton action={() => navigation.goBack()} text={I18n.get('auth-forgot-connect')} />}
 
         {hasStructures && errorMsg ? (
           <SmallText style={styles.errorMsg}>{I18n.get('auth-forgot-severalemails-nomatch')}</SmallText>
