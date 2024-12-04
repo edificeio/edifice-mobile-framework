@@ -85,10 +85,33 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
     );
   }, [platform]);
 
-  const multiAccountInfo = React.useCallback(() => {
+  const renderMultiAccountInfo = React.useCallback(() => {
     if ((hasStructures && !isSuccess) || (isError && !editing))
       return <AlertCard type="info" text={errorText} style={styles.alertCard} />;
   }, [hasStructures, isSuccess, isError, editing]);
+
+  const renderSuccessMessage = React.useCallback(() => {
+    if (isSuccess)
+      return editing
+        ? ''
+        : isSuccess && (
+            <AlertCard type="info" text={I18n.get(`auth-forgot-success-${forgotMode}`)} style={styles.alertCardSuccess} />
+          );
+  }, [isSuccess, editing, forgotMode]);
+
+  const renderInstructions = React.useCallback(() => {
+    if (!isSuccess)
+      return (
+        <SmallText style={styles.instructions}>
+          {I18n.get(forgotMode === 'id' ? 'auth-forgot-id-instructions' : 'auth-forgot-password-instructions')}
+        </SmallText>
+      );
+  }, [isSuccess, forgotMode]);
+
+  const renderNoMatchError = React.useCallback(() => {
+    if (hasStructures && errorMsg)
+      return <SmallText style={styles.errorMsg}>{I18n.get('auth-forgot-severalemails-nomatch')}</SmallText>;
+  }, [hasStructures, errorMsg]);
 
   const doSubmit = React.useCallback(async () => {
     try {
@@ -134,59 +157,38 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
     <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
       <View style={styles.infos}>
         {renderPlatform()}
-        {!isSuccess ? (
-          <SmallText style={styles.infosText}>
-            {I18n.get(forgotMode === 'id' ? 'auth-forgot-id-instructions' : 'auth-forgot-password-instructions')}
-          </SmallText>
-        ) : null}
+        {renderInstructions()}
       </View>
-      {!isSuccess ? (
-        <InputContainer
-          style={styles.inputContainer}
-          label={{
-            icon: forgotMode === 'id' ? 'ui-mail' : 'ui-user',
-            text: forgotMode === 'id' ? I18n.get('auth-forgot-email') : I18n.get('auth-forgot-login'),
-          }}
-          input={
-            <TextInput
-              annotation={hasError ? errorText : I18n.get('common-space')}
-              onChange={({ nativeEvent: { text } }) => handleInputChange('login', text)}
-              placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email' : 'auth-forgot-login')}
-              showError={hasError}
-              showIconCallback
-              value={login}
-              keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
-              editable={!hasStructures}
-              returnKeyLabel={I18n.get('auth-forgot-submit')}
-              returnKeyType="done"
-              onSubmitEditing={() => !canSubmit && doSubmit()}
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!hasStructures}
-              keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
-              onChange={({ nativeEvent: { text } }) => handleInputChange('login', text)}
-              onSubmitEditing={() => doSubmit()}
-              placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email-placeholder' : 'auth-forgot-login-placeholder')}
-              returnKeyLabel={I18n.get('auth-forgot-submit')}
-              returnKeyType="done"
-              showError={hasError}
-              showIconCallback
-              spellCheck={false}
-              value={login}
-            />
-          }
-        />
-      ) : null}
-      {multiAccountInfo()}
-      {isSuccess ? (
-        <SmallText style={styles.successMsg}>{editing ? '' : isSuccess && I18n.get(`auth-forgot-success-${forgotMode}`)}</SmallText>
-      ) : null}
+      <InputContainer
+        style={styles.inputContainer}
+        label={{
+          icon: forgotMode === 'id' ? 'ui-mail' : 'ui-user',
+          text: forgotMode === 'id' ? I18n.get('auth-forgot-email') : I18n.get('auth-forgot-login'),
+        }}
+        input={
+          <TextInput
+            annotation={hasError ? errorText : I18n.get('common-space')}
+            autoCapitalize="none"
+            autoCorrect={false}
+            editable={!hasStructures}
+            keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
+            onChange={({ nativeEvent: { text } }) => handleInputChange('login', text)}
+            onSubmitEditing={() => doSubmit()}
+            placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email-placeholder' : 'auth-forgot-login-placeholder')}
+            returnKeyLabel={I18n.get('auth-forgot-submit')}
+            returnKeyType="done"
+            showError={hasError}
+            showIconCallback
+            spellCheck={false}
+            value={login}
+          />
+        }
+      />
+      {renderMultiAccountInfo()}
+      {renderSuccessMessage()}
       {forgotMode === 'id' && hasStructures ? (
         <>
           <InputContainer
-            style={{
-              marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
-            }}
             label={{
               icon: 'ui-user',
               text: I18n.get('auth-forgot-firstname'),
@@ -253,9 +255,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
         )}
         {isSuccess && !editing && <PrimaryButton action={() => navigation.goBack()} text={I18n.get('auth-forgot-connect')} />}
 
-        {hasStructures && errorMsg ? (
-          <SmallText style={styles.errorMsg}>{I18n.get('auth-forgot-severalemails-nomatch')}</SmallText>
-        ) : null}
+        {renderNoMatchError()}
       </View>
     </KeyboardPageView>
   );
