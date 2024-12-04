@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Image, ImageURISource, Text, View, ViewStyle } from 'react-native';
+import { Image, Text, View, ViewStyle } from 'react-native';
 
 import { simpleStyle } from './image-viewer.style';
 
@@ -276,7 +276,7 @@ export class State {
 }
 
 export interface IImageInfo {
-  url: string;
+  url?: string;
   /**
    * 没有的话会自动拉取
    */

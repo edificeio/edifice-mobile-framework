@@ -198,7 +198,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     let imageLoaded = false;
 
     // Tagged success if url is started with file:, or not set yet(for custom source.uri).
-    if (image.url.startsWith(`file:`)) {
+    if (image.url?.startsWith(`file:`)) {
       imageLoaded = true;
     }
 
@@ -658,25 +658,27 @@ export default class ImageViewer extends React.Component<Props, State> {
    * 保存当前图片到本地相册
    */
   public saveToLocal = () => {
+    const uri =
+      this.props.imageUrls[this.state.currentShowIndex || 0]?.url ||
+      this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source;
+    if (!uri) return;
     if (!this.props.onSave) {
-      CameraRoll.saveToCameraRoll(this.props.imageUrls[this.state.currentShowIndex || 0].url);
+      CameraRoll.saveToCameraRoll(uri);
       this!.props!.onSaveToCamera!(this.state.currentShowIndex);
     } else {
-      this.props.onSave(
-        this.props.imageUrls[this.state.currentShowIndex || 0].url ||
-          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source,
-      );
+      this.props.onSave(uri);
     }
 
     this.setState({ isShowMenu: false });
   };
 
   public share = () => {
+    const uri =
+      this.props.imageUrls[this.state.currentShowIndex || 0]?.url ||
+      this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source;
+    if (!uri) return;
     if (this.props.onShare) {
-      this.props.onShare(
-        this.props.imageUrls[this.state.currentShowIndex || 0].url ||
-          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source,
-      );
+      this.props.onShare(uri);
     }
 
     this.setState({ isShowMenu: false });
