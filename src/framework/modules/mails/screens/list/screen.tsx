@@ -9,8 +9,10 @@ import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
@@ -185,6 +187,17 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     );
   };
 
+  const renderEmpty = () => {
+    return (
+      <EmptyScreen
+        svgImage="empty-conversation"
+        title={I18n.get('mails-list-emptytitle')}
+        textColor={theme.palette.grey.black}
+        text={I18n.get('mails-list-emptytext')}
+      />
+    );
+  };
+
   return (
     <PageView>
       <FlashList
@@ -194,6 +207,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             <MailsMailPreview data={mail.item} onPress={onPressItem} isSender={props.session?.user.id === mail.item.from.id} />
           );
         }}
+        ListEmptyComponent={renderEmpty()}
       />
       {renderBottomSheetFolders()}
     </PageView>

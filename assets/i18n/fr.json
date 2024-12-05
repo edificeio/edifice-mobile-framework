@@ -797,6 +797,8 @@
   "mails-edit-objectplaceholder": "Objet du message",
   "mails-list-drafts": "Brouillons",
   "mails-list-draft": "Brouillon",
+  "mails-list-emptytext": "Avec la Messagerie, communiquez facilement avec la communauté de l’école. Vos messages prennent leur envol !",
+  "mails-list-emptytitle": "Pas l’ombre d’un message pour le moment...",
   "mails-list-inbox": "Boîte de reception",
   "mails-list-newfolder": "Nouveau dossier",
   "mails-list-newfolderlabel": "Nom du dossier",
