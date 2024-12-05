@@ -15,18 +15,28 @@ export default StyleSheet.create({
   buttonWrapper: {
     marginBottom: UI_SIZES.spacing.big,
   },
-  container: {
+  dropDownArrow: {
+    width: UI_SIZES.elements.icon.medium,
+    height: UI_SIZES.elements.icon.medium,
+    marginLeft: UI_SIZES.spacing.small,
+  },
+  dropDownArrowContainer: {
+    borderLeftWidth: 1,
+    borderLeftColor: theme.palette.grey.cloudy,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '110%',
+  },
+  dropDownContainer: {
     alignItems: 'center',
     flex: 1,
-    justifyContent: 'space-around',
-    paddingVertical: UI_SIZES.spacing.minor,
   },
   dropdownInput: {
     ...TextSizeStyle.Medium,
     backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.input,
     borderWidth: 1,
-    borderColor: theme.palette.primary.regular,
+    borderColor: theme.palette.grey.cloudy,
     color: theme.ui.text.regular,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
@@ -34,10 +44,12 @@ export default StyleSheet.create({
     borderLeftWidth: 1,
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.small,
-    borderColor: theme.palette.primary.regular,
+    borderColor: theme.palette.grey.cloudy,
     borderWidth: 1,
     flex: 1,
   },
+  dropDownPlaceholder: { color: theme.ui.text.light },
+  dropDownText: { color: theme.ui.text.light },
   errorMsg: {
     alignSelf: 'center',
     color: theme.palette.status.failure.regular,
@@ -75,10 +87,4 @@ export default StyleSheet.create({
   platformName: {
     marginTop: UI_SIZES.spacing.medium,
   },
-  select: {
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
-  },
-  selectPlaceholder: { color: theme.ui.text.light },
-  selectText: { color: theme.ui.text.light },
 });

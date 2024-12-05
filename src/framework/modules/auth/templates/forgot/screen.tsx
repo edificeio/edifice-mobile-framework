@@ -4,6 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -11,6 +12,7 @@ import InputContainer from '~/framework/components/inputs/container';
 import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
+import { NamedSVG } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { forgotAction } from '~/framework/modules/auth/actions';
 import { API } from '~/framework/modules/auth/service.ts';
@@ -215,19 +217,26 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
             }}
             style={{ justifyContent: 'center' }}
             input={
-              <View style={styles.container}>
+              <View style={styles.dropDownContainer}>
                 <DropDownPicker
                   dropDownContainerStyle={styles.dropdownItems}
                   items={dropdownItems}
                   open={dropDownOpened}
                   placeholder={selectedStructureName ? selectedStructureName : I18n.get('auth-forgot-structure')}
-                  placeholderStyle={styles.selectPlaceholder}
+                  placeholderStyle={styles.dropDownPlaceholder}
                   setOpen={toggleDropDown}
                   setValue={setCurrentStructure}
                   showTickIcon={false}
-                  style={[styles.select, styles.dropdownInput]}
-                  textStyle={styles.selectText}
+                  style={styles.dropdownInput}
+                  textStyle={styles.dropDownText}
                   value={selectedSructureId}
+                  ArrowDownIconComponent={() => (
+                    <NamedSVG name="ui-rafterDown" fill={theme.palette.grey.black} style={styles.dropDownArrow} />
+                  )}
+                  ArrowUpIconComponent={() => (
+                    <NamedSVG name="ui-rafterUp" fill={theme.palette.grey.black} style={styles.dropDownArrow} />
+                  )}
+                  arrowIconContainerStyle={styles.dropDownArrowContainer}
                 />
               </View>
             }
