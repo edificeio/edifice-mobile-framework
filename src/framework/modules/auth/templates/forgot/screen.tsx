@@ -203,7 +203,8 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
                 onChange={({ nativeEvent: { text } }) => {
                   handleInputChange('firstName', text);
                 }}
-                onSubmitEditing={() => doSubmit()}
+                // onSubmitEditing={() => doSubmit()}
+                onSubmitEditing={() => !canSubmit && doSubmit()}
                 returnKeyLabel={I18n.get('auth-forgot-submit')}
                 returnKeyType="done"
                 placeholder={I18n.get('auth-forgot-firstname-placeholder')}
@@ -218,6 +219,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
               icon: 'ui-school',
               text: I18n.get('auth-forgot-school'),
             }}
+            labelStyle={styles.dropDownLabel}
             style={{ justifyContent: 'center' }}
             input={
               <View style={styles.dropDownContainer}>

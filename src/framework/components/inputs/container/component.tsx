@@ -8,7 +8,7 @@ import Label from '~/framework/components/inputs/container/label';
 export default function InputContainer(props: InputContainerProps) {
   return (
     <View style={props.style}>
-      <Label {...props.label} />
+      <Label {...props.label} labelStyle={props.labelStyle} />
       {props.input}
     </View>
   );
