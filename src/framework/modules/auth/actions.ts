@@ -67,6 +67,7 @@ import {
   IAuthState,
 } from '~/framework/modules/auth/reducer';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
+import { updateShakeListenerAction } from '~/framework/modules/user/actions';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { OAuth2Error, OAuth2ErrorCode } from '~/framework/util/oauth2';
@@ -497,6 +498,9 @@ const performLogin = async (
 
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
+
+  // check and show xmasTheme if enable
+  dispatch(updateShakeListenerAction());
 
   return accountInfo;
 };

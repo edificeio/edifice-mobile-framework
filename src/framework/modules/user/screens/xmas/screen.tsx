@@ -32,10 +32,18 @@ export const computeNavBar = ({
   }),
 });
 
+const getNextYear = () => {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
+
+  return currentMonth === 0 ? currentYear : currentYear + 1;
+};
+
 const XmasScreen = ({ onSetXmasMusic, onSetXmasTheme, xmasMusic, xmasTheme }: UserXmasScreenPrivateProps) => {
   return (
     <PageView style={styles.page}>
-      <SmallText>{I18n.get('user-xmas-description-temporary')}</SmallText>
+      <SmallText>{I18n.get('user-xmas-description-temporary', { nextYear: getNextYear() })}</SmallText>
       <View style={styles.toggleContainer}>
         <BodyText>{I18n.get('user-xmas-activate-theme')}</BodyText>
         <Toggle onCheckChange={() => onSetXmasTheme(!xmasTheme)} checked={xmasTheme} />

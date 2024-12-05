@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
-import { TextSizeStyle } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 
 const WIDTH_TEXT_TAB = getScaleWidth(20);
@@ -37,20 +36,11 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
   },
   halfRoomLabelContainer: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
     flexDirection: 'row',
-    paddingTop: (TextSizeStyle.Normal.lineHeight - TextSizeStyle.Small.lineHeight) / 2,
   },
   halfSplitLineView: {
     flexDirection: 'row',
-    flexShrink: 1,
-    flexGrow: 1
-  },
-  firstTextLine: {
-    flexShrink: 0,
-    marginTop: TextSizeStyle.Normal.fontSize - TextSizeStyle.Normal.lineHeight,
-    position: 'relative',
-    top: (TextSizeStyle.Normal.lineHeight - TextSizeStyle.Normal.fontSize) / 2
   },
   halfTextStyle: {
     flex: 1,
@@ -60,9 +50,8 @@ export default StyleSheet.create({
     zIndex: 1000,
   },
   roomView: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
     flexDirection: 'row',
-    paddingTop: (TextSizeStyle.Normal.lineHeight - TextSizeStyle.Small.lineHeight) / 2,
   },
   subjectView: {
     maxWidth: '56%',
