@@ -9,13 +9,24 @@ export default StyleSheet.create({
     columnGap: UI_SIZES.spacing.small,
     flex: 1,
     flexDirection: 'row',
-    paddingHorizontal: UI_SIZES.spacing.small,
+    alignItems: 'center',
+    paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.minor,
   },
   isSelected: {
     backgroundColor: theme.palette.primary.pale,
   },
   text: {
-    flexShrink: 1,
+    flex: 1,
+  },
+  nbUnread: {
+    backgroundColor: theme.palette.secondary.regular,
+    paddingHorizontal: UI_SIZES.spacing.minor,
+
+    borderRadius: UI_SIZES.radius.big,
+    flexDirection: 'row',
+  },
+  nbUnreadText: {
+    color: theme.palette.grey.white,
   },
 });

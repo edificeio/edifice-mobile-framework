@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, ViewStyle } from 'react-native';
+import { TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import styles from './styles';
 import { MailsFolderItemProps } from './types';
@@ -21,6 +21,15 @@ export const MailsFolderItem = (props: MailsFolderItemProps) => {
     return {};
   };
 
+  const renderUnread = () => {
+    if (!props.nbUnread) return;
+    return (
+      <View style={styles.nbUnread}>
+        <SmallBoldText style={styles.nbUnreadText}>{props.nbUnread}</SmallBoldText>
+      </View>
+    );
+  };
+
   return (
     <TouchableOpacity style={[styles.container, suppStyles(), props.selected ? styles.isSelected : {}]} onPress={onPress}>
       <NamedSVG
@@ -29,9 +38,8 @@ export const MailsFolderItem = (props: MailsFolderItemProps) => {
         width={UI_SIZES.elements.icon.default}
         height={UI_SIZES.elements.icon.default}
       />
-      <TextComponent numberOfLines={1} style={styles.text}>
-        {props.name}
-      </TextComponent>
+      <TextComponent style={styles.text}>{props.name}</TextComponent>
+      {renderUnread()}
     </TouchableOpacity>
   );
 };

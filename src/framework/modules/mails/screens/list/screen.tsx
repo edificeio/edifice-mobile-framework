@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
@@ -9,7 +9,6 @@ import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
@@ -18,7 +17,6 @@ import TextInput from '~/framework/components/inputs/text';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
 import Separator from '~/framework/components/separator';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -144,6 +142,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               name={folder.name}
               selected={selectedFolder.id === folder.id}
               onPress={() => switchFolder({ id: folder.id, name: folder.name })}
+              nbUnread={folder.nbUnread}
               depth={folder.depth}
             />
           ))}
@@ -162,14 +161,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     return (
       <View>
         <View style={styles.newFolderHeader}>
-          <TouchableOpacity onPress={() => setIsInModalCreation(false)}>
-            <NamedSVG
-              name="ui-rafterLeft"
-              fill={theme.palette.grey.black}
-              width={UI_SIZES.elements.icon.small}
-              height={UI_SIZES.elements.icon.small}
-            />
-          </TouchableOpacity>
           <HeadingXSText>{I18n.get('mails-list-newfolder')}</HeadingXSText>
         </View>
         <InputContainer
