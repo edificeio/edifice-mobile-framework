@@ -146,7 +146,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
     field === 'login' ? setLogin(value) : setFirstName(value);
   }, []);
 
-  const toggleDropDown = React.useCallback((open): void => {
+  const toggleDropDown = React.useCallback((open: (prevState: boolean) => boolean): void => {
     setDropDownOpened(open);
   }, []);
 
