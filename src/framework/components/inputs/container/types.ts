@@ -7,4 +7,5 @@ export interface InputContainerProps {
   input: ReactElement;
   label: LabelProps;
   style?: ViewStyle;
+  labelStyle?: ViewStyle;
 }

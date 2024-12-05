@@ -10,7 +10,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
 
 export default function Label(props: LabelProps) {
-  const { icon, indicator, text } = props;
+  const { icon, indicator, text, labelStyle } = props;
 
   const renderIcon = useCallback(() => {
     return (
@@ -31,13 +31,13 @@ export default function Label(props: LabelProps) {
 
   const renderLabel = useCallback(() => {
     return (
-      <View style={styles.label}>
+      <View style={[styles.label, labelStyle]}>
         {icon ? renderIcon() : null}
         <SmallBoldText>{text}</SmallBoldText>
         {indicator ? renderLabelIndicator() : null}
       </View>
     );
-  }, [icon, indicator, text, renderIcon, renderLabelIndicator]);
+  }, [icon, indicator, text, renderIcon, renderLabelIndicator, labelStyle]);
 
   return renderLabel();
 }

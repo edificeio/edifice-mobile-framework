@@ -48,6 +48,11 @@ export default StyleSheet.create({
     borderWidth: 1,
     flex: 1,
   },
+  dropDownLabel: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  },
   dropDownPlaceholder: { color: theme.ui.text.light },
   dropDownText: { color: theme.ui.text.light },
   errorMsg: {
