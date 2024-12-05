@@ -37,10 +37,10 @@ export default StyleSheet.create({
     justifyContent: 'center',
     width: 80,
   },
-  swipeLeftAction: {
+  swipeUnreadAction: {
     backgroundColor: theme.palette.status.warning.regular,
   },
-  swipeRightAction: {
+  swipeDeleteAction: {
     backgroundColor: theme.palette.status.failure.regular,
   },
   texts: {

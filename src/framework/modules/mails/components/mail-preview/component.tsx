@@ -17,37 +17,25 @@ import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/component
 import { displayPastDate } from '~/framework/util/date';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
-const unreadSwipeLeftAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
+const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
   const styleAnimation = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: drag.value - 80 }],
+      flexDirection: 'row',
+      transform: [{ translateX: drag.value + 160 }],
     };
   });
 
   return (
     <Reanimated.View style={styleAnimation}>
-      <TouchableOpacity onPress={() => Alert.alert('unread')} style={[styles.swipeAction, styles.swipeLeftAction]}>
+      <TouchableOpacity onPress={() => Alert.alert('unread')} style={[styles.swipeAction, styles.swipeUnreadAction]}>
         <NamedSVG
-          name="ui-eyeSlash"
+          name="ui-mailUnread"
           fill={theme.palette.grey.white}
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
       </TouchableOpacity>
-    </Reanimated.View>
-  );
-};
-
-const deleteSwipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value + 80 }],
-    };
-  });
-
-  return (
-    <Reanimated.View style={styleAnimation}>
-      <TouchableOpacity onPress={() => Alert.alert('delete')} style={[styles.swipeAction, styles.swipeRightAction]}>
+      <TouchableOpacity onPress={() => Alert.alert('delete')} style={[styles.swipeAction, styles.swipeDeleteAction]}>
         <NamedSVG
           name="ui-delete"
           fill={theme.palette.grey.white}
@@ -110,11 +98,9 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
     <ReanimatedSwipeable
       friction={2}
       enableTrackpadTwoFingerGesture
-      rightThreshold={80}
-      leftThreshold={80}
+      rightThreshold={160}
       overshootFriction={8}
-      renderRightActions={deleteSwipeRightAction}
-      renderLeftActions={unreadSwipeLeftAction}>
+      renderRightActions={swipeRightAction}>
       <TouchableOpacity style={[styles.container, unread ? styles.containerUnread : {}]} onPress={onPress}>
         <Avatar size={Size.large} sourceOrId={from.id} id="" />
         {type === 'ANSWERED' ? (
