@@ -44,6 +44,7 @@ export default StyleSheet.create({
     borderLeftWidth: 1,
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.small,
     borderColor: theme.palette.grey.cloudy,
     borderWidth: 1,
     flex: 1,
