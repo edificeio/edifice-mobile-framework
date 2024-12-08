@@ -207,8 +207,8 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
             label={{
               icon: 'ui-school',
               text: I18n.get('auth-forgot-school'),
+              labelStyle: styles.dropDownLabel,
             }}
-            labelStyle={styles.dropDownLabel}
             style={{ justifyContent: 'center' }}
             input={
               <View style={styles.dropDownContainer}>
