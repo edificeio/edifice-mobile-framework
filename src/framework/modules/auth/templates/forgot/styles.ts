@@ -14,6 +14,7 @@ export default StyleSheet.create({
   },
   buttonWrapper: {
     marginBottom: UI_SIZES.spacing.big,
+    zIndex: -1,
   },
   dropDownArrow: {
     width: UI_SIZES.elements.icon.medium,
