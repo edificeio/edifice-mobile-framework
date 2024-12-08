@@ -89,47 +89,6 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
   }, [result]);
   const hasError = isError && !editing && !(hasStructures && errorMsg);
 
-  const renderInstructions = React.useCallback(() => {
-    if (!isSuccess)
-      return (
-        <SmallText style={styles.instructions}>
-          {I18n.get(forgotMode === 'id' ? 'auth-forgot-id-instructions' : 'auth-forgot-password-instructions')}
-        </SmallText>
-      );
-  }, [isSuccess, forgotMode]);
-
-  const renderMultiAccountInfo = React.useCallback(() => {
-    if ((hasStructures && !isSuccess) || (isError && !editing))
-      return <AlertCard type="info" text={errorText} style={styles.alertCard} />;
-  }, [hasStructures, isSuccess, isError, editing]);
-
-  const renderPlatform = React.useCallback(() => {
-    const logoStyle = {
-      ...styles.platformLogo,
-    };
-    if (platform.logoStyle) Object.assign(logoStyle, platform.logoStyle);
-    return (
-      <View style={styles.platform}>
-        <PFLogo pf={platform} />
-        <HeadingXSText style={styles.platformName}>{platform.displayName}</HeadingXSText>
-      </View>
-    );
-  }, [platform]);
-
-  const renderSuccessMessage = React.useCallback(() => {
-    if (isSuccess)
-      return editing
-        ? ''
-        : isSuccess && (
-            <AlertCard type="info" text={I18n.get(`auth-forgot-success-${forgotMode}`)} style={styles.alertCardSuccess} />
-          );
-  }, [isSuccess, editing, forgotMode]);
-
-  const renderNoMatchError = React.useCallback(() => {
-    if (hasStructures && errorMsg)
-      return <SmallText style={styles.errorMsg}>{I18n.get('auth-forgot-severalemails-nomatch')}</SmallText>;
-  }, [hasStructures, errorMsg]);
-
   const doSubmit = React.useCallback(async () => {
     try {
       setEditing(false);
@@ -170,12 +129,25 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
     setSelectedSructureId(structureId);
   }, []);
 
-  return (
-    <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
-      <View style={styles.infos}>
-        {renderPlatform()}
-        {renderInstructions()}
-      </View>
+  const renderButtons = React.useCallback(() => {
+    if (!isSuccess || editing) {
+      return (
+        <PrimaryButton
+          action={() => doSubmit()}
+          disabled={canSubmit}
+          text={I18n.get('auth-forgot-submit')}
+          loading={forgotState === 'RUNNING'}
+        />
+      );
+    }
+    if (isSuccess && !editing) {
+      return <PrimaryButton action={() => navigation.goBack()} text={I18n.get('auth-forgot-connect')} />;
+    }
+    return null;
+  }, [isSuccess, editing, doSubmit, canSubmit, forgotState, navigation]);
+
+  const renderInputLogin = React.useCallback(() => {
+    return (
       <InputContainer
         style={styles.inputContainer}
         label={{
@@ -201,9 +173,12 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
           />
         }
       />
-      {renderMultiAccountInfo()}
-      {renderSuccessMessage()}
-      {forgotMode === 'id' && hasStructures ? (
+    );
+  }, [forgotMode, hasError, errorText, login]);
+
+  const renderInputFirstnameWithStructurePicker = React.useCallback(() => {
+    if (forgotMode === 'id' && hasStructures)
+      return (
         <>
           <InputContainer
             label={{
@@ -261,25 +236,80 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
             }
           />
         </>
-      ) : null}
+      );
+  }, [
+    forgotMode,
+    hasStructures,
+    hasError,
+    errorText,
+    canSubmit,
+    firstName,
+    dropdownItems,
+    dropDownOpened,
+    selectedStructureName,
+    selectedSructureId,
+    theme,
+  ]);
+
+  const renderInstructions = React.useCallback(() => {
+    if (!isSuccess)
+      return (
+        <SmallText style={styles.instructions}>
+          {I18n.get(forgotMode === 'id' ? 'auth-forgot-id-instructions' : 'auth-forgot-password-instructions')}
+        </SmallText>
+      );
+  }, [isSuccess, forgotMode]);
+
+  const renderMultiAccountInfo = React.useCallback(() => {
+    if ((hasStructures && !isSuccess) || (isError && !editing))
+      return <AlertCard type="info" text={errorText} style={styles.alertCard} />;
+  }, [hasStructures, isSuccess, isError, editing]);
+
+  const renderPlatform = React.useCallback(() => {
+    const logoStyle = {
+      ...styles.platformLogo,
+    };
+    if (platform.logoStyle) Object.assign(logoStyle, platform.logoStyle);
+    return (
+      <View style={styles.platform}>
+        <PFLogo pf={platform} />
+        <HeadingXSText style={styles.platformName}>{platform.displayName}</HeadingXSText>
+      </View>
+    );
+  }, [platform]);
+
+  const renderSuccessMessage = React.useCallback(() => {
+    if (isSuccess)
+      return editing
+        ? ''
+        : isSuccess && (
+            <AlertCard type="info" text={I18n.get(`auth-forgot-success-${forgotMode}`)} style={styles.alertCardSuccess} />
+          );
+  }, [isSuccess, editing, forgotMode]);
+
+  const renderNoMatchError = React.useCallback(() => {
+    if (hasStructures && errorMsg)
+      return <SmallText style={styles.errorMsg}>{I18n.get('auth-forgot-severalemails-nomatch')}</SmallText>;
+  }, [hasStructures, errorMsg]);
+
+  return (
+    <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
+      <View style={styles.infos}>
+        {renderPlatform()}
+        {renderInstructions()}
+      </View>
+      {renderInputLogin()}
+      {renderMultiAccountInfo()}
+      {renderSuccessMessage()}
+      {renderInputFirstnameWithStructurePicker()}
       <View
         style={[
           styles.buttonWrapper,
           {
             marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
-            zIndex: -1,
           },
         ]}>
-        {(!isSuccess || editing) && (
-          <PrimaryButton
-            action={() => doSubmit()}
-            disabled={canSubmit}
-            text={I18n.get('auth-forgot-submit')}
-            loading={forgotState === 'RUNNING'}
-          />
-        )}
-        {isSuccess && !editing && <PrimaryButton action={() => navigation.goBack()} text={I18n.get('auth-forgot-connect')} />}
-
+        {renderButtons()}
         {renderNoMatchError()}
       </View>
     </KeyboardPageView>
