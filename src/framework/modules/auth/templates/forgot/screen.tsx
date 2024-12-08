@@ -52,8 +52,14 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
   const emailValidator = new ValidatorBuilder().withRequired(true).withEmail().build<string>();
   const isValidEmail = emailValidator.isValid(login);
   const hasStructures = structures.length > 0;
-  const isError = result && containsKey(result, 'error');
-  const errorMsg = isError ? (result as { error: string }).error : null;
+  const isError = React.useMemo(() => result && containsKey(result, 'error'), [result]);
+  const errorMsg = React.useMemo(() => {
+    if (isError && result) {
+      return (result as { error: string }).error;
+    }
+    return undefined;
+  }, [isError, result]);
+
   const canSubmit = React.useMemo(
     () =>
       forgotMode === 'password'
@@ -61,18 +67,41 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
         : !isValidEmail || (hasStructures && (!firstName || !selectedSructureId)),
     [forgotMode, login, isValidEmail, hasStructures, firstName, selectedSructureId],
   );
-  const errorText = hasStructures
-    ? I18n.get('auth-forgot-severalemails')
-    : errorMsg
-      ? I18n.get(`auth-forgot-${errorMsg.replace(/\./g, '')}${forgotMode === 'id' ? '-id' : ''}`)
-      : I18n.get('auth-forgot-error-unknown');
-  const isSuccess =
-    result &&
-    !containsKey(result, 'error') &&
-    !containsKey(result, 'structures') &&
-    containsKey(result, 'ok') &&
-    (result as { ok: boolean }).ok === true;
+
+  const errorText = React.useMemo(() => {
+    if (hasStructures) {
+      return I18n.get('auth-forgot-severalemails');
+    }
+    if (errorMsg) {
+      return I18n.get(`auth-forgot-${errorMsg.replace(/\./g, '')}${forgotMode === 'id' ? '-id' : ''}`);
+    }
+    return I18n.get('auth-forgot-error-unknown');
+  }, [hasStructures, errorMsg, forgotMode]);
+
+  const isSuccess = React.useMemo(() => {
+    return (
+      result &&
+      !containsKey(result, 'error') &&
+      !containsKey(result, 'structures') &&
+      containsKey(result, 'ok') &&
+      (result as { ok: boolean }).ok === true
+    );
+  }, [result]);
   const hasError = isError && !editing && !(hasStructures && errorMsg);
+
+  const renderInstructions = React.useCallback(() => {
+    if (!isSuccess)
+      return (
+        <SmallText style={styles.instructions}>
+          {I18n.get(forgotMode === 'id' ? 'auth-forgot-id-instructions' : 'auth-forgot-password-instructions')}
+        </SmallText>
+      );
+  }, [isSuccess, forgotMode]);
+
+  const renderMultiAccountInfo = React.useCallback(() => {
+    if ((hasStructures && !isSuccess) || (isError && !editing))
+      return <AlertCard type="info" text={errorText} style={styles.alertCard} />;
+  }, [hasStructures, isSuccess, isError, editing]);
 
   const renderPlatform = React.useCallback(() => {
     const logoStyle = {
@@ -87,11 +116,6 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
     );
   }, [platform]);
 
-  const renderMultiAccountInfo = React.useCallback(() => {
-    if ((hasStructures && !isSuccess) || (isError && !editing))
-      return <AlertCard type="info" text={errorText} style={styles.alertCard} />;
-  }, [hasStructures, isSuccess, isError, editing]);
-
   const renderSuccessMessage = React.useCallback(() => {
     if (isSuccess)
       return editing
@@ -100,15 +124,6 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
             <AlertCard type="info" text={I18n.get(`auth-forgot-success-${forgotMode}`)} style={styles.alertCardSuccess} />
           );
   }, [isSuccess, editing, forgotMode]);
-
-  const renderInstructions = React.useCallback(() => {
-    if (!isSuccess)
-      return (
-        <SmallText style={styles.instructions}>
-          {I18n.get(forgotMode === 'id' ? 'auth-forgot-id-instructions' : 'auth-forgot-password-instructions')}
-        </SmallText>
-      );
-  }, [isSuccess, forgotMode]);
 
   const renderNoMatchError = React.useCallback(() => {
     if (hasStructures && errorMsg)
@@ -203,7 +218,6 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
                 onChange={({ nativeEvent: { text } }) => {
                   handleInputChange('firstName', text);
                 }}
-                // onSubmitEditing={() => doSubmit()}
                 onSubmitEditing={() => !canSubmit && doSubmit()}
                 returnKeyLabel={I18n.get('auth-forgot-submit')}
                 returnKeyType="done"
