@@ -208,11 +208,11 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
               icon: 'ui-school',
               text: I18n.get('auth-forgot-school'),
             }}
-            style={{ justifyContent: 'center' }}
+            style={styles.dropDownLabel}
             input={
               <View style={styles.dropDownContainer}>
                 <DropDownPicker
-                  dropDownContainerStyle={styles.dropdownItems}
+                  dropDownContainerStyle={styles.dropDownItems}
                   items={dropdownItems}
                   open={dropDownOpened}
                   placeholder={selectedStructureName ? selectedStructureName : I18n.get('auth-forgot-structure')}
@@ -220,7 +220,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
                   setOpen={toggleDropDown}
                   setValue={setCurrentStructure}
                   showTickIcon={false}
-                  style={styles.dropdownInput}
+                  style={styles.dropDownInput}
                   textStyle={styles.dropDownText}
                   value={selectedSructureId}
                   ArrowDownIconComponent={() => (

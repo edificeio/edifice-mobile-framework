@@ -32,7 +32,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  dropdownInput: {
+  dropDownInput: {
     ...TextSizeStyle.Medium,
     backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.input,
@@ -41,7 +41,7 @@ export default StyleSheet.create({
     color: theme.ui.text.regular,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
-  dropdownItems: {
+  dropDownItems: {
     borderLeftWidth: 1,
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.small,
@@ -50,6 +50,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     flex: 1,
   },
+  dropDownLabel: { justifyContent: 'center' },
   dropDownPlaceholder: { color: theme.ui.text.light },
   dropDownText: { color: theme.ui.text.light },
   errorMsg: {
