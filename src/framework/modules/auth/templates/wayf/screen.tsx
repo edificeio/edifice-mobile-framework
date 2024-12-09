@@ -35,8 +35,8 @@ import { Loading } from '~/ui/Loading';
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Used to set X-APP cookie used backend side
   // Injected in WebView with injectedJavaScript property
-  static get INJECTED_JS() {
-    return 'document.cookie="X-APP=mobileV2"; true;';
+  static get INJECTED_JS_BEFORE() {
+    return 'document.cookie="X-APP=mobileV2; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT"; true;';
   }
 
   // User selection dropdown items
@@ -55,6 +55,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private webview?: WebView;
 
   private setWebView(ref: WebView) {
+    console.debug('SET WEBVIEW REF');
     this.webview = ref;
   }
 
@@ -160,7 +161,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
           incognito
-          injectedJavaScript={WayfScreen.INJECTED_JS}
+          injectedJavaScriptBeforeContentLoaded={WayfScreen.INJECTED_JS_BEFORE}
           javaScriptEnabled
           onError={this.onError.bind(this)}
           onHttpError={this.onHttpError.bind(this)}
@@ -214,6 +215,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
 
   // Clear datas (WebView cookies, etc.) and execute given callback when done
   clearDatas(callback: Function) {
+    console.debug('WAYFScreen::clearDatas');
     const { navigation } = this.props;
     CookieManager.clearAll(true)
       .then(_success => {
