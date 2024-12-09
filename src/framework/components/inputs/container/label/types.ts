@@ -1,5 +1,3 @@
-import { ViewStyle } from 'react-native';
-
 export enum LabelIndicator {
   OPTIONAL,
   REQUIRED,
@@ -10,5 +8,4 @@ export interface LabelProps {
   icon?: string;
   indicator?: LabelIndicator;
   testID?: string;
-  labelStyle?: ViewStyle;
 }
