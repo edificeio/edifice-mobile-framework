@@ -1,9 +1,16 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Moment } from 'moment';
 
-import { AuthLoggedAccount, UserChild } from '~/framework/modules/auth/model';
+import { AuthActiveAccount, UserChild } from '~/framework/modules/auth/model';
+import {
+  fetchHomeworkAssistanceConfigAction,
+  fetchHomeworkAssistanceServicesAction,
+  postHomeworkAssistanceRequestAction,
+} from '~/framework/modules/homework-assistance/actions';
 import { IConfig, IService } from '~/framework/modules/homework-assistance/model';
-import { HomeworkAssistanceNavigationParams } from '~/framework/modules/homework-assistance/navigation';
+import {
+  HomeworkAssistanceNavigationParams,
+  homeworkAssistanceRouteNames,
+} from '~/framework/modules/homework-assistance/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 interface IChild extends UserChild {
@@ -11,32 +18,27 @@ interface IChild extends UserChild {
   label: string;
 }
 
-export interface HomeworkAssistanceRequestScreenProps {
+export interface HomeworkAssistanceRequestScreenProps {}
+
+export interface HomeworkAssistanceRequestScreenNavParams {}
+
+export interface HomeworkAssistanceRequestScreenStoreProps {
   className: string;
   initialLoadingState: AsyncPagedLoadingState;
   services: IService[];
   structureName: string;
   children?: IChild[];
   config?: IConfig;
-  session?: AuthLoggedAccount;
-  addRequest: (
-    service: IService,
-    phoneNumber: string,
-    date: Moment,
-    time: Moment,
-    student: UserChild | null,
-    structureName: string,
-    className: string,
-    information: string,
-  ) => Promise<unknown>;
-  fetchConfig: () => Promise<IConfig>;
-  fetchServices: () => Promise<IService[]>;
+  session?: AuthActiveAccount;
 }
 
-export interface HomeworkAssistanceRequestScreenNavParams {}
-
-export interface HomeworkAssistanceRequestScreenPrivateProps
-  extends NativeStackScreenProps<HomeworkAssistanceNavigationParams, 'request'>,
-    HomeworkAssistanceRequestScreenProps {
-  // @scaffolder add HOC props here
+export interface HomeworkAssistanceRequestScreenDispatchProps {
+  tryAddRequest: (...args: Parameters<typeof postHomeworkAssistanceRequestAction>) => Promise<unknown>;
+  tryFetchConfig: (...args: Parameters<typeof fetchHomeworkAssistanceConfigAction>) => Promise<IConfig>;
+  tryFetchServices: (...args: Parameters<typeof fetchHomeworkAssistanceServicesAction>) => Promise<IService[]>;
 }
+
+export type HomeworkAssistanceRequestScreenPrivateProps = HomeworkAssistanceRequestScreenProps &
+  HomeworkAssistanceRequestScreenStoreProps &
+  HomeworkAssistanceRequestScreenDispatchProps &
+  NativeStackScreenProps<HomeworkAssistanceNavigationParams, typeof homeworkAssistanceRouteNames.request>;

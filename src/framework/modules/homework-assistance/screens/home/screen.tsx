@@ -4,10 +4,9 @@ import { RefreshControl, ScrollView, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
-import { HomeworkAssistanceHomeScreenPrivateProps } from './types';
+import { HomeworkAssistanceHomeScreenDispatchProps, HomeworkAssistanceHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -26,7 +25,7 @@ import {
   homeworkAssistanceRouteNames,
 } from '~/framework/modules/homework-assistance/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export const computeNavBar = ({
@@ -52,7 +51,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
     props
-      .fetchConfig()
+      .tryFetchConfig()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
@@ -60,7 +59,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
   const reload = () => {
     setLoadingState(AsyncPagedLoadingState.RETRY);
     props
-      .fetchConfig()
+      .tryFetchConfig()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
@@ -73,7 +72,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
-  const goToRequest = () => props.navigation.navigate(homeworkAssistanceRouteNames.request);
+  const goToRequest = () => props.navigation.navigate(homeworkAssistanceRouteNames.request, {});
 
   const renderError = () => {
     return (
@@ -140,14 +139,10 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<HomeworkAssistanceHomeScreenDispatchProps>(
       {
-        fetchConfig: tryActionLegacy(
-          fetchHomeworkAssistanceConfigAction,
-          undefined,
-          true,
-        ) as unknown as HomeworkAssistanceHomeScreenPrivateProps['fetchConfig'],
+        tryFetchConfig: tryAction(fetchHomeworkAssistanceConfigAction),
       },
       dispatch,
     ),
