@@ -1,12 +1,8 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
-
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import styles from './styles';
-import { HomeworkAssistanceHomeScreenDispatchProps, HomeworkAssistanceHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -18,7 +14,11 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { fetchHomeworkAssistanceConfigAction } from '~/framework/modules/homework-assistance/actions';
+import {
+  fetchHomeworkAssistanceConfigAction,
+  fetchHomeworkAssistanceResourcesAction,
+} from '~/framework/modules/homework-assistance/actions';
+import ResourceList from '~/framework/modules/homework-assistance/components/resource-list';
 import moduleConfig from '~/framework/modules/homework-assistance/module-config';
 import {
   HomeworkAssistanceNavigationParams,
@@ -27,6 +27,9 @@ import {
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+
+import styles from './styles';
+import { HomeworkAssistanceHomeScreenDispatchProps, HomeworkAssistanceHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -48,18 +51,26 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
+  const fetchInfo = async () => {
+    try {
+      await props.tryFetchConfig();
+      await props.tryFetchResources();
+    } catch {
+      throw new Error();
+    }
+  };
+
+  console.log(props.resources);
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
-    props
-      .tryFetchConfig()
+    fetchInfo()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
   const reload = () => {
     setLoadingState(AsyncPagedLoadingState.RETRY);
-    props
-      .tryFetchConfig()
+    fetchInfo()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
@@ -87,25 +98,28 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
     const { body, days, header, info, time } = props.config.messages;
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
-        <SmallText style={styles.primaryText}>{body}</SmallText>
-        <NamedSVG name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
-        <View>
-          <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
-          <View style={styles.rowContainer}>
-            <NamedSVG name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
-            <SmallText style={styles.secondaryText}>{days}</SmallText>
+        <View style={styles.configContainer}>
+          <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
+          <SmallText style={styles.primaryText}>{body}</SmallText>
+          <NamedSVG name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
+          <View>
+            <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
+            <View style={styles.rowContainer}>
+              <NamedSVG name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
+              <SmallText style={styles.secondaryText}>{days}</SmallText>
+            </View>
+            <View style={styles.rowContainer}>
+              <NamedSVG name="ui-clock" width={24} height={24} fill={theme.palette.secondary.regular} />
+              <SmallText style={styles.secondaryText}>{time}</SmallText>
+            </View>
+            <View style={styles.rowContainer}>
+              <NamedSVG name="ui-infoCircle" width={24} height={24} fill={theme.palette.secondary.regular} />
+              <SmallText style={styles.secondaryText}>{info}</SmallText>
+            </View>
           </View>
-          <View style={styles.rowContainer}>
-            <NamedSVG name="ui-clock" width={24} height={24} fill={theme.palette.secondary.regular} />
-            <SmallText style={styles.secondaryText}>{time}</SmallText>
-          </View>
-          <View style={styles.rowContainer}>
-            <NamedSVG name="ui-infoCircle" width={24} height={24} fill={theme.palette.secondary.regular} />
-            <SmallText style={styles.secondaryText}>{info}</SmallText>
-          </View>
+          <PrimaryButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} />
         </View>
-        <PrimaryButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} />
+        {props.resources.length ? <ResourceList resources={props.resources} /> : null}
       </ScrollView>
     );
   };
@@ -136,6 +150,7 @@ export default connect(
       initialLoadingState: homeworkAssistanceState.config.isPristine
         ? AsyncPagedLoadingState.PRISTINE
         : AsyncPagedLoadingState.DONE,
+      resources: homeworkAssistanceState.resources.data,
       session,
     };
   },
@@ -143,6 +158,7 @@ export default connect(
     bindActionCreators<HomeworkAssistanceHomeScreenDispatchProps>(
       {
         tryFetchConfig: tryAction(fetchHomeworkAssistanceConfigAction),
+        tryFetchResources: tryAction(fetchHomeworkAssistanceResourcesAction),
       },
       dispatch,
     ),
