@@ -47,7 +47,7 @@ type IBackendHomeworkAssistanceServices = {
 
 const homeworkAssistanceExclusionAdapter = (exclusion: IBackendHomeworkAssistanceExclusion) => {
   return {
-    end: moment(exclusion.start, 'DD/MM/YYYY'),
+    end: moment(exclusion.end, 'DD/MM/YYYY'),
     start: moment(exclusion.start, 'DD/MM/YYYY'),
   } as IExclusion;
 };
