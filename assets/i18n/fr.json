@@ -179,6 +179,7 @@
   "auth-forgot-connect": "Se connecter",
   "auth-forgot-severalemails": "Cette adresse mail est utilisée sur plusieurs comptes. Merci de renseigner quelques informations pour que nous identifions le bon compte.",
   "auth-forgot-severalemails-nomatch": "Les informations saisies ne correspondent pas à l'adresse mail renseignée.",
+  "auth-forgot-structure": "Sélectionnez votre établissement",
   "auth-forgot-submit": "Envoyer",
   "auth-forgot-success-id": "Si une adresse mail est associée à ce compte, un message contenant votre identifiant vous a été envoyé. Pensez à vérifier vos spams.",
   "auth-forgot-success-password": "Si une adresse mail est associée à ce compte, un message contenant un lien de renouvellement de mot de passe vous a été envoyé. Pensez à vérifier vos spams.",
