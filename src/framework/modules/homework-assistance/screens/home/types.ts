@@ -1,21 +1,29 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { FormNavigationParams } from '~/framework/modules/form/navigation';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { fetchHomeworkAssistanceConfigAction } from '~/framework/modules/homework-assistance/actions';
 import { IConfig } from '~/framework/modules/homework-assistance/model';
+import {
+  HomeworkAssistanceNavigationParams,
+  homeworkAssistanceRouteNames,
+} from '~/framework/modules/homework-assistance/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-export interface HomeworkAssistanceHomeScreenProps {
-  initialLoadingState: AsyncPagedLoadingState;
-  config?: IConfig;
-  session?: AuthLoggedAccount;
-  fetchConfig: () => Promise<IConfig>;
-}
+export interface HomeworkAssistanceHomeScreenProps {}
 
 export interface HomeworkAssistanceHomeScreenNavParams {}
 
-export interface HomeworkAssistanceHomeScreenPrivateProps
-  extends NativeStackScreenProps<FormNavigationParams, 'home'>,
-    HomeworkAssistanceHomeScreenProps {
-  // @scaffolder add HOC props here
+export interface HomeworkAssistanceHomeScreenStoreProps {
+  initialLoadingState: AsyncPagedLoadingState;
+  config?: IConfig;
+  session?: AuthActiveAccount;
 }
+
+export interface HomeworkAssistanceHomeScreenDispatchProps {
+  tryFetchConfig: (...args: Parameters<typeof fetchHomeworkAssistanceConfigAction>) => Promise<IConfig>;
+}
+
+export type HomeworkAssistanceHomeScreenPrivateProps = HomeworkAssistanceHomeScreenProps &
+  HomeworkAssistanceHomeScreenStoreProps &
+  HomeworkAssistanceHomeScreenDispatchProps &
+  NativeStackScreenProps<HomeworkAssistanceNavigationParams, typeof homeworkAssistanceRouteNames.home>;
