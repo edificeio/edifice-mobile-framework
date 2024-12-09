@@ -6,7 +6,7 @@ import {
   fetchHomeworkAssistanceServicesAction,
   postHomeworkAssistanceRequestAction,
 } from '~/framework/modules/homework-assistance/actions';
-import { IConfig, IService } from '~/framework/modules/homework-assistance/model';
+import { Config, Service } from '~/framework/modules/homework-assistance/model';
 import {
   HomeworkAssistanceNavigationParams,
   homeworkAssistanceRouteNames,
@@ -25,17 +25,17 @@ export interface HomeworkAssistanceRequestScreenNavParams {}
 export interface HomeworkAssistanceRequestScreenStoreProps {
   className: string;
   initialLoadingState: AsyncPagedLoadingState;
-  services: IService[];
+  services: Service[];
   structureName: string;
   children?: IChild[];
-  config?: IConfig;
+  config?: Config;
   session?: AuthActiveAccount;
 }
 
 export interface HomeworkAssistanceRequestScreenDispatchProps {
   tryAddRequest: (...args: Parameters<typeof postHomeworkAssistanceRequestAction>) => Promise<unknown>;
-  tryFetchConfig: (...args: Parameters<typeof fetchHomeworkAssistanceConfigAction>) => Promise<IConfig>;
-  tryFetchServices: (...args: Parameters<typeof fetchHomeworkAssistanceServicesAction>) => Promise<IService[]>;
+  tryFetchConfig: (...args: Parameters<typeof fetchHomeworkAssistanceConfigAction>) => Promise<Config>;
+  tryFetchServices: (...args: Parameters<typeof fetchHomeworkAssistanceServicesAction>) => Promise<Service[]>;
 }
 
 export type HomeworkAssistanceRequestScreenPrivateProps = HomeworkAssistanceRequestScreenProps &
