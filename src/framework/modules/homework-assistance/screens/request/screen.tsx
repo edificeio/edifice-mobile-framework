@@ -1,14 +1,9 @@
-import * as React from 'react';
-import { Platform, RefreshControl, ScrollView, TextInput, View } from 'react-native';
-
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import DropDownPicker from 'react-native-dropdown-picker';
+import * as React from 'react';
+import { Platform, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import styles from './styles';
-import { HomeworkAssistanceRequestScreenDispatchProps, HomeworkAssistanceRequestScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -17,8 +12,10 @@ import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import TextInput from '~/framework/components/inputs/text';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
+import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AccountType, getFlattenedChildren } from '~/framework/modules/auth/model';
@@ -37,6 +34,9 @@ import {
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+
+import styles from './styles';
+import { HomeworkAssistanceRequestScreenDispatchProps, HomeworkAssistanceRequestScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -135,18 +135,16 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       <ScrollView contentContainerStyle={styles.container}>
         <View>
           {props.children ? (
-            <DropDownPicker
+            <DropdownPicker
               open={isChildDropdownOpen}
               value={child}
               items={props.children}
               setOpen={setChildDropdownOpen}
               setValue={setChild}
               style={styles.dropdownContainer}
-              dropDownContainerStyle={styles.dropdownContainer}
-              textStyle={styles.dropdownText}
             />
           ) : undefined}
-          <DropDownPicker
+          <DropdownPicker
             open={isServiceDropdownOpen}
             value={service}
             items={props.services}
@@ -155,8 +153,6 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
             placeholder={I18n.get('homeworkassistance-request-subject-placeholder')}
             style={styles.dropdownContainer}
             containerStyle={{ zIndex: -1 }}
-            dropDownContainerStyle={styles.dropdownContainer}
-            textStyle={styles.dropdownText}
           />
           <View style={{ zIndex: -2 }}>
             <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-request-phonenumber')}</SmallText>
