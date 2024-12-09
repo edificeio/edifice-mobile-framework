@@ -6,10 +6,9 @@ import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
-import { HomeworkAssistanceRequestScreenPrivateProps } from './types';
+import { HomeworkAssistanceRequestScreenDispatchProps, HomeworkAssistanceRequestScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -36,7 +35,7 @@ import {
   homeworkAssistanceRouteNames,
 } from '~/framework/modules/homework-assistance/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export const computeNavBar = ({
@@ -71,8 +70,8 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
 
   const fetchData = async () => {
     try {
-      await props.fetchConfig();
-      await props.fetchServices();
+      await props.tryFetchConfig();
+      await props.tryFetchServices();
     } catch {
       throw new Error();
     }
@@ -108,7 +107,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       if (!selectedService) throw new Error();
       setSendingRequest(true);
       const student = children ? children.find(c => c.value === child) : undefined;
-      await props.addRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
+      await props.tryAddRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
       setSendingRequest(false);
       props.navigation.goBack();
       Toast.showSuccess(I18n.get('homeworkassistance-request-successmessage'));
@@ -258,24 +257,12 @@ export default connect(
       structureName: session?.user.structures?.[0].name ?? '',
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<HomeworkAssistanceRequestScreenDispatchProps>(
       {
-        addRequest: tryActionLegacy(
-          postHomeworkAssistanceRequestAction,
-          undefined,
-          true,
-        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['addRequest'],
-        fetchConfig: tryActionLegacy(
-          fetchHomeworkAssistanceConfigAction,
-          undefined,
-          true,
-        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchConfig'],
-        fetchServices: tryActionLegacy(
-          fetchHomeworkAssistanceServicesAction,
-          undefined,
-          true,
-        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchServices'],
+        tryAddRequest: tryAction(postHomeworkAssistanceRequestAction),
+        tryFetchConfig: tryAction(fetchHomeworkAssistanceConfigAction),
+        tryFetchServices: tryAction(fetchHomeworkAssistanceServicesAction),
       },
       dispatch,
     ),
