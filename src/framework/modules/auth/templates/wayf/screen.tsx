@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 
 import CookieManager from '@react-native-cookies/cookies';
+import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
@@ -44,7 +45,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Used to set X-APP cookie used backend side
   // Injected in WebView with injectedJavaScriptBeforeContentLoaded property
   static get INJECTED_JS_BEFORE() {
-    return 'document.cookie="X-APP=mobile"; true;';
+    return `document.cookie="X-APP=mobile; path=/; expires=${moment().add(1, 'days').format('YYYY-MM-DD')}"; true;`;
   }
 
   // User selection dropdown items
