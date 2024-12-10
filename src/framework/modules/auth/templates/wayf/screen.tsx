@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { ActivityIndicator, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Platform, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 
 import CookieManager from '@react-native-cookies/cookies';
-import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
@@ -34,12 +33,6 @@ import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
-  // Used to set X-APP cookie used backend side
-  // Injected in WebView with injectedJavaScriptBeforeContentLoaded property
-  static get INJECTED_JS_BEFORE() {
-    return `document.cookie="X-APP=mobileV2; path=/; expires=${moment().add(1, 'days').format('YYYY-MM-DD')}"; true;`;
-  }
-
   // User selection dropdown items
   private dropdownItems: any = [];
 
@@ -56,7 +49,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private webview?: WebView;
 
   private setWebView(ref: WebView) {
-    console.debug('SET WEBVIEW REF');
     this.webview = ref;
   }
 
@@ -162,7 +154,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
           incognito
-          injectedJavaScriptBeforeContentLoaded={WayfScreen.INJECTED_JS_BEFORE}
           javaScriptEnabled
           onError={this.onError.bind(this)}
           onHttpError={this.onHttpError.bind(this)}
@@ -176,6 +167,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           source={{ headers: { 'X-APP': 'mobile' }, uri: this.wayfUrl! }}
           startInLoadingState
           style={styles.webview}
+          userAgent={`X-APP=mobile-${Platform.OS}`}
           webviewDebuggingEnabled={__DEV__}
         />
       );
@@ -216,7 +208,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
 
   // Clear datas (WebView cookies, etc.) and execute given callback when done
   clearDatas(callback: Function) {
-    console.debug('WAYFScreen::clearDatas');
     const { navigation } = this.props;
     CookieManager.clearAll(true)
       .then(_success => {
@@ -347,7 +338,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.displayEmpty();
   }
 
-  // Called when WebView first Load succed
+  // Called when WebView content is loaded
   // See WebView onLoad property
   onLoad({ nativeEvent }: WebViewNavigationEvent) {
     console.debug('WAYFScreen::onLoad => ', nativeEvent.url);
