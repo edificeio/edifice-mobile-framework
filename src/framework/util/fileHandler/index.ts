@@ -127,6 +127,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       await assertPermissions('galery.read');
       const pics = await ImagePicker.openPicker({
         multiple,
+        maxFiles: 0 // Default value is 5 somewhere in the third-party package, so we must set it to 0 here to allow unlimited selection.
       });
 
       pickedFiles = await processImages(pics);
@@ -260,7 +261,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       destPath = `${destFolder}/${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
     }
     copyFile(this.filepath, destPath)
-      .then(() => {})
+      .then(() => { })
       .catch(error => {
         throw error;
       });
