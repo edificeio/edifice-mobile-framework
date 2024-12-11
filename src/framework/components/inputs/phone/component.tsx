@@ -26,7 +26,7 @@ export const InputPhone = (props: InputPhoneProps) => {
       <PhoneInput
         defaultCode={props.defaultCode}
         onChangeCountry={props.onChangeCountry}
-        onChangeText={props.onChangeText}
+        onChangeFormattedText={props.onChangeText}
         placeholder={props.placeholder}
         layout="third"
         value={props.phoneNumber}
