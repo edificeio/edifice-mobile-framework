@@ -1,0 +1,15 @@
+diff --git a/ios/RNPDFPdf/RNPDFPdfView.mm b/ios/RNPDFPdf/RNPDFPdfView.mm
+index c70c17e14c0f3302c6bd89855c573a371a187fb7..cc2b5dc15124fe9f26c35ca255c0e46d1a8fc938 100644
+--- a/ios/RNPDFPdf/RNPDFPdfView.mm
++++ b/ios/RNPDFPdf/RNPDFPdfView.mm
+@@ -280,7 +280,9 @@ using namespace facebook::react;
+     // Disable built-in double tap, so as not to conflict with custom recognizers.
+     for (UIGestureRecognizer *recognizer in _pdfView.gestureRecognizers) {
+         if ([recognizer isKindOfClass:[UITapGestureRecognizer class]]) {
+-            recognizer.enabled = NO;
++            // Change 'NO' to 'YES' to allow links to be clicked.
++            // @See https://github.com/wonday/react-native-pdf/issues/841
++            recognizer.enabled = YES;
+         }
+     }
+ 
