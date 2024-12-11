@@ -18,6 +18,7 @@ import {
   fetchHomeworkAssistanceConfigAction,
   fetchHomeworkAssistanceResourcesAction,
 } from '~/framework/modules/homework-assistance/actions';
+import FeedbackMenu from '~/framework/modules/homework-assistance/components/feedback-menu';
 import ResourceList from '~/framework/modules/homework-assistance/components/resource-list';
 import moduleConfig from '~/framework/modules/homework-assistance/module-config';
 import {
@@ -60,7 +61,6 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
     }
   };
 
-  console.log(props.resources);
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
     fetchInfo()
@@ -96,31 +96,35 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
   const renderInformation = () => {
     if (!props.config) return renderError();
     const { body, days, header, info, time } = props.config.messages;
+
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.configContainer}>
-          <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
-          <SmallText style={styles.primaryText}>{body}</SmallText>
-          <NamedSVG name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
-          <View>
-            <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
-            <View style={styles.rowContainer}>
-              <NamedSVG name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
-              <SmallText style={styles.secondaryText}>{days}</SmallText>
+      <>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.configContainer}>
+            <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
+            <SmallText style={styles.primaryText}>{body}</SmallText>
+            <NamedSVG name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
+            <View>
+              <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
+              <View style={styles.rowContainer}>
+                <NamedSVG name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
+                <SmallText style={styles.secondaryText}>{days}</SmallText>
+              </View>
+              <View style={styles.rowContainer}>
+                <NamedSVG name="ui-clock" width={24} height={24} fill={theme.palette.secondary.regular} />
+                <SmallText style={styles.secondaryText}>{time}</SmallText>
+              </View>
+              <View style={styles.rowContainer}>
+                <NamedSVG name="ui-infoCircle" width={24} height={24} fill={theme.palette.secondary.regular} />
+                <SmallText style={styles.secondaryText}>{info}</SmallText>
+              </View>
             </View>
-            <View style={styles.rowContainer}>
-              <NamedSVG name="ui-clock" width={24} height={24} fill={theme.palette.secondary.regular} />
-              <SmallText style={styles.secondaryText}>{time}</SmallText>
-            </View>
-            <View style={styles.rowContainer}>
-              <NamedSVG name="ui-infoCircle" width={24} height={24} fill={theme.palette.secondary.regular} />
-              <SmallText style={styles.secondaryText}>{info}</SmallText>
-            </View>
+            <PrimaryButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} />
           </View>
-          <PrimaryButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} />
-        </View>
-        {props.resources.length ? <ResourceList resources={props.resources} /> : null}
-      </ScrollView>
+          {props.resources.length ? <ResourceList resources={props.resources} /> : null}
+        </ScrollView>
+        <FeedbackMenu formUrl="/welcome" />
+      </>
     );
   };
 

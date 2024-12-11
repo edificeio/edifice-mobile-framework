@@ -47,6 +47,7 @@ const imports = {
   'ui-clock-alert': async () => import('ASSETS/icons/uiIcons/clock-alert.svg'),
   'ui-close': async () => import('ASSETS/icons/uiIcons/close.svg'),
   'ui-closeFullScreen': async () => import('ASSETS/icons/uiIcons/closeFullScreen.svg'),
+  'ui-comment-quote': async () => import('ASSETS/icons/uiIcons/comment-quote.svg'),
   'ui-copy': async () => import('ASSETS/icons/uiIcons/copy.svg'),
   'ui-cottage': async () => import('ASSETS/icons/uiIcons/cottage.svg'),
   'ui-cut': async () => import('ASSETS/icons/uiIcons/cut.svg'),
