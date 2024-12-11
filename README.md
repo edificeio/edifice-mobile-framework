@@ -9,4 +9,4 @@ It is built with React Native, and some other popular libraries for React Native
 
 > Note this project is in a beta state. Some components and API are unstable and will be refactor.
 
-> This project is designed, developed and maintained by [Open Digital Education](http://opendigitaleducation.com)
+> This project is designed, developed and maintained by [Edifice](https://edifice.io/)
