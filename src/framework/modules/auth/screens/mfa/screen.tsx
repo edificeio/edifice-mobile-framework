@@ -377,7 +377,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
             />
             {/* Note: the CodeField's "editable" prop is not sufficient to prevent the user from typing, so an invisible absolute View is used instead.*/}
             {isCodeComplete ? (
-              <TouchableWithoutFeedback disabled={isVerifyingActive || isCodeCorrect || isCodeStateUnknown} onPress={onResetCode}>
+              <TouchableWithoutFeedback disabled={isVerifyingActive || isCodeCorrect} onPress={onResetCode}>
                 <View style={styles.codeFieldWrapper} />
               </TouchableWithoutFeedback>
             ) : null}
