@@ -1,6 +1,6 @@
 import React from 'react';
-
 import { View } from 'react-native';
+
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
 import { UI_STYLES } from '~/framework/components/constants';
 import { CaptionText, SmallActionText } from '~/framework/components/text';
