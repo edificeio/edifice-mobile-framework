@@ -141,7 +141,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       await onUpdateAvatar(sc.url);
     } catch (err: any) {
       if (err.message === 'Error picking image') {
-        Toast.showError('pickfile-error-storageaccess');
+        Toast.showError(I18n.get('pickfile-error-storageaccess'));
       } else if (!(err instanceof Error)) {
         onUploadAvatarError();
       }
