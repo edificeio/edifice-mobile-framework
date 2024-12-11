@@ -14,7 +14,7 @@ import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
 import { actionTypes } from '~/framework/modules/user/reducer';
 import { writeXmasMusic, writeXmasTheme } from '~/framework/modules/user/storage';
-import { addTime, today } from '~/framework/util/date';
+import { addTime, subtractTime, today } from '~/framework/util/date';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
@@ -80,9 +80,15 @@ const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: num
   };
   const startOfThisYear = today().startOf('year');
   const startOfNextYear = addTime(today(), 1, 'year').startOf('year');
+  const lastYear = subtractTime(today(), 1, 'year').startOf('year');
   const startDateThisYear = getDateForYear(startOfThisYear, startDay, startMonth);
+  const startDatePreviousYear = getDateForYear(lastYear, startDay, startMonth);
   const endDateNextYear = getDateForYear(startOfNextYear, endDay, endMonth);
-  const isWithinXmasPeriod = today().isBetween(startDateThisYear, endDateNextYear);
+  const endDateThisYear = getDateForYear(startOfThisYear, endDay, endMonth);
+  const isWithinXmasPeriod =
+    today().month() === 0
+      ? today().isBetween(startDatePreviousYear, endDateThisYear)
+      : today().isBetween(startDateThisYear, endDateNextYear);
   return isWithinXmasPeriod;
 };
 
