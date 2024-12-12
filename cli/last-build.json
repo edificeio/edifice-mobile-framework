@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-12-17 18:59:37",
-  "notes": "update(yarn): update yarn cache\nupdate(yarn): update yarn cache\nMerge branch 'dev/1.13.7' of https://github.com/edificeio/edifice-mobile-framework into dev/1.13.7\nfix(news): WB-3641 , change parser html in news list screen to show preview\nchore: yarn cache update\nfix(xmas) ENABLING-109 , fix music on android when kill and open app\nfix(audience): MB-3037 , fix space between reaction icons\nMerge branch 'dev/1.13.7' of https://github.com/edificeio/edifice-mobile-framework into dev/1.13.7\nfix(xmas) MB-3012 , stop music when app is in background on android\nrelease: 1.13.7-rc.4(1130705)",
-  "version": "1.13.7-rc.5(1130706)"
+  "last": "2024-12-12 19:57:16",
+  "notes": "update(yarn): update yarn stack\nupdate(yarn): update yarn stack\nfix(zimbra): AMV2-657 decode body href\nfeat(mediacentre): AMV2-659 add notif handler\nRevert \"chore: MB-2998 restore mediacentre version 1.13.4\"\nfeat(i18n): AMV2-658 add mediacentre notification i18n\nfeat(homework-assistance): AMV2-615 add feedback menu\nfeat(homework-assistance): AMV2-614 display resources in home screen\nfeat(homework-assistance): replace tryActionLegacy with tryAction, enhance typing\nfix(homework-assistance): AMV2-656 fix date exclusions check\nrelease: 1.13.7-alpha.1(1130704)",
+  "version": "1.13.7-alpha.2(1130705)"
 }
