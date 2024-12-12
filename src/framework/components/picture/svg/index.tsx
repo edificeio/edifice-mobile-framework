@@ -1,5 +1,5 @@
 /**
- * NamedSVG
+ * Svg
  *
  * Display an SVG file through its name.
  *
@@ -9,7 +9,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 
-import type { SvgProps } from 'react-native-svg';
+import type { SvgProps as RNSvgProps } from 'react-native-svg';
 
 const imports = {
   // ModuleIcons
@@ -488,12 +488,12 @@ export const removeFromCache = (name: string) => {
   delete importsCache[name];
 };
 
-export interface NamedSVGProps extends SvgProps {
+export interface SvgProps extends RNSvgProps {
   name: string;
   cached?: boolean;
 }
 
-export const NamedSVG = ({ cached, name, ...rest }: NamedSVGProps): React.JSX.Element | null => {
+export const Svg = ({ cached, name, ...rest }: SvgProps): React.JSX.Element | null => {
   const ImportedSVGRef = useRef<any>(importsCache[name]);
   const [loading, setLoading] = React.useState(false);
   useEffect((): void => {
@@ -520,4 +520,4 @@ export const NamedSVG = ({ cached, name, ...rest }: NamedSVGProps): React.JSX.El
   return null;
 };
 
-export default NamedSVG;
+export default Svg;

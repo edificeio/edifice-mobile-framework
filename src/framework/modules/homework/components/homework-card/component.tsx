@@ -6,8 +6,7 @@ import { HomeworkCardProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/icon';
-import { NamedSVG } from '~/framework/components/picture';
+import { Icon, Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
@@ -63,7 +62,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
         <View style={styles.viewTitle}>
           {renderTitle()}
           {finished === undefined ? null : (
-            <NamedSVG
+            <Svg
               fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
               name={`ui-${finished ? 'check' : 'clock'}`}
               style={styles.status}
