@@ -5,8 +5,7 @@ import { Moment } from 'moment';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/icon';
-import { NamedSVG } from '~/framework/components/picture';
+import { Icon, Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import HtmlToText from '~/infra/htmlConverter/text';
@@ -63,7 +62,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: IHomew
         <View style={styles.viewTitle}>
           {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
           {finished === undefined ? null : (
-            <NamedSVG
+            <Svg
               fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
               name={`ui-${finished ? 'check' : 'clock'}`}
               style={styles.status}
