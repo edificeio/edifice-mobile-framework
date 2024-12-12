@@ -19,6 +19,7 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
   const listAdditionalStyle = { paddingBottom: data?.length === 0 ? undefined : UI_SIZES.screen.bottomInset };
 
   const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [itemsErrorThumbnail, setItemsErrorThumbnail] = React.useState<string[]>([]);
 
   const handleRefresh = async () => {
     try {
@@ -47,8 +48,12 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
         <ListItem
           leftElement={
             <View style={styles.item}>
-              {item.thumbnail ? (
-                <Image source={{ uri: item.thumbnail }} style={styles.itemImage} />
+              {item.thumbnail && !itemsErrorThumbnail.includes(item.id) ? (
+                <Image
+                  source={{ uri: item.thumbnail }}
+                  style={styles.itemImage}
+                  onError={() => setItemsErrorThumbnail([...itemsErrorThumbnail, item.id])}
+                />
               ) : (
                 <View style={[styles.itemImage, styles.itemNoImage, defaultBackground]}>
                   <NamedSVG
