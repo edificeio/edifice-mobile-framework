@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-12-03 12:35:52",
-  "notes": "Updated translations from Phrase (#174)\nfix(xmas): MB-3007, make wording dynamic to show good year\nrelease: 1.13.7-rc.2(1130702)",
-  "version": "1.13.7-rc.3(1130703)"
+  "last": "2024-12-11 21:09:08",
+  "notes": "update(yarn): update yarn cache\nupdate(yarn): update yarn cache\nfix(wayf): remove cookie improvements.\nfix(audience) MB-3031 , fix scroll when hide bloc reactions\nMerge branch 'dev/1.13.7' of https://github.com/edificeio/edifice-mobile-framework into dev/1.13.7\nfix(xmas): MB-3012 , not music pause when app is in background\nfix: MB-3024 bad message when storage quato is full\nfix(pdf): MB-3021 allow pdf link open on ios\nfix(mfa): MB-3009 allow reset mfa code when api is ko\nupdate(yarn): update yarn cache\nMerge branch 'dev/1.13.7' of https://github.com/edificeio/edifice-mobile-framework into dev/1.13.7\nfix(xmas) MB-3007 , fix xmas theme until 5 january\nfix(auth): MB-2958 fixing phone number formatting\nchore: fix eslint\nfix(auth): MB-3020 fix print error code text\nupdate(yarn): update yarn cache\nfix: MB-3016 allow import from galery selection range over 5 images\nfix(android): improve X-APP cookie management for Android\nupdate(yarn): update yarn cache\nfix(blog): WB2-2001 wrong blog post date displayed\nfix(auth): MB-2958 fixing phone input error\nrelease: 1.13.7-rc.3(1130703)",
+  "version": "1.13.7-alpha.1(1130704)"
 }
