@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { ForgotScreenPrivateProps, IForgotPageEventProps, IForgotScreenState } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
@@ -19,8 +24,6 @@ import { API } from '~/framework/modules/auth/service.ts';
 import { containsKey } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
-import styles from './styles';
-import { ForgotScreenPrivateProps, IForgotPageEventProps, IForgotScreenState } from './types';
 
 const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
 
@@ -65,7 +68,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
       forgotMode === 'password'
         ? !login || (isError && !editing)
         : !isValidEmail || (hasStructures && (!firstName || !selectedSructureId)),
-    [forgotMode, login, isValidEmail, hasStructures, firstName, selectedSructureId],
+    [forgotMode, login, isValidEmail, hasStructures, firstName, selectedSructureId, editing, isError],
   );
 
   const errorText = React.useMemo(() => {
@@ -113,7 +116,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
       setForgotState('IDLE');
       setResult(undefined);
     }
-  }, [firstName, props.trySubmit, route.params.platform, login, selectedSructureId, forgotMode]);
+  }, [firstName, props, route.params.platform, login, selectedSructureId, forgotMode]);
 
   const handleInputChange = React.useCallback((field: string, value: string) => {
     setEditing(true);
@@ -174,7 +177,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
         }
       />
     );
-  }, [forgotMode, hasError, errorText, login]);
+  }, [forgotMode, hasError, errorText, login, doSubmit, handleInputChange, hasStructures]);
 
   const renderInputFirstnameWithStructurePicker = React.useCallback(() => {
     if (forgotMode === 'id' && hasStructures)
@@ -247,7 +250,10 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
     dropDownOpened,
     selectedStructureName,
     selectedSructureId,
-    theme,
+    doSubmit,
+    handleInputChange,
+    setCurrentStructure,
+    toggleDropDown,
   ]);
 
   const renderInstructions = React.useCallback(() => {
@@ -262,7 +268,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
   const renderMultiAccountInfo = React.useCallback(() => {
     if ((hasStructures && !isSuccess) || (isError && !editing))
       return <AlertCard type="info" text={errorText} style={styles.alertCard} />;
-  }, [hasStructures, isSuccess, isError, editing]);
+  }, [hasStructures, isSuccess, isError, editing, errorText]);
 
   const renderPlatform = React.useCallback(() => {
     const logoStyle = {
