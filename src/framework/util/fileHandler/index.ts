@@ -48,7 +48,7 @@ const processImage = async (pic: Image) => {
       {
         mode: 'contain',
         onlyScaleDown: false,
-      },
+      }
     );
     return {
       ...response,
@@ -116,7 +116,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     } catch {
       Alert.alert(
         I18n.get('document-permissionblocked-title'),
-        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() })
       );
     }
   }
@@ -126,8 +126,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     try {
       await assertPermissions('galery.read');
       const pics = await ImagePicker.openPicker({
-        multiple,
-        maxFiles: 0 // Default value is 5 somewhere in the third-party package, so we must set it to 0 here to allow unlimited selection.
+        maxFiles: 0,
+        multiple, // Default value is 5 somewhere in the third-party package, so we must set it to 0 here to allow unlimited selection.
       });
 
       pickedFiles = await processImages(pics);
@@ -148,7 +148,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       console.error(e);
       Alert.alert(
         I18n.get('gallery-readpermissionblocked-title'),
-        I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() })
       );
     }
   }
@@ -164,10 +164,14 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       pickedFile = [compressPic];
       const image: LocalFile[] = pickedFile.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
       await this.imageCallback(image, callback, synchrone, callbackOnce);
-    } catch {
+    } catch (e) {
+      if (e instanceof Error && (e as { code?: unknown }).code === 'E_PICKER_CANCELLED') {
+        await this.imageCallback([], callback, synchrone, callbackOnce);
+        return;
+      }
       Alert.alert(
         I18n.get('camera-permissionblocked-title'),
-        I18n.get('camera-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('camera-permissionblocked-text', { appName: DeviceInfo.getApplicationName() })
       );
     }
   }
@@ -190,7 +194,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     file: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem,
     opts: {
       _needIOSReleaseSecureAccess: boolean;
-    },
+    }
   ) {
     this._needIOSReleaseSecureAccess = opts._needIOSReleaseSecureAccess;
     this.filename =
