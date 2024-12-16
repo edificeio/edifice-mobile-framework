@@ -130,8 +130,11 @@ export const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<an
     if (!shakeListener && getIsXmasActive(getState())) {
       setTimeout(() => {
         dispatch(letItSnowAction());
-        if (getIsXmasMusicActive(getState())) jingleBells.play();
-      }, 10);
+        if (getIsXmasMusicActive(getState())) {
+          jingleBells.setVolume(0.5);
+          jingleBells.play();
+        }
+      }, 100);
       shakeListener = RNShake.addListener(() => {
         Vibration.vibrate();
         dispatch(letItSnowAction());
