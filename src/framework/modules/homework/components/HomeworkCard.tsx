@@ -9,6 +9,8 @@ import { Icon } from '~/framework/components/icon';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
+import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
+import { IMedia } from '~/framework/util/notifications';
 import HtmlToText from '~/infra/htmlConverter/text';
 
 export interface IHomeworkCardProps {
@@ -57,11 +59,48 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: IHomew
   const arrowColor = isPastDate ? theme.palette.grey.stone : dayColor;
   const formattedContent = content && HtmlToText(content, false).render;
 
+  const renderTitle = () => {
+    /**
+     * We want to render title along with icons representing media types featured in the task
+     */
+    const mediaTypes: IMedia[] = content ? extractMediaFromHtml(content) || [] : [];
+    const mediaTypesPerTask = [...new Set(mediaTypes.map(media => media.type))];
+
+    const mediaIcons: { [key: string]: string } = {
+      audio: 'ui-mic-preview',
+      image: 'ui-image-preview',
+      video: 'ui-recordVideo-preview',
+    };
+
+    if (mediaTypesPerTask.length === 0) {
+      return <View style={styles.viewTitle}>{title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}</View>;
+    } else {
+      return (
+        <View style={styles.viewTitle}>
+          {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
+          {mediaTypesPerTask.map((type, index) => (
+            <NamedSVG
+              key={index}
+              name={mediaIcons[type]}
+              style={{
+                marginLeft: index === 0 ? UI_SIZES.spacing.tiny : -(UI_SIZES.spacing.tiny + UI_SIZES.spacing._LEGACY_tiny),
+                zIndex: mediaTypesPerTask.length + index,
+              }}
+              width={UI_SIZES.elements.icon.medium}
+              height={UI_SIZES.elements.icon.medium}
+            />
+          ))}
+        </View>
+      );
+    }
+  };
+
   return (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
       <View style={styles.viewTexts}>
         <View style={styles.viewTitle}>
-          {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
+          {/* {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null} */}
+          {renderTitle()}
           {finished === undefined ? null : (
             <NamedSVG
               fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
