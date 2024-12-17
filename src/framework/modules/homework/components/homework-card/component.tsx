@@ -21,7 +21,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
   const arrowColor = isPastDate ? theme.palette.grey.stone : dayColor;
   const formattedContent = content && HtmlToText(content, false).render;
 
-  const renderTitle = () => {
+  const renderTitle = React.useCallback(() => {
     /**
      * We want to render title along with icons representing media types featured in the task
      */
@@ -55,7 +55,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
         </View>
       );
     }
-  };
+  }, [content, title]);
 
   return (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
