@@ -3,10 +3,10 @@
  */
 import { combineReducers } from 'redux';
 
+import moduleConfig from './module-config';
+
 import { Reducers } from '~/app/store';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
-
-import moduleConfig from './module-config';
 
 // Types
 

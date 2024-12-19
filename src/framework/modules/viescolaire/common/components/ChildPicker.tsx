@@ -1,11 +1,12 @@
 import React from 'react';
 import { ViewStyle } from 'react-native';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import UserList from '~/framework/components/UserList';
-import { UserChildrenFlattened, getFlattenedChildren } from '~/framework/modules/auth/model';
+import { getFlattenedChildren, UserChildrenFlattened } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadStoredChildAction, selectChildAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';

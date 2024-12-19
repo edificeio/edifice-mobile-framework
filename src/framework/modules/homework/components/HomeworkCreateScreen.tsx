@@ -1,7 +1,8 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, Platform, ScrollView, StyleSheet, View } from 'react-native';
+
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -63,15 +64,15 @@ const styles = StyleSheet.create({
   },
   dayPickerContainer: {
     borderColor: theme.palette.grey.stone,
-    borderWidth: UI_SIZES.border.thin,
     borderRadius: UI_SIZES.radius.selector,
+    borderWidth: UI_SIZES.border.thin,
   },
   inputContainer: {
     marginTop: UI_SIZES.spacing.big,
   },
   page: {
     backgroundColor: theme.ui.background.card,
-    marginBottom: Platform.select({ ios: -UI_SIZES.screen.bottomInset, default: 0 }),
+    marginBottom: Platform.select({ default: 0, ios: -UI_SIZES.screen.bottomInset }),
   },
   scrollView: {
     backgroundColor: theme.ui.background.card,
@@ -92,9 +93,9 @@ export const computeNavBar = ({
 
 function PreventBack(props: { showAlert: boolean }) {
   usePreventBack({
-    title: I18n.get('homework-create-leavealert-title'),
-    text: I18n.get('homework-create-leavealert-text'),
     showAlert: props.showAlert,
+    text: I18n.get('homework-create-leavealert-text'),
+    title: I18n.get('homework-create-leavealert-title'),
   });
   return null;
 }
@@ -102,10 +103,10 @@ function PreventBack(props: { showAlert: boolean }) {
 export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScreenProps, HomeworkCreateScreenState> {
   state: HomeworkCreateScreenState = {
     date: undefined,
-    subject: '',
     description: '',
     images: [],
     isCreatingEntry: false,
+    subject: '',
   };
 
   verifyDate = () => {
@@ -118,8 +119,8 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
           text: I18n.get('homework-create-warning-past-modify'),
         },
         {
-          text: I18n.get('homework-create-warning-past-add'),
           onPress: () => this.createEntry(),
+          text: I18n.get('homework-create-warning-past-add'),
         },
       ]);
     } else this.createEntry();
@@ -129,14 +130,14 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     try {
       const {
         connectionTrackerState,
-        navigation,
+        diaryId,
         handleCreateDiaryEntry,
         handleGetHomeworkTasks,
         handleUploadEntryImages,
-        diaryId,
+        navigation,
         route,
       } = this.props;
-      const { date, subject, description, images } = this.state;
+      const { date, description, images, subject } = this.state;
 
       this.setState({ isCreatingEntry: true });
 
@@ -185,7 +186,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
   }
 
   render() {
-    const { date, subject, description, images, isCreatingEntry } = this.state;
+    const { date, description, images, isCreatingEntry, subject } = this.state;
     const isDefaultDateSelected = date?.isSame(defaultSelectedDate);
     const isEditing = !isDefaultDateSelected || !!subject || !!description || !!images.length;
     const isRequiredFieldEmpty = !date || !subject || !description;
@@ -202,14 +203,14 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
         <KeyboardPageView style={styles.page}>
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollView}>
             <InputContainer
-              label={{ text: I18n.get('homework-create-date-title'), icon: 'ui-calendarLight' }}
+              label={{ icon: 'ui-calendarLight', text: I18n.get('homework-create-date-title') }}
               input={
                 <DayPicker onDateChange={selectedDate => this.setState({ date: selectedDate })} style={styles.dayPickerContainer} />
               }
             />
             <InputContainer
               style={styles.inputContainer}
-              label={{ text: I18n.get('homework-create-subject-title'), icon: 'ui-book' }}
+              label={{ icon: 'ui-book', text: I18n.get('homework-create-subject-title') }}
               input={
                 <TextInput
                   placeholder={I18n.get('homework-create-subject-placeholder')}
@@ -224,7 +225,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
             />
             <InputContainer
               style={styles.inputContainer}
-              label={{ text: I18n.get('homework-create-description-title'), icon: 'ui-textPage' }}
+              label={{ icon: 'ui-textPage', text: I18n.get('homework-create-description-title') }}
               input={
                 <MultilineTextInput
                   ref={descriptionFieldRef}

@@ -1,12 +1,12 @@
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { IAuthState } from '~/framework/modules/auth/reducer';
-import { IModuleConfig } from '~/framework/util/moduleTool';
-import { Trackers } from '~/framework/util/tracker';
-
 import { StorageHandler } from './handler';
 import { mmkvHandler } from './mmkv';
 import { StorageSlice } from './slice';
 import { StorageTypeMap } from './types';
+
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { IAuthState } from '~/framework/modules/auth/reducer';
+import { IModuleConfig } from '~/framework/util/moduleTool';
+import { Trackers } from '~/framework/util/tracker';
 
 /**
  * Use MMKV as the storage technology.
@@ -65,44 +65,21 @@ export class Storage {
 
 export const OldStorageFunctions = {
   //
-  //
-  //
-  //
-  // === Legacy zone ===
-  //
-  //
-  //
-  //
-
   /**
-   * Set item JSON
-   * - Convert data into JSON string
-   * - Save data and key within storage
+   * Get item JSON
+   * - Retrieve stored item via key
+   * - Parse and return item
    */
-  setItemJson: async <T>(key: string, data: T) => {
+  getItem: async <T extends string | number | boolean>(key: string) => {
     try {
-      Storage.global.set(key, JSON.stringify(data));
+      const item = Storage.global.getString(key);
+      return item as T | undefined;
     } catch (error) {
       console.error(
-        `[Storage] setItemJson: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+        `[Storage] getItem: failed to load key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
-      Trackers.trackDebugEvent('Storage', 'setItemJson ERROR', (error as Error | null)?.message || '');
-    }
-  },
-
-  /**
-   * Set item JSON
-   * - Convert data into JSON string
-   * - Save data and key within storage
-   */
-  setItem: async <T extends string | number | boolean>(key: string, data: T) => {
-    try {
-      Storage.global.set(key, data);
-    } catch (error) {
-      console.error(
-        `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
-      );
-      Trackers.trackDebugEvent('Storage', 'setItem ERROR', (error as Error | null)?.message || '');
+      Trackers.trackDebugEvent('Storage', 'getItem ERROR', (error as Error | null)?.message || '');
+      return null;
     }
   },
 
@@ -125,22 +102,35 @@ export const OldStorageFunctions = {
     }
   },
 
+  //
   /**
-   * Get item JSON
-   * - Retrieve stored item via key
-   * - Parse and return item
+   * Get keys
+   * - Find all existing keys within storage
+   * - Return keys
    */
-  getItem: async <T extends string | number | boolean>(key: string) => {
+  getKeys: async () => {
     try {
-      const item = Storage.global.getString(key);
-      return item as T | undefined;
+      const keys = Storage.global.getAllKeys();
+      return keys;
     } catch (error) {
-      console.error(
-        `[Storage] getItem: failed to load key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
-      );
-      Trackers.trackDebugEvent('Storage', 'getItem ERROR', (error as Error | null)?.message || '');
+      console.error(`[Storage] getKeys: failed to get all keys ${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
+      Trackers.trackDebugEvent('Storage', 'getKeys ERROR', (error as Error | null)?.message || '');
       return null;
     }
+  },
+
+  //
+  /**
+   * Migrate item JSON
+   * - Get notifications filter setting to migrate (via its current key)
+   * - Return setting and remove it from storage
+   */
+  migrateItemJson: async <ItemType>(oldKey: string): Promise<ItemType | undefined> => {
+    const data: ItemType | undefined = (await OldStorageFunctions.getItemJson(oldKey)) ?? undefined;
+    if (data) {
+      await OldStorageFunctions.removeItem(oldKey);
+      return data;
+    } else return undefined;
   },
 
   /**
@@ -159,6 +149,7 @@ export const OldStorageFunctions = {
     }
   },
 
+  //
   /**
    * Remove items
    * - Find all items via provided keys
@@ -178,31 +169,43 @@ export const OldStorageFunctions = {
   },
 
   /**
-   * Get keys
-   * - Find all existing keys within storage
-   * - Return keys
+   * Set item JSON
+   * - Convert data into JSON string
+   * - Save data and key within storage
    */
-  getKeys: async () => {
+  setItem: async <T extends string | number | boolean>(key: string, data: T) => {
     try {
-      const keys = Storage.global.getAllKeys();
-      return keys;
+      Storage.global.set(key, data);
     } catch (error) {
-      console.error(`[Storage] getKeys: failed to get all keys ${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
-      Trackers.trackDebugEvent('Storage', 'getKeys ERROR', (error as Error | null)?.message || '');
-      return null;
+      console.error(
+        `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+      Trackers.trackDebugEvent('Storage', 'setItem ERROR', (error as Error | null)?.message || '');
     }
   },
 
+  //
+  //
+  //
+  //
+  // === Legacy zone ===
+  //
+  //
+  //
+  //
   /**
-   * Migrate item JSON
-   * - Get notifications filter setting to migrate (via its current key)
-   * - Return setting and remove it from storage
+   * Set item JSON
+   * - Convert data into JSON string
+   * - Save data and key within storage
    */
-  migrateItemJson: async <ItemType>(oldKey: string): Promise<ItemType | undefined> => {
-    const data: ItemType | undefined = (await OldStorageFunctions.getItemJson(oldKey)) ?? undefined;
-    if (data) {
-      await OldStorageFunctions.removeItem(oldKey);
-      return data;
-    } else return undefined;
+  setItemJson: async <T>(key: string, data: T) => {
+    try {
+      Storage.global.set(key, JSON.stringify(data));
+    } catch (error) {
+      console.error(
+        `[Storage] setItemJson: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+      Trackers.trackDebugEvent('Storage', 'setItemJson ERROR', (error as Error | null)?.message || '');
+    }
   },
 };

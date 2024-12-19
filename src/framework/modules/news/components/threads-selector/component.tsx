@@ -1,11 +1,11 @@
 import * as React from 'react';
 
+import styles from './styles';
+import { ThreadsSelectorProps } from './types';
+
 import HorizontalList from '~/framework/components/list/horizontal';
 import ThreadItem, { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
 import { NewsThreadItem } from '~/framework/modules/news/model';
-
-import styles from './styles';
-import { ThreadsSelectorProps } from './types';
 
 export default function ThreadsSelector(props: ThreadsSelectorProps) {
   const [selectedId, setSelectedId] = React.useState(null);

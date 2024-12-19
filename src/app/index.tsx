@@ -1,29 +1,30 @@
-/* eslint-disable react/jsx-max-depth */
+import * as React from 'react';
+import { AppState, AppStateStatus, Platform } from 'react-native';
+
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
-import * as React from 'react';
-import { AppState, AppStateStatus, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
-import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
+
+import { I18n } from './i18n';
+import { connectWithStore, IStoreProp, Reducers } from './store';
 
 import AppModules from '~/app/modules';
 import { UI_STYLES } from '~/framework/components/constants';
-import Navigation from '~/framework/navigation/RootNavigator';
 import { reducer as navigationReducer } from '~/framework/navigation/redux';
+import Navigation from '~/framework/navigation/RootNavigator';
 import appConf from '~/framework/util/appConf';
 import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
+import { AppModules as AllModulesBackup2 } from '~/framework/util/oauth2';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { ZendeskProvider } from '~/framework/util/zendesk';
 import { AllModulesBackup } from '~/infra/oauth';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
-
-import { I18n } from './i18n';
-import { IStoreProp, Reducers, connectWithStore } from './store';
 
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
@@ -120,6 +121,7 @@ function App(props: AppProps) {
 
 // Hack to generate scopes without circular deps. ToDo: fix it !
 AllModulesBackup.value = AppModules();
+AllModulesBackup2.value = AppModules();
 
 // Hack : Flatten reducers to prevent misordring of module execution
 Reducers.register('startup', navigationReducer);

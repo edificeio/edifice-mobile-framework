@@ -1,11 +1,23 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import LottieView from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import LottieView from 'lottie-react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import {
+  AuthMFAScreenDispatchProps,
+  AuthMFAScreenPrivateProps,
+  AuthMFAScreenStoreProps,
+  CodeState,
+  MFATestIds,
+  PageTexts,
+  ResendResponse,
+} from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -20,10 +32,10 @@ import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
+  getMFAValidationInfos,
   IEntcoreEmailValidationState,
   IEntcoreMFAValidationState,
   IEntcoreMobileValidationState,
-  getMFAValidationInfos,
   requestEmailVerificationCode,
   requestMobileVerificationCode,
   verifyEmailCode,
@@ -35,16 +47,6 @@ import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import styles from './styles';
-import {
-  AuthMFAScreenDispatchProps,
-  AuthMFAScreenPrivateProps,
-  AuthMFAScreenStoreProps,
-  CodeState,
-  PageTexts,
-  ResendResponse,
-} from './types';
 
 const animationSources = {
   [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
@@ -76,8 +78,26 @@ export const computeNavBar = ({
   };
 };
 
+const feedbackTexts = {
+  mfa: {
+    [CodeState.CODE_CORRECT]: 'auth-mfa-feedback-codecorrect',
+    [CodeState.CODE_EXPIRED]: 'auth-mfa-feedback-codeexpired',
+    [CodeState.CODE_WRONG]: 'auth-mfa-feedback-codewrong',
+  },
+  mfaEmail: {
+    [CodeState.CODE_CORRECT]: 'auth-mfa-email-feedback-codecorrect',
+    [CodeState.CODE_EXPIRED]: 'auth-mfa-email-feedback-codeexpired',
+    [CodeState.CODE_WRONG]: 'auth-mfa-email-feedback-codewrong',
+  },
+  mfaMobile: {
+    [CodeState.CODE_CORRECT]: 'auth-mfa-mobile-feedback-codecorrect',
+    [CodeState.CODE_EXPIRED]: 'auth-mfa-mobile-feedback-codeexpired',
+    [CodeState.CODE_WRONG]: 'auth-mfa-mobile-feedback-codewrong',
+  },
+};
+
 const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
-  const { tryRefreshRequirements, tryUpdateProfile, navigation, route } = props;
+  const { navigation, route, tryRefreshRequirements, tryUpdateProfile } = props;
 
   const platform = props.route.params.platform;
   const modificationType = route.params.modificationType;
@@ -100,10 +120,10 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const [animationSource, setAnimationSource] = useState(animationSources[CodeState.CODE_CORRECT]);
   const animationRef = useRef<LottieView>(null);
 
-  const codeFieldRef = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
+  const codeFieldRef = useBlurOnFulfill({ cellCount: CELL_COUNT, value: code });
   const [codeFieldProps, getCellOnLayoutHandler] = useClearByFocusCell({
-    value: code,
     setValue: setCode,
+    value: code,
   });
 
   const isCodeComplete = code.length === CELL_COUNT;
@@ -118,7 +138,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const texts: PageTexts = isEmailMFA
     ? {
-        feedback: I18n.get(`auth-mfa-email-feedback-${codeState.toLowerCase()}`),
+        feedback: I18n.get(feedbackTexts.mfaEmail[codeState]),
         message: I18n.get('auth-mfa-email-message'),
         messageSent: `${I18n.get('auth-mfa-email-message-sent')} ${email}.`,
         resendToast: I18n.get('auth-mfa-email-toast'),
@@ -126,18 +146,45 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       }
     : isMobileMFA
       ? {
-          feedback: I18n.get(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
+          feedback: I18n.get(feedbackTexts.mfaMobile[codeState]),
           message: I18n.get('auth-mfa-mobile-message'),
           messageSent: `${I18n.get('auth-mfa-mobile-message-sent')} ${mobile}.`,
           resendToast: I18n.get('auth-mfa-mobile-toast'),
           title: I18n.get('auth-mfa-mobile-title'),
         }
       : {
-          feedback: I18n.get(`auth-mfa-feedback-${codeState.toLowerCase()}`),
+          feedback: I18n.get(feedbackTexts.mfa[codeState]),
           message: I18n.get('auth-mfa-message'),
           messageSent: `${I18n.get('auth-mfa-message-sent')} ${mobile}.`,
           resendToast: I18n.get('auth-mfa-toast'),
           title: I18n.get('auth-mfa-title'),
+        };
+
+  const testIds: MFATestIds = isEmailMFA
+    ? {
+        code: 'email-code',
+        codeError: 'email-code-error',
+        codeIssues: 'email-code-issues',
+        resend: 'email-code-send-again',
+        subtitle: 'email-code-subtitle',
+        title: 'email-code-title',
+      }
+    : isMobileMFA
+      ? {
+          code: 'phone-code',
+          codeError: 'phone-code-error',
+          codeIssues: 'phone-code-issues',
+          resend: 'phone-code-send-again',
+          subtitle: 'phone-code-subtitle',
+          title: 'phone-code-title',
+        }
+      : {
+          code: '',
+          codeError: '',
+          codeIssues: '',
+          resend: '',
+          subtitle: '',
+          title: '',
         };
 
   const setResendTimer = () => {
@@ -228,7 +275,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const redirectMFA = useCallback(() => {
     if (isCodeCorrect) {
-      const params = { navBarTitle: route.params.navBarTitle, modificationType, platform };
+      const params = { modificationType, navBarTitle: route.params.navBarTitle, platform };
       navigation.replace(mfaRedirectionRoute!, params);
     }
   }, [isCodeCorrect, modificationType, navigation, platform, route.params.navBarTitle, mfaRedirectionRoute]);
@@ -292,10 +339,14 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
               />
             )}
           </View>
-          <HeadingSText style={styles.title}>{texts.title}</HeadingSText>
-          <SmallText style={styles.contentSent}>{texts.messageSent}</SmallText>
-          <SmallText style={styles.content}>{texts.message}</SmallText>
-          <View pointerEvents="box-none" style={styles.codeFieldContainer}>
+          <HeadingSText style={styles.title} testID={testIds.title}>
+            {texts.title}
+          </HeadingSText>
+          <View testID={testIds.subtitle}>
+            <SmallText style={styles.contentSent}>{texts.messageSent}</SmallText>
+            <SmallText style={styles.content}>{texts.message}</SmallText>
+          </View>
+          <View pointerEvents="box-none" style={styles.codeFieldContainer} testID={testIds.code}>
             <CodeField
               {...codeFieldProps}
               ref={codeFieldRef}
@@ -303,7 +354,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
               cellCount={CELL_COUNT}
               keyboardType="number-pad"
               textContentType="oneTimeCode"
-              renderCell={({ index, symbol, isFocused }) => (
+              renderCell={({ index, isFocused, symbol }) => (
                 <HeadingLText
                   key={index}
                   style={[
@@ -326,7 +377,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
             />
             {/* Note: the CodeField's "editable" prop is not sufficient to prevent the user from typing, so an invisible absolute View is used instead.*/}
             {isCodeComplete ? (
-              <TouchableWithoutFeedback disabled={isVerifyingActive || isCodeCorrect || isCodeStateUnknown} onPress={onResetCode}>
+              <TouchableWithoutFeedback disabled={isVerifyingActive || isCodeCorrect} onPress={onResetCode}>
                 <View style={styles.codeFieldWrapper} />
               </TouchableWithoutFeedback>
             ) : null}
@@ -343,17 +394,22 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
                   width={33}
                   height={33}
                 />
-                <BodyText style={[styles.codeStateText, { color: codeStateColor }]}>{texts.feedback}</BodyText>
+                <BodyText style={[styles.codeStateText, { color: codeStateColor }]} testID={testIds.codeError}>
+                  {texts.feedback}
+                </BodyText>
               </>
             ) : null}
           </View>
         </View>
         <View style={styles.resendContainer}>
-          <SmallText style={styles.issueText}>{I18n.get('auth-mfa-issue')}</SmallText>
+          <SmallText style={styles.issueText} testID={testIds.codeIssues}>
+            {I18n.get('auth-mfa-issue')}
+          </SmallText>
           <TouchableOpacity
             style={[styles.resendButton, { opacity: resendOpacity }]}
             disabled={isResendInactive}
-            onPress={onResendCode}>
+            onPress={onResendCode}
+            testID={testIds.resend}>
             <Picture
               type="NamedSvg"
               name="pictos-redo"

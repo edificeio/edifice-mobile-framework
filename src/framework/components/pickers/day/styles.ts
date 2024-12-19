@@ -13,10 +13,10 @@ export default StyleSheet.create({
     marginTop: UI_SIZES.spacing.big,
   },
   week: {
-    flex: 1,
-    textAlign: 'center',
     alignSelf: 'center',
+    flex: 1,
     marginHorizontal: UI_SIZES.spacing.small,
+    textAlign: 'center',
   },
   weekContainer: {
     flexDirection: 'row',

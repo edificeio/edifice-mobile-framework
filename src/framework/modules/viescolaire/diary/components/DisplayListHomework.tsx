@@ -1,6 +1,7 @@
-import moment from 'moment';
 import * as React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
+
+import moment from 'moment';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -13,35 +14,35 @@ import { PageContainer } from '~/ui/ContainerContent';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const styles = StyleSheet.create({
-  mainView: {
+  LeftColoredItemInfoBar: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  course: {
+    textTransform: 'uppercase',
+    marginLeft: UI_SIZES.spacing.minor,
+  },
+  homeworkPart: {
     flex: 1,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
+  homeworkType: {
+    marginTop: UI_SIZES.spacing.medium,
   },
   homeworksInfoBar: {
     justifyContent: 'flex-end',
     flexDirection: 'row',
   },
-  LeftColoredItemInfoBar: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  homeworkPart: {
-    flex: 1,
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
   homeworksView: {
     marginBottom: UI_SIZES.spacing.large,
   },
-  homeworkType: {
-    marginTop: UI_SIZES.spacing.medium,
+  mainView: {
+    flex: 1,
   },
   subtitle: {
     color: theme.palette.grey.stone,
     marginBottom: UI_SIZES.spacing.medium,
-  },
-  course: {
-    textTransform: 'uppercase',
-    marginLeft: UI_SIZES.spacing.minor,
   },
 });
 
@@ -52,7 +53,7 @@ type IDisplayListHomeworkProps = {
 
 export default class DisplayListHomework extends React.PureComponent<IDisplayListHomeworkProps> {
   public render() {
-    const { subject, homeworkList } = this.props;
+    const { homeworkList, subject } = this.props;
     const htmlOpts = {
       selectable: true,
     };

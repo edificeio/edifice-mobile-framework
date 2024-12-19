@@ -11,7 +11,7 @@ export const resourceHasRight = (resource: IResource, key: string, session: Auth
   let hasRight = false;
   resource.shared?.forEach(sharedEntry => {
     if (hasRight) return;
-    const { userId, groupId, ...rights } = sharedEntry;
+    const { groupId, userId, ...rights } = sharedEntry;
     if (userId === session.user.id || (groupId && session.user.groups && session.user.groups?.includes(groupId))) {
       for (const k of Object.keys(rights)) {
         if (k === key && rights[k] === true) hasRight = true;

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ColorValue, View, ViewStyle } from 'react-native';
 
+import { Badge } from './badge';
+
 import { Status } from '~/ui/avatars/Avatar';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
-import { Badge } from './badge';
 
 export enum BadgePosition {
   top,
@@ -26,12 +26,12 @@ export interface BadgeAvatarProps {
   size?: number;
 }
 
-export const BadgeAvatar = ({ userId, badgeContent, badgeColor, badgePosition, customStyle, status, size }: BadgeAvatarProps) => {
+export const BadgeAvatar = ({ badgeColor, badgeContent, badgePosition, customStyle, size, status, userId }: BadgeAvatarProps) => {
   const position =
     badgePosition === BadgePosition.top
       ? {
-          top: 0,
           right: 0,
+          top: 0,
         }
       : badgePosition === BadgePosition.bottom
         ? {
@@ -39,8 +39,8 @@ export const BadgeAvatar = ({ userId, badgeContent, badgeColor, badgePosition, c
             right: 0,
           }
         : {
-            top: 0,
             right: 0,
+            top: 0,
           };
 
   return (

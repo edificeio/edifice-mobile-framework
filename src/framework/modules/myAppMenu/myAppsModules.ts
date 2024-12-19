@@ -1,7 +1,7 @@
 /**
  * A specific moduleMap that exists inside myAppMenu
  */
-import { ModuleRegister, UnknownNavigableModule, setGlobalRegister } from '~/framework/util/moduleTool';
+import { ModuleRegister, setGlobalRegister, UnknownNavigableModule } from '~/framework/util/moduleTool';
 
 // myApps module register =========================================================================
 

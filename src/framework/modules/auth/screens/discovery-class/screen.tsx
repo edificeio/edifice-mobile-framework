@@ -1,7 +1,10 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Trans } from 'react-i18next';
 import { View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Trans } from 'react-i18next';
+
+import styles from './styles';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -13,8 +16,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
-
-import styles from './styles';
 
 export const computeNavBar = ({
   navigation,

@@ -1,18 +1,22 @@
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-
 import type { TimelineState } from './reducer';
 
-export default new NavigableModuleConfig<'timeline', TimelineState>({
-  name: 'timeline',
-  entcoreScope: ['timeline', 'userbook'],
-  matchEntcoreApp: app => app.prefix === '/timeline',
-  hasRight: () => true, // The timeline is always displayed
-  storageName: 'timeline',
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-  displayI18n: 'timeline-tabname',
+export default new NavigableModuleConfig<'timeline', TimelineState>({
   displayAs: 'tabModule',
+  displayI18n: 'timeline-tabname',
   displayOrder: 0,
-  displayPicture: { type: 'Icon', name: 'nouveautes-off' },
-  displayPictureFocus: { type: 'Icon', name: 'nouveautes-on' },
+  displayPicture: { name: 'nouveautes-off', type: 'Icon' },
+  displayPictureFocus: { name: 'nouveautes-on', type: 'Icon' },
+
+  entcoreScope: ['timeline', 'userbook'],
+
+  hasRight: () => true,
+
+  matchEntcoreApp: app => app.prefix === '/timeline',
+
+  name: 'timeline',
+  // The timeline is always displayed
+  storageName: 'timeline',
   testID: 'tabbar-news',
 });

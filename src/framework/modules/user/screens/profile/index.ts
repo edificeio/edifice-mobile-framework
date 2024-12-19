@@ -8,10 +8,10 @@ export default UserProfileScreen;
 export const hobbiesItems = ['animals', 'books', 'cinema', 'music', 'places', 'sport'];
 
 export const renderEmoji = {
-  sport: '🏆',
-  cinema: '🎬',
   animals: '🐼',
+  books: '📚',
+  cinema: '🎬',
   music: '🎼',
   places: '🌏',
-  books: '📚',
+  sport: '🏆',
 };

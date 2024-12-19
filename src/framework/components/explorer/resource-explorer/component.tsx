@@ -19,11 +19,11 @@
  *      - base                           : Another component displayed below the image/background. Typically the icon of the entcore application.
  *      - style                          : ViewStyle applied. Replaces entirely the default one. Use this if your style must be on a parent component to erase the default behavior.
  */
-import styled from '@emotion/native';
 import * as React from 'react';
 import { View } from 'react-native';
 
-import GridList from '~/framework/components/GridList';
+import styled from '@emotion/native';
+
 import { UI_SIZES } from '~/framework/components/constants';
 import styles from '~/framework/components/explorer/resource-explorer/styles';
 import {
@@ -35,6 +35,7 @@ import {
   ResourceExplorerItemWithImage,
   ResourceExplorerProps,
 } from '~/framework/components/explorer/resource-explorer/types';
+import GridList from '~/framework/components/GridList';
 import { Icon } from '~/framework/components/icon';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { displayPastDate } from '~/framework/util/date';
@@ -153,7 +154,7 @@ const renderItem = <FolderType extends object, ResourceType extends object>(
 };
 
 export default <FolderType extends object, ResourceType extends object>(props: ResourceExplorerProps<FolderType, ResourceType>) => {
-  const { data, folders, resources, keyExtractor, contentContainerStyle, ...otherProps } = props;
+  const { contentContainerStyle, data, folders, keyExtractor, resources, ...otherProps } = props;
   const resourceExplorerData: (
     | (ResourceExplorerFolderItem & FolderType)
     | (ResourceExplorerItemWithImage & ResourceType)

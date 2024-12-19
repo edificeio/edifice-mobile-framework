@@ -11,9 +11,9 @@ export default StyleSheet.create({
     marginBottom: UI_SIZES.spacing.small,
   },
   listContentContainer: {
-    rowGap: UI_SIZES.spacing.small,
     padding: UI_SIZES.spacing.medium,
     paddingBottom: UI_SIZES.spacing.medium + UI_SIZES.screen.bottomInset,
+    rowGap: UI_SIZES.spacing.small,
   },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,

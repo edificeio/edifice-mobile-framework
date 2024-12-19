@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 
 export interface CheckboxProps {
@@ -10,21 +10,22 @@ export interface CheckboxProps {
   checked: boolean;
   partialyChecked?: boolean;
   customContainerStyle?: ViewStyle;
+  testID?: string;
 }
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'center',
+    borderRadius: UI_SIZES.radius.small,
+    borderWidth: getScaleWidth(UI_SIZES.border.small),
+    height: getScaleWidth(UI_SIZES.dimensions.height.mediumPlus),
+    justifyContent: 'center',
     margin: UI_SIZES.spacing._LEGACY_tiny,
     width: getScaleWidth(UI_SIZES.dimensions.width.mediumPlus),
-    height: getScaleWidth(UI_SIZES.dimensions.height.mediumPlus),
-    borderRadius: UI_SIZES.radius.small,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: getScaleWidth(UI_SIZES.border.small),
   },
 });
 
-export const Checkbox = ({ checked, partialyChecked, onPress, customContainerStyle }: CheckboxProps) => {
+export const Checkbox = ({ checked, customContainerStyle, onPress, partialyChecked, testID }: CheckboxProps) => {
   const checkedContainerStyle = {
     backgroundColor: checked ? theme.palette.primary.regular : theme.ui.background.card,
     borderColor: checked || partialyChecked ? theme.palette.primary.regular : theme.palette.grey.graphite,
@@ -49,11 +50,10 @@ export const Checkbox = ({ checked, partialyChecked, onPress, customContainerSty
           fill={theme.ui.text.inverse}
         />
       );
-    return;
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, checkedContainerStyle, customContainerStyle]}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, checkedContainerStyle, customContainerStyle]} testID={testID}>
       {renderStatus()}
     </TouchableOpacity>
   );

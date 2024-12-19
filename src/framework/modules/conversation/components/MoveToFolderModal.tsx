@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import { I18n } from '~/app/i18n';
@@ -36,17 +37,17 @@ export default class MoveToFolderModal extends React.Component<
   constructor(props) {
     super(props);
     this.state = {
-      openDropdown: false,
       dropdownWidth: undefined,
+      openDropdown: false,
     };
   }
 
   public render() {
-    const { show, folders, closeModal, confirm, currentFolder, selectFolder, selectedFolder } = this.props;
+    const { closeModal, confirm, currentFolder, folders, selectedFolder, selectFolder, show } = this.props;
     const { openDropdown } = this.state;
     const isCurrentFolderInbox = currentFolder === 'inbox';
     const isCurrentFolderTrash = currentFolder === 'trash';
-    const modalTitle = `conversation-movetofolder-${isCurrentFolderTrash ? 'restore' : 'move'}to`;
+    const modalTitle = isCurrentFolderTrash ? 'conversation-movetofolder-restoreto' : 'conversation-movetofolder-moveto';
     const foldersWithoutCurrent = folders && folders.filter(folder => folder.folderName !== currentFolder);
     const options: any = [];
     if (!isCurrentFolderInbox) options.push({ label: I18n.get('conversation-movetofolder-inbox'), value: 'inbox' });
@@ -74,10 +75,10 @@ export default class MoveToFolderModal extends React.Component<
       modalBoxContainer: { alignItems: 'stretch' },
       modalContent: {
         height: 250,
+        justifyContent: 'space-between',
         padding: UI_SIZES.spacing.big,
         paddingTop: undefined,
         width: undefined,
-        justifyContent: 'space-between',
       },
       text: { textAlign: 'center' },
     });
@@ -125,7 +126,7 @@ export default class MoveToFolderModal extends React.Component<
                 }}
               />
               <PrimaryButton
-                text={I18n.get(`conversation-movetofolder-${isCurrentFolderTrash ? 'restore' : 'move'}`)}
+                text={I18n.get(isCurrentFolderTrash ? 'conversation-movetofolder-restore' : 'conversation-movetofolder-move')}
                 style={{ marginLeft: UI_SIZES.spacing.medium }}
                 disabled={isMoveImpossible || !selectedFolder}
                 action={() => {

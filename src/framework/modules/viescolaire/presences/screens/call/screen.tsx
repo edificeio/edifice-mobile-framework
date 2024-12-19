@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { FlatList, ScrollView, ScrollViewProps, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -29,9 +33,6 @@ import { presencesService } from '~/framework/modules/viescolaire/presences/serv
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
-
-import styles from './styles';
-import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -237,9 +238,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     props.call !== undefined && props.call.stateId !== CallState.DONE && props.call.students.some(student => student.events.length);
 
   usePreventBack({
-    title: I18n.get('presences-call-leavealert-title'),
-    text: I18n.get('presences-call-leavealert-text'),
     showAlert: isCallLackingValidation && !isValidating,
+    text: I18n.get('presences-call-leavealert-text'),
+    title: I18n.get('presences-call-leavealert-title'),
   });
 
   return (

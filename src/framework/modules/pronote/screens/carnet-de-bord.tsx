@@ -1,6 +1,7 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ScrollView, ScrollViewProps, StyleSheet, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -8,7 +9,6 @@ import type { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import UserList, { IUserListItem } from '~/framework/components/UserList';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -16,18 +16,19 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import type { PictureProps } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
+import UserList, { IUserListItem } from '~/framework/components/UserList';
 import { ContentLoader } from '~/framework/hooks/loader';
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadCarnetDeBordAction } from '~/framework/modules/pronote/actions/carnet-de-bord';
 import {
   CarnetDeBordSection,
-  ICarnetDeBord,
-  PronoteCdbInitError,
   formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   getSummaryItem,
+  ICarnetDeBord,
+  PronoteCdbInitError,
 } from '~/framework/modules/pronote/model/carnet-de-bord';
 import moduleConfig from '~/framework/modules/pronote/module-config';
 import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
@@ -64,36 +65,36 @@ export const computeNavBar = ({
 });
 
 const styles = StyleSheet.create({
-  textRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-  },
-  emptyRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'baseline',
-  },
-  textLabel: {
-    flex: 1,
-    marginRight: UI_SIZES.spacing.small,
+  button: {
+    marginBottom: UI_SIZES.screen.bottomInset
+      ? UI_SIZES.spacing.large + UI_SIZES.spacing.big - UI_SIZES.screen.bottomInset
+      : UI_SIZES.spacing.large + UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.large,
   },
   card: {
     marginHorizontal: UI_SIZES.spacing.medium,
     marginTop: UI_SIZES.spacing.medium,
   },
-  button: {
-    marginTop: UI_SIZES.spacing.large,
-    marginBottom: UI_SIZES.screen.bottomInset
-      ? UI_SIZES.spacing.large + UI_SIZES.spacing.big - UI_SIZES.screen.bottomInset
-      : UI_SIZES.spacing.large + UI_SIZES.spacing.medium,
+  emptyRow: {
+    alignItems: 'baseline',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  textLabel: {
+    flex: 1,
+    marginRight: UI_SIZES.spacing.small,
+  },
+  textRow: {
+    alignItems: 'baseline',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
-function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, structures }: CarnetDeBordScreenProps) {
+function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, structures }: CarnetDeBordScreenProps) {
   // UserList info & selected user
   const getUsers = React.useCallback(
-    (_data: typeof data) => _data.map(cdb => ({ id: cdb.idPronote ?? cdb.id, avatarId: cdb.id, name: cdb.firstName })),
+    (_data: typeof data) => _data.map(cdb => ({ avatarId: cdb.id, id: cdb.idPronote ?? cdb.id, name: cdb.firstName })),
     [],
   );
   const users = React.useMemo(() => getUsers(data), [getUsers, data]);
@@ -174,7 +175,7 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
 CarnetDeBordScreen.getRenderContent =
   (
     data: ICarnetDeBord | undefined,
-    users: Readonly<IUserListItem[]>,
+    users: readonly IUserListItem[],
     selectedId: string | undefined,
     setSelected: (id: string) => void,
     isUserListShown: boolean,
@@ -204,9 +205,9 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-cahierdetextes-title')}
               picture={{
-                type: 'NamedSvg',
-                name: 'ui-calendar',
                 cached: true,
+                name: 'ui-calendar',
+                type: 'NamedSvg',
               }}
               {...(() => {
                 const taf = getSummaryItem(
@@ -232,9 +233,9 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-transcript-title')}
               picture={{
-                type: 'NamedSvg',
-                name: 'ui-success',
                 cached: true,
+                name: 'ui-success',
+                type: 'NamedSvg',
               }}
               {...(() => {
                 const note = getSummaryItem(data.PageReleveDeNotes?.DevoirsPast, data.PageReleveDeNotes?.DevoirsFuture);
@@ -255,9 +256,9 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-skills-title')}
               picture={{
-                type: 'NamedSvg',
-                name: 'ui-skills',
                 cached: true,
+                name: 'ui-skills',
+                type: 'NamedSvg',
               }}
               {...(() => {
                 const comp = getSummaryItem(data.PageCompetences?.CompetencesPast, data.PageCompetences?.CompetencesFuture);
@@ -276,9 +277,9 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-viescolaire-title')}
               picture={{
-                type: 'NamedSvg',
-                name: 'ui-flag',
                 cached: true,
+                name: 'ui-flag',
+                type: 'NamedSvg',
               }}
               {...(() => {
                 const vsco = getSummaryItem(data.PageVieScolaire?.VieScolairePast, data.PageVieScolaire?.VieScolaireFuture);
@@ -294,12 +295,12 @@ CarnetDeBordScreen.getRenderContent =
                               : displayDate(vsco.DateDebut, 'short') +
                                 I18n.get('common-space') +
                                 I18n.get('pronote-viescolaire-datefromto', {
-                                  start: vsco.DateDebut.format('LT'),
                                   end: vsco.DateFin.format('LT'),
+                                  start: vsco.DateDebut.format('LT'),
                                 })
                             : I18n.get('pronote-viescolaire-datefromto', {
-                                start: displayDate(vsco.DateDebut, 'short'),
                                 end: displayDate(vsco.DateFin, 'short'),
+                                start: displayDate(vsco.DateDebut, 'short'),
                               })
                           : I18n.get('pronote-noinfo')
                         : vsco.Date
@@ -348,7 +349,7 @@ CarnetDeBordScreen.SectionContent = function (props: {
   // React ESLint doesn't allow hooks in components that are defined with `CarnetDeBord.SectionContent = ...`
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const goToDetails = React.useCallback(() => {
-    props.navigation.navigate(pronoteRouteNames.carnetDeBordDetails, { type: props.type, data: props.data });
+    props.navigation.navigate(pronoteRouteNames.carnetDeBordDetails, { data: props.data, type: props.type });
   }, [props.navigation, props.type, props.data]);
   const isNotEmpty = props.textLabel && props.valueLabel;
   const CC = isNotEmpty ? TouchableOverviewCard : OverviewCard;

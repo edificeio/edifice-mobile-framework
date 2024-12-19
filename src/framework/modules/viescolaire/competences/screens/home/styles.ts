@@ -12,20 +12,6 @@ export default StyleSheet.create({
   colorsText: {
     marginRight: UI_SIZES.spacing.minor,
   },
-  listContentContainer: {
-    padding: pageGutterSize,
-    paddingTop: 0,
-    rowGap: pageGutterSize,
-  },
-  headerContainer: {
-    zIndex: 5,
-    margin: UI_SIZES.spacing.medium,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   dropdown: {
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
@@ -41,8 +27,22 @@ export default StyleSheet.create({
     zIndex: 100,
     marginVertical: UI_SIZES.spacing.small,
   },
-  switchContainer: {
-    flexDirection: 'row',
+  headerContainer: {
+    margin: UI_SIZES.spacing.medium,
+    zIndex: 5,
+  },
+  headerRow: {
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  listContentContainer: {
+    padding: pageGutterSize,
+    paddingTop: 0,
+    rowGap: pageGutterSize,
+  },
+  switchContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });

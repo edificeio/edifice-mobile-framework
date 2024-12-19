@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { ITimelineNotificationProps } from './types';
+
 import { UI_STYLES } from '~/framework/components/constants';
 import { SmallItalicText, SmallText } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timeline/components/notification-top-info';
@@ -10,9 +13,6 @@ import { renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { Image } from '~/framework/util/media';
 import { getAsEnrichedNotification, getAsResourceUriNotification } from '~/framework/util/notifications';
 import { ArticleContainer } from '~/ui/ContainerContent';
-
-import styles from './styles';
-import { ITimelineNotificationProps } from './types';
 
 export function TimelineNotification(props: ITimelineNotificationProps) {
   const { notification, notificationAction } = props;

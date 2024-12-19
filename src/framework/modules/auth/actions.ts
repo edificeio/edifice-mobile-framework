@@ -1,30 +1,9 @@
-import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
-import { openSplashadsScreen } from '~/framework/components/splashads';
 import {
-  ERASE_ALL_ACCOUNTS,
-  IAuthState,
-  actions,
-  assertSession,
-  getState as getAuthState,
-  getSession,
-} from '~/framework/modules/auth/reducer';
-import { audienceService } from '~/framework/modules/core/audience/service';
-import { AudienceValidReactionTypes } from '~/framework/modules/core/audience/types';
-import appConf, { Platform } from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
-import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
-import { Storage } from '~/framework/util/storage';
-import { Trackers } from '~/framework/util/tracker';
-import { clearRequestsCacheLegacy } from '~/infra/cache';
-import { OAuth2RessourceOwnerPasswordClient, destroyOAuth2Legacy } from '~/infra/oauth';
-
-import {
+  accountIsActive,
   IActivationPayload as ActivationPayload,
   AuthCredentials,
   AuthFederationCredentials,
@@ -34,23 +13,19 @@ import {
   AuthSavedAccount,
   AuthSavedLoggedInAccount,
   AuthSavedLoggedInAccountWithCredentials,
+  createActivationError,
+  createChangePasswordError,
   ForgotMode,
+  getSerializedLoggedInAccountInfo,
   IActivationError,
   IChangePasswordError,
   IChangePasswordPayload,
   IForgotPayload,
   InitialAuthenticationMethod,
   PlatformAuthContext,
-  accountIsActive,
-  createActivationError,
-  createChangePasswordError,
-  getSerializedLoggedInAccountInfo,
 } from './model';
 import * as authService from './service';
 import {
-  IUserInfoBackend,
-  UserPersonDataBackend,
-  UserPrivateData,
   createSession,
   ensureUserValidity,
   fetchRawUserRequirements,
@@ -61,21 +36,46 @@ import {
   formatSession,
   getAuthContext,
   getRequirementScenario,
-  manageFirebaseToken,
+  IUserInfoBackend,
   revalidateTerms,
+  UserPersonDataBackend,
+  UserPrivateData,
 } from './service';
 import {
   readSavedAccounts,
   readSavedStartup,
   readShowOnbording,
-  readSplashadsData,
   writeCreateAccount,
   writeDeleteAccount,
   writeLogout,
   writeRemoveToken,
   writeReplaceAccount,
-  writeSplashads,
 } from './storage';
+
+import firebaseService from '~/framework/util/notifications/service';
+
+import { I18n } from '~/app/i18n';
+import { IGlobalState } from '~/app/store';
+import { audienceService } from '~/framework/modules/audience/service';
+import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
+import {
+  actions,
+  assertSession,
+  ERASE_ALL_ACCOUNTS,
+  getState as getAuthState,
+  getSession,
+  IAuthState,
+} from '~/framework/modules/auth/reducer';
+import { checkAndShowSplashAds } from '~/framework/modules/splashads';
+import { updateShakeListenerAction } from '~/framework/modules/user/actions';
+import appConf, { Platform } from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
+import { OAuth2Error, OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
+import { Storage } from '~/framework/util/storage';
+import { Trackers } from '~/framework/util/tracker';
+import { clearRequestsCacheLegacy } from '~/infra/cache';
+import { destroyOAuth2Legacy, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 
@@ -161,7 +161,7 @@ async function getRequirementAdditionalInfos(requirement: AuthRequirement, platf
     const emailValidationInfos = await authService.getEmailValidationInfos(platform.url);
     defaultEmail = emailValidationInfos?.email;
   }
-  return { defaultMobile, defaultEmail };
+  return { defaultEmail, defaultMobile };
 }
 
 const withMeasure = <Fn extends (...args: any[]) => any>(fn: Fn, tag?: string) => {
@@ -214,8 +214,8 @@ const raceTimeoutAction = <ReturnType>(fn: ThunkAction<ReturnType, any, any, any
       loginCanceled = true;
       args[0](
         actions.authError({
-          key,
           info: e as Error,
+          key,
         }),
       );
       console.error('[Auth] Login Timeout exceeded', e);
@@ -229,6 +229,62 @@ const raceTimeoutAction = <ReturnType>(fn: ThunkAction<ReturnType, any, any, any
  */
 export const loginSteps = {
   /**
+   * Check password against activation and password renew codes.
+   */
+  checkActivationAndRenew: withErrorTracking(
+    withMeasure(async (platform: Platform, credentials: AuthCredentials) => {
+      try {
+        const response = await Promise.any([
+          authService.ensureCredentialsMatchActivationCode(platform, credentials),
+          authService.ensureCredentialsMatchPwdRenewCode(platform, credentials),
+        ]);
+        return response;
+      } catch (e) {
+        if (e instanceof AggregateError) {
+          const ee = e.errors.find(
+            eee => Error.getDeepErrorType<typeof Error.LoginError>(eee as Error) !== OAuth2ErrorCode.CREDENTIALS_MISMATCH,
+          );
+          if (ee) throw ee;
+          else throw e.errors.at(0);
+        } else throw e;
+      }
+    }, 'checkActivationAndRenew'),
+    'Auth',
+    'LOGIN ERROR',
+    'loginSteps.checkActivationAndRenew',
+  ),
+
+  /**
+   * Saves the new account information & registers tokens (fcm) into the backend
+   * @param platform
+   */
+  finalizeSession: withErrorTracking(
+    withMeasure(
+      async (
+        addTimestamp: number,
+        platform: Platform,
+        loginUsed: string | undefined,
+        userInfo: IUserInfoBackend,
+        publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
+        method: InitialAuthenticationMethod | undefined,
+      ) => {
+        const { userData, userPublicInfo } = publicInfo;
+        const sessionInfo = formatSession(addTimestamp, platform, loginUsed, userInfo, method, userData, userPublicInfo);
+        await Promise.all([forgetPlatform(), forgetPreviousSession()]);
+        await Storage.sessionInit(sessionInfo);
+        Trackers.setUserId(sessionInfo.user.id);
+        Trackers.setCustomDimension(1, 'Profile', sessionInfo.user.type.toString());
+        Trackers.setCustomDimension(3, 'Project', new URL(sessionInfo.platform.url).hostname);
+        return sessionInfo;
+      },
+      'finalizeSession',
+    ),
+    'Auth',
+    'LOGIN ERROR',
+    'loginSteps.confirmLogin',
+  ),
+
+  /**
    * Get a new oAuth2 token set with given credentials
    * If bad credentials provided, check if this not the activation code / reset code
    */
@@ -240,18 +296,7 @@ export const loginSteps = {
     'LOGIN ERROR',
     'loginSteps.getToken',
   ),
-  /**
-   * Loads the saved token oAuth2 from the storage.
-   * @param platform
-   */
-  loadToken: withErrorTracking(
-    withMeasure(async (account: AuthSavedLoggedInAccount) => {
-      authService.restoreSession(appConf.assertPlatformOfName(account.platform), account.tokens);
-    }, 'loadToken'),
-    'Auth',
-    'LOGIN ERROR',
-    'loginSteps.loadToken',
-  ),
+
   /**
    * Get one of the requirements needed by the user to access the app
    * @param platform
@@ -265,6 +310,7 @@ export const loginSteps = {
     'LOGIN ERROR',
     'loginSteps.getRequirements',
   ),
+
   /**
    * Retrives the user information from the backend
    * @param platform
@@ -288,59 +334,18 @@ export const loginSteps = {
     'LOGIN ERROR',
     'loginSteps.getUserData',
   ),
+
   /**
-   * Saves the new account information & registers tokens (fcm) into the backend
+   * Loads the saved token oAuth2 from the storage.
    * @param platform
    */
-  finalizeSession: withErrorTracking(
-    withMeasure(
-      async (
-        addTimestamp: number,
-        platform: Platform,
-        loginUsed: string | undefined,
-        userInfo: IUserInfoBackend,
-        publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
-        method: InitialAuthenticationMethod | undefined,
-      ) => {
-        await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
-        const { userData, userPublicInfo } = publicInfo;
-        const sessionInfo = formatSession(addTimestamp, platform, loginUsed, userInfo, method, userData, userPublicInfo);
-        await Storage.sessionInit(sessionInfo);
-        Trackers.setUserId(sessionInfo.user.id);
-        Trackers.setCustomDimension(1, 'Profile', sessionInfo.user.type.toString());
-        Trackers.setCustomDimension(3, 'Project', new URL(sessionInfo.platform.url).hostname);
-        return sessionInfo;
-      },
-      'finalizeSession',
-    ),
+  loadToken: withErrorTracking(
+    withMeasure(async (account: AuthSavedLoggedInAccount) => {
+      authService.restoreSession(appConf.assertPlatformOfName(account.platform), account.tokens);
+    }, 'loadToken'),
     'Auth',
     'LOGIN ERROR',
-    'loginSteps.confirmLogin',
-  ),
-  /**
-   * Check password against activation and password renew codes.
-   */
-  checkActivationAndRenew: withErrorTracking(
-    withMeasure(async (platform: Platform, credentials: AuthCredentials) => {
-      try {
-        const response = await Promise.any([
-          authService.ensureCredentialsMatchActivationCode(platform, credentials),
-          authService.ensureCredentialsMatchPwdRenewCode(platform, credentials),
-        ]);
-        return response;
-      } catch (e) {
-        if (e instanceof AggregateError) {
-          const ee = e.errors.find(
-            eee => Error.getDeepErrorType<typeof Error.LoginError>(eee as Error) !== Error.OAuth2ErrorType.CREDENTIALS_MISMATCH,
-          );
-          if (ee) throw ee;
-          else throw e.errors.at(0);
-        } else throw e;
-      }
-    }, 'checkActivationAndRenew'),
-    'Auth',
-    'LOGIN ERROR',
-    'loginSteps.checkActivationAndRenew',
+    'loginSteps.loadToken',
   ),
 };
 
@@ -351,7 +356,7 @@ export function deactivateLoggedAccountActionIfApplicable(action?: AnyAction | T
     const account = getSession();
     if (account) {
       // Unregister the device token from the backend
-      await authService.removeFirebaseTokenWithAccount(account);
+      await firebaseService.disablePushNotificationsForAccount(account);
       // Erase requests cache
       await clearRequestsCacheLegacy();
       // flush sessionReducers
@@ -377,73 +382,73 @@ interface AuthLoginFunctions {
 }
 
 const getLoginFunctions = {
-  addFirstAccount: () =>
-    ({
-      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(ERASE_ALL_ACCOUNTS, ...args),
-      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) =>
-        actions.replaceAccountRequirement(ERASE_ALL_ACCOUNTS, ...args),
-      activation: actions.redirectActivation,
-      passwordRenew: actions.redirectPasswordRenew,
-      redirectCancel: actions.redirectCancel,
-      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(ERASE_ALL_ACCOUNTS, ...args),
-      getTimestamp: Date.now,
-    }) as AuthLoginFunctions,
-  replaceAccount: (id: keyof IAuthState['accounts'], timestamp: number) =>
-    ({
-      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
-      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) => actions.replaceAccountRequirement(id, ...args),
-      activation: actions.redirectActivation,
-      passwordRenew: (...[platformName, login, code]: Parameters<typeof actions.redirectPasswordRenew>) =>
-        actions.redirectPasswordRenew(platformName, login, code, id, timestamp),
-      redirectCancel: actions.redirectCancel,
-      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
-      getTimestamp: () => timestamp,
-    }) as AuthLoginFunctions,
   addAnotherAccount: () =>
     ({
-      success:
-        (...args: Parameters<typeof actions.addAccount>) =>
-        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-          await dispatch(deactivateLoggedAccountActionIfApplicable(actions.addAccount(...args)));
-        },
+      activation: actions.addAccountActivation,
+      getTimestamp: Date.now,
+      passwordRenew: actions.addAccountPasswordRenew,
+      redirectCancel: actions.addAccountRedirectCancel,
       requirement:
         (...args: Parameters<typeof actions.addAccountRequirement>) =>
         async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
           await dispatch(deactivateLoggedAccountActionIfApplicable(actions.addAccountRequirement(...args)));
         },
-      activation: actions.addAccountActivation,
-      passwordRenew: actions.addAccountPasswordRenew,
-      redirectCancel: actions.addAccountRedirectCancel,
-      writeStorage: writeCreateAccount,
-      getTimestamp: Date.now,
-    }) as AuthLoginFunctions,
-  restoreAccount: (id: keyof IAuthState['accounts'], timestamp: number) =>
-    ({
-      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
-      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) => actions.replaceAccountRequirement(id, ...args),
-      activation: actions.redirectActivation,
-      passwordRenew: actions.redirectPasswordRenew,
-      redirectCancel: actions.redirectCancel,
-      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
-      getTimestamp: () => timestamp,
-    }) as AuthLoginFunctions,
-  switchAccount: (id: keyof IAuthState['accounts'], timestamp: number) =>
-    ({
       success:
         (...args: Parameters<typeof actions.addAccount>) =>
         async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-          await dispatch(deactivateLoggedAccountActionIfApplicable(actions.replaceAccount(id, ...args)));
+          await dispatch(deactivateLoggedAccountActionIfApplicable(actions.addAccount(...args)));
         },
+      writeStorage: writeCreateAccount,
+    }) as AuthLoginFunctions,
+  addFirstAccount: () =>
+    ({
+      activation: actions.redirectActivation,
+      getTimestamp: Date.now,
+      passwordRenew: actions.redirectPasswordRenew,
+      redirectCancel: actions.redirectCancel,
+      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) =>
+        actions.replaceAccountRequirement(ERASE_ALL_ACCOUNTS, ...args),
+      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(ERASE_ALL_ACCOUNTS, ...args),
+      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(ERASE_ALL_ACCOUNTS, ...args),
+    }) as AuthLoginFunctions,
+  replaceAccount: (id: keyof IAuthState['accounts'], timestamp: number) =>
+    ({
+      activation: actions.redirectActivation,
+      getTimestamp: () => timestamp,
+      passwordRenew: (...[platformName, login, code]: Parameters<typeof actions.redirectPasswordRenew>) =>
+        actions.redirectPasswordRenew(platformName, login, code, id, timestamp),
+      redirectCancel: actions.redirectCancel,
+      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) => actions.replaceAccountRequirement(id, ...args),
+      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
+      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
+    }) as AuthLoginFunctions,
+  restoreAccount: (id: keyof IAuthState['accounts'], timestamp: number) =>
+    ({
+      activation: actions.redirectActivation,
+      getTimestamp: () => timestamp,
+      passwordRenew: actions.redirectPasswordRenew,
+      redirectCancel: actions.redirectCancel,
+      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) => actions.replaceAccountRequirement(id, ...args),
+      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
+      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
+    }) as AuthLoginFunctions,
+  switchAccount: (id: keyof IAuthState['accounts'], timestamp: number) =>
+    ({
+      activation: actions.redirectActivation,
+      getTimestamp: () => timestamp,
+      passwordRenew: actions.redirectPasswordRenew,
+      redirectCancel: actions.redirectCancel,
       requirement:
         (...args: Parameters<typeof actions.addAccountRequirement>) =>
         async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
           await dispatch(deactivateLoggedAccountActionIfApplicable(actions.replaceAccountRequirement(id, ...args)));
         },
-      activation: actions.redirectActivation,
-      passwordRenew: actions.redirectPasswordRenew,
-      redirectCancel: actions.redirectCancel,
+      success:
+        (...args: Parameters<typeof actions.addAccount>) =>
+        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+          await dispatch(deactivateLoggedAccountActionIfApplicable(actions.replaceAccount(id, ...args)));
+        },
       writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
-      getTimestamp: () => timestamp,
     }) as AuthLoginFunctions,
 };
 
@@ -481,49 +486,21 @@ const performLogin = async (
     await dispatch(deactivateLoggedAccountActionIfApplicable(reduxActions.success(accountInfo)));
   }
 
+  // Setup push-notifications for the new account
+  // No `await` as it is non-blocking for login process
+  firebaseService.enablePushNotificationsForAccount(accountInfo);
+
   // Launch oneSessionId fetch to prevent errors in rich-content. This is non-preventing in case of fails, so no await !
   OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
 
-  // Splashads
-  const timeoutPromise = new Promise((resolve, reject) => {
-    setTimeout(() => reject(new global.Error('Request timed out')), 2000);
-  });
-
-  const fetchData = async url => {
-    try {
-      const response = await Promise.race([timeoutPromise, fetch(url)]);
-      return response;
-    } catch (error) {
-      console.error('[Splashads]: Fetch operation failed: ' + error.message);
-    }
-  };
-
-  const fetchSplashads = async () => {
-    const source = `${platform.splashads}/${user.infos.type?.toLowerCase()}/${I18n.getSplashadsLocale()}`;
-    try {
-      const response = await fetchData(source);
-      if (response && response.status === 200) {
-        writeSplashads(platform.name, moment().startOf('day'), source);
-        openSplashadsScreen({ resourceUri: source });
-      } else {
-        console.error('[Splashads]: Failed to fetch splashads: ', response.status);
-      }
-    } catch (error) {
-      console.error('[Splashads]: Failed to fetch splashads: ', error.message);
-    }
-  };
+  // SplashAds
+  checkAndShowSplashAds(platform, user.infos.type!);
 
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
 
-  if (platform.splashads) {
-    const splashads = readSplashadsData();
-    const today = moment().startOf('day');
-    const splashadsDay = splashads[platform.name];
-    if (splashadsDay && today.isAfter(moment(splashadsDay.date).clone())) fetchSplashads();
-    else if (splashadsDay && platform.splashads!.includes('test')) fetchSplashads();
-    if (!splashadsDay) fetchSplashads();
-  }
+  // check and show xmasTheme if enable
+  dispatch(updateShakeListenerAction());
 
   return accountInfo;
 };
@@ -546,10 +523,10 @@ const loginCredentialsAction = (functions: AuthLoginFunctions, platform: Platfor
           functions.writeStorage(session, getAuthState(getState()).showOnboarding);
           return session;
         } catch (ee) {
-          if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.ACTIVATION_CODE) {
+          if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === OAuth2ErrorCode.ACTIVATION_CODE) {
             dispatch(functions.activation(platform.name, credentials.username, credentials.password));
             return AuthPendingRedirection.ACTIVATE;
-          } else if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.PASSWORD_RESET) {
+          } else if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === OAuth2ErrorCode.PASSWORD_RESET) {
             dispatch(functions.passwordRenew(platform.name, credentials.username, credentials.password));
             return AuthPendingRedirection.RENEW_PASSWORD;
           } else {
@@ -560,8 +537,8 @@ const loginCredentialsAction = (functions: AuthLoginFunctions, platform: Platfor
         console.error(`[Auth] Login credentials error :`, e);
         dispatch(
           actions.authError({
-            key,
             info: e as Error,
+            key,
           }),
         );
         throw e;
@@ -628,15 +605,15 @@ const loginFederationAction = (
         // When login in with federation, "CREDENTIALS_MISMATCH" is the errcode obtained if the saml token does not link to an actual user account.
         // We override the error type to "SAML_INVALID" in this case.
         const error =
-          e instanceof Error.ErrorWithType && e.type === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH
-            ? new Error.LoginError(Error.OAuth2ErrorType.SAML_INVALID, undefined, { cause: e.cause })
+          e instanceof Error.ErrorWithType && e.type === OAuth2ErrorCode.CREDENTIALS_MISMATCH
+            ? new Error.LoginError(OAuth2ErrorCode.SAML_INVALID, undefined, { cause: e.cause })
             : e;
 
         console.error(`[Auth] Login federation error :`, error);
         dispatch(
           actions.authError({
-            key,
             info: error as Error,
+            key,
           }),
         );
         throw error;
@@ -674,7 +651,7 @@ const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedLogg
         : account;
       await loginSteps.loadToken(accountToRestore);
       if (!OAuth2RessourceOwnerPasswordClient.connection) {
-        throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+        throw new OAuth2Error(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
       }
       await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(accountToRestore.user.id, false);
       const session = await performLogin(
@@ -690,8 +667,8 @@ const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedLogg
       console.error(`[Auth] Restore error :`, e);
       dispatch(
         actions.authError({
-          key: undefined,
           info: e as Error,
+          key: undefined,
         }),
       );
       throw e;
@@ -762,8 +739,8 @@ const activateAccountAction =
       activationWasDone = true;
       await dispatch(
         loginCredentialsAction(reduxActions, platform, {
-          username: model.login,
           password: model.password,
+          username: model.login,
         }),
       );
     } catch (e) {
@@ -799,8 +776,8 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
         platform,
         forgotMode,
         {
-          mail: userInfo.login,
           firstName: userInfo.firstName,
+          mail: userInfo.login,
           structureId: userInfo.structureId,
         },
         deviceId,
@@ -823,7 +800,7 @@ export function quietLogoutAction() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     // Unregister the device token from the backend
     const account = assertSession();
-    await authService.removeFirebaseToken(account.platform);
+    await firebaseService.disablePushNotificationsForAccount(account);
     // Erase requests cache
     await clearRequestsCacheLegacy();
     // Erase stored oauth2 token and cache information
@@ -839,7 +816,7 @@ export function quietLogoutAction() {
 export function invalidateSessionAction() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const account = assertSession();
-    await authService.removeFirebaseToken(account.platform);
+    await firebaseService.disablePushNotificationsForAccount(account);
     await clearRequestsCacheLegacy();
     await destroyOAuth2Legacy();
     writeRemoveToken(account);
@@ -899,10 +876,10 @@ function changePasswordAction(
       const payload: IChangePasswordSubmitPayload = {
         oldPassword: p.oldPassword,
         ...(p?.resetCode ? { resetCode: p?.resetCode } : {}),
-        password: p.newPassword,
+        callback: '',
         confirmPassword: p.confirm,
         login: p.login,
-        callback: '',
+        password: p.newPassword,
         ...(forceChange ? { forceChange: 'force' } : {}),
       };
       const formdata = new FormData();
@@ -959,8 +936,8 @@ function changePasswordAction(
     try {
       // 4 === Login back to get renewed token
       const credentials: AuthCredentials = {
-        username: p.login,
         password: p.newPassword,
+        username: p.login,
       };
       await dispatch(loginCredentialsAction(reduxActions, platform, credentials));
     } catch (e) {

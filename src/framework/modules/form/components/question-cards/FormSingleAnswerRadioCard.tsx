@@ -1,6 +1,9 @@
 import React from 'react';
 import { FlatList, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
+import { FormAnswerText } from './FormAnswerText';
+import { FormRadio } from './FormRadio';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
@@ -10,24 +13,21 @@ import { FormQuestionCard } from '~/framework/modules/form/components/FormQuesti
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
 import { urlSigner } from '~/infra/oauth';
 
-import { FormAnswerText } from './FormAnswerText';
-import { FormRadio } from './FormRadio';
-
 const styles = StyleSheet.create({
   choiceContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   containerMargin: {
     marginTop: UI_SIZES.spacing.minor,
   },
   customAnswerInput: {
+    borderBottomColor: theme.palette.grey.grey,
+    borderBottomWidth: 1,
+    color: theme.ui.text.regular,
     flex: 1,
     marginLeft: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.tiny,
-    color: theme.ui.text.regular,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.palette.grey.grey,
   },
   imageContainer: {
     marginLeft: UI_SIZES.spacing.minor,
@@ -48,14 +48,14 @@ interface IFormSingleAnswerRadioCardProps {
 
 export const FormSingleAnswerRadioCard = ({
   isDisabled,
-  question,
-  responses,
   onChangeAnswer,
   onEditQuestion,
+  question,
+  responses,
 }: IFormSingleAnswerRadioCardProps) => {
   const [value, setValue] = React.useState(responses[0]?.choiceId);
   const [customAnswer, setCustomAnswer] = React.useState(responses[0]?.customAnswer ?? '');
-  const { title, mandatory, choices } = question;
+  const { choices, mandatory, title } = question;
 
   const onChangeChoice = (choice: IQuestionChoice) => {
     setValue(choice.id);
@@ -65,10 +65,10 @@ export const FormSingleAnswerRadioCard = ({
       responses[0].customAnswer = choice.isCustom ? customAnswer : undefined;
     } else {
       responses.push({
-        questionId: question.id,
         answer: choice.value,
         choiceId: choice.id,
         customAnswer: choice.isCustom ? customAnswer : undefined,
+        questionId: question.id,
       });
     }
     onChangeAnswer(question.id, responses);
@@ -105,7 +105,7 @@ export const FormSingleAnswerRadioCard = ({
         <FlatList
           data={choices}
           keyExtractor={choice => choice.id.toString()}
-          renderItem={({ item, index }) => (
+          renderItem={({ index, item }) => (
             <TouchableOpacity
               onPress={() => onChangeChoice(item)}
               disabled={isDisabled}
@@ -123,9 +123,9 @@ export const FormSingleAnswerRadioCard = ({
               ) : null}
               {item.image ? (
                 <TouchableOpacity
-                  onPress={() => openCarousel({ data: [{ type: 'image', src: item.image }] })}
+                  onPress={() => openCarousel({ data: [{ src: item.image, type: 'image' }] })}
                   style={styles.imageContainer}>
-                  <Image source={{ uri: item.image, headers: urlSigner.getAuthHeader(), width: 75, height: 75 }} />
+                  <Image source={{ headers: urlSigner.getAuthHeader(), height: 75, uri: item.image, width: 75 }} />
                 </TouchableOpacity>
               ) : null}
             </TouchableOpacity>

@@ -5,23 +5,23 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    rowGap: UI_SIZES.spacing.medium,
-    borderWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.newCard,
+    borderWidth: UI_SIZES.border.thin,
+    flexDirection: 'row',
+    rowGap: UI_SIZES.spacing.medium,
   },
   dateContainer: {
     flex: 1,
     justifyContent: 'center',
-    rowGap: UI_SIZES.spacing.tiny,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.minor,
+    rowGap: UI_SIZES.spacing.tiny,
   },
   endDateLabel: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   removeEndDateAction: {
     backgroundColor: theme.palette.grey.cloudy,
@@ -29,13 +29,13 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing._LEGACY_tiny,
   },
   separatorContainer: {
-    width: 1,
-    height: '100%',
     backgroundColor: theme.palette.grey.cloudy,
+    height: '100%',
+    width: 1,
   },
   timeContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginTop: UI_SIZES.spacing.minor,
   },
   timeText: {

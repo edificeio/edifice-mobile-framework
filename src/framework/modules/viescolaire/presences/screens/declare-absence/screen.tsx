@@ -1,9 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, ScrollView, View } from 'react-native';
-import { Asset } from 'react-native-image-picker';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
+
+import styles from './styles';
+import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -13,7 +16,7 @@ import { UI_STYLES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
-import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import { cameraAction, documentAction, DocumentPicked, galleryAction, ImagePicked } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
@@ -29,11 +32,9 @@ import { presencesService } from '~/framework/modules/viescolaire/presences/serv
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { Asset } from '~/framework/util/fileHandler/types';
 import { Trackers } from '~/framework/util/tracker';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
-import styles from './styles';
-import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -99,9 +100,9 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         />
         <InputContainer
           label={{
-            text: I18n.get('presences-declareabsence-reasoninput-label'),
             icon: 'ui-textPage',
             indicator: LabelIndicator.REQUIRED,
+            text: I18n.get('presences-declareabsence-reasoninput-label'),
           }}
           input={
             <TextInput
@@ -144,12 +145,12 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
   };
 
   usePreventBack({
-    title: I18n.get('presences-declareabsence-leavealert-title'),
-    text: I18n.get('presences-declareabsence-leavealert-text'),
     showAlert: !!(reason || attachment) && !isCreating,
+    text: I18n.get('presences-declareabsence-leavealert-text'),
+    title: I18n.get('presences-declareabsence-leavealert-title'),
   });
 
-  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
   return <PageComponent style={styles.pageContainer}>{renderPage()}</PageComponent>;
 };

@@ -5,17 +5,17 @@ import theme from '~/app/theme';
 
 const styles = StyleSheet.create({
   container: {
-    width: 25,
-    height: 25,
-    borderRadius: 14,
     alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 14,
     borderWidth: 2,
+    height: 25,
+    justifyContent: 'center',
+    width: 25,
   },
   innerContainer: {
-    width: 15,
-    height: 15,
     borderRadius: 14,
+    height: 15,
+    width: 15,
   },
 });
 

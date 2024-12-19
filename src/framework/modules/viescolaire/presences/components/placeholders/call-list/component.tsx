@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import CallCardPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-card';
+import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import styles from './styles';
 import type { CallListPlaceholderProps } from './types';
+
+import CallCardPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-card';
 
 export default function CallListPlaceholder(props: CallListPlaceholderProps) {
   return (

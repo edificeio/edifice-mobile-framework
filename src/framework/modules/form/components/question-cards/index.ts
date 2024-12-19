@@ -1,5 +1,3 @@
-import { QuestionType } from '~/framework/modules/form/model';
-
 import { FormDateCard } from './FormDateCard';
 import { FormFileCard } from './FormFileCard';
 import { FormFreeTextCard } from './FormFreeTextCard';
@@ -12,6 +10,8 @@ import { FormSingleAnswerCard } from './FormSingleAnswerCard';
 import { FormSingleAnswerRadioCard } from './FormSingleAnswerRadioCard';
 import { FormSliderCard } from './FormSliderCard';
 import { FormTimeCard } from './FormTimeCard';
+
+import { QuestionType } from '~/framework/modules/form/model';
 
 export const getQuestionCard = (questionType: QuestionType) => {
   switch (questionType) {

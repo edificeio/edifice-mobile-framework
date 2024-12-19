@@ -32,7 +32,7 @@ export const getUserColor = async (userId: string) => {
   try {
     const { result } = userId
       ? await mailContentService.getUserInfos(userId)
-      : { result: [{ id: '', displayNames: '', type: [''] }] };
+      : { result: [{ displayNames: '', id: '', type: [''] }] };
     return getProfileColor(result?.[0].type[0]);
   } catch {
     return getProfileColor();

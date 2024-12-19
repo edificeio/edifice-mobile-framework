@@ -8,11 +8,15 @@ import { SmallText } from '~/framework/components/text';
 import { BottomColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 
 const styles = StyleSheet.create({
+  gridButton: {
+    alignItems: 'center',
+    backgroundColor: theme.palette.grey.white,
+    flexDirection: 'column',
+  },
   gridButtonContainer: {
-    width: '50%',
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.small,
     elevation: 20,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
     shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
@@ -20,17 +24,13 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 2,
-  },
-  gridButton: {
-    alignItems: 'center',
-    flexDirection: 'column',
-    backgroundColor: theme.palette.grey.white,
-  },
-  gridButtonEnabled: {
-    opacity: 1,
+    width: '50%',
   },
   gridButtonDisabled: {
     opacity: 0.6,
+  },
+  gridButtonEnabled: {
+    opacity: 1,
   },
 });
 
@@ -42,7 +42,7 @@ interface ModuleButtonProps {
   onPress: () => void;
 }
 
-export const ModuleButton = ({ color, icon, text, disabled, onPress }: ModuleButtonProps) => {
+export const ModuleButton = ({ color, disabled, icon, onPress, text }: ModuleButtonProps) => {
   return (
     <View style={styles.gridButtonContainer}>
       <BottomColoredItem

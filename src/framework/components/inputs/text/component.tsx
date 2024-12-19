@@ -1,13 +1,13 @@
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ColorValue, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { TextInputProps } from './types';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { CaptionItalicText } from '~/framework/components/text';
-
-import styles from './styles';
-import { TextInputProps } from './types';
 
 const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
 
@@ -16,18 +16,20 @@ export type TextInputType = RNTextInput;
 const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
   const {
     annotation,
-    showError,
-    showSuccess,
-    showIconCallback,
-    toggleIconOn,
-    toggleIconOff,
-    value,
     disabled,
-    style,
-    testIDToggle,
-    onToggle,
-    onFocus,
     onBlur,
+    onFocus,
+    onToggle,
+    showError,
+    showIconCallback,
+    showSuccess,
+    style,
+    testID,
+    testIDCaption,
+    testIDToggle,
+    toggleIconOff,
+    toggleIconOn,
+    value,
   } = props;
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -121,7 +123,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
   const renderInput = useCallback(() => {
     return (
-      <View style={styles.viewInput}>
+      <View style={styles.viewInput} testID={testID ?? ''}>
         <RNTextInput
           {...props}
           onFocus={e => handleFocus(e)}
@@ -131,7 +133,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
           {...(disabled ? { editable: false, placeholderTextColor: theme.palette.grey.graphite } : null)}
           style={[
             styles.input,
-            { paddingRight, borderColor: colorStatus() },
+            { borderColor: colorStatus(), paddingRight },
             { ...(disabled ? styles.inputDisabled : null) },
             style,
           ]}
@@ -141,7 +143,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
         {renderToggle()}
       </View>
     );
-  }, [props, ref, disabled, paddingRight, colorStatus, style, renderIconInput, renderToggle, handleFocus, handleBlur]);
+  }, [props, ref, disabled, paddingRight, colorStatus, style, renderIconInput, renderToggle, handleFocus, handleBlur, testID]);
 
   const renderAnnotation = useCallback(() => {
     if (annotation)
@@ -151,11 +153,12 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
             styles.annotation,
             props.annotationStyle,
             { ...(showError ? styles.annotationError : showSuccess ? styles.annotationSuccess : null) },
-          ]}>
+          ]}
+          testID={testIDCaption ?? ''}>
           {annotation}
         </CaptionItalicText>
       );
-  }, [annotation, props.annotationStyle, showError, showSuccess]);
+  }, [annotation, props.annotationStyle, showError, showSuccess, testIDCaption]);
 
   return (
     <View>

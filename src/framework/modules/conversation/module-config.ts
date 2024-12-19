@@ -1,18 +1,18 @@
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-
 import type { IConversationState } from './reducer';
 
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+
 export default new NavigableModuleConfig<'conversation', IConversationState>({
-  name: 'conversation',
+  displayAs: 'tabModule',
+  displayI18n: 'conversation-moduleconfig-tabname',
+  displayOrder: 1,
+  displayPicture: { name: 'messagerie-off', type: 'Icon' },
+  displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },
+
   entcoreScope: ['conversation', 'userbook'],
   matchEntcoreApp: '/conversation/conversation',
-  trackingName: 'Messagerie',
+  name: 'conversation',
   storageName: 'conversation',
-
-  displayI18n: 'conversation-moduleconfig-tabname',
-  displayAs: 'tabModule',
-  displayOrder: 1,
-  displayPicture: { type: 'Icon', name: 'messagerie-off' },
-  displayPictureFocus: { type: 'Icon', name: 'messagerie-on' },
   testID: 'tabbar-messages',
+  trackingName: 'Messagerie',
 });

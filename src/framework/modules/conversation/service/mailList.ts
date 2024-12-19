@@ -28,24 +28,31 @@ const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
   let result = [] as IMailList;
   if (!data) return result;
   result = data.map(item => ({
-    id: item.id,
-    date: moment(item.date),
-    subject: item.subject,
-    state: item.state,
-    unread: item.unread,
-    response: item.response,
-    hasAttachment: item.hasAttachment,
-    to: item.to,
     cc: item.cc,
+    cci: item.cci,
+    cciName: item.cciName,
+    ccName: item.ccName,
+    count: item.count,
+    date: moment(item.date),
     displayNames: item.displayNames,
     from: item.from,
     // Extra data
     fromName: item.fromName,
+
+    hasAttachment: item.hasAttachment,
+
+    id: item.id,
+
+    response: item.response,
+
+    state: item.state,
+
+    subject: item.subject,
+
+    to: item.to,
+
     toName: item.toName,
-    ccName: item.ccName,
-    cci: item.cci,
-    cciName: item.cciName,
-    count: item.count,
+    unread: item.unread,
   }));
   return result;
 };

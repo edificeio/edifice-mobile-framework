@@ -1,10 +1,15 @@
+import * as React from 'react';
+import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+
 import { useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
-import * as React from 'react';
-import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
 import { ThunkDispatch } from 'redux-thunk';
+
+import HomeworkCard from './HomeworkCard';
+import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
+import HomeworkTimeline from './HomeworkTimeline';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -13,7 +18,7 @@ import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-sc
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { PageView, pageGutterSize } from '~/framework/components/page';
+import { pageGutterSize, PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -29,10 +34,6 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
-
-import HomeworkCard from './HomeworkCard';
-import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
-import HomeworkTimeline from './HomeworkTimeline';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -83,14 +84,14 @@ const styles = StyleSheet.create({
   dayCheckpoint: { zIndex: 1 },
   dayCheckpointContainer: { marginBottom: UI_SIZES.spacing.tiny },
   footer: {
-    flexDirection: 'row',
-    borderWidth: UI_SIZES.dimensions.width.tiny,
-    borderRadius: UI_SIZES.radius.medium,
     borderColor: theme.palette.grey.cloudy,
-    paddingVertical: UI_SIZES.spacing.medium,
-    paddingRight: UI_SIZES.spacing.big,
-    paddingLeft: UI_SIZES.spacing.medium,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: UI_SIZES.dimensions.width.tiny,
+    flexDirection: 'row',
     marginLeft: UI_SIZES.spacing.big,
+    paddingLeft: UI_SIZES.spacing.medium,
+    paddingRight: UI_SIZES.spacing.big,
+    paddingVertical: UI_SIZES.spacing.medium,
   },
   footerIcon: { justifyContent: 'center', marginRight: UI_SIZES.spacing.medium },
   footerText: { color: theme.palette.grey.graphite },
@@ -113,8 +114,8 @@ export const computeNavBar = ({
 class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreenProps, IHomeworkTaskListScreenState> {
   state = {
     fetching: false,
-    refreshing: false,
     pastDateLimit: today(),
+    refreshing: false,
   };
 
   sectionListRef: { current: any } = React.createRef();
@@ -129,13 +130,13 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     const { tasksByDay } = this.props;
     const dataInfo: DataType[] = tasksByDay
       ? tasksByDay.map(day => ({
-          type: 'day',
-          title: day.date,
           data: day.tasks.map(task => ({
             ...task,
             date: day.date,
             type: 'day',
           })),
+          title: day.date,
+          type: 'day',
         }))
       : [];
     return dataInfo;
@@ -172,7 +173,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     const displayedHomework = [...displayedPastHomework, ...this.futureHomework()];
     // Add footer only if there is at least one element
     // We must keep the empty state displaying if the list is empty.
-    if (displayedHomework.length) (displayedHomework as DataTypeOrFooter[]).push({ type: 'footer', data: [{ type: 'footer' }] });
+    if (displayedHomework.length) (displayedHomework as DataTypeOrFooter[]).push({ data: [{ type: 'footer' }], type: 'footer' });
     return displayedHomework;
   }
 
@@ -219,10 +220,11 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   updateNavBarTitle() {
     const { diaryInformation, navigation } = this.props;
     navigation.setOptions({
-      headerTitle: navBarTitle(diaryInformation?.title),
       // React Navigation 6 uses this syntax to setup nav options
-      // eslint-disable-next-line react/no-unstable-nested-components
+
       headerRight: () => (this.canCreateEntry() ? <NavBarAction icon="ui-plus" onPress={this.addEntry} /> : undefined),
+
+      headerTitle: navBarTitle(diaryInformation?.title),
     });
   }
 
@@ -231,7 +233,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   }
 
   componentDidUpdate(prevProps: any) {
-    const { isFetching, diaryId, tasksByDay, route, isFocused } = this.props;
+    const { diaryId, isFetching, isFocused, route, tasksByDay } = this.props;
     const { pastDateLimit } = this.state;
     const createdEntryId = route.params?.createdEntryId;
     const prevCreatedEntryId = prevProps.route.params?.createdEntryId;
@@ -258,8 +260,8 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
           task => task.taskId === createdEntryId,
         );
         this.sectionListRef?.current?.scrollToLocation({
-          sectionIndex: createdTaskDayIndex,
           itemIndex: createdTaskIndex,
+          sectionIndex: createdTaskDayIndex,
           viewPosition: 0.5,
         });
       }, 1000);
@@ -275,7 +277,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   // Render
 
   render() {
-    const { isFetching, didInvalidate, error } = this.props;
+    const { didInvalidate, error, isFetching } = this.props;
     const pageContent = isFetching && didInvalidate ? <Loading /> : error ? this.renderError() : this.renderList();
     return <PageView>{pageContent}</PageView>;
   }
@@ -287,7 +289,9 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   private renderListHeaderComponent() {
     const noRemainingPastHomework = this.remainingPastHomework().length === 0;
     const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
-    const labelText = I18n.get(`homework-tasklist-${noRemainingPastHomework ? 'nomorepasthomework' : 'displaypastdays'}`);
+    const labelText = I18n.get(
+      noRemainingPastHomework ? 'homework-tasklist-nomorepasthomework' : 'homework-tasklist-displaypastdays',
+    );
     const icon = noRemainingPastHomework ? undefined : 'back';
     return this.hasPastHomeWork() ? (
       <TouchableOpacity style={styles.buttonPastHomework} disabled={noRemainingPastHomework} onPress={this.displayPastHomework}>
@@ -305,20 +309,20 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
 
   private renderListEmptyComponent() {
     const title = I18n.get(
-      `homework-tasklist-emptyscreen-title${
-        this.hasPastHomeWork() ? '' : this.canCreateEntry() ? '-notasks' : '-notasks-nocreationrights'
-      }`,
+      this.hasPastHomeWork()
+        ? 'homework-tasklist-emptyscreen-title'
+        : this.canCreateEntry()
+          ? 'homework-tasklist-emptyscreen-title-notasks'
+          : 'homework-tasklist-emptyscreen-title-notasks-nocreationrights',
     );
     const text = I18n.get(
-      `homework-tasklist-emptyscreen-text${
-        this.hasPastHomeWork()
-          ? this.canCreateEntry()
-            ? ''
-            : '-nocreationrights'
-          : this.canCreateEntry()
-            ? '-notasks'
-            : '-notasks-nocreationrights'
-      }`,
+      this.hasPastHomeWork()
+        ? this.canCreateEntry()
+          ? 'homework-tasklist-emptyscreen-text'
+          : 'homework-tasklist-emptyscreen-text-nocreationrights'
+        : this.canCreateEntry()
+          ? 'homework-tasklist-emptyscreen-text-notasks'
+          : 'homework-tasklist-emptyscreen-text-notasks-nocreationrights',
     );
     const buttonText = this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined;
 
@@ -349,10 +353,10 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     }
   }
 
-  private renderItem({ item, index, section }) {
-    const { navigation, diaryId, session } = this.props;
+  private renderItem({ index, item, section }) {
+    const { diaryId, navigation, session } = this.props;
     const isLastItem = index === section?.data?.length - 1;
-    const displayEntry = () => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId });
+    const displayEntry = () => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { diaryId, task: item });
     const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCheckHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.check;
 
@@ -396,9 +400,9 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
 
   private renderList() {
     const stylesContentSectionList = {
+      flexGrow: 1,
       padding: this.hasHomework() ? UI_SIZES.spacing.medium : undefined,
       paddingTop: !this.hasPastHomeWork() ? UI_SIZES.spacing.big + pageGutterSize : this.hasHomework() ? undefined : 0,
-      flex: this.noFutureHomeworkHiddenPast() ? 1 : undefined,
     };
 
     return (

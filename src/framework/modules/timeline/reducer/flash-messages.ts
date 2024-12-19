@@ -36,15 +36,15 @@ const initialState: FlashMessagesStateData = [];
 
 export const actionTypes = {
   ...createAsyncActionTypes(moduleConfig.namespaceActionType('FLASHMESSAGES')),
-  dismissRequest: moduleConfig.namespaceActionType('FLASHMESSAGE_DISMISS_REQUEST'),
-  dismissReceipt: moduleConfig.namespaceActionType('FLASHMESSAGE_DISMISS_RECEIPT'),
   dismissError: moduleConfig.namespaceActionType('FLASHMESSAGE_DISMISS_ERROR'),
+  dismissReceipt: moduleConfig.namespaceActionType('FLASHMESSAGE_DISMISS_RECEIPT'),
+  dismissRequest: moduleConfig.namespaceActionType('FLASHMESSAGE_DISMISS_REQUEST'),
 };
 export const actions = {
   ...createAsyncActionCreators<FlashMessagesStateData>(actionTypes),
-  dismissRequest: (flashMessageId: number) => ({ type: actionTypes.dismissRequest, flashMessageId }),
-  dismissReceipt: (flashMessageId: number) => ({ type: actionTypes.dismissReceipt, flashMessageId }),
-  dismissError: (flashMessageId: number) => ({ type: actionTypes.dismissError, flashMessageId }),
+  dismissError: (flashMessageId: number) => ({ flashMessageId, type: actionTypes.dismissError }),
+  dismissReceipt: (flashMessageId: number) => ({ flashMessageId, type: actionTypes.dismissReceipt }),
+  dismissRequest: (flashMessageId: number) => ({ flashMessageId, type: actionTypes.dismissRequest }),
 };
 
 const dismissFlashMessageActionsHandlerMap = {

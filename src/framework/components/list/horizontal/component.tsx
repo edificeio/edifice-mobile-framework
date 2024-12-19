@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { FlatList as RNFlatList } from 'react-native';
 
-import FlatList from '~/framework/components/list/flat-list';
-
 import styles from './styles';
 import { HorizontalListProps } from './types';
+
+import FlatList from '~/framework/components/list/flat-list';
 
 export const HorizontalList = React.forwardRef(function <ItemT>(
   props: HorizontalListProps<ItemT>,

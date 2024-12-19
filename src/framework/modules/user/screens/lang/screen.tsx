@@ -1,6 +1,10 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import styles from './styles';
+import type { UserLangScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { PageView } from '~/framework/components/page';
@@ -9,9 +13,6 @@ import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { OldStorageFunctions } from '~/framework/util/storage';
-
-import styles from './styles';
-import type { UserLangScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -34,7 +35,7 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
   const values: { label: string; value: string }[] = [
     { label: I18n.get('user-lang-dropdownvalue-auto'), value: 'auto' },
     ...Object.entries(I18n.supportedLanguagesDisplayNames)
-      .map(([value, label]) => ({ value, label }))
+      .map(([value, label]) => ({ label, value }))
       .sort((a, b) => a.label.localeCompare(b.label)),
   ];
 
@@ -42,7 +43,7 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
     const lang = await OldStorageFunctions.getItemJson(I18N_APP_LANG);
     const showI18nKeys = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
 
-    const initialLang = showI18nKeys ? 'wordingKeys' : lang ?? 'auto';
+    const initialLang = showI18nKeys ? 'wordingKeys' : (lang ?? 'auto');
     setSelected(initialLang as string);
   };
 
@@ -57,12 +58,12 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
         text: I18n.get('common-cancel'),
       },
       {
-        text: I18n.get('common-ok'),
-        style: 'default',
         onPress: () => {
           if (lang.value === 'wordingKeys') return I18n.toggleShowKeys();
           return I18n.changeLanguage(lang.value);
         },
+        style: 'default',
+        text: I18n.get('common-ok'),
       },
     ]);
   };

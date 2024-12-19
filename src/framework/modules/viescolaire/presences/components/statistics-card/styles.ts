@@ -4,20 +4,20 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   pictoContainer: {
     alignSelf: 'stretch',
-    borderTopLeftRadius: UI_SIZES.radius.card,
     borderBottomLeftRadius: UI_SIZES.radius.card,
+    borderTopLeftRadius: UI_SIZES.radius.card,
   },
   rowContainer: {
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.big,
     flexDirection: 'row',
     flexGrow: 1,
     justifyContent: 'space-between',
-    alignItems: 'center',
-    columnGap: UI_SIZES.spacing.big,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
   },

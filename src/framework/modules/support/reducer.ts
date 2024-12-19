@@ -3,11 +3,11 @@
  */
 import { combineReducers } from 'redux';
 
+import moduleConfig from './module-config';
+
 import { Reducers } from '~/app/store';
 import moduleConfigWorkspace from '~/framework/modules/workspace/module-config';
 import { createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
-
-import moduleConfig from './module-config';
 
 // State
 export interface ISupportState {}

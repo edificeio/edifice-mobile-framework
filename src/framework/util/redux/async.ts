@@ -1,7 +1,7 @@
 import moment, { Moment } from 'moment';
 import { AnyAction, Reducer } from 'redux';
 
-import createReducer, { IReducerActionsHandlerMap, createSessionReducer } from './reducerFactory';
+import createReducer, { createSessionReducer, IReducerActionsHandlerMap } from './reducerFactory';
 
 // Action Types
 
@@ -9,10 +9,10 @@ export type AsyncActionTypeKey = 'request' | 'receipt' | 'error' | 'clear';
 export type AsyncActionTypes = { [key in AsyncActionTypeKey]: string };
 
 export const asyncActionTypeSuffixes: AsyncActionTypes = {
-  request: '_REQUEST',
-  receipt: '_RECEIPT',
-  error: '_ERROR',
   clear: '_CLEAR',
+  error: '_ERROR',
+  receipt: '_RECEIPT',
+  request: '_REQUEST',
 };
 
 export type AsyncActionCreators<DataType> = {
@@ -33,10 +33,10 @@ export const createAsyncActionTypes: (prefixUpperCase: string) => AsyncActionTyp
 export const createAsyncActionCreators: <DataType>(actionTypes: AsyncActionTypes) => AsyncActionCreators<DataType> = <DataType>(
   actionTypes: AsyncActionTypes,
 ) => ({
-  request: () => ({ type: actionTypes.request }),
-  receipt: (data: DataType) => ({ type: actionTypes.receipt, data }),
-  error: (error: Error) => ({ type: actionTypes.error, error }),
   clear: () => ({ type: actionTypes.clear }),
+  error: (error: Error) => ({ error, type: actionTypes.error }),
+  receipt: (data: DataType) => ({ data, type: actionTypes.receipt }),
+  request: () => ({ type: actionTypes.request }),
 });
 
 // State
@@ -63,9 +63,9 @@ export enum AsyncLoadingState {
 export function createInitialAsyncState<DataType>(initialState: DataType) {
   return {
     data: initialState,
-    isPristine: true,
-    isFetching: false,
     error: undefined,
+    isFetching: false,
+    isPristine: true,
     lastSuccess: undefined,
   };
 }
@@ -102,15 +102,15 @@ function _createAsyncReducer<DataType>(
       }),
       [actionTypes.receipt]: (state, action: ReceiptAction<DataType>) => ({
         ...state,
+        data: action.data,
         isFetching: false,
         isPristine: false,
         lastSuccess: moment(),
-        data: action.data,
       }),
       [actionTypes.error]: (state, action: ErrorAction) => ({
         ...state,
-        isFetching: false,
         error: action.error,
+        isFetching: false,
       }),
       [actionTypes.clear]: () => asyncInitialState,
     } as IReducerActionsHandlerMap<AsyncState<DataType>>,

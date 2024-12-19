@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { DashboardNavigationParams, dashboardRouteNames } from '.';
+
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
@@ -9,11 +11,8 @@ import DashboardRelativeScreen, {
 import DashboardStudentScreen, { computeNavBar as studentNavBar } from '~/framework/modules/viescolaire/dashboard/screens/student';
 import DashboardTeacherScreen, { computeNavBar as teacherNavBar } from '~/framework/modules/viescolaire/dashboard/screens/teacher';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import { DashboardNavigationParams, dashboardRouteNames } from '.';
-
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<DashboardNavigationParams>(moduleConfig.name, Stack => {
     /**
      * This module has no fixed home screen. We dynamically update `moduleConfig.routeName` to point to the "home" depending of user type.

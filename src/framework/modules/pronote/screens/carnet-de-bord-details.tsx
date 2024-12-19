@@ -1,6 +1,7 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -9,7 +10,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
-import { CardWithoutPadding, cardPadding } from '~/framework/components/card/base';
+import { cardPadding, CardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
@@ -18,10 +19,10 @@ import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   CarnetDeBordSection,
-  ICarnetDeBord,
   formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
+  ICarnetDeBord,
 } from '~/framework/modules/pronote/model/carnet-de-bord';
 import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
 import redirect from '~/framework/modules/pronote/service/redirect';
@@ -67,43 +68,43 @@ export const computeNavBar = ({
 });
 
 const styles = StyleSheet.create({
+  button: {
+    marginBottom: UI_SIZES.screen.bottomInset
+      ? UI_SIZES.spacing.large + UI_SIZES.spacing.big - UI_SIZES.screen.bottomInset
+      : UI_SIZES.spacing.large + UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.large,
+  },
   card: {
     marginHorizontal: UI_SIZES.spacing.medium,
     marginTop: UI_SIZES.spacing.medium,
   },
+  message: {
+    marginBottom: UI_SIZES.spacing.big - UI_SIZES.spacing.medium,
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.big,
+  },
   section: {
     ...cardPadding,
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   sectionLeft: {
     flex: 1,
   },
   sectionRight: {
     flex: 0,
-    textAlign: 'right',
     marginLeft: UI_SIZES.spacing.small,
+    textAlign: 'right',
   },
   sectionWithBorder: {
-    borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
+    borderBottomWidth: 1,
   },
   textDate: {
     color: theme.palette.grey.graphite,
   },
   textDateMargin: {
     marginBottom: UI_SIZES.spacing.tiny,
-  },
-  button: {
-    marginTop: UI_SIZES.spacing.large,
-    marginBottom: UI_SIZES.screen.bottomInset
-      ? UI_SIZES.spacing.large + UI_SIZES.spacing.big - UI_SIZES.screen.bottomInset
-      : UI_SIZES.spacing.large + UI_SIZES.spacing.medium,
-  },
-  message: {
-    marginHorizontal: UI_SIZES.spacing.medium,
-    marginTop: UI_SIZES.spacing.big,
-    marginBottom: UI_SIZES.spacing.big - UI_SIZES.spacing.medium,
   },
 });
 
@@ -175,22 +176,22 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
           date: I18n.get('pronote-cahierdetextes-pourdate', {
             date: taf.PourLe ? displayDate(taf.PourLe) : I18n.get('pronote-noinfo'),
           }),
-          label: taf.Matiere || I18n.get('pronote-noinfo'),
           description: taf.Descriptif || `<p>${I18n.get('pronote-noinfo')}</p>`,
+          label: taf.Matiere || I18n.get('pronote-noinfo'),
         }),
       );
     }
     case CarnetDeBordSection.NOTES: {
       return [...(data.PageReleveDeNotes?.DevoirsPast ?? []), ...(data.PageReleveDeNotes?.DevoirsFuture ?? [])].map(item => ({
-        label: item.Matiere || I18n.get('pronote-noinfo'),
         date: item.Date ? displayDate(item.Date) : I18n.get('pronote-noinfo'),
+        label: item.Matiere || I18n.get('pronote-noinfo'),
         value: formatCarnetDeBordReleveDeNotesDevoirNoteBareme(item.Note, item.Bareme),
       }));
     }
     case CarnetDeBordSection.COMPETENCES: {
       return [...(data.PageCompetences?.CompetencesPast ?? []), ...(data.PageCompetences?.CompetencesFuture ?? [])].map(item => ({
-        label: item.Matiere || I18n.get('pronote-noinfo'),
         date: item.Date ? displayDate(item.Date) : I18n.get('pronote-noinfo'),
+        label: item.Matiere || I18n.get('pronote-noinfo'),
         value: item.NiveauDAcquisition?.Genre
           ? splitWords(formatCarnetDeBordCompetencesValue(item.NiveauDAcquisition.Genre), 2)
           : I18n.get('pronote-noinfo'),
@@ -198,7 +199,6 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
     }
     case CarnetDeBordSection.VIE_SCOLAIRE: {
       return [...(data.PageVieScolaire?.VieScolairePast ?? []), ...(data.PageVieScolaire?.VieScolaireFuture ?? [])].map(item => ({
-        label: formatCarnetDeBordVieScolaireType(item?.type),
         date:
           item.type === 'Absence'
             ? item.DateDebut && item.DateFin
@@ -208,12 +208,12 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
                   : displayDate(item.DateDebut) +
                     I18n.get('common-space') +
                     I18n.get('pronote-viescolaire-datefromto', {
-                      start: item.DateDebut.format('LT'),
                       end: item.DateFin.format('LT'),
+                      start: item.DateDebut.format('LT'),
                     })
                 : I18n.get('pronote-viescolaire-datefromto', {
-                    start: displayDate(item.DateDebut),
                     end: displayDate(item.DateFin),
+                    start: displayDate(item.DateDebut),
                   })
               : I18n.get('pronote-noinfo')
             : item.Date
@@ -229,6 +229,7 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
               : item.type === 'Observation'
                 ? item.Observation || I18n.get('pronote-noinfo')
                 : I18n.get('pronote-noinfo'),
+        label: formatCarnetDeBordVieScolaireType(item?.type),
       }));
     }
   }

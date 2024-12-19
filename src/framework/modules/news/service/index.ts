@@ -60,23 +60,23 @@ export interface BackendNewsCommentItem {
 
 export const newsItemAdapter = (n: BackendNewsItem) => {
   const ret = {
-    id: n.id,
-    threadId: n.threadId,
     content: n.content,
-    status: n.status as NewsItemStatus,
-    owner: {
-      id: n.owner.id,
-      displayName: n.owner.displayName,
-      deleted: n.owner.deleted,
-    },
     created: moment(n.created),
-    modified: moment(n.modified),
-    publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
     expirationDate: n.expirationDate ? moment(n.expirationDate) : null,
-    numberOfComments: n.numberOfComments,
-    title: n.title,
     headline: n.headline,
+    id: n.id,
+    modified: moment(n.modified),
+    numberOfComments: n.numberOfComments,
+    owner: {
+      deleted: n.owner.deleted,
+      displayName: n.owner.displayName,
+      id: n.owner.id,
+    },
+    publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
     sharedRights: n.sharedRights as NewsItemRights[],
+    status: n.status as NewsItemStatus,
+    threadId: n.threadId,
+    title: n.title,
   };
   return ret as NewsItem;
 };
@@ -84,29 +84,29 @@ export const newsItemAdapter = (n: BackendNewsItem) => {
 export const newsItemDetailsAdapter = (n: BackendNewsItemDetails) => {
   const ret = {
     news: {
-      id: n.id,
-      threadId: n.thread.id,
       content: n.content,
-      status: n.status as NewsItemStatus,
-      owner: {
-        id: n.owner.id,
-        displayName: n.owner.displayName,
-        deleted: n.owner.deleted,
-      },
       created: moment(n.created),
-      modified: moment(n.modified),
-      publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
       expirationDate: n.expirationDate ? moment(n.expirationDate) : null,
-      numberOfComments: n.numberOfComments,
-      title: n.title,
       headline: n.headline,
+      id: n.id,
+      modified: moment(n.modified),
+      numberOfComments: n.numberOfComments,
+      owner: {
+        deleted: n.owner.deleted,
+        displayName: n.owner.displayName,
+        id: n.owner.id,
+      },
+      publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
       sharedRights: n.sharedRights as NewsItemRights[],
+      status: n.status as NewsItemStatus,
+      threadId: n.thread.id,
+      title: n.title,
     },
     thread: {
-      title: n.thread.title,
       icon: n.thread.icon,
-      sharedRights: n.thread.sharedRights as NewsThreadItemRights[],
       ownerId: n.thread.owner.id,
+      sharedRights: n.thread.sharedRights as NewsThreadItemRights[],
+      title: n.thread.title,
     },
   };
   return ret as NewsItemDetails;
@@ -114,42 +114,83 @@ export const newsItemDetailsAdapter = (n: BackendNewsItemDetails) => {
 
 export const newsThreadItemAdapter = (n: BackendNewsThreadItem) => {
   const ret = {
-    title: n.title,
-    id: n.id,
-    icon: n.icon,
     created: moment(n.created),
+    icon: n.icon,
+    id: n.id,
     modified: moment(n.created),
     owner: {
-      id: n.owner.id,
-      displayName: n.owner.displayName,
       deleted: n.owner.deleted,
+      displayName: n.owner.displayName,
+      id: n.owner.id,
     },
     sharedRights: n.sharedRights as NewsThreadItemRights[],
+    title: n.title,
   };
   return ret as NewsThreadItem;
 };
 
 export const newsCommentItemAdapter = (n: BackendNewsCommentItem) => {
   const ret = {
+    comment: n.comment,
+    created: moment(n.created),
     id: n._id,
     infoId: n.info_id,
-    comment: n.comment,
-    owner: n.owner,
-    created: moment(n.created),
     modified: moment(n.modified),
+    owner: n.owner,
     username: n.username,
   };
   return ret as NewsCommentItem;
 };
 
 export const newsService = {
-  threads: {
-    get: async () => {
-      const api = `/actualites/threads/list`;
-      const backendThreads = (await fetchJSONWithCache(api)) as BackendNewsThreadItem[];
+  comments: {
+    delete: async (infoId: number, commentId: number) => {
+      const api = `/actualites/info/${infoId}/comment/${commentId}`;
 
-      const threads = backendThreads.map(thread => newsThreadItemAdapter(thread));
-      return threads as NewsThreadItem[];
+      return signedFetchJsonRelative(`${api}`, {
+        method: 'DELETE',
+      });
+    },
+    get: async newsId => {
+      const api = `/actualites/infos/${newsId}/comments`;
+      const backendComments = (await fetchJSONWithCache(api)) as BackendNewsCommentItem[];
+
+      const comments = backendComments.map(comment => newsCommentItemAdapter(comment));
+      return comments as NewsCommentItem[];
+    },
+    post: async (infoId: number, comment: string) => {
+      const api = `/actualites/info/${infoId}/comment`;
+
+      const body = JSON.stringify({ comment, info_id: infoId });
+      return signedFetchJsonRelative(`${api}`, {
+        body,
+        method: 'PUT',
+      });
+    },
+    update: async (infoId: number, comment: string, commentId: number) => {
+      const api = `/actualites/info/${infoId}/comment/${commentId}`;
+
+      const body = JSON.stringify({ comment, info_id: infoId });
+      return signedFetchJsonRelative(`${api}`, {
+        body,
+        method: 'PUT',
+      });
+    },
+  },
+  info: {
+    delete: async (threadId: number, infoId: number) => {
+      const api = `/actualites/thread/${threadId}/info/${infoId}`;
+
+      return signedFetchJsonRelative(`${api}`, {
+        method: 'DELETE',
+      });
+    },
+    get: async infoId => {
+      const api = `/actualites/info/${infoId}`;
+      const backendInfo = (await fetchJSONWithCache(api)) as BackendNewsItemDetails;
+
+      const news = newsItemDetailsAdapter(backendInfo);
+      return news as NewsItemDetails;
     },
   },
   infos: {
@@ -164,54 +205,13 @@ export const newsService = {
       return news as NewsItem[];
     },
   },
-  info: {
-    get: async infoId => {
-      const api = `/actualites/info/${infoId}`;
-      const backendInfo = (await fetchJSONWithCache(api)) as BackendNewsItemDetails;
+  threads: {
+    get: async () => {
+      const api = `/actualites/threads/list`;
+      const backendThreads = (await fetchJSONWithCache(api)) as BackendNewsThreadItem[];
 
-      const news = newsItemDetailsAdapter(backendInfo);
-      return news as NewsItemDetails;
-    },
-    delete: async (threadId: number, infoId: number) => {
-      const api = `/actualites/thread/${threadId}/info/${infoId}`;
-
-      return signedFetchJsonRelative(`${api}`, {
-        method: 'DELETE',
-      });
-    },
-  },
-  comments: {
-    get: async newsId => {
-      const api = `/actualites/infos/${newsId}/comments`;
-      const backendComments = (await fetchJSONWithCache(api)) as BackendNewsCommentItem[];
-
-      const comments = backendComments.map(comment => newsCommentItemAdapter(comment));
-      return comments as NewsCommentItem[];
-    },
-    post: async (infoId: number, comment: string) => {
-      const api = `/actualites/info/${infoId}/comment`;
-
-      const body = JSON.stringify({ info_id: infoId, comment });
-      return signedFetchJsonRelative(`${api}`, {
-        method: 'PUT',
-        body,
-      });
-    },
-    update: async (infoId: number, comment: string, commentId: number) => {
-      const api = `/actualites/info/${infoId}/comment/${commentId}`;
-
-      const body = JSON.stringify({ info_id: infoId, comment });
-      return signedFetchJsonRelative(`${api}`, {
-        method: 'PUT',
-        body,
-      });
-    },
-    delete: async (infoId: number, commentId: number) => {
-      const api = `/actualites/info/${infoId}/comment/${commentId}`;
-
-      return signedFetchJsonRelative(`${api}`, {
-        method: 'DELETE',
-      });
+      const threads = backendThreads.map(thread => newsThreadItemAdapter(thread));
+      return threads as NewsThreadItem[];
     },
   },
 };

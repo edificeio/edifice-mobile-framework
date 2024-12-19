@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import { Alert, Platform, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import LottieView from 'lottie-react-native';
 import DeviceInfo from 'react-native-device-info';
 import Rate, { AndroidMarket } from 'react-native-rate';
+
+import styles from './styles';
+import type { UserWhoAreWeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -12,9 +16,6 @@ import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import styles from './styles';
-import type { UserWhoAreWeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -47,9 +48,9 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
             const options = {
               AppleAppID: APPLE_APP_ID,
               GooglePackageName: DeviceInfo.getBundleId(),
-              preferredAndroidMarket: AndroidMarket.Google,
-              preferInApp: Platform.OS !== 'android',
               inAppDelay: 0,
+              preferInApp: Platform.OS !== 'android',
+              preferredAndroidMarket: AndroidMarket.Google,
             };
             Rate.rate(options, (success, error) => {
               if (error) {

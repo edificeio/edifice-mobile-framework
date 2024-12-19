@@ -3,52 +3,60 @@ import { TextStyle, ViewStyle } from 'react-native';
 export default (
   width: number,
   height: number,
-  backgroundColor: string
+  backgroundColor: string,
 ): {
   [x: string]: ViewStyle | TextStyle;
 } => {
   return {
-    modalContainer: { backgroundColor, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
-    watchOrigin: { position: 'absolute', width, bottom: 20, justifyContent: 'center', alignItems: 'center' },
+    arrowLeftContainer: { bottom: 0, justifyContent: 'center', left: 0, position: 'absolute', top: 0, zIndex: 13 },
+    arrowRightContainer: { bottom: 0, justifyContent: 'center', position: 'absolute', right: 0, top: 0, zIndex: 13 },
+    container: { backgroundColor },
+    imageStyle: {},
+    loadingContainer: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+    loadingTouchable: { height, width },
+    menuContainer: { bottom: 0, height, left: 0, position: 'absolute', width, zIndex: 12 },
+
+    menuContent: { bottom: 0, left: 0, position: 'absolute', width, zIndex: 11 },
+
+    menuShadow: {
+      backgroundColor: 'black',
+      bottom: 0,
+      height,
+      left: 0,
+      opacity: 0.2,
+      position: 'absolute',
+      width,
+      zIndex: 10,
+    },
+
+    modalContainer: { alignItems: 'center', backgroundColor, justifyContent: 'center', overflow: 'hidden' },
+
+    // 多图浏览需要调整整体位置的盒子
+    moveBox: { alignItems: 'center', flexDirection: 'row' },
+
+    operateContainer: {
+      alignItems: 'center',
+      backgroundColor: 'white',
+      borderBottomColor: '#ccc',
+      borderBottomWidth: 1,
+      height: 40,
+      justifyContent: 'center',
+    },
+
+    operateText: { color: '#333' },
+
+    watchOrigin: { alignItems: 'center', bottom: 20, justifyContent: 'center', position: 'absolute', width },
+    watchOriginText: { backgroundColor: 'transparent', color: 'white' },
     watchOriginTouchable: {
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      borderColor: 'white',
+      borderRadius: 30,
+      borderWidth: 0.5,
+      paddingBottom: 5,
       paddingLeft: 10,
       paddingRight: 10,
       paddingTop: 5,
-      paddingBottom: 5,
-      borderRadius: 30,
-      borderColor: 'white',
-      borderWidth: 0.5,
-      backgroundColor: 'rgba(0, 0, 0, 0.1)'
     },
-    watchOriginText: { color: 'white', backgroundColor: 'transparent' },
-    imageStyle: {},
-    container: { backgroundColor }, // 多图浏览需要调整整体位置的盒子
-    moveBox: { flexDirection: 'row', alignItems: 'center' },
-    menuContainer: { position: 'absolute', width, height, left: 0, bottom: 0, zIndex: 12 },
-    menuShadow: {
-      position: 'absolute',
-      width,
-      height,
-      backgroundColor: 'black',
-      left: 0,
-      bottom: 0,
-      opacity: 0.2,
-      zIndex: 10
-    },
-    menuContent: { position: 'absolute', width, left: 0, bottom: 0, zIndex: 11 },
-    operateContainer: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'white',
-      height: 40,
-      borderBottomColor: '#ccc',
-      borderBottomWidth: 1
-    },
-    operateText: { color: '#333' },
-    loadingTouchable: { width, height },
-    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    arrowLeftContainer: { position: 'absolute', top: 0, bottom: 0, left: 0, justifyContent: 'center', zIndex: 13 },
-    arrowRightContainer: { position: 'absolute', top: 0, bottom: 0, right: 0, justifyContent: 'center', zIndex: 13 }
   };
 };
 
@@ -56,24 +64,24 @@ export const simpleStyle: {
   [x: string]: ViewStyle | TextStyle;
 } = {
   count: {
-    position: 'absolute',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
     left: 0,
+    position: 'absolute',
     right: 0,
     top: 38,
     zIndex: 13,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent'
   },
   countText: {
+    backgroundColor: 'transparent',
     color: 'white',
     fontSize: 16,
-    backgroundColor: 'transparent',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: {
+      height: 0.5,
       width: 0,
-      height: 0.5
     },
-    textShadowRadius: 0
-  }
+    textShadowRadius: 0,
+  },
 };

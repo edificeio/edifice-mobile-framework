@@ -1,25 +1,28 @@
-/* eslint-disable react/no-unstable-nested-components */
+import * as React from 'react';
+import { Alert, RefreshControl, ScrollView, View } from 'react-native';
+
 import { DrawerNavigationOptions, DrawerScreenProps } from '@react-navigation/drawer';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
-import * as React from 'react';
-import { Alert, RefreshControl, ScrollView, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import styles from './styles';
+import { ZimbraMailListScreenDispatchProps, ZimbraMailListScreenPrivateProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { PageView, pageGutterSize } from '~/framework/components/page';
+import { pageGutterSize, PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
 import SwipeableList from '~/framework/components/swipeableList';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
@@ -37,26 +40,23 @@ import { navBarTitle } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import styles from './styles';
-import { ZimbraMailListScreenDispatchProps, ZimbraMailListScreenPrivateProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
 }: DrawerScreenProps<ZimbraNavigationParams, typeof zimbraRouteNames.mailList>): DrawerNavigationOptions =>
   ({
-    headerTitle: navBarTitle(getFolderName(route.params.folderName), styles.navBarTitle),
+    freezeOnBlur: true,
+    headerShadowVisible: true,
     headerStyle: {
       backgroundColor: theme.palette.primary.regular,
     },
+    headerTintColor: theme.ui.text.inverse,
+    headerTitle: navBarTitle(getFolderName(route.params.folderName), styles.navBarTitle),
+    headerTitleAlign: 'center',
     headerTitleStyle: {
       ...TextFontStyle.Bold,
       color: theme.ui.text.inverse,
     },
-    headerTitleAlign: 'center',
-    headerTintColor: theme.ui.text.inverse,
-    headerShadowVisible: true,
-    freezeOnBlur: true,
   }) as DrawerNavigationOptions;
 
 const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
@@ -201,16 +201,16 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
     if (mail.state === 'DRAFT' && mail.systemFolder === 'DRAFT') {
       props.navigation.navigate(zimbraRouteNames.composer, {
-        type: DraftType.DRAFT,
-        mailId: mail.id,
         isTrashed: folderPath === '/Trash',
+        mailId: mail.id,
+        type: DraftType.DRAFT,
       });
     } else {
       props.navigation.navigate(zimbraRouteNames.mail, {
         folderPath,
         id: mail.id,
-        subject: mail.subject,
         onNavigateBack: () => refreshListItem(mail.id),
+        subject: mail.subject,
       });
     }
   };
@@ -293,13 +293,13 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   const alertPermanentDeletion = (ids: string[]) => {
     Alert.alert(I18n.get('zimbra-maillist-deletealert-title'), I18n.get('zimbra-maillist-deletealert-message'), [
       {
-        text: I18n.get('common-cancel'),
         style: 'default',
+        text: I18n.get('common-cancel'),
       },
       {
-        text: I18n.get('common-delete'),
         onPress: () => deleteMails(ids),
         style: 'destructive',
+        text: I18n.get('common-delete'),
       },
     ]);
   };
@@ -313,12 +313,12 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   const getDropdownActions = () => {
     return [
       {
-        title: I18n.get('zimbra-maillist-menuactions-move'),
         action: () => moveModalRef.current?.doShowModal(),
         icon: {
-          ios: 'arrow.up.square',
           android: 'ic_move_to_inbox',
+          ios: 'arrow.up.square',
         },
+        title: I18n.get('zimbra-maillist-menuactions-move'),
       },
       deleteAction({ action: () => trashMails(selectedMails) }),
     ];
@@ -440,7 +440,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
           }
           ListFooterComponent={
             loadingState === AsyncPagedLoadingState.FETCH_NEXT ? (
-              <LoadingIndicator customStyle={{ marginTop: UI_SIZES.spacing.big, marginBottom: pageGutterSize }} />
+              <LoadingIndicator customStyle={{ marginBottom: pageGutterSize, marginTop: UI_SIZES.spacing.big }} />
             ) : null
           }
           ListEmptyComponent={renderEmpty()}
@@ -455,8 +455,8 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
                       row[item.key]?.closeRow();
                     },
                     actionColor: theme.palette.status.info.regular,
-                    actionText: I18n.get(item.unread ? 'zimbra-maillist-markread' : 'zimbra-maillist-markunread'),
                     actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
+                    actionText: I18n.get(item.unread ? 'zimbra-maillist-markread' : 'zimbra-maillist-markunread'),
                   },
                 ]
               : [],
@@ -471,8 +471,8 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
                   row[item.key]?.closeRow();
                 },
                 actionColor: theme.palette.status.failure.regular,
-                actionText: I18n.get('zimbra-maillist-delete'),
                 actionIcon: 'ui-trash',
+                actionText: I18n.get('zimbra-maillist-delete'),
               },
             ],
           })}

@@ -13,9 +13,9 @@ import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 const styles = StyleSheet.create({
   contactContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     flexShrink: 1,
-    alignItems: 'center',
   },
   contactText: {
     flexShrink: 1,
@@ -31,9 +31,9 @@ const styles = StyleSheet.create({
     color: theme.palette.secondary.dark,
   },
   lineContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     width: '100%',
   },
   rightContainer: {
@@ -41,22 +41,22 @@ const styles = StyleSheet.create({
     marginLeft: UI_SIZES.spacing.small,
   },
   selectedContainer: {
-    borderBottomWidth: 0,
     backgroundColor: theme.palette.primary.pale,
+    borderBottomWidth: 0,
     borderRadius: UI_SIZES.radius.medium,
     margin: UI_SIZES.spacing.tiny,
     padding: UI_SIZES.spacing.minor,
   },
   subjectText: {
-    flexShrink: 1,
     color: theme.ui.text.light,
+    flexShrink: 1,
   },
   unreadIndicator: {
-    width: 10,
-    height: 10,
-    marginRight: UI_SIZES.spacing.tiny,
     backgroundColor: theme.palette.secondary.regular,
     borderRadius: 5,
+    height: 10,
+    marginRight: UI_SIZES.spacing.tiny,
+    width: 10,
   },
 });
 

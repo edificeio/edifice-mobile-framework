@@ -1,8 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import type { LegalItem, UserLegalNoticeScreenPrivateProps, UserLegalNoticeScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -20,21 +24,25 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Loading } from '~/ui/Loading';
 
-import styles from './styles';
-import type { UserLegalNoticeScreenPrivateProps, UserLegalNoticeScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
 }: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.legalNotice>): NativeStackNavigationOptions => ({
   ...navBarOptions({
+    backButtonTestID: 'legal-back',
     navigation,
     route,
     title: I18n.get('user-legalnotice-title'),
+    titleTestID: 'legal-title',
   }),
 });
 
-const LEGAL_ITEMS = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];
+const LEGAL_ITEMS: LegalItem[] = [
+  { item: 'userCharter', testID: 'legal-user-charter' },
+  { item: 'cgu', testID: 'legal-user-cgu' },
+  { item: 'personalDataProtection', testID: 'legal-user-data-protection' },
+  { item: 'cookies', testID: 'legal-cookies' },
+];
 
 function UserLegalNoticeScreen(
   props: UserLegalNoticeScreenPrivateProps & Pick<Required<UserLegalNoticeScreenPrivateProps>, 'legalUrls'>,
@@ -43,17 +51,18 @@ function UserLegalNoticeScreen(
     (legalItem: string) => {
       const selectedLegalTitle = I18n.get(`user-legalnotice-${legalItem.toLowerCase()}`);
       const selectedLegalUrl = props.legalUrls[legalItem];
-      openPDFReader({ title: selectedLegalTitle, src: selectedLegalUrl });
+      openPDFReader({ src: selectedLegalUrl, title: selectedLegalTitle });
     },
     [props.legalUrls],
   );
 
   const renderLegalItem = React.useCallback(
-    (legalItem: string) => (
-      <TouchableOpacity onPress={() => openLegalItem(legalItem)} key={legalItem}>
+    (legalItem: LegalItem) => (
+      <TouchableOpacity onPress={() => openLegalItem(legalItem.item)} key={legalItem.item}>
         <ListItem
-          leftElement={<SmallText>{I18n.get(`user-legalnotice-${legalItem.toLowerCase()}`)}</SmallText>}
+          leftElement={<SmallText>{I18n.get(`user-legalnotice-${legalItem.item.toLowerCase()}`)}</SmallText>}
           rightElement={<Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.itemIcon} />}
+          testID={legalItem.testID}
         />
       </TouchableOpacity>
     ),

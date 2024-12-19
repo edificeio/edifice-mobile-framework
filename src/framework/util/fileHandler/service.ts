@@ -16,12 +16,12 @@ import RNFS, {
   UploadProgressCallbackResult,
 } from 'react-native-fs';
 
+import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
+
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { assertPermissions } from '~/framework/util/permissions';
 import { getSafeFileName } from '~/framework/util/string';
 import { urlSigner } from '~/infra/oauth';
-
-import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
 
 export interface IUploadCommonParams {
   fields?: { [key: string]: string };
@@ -53,88 +53,31 @@ const mimeAliases = {
 };
 
 const fileTransferService = {
-  /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
-  startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
+  /** Download a file that exists in the server. */
+  downloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: AuthLoggedAccount,
-    file: LocalFile,
-    params: IUploadParams,
-    adapter: (data: any) => SyncedFileType['df'],
-    callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
-  ) => {
-    const url = session.platform.url + params.url;
-    const job = RNFS.uploadFiles({
-      files: [{ ...file, name: 'file' }],
-      toUrl: url,
-      method: 'POST',
-      fields: { ...params.fields },
-      headers: { ...urlSigner.getAuthHeader(), ...params.headers },
-      binaryStreamOnly: params.binaryStreamOnly,
-      begin: callbacks?.onBegin,
-      progress: callbacks?.onProgress,
-    });
-    const newJob = {
-      jobId: job.jobId,
-      promise: job.promise
-        .then(res => {
-          const statusCode = res.statusCode || 0;
-          if (statusCode >= 200 && statusCode < 300) {
-            const df = adapter(res.body);
-            const sfclass = (syncedFileClass ?? SyncedFile) as new (
-              ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
-            ) => SyncedFileType;
-            return new sfclass(file, df) as SyncedFileType;
-          } else {
-            const err = new Error('Upload failed: server error ' + JSON.stringify(res));
-            err.response = res;
-            throw err;
-          }
-        })
-        .catch(e => {
-          throw e;
-        }),
-    };
-    return newJob;
-  },
-
-  /** Upload a file to the given url. */
-  uploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
-    file: LocalFile,
-    params: IUploadParams,
-    adapter: (data: any) => SyncedFileType['df'],
-    callbacks?: IUploadCallbaks,
+    file: IDistantFile,
+    params: IDownloadParams,
+    callbacks?: IDownloadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     try {
-      const job = fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
-      return job.promise;
+      const job = await fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
+      return await job.promise;
     } catch (e) {
       throw e;
     }
   },
 
-  startUploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
+  downloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: AuthLoggedAccount,
-    files: LocalFile[],
-    params: IUploadParams,
-    adapter: (data: any) => SyncedFileType['df'],
-    callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
-  ) => {
-    return files.map(f => fileTransferService.startUploadFile(session, f, params, adapter, callbacks, syncedFileClass));
-  },
-
-  uploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
-    files: LocalFile[],
-    params: IUploadParams,
-    adapter: (data: any) => SyncedFileType['df'],
-    callbacks?: IUploadCallbaks,
+    files: IDistantFile[],
+    params: IDownloadParams,
+    callbacks?: IDownloadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     return Promise.all(
-      fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass).map(j => j.promise),
+      fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass).map(async j => (await j).promise),
     );
   },
 
@@ -194,9 +137,6 @@ const fileTransferService = {
     RNFS.mkdir(folderDest, { NSURLIsExcludedFromBackupKey: true });
     // Download file now!
     const job = RNFS.downloadFile({
-      fromUrl: downloadUrl,
-      toFile: downloadDest,
-      headers,
       begin: res => {
         if (res.contentLength) {
           file.filesize = res.contentLength;
@@ -208,7 +148,10 @@ const fileTransferService = {
         }
         callbacks?.onBegin?.(res);
       },
+      fromUrl: downloadUrl,
+      headers,
       progress: callbacks?.onProgress,
+      toFile: downloadDest,
     });
     const newJob = {
       jobId: job.jobId,
@@ -235,22 +178,6 @@ const fileTransferService = {
     return newJob;
   },
 
-  /** Download a file that exists in the server. */
-  downloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
-    file: IDistantFile,
-    params: IDownloadParams,
-    callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
-  ) => {
-    try {
-      const job = await fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
-      return await job.promise;
-    } catch (e) {
-      throw e;
-    }
-  },
-
   startDownloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: AuthLoggedAccount,
     files: IDistantFile[],
@@ -261,15 +188,88 @@ const fileTransferService = {
     return files.map(f => fileTransferService.startDownloadFile(session, f, params, callbacks, syncedFileClass));
   },
 
-  downloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
+  /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
+  startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: AuthLoggedAccount,
-    files: IDistantFile[],
-    params: IDownloadParams,
-    callbacks?: IDownloadCallbaks,
+    file: LocalFile,
+    params: IUploadParams,
+    adapter: (data: any) => SyncedFileType['df'],
+    callbacks?: IUploadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+  ) => {
+    const url = session.platform.url + params.url;
+    const job = RNFS.uploadFiles({
+      begin: callbacks?.onBegin,
+      binaryStreamOnly: params.binaryStreamOnly,
+      fields: { ...params.fields },
+      files: [{ ...file, name: 'file' }],
+      headers: { ...urlSigner.getAuthHeader(), ...params.headers },
+      method: 'POST',
+      progress: callbacks?.onProgress,
+      toUrl: url,
+    });
+    const newJob = {
+      jobId: job.jobId,
+      promise: job.promise
+        .then(res => {
+          const statusCode = res.statusCode || 0;
+          if (statusCode >= 200 && statusCode < 300) {
+            const df = adapter(res.body);
+            const sfclass = (syncedFileClass ?? SyncedFile) as new (
+              ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
+            ) => SyncedFileType;
+            return new sfclass(file, df) as SyncedFileType;
+          } else {
+            const err = new Error('Upload failed: server error ' + JSON.stringify(res));
+            err.response = res;
+            throw err;
+          }
+        })
+        .catch(e => {
+          throw e;
+        }),
+    };
+    return newJob;
+  },
+
+  startUploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
+    session: AuthLoggedAccount,
+    files: LocalFile[],
+    params: IUploadParams,
+    adapter: (data: any) => SyncedFileType['df'],
+    callbacks?: IUploadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+  ) => {
+    return files.map(f => fileTransferService.startUploadFile(session, f, params, adapter, callbacks, syncedFileClass));
+  },
+
+  /** Upload a file to the given url. */
+  uploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
+    session: AuthLoggedAccount,
+    file: LocalFile,
+    params: IUploadParams,
+    adapter: (data: any) => SyncedFileType['df'],
+    callbacks?: IUploadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
+  ) => {
+    try {
+      const job = fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
+      return job.promise;
+    } catch (e) {
+      throw e;
+    }
+  },
+
+  uploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
+    session: AuthLoggedAccount,
+    files: LocalFile[],
+    params: IUploadParams,
+    adapter: (data: any) => SyncedFileType['df'],
+    callbacks?: IUploadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     return Promise.all(
-      fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass).map(async j => (await j).promise),
+      fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass).map(j => j.promise),
     );
   },
 };

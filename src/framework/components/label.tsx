@@ -1,15 +1,16 @@
 /**
  * Display a label in a chip-shape.
  */
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ColorValue, TextProps, TextStyle, View, ViewProps } from 'react-native';
 
-import theme from '~/app/theme';
+import styled from '@emotion/native';
 
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
 import { SmallBoldText, TextSizeStyle } from './text';
+
+import theme from '~/app/theme';
 
 // PROPS ==========================================================================================
 
@@ -34,20 +35,20 @@ export const LabelView = styled.View({
 
 export default (props: ILabelProps) => {
   const {
-    text,
+    children,
+    color = theme.ui.text.regular,
     icon,
     iconStyle,
-    color = theme.ui.text.regular,
-    labelStyle = 'plain',
     labelSize = 'normal',
-    children,
+    labelStyle = 'plain',
+    text,
     textProps,
     ...viewProps
   } = props;
   const LabelViewWithPadding = styled(LabelView)({
+    borderRadius: labelSize === 'large' ? UI_SIZES.radius.extraLarge : UI_SIZES.radius.large,
     height: labelSize === 'large' ? UI_SIZES.dimensions.height.huge : UI_SIZES.dimensions.height.largerPlus,
     paddingHorizontal: labelSize === 'large' ? UI_SIZES.spacing.medium : UI_SIZES.spacing.small,
-    borderRadius: labelSize === 'large' ? UI_SIZES.radius.extraLarge : UI_SIZES.radius.large,
   });
   const LabelViewWithColor = styled(LabelViewWithPadding)({
     ...(labelStyle === 'plain'
@@ -55,8 +56,8 @@ export default (props: ILabelProps) => {
           backgroundColor: color,
         }
       : {
-          borderWidth: labelSize === 'large' ? UI_SIZES.dimensions.width.small : UI_SIZES.dimensions.width.tiny,
           borderColor: color,
+          borderWidth: labelSize === 'large' ? UI_SIZES.dimensions.width.small : UI_SIZES.dimensions.width.tiny,
         }),
   });
   const LabelTextWithColor = styled(SmallBoldText)({

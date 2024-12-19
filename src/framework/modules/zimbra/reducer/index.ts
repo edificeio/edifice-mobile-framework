@@ -24,17 +24,17 @@ export interface IZimbraReduxState {
 const initialState: IZimbraReduxStateData = {
   mails: [],
   quota: {
-    storage: 0,
     quota: 0,
+    storage: 0,
   },
   rootFolders: [],
   signature: {
+    id: '',
     preference: {
-      useSignature: false,
       signature: '',
+      useSignature: false,
     },
     zimbraENTSignatureExists: false,
-    id: '',
   },
 };
 

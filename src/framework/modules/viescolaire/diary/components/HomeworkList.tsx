@@ -1,7 +1,10 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
+
+import { HomeworkItem, SessionItem } from './Items';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -24,41 +27,39 @@ import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/vies
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { PageContainer } from '~/ui/ContainerContent';
 
-import { HomeworkItem, SessionItem } from './Items';
-
 const styles = StyleSheet.create({
   childPickerContentContainer: {
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingTop: UI_SIZES.spacing.medium,
   },
-  mainView: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
+  datePicker: {
+    marginHorizontal: UI_SIZES.spacing.minor,
+  },
+  grid: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: UI_SIZES.spacing.small,
+  },
+  gridHomeworkTitle: {
+    alignItems: 'flex-end',
+    flex: 1,
+  },
+  gridSesionTitle: {
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+  gridSwith: {
+    marginHorizontal: UI_SIZES.spacing.small,
+    marginTop: UI_SIZES.spacing.big,
   },
   homeworkPart: {
     flex: 1,
     paddingBottom: UI_SIZES.spacing.minor,
   },
-  grid: {
-    marginTop: UI_SIZES.spacing.small,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  gridHomeworkTitle: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-  gridSwith: {
-    marginTop: UI_SIZES.spacing.big,
-    marginHorizontal: UI_SIZES.spacing.small,
-  },
-  gridSesionTitle: {
-    flex: 1,
-    alignItems: 'flex-start',
-  },
-  datePicker: {
-    marginHorizontal: UI_SIZES.spacing.minor,
+  mainView: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
 });
 
@@ -82,7 +83,7 @@ type HomeworkListProps = {
 
 const EmptyComponent = ({ title }) => <EmptyScreen svgImage="empty-homework" title={title} />;
 
-const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomeworkTap, onHomeworkStatusUpdate, userType }) => {
+const HomeworkList = ({ homeworkList, isFetching, onHomeworkStatusUpdate, onHomeworkTap, onRefreshHomeworks, userType }) => {
   React.useEffect(() => {
     if (Object.keys(homeworkList).length === 0) onRefreshHomeworks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,7 +98,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
       style={styles.mainView}
       refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshHomeworks} />}
       data={homeworksArray}
-      renderItem={({ item, index }) => (
+      renderItem={({ index, item }) => (
         <View key={item.id}>
           {index === 0 ||
           moment(item.due_date).format('DD/MM/YY') !== moment(homeworksArray[index - 1].due_date).format('DD/MM/YY') ? (
@@ -120,7 +121,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
   );
 };
 
-const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap, personnelList }) => {
+const SessionList = ({ isFetching, onRefreshSessions, onSessionTap, personnelList, sessionList }) => {
   React.useEffect(() => {
     if (sessionList.length === 0) onRefreshSessions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -131,7 +132,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
       style={styles.mainView}
       refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshSessions} />}
       data={sessionList}
-      renderItem={({ item, index }) => (
+      renderItem={({ index, item }) => (
         <View>
           {index === 0 || moment(item.date).format('DD/MM/YY') !== moment(sessionList[index - 1].date).format('DD/MM/YY') ? (
             <SmallBoldText>{moment(item.date).format('DD/MM/YY')}</SmallBoldText>
@@ -179,11 +180,11 @@ export default (props: HomeworkListProps) => {
   const switchProps =
     Platform.OS === 'ios'
       ? {
-          trackColor: { false: theme.palette.status.warning.regular, true: viescoTheme.palette.diary },
           ios_backgroundColor: theme.palette.status.warning.regular,
+          trackColor: { false: theme.palette.status.warning.regular, true: viescoTheme.palette.diary },
         }
       : { thumbColor: switchValue ? viescoTheme.palette.diary : theme.palette.status.warning.regular };
-  const { isFetchingSession, isFetchingHomework, userType } = props;
+  const { isFetchingHomework, isFetchingSession, userType } = props;
 
   return (
     <PageContainer>

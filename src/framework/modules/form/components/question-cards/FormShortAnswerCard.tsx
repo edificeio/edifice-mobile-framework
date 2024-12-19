@@ -1,21 +1,21 @@
 import React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 
+import { FormAnswerText } from './FormAnswerText';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/framework/modules/form/model';
 
-import { FormAnswerText } from './FormAnswerText';
-
 const styles = StyleSheet.create({
   textInput: {
-    padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
-    borderWidth: 1,
     borderRadius: 5,
+    borderWidth: 1,
     color: theme.ui.text.regular,
+    padding: UI_SIZES.spacing.small,
   },
 });
 
@@ -29,13 +29,13 @@ interface IFormShortAnswerCardProps {
 
 export const FormShortAnswerCard = ({
   isDisabled,
-  question,
-  responses,
   onChangeAnswer,
   onEditQuestion,
+  question,
+  responses,
 }: IFormShortAnswerCardProps) => {
   const [value, setValue] = React.useState(responses[0]?.answer ?? '');
-  const { title, mandatory, placeholder } = question;
+  const { mandatory, placeholder, title } = question;
 
   const onChangeTextCallback = (text: string) => {
     setValue(text);
@@ -43,8 +43,8 @@ export const FormShortAnswerCard = ({
       responses[0].answer = text;
     } else {
       responses.push({
-        questionId: question.id,
         answer: text,
+        questionId: question.id,
       });
     }
     onChangeAnswer(question.id, responses);

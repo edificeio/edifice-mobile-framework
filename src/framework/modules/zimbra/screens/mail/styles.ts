@@ -15,7 +15,7 @@ export default StyleSheet.create({
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%',
     marginTop: UI_SIZES.spacing.small,
+    width: '100%',
   },
 });

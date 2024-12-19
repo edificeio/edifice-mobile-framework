@@ -10,11 +10,11 @@ type IResult = {
 
 function mapObject(item: IEntcoreWorkspaceFolder): IFolder {
   return {
+    children: [],
     id: item._id,
     name: item.name,
     parentId: item.eParent ? item.eParent : 'owner',
     sortNo: item.name,
-    children: [],
   };
 }
 
@@ -26,13 +26,13 @@ function findParent(treeItems: IFolder[], parentId: string): IFolder | null {
 }
 
 function insertItem(result: IResult, item: IEntcoreWorkspaceFolder): IResult {
-  const { treeItems, notFormated } = result;
+  const { notFormated, treeItems } = result;
 
   if (!item.eParent) {
     treeItems.push(mapObject(item));
     return {
-      treeItems,
       notFormated,
+      treeItems,
     };
   }
   const parent = findParent(treeItems, item.eParent);
@@ -41,28 +41,28 @@ function insertItem(result: IResult, item: IEntcoreWorkspaceFolder): IResult {
     if (!parent.children) parent.children = [];
     parent.children.push(mapObject(item));
     return {
-      treeItems,
       notFormated,
+      treeItems,
     };
   }
   return {
-    treeItems,
     notFormated: [...notFormated, item],
+    treeItems,
   };
 }
 
 export const workspaceFolderListAdapter = (data: IEntcoreWorkspaceFolderList): IFolder[] => {
   let result: IResult = {
-    treeItems: [],
     notFormated: data,
+    treeItems: [],
   };
   let notFormatedLength = 0;
 
   do {
     notFormatedLength = result.notFormated.length;
     result = result.notFormated.reduce((acc, item) => insertItem(acc, item), {
-      treeItems: result.treeItems,
       notFormated: [] as IEntcoreWorkspaceFolder[],
+      treeItems: result.treeItems,
     });
   } while (result.notFormated.length !== notFormatedLength);
   return result.treeItems;

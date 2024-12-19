@@ -1,6 +1,7 @@
-import { DrawerItem } from '@react-navigation/drawer';
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { DrawerItem } from '@react-navigation/drawer';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -9,12 +10,12 @@ import { IFolder } from '~/framework/modules/zimbra/model';
 
 const styles = StyleSheet.create({
   expandActionContainer: {
-    justifyContent: 'center',
     alignItems: 'center',
+    height: '100%',
+    justifyContent: 'center',
     position: 'absolute',
     right: 2,
     width: 48,
-    height: '100%',
   },
   subfolderListContainer: {
     marginLeft: UI_SIZES.spacing.minor,

@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import type { PresencesStatisticsScreenDispatchProps, PresencesStatisticsScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -27,9 +31,6 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import styles from './styles';
-import type { PresencesStatisticsScreenDispatchProps, PresencesStatisticsScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -59,7 +60,7 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
         const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
-      const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
+      const { endDate, startDate } = await props.tryFetchSchoolYear(structureId);
       await props.tryFetchStatistics(studentId, structureId, startDate, endDate);
       const terms = await props.tryFetchTerms(structureId, groupId ?? '');
       const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));

@@ -5,12 +5,12 @@
 import moment from 'moment';
 import { AnyAction, Reducer } from 'redux';
 
+import { IHomeworkDiary } from './diaryList';
+
 import { actionTypes } from '~/framework/modules/homework/actions/tasks';
 import { IOrderedArrayById } from '~/infra/collections';
 import asyncReducer, { IAction, IState } from '~/infra/redux/async';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
-
-import { IHomeworkDiary } from './diaryList';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -96,8 +96,8 @@ const homeworkAllTasksReducer = (
         ...state,
         [action.diaryId]: {
           ...homeworkSingleTasksAsyncReducer(state[action.diaryId], action),
-          error: action.error,
           errmsg: action.errmsg,
+          error: action.error,
         },
       };
     // Session flush forward-compatibility.

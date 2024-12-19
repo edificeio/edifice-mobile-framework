@@ -4,7 +4,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: theme.ui.background.card },
+  safeArea: { backgroundColor: theme.ui.background.card, flex: 1 },
   safeAreaInner: {
     alignItems: 'center',
     flex: 1,
@@ -14,11 +14,11 @@ export default StyleSheet.create({
   },
   textCenter: { textAlign: 'center' },
   textError: {
+    alignSelf: 'center',
+    color: theme.palette.status.failure.regular,
     flexGrow: 0,
     marginTop: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.tiny,
     textAlign: 'center',
-    alignSelf: 'center',
-    color: theme.palette.status.failure.regular,
   },
 });

@@ -30,26 +30,33 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
   let result = {} as IMail;
   if (!data) throw new Error('(mailContentAdapter) data is not populated.');
   result = {
-    id: data.id,
-    date: moment(data.date),
-    state: data.state,
-    from: data.from,
-    to: data.to,
+    attachments: data.attachments,
+    body: data.body,
     cc: data.cc,
     cci: data.cci,
+    cciName: data.cciName,
+    ccName: data.ccName,
+    date: moment(data.date),
+
     displayNames: data.displayNames,
-    attachments: data.attachments,
-    subject: data.subject,
-    body: data.body,
-    parent_id: data.parent_id,
-    thread_id: data.thread_id,
+
+    from: data.from,
+
     // Extra data
     fromName: data.fromName,
-    toName: data.toName,
-    ccName: data.ccName,
+
+    id: data.id,
+
     language: data.language,
+
+    parent_id: data.parent_id,
+
+    state: data.state,
+    subject: data.subject,
     text_searchable: data.text_searchable,
-    cciName: data.cciName,
+    thread_id: data.thread_id,
+    to: data.to,
+    toName: data.toName,
   };
   return result;
 };

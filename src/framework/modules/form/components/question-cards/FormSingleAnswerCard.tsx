@@ -1,23 +1,23 @@
 import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
+import { FormAnswerText } from './FormAnswerText';
+import Dropdown from './FormDropdown';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
 
-import { FormAnswerText } from './FormAnswerText';
-import Dropdown from './FormDropdown';
-
 const styles = StyleSheet.create({
   customAnswerInput: {
+    borderBottomColor: theme.palette.grey.grey,
+    borderBottomWidth: 1,
+    color: theme.ui.text.regular,
     flex: 1,
     marginTop: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.tiny,
-    color: theme.ui.text.regular,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.palette.grey.grey,
   },
 });
 
@@ -46,16 +46,16 @@ const mapDropdownItems = (choices: IQuestionChoice[]): { id?: string; value: str
 
 export const FormSingleAnswerCard = ({
   isDisabled,
-  question,
-  responses,
   onChangeAnswer,
   onEditQuestion,
+  question,
+  responses,
 }: IFormSingleAnswerCardProps) => {
   const [items] = React.useState(mapDropdownItems(question.choices));
   const [value, setValue] = React.useState(responses[0]?.choiceId);
   const [customAnswer, setCustomAnswer] = React.useState(responses[0]?.customAnswer ?? '');
   let selectedChoice = question.choices.find(c => c.id === value);
-  const { title, mandatory } = question;
+  const { mandatory, title } = question;
 
   const onChangeChoice = (choiceId?: number) => {
     setValue(choiceId);
@@ -69,10 +69,10 @@ export const FormSingleAnswerCard = ({
       responses[0].customAnswer = selectedChoice?.isCustom ? customAnswer : undefined;
     } else {
       responses.push({
-        choiceId,
         answer,
-        questionId: question.id,
+        choiceId,
         customAnswer: selectedChoice?.isCustom ? customAnswer : undefined,
+        questionId: question.id,
       });
     }
     onChangeAnswer(question.id, responses);

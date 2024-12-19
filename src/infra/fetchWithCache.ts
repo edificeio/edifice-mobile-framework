@@ -2,13 +2,13 @@ import NetInfo from '@react-native-community/netinfo';
 import CookieManager from '@react-native-cookies/cookies';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { CACHE_KEY_PREFIX } from './cache';
+import { OAuth2RessourceOwnerPasswordClient } from './oauth';
+
 import { getStore } from '~/app/store';
 import { invalidateSessionAction } from '~/framework/modules/auth/actions';
 import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
 import { OldStorageFunctions } from '~/framework/util/storage';
-
-import { CACHE_KEY_PREFIX } from './cache';
-import { OAuth2RessourceOwnerPasswordClient } from './oauth';
 
 /** singleton boolean to prevent logout multiple time when parallel fetchs fails */
 let isFailing: boolean = false;

@@ -1,7 +1,8 @@
-import { RouteProp, useIsFocused } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Platform, View } from 'react-native';
+
+import { RouteProp, useIsFocused } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import PhoneInput, {
   Country,
   CountryCode,
@@ -13,6 +14,9 @@ import PhoneInput, {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -36,9 +40,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import styles from './styles';
-import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
-
 const getNavBarTitle = (route: RouteProp<AuthNavigationParams, typeof authRouteNames.changeMobile>) =>
   route.params.navBarTitle || I18n.get('auth-change-mobile-verify');
 
@@ -48,22 +49,26 @@ export const computeNavBar = ({
 }: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changeMobile>): NativeStackNavigationOptions => {
   return {
     ...navBarOptions({
+      backButtonTestID: 'phone-back',
       navigation,
       route,
       title: getNavBarTitle(route),
+      titleTestID: 'phone-title',
     }),
   };
 };
 
 const countryListLanguages = {
-  fr: 'fra',
-  en: 'common', // this is english
-  es: 'spa',
   DEFAULT: 'common',
+  en: 'common',
+  // this is english
+  es: 'spa',
+
+  fr: 'fra',
 } as const;
 
 const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
-  const { tryLogout, navigation, route } = props;
+  const { navigation, route, tryLogout } = props;
   const isScreenFocused = useIsFocused();
   const phoneInputRef = useRef<PhoneInput>(null);
 
@@ -111,14 +116,14 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const texts: PageTexts = isModifyingMobile
     ? {
         button,
-        message,
         label: I18n.get('auth-change-mobile-edit-label'),
+        message,
         title: I18n.get('auth-change-mobile-edit-title'),
       }
     : {
         button,
-        message,
         label: I18n.get('auth-change-mobile-verify-label'),
+        message,
         title: I18n.get('auth-change-mobile-verify-title'),
       };
 
@@ -162,12 +167,12 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           setIsSendingCode(true);
           await requestMobileVerificationCode(platform, mobileNumberFormatted);
           navigation.navigate(authRouteNames.mfa, {
-            platform,
-            rememberMe: false,
-            modificationType,
             isMobileMFA: true,
             mobile: mobileNumberFormatted,
+            modificationType,
             navBarTitle: getNavBarTitle(route),
+            platform,
+            rememberMe: false,
           });
         } else {
           setIsSendingCode(false);
@@ -209,9 +214,9 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   }, [tryLogout]);
 
   usePreventBack({
-    title: I18n.get('auth-change-mobile-edit-alert-title'),
-    text: I18n.get('auth-change-mobile-edit-alert-message'),
     showAlert: !isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused && isModifyingMobile,
+    text: I18n.get('auth-change-mobile-edit-alert-message'),
+    title: I18n.get('auth-change-mobile-edit-alert-title'),
   });
 
   const onChangeMobile = useCallback((text: string) => changeMobile(text), [changeMobile]);
@@ -221,15 +226,15 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     if (!isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused) {
       Alert.alert(I18n.get('auth-change-mobile-edit-alert-title'), I18n.get('auth-change-mobile-edit-alert-message'), [
         {
-          text: I18n.get('common-quit'),
           onPress: () => {
             refuseMobileVerification();
           },
           style: 'destructive',
+          text: I18n.get('common-quit'),
         },
         {
-          text: I18n.get('common-continue'),
           style: 'default',
+          text: I18n.get('common-continue'),
         },
       ]);
     } else {
@@ -248,9 +253,13 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           <View style={styles.imageContainer}>
             <NamedSVG name="user-smartphone" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
           </View>
-          <HeadingSText style={styles.title}>{texts.title}</HeadingSText>
-          <SmallText style={styles.content}>{texts.message}</SmallText>
-          <View style={styles.inputTitleContainer}>
+          <HeadingSText style={styles.title} testID="phone-new-title">
+            {texts.title}
+          </HeadingSText>
+          <SmallText style={styles.content} testID="phone-new-subtitle">
+            {texts.message}
+          </SmallText>
+          <View style={styles.inputTitleContainer} testID="phone-new-label">
             <Picture
               type="NamedSvg"
               name="pictos-smartphone"
@@ -281,30 +290,32 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
               },
             ]}
             textInputStyle={styles.inputTextInput}
-            flagSize={Platform.select({ ios: UI_SIZES.dimensions.width.larger, android: UI_SIZES.dimensions.width.medium })}
+            flagSize={Platform.select({ android: UI_SIZES.dimensions.width.medium, ios: UI_SIZES.dimensions.width.larger })}
             drowDownImage={
               <NamedSVG style={styles.dropDownArrow} name="ui-rafterDown" fill={theme.ui.text.regular} width={12} height={12} />
             }
             countryPickerProps={{
               filterProps: {
-                placeholder: I18n.get('auth-change-mobile-country-placeholder'),
                 autoFocus: true,
+                placeholder: I18n.get('auth-change-mobile-country-placeholder'),
               },
               language: countryListLanguages[I18n.getLanguage()] ?? countryListLanguages.DEFAULT,
             }}
+            testIDCountryWithCode="phone-new-country"
             textInputProps={{
               hitSlop: {
-                top: -UI_SIZES.spacing.big,
                 bottom: -UI_SIZES.spacing.big,
                 left: 0,
                 right: 0,
+                top: -UI_SIZES.spacing.big,
               },
-              keyboardType: 'phone-pad',
               inputMode: 'tel',
+              keyboardType: 'phone-pad',
               placeholderTextColor: theme.palette.grey.stone,
+              testID: 'phone-new-field',
             }}
           />
-          <CaptionItalicText style={styles.errorText}>
+          <CaptionItalicText style={styles.errorText} testID="phone-new-error">
             {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
           </CaptionItalicText>
           <PrimaryButton
@@ -313,6 +324,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             disabled={isMobileEmpty}
             loading={isSendingCode}
             action={onSendSMS}
+            testID="phone-change"
           />
           {isModifyingMobile ? null : (
             <DefaultButton

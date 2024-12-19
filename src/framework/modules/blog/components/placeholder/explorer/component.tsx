@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
-
 import styles from './styles';
+
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 const cardExplorer = (
   <View style={styles.cardExplorer}>

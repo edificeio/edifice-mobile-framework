@@ -1,8 +1,8 @@
 //const STORAGE_KEY = `${moduleConfig.name}.showAverageColors`;^
 
-import { Storage } from '~/framework/util/storage';
-
 import moduleConfig from './module-config';
+
+import { Storage } from '~/framework/util/storage';
 
 export interface CompetencesStorageData {
   'show-average-colors': boolean;

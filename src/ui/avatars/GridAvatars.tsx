@@ -1,22 +1,23 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ImageURISource } from 'react-native';
+
+import styled from '@emotion/native';
 
 import Avatar, { Size } from './Avatar';
 
 export interface IAvatarsProps {
   users:
     | string[]
-    | Array<{
+    | {
         id?: string;
         isGroup: boolean;
-      }>;
+      }[];
   fallback?: ImageURISource;
 }
 
 export class GridAvatars extends React.Component<IAvatarsProps> {
   public render() {
-    const { users, fallback } = this.props;
+    const { fallback, users } = this.props;
 
     if (users.length > 4) {
       users.length = 4;
@@ -36,7 +37,7 @@ const Container = styled.View({
   alignItems: 'center',
   flexDirection: 'row',
   flexWrap: 'nowrap',
+  height: 45,
   justifyContent: 'center',
   width: 45,
-  height: 45,
 });

@@ -1,92 +1,92 @@
 import React from 'react';
 import { FlatList, NativeScrollEvent, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { FormAnswerText } from './FormAnswerText';
+import { FormCheckbox } from './FormCheckbox';
+import { FormRadio } from './FormRadio';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionChoice, IQuestionResponse, QuestionType } from '~/framework/modules/form/model';
 
-import { FormAnswerText } from './FormAnswerText';
-import { FormCheckbox } from './FormCheckbox';
-import { FormRadio } from './FormRadio';
-
 const CELL_MIN_HEIGHT = 50;
 const CHOICE_CELL_WIDTH = 100;
 const QUESTION_CELL_WIDTH = 100;
 
 const styles = StyleSheet.create({
-  scrollViewContent: {
-    marginBottom: UI_SIZES.spacing.minor,
-  },
-  scrollViewShadow: {
-    position: 'absolute',
-    right: -UI_SIZES.spacing.small,
-    width: UI_SIZES.spacing.small,
-    height: '100%',
-    backgroundColor: theme.ui.background.card,
-    shadowColor: theme.ui.background.card,
-    shadowOffset: { width: -5, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 5,
-    elevation: 1,
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    minHeight: CELL_MIN_HEIGHT,
-    backgroundColor: theme.palette.grey.fog,
-    borderRadius: UI_SIZES.radius.small,
-    marginBottom: UI_SIZES.spacing.tiny,
-  },
-  hiddenQuestionContainer: {
-    textAlign: 'center',
-    width: QUESTION_CELL_WIDTH,
-    minHeight: CELL_MIN_HEIGHT,
-  },
   choiceContainer: {
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     width: CHOICE_CELL_WIDTH,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    minHeight: CELL_MIN_HEIGHT,
-    marginBottom: UI_SIZES.spacing.tiny,
-    marginLeft: QUESTION_CELL_WIDTH,
   },
   choiceText: {
     textAlign: 'center',
   },
-  hiddenHeaderContainer: {
-    position: 'absolute',
-    width: QUESTION_CELL_WIDTH,
-    height: '50%',
-    backgroundColor: theme.ui.background.card,
+  headerContainer: {
+    flexDirection: 'row',
+    marginBottom: UI_SIZES.spacing.tiny,
+    marginLeft: QUESTION_CELL_WIDTH,
+    minHeight: CELL_MIN_HEIGHT,
   },
-  titlesContainer: {
-    position: 'absolute',
-    bottom: UI_SIZES.spacing.small,
-    width: QUESTION_CELL_WIDTH,
+  hiddenHeaderContainer: {
     backgroundColor: theme.ui.background.card,
+    height: '50%',
+    position: 'absolute',
+    width: QUESTION_CELL_WIDTH,
+  },
+  hiddenQuestionContainer: {
+    minHeight: CELL_MIN_HEIGHT,
+    textAlign: 'center',
+    width: QUESTION_CELL_WIDTH,
+  },
+  itemContainer: {
+    backgroundColor: theme.palette.grey.fog,
+    borderRadius: UI_SIZES.radius.small,
+    flexDirection: 'row',
+    marginBottom: UI_SIZES.spacing.tiny,
+    minHeight: CELL_MIN_HEIGHT,
   },
   questionContainer: {
-    justifyContent: 'center',
-    width: QUESTION_CELL_WIDTH,
-    minHeight: CELL_MIN_HEIGHT,
     backgroundColor: theme.palette.grey.fog,
-    borderTopLeftRadius: UI_SIZES.radius.small,
     borderBottomLeftRadius: UI_SIZES.radius.small,
+    borderTopLeftRadius: UI_SIZES.radius.small,
+    justifyContent: 'center',
     marginTop: UI_SIZES.spacing.tiny,
+    minHeight: CELL_MIN_HEIGHT,
+    width: QUESTION_CELL_WIDTH,
   },
   questionContainerShadow: {
+    elevation: 1,
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 3, height: 0 },
+    shadowOffset: { height: 0, width: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 1,
-    elevation: 1,
   },
   questionText: {
     textAlign: 'center',
+  },
+  scrollViewContent: {
+    marginBottom: UI_SIZES.spacing.minor,
+  },
+  scrollViewShadow: {
+    backgroundColor: theme.ui.background.card,
+    elevation: 1,
+    height: '100%',
+    position: 'absolute',
+    right: -UI_SIZES.spacing.small,
+    shadowColor: theme.ui.background.card,
+    shadowOffset: { height: 0, width: -5 },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    width: UI_SIZES.spacing.small,
+  },
+  titlesContainer: {
+    backgroundColor: theme.ui.background.card,
+    bottom: UI_SIZES.spacing.small,
+    position: 'absolute',
+    width: QUESTION_CELL_WIDTH,
   },
 });
 
@@ -102,7 +102,7 @@ const getResponseValues = (responses: IQuestionResponse[]): { [key: string]: num
   const values: { [key: string]: number[] } = {};
 
   for (const response of responses) {
-    const { questionId, choiceId } = response;
+    const { choiceId, questionId } = response;
     if (values[response.questionId]) {
       values[questionId].push(choiceId!);
     } else {
@@ -112,9 +112,9 @@ const getResponseValues = (responses: IQuestionResponse[]): { [key: string]: num
   return values;
 };
 
-export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer, onEditQuestion }: IFormMatrixCardProps) => {
+export const FormMatrixCard = ({ isDisabled, onChangeAnswer, onEditQuestion, question, responses }: IFormMatrixCardProps) => {
   const [values, setValues] = React.useState<{ [key: string]: number[] }>(getResponseValues(responses));
-  const { title, mandatory, choices, children } = question;
+  const { children, choices, mandatory, title } = question;
   const [isQuestionShadowVisible, setQuestionShadowVisible] = React.useState(false);
   const [isEndShadowVisible, setEndShadowVisible] = React.useState(true);
   const [isSingleAnswer] = React.useState(question.children?.some(q => q.type === QuestionType.SINGLEANSWERRADIO));
@@ -130,9 +130,9 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
       response.choiceId = choice.id;
     } else {
       response = {
-        questionId: child.id,
         answer: choice.value,
         choiceId: choice.id,
+        questionId: child.id,
       };
     }
     onChangeAnswer(child.id, [response]);
@@ -153,8 +153,8 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
       }
       setValues(values);
       res.push({
-        choiceId: choice.id,
         answer: choice.value,
+        choiceId: choice.id,
         questionId: child.id,
       });
     }
@@ -171,9 +171,9 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
         response.choiceId = undefined;
       } else {
         response = {
-          questionId: child.id,
           answer: '',
           choiceId: undefined,
+          questionId: child.id,
         };
       }
       onChangeAnswer(child.id, [response]);
@@ -208,7 +208,7 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
             <FlatList
               data={children}
               keyExtractor={child => child.id.toString()}
-              renderItem={({ item, index }) => (
+              renderItem={({ index, item }) => (
                 <View style={styles.itemContainer}>
                   <SmallText style={styles.hiddenQuestionContainer}>{item.title}</SmallText>
                   {choices.map(choice => (

@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { Platform, View } from 'react-native';
+
 import deviceInfoModule from 'react-native-device-info';
 import Swiper from 'react-native-swiper';
+
+import styles from './styles';
+import { AuthOnboardingScreenPrivateProps, AuthOnboardingScreenState } from './types';
 
 import { I18n } from '~/app/i18n';
 import { getButtonWidth } from '~/framework/components/buttons/default';
@@ -13,9 +17,6 @@ import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
 import appConf from '~/framework/util/appConf';
 import { Image } from '~/framework/util/media';
-
-import styles from './styles';
-import { AuthOnboardingScreenPrivateProps, AuthOnboardingScreenState } from './types';
 
 class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivateProps, AuthOnboardingScreenState> {
   state = {
@@ -31,19 +32,19 @@ class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivatePr
   async componentDidMount() {
     // Calculate button(s) width(s)
     let discoverWidth = 0;
-    const joinWidth = await getButtonWidth({ text: I18n.get('user-onboarding-joinmynetwork'), type: 'primary', bold: true });
+    const joinWidth = await getButtonWidth({ bold: true, text: I18n.get('user-onboarding-joinmynetwork'), type: 'primary' });
     if (this.showDiscoverLink)
       discoverWidth = await getButtonWidth({
-        text: I18n.get('user-onboarding-discover'),
-        icons: 1,
-        type: 'secondary',
         bold: true,
+        icons: 1,
+        text: I18n.get('user-onboarding-discover'),
+        type: 'secondary',
       });
     if (this.showDiscoveryClass)
       discoverWidth = await getButtonWidth({
+        bold: true,
         text: I18n.get('user-onboarding-discoveryclass'),
         type: 'secondary',
-        bold: true,
       });
 
     this.setState({ buttonsWidth: Math.max(joinWidth, discoverWidth) });
@@ -74,7 +75,7 @@ class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivatePr
   };
 
   render() {
-    const { navigation, texts, pictures, nextScreenAction } = this.props;
+    const { navigation, nextScreenAction, pictures, texts } = this.props;
     const { buttonsWidth } = this.state;
     return (
       <PageView style={styles.page} statusBar="none">
@@ -86,7 +87,6 @@ class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivatePr
             {texts.map((onboardingText, index) => (
               <View key={index} style={styles.swiperItem}>
                 <Image source={pictures[index]} style={styles.swiperItemImage} />
-
                 <HeadingSText style={styles.swiperItemText}>{onboardingText}</HeadingSText>
               </View>
             ))}

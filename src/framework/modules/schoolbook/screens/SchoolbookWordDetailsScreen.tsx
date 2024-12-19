@@ -1,9 +1,10 @@
 /**
  * Schoolbook word details
  */
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert, Platform, RefreshControl, ScrollView } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -67,9 +68,9 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   const [isPublishingReply, setIsPublishingReply] = React.useState(false);
   const [isAcknowledgingWord, setIsAcknowledgingWord] = React.useState(false);
   const [infoComment, setInfoComment] = React.useState<InfoCommentField>({
-    type: '',
-    isPublication: false,
     changed: false,
+    isPublication: false,
+    type: '',
     value: '',
   });
   const isSchoolbookWordRendered =
@@ -195,23 +196,23 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     const showDeleteSchoolbookWordAlert = () =>
       Alert.alert(I18n.get('schoolbook-worddetails-deletealert-title'), I18n.get('schoolbook-worddetails-deletealert-text'), [
         {
-          text: I18n.get('common-cancel'),
           style: 'default',
+          text: I18n.get('common-cancel'),
         },
         {
-          text: I18n.get('common-delete'),
-          style: 'destructive',
           onPress: () => deleteSchoolbookWord(),
+          style: 'destructive',
+          text: I18n.get('common-delete'),
         },
       ]);
     const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
     const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
-    const schoolbookWordResource = { shared: schoolbookWord?.word?.shared, author: { userId: schoolbookWord?.word?.ownerId } };
+    const schoolbookWordResource = { author: { userId: schoolbookWord?.word?.ownerId }, shared: schoolbookWord?.word?.shared };
     const hasSchoolbookWordDeleteRights = session && hasDeleteRight(schoolbookWordResource, session);
     const canDeleteSchoolbookWord = isUserSchoolbookWordOwner || hasSchoolbookWordDeleteRights;
     props.navigation.setOptions({
       // React Navigation 6 uses this syntax to setup nav options
-      // eslint-disable-next-line react/no-unstable-nested-components
+
       headerRight: () =>
         isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
           <PopupMenu actions={[deleteAction({ action: () => showDeleteSchoolbookWordAlert() })]}>
@@ -230,13 +231,17 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   ]);
 
   usePreventBack({
-    title: I18n.get(`schoolbook-worddetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-    text: I18n.get(
-      `schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-${
-        infoComment.isPublication ? 'publication' : 'modification'
-      }`,
-    ),
     showAlert: infoComment.changed,
+    text: I18n.get(
+      infoComment.isPublication
+        ? `schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-publication`
+        : `schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-modification`,
+    ),
+    title: I18n.get(
+      infoComment.isPublication
+        ? 'schoolbook-worddetails-confirmation-unsaved-publication'
+        : 'schoolbook-worddetails-confirmation-unsaved-modification',
+    ),
   });
 
   React.useEffect(() => {
@@ -320,7 +325,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     }
   };
 
-  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
   return (
     <>
@@ -332,6 +337,6 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 // MAPPING ========================================================================================
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(),
   initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+  session: getSession(),
 }))(SchoolbookWordDetailsScreen);

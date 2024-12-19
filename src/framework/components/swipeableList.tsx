@@ -34,7 +34,6 @@
  *     hiddenItemStyle={UI_STYLES.justifyEnd} // Optional. style for every action
  * />
  */
-import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import {
   Animated,
@@ -48,13 +47,15 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { IPropsSwipeListView, RowMap, SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 
-import theme from '~/app/theme';
+import { useScrollToTop } from '@react-navigation/native';
+import { IPropsSwipeListView, RowMap, SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 
 import { UI_SIZES, UI_STYLES } from './constants';
 import { NamedSVG } from './picture';
 import { SmallText } from './text';
+
+import theme from '~/app/theme';
 
 // Redecalare forwardRef @see https://fettblog.eu/typescript-react-generic-forward-refs/#option-3%3A-augment-forwardref
 declare module 'react' {
@@ -80,18 +81,18 @@ export interface ISwipeActionProps<ItemT extends { key: string }> {
 }
 
 const styles = StyleSheet.create({
-  swipeActionWrapper: {
-    flexDirection: 'row',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   swipeAction: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flex: 0,
+    flexDirection: 'row',
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.medium,
-    flex: 0,
+  },
+  swipeActionWrapper: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    height: '100%',
+    justifyContent: 'center',
   },
 });
 
@@ -116,11 +117,11 @@ const SwipeAction = <ItemT extends { key: string }>(
         <View
           // eslint-disable-next-line react-native/no-inline-styles
           style={{
-            position: 'absolute',
-            width: overlapWidth,
             backgroundColor: props.backgroundColor,
-            top: 0,
             bottom: 0,
+            position: 'absolute',
+            top: 0,
+            width: overlapWidth,
             ...(props.direction === 'left' ? { left: -overlapWidth } : { right: -overlapWidth }),
           }}
         />
@@ -164,8 +165,8 @@ const SwipeAction = <ItemT extends { key: string }>(
             <SmallText
               style={{
                 color: props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.primary.regular),
-                marginLeft: UI_SIZES.spacing.small,
                 lineHeight: undefined,
+                marginLeft: UI_SIZES.spacing.small,
               }}>
               {props.actionText}
             </SmallText>
@@ -202,16 +203,16 @@ export default React.forwardRef(
     ref: React.Ref<SwipeListView<ItemT>>,
   ) => {
     const {
-      itemSwipeActionProps,
-      hiddenRowStyle,
-      hiddenItemStyle,
-      swipeActionWidth,
-      data,
       bottomInset,
+      data,
+      hiddenItemStyle,
+      hiddenRowStyle,
+      itemSwipeActionProps,
       ListFooterComponent,
-      scrollIndicatorInsets,
-      renderItem,
       onScrollBeginDrag,
+      renderItem,
+      scrollIndicatorInsets,
+      swipeActionWidth,
       ...otherListProps
     } = props;
     const animatedRefs = React.useRef<{ [key: string]: Animated.Value }>({});
@@ -273,12 +274,12 @@ export default React.forwardRef(
 
     const getTouchPreventerStyle = (active: boolean) =>
       ({
+        height: '100%',
+        left: 0,
         position: 'absolute',
         top: 0,
-        left: 0,
-        zIndex: active ? 1 : -1,
         width: '100%',
-        height: '100%',
+        zIndex: active ? 1 : -1,
       }) as ViewStyle;
 
     const onRowOpen = (rowKey: string, rowMap: RowMap<ItemT>) => {

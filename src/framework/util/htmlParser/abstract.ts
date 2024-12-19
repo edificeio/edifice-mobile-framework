@@ -103,14 +103,6 @@ export class HtmlParserAbstract<RenderType> {
   }
 
   protected saxEventHandlersAbstract = {
-    tagopen: this.onTagOpenAbstract.bind(this),
-
-    tagclose: this.onTagCloseAbstract.bind(this),
-
-    processinginstruction: this.onProcessingInstructionAbstract.bind(this),
-
-    text: this.onTextAbstract.bind(this),
-
     cdata: this.onCdataAbstract.bind(this),
 
     comment: this.onCommentAbstract.bind(this),
@@ -118,6 +110,14 @@ export class HtmlParserAbstract<RenderType> {
     error: this.onErrorAbstract.bind(this),
 
     finish: this.onFinishAbstract.bind(this),
+
+    processinginstruction: this.onProcessingInstructionAbstract.bind(this),
+
+    tagclose: this.onTagCloseAbstract.bind(this),
+
+    tagopen: this.onTagOpenAbstract.bind(this),
+
+    text: this.onTextAbstract.bind(this),
   };
 
   // ----------------------------------------------------------------------------------------------
@@ -131,8 +131,8 @@ export class HtmlParserAbstract<RenderType> {
     // 1 - Compute if the tag needs to be ignored
 
     let willBeIgnored = false;
-    if (this.opts.ignoreClass && tagAttrs['class']) {
-      const classes = tagAttrs['class'].split(' ');
+    if (this.opts.ignoreClass && tagAttrs.class) {
+      const classes = tagAttrs.class.split(' ');
 
       classes.forEach(className => {
         if (this.opts.ignoreClass?.includes(className)) willBeIgnored = true;

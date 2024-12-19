@@ -1,8 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Keyboard } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPostScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -20,9 +24,6 @@ import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import styles from './styles';
-import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPostScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -36,8 +37,8 @@ export const computeNavBar = ({
 });
 
 const preventBackI18n = {
-  title: 'blog-createpost-confirmation-unsavedpublication',
   text: 'blog-createpost-unsavedpublication',
+  title: 'blog-createpost-confirmation-unsavedpublication',
 };
 
 const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
@@ -46,7 +47,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   const [content, setContent] = React.useState(props.route.params.content);
   const [saving, setSaving] = React.useState(false);
 
-  const { route, navigation, session, handleEditBlogPost } = props;
+  const { handleEditBlogPost, navigation, route, session } = props;
   const blog = route.params.blog;
   const postState = route.params.postState;
 
@@ -90,7 +91,6 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   React.useEffect(() => {
     //console.debug(`HTML CONTENT:\r\n${props.route.params.content}`);
     props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
@@ -155,13 +155,13 @@ const mapStateToProps: (s: IGlobalState) => BlogEditPostScreenDataProps = s => {
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogEditPostScreenEventProps = dispatch => ({
+  dispatch,
   handleEditBlogPost: async (blog: Blog, postId: string, title: string, content: string, postState: string) => {
     return (await dispatch(editBlogPostAction(blog, postId, title, content, postState))) as unknown as string | undefined;
   },
   handleInitTimeline: async () => {
     await dispatch(startLoadNotificationsAction());
   },
-  dispatch,
 });
 
 const BlogEditPostScreenConnected = connect(mapStateToProps, mapDispatchToProps)(BlogEditPostScreen);

@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { PresencesNavigationParams, presencesRouteNames } from '.';
+
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
@@ -19,11 +21,8 @@ import PresencesEventListScreen, {
 import PresencesHistoryScreen, { computeNavBar as historyNavBar } from '~/framework/modules/viescolaire/presences/screens/history';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import { PresencesNavigationParams, presencesRouteNames } from '.';
-
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<PresencesNavigationParams>(moduleConfig.name, Stack => {
     /**
      * This module has no fixed home screen. We dynamically update `moduleConfig.routeName` to point to the "home" depending of user type.

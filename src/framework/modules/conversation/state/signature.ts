@@ -16,11 +16,11 @@ export interface ISignature {
 export type ISignatureState = AsyncState<ISignature>;
 
 export const initialState: ISignature = {
-  preference: {
-    useSignature: false,
-    signature: '',
-  },
   id: '',
+  preference: {
+    signature: '',
+    useSignature: false,
+  },
 };
 
 export const getSignatureState = (globalState: any) => signatureConfig.getState(globalState).signature as ISignatureState;

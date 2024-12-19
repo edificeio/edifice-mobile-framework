@@ -1,13 +1,13 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import styles from './styles';
+import { CardFooterProps } from './types';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-
-import styles from './styles';
-import { CardFooterProps } from './types';
 
 export default function CardFooter(props: CardFooterProps) {
   const { icon, text } = props;

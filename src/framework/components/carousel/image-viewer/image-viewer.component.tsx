@@ -1,4 +1,3 @@
-import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import * as React from 'react';
 import {
   Animated,
@@ -10,12 +9,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import ImageZoom from 'react-native-image-pan-zoom';
 
-import { UI_SIZES } from '~/framework/components/constants';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import ImageZoom from 'react-native-image-pan-zoom';
 
 import styles from './image-viewer.style';
 import { IImageInfo, IImageSize, Props, State } from './image-viewer.type';
+
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default class ImageViewer extends React.Component<Props, State> {
   public static defaultProps = new Props();
@@ -69,8 +70,8 @@ export default class ImageViewer extends React.Component<Props, State> {
 
       // 显示动画
       Animated.timing(this.fadeAnim, {
-        toValue: 1,
         duration: 200,
+        toValue: 1,
         useNativeDriver: false,
       }).start();
     }
@@ -90,17 +91,17 @@ export default class ImageViewer extends React.Component<Props, State> {
     const imageSizes: IImageSize[] = [];
     nextProps.imageUrls.forEach(imageUrl => {
       imageSizes.push({
-        width: imageUrl.width || 0,
         height: imageUrl.height || 0,
         status: 'loading',
+        width: imageUrl.width || 0,
       });
     });
 
     this.setState(
       {
         currentShowIndex: nextProps.index,
-        prevIndexProp: nextProps.index || 0,
         imageSizes,
+        prevIndexProp: nextProps.index || 0,
       },
       () => {
         // 立刻预加载要看的图
@@ -110,8 +111,8 @@ export default class ImageViewer extends React.Component<Props, State> {
 
         // 显示动画
         Animated.timing(this.fadeAnim, {
-          toValue: 1,
           duration: 200,
+          toValue: 1,
           useNativeDriver: false,
         }).start();
       },
@@ -197,7 +198,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     let imageLoaded = false;
 
     // Tagged success if url is started with file:, or not set yet(for custom source.uri).
-    if (image.url.startsWith(`file:`)) {
+    if (image.url?.startsWith(`file:`)) {
       imageLoaded = true;
     }
 
@@ -325,8 +326,8 @@ export default class ImageViewer extends React.Component<Props, State> {
     this.positionXNumber = !I18nManager.isRTL ? this.standardPositionX + this.width : this.standardPositionX - this.width;
     this.standardPositionX = this.positionXNumber;
     Animated.timing(this.positionX, {
-      toValue: this.positionXNumber,
       duration: this.props.pageAnimateTime,
+      toValue: this.positionXNumber,
       useNativeDriver: false,
     }).start();
 
@@ -358,8 +359,8 @@ export default class ImageViewer extends React.Component<Props, State> {
     this.positionXNumber = !I18nManager.isRTL ? this.standardPositionX - this.width : this.standardPositionX + this.width;
     this.standardPositionX = this.positionXNumber;
     Animated.timing(this.positionX, {
-      toValue: this.positionXNumber,
       duration: this.props.pageAnimateTime,
+      toValue: this.positionXNumber,
       useNativeDriver: false,
     }).start();
 
@@ -384,8 +385,8 @@ export default class ImageViewer extends React.Component<Props, State> {
   public resetPosition() {
     this.positionXNumber = this.standardPositionX;
     Animated.timing(this.positionX, {
-      toValue: this.standardPositionX,
       duration: 150,
+      toValue: this.standardPositionX,
       useNativeDriver: false,
     }).start();
   }
@@ -460,7 +461,7 @@ export default class ImageViewer extends React.Component<Props, State> {
 
     const ImageElements = this.props.imageUrls.map((image, index) => {
       if ((this.state.currentShowIndex || 0) > index + 1 || (this.state.currentShowIndex || 0) < index - 1) {
-        return <View key={index} style={{ width: screenWidth, height: screenHeight }} />;
+        return <View key={index} style={{ height: screenHeight, width: screenWidth }} />;
       }
 
       if (!this.handleLongPressWithIndex.has(index)) {
@@ -472,7 +473,7 @@ export default class ImageViewer extends React.Component<Props, State> {
       const imageInfo = this.state.imageSizes![index];
 
       if (!imageInfo || !imageInfo.status) {
-        return <View key={index} style={{ width: screenWidth, height: screenHeight }} />;
+        return <View key={index} style={{ height: screenHeight, width: screenWidth }} />;
       }
 
       // 如果宽大于屏幕宽度,整体缩放到宽度是屏幕宽度
@@ -536,8 +537,8 @@ export default class ImageViewer extends React.Component<Props, State> {
           image.props.style = {
             ...this.styles.imageStyle, // User config can override above.
             ...image.props.style,
-            width,
             height,
+            width,
           };
 
           if (typeof image.props.source === 'number') {
@@ -596,8 +597,8 @@ export default class ImageViewer extends React.Component<Props, State> {
                       uri: this.props.failImageSource.url,
                     },
                     style: {
-                      width: this.props.failImageSource.width,
                       height: this.props.failImageSource.height,
+                      width: this.props.failImageSource.width,
                     },
                   })}
             </Wrapper>
@@ -657,25 +658,27 @@ export default class ImageViewer extends React.Component<Props, State> {
    * 保存当前图片到本地相册
    */
   public saveToLocal = () => {
+    const uri =
+      this.props.imageUrls[this.state.currentShowIndex || 0]?.url ||
+      this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source;
+    if (!uri) return;
     if (!this.props.onSave) {
-      CameraRoll.saveToCameraRoll(this.props.imageUrls[this.state.currentShowIndex || 0].url);
+      CameraRoll.saveToCameraRoll(uri);
       this!.props!.onSaveToCamera!(this.state.currentShowIndex);
     } else {
-      this.props.onSave(
-        this.props.imageUrls[this.state.currentShowIndex || 0].url ||
-          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source,
-      );
+      this.props.onSave(uri);
     }
 
     this.setState({ isShowMenu: false });
   };
 
   public share = () => {
+    const uri =
+      this.props.imageUrls[this.state.currentShowIndex || 0]?.url ||
+      this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source;
+    if (!uri) return;
     if (this.props.onShare) {
-      this.props.onShare(
-        this.props.imageUrls[this.state.currentShowIndex || 0].url ||
-          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source,
-      );
+      this.props.onShare(uri);
     }
 
     this.setState({ isShowMenu: false });

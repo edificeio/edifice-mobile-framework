@@ -1,11 +1,12 @@
 /**
  * Index page for push-notifs settings.
  */
+import * as React from 'react';
+import { View } from 'react-native';
+
 import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import deepmerge from 'deepmerge';
-import * as React from 'react';
-import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -24,9 +25,9 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { updatePushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import {
-  TimelineState,
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
+  TimelineState,
 } from '~/framework/modules/timeline/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
@@ -80,9 +81,9 @@ const formatI18nNotifType = (notifType: string) => notifType.replaceAll('_', '')
 
 function PreventBack(props: { hasChanged: boolean }) {
   usePreventBack({
-    title: I18n.get('user-pushnotifssettings-leavealert-title'),
-    text: I18n.get('user-pushnotifssettings-leavealert-text'),
     showAlert: props.hasChanged,
+    text: I18n.get('user-pushnotifssettings-leavealert-text'),
+    title: I18n.get('user-pushnotifssettings-leavealert-title'),
   });
   return null;
 }
@@ -92,9 +93,9 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
   IPushNotifsItemsListScreenState
 > {
   state: IPushNotifsItemsListScreenState = {
+    arePrefsUnchanged: true,
     loadingState: PushNotifsItemsListLoadingState.PRISTINE,
     pendingPrefsChanges: {},
-    arePrefsUnchanged: true,
   };
 
   settings = this.props.timelineState.notifSettings.pushNotifsSettings;
@@ -118,7 +119,6 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
       arePrefsUnchanged: shallowEqual(this.initialItems, items),
     });
     this.props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarAction
           icon="ui-check"
@@ -126,7 +126,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
           onPress={() => {
             this.setState({ loadingState: PushNotifsItemsListLoadingState.UPDATE });
             this.props.handleUpdatePushNotifSettings(this.state.pendingPrefsChanges).then(() => {
-              this.setState({ pendingPrefsChanges: {}, loadingState: PushNotifsItemsListLoadingState.DONE });
+              this.setState({ loadingState: PushNotifsItemsListLoadingState.DONE, pendingPrefsChanges: {} });
               this.props.navigation.dispatch(CommonActions.goBack());
             });
           }}
@@ -249,8 +249,8 @@ const mapStateToProps: (s: IGlobalState) => IPushNotifsItemsListScreenDataProps 
   const timelineState = timelineModuleConfig.getState(s) as TimelineState;
   const session = getSession()!;
   return {
-    timelineState,
     session,
+    timelineState,
   };
 };
 

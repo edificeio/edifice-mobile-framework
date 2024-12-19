@@ -6,16 +6,16 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
+import moduleConfig from './module-config';
+import { conversationRouteNames } from './navigation';
+
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceIdNotification } from '~/framework/util/notifications';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
-
-import moduleConfig from './module-config';
-import { conversationRouteNames } from './navigation';
 
 const handleConversationNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation, allowSwitchTab) => async (dispatch, getState) => {
@@ -31,18 +31,18 @@ const handleConversationNotificationAction: NotifHandlerThunkAction =
               name: computeTabRouteName(moduleConfig.routeName),
               params: {
                 initial: false,
-                screen: conversationRouteNames.mailContent,
                 params: {
-                  notification: notif,
                   mailId: notif.resource.id,
+                  notification: notif,
                 },
+                screen: conversationRouteNames.mailContent,
               },
             }
           : {
               name: conversationRouteNames.mailContent,
               params: {
-                notification: notif,
                 mailId: notif.resource.id,
+                notification: notif,
               },
             },
       );
@@ -61,8 +61,8 @@ const handleConversationNotificationAction: NotifHandlerThunkAction =
 export default () =>
   registerNotifHandlers([
     {
-      type: 'MESSAGERIE',
       'event-type': 'SEND-MESSAGE',
       notifHandlerAction: handleConversationNotificationAction,
+      type: 'MESSAGERIE',
     },
   ]);

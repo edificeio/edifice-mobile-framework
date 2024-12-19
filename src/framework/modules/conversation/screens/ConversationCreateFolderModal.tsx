@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -52,7 +53,11 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
       const folderAlreadyExists = (error as Error).message === 'conversation.error.duplicate.folder';
       onClose();
       Toast.showError(
-        I18n.get(folderAlreadyExists ? 'conversation-createfolder-createdirectoryerror-folderexists' : 'conversation-createfolder-error-text'),
+        I18n.get(
+          folderAlreadyExists
+            ? 'conversation-createfolder-createdirectoryerror-folderexists'
+            : 'conversation-createfolder-error-text',
+        ),
       );
     } finally {
       this.setState({ name: '' });
@@ -61,13 +66,13 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
 
   public render() {
     const { name } = this.state;
-    const { show, onClose } = this.props;
+    const { onClose, show } = this.props;
     const textInputStyle = {
       color: theme.ui.text.regular,
     } as ViewStyle;
     //FIXME: create/move to styles.ts
     const styles = StyleSheet.create({
-      inputContainer: { width: '100%', marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium },
+      inputContainer: { marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium, width: '100%' },
       modalContent: { width: 350 },
       modalContentBlock: { flexDirection: 'row' },
     });

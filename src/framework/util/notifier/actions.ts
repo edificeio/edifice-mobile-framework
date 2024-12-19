@@ -1,10 +1,10 @@
 import { Dispatch } from 'redux';
 
-import { NotifierType, notifierActionTypes } from './reducer';
+import { notifierActionTypes, NotifierType } from './reducer';
 
 export const notifierHideAction = id => ({
-  type: notifierActionTypes.hide,
   id,
+  type: notifierActionTypes.hide,
 });
 
 export const notifierShowAction = (opts: {
@@ -21,13 +21,13 @@ export const notifierShowAction = (opts: {
       setTimeout(() => dispatch(notifierHideAction(opts.id)), opts.duration || 5000);
     }
     dispatch({
-      type: notifierActionTypes.show,
+      duration: opts.duration,
+      icon: opts.icon,
       id: opts.id,
+      loading: opts.loading,
       notifierType: opts.type,
       text: opts.text,
-      icon: opts.icon,
-      loading: opts.loading,
-      duration: opts.duration,
+      type: notifierActionTypes.show,
     });
   };
 };

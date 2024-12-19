@@ -1,12 +1,16 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, Keyboard, Platform, RefreshControl, View } from 'react-native';
+
 import { HeaderBackButton } from '@react-navigation/elements';
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -49,9 +53,6 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { commentsString } from '~/framework/util/string';
 import HtmlContentView from '~/ui/HtmlContentView';
 
-import styles from './styles';
-import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -65,15 +66,15 @@ export const computeNavBar = ({
 
 const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const {
-    route,
-    session,
-    navigation,
-    handleEditComment,
-    handlePublishComment,
     handleDeleteComment,
     handleDeleteInfo,
+    handleEditComment,
     handleGetNewsItem,
     handleGetNewsItemComments,
+    handlePublishComment,
+    navigation,
+    route,
+    session,
   } = props;
   const notif = route.params.notification;
 
@@ -82,7 +83,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const [comments, setComments] = useState<NewsCommentItem[]>();
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
-  const [infoComment, setInfoComment] = useState<InfoCommentField>({ type: '', isPublication: false, changed: false, value: '' });
+  const [infoComment, setInfoComment] = useState<InfoCommentField>({ changed: false, isPublication: false, type: '', value: '' });
   const [indexEditingComment, setIndexEditingComment] = useState<number | undefined>(undefined);
   const [listHeight, setListHeight] = useState<number>(0);
 
@@ -99,12 +100,12 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   const ListComponent = useMemo(() => {
     return Platform.select<React.ComponentType<any>>({
-      ios: FlatList,
       android: KeyboardAvoidingFlatList,
+      ios: FlatList,
     })!;
   }, []);
   const PageComponent = useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
   }, []);
 
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
@@ -164,13 +165,13 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     try {
       Alert.alert(I18n.get('news-details-deletion-title'), I18n.get('news-details-deletion-text'), [
         {
-          text: I18n.get('common-cancel'),
           style: 'default',
+          text: I18n.get('common-cancel'),
         },
         {
-          text: I18n.get('common-delete'),
-          style: 'destructive',
           onPress: () => handleDeleteInfo(news?.threadId, news?.id).then(() => navigation.goBack()),
+          style: 'destructive',
+          text: I18n.get('common-delete'),
         },
       ]);
     } catch {
@@ -182,12 +183,10 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     async commentId => {
       Alert.alert(I18n.get('news-details-deletion'), I18n.get('news-details-deleteconfirmation'), [
         {
-          text: I18n.get('common-cancel'),
           style: 'default',
+          text: I18n.get('common-cancel'),
         },
         {
-          text: I18n.get('common-delete'),
-          style: 'destructive',
           onPress: async () => {
             try {
               if (news) {
@@ -199,6 +198,8 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
               showAlertError();
             }
           },
+          style: 'destructive',
+          text: I18n.get('common-delete'),
         },
       ]);
     },
@@ -266,7 +267,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
               image={<ThumbnailThread icon={thread.icon} square />}
               text={thread.title}
               {...(news.headline
-                ? { statusIcon: 'ui-star-filled', statusColor: theme.palette.complementary.orange.regular }
+                ? { statusColor: theme.palette.complementary.orange.regular, statusIcon: 'ui-star-filled' }
                 : null)}
               style={styles.detailsHeaderTopContent}
             />
@@ -349,15 +350,15 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           data={comments}
           ListHeaderComponent={renderNewsDetails}
           removeClippedSubviews={false}
-          renderItem={({ item, index }) => renderComment(item)}
+          renderItem={({ index, item }) => renderComment(item)}
           onContentSizeChange={(width, height) => setListHeight(height)}
           refreshControl={
             <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => onRefresh(news?.id)} />
           }
           scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-          {...Platform.select({ ios: {}, android: { stickyFooter: renderFooter() } })}
+          {...Platform.select({ android: { stickyFooter: renderFooter() }, ios: {} })}
         />
-        {Platform.select({ ios: renderFooter(), android: null })}
+        {Platform.select({ android: null, ios: renderFooter() })}
       </>
     );
   }, [ListComponent, comments, loadingState, news?.id, onRefresh, renderComment, renderError, renderFooter, renderNewsDetails]);
@@ -365,7 +366,6 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   useEffect(() => {
     if (hasPermissionDelete) {
       navigation.setOptions({
-        // eslint-disable-next-line react/no-unstable-nested-components
         headerRight: () => (
           <PopupMenu actions={[deleteAction({ action: doDeleteNews })]}>
             <NavBarAction icon="ui-options" />
@@ -379,7 +379,6 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     init();
     if (route.params.page) {
       navigation.setOptions({
-        // eslint-disable-next-line react/no-unstable-nested-components
         headerLeft: () => (
           <HeaderBackButton
             labelVisible={false}
@@ -410,31 +409,35 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`news-details-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(
+        infoComment.isPublication
+          ? 'news-details-confirmation-unsaved-publication'
+          : 'news-details-confirmation-unsaved-modification',
+      ),
       I18n.get(
         `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
       ),
       [
         {
-          text: I18n.get('common-quit'),
-          style: 'destructive',
           onPress: () => {
             handleRemoveConfirmNavigationEvent(data.action, navigation);
           },
+          style: 'destructive',
+          text: I18n.get('common-quit'),
         },
         {
-          text: I18n.get('common-continue'),
-          style: 'default',
           onPress: () => {
             clearConfirmNavigationEvent();
           },
+          style: 'default',
+          text: I18n.get('common-continue'),
         },
       ],
     );
   });
 
   return (
-    <PageComponent {...Platform.select({ ios: { safeArea: !hasPermissionComment }, android: {} })}>
+    <PageComponent {...Platform.select({ android: {}, ios: { safeArea: !hasPermissionComment } })}>
       {showPlaceholder ? <NewsPlaceholderDetails /> : renderPage()}
     </PageComponent>
   );
@@ -448,23 +451,23 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   dispatch,
   getState,
 ) => ({
+  handleDeleteComment: async (infoId, commentId) => {
+    return (await dispatch(deleteCommentNewsItemAction(infoId, commentId))) as unknown as number | undefined;
+  },
+  handleDeleteInfo: async (threadId, infoId) => {
+    return (await dispatch(deleteNewsItemAction(threadId, infoId))) as unknown as number | undefined;
+  },
+  handleEditComment: async (infoId: number, comment: string, commentId: number) => {
+    return (await dispatch(editCommentNewsItemAction(infoId, comment, commentId))) as unknown as number | undefined;
+  },
   handleGetNewsItem: async (infoId: number) => {
     return (await dispatch(getNewsItemAction(infoId))) as NewsItemDetails;
   },
   handleGetNewsItemComments: async (newsItemId: number) => {
     return (await dispatch(getNewsItemCommentsAction(newsItemId))) as NewsCommentItem[];
   },
-  handleDeleteInfo: async (threadId, infoId) => {
-    return (await dispatch(deleteNewsItemAction(threadId, infoId))) as unknown as number | undefined;
-  },
-  handleDeleteComment: async (infoId, commentId) => {
-    return (await dispatch(deleteCommentNewsItemAction(infoId, commentId))) as unknown as number | undefined;
-  },
   handlePublishComment: async (infoId: number, comment: string) => {
     return (await dispatch(publishCommentNewsItemAction(infoId, comment))) as unknown as number | undefined;
-  },
-  handleEditComment: async (infoId: number, comment: string, commentId: number) => {
-    return (await dispatch(editCommentNewsItemAction(infoId, comment, commentId))) as unknown as number | undefined;
   },
 });
 

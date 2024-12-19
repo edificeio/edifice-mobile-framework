@@ -1,23 +1,31 @@
-import styled from '@emotion/native';
 import * as React from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
+
+import styled from '@emotion/native';
 
 import theme from '~/app/theme';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
+const styles = StyleSheet.create({
+  container: {
+    height: 22,
+    width: 40,
+  },
+});
+
 const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
   {
-    borderRadius: 14,
-    justifyContent: 'center',
     alignItems: 'center',
-    width: 22,
-    height: 22,
     backgroundColor: theme.ui.background.card,
-    position: 'absolute',
-    left: 0,
-    top: 0,
+    borderRadius: 14,
     borderWidth: 1,
     elevation: 2,
+    height: 22,
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: 22,
   },
   ({ checked = false }) => ({
     borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
@@ -26,15 +34,15 @@ const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
 
 const Container = styled(TouchableOpacity)<{ checked: boolean }>(
   {
-    borderRadius: 14,
-    justifyContent: 'center',
     alignItems: 'center',
-    width: 40,
-    height: 22,
     borderColor: theme.palette.grey.cloudy,
-    position: 'absolute',
+    borderRadius: 14,
+    height: 22,
+    justifyContent: 'center',
     left: 0,
+    position: 'absolute',
     top: 0,
+    width: 40,
   },
   ({ checked = false }) => ({
     backgroundColor: checked ? theme.palette.primary.regular : theme.palette.grey.cloudy,
@@ -58,20 +66,21 @@ export class Toggle extends React.Component<
   componentDidUpdate(prevProps) {
     if (this.props.checked !== prevProps.checked) {
       Animated.timing(this.state.positionAnim, {
-        toValue: this.props.checked ? 20 : 0,
         duration: 500,
+        toValue: this.props.checked ? 20 : 0,
         useNativeDriver: false,
       }).start();
     }
   }
 
   switchCheck() {
-    this.props.checked ? this.props.onUncheck && this.props.onUncheck() : this.props.onCheck && this.props.onCheck();
+    if (this.props.checked) this.props?.onUncheck?.();
+    else this.props?.onCheck?.();
   }
 
   render() {
     return (
-      <View style={{ width: 40, height: 22 }} {...(this.props.testID ? { testID: this.props.testID } : {})}>
+      <View style={styles.container} {...(this.props.testID ? { testID: this.props.testID } : {})}>
         <Container onPress={() => this.switchCheck()} checked={this.props.checked} />
         <Animated.View style={{ left: this.state.positionAnim }}>
           <TapCircle onPress={() => this.switchCheck()} checked={this.props.checked} />

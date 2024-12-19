@@ -22,11 +22,11 @@ interface IFormReduxStateData {
 
 const initialState: IFormReduxStateData = {
   distributions: [],
-  forms: [],
   formContent: {
     elements: [],
     elementsCount: 0,
   },
+  forms: [],
 };
 
 export const actionTypes = {
@@ -37,8 +37,8 @@ export const actionTypes = {
 
 const reducer = combineReducers({
   distributions: createSessionAsyncReducer(initialState.distributions, actionTypes.listDistributionsReceived),
-  forms: createSessionAsyncReducer(initialState.forms, actionTypes.listFormsReceived),
   formContent: createSessionAsyncReducer(initialState.formContent, actionTypes.content),
+  forms: createSessionAsyncReducer(initialState.forms, actionTypes.listFormsReceived),
 });
 Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;

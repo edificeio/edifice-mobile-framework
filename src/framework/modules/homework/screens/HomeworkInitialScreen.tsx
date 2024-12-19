@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -21,14 +22,14 @@ const mapStateToProps: (state: IGlobalState) => HomeworkInitialScreenDataProps =
   const flatHomeworkDiaryList = Object.getOwnPropertyNames(homeworkDiaryList.data).map(diaryId => ({
     id: diaryId,
     name: homeworkDiaryList.data[diaryId].name,
-    title: homeworkDiaryList.data[diaryId].title,
     thumbnail: homeworkDiaryList.data[diaryId].thumbnail,
+    title: homeworkDiaryList.data[diaryId].title,
   }));
 
   return {
     diaryList: flatHomeworkDiaryList,
-    isFetching: homeworkDiaryList.isFetching,
     didInvalidate: homeworkDiaryList.didInvalidate,
+    isFetching: homeworkDiaryList.isFetching,
   };
 };
 

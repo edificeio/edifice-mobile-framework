@@ -33,12 +33,12 @@ export const isHomeworkDone = homework => homework.progress !== null && homework
 
 export const homeworkDetailsAdapter = (homework: IHomework) => {
   return {
-    id: homework.id,
-    subject: homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label,
+    created_date: homework.created_date,
     description: homework.description,
     due_date: homework.due_date,
+    id: homework.id,
+    subject: homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label,
     type: homework.type.label,
-    created_date: homework.created_date,
   } as Homework;
 };
 
@@ -61,13 +61,13 @@ export const homeworkListDetailsAdapter = (homework: IHomework, homeworkList?: I
 
 const homeworkDetailsTeacherAdapter = (homework: IHomework) => {
   return {
-    id: homework.id,
-    subject: homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label,
+    audience: homework.audience.name,
+    created_date: homework.created_date,
     description: homework.description,
     due_date: homework.due_date,
+    id: homework.id,
+    subject: homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label,
     type: homework.type.label,
-    created_date: homework.created_date,
-    audience: homework.audience.name,
   } as Homework;
 };
 
@@ -92,11 +92,11 @@ export const homeworkListDetailsTeacherAdapter = (homeworkList: IHomeworkMap | I
 
 export const sessionDetailsAdapter = (session: IDiarySession, teachers?: IUser[]) => {
   return {
+    date: session?.date ? session.date : null,
+    description: session?.description ? session.description : null,
     id: session?.id ? session.id : 0,
     subject: session?.subject_id !== 'exceptional' ? session?.subject?.name : session?.exceptional_label,
-    date: session?.date ? session.date : null,
     teacher: teachers ? getTeacherName(session.teacher_id, teachers) : null,
-    description: session?.description ? session.description : null,
     title: session?.title ? session.title : null,
   } as Session;
 };

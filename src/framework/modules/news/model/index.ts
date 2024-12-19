@@ -1,5 +1,6 @@
-import { Moment } from 'moment';
 import { ImageSourcePropType } from 'react-native';
+
+import { Moment } from 'moment';
 
 import { NewsThreadItemReduce } from '~/framework/modules/news/screens/home';
 

@@ -2,11 +2,11 @@
  * Homework diary list actions
  * Build actions to be dispatched to the homework diary list reducer.
  */
+import { homeworkDiarySelected } from './selectedDiary';
+
 import homeworkConfig from '~/framework/modules/homework/module-config';
 import { IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { asyncActionTypes, asyncFetchIfNeeded, asyncGetJson } from '~/infra/redux/async';
-
-import { homeworkDiarySelected } from './selectedDiary';
 
 /** Returns the local state (global state -> homework -> diaryList). Give the global state as parameter. */
 const localState = globalState => homeworkConfig.getState(globalState).diaryList;
@@ -48,10 +48,10 @@ const homeworkDiaryListAdapter: (data: IHomeworkDiaryListBackend) => IHomeworkDi
     result[item._id] = {
       id: item._id,
       name: item.name,
-      title: item.title,
-      thumbnail: item.thumbnail,
-      shared: item.shared,
       owner: item.owner,
+      shared: item.shared,
+      thumbnail: item.thumbnail,
+      title: item.title,
     };
   }
   return result;
@@ -70,11 +70,11 @@ export function homeworkDiaryListRequested() {
 }
 
 export function homeworkDiaryListReceived(data: IHomeworkDiaryList) {
-  return { type: actionTypes.received, data, receivedAt: Date.now() };
+  return { data, receivedAt: Date.now(), type: actionTypes.received };
 }
 
 export function homeworkDiaryListFetchError(errmsg: string) {
-  return { type: actionTypes.fetchError, error: true, errmsg };
+  return { errmsg, error: true, type: actionTypes.fetchError };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------

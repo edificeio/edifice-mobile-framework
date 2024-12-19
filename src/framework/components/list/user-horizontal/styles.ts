@@ -4,8 +4,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   contentContainer: {
-    columnGap: UI_SIZES.spacing.minor,
     alignItems: 'stretch',
+    columnGap: UI_SIZES.spacing.minor,
     // Default styles for UserList
   },
   item: {

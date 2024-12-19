@@ -12,17 +12,17 @@ const styles = StyleSheet.create({
     color: theme.palette.primary.regular,
   },
   devoirContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   devoirNameText: {
     flexShrink: 1,
   },
   subjectInformationContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: UI_SIZES.spacing.minor,
   },
 });

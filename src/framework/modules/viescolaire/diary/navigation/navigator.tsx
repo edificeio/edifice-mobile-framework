@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { DiaryNavigationParams, diaryRouteNames } from '.';
+
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
@@ -10,11 +12,8 @@ import DiaryHomeworkListScreen, {
 import DiarySessionScreen, { computeNavBar as sessionNavBar } from '~/framework/modules/viescolaire/diary/screens/session';
 import DiaryTimetableScreen, { computeNavBar as timetableNavBar } from '~/framework/modules/viescolaire/diary/screens/timetable';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import { DiaryNavigationParams, diaryRouteNames } from '.';
-
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<DiaryNavigationParams>(moduleConfig.name, Stack => {
     /**
      * This module has no fixed home screen. We dynamically update `moduleConfig.routeName` to point to the "home" depending of user type.

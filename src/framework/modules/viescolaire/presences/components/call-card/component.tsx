@@ -1,6 +1,10 @@
-import moment, { Moment } from 'moment';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
+
+import moment, { Moment } from 'moment';
+
+import styles from './styles';
+import type { CallCardProps, CallCardStyle } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -9,9 +13,6 @@ import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, HeadingSText, NestedText } from '~/framework/components/text';
 import { CallState } from '~/framework/modules/viescolaire/presences/model';
 import appConf from '~/framework/util/appConf';
-
-import styles from './styles';
-import type { CallCardProps, CallCardStyle } from './types';
 
 export default class CallCard extends React.PureComponent<CallCardProps> {
   private getStatusStyle(): CallCardStyle {
@@ -70,7 +71,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
   }
 
   public render() {
-    const { course, disabled, showStatus, onPress } = this.props;
+    const { course, disabled, onPress, showStatus } = this.props;
     const hoursLabel = this.getHoursLabel(course.startDate, course.endDate);
     const roomLabel = course.roomLabels[0];
     const classLabel = course.classes.length ? course.classes : course.groups;

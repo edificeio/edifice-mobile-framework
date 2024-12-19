@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import type { DashboardStudentScreenDispatchProps, DashboardStudentScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -41,9 +45,6 @@ import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import styles from './styles';
-import type { DashboardStudentScreenDispatchProps, DashboardStudentScreenPrivateProps } from './types';
 
 type IHomeworkByDateList = {
   [key: string]: IHomework[];

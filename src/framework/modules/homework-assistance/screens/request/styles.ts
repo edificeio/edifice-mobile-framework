@@ -5,25 +5,25 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
-  actionContainerEnabled: {
-    backgroundColor: theme.palette.secondary.regular,
-    borderColor: theme.palette.secondary.regular,
-    opacity: 1,
-  },
   actionContainerDisabled: {
     backgroundColor: theme.ui.text.light,
     borderColor: theme.ui.text.light,
     opacity: 0.5,
   },
+  actionContainerEnabled: {
+    backgroundColor: theme.palette.secondary.regular,
+    borderColor: theme.palette.secondary.regular,
+    opacity: 1,
+  },
   container: {
-    padding: pageGutterSize,
     flexGrow: 1,
     justifyContent: 'space-between',
+    padding: pageGutterSize,
   },
   dropdownContainer: {
-    marginBottom: UI_SIZES.spacing.medium,
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   dropdownText: {
     color: theme.ui.text.regular,
@@ -32,29 +32,29 @@ export default StyleSheet.create({
     marginBottom: UI_SIZES.spacing.medium,
   },
   informationInput: {
-    marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
-    borderWidth: 1,
     borderRadius: 5,
-    height: 100,
+    borderWidth: 1,
     color: theme.ui.text.regular,
+    height: 100,
+    marginBottom: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.small,
   },
   phoneNumberInput: {
-    marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
-    borderWidth: 1,
     borderRadius: 5,
+    borderWidth: 1,
     color: theme.ui.text.regular,
+    marginBottom: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.small,
   },
   rowContainer: {
-    marginBottom: UI_SIZES.spacing.medium,
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    marginBottom: UI_SIZES.spacing.medium,
   },
   textMargin: {
     marginBottom: UI_SIZES.spacing.minor,

@@ -8,14 +8,14 @@ import { AnyAction, Reducer } from 'redux';
 
 import {
   AsyncActionTypeKey,
-  AsyncState,
-  ErrorAction,
-  ReceiptAction,
   asyncActionTypeSuffixes,
+  AsyncState,
   createAsyncActionTypes,
   createInitialAsyncState,
+  ErrorAction,
+  ReceiptAction,
 } from './async';
-import createReducer, { IReducerActionsHandlerMap, createSessionReducer } from './reducerFactory';
+import createReducer, { createSessionReducer, IReducerActionsHandlerMap } from './reducerFactory';
 
 // Actions types & actions
 
@@ -26,7 +26,7 @@ export const asyncPagedActionTypeSuffixes: AsyncPagedActionTypes = {
   ...asyncActionTypeSuffixes,
 };
 
-export type AsyncPagedActionCreators<DataType extends Array<any>> = {
+export type AsyncPagedActionCreators<DataType extends any[]> = {
   request: () => AnyAction;
   receipt: (data: DataType, page: number) => ReceiptPagedAction<DataType>;
   error: (err: Error) => ErrorAction;
@@ -36,39 +36,39 @@ export type AsyncPagedActionCreators<DataType extends Array<any>> = {
 export const createAsyncPagedActionTypes: (prefixUpperCase: string) => AsyncPagedActionTypes = (prefixUpperCase: string) =>
   ({
     ...createAsyncActionTypes(prefixUpperCase),
-  } as AsyncPagedActionTypes);
+  }) as AsyncPagedActionTypes;
 
-export const createAsyncPagedActionCreators: <DataType extends Array<any>>(
+export const createAsyncPagedActionCreators: <DataType extends any[]>(
   actionTypes: AsyncPagedActionTypes,
 ) => AsyncPagedActionCreators<DataType> = <DataType>(actionTypes: AsyncPagedActionTypes) => ({
-  request: () => ({ type: actionTypes.request }),
-  receipt: (data: DataType, page: number) => ({ type: actionTypes.receipt, data, page }),
-  error: (error: Error) => ({ type: actionTypes.error, error }),
   clear: () => ({ type: actionTypes.clear }),
+  error: (error: Error) => ({ error, type: actionTypes.error }),
+  receipt: (data: DataType, page: number) => ({ data, page, type: actionTypes.receipt }),
+  request: () => ({ type: actionTypes.request }),
 });
 
 // State
 
-export interface AsyncPagedState<DataType extends Array<any>> extends AsyncState<DataType> {
+export interface AsyncPagedState<DataType extends any[]> extends AsyncState<DataType> {
   nextPage: number;
   endReached: boolean;
 }
 
-export function createInitialAsyncPagedState<DataType extends Array<any>>(initialState: DataType) {
+export function createInitialAsyncPagedState<DataType extends any[]>(initialState: DataType) {
   return {
     ...createInitialAsyncState(initialState),
-    nextPage: 0,
     endReached: false,
+    nextPage: 0,
   };
 }
 
 // Reducer
 
-export interface ReceiptPagedAction<DataType extends Array<any>> extends ReceiptAction<DataType> {
+export interface ReceiptPagedAction<DataType extends any[]> extends ReceiptAction<DataType> {
   page: number;
 }
 
-function _createAsyncPagedReducer<DataType extends Array<any>>(
+function _createAsyncPagedReducer<DataType extends any[]>(
   initialState: DataType,
   actionTypes: AsyncPagedActionTypes,
   pageSize: number,
@@ -91,17 +91,17 @@ function _createAsyncPagedReducer<DataType extends Array<any>>(
       }),
       [actionTypes.receipt]: (state, action: ReceiptPagedAction<DataType>) => ({
         ...state,
+        data: [...state.data.slice(0, pageSize * action.page), ...action.data, ...state.data.slice(pageSize * (action.page + 1))],
+        endReached: action.data.length < pageSize,
         isFetching: false,
         isPristine: false,
         lastSuccess: moment(),
         nextPage: action.page + 1,
-        endReached: action.data.length < pageSize,
-        data: [...state.data.slice(0, pageSize * action.page), ...action.data, ...state.data.slice(pageSize * (action.page + 1))],
       }),
       [actionTypes.error]: (state, action: ErrorAction) => ({
         ...state,
-        isFetching: false,
         error: action.error,
+        isFetching: false,
       }),
       [actionTypes.clear]: () => asyncInitialState,
     } as IReducerActionsHandlerMap<AsyncState<DataType>>,

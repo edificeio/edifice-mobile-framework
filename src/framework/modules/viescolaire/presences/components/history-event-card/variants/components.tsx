@@ -1,5 +1,8 @@
-import { Moment } from 'moment';
 import * as React from 'react';
+
+import { Moment } from 'moment';
+
+import styles from './styles';
 
 import { I18n } from '~/app/i18n';
 import { BodyText, CaptionBoldText, NestedBoldText } from '~/framework/components/text';
@@ -15,11 +18,9 @@ import {
 } from '~/framework/modules/viescolaire/presences/model';
 import appConf from '~/framework/util/appConf';
 
-import styles from './styles';
-
 const formatAbsenceDates = (startDate: Moment, endDate: Moment): string => {
   if (!endDate.isSame(startDate, 'day')) {
-    return I18n.get('presences-history-eventcard-fromdate', { start: startDate.format('D'), end: endDate.format('D MMMM') });
+    return I18n.get('presences-history-eventcard-fromdate', { end: endDate.format('D MMMM'), start: startDate.format('D') });
   } else if (appConf.is1d) {
     const timeLabel = I18n.get(
       startDate.get('hour') < 12 ? 'presences-history-eventcard-morning' : 'presences-history-eventcard-afternoon',
@@ -27,8 +28,8 @@ const formatAbsenceDates = (startDate: Moment, endDate: Moment): string => {
     return `${startDate.format('D MMMM')} (${timeLabel})`;
   } else {
     return `${startDate.format('D MMMM')} ${I18n.get('presences-history-eventcard-absence-time', {
-      start: startDate.format('H'),
       end: endDate.format('H'),
+      start: startDate.format('H'),
     })}`;
   }
 };

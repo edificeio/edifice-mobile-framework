@@ -1,6 +1,8 @@
 import type { Moment } from 'moment';
+import { CountryCode } from 'react-native-phone-number-input';
 
 import type { IAuthorizedAction, UserPrivateData } from '~/framework/modules/auth/service';
+import { EmailState, MobileState } from '~/framework/modules/auth/templates/activation';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -78,7 +80,7 @@ interface AuthSavedLoggedOutAccountCommon {
   platform: string; // name of the platform
   addTimestamp: number; // date of the account addition into the app to preserve display order.
 }
-interface AuthSavedLoggedInAccountCommon extends AuthSavedLoggedOutAccountCommon, AuthLoggedInAccountTokens {}
+interface AuthSavedLoggedInAccountCommon extends AuthSavedLoggedOutAccountCommon, AuthLoggedInAccountTokens { }
 
 // Saved account that is Credentials / Saml
 
@@ -96,11 +98,11 @@ interface AuthSavedAccountWithFederation {
 
 export interface AuthSavedLoggedOutAccountWithCredentials
   extends AuthSavedAccountWithCredentials,
-    AuthSavedLoggedOutAccountCommon {}
-export interface AuthSavedLoggedInAccountWithCredentials extends AuthSavedAccountWithCredentials, AuthSavedLoggedInAccountCommon {}
+  AuthSavedLoggedOutAccountCommon { }
+export interface AuthSavedLoggedInAccountWithCredentials extends AuthSavedAccountWithCredentials, AuthSavedLoggedInAccountCommon { }
 
-export interface AuthSavedLoggedOutAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedOutAccountCommon {}
-export interface AuthSavedLoggedInAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedInAccountCommon {}
+export interface AuthSavedLoggedOutAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedOutAccountCommon { }
+export interface AuthSavedLoggedInAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedInAccountCommon { }
 
 export type AuthSavedLoggedOutAccount = AuthSavedLoggedOutAccountWithCredentials | AuthSavedLoggedOutAccountWithSaml;
 export type AuthSavedLoggedInAccount = AuthSavedLoggedInAccountWithCredentials | AuthSavedLoggedInAccountWithSaml;
@@ -401,8 +403,11 @@ export interface IActivationPayload {
   password: string;
   confirmPassword: string;
   mail: string;
+  mailState: EmailState;
   phone: string;
   acceptCGU: boolean;
+  phoneCountry: CountryCode;
+  phoneState: MobileState;
 }
 
 export interface IActivationError extends Error {
@@ -495,16 +500,16 @@ export function getFlattenedChildren(children: ILoggedUser['children']): UserChi
 /** Converts an actual logged account into a serialisable saved account information */
 export const getSerializedLoggedOutAccountInfo = (account: AuthActiveAccount) => {
   return {
+    addTimestamp: account.addTimestamp,
     method: account.method,
     platform: account.platform.name,
     user: {
       displayName: account.user.displayName,
       id: account.user.id,
       ...(account.method === InitialAuthenticationMethod.LOGIN_PASSWORD ? { loginUsed: account.user.loginUsed } : undefined),
-      type: account.user.type,
       avatar: account.user.avatar,
+      type: account.user.type,
     },
-    addTimestamp: account.addTimestamp,
   } as AuthSavedLoggedOutAccount;
 };
 
@@ -516,5 +521,14 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
   } as AuthSavedAccount;
 };
 
+export const isSerializedLoggedInAccount = (account: AuthActiveAccount | AuthSavedLoggedInAccount): account is AuthSavedLoggedInAccount => typeof account.platform === 'string';
+
 export const getOrderedAccounts = (accounts: AuthMixedAccountMap) =>
   Object.values(accounts).sort((a, b) => a.addTimestamp - b.addTimestamp);
+
+export interface LegalUrls {
+  cgu: string;
+  personalDataProtection: string;
+  cookies: string;
+  userCharter: string;
+}

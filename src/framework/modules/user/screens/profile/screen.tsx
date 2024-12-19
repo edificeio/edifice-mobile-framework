@@ -1,11 +1,17 @@
-import Clipboard from '@react-native-clipboard/clipboard';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Linking, Platform, TouchableOpacity, View } from 'react-native';
+
+import Clipboard from '@react-native-clipboard/clipboard';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import BottomSheet from 'react-native-bottomsheet';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { ProfilePageProps } from './types';
+
+import { hobbiesItems, renderEmoji } from '.';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -35,13 +41,8 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { Image, formatSource } from '~/framework/util/media';
+import { formatSource, Image } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
-import { pickFileError } from '~/infra/actions/pickFile';
-
-import { hobbiesItems, renderEmoji } from '.';
-import styles from './styles';
-import { ProfilePageProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -56,11 +57,11 @@ export const computeNavBar = ({
 
 const renderTextIcon = ({
   icon,
-  text,
-  textEmpty,
   onPress,
   show,
   showArrow,
+  text,
+  textEmpty,
 }: {
   icon: string;
   text: string | undefined;
@@ -83,15 +84,15 @@ const renderTextIcon = ({
 };
 
 const showBottomMenu = (actions: MenuAction[]) => {
-  actions.push({ title: I18n.get('common-cancel'), action: () => {} });
+  actions.push({ action: () => {}, title: I18n.get('common-cancel') });
   BottomSheet.showBottomSheetWithOptions(
     {
+      cancelButtonIndex: actions.length - 1,
       options: [
         ...actions.map(action => {
           return action.title;
         }),
       ],
-      cancelButtonIndex: actions.length - 1,
     },
     index => {
       actions[index].action();
@@ -112,7 +113,7 @@ const callPhoneNumber = tel => {
 };
 
 const UserProfileScreen = (props: ProfilePageProps) => {
-  const { route, session, navigation, onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError } = props;
+  const { navigation, onUpdateAvatar, onUploadAvatar, onUploadAvatarError, route, session } = props;
 
   const [updatingAvatar, setUpdatingAvatar] = React.useState<boolean>(false);
   const [userInfo, setUserInfo] = React.useState<undefined | InfoPerson>(undefined);
@@ -140,7 +141,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       await onUpdateAvatar(sc.url);
     } catch (err: any) {
       if (err.message === 'Error picking image') {
-        onPickFileError('profileOne');
+        Toast.showError(I18n.get('pickfile-error-storageaccess'));
       } else if (!(err instanceof Error)) {
         onUploadAvatarError();
       }
@@ -164,7 +165,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     const data = isMyProfile ? await userService.person.get() : await userService.person.get(route.params.userId);
 
     if (!isEmpty(data[0].relatedId)) {
-      const filteredDataFamily = data.map(({ relatedId, relatedName }) => ({ relatedName, relatedId }));
+      const filteredDataFamily = data.map(({ relatedId, relatedName }) => ({ relatedId, relatedName }));
       setFamily(filteredDataFamily);
     }
 
@@ -178,25 +179,25 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
       showBottomMenu([
         {
-          title: I18n.get('user-profile-sendMessage-student'),
           action: () =>
             navigation.navigate(conversationRouteNames.newMail, {
               toUsers: user,
             }),
+          title: I18n.get('user-profile-sendMessage-student'),
         },
         {
-          title: I18n.get('user-profile-sendMessage-relatives'),
           action: () =>
             navigation.navigate(conversationRouteNames.newMail, {
               toUsers: familyUser,
             }),
+          title: I18n.get('user-profile-sendMessage-relatives'),
         },
         {
-          title: I18n.get('user-profile-sendMessage-relatives&student'),
           action: () =>
             navigation.navigate(conversationRouteNames.newMail, {
               toUsers: user.concat(familyUser),
             }),
+          title: I18n.get('user-profile-sendMessage-relatives&student'),
         },
       ]);
       return;
@@ -218,7 +219,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     const userAvatar = userInfo?.id;
     return (
       <UserCard
-        id={selfAvatar ? formatSource(`${session?.platform.url}${selfAvatar}`) : userAvatar ?? ''}
+        id={selfAvatar ? formatSource(`${session?.platform.url}${selfAvatar}`) : (userAvatar ?? '')}
         displayName={userInfo?.displayName}
         type={userInfo?.type}
         hasAvatar={!!session?.user.avatar}
@@ -302,6 +303,11 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         <ButtonLineGroup>
           {renderTextIcon({
             icon: 'ui-school',
+            onPress:
+              schools.length > 1
+                ? () => navigation.navigate(userRouteNames.structures, { structures: userInfo?.schools })
+                : undefined,
+            showArrow: true,
             text: `${
               schools[0] +
               (schools.length > 1
@@ -311,14 +317,15 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                   I18n.get(schools.length > 2 ? 'user-profile-structures' : 'user-profile-structure').toLowerCase()
                 : '')
             }`,
-            onPress:
-              schools.length > 1
-                ? () => navigation.navigate(userRouteNames.structures, { structures: userInfo?.schools })
-                : undefined,
-            showArrow: true,
           })}
           {renderTextIcon({
             icon: 'ui-class',
+            onPress:
+              classes.length > 1
+                ? () => navigation.navigate(userRouteNames.structures, { structures: userInfo?.schools })
+                : undefined,
+            show: true,
+            showArrow: true,
             text: !isEmpty(classes)
               ? `${
                   classes[0] +
@@ -331,12 +338,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 }`
               : '',
             textEmpty: I18n.get('user-profile-classEmpty'),
-            show: true,
-            onPress:
-              classes.length > 1
-                ? () => navigation.navigate(userRouteNames.structures, { structures: userInfo?.schools })
-                : undefined,
-            showArrow: true,
           })}
         </ButtonLineGroup>
       </View>
@@ -358,43 +359,43 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         <ButtonLineGroup>
           {renderTextIcon({
             icon: 'ui-anniversary',
-            text: userInfo?.birthdate ? userInfo?.birthdate.format('D MMMM Y') : undefined,
             show: isMyProfile,
+            text: userInfo?.birthdate ? userInfo?.birthdate.format('D MMMM Y') : undefined,
           })}
           {renderTextIcon({
             icon: 'ui-mail',
-            text: userInfo?.email,
             onPress: () =>
-              showBottomMenu([{ title: I18n.get('user-profile-copyEmail'), action: () => Clipboard.setString(userInfo?.email!) }]),
+              showBottomMenu([{ action: () => Clipboard.setString(userInfo?.email!), title: I18n.get('user-profile-copyEmail') }]),
             show: isMyProfile,
             showArrow: false,
+            text: userInfo?.email,
           })}
           {renderTextIcon({
             icon: 'ui-phone',
-            text: userInfo?.tel ?? undefined,
             onPress: () =>
               Platform.OS === 'ios'
                 ? callPhoneNumber(userInfo?.tel)
                 : showBottomMenu([
-                    { title: I18n.get('user-profile-call') + ' ' + userInfo?.tel, action: () => callPhoneNumber(userInfo?.tel) },
+                    { action: () => callPhoneNumber(userInfo?.tel), title: I18n.get('user-profile-call') + ' ' + userInfo?.tel },
                   ]),
             show: isMyProfile,
             showArrow: false,
+            text: userInfo?.tel ?? undefined,
           })}
           {renderTextIcon({
             icon: 'ui-smartphone',
-            text: userInfo?.mobile,
             onPress: () =>
               Platform.OS === 'ios'
                 ? callPhoneNumber(userInfo?.mobile)
                 : showBottomMenu([
                     {
-                      title: I18n.get('user-profile-call') + ' ' + userInfo?.mobile,
                       action: () => callPhoneNumber(userInfo?.mobile),
+                      title: I18n.get('user-profile-call') + ' ' + userInfo?.mobile,
                     },
                   ]),
             show: isMyProfile,
             showArrow: false,
+            text: userInfo?.mobile,
           })}
         </ButtonLineGroup>
       </View>
@@ -412,12 +413,12 @@ const UserProfileScreen = (props: ProfilePageProps) => {
               text={I18n.get('common-edit')}
               action={() =>
                 navigation.navigate(userRouteNames.editDescription, {
-                  userId: userInfo!.id,
                   description,
-                  visibility: descriptionVisibility,
+                  hobbies,
                   mood,
                   motto,
-                  hobbies,
+                  userId: userInfo!.id,
+                  visibility: descriptionVisibility,
                 })
               }
             />
@@ -445,11 +446,11 @@ const UserProfileScreen = (props: ProfilePageProps) => {
               text={I18n.get('common-edit')}
               action={() =>
                 navigation.navigate(userRouteNames.editMoodMotto, {
-                  userId: userInfo!.id,
+                  description,
+                  hobbies,
                   mood,
                   motto,
-                  hobbies,
-                  description,
+                  userId: userInfo!.id,
                   visibility: descriptionVisibility,
                 })
               }
@@ -490,12 +491,12 @@ const UserProfileScreen = (props: ProfilePageProps) => {
               text={I18n.get('common-edit')}
               action={() =>
                 navigation.navigate(userRouteNames.editHobbies, {
-                  userId: userInfo!.id,
-                  hobbies,
                   description,
-                  visibility: descriptionVisibility,
+                  hobbies,
                   mood,
                   motto,
+                  userId: userInfo!.id,
+                  visibility: descriptionVisibility,
                 })
               }
             />
@@ -571,11 +572,10 @@ const UserProfileScreenConnected = connect(
     return ret;
   },
   (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
-    onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
-    onUploadAvatarError: () => dispatch(uploadAvatarError()),
-    onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
     onUpdateAvatar: (imageWorkspaceUrl: string) =>
       dispatch(profileUpdateAction({ avatar: imageWorkspaceUrl })) as unknown as Promise<void>,
+    onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
+    onUploadAvatarError: () => dispatch(uploadAvatarError()),
   }),
 )(UserProfileScreen);
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { RecipientField } from './RecipientField';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -8,25 +10,23 @@ import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { IDraft } from '~/framework/modules/zimbra/model';
 
-import { RecipientField } from './RecipientField';
-
 const styles = StyleSheet.create({
   expandActionContainer: {
-    padding: UI_SIZES.spacing.minor,
     marginLeft: UI_SIZES.spacing.minor,
+    padding: UI_SIZES.spacing.minor,
   },
   headerContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginBottom: UI_SIZES.spacing.small,
   },
   subjectInput: {
+    borderBottomColor: theme.palette.grey.pearl,
+    borderBottomWidth: 2,
+    color: theme.ui.text.regular,
     flex: 1,
     height: 40,
     marginLeft: UI_SIZES.spacing.minor,
-    color: theme.ui.text.regular,
-    borderBottomColor: theme.palette.grey.pearl,
-    borderBottomWidth: 2,
   },
 });
 

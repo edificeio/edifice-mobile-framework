@@ -1,13 +1,17 @@
 /**
  * Blog post list
  */
+import React from 'react';
+import { RefreshControl, ScrollView, View } from 'react-native';
+
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import React from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import { styles } from './styles';
+import { BlogPostListScreenDataProps, BlogPostListScreenEventProps, BlogPostListScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -17,6 +21,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
+import { audienceService } from '~/framework/modules/audience/service';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder/list';
@@ -26,12 +31,8 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { Blog, BlogPost, BlogPostList, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight, hasPermissionManager } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
-import { audienceService } from '~/framework/modules/core/audience/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import { styles } from './styles';
-import { BlogPostListScreenDataProps, BlogPostListScreenEventProps, BlogPostListScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -48,8 +49,8 @@ const BlogPostListItem = ({ blog, post, session }: { blog: Blog; post: BlogPostW
   const navigation = useNavigation<NavigationProp<BlogNavigationParams, typeof blogRouteNames.blogPostList>>();
   const onOpenBlogPost = React.useCallback(() => {
     navigation.navigate(blogRouteNames.blogPostDetails, {
-      blogPost: post,
       blog,
+      blogPost: post,
     });
   }, [blog, navigation, post]);
 
@@ -108,12 +109,12 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         return {
           ...p,
           audience: {
-            views,
             reactions: {
               total: reactions?.totalReactionsCounter ?? 0,
               types: reactions?.reactionTypes ?? [],
               userReaction: reactions?.userReaction ?? null,
             },
+            views,
           },
         };
       });
@@ -254,8 +255,6 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     const hasError =
       !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
     props.navigation.setOptions({
-      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog-appname')),
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         hasBlogPostCreationRights && !hasError ? (
           <NavBarAction
@@ -265,6 +264,8 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
             }}
           />
         ) : null,
+
+      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog-appname')),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -273,12 +274,16 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-blog"
-        title={I18n.get(`blog-postlist-emptyscreen-title${hasBlogPostCreationRights ? '' : '-nocreationrights'}`)}
-        text={I18n.get(`blog-postlist-emptyscreen-text${hasBlogPostCreationRights ? '' : '-nocreationrights'}`)}
+        title={I18n.get(
+          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-title' : 'blog-postlist-emptyscreen-title-nocreationrights',
+        )}
+        text={I18n.get(
+          hasBlogPostCreationRights ? 'blog-postlist-emptyscreen-text' : 'blog-postlist-emptyscreen-text-nocreationrights',
+        )}
         {...(hasBlogPostCreationRights
           ? {
-              buttonText: I18n.get('blog-postlist-emptyscreen-button'),
               buttonAction: onGoToPostCreationScreen,
+              buttonText: I18n.get('blog-postlist-emptyscreen-button'),
             }
           : {})}
       />
@@ -369,8 +374,8 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
 };
 
 const mapStateToProps: (s: IGlobalState) => BlogPostListScreenDataProps = s => ({
-  session: getSession(),
   initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+  session: getSession(),
 });
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => BlogPostListScreenEventProps = (

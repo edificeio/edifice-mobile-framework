@@ -1,9 +1,10 @@
 /**
  * Revalidate terms screen
  */
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -43,13 +44,13 @@ export type IRevalidateTermsScreenProps = IRevalidateTermsScreenEventProps &
 
 const styles = StyleSheet.create({
   mustAccept: {
-    textAlign: 'center',
     marginTop: UI_SIZES.spacing.small,
+    textAlign: 'center',
   },
   newEULALabel: {
-    textAlign: 'center',
     color: theme.palette.primary.regular,
     marginTop: UI_SIZES.spacing.large,
+    textAlign: 'center',
   },
   newEULALink: {
     textDecorationLine: 'underline',
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
 
 const RevalidateTermsScreen = (props: IRevalidateTermsScreenProps) => {
   // EVENTS =====================================================================================
-  const { tryLogout, tryRevalidate, navigation } = props;
+  const { navigation, tryLogout, tryRevalidate } = props;
 
   const doRefuseTerms = React.useCallback(async () => {
     try {
@@ -102,8 +103,8 @@ const RevalidateTermsScreen = (props: IRevalidateTermsScreenProps) => {
       <PageViewStyle
         style={{
           backgroundColor: theme.ui.background.empty,
-          paddingTop: UI_SIZES.spacing.huge,
           paddingHorizontal: UI_SIZES.spacing.big,
+          paddingTop: UI_SIZES.spacing.huge,
         }}>
         <View style={{ paddingHorizontal: UI_SIZES.spacing.big }}>
           <View style={{ height: imageHeight }}>

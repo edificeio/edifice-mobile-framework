@@ -1,17 +1,21 @@
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
+
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import styles from './styles';
+import { FormDistributionScreenDispatchProps, FormDistributionScreenPrivateProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -23,16 +27,16 @@ import FormSubmissionModal from '~/framework/modules/form/components/FormSubmiss
 import { getQuestionCard } from '~/framework/modules/form/components/question-cards';
 import {
   DistributionStatus,
-  IFormElement,
-  IQuestion,
-  IQuestionResponse,
-  QuestionType,
   findLongestPathInFormElement,
   formatElement,
   formatSummary,
   getIsElementSection,
   getIsMandatoryAnswerMissing,
   getPositionHistory,
+  IFormElement,
+  IQuestion,
+  IQuestionResponse,
+  QuestionType,
 } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
@@ -41,9 +45,6 @@ import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from 
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import styles from './styles';
-import { FormDistributionScreenDispatchProps, FormDistributionScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -57,7 +58,7 @@ export const computeNavBar = ({
 });
 
 const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
-  const { id: distributionId, editable, formId, status } = props.route.params;
+  const { editable, formId, id: distributionId, status } = props.route.params;
   const [hasResponderRight, setHasResponderRight] = React.useState(true);
   const [position, setPosition] = React.useState(0);
   const [positionHistory, setPositionHistory] = React.useState<number[]>([]);
@@ -211,8 +212,8 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
           await Promise.all(
             questionIds.map(id => {
               const response: IQuestionResponse = {
-                questionId: id,
                 answer: '',
+                questionId: id,
               };
               return formService.question
                 .createResponse(
@@ -319,7 +320,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
 
   const renderElement = (item: IFormElement) => {
     if (!('type' in item)) {
-      const { title, description } = item;
+      const { description, title } = item;
       return <FormSectionCard title={title} description={description} />;
     }
     let questionResponses = responses.filter(response => response.questionId === item.id);
@@ -425,14 +426,13 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     ({ data }) => {
       Alert.alert(I18n.get('form-distribution-leavealert-title'), I18n.get('form-distribution-leavealert-message'), [
         {
-          text: I18n.get('common-cancel'),
-          style: 'cancel',
           onPress: () => {
             clearConfirmNavigationEvent();
           },
+          style: 'cancel',
+          text: I18n.get('common-cancel'),
         },
         {
-          text: I18n.get('common-quit'),
           onPress: async () => {
             try {
               await postResponsesChanges();
@@ -443,12 +443,13 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
             }
           },
           style: 'destructive',
+          text: I18n.get('common-quit'),
         },
       ]);
     },
   );
 
-  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
   return <PageComponent>{renderPage()}</PageComponent>;
 };

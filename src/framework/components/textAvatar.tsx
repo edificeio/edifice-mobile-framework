@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ColorValue, StyleProp, TextStyle, View, ViewStyle } from 'react-native';
 
-import { Status } from '~/ui/avatars/Avatar';
-
 import { BadgeAvatar, BadgePosition } from './badgeAvatar';
 import { UI_SIZES } from './constants';
 import { SmallText } from './text';
+
+import { Status } from '~/ui/avatars/Avatar';
 
 export interface BadgeAvatarProps {
   text: string;
@@ -27,17 +27,17 @@ export interface BadgeAvatarProps {
 }
 
 export const TextAvatar = ({
-  text,
-  userId,
-  viewStyle,
-  textStyle,
-  badgeContent,
   badgeColor,
+  badgeContent,
   badgePosition,
   customAvatarStyle,
-  status,
-  size,
   isHorizontal,
+  size,
+  status,
+  text,
+  textStyle,
+  userId,
+  viewStyle,
 }: BadgeAvatarProps) => {
   return (
     <View
@@ -45,8 +45,8 @@ export const TextAvatar = ({
         {
           alignItems: 'center',
           flexDirection: isHorizontal ? 'row' : 'column',
-          width: isHorizontal ? undefined : 48,
-          paddingTop: 2, // to fix border when avatar is selected
+          paddingTop: 2,
+          width: isHorizontal ? undefined : 48, // to fix border when avatar is selected
         },
         viewStyle,
       ]}>
@@ -63,10 +63,10 @@ export const TextAvatar = ({
         numberOfLines={1}
         style={[
           {
-            marginHorizontal: isHorizontal ? UI_SIZES.spacing.minor : -UI_SIZES.spacing.minor,
-            textAlign: isHorizontal ? 'auto' : 'center',
-            marginTop: isHorizontal ? undefined : UI_SIZES.spacing.tiny,
             flexShrink: 1,
+            marginHorizontal: isHorizontal ? UI_SIZES.spacing.minor : -UI_SIZES.spacing.minor,
+            marginTop: isHorizontal ? undefined : UI_SIZES.spacing.tiny,
+            textAlign: isHorizontal ? 'auto' : 'center',
           },
           textStyle,
         ]}>

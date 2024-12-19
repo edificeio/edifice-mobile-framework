@@ -1,14 +1,14 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import styles from './styles';
+import type { CallSummaryProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
 import { Call, CallEventType } from '~/framework/modules/viescolaire/presences/model';
-
-import styles from './styles';
-import type { CallSummaryProps } from './types';
 
 const countEventType = (call: Call, eventType: CallEventType): number =>
   call.students.reduce((acc, item) => {

@@ -1,5 +1,7 @@
 import { CommonActions, NavigationProp, ParamListBase, StackActions } from '@react-navigation/native';
 
+import { authRouteNames, simulateNavAction } from '..';
+
 import {
   AuthActiveAccount,
   AuthPendingRedirection,
@@ -8,12 +10,10 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   InitialAuthenticationMethod,
 } from '~/framework/modules/auth/model';
-import { AuthPendingRestore, IAuthState, getAccountsNumber, getPlatform, getSession } from '~/framework/modules/auth/reducer';
+import { AuthPendingRestore, getAccountsNumber, getPlatform, getSession, IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
-
-import { authRouteNames, simulateNavAction } from '..';
 
 /**
  * Return the navigation route object corresponding to returning to the login screen of the given platform.
@@ -43,7 +43,7 @@ const getNavRoutesForLoginRedirection = (
         return [
           {
             name: authRouteNames.loginCredentials,
-            params: { platform, accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined },
+            params: { accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined, platform },
           },
         ];
       } else {
@@ -53,7 +53,7 @@ const getNavRoutesForLoginRedirection = (
           { name: authRouteNames.loginWayf, params: { platform } },
           {
             name: authRouteNames.loginCredentials,
-            params: { platform, accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined },
+            params: { accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined, platform },
           },
         ];
       }
@@ -65,14 +65,14 @@ const getNavRoutesForLoginRedirection = (
       return [
         {
           name: authRouteNames.loginCredentials,
-          params: { platform, accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined },
+          params: { accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined, platform },
         },
       ];
     } else {
       return [
         {
           name: authRouteNames.loginCredentials,
-          params: { platform, loginUsed: account === undefined ? loginUsed : undefined },
+          params: { loginUsed: account === undefined ? loginUsed : undefined, platform },
         },
       ];
     }
@@ -193,8 +193,8 @@ export const getNavActionForRequirement = (requirement: AuthRequirement) => {
           {
             name: authRouteNames.changeMobile,
             params: {
-              platform: getPlatform(),
               defaultMobile: getSession()?.user.mobile,
+              platform: getPlatform(),
             },
           },
         ],
@@ -205,8 +205,8 @@ export const getNavActionForRequirement = (requirement: AuthRequirement) => {
           {
             name: authRouteNames.changeEmail,
             params: {
-              platform: getPlatform(),
               defaultEmail: getSession()?.user.email,
+              platform: getPlatform(),
             },
           },
         ],
@@ -217,22 +217,22 @@ export const getNavActionForRedirect = (platform: Platform, pending: IAuthState[
   switch (pending?.redirect) {
     case AuthPendingRedirection.ACTIVATE:
       return StackActions.push(authRouteNames.activation, {
-        platform,
         credentials: {
-          username: pending.loginUsed,
           password: pending.code,
+          username: pending.loginUsed,
         },
+        platform,
       });
     case AuthPendingRedirection.RENEW_PASSWORD:
       return StackActions.push(authRouteNames.changePassword, {
-        platform,
         credentials: {
-          username: pending.loginUsed,
           password: pending.code,
+          username: pending.loginUsed,
         },
-        useResetCode: true,
+        platform,
         replaceAccountId: pending.accountId,
         replaceAccountTimestamp: pending.accountTimestamp,
+        useResetCode: true,
       });
   }
 };
@@ -334,12 +334,11 @@ export const getAuthNavigationState = (
   if (navRedirection) {
     return { ...simulateNavAction(navRedirection, { routes }), stale: true as const };
   } else {
-    return { stale: true as const, routes, index: routes.length - 1 };
+    return { index: routes.length - 1, routes, stale: true as const };
   }
 };
 
 export const getFirstTabRoute = () => ({
-  stale: true as const,
   routes: [
     {
       name: '$tabs',
@@ -359,4 +358,5 @@ export const getFirstTabRoute = () => ({
       },
     },
   ],
+  stale: true as const,
 });

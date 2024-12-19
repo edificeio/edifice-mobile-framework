@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import type { StudentListItemProps } from './types';
+
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import { CallEventType, CallState } from '~/framework/modules/viescolaire/presences/model';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
-import styles from './styles';
-import type { StudentListItemProps } from './types';
 
 export default class StudentListItem extends React.PureComponent<StudentListItemProps> {
   constructor(props: StudentListItemProps) {
@@ -59,7 +59,7 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
   }
 
   public render() {
-    const { isSelected, student, onPress } = this.props;
+    const { isSelected, onPress, student } = this.props;
     return (
       <TouchableOpacity onPress={onPress} style={[styles.container, isSelected && styles.containerSelected]}>
         <View style={styles.leftContainer}>

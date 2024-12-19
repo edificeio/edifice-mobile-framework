@@ -4,14 +4,14 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  boxError: {
-    marginTop: UI_SIZES.spacing.medium,
-    marginBottom: UI_SIZES.spacing.big,
-  },
   boxButtons: {
     alignItems: 'center',
     flexGrow: 2,
     justifyContent: 'flex-start',
+  },
+  boxError: {
+    marginBottom: UI_SIZES.spacing.big,
+    marginTop: UI_SIZES.spacing.medium,
   },
   boxInputs: {
     alignSelf: 'stretch',
@@ -21,8 +21,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   forgotPasswordButton: {
-    marginTop: UI_SIZES.spacing.big,
     marginBottom: UI_SIZES.spacing.tiny,
+    marginTop: UI_SIZES.spacing.big,
   },
   form: {
     alignItems: 'center',
@@ -32,13 +32,13 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.big,
     paddingTop: UI_SIZES.spacing.large,
   },
+  inputCheckbox: {
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    marginTop: UI_SIZES.spacing.medium,
+  },
   inputPassword: {
     marginTop: UI_SIZES.spacing.big,
-  },
-  inputCheckbox: {
-    flexDirection: 'row',
-    alignSelf: 'flex-end',
-    marginTop: UI_SIZES.spacing.medium,
   },
   pageView: {
     backgroundColor: theme.ui.background.card,
@@ -46,8 +46,8 @@ export default StyleSheet.create({
   platform: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
     marginBottom: UI_SIZES.spacing.large,
+    width: '100%',
   },
   platformLogo: {
     height: UI_SIZES.elements.logoSize.height,
@@ -55,15 +55,15 @@ export default StyleSheet.create({
   platformName: {
     marginTop: UI_SIZES.spacing.medium,
   },
+  scrollview: {
+    flexGrow: 1,
+  },
   userError: {
     alignItems: 'center',
   },
   userTextError: {
-    textAlign: 'center',
     color: theme.palette.status.failure.regular,
     marginTop: UI_SIZES.spacing.minor,
-  },
-  scrollview: {
-    flexGrow: 1,
+    textAlign: 'center',
   },
 });

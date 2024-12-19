@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-import theme from '~/app/theme';
-import DefaultButton from '~/framework/components/buttons/default';
-
 import styles from './styles';
 import { PrimaryButtonProps } from './types';
+
+import theme from '~/app/theme';
+import DefaultButton from '~/framework/components/buttons/default';
 
 const PrimaryButton = (props: PrimaryButtonProps) => {
   const initialBackgroundColor = theme.palette.primary.regular;

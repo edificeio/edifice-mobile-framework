@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { ColorValue, TextStyle, TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+
 import theme from '~/app/theme';
-import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
+import { genericHitSlop, UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
-
-import styles from './styles';
 
 export default function NavBarAction(props: {
   icon?: string;

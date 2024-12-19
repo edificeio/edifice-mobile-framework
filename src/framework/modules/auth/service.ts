@@ -1,19 +1,6 @@
 import CookieManager from '@react-native-cookies/cookies';
-import firebase from '@react-native-firebase/app';
-import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
-import { Platform as RNPlatform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
-
-import { I18n } from '~/app/i18n';
-import appConf, { Platform } from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { OldStorageFunctions, Storage } from '~/framework/util/storage';
-import { Connection } from '~/infra/Connection';
-import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-import { OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
 
 import {
   AccountType,
@@ -30,6 +17,10 @@ import {
   AuthPendingRedirection,
   AuthRequirement,
   AuthTokenSet,
+  createActivationError,
+  credentialsAreCustomToken,
+  credentialsAreLoginPassword,
+  credentialsAreSaml,
   ForgotMode,
   InitialAuthenticationMethod,
   LegalUrls,
@@ -38,12 +29,18 @@ import {
   StructureNode,
   UserChild,
   UserChildren,
-  createActivationError,
-  credentialsAreCustomToken,
-  credentialsAreLoginPassword,
-  credentialsAreSaml,
 } from './model';
-import { getSession } from './reducer';
+
+import { getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-phone-number-input';
+import { I18n } from '~/app/i18n';
+import appConf, { Platform } from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
+import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { Storage } from '~/framework/util/storage';
+import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
+import { initOAuth2, OAuth2RessourceOwnerPasswordClient, uniqueId, urlSigner } from '~/infra/oauth';
+import { AccountError, AccountErrorCode } from './model/error';
 
 export interface IUserRequirements {
   forceChangePassword?: boolean;
@@ -119,7 +116,6 @@ export interface IUserInfoBackend {
   login?: string;
   type?: AccountType;
   deletePending?: boolean;
-  hasApp?: boolean;
   forceChangePassword?: boolean;
   needRevalidateTerms?: boolean;
   apps?: IEntcoreApp[];
@@ -166,6 +162,14 @@ export interface UserPersonDataBackend {
   schools?: UserPersonDataStructureWithClasses[];
 }
 
+export namespace API {
+  export interface AuthForgotResponse {
+    ok: boolean;
+    structures?: any[];
+    error?: string;
+  }
+}
+
 export function formatStructuresWithClasses(
   structureNodes?: StructureNode[],
   structuresWithClasses?: UserPersonDataStructureWithClasses[],
@@ -182,7 +186,7 @@ export async function createSession(platform: Platform, credentials: AuthCredent
   }
   initOAuth2(platform);
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
   }
 
   if (credentialsAreLoginPassword(credentials)) {
@@ -209,7 +213,7 @@ export async function createSession(platform: Platform, credentials: AuthCredent
 export async function restoreSession(platform: Platform, token: AuthTokenSet) {
   initOAuth2(platform);
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
   }
   OAuth2RessourceOwnerPasswordClient.connection.importToken(token);
   if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
@@ -224,7 +228,7 @@ export async function restoreSession(platform: Platform, token: AuthTokenSet) {
 export async function forgetPreviousSession() {
   try {
     if (!OAuth2RessourceOwnerPasswordClient.connection) {
-      throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+      throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
     }
     await OAuth2RessourceOwnerPasswordClient.connection.forgetToken();
   } catch (err) {
@@ -243,7 +247,7 @@ export function formatSession(
   rememberMe?: boolean,
 ): AuthActiveAccount {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
   }
   if (
     !userinfo.apps ||
@@ -260,22 +264,22 @@ export function formatSession(
     throw new Error.LoginError(Error.FetchErrorType.BAD_RESPONSE, 'Missing data in user info');
   }
   const user: Partial<AuthActiveUserInfo> = {
+    avatar: userPublicInfo?.photo,
+    birthDate: userinfo.birthDate ? moment(userinfo.birthDate) : undefined,
+    classes: userinfo.classes,
+    displayName: userinfo.username,
+    email: userPrivateData?.email,
+    firstName: userinfo.firstName,
+    groups: userinfo.groupsIds,
+    homePhone: userPrivateData?.homePhone,
     id: userinfo.userId,
+    lastName: userinfo.lastName,
     login: userinfo.login,
     loginUsed,
-    type: userinfo.type,
-    displayName: userinfo.username,
-    firstName: userinfo.firstName,
-    lastName: userinfo.lastName,
-    groups: userinfo.groupsIds,
-    classes: userinfo.classes,
-    structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
-    uniqueId: userinfo.uniqueId,
-    avatar: userPublicInfo?.photo,
     mobile: userPrivateData?.mobile,
-    email: userPrivateData?.email,
-    homePhone: userPrivateData?.homePhone,
-    birthDate: userinfo.birthDate ? moment(userinfo.birthDate) : undefined,
+    structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
+    type: userinfo.type,
+    uniqueId: userinfo.uniqueId,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
   // compute here detailed data about children (laborious)
@@ -301,17 +305,17 @@ export function formatSession(
     (user as AuthActiveUserInfoStudent).relatives = userPrivateData.parents;
   }
   return {
+    addTimestamp,
+    method,
+    persist: rememberMe ? SessionPersistence.PERMANENT : SessionPersistence.TEMPORARY,
     platform,
-    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
-    user: user as AuthActiveUserInfo,
     rights: {
       apps: userinfo.apps,
-      widgets: userinfo.widgets,
       authorizedActions: userinfo.authorizedActions,
+      widgets: userinfo.widgets,
     },
-    persist: rememberMe ? SessionPersistence.PERMANENT : SessionPersistence.TEMPORARY,
-    method,
-    addTimestamp,
+    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
+    user: user as AuthActiveUserInfo,
   } as AuthActiveAccountWithCredentials | AuthActiveAccountWithSaml;
 }
 
@@ -373,7 +377,7 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
     }
     const body = await res.json();
     if (!body.match) {
-      throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
+      throw new Error.LoginError(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
     }
     return AuthPendingRedirection.ACTIVATE;
   } catch (activationErr) {
@@ -403,7 +407,7 @@ export async function ensureCredentialsMatchPwdRenewCode(platform: Platform, cre
     }
     const body = await res.json();
     if (!body.match) {
-      throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
+      throw new Error.LoginError(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
     }
     return AuthPendingRedirection.RENEW_PASSWORD;
   } catch (err) {
@@ -424,199 +428,6 @@ export async function getAuthContext(platform: Platform) {
   return activationContext;
 }
 
-export class FcmService {
-  static FCM_TOKEN_TODELETE_KEY = 'users.fcmtokens.todelete';
-
-  lastRegisteredToken?: string;
-
-  pendingRegistration: 'initial' | 'delayed' | 'registered' = 'initial';
-
-  platform: Platform;
-
-  constructor(platform: Platform) {
-    this.platform = platform;
-    // Network Connection Listener
-    Connection.onEachNetworkBack(async () => {
-      if (this.pendingRegistration === 'delayed') {
-        console.debug('FcmService - onEachNetworkBack - registerFCMToken');
-        await this.registerFCMToken();
-      }
-      this._cleanQueue();
-    });
-    // FCM Token Listener
-    firebase.messaging().onTokenRefresh(async (token: string) => {
-      console.debug('FcmService - onEachNetworkBack - registerFCMToken');
-      await this.registerFCMToken(token);
-    });
-  }
-
-  private async _cleanQueue() {
-    const tokens = await this._getTokenToDeleteQueue();
-    tokens.forEach(token => {
-      console.debug('FcmService - _cleanQueue - unregisterFCMToken');
-      this.unregisterFCMToken(token);
-    });
-  }
-
-  private async _getTokenToDeleteQueue(): Promise<string[]> {
-    try {
-      const tokensCached = await OldStorageFunctions.getItemJson(FcmService.FCM_TOKEN_TODELETE_KEY);
-      if (!tokensCached) return [];
-      const tokens = tokensCached as string[];
-      if (tokens instanceof Array) {
-        return tokens;
-      } else {
-        console.debug('not an array?', tokens);
-      }
-    } catch {
-      // TODO: Manage error
-    }
-    return [];
-  }
-
-  private async _removeTokenFromDeleteQueue(token: string) {
-    if (!token) {
-      return;
-    }
-    //merge is not supported by all implementation
-    let tokens = await this._getTokenToDeleteQueue();
-    tokens = tokens.filter(t => t !== token);
-    await OldStorageFunctions.setItemJson(FcmService.FCM_TOKEN_TODELETE_KEY, tokens);
-  }
-
-  async unregisterFCMToken(token: string | null = null) {
-    try {
-      const account = getSession();
-      if (!account) {
-        console.error('FcmService - unregisterFCMToken - ERROR - No account');
-        return;
-      }
-      if (!token) {
-        token = await messaging().getToken();
-      }
-      if (token) {
-        const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
-          OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
-          `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
-          {
-            method: 'delete',
-          },
-        );
-        await fetch(req);
-        this._removeTokenFromDeleteQueue(token);
-        console.debug(`FcmService - unregisterFCMToken - OK - ${account?.user?.login} - ${token}`);
-      } else {
-        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ', account?.user?.login);
-      }
-    } catch (err) {
-      console.error('FcmService - unregisterFCMToken - ERROR - ', (err as Error).message);
-      //unregistering fcm token should not crash the login process
-      if (!Connection.isOnline) {
-        //when no connection => get it from property
-        const tokenToUnregister = token || this.lastRegisteredToken;
-        if (tokenToUnregister) this._removeTokenFromDeleteQueue(tokenToUnregister);
-      }
-    }
-  }
-
-  async unregisterFCMTokenWithAccount(account: AuthLoggedAccount, token: string | null = null) {
-    try {
-      if (!token) {
-        token = await messaging().getToken();
-      }
-      if (token) {
-        const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
-          OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
-          `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
-          {
-            method: 'delete',
-          },
-        );
-        await fetch(req);
-        this._removeTokenFromDeleteQueue(token);
-        console.debug(`FcmService - unregisterFCMToken - OK - ${account?.user?.login} - ${token}`);
-      } else {
-        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ', account?.user?.login);
-      }
-    } catch (err) {
-      console.error('FcmService - unregisterFCMTokenWithAccount - ERROR - ', (err as Error).message);
-      //unregistering fcm token should not crash the login process
-      if (!Connection.isOnline) {
-        //when no connection => get it from property
-        const tokenToUnregister = token || this.lastRegisteredToken;
-        if (tokenToUnregister) this._removeTokenFromDeleteQueue(tokenToUnregister);
-      }
-    }
-  }
-
-  async registerFCMToken(token: string | null = null) {
-    try {
-      this.pendingRegistration = 'initial';
-      if (!token) {
-        token = await messaging().getToken();
-      }
-      this.lastRegisteredToken = token;
-      await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
-        method: 'put',
-      });
-      this.pendingRegistration = 'registered';
-      console.debug('FcmService - registerFCMToken - OK - ', token);
-      //try to unregister queue
-      this._cleanQueue(); //clean queue on login
-    } catch (err) {
-      console.error('FcmService - registerFCMToken - ERROR - ', token);
-      console.error((err as Error).message);
-      //registering fcm token should not crash the login process
-      if (!Connection.isOnline) {
-        this.pendingRegistration = 'delayed';
-      }
-    }
-  }
-}
-
-export async function manageFirebaseToken(platform: Platform) {
-  try {
-    const fcm = new FcmService(platform);
-    console.debug('manageFirebaseToken - registerFCMToken');
-    if (RNPlatform.OS === 'android') {
-      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
-      if (result === RESULTS.GRANTED || result === RESULTS.UNAVAILABLE) {
-        await fcm.registerFCMToken();
-      }
-    } else {
-      const authorizationStatus = await messaging().requestPermission();
-      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-        await fcm.registerFCMToken();
-      }
-    }
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('Firebase register error', { cause: err });
-  }
-}
-
-export async function removeFirebaseToken(platform: Platform) {
-  try {
-    const fcm = new FcmService(platform);
-    console.debug('removeFirebaseToken - unregisterFCMToken');
-    fcm.unregisterFCMToken();
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('Firebase unregister error', { cause: err });
-  }
-}
-
-export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount) {
-  try {
-    const fcm = new FcmService(account.platform);
-    console.debug('removeFirebaseTokenWithAccount - unregisterFCMToken');
-    await fcm.unregisterFCMTokenWithAccount(account);
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('Firebase unregister error', { cause: err });
-  }
-}
-
 export async function getAuthTranslationKeys(platform: Platform, language: I18n.SupportedLocales) {
   try {
     // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
@@ -625,8 +436,8 @@ export async function getAuthTranslationKeys(platform: Platform, language: I18n.
       const authTranslationKeys = await res.json();
       const legalUrls: LegalUrls = {
         cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
-        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
         cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
       };
       if (authTranslationKeys) {
         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
@@ -660,8 +471,8 @@ export async function getMFAValidationInfos() {
 export async function verifyMFACode(key: string) {
   try {
     const mfaValidationState = (await fetchJSONWithCache('/auth/user/mfa/code', {
-      method: 'POST',
       body: JSON.stringify({ key }),
+      method: 'POST',
     })) as IEntcoreMFAValidationState;
     return mfaValidationState;
   } catch (e) {
@@ -681,16 +492,16 @@ export async function getMobileValidationInfos(platformUrl: string) {
 
 export async function requestMobileVerificationCode(platform: Platform, mobile: string) {
   await signedFetch(platform.url + '/directory/user/mobilestate', {
-    method: 'PUT',
     body: JSON.stringify({ mobile }),
+    method: 'PUT',
   });
 }
 
 export async function verifyMobileCode(key: string) {
   try {
     const mobileValidationState = (await fetchJSONWithCache('/directory/user/mobilestate', {
-      method: 'POST',
       body: JSON.stringify({ key }),
+      method: 'POST',
     })) as IEntcoreMobileValidationState;
     return mobileValidationState;
   } catch (e) {
@@ -717,16 +528,16 @@ export async function getEmailValidationInfos(platformUrl: string) {
 
 export async function requestEmailVerificationCode(platform: Platform, email: string) {
   await signedFetch(platform.url + '/directory/user/mailstate', {
-    method: 'PUT',
     body: JSON.stringify({ email }),
+    method: 'PUT',
   });
 }
 
 export async function verifyEmailCode(key: string) {
   try {
     const emailValidationState = (await fetchJSONWithCache('/directory/user/mailstate', {
-      method: 'POST',
       body: JSON.stringify({ key }),
+      method: 'POST',
     })) as IEntcoreEmailValidationState;
     return emailValidationState;
   } catch (e) {
@@ -801,9 +612,7 @@ export async function fetchUserInfo(platform: Platform) {
  */
 export function ensureUserValidity(userinfo: IUserInfoBackend) {
   if (userinfo.deletePending) {
-    throw new Error.LoginError(Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED);
-  } else if (!userinfo.hasApp) {
-    throw new Error.LoginError(Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM);
+    throw new AccountError(AccountErrorCode.ACCOUNT_INELIGIBLE_PRE_DELETED, 'User is predeleted');
   }
 }
 
@@ -852,15 +661,40 @@ interface IActivationSubmitPayload extends ActivationPayload {
 
 export async function activateAccount(platform: Platform, model: ActivationPayload) {
   const theme = platform.webTheme;
+  const phoneNumber = model.phone;
+  const phonePrefix = model.phoneCountry;
+
+  const getIsValidMobileNumberForRegion = (toVerify: string) => {
+    try {
+      // Returns whether number is valid for selected region and an actual mobile number
+      const isValidNumberForRegion = isValidNumber(toVerify, phonePrefix);
+      const isValidMobileNumber = isMobileNumber(toVerify, phonePrefix);
+      return isValidNumberForRegion && isValidMobileNumber;
+    } catch {
+      // Returns false in case of format error (string is too short, isn't recognized as a phone number, etc.)
+      return false;
+    }
+  };
+
+  const phoneNumberCleaned = phoneNumber.replaceAll(/[-.]+/g, '');
+  const isValidMobileNumberForRegion = getIsValidMobileNumberForRegion(phoneNumberCleaned);
+
+  if (!isValidMobileNumberForRegion) {
+    throw new global.Error('Invalid mobile number submitted');
+  }
+  const mobileNumberFormatted = getFormattedNumber(phoneNumberCleaned, phonePrefix);
+
+  if (!mobileNumberFormatted) throw new global.Error('Failed to format mobile number');
+
   const payload: IActivationSubmitPayload = {
     acceptCGU: true,
     activationCode: model.activationCode,
     callBack: '',
-    login: model.login,
-    password: model.password,
     confirmPassword: model.confirmPassword,
+    login: model.login,
     mail: model.mail || '',
-    phone: model.phone,
+    password: model.password,
+    phone: mobileNumberFormatted,
     theme,
   };
   const formdata = new FormData();
@@ -893,24 +727,28 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
 }
 
 // ToDo : type def for response type
-export async function forgot<Mode extends 'password'>(platform: Platform, mode: Mode, payload: { login: string }, deviceId: string);
+export async function forgot<Mode extends 'password'>(
+  platform: Platform,
+  mode: Mode,
+  payload: { login: string },
+  deviceId: string,
+): Promise<API.AuthForgotResponse>;
 export async function forgot<Mode extends 'id'>(
   platform: Platform,
   mode: Mode,
   payload: { mail: string } | { mail: string; firstName: string; structureId: string },
   deviceId: string,
-);
+): Promise<API.AuthForgotResponse>;
 export async function forgot<Mode extends ForgotMode>(
   platform: Platform,
   mode: Mode,
   payload: { login: string } | { mail: string } | { mail: string; firstName: string; structureId: string },
   deviceId: string,
-) {
+): Promise<API.AuthForgotResponse> {
   const realPayload = { ...payload, service: 'mail' };
   const api = mode === 'id' ? `${platform.url}/auth/forgot-id` : `${platform.url}/auth/forgot-password`;
   const res = await fetch(api, {
     body: JSON.stringify(realPayload),
-    method: 'POST',
     headers: {
       'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'application/json',
@@ -919,6 +757,7 @@ export async function forgot<Mode extends ForgotMode>(
       'X-APP-VERSION': DeviceInfo.getReadableVersion(),
       'X-Device-Id': uniqueId(),
     },
+    method: 'POST',
   });
   const resStatus = res.status;
   const resJson = await res.json();

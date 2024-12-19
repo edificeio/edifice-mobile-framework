@@ -1,8 +1,11 @@
+import * as React from 'react';
+
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import type { DiaryTimetableScreenDispatchProps, DiaryTimetableScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -21,8 +24,6 @@ import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import type { DiaryTimetableScreenDispatchProps, DiaryTimetableScreenPrivateProps } from './types';
 
 export type TimetableState = {
   startDate: Moment;
@@ -44,8 +45,8 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
   constructor(props) {
     super(props);
     this.state = {
-      startDate: moment().startOf('week'),
       selectedDate: moment(),
+      startDate: moment().startOf('week'),
     };
   }
 
@@ -64,7 +65,7 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { startDate, selectedDate } = this.state;
+    const { selectedDate, startDate } = this.state;
     const { structureId, tryFetchSlots } = this.props;
 
     // on selected date change

@@ -7,27 +7,27 @@
 import * as React from 'react';
 import { ColorValue, TextStyle, View, ViewStyle } from 'react-native';
 
+import styles from './styles';
+
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
+import { getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 
-import styles from './styles';
-
 const EmptyScreen = ({
-  svgImage,
-  title,
-  text,
-  buttonText,
-  buttonUrl,
   buttonAction,
   buttonIcon,
+  buttonText,
+  buttonUrl,
   customStyle,
   customTitleStyle,
   svgFillColor,
+  svgImage,
+  text,
   textColor,
+  title,
 }: {
   svgImage: string;
   title: string;
@@ -48,8 +48,8 @@ const EmptyScreen = ({
     <PageViewStyle
       style={[
         {
-          paddingTop: UI_SIZES.spacing.huge,
           paddingHorizontal: UI_SIZES.spacing.big,
+          paddingTop: UI_SIZES.spacing.huge,
         },
         customStyle,
       ]}>

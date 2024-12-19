@@ -1,6 +1,9 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+
 import DraggableFlatList, { RenderItemParams, ScaleDecorator } from 'react-native-draggable-flatlist';
+
+import { FormAnswerText } from './FormAnswerText';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -9,24 +12,22 @@ import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
 
-import { FormAnswerText } from './FormAnswerText';
-
 const styles = StyleSheet.create({
   choiceContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: UI_SIZES.radius.medium,
+    flexDirection: 'row',
     marginHorizontal: UI_SIZES.spacing.minor,
     marginVertical: UI_SIZES.spacing.tiny,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
-    borderRadius: UI_SIZES.radius.medium,
+  },
+  listContainer: {
+    overflow: 'visible',
   },
   valueText: {
     flex: 1,
     marginLeft: UI_SIZES.spacing.minor,
-  },
-  listContainer: {
-    overflow: 'visible',
   },
 });
 
@@ -47,24 +48,24 @@ const sortChoices = (choices: IQuestionChoice[], responses: IQuestionResponse[])
   return choices.slice().sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
 };
 
-export const FormOrderCard = ({ isDisabled, question, responses, onChangeAnswer, onEditQuestion }: IFormOrderCardProps) => {
+export const FormOrderCard = ({ isDisabled, onChangeAnswer, onEditQuestion, question, responses }: IFormOrderCardProps) => {
   const [choices, setChoices] = React.useState<IQuestionChoice[]>(sortChoices(question.choices, responses));
-  const { title, mandatory } = question;
+  const { mandatory, title } = question;
 
   React.useEffect(() => {
     onChangeAnswer(
       question.id,
       choices.map((choice, index) => ({
-        questionId: question.id,
         answer: choice.value,
         choiceId: choice.id,
         choicePosition: index + 1,
+        questionId: question.id,
       })),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [choices]);
 
-  const renderItem = ({ item, drag, isActive }: RenderItemParams<IQuestionChoice>) => {
+  const renderItem = ({ drag, isActive, item }: RenderItemParams<IQuestionChoice>) => {
     return (
       <ScaleDecorator>
         <TouchableOpacity

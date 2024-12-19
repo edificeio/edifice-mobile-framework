@@ -5,8 +5,8 @@ import { TimelineSpaceScreenNavParams } from '~/framework/modules/timeline/scree
 import { IAbstractNotification } from '~/framework/util/notifications';
 
 export const timelineRouteNames = {
-  Home: `${moduleConfig.routeName}` as 'Home',
   Filters: `${moduleConfig.routeName}/filters` as 'Filters',
+  Home: `${moduleConfig.routeName}` as 'Home',
   space: `${moduleConfig.routeName}/space` as 'space',
 };
 export interface ITimelineNavigationParams extends ParamListBase {

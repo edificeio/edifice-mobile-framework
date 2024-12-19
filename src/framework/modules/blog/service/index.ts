@@ -101,8 +101,8 @@ export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>
       username: blogPost.author.username,
     },
     created: moment(blogPost.created.$date),
-    modified: moment(blogPost.modified.$date),
     firstPublishDate: blogPost.firstPublishDate?.$date && moment(blogPost.firstPublishDate.$date),
+    modified: moment(blogPost.modified.$date),
     state: blogPost.state,
     title: blogPost.title,
     views: blogPost.views,
@@ -112,23 +112,23 @@ export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>
 
 export const blogAdapter = (blog: IEntcoreBlog) => {
   const ret = {
-    id: blog._id,
-    visibility: blog.visibility,
-    title: blog.title,
-    thumbnail: blog.thumbnail,
-    trashed: blog.trashed,
-    'comment-type': blog['comment-type'],
-    'publish-type': blog['publish-type'],
-    description: blog.description,
-    created: moment(blog.created.$date),
-    modified: moment(blog.modified.$date),
     author: {
       login: blog.author.login,
       userId: blog.author.userId,
       username: blog.author.username,
     },
-    shared: blog.shared,
+    'comment-type': blog['comment-type'],
+    created: moment(blog.created.$date),
+    description: blog.description,
     fetchPosts: blog.fetchPosts?.map(bp => blogFetchPostAdapter(bp)),
+    id: blog._id,
+    modified: moment(blog.modified.$date),
+    'publish-type': blog['publish-type'],
+    shared: blog.shared,
+    thumbnail: blog.thumbnail,
+    title: blog.title,
+    trashed: blog.trashed,
+    visibility: blog.visibility,
   };
   return ret as Blog;
 };
@@ -147,6 +147,7 @@ export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostCommen
 
 export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
   const ret = {
+    _id: blogPost._id,
     author: {
       login: blogPost.author.login,
       userId: blogPost.author.userId,
@@ -160,7 +161,6 @@ export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
     state: blogPost.state,
     title: blogPost.title,
     views: blogPost.views,
-    _id: blogPost._id,
   };
   return ret as BlogPost;
 };
@@ -168,8 +168,8 @@ export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
 export const blogFolderAdapter = (blogFolder: IEntcoreBlogFolder) => {
   return {
     ...blogFolder,
-    id: blogFolder._id,
     created: moment(blogFolder.created.$date),
+    id: blogFolder._id,
     modified: moment(blogFolder.created.$date),
     resourceIds: blogFolder.ressourceIds,
   } as BlogFolder;
@@ -181,18 +181,71 @@ export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: strin
   const blogPostIdMatch = url.match(blogPostIdRegex);
   return !blogPostIdMatch
     ? {
-        blogId: url.match(blogIdRegex)?.[1],
-      }
+      blogId: url.match(blogIdRegex)?.[1],
+    }
     : {
-        blogId: blogPostIdMatch?.[1],
-        postId: blogPostIdMatch?.[2],
-      };
+      blogId: blogPostIdMatch?.[1],
+      postId: blogPostIdMatch?.[2],
+    };
 };
 export const blogPostGenerateResourceUriFunction = ({ blogId, postId }: { blogId: string; postId: string }) => {
   return `/blog#/detail/${blogId}/${postId}`;
 };
 
 export const blogService = {
+  comments: {
+    delete: async (session: AuthActiveAccount, blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
+      const { blogId, commentId, postId } = blogPostCommentId;
+      const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
+      return signedFetchJson(`${session.platform.url}${api}`, {
+        method: 'DELETE',
+      }) as Promise<{ number: number }>;
+    },
+    get: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }) => {
+      const { blogId, postId } = blogPostId;
+      const api = `/blog/comments/${blogId}/${postId}`;
+      const entcoreBlogPostComments = (await fetchJSONWithCache(api)) as IEntcoreBlogPostComments;
+      // Run the adapter for the received blog post comments
+      return blogPostCommentsAdapter(entcoreBlogPostComments) as BlogPostComments;
+    },
+    publish: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }, comment: string) => {
+      const { blogId, postId } = blogPostId;
+      const api = `/blog/comment/${blogId}/${postId}`;
+      const body = JSON.stringify({ comment });
+      return signedFetchJson(`${session.platform.url}${api}`, {
+        body,
+        method: 'POST',
+      }) as Promise<{ number: number }>;
+    },
+    update: async (
+      session: AuthActiveAccount,
+      blogPostCommentId: { blogId: string; postId: string; commentId: string },
+      comment: string,
+    ) => {
+      const { blogId, commentId, postId } = blogPostCommentId;
+      const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
+      const body = JSON.stringify({ comment });
+      return signedFetchJson(`${session.platform.url}${api}`, {
+        body,
+        method: 'PUT',
+      }) as Promise<{ number: number }>;
+    },
+  },
+
+  // This service automatically filters only non-trashed content.
+  folders: {
+    list: async (session: AuthActiveAccount) => {
+      const api = `/blog/folder/list/all`;
+      const entcoreBlogFolderList = (await fetchJSONWithCache(api)) as IEntcoreBlogFolder[];
+      return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as BlogFolder[]).filter(f => !f.trashed);
+    },
+  },
+
+  get: async (session: AuthActiveAccount, blogId: string) => {
+    const api = `/blog/${blogId}`;
+    const entcoreBlog = (await fetchJSONWithCache(api)) as IEntcoreBlog;
+    return blogAdapter(entcoreBlog);
+  },
   // This service automatically filters only non-trashed content.
   list: async (session: AuthActiveAccount) => {
     const api = `/blog/list/all`;
@@ -203,17 +256,52 @@ export const blogService = {
     }
     return blogList;
   },
-  get: async (session: AuthActiveAccount, blogId: string) => {
-    const api = `/blog/${blogId}`;
-    const entcoreBlog = (await fetchJSONWithCache(api)) as IEntcoreBlog;
-    return blogAdapter(entcoreBlog);
-  },
-  // This service automatically filters only non-trashed content.
-  folders: {
-    list: async (session: AuthActiveAccount) => {
-      const api = `/blog/folder/list/all`;
-      const entcoreBlogFolderList = (await fetchJSONWithCache(api)) as IEntcoreBlogFolder[];
-      return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as BlogFolder[]).filter(f => !f.trashed);
+  post: {
+    create: async (session: AuthActiveAccount, blogId: string, postTitle: string, postContentHtml: string) => {
+      const api = `/blog/post/${blogId}`;
+      const body = JSON.stringify({ content: postContentHtml, title: postTitle });
+      return signedFetchJson(`${session.platform.url}${api}`, {
+        body,
+        method: 'POST',
+      }) as Promise<IEntcoreCreatedBlogPost>;
+    },
+    delete: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }) => {
+      const { blogId, postId } = blogPostId;
+      const api = `/blog/post/${blogId}/${postId}`;
+      return signedFetch(`${session.platform.url}${api}`, {
+        method: 'DELETE',
+      }) as Promise<Response>;
+    },
+    edit: async (session: AuthActiveAccount, blogId: string, postId: string, postTitle: string, postContentHtml: string) => {
+      const api = `/blog/post/${blogId}/${postId}`;
+      const body = JSON.stringify({ content: postContentHtml, title: postTitle });
+      return signedFetchJson(`${session.platform.url}${api}`, {
+        body,
+        method: 'PUT',
+      });
+    },
+    get: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }, state?: string) => {
+      const { blogId, postId } = blogPostId;
+      if (!state) {
+        const apiMetadata = `/blog/post/list/all/${blogId}?postId=${postId}`;
+        const entcoreBlogPostMetadata = (await fetchJSONWithCache(apiMetadata)) as IEntcoreBlogPost;
+        state = entcoreBlogPostMetadata[0].state;
+      }
+      let api = `/blog/post/${blogId}/${postId}`;
+      if (state) {
+        api += `?state=${state}`;
+      }
+      const entcoreBlogPost = (await fetchJSONWithCache(api)) as IEntcoreBlogPost;
+      // Run the adapter for the received blog post
+      return blogPostAdapter(entcoreBlogPost) as BlogPost;
+    },
+    publish: async (session: AuthActiveAccount, blogId: string, postId: string) => {
+      const api = `/blog/post/publish/${blogId}/${postId}`;
+      return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
+    },
+    submit: async (session: AuthActiveAccount, blogId: string, postId: string) => {
+      const api = `/blog/post/submit/${blogId}/${postId}`;
+      return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
     },
   },
   posts: {
@@ -238,92 +326,6 @@ export const blogService = {
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
       const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPost[];
       return blogPosts;
-    },
-  },
-  post: {
-    get: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }, state?: string) => {
-      const { blogId, postId } = blogPostId;
-      if (!state) {
-        const apiMetadata = `/blog/post/list/all/${blogId}?postId=${postId}`;
-        const entcoreBlogPostMetadata = (await fetchJSONWithCache(apiMetadata)) as IEntcoreBlogPost;
-        state = entcoreBlogPostMetadata[0].state;
-      }
-      let api = `/blog/post/${blogId}/${postId}`;
-      if (state) {
-        api += `?state=${state}`;
-      }
-      const entcoreBlogPost = (await fetchJSONWithCache(api)) as IEntcoreBlogPost;
-      // Run the adapter for the received blog post
-      return blogPostAdapter(entcoreBlogPost) as BlogPost;
-    },
-    create: async (session: AuthActiveAccount, blogId: string, postTitle: string, postContentHtml: string) => {
-      const api = `/blog/post/${blogId}`;
-      const body = JSON.stringify({ title: postTitle, content: postContentHtml });
-      return signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'POST',
-        body,
-      }) as Promise<IEntcoreCreatedBlogPost>;
-    },
-    edit: async (session: AuthActiveAccount, blogId: string, postId: string, postTitle: string, postContentHtml: string) => {
-      const api = `/blog/post/${blogId}/${postId}`;
-      const body = JSON.stringify({ title: postTitle, content: postContentHtml });
-      return signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'PUT',
-        body,
-      });
-    },
-    submit: async (session: AuthActiveAccount, blogId: string, postId: string) => {
-      const api = `/blog/post/submit/${blogId}/${postId}`;
-      return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
-    },
-    publish: async (session: AuthActiveAccount, blogId: string, postId: string) => {
-      const api = `/blog/post/publish/${blogId}/${postId}`;
-      return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
-    },
-    delete: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }) => {
-      const { blogId, postId } = blogPostId;
-      const api = `/blog/post/${blogId}/${postId}`;
-      return signedFetch(`${session.platform.url}${api}`, {
-        method: 'DELETE',
-      }) as Promise<Response>;
-    },
-  },
-  comments: {
-    get: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }) => {
-      const { blogId, postId } = blogPostId;
-      const api = `/blog/comments/${blogId}/${postId}`;
-      const entcoreBlogPostComments = (await fetchJSONWithCache(api)) as IEntcoreBlogPostComments;
-      // Run the adapter for the received blog post comments
-      return blogPostCommentsAdapter(entcoreBlogPostComments) as BlogPostComments;
-    },
-    publish: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }, comment: string) => {
-      const { blogId, postId } = blogPostId;
-      const api = `/blog/comment/${blogId}/${postId}`;
-      const body = JSON.stringify({ comment });
-      return signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'POST',
-        body,
-      }) as Promise<{ number: number }>;
-    },
-    update: async (
-      session: AuthActiveAccount,
-      blogPostCommentId: { blogId: string; postId: string; commentId: string },
-      comment: string,
-    ) => {
-      const { blogId, postId, commentId } = blogPostCommentId;
-      const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
-      const body = JSON.stringify({ comment });
-      return signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'PUT',
-        body,
-      }) as Promise<{ number: number }>;
-    },
-    delete: async (session: AuthActiveAccount, blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
-      const { blogId, postId, commentId } = blogPostCommentId;
-      const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
-      return signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'DELETE',
-      }) as Promise<{ number: number }>;
     },
   },
 };

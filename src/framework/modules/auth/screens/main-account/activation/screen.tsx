@@ -1,8 +1,11 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import type { AuthActivationScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { activateAccountActionAddFirstAccount } from '~/framework/modules/auth/actions';
@@ -12,8 +15,6 @@ import ActivationScreen, { ActivationScreenDispatchProps } from '~/framework/mod
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import type { AuthActivationScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

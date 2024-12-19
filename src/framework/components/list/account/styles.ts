@@ -5,12 +5,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   separator: {
-    height: UI_SIZES.border.thin,
     backgroundColor: theme.palette.grey.cloudy,
+    height: UI_SIZES.border.thin,
   },
   separatorContainer: {
-    paddingVertical: UI_SIZES.spacing.small,
     paddingHorizontal: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.small,
   },
   textContainer: {
     marginBottom: UI_SIZES.spacing.big,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Image, ImageURISource, Text, View, ViewStyle } from 'react-native';
+import { Image, Text, View, ViewStyle } from 'react-native';
 
 import { simpleStyle } from './image-viewer.style';
 
@@ -60,7 +60,7 @@ export class Props {
   /**
    * Menu Context Values
    */
-  public menuContext?: any = { saveToLocal: 'save to the album', cancel: 'cancel' };
+  public menuContext?: any = { cancel: 'cancel', saveToLocal: 'save to the album' };
 
   /**
    * 是否开启长按保存到本地的功能
@@ -276,7 +276,7 @@ export class State {
 }
 
 export interface IImageInfo {
-  url: string;
+  url?: string;
   /**
    * 没有的话会自动拉取
    */

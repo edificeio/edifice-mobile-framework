@@ -115,8 +115,8 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
 const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
   abs: 'pronote-transcript-value-absent',
   disp: 'pronote-transcript-value-exempted',
-  'n.not': 'pronote-transcript-value-unrated',
   inap: 'pronote-transcript-value-unfit',
+  'n.not': 'pronote-transcript-value-unrated',
   'n.rdu': 'pronote-transcript-value-unreturned',
 };
 export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
@@ -127,8 +127,8 @@ export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | 
   } else
     return bareme
       ? I18n.get('pronote-transcript-note', {
-          note,
           bareme,
+          note,
         })
       : note.toString();
 }
@@ -199,17 +199,17 @@ export function getSummaryItem<T>(itemsPast?: T[], itemsFuture?: T[]) {
   return itemsFuture !== undefined && itemsFuture.length > 0
     ? itemsFuture[0]
     : itemsPast !== undefined && itemsPast.length > 0
-    ? itemsPast[itemsPast.length - 1]
-    : undefined;
+      ? itemsPast[itemsPast.length - 1]
+      : undefined;
 }
 
 const carnetDeBordVieScolaireTypeI18n = {
   Absence: 'pronote-viescolaire-type-absence',
-  Retard: 'pronote-viescolaire-type-lateness',
+  Observation: 'pronote-viescolaire-type-observation',
   PassageInfirmerie: 'pronote-viescolaire-type-infirmary',
   Punition: 'pronote-viescolaire-type-punishment',
+  Retard: 'pronote-viescolaire-type-lateness',
   Sanction: 'pronote-viescolaire-type-sanction',
-  Observation: 'pronote-viescolaire-type-observation',
 };
 
 export function formatCarnetDeBordVieScolaireType(type?: string) {

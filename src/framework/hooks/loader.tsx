@@ -63,12 +63,12 @@ export const useLoadingState = (load: () => Promise<void>, initialLoadingState =
         .catch(() => setLoadingState(LoadingState.REFRESH_FAILED));
     }
   };
-  return { loadingState, reload, refresh, refreshSilent };
+  return { loadingState, refresh, refreshSilent, reload };
 };
 
 export const ContentLoader = React.forwardRef<ContentLoaderHandle, ContentLoaderProps>(
   ({ initialLoadingState, loadContent, renderContent, renderError, renderLoading }, ref) => {
-    const { loadingState, reload, refresh, refreshSilent } = useLoadingState(loadContent, initialLoadingState);
+    const { loadingState, refresh, refreshSilent, reload } = useLoadingState(loadContent, initialLoadingState);
     React.useImperativeHandle(ref, () => ({ refresh, refreshSilent }));
 
     switch (loadingState) {

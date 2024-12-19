@@ -1,11 +1,11 @@
 import React from 'react';
 import { TextStyle, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
 
-import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
+import { Card, CardWithoutPadding, TouchCard } from './base';
+
+import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-
-import { Card, CardWithoutPadding, TouchCard } from './base';
 
 export type PictureCardProps = {
   text?: string | React.ReactElement;
@@ -15,7 +15,7 @@ export type PictureCardProps = {
 } & ViewProps;
 
 function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
-  const { cardComponent, text, textStyle, picture, style, ...viewProps } = props;
+  const { cardComponent, picture, style, text, textStyle, ...viewProps } = props;
   const CC = cardComponent ?? CardWithoutPadding;
   return (
     <CC {...viewProps} style={[{ alignItems: 'center', justifyContent: 'center' }, style]}>
@@ -24,17 +24,17 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
         typeof text === 'string' ? (
           <View
             style={{
-              justifyContent: 'center',
               alignItems: 'center',
-              marginTop: UI_SIZES.spacing.minor,
               height: getScaleHeight(20) * 2,
+              justifyContent: 'center',
+              marginTop: UI_SIZES.spacing.minor,
             }}>
             <SmallText
               numberOfLines={2}
               style={[
                 {
-                  textAlign: 'center',
                   lineHeight: undefined,
+                  textAlign: 'center',
                 },
                 textStyle,
               ]}>
@@ -56,12 +56,12 @@ export function TouchablePictureCard(props: PictureCardProps & TouchableOpacityP
 }
 
 function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
-  const { style, picture, pictureStyle, ...rest } = props;
-  picture['style'] = { maxWidth: '100%', ...pictureStyle };
-  picture['resizeMode'] = 'contain';
+  const { picture, pictureStyle, style, ...rest } = props;
+  picture.style = { maxWidth: '100%', ...pictureStyle };
+  picture.resizeMode = 'contain';
   return (
     <PictureCard
-      style={[{ paddingVertical: UI_SIZES.spacing.medium, paddingHorizontal: UI_SIZES.spacing.medium }, style]}
+      style={[{ paddingHorizontal: UI_SIZES.spacing.medium, paddingVertical: UI_SIZES.spacing.medium }, style]}
       picture={picture}
       {...rest}
     />

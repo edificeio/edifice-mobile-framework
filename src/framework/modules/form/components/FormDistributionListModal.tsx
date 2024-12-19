@@ -3,9 +3,9 @@ import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
+import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -14,9 +14,13 @@ import { DistributionStatus, IDistribution, IForm } from '~/framework/modules/fo
 import { formService } from '~/framework/modules/form/service';
 
 const styles = StyleSheet.create({
+  flatListContainer: {
+    marginVertical: UI_SIZES.spacing.medium,
+    maxHeight: 300,
+  },
   itemContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     minHeight: 32,
   },
   itemIconMargin: {
@@ -24,10 +28,6 @@ const styles = StyleSheet.create({
   },
   titleMargin: {
     marginTop: UI_SIZES.spacing.small,
-  },
-  flatListContainer: {
-    marginVertical: UI_SIZES.spacing.medium,
-    maxHeight: 300,
   },
 });
 
@@ -115,13 +115,14 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
       ref={ref}
       content={
         <View>
-          <BodyText style={styles.titleMargin}>{`${I18n.get('form-distributionlist-listmodal-myanswers')} - ${props.form
-            ?.title}`}</BodyText>
+          <BodyText style={styles.titleMargin}>{`${I18n.get('form-distributionlist-listmodal-myanswers')} - ${
+            props.form?.title
+          }`}</BodyText>
           <FlatList
             data={data}
             initialNumToRender={data.length}
             keyExtractor={distribution => distribution.id.toString()}
-            renderItem={({ item, index }) => renderListItem(item, index + 1)}
+            renderItem={({ index, item }) => renderListItem(item, index + 1)}
             persistentScrollbar
             style={styles.flatListContainer}
           />

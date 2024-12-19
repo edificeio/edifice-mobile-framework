@@ -1,6 +1,6 @@
 export const toastConfigColor = {
-  success: 'success',
-  info: 'info',
-  warning: 'warning',
   error: 'failure',
+  info: 'info',
+  success: 'success',
+  warning: 'warning',
 };

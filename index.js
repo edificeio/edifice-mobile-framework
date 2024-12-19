@@ -1,4 +1,5 @@
 import { AppRegistry } from 'react-native';
+
 import 'react-native-url-polyfill/auto';
 // Add URLSearchParams polyfill as it is not implemented in React Native.
 // @see https://github.com/facebook/react-native/issues/23922#issuecomment-648096619

@@ -7,16 +7,16 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
+import { newsRouteNames } from './navigation';
+
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
-
-import { newsRouteNames } from './navigation';
 
 export interface INewsNotification extends ITimelineNotification, IResourceUriNotification {}
 
@@ -27,8 +27,8 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<INewsNotification> =
         name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
           initial: false,
-          screen: newsRouteNames.details,
           params: { notification },
+          screen: newsRouteNames.details,
         },
       });
 
@@ -46,8 +46,9 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<INewsNotification> =
 export default () =>
   registerNotifHandlers([
     {
-      type: 'NEWS',
-      'event-type': ['INFO-SHARED', 'NEWS-PUBLISHED', 'NEWS-COMMENT', 'NEWS-UPDATE'], // Replace this with the backend notification event-type
+      'event-type': ['INFO-SHARED', 'NEWS-PUBLISHED', 'NEWS-COMMENT', 'NEWS-UPDATE'],
+      // Replace this with the backend notification event-type
       notifHandlerAction: handleSomeNotificationAction,
+      type: 'NEWS',
     },
   ]);

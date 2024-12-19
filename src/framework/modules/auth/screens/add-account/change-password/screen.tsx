@@ -1,8 +1,11 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { changePasswordActionAddAnotherAccount, manualLogoutAction } from '~/framework/modules/auth/actions';
@@ -13,8 +16,6 @@ import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/temp
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -30,18 +31,18 @@ export const computeNavBar = ({
 export default connect(
   (state, props: AuthChangePasswordScreenPrivateProps) => {
     return {
-      session: undefined,
       context: props.route.params.platform ? getPlatformContextOf(props.route.params.platform) : getPlatformContext(),
+      session: undefined,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>, props: AuthChangePasswordScreenOwnProps) => {
     return bindActionCreators<ChangePasswordScreenDispatchProps>(
       {
+        tryLogout: tryAction(manualLogoutAction),
         trySubmit: tryAction(
           changePasswordActionAddAnotherAccount,
           props.route.params.useResetCode ? { track: track.passwordRenew } : undefined,
         ),
-        tryLogout: tryAction(manualLogoutAction),
       },
       dispatch,
     );

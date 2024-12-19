@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
+
 import FastImage from 'react-native-fast-image';
 
 import theme from '~/app/theme';
@@ -7,19 +8,19 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
-import { Image, formatSource } from '~/framework/util/media';
+import { formatSource, Image } from '~/framework/util/media';
 import ImageOptional from '~/ui/ImageOptional';
 
 const styles = StyleSheet.create({
   iconContainer: {
-    width: UI_SIZES.screen.width,
+    alignItems: 'center',
     flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    width: UI_SIZES.screen.width,
   },
   imageContainer: {
-    width: UI_SIZES.screen.width,
     flexGrow: 1,
+    width: UI_SIZES.screen.width,
   },
 });
 
@@ -110,7 +111,7 @@ export const renderIcon = (id: string | null, isFolder: boolean, name: string, c
     return <Icon color={theme.palette.grey.grey} size={50} name={icon} />;
   } else {
     const uri = `${session?.platform.url}/workspace/document/${id}?thumbnail=120x120`;
-    const style = { width: 50, height: 50 };
+    const style = { height: 50, width: 50 };
     return <ImageOptional style={style} imageComponent={Image} errorComponent={<UnavailableIcon />} source={formatSource(uri)} />;
   }
 };

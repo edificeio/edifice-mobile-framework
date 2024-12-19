@@ -22,18 +22,24 @@ export interface BackendScrapbookItem {
 export const scrapbookItemAdapter = (n: BackendScrapbookItem) => {
   const ret = {
     id: n._id,
-    title: n.title,
-    thumbnail: n.icon,
-    trashed: n.trashed,
     owner: {
-      userId: n.owner.userId,
       displayName: n.owner.displayName,
+      userId: n.owner.userId,
     },
+    thumbnail: n.icon,
+    title: n.title,
+    trashed: n.trashed,
   };
   return ret as ScrapbookItem;
 };
 
 export const scrapbookService = {
+  get: async (id: string) => {
+    const api = `/scrapbook/get/${id}`;
+    const entcoreScrapbook = (await fetchJSONWithCache(api)) as any;
+
+    return entcoreScrapbook;
+  },
   list: async () => {
     const api = `/scrapbook/list/all`;
     const backendScrapbooks = (await fetchJSONWithCache(api)) as BackendScrapbookItem[];
@@ -50,11 +56,5 @@ export const scrapbookService = {
     });
 
     return finalScrapbooks as ScrapbookItem[];
-  },
-  get: async (id: string) => {
-    const api = `/scrapbook/get/${id}`;
-    const entcoreScrapbook = (await fetchJSONWithCache(api)) as any;
-
-    return entcoreScrapbook;
   },
 };

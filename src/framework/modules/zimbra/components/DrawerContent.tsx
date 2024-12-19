@@ -1,15 +1,19 @@
-import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { useIsFocused } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import { FolderButton } from './FolderButton';
+import CreateFolderModal from './modals/CreateFolderModal';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { NamedSVG } from '~/framework/components/picture';
 import { CaptionBoldText, HeadingXSText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -20,43 +24,40 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import { FolderButton } from './FolderButton';
-import CreateFolderModal from './modals/CreateFolderModal';
-
 const styles = StyleSheet.create({
   categoryText: {
+    color: theme.palette.primary.regular,
     marginLeft: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
-    color: theme.palette.primary.regular,
   },
   contentContainer: {
     flexGrow: 1,
     justifyContent: 'space-between',
   },
-  foldersHeaderContainer: {
-    flexDirection: 'row',
-  },
   createFolderContainer: {
+    alignItems: 'center',
     flex: 1,
     flexDirection: 'row',
     height: '100%',
     justifyContent: 'flex-end',
-    alignItems: 'center',
     paddingRight: UI_SIZES.spacing.small,
   },
+  foldersHeaderContainer: {
+    flexDirection: 'row',
+  },
   storageBar: {
-    height: 30,
-    marginHorizontal: UI_SIZES.spacing.small,
-    marginBottom: UI_SIZES.spacing.small,
     backgroundColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.medium,
+    height: 30,
+    marginBottom: UI_SIZES.spacing.small,
+    marginHorizontal: UI_SIZES.spacing.small,
     overflow: 'hidden',
   },
   storageBarUsed: {
-    justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
     backgroundColor: theme.palette.grey.graphite,
+    height: '100%',
+    justifyContent: 'center',
   },
   storageText: {
     color: theme.ui.text.inverse,

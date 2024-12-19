@@ -1,6 +1,7 @@
-import { Picker } from '@react-native-picker/picker';
 import * as React from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { Picker } from '@react-native-picker/picker';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -15,33 +16,33 @@ const styles = StyleSheet.create({
     gap: UI_SIZES.spacing.large,
     marginBottom: UI_SIZES.spacing.large,
   },
-  container: {
-    borderRadius: UI_SIZES.radius.medium,
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
-    minHeight: 50,
-    backgroundColor: theme.ui.background.card,
-  },
   androidPickerColor: {
     color: theme.ui.text.regular,
   },
-  rowContainer: {
-    paddingVertical: UI_SIZES.spacing.tiny,
-    paddingHorizontal: UI_SIZES.spacing.small,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  container: {
+    backgroundColor: theme.ui.background.card,
+    borderColor: theme.palette.primary.regular,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: 1,
+    minHeight: 50,
   },
-  valueText: {
-    color: theme.ui.text.regular,
+  dropdownPicker: {
+    marginBottom: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    width: '100%',
   },
   modalContent: {
     width: 350,
   },
-  dropdownPicker: {
-    width: '100%',
-    marginBottom: UI_SIZES.spacing.large,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+  rowContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tiny,
+  },
+  valueText: {
+    color: theme.ui.text.regular,
   },
 });
 
@@ -55,10 +56,10 @@ interface IDropdownProps {
 
 const DropdownAndroid = ({
   data,
-  value,
-  onSelect,
   keyExtractor = item => item.toString(),
+  onSelect,
   renderItem = item => item.toString(),
+  value,
 }: IDropdownProps) => {
   return (
     <View style={styles.container}>
@@ -73,10 +74,10 @@ const DropdownAndroid = ({
 
 const DropdownIOS = ({
   data,
-  value,
-  onSelect,
   keyExtractor = item => item.toString(),
+  onSelect,
   renderItem = item => item.toString(),
+  value,
 }: IDropdownProps) => {
   const [isModalVisible, setModalVisible] = React.useState(false);
   const [tempValue, setTempValue] = React.useState<string | undefined>(value ?? keyExtractor(data[0]));

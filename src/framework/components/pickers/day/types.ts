@@ -1,5 +1,6 @@
-import { Moment } from 'moment';
 import { ViewStyle } from 'react-native';
+
+import { Moment } from 'moment';
 
 export interface DayPickerProps {
   initialSelectedDate?: Moment;

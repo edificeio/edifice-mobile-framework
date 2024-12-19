@@ -1,10 +1,13 @@
-import { filesize } from 'filesize';
 import * as React from 'react';
 import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
+
+import { filesize } from 'filesize';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import { IconButton } from './IconButton';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -19,8 +22,6 @@ import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import Notifier from '~/framework/util/notifier';
 import { urlSigner } from '~/infra/oauth';
-
-import { IconButton } from './IconButton';
 
 export interface IRemoteAttachment {
   charset?: string;
@@ -169,7 +170,7 @@ class Attachment extends React.PureComponent<
   }
 
   public render() {
-    const { attachment: att, style, editMode, onDownloadFile } = this.props;
+    const { attachment: att, editMode, onDownloadFile, style } = this.props;
     const { downloadState } = this.state;
     const notifierId = `attachment/${this.attId}`;
 
@@ -178,24 +179,24 @@ class Attachment extends React.PureComponent<
         <Notifier id={notifierId} />
         <View
           style={{
-            flexDirection: 'row',
             alignItems: 'center',
             backgroundColor: theme.palette.grey.white,
-            paddingVertical: UI_SIZES.spacing.minor,
-            paddingHorizontal: UI_SIZES.spacing.small,
+            borderColor: theme.palette.grey.pearl,
             borderRadius: UI_SIZES.radius.mediumPlus,
             borderWidth: UI_SIZES.elements.border.thin,
-            borderColor: theme.palette.grey.pearl,
+            flexDirection: 'row',
+            paddingHorizontal: UI_SIZES.spacing.small,
+            paddingVertical: UI_SIZES.spacing.minor,
           }}>
           <Pressable
-            style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
+            style={{ alignItems: 'center', flex: 1, flexDirection: 'row' }}
             onPress={() => this.onPressAttachment(notifierId, this.props.navigation)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
                 <ActivityIndicator
                   size="small"
                   color={theme.palette.primary.regular}
-                  style={{ marginRight: UI_SIZES.spacing.tiny, height: 18 }}
+                  style={{ height: 18, marginRight: UI_SIZES.spacing.tiny }}
                 />
               ) : downloadState === DownloadState.Success ? (
                 <Icon
@@ -232,8 +233,8 @@ class Attachment extends React.PureComponent<
               <SmallText style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
                 <SmallText
                   style={{
-                    textDecorationColor: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
                     color: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
+                    textDecorationColor: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
                     textDecorationLine: 'underline',
                     textDecorationStyle: 'solid',
                   }}>
@@ -284,7 +285,7 @@ class Attachment extends React.PureComponent<
   }
 
   public async onPressAttachment(notifierId: string, navigation: NavigationInjectedProps['navigation']) {
-    const { onOpenFile, onOpen, attachment, editMode } = this.props;
+    const { attachment, editMode, onOpen, onOpenFile } = this.props;
     const { downloadState, newDownloadedFile } = this.state;
     const fileType = editMode
       ? (attachment as ILocalAttachment).mime
@@ -293,8 +294,8 @@ class Attachment extends React.PureComponent<
       new LocalFile(
         {
           filename: att.displayName || att.name,
-          filetype: att.mime,
           filepath: att.uri,
+          filetype: att.mime,
         },
         { _needIOSReleaseSecureAccess: false },
       ) as LocalFile;
@@ -327,10 +328,10 @@ class Attachment extends React.PureComponent<
     if (!url) throw new Error('[Attachment] url invalid');
     const df: IDistantFileWithId = {
       ...att,
+      filename: att.filename || att.displayName,
+      filesize: att.size,
       filetype: att.contentType,
       id: att.id!,
-      filesize: att.size,
-      filename: att.filename || att.displayName,
       url,
     };
 
@@ -375,8 +376,8 @@ class Attachment extends React.PureComponent<
 }
 
 export default connect(null, dispatch => ({
-  onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
+  dispatch,
   onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
     dispatch(downloadFile(notifierId, file, toastMessage)),
-  dispatch,
+  onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
 }))(Attachment);

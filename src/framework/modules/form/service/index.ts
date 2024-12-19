@@ -129,52 +129,52 @@ type IBackendSectionList = IBackendSection[];
 
 const distributionAdapter = (data: IBackendDistribution): IDistribution => {
   return {
-    id: data.id,
+    active: data.active,
+    dateResponse: moment(data.date_response),
+    dateSending: moment(data.date_sending),
     formId: data.form_id,
-    senderId: data.sender_id,
-    senderName: data.sender_name,
+    id: data.id,
+    originalId: data.original_id,
     responderId: data.responder_id,
     responderName: data.responder_name,
+    senderId: data.sender_id,
+    senderName: data.sender_name,
     status: data.status as DistributionStatus,
-    dateSending: moment(data.date_sending),
-    dateResponse: moment(data.date_response),
-    active: data.active,
     structure: data.structure,
-    originalId: data.original_id,
   };
 };
 
 const formAdapter = (data: IBackendForm): IForm => {
   return {
-    id: data.id,
-    title: data.title,
-    description: data.description,
-    picture: data.picture,
-    ownerName: data.owner_name,
     archived: data.archived,
-    multiple: data.multiple,
+    description: data.description,
     editable: data.editable,
+    id: data.id,
+    multiple: data.multiple,
+    ownerName: data.owner_name,
+    picture: data.picture,
+    title: data.title,
   };
 };
 
 const questionAdapter = (data: IBackendQuestion): IQuestion => {
   return {
-    id: data.id,
-    formId: data.form_id,
-    title: data.title,
-    position: data.position,
-    type: data.question_type,
-    statement: data.statement,
-    mandatory: data.mandatory,
-    sectionId: data.section_id,
-    conditional: data.conditional,
-    placeholder: data.placeholder,
-    cursorMinVal: data.cursor_min_val,
-    cursorMaxVal: data.cursor_max_val,
-    cursorStep: data.cursor_step,
-    cursorMinLabel: data.cursor_min_label,
-    cursorMaxLabel: data.cursor_max_label,
     choices: [],
+    conditional: data.conditional,
+    cursorMaxLabel: data.cursor_max_label,
+    cursorMaxVal: data.cursor_max_val,
+    cursorMinLabel: data.cursor_min_label,
+    cursorMinVal: data.cursor_min_val,
+    cursorStep: data.cursor_step,
+    formId: data.form_id,
+    id: data.id,
+    mandatory: data.mandatory,
+    placeholder: data.placeholder,
+    position: data.position,
+    sectionId: data.section_id,
+    statement: data.statement,
+    title: data.title,
+    type: data.question_type,
   };
 };
 
@@ -191,14 +191,14 @@ const compareMatrixChildren = (a: IBackendQuestion, b: IBackendQuestion): number
 const questionChoiceAdapter = (data: IBackendQuestionChoice, platformUrl: string): IQuestionChoice => {
   return {
     id: data.id,
-    questionId: data.question_id,
-    value: data.value,
-    type: data.type,
+    image: data.image?.startsWith('/') ? platformUrl + data.image : data.image,
+    isCustom: data.is_custom,
+    isNextFormElementDefault: data.is_next_form_element_default,
     nextFormElementId: data.next_form_element_id,
     nextFormElementType: data.next_form_element_type,
-    isNextFormElementDefault: data.is_next_form_element_default,
-    isCustom: data.is_custom,
-    image: data.image?.startsWith('/') ? platformUrl + data.image : data.image,
+    questionId: data.question_id,
+    type: data.type,
+    value: data.value,
   };
 };
 
@@ -208,36 +208,84 @@ const compareChoices = (a: IBackendQuestionChoice, b: IBackendQuestionChoice): n
 
 const questionResponseAdapter = (data: IBackendQuestionResponse): IQuestionResponse => {
   return {
-    id: data.id,
-    questionId: data.question_id,
     answer: data.answer,
     choiceId: data.choice_id,
-    customAnswer: data.custom_answer,
     choicePosition: data.choice_position,
+    customAnswer: data.custom_answer,
+    id: data.id,
+    questionId: data.question_id,
   };
 };
 
 const responseFileAdapter = (data: IBackendResponseFile): IResponseFile => {
   return {
+    filename: data.filename,
     id: data.id,
     responseId: data.response_id,
-    filename: data.filename,
     type: data.type,
   };
 };
 
 const sectionAdapter = (data: IBackendSection): ISection => {
   return {
-    id: data.id,
-    formId: data.form_id,
-    title: data.title,
     description: data.description,
+    formId: data.form_id,
+    id: data.id,
     position: data.position,
     questions: [],
+    title: data.title,
   };
 };
 
 export const formService = {
+  distribution: {
+    add: async (session: AuthLoggedAccount, distributionId: number) => {
+      const api = `/formulaire/distributions/${distributionId}/add`;
+      const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
+        method: 'POST',
+      })) as IBackendDistribution;
+      return distributionAdapter(distribution);
+    },
+    deleteQuestionResponses: async (session: AuthLoggedAccount, distributionId: number, questionId: number) => {
+      const api = `/formulaire/responses/${distributionId}/questions/${questionId}`;
+      return signedFetchJson(`${session.platform.url}${api}`, {
+        method: 'DELETE',
+      }) as Promise<[]>;
+    },
+    duplicate: async (session: AuthLoggedAccount, distributionId: number) => {
+      const api = `/formulaire/distributions/${distributionId}/duplicate`;
+      const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
+        method: 'POST',
+      })) as IBackendDistribution;
+      return distributionAdapter(distribution);
+    },
+    get: async (session: AuthLoggedAccount, distributionId: number) => {
+      const api = `/formulaire/distributions/${distributionId}`;
+      const distribution = (await fetchJSONWithCache(api)) as IBackendDistribution;
+      return distributionAdapter(distribution);
+    },
+    getResponses: async (session: AuthLoggedAccount, distributionId: number) => {
+      const api = `/formulaire/distributions/${distributionId}/responses`;
+      const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
+      return responses.map(questionResponseAdapter);
+    },
+    put: async (session: AuthLoggedAccount, distribution: IDistribution) => {
+      const api = `/formulaire/distributions/${distribution.id}`;
+      const body = JSON.stringify(distribution);
+      const distrib = (await signedFetchJson(`${session.platform.url}${api}`, {
+        body,
+        method: 'PUT',
+      })) as IBackendDistribution;
+      return distributionAdapter(distrib);
+    },
+    replace: async (session: AuthLoggedAccount, distributionId: number, originalDistributionId: number) => {
+      const api = `/formulaire/distributions/${distributionId}/replace/${originalDistributionId}`;
+      const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
+        method: 'DELETE',
+      })) as IBackendDistribution;
+      return distributionAdapter(distribution);
+    },
+  },
   distributions: {
     list: async (session: AuthLoggedAccount) => {
       const api = '/formulaire/distributions/listMine';
@@ -248,61 +296,6 @@ export const formService = {
       const api = `/formulaire/distributions/forms/${formId}/listMine`;
       const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
       return distributions.map(distributionAdapter);
-    },
-  },
-  distribution: {
-    get: async (session: AuthLoggedAccount, distributionId: number) => {
-      const api = `/formulaire/distributions/${distributionId}`;
-      const distribution = (await fetchJSONWithCache(api)) as IBackendDistribution;
-      return distributionAdapter(distribution);
-    },
-    add: async (session: AuthLoggedAccount, distributionId: number) => {
-      const api = `/formulaire/distributions/${distributionId}/add`;
-      const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'POST',
-      })) as IBackendDistribution;
-      return distributionAdapter(distribution);
-    },
-    getResponses: async (session: AuthLoggedAccount, distributionId: number) => {
-      const api = `/formulaire/distributions/${distributionId}/responses`;
-      const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
-      return responses.map(questionResponseAdapter);
-    },
-    deleteQuestionResponses: async (session: AuthLoggedAccount, distributionId: number, questionId: number) => {
-      const api = `/formulaire/responses/${distributionId}/questions/${questionId}`;
-      return signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'DELETE',
-      }) as Promise<[]>;
-    },
-    put: async (session: AuthLoggedAccount, distribution: IDistribution) => {
-      const api = `/formulaire/distributions/${distribution.id}`;
-      const body = JSON.stringify(distribution);
-      const distrib = (await signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'PUT',
-        body,
-      })) as IBackendDistribution;
-      return distributionAdapter(distrib);
-    },
-    duplicate: async (session: AuthLoggedAccount, distributionId: number) => {
-      const api = `/formulaire/distributions/${distributionId}/duplicate`;
-      const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'POST',
-      })) as IBackendDistribution;
-      return distributionAdapter(distribution);
-    },
-    replace: async (session: AuthLoggedAccount, distributionId: number, originalDistributionId: number) => {
-      const api = `/formulaire/distributions/${distributionId}/replace/${originalDistributionId}`;
-      const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'DELETE',
-      })) as IBackendDistribution;
-      return distributionAdapter(distribution);
-    },
-  },
-  forms: {
-    getReceived: async (session: AuthLoggedAccount) => {
-      const api = '/formulaire/forms/sent';
-      const forms = (await fetchJSONWithCache(api)) as IBackendFormList;
-      return forms.map(formAdapter);
     },
   },
   form: {
@@ -332,6 +325,54 @@ export const formService = {
       return rights.some(r => r.action === 'fr-openent-formulaire-controllers-FormController|initResponderResourceRight');
     },
   },
+  forms: {
+    getReceived: async (session: AuthLoggedAccount) => {
+      const api = '/formulaire/forms/sent';
+      const forms = (await fetchJSONWithCache(api)) as IBackendFormList;
+      return forms.map(formAdapter);
+    },
+  },
+  question: {
+    createResponse: async (
+      session: AuthLoggedAccount,
+      questionId: number,
+      distributionId: number,
+      choiceId: number | null,
+      answer: string,
+      customAnswer: string | null,
+      choicePosition: number | null,
+    ) => {
+      const api = `/formulaire/questions/${questionId}/responses`;
+      const body = JSON.stringify({
+        answer,
+        choice_id: choiceId,
+        choice_position: choicePosition,
+        custom_answer: customAnswer,
+        distribution_id: distributionId,
+        question_id: questionId,
+        responder_id: session.user.id,
+      });
+      const response = (await signedFetchJson(`${session.platform.url}${api}`, {
+        body,
+        method: 'POST',
+      })) as IBackendQuestionResponse;
+      return questionResponseAdapter(response);
+    },
+    getChoices: async (session: AuthLoggedAccount, questionId: number) => {
+      const api = `/formulaire/questions/${questionId}/choices`;
+      const headers = {
+        Accept: 'application/json;version=1.9',
+      };
+      const choices = (await fetchJSONWithCache(api, { headers })) as IBackendQuestionChoiceList;
+      choices.sort(compareChoices);
+      return choices.map(choice => questionChoiceAdapter(choice, session.platform.url));
+    },
+    getDistributionResponses: async (session: AuthLoggedAccount, questionId: number, distributionId: number) => {
+      const api = `/formulaire/questions/${questionId}/distributions/${distributionId}/responses`;
+      const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
+      return responses.map(questionResponseAdapter);
+    },
+  },
   questions: {
     getAllChoices: async (session: AuthLoggedAccount, questionIds: number[]) => {
       let api = `/formulaire/questions/choices/all?`;
@@ -351,68 +392,44 @@ export const formService = {
       return children.map(questionAdapter);
     },
   },
-  question: {
-    createResponse: async (
-      session: AuthLoggedAccount,
-      questionId: number,
-      distributionId: number,
-      choiceId: number | null,
-      answer: string,
-      customAnswer: string | null,
-      choicePosition: number | null,
-    ) => {
-      const api = `/formulaire/questions/${questionId}/responses`;
-      const body = JSON.stringify({
-        question_id: questionId,
-        distribution_id: distributionId,
-        choice_id: choiceId,
-        answer,
-        responder_id: session.user.id,
-        custom_answer: customAnswer,
-        choice_position: choicePosition,
-      });
-      const response = (await signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'POST',
-        body,
-      })) as IBackendQuestionResponse;
-      return questionResponseAdapter(response);
-    },
-    getChoices: async (session: AuthLoggedAccount, questionId: number) => {
-      const api = `/formulaire/questions/${questionId}/choices`;
-      const headers = {
-        Accept: 'application/json;version=1.9',
-      };
-      const choices = (await fetchJSONWithCache(api, { headers })) as IBackendQuestionChoiceList;
-      choices.sort(compareChoices);
-      return choices.map(choice => questionChoiceAdapter(choice, session.platform.url));
-    },
-    getDistributionResponses: async (session: AuthLoggedAccount, questionId: number, distributionId: number) => {
-      const api = `/formulaire/questions/${questionId}/distributions/${distributionId}/responses`;
-      const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
-      return responses.map(questionResponseAdapter);
-    },
-  },
-  responses: {
-    delete: async (session: AuthLoggedAccount, formId: number, responses: IQuestionResponse[]) => {
-      const api = `/formulaire/responses/${formId}`;
-      const body = JSON.stringify(
-        responses.map(r => {
+  response: {
+    addFile: async (session: AuthLoggedAccount, responseId: number, file: LocalFile) => {
+      const api = `/formulaire/responses/${responseId}/files`;
+      const { firstName, lastName } = session.user;
+      if (!file.filename.startsWith(firstName)) {
+        file.filename = `${firstName}${lastName}_${file.filename}`;
+      }
+      return fileHandlerService.uploadFile<SyncedFileWithId>(
+        session,
+        file,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+          url: api,
+        },
+        data => {
+          const json = JSON.parse(data) as { id: string };
           return {
-            id: r.id,
-            question_id: r.questionId,
-            answer: r.answer,
-            choice_id: r.choiceId,
-            custom_answer: r.customAnswer,
-          } as IBackendQuestionResponse;
-        }),
+            id: json.id,
+            url: `/formulaire/responses/${responseId}/files/${json.id}`,
+          };
+        },
+        undefined,
+        SyncedFileWithId,
       );
+    },
+    deleteFiles: async (session: AuthLoggedAccount, responseId: number) => {
+      const api = `/formulaire/responses/${responseId}/files`;
       return fetchWithCache(api, {
         method: 'DELETE',
-        body,
       });
     },
-  },
-  response: {
+    getFiles: async (session: AuthLoggedAccount, responseId: number) => {
+      const api = `/formulaire/responses/${responseId}/files/all`;
+      const files = (await fetchJSONWithCache(api)) as IBackendResponseFileList;
+      return files.map(responseFileAdapter);
+    },
     put: async (
       session: AuthLoggedAccount,
       responseId: number,
@@ -424,53 +441,36 @@ export const formService = {
     ) => {
       const api = `/formulaire/responses/${responseId}`;
       const body = JSON.stringify({
+        answer,
+        choice_id: choiceId,
+        custom_answer: customAnswer,
         distribution_id: distributionId,
         question_id: questionId,
-        choice_id: choiceId,
-        answer,
         reponder_id: session.user.id,
-        custom_answer: customAnswer,
       });
       const response = (await signedFetchJson(`${session.platform.url}${api}`, {
-        method: 'PUT',
         body,
+        method: 'PUT',
       })) as IBackendQuestionResponse;
       return questionResponseAdapter(response);
     },
-    getFiles: async (session: AuthLoggedAccount, responseId: number) => {
-      const api = `/formulaire/responses/${responseId}/files/all`;
-      const files = (await fetchJSONWithCache(api)) as IBackendResponseFileList;
-      return files.map(responseFileAdapter);
-    },
-    addFile: async (session: AuthLoggedAccount, responseId: number, file: LocalFile) => {
-      const api = `/formulaire/responses/${responseId}/files`;
-      const { firstName, lastName } = session.user;
-      if (!file.filename.startsWith(firstName)) {
-        file.filename = `${firstName}${lastName}_${file.filename}`;
-      }
-      return fileHandlerService.uploadFile<SyncedFileWithId>(
-        session,
-        file,
-        {
-          url: api,
-          headers: {
-            Accept: 'application/json',
-          },
-        },
-        data => {
-          const json = JSON.parse(data) as { id: string };
+  },
+  responses: {
+    delete: async (session: AuthLoggedAccount, formId: number, responses: IQuestionResponse[]) => {
+      const api = `/formulaire/responses/${formId}`;
+      const body = JSON.stringify(
+        responses.map(r => {
           return {
-            url: `/formulaire/responses/${responseId}/files/${json.id}`,
-            id: json.id,
-          };
-        },
-        undefined,
-        SyncedFileWithId,
+            answer: r.answer,
+            choice_id: r.choiceId,
+            custom_answer: r.customAnswer,
+            id: r.id,
+            question_id: r.questionId,
+          } as IBackendQuestionResponse;
+        }),
       );
-    },
-    deleteFiles: async (session: AuthLoggedAccount, responseId: number) => {
-      const api = `/formulaire/responses/${responseId}/files`;
       return fetchWithCache(api, {
+        body,
         method: 'DELETE',
       });
     },

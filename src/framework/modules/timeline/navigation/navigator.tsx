@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { ITimelineNavigationParams, timelineRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import TimelineSpaceScreen, { computeNavBar as spaceNavBar } from '~/framework/modules/timeline/screens/space';
 import TimelineFiltersScreen, {
@@ -8,11 +10,8 @@ import TimelineFiltersScreen, {
 import TimelineScreen, { computeNavBar as TimelineNavBar } from '~/framework/modules/timeline/screens/timeline-screen';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import { ITimelineNavigationParams, timelineRouteNames } from '.';
-
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default () =>
   createModuleNavigator<ITimelineNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={timelineRouteNames.Home} component={TimelineScreen} options={TimelineNavBar} initialParams={{}} />

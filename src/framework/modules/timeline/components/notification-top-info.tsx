@@ -2,6 +2,7 @@
  * Information about a timeline notification. Displayed in the header.
  */
 import * as React from 'react';
+
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -13,10 +14,10 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { APPBADGES } from '~/framework/modules/timeline/app-badges';
 import appConf from '~/framework/util/appConf';
 import {
-  INamedResourceNotification,
-  ITimelineNotification,
   getAsNamedResourceNotification,
   getAsSenderNotification,
+  INamedResourceNotification,
+  ITimelineNotification,
 } from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
 
@@ -49,8 +50,8 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
   }
 
   const badgeInfo = {
-    icon: APPBADGES[type] && APPBADGES[type].icon,
     color: APPBADGES[type] && APPBADGES[type].color,
+    icon: APPBADGES[type] && APPBADGES[type].icon,
   };
 
   return (
@@ -61,21 +62,21 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
         <HtmlContentView
           html={formattedMessage}
           opts={{
-            hyperlinks: false,
-            textFormatting: false,
-            textColor: false,
             audio: false,
-            video: false,
-            iframes: false,
-            images: false,
-            ignoreLineBreaks: true,
             globalTextStyle: {
               ...TextFontStyle.Regular,
               ...TextSizeStyle.Normal,
             },
+            hyperlinks: false,
+            iframes: false,
+            ignoreLineBreaks: true,
+            images: false,
             linkTextStyle: {
               ...TextFontStyle.Bold,
             },
+            textColor: false,
+            textFormatting: false,
+            video: false,
           }}
         />
       }

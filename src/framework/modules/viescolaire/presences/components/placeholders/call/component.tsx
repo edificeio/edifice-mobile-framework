@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
+
+import styles from './styles';
 
 import { UI_STYLES } from '~/framework/components/constants';
 import CallCardPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-card';
-
-import styles from './styles';
 
 export default function CallPlaceholder() {
   const renderStudent = (lineWidth: number) => (

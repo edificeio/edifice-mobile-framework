@@ -3,10 +3,10 @@
  */
 import { Moment } from 'moment';
 
+import moduleConfig from './module-config';
+
 import { Reducers } from '~/app/store';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
-
-import moduleConfig from './module-config';
 
 // Types
 

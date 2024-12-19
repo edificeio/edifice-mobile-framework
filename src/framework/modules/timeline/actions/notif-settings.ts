@@ -1,5 +1,7 @@
 import { ThunkDispatch } from 'redux-thunk';
 
+import { loadNotificationsDefinitionsAction } from './notif-definitions';
+
 import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
@@ -16,8 +18,6 @@ import {
 import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { preferences } from '~/framework/modules/timeline/storage';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
-
-import { loadNotificationsDefinitionsAction } from './notif-definitions';
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -92,9 +92,9 @@ export const updatePushNotifsSettingsAction =
       dispatch(pushNotifsSettingsActions.setError(e as INotifFilterSettings));
       dispatch(
         notifierShowAction({
-          type: 'error',
           id: 'timeline/push-notifications',
           text: I18n.get('timeline-notifsettings-error-text'),
+          type: 'error',
         }),
       );
     }

@@ -25,16 +25,16 @@ const initialState: IPushNotifsSettings = {};
 export const actionTypes = {
   ...createAsyncActionTypes(moduleConfig.namespaceActionType('PUSHNOTIFS_SETTINGS')),
   put: moduleConfig.namespaceActionType('PUSHNOTIFS_SETTINGS_UPDATED'),
-  setRequest: moduleConfig.namespaceActionType('PUSHNOTIFS_SETTINGS_SET_REQUEST'),
-  setReceipt: moduleConfig.namespaceActionType('PUSHNOTIFS_SETTINGS_SET_RECEIPT'),
   setError: moduleConfig.namespaceActionType('PUSHNOTIFS_SETTINGS_SET_ERROR'),
+  setReceipt: moduleConfig.namespaceActionType('PUSHNOTIFS_SETTINGS_SET_RECEIPT'),
+  setRequest: moduleConfig.namespaceActionType('PUSHNOTIFS_SETTINGS_SET_REQUEST'),
 };
 export const actions = {
   ...createAsyncActionCreators<PushNotifsSettingsStateData>(actionTypes),
-  put: (data: IPushNotifsSettings) => ({ type: actionTypes.put, data }),
-  setRequest: (pushNotifsSettings: PushNotifsSettingsStateData) => ({ type: actionTypes.setRequest, pushNotifsSettings }),
-  setReceipt: (pushNotifsSettings: PushNotifsSettingsStateData) => ({ type: actionTypes.setReceipt, pushNotifsSettings }),
-  setError: (pushNotifsSettings: PushNotifsSettingsStateData) => ({ type: actionTypes.setError, pushNotifsSettings }),
+  put: (data: IPushNotifsSettings) => ({ data, type: actionTypes.put }),
+  setError: (pushNotifsSettings: PushNotifsSettingsStateData) => ({ pushNotifsSettings, type: actionTypes.setError }),
+  setReceipt: (pushNotifsSettings: PushNotifsSettingsStateData) => ({ pushNotifsSettings, type: actionTypes.setReceipt }),
+  setRequest: (pushNotifsSettings: PushNotifsSettingsStateData) => ({ pushNotifsSettings, type: actionTypes.setRequest }),
 };
 
 const actionsHandlerMap: IReducerActionsHandlerMap<PushNotifsSettingsStateData> = {

@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+
 import { trigger } from 'react-native-haptic-feedback';
 
 enum FeedbackType {
@@ -8,9 +9,9 @@ enum FeedbackType {
 }
 
 const HapticFeebackType = {
-  [FeedbackType.ACTION_DONE]: Platform.select({ ios: 'impactHeavy', default: 'impactHeavy' }),
-  [FeedbackType.ERROR_DISPLAYED]: Platform.select({ ios: 'notificationError', default: 'notificationError' }),
-  [FeedbackType.TAB_PRESSED]: Platform.select({ ios: 'soft', default: 'keyboardTap' }),
+  [FeedbackType.ACTION_DONE]: Platform.select({ default: 'impactHeavy', ios: 'impactHeavy' }),
+  [FeedbackType.ERROR_DISPLAYED]: Platform.select({ default: 'notificationError', ios: 'notificationError' }),
+  [FeedbackType.TAB_PRESSED]: Platform.select({ default: 'keyboardTap', ios: 'soft' }),
 };
 
 export default class Feedback {

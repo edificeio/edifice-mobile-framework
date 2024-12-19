@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
-import EventCardPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/event-card';
-
 import styles from './styles';
+
+import EventCardPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/event-card';
 
 export default function HistoryPlaceholder() {
   return (

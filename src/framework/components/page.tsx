@@ -7,10 +7,6 @@
  * - Displays Connection tracker and notifier
  * - Handle keyboard
  */
-import styled from '@emotion/native';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import {
   KeyboardAvoidingView,
@@ -24,15 +20,20 @@ import {
   ViewProps,
 } from 'react-native';
 
+import styled from '@emotion/native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useRoute } from '@react-navigation/native';
+
+import { UI_SIZES } from './constants';
+import SnowFlakes from './SnowFlakes';
+import { StatusBar } from './status-bar';
+import { ToastHandler } from './toast/component';
+
 import theme from '~/app/theme';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-
-import SnowFlakes from './SnowFlakes';
-import { UI_SIZES } from './constants';
-import { StatusBar } from './status-bar';
-import { ToastHandler } from './toast/component';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
@@ -56,11 +57,11 @@ export const getPageGutterStyle = (gutters: PageViewProps['gutters'] = true) => 
 });
 
 export const PageViewStyle = styled.View({
-  flex: 1,
   backgroundColor: theme.ui.background.page,
+  flex: 1,
 });
 export const PageView = (props: PageViewProps) => {
-  const { children, gutters, showNetworkBar = true, statusBar, showToast = true, ...viewProps } = props;
+  const { children, gutters, showNetworkBar = true, showToast = true, statusBar, ...viewProps } = props;
   const route = useRoute();
 
   const gutterStyle = React.useMemo(
@@ -103,12 +104,12 @@ export const KeyboardPageView = (
   >,
 ) => {
   const keyboardAvoidingViewBehavior = Platform.select({
-    ios: 'padding',
     android: undefined,
+    ios: 'padding',
   }) as KeyboardAvoidingViewProps['behavior'];
   const { children, gutters, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
-  const AreaComponent = props.safeArea ?? true ? SafeAreaView : View;
+  const AreaComponent = (props.safeArea ?? true) ? SafeAreaView : View;
   const headerHeight = useHeaderHeight();
   return (
     <PageView gutters={gutters} {...pageProps}>

@@ -263,16 +263,16 @@ export const concatDevoirs = (devoirs: IDevoir[], competences: ICompetence[]): I
 const domaineAdapter = (data: IBackendDomaine): IDomaine => {
   return {
     codification: data.codification,
-    cycleId: data.id_cycle,
-    degree: data.niveau,
-    id: data.id,
-    name: data.nom,
     competences: data.competences?.map(c => ({
+      hidden: c.masque,
       id: c.id,
       name: c.nom,
-      hidden: c.masque,
     })),
+    cycleId: data.id_cycle,
+    degree: data.niveau,
     domaines: data.domaines?.map(domaineAdapter),
+    id: data.id,
+    name: data.nom,
   };
 };
 

@@ -4,26 +4,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  postNeedValidation: {
-    color: theme.palette.status.warning.regular,
-  },
   blogTitle: {
-    color: theme.ui.text.light,
-  },
-  postCommentsTotal: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: UI_SIZES.spacing.minor,
-    padding: UI_SIZES.spacing.small,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderTopColor: theme.ui.border.input,
-    borderBottomColor: theme.ui.border.input,
-  },
-  postCommentsIcon: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  postCommentsTotalText: {
     color: theme.ui.text.light,
   },
   container: {
@@ -38,5 +19,24 @@ export default StyleSheet.create({
   footer: {
     padding: UI_SIZES.spacing.medium,
     paddingTop: 0,
+  },
+  postCommentsIcon: {
+    marginRight: UI_SIZES.spacing.minor,
+  },
+  postCommentsTotal: {
+    alignItems: 'center',
+    borderBottomColor: theme.ui.border.input,
+    borderBottomWidth: 1,
+    borderTopColor: theme.ui.border.input,
+    borderTopWidth: 1,
+    flexDirection: 'row',
+    marginTop: UI_SIZES.spacing.minor,
+    padding: UI_SIZES.spacing.small,
+  },
+  postCommentsTotalText: {
+    color: theme.ui.text.light,
+  },
+  postNeedValidation: {
+    color: theme.palette.status.warning.regular,
   },
 });

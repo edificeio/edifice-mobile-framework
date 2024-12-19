@@ -1,13 +1,13 @@
 import * as React from 'react';
 
+import { LvsNavigationParams, lvsRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/connectors/lvs/module-config';
 import LvsHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/connectors/lvs/screens/home';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { AnyNavigableModule } from '~/framework/util/moduleTool';
 
-import { LvsNavigationParams, lvsRouteNames } from '.';
-
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default (({ matchingApps }) =>
   createModuleNavigator<LvsNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen
@@ -15,8 +15,8 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         component={LvsHomeScreen}
         options={homeNavBar}
         initialParams={{
-          connector: apps[0],
+          connector: matchingApps[0],
         }}
       />
     </>
-  ));
+  ))) as AnyNavigableModule['getRoot'];

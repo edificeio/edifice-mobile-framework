@@ -5,8 +5,8 @@ import type { IWorkspaceFileListScreenNavigationParams } from '~/framework/modul
 import type { IWorkspaceFilePreviewScreenNavigationParams } from '~/framework/modules/workspace/screens/file-preview';
 
 export const workspaceRouteNames = {
-  home: `${moduleConfig.routeName}` as 'home',
   filePreview: `${moduleConfig.routeName}/file-preview` as 'filePreview',
+  home: `${moduleConfig.routeName}` as 'home',
 };
 export interface WorkspaceNavigationParams extends ParamListBase {
   home: IWorkspaceFileListScreenNavigationParams;

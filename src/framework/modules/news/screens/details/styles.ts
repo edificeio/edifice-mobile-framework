@@ -4,10 +4,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  ressourceView: {
-    backgroundColor: theme.palette.grey.white,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.palette.grey.pearl,
+  detailsDate: {
+    color: theme.palette.grey.graphite,
   },
   detailsHeader: {
     backgroundColor: theme.palette.grey.fog,
@@ -16,10 +14,12 @@ export default StyleSheet.create({
   detailsHeaderTopContent: {
     marginTop: 0,
   },
-  detailsDate: {
-    color: theme.palette.grey.graphite,
-  },
   detailsOwner: {
     marginVertical: UI_SIZES.spacing.small,
+  },
+  ressourceView: {
+    backgroundColor: theme.palette.grey.white,
+    borderBottomColor: theme.palette.grey.pearl,
+    borderBottomWidth: 1,
   },
 });

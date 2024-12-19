@@ -1,21 +1,25 @@
+import * as React from 'react';
+import { Alert, Platform, RefreshControl, View } from 'react-native';
+
 import { HeaderBackButton } from '@react-navigation/elements';
 import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as React from 'react';
-import { Alert, Platform, RefreshControl, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import styles from './styles';
+import { IWorkspaceFileListScreenProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { MenuAction, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import { cameraAction, deleteAction, documentAction, galleryAction, MenuAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
@@ -47,8 +51,32 @@ import { openDocument } from '~/framework/util/fileHandler/actions';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import styles from './styles';
-import { IWorkspaceFileListScreenProps } from './types';
+const emptyTextsFolder = {
+  [Filter.OWNER]: {
+    text: 'workspace-filelist-emptyscreen-owner-text',
+    title: 'workspace-filelist-emptyscreen-owner-title',
+  },
+  [Filter.PROTECTED]: {
+    text: 'workspace-filelist-emptyscreen-protected-text',
+    title: 'workspace-filelist-emptyscreen-protected-title',
+  },
+  [Filter.ROOT]: {
+    text: 'workspace-filelist-emptyscreen-root-text',
+    title: 'workspace-filelist-emptyscreen-root-title',
+  },
+  [Filter.SHARED]: {
+    text: 'workspace-filelist-emptyscreen-shared-text',
+    title: 'workspace-filelist-emptyscreen-shared-title',
+  },
+  [Filter.TRASH]: {
+    text: 'workspace-filelist-emptyscreen-trash-text',
+    title: 'workspace-filelist-emptyscreen-trash-title',
+  },
+  subfolder: {
+    text: 'workspace-filelist-emptyscreen-subfolder-text',
+    title: 'workspace-filelist-emptyscreen-subfolder-title',
+  },
+};
 
 export const computeNavBar = ({
   navigation,
@@ -76,7 +104,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   const fetchList = async (id: string = parentId, shouldRefreshFolderList?: boolean) => {
     try {
-      const { fetchFiles, listFolders, folderTree } = props;
+      const { fetchFiles, folderTree, listFolders } = props;
       await fetchFiles(filter, id);
       if (!folderTree.length || shouldRefreshFolderList) {
         await listFolders();
@@ -153,7 +181,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       return props.previewFile(file, props.navigation);
     }
     const { navigation } = props;
-    const { id, name: title, isFolder } = file;
+    const { id, isFolder, name: title } = file;
     if (isFolder) {
       const newFilter = filter === Filter.ROOT ? id : filter;
       navigation.push(moduleConfig.routeName, { filter: newFilter, parentId: id, title });
@@ -184,13 +212,13 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   const alertPermanentDeletion = (ids: string[]) => {
     Alert.alert(I18n.get('workspace-filelist-deletealert-title'), I18n.get('workspace-filelist-deletealert-message'), [
       {
-        text: I18n.get('common-cancel'),
         style: 'default',
+        text: I18n.get('common-cancel'),
       },
       {
-        text: I18n.get('common-delete'),
         onPress: () => deleteFiles(ids),
         style: 'destructive',
+        text: I18n.get('common-delete'),
       },
     ]);
   };
@@ -233,60 +261,60 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           ...(selectedFiles.length === 1 && filter === Filter.OWNER
             ? [
                 {
-                  title: I18n.get('workspace-filelist-menuaction-rename'),
                   action: () => openModal(WorkspaceModalType.RENAME),
                   icon: {
-                    ios: 'pencil',
                     android: 'ic_pencil',
+                    ios: 'pencil',
                   },
+                  title: I18n.get('workspace-filelist-menuaction-rename'),
                 },
               ]
             : []),
           ...(filter !== Filter.TRASH
             ? [
                 {
-                  title: I18n.get('workspace-filelist-menuaction-copy'),
                   action: () => openModal(WorkspaceModalType.COPY),
                   icon: {
-                    ios: 'square.on.square',
                     android: 'ic_content_copy',
+                    ios: 'square.on.square',
                   },
+                  title: I18n.get('workspace-filelist-menuaction-copy'),
                 },
               ]
             : []),
           ...(filter === Filter.OWNER
             ? [
                 {
-                  title: I18n.get('workspace-filelist-menuaction-move'),
                   action: () => openModal(WorkspaceModalType.MOVE),
                   icon: {
-                    ios: 'arrow.up.square',
                     android: 'ic_move_to_inbox',
+                    ios: 'arrow.up.square',
                   },
+                  title: I18n.get('workspace-filelist-menuaction-move'),
                 },
               ]
             : []),
           ...(filter === Filter.TRASH
             ? [
                 {
-                  title: I18n.get('workspace-filelist-menuaction-restore'),
                   action: restoreSelectedFiles,
                   icon: {
-                    ios: 'arrow.uturn.backward.circle',
                     android: 'ic_restore',
+                    ios: 'arrow.uturn.backward.circle',
                   },
+                  title: I18n.get('workspace-filelist-menuaction-restore'),
                 },
               ]
             : []),
           ...(Platform.OS !== 'ios' && !isFolderSelected
             ? [
                 {
-                  title: I18n.get('workspace-filelist-menuaction-download'),
                   action: () => openModal(WorkspaceModalType.DOWNLOAD),
                   icon: {
-                    ios: 'square.and.arrow.down',
                     android: 'ic_download',
+                    ios: 'square.and.arrow.down',
                   },
+                  title: I18n.get('workspace-filelist-menuaction-download'),
                 },
               ]
             : []),
@@ -308,12 +336,12 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           ...(filter === Filter.OWNER
             ? [
                 {
-                  title: I18n.get('workspace-filelist-menuaction-createfolder'),
                   action: () => openModal(WorkspaceModalType.CREATE_FOLDER),
                   icon: {
-                    ios: 'folder.badge.plus',
                     android: 'ic_create_new_folder',
+                    ios: 'folder.badge.plus',
                   },
+                  title: I18n.get('workspace-filelist-menuaction-createfolder'),
                 },
               ]
             : []),
@@ -324,7 +352,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     };
     const { actionIcon, menuActions } = getNavBarActions();
     props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerLeft: ({ tintColor }) => (
         <>
           <HeaderBackButton
@@ -336,7 +363,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           {isSelectionActive ? <BodyBoldText style={styles.navBarCountText}>{selectedFiles.length}</BodyBoldText> : null}
         </>
       ),
-      // eslint-disable-next-line react/no-unstable-nested-components
+
       headerRight: () => (
         <PopupMenu actions={menuActions}>
           <NavBarAction icon={actionIcon} />
@@ -363,8 +390,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     return (
       <EmptyScreen
         svgImage={image}
-        title={I18n.get(`workspace-filelist-emptyscreen-${screen}-title`)}
-        text={I18n.get(`workspace-filelist-emptyscreen-${screen}-text`)}
+        title={I18n.get(emptyTextsFolder[screen].title)}
+        text={I18n.get(emptyTextsFolder[screen].text)}
       />
     );
   };
@@ -424,9 +451,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         props.restoreFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
                         row[item.key]?.closeRow();
                       },
-                      backgroundColor: theme.palette.status.success.regular,
-                      actionText: I18n.get('workspace-filelist-swipeaction-restore'),
                       actionIcon: 'ui-unarchive',
+                      actionText: I18n.get('workspace-filelist-swipeaction-restore'),
+                      backgroundColor: theme.palette.status.success.regular,
                     },
                   ]
                 : [],
@@ -442,9 +469,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         }
                         row[item.key]?.closeRow();
                       },
-                      backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.get('workspace-filelist-swipeaction-delete'),
                       actionIcon: 'ui-trash',
+                      actionText: I18n.get('workspace-filelist-swipeaction-delete'),
+                      backgroundColor: theme.palette.status.failure.regular,
                     },
                   ]
                 : [],

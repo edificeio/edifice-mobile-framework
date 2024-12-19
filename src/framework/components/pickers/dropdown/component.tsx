@@ -1,20 +1,21 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import DropDownPicker, { ValueType } from 'react-native-dropdown-picker';
+
+import DropdownListItem from './list-item';
+import styles, { getToggleStyle } from './styles';
+import { DropdownPickerProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyItalicText, BodyText } from '~/framework/components/text';
 
-import DropdownListItem from './list-item';
-import styles, { getToggleStyle } from './styles';
-import { DropdownPickerProps } from './types';
-
 export const BUTTON_ICON_SIZE = UI_SIZES.elements.icon.small;
 
 export const DropdownPicker = <T extends ValueType>(props: DropdownPickerProps<T>) => {
-  const { disabled, iconName, items, open, placeholder, size = 'big', style, variant = 'outlined', value } = props;
+  const { disabled, iconName, items, open, placeholder, size = 'big', style, value, variant = 'outlined' } = props;
 
   const getSelectedItemLabel = (): string => items.find(item => item.value === value)?.label ?? ' ';
 
@@ -48,8 +49,8 @@ export const DropdownPicker = <T extends ValueType>(props: DropdownPickerProps<T
       textStyle={styles.text}
       dropDownContainerStyle={styles.dropdownContainer}
       flatListProps={{
-        style: styles.dropdownListContainer,
         contentContainerStyle: styles.dropdownListContentContainer,
+        style: styles.dropdownListContainer,
       }}
       {...getToggleStyle(variant, size, open, value !== null, style)}
     />

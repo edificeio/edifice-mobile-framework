@@ -1,49 +1,53 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   //GLOBAL
   br4: {
     borderRadius: UI_SIZES.radius.small,
   },
+  //ELEMENTS
+  container: {
+    borderColor: theme.palette.grey.pearl,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: 1,
+    columnGap: UI_SIZES.spacing.small,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
   h22: {
     height: getScaleWidth(22),
   },
+
   h24: {
     height: getScaleWidth(24),
   },
-  mb0: {
-    marginBottom: 0,
-  },
-  w22: {
-    width: getScaleWidth(22),
-  },
-  //ELEMENTS
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    columnGap: UI_SIZES.spacing.small,
-    borderWidth: 1,
-    borderRadius: UI_SIZES.radius.medium,
-    borderColor: theme.palette.grey.pearl,
-  },
+
   heading: {
     backgroundColor: theme.palette.grey.cloudy,
   },
+
   leftContainer: {
     flexGrow: 1,
-    rowGap: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
+    rowGap: UI_SIZES.spacing.minor,
+  },
+  mb0: {
+    marginBottom: 0,
   },
   status: {
     backgroundColor: theme.palette.grey.cloudy,
   },
   statusContainer: {
+    backgroundColor: theme.palette.grey.pearl,
     justifyContent: 'center',
     padding: UI_SIZES.spacing.small,
-    backgroundColor: theme.palette.grey.pearl,
+  },
+  w22: {
+    width: getScaleWidth(22),
   },
 });

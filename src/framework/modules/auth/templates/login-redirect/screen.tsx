@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Platform, SafeAreaView, View } from 'react-native';
 
+import styles from './styles';
+import { LoginRedirectScreenPrivateProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { BodyText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media';
-
-import styles from './styles';
-import { LoginRedirectScreenPrivateProps } from './types';
 
 const LoginRedirectPage = (props: LoginRedirectScreenPrivateProps) => {
   const { route } = props;

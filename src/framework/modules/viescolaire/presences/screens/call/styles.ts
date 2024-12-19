@@ -10,18 +10,18 @@ export default StyleSheet.create({
     rowGap: UI_SIZES.spacing.tiny,
   },
   listHeaderContainer: {
-    padding: UI_SIZES.spacing.medium,
-    marginBottom: UI_SIZES.spacing.tiny,
-    borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,
+    borderBottomWidth: UI_SIZES.border.thin,
+    marginBottom: UI_SIZES.spacing.tiny,
+    padding: UI_SIZES.spacing.medium,
   },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,
   },
   separatorContainer: {
+    backgroundColor: theme.palette.grey.cloudy,
     height: 1,
     marginVertical: UI_SIZES.spacing.tiny,
-    backgroundColor: theme.palette.grey.cloudy,
   },
   summaryContainer: {
     paddingVertical: UI_SIZES.spacing.medium,

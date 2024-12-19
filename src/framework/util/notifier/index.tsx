@@ -20,9 +20,9 @@
  *   duration?: number;
  * }))
  */
-import { Reducers } from '~/app/store';
-
 import reducer from './reducer';
+
+import { Reducers } from '~/app/store';
 
 Reducers.register('notifiers', reducer);
 

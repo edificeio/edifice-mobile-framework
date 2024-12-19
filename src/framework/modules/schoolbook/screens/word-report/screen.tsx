@@ -1,15 +1,14 @@
 /**
  * Schoolbook word report
  */
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { RefreshControl, TouchableOpacity, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import ModalBox from '~/framework/components/ModalBox';
-import UserList from '~/framework/components/UserList';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { ResourceView } from '~/framework/components/card';
@@ -17,6 +16,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
+import ModalBox from '~/framework/components/ModalBox';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import {
@@ -29,9 +29,10 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import UserList from '~/framework/components/UserList';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
-import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '~/framework/modules/schoolbook/reducer';
+import { getStudentsByAcknowledgementForTeacher, IAcknowledgment, IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasResendRight } from '~/framework/modules/schoolbook/rights';
 import styles from '~/framework/modules/schoolbook/screens/word-report/styles';
 import { SchoolbookWordReportScreenProps } from '~/framework/modules/schoolbook/screens/word-report/types';
@@ -150,10 +151,10 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
 
   const renderSchoolbookWordReport = () => {
     const acknowledgementsString = (ackNumber: number, total: number) =>
-      `${ackNumber}/${total} ${I18n.get(`schoolbook-wordreport-acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+      `${ackNumber}/${total} ${I18n.get(ackNumber === 1 ? 'schoolbook-wordreport-acknowledgement' : 'schoolbook-wordreport-acknowledgements').toLowerCase()}`;
     const unacknowledgementsString = (ackNumber: number, total: number) =>
       `${total - ackNumber}/${total} ${I18n.get(
-        `schoolbook-wordreport-unacknowledgement${total - ackNumber === 1 ? '' : 's'}`,
+        total - ackNumber === 1 ? 'schoolbook-wordreport-unacknowledgement' : 'schoolbook-wordreport-unacknowledgements',
       ).toLowerCase()}`;
     const acknowledgedByString = (acknowledgments: IAcknowledgment[]) =>
       `${I18n.get('schoolbook-wordreport-acknowledgedby')}${acknowledgments?.map(
@@ -171,7 +172,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
     const acknowledgedStudents = studentsByAcknowledgementForTeacher?.acknowledged;
     const hasUnacknowledgedStudents = unacknowledgedStudents?.length;
     const hasAcknowledgedStudents = acknowledgedStudents?.length;
-    const schoolbookWordResource = { shared: word?.shared, author: { userId: word?.ownerId } };
+    const schoolbookWordResource = { author: { userId: word?.ownerId }, shared: word?.shared };
     const hasSchoolbookWordResendRights = session && hasResendRight(schoolbookWordResource, session);
 
     return (
@@ -193,7 +194,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
                   data={acknowledgedStudents}
                   initialNumToRender={acknowledgedStudents.length}
                   keyExtractor={item => item.owner}
-                  renderItem={({ item, index }) => {
+                  renderItem={({ index, item }) => {
                     const isLastAcknowledgedStudent = index === acknowledgedStudents?.length - 1;
                     return (
                       <View
@@ -319,6 +320,6 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
 // MAPPING ========================================================================================
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(),
   initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+  session: getSession(),
 }))(SchoolbookWordReportScreen);

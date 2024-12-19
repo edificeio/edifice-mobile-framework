@@ -1,10 +1,10 @@
 import * as React from 'react';
 
+import { ChangeAccountListProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import AccountList from '~/framework/components/list/account';
 import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
-
-import { ChangeAccountListProps } from './types';
 
 const ChangeAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(props: ChangeAccountListProps<ItemT>, ref) => {
   return (

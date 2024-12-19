@@ -11,13 +11,13 @@ export default StyleSheet.create({
     flexGrow: 1,
   },
   navBarCountText: {
+    color: theme.ui.text.inverse,
     textAlign: 'center',
     textAlignVertical: 'center',
-    color: theme.ui.text.inverse,
   },
   navBarLeftContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginLeft: UI_SIZES.spacing.minor,
   },
   navBarRightContainer: {

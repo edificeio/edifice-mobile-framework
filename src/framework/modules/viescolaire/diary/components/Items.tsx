@@ -16,30 +16,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-evenly',
   },
+  sessionAuthorText: {
+    color: theme.palette.grey.stone,
+  },
   sessionLeftColoredItem: {
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  sessionMatiereText: {
+    textTransform: 'uppercase',
   },
   sessionView: {
     flex: 1,
     justifyContent: 'space-evenly',
   },
-  sessionMatiereText: {
-    textTransform: 'uppercase',
-  },
-  sessionAuthorText: {
-    color: theme.palette.grey.stone,
-  },
 });
 
 export const HomeworkItem = ({
-  onPress,
-  title,
-  subtitle,
   checked,
   disabled,
-  onChange,
   hideCheckbox,
+  onChange,
+  onPress,
+  subtitle,
+  title,
 }: {
   onPress: () => void;
   title: string;
@@ -69,7 +69,7 @@ export const HomeworkItem = ({
   </LeftColoredItem>
 );
 
-export const SessionItem = ({ onPress, matiere, author }: any) => (
+export const SessionItem = ({ author, matiere, onPress }: any) => (
   <LeftColoredItem shadow onPress={onPress} style={styles.sessionLeftColoredItem} color={viescoTheme.palette.diary}>
     <View style={styles.sessionView}>
       <SmallBoldText style={styles.sessionMatiereText}>{matiere}</SmallBoldText>

@@ -1,9 +1,13 @@
-import { useIsFocused } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl } from 'react-native';
+
+import { useIsFocused } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import styles from './styles';
+import { NewsHomeScreenDataProps, NewsHomeScreenEventProps, NewsHomeScreenProps, NewsThreadItemReduce } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -24,15 +28,12 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import styles from './styles';
-import { NewsHomeScreenDataProps, NewsHomeScreenEventProps, NewsHomeScreenProps, NewsThreadItemReduce } from './types';
-
 const convertArrayToObject = (array: NewsThreadItem[], key) => {
   const initialValue = {};
   return array.reduce((obj, item) => {
     return {
       ...obj,
-      [item[key]]: { title: item.title, icon: item.icon, sharedRights: item.sharedRights, ownerId: item.owner.id },
+      [item[key]]: { icon: item.icon, ownerId: item.owner.id, sharedRights: item.sharedRights, title: item.title },
     };
   }, initialValue);
 };
@@ -49,7 +50,7 @@ export const computeNavBar = ({
 });
 
 const NewsHomeScreen = (props: NewsHomeScreenProps) => {
-  const { navigation, route, session, handleGetNewsItems, handleGetNewsThreads } = props;
+  const { handleGetNewsItems, handleGetNewsThreads, navigation, route, session } = props;
 
   const [threads, setThreads] = useState<NewsThreadItem[]>([]);
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -80,8 +81,8 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     (item: NewsItem, thread: NewsThreadItemReduce) => {
       navigation.navigate(newsRouteNames.details, {
         news: item,
-        thread,
         page,
+        thread,
       });
     },
     [navigation, page],
@@ -222,11 +223,11 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   dispatch,
   getState,
 ) => ({
-  handleGetNewsThreads: async () => {
-    return (await dispatch(getNewsThreadsAction())) as NewsThreadItem[];
-  },
   handleGetNewsItems: async (page: number, threadId?: number, isRefresh?: boolean) => {
     return (await dispatch(getNewsItemsAction(page, threadId, isRefresh))) as NewsItem[];
+  },
+  handleGetNewsThreads: async () => {
+    return (await dispatch(getNewsThreadsAction())) as NewsThreadItem[];
   },
 });
 

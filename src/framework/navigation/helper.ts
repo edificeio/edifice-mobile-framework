@@ -5,15 +5,15 @@
  */
 import {
   CommonActions,
+  createNavigationContainerRef,
   NavigationAction,
   NavigationHelpers,
   NavigationProp,
   ParamListBase,
   Route,
-  createNavigationContainerRef,
 } from '@react-navigation/native';
 
-import { NAVIGATE_CLOSE_DELAY, consumeConfirmQuitAction, consumeModalCloseAction } from './nextTabJump';
+import { consumeConfirmQuitAction, consumeModalCloseAction, NAVIGATE_CLOSE_DELAY } from './nextTabJump';
 
 export interface INavigationParams extends ParamListBase {}
 export const navigationRef = createNavigationContainerRef<INavigationParams>();

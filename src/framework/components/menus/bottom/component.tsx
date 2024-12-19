@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
+
 import BottomSheet from 'react-native-bottomsheet';
 
 import { I18n } from '~/app/i18n';
@@ -7,7 +8,7 @@ import { MenuProps } from '~/framework/components/menus/types/types';
 
 const BottomMenu = (props: React.PropsWithChildren<MenuProps & { title?: string }>) => {
   //add cancel action to actions
-  props.actions.push({ title: I18n.get('common-cancel'), action: () => {} });
+  props.actions.push({ action: () => {}, title: I18n.get('common-cancel') });
 
   const showBottomMenu = () => {
     BottomSheet.showBottomSheetWithOptions(

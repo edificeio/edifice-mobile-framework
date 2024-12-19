@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 
-import { Trackers } from '~/framework/util/tracker';
-import { pickFileError } from '~/infra/actions/pickFile';
-import { ContentUri } from '~/types/contentUri';
+import { connect } from 'react-redux';
 
 import { ILocalAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 import { AttachmentGroupImages } from './AttachmentGroupImages';
+
 import { ImagePicked } from '~/framework/components/menus/actions';
+import { Trackers } from '~/framework/util/tracker';
+import { ContentUri } from '~/types/contentUri';
 
 class AttachmentPicker_Unconnected extends React.PureComponent<{
   attachments: ContentUri[] | ILocalAttachment[];
@@ -19,7 +18,6 @@ class AttachmentPicker_Unconnected extends React.PureComponent<{
   notifierId: string;
   onAttachmentRemoved: (attachments: ContentUri[] | ILocalAttachment[]) => void;
   onlyImages?: boolean;
-  onPickFileError: (notifierId: string) => void;
 }> {
   public onRemoveAttachment(index: number) {
     const { attachments, onAttachmentRemoved } = this.props;
@@ -29,7 +27,7 @@ class AttachmentPicker_Unconnected extends React.PureComponent<{
   }
 
   public render() {
-    const { onlyImages, attachments, isContainerHalfScreen, attachmentsHeightHalfScreen, imageCallback, notifierId } = this.props;
+    const { attachments, attachmentsHeightHalfScreen, imageCallback, isContainerHalfScreen, notifierId, onlyImages } = this.props;
     return onlyImages ? (
       <AttachmentGroupImages
         imageCallback={imageCallback}
@@ -50,11 +48,4 @@ class AttachmentPicker_Unconnected extends React.PureComponent<{
   }
 }
 
-export const AttachmentPicker = connect(
-  null,
-  (dispatch: Dispatch) => ({
-    onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
-  }),
-  null,
-  { forwardRef: true },
-)(AttachmentPicker_Unconnected);
+export const AttachmentPicker = connect(null, null, null, { forwardRef: true })(AttachmentPicker_Unconnected);

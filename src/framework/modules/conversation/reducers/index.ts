@@ -7,10 +7,10 @@ import mailList from './mailList';
 import visibles from './visibles';
 
 const rootReducer = combineReducers({
-  init,
   count,
-  mailList,
+  init,
   mailContent,
+  mailList,
   visibles,
 });
 export default rootReducer;

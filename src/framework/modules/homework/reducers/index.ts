@@ -3,12 +3,12 @@
 */
 import { combineReducers } from 'redux';
 
-import { Reducers } from '~/app/store';
-import moduleConfig from '~/framework/modules/homework/module-config';
-
 import diaryList from './diaryList';
 import selectedDiary from './selectedDiary';
 import tasks from './tasks';
+
+import { Reducers } from '~/app/store';
+import moduleConfig from '~/framework/modules/homework/module-config';
 
 const reducer = combineReducers({
   diaryList,

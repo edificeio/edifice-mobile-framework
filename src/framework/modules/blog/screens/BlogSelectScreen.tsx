@@ -1,5 +1,6 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -68,7 +69,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
       <EmptyScreen
         svgImage="empty-search"
         title={I18n.get('blog-select-emptyscreen-title')}
-        text={I18n.get(`blog-select-emptyscreen-text${hasBlogCreationRights ? '' : '-nocreationrights'}`)}
+        text={I18n.get(hasBlogCreationRights ? 'blog-select-emptyscreen-text' : 'blog-select-emptyscreen-text-nocreationrights')}
         buttonText={hasBlogCreationRights ? I18n.get('blog-select-emptyscreen-button') : undefined}
         buttonUrl="/blog#/edit/new"
       />
@@ -84,7 +85,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
         emptyComponent={this.renderEmptyBlogList}
         onRefresh={this.doGetPublishableBlogList}
         onPressItem={this.onPressBlog}
-        defaultThumbnail={{ name: 'blog', fill: moduleColor.regular, background: moduleColor.pale }}
+        defaultThumbnail={{ background: moduleColor.pale, fill: moduleColor.regular, name: 'blog' }}
       />
     );
   }

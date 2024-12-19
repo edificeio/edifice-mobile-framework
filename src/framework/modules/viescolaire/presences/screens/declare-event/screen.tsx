@@ -1,8 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, Pressable, ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
+
+import styles from './styles';
+import type { PresencesDeclareEventScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -25,9 +29,6 @@ import { presencesService } from '~/framework/modules/viescolaire/presences/serv
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { addTime, subtractTime } from '~/framework/util/date';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
-import styles from './styles';
-import type { PresencesDeclareEventScreenPrivateProps } from './types';
 
 const getNavBarTitle = (eventType: CallEventType): string => {
   switch (eventType) {
@@ -255,12 +256,12 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
   const isEventEdited = getIsEventEdited();
 
   usePreventBack({
-    title: I18n.get('presences-declareevent-confirmation-unsavedmodification-title'),
-    text: I18n.get('presences-declareevent-confirmation-unsavedmodification-text'),
     showAlert: isEventEdited && !isCreating && !isDeleting,
+    text: I18n.get('presences-declareevent-confirmation-unsavedmodification-text'),
+    title: I18n.get('presences-declareevent-confirmation-unsavedmodification-title'),
   });
 
-  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
   return <PageComponent style={styles.pageContainer}>{renderPage()}</PageComponent>;
 };

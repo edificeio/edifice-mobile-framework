@@ -4,10 +4,10 @@
  */
 import { Action } from 'redux';
 
+import { fetchHomeworkTasks } from './tasks';
+
 import homeworkConfig from '~/framework/modules/homework/module-config';
 import { Trackers } from '~/framework/util/tracker';
-
-import { fetchHomeworkTasks } from './tasks';
 
 export const actionTypeDiarySelected = homeworkConfig.namespaceActionType('DIARY_SELECTED');
 

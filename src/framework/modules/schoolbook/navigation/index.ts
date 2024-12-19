@@ -5,8 +5,8 @@ import type { SchoolbookWordDetailsScreenNavigationParams } from '~/framework/mo
 import type { SchoolbookWordReportScreenNavigationParams } from '~/framework/modules/schoolbook/screens/word-report/types';
 
 export const schoolbookRouteNames = {
-  home: `${moduleConfig.routeName}` as 'home',
   details: `${moduleConfig.routeName}/details` as 'details',
+  home: `${moduleConfig.routeName}` as 'home',
   report: `${moduleConfig.routeName}/report` as 'report',
 };
 export interface SchoolbookNavigationParams extends ParamListBase {

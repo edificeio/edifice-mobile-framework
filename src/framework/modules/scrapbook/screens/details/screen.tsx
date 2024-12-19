@@ -1,9 +1,9 @@
 import * as React from 'react';
 
+import { ScrapbookDetailsScreenProps } from './types';
+
 import WebResourceViewer, { computeWebResourceViewerNavbar } from '~/framework/components/pages/web-resource-viewer';
 import { scrapbookService } from '~/framework/modules/scrapbook/service';
-
-import { ScrapbookDetailsScreenProps } from './types';
 
 export const computeNavBar = computeWebResourceViewerNavbar;
 

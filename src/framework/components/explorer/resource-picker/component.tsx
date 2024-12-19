@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { RefreshControl, TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { ResourcePickerProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -12,13 +15,11 @@ import { BodyBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { Image } from '~/framework/util/media';
 
-import styles from './styles';
-import { ResourcePickerProps } from './types';
-
 const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, onRefresh }: ResourcePickerProps) => {
   const listAdditionalStyle = { paddingBottom: data?.length === 0 ? undefined : UI_SIZES.screen.bottomInset };
 
   const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [itemsErrorThumbnail, setItemsErrorThumbnail] = React.useState<string[]>([]);
 
   const handleRefresh = async () => {
     try {
@@ -36,7 +37,7 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
   const renderItem = ({ item }) => {
     const shareNumber = item.shared?.length;
     const numberOfLines = 1;
-    const shareText = I18n.get(`resourcepicker-sharedtonbperson${shareNumber === 1 ? '' : 's'}`, {
+    const shareText = I18n.get(shareNumber === 1 ? 'resourcepicker-sharedtonbperson' : 'resourcepicker-sharedtonbpersons', {
       nb: shareNumber || 0,
     });
     const defaultBackground = { backgroundColor: defaultThumbnail.background };
@@ -47,8 +48,12 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
         <ListItem
           leftElement={
             <View style={styles.item}>
-              {item.thumbnail ? (
-                <Image source={{ uri: item.thumbnail }} style={styles.itemImage} />
+              {item.thumbnail && !itemsErrorThumbnail.includes(item.id) ? (
+                <Image
+                  source={{ uri: item.thumbnail }}
+                  style={styles.itemImage}
+                  onError={() => setItemsErrorThumbnail([...itemsErrorThumbnail, item.id])}
+                />
               ) : (
                 <View style={[styles.itemImage, styles.itemNoImage, defaultBackground]}>
                   <NamedSVG

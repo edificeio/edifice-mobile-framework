@@ -1,6 +1,7 @@
-import moment, { Moment } from 'moment';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import moment, { Moment } from 'moment';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -21,53 +22,53 @@ import { DiaryTimetableScreenProps } from '~/framework/modules/viescolaire/diary
 import { TimetableState } from '~/framework/modules/viescolaire/diary/screens/timetable/screen';
 
 const styles = StyleSheet.create({
-  weekPickerView: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: UI_SIZES.spacing.medium,
-  },
-  weekText: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  courseView: {
-    flexDirection: 'row',
-    padding: UI_SIZES.spacing.minor,
-    height: '100%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: theme.palette.grey.white,
-    borderRadius: UI_SIZES.radius.medium,
-  },
-  subjectView: {
-    flexShrink: 1,
-  },
-  subjectPadding: {
-    paddingLeft: UI_SIZES.spacing.tiny,
+  activeCourseBorder: {
+    borderColor: viescoTheme.palette.diary,
+    borderWidth: 2,
   },
   buttonsContainer: {
     flexDirection: 'row',
   },
-  homeworksContainer: {
-    backgroundColor: theme.palette.complementary.orange.pale,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  courseView: {
     alignItems: 'center',
-    height: 45,
-    paddingHorizontal: UI_SIZES.spacing.small,
+    backgroundColor: theme.palette.grey.white,
+    borderRadius: UI_SIZES.radius.medium,
+    flexDirection: 'row',
+    height: '100%',
+    justifyContent: 'space-between',
+    padding: UI_SIZES.spacing.minor,
   },
   halfSessionMargin: {
     marginHorizontal: UI_SIZES.spacing.minor,
   },
-  sessionMargin: {
-    marginHorizontal: UI_SIZES.spacing.big,
-  },
   homeworkMargin: {
     marginRight: UI_SIZES.spacing.tiny,
   },
-  activeCourseBorder: {
-    borderColor: viescoTheme.palette.diary,
-    borderWidth: 2,
+  homeworksContainer: {
+    alignItems: 'center',
+    backgroundColor: theme.palette.complementary.orange.pale,
+    flexDirection: 'row',
+    height: 45,
+    justifyContent: 'space-between',
+    paddingHorizontal: UI_SIZES.spacing.small,
+  },
+  sessionMargin: {
+    marginHorizontal: UI_SIZES.spacing.big,
+  },
+  subjectPadding: {
+    paddingLeft: UI_SIZES.spacing.tiny,
+  },
+  subjectView: {
+    flexShrink: 1,
+  },
+  weekPickerView: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  weekText: {
+    marginRight: UI_SIZES.spacing.minor,
   },
 });
 
@@ -210,7 +211,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
   renderHalf = course => this.renderCourse(course, true);
 
   public render() {
-    const { startDate, selectedDate, courses, slots, updateSelectedDate, sessions } = this.props;
+    const { courses, selectedDate, sessions, slots, startDate, updateSelectedDate } = this.props;
     const slotEvents = adaptCourses(courses.data, sessions.data);
 
     return (

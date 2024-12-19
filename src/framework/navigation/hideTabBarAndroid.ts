@@ -6,8 +6,9 @@
  * use `setModalModeForRoutes` in your module to populate the route map on which tabBar is hidden
  * use `isModalModeOnThisRoute` by giving navState to get the nav options to apply
  */
-import { NavigationState } from '@react-navigation/native';
 import { Platform } from 'react-native';
+
+import { NavigationState } from '@react-navigation/native';
 
 const routesWithTabBarHiddenOnAndroid: string[] = [];
 

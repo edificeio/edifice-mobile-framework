@@ -1,5 +1,3 @@
-import type { IModuleConfig } from '~/framework/util/moduleTool';
-
 import { StorageHandler } from './handler';
 import type {
   IStorageBackend,
@@ -9,6 +7,8 @@ import type {
   StorageStringKeys,
   StorageTypeMap,
 } from './types';
+
+import type { IModuleConfig } from '~/framework/util/moduleTool';
 
 export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHandler {
   static separator = '.';

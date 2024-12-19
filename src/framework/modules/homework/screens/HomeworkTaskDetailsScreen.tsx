@@ -1,5 +1,6 @@
-import { Moment } from 'moment';
 import React from 'react';
+
+import { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -27,16 +28,16 @@ const mapStateToProps: (state: any) => HomeworkTaskDetailsScreenDataProps = stat
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkTaskDetailsScreenEventProps = dispatch => ({
+  dispatch,
   handleDeleteHomeworkEntry: async (diaryId: string, entryId: string, date: Moment) => {
     return (await dispatch(deleteHomeworkDiaryEntry(diaryId, entryId, date))) as unknown as undefined;
-  },
-  handleToggleHomeworkEntryStatus: async (diaryId: string, entryId: string, finished: boolean) => {
-    return (await dispatch(toggleHomeworkDiaryEntryStatus(diaryId, entryId, finished))) as unknown as undefined;
   },
   handleGetHomeworkTasks: diaryId => {
     return dispatch(fetchHomeworkTasks(diaryId));
   },
-  dispatch,
+  handleToggleHomeworkEntryStatus: async (diaryId: string, entryId: string, finished: boolean) => {
+    return (await dispatch(toggleHomeworkDiaryEntryStatus(diaryId, entryId, finished))) as unknown as undefined;
+  },
 });
 
 export interface IHomeworkTaskDetailsScreenNavigationParams {

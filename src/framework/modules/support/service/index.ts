@@ -27,19 +27,19 @@ export const supportService = {
     ) => {
       const api = '/support/ticket';
       const body = JSON.stringify({
-        category,
-        school_id: structure,
-        subject,
-        description,
         attachments: attachments?.map(a => ({
           id: a.df.id,
           name: a.filename,
           size: a.filesize,
         })),
+        category,
+        description,
+        school_id: structure,
+        subject,
       });
       const ticket = (await fetchJSONWithCache(api, {
-        method: 'POST',
         body,
+        method: 'POST',
       })) as IBackendTicket;
       return ticket.id;
     },

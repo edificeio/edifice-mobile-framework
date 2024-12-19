@@ -17,42 +17,42 @@ const styles = StyleSheet.create({
     marginLeft: UI_SIZES.spacing.minor,
   },
   foundRecipientContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: UI_SIZES.spacing.tiny,
+    flexDirection: 'row',
     marginLeft: UI_SIZES.spacing.small,
+    marginVertical: UI_SIZES.spacing.tiny,
   },
   foundRecipientListContainer: {
-    top: 0,
-    left: 0,
-    right: 0,
-    flexGrow: 1,
-    zIndex: 10,
-    width: '100%',
-    maxHeight: UI_SIZES.screen.height * 0.25,
     backgroundColor: theme.ui.background.card,
+    elevation: 5,
+    flexGrow: 1,
+    left: 0,
+    maxHeight: UI_SIZES.screen.height * 0.25,
+    right: 0,
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { height: 1, width: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 1,
-    elevation: 5,
+    top: 0,
+    width: '100%',
+    zIndex: 10,
   },
   selectedRecipientContainer: {
     backgroundColor: theme.palette.primary.pale,
     borderRadius: 3,
-    padding: UI_SIZES.spacing.tiny,
     margin: UI_SIZES.spacing.tiny,
+    padding: UI_SIZES.spacing.tiny,
   },
   selectedRecipientListContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   textInput: {
-    flex: 1,
-    height: 40,
-    color: theme.ui.text.regular,
     borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: 2,
+    color: theme.ui.text.regular,
+    flex: 1,
+    height: 40,
   },
 });
 
@@ -62,7 +62,7 @@ interface RecipientFieldProps {
   onChange: (recipients: IRecipient[]) => void;
 }
 
-export const RecipientField = ({ hasZimbraSendExternalRight, selectedRecipients, onChange }: RecipientFieldProps) => {
+export const RecipientField = ({ hasZimbraSendExternalRight, onChange, selectedRecipients }: RecipientFieldProps) => {
   const [value, setValue] = React.useState<string>('');
   const [foundRecipients, setFoundRecipients] = React.useState<IRecipient[]>([]);
   const searchTimeout = React.useRef<NodeJS.Timeout>();
@@ -97,7 +97,7 @@ export const RecipientField = ({ hasZimbraSendExternalRight, selectedRecipients,
   const manageExternalRecipient = () => {
     if (value.includes('@')) {
       if (hasZimbraSendExternalRight) {
-        addRecipient({ id: value, displayName: value } as IRecipient);
+        addRecipient({ displayName: value, id: value } as IRecipient);
       } else {
         Toast.showError(I18n.get('zimbra-composer-recipientfield-externalrighterror'));
       }

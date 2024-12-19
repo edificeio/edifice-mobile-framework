@@ -1,9 +1,13 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, FlatList, RefreshControl, ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -36,9 +40,6 @@ import { subtractTime, today } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { Trackers } from '~/framework/util/tracker';
-
-import styles from './styles';
-import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

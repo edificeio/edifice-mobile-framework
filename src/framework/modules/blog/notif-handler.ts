@@ -14,8 +14,8 @@ import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
@@ -29,11 +29,11 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction =
         name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
           initial: false,
-          screen: blogRouteNames.blogPostDetails,
           params: {
             notification: blogNotif,
             useNotification: true,
           },
+          screen: blogRouteNames.blogPostDetails,
         },
       });
 
@@ -64,10 +64,10 @@ const handleBlogNotificationAction: NotifHandlerThunkAction =
         name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
           initial: false,
-          screen: blogRouteNames.blogPostList,
           params: {
             selectedBlog: blogInfo,
           },
+          screen: blogRouteNames.blogPostList,
         },
       });
 
@@ -86,13 +86,13 @@ const handleBlogNotificationAction: NotifHandlerThunkAction =
 export default () =>
   registerNotifHandlers([
     {
-      type: 'BLOG',
       'event-type': ['PUBLISH-POST', 'SUBMIT-POST', 'PUBLISH-COMMENT'],
       notifHandlerAction: handleBlogPostNotificationAction,
+      type: 'BLOG',
     },
     {
-      type: 'BLOG',
       'event-type': 'SHARE',
       notifHandlerAction: handleBlogNotificationAction,
+      type: 'BLOG',
     },
   ]);

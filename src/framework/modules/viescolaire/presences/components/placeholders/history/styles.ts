@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
+import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   //GLOBAL
@@ -10,13 +10,14 @@ export default StyleSheet.create({
   h22: {
     height: getScaleHeight(22),
   },
-  mb0: {
-    marginBottom: 0,
-  },
   //ELEMENTS
   listContainer: {
-    rowGap: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.minor,
+  },
+
+  mb0: {
+    marginBottom: 0,
   },
 });

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 
-import theme from '~/app/theme';
-
 import { UI_SIZES } from './constants';
+
+import theme from '~/app/theme';
 
 export interface BottomSheetProps {
   content: JSX.Element;
@@ -18,20 +18,20 @@ export const BottomSheet = ({ content, displayShadow }: BottomSheetProps) => {
   );
 };
 BottomSheet.styles = StyleSheet.create({
+  innerWrapper: {
+    alignItems: 'center',
+    padding: UI_SIZES.spacing.medium,
+  },
   outerWrapper: {
     backgroundColor: theme.ui.background.card,
     borderTopLeftRadius: UI_SIZES.radius.mediumPlus,
     borderTopRightRadius: UI_SIZES.radius.mediumPlus,
   },
   outerWrapperShadow: {
-    shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 0, height: -6 },
     elevation: 24,
-    shadowRadius: 20,
+    shadowColor: theme.ui.shadowColor,
+    shadowOffset: { height: -6, width: 0 },
     shadowOpacity: 0.2,
-  },
-  innerWrapper: {
-    alignItems: 'center',
-    padding: UI_SIZES.spacing.medium,
+    shadowRadius: 20,
   },
 });

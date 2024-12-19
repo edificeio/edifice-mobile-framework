@@ -1,8 +1,11 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { FlatListProps, TouchableOpacity, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -17,10 +20,10 @@ import { removeAccountAction, restoreAccountAction } from '~/framework/modules/a
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import {
+  accountIsLoggable,
   AuthLoggedAccount,
   AuthSavedLoggedInAccount,
   AuthSavedLoggedInAccountWithCredentials,
-  accountIsLoggable,
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
@@ -32,8 +35,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
-
-import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -49,7 +50,7 @@ export const computeNavBar = ({
 };
 
 const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) => {
-  const { navigation, accounts, tryRestore, tryRemoveAccount } = props;
+  const { accounts, navigation, tryRemoveAccount, tryRestore } = props;
   const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const onHandleAccounts = () => {
@@ -60,13 +61,13 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const dataforList = React.useMemo(
     () =>
       data.map(account => ({
-        id: account.user.id,
-        type: account.user.type,
         displayName: account.user.displayName,
-        platform: appConf.getExpandedPlatform(account.platform),
-        login: (account.user as Partial<AuthSavedLoggedInAccountWithCredentials['user']>).loginUsed,
+        id: account.user.id,
         isLoggable: accountIsLoggable(account),
+        login: (account.user as Partial<AuthSavedLoggedInAccountWithCredentials['user']>).loginUsed,
         method: account.method,
+        platform: appConf.getExpandedPlatform(account.platform),
+        type: account.user.type,
       })),
     [data],
   );
@@ -174,10 +175,10 @@ export default connect(
   dispatch =>
     bindActionCreators<AuthAccountSelectionScreenDispatchProps>(
       {
+        tryRemoveAccount: handleAction(removeAccountAction),
         tryRestore: tryAction(restoreAccountAction, {
           track: track.loginRestore,
         }),
-        tryRemoveAccount: handleAction(removeAccountAction),
       },
       dispatch,
     ),

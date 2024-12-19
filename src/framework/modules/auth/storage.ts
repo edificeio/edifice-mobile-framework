@@ -1,11 +1,9 @@
-import { Moment } from 'moment';
-
-import { Storage } from '~/framework/util/storage';
-import type { IOAuthToken } from '~/infra/oauth';
-
 import { AuthActiveAccount, AuthSavedAccount, AuthSavedLoggedInAccount, getSerializedLoggedInAccountInfo } from './model';
 import moduleConfig from './module-config';
 import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
+
+import { Storage } from '~/framework/util/storage';
+import type { IOAuthToken } from '~/infra/oauth';
 
 export interface AuthStorageData {
   accounts: Record<string, AuthSavedAccount>;
@@ -16,7 +14,6 @@ export interface AuthStorageData {
     anonymousToken?: IOAuthToken;
   };
   'show-onboarding': boolean;
-  splashads: Record<string, { date: Moment; url: string }>;
 }
 
 export const storage = Storage.slice<AuthStorageData>().withModule(moduleConfig);
@@ -45,8 +42,8 @@ export const writeCreateAccount = (account: AuthActiveAccount, showOnboarding: b
     [account.user.id]: savedAccount,
   };
   const startup: AuthStorageData['startup'] = {
-    platform: account.platform.name,
     account: account.user.id,
+    platform: account.platform.name,
   };
   storage.setJSON('accounts', savedAccounts);
   storage.setJSON('startup', startup);
@@ -68,8 +65,8 @@ export const writeReplaceAccount = (
   if (id !== ERASE_ALL_ACCOUNTS) delete savedAccounts[id];
   savedAccounts[account.user.id] = savedAccount;
   const startup: AuthStorageData['startup'] = {
-    platform: account.platform.name,
     account: account.user.id,
+    platform: account.platform.name,
   };
   storage.setJSON('accounts', savedAccounts);
   storage.setJSON('startup', startup);
@@ -79,7 +76,7 @@ export const writeReplaceAccount = (
  * Update the given account information in the storage
  * @param account
  */
-export const updateAccount = (savedAccount: AuthSavedAccount) => {
+export const writeUpdateAccount = (savedAccount: AuthSavedAccount) => {
   const savedAccounts = readSavedAccounts();
   savedAccounts[savedAccount.user.id] = savedAccount;
   storage.setJSON('accounts', savedAccounts);
@@ -113,26 +110,4 @@ export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
   delete savedAccounts[id];
   storage.setJSON('accounts', savedAccounts);
   Storage.erasePreferences(id);
-};
-
-// SplashAds management
-
-const SPLASHADS_KEY = 'splashads';
-
-export const readSplashadsData = () => storage.getJSON(SPLASHADS_KEY) ?? {};
-
-export const updateSplashads = (name: string, date: Moment, url: string) => {
-  const splashads = readSplashadsData();
-  splashads[name] = { date, url };
-  storage.setJSON(SPLASHADS_KEY, splashads);
-};
-
-export const writeSplashads = (name: string, date: Moment, url: string) => {
-  const splashads = readSplashadsData();
-  if (!splashads[name]) {
-    splashads[name] = { date, url };
-    storage.setJSON(SPLASHADS_KEY, splashads);
-  } else {
-    updateSplashads(name, date, url);
-  }
 };

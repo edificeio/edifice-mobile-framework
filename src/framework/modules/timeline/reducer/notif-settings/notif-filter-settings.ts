@@ -25,16 +25,16 @@ const initialState: INotifFilterSettings = {};
 export const actionTypes = {
   ...createAsyncActionTypes(moduleConfig.namespaceActionType('NOTIFICATION_SETTINGS')),
   put: moduleConfig.namespaceActionType('NOTIFICATION_SETTINGS_UPDATED'),
-  setRequest: moduleConfig.namespaceActionType('NOTIFICATION_FILTERS_SET_REQUEST'),
-  setReceipt: moduleConfig.namespaceActionType('NOTIFICATION_FILTERS_SET_RECEIPT'),
   setError: moduleConfig.namespaceActionType('NOTIFICATION_FILTERS_SET_ERROR'),
+  setReceipt: moduleConfig.namespaceActionType('NOTIFICATION_FILTERS_SET_RECEIPT'),
+  setRequest: moduleConfig.namespaceActionType('NOTIFICATION_FILTERS_SET_REQUEST'),
 };
 export const actions = {
   ...createAsyncActionCreators<NotifFilterSettingsStateData>(actionTypes),
-  put: (data: INotifFilterSettings) => ({ type: actionTypes.put, data }),
-  setRequest: (selectedFilters: NotifFilterSettingsStateData) => ({ type: actionTypes.setRequest, selectedFilters }),
-  setReceipt: (selectedFilters: NotifFilterSettingsStateData) => ({ type: actionTypes.setReceipt, selectedFilters }),
-  setError: (selectedFilters: NotifFilterSettingsStateData) => ({ type: actionTypes.setError, selectedFilters }),
+  put: (data: INotifFilterSettings) => ({ data, type: actionTypes.put }),
+  setError: (selectedFilters: NotifFilterSettingsStateData) => ({ selectedFilters, type: actionTypes.setError }),
+  setReceipt: (selectedFilters: NotifFilterSettingsStateData) => ({ selectedFilters, type: actionTypes.setReceipt }),
+  setRequest: (selectedFilters: NotifFilterSettingsStateData) => ({ selectedFilters, type: actionTypes.setRequest }),
 };
 
 const actionsHandlerMap: IReducerActionsHandlerMap<NotifFilterSettingsStateData> = {

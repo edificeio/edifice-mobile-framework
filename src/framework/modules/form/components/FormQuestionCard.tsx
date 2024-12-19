@@ -9,8 +9,8 @@ import { BodyBoldText, NestedBoldText, SmallActionText } from '~/framework/compo
 
 const styles = StyleSheet.create({
   actionContainer: {
-    flexGrow: 1,
     alignItems: 'flex-end',
+    flexGrow: 1,
     marginTop: UI_SIZES.spacing.small,
   },
   childrenContainer: {
@@ -32,7 +32,7 @@ interface IFormQuestionCardProps {
 
 export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps> {
   public render() {
-    const { title, children, isMandatory, onClearAnswer, onEditQuestion } = this.props;
+    const { children, isMandatory, onClearAnswer, onEditQuestion, title } = this.props;
     const mandatoryText = ' *';
     return (
       <Card>

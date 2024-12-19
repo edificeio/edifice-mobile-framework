@@ -5,11 +5,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
+    borderColor: theme.palette.grey.stone,
+    borderRadius: UI_SIZES.radius.selector,
+    borderWidth: UI_SIZES.border.thin,
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingVertical: UI_SIZES.spacing.medium,
-    borderColor: theme.palette.grey.stone,
-    borderWidth: UI_SIZES.border.thin,
-    borderRadius: UI_SIZES.radius.selector,
   },
   daysContainer: {
     flexDirection: 'row',

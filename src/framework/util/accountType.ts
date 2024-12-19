@@ -4,28 +4,28 @@ import { AccountType } from '~/framework/modules/auth/model';
 
 export const accountTypeInfos = {
   [AccountType.Student]: {
-    text: I18n.get('user-profiletypes-student'),
     color: theme.palette.complementary.orange,
     icon: 'ui-backpack',
+    text: I18n.get('user-profiletypes-student'),
   },
   [AccountType.Teacher]: {
-    text: I18n.get('user-profiletypes-teacher'),
     color: theme.palette.complementary.green,
     icon: 'ui-teacher',
+    text: I18n.get('user-profiletypes-teacher'),
   },
   [AccountType.Relative]: {
-    text: I18n.get('user-profiletypes-relative'),
     color: theme.palette.complementary.blue,
     icon: 'ui-cottage',
+    text: I18n.get('user-profiletypes-relative'),
   },
   [AccountType.Personnel]: {
-    text: I18n.get('user-profiletypes-personnel'),
     color: theme.palette.complementary.purple,
     icon: 'ui-environment',
+    text: I18n.get('user-profiletypes-personnel'),
   },
   [AccountType.Guest]: {
-    text: I18n.get('user-profiletypes-guest'),
     color: theme.palette.complementary.red,
     icon: 'ui-personBook',
+    text: I18n.get('user-profiletypes-guest'),
   },
 };

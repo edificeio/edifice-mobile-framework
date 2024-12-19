@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Pressable } from 'react-native';
+
 import { RenderListItemPropsInterface, ValueType } from 'react-native-dropdown-picker';
+
+import styles from './styles';
 
 import theme from '~/app/theme';
 import { BodyText } from '~/framework/components/text';
-
-import styles from './styles';
 
 export const DropdownListItem = <T extends ValueType>(itemProps: RenderListItemPropsInterface<T>) => {
   const [isPressed, setPressed] = React.useState<boolean>(false);

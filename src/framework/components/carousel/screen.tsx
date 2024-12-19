@@ -1,18 +1,21 @@
 /**
  * New implementation of Carousel built with our custom react-native-image-viewer !
  */
+import * as React from 'react';
+import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
+
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
-import * as React from 'react';
-import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import RNFastImage from 'react-native-fast-image';
-import { PERMISSIONS, Permission, PermissionStatus, check, request } from 'react-native-permissions';
+import { check, Permission, PERMISSIONS, PermissionStatus, request } from 'react-native-permissions';
 import Share from 'react-native-share';
+
+import { IImageSize } from './image-viewer/image-viewer.type';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -25,9 +28,9 @@ import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { DEFAULTS, ToastHandler } from '~/framework/components/toast/component';
+import { markViewAudience } from '~/framework/modules/audience';
+import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { markViewAudience } from '~/framework/modules/core/audience';
-import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { IMAGE_MAX_DIMENSION, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
@@ -38,8 +41,6 @@ import { OldStorageFunctions } from '~/framework/util/storage';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
-import { IImageSize } from './image-viewer/image-viewer.type';
-
 export interface ICarouselNavParams {
   data: IMedia[];
   startIndex?: number;
@@ -49,13 +50,14 @@ export interface ICarouselNavParams {
 export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
 
 const styles = StyleSheet.create({
-  page: { backgroundColor: theme.palette.grey.black },
   // eslint-disable-next-line react-native/no-color-literals
   errorScreen: {
     backgroundColor: 'transparent',
     height: UI_SIZES.screen.height,
     justifyContent: 'center',
   },
+
+  page: { backgroundColor: theme.palette.grey.black },
   title: {
     width: undefined,
   },
@@ -98,8 +100,8 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
       if (isEmpty(getDatePrivacyAlert) || moment().startOf('day').isAfter(getDatePrivacyAlert)) {
         Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
           {
-            text: I18n.get('carousel-privacy-button'),
             onPress: action,
+            text: I18n.get('carousel-privacy-button'),
           },
         ]);
         await OldStorageFunctions.setItemJson('privacyAlert', moment().startOf('day'));
@@ -122,12 +124,12 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
         <PopupMenu
           actions={[
             {
-              title: I18n.get('carousel-share'),
               action: () => showPrivacyAlert(() => imageViewerRef.current?.share?.()),
               icon: {
-                ios: 'square.and.arrow.up',
                 android: 'ic-menu-share',
+                ios: 'square.and.arrow.up',
               },
+              title: I18n.get('carousel-share'),
             },
           ]}>
           <NavBarAction disabled={disabled} icon="ui-options" />
@@ -151,9 +153,9 @@ export function computeNavBar({
           : '',
       titleStyle: styles.title,
     }),
-    headerTransparent: true,
     headerBlurEffect: 'dark',
     headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
+    headerTransparent: true,
   };
 }
 
@@ -170,8 +172,8 @@ export function Carousel(props: ICarouselProps) {
         uri.searchParams.delete('thumbnail');
         uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x0`);
         source.uri = uri.toString();
+        source.cache = 'web';
         return {
-          url: '',
           props: { source },
         };
       }),
@@ -197,12 +199,12 @@ export function Carousel(props: ICarouselProps) {
       if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
       const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
       const permissions = Platform.select<Permission[]>({
-        ios: [],
         android: (androidVersionMajor as number) >= 13 ? [] : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+        ios: [],
       })!;
       await assertPermissions(permissions);
       const foundData = data.find(d => (d.src = url));
-      const sf = await fileTransferService.downloadFile(assertSession(), { url: realUrl, filetype: foundData?.mime }, {});
+      const sf = await fileTransferService.downloadFile(assertSession(), { filetype: foundData?.mime, url: realUrl }, {});
       return sf;
     },
     [data],
@@ -215,7 +217,7 @@ export function Carousel(props: ICarouselProps) {
       const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
       if (realUrl!.indexOf('file://') > -1) {
         sf = new SyncedFile(
-          new LocalFile({ filepath: realUrl!, filetype: foundData?.mime!, filename: '' }, { _needIOSReleaseSecureAccess: false }),
+          new LocalFile({ filename: '', filepath: realUrl!, filetype: foundData?.mime! }, { _needIOSReleaseSecureAccess: false }),
           {
             url: realUrl!,
           },
@@ -236,11 +238,11 @@ export function Carousel(props: ICarouselProps) {
           if (!sf) return;
           const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
           const permissions = Platform.select<Permission[]>({
-            ios: [PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
             android:
               androidVersionMajor >= 13
                 ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
                 : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+            ios: [PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
           })!;
           await assertPermissions(permissions);
         } catch (e) {
@@ -277,10 +279,10 @@ export function Carousel(props: ICarouselProps) {
         const sf = await getSyncedFile(url);
         if (!sf) return;
         await Share.open({
+          failOnCancel: false,
+          showAppsToView: true,
           type: sf.filetype || 'text/html',
           url: Platform.OS === 'android' ? 'file://' + sf.filepath : sf.filepath,
-          showAppsToView: true,
-          failOnCancel: false,
         });
       } catch (e) {
         if (e instanceof PermissionError) {
@@ -300,7 +302,9 @@ export function Carousel(props: ICarouselProps) {
   const loadingComponent = React.useMemo(() => <Loading />, []);
   const renderLoading = React.useCallback(() => loadingComponent, [loadingComponent]);
 
-  const renderImage = React.useCallback(imageProps => <FastImage {...imageProps} />, []);
+  const renderImage = React.useCallback(imageProps => {
+    return <FastImage {...imageProps} />;
+  }, []);
 
   const renderFailImage = React.useCallback(imageProps => {
     return (
@@ -319,20 +323,20 @@ export function Carousel(props: ICarouselProps) {
     if (isNavBarVisible) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
+        headerRight: () => getButtons(imageState !== 'success'),
         headerTitle: navBarTitle(
           route.params.data.length !== 1
             ? I18n.get('carousel-counter', { current: indexDisplay, total: route.params.data.length })
             : '',
           styles.title,
         ),
-        headerRight: () => getButtons(imageState !== 'success'),
       });
     } else {
       navigation.setOptions({
         headerBlurEffect: undefined,
-        headerStyle: { backgroundColor: 'transparent' },
         headerLeft: undefined,
         headerRight: undefined,
+        headerStyle: { backgroundColor: 'transparent' },
         headerTitle: '',
       });
     }
@@ -362,6 +366,14 @@ export function Carousel(props: ICarouselProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const onClick = React.useCallback(() => setNavBarVisible(!isNavBarVisible), [isNavBarVisible]);
+
+  const renderIndicator = React.useCallback((index?: number, total?: number, imageStatus?: IImageSize['status']) => {
+    if (index !== undefined) setIndexDisplay(index);
+    if (imageStatus !== undefined) setImageState(imageStatus);
+    return <></>;
+  }, []);
+
   const imageViewer = React.useMemo(
     () => (
       <ImageViewer
@@ -370,21 +382,16 @@ export function Carousel(props: ICarouselProps) {
         show
         imageUrls={dataAsImages}
         index={startIndex}
-        onCancel={() => {
-          navigation.goBack();
-        }}
+        onCancel={navigation.goBack}
         onSave={onSave}
         onShare={onShare}
         renderImage={renderImage}
         loadingRender={renderLoading}
         loadWindow={1}
         saveToLocalByLongPress={false}
-        onClick={() => setNavBarVisible(!isNavBarVisible)}
+        onClick={onClick}
         renderFailImage={renderFailImage}
-        renderIndicator={(index?: number, total?: number, imageStatus?: IImageSize['status']) => {
-          if (index !== undefined) setIndexDisplay(index);
-          if (imageStatus !== undefined) setImageState(imageStatus);
-        }}
+        renderIndicator={renderIndicator}
       />
     ),
     // We want to remove `navigation` and `startIndex` from the dependencies here to avoid re-rendering when navState changes

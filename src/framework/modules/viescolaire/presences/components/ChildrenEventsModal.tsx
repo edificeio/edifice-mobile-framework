@@ -3,8 +3,8 @@ import { ColorValue, FlatList, SectionList, StyleSheet } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
+import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import {
   BodyBoldText,
   BodyText,
@@ -91,7 +91,7 @@ const renderChildEvents = (events: ChildEvents, childName?: string) => {
   const sections = Object.entries(events)
     .filter(([id, value]) => value.length > 0)
     .map(([category, e]) => {
-      return { title: category, data: e };
+      return { data: e, title: category };
     });
 
   return (

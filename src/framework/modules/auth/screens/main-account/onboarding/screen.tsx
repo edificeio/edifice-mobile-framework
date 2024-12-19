@@ -1,5 +1,8 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import type { AuthOnboardingScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { StatusBar } from '~/framework/components/status-bar';
@@ -7,8 +10,6 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { getNavActionForOnboarding } from '~/framework/modules/auth/navigation/main-account/router';
 import OnboardingScreen from '~/framework/modules/auth/templates/onboarding';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import type { AuthOnboardingScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,

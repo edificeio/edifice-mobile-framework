@@ -5,11 +5,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    flexDirection: 'row',
     backgroundColor: theme.ui.background.card,
-    borderWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.card,
+    borderWidth: UI_SIZES.border.thin,
+    flexDirection: 'row',
     overflow: 'hidden',
   },
   contentContainer: {

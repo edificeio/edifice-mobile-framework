@@ -1,6 +1,10 @@
+import * as React from 'react';
+
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
-import * as React from 'react';
+
+import styles from './styles';
+import { UserSpaceScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -14,9 +18,6 @@ import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
 
-import styles from './styles';
-import { UserSpaceScreenPrivateProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -26,8 +27,8 @@ export const computeNavBar = ({
     route,
     title: I18n.get('user-space-title'),
   }),
-  headerStyle: { backgroundColor: theme.palette.secondary.dark },
   headerShadowVisible: false,
+  headerStyle: { backgroundColor: theme.palette.secondary.dark },
 });
 
 const animationSource = require('ASSETS/animations/space/modal.json');

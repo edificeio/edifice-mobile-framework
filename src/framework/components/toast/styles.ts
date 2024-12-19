@@ -10,10 +10,10 @@ export default StyleSheet.create({
     // Toast will be horizontally-centered automatically by react-native-toast-message
   },
   progress: {
-    position: 'absolute',
     bottom: -UI_SIZES.border.thin,
-    left: 0,
-    right: 0,
     height: TOAST_PROOGRESS_THICKNESS,
+    left: 0,
+    position: 'absolute',
+    right: 0,
   },
 });

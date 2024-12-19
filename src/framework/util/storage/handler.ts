@@ -1,6 +1,6 @@
-import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
-
 import { IStorageBackend, StorageKey } from './types';
+
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 
 export class StorageHandler {
   constructor(

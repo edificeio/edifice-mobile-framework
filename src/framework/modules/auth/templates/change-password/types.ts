@@ -2,8 +2,8 @@ import { NavigationAction } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type {
-  IChangePasswordModel,
   changePasswordActionAddFirstAccount,
+  IChangePasswordModel,
   manualLogoutAction,
 } from '~/framework/modules/auth/actions';
 import type {

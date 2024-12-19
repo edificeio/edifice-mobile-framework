@@ -1,8 +1,11 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import {
@@ -19,8 +22,6 @@ import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -29,22 +30,25 @@ export const computeNavBar = ({
   typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal
 >): NativeStackNavigationOptions => ({
   ...navBarOptions({
+    backButtonTestID: 'change-password-back',
     navigation,
     route,
     title: I18n.get('user-page-editpassword'),
+    titleTestID: 'change-password-title',
   }),
 });
 
 export default connect(
   (state, props: AuthChangePasswordScreenPrivateProps) => {
     return {
-      session: getSession(),
       context: props.route.params.platform ? getPlatformContextOf(props.route.params.platform) : getPlatformContext(),
+      session: getSession(),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>, props: AuthChangePasswordScreenOwnProps) => {
     return bindActionCreators<ChangePasswordScreenDispatchProps>(
       {
+        tryLogout: tryAction(manualLogoutAction),
         trySubmit: tryAction(
           (...args: Parameters<typeof changePasswordActionAddFirstAccount>) =>
             (d, gs) => {
@@ -60,7 +64,6 @@ export default connect(
             },
           props.route.params.useResetCode ? { track: track.passwordRenew } : undefined,
         ),
-        tryLogout: tryAction(manualLogoutAction),
       },
       dispatch,
     );

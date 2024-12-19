@@ -1,8 +1,8 @@
 import { ImageStyle, StyleSheet } from 'react-native';
 
-import { UI_SIZES } from '~/framework/components/constants';
-
 import * as Avatar from './types';
+
+import { UI_SIZES } from '~/framework/components/constants';
 
 export const AvatarSizes = {
   [Avatar.Size.sm]: UI_SIZES.elements.avatar.sm,

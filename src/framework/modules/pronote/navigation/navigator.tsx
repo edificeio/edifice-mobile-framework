@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { PronoteNavigationParams, pronoteRouteNames } from '.';
+
 import moduleConfig from '~/framework/modules/pronote/module-config';
 import PronoteCarnetDeBordScreen, { computeNavBar as carnetDeBordNavBar } from '~/framework/modules/pronote/screens/carnet-de-bord';
 import PronoteCarnetDeBordDetailsScreen, {
@@ -12,19 +14,17 @@ import PronoteConnectorSelectorScreen, {
   computeNavBar as connectorSelectorNavBar,
 } from '~/framework/modules/pronote/screens/connector-selector';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { AnyNavigableModule } from '~/framework/util/moduleTool';
 
-import { PronoteNavigationParams, pronoteRouteNames } from '.';
-
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
+export default (({ matchingApps, matchingWidgets }) =>
   createModuleNavigator<PronoteNavigationParams>(moduleConfig.name, Stack => {
     /**
      * This module has no fixed home screen. We dynamically update `moduleConfig.routeName` to point to the "home" depending of apps & widgets.
      */
 
     const screens: React.ReactElement[] = [];
-    const hasCarnetDeBord = widgets.length > 0;
-    const hasMultipleConnectors = apps.length > 1;
+    const hasCarnetDeBord = matchingWidgets.length > 0;
+    const hasMultipleConnectors = matchingApps.length > 1;
 
     // If widgets are available, the module shows Carnet de Bord as home
     if (hasCarnetDeBord) {
@@ -55,7 +55,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={pronoteRouteNames.connectorSelector}
           component={PronoteConnectorSelectorScreen}
           options={connectorSelectorNavBar}
-          initialParams={{ connectors: apps }}
+          initialParams={{ connectors: matchingApps }}
         />,
       );
       moduleConfig.routeName = pronoteRouteNames.connectorSelector;
@@ -73,7 +73,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         initialParams={
           !hasCarnetDeBord && !hasMultipleConnectors
             ? {
-                connector: apps[0],
+                connector: matchingApps[0],
               }
             : undefined
         }
@@ -81,4 +81,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     );
 
     return <>{screens}</>;
-  });
+  })) as AnyNavigableModule['getRoot'];

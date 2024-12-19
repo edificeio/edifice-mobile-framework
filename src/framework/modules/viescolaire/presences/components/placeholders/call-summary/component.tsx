@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
 import styles from './styles';

@@ -1,5 +1,6 @@
-import { findFocusedRoute, InitialState, type Route } from '@react-navigation/native';
 import * as React from 'react';
+
+import { findFocusedRoute, InitialState, type Route } from '@react-navigation/native';
 
 import { Trackers } from '.';
 

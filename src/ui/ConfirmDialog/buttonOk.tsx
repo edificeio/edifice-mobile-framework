@@ -7,13 +7,13 @@ import { SmallText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   buttonContainer: {
+    alignItems: 'center',
     backgroundColor: theme.palette.secondary.regular,
     borderRadius: UI_SIZES.radius.small,
+    justifyContent: 'center',
     marginLeft: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.tiny,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   disabledOpacity: {
     opacity: 0.5,
@@ -31,7 +31,7 @@ interface IDialogButtonOkProps {
   onPress: () => void;
 }
 
-export const DialogButtonOk = ({ label, disabled, style, textStyle, onPress }: IDialogButtonOkProps) => (
+export const DialogButtonOk = ({ disabled, label, onPress, style, textStyle }: IDialogButtonOkProps) => (
   <TouchableOpacity
     onPress={onPress}
     disabled={disabled}

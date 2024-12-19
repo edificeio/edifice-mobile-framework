@@ -1,32 +1,32 @@
 import * as React from 'react';
 
+import { BlogPostResourceCardProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import Audience from '~/framework/modules/core/audience/components';
+import Audience from '~/framework/modules/audience/components';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
-import { BlogPostResourceCardProps } from './types';
-
 export const BlogPostResourceCard = React.memo(
   ({
     action,
+    audience,
     authorId,
     authorName,
+    blogVisibility,
     comments,
     contentHtml,
     date,
-    title,
-    state,
-    resourceId,
-    audience,
-    session,
-    blogVisibility,
     isManager,
+    resourceId,
+    session,
+    state,
+    title,
   }: BlogPostResourceCardProps) => {
     const authorTextMaxLines = 1;
     const contentTextMaxLines = 5;
@@ -66,7 +66,7 @@ export const BlogPostResourceCard = React.memo(
                 nbComments={comments}
                 nbViews={audience?.views}
                 infosReactions={audience?.reactions}
-                referer={{ module: 'blog', resourceType: 'post', resourceId }}
+                referer={{ module: 'blog', resourceId, resourceType: 'post' }}
                 session={session}
                 preview
                 isManager={isManager}
@@ -80,7 +80,7 @@ export const BlogPostResourceCard = React.memo(
               {blogPostText}
             </SmallText>
           ) : null}
-          {hasBlogPostMedia ? renderMediaPreview(blogPostMedia, { module: 'blog', resourceType: 'post', resourceId }) : null}
+          {hasBlogPostMedia ? renderMediaPreview(blogPostMedia, { module: 'blog', resourceId, resourceType: 'post' }) : null}
         </TouchableResourceCard>
       </ArticleContainer>
     );

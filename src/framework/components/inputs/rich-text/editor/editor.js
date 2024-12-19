@@ -1,13 +1,14 @@
 import { Platform } from 'react-native';
+
 import RNFS from 'react-native-fs';
+
+import { ui } from './const';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleFontSize, getScaleWidth } from '~/framework/components/constants';
+import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
-
-import { ui } from './const';
 
 const base64Type = {
   FONT: 'fonts',
@@ -33,7 +34,7 @@ async function loadBase64File(fileName, type) {
 }
 
 async function loadFont(fontInfo) {
-  const { fontFile, fontFamily, bold, italic, cursive } = fontInfo;
+  const { bold, cursive, fontFamily, fontFile, italic } = fontInfo;
   try {
     const base64Font = await loadBase64File(fontFile, base64Type.FONT);
     fontFaces += `
@@ -63,28 +64,28 @@ async function loadIcon(iconFile) {
 async function initEditor() {
   const fontItems = [
     // OpenDyslexic
-    { fontFile: 'opendyslexic_regular.woff', fontFamily: 'OpenDyslexic' },
-    { fontFile: 'opendyslexic_bold.woff', fontFamily: 'OpenDyslexic', bold: true },
-    { fontFile: 'opendyslexic_bolditalic.woff', fontFamily: 'OpenDyslexic', bold: true, italic: true },
-    { fontFile: 'opendyslexic_italic.woff', fontFamily: 'OpenDyslexic', italic: true },
+    { fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_regular.woff' },
+    { bold: true, fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_bold.woff' },
+    { bold: true, fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_bolditalic.woff', italic: true },
+    { fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_italic.woff', italic: true },
     //Lora
-    { fontFile: 'lora_regular.woff', fontFamily: 'Lora' },
-    { fontFile: 'lora_bold.woff', fontFamily: 'Lora', bold: true },
-    { fontFile: 'lora_bolditalic.woff', fontFamily: 'Lora', bold: true, italic: true },
-    { fontFile: 'lora_italic.woff', fontFamily: 'Lora', italic: true },
+    { fontFamily: 'Lora', fontFile: 'lora_regular.woff' },
+    { bold: true, fontFamily: 'Lora', fontFile: 'lora_bold.woff' },
+    { bold: true, fontFamily: 'Lora', fontFile: 'lora_bolditalic.woff', italic: true },
+    { fontFamily: 'Lora', fontFile: 'lora_italic.woff', italic: true },
     //IBM Plex Mono
-    { fontFile: 'ibmplexmono_regular.woff', fontFamily: 'IBM Plex Mono' },
-    { fontFile: 'ibmplexmono_bold.woff', fontFamily: 'IBM Plex Mono', bold: true },
-    { fontFile: 'ibmplexmono_bolditalic.woff', fontFamily: 'IBM Plex Mono', bold: true, italic: true },
-    { fontFile: 'ibmplexmono_italic.woff', fontFamily: 'IBM Plex Mono', italic: true },
+    { fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_regular.woff' },
+    { bold: true, fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_bold.woff' },
+    { bold: true, fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_bolditalic.woff', italic: true },
+    { fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_italic.woff', italic: true },
     //Font
-    { fontFile: 'font_regular.woff', fontFamily: 'Font' },
-    { fontFile: 'font_bold.woff', fontFamily: 'Font', bold: true },
-    { fontFile: 'font_bolditalic.woff', fontFamily: 'Font', bold: true, italic: true },
-    { fontFile: 'font_italic.woff', fontFamily: 'Font', italic: true },
+    { fontFamily: 'Font', fontFile: 'font_regular.woff' },
+    { bold: true, fontFamily: 'Font', fontFile: 'font_bold.woff' },
+    { bold: true, fontFamily: 'Font', fontFile: 'font_bolditalic.woff', italic: true },
+    { fontFamily: 'Font', fontFile: 'font_italic.woff', italic: true },
     //Ecriture A
-    { fontFile: 'ecriturea_regular.woff', fontFamily: 'Ecriture A', cursive: true },
-    { fontFile: 'ecriturea_italic.woff', fontFamily: 'Ecriture A', italic: true, cursive: true },
+    { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_regular.woff' },
+    { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_italic.woff', italic: true },
   ];
   await Promise.all(fontItems.map(loadFont));
   attachmentIcon = await loadIcon('attachment.svg');
@@ -95,22 +96,22 @@ async function initEditor() {
 
 function createHTML(options = {}) {
   const {
-    pasteAsPlainText = false,
-    pasteListener = false,
-    keyDownListener = false,
-    keyUpListener = false,
-    inputListener = false,
     autoCapitalize = 'off',
-    enterKeyHint = '',
-    initialFocus = false,
     autoCorrect = false,
     defaultParagraphSeparator = 'div',
-    // When first gaining focus, the cursor moves to the end of the text
+    enterKeyHint = '',
     firstFocusEnd = true,
-    useContainer = true,
+    initialFocus = false,
+    inputListener = false,
+    keyDownListener = false,
+    keyUpListener = false,
+    pasteAsPlainText = false,
+    // When first gaining focus, the cursor moves to the end of the text
+    pasteListener = false,
     styleWithCSS = false,
-    // Enable/Disable composition
     useComposition = true,
+    // Enable/Disable composition
+    useContainer = true,
   } = options;
 
   const placeholderColor = theme.palette.grey.stone;
@@ -827,22 +828,36 @@ function createHTML(options = {}) {
                 postAction({type: 'SELECTION_CHANGE', data: []});
                 postAction({type: 'CONTENT_BLUR'});
             }
-            function handleClick(event){
-                var ele = event.target;
+            function handleClickElement(event, ele){
+                // _postMessage({type: 'LOG', data: ['TOUCH', ele.nodeName, JSON.stringify(ele)]});
                 if (ele.nodeName === 'INPUT' && ele.type === 'checkbox'){
                     // Set whether the checkbox is selected by default
                     if (ele.checked) ele.setAttribute('checked', '');
                     else ele.removeAttribute('checked');
+                    return false;
                 } else if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
+                    return false;
                 } else if (ele.getAttribute('class') === 'audio-wrapper') {
                     var audioSrc = ele.querySelector('audio').getAttribute('src');
                     postAction({type: 'AUDIO_TOUCHED', data: audioSrc}, true);
+                    return false;
                 } else if (ele.nodeName === 'IMG' && ele.getAttribute('src') && ele.getAttribute('class') !== 'play-button') {
                     postAction({type: 'IMAGE_TOUCHED', data: ele.getAttribute('src')}, true);
+                    return false;
                 } else if (ele.nodeName === 'VIDEO' && ele.getAttribute('src')) {
                     postAction({type: 'VIDEO_TOUCHED', data: ele.getAttribute('src')}, true);
+                    return false;
                 }
+                return true;
+            }
+            function handleClick(event){
+              let ele = event.target;
+              let continueBubbling = true;
+              do {
+                continueBubbling = handleClickElement(event, ele);
+                ele = ele.parentNode;
+              } while (continueBubbling && ele && ele !== editor.content);
             }
             addEventListener(content, 'touchcancel', handleSelecting);
             addEventListener(content, 'mouseup', handleSelecting);
@@ -935,4 +950,5 @@ function createHTML(options = {}) {
 }
 
 const HTML = createHTML();
-export { HTML, createHTML, initEditor };
+export { createHTML, HTML, initEditor };
+

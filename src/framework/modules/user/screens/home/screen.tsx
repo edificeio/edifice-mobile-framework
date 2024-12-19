@@ -1,13 +1,16 @@
+import * as React from 'react';
+import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
+
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
-import * as React from 'react';
-import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -24,13 +27,13 @@ import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/componen
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
+  accountIsLoggable,
   AccountType,
   AuthLoggedAccount,
   AuthSavedLoggedInAccount,
+  getOrderedAccounts,
   InitialAuthenticationMethod,
   PlatformAuthContext,
-  accountIsLoggable,
-  getOrderedAccounts,
 } from '~/framework/modules/auth/model';
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
@@ -41,9 +44,10 @@ import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screen
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
-import { readSplashadsData } from '~/framework/modules/auth/storage';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
+import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
+import { readSplashadsData } from '~/framework/modules/splashads/storage';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
@@ -58,9 +62,6 @@ import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
-
-import styles from './styles';
-import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -207,20 +208,20 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         let routeName = routeNames[modificationType];
         const params = {
           [ModificationType.EMAIL]: {
-            navBarTitle: I18n.get('user-page-editemail'),
             modificationType: ModificationType.EMAIL,
+            navBarTitle: I18n.get('user-page-editemail'),
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeEmailScreenNavParams,
           [ModificationType.MOBILE]: {
-            navBarTitle: I18n.get('user-page-editmobile'),
             modificationType: ModificationType.MOBILE,
+            navBarTitle: I18n.get('user-page-editmobile'),
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeMobileScreenNavParams,
           [ModificationType.PASSWORD]: {
-            platform: session?.platform,
             context: authContextRef?.current,
             credentials: { username: session?.user.loginUsed ?? session?.user.login },
             navCallback: CommonActions.goBack(),
+            platform: session?.platform,
           } as ChangePasswordScreenNavParams,
         };
         const routeParams = params[modificationType];
@@ -251,11 +252,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
   const splashads = readSplashadsData();
-  const showSplashads =
-    session?.platform.name && splashads[session?.platform.name]
-      ? moment().startOf('day').toISOString() === splashads[session?.platform.name].date.toString()
-      : false;
-
   //
   // Zendesk stuff
   //
@@ -291,9 +287,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     if (showHelpCenter)
       try {
         await zendesk?.openHelpCenter({
-          labels: [],
-          groupType: 'section',
           groupIds: appConf.zendeskSections!,
+          groupType: 'section',
+          labels: [],
           showContactOptions: false,
         });
       } catch (error) {
@@ -394,12 +390,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 testID="account-who-are-we"
               />
             ) : null}
-            {showSplashads && session?.platform.name ? (
+            {showSplashadsOnUserScreen(session!) ? (
               <LineButton
                 title={I18n.get('user-page-splashads')}
                 onPress={() => {
                   navigation.navigate(ModalsRouteNames.SplashAds, {
-                    resourceUri: splashads[session?.platform.name] ? splashads[session?.platform.name].url : '',
+                    resourceUri: splashads[session?.platform.name!] ? splashads[session?.platform.name!].url : '',
                   });
                 }}
                 icon="ui-megaphone"
@@ -423,9 +419,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       canEditPersonalInfo,
       showHelpCenter,
       showWhoAreWe,
+      session,
       navigation,
       editUserInformation,
       openHelpCenter,
+      splashads,
     ],
   );
 }
@@ -461,7 +459,7 @@ function useAccountsFeature(
   const onPressItem = React.useCallback(
     async (item: (typeof data)[0], index: number) => {
       const activeSession = assertSession();
-      // await authService.removeFirebaseToken(account.platform);
+
       accountListRef.current?.dismiss();
 
       if (activeSession.user.id === item.user.id) return;
@@ -544,13 +542,13 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
   const doLogout = React.useCallback(() => {
     Alert.alert('', I18n.get('auth-disconnect-confirm'), [
       {
-        text: I18n.get('common-cancel'),
         style: 'default',
+        text: I18n.get('common-cancel'),
       },
       {
-        text: I18n.get('user-page-disconnect'),
-        style: 'destructive',
         onPress: logout,
+        style: 'destructive',
+        text: I18n.get('user-page-disconnect'),
       },
     ]);
   }, [logout]);
@@ -586,14 +584,27 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
             {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
           </SmallBoldText>
           {appConf.isDebugEnabled ? (
-            <DefaultButton
-              text="Debug infos"
-              action={() => {
-                navigation.navigate(userRouteNames.debug, {});
-              }}
-              contentColor={theme.palette.primary.regular}
-              style={styles.debugButton}
-            />
+            <>
+              <View style={styles.section}>
+                <HeadingSText style={styles.sectionTitle}>Debug</HeadingSText>
+                <ButtonLineGroup>
+                  <LineButton
+                    title="Network Log"
+                    icon="ui-print"
+                    onPress={() => {
+                      navigation.navigate(userRouteNames.network, {});
+                    }}
+                  />
+                  <LineButton
+                    title="Debug Log"
+                    icon="ui-print"
+                    onPress={() => {
+                      navigation.navigate(userRouteNames.log, {});
+                    }}
+                  />
+                </ButtonLineGroup>
+              </View>
+            </>
           ) : null}
         </>
       );
@@ -643,7 +654,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const [debugVisible, setDebugVisible] = React.useState<boolean>(false);
-  const { handleLogout, trySwitch, tryRemoveAccount, session, accounts } = props;
+  const { accounts, handleLogout, session, tryRemoveAccount, trySwitch } = props;
 
   const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
@@ -696,18 +707,18 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
 export default connect(
   (state: IGlobalState) => {
     return {
-      session: getSession(),
       accounts: getAuthState(state).accounts,
+      session: getSession(),
     };
   },
   dispatch =>
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
         handleLogout: handleAction(manualLogoutAction, { track: track.logout }),
+        tryRemoveAccount: handleAction(removeAccountAction),
         trySwitch: tryAction(switchAccountAction, {
           track: track.loginRestore,
         }),
-        tryRemoveAccount: handleAction(removeAccountAction),
       },
       dispatch,
     ),

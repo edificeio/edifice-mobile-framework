@@ -1,6 +1,7 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ColorValue, StyleSheet, View } from 'react-native';
+
+import styled from '@emotion/native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -21,7 +22,7 @@ const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
   }),
 );
 
-export const Checkbox = ({ checked, onUncheck, onCheck }: { checked: boolean; onUncheck?: () => void; onCheck?: () => void }) => (
+export const Checkbox = ({ checked, onCheck, onUncheck }: { checked: boolean; onUncheck?: () => void; onCheck?: () => void }) => (
   <TapCircle onPress={() => (checked ? onUncheck && onUncheck() : onCheck && onCheck())} checked={checked}>
     <Icon size={17} name="checked" color={theme.ui.text.inverse} />
   </TapCircle>
@@ -30,19 +31,19 @@ export const Checkbox = ({ checked, onUncheck, onCheck }: { checked: boolean; on
 const squareCheckboxStyle = StyleSheet.create({
   square: {
     alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: theme.palette.grey.grey,
     borderRadius: 3,
     height: 25,
+    justifyContent: 'center',
     width: 25,
-    borderColor: theme.palette.grey.grey,
   },
 });
 
 export const SquareCheckbox = ({
-  value,
-  onChange,
-  disabled,
   color,
+  disabled,
+  onChange,
+  value,
 }: {
   value: boolean;
   onChange?: () => void;

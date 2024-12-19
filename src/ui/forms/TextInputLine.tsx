@@ -1,10 +1,17 @@
 import * as React from 'react';
-import { ColorValue, StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+import { ColorValue, StyleProp, StyleSheet, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+
 import { TextField } from 'rn-material-ui-textfield';
 
 import theme from '~/app/theme';
 import PasswordInput from '~/framework/components/passwordInput';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+
+const styles = StyleSheet.create({
+  container: {
+    alignSelf: 'stretch',
+  },
+});
 
 export type TextInputLineProps = {
   hasError: boolean;
@@ -34,29 +41,30 @@ export class TextInputLine extends React.Component<
   } & TextInputProps
 > {
   public render() {
-    const { hasError, style, inputStyle, inputRef, isPasswordField, onBlur, onFocus, placeholderTextColor, textColor } = this.props;
+    const { hasError, inputRef, inputStyle, isPasswordField, onBlur, onFocus, placeholderTextColor, style, textColor } = this.props;
     const inputProps = {
       ...this.props,
       ...TextFontStyle.Regular,
       ...TextSizeStyle.Medium,
+      activeLineWidth: 2,
+      autoCapitalize: 'none',
+      baseColor: hasError ? theme.palette.status.failure.regular : theme.ui.border.input,
+      containerStyle: style,
       innerRef: r => inputRef(r),
+      inputContainerStyle: inputStyle,
+      invertVisibilityIcon: true,
+      lineWidth: hasError ? 2 : 1,
       onBlur: () => onBlur && onBlur(),
       onFocus: () => onFocus && onFocus(),
       placeholderTextColor: placeholderTextColor || theme.ui.text.light,
       textColor: textColor || theme.ui.text.regular,
-      underlineColorAndroid: 'transparent',
-      autoCapitalize: 'none',
-      containerStyle: style,
-      inputContainerStyle: inputStyle,
-      lineWidth: hasError ? 2 : 1,
-      activeLineWidth: 2,
-      baseColor: hasError ? theme.palette.status.failure.regular : theme.ui.border.input,
       tintColor: hasError ? theme.palette.status.failure.regular : theme.palette.primary.regular,
-      invertVisibilityIcon: true,
+      underlineColorAndroid: 'transparent',
     };
+
     const TextComponent = isPasswordField ? PasswordInput : TextField;
     return (
-      <View style={{ alignSelf: 'stretch' }}>
+      <View style={styles.container}>
         <TextComponent {...inputProps} />
       </View>
     );

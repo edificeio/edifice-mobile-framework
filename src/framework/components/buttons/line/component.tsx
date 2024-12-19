@@ -1,21 +1,22 @@
-import styled from '@emotion/native';
 import * as React from 'react';
-import * as ReactIs from 'react-is';
 import { ActivityIndicator, TextStyle, View } from 'react-native';
+
+import styled from '@emotion/native';
+import * as ReactIs from 'react-is';
 
 import theme from '~/app/theme';
 import styles from '~/framework/components/buttons/line/styles';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 export const ContainerView = styled.View({
   alignItems: 'center',
-  flexDirection: 'row',
   backgroundColor: theme.ui.background.card,
   borderBottomWidth: 1,
   borderColor: theme.palette.grey.cloudy,
+  flexDirection: 'row',
   height: 46,
   justifyContent: 'flex-start',
   paddingHorizontal: UI_SIZES.spacing.medium,
@@ -23,27 +24,27 @@ export const ContainerView = styled.View({
 
 export const ContainerTextInput = styled.TextInput({
   alignItems: 'center',
-  flexDirection: 'row',
   backgroundColor: theme.ui.background.card,
   borderBottomWidth: 1,
   borderColor: theme.palette.grey.cloudy,
+  flexDirection: 'row',
   height: 46,
   justifyContent: 'flex-start',
   padding: UI_SIZES.spacing.medium,
 });
 
 export const LineButton = ({
-  onPress,
-  title,
-  icon,
-  first = false,
-  last = false,
   alone = false,
   disabled = false,
+  first = false,
+  icon,
+  last = false,
   loading = false,
+  onPress,
   showArrow = true,
-  textStyle,
   testID,
+  textStyle,
+  title,
 }: {
   title: string;
   icon?: string;
@@ -111,10 +112,10 @@ export const LineButton = ({
 };
 
 export const ButtonLineGroup = ({
-  children,
+  allowAlone = true,
   allowFirst = true,
   allowLast = true,
-  allowAlone = true,
+  children,
 }: React.PropsWithChildren & { allowFirst?: boolean; allowLast?: boolean; allowAlone?: boolean }) => {
   const childrenAsArray = React.Children.toArray(children); // We use `childrenAsArray` instead of `count` to ignore empty/null/undefined nodes.
   const mapFunction = (node: Parameters<Parameters<typeof childrenAsArray.map>[0]>[0], index: number) => {

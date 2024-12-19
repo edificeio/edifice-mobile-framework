@@ -29,20 +29,20 @@ export const getAddAccountNavActionForRedirect = (platform: Platform, pending: I
   switch (pending?.redirect) {
     case AuthPendingRedirection.ACTIVATE:
       return StackActions.push(authRouteNames.addAccountActivation, {
-        platform,
         credentials: {
-          username: pending.loginUsed,
           password: pending.code,
+          username: pending.loginUsed,
         },
+        platform,
       });
 
     case AuthPendingRedirection.RENEW_PASSWORD:
       return StackActions.push(authRouteNames.addAccountChangePassword, {
-        platform,
         credentials: {
-          username: pending.loginUsed,
           password: pending.code,
+          username: pending.loginUsed,
         },
+        platform,
         useResetCode: true,
       });
   }
@@ -105,6 +105,6 @@ export const getAddAccountNavigationState = (pending: IAuthState['pendingAddAcco
   if (navRedirection) {
     return { ...simulateNavAction(navRedirection, { routes }), stale: true as const } as PartialState<NavigationState>;
   } else {
-    return { stale: true as const, routes, index: routes.length - 1 } as PartialState<NavigationState>;
+    return { index: routes.length - 1, routes, stale: true as const } as PartialState<NavigationState>;
   }
 };

@@ -1,25 +1,25 @@
+import * as React from 'react';
+
 import { CommonActions, StackActionType } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as React from 'react';
 import { useSelector } from 'react-redux';
+
+import type { AuthAddAccountModalScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import {
-  IAuthNavigationParams,
   authRouteNames,
   getLoginRouteName,
   getNavActionForRedirect,
+  IAuthNavigationParams,
   simulateNavAction,
 } from '~/framework/modules/auth/navigation';
-import { IAuthState, getState } from '~/framework/modules/auth/reducer';
+import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
+import { getState, IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 import appConf, { Platform } from '~/framework/util/appConf';
-
-import type { AuthAddAccountModalScreenPrivateProps } from './types';
-
-import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 
 export const computeNavBar = ({
   navigation,
@@ -76,8 +76,8 @@ const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
       routes.push({
         name: getLoginRouteName(platform),
         params: {
-          platform,
           login,
+          platform,
         },
       });
 
@@ -90,7 +90,7 @@ const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
   if (navRedirection) {
     return { ...simulateNavAction(navRedirection, { routes }), stale: true as const };
   } else {
-    return { stale: true as const, routes, index: routes.length - 1 };
+    return { index: routes.length - 1, routes, stale: true as const };
   }
 };
 

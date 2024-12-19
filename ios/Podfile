@@ -1,3 +1,4 @@
+
 def node_require(script)
   require Pod::Executable.execute_command('node', ['-p',
     "require.resolve(
@@ -12,10 +13,7 @@ node_require('react-native-permissions/scripts/setup.rb')
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-#flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
-
 linkage = ENV['USE_FRAMEWORKS']
-
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
@@ -79,9 +77,6 @@ target 'appe' do
   #
   use_react_native!(
     :path => config[:reactNativePath],
-    #:hermes_enabled => flags[:hermes_enabled],
-    #:fabric_enabled => flags[:fabric_enabled],
-    #:flipper_configuration => flipper_config,
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
@@ -89,21 +84,22 @@ target 'appe' do
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
     )
-    #bitcode_strip_path = `xcrun --find bitcode_strip`.chop!
-    #def strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
-    #  framework_path = File.join(Dir.pwd, framework_relative_path)
-    #  command = "#{bitcode_strip_path} #{framework_path} -r -o #{framework_path}"
-    #  puts "Stripping bitcode: #{command}"
-    #  system(command)
-    #end
-    #framework_paths = [
-    #  "Pods/ZendeskSDKConfigurationsSDK/SDKConfigurations.xcframework/ios-arm64/SDKConfigurations.framework/SDKConfigurations"
-    #]
-    #framework_paths.each do |framework_relative_path|
-    #  strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
-    #end
+  #   bitcode_strip_path = `xcrun --find bitcode_strip`.chop!
+  #  def strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
+  #    framework_path = File.join(Dir.pwd, framework_relative_path)
+  #    command = "#{bitcode_strip_path} #{framework_path} -r -o #{framework_path}"
+  #    puts "Stripping bitcode: #{command}"
+  #    system(command)
+  #  end
+  #  framework_paths = [
+  #    "Pods/ZendeskSDKConfigurationsSDK/SDKConfigurations.xcframework/ios-arm64/SDKConfigurations.framework/SDKConfigurations"
+  #  ]
+  #  framework_paths.each do |framework_relative_path|
+  #    strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
+  #  end
   end
 
 end

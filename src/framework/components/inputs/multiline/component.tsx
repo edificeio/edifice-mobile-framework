@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react';
 import { TextInput as RNTextInput } from 'react-native';
 
-import TextInput, { styles as stylesTextInput } from '~/framework/components/inputs/text';
-import { TextSizeStyle } from '~/framework/components/text';
-
 import styles from './styles';
 import { MultilineTextInputProps } from './types';
+
+import TextInput, { styles as stylesTextInput } from '~/framework/components/inputs/text';
+import { TextSizeStyle } from '~/framework/components/text';
 
 const MultilineTextInput = forwardRef<RNTextInput, MultilineTextInputProps>((props: MultilineTextInputProps, ref) => {
   const { numberOfLines } = props;

@@ -6,10 +6,10 @@
 import * as React from 'react';
 import { ImageProps } from 'react-native';
 
-import { Image } from '~/framework/util/media';
-
 import { Icon, IconProps } from './Icon';
 import NamedSVG, { NamedSVGProps } from './NamedSVG';
+
+import { Image } from '~/framework/util/media';
 
 export interface IAnyPictureSource {
   source: any;

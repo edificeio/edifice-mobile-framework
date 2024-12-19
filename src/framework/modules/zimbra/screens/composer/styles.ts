@@ -6,31 +6,31 @@ import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
   bodyInput: {
-    flexGrow: 1,
     color: theme.ui.text.regular,
+    flexGrow: 1,
     padding: 0,
   },
   contentContainer: {
+    backgroundColor: theme.palette.grey.white,
     flexGrow: 1,
     padding: pageGutterSize,
-    backgroundColor: theme.palette.grey.white,
   },
   navBarActionsContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   navBarSendAction: {
-    justifyContent: 'center',
     alignItems: 'center',
-    width: UI_SIZES.dimensions.width.hug,
     height: UI_SIZES.dimensions.width.hug,
+    justifyContent: 'center',
     marginHorizontal: UI_SIZES.spacing.medium,
+    width: UI_SIZES.dimensions.width.hug,
   },
   separatorContainer: {
-    width: '50%',
-    height: 1,
     backgroundColor: theme.palette.grey.grey,
+    height: 1,
     marginVertical: UI_SIZES.spacing.minor,
+    width: '50%',
   },
   signatureInput: {
     color: theme.ui.text.regular,

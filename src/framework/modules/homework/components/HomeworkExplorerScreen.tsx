@@ -1,6 +1,7 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { RefreshControl, View } from 'react-native';
+
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -62,7 +63,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
   };
 
   render() {
-    const { isFetching, didInvalidate } = this.props;
+    const { didInvalidate, isFetching } = this.props;
     const pageContent = isFetching && didInvalidate ? <Loading /> : this.renderList();
 
     return <PageView>{pageContent}</PageView>;

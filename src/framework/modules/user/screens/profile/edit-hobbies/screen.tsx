@@ -1,7 +1,11 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Keyboard, Platform } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
+
+import styles from './styles';
+import type { ObjectHobbies, UserEditHobbiesScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -17,9 +21,6 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import styles from './styles';
-import type { ObjectHobbies, UserEditHobbiesScreenProps } from './types';
-
 export const computeNavBar = ({
   navigation,
   route,
@@ -31,9 +32,36 @@ export const computeNavBar = ({
   }),
 });
 
+const i18nHobbies = {
+  animals: {
+    empty: 'user-profile-editHobbies-emptyanimals',
+    title: 'user-profile-editHobbies-animals',
+  },
+  books: {
+    empty: 'user-profile-editHobbies-emptybooks',
+    title: 'user-profile-editHobbies-books',
+  },
+  cinema: {
+    empty: 'user-profile-editHobbies-emptycinema',
+    title: 'user-profile-editHobbies-cinema',
+  },
+  music: {
+    empty: 'user-profile-editHobbies-emptymusic',
+    title: 'user-profile-editHobbies-music',
+  },
+  places: {
+    empty: 'user-profile-editHobbies-emptyplaces',
+    title: 'user-profile-editHobbies-places',
+  },
+  sport: {
+    empty: 'user-profile-editHobbies-emptysport',
+    title: 'user-profile-editHobbies-sport',
+  },
+};
+
 const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
-  const { route, navigation } = props;
-  const { userId, description, descriptionVisibility, mood, motto } = route.params;
+  const { navigation, route } = props;
+  const { description, descriptionVisibility, mood, motto, userId } = route.params;
 
   const [initialHobbies, setInitialHobbies] = React.useState<ObjectHobbies>();
   const [hobbies, setHobbies] = React.useState<ObjectHobbies>();
@@ -42,12 +70,12 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
 
   const ListComponent = React.useMemo(() => {
     return Platform.select<React.ComponentType<any>>({
-      ios: FlatList,
       android: KeyboardAvoidingFlatList,
+      ios: FlatList,
     })!;
   }, []);
   const PageComponent = React.useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
   }, []);
 
   const flatListRef: { current: any } = React.useRef<typeof FlatList>(null);
@@ -105,9 +133,9 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
       const body = JSON.stringify({ hobbies: arrayHobbies });
       await userService.person.put(userId, body);
       navigation.navigate(userRouteNames.profile, {
-        newHobbies: arrayHobbies,
-        newDescriptionVisibility: descriptionVisibility,
         newDescription: description,
+        newDescriptionVisibility: descriptionVisibility,
+        newHobbies: arrayHobbies,
         newMood: mood,
         newMotto: motto,
       });
@@ -123,10 +151,10 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
     return (
       <InputContainer
         style={styles.inputContainer}
-        label={{ text: I18n.get(`user-profile-editHobbies-${item.category}`) }}
+        label={{ text: I18n.get(i18nHobbies[item.category].title) }}
         input={
           <TextInput
-            placeholder={I18n.get(`user-profile-editHobbies-empty${item.category}`)}
+            placeholder={I18n.get(i18nHobbies[item.category].empty)}
             value={hobbies![item.category].values}
             toggleIconOn={hobbies![item.category].visibility === HobbieVisibility.PRIVE ? 'ui-lock' : 'ui-internet'}
             toggleIconOff={hobbies![item.category].visibility === HobbieVisibility.PRIVE ? 'ui-lock' : 'ui-internet'}
@@ -150,7 +178,7 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
         keyboardShouldPersistTaps="handled"
         data={route.params.hobbies}
         removeClippedSubviews={false}
-        renderItem={({ item, index }) => renderInput(item, index)}
+        renderItem={({ index, item }) => renderInput(item, index)}
         showsVerticalScrollIndicator={false}
         initialNumToRender={route.params.hobbies.length}
         keyExtractor={item => item.category}
@@ -160,14 +188,13 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
   };
 
   usePreventBack({
-    title: I18n.get('user-profile-preventremove-title'),
-    text: I18n.get('user-profile-preventremove-text'),
     showAlert: initialHobbies !== hobbies && !isSending,
+    text: I18n.get('user-profile-preventremove-text'),
+    title: I18n.get('user-profile-preventremove-title'),
   });
 
   React.useEffect(() => {
     navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => <NavBarAction icon="ui-check" onPress={onSaveHobbies} />,
     });
   });
@@ -179,8 +206,8 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
           if (indexHobbie !== undefined && indexHobbie > -1) {
             flatListRef.current?.scrollToIndex({
               index: indexHobbie,
-              viewPosition: 1,
               viewOffset: -UI_SIZES.spacing.medium,
+              viewPosition: 1,
             });
           }
         }, 50);

@@ -7,6 +7,12 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 
 const styles = StyleSheet.create({
+  authorText: {
+    color: theme.palette.grey.stone,
+  },
+  matiereText: {
+    textTransform: 'uppercase',
+  },
   sessionLeftColoredItem: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -15,15 +21,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-evenly',
   },
-  matiereText: {
-    textTransform: 'uppercase',
-  },
-  authorText: {
-    color: theme.palette.grey.stone,
-  },
 });
 
-export const SessionItem = ({ matiere, author }: any) => (
+export const SessionItem = ({ author, matiere }: any) => (
   <LeftColoredItem style={styles.sessionLeftColoredItem} color={viescoTheme.palette.diary}>
     <View style={styles.sessionView}>
       <SmallBoldText style={styles.matiereText}>{matiere}</SmallBoldText>

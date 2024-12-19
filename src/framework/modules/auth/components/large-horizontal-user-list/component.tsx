@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { FlatList as RNFlatList, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { SingleAvatar, buildRelativeUserAvatarUrl } from '~/framework/components/avatar';
+import styles from './styles';
+import { AccountSelectListProps } from './types';
+
+import { buildRelativeUserAvatarUrl, SingleAvatar } from '~/framework/components/avatar';
 import { SingleAvatarProps } from '~/framework/components/avatar/types';
 import { UI_SIZES } from '~/framework/components/constants';
 import { DISPLAY_NAME_NUMBER_OF_LINES, UserList, UserListItemDetails } from '~/framework/components/list/user-horizontal/component';
@@ -9,9 +12,6 @@ import { UserListItemProps } from '~/framework/components/list/user-horizontal/t
 import { SmallText } from '~/framework/components/text';
 import { AccountTypeText } from '~/framework/components/text/account-type';
 import { AuthLoggedAccount, DisplayUserPublicWithType } from '~/framework/modules/auth/model';
-
-import styles from './styles';
-import { AccountSelectListProps } from './types';
 
 export const LargeHorizontalUserListItemDetails = <ItemT extends DisplayUserPublicWithType = DisplayUserPublicWithType>({
   item,
@@ -33,7 +33,7 @@ const UserExternalListItem = <
   props: UserListItemProps<ItemT>,
 ) => {
   const { renderUserDetails, style, ...info } = props;
-  const { platform, id } = info.item;
+  const { id, platform } = info.item;
   const avatarProps: SingleAvatarProps = React.useMemo(
     () => (platform ? { size: 'xxl', source: { uri: `${platform.url}${buildRelativeUserAvatarUrl(id)}` } } : { size: 'xxl' }),
     [platform, id],

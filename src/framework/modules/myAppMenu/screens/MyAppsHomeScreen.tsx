@@ -1,12 +1,13 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { I18n } from '~/app/i18n';
-import GridList from '~/framework/components/GridList';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
+import GridList from '~/framework/components/GridList';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
@@ -24,9 +25,9 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
 
 const styles = StyleSheet.create({
   container: { flexGrow: 1 },
+  flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
   image: { height: 64, width: '100%' },
   otherModules: { paddingBottom: UI_SIZES.spacing.major },
-  flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
   otherModulesTitle: {
     marginBottom: UI_SIZES.spacing.small,
     marginTop: UI_SIZES.spacing.small,
@@ -54,13 +55,13 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
                   ? { ...item.config.displayPicture }
                   : /* item.config.displayPicture.type === 'Icon' */ { ...item.config.displayPicture, size: 64 }
               : {
+                  color: item.config.iconColor,
+
+                  name: item.config.iconName,
+
+                  size: 64,
                   // Fallback on legacy moduleConfig properties
                   type: 'Icon',
-                  // eslint-disable-next-line @typescript-eslint/dot-notation
-                  color: item.config['iconColor'],
-                  // eslint-disable-next-line @typescript-eslint/dot-notation
-                  name: item.config['iconName'],
-                  size: 64,
                 }
           }
           pictureStyle={item.config.displayPicture?.type === 'Image' ? styles.image : {}}

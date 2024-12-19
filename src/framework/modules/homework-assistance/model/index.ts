@@ -42,7 +42,7 @@ export interface IService {
 }
 
 export const getIsDateValid = (config: IConfig, date: Moment, time: Moment): boolean => {
-  const { openingDays, exclusions, openingTime } = config.settings;
+  const { exclusions, openingDays, openingTime } = config.settings;
   const allowedWeekDays = Object.keys(openingDays).filter(day => openingDays[day]);
   const weekday = getDayOfTheWeek(date.clone());
 

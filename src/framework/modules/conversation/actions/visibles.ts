@@ -3,7 +3,7 @@ import type { Dispatch } from 'redux';
 import { IGlobalState } from '~/app/store';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { visiblesService } from '~/framework/modules/conversation/service/visibles';
-import { IVisibles, actionTypes } from '~/framework/modules/conversation/state/visibles';
+import { actionTypes, IVisibles } from '~/framework/modules/conversation/state/visibles';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 export const dataActions = createAsyncActionCreators<IVisibles>(actionTypes);

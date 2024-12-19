@@ -1,6 +1,7 @@
-import CookieManager from '@react-native-cookies/cookies';
 import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
+
+import CookieManager from '@react-native-cookies/cookies';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
@@ -10,6 +11,9 @@ import {
   WebViewNavigation,
   WebViewNavigationEvent,
 } from 'react-native-webview/lib/WebViewTypes';
+
+import styles from './styles';
+import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -24,12 +28,10 @@ import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
+import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
-
-import styles from './styles';
-import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Used to post HTML content and retrieve it via onMessage
@@ -42,7 +44,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Used to set X-APP cookie used backend side
   // Injected in WebView with injectedJavaScriptBeforeContentLoaded property
   static get INJECTED_JS_BEFORE() {
-    return 'document.cookie="X-APP=mobile"; true;';
+    return `document.cookie="X-APP=mobile;}"; true;`;
   }
 
   // User selection dropdown items
@@ -195,7 +197,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           scalesPageToFit
           setSupportMultipleWindows={false}
           showsHorizontalScrollIndicator={false}
-          source={{ uri: this.wayfUrl!, headers: { 'X-APP': 'mobile' } }}
+          source={{ headers: { 'X-APP': 'mobile' }, uri: this.wayfUrl! }}
           startInLoadingState
           style={styles.webview}
           webviewDebuggingEnabled={__DEV__}
@@ -210,7 +212,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.authUrl = pfConf?.auth;
     this.pfUrl = pfConf?.url;
     this.wayfUrl = pfConf?.wayf;
-    this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW, errkey: Error.generateErrorKey() };
+    this.state = { dropdownOpened: false, errkey: Error.generateErrorKey(), mode: WAYFPageMode.WEBVIEW };
     this.backActions.forEach(action => {
       action.bind(this);
     });
@@ -226,7 +228,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       errorType?.length &&
       errorType?.length > 0 &&
       errorType !== this.error &&
-      errorType !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
+      errorType !== OAuth2ErrorCode.SAML_MULTIPLE_VECTOR
     ) {
       this.displayError(errorType);
     }
@@ -302,7 +304,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         await this.props.tryLogin(this.props.route.params.platform, { saml }, this.state.errkey);
       } catch (error) {
         const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
-        if (error instanceof Error.SamlMultipleVectorError && errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR) {
+        if (error instanceof Error.SamlMultipleVectorError && errtype === OAuth2ErrorCode.SAML_MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
             (error.data.users as OAuthCustomTokens).forEach(token => {

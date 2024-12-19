@@ -17,6 +17,6 @@ export interface IAvatarsState {
   status?: Status;
 }
 
-export const SingleAvatar = ({ userId, size, status }) => (
+export const SingleAvatar = ({ size, status, userId }) => (
   <Avatar status={status} size={Size.large} sourceOrId={userId} width={size} />
 );

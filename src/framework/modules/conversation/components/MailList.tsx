@@ -1,7 +1,8 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { I18n } from '~/app/i18n';
@@ -11,7 +12,7 @@ import { Drawer } from '~/framework/components/drawer';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView, pageGutterSize } from '~/framework/components/page';
+import { pageGutterSize, PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import SwipeableList from '~/framework/components/swipeableList';
 import { CaptionBoldText, CaptionText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
@@ -28,9 +29,9 @@ import { IMailList } from '~/framework/modules/conversation/state/mailList';
 import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos';
 import { displayPastDate } from '~/framework/util/date';
 import { isEmpty } from '~/framework/util/object';
+import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Loading } from '~/ui/Loading';
-import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 interface ConversationMailListComponentDataProps {
   notifications: any;
@@ -84,31 +85,50 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.primary.pale,
     paddingVertical: UI_SIZES.spacing.medium,
   },
-  mailInfos: {
-    paddingLeft: UI_SIZES.spacing.small,
-    flex: 1,
-  },
   mailDate: {
-    textAlign: 'right',
     alignItems: 'center',
-    justifyContent: 'flex-end',
     color: theme.ui.text.light,
+    justifyContent: 'flex-end',
+    textAlign: 'right',
   },
   mailIndicator: {
-    flexDirection: 'row',
-    textAlign: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'flex-end',
+    paddingLeft: UI_SIZES.spacing.small,
     paddingTop: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+  },
+  mailInfos: {
+    flex: 1,
     paddingLeft: UI_SIZES.spacing.small,
   },
   pageViewSubContainer: { flex: 1 },
-  subjectAndContent: { marginTop: UI_SIZES.spacing.tiny, flex: 1 },
+  subjectAndContent: { flex: 1, marginTop: UI_SIZES.spacing.tiny },
   subjectAndContentContainer: { flex: 1 },
   subjectContentAndAttachmentIndicatorContainer: { flex: 1, flexDirection: 'row' },
   swipeableListContentContainerStyle: { flexGrow: 1 },
   swipeableListStyle: { marginTop: 45, zIndex: 0 },
 });
+
+const emptyFolderTexts = {
+  drafts: {
+    text: 'conversation-maillist-emptyscreen-draftstext',
+    title: 'conversation-maillist-emptyscreen-draftstitle',
+  },
+  mailbox: {
+    text: 'conversation-maillist-emptyscreen-mailboxtext',
+    title: 'conversation-maillist-emptyscreen-mailboxtitle',
+  },
+  sent: {
+    text: 'conversation-maillist-emptyscreen-senttext',
+    title: 'conversation-maillist-emptyscreen-senttitle',
+  },
+  trash: {
+    text: 'conversation-maillist-emptyscreen-trashtext',
+    title: 'conversation-maillist-emptyscreen-trashtitle',
+  },
+};
 
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
   flatListRef = React.createRef<SwipeListView<any>>();
@@ -119,13 +139,13 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     const { notifications } = this.props;
     this.state = {
       indexPage: 0,
+      isChangingPage: false,
+      isRefreshing: false,
       mails: notifications,
       nextPageCallable: false,
-      showModal: false,
       selectedMail: undefined,
-      isRefreshing: false,
-      isChangingPage: false,
       showFolderCreationModal: false,
+      showModal: false,
     };
   }
 
@@ -146,8 +166,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
   };
 
   componentDidUpdate(prevProps) {
-    const { notifications, isFetching, fetchCompleted, fetchRequested, navigation } = this.props;
-    const { isChangingPage, indexPage } = this.state;
+    const { fetchCompleted, fetchRequested, isFetching, navigation, notifications } = this.props;
+    const { indexPage, isChangingPage } = this.state;
 
     if (indexPage === 0 && !isFetching && prevProps.isFetching && fetchRequested) {
       this.setState({ mails: notifications });
@@ -185,27 +205,27 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     const isFolderDrafts = navigationKey === 'drafts';
     const isFolderOutbox = navigationKey === 'sendMessages';
     const folder = isFolderDrafts ? 'drafts' : isFolderOutbox ? 'sent' : isTrashed ? 'trash' : 'mailbox';
-    const text = I18n.get(`conversation-maillist-emptyscreen-${folder}text`);
-    const title = I18n.get(`conversation-maillist-emptyscreen-${folder}title`);
+    const text = I18n.get(emptyFolderTexts[folder].text);
+    const title = I18n.get(emptyFolderTexts[folder].title);
     return <EmptyScreen svgImage={isTrashed ? 'empty-trash' : 'empty-conversation'} text={text} title={title} />;
   }
 
   renderMailContent = mailInfos => {
-    const { navigationKey, navigation, isTrashed } = this.props;
+    const { isTrashed, navigation, navigationKey } = this.props;
     const isFolderDrafts = navigationKey === 'drafts';
     const isStateDraft = mailInfos.state === 'DRAFT';
 
     if (isStateDraft && isFolderDrafts) {
       navigation.navigate(conversationRouteNames.newMail, {
-        type: DraftType.DRAFT,
         mailId: mailInfos.id,
+        type: DraftType.DRAFT,
       });
     } else {
       navigation.navigate(conversationRouteNames.mailContent, {
-        mailId: mailInfos.id,
-        subject: mailInfos.subject,
         currentFolder: navigationKey || 'inbox',
         isTrashed,
+        mailId: mailInfos.id,
+        subject: mailInfos.subject,
       });
     }
   };
@@ -222,7 +242,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
   };
 
   toggleRead = async (unread: boolean, mailId: string) => {
-    const { toggleRead, fetchInit } = this.props;
+    const { fetchInit, toggleRead } = this.props;
     try {
       await toggleRead([mailId], unread);
       this.refreshMailList();
@@ -233,7 +253,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
   };
 
   delete = async (mailId: string) => {
-    const { isTrashed, deleteMails, deleteDrafts, trashMails, fetchInit, navigationKey } = this.props;
+    const { deleteDrafts, deleteMails, fetchInit, isTrashed, navigationKey, trashMails } = this.props;
     const isFolderDrafts = navigationKey === 'drafts';
     const isTrashedOrDraft = isTrashed || isFolderDrafts;
     try {
@@ -244,14 +264,16 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       } else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
-      Toast.showSuccess(I18n.get(`conversation-maillist-message${isTrashedOrDraft ? 'deleted' : 'trashed'}`));
+      Toast.showSuccess(
+        I18n.get(isTrashedOrDraft ? 'conversation-maillist-messagedeleted' : 'conversation-maillist-messagetrashed'),
+      );
     } catch {
       // TODO: Manage error
     }
   };
 
   onChangePage = () => {
-    const { isFetching, notifications, fetchMails } = this.props;
+    const { fetchMails, isFetching, notifications } = this.props;
     if (!isFetching && notifications !== undefined) {
       const { indexPage } = this.state;
       const currentPage = indexPage + 1;
@@ -278,18 +300,18 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
 
   public render() {
     const {
-      isFetching,
-      navigationKey,
-      navigation,
       folders,
-      mailboxesCount,
+      isFetching,
       isTrashed,
+      mailboxesCount,
       moveToFolder,
       moveToInbox,
+      navigation,
+      navigationKey,
       restoreToFolder,
       restoreToInbox,
     } = this.props;
-    const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage, showFolderCreationModal, mails } = this.state;
+    const { isChangingPage, isRefreshing, mails, nextPageCallable, selectedMail, showFolderCreationModal, showModal } = this.state;
     const uniqueId = [] as string[];
     const uniqueMails: (IMail & { key: string })[] = [];
     if (mails)
@@ -304,66 +326,66 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       }
     const drawerMailboxes = [
       {
-        name: I18n.get('conversation-maillist-inbox').toUpperCase(),
-        value: 'inbox',
-        iconName: 'messagerie-on',
         count: mailboxesCount.INBOX,
+        iconName: 'messagerie-on',
         labelStyle: {
           ...TextFontStyle.Regular,
           ...TextSizeStyle.Normal,
         },
+        name: I18n.get('conversation-maillist-inbox').toUpperCase(),
+        value: 'inbox',
       },
       {
-        name: I18n.get('conversation-maillist-sendmessages').toUpperCase(),
-        value: 'sendMessages',
         iconName: 'send',
         labelStyle: {
           ...TextFontStyle.Regular,
           ...TextSizeStyle.Normal,
         },
+        name: I18n.get('conversation-maillist-sendmessages').toUpperCase(),
+        value: 'sendMessages',
       },
       {
-        name: I18n.get('conversation-maillist-drafts').toUpperCase(),
-        value: 'drafts',
-        iconName: 'pencil',
         count: mailboxesCount.DRAFT,
+        iconName: 'pencil',
         labelStyle: {
           ...TextFontStyle.Regular,
           ...TextSizeStyle.Normal,
         },
+        name: I18n.get('conversation-maillist-drafts').toUpperCase(),
+        value: 'drafts',
       },
       {
-        name: I18n.get('conversation-maillist-trash').toUpperCase(),
-        value: 'trash',
         iconName: 'delete',
         labelStyle: {
           ...TextFontStyle.Regular,
           ...TextSizeStyle.Normal,
         },
+        name: I18n.get('conversation-maillist-trash').toUpperCase(),
+        value: 'trash',
       },
     ];
     const createFolderItem = {
-      name: I18n.get('conversation-maillist-createdirectory'),
-      value: 'createDirectory',
+      closeAfterSelecting: false,
       iconName: 'create_new_folder',
       labelStyle: {
         ...TextFontStyle.Regular,
         ...TextSizeStyle.Small,
       },
-      closeAfterSelecting: false,
+      name: I18n.get('conversation-maillist-createdirectory'),
+      value: 'createDirectory',
     };
     const drawerFolders =
       folders &&
       folders.map(folder => ({
-        name: folder.folderName,
-        value: `folder-${folder.id}`,
-        iconName: 'folder',
         count: folder.unread,
         depth: folder.depth - 1,
+        iconName: 'folder',
         labelStyle: {
           ...TextFontStyle.Regular,
           ...TextSizeStyle.Normal,
         },
+        name: folder.folderName,
+        value: `folder-${folder.id}`,
       }));
     if (drawerFolders) drawerFolders.push(createFolderItem);
     const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;
@@ -479,13 +501,13 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                   onEndReachedThreshold={0.5}
                   onEndReached={() => {
                     if (nextPageCallable && !isRefreshing) {
-                      this.setState({ nextPageCallable: false, isChangingPage: true });
+                      this.setState({ isChangingPage: true, nextPageCallable: false });
                       this.onChangePage();
                     }
                   }}
                   ListFooterComponent={
                     isChangingPage ? (
-                      <LoadingIndicator customStyle={{ marginTop: UI_SIZES.spacing.big, marginBottom: pageGutterSize }} />
+                      <LoadingIndicator customStyle={{ marginBottom: pageGutterSize, marginTop: UI_SIZES.spacing.big }} />
                     ) : null
                   }
                   ListEmptyComponent={this.renderEmpty()}
@@ -497,12 +519,12 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                       ? [
                           {
                             action: async row => {
-                              this.setState({ showModal: true, selectedMail: item });
+                              this.setState({ selectedMail: item, showModal: true });
                               row[item.key]?.closeRow();
                             },
-                            backgroundColor: theme.palette.status.success.regular,
-                            actionText: I18n.get('conversation-maillist-restore'),
                             actionIcon: 'ui-unarchive',
+                            actionText: I18n.get('conversation-maillist-restore'),
+                            backgroundColor: theme.palette.status.success.regular,
                           },
                         ]
                       : !isFolderDrafts && !isFolderOutbox
@@ -512,9 +534,11 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                                 this.toggleRead(item.unread, item.id);
                                 row[item.key]?.closeRow();
                               },
-                              backgroundColor: theme.palette.secondary.regular,
-                              actionText: I18n.get(`conversation-maillist-mark${item.unread ? 'read' : 'unread'}`),
                               actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
+                              actionText: I18n.get(
+                                item.unread ? 'conversation-maillist-markread' : 'conversation-maillist-markunread',
+                              ),
+                              backgroundColor: theme.palette.secondary.regular,
                             },
                           ]
                         : [],
@@ -524,9 +548,9 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                           this.delete(item.id);
                           row[item.key]?.closeRow();
                         },
-                        backgroundColor: theme.palette.status.failure.regular,
-                        actionText: I18n.get('conversation-maillist-delete'),
                         actionIcon: 'ui-trash',
+                        actionText: I18n.get('conversation-maillist-delete'),
+                        backgroundColor: theme.palette.status.failure.regular,
                       },
                     ],
                   })}
@@ -547,9 +571,9 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                   this.setState({ showFolderCreationModal: true });
                 } else {
                   navigation.setParams({
-                    key: selectedItem,
-                    folderName: isFolder ? selectedItem : undefined,
                     folderId: isFolder ? folderId : undefined,
+                    folderName: isFolder ? selectedItem : undefined,
+                    key: selectedItem,
                   });
                 }
               }}

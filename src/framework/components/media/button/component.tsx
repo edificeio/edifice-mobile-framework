@@ -4,9 +4,12 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { IPlayerProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleHeight, getScaleImageSize } from '~/framework/components/constants';
+import { getScaleHeight, getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { NamedSVG } from '~/framework/components/picture';
@@ -14,14 +17,18 @@ import { SmallItalicText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
-import styles from './styles';
-import { IPlayerProps } from './types';
-
 const iconSizeAudio = getScaleImageSize(20);
 const iconSizeVideo = getScaleImageSize(24);
 
+const notAvailableMediaText = {
+  audio: 'mediabutton-audio-notavailable',
+  image: 'mediabutton-image-notavailable',
+  media: 'mediabutton-media-notavailable',
+  video: 'mediabutton-video-notavailable',
+};
+
 const MediaButton = (props: IPlayerProps) => {
-  const { type, source, ratio, posterSource, style } = props;
+  const { posterSource, ratio, source, style, type } = props;
 
   const widthWaves = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.medium - getScaleHeight(36) - 3 * UI_SIZES.spacing.small;
   const heightWaves = Math.round(widthWaves * (36 / 237));
@@ -35,15 +42,15 @@ const MediaButton = (props: IPlayerProps) => {
 
   const showMediaPlayer = () => {
     openMediaPlayer({
-      type: props.type as MediaType,
-      source: urlSigner.signURISource(props.source),
       referer: props.referer,
+      source: urlSigner.signURISource(props.source),
+      type: props.type as MediaType,
     });
   };
 
   const getPreviewVideo = () => {
     return !source || !type ? (
-      <SmallItalicText>{I18n.get(`mediabutton-${type || 'media'}-notavailable`)}</SmallItalicText>
+      <SmallItalicText>{I18n.get(notAvailableMediaText[type || 'media'])}</SmallItalicText>
     ) : (
       <TouchableOpacity onPress={() => showMediaPlayer()} style={[styles.previewVideo, style]}>
         {posterSource ? <Image source={posterSource || {}} style={[playerStyle, styles.player]} resizeMode="contain" /> : null}

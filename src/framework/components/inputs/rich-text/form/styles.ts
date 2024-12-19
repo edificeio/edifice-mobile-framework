@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
   addButton: {
@@ -13,40 +13,40 @@ const styles = StyleSheet.create({
   },
   addFilesResultsFile: { flex: 1 },
   addFilesResultsItem: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     paddingVertical: UI_SIZES.spacing.minor,
   },
   addFilesResultsTitle: {
-    textAlign: 'center',
     marginBottom: UI_SIZES.spacing.minor,
+    textAlign: 'center',
   },
   addFilesResultsType: {
-    width: getScaleWidth(36),
-    aspectRatio: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    aspectRatio: 1,
     borderRadius: UI_SIZES.radius.card,
+    justifyContent: 'center',
     marginRight: UI_SIZES.spacing.minor,
-  },
-  choosePicsMenuTitle: {
-    marginBottom: UI_SIZES.spacing.big,
-    alignSelf: 'flex-start',
+    width: getScaleWidth(36),
   },
   choosePicsMenuElement: {
-    flexDirection: 'row',
     columnGap: UI_SIZES.spacing.small,
+    flexDirection: 'row',
     paddingVertical: UI_SIZES.spacing.minor,
   },
   choosePicsMenuSeparator: {
-    borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
-    marginVertical: UI_SIZES.spacing.small,
+    borderBottomWidth: 1,
     marginHorizontal: UI_SIZES.spacing.minor,
+    marginVertical: UI_SIZES.spacing.small,
+  },
+  choosePicsMenuTitle: {
+    alignSelf: 'flex-start',
+    marginBottom: UI_SIZES.spacing.big,
   },
   container: {
-    marginBottom: UI_SIZES.screen.bottomInset,
     flex: 1,
+    marginBottom: UI_SIZES.screen.bottomInset,
   },
   page: {
     backgroundColor: theme.palette.grey.white,

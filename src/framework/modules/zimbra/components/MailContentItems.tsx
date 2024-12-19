@@ -14,38 +14,23 @@ import fileTransferService from '~/framework/util/fileHandler/service';
 import { ButtonIcon } from '~/ui/ButtonIconText';
 
 const styles = StyleSheet.create({
-  gridViewStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  attachmentDownloadButton: {
+    flex: 0,
+    paddingHorizontal: UI_SIZES.spacing.small,
   },
-  gridButtonTextPJnames: {
-    flex: 2,
-    color: theme.palette.primary.regular,
-    marginLeft: UI_SIZES.spacing.tiny,
+  attachmentDownloadContainer: {
+    justifyContent: 'flex-end',
   },
-  shadow: {
-    elevation: 5,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.8,
-    marginBottom: UI_SIZES.spacing.minor,
-  },
-  attachmentsContainer: {
-    marginTop: UI_SIZES.spacing.small,
+  attachmentEmpty: {
+    height: 30,
+    width: 25,
   },
   attachmentGridView: {
     justifyContent: 'space-between',
   },
   attachmentGridViewChild: {
-    justifyContent: 'flex-start',
     flex: 1,
-  },
-  attachmentDownloadContainer: {
-    justifyContent: 'flex-end',
-  },
-  attachmentDownloadButton: {
-    paddingHorizontal: UI_SIZES.spacing.small,
-    flex: 0,
+    justifyContent: 'flex-start',
   },
   attachmentListButton: {
     padding: UI_SIZES.spacing.tiny,
@@ -53,19 +38,34 @@ const styles = StyleSheet.create({
   attachmentListText: {
     color: theme.palette.primary.regular,
   },
-  attachmentEmpty: {
-    width: 25,
-    height: 30,
-  },
-  footerButtonContainer: {
-    alignItems: 'center',
+  attachmentsContainer: {
+    marginTop: UI_SIZES.spacing.small,
   },
   footerButton: {
     backgroundColor: theme.palette.grey.white,
   },
+  footerButtonContainer: {
+    alignItems: 'center',
+  },
+  gridButtonTextPJnames: {
+    color: theme.palette.primary.regular,
+    flex: 2,
+    marginLeft: UI_SIZES.spacing.tiny,
+  },
+  gridViewStyle: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  shadow: {
+    elevation: 5,
+    marginBottom: UI_SIZES.spacing.minor,
+    shadowOffset: { height: 2, width: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.8,
+  },
 });
 
-export const FooterButton = ({ icon, text, onPress }) => {
+export const FooterButton = ({ icon, onPress, text }) => {
   return (
     <View style={styles.footerButtonContainer}>
       <ButtonIcon name={icon} onPress={onPress} style={[styles.footerButton, styles.shadow]} color={theme.palette.grey.black} />

@@ -1,5 +1,6 @@
-import { Moment } from 'moment';
 import React from 'react';
+
+import { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -21,16 +22,13 @@ const mapStateToProps: (state: any) => HomeworkCreateScreenDataProps = state => 
   const selectedDiaryId = localState.selectedDiary;
 
   return {
-    diaryId: selectedDiaryId,
     connectionTrackerState: getConnectionTrackerState(state),
+    diaryId: selectedDiaryId,
   };
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkCreateScreenEventProps = dispatch => ({
-  handleUploadEntryImages: async (images: ImagePicked[]) => {
-    const localFiles = images.map(img => imagePickedToLocalFile(img));
-    return dispatch(uploadHomeworkDiaryEntryImages(localFiles)) as unknown as Promise<SyncedFile[]>;
-  },
+  dispatch,
   handleCreateDiaryEntry: async (
     diaryId: string,
     date: Moment,
@@ -45,7 +43,10 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkCr
   handleGetHomeworkTasks: diaryId => {
     return dispatch(fetchHomeworkTasks(diaryId));
   },
-  dispatch,
+  handleUploadEntryImages: async (images: ImagePicked[]) => {
+    const localFiles = images.map(img => imagePickedToLocalFile(img));
+    return dispatch(uploadHomeworkDiaryEntryImages(localFiles)) as unknown as Promise<SyncedFile[]>;
+  },
 });
 
 export interface HomeworkCreateScreenNavigationParams {

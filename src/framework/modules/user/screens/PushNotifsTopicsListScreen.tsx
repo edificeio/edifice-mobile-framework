@@ -1,10 +1,11 @@
 /**
  * Index page for push-notifs settings.
  */
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import deepmerge from 'deepmerge';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -24,10 +25,10 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import {
-  IPushNotifsSettingsByType,
-  TimelineState,
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
+  IPushNotifsSettingsByType,
+  TimelineState,
 } from '~/framework/modules/timeline/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
@@ -161,10 +162,15 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
           rightElement={
             <View style={styles.item}>
               <SmallActionText style={{ ...TextSizeStyle.Small }}>
-                {I18n.get(`user-pushnotifssettings-countoutoftotal-${isTotalOnSingle ? 'single' : 'other'}`, {
-                  count: totalOn,
-                  total,
-                })}
+                {I18n.get(
+                  isTotalOnSingle
+                    ? 'user-pushnotifssettings-countoutoftotal-single'
+                    : 'user-pushnotifssettings-countoutoftotal-other',
+                  {
+                    count: totalOn,
+                    total,
+                  },
+                )}
               </SmallActionText>
               <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.iconItem} />
             </View>
@@ -196,8 +202,8 @@ const mapStateToProps: (s: IGlobalState) => IPushNotifsTopicsListScreenDataProps
   const timelineState = timelineModuleConfig.getState(s) as TimelineState;
   const session = getSession()!;
   return {
-    timelineState,
     session,
+    timelineState,
   };
 };
 

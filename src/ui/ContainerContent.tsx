@@ -6,8 +6,8 @@ import { pageGutterSize } from '~/framework/components/page';
 
 export const ArticleContainer = styled.View({
   paddingHorizontal: pageGutterSize,
-  paddingVertical: pageGutterSize,
   paddingTop: 0,
+  paddingVertical: pageGutterSize,
 });
 
 export const Header = styled.View({
@@ -21,8 +21,8 @@ export const Header = styled.View({
 
 export const LeftPanel = styled.View({
   justifyContent: 'center',
-  width: 50,
   minHeight: 50,
+  width: 50,
 });
 
 export const CenterPanel = styled.View({

@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 
+import styles from './styles';
+import { HistoryProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { SmallText } from '~/framework/components/text';
@@ -24,9 +27,6 @@ import {
   Incident,
   Punishment,
 } from '~/framework/modules/viescolaire/presences/model';
-
-import styles from './styles';
-import { HistoryProps } from './types';
 
 const History = (props: HistoryProps) => {
   const renderHistoryEventListItem = ({ item }: { item: Event }) => {

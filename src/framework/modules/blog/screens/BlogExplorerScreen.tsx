@@ -1,10 +1,11 @@
 /**
  * Blog explorer
  */
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import React, { useEffect } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -142,7 +143,9 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
       <EmptyScreen
         svgImage="empty-search"
         title={I18n.get('blog-explorer-emptyscreen-title')}
-        text={I18n.get(`blog-explorer-emptyscreen-text${hasBlogCreationRights ? '' : '-nocreationrights'}`)}
+        text={I18n.get(
+          hasBlogCreationRights ? 'blog-explorer-emptyscreen-text' : 'blog-explorer-emptyscreen-text-nocreationrights',
+        )}
         buttonText={hasBlogCreationRights ? I18n.get('blog-explorer-emptyscreen-button') : undefined}
         buttonUrl="/blog#/edit/new"
       />
@@ -159,8 +162,8 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
   };
 
   const renderExplorer = ({
-    resources,
     folders,
+    resources,
   }: {
     resources: Blog[];
     folders: (BlogFolderWithChildren & BlogFolderWithResources & { depth: number })[];
@@ -221,7 +224,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
       case AsyncLoadingState.DONE:
       case AsyncLoadingState.REFRESH:
       case AsyncLoadingState.REFRESH_FAILED:
-        return <>{renderExplorer(props.tree || { resources: [], folders: [] })}</>;
+        return <>{renderExplorer(props.tree || { folders: [], resources: [] })}</>;
 
       case AsyncLoadingState.PRISTINE:
       case AsyncLoadingState.INIT:
@@ -240,10 +243,10 @@ export default connect(
   (gs: IGlobalState) => {
     const bs = moduleConfig.getState(gs);
     return {
+      error: bs.blogs.error ?? bs.folders.error,
+      initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine ? AsyncLoadingState.PRISTINE : AsyncLoadingState.DONE,
       session: getSession(),
       tree: bs.tree,
-      initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine ? AsyncLoadingState.PRISTINE : AsyncLoadingState.DONE,
-      error: bs.blogs.error ?? bs.folders.error,
     };
   },
   dispatch =>

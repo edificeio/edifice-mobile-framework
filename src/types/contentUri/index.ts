@@ -10,10 +10,10 @@ export type ContentUri = {
 export const contentUriToLocalFile = (ct: ContentUri) =>
   new LocalFile(
     {
-      name: ct.name,
       filename: ct.name,
       filepath: ct.uri,
       filetype: ct.mime,
+      name: ct.name,
     },
     { _needIOSReleaseSecureAccess: false },
   );

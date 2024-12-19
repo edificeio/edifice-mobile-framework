@@ -1,8 +1,9 @@
 /**
  * Theme declaration and overloading system.
  */
-import deepmerge from 'deepmerge';
 import { ColorValue } from 'react-native';
+
+import deepmerge from 'deepmerge';
 
 import customTheme from '~/app/override/theme';
 
@@ -133,127 +134,6 @@ type ThemeInitializer = Pick<ITheme, 'palette' | 'legacy'> & {
 };
 
 export const defaultTheme: ThemeInitializer = {
-  //  888     888          888
-  //  888     888          888
-  //  888     888          888
-  //  Y88b   d88P  8888b.  888 888  888  .d88b.  .d8888b
-  //   Y88b d88P      "88b 888 888  888 d8P  Y8b 88K
-  //    Y88o88P   .d888888 888 888  888 88888888 "Y8888b.
-  //     Y888P    888  888 888 Y88b 888 Y8b.          X88
-  //      Y8P     "Y888888 888  "Y88888  "Y8888   88888P'
-
-  // Magenta color indicated non-defined values
-
-  palette: {
-    primary: {
-      evil: 'magenta',
-      dark: '#1B84AC',
-      regular: '#2A9CC8',
-      light: '#AADAED',
-      pale: '#E4F4FF',
-    },
-    secondary: {
-      evil: 'magenta',
-      dark: '#F17A17',
-      regular: '#FF8D2E',
-      light: '#FFC696',
-      pale: '#FFEFE3',
-    },
-    complementary: {
-      red: {
-        evil: 'magenta',
-        dark: '#C82222',
-        regular: '#E13A3A',
-        light: '#F48A8A',
-        pale: '#FFD9D9',
-      },
-      orange: {
-        evil: 'magenta',
-        dark: '#F17A17',
-        regular: '#FF8D2E',
-        light: '#FFC696',
-        pale: '#FFEFE3',
-      },
-      yellow: {
-        evil: 'magenta',
-        dark: '#DAA910',
-        regular: '#ECBE30',
-        light: '#F6DE94',
-        pale: '#FFF4D1',
-      },
-      green: {
-        evil: 'magenta',
-        dark: '#33A797',
-        regular: '#46BFAF',
-        light: '#A2E0D8',
-        pale: '#E7F5F4',
-      },
-      blue: {
-        evil: 'magenta',
-        dark: '#1B84AC',
-        regular: '#2A9CC8',
-        light: '#AADAED',
-        pale: '#E4F4FF',
-      },
-      indigo: {
-        evil: 'magenta',
-        dark: '#121982',
-        regular: '#1A22A2',
-        light: '#9297E5',
-        pale: '#DDE8FD',
-      },
-      purple: {
-        evil: 'magenta',
-        dark: '#5D1D79',
-        regular: '#763294',
-        light: '#B68ACA',
-        pale: '#F4EAF9',
-      },
-      pink: {
-        evil: 'magenta',
-        dark: '#9C2288',
-        regular: '#B930A2',
-        light: '#E39CD7',
-        pale: '#FFE5FB',
-      },
-    },
-    grey: {
-      darkness: '#000000',
-      black: '#4a4a4a',
-      graphite: '#909090',
-      stone: '#B0B0B0',
-      grey: '#C7C7C7',
-      cloudy: '#e4e4e4',
-      pearl: '#f2f2f2',
-      fog: '#fafafa',
-      white: '#ffffff',
-    },
-    status: {
-      info: { evil: 'magenta', dark: '#3499BF', regular: '#4bafd5', light: '#ACD6E6', pale: '#D7E8EE' },
-      success: { evil: 'magenta', dark: '#70A977', regular: '#7dbf85', light: '#BBE1BF', pale: '#DAF1DD' },
-      failure: { evil: 'magenta', dark: '#D12A2A', regular: '#e13a3a', light: '#F3A6A6', pale: '#FFE9E9' },
-      warning: { evil: 'magenta', dark: '#E58D00', regular: '#f59700', light: '#F2C987', pale: '#FDECD2' },
-    },
-    flashMessages: {
-      'grey-dark': '#5b6472',
-      red: '#c74848',
-      orange: '#ff9057',
-      green: '#3cb371',
-      blue: '#2a9cc8',
-    },
-  },
-
-  legacy: {
-    neutral: {
-      regular: '#868ca0',
-      subtleShadow: '#414355',
-      shadow: '#1f2029',
-      light: '#f8f8fa',
-      subtleLight: '#858Fa9',
-      extraLight: '#f8f8fa',
-    },
-  },
-
   //  888     888
   //  888     888
   //  888     888
@@ -265,12 +145,8 @@ export const defaultTheme: ThemeInitializer = {
   //                                     888
   //                                Y8b d88P
   //                                 "Y88P"
-
   init() {
     (this as Partial<ITheme>).ui = {
-      notificationBadge: this.palette.complementary.red.regular,
-      shadowColor: '#000',
-      shadowColorTransparent: '#000000af',
       background: {
         card: this.palette.grey.white,
         empty: this.palette.grey.fog,
@@ -280,47 +156,57 @@ export const defaultTheme: ThemeInitializer = {
         input: this.palette.grey.cloudy,
         listItem: this.palette.grey.cloudy,
       },
+      notificationBadge: this.palette.complementary.red.regular,
+      shadowColor: '#000',
+      shadowColorTransparent: '#000000af',
       text: {
-        regular: this.palette.grey.black,
-        light: this.palette.grey.graphite,
         inverse: this.palette.grey.white,
+        light: this.palette.grey.graphite,
+        regular: this.palette.grey.black,
       },
     };
 
     (this as Partial<ITheme>).color = {
       homework: {
         days: {
-          monday: {
-            accent: this.palette.complementary.green.regular,
-            light: this.palette.complementary.green.light,
-            background: this.palette.complementary.green.pale,
-          },
-          tuesday: {
-            accent: this.palette.complementary.purple.regular,
-            light: this.palette.complementary.purple.light,
-            background: this.palette.complementary.purple.pale,
-          },
-          wednesday: {
-            accent: this.palette.complementary.blue.regular,
-            light: this.palette.complementary.blue.light,
-            background: this.palette.complementary.blue.pale,
-          },
-          thursday: {
-            accent: this.palette.complementary.red.regular,
-            light: this.palette.complementary.red.light,
-            background: this.palette.complementary.red.pale,
-          },
           friday: {
             accent: this.palette.complementary.orange.regular,
-            light: this.palette.complementary.orange.light,
             background: this.palette.complementary.orange.pale,
+            light: this.palette.complementary.orange.light,
+          },
+          monday: {
+            accent: this.palette.complementary.green.regular,
+            background: this.palette.complementary.green.pale,
+            light: this.palette.complementary.green.light,
           },
           saturday: {
             accent: this.palette.complementary.yellow.regular,
-            light: this.palette.complementary.yellow.light,
             background: this.palette.complementary.yellow.pale,
+            light: this.palette.complementary.yellow.light,
+          },
+          thursday: {
+            accent: this.palette.complementary.red.regular,
+            background: this.palette.complementary.red.pale,
+            light: this.palette.complementary.red.light,
+          },
+          tuesday: {
+            accent: this.palette.complementary.purple.regular,
+            background: this.palette.complementary.purple.pale,
+            light: this.palette.complementary.purple.light,
+          },
+          wednesday: {
+            accent: this.palette.complementary.blue.regular,
+            background: this.palette.complementary.blue.pale,
+            light: this.palette.complementary.blue.light,
           },
         },
+      },
+      profileTypes: {
+        Guest: this.palette.complementary.pink.regular,
+        Personnel: this.palette.complementary.purple.regular,
+        Relative: this.palette.complementary.blue.regular,
+        Student: this.palette.complementary.orange.regular,
+        Teacher: this.palette.complementary.green.regular,
       },
       schoolbook: {
         acknowledge: this.palette.status.warning.regular,
@@ -334,16 +220,128 @@ export const defaultTheme: ThemeInitializer = {
           various: this.palette.complementary.indigo.regular,
         },
       },
-      profileTypes: {
-        Student: this.palette.complementary.orange.regular,
-        Relative: this.palette.complementary.blue.regular,
-        Personnel: this.palette.complementary.purple.regular,
-        Teacher: this.palette.complementary.green.regular,
-        Guest: this.palette.complementary.pink.regular,
-      },
     };
 
     return this as unknown as ITheme;
+  },
+
+  legacy: {
+    neutral: {
+      extraLight: '#f8f8fa',
+      light: '#f8f8fa',
+      regular: '#868ca0',
+      shadow: '#1f2029',
+      subtleLight: '#858Fa9',
+      subtleShadow: '#414355',
+    },
+  },
+
+  //  888     888          888
+  //  888     888          888
+  //  888     888          888
+  //  Y88b   d88P  8888b.  888 888  888  .d88b.  .d8888b
+  //   Y88b d88P      "88b 888 888  888 d8P  Y8b 88K
+  //    Y88o88P   .d888888 888 888  888 88888888 "Y8888b.
+  //     Y888P    888  888 888 Y88b 888 Y8b.          X88
+  //      Y8P     "Y888888 888  "Y88888  "Y8888   88888P'
+  // Magenta color indicated non-defined values
+  palette: {
+    complementary: {
+      blue: {
+        dark: '#1B84AC',
+        evil: 'magenta',
+        light: '#AADAED',
+        pale: '#E4F4FF',
+        regular: '#2A9CC8',
+      },
+      green: {
+        dark: '#33A797',
+        evil: 'magenta',
+        light: '#A2E0D8',
+        pale: '#E7F5F4',
+        regular: '#46BFAF',
+      },
+      indigo: {
+        dark: '#121982',
+        evil: 'magenta',
+        light: '#9297E5',
+        pale: '#DDE8FD',
+        regular: '#1A22A2',
+      },
+      orange: {
+        dark: '#F17A17',
+        evil: 'magenta',
+        light: '#FFC696',
+        pale: '#FFEFE3',
+        regular: '#FF8D2E',
+      },
+      pink: {
+        dark: '#9C2288',
+        evil: 'magenta',
+        light: '#E39CD7',
+        pale: '#FFE5FB',
+        regular: '#B930A2',
+      },
+      purple: {
+        dark: '#5D1D79',
+        evil: 'magenta',
+        light: '#B68ACA',
+        pale: '#F4EAF9',
+        regular: '#763294',
+      },
+      red: {
+        dark: '#C82222',
+        evil: 'magenta',
+        light: '#F48A8A',
+        pale: '#FFD9D9',
+        regular: '#E13A3A',
+      },
+      yellow: {
+        dark: '#DAA910',
+        evil: 'magenta',
+        light: '#F6DE94',
+        pale: '#FFF4D1',
+        regular: '#ECBE30',
+      },
+    },
+    flashMessages: {
+      blue: '#2a9cc8',
+      green: '#3cb371',
+      'grey-dark': '#5b6472',
+      orange: '#ff9057',
+      red: '#c74848',
+    },
+    grey: {
+      black: '#4a4a4a',
+      cloudy: '#e4e4e4',
+      darkness: '#000000',
+      fog: '#fafafa',
+      graphite: '#909090',
+      grey: '#C7C7C7',
+      pearl: '#f2f2f2',
+      stone: '#B0B0B0',
+      white: '#ffffff',
+    },
+    primary: {
+      dark: '#1B84AC',
+      evil: 'magenta',
+      light: '#AADAED',
+      pale: '#E4F4FF',
+      regular: '#2A9CC8',
+    },
+    secondary: {
+      dark: '#F17A17',
+      evil: 'magenta',
+      light: '#FFC696',
+      pale: '#FFEFE3',
+      regular: '#FF8D2E',
+    },
+    status: {
+      failure: { dark: '#D12A2A', evil: 'magenta', light: '#F3A6A6', pale: '#FFE9E9', regular: '#e13a3a' },
+      info: { dark: '#3499BF', evil: 'magenta', light: '#ACD6E6', pale: '#D7E8EE', regular: '#4bafd5' },
+      success: { dark: '#70A977', evil: 'magenta', light: '#BBE1BF', pale: '#DAF1DD', regular: '#7dbf85' },
+      warning: { dark: '#E58D00', evil: 'magenta', light: '#F2C987', pale: '#FDECD2', regular: '#f59700' },
+    },
   },
 };
 

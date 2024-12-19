@@ -1,14 +1,15 @@
-import moment, { Moment } from 'moment';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+
+import moment, { Moment } from 'moment';
+
+import { FormAnswerText } from './FormAnswerText';
 
 import { I18n } from '~/app/i18n';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { SmallActionText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/framework/modules/form/model';
-
-import { FormAnswerText } from './FormAnswerText';
 
 const styles = StyleSheet.create({
   timePicker: {
@@ -24,10 +25,10 @@ interface IFormTimeCardProps {
   onEditQuestion?: () => void;
 }
 
-export const FormTimeCard = ({ isDisabled, question, responses, onChangeAnswer, onEditQuestion }: IFormTimeCardProps) => {
+export const FormTimeCard = ({ isDisabled, onChangeAnswer, onEditQuestion, question, responses }: IFormTimeCardProps) => {
   const backendFormat = 'HH:mm';
   const [time, setTime] = React.useState(responses[0]?.answer ? moment(responses[0].answer, backendFormat) : moment());
-  const { title, mandatory } = question;
+  const { mandatory, title } = question;
 
   const onChangeTime = (value: Moment) => {
     setTime(value);
@@ -35,8 +36,8 @@ export const FormTimeCard = ({ isDisabled, question, responses, onChangeAnswer, 
       responses[0].answer = value.format(backendFormat);
     } else {
       responses.push({
-        questionId: question.id,
         answer: value.format(backendFormat),
+        questionId: question.id,
       });
     }
     onChangeAnswer(question.id, responses);

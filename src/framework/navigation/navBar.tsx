@@ -1,11 +1,14 @@
 /**
  * constants used for the navBar setup accross navigators
  */
+import * as React from 'react';
+import { Platform, StyleSheet, TextStyle } from 'react-native';
+
 import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
-import * as React from 'react';
-import { Platform, StyleSheet, TextStyle } from 'react-native';
+
+import { addCrossIconBlackOnThisRoute, isModalModeOnThisRoute } from './hideTabBarAndroid';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -13,9 +16,10 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 
-import { addCrossIconBlackOnThisRoute, isModalModeOnThisRoute } from './hideTabBarAndroid';
-
 const styles = StyleSheet.create({
+  backbutton: {
+    marginHorizontal: 0,
+  },
   navBarTitleStyle: {
     ...TextFontStyle.Bold,
     color: theme.ui.text.inverse,
@@ -23,9 +27,6 @@ const styles = StyleSheet.create({
   },
   navBarTitleStyleAndroid: {
     width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin,
-  },
-  backbutton: {
-    marginHorizontal: 0,
   },
 });
 
@@ -49,14 +50,15 @@ export const navBarOptions: (props: {
   titleStyle?: TextStyle;
   titleTestID?: string;
   backButtonTestID?: string;
-}) => NativeStackNavigationOptions = ({ route, navigation, title, titleStyle, titleTestID, backButtonTestID }) =>
+}) => NativeStackNavigationOptions = ({ backButtonTestID, navigation, route, title, titleStyle, titleTestID }) =>
   ({
-    headerStyle: {
-      backgroundColor: theme.palette.primary.regular,
-    },
-    headerTitle: navBarTitle(title, titleStyle, titleTestID),
-    headerTitleStyle: styles.navBarTitleStyle,
-    headerTitleAlign: 'center',
+    // Since headerLeft replaces native back, we cannot use this.
+    freezeOnBlur: true,
+
+    headerBackButtonMenuEnabled: false,
+
+    headerBackVisible: false,
+
     headerLeft: props => {
       const navState = navigation.getState();
       // Here use canGoBack() is not sufficient. We have to manually check how many routes have been traversed in the current stack.
@@ -85,9 +87,19 @@ export const navBarOptions: (props: {
         }
       } else return null;
     },
-    headerTintColor: theme.ui.text.inverse,
-    headerBackVisible: false, // Since headerLeft replaces native back, we don't want him to show when there's no headerLeft
+
+    // Since headerLeft replaces native back, we don't want him to show when there's no headerLeft
     headerShadowVisible: true,
-    headerBackButtonMenuEnabled: false, // Since headerLeft replaces native back, we cannot use this.
-    freezeOnBlur: true,
+
+    headerStyle: {
+      backgroundColor: theme.palette.primary.regular,
+    },
+
+    headerTintColor: theme.ui.text.inverse,
+
+    headerTitle: navBarTitle(title, titleStyle, titleTestID),
+
+    headerTitleAlign: 'center',
+
+    headerTitleStyle: styles.navBarTitleStyle,
   }) as NativeStackNavigationOptions;

@@ -30,31 +30,41 @@ const formatMailDatas = mailDatas => {
     attachments: mailDatas.attachments?.map(att => ({
       contentType: att.filetype,
       filename: att.filename,
-      size: att.filesize,
       id: att.id,
+      size: att.filesize,
     })),
   };
 };
 
 export const newMailService = {
-  searchUsers: async search => {
-    const searchResult = await fetchJSONWithCache(`/conversation/visible?search=${search}`);
-    return searchResult;
+  addAttachment: async (session: AuthLoggedAccount, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
+    const url = `/conversation/message/${draftId}/attachment`;
+    const uploadedFile = await fileHandlerService.uploadFile<SyncedFileWithId>(
+      session,
+      file,
+      {
+        headers: {
+          Accept: 'application/json',
+        },
+        url,
+      },
+      data => {
+        const json = JSON.parse(data) as { id: string };
+        return {
+          id: json.id,
+          url: `/conversation/message/${draftId}/attachment/${json.id}`,
+        };
+      },
+      callbacks,
+      SyncedFileWithId,
+    );
+    return uploadedFile;
   },
-  sendMail: async (session: AuthLoggedAccount, mailDatas, draftId, inReplyTo) => {
-    const params = {
-      id: draftId,
-      'In-Reply-To': inReplyTo,
-    };
-    const paramsUrl = Object.entries(params)
-      .filter(([key, value]) => !!value)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
-
-    await signedFetch(`${session.platform.url}/conversation/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
-      method: 'POST',
-      body: JSON.stringify(formatMailDatas(mailDatas)),
+  deleteAttachment: async (draftId: string, attachmentId: string) => {
+    const deletedAttachment = await fetchJSONWithCache(`/conversation/message/${draftId}/attachment/${attachmentId}`, {
+      method: 'DELETE',
     });
+    return deletedAttachment;
   },
   forwardMail: async (draftId, forwardFrom) => {
     await fetchJSONWithCache(`/conversation/message/${draftId}/forward/${forwardFrom}`, {
@@ -72,41 +82,31 @@ export const newMailService = {
       .join('&');
 
     const response = await fetchJSONWithCache(`/conversation/draft${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
-      method: 'POST',
       body: JSON.stringify(formatMailDatas(mailDatas)),
+      method: 'POST',
     });
     return response.id;
   },
-  updateDraftMail: async (mailId, mailDatas) => {
-    await fetchJSONWithCache(`/conversation/draft/${mailId}`, { method: 'PUT', body: JSON.stringify(formatMailDatas(mailDatas)) });
+  searchUsers: async search => {
+    const searchResult = await fetchJSONWithCache(`/conversation/visible?search=${search}`);
+    return searchResult;
   },
-  addAttachment: async (session: AuthLoggedAccount, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
-    const url = `/conversation/message/${draftId}/attachment`;
-    const uploadedFile = await fileHandlerService.uploadFile<SyncedFileWithId>(
-      session,
-      file,
-      {
-        url,
-        headers: {
-          Accept: 'application/json',
-        },
-      },
-      data => {
-        const json = JSON.parse(data) as { id: string };
-        return {
-          url: `/conversation/message/${draftId}/attachment/${json.id}`,
-          id: json.id,
-        };
-      },
-      callbacks,
-      SyncedFileWithId,
-    );
-    return uploadedFile;
-  },
-  deleteAttachment: async (draftId: string, attachmentId: string) => {
-    const deletedAttachment = await fetchJSONWithCache(`/conversation/message/${draftId}/attachment/${attachmentId}`, {
-      method: 'DELETE',
+  sendMail: async (session: AuthLoggedAccount, mailDatas, draftId, inReplyTo) => {
+    const params = {
+      id: draftId,
+      'In-Reply-To': inReplyTo,
+    };
+    const paramsUrl = Object.entries(params)
+      .filter(([key, value]) => !!value)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    await signedFetch(`${session.platform.url}/conversation/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
+      body: JSON.stringify(formatMailDatas(mailDatas)),
+      method: 'POST',
     });
-    return deletedAttachment;
+  },
+  updateDraftMail: async (mailId, mailDatas) => {
+    await fetchJSONWithCache(`/conversation/draft/${mailId}`, { body: JSON.stringify(formatMailDatas(mailDatas)), method: 'PUT' });
   },
 };

@@ -5,9 +5,9 @@
  */
 import { ParamListBase, StackNavigationState } from '@react-navigation/native';
 import {
+  createNativeStackNavigator,
   NativeStackNavigationEventMap,
   NativeStackNavigationOptions,
-  createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { NativeStackNavigatorProps } from '@react-navigation/native-stack/lib/typescript/src/types';
 
@@ -17,7 +17,7 @@ export type TypedNativeStackNavigator<ParamList extends ParamListBase> = import(
   StackNavigationState<ParamListBase>,
   NativeStackNavigationOptions,
   NativeStackNavigationEventMap,
-  ({ id, initialRouteName, children, screenListeners, screenOptions, ...rest }: NativeStackNavigatorProps) => JSX.Element
+  ({ children, id, initialRouteName, screenListeners, screenOptions, ...rest }: NativeStackNavigatorProps) => JSX.Element
 >;
 export function getTypedRootStack<T extends ParamListBase>() {
   return RootStack as TypedNativeStackNavigator<T>;

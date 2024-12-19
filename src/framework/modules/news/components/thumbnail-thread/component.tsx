@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import { Grayscale } from 'react-native-color-matrix-image-filters';
+
+import styles from './styles';
+import { ThumbnailThreadProps } from './types';
 
 import theme from '~/app/theme';
 import { getScaleHeight } from '~/framework/components/constants';
@@ -8,9 +12,6 @@ import { NamedSVG, NamedSVGProps } from '~/framework/components/picture';
 import { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
 import moduleConfig, { fillColor } from '~/framework/modules/news/module-config';
 import { Image } from '~/framework/util/media';
-
-import styles from './styles';
-import { ThumbnailThreadProps } from './types';
 
 const Selected = () => (
   <View style={[styles.thumbnailSelectedItem, { borderColor: (moduleConfig.displayPicture as NamedSVGProps).fill }]} />

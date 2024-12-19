@@ -3,6 +3,7 @@
  * AppConf Loader
  */
 import type { ImageStyle, PlatformOSType } from 'react-native';
+
 import RNConfigReader from 'react-native-config-reader';
 
 import AppConfValues from '~/app/appconf';
@@ -240,15 +241,15 @@ export class AppConf {
         onboarding.showDiscoverLink[ptf] = true;
       }
     } else {
-      onboarding.showDiscoverLink = { ios: true, android: true };
+      onboarding.showDiscoverLink = { android: true, ios: true };
     }
     onboarding.showDiscoveryClass = opts.onboarding?.showDiscoveryClass ?? false;
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
     const space: Partial<AppConf['space']> = {
-      expirationDate: opts.space?.expirationDate ?? undefined,
-      userType: opts.space?.userType ?? undefined,
-      lang: opts.space?.lang ?? undefined,
       exceptionProject: opts.space?.exceptionProject ?? [],
+      expirationDate: opts.space?.expirationDate ?? undefined,
+      lang: opts.space?.lang ?? undefined,
+      userType: opts.space?.userType ?? undefined,
     };
 
     this.onboarding = onboarding as AppConf['onboarding'];

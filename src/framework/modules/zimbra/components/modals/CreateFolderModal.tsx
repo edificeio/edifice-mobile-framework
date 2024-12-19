@@ -3,9 +3,9 @@ import { StyleSheet, TextInput, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
+import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -13,13 +13,13 @@ import { zimbraService } from '~/framework/modules/zimbra/service';
 
 const styles = StyleSheet.create({
   textInput: {
-    marginVertical: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.minor,
     backgroundColor: theme.palette.grey.fog,
     borderColor: theme.ui.border.input,
-    borderWidth: 1,
     borderRadius: 5,
+    borderWidth: 1,
     color: theme.ui.text.regular,
+    marginVertical: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.minor,
   },
 });
 

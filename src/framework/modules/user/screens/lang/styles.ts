@@ -5,13 +5,13 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   page: {
-    padding: UI_SIZES.spacing.big,
     backgroundColor: theme.palette.grey.white,
-  },
-  title: {
-    color: theme.palette.primary.regular,
+    padding: UI_SIZES.spacing.big,
   },
   text: {
     marginVertical: UI_SIZES.spacing.medium,
+  },
+  title: {
+    color: theme.palette.primary.regular,
   },
 });

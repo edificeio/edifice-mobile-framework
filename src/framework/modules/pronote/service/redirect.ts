@@ -4,10 +4,10 @@ import { openUrl } from '~/framework/util/linking';
 import { signedFetch } from '~/infra/fetchWithCache';
 
 const profileMap = {
-  TEACHER: 'professeur',
-  STUDENT: 'eleve',
-  RELATIVE: 'parent',
   PERSONNEL: 'direction',
+  RELATIVE: 'parent',
+  STUDENT: 'eleve',
+  TEACHER: 'professeur',
 };
 
 const getRedirectUrl = (session: AuthLoggedAccount, connectorAddress: string, pageId?: string) => {
@@ -29,7 +29,7 @@ export default async (session: AuthLoggedAccount, connectorAddress: string, page
   const finalUrl = intermediateResponse.headers.get('location');
   if (dryRun) return finalUrl ?? undefined;
   openUrl(finalUrl ?? undefined, {
-    errorTitle: I18n.get('pronote-redirect-error-title'),
     error: I18n.get('pronote-redirect-error-message'),
+    errorTitle: I18n.get('pronote-redirect-error-title'),
   });
 };

@@ -1,18 +1,17 @@
-import theme from '~/app/theme';
-import { getSession } from '~/framework/modules/auth/reducer';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-
 import type { IFormReduxState } from './reducer';
 import { getFormWorkflowInformation } from './rights';
 
-export default new NavigableModuleConfig<'form', IFormReduxState>({
-  name: 'form',
-  entcoreScope: ['formulaire'],
-  matchEntcoreApp: '/formulaire',
-  hasRight: () => !!getFormWorkflowInformation(getSession()).initResponse,
-  storageName: 'form',
+import theme from '~/app/theme';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-  displayI18n: 'form-moduleconfig-appname',
+export default new NavigableModuleConfig<'form', IFormReduxState>({
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'form', fill: theme.palette.complementary.purple.regular },
+  displayI18n: 'form-moduleconfig-appname',
+  displayPicture: { fill: theme.palette.complementary.purple.regular, name: 'form', type: 'NamedSvg' },
+  entcoreScope: ['formulaire'],
+  hasRight: ({ session }) => !!getFormWorkflowInformation(session).initResponse,
+
+  matchEntcoreApp: '/formulaire',
+  name: 'form',
+  storageName: 'form',
 });

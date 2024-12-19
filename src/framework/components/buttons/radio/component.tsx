@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
+import styles from './styles';
+import type { RadioButtonProps } from './types';
+
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
 
-import styles from './styles';
-import type { RadioButtonProps } from './types';
-
-export const RadioButton = ({ isChecked, isDisabled, label, size = 'default', style, onPress }: RadioButtonProps) => {
+export const RadioButton = ({ isChecked, isDisabled, label, onPress, size = 'default', style }: RadioButtonProps) => {
   const [isPressed, setPressed] = React.useState<boolean>(false);
   const LabelTextComponent = size === 'default' ? BodyText : SmallText;
   const iconSize = size === 'default' ? 24 : 22;
@@ -38,10 +38,10 @@ export const RadioButton = ({ isChecked, isDisabled, label, size = 'default', st
                 ? theme.palette.primary.light
                 : theme.palette.primary.regular
               : isDisabled
-              ? theme.palette.grey.grey
-              : isPressed
-              ? theme.palette.primary.regular
-              : theme.palette.grey.graphite
+                ? theme.palette.grey.grey
+                : isPressed
+                  ? theme.palette.primary.regular
+                  : theme.palette.grey.graphite
           }
         />
       </View>

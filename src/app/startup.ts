@@ -1,5 +1,8 @@
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from './i18n';
+import { Log } from './log';
+
 import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
@@ -9,9 +12,8 @@ import { appReadyAction } from '~/framework/navigation/redux';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Storage } from '~/framework/util/storage';
 
-import { I18n } from './i18n';
-
 const initFeatures = async () => {
+  await Log.init();
   await Storage.init();
   await I18n.init();
 };

@@ -1,13 +1,13 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
+import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   appsGrid: {
     flexDirection: 'row',
-    justifyContent: 'center',
     flexWrap: 'wrap',
+    justifyContent: 'center',
     marginTop: UI_SIZES.spacing.huge,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
@@ -15,13 +15,13 @@ export default StyleSheet.create({
     justifyContent: 'center',
     minHeight: getScaleHeight(70),
   },
-  presencesContainer: {
-    rowGap: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.big,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
   presencesCallListAction: {
     alignSelf: 'flex-end',
+  },
+  presencesContainer: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.medium,
   },
   presencesEmptyContainer: {
     alignItems: 'center',
@@ -32,8 +32,8 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
   presencesHeadingContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
   },
 });

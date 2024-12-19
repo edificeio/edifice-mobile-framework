@@ -1,28 +1,17 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 const MOOD_PICTURE_SIZE = getScaleWidth(64);
 
 export default StyleSheet.create({
-  page: {
-    backgroundColor: theme.palette.grey.white,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
-  scrollview: {
-    paddingTop: UI_SIZES.spacing.medium,
-  },
-  moods: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    columnGap: UI_SIZES.spacing.small,
-    rowGap: UI_SIZES.spacing.small,
-    marginBottom: UI_SIZES.spacing.big,
+  annotationMotto: {
+    textAlign: 'right',
   },
   mood: {
-    borderRadius: UI_SIZES.radius.input,
     alignItems: 'center',
+    borderRadius: UI_SIZES.radius.input,
     paddingVertical: UI_SIZES.spacing.minor,
   },
   moodActive: {
@@ -32,10 +21,21 @@ export default StyleSheet.create({
     height: MOOD_PICTURE_SIZE,
     width: MOOD_PICTURE_SIZE,
   },
+  moods: {
+    columnGap: UI_SIZES.spacing.small,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.small,
+  },
   mottoInput: {
     marginBottom: UI_SIZES.spacing.large,
   },
-  annotationMotto: {
-    textAlign: 'right',
+  page: {
+    backgroundColor: theme.palette.grey.white,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+  },
+  scrollview: {
+    paddingTop: UI_SIZES.spacing.medium,
   },
 });

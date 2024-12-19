@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
 
+import styles from './styles';
+import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
@@ -17,23 +20,21 @@ import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredenti
 import { getAccountById } from '~/framework/modules/auth/reducer';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
-
-import styles from './styles';
-import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
+import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const {
-    route,
-    navigation,
     error,
-    forgotPasswordRoute,
     forgotIdRoute,
+    forgotPasswordRoute,
     handleConsumeError,
+    lockLogin,
+    navigation,
+    route,
     tryLoginAdd,
     tryLoginReplace,
-    lockLogin,
   } = props;
-  const { platform, accountId } = route.params;
+  const { accountId, platform } = route.params;
   const account = getAccountById(accountId);
 
   const initialLogin =
@@ -44,7 +45,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
 
-  const { errmsg, errtype, errkey, errclear } = useErrorWithKey<typeof Error.LoginError>(platform.url, error, handleConsumeError);
+  const { errclear, errkey, errmsg, errtype } = useErrorWithKey<typeof Error.LoginError>(platform.url, error, handleConsumeError);
 
   const inputLogin = React.useRef<any>(null);
   const inputPassword = React.useRef<any>(null);
@@ -64,8 +65,8 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     setLoginState(LoginState.RUNNING);
     try {
       const loginCredentials = {
-        username: login,
         password: password.trim(),
+        username: login,
       };
 
       if (accountId) {
@@ -130,7 +131,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     if (!errmsg) {
       return (
         <View style={styles.boxError}>
-          <BodyText style={styles.userTextError}> </BodyText>
+          <BodyText style={styles.userTextError} testID="login-error" />
         </View>
       );
     }
@@ -142,7 +143,9 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
-        <BodyText style={styles.userTextError}>{errmsg}</BodyText>
+        <BodyText style={styles.userTextError} testID="login-error">
+          {errmsg}
+        </BodyText>
       </View>
     );
   }, [errmsg]);
@@ -164,7 +167,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     return (
       <View style={styles.boxInputs}>
         <InputContainer
-          label={{ text: I18n.get('auth-login-login'), icon: 'ui-user' }}
+          label={{ icon: 'ui-user', text: I18n.get('auth-login-login') }}
           input={
             <TextInput
               placeholder={I18n.get('auth-login-inputLogin')}
@@ -176,7 +179,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               autoCorrect={false}
               spellCheck={false}
               testID="login-identifier"
-              showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
+              showError={errmsg ? errtype === OAuth2ErrorCode.CREDENTIALS_MISMATCH : false}
               onSubmitEditing={onSubmitEditingLogin}
               returnKeyType="next"
               disabled={lockLogin && !!initialLogin} // lock Login only if login is provided.
@@ -185,14 +188,14 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         />
         <InputContainer
           style={styles.inputPassword}
-          label={{ text: I18n.get('auth-login-password'), icon: 'ui-lock' }}
+          label={{ icon: 'ui-lock', text: I18n.get('auth-login-password') }}
           input={
             <PasswordInput
               placeholder={I18n.get('auth-login-inputPassword')}
               ref={inputPassword}
               onChangeText={onPasswordChanged.bind(this)}
               value={password}
-              showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
+              showError={errmsg ? errtype === OAuth2ErrorCode.CREDENTIALS_MISMATCH : false}
               testID="login-password"
               onSubmitEditing={onSubmitEditingPassword}
               returnKeyType="send"

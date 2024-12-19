@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { useSelector } from 'react-redux';
 
 import { BottomSheet, BottomSheetProps } from '~/framework/components/BottomSheet';
@@ -7,11 +8,11 @@ import { getSession } from '~/framework/modules/auth/reducer';
 
 const BottomEditorSheet = (
   {
-    isResponse,
-    isPublishingComment,
-    onPublishComment,
-    onChangeText,
     displayShadow,
+    isPublishingComment,
+    isResponse,
+    onChangeText,
+    onPublishComment,
   }: CommentFieldProps & Omit<BottomSheetProps, 'content'>,
   ref,
 ) => {

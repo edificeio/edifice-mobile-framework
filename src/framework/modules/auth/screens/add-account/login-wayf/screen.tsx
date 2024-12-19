@@ -1,8 +1,11 @@
+import * as React from 'react';
+
 import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import type { AuthLoginWayfAddAccountScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
@@ -14,8 +17,6 @@ import LoginWAYFScreen, {
 } from '~/framework/modules/auth/templates/login-wayf';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import type { AuthLoginWayfAddAccountScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

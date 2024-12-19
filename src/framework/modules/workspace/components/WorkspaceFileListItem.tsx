@@ -1,6 +1,7 @@
-import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import moment from 'moment';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -12,19 +13,19 @@ import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { displayPastDate } from '~/framework/util/date';
 
 const styles = StyleSheet.create({
+  captionText: {
+    color: theme.ui.text.light,
+    maxWidth: '50%',
+  },
   centerPanel: {
     flex: 1,
     marginLeft: UI_SIZES.spacing.small,
   },
   dateContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     marginTop: UI_SIZES.spacing.tiny,
-  },
-  captionText: {
-    color: theme.ui.text.light,
-    maxWidth: '50%',
   },
 });
 
@@ -50,8 +51,8 @@ export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileLis
   };
 
   public render() {
-    const { item, isDisabled, isSelected } = this.props;
-    const { id, isFolder, name, date, ownerName, contentType, parentId } = item;
+    const { isDisabled, isSelected, item } = this.props;
+    const { contentType, date, id, isFolder, name, ownerName, parentId } = item;
     const borderBottomWidth = isDisabled ? 0 : 1;
     const longOwnerName = `${I18n.get('common-by').toLowerCase()} ${ownerName}`;
     return (

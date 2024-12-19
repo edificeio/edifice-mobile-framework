@@ -1,18 +1,22 @@
+import * as React from 'react';
+import { View } from 'react-native';
+
 import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
-import * as React from 'react';
-import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import styles from './styles';
+import type { DashboardRelativeScreenDispatchProps, DashboardRelativeScreenPrivateProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
@@ -52,9 +56,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { Trackers } from '~/framework/util/tracker';
-
-import styles from './styles';
-import type { DashboardRelativeScreenDispatchProps, DashboardRelativeScreenPrivateProps } from './types';
 
 type IHomeworkByDateList = {
   [key: string]: IHomework[];

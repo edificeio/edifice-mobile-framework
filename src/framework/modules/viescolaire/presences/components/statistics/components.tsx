@@ -1,6 +1,10 @@
-import moment from 'moment';
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
+
+import moment from 'moment';
+
+import styles from './styles';
+import { StatisticsProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
@@ -10,9 +14,6 @@ import StatisticsPlaceholder from '~/framework/modules/viescolaire/presences/com
 import StatisticsCard from '~/framework/modules/viescolaire/presences/components/statistics-card';
 import { Event, EventType } from '~/framework/modules/viescolaire/presences/model';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
-
-import styles from './styles';
-import { StatisticsProps } from './types';
 
 const getDefaultSelectedTerm = (terms: ITerm[]): string => {
   const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
@@ -49,7 +50,7 @@ const Statistics = (props: StatisticsProps) => {
     };
   };
 
-  const { session, statistics, terms, openEventList } = props;
+  const { openEventList, session, statistics, terms } = props;
 
   if (props.isRefreshing) {
     if (isDropdownOpen) setDropdownOpen(false);

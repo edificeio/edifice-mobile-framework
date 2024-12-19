@@ -2,8 +2,8 @@ import appConfOverride from '~/app/override/appconf';
 
 const emptyAppConf = {
   matomo: undefined,
-  webviewIdentifier: undefined,
   platforms: [],
+  webviewIdentifier: undefined,
 };
 
 export default {

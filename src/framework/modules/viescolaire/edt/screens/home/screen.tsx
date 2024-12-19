@@ -1,10 +1,14 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import { NavigationState, SceneMap, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -38,9 +42,6 @@ import { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescola
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import styles from './styles';
-import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -255,7 +256,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   ) => {
     return (
       <TabBar
-        renderLabel={({ route, focused }) => (
+        renderLabel={({ focused, route }) => (
           <View
             style={[
               styles.tabBarItem,
@@ -309,12 +310,12 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
           onIndexChange={setIndex}
           animationEnabled={false}
           renderScene={SceneMap({
+            friday: () => renderScrollView(weekdays[4]),
             monday: () => renderScrollView(weekdays[0]),
+            saturday: () => renderScrollView(weekdays[5]),
+            thursday: () => renderScrollView(weekdays[3]),
             tuesday: () => renderScrollView(weekdays[1]),
             wednesday: () => renderScrollView(weekdays[2]),
-            thursday: () => renderScrollView(weekdays[3]),
-            friday: () => renderScrollView(weekdays[4]),
-            saturday: () => renderScrollView(weekdays[5]),
           })}
           renderTabBar={renderTabbar}
         />

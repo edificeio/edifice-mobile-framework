@@ -1,8 +1,9 @@
 /**
  * Thunk actions for user module
  */
-import { Moment } from 'moment';
 import { EmitterSubscription, Vibration } from 'react-native';
+
+import { Moment } from 'moment';
 import RNShake from 'react-native-shake';
 import Sound from 'react-native-sound';
 import { AnyAction, Dispatch } from 'redux';
@@ -12,8 +13,8 @@ import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
 import { actionTypes } from '~/framework/modules/user/reducer';
-import { addTime, today } from '~/framework/util/date';
-import { OldStorageFunctions } from '~/framework/util/storage';
+import { writeXmasMusic, writeXmasTheme } from '~/framework/modules/user/storage';
+import { addTime, subtractTime, today } from '~/framework/util/date';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
@@ -39,8 +40,8 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
       const userId = session.user.id;
       const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.avatar } : newValues;
       const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
-        method: 'PUT',
         body: JSON.stringify(updatedValues),
+        method: 'PUT',
       });
       if ((reponse as any).error) {
         throw new Error((reponse as any).error);
@@ -59,13 +60,17 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
   };
 }
 
-const xmasThemeStorageKey = 'xmasThemeSetting';
-const xmasMusicStorageKey = 'xmasMusicSetting';
 const snowFallDuration = 35000;
-const snowFirstLaunchWait = 1000;
 let snowfallTimer: NodeJS.Timeout;
 
 Sound.setCategory('Playback');
+export const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, error => {
+  if (error) {
+    console.log('failed to load the sound', error);
+  } else
+    console.log('duration in seconds: ' + jingleBells.getDuration() + 'number of channels: ' + jingleBells.getNumberOfChannels());
+});
+jingleBells.setVolume(0.5);
 
 const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: number, endMonth: number) => {
   const getDateForYear = (startOfYear: Moment, day: number, month: number) => {
@@ -75,9 +80,15 @@ const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: num
   };
   const startOfThisYear = today().startOf('year');
   const startOfNextYear = addTime(today(), 1, 'year').startOf('year');
+  const lastYear = subtractTime(today(), 1, 'year').startOf('year');
   const startDateThisYear = getDateForYear(startOfThisYear, startDay, startMonth);
+  const startDatePreviousYear = getDateForYear(lastYear, startDay, startMonth);
   const endDateNextYear = getDateForYear(startOfNextYear, endDay, endMonth);
-  const isWithinXmasPeriod = today().isBetween(startDateThisYear, endDateNextYear);
+  const endDateThisYear = getDateForYear(startOfThisYear, endDay, endMonth);
+  const isWithinXmasPeriod =
+    today().month() === 0
+      ? today().isBetween(startDatePreviousYear, endDateThisYear)
+      : today().isBetween(startDateThisYear, endDateNextYear);
   return isWithinXmasPeriod;
 };
 
@@ -102,7 +113,7 @@ export const letItSnowAction = () => async (dispatch: ThunkDispatch<any, any, an
 export const stopItSnowAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
     if (!getIsXmasActive(getState())) return;
-    //jingleBells.stop();
+    jingleBells.stop();
     dispatch({ type: actionTypes.setFlakes, value: false });
     if (snowfallTimer) {
       clearTimeout(snowfallTimer);
@@ -114,13 +125,20 @@ export const stopItSnowAction = () => async (dispatch: ThunkDispatch<any, any, a
 
 let shakeListener: EmitterSubscription | undefined;
 
-const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
+export const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
     if (!shakeListener && getIsXmasActive(getState())) {
+      setTimeout(() => {
+        dispatch(letItSnowAction());
+        if (getIsXmasMusicActive(getState())) {
+          jingleBells.setVolume(0.5);
+          jingleBells.play();
+        }
+      }, 100);
       shakeListener = RNShake.addListener(() => {
         Vibration.vibrate();
         dispatch(letItSnowAction());
-        //if (getIsXmasMusicActive(getState())) jingleBells.play();
+        if (getIsXmasMusicActive(getState())) jingleBells.play();
       });
     } else if (shakeListener && !getIsXmasActive(getState())) {
       shakeListener.remove();
@@ -133,10 +151,10 @@ const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any,
 
 export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await OldStorageFunctions.setItemJson(xmasMusicStorageKey, xmasMusic);
+    writeXmasMusic(xmasMusic);
     dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusic });
     if (xmasMusic) {
-      //jingleBells.play();
+      jingleBells.play();
       dispatch(letItSnowAction());
     } else {
       dispatch(stopItSnowAction());
@@ -149,47 +167,12 @@ export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: Thunk
 
 export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await OldStorageFunctions.setItemJson(xmasThemeStorageKey, xmasTheme);
+    writeXmasTheme(xmasTheme);
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
-    if (xmasTheme) {
-      dispatch(letItSnowAction());
-      //if (getIsXmasMusicActive(getState())) jingleBells.play();
-    } //else jingleBells.stop();
+    if (!xmasTheme) jingleBells.stop();
     dispatch(updateShakeListenerAction());
   } catch {
     // If error, we disable theme for now
     dispatch({ type: actionTypes.toggleXmasTheme, value: false });
-  }
-};
-
-export const importXmasAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
-  try {
-    let xmasThemeSetting;
-    let xmasMusicSetting;
-    xmasThemeSetting = (await OldStorageFunctions.getItemJson(xmasThemeStorageKey)) as boolean | undefined;
-    xmasMusicSetting = (await OldStorageFunctions.getItemJson(xmasMusicStorageKey)) as boolean | undefined;
-    // These settings are undefined on first launch (by default, we set the theme on and the music off)
-    if (xmasThemeSetting === undefined) {
-      await OldStorageFunctions.setItemJson(xmasThemeStorageKey, true);
-      xmasThemeSetting = true;
-    }
-    if (xmasMusicSetting === undefined) {
-      await OldStorageFunctions.setItemJson(xmasMusicStorageKey, false);
-      xmasMusicSetting = false;
-    }
-
-    const xmasTheme = xmasThemeSetting && isWithinXmasPeriod;
-    dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
-    dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusicSetting });
-
-    // We make sure the app is ready to display the snowflakes on first launch
-    setTimeout(() => {
-      if (xmasTheme) dispatch(letItSnowAction());
-    }, snowFirstLaunchWait);
-    dispatch(updateShakeListenerAction());
-  } catch {
-    // If error, we reset to the inital behavior => theme on
-    dispatch({ type: actionTypes.toggleXmasTheme, value: true });
-    return true;
   }
 };

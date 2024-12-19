@@ -1,19 +1,19 @@
 import * as React from 'react';
 
+import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
+
 import { I18n } from '~/app/i18n';
 import moduleConfig from '~/framework/modules/myAppMenu/module-config';
 import { myAppsConnector, myAppsModules, myAppsSecondaryModules } from '~/framework/modules/myAppMenu/myAppsModules';
 import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { navBarTitle } from '~/framework/navigation/navBar';
-import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 
-import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
-
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
-  const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(apps, widgets));
-  const secondaryModules = new NavigableModuleArray(...myAppsSecondaryModules.get().filterAvailables(apps, widgets));
-  const connectors = new NavigableModuleArray(...myAppsConnector.get().filterAvailables(apps, widgets));
+export default (({ session }) => {
+  const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(session));
+  const secondaryModules = new NavigableModuleArray(...myAppsSecondaryModules.get().filterAvailables(session));
+  const connectors = new NavigableModuleArray(...myAppsConnector.get().filterAvailables(session));
   const MyAppsContainer = props => (
     <MyAppsHomeScreen {...props} modules={modules} secondaryModules={secondaryModules} connectors={connectors} />
   );
@@ -29,4 +29,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
       />
     </>
   ));
-};
+}) as AnyNavigableModule['getRoot'];

@@ -1,5 +1,6 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ImageSourcePropType } from 'react-native';
+
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { NewsItem, NewsThreadItem, NewsThreadItemRights } from '~/framework/modules/news/model';

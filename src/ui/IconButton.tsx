@@ -16,13 +16,13 @@ export const IconButton = (props: {
     <View
       style={[
         {
+          alignItems: 'center',
           backgroundColor: theme.palette.primary.regular,
           borderRadius: 15,
           height: 30,
-          width: 30,
-          alignItems: 'center',
           justifyContent: 'center',
           opacity: props.disabled ? 0.5 : 1,
+          width: 30,
         },
         props.buttonStyle,
       ]}>

@@ -11,6 +11,8 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { Platform } from '~/framework/util/appConf';
 
 export type IFields = 'login' | 'password' | 'confirmPassword' | 'phone' | 'mail';
+export type MobileState = 'MOBILE_FORMAT_INVALID' | 'PRISTINE' | 'STALE';
+export type EmailState = 'EMAIL_FORMAT_INVALID' | 'PRISTINE';
 
 export interface ActivationScreenNavParams {
   platform: Platform;

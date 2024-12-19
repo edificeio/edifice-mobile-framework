@@ -14,19 +14,19 @@ import { asyncActionTypes } from '~/infra/redux/async';
 export const actionTypes = asyncActionTypes(homeworkConfig.namespaceActionType('TOGGLE_ENTRY_STATUS'));
 
 export function homeworkToggleEntryStatusInvalidated(entryId: string) {
-  return { type: actionTypes.invalidated, entryId };
+  return { entryId, type: actionTypes.invalidated };
 }
 
 export function homeworkToggleEntryStatusRequested(entryId: string) {
-  return { type: actionTypes.requested, entryId };
+  return { entryId, type: actionTypes.requested };
 }
 
 export function homeworkToggleEntryStatusToggled(entryId: string) {
-  return { type: actionTypes.received, entryId, toggledAt: Date.now() };
+  return { entryId, toggledAt: Date.now(), type: actionTypes.received };
 }
 
 export function homeworkToggleEntryStatusError(entryId: string, errmsg: string) {
-  return { type: actionTypes.fetchError, error: true, errmsg, entryId };
+  return { entryId, errmsg, error: true, type: actionTypes.fetchError };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
@@ -42,11 +42,11 @@ export function toggleHomeworkDiaryEntryStatus(diaryId: string, entryId: string,
     dispatch(homeworkToggleEntryStatusRequested(entryId));
     try {
       await signedFetch(`${session?.platform.url}/homeworks/${diaryId}/entry/status`, {
-        method: 'PUT',
         body: JSON.stringify({
           entryid: entryId,
           finished,
         }),
+        method: 'PUT',
       });
       dispatch(homeworkToggleEntryStatusToggled(entryId));
     } catch (error) {

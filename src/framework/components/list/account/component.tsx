@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FlatList, FlatListProps, View } from 'react-native';
+
 import { useSelector } from 'react-redux';
 
 import { buildAvatarSourceForAccount } from '~/framework/components/avatar';
@@ -19,7 +20,7 @@ const ItemSeparator = () => (
 );
 
 const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
-  { data, description, title, onPress, onDelete }: AccountListProps<ItemT>,
+  { data, description, onDelete, onPress, title }: AccountListProps<ItemT>,
   ref,
 ) => {
   const currentAccount = useSelector(state => getSession());

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
+import styles from './styles';
+import { StatisticsCardProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
 import { BodyText, HeadingLText } from '~/framework/components/text';
 import EventPicto from '~/framework/modules/viescolaire/presences/components/event-picto';
 import { Event, EventType } from '~/framework/modules/viescolaire/presences/model';
-
-import styles from './styles';
-import { StatisticsCardProps } from './types';
 
 const eventKeys = {
   [EventType.DEPARTURE]: 'departures',

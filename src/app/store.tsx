@@ -11,11 +11,11 @@
  * Reducers.register('REDUCER_NAME', reducer);
  */
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Reducer, Store, applyMiddleware, combineReducers, compose, createStore } from 'redux';
-import thunkMiddleware from 'redux-thunk';
 
-// eslint-disable-next-line no-var
+import { connect } from 'react-redux';
+import { applyMiddleware, combineReducers, compose, createStore, Reducer, Store } from 'redux';
+import { thunk } from 'redux-thunk';
+
 declare var window: any;
 
 /** === Store reducers map === */
@@ -52,7 +52,7 @@ export function createMainStore() {
     ...Reducers.all,
   });
 
-  const middlewares = [thunkMiddleware];
+  const middlewares = [thunk];
 
   const enhancer = applyMiddleware(...middlewares);
 

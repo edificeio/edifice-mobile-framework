@@ -1,15 +1,15 @@
-import { I18n } from '~/app/i18n';
-
 import { MenuActionProps } from './types';
+
+import { I18n } from '~/app/i18n';
 
 export default function deleteAction(props: MenuActionProps) {
   return {
-    title: I18n.get('common-delete'),
-    icon: {
-      ios: 'trash',
-      android: 'ic_delete_item',
-    },
-    destructive: true,
     action: props.action,
+    destructive: true,
+    icon: {
+      android: 'ic_delete_item',
+      ios: 'trash',
+    },
+    title: I18n.get('common-delete'),
   };
 }

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { WebResourceViewer, computeWebResourceViewerNavbar } from '~/framework/components/pages/web-resource-viewer';
-import { collaborativewallService, collaborativewallUriParser } from '~/framework/modules/collaborativewall/service';
-
 import type { CollaborativewallViewerScreenPrivateProps } from './types';
+
+import { computeWebResourceViewerNavbar, WebResourceViewer } from '~/framework/components/pages/web-resource-viewer';
+import { collaborativewallService, collaborativewallUriParser } from '~/framework/modules/collaborativewall/service';
 
 export const computeNavBar = computeWebResourceViewerNavbar;
 

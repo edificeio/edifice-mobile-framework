@@ -1,38 +1,38 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 const MOOD_PICTURE_SIZE = getScaleWidth(60);
 
 export default StyleSheet.create({
-  notif: {
-    paddingVertical: UI_SIZES.spacing.small,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    borderRadius: UI_SIZES.radius.newCard,
-    shadowColor: theme.ui.shadowColor,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-    elevation: 3,
-    backgroundColor: theme.palette.grey.white,
-  },
-  notifMood: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  moodPicture: {
-    height: MOOD_PICTURE_SIZE,
-    width: MOOD_PICTURE_SIZE,
-    marginLeft: UI_SIZES.spacing.small,
-  },
-  motto: {
-    textAlign: 'center',
+  contentNotif: {
+    marginTop: UI_SIZES.spacing.small,
   },
   flex1: {
     flex: 1,
   },
-  contentNotif: {
-    marginTop: UI_SIZES.spacing.small,
+  moodPicture: {
+    height: MOOD_PICTURE_SIZE,
+    marginLeft: UI_SIZES.spacing.small,
+    width: MOOD_PICTURE_SIZE,
+  },
+  motto: {
+    textAlign: 'center',
+  },
+  notif: {
+    backgroundColor: theme.palette.grey.white,
+    borderRadius: UI_SIZES.radius.newCard,
+    elevation: 3,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
+    shadowColor: theme.ui.shadowColor,
+    shadowOffset: { height: 2, width: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+  },
+  notifMood: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });
