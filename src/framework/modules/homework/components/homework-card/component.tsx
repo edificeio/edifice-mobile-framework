@@ -40,7 +40,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
         <View style={styles.viewTitle}>
           {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
           {mediaTypesPerTask.map((type, index) => (
-            <NamedSVG
+            <Svg
               key={index}
               name={mediaIcons[type]}
               style={{
