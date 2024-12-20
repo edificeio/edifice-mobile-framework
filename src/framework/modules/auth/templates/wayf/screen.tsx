@@ -354,7 +354,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       console.debug('WAYFScreen::onMessage => ', message);
       Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Message'), message.toString());
       // Execute right action depending on message type
-      const { type, token } = message;
+      const { token, type } = message;
       switch (type) {
         // Login with SAML token if received
         case 'SAML':
