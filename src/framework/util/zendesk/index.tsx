@@ -143,7 +143,6 @@ interface ZendeskContextProps {
  */
 export function ZendeskProvider({ children, zendeskConfig }: ZendeskContextProps) {
   const ZendeskInstance = new Zendesk(zendeskConfig);
-
   return <ZendeskContext.Provider value={ZendeskInstance}>{children}</ZendeskContext.Provider>;
 }
 

@@ -71,7 +71,7 @@ def runTasks = gradle.startParameter.taskNames
 if ('assembleDebug' in runTasks) {
     exec {
         workingDir '../..'
-        commandLine 'watchman watch-del-all && react-native start --reset-cache'
+        commandLine 'watchman watch-del-all && npx react-native start --reset-cache'
     }
 }
 
@@ -84,11 +84,11 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1130801
-        versionName "1.13.8"
+        versionCode 1130700
+        versionName "1.13.7"
         manifestPlaceholders.applicationName = APPNAME
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.1\""
+        buildConfigField "String", "BundleVersionType", "\"\""
         resValue "string", "app_name", "${APPNAME}"
         ndk {
             debugSymbolLevel 'FULL'
@@ -140,7 +140,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.11.1")
     implementation("com.google.android.gms:play-services-base:18.5.0")
     // Fix Duplicate class
-    implementation('org.jetbrains:annotations:16.0.2')
+    implementation('org.jetbrains:annotations:23.0.0')
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     // Zendesk
     implementation("com.zendesk:answerbot:3.2.0")
