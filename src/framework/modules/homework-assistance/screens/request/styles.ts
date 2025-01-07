@@ -21,34 +21,17 @@ export default StyleSheet.create({
     padding: pageGutterSize,
   },
   dropdownContainer: {
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
     marginBottom: UI_SIZES.spacing.medium,
-  },
-  dropdownText: {
-    color: theme.ui.text.regular,
   },
   errorAlert: {
     marginBottom: UI_SIZES.spacing.medium,
   },
   informationInput: {
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderRadius: 5,
-    borderWidth: 1,
-    color: theme.ui.text.regular,
     height: 100,
     marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.small,
   },
   phoneNumberInput: {
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderRadius: 5,
-    borderWidth: 1,
-    color: theme.ui.text.regular,
     marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.small,
   },
   rowContainer: {
     alignItems: 'center',

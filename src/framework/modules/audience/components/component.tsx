@@ -108,6 +108,7 @@ const Audience = (props: AudienceAllProps) => {
                   name={`${reaction.toLowerCase()}-round`}
                   height={UI_SIZES.elements.icon.default}
                   width={UI_SIZES.elements.icon.default}
+                  style={styles.statsReactionsItem}
                   cached
                 />
               ))

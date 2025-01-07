@@ -107,8 +107,6 @@ export class ActivationScreen extends React.PureComponent<
   };
 
   private onCheckBoxPress = () => {
-    // ensures phone number formatting before submit
-    this.onPhoneInputBlur();
     this.setState(prevState => ({ acceptCGU: !prevState.acceptCGU }));
   };
 
@@ -119,7 +117,9 @@ export class ActivationScreen extends React.PureComponent<
 
   private onPhoneInputBlur = () => {
     const { phone } = this.state;
-    this.verifyAndFormatPhoneNumber(phone);
+    if (this.props.context.mandatory?.phone) {
+      this.verifyAndFormatPhoneNumber(phone);
+    }
   };
 
   private onSetCountry = (newCountry: Country): void => {

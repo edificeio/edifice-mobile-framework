@@ -31,6 +31,7 @@ import {
   UserChildren,
 } from './model';
 
+import { getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-phone-number-input';
 import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
@@ -660,6 +661,31 @@ interface IActivationSubmitPayload extends ActivationPayload {
 
 export async function activateAccount(platform: Platform, model: ActivationPayload) {
   const theme = platform.webTheme;
+  const phoneNumber = model.phone;
+  const phonePrefix = model.phoneCountry;
+
+  const getIsValidMobileNumberForRegion = (toVerify: string) => {
+    try {
+      // Returns whether number is valid for selected region and an actual mobile number
+      const isValidNumberForRegion = isValidNumber(toVerify, phonePrefix);
+      const isValidMobileNumber = isMobileNumber(toVerify, phonePrefix);
+      return isValidNumberForRegion && isValidMobileNumber;
+    } catch {
+      // Returns false in case of format error (string is too short, isn't recognized as a phone number, etc.)
+      return false;
+    }
+  };
+
+  const phoneNumberCleaned = phoneNumber.replaceAll(/[-.]+/g, '');
+  const isValidMobileNumberForRegion = getIsValidMobileNumberForRegion(phoneNumberCleaned);
+
+  if (!isValidMobileNumberForRegion) {
+    throw new global.Error('Invalid mobile number submitted');
+  }
+  const mobileNumberFormatted = getFormattedNumber(phoneNumberCleaned, phonePrefix);
+
+  if (!mobileNumberFormatted) throw new global.Error('Failed to format mobile number');
+
   const payload: IActivationSubmitPayload = {
     acceptCGU: true,
     activationCode: model.activationCode,
@@ -668,7 +694,7 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
     login: model.login,
     mail: model.mail || '',
     password: model.password,
-    phone: model.phone,
+    phone: mobileNumberFormatted,
     theme,
   };
   const formdata = new FormData();

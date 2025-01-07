@@ -13,11 +13,13 @@ export default StyleSheet.create({
     maxHeight: 300,
     position: 'absolute',
     right: -UI_SIZES.spacing.major,
+    opacity: 0.8,
+  },
+  configContainer: {
+    padding: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.medium,
   },
   container: {
-    flexGrow: 1,
-    justifyContent: 'space-between',
-    padding: UI_SIZES.spacing.big,
     rowGap: UI_SIZES.spacing.medium,
   },
   primaryText: {

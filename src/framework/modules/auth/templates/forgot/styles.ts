@@ -5,54 +5,33 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
-  alertCard: {
-    marginBottom: UI_SIZES.spacing.big,
-    marginTop: UI_SIZES.spacing.tiny,
-  },
-  alertCardSuccess: {
-    marginBottom: UI_SIZES.spacing.big,
-  },
   buttonWrapper: {
+    marginTop: UI_SIZES.spacing.major,
     marginBottom: UI_SIZES.spacing.big,
-    zIndex: -1,
   },
-  dropDownArrow: {
-    width: UI_SIZES.elements.icon.medium,
-    height: UI_SIZES.elements.icon.medium,
-    marginLeft: UI_SIZES.spacing.small,
-  },
-  dropDownArrowContainer: {
-    borderLeftWidth: 1,
-    borderLeftColor: theme.palette.grey.cloudy,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '110%',
-  },
-  dropDownContainer: {
+  container: {
     alignItems: 'center',
     flex: 1,
+    justifyContent: 'space-around',
+    paddingVertical: UI_SIZES.spacing.minor,
   },
-  dropDownInput: {
+  dropdownInput: {
     ...TextSizeStyle.Medium,
     backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.input,
     borderWidth: 1,
-    borderColor: theme.palette.grey.cloudy,
+    borderColor: theme.palette.primary.regular,
     color: theme.ui.text.regular,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
-  dropDownItems: {
+  dropdownItems: {
     borderLeftWidth: 1,
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing.small,
-    borderColor: theme.palette.grey.cloudy,
+    borderColor: theme.palette.primary.regular,
     borderWidth: 1,
     flex: 1,
   },
-  dropDownLabel: { justifyContent: 'center' },
-  dropDownPlaceholder: { color: theme.ui.text.light },
-  dropDownText: { color: theme.ui.text.light },
   errorMsg: {
     alignSelf: 'center',
     color: theme.palette.status.failure.regular,
@@ -64,30 +43,36 @@ export default StyleSheet.create({
   infos: {
     alignItems: 'center',
   },
-  inputContainer: {
-    marginTop: UI_SIZES.spacing.big,
+  img: {
+    height: UI_SIZES.elements.thumbnail,
+    width: UI_SIZES.elements.thumbnail,
   },
-  instructions: {
-    marginTop: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny,
+  infosText: {
+    marginTop: UI_SIZES.spacing.large,
     textAlign: 'center',
+  },
+  inputContainer: {
+    marginTop: UI_SIZES.spacing.major,
   },
   page: {
     backgroundColor: theme.palette.grey.white,
     paddingBottom: -UI_SIZES.elements.tabbarHeight,
     paddingHorizontal: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.big,
     flexDirection: 'column',
     display: 'flex',
   },
-  platform: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny,
-    width: '100%',
+  select: {
+    borderColor: theme.palette.primary.regular,
+    borderWidth: 1,
   },
-  platformLogo: {
-    height: UI_SIZES.elements.logoSize.height,
-  },
-  platformName: {
-    marginTop: UI_SIZES.spacing.medium,
+  selectPlaceholder: { color: theme.ui.text.light },
+  selectText: { color: theme.ui.text.light },
+  successMsg: {
+    alignSelf: 'center',
+    marginTop: UI_SIZES.spacing.major,
+    marginBottom: UI_SIZES.spacing.large,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
   },
 });

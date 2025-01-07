@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-12-03 12:35:52",
-  "notes": "Updated translations from Phrase (#174)\nfix(xmas): MB-3007, make wording dynamic to show good year\nrelease: 1.13.7-rc.2(1130702)",
-  "version": "1.13.7-rc.3(1130703)"
+  "last": "2024-12-16 18:56:19",
+  "notes": "release: 1.13.8-alpha.1(1130801)\nrelease: 1.13.8(1130800)\nrelease: 1.13.7-alpha.2(1130705)\nupdate(yarn): update yarn stack\nupdate(yarn): update yarn stack\nfix(zimbra): AMV2-657 decode body href\nfeat(mediacentre): AMV2-659 add notif handler\nRevert \"chore: MB-2998 restore mediacentre version 1.13.4\"\nfeat(i18n): AMV2-658 add mediacentre notification i18n\nfeat(homework-assistance): AMV2-615 add feedback menu\nfeat(homework-assistance): AMV2-614 display resources in home screen\nfeat(homework-assistance): replace tryActionLegacy with tryAction, enhance typing\nfix(homework-assistance): AMV2-656 fix date exclusions check\nrelease: 1.13.7-rc.4(1130705)\nupdate(yarn): update yarn cache\nupdate(yarn): update yarn cache",
+  "version": "1.13.8-alpha.2(1130802)"
 }
