@@ -10,9 +10,6 @@ import { useSyncRef } from '~/framework/hooks/ref';
 export interface ScrollViewProps extends RNScrollViewProps {
   bottomInset?: boolean;
 }
-type ScrollContextType = React.MutableRefObject<RNScrollView | RNFlatList<any> | null> | null;
-
-export const ScrollContext = React.createContext<ScrollContextType>(null);
 
 function ScrollView(props: ScrollViewProps, ref) {
   const { bottomInset = true, contentContainerStyle, scrollIndicatorInsets, ...otherProps } = props;
