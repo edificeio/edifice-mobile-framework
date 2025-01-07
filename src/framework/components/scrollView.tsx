@@ -14,10 +14,6 @@ type ScrollContextType = React.MutableRefObject<RNScrollView | RNFlatList<any> |
 
 export const ScrollContext = React.createContext<ScrollContextType>(null);
 
-type ScrollContextType = React.MutableRefObject<RNScrollView | RNFlatList<any> | null> | null;
-
-export const ScrollContext = React.createContext<ScrollContextType>(null);
-
 function ScrollView(props: ScrollViewProps, ref) {
   const { bottomInset = true, contentContainerStyle, scrollIndicatorInsets, ...otherProps } = props;
   const realContentContainerStyle = React.useMemo(() => {
