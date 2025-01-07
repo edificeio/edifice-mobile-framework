@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-12-16 18:56:19",
-  "notes": "release: 1.13.8-alpha.1(1130801)\nrelease: 1.13.8(1130800)\nrelease: 1.13.7-alpha.2(1130705)\nupdate(yarn): update yarn stack\nupdate(yarn): update yarn stack\nfix(zimbra): AMV2-657 decode body href\nfeat(mediacentre): AMV2-659 add notif handler\nRevert \"chore: MB-2998 restore mediacentre version 1.13.4\"\nfeat(i18n): AMV2-658 add mediacentre notification i18n\nfeat(homework-assistance): AMV2-615 add feedback menu\nfeat(homework-assistance): AMV2-614 display resources in home screen\nfeat(homework-assistance): replace tryActionLegacy with tryAction, enhance typing\nfix(homework-assistance): AMV2-656 fix date exclusions check\nrelease: 1.13.7-rc.4(1130705)\nupdate(yarn): update yarn cache\nupdate(yarn): update yarn cache",
-  "version": "1.13.8-alpha.2(1130802)"
+  "last": "2024-12-20 11:13:14",
+  "notes": "update(yarn): yarn cache update\nchore(eslint): fix declaration order\nfeat(wayf): MB-3005, improve saml/oidc token detection using direct communication between wayf anf mobile via messages\nrelease: 1.13.8(1130800)\nupdate(yarn): update yarn cache.\nrelease: 1.13.7-rc.5(1130706)",
+  "version": "1.13.8-rc.1(1130801)"
 }

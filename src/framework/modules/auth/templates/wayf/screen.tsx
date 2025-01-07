@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { ActivityIndicator, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Platform, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 
 import CookieManager from '@react-native-cookies/cookies';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
-  ShouldStartLoadRequest,
   WebViewErrorEvent,
   WebViewHttpErrorEvent,
   WebViewNavigation,
@@ -34,42 +33,14 @@ import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
-  // Used to post HTML content and retrieve it via onMessage
-  // Injected in WebView with injectedJavaScript property
-  // Executed each time WebView url changes
-  static get INJECTED_JS() {
-    return 'ReactNativeWebView.postMessage(document.documentElement.innerHTML); true;';
-  }
-
-  // Used to set X-APP cookie used backend side
-  // Injected in WebView with injectedJavaScriptBeforeContentLoaded property
-  static get INJECTED_JS_BEFORE() {
-    return `document.cookie="X-APP=mobile;}"; true;`;
-  }
-
   // User selection dropdown items
   private dropdownItems: any = [];
 
   //  User selection dropdown selected value
   private dropdownValue: string | null = null;
 
-  // Auth url if defined
-  private authUrl: string | undefined = undefined;
-
   // Error if any
   private error: Error.ErrorTypes<typeof Error.LoginError> | undefined;
-
-  // Flag first webview page loading completion
-  private isFirstLoadFinished = false;
-
-  // OpenID custom token if any
-  private oidResponse: string | undefined = undefined;
-
-  // Platform url
-  private pfUrl: string | null = null;
-
-  // SAMLResponse if any
-  private samlResponse: string | undefined = undefined;
 
   // WAYF url
   private wayfUrl: string | undefined = undefined;
@@ -111,14 +82,14 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private contentComponents = [
     // WAYFPageMode.EMPTY: Display empty screen
     () => {
-      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Erreur'));
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Empty'));
       return (
         <EmptyScreen svgImage="empty-content" text={I18n.get('auth-wayf-empty-text')} title={I18n.get('auth-wayf-empty-title')} />
       );
     },
     // WAYFPageMode.ERROR: Display error message
     () => {
-      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Erreur'), this.error?.toString());
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Error'), this.error?.toString());
       return (
         <View style={styles.container}>
           <PFLogo pf={this.props.route.params.platform} />
@@ -183,16 +154,12 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
           incognito
-          injectedJavaScriptBeforeContentLoaded={WayfScreen.INJECTED_JS_BEFORE}
-          injectedJavaScript={WayfScreen.INJECTED_JS}
           javaScriptEnabled
           onError={this.onError.bind(this)}
           onHttpError={this.onHttpError.bind(this)}
           onLoad={this.onLoad.bind(this)}
-          onLoadStart={this.onLoadStart.bind(this)}
           onMessage={this.onMessage.bind(this)}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
-          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
           renderLoading={() => <Loading />}
           scalesPageToFit
           setSupportMultipleWindows={false}
@@ -200,6 +167,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           source={{ headers: { 'X-APP': 'mobile' }, uri: this.wayfUrl! }}
           startInLoadingState
           style={styles.webview}
+          userAgent={`X-APP=mobile-${Platform.OS}`}
           webviewDebuggingEnabled={__DEV__}
         />
       );
@@ -209,8 +177,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   constructor(props: IWayfScreenProps) {
     super(props);
     const pfConf = this.props.route.params.platform;
-    this.authUrl = pfConf?.auth;
-    this.pfUrl = pfConf?.url;
     this.wayfUrl = pfConf?.wayf;
     this.state = { dropdownOpened: false, errkey: Error.generateErrorKey(), mode: WAYFPageMode.WEBVIEW };
     this.backActions.forEach(action => {
@@ -243,20 +209,14 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Clear datas (WebView cookies, etc.) and execute given callback when done
   clearDatas(callback: Function) {
     const { navigation } = this.props;
-    // Clear cookies
     CookieManager.clearAll(true)
       .then(_success => {
-        // Clear some stuff
         this.error = undefined;
         this.dropdownItems = [];
         this.dropdownValue = null;
-        this.oidResponse = undefined;
-        this.samlResponse = undefined;
-        // Execute given callack
         callback();
       })
       .catch(_error => {
-        // Go to WAYF stack home
         navigation.navigate(authRouteNames.loginWayf, { platform: this.props.route.params.platform });
       });
   }
@@ -289,13 +249,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
 
   // Display WebView
   displayWebview() {
-    // Clear cookies and then go to WebView mode
     this.clearDatas(() => this.setState({ dropdownOpened: false, mode: WAYFPageMode.WEBVIEW }));
   }
 
   // Login with obtained saml assertion
-  loginWithSaml() {
-    const saml = this.samlResponse;
+  loginWithSaml(saml: string) {
     this.clearDatas(async () => {
       if (!saml) return;
       Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'SAML'));
@@ -321,8 +279,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         if (errtype) {
           this.displayError(errtype);
         }
-      } finally {
-        this.samlResponse = undefined;
       }
     });
   }
@@ -345,21 +301,18 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   }
 
   // Login with OpenID custom token
-  async loginWithOpenID() {
-    const customToken = this.oidResponse;
+  async loginWithOpenID(oidToken: string) {
     this.clearDatas(async () => {
-      if (!customToken) return;
+      if (!oidToken) return;
       Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'OpenID'));
       this.displayLoading();
       try {
-        await this.props.tryLogin(this.props.route.params.platform, { customToken }, this.state.errkey);
+        await this.props.tryLogin(this.props.route.params.platform, { customToken: oidToken }, this.state.errkey);
       } catch (error) {
         const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
         if (errtype) {
           this.displayError(errtype);
         }
-      } finally {
-        this.oidResponse = undefined;
       }
     });
   }
@@ -373,8 +326,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // See WebView onError property
   onError({ nativeEvent }: WebViewErrorEvent) {
     console.error('WAYFScreen::onError => ', nativeEvent);
-    if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url);
-    // Display empty screen
+    trackingWayfEvents.loadError(nativeEvent.url);
     this.displayEmpty();
   }
 
@@ -382,62 +334,46 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // See WebView onError property
   onHttpError({ nativeEvent }: WebViewHttpErrorEvent) {
     console.error('WAYFScreen::onHttpError => ', nativeEvent.statusCode);
-    if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url, nativeEvent.statusCode);
-    // Display empty screen
+    trackingWayfEvents.loadError(nativeEvent.url, nativeEvent.statusCode);
     this.displayEmpty();
   }
 
+  // Called when WebView content is loaded
+  // See WebView onLoad property
   onLoad({ nativeEvent }: WebViewNavigationEvent) {
-    // Flag first webview page loading completion
-    if (!this.isFirstLoadFinished) trackingWayfEvents.loadSuccess(nativeEvent.url);
-    this.isFirstLoadFinished = true;
+    console.debug('WAYFScreen::onLoad => ', nativeEvent.url);
+    trackingWayfEvents.loadSuccess(nativeEvent.url);
   }
 
-  onLoadStart() {
-    setTimeout(() => {
-      if (!this.isFirstLoadFinished) {
-        this.error = Error.FetchErrorType.TIMEOUT;
-        this.setState({ mode: WAYFPageMode.ERROR });
-      }
-    }, 20000);
-  }
-
-  // Called each time POST_HTML_CONTENT js code is executed (e.g when WebView url changes)
+  // Called each time a message is posted via window.ReactNativeWebView.postMessage
   // See WebView onMessage property
   onMessage(event: WebViewMessageEvent) {
-    // Get HTML code
-    const innerHTML = event?.nativeEvent?.data || '';
-    console.debug('WAYFScreen::onMessage: url = ', event?.nativeEvent?.url);
-    //console.debug('WAYFScreen::onMessage: innerHTML =\n' + innerHTML);
-    // Retrieve potential SAML token (Stored in <input type="hidden" name="SAMLResponse" value="[saml]"/>)
-    const saml = innerHTML.split('name="SAMLResponse" value="');
-    if (saml?.length === 2) {
-      const index = saml[1].indexOf('"');
-      if (index > 0) {
-        this.samlResponse = saml[1].substring(0, index);
-        console.debug('WAYFScreen::onMessage: SAMLResponse retrieved');
+    try {
+      // Decrypt received message
+      const message = JSON.parse(event?.nativeEvent?.data);
+      console.debug('WAYFScreen::onMessage => ', message);
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Message'), message.toString());
+      // Execute right action depending on message type
+      const { token, type } = message;
+      switch (type) {
+        // Login with SAML token if received
+        case 'SAML':
+          if (token) this.loginWithSaml(token);
+          break;
+        // Login with OpenID token if received
+        case 'OIDC':
+          if (token) this.loginWithOpenID(token);
+          break;
+        // Redirect to login page
+        case 'ENT':
+          this.props.navigation.dispatch(this.props.loginCredentialsNavAction);
+          break;
+        default:
+          console.error('WAYFScreen::onMessage => Wrong type received - ', type);
       }
-      // SP-Initiated WAYF stuff => Call oauth2 token api with received SAML if any
-      if (this.authUrl && this.samlResponse) {
-        console.debug('WAYFScreen::onMessage: SP-Initiated WAYF stuff');
-        this.loginWithSaml();
-      }
-    } else {
-      // Retrieve potential OpenID custom token (Stored via customToken=“..." format)
-      // Call oauth2 token api with received OpenID custom token if any
-      const oid = innerHTML.split('customToken=“');
-      if (oid?.length === 2) {
-        const index = oid[1].indexOf('"');
-        if (index > 0) {
-          this.oidResponse = oid[1].substring(0, index);
-          console.debug('WAYFScreen::onMessage: customToken retrieved');
-        }
-        // SP-Initiated WAYF stuff => Call oauth2 token api with received SAML if any
-        if (this.authUrl && this.oidResponse) {
-          console.debug('WAYFScreen::onMessage: SP-Initiated WAYF stuff');
-          this.loginWithOpenID();
-        }
-      }
+    } catch (err) {
+      console.error('WAYFScreen::onMessage => ', (err as Error).message);
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Error'), (err as Error).message);
     }
   }
 
@@ -445,71 +381,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // See WebView onNavigationStateChange property
   onNavigationStateChange(navigationState: WebViewNavigation) {
     Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Url'), navigationState.url);
-    // Update WebView back history flag
     this.webviewCanGoBack = navigationState.canGoBack;
-    // Track new url
-  }
-
-  // Called each time WebView url is about to change
-  // Must return true|false to allow|avoid navigation
-  // See WebView onNavigationStateChange property
-  onShouldStartLoadWithRequest(request: ShouldStartLoadRequest) {
-    const url = request.url;
-    console.debug('WAYFScreen::onShouldStartLoadWithRequest: isFirstLoadFinished = ', this.isFirstLoadFinished);
-    console.debug('WAYFScreen::onShouldStartLoadWithRequest: url = ', url);
-    // If current url is outside the WAYF
-    if (this.wayfUrl && this.isFirstLoadFinished && !url.startsWith(this.wayfUrl)) {
-      if (this.authUrl) {
-        // SP-Initiated WAYF stuff
-        console.debug('WAYFScreen::onShouldStartLoadWithRequest: SP-Initiated WAYF stuff');
-        // Allow navigation to SP-Initiated WAYFs via auth config field
-        if (url.startsWith(this.authUrl)) {
-          console.debug('WAYFScreen::onShouldStartLoadWithRequest: authUrl received => Navigation allowed');
-          return true;
-        }
-        // Go to standard login page and block navigation when
-        //   - No SAMLResponse has been detected
-        //   - No OpenID custom token has been detected
-        //   - WAYF redirects to ENT
-        if (this.pfUrl && url.startsWith(this.pfUrl)) {
-          if (!this.samlResponse && !this.oidResponse) {
-            if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Will show login page');
-            this.props.navigation.dispatch(this.props.loginCredentialsNavAction);
-          }
-          return false;
-        }
-      } else {
-        // IDP-Initiated WAYF stuff
-        console.debug(' IDP-Initiated WAYF stuff');
-        // If WAYF redirects to ENT
-        //   - Try to login with SAML token if any retrieved previously
-        //   - Try to login with OpenID custom token if any retrieved previously
-        //   - Otherwise go to standard login page
-        //   - Block navigation
-        if (this.pfUrl && url.startsWith(this.pfUrl)) {
-          if (this.samlResponse) {
-            console.debug(
-              'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with SAML token\n' + this.samlResponse,
-            );
-            this.loginWithSaml();
-          } else if (this.oidResponse) {
-            console.debug(
-              'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with OpenID custom token\n' +
-                this.oidResponse,
-            );
-            this.loginWithOpenID();
-          } else {
-            console.debug('WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Will show login page');
-            this.props.navigation.dispatch(this.props.loginCredentialsNavAction);
-          }
-          // Block navigation
-          return false;
-        }
-      }
-    }
-    // Allow navigation
-    console.debug('WAYFScreen::onShouldStartLoadWithRequest: Navigation allowed');
-    return true;
   }
 
   public render() {
