@@ -11,11 +11,14 @@ interface BackendExclusion {
 
 type BackendConfig = {
   messages: {
+    header: string;
     body: string;
     days: string;
-    header: string;
-    info: string;
     time: string;
+    info: string;
+    title_link: string;
+    description_link: string;
+    link: string;
   };
   settings: {
     exclusions: BackendExclusion[];
@@ -65,9 +68,12 @@ const configAdapter = (data: BackendConfig): Config => {
     messages: {
       body: data.messages.body,
       days: data.messages.days,
+      descriptionLink: data.messages.description_link,
       header: data.messages.header,
       info: data.messages.info,
+      link: data.messages.link,
       time: data.messages.time,
+      titleLink: data.messages.title_link,
     },
     settings: {
       exclusions: data.settings.exclusions.map(exclusionAdapter),
@@ -90,11 +96,11 @@ const configAdapter = (data: BackendConfig): Config => {
 
 const resourceAdapter = (data: BackendResource): Resource => {
   return {
+    description: data.description,
     id: data.idRessource,
     name: data.nomRessource,
     pictureUrl: data.urlVignette,
     url: data.urlAccesRessource,
-    description: data.description,
   };
 };
 

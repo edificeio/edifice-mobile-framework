@@ -1,8 +1,12 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
+
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import styles from './styles';
+import { HomeworkAssistanceHomeScreenDispatchProps, HomeworkAssistanceHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -28,9 +32,6 @@ import {
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import styles from './styles';
-import { HomeworkAssistanceHomeScreenDispatchProps, HomeworkAssistanceHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -95,11 +96,11 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
 
   const renderInformation = () => {
     if (!props.config) return renderError();
-    const { body, days, header, info, time } = props.config.messages;
+    const { body, days, descriptionLink, header, info, link, time } = props.config.messages;
 
     return (
       <>
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={[styles.container, props.resources.length ? styles.containerPadding : {}]}>
           <View style={styles.configContainer}>
             <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
             <SmallText style={styles.primaryText}>{body}</SmallText>
@@ -123,7 +124,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
           </View>
           {props.resources.length ? <ResourceList resources={props.resources} /> : null}
         </ScrollView>
-        <FeedbackMenu formUrl="/welcome" />
+        <FeedbackMenu description={descriptionLink} link={link} />
       </>
     );
   };
