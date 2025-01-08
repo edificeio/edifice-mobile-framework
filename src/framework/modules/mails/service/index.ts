@@ -1,4 +1,4 @@
-import { IMailsMailPreview } from '~/framework/modules/mails/model';
+import { IMailsFolder, IMailsMailPreview } from '~/framework/modules/mails/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { mailsAdapter, MailsMailPreviewBackend } from './adapters/mails';
 
@@ -10,23 +10,20 @@ export const mailsService = {
     },
   },
   folder: {
-    count: async (params: { folderName: string; unread: boolean }) => {
-      const api = `/conversation/count/${params.folderName}?unread=${params.unread}`;
+    count: async (params: { folderId: string; unread: boolean }) => {
+      const api = `/conversation/count/${params.folderId}?unread=${params.unread}`;
     },
     create: async (payload: { name: string; parentID?: string }) => {
       const api = '/conversation/folder';
     },
   },
   folders: {
-    //NEW
     get: async (params: { depth: number }) => {
-      const api = `/conversation/api/folders`;
-    },
-    getAll: async (params: { unread: boolean }) => {
-      const api = `/conversation/userfolders/list&unread=${params.unread}`;
-    },
-    getSubfolders: async (params: { unread: boolean; folderParentId: string }) => {
-      const api = `/conversation/userfolders/list&unread=${params.unread}&parentId=${params.folderParentId}`;
+      const api = `/conversation/api/folders?depth=${params.depth}`;
+      const backendFolders = await fetchJSONWithCache(api);
+      const folders = [...backendFolders];
+
+      return folders as IMailsFolder[];
     },
   },
   mail: {

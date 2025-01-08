@@ -96,17 +96,6 @@ export interface MailsCountBackend {
   count: number;
 }
 
-export interface MailsFolderBackend {
-  depth: number;
-  id: string;
-  name: string;
-  nbUnread: number;
-  parent_id: string;
-  skip_uniq: boolean; // ??
-  trashed: boolean;
-  user_id: string;
-}
-
 export interface MailsVisiblesGroupsBackend {
   groups: {
     groupDisplayName: string; // ??

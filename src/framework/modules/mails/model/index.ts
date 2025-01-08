@@ -63,12 +63,10 @@ export interface IMailsFolder {
   depth: number;
   id: string;
   name: string;
+  nbMessages: number;
   nbUnread: number;
   parent_id: string | null;
-  skip_uniq: boolean;
-  trashed: boolean;
-  user_id: string;
-  subfolders?: IMailsFolder[];
+  subFolders?: IMailsFolder[];
 }
 
 export interface MailsFolderInfo {

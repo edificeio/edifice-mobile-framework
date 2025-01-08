@@ -25,7 +25,6 @@ import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
-import { mailsFoldersData } from '~/framework/modules/mails/data';
 import { IMailsFolder, IMailsMailPreview, MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
@@ -66,8 +65,8 @@ const flattenFolders = (folders: IMailsFolder[]) => {
 
   folders.forEach(folder => {
     result.push(folder);
-    if (folder.subfolders) {
-      result.push(...flattenFolders(folder.subfolders));
+    if (folder.subFolders) {
+      result.push(...flattenFolders(folder.subFolders));
     }
   });
 
@@ -80,14 +79,34 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
   const [isInModalCreation, setIsInModalCreation] = React.useState<boolean>(false);
   const [mails, setMails] = React.useState<IMailsMailPreview[]>([]);
+  const [folders, setFolders] = React.useState<IMailsFolder[]>([]);
 
-  const flattenedFolders = flattenFolders(mailsFoldersData);
+  const loadMessages = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+    try {
+      const folderId = typeof folder === 'object' ? folder.id : (folder as string);
+      const mailsData = await mailsService.mails.get({ folderId, pageNb: 0, pageSize: 50, unread: false });
+
+      setMails(mailsData);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadFolders = async () => {
+    try {
+      const foldersData = await mailsService.folders.get({ depth: 2 });
+      const flattenedFolders = flattenFolders(foldersData);
+
+      setFolders(flattenedFolders);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const loadData = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     try {
-      const folderId = typeof folder === 'object' ? folder.id : (folder as string);
-      const mailsData = await mailsService.mails.get({ folderId, pageNb: 0, pageSize: 20, unread: false });
-      setMails(mailsData);
+      await loadMessages(folder);
+      await loadFolders();
     } catch (e) {
       console.error(e);
     }
@@ -124,7 +143,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const switchFolder = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     setSelectedFolder(folder);
     bottomSheetModalRef.current?.dismiss();
-    await loadData(folder);
+    await loadMessages(folder);
   };
 
   const onPressItem = () => {
@@ -151,7 +170,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         </View>
         <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.medium} />
         <View style={styles.customFolders}>
-          {flattenedFolders.map(folder => (
+          {folders.map(folder => (
             <MailsFolderItem
               key={folder.id}
               icon="ui-folder"
