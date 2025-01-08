@@ -16,7 +16,7 @@ export enum MailsRecipientsType {
 export interface MailsRecipientInfo {
   id: string;
   displayName: string;
-  type: AccountType;
+  profile: AccountType;
 }
 
 export interface IMailsMailContent {
@@ -45,16 +45,17 @@ export interface IMailsMailContent {
 }
 
 export interface IMailsMailPreview {
-  cc: MailsRecipientInfo[];
-  cci: MailsRecipientInfo[];
+  cc: { users: MailsRecipientInfo[]; groups: MailsRecipientInfo[] };
+  cci: { users: MailsRecipientInfo[]; groups: MailsRecipientInfo[] };
+  count: number;
   date: number;
   from: MailsRecipientInfo;
   hasAttachment: boolean;
   id: string;
   state: string;
   subject: string;
-  to: MailsRecipientInfo[];
-  type: string;
+  to: { users: MailsRecipientInfo[]; groups: MailsRecipientInfo[] };
+  response: boolean;
   unread: boolean;
 }
 

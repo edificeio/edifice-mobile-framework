@@ -50,18 +50,18 @@ const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) 
 function formatRecipients(to, cc, cci): string {
   const formattedParts: string[] = [];
 
-  if (to && to.length > 0) {
-    const toNames = to.map(recipient => recipient.displayName).join(', ');
+  if (to && to.users.length > 0) {
+    const toNames = to.users.map(recipient => recipient.displayName).join(', ');
     formattedParts.push(`${I18n.get('mails-prefixto')} ${toNames}`);
   }
 
-  if (cc && cc.length > 0) {
-    const ccNames = cc.map(recipient => recipient.displayName).join(', ');
+  if (cc && cc.users.length > 0) {
+    const ccNames = cc.users.map(recipient => recipient.displayName).join(', ');
     formattedParts.push(`${I18n.get('mails-prefixcc')} ${ccNames}`);
   }
 
-  if (cci && cci.length > 0) {
-    const cciNames = cci.map(recipient => recipient.displayName).join(', ');
+  if (cci && cci.users.length > 0) {
+    const cciNames = cci.users.map(recipient => recipient.displayName).join(', ');
     formattedParts.push(`${I18n.get('mails-prefixcci')} ${cciNames}`);
   }
 
@@ -69,7 +69,7 @@ function formatRecipients(to, cc, cci): string {
 }
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
-  const { cc, cci, date, from, hasAttachment, state, subject, to, type, unread } = props.data;
+  const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread } = props.data;
   const TextComponent = unread ? SmallBoldText : SmallText;
 
   const onPress = () => {
@@ -103,7 +103,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       renderRightActions={swipeRightAction}>
       <TouchableOpacity style={[styles.container, unread ? styles.containerUnread : {}]} onPress={onPress}>
         <Avatar size={Size.large} sourceOrId={from.id} id="" />
-        {type === 'ANSWERED' ? (
+        {response ? (
           <View style={styles.responseIcon}>
             <NamedSVG
               name="ui-undo"

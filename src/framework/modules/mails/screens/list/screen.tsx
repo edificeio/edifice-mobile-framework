@@ -12,7 +12,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
@@ -20,13 +20,15 @@ import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/component
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
-import { BodyText, HeadingXSText } from '~/framework/components/text';
+import { BodyText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
+import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
-import { mailsFoldersData, mailsListData } from '~/framework/modules/mails/data';
-import { IMailsFolder, MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
+import { mailsFoldersData } from '~/framework/modules/mails/data';
+import { IMailsFolder, IMailsMailPreview, MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { mailsService } from '~/framework/modules/mails/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -77,8 +79,19 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const navigation = props.navigation;
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
   const [isInModalCreation, setIsInModalCreation] = React.useState<boolean>(false);
+  const [mails, setMails] = React.useState<IMailsMailPreview[]>([]);
 
   const flattenedFolders = flattenFolders(mailsFoldersData);
+
+  const loadData = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+    try {
+      const folderId = typeof folder === 'object' ? folder.id : (folder as string);
+      const mailsData = await mailsService.mails.get({ folderId, pageNb: 0, pageSize: 20, unread: false });
+      setMails(mailsData);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -108,9 +121,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolder]);
 
-  const switchFolder = (folder: MailsDefaultFolders | MailsFolderInfo) => {
+  const switchFolder = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     setSelectedFolder(folder);
     bottomSheetModalRef.current?.dismiss();
+    await loadData(folder);
   };
 
   const onPressItem = () => {
@@ -198,10 +212,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     );
   };
 
-  return (
+  const renderContent = () => (
     <PageView>
       <FlashList
-        data={mailsListData}
+        data={mails}
         renderItem={mail => {
           return (
             <MailsMailPreview data={mail.item} onPress={onPressItem} isSender={props.session?.user.id === mail.item.from.id} />
@@ -211,6 +225,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       />
       {renderBottomSheetFolders()}
     </PageView>
+  );
+
+  return (
+    <ContentLoader
+      loadContent={() => loadData(MailsDefaultFolders.INBOX)}
+      renderContent={renderContent}
+      renderError={() => <EmptyConnectionScreen />}
+      renderLoading={() => <SmallBoldText>Loading</SmallBoldText>}
+    />
   );
 };
 

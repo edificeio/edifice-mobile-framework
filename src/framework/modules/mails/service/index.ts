@@ -1,3 +1,7 @@
+import { IMailsMailPreview } from '~/framework/modules/mails/model';
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { mailsAdapter, MailsMailPreviewBackend } from './adapters/mails';
+
 export const mailsService = {
   attachments: {
     add: async () => {},
@@ -14,6 +18,10 @@ export const mailsService = {
     },
   },
   folders: {
+    //NEW
+    get: async (params: { depth: number }) => {
+      const api = `/conversation/api/folders`;
+    },
     getAll: async (params: { unread: boolean }) => {
       const api = `/conversation/userfolders/list&unread=${params.unread}`;
     },
@@ -29,8 +37,9 @@ export const mailsService = {
       // revoir forwardfrom
       const api = `/conversation/message/${params.mailId}/forward/${params.forwardFrom}`;
     },
+    //NEW
     getContent: async (params: { mailId: string }) => {
-      const api = `/conversation/message/${params.mailId}`;
+      const api = `conversation/api/messages/${params.mailId}`;
     },
     markUnread: async (payload: { id: string[]; unread: boolean }) => {
       const api = '/conversation/toggleUnread';
@@ -65,11 +74,12 @@ export const mailsService = {
     },
   },
   mails: {
-    getAll: async (params: { folderName: string; pageNb: number; unread: boolean }) => {
-      const api = `/conversation/list/${params.folderName}?page=${params.pageNb}&unread=${params.unread}`;
-    },
-    getAllByFolderId: async (params: { folderId: string; pageNb: string; unread: boolean }) => {
-      const api = `/conversation/list/${params.folderId}?restrain&page=${params.pageNb}&unread=${params.unread}`;
+    get: async (params: { folderId: string; pageNb: number; pageSize: number; unread: boolean }) => {
+      const api = `/conversation/api/folders/${params.folderId}/messages?page=${params.pageNb}&page_size=${params.pageSize}&unread=${params.unread}`;
+      const backendMails = (await fetchJSONWithCache(api)) as MailsMailPreviewBackend[];
+
+      const mails = backendMails.map(mail => mailsAdapter(mail));
+      return mails as IMailsMailPreview[];
     },
   },
   signature: {},

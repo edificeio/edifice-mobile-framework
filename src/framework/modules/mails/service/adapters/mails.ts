@@ -1,22 +1,74 @@
+import { IMailsMailPreview, MailsRecipientInfo } from '~/framework/modules/mails/model';
+
 export interface MailsMailPreviewBackend {
-  cc: string[];
-  ccName: any; // ???
-  cci: string[];
-  cciName: string[]; // ???
-  count: number; // ??
+  cc: {
+    users: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+    groups: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+  };
+  cci: {
+    users: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+    groups: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+  };
+  count: number;
   date: number;
-  displayNames: [string, string, boolean][]; // pq ?
-  from: string;
-  fromName: any; // Voir ce que c'est
+  from: {
+    id: string;
+    displayName: string;
+    profile: string;
+  };
   hasAttachment: boolean;
   id: string;
   response: boolean;
-  state: string; // "SENT" ou ??
+  state: string;
   subject: string;
-  to: string[];
-  toName: any; // Voir ce que c'est
+  to: {
+    users: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+    groups: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+  };
   unread: boolean;
 }
+
+export const mailsAdapter = (n: MailsMailPreviewBackend) => {
+  const ret = {
+    cc: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientInfo[] },
+    cci: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientInfo[] },
+    count: n.count,
+    date: n.date,
+    from: n.from as MailsRecipientInfo,
+    hasAttachment: n.hasAttachment,
+    id: n.id,
+    response: n.response,
+    state: n.state as 'SENT' | 'DRAFT',
+    subject: n.subject,
+    to: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientInfo[] },
+    unread: n.unread,
+  };
+  return ret as IMailsMailPreview;
+};
 
 export interface MailsMailContentBackend {
   attachments: any[];
