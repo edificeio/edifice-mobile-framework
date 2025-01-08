@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { BUTTON_WIDTH } from '~/framework/modules/homework-assistance/components/feedback-menu/button/styles';
 
 export default StyleSheet.create({
   actionContainer: {
@@ -11,9 +12,9 @@ export default StyleSheet.create({
   backgroundImage: {
     bottom: 80,
     maxHeight: 300,
+    opacity: 0.8,
     position: 'absolute',
     right: -UI_SIZES.spacing.major,
-    opacity: 0.8,
   },
   configContainer: {
     padding: UI_SIZES.spacing.big,
@@ -21,6 +22,9 @@ export default StyleSheet.create({
   },
   container: {
     rowGap: UI_SIZES.spacing.medium,
+  },
+  containerPadding: {
+    paddingBottom: BUTTON_WIDTH + UI_SIZES.spacing.minor,
   },
   primaryText: {
     textAlign: 'center',
