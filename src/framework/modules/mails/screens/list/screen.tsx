@@ -20,11 +20,12 @@ import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/component
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
-import { BodyText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
+import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
+import MailsPlaceholderList from '~/framework/modules/mails/components/placeholder/list';
 import { IMailsFolder, IMailsMailPreview, MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
@@ -251,7 +252,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       loadContent={() => loadData(MailsDefaultFolders.INBOX)}
       renderContent={renderContent}
       renderError={() => <EmptyConnectionScreen />}
-      renderLoading={() => <SmallBoldText>Loading</SmallBoldText>}
+      renderLoading={() => <MailsPlaceholderList />}
     />
   );
 };
