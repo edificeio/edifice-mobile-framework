@@ -14,9 +14,12 @@ export interface Config {
   messages: {
     body: string;
     days: string;
+    descriptionLink: string;
     header: string;
     info: string;
+    link: string;
     time: string;
+    titleLink: string;
   };
   settings: {
     exclusions: Exclusion[];
