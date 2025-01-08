@@ -81,12 +81,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isInModalCreation, setIsInModalCreation] = React.useState<boolean>(false);
   const [mails, setMails] = React.useState<IMailsMailPreview[]>([]);
   const [folders, setFolders] = React.useState<IMailsFolder[]>([]);
+  const [folderCounts, setFolderCounts] = React.useState<Record<MailsDefaultFolders, number>>({});
 
   const loadMessages = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     try {
       const folderId = typeof folder === 'object' ? folder.id : (folder as string);
       const mailsData = await mailsService.mails.get({ folderId, pageNb: 0, pageSize: 50, unread: false });
-
       setMails(mailsData);
     } catch (e) {
       console.error(e);
@@ -97,8 +97,22 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     try {
       const foldersData = await mailsService.folders.get({ depth: 2 });
       const flattenedFolders = flattenFolders(foldersData);
-
       setFolders(flattenedFolders);
+
+      const counts: Record<string, number> = {};
+      for (const folder of Object.values(MailsDefaultFolders)) {
+        try {
+          const countData = await mailsService.folder.count({
+            folderId: folder,
+            unread: folder === MailsDefaultFolders.DRAFTS ? false : true,
+          });
+
+          counts[folder] = countData.count;
+        } catch (e) {
+          console.error(`Failed to fetch count for folder: ${folder}`, e);
+        }
+      }
+      setFolderCounts(counts);
     } catch (e) {
       console.error(e);
     }
@@ -166,6 +180,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               name={I18n.get(defaultFoldersInfos[folder].title)}
               selected={selectedFolder === folder}
               onPress={() => switchFolder(folder as MailsDefaultFolders)}
+              nbUnread={folderCounts[folder]}
             />
           ))}
         </View>

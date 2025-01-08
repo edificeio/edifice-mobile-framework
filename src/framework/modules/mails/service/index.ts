@@ -1,4 +1,4 @@
-import { IMailsFolder, IMailsMailPreview } from '~/framework/modules/mails/model';
+import { IMailsFolder, IMailsMailPreview, MailsFolderCount } from '~/framework/modules/mails/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { mailsAdapter, MailsMailPreviewBackend } from './adapters/mails';
 
@@ -12,6 +12,9 @@ export const mailsService = {
   folder: {
     count: async (params: { folderId: string; unread: boolean }) => {
       const api = `/conversation/count/${params.folderId}?unread=${params.unread}`;
+      const count = await fetchJSONWithCache(api);
+
+      return count as MailsFolderCount;
     },
     create: async (payload: { name: string; parentID?: string }) => {
       const api = '/conversation/folder';

@@ -92,10 +92,6 @@ export interface MailsMailContentBackend {
   toName: any; // Voir ce que c'est
 }
 
-export interface MailsCountBackend {
-  count: number;
-}
-
 export interface MailsVisiblesGroupsBackend {
   groups: {
     groupDisplayName: string; // ??

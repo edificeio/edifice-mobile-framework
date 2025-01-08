@@ -44,6 +44,10 @@ export interface IMailsMailContent {
   to: MailsRecipientInfo[];
 }
 
+export interface MailsFolderCount {
+  count: number;
+}
+
 export interface IMailsMailPreview {
   cc: { users: MailsRecipientInfo[]; groups: MailsRecipientInfo[] };
   cci: { users: MailsRecipientInfo[]; groups: MailsRecipientInfo[] };
