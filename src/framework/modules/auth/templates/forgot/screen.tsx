@@ -10,7 +10,7 @@ import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { forgotAction } from '~/framework/modules/auth/actions';
 import { API } from '~/framework/modules/auth/service.ts';
@@ -114,7 +114,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = (props: ForgotScre
   return (
     <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
       <View style={styles.infos}>
-        <NamedSVG name="user-email" style={styles.img} />
+        <Svg name="user-email" style={styles.img} />
         {!isSuccess ? (
           <SmallText style={styles.infosText}>
             {I18n.get(forgotMode === 'id' ? 'auth-forgot-id-instructions' : 'auth-forgot-password-instructions')}

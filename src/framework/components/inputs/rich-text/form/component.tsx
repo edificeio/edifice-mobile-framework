@@ -17,8 +17,7 @@ import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEdito
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
-import Separator from '~/framework/components/separator';
+import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
@@ -207,7 +206,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           style={styles.choosePicsMenuTitle}
         />
         <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleTakePic}>
-          <NamedSVG
+          <Svg
             height={UI_SIZES.elements.icon.default}
             width={UI_SIZES.elements.icon.default}
             name="ui-camera"
@@ -217,7 +216,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         </TouchableOpacity>
         <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.minor} />
         <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleChoosePics}>
-          <NamedSVG
+          <Svg
             height={UI_SIZES.elements.icon.default}
             width={UI_SIZES.elements.icon.default}
             name="ui-smartphone"
