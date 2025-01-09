@@ -1,5 +1,5 @@
 import { IMailsFolder, IMailsMailPreview, MailsFolderCount } from '~/framework/modules/mails/model';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
 import { mailsAdapter, MailsMailPreviewBackend } from './adapters/mails';
 
 export const mailsService = {
@@ -38,8 +38,13 @@ export const mailsService = {
     },
   },
   mail: {
-    delete: async (payload: { id: string[] }) => {
+    delete: async (payload: { ids: string[] }) => {
       const api = '/conversation/delete';
+      const body = JSON.stringify({ id: payload.ids });
+      await fetchWithCache(api, {
+        body,
+        method: 'PUT',
+      });
     },
     forward: async (params: { mailId: string; forwardFrom: string }) => {
       // revoir forwardfrom
@@ -55,8 +60,13 @@ export const mailsService = {
     moveToFolder: async (params: { folderId: string }, payload: { id: string[] }) => {
       const api = `/conversation/move/userfolder/${params.folderId}`;
     },
-    moveToTrash: async (payload: { id: string[] }) => {
+    moveToTrash: async (payload: { ids: string[] }) => {
       const api = '/conversation/trash';
+      const body = JSON.stringify({ id: payload.ids });
+      await fetchWithCache(api, {
+        body,
+        method: 'PUT',
+      });
     },
     removeFromFolder: async (params: { mailIds: string[] }) => {
       const idsToString = params.mailIds.reduce((s, id) => s + 'id=' + id + '&', '');

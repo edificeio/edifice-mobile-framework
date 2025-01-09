@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-raw-text */
 import * as React from 'react';
-import { Alert, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import moment from 'moment';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -17,36 +17,6 @@ import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/component
 import { MailsMailStatePreview } from '~/framework/modules/mails/model';
 import { displayPastDate } from '~/framework/util/date';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
-
-const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      flexDirection: 'row',
-      transform: [{ translateX: drag.value + 160 }],
-    };
-  });
-
-  return (
-    <Reanimated.View style={styleAnimation}>
-      <TouchableOpacity onPress={() => Alert.alert('unread')} style={[styles.swipeAction, styles.swipeUnreadAction]}>
-        <Svg
-          name="ui-mailUnread"
-          fill={theme.palette.grey.white}
-          width={UI_SIZES.elements.icon.default}
-          height={UI_SIZES.elements.icon.default}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => Alert.alert('delete')} style={[styles.swipeAction, styles.swipeDeleteAction]}>
-        <Svg
-          name="ui-delete"
-          fill={theme.palette.grey.white}
-          width={UI_SIZES.elements.icon.default}
-          height={UI_SIZES.elements.icon.default}
-        />
-      </TouchableOpacity>
-    </Reanimated.View>
-  );
-};
 
 function formatRecipients(to, cc, cci): string {
   const formattedParts: string[] = [];
@@ -69,13 +39,10 @@ function formatRecipients(to, cc, cci): string {
 }
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
-  const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread } = props.data;
+  const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread, id } = props.data;
+  const { isSender, onPress, onDelete, onUnread } = props;
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
   const TextComponent = isUnread ? SmallBoldText : SmallText;
-
-  const onPress = () => {
-    props.onPress();
-  };
 
   const renderFirstText = () => {
     const recipientsText = formatRecipients(to, cc, cci);
@@ -90,12 +57,42 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
             </SmallBoldText>
             {recipientsText}
           </>
-        ) : props.isSender ? (
+        ) : isSender ? (
           recipientsText
         ) : (
           from.displayName
         )}
       </TextComponent>
+    );
+  };
+
+  const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
+    const styleAnimation = useAnimatedStyle(() => {
+      return {
+        flexDirection: 'row',
+        transform: [{ translateX: drag.value + 160 }],
+      };
+    });
+
+    return (
+      <Reanimated.View style={styleAnimation}>
+        <TouchableOpacity onPress={() => onUnread && onUnread(id)} style={[styles.swipeAction, styles.swipeUnreadAction]}>
+          <Svg
+            name="ui-mailUnread"
+            fill={theme.palette.grey.white}
+            width={UI_SIZES.elements.icon.default}
+            height={UI_SIZES.elements.icon.default}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => onDelete(id)} style={[styles.swipeAction, styles.swipeDeleteAction]}>
+          <Svg
+            name="ui-delete"
+            fill={theme.palette.grey.white}
+            width={UI_SIZES.elements.icon.default}
+            height={UI_SIZES.elements.icon.default}
+          />
+        </TouchableOpacity>
+      </Reanimated.View>
     );
   };
 
@@ -124,7 +121,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
             <CaptionBoldText style={styles.date}>{displayPastDate(moment(date))}</CaptionBoldText>
           </View>
           <View style={styles.line}>
-            <TextComponent>{subject ?? I18n.get('mails-list-noobject')}</TextComponent>
+            <TextComponent numberOfLines={1}>{subject ?? I18n.get('mails-list-noobject')}</TextComponent>
             {hasAttachment ? (
               <Svg
                 name="ui-attachment"

@@ -197,6 +197,26 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }
   };
 
+  const onTrash = async (id: string) => {
+    try {
+      await mailsService.mail.moveToTrash({ ids: [id] });
+      loadMessages(selectedFolder);
+      toast.showSuccess(I18n.get('mails-list-trashmessage'));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const onDelete = async (id: string) => {
+    try {
+      await mailsService.mail.delete({ ids: [id] });
+      loadMessages(selectedFolder);
+      toast.showSuccess(I18n.get('mails-list-deletemessage'));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const renderFolders = () => {
     return (
       <View>
@@ -295,10 +315,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderEmpty = () => {
     return (
       <EmptyScreen
-        svgImage="empty-conversation"
-        title={I18n.get('mails-list-emptytitle')}
+        svgImage={selectedFolder === MailsDefaultFolders.TRASH ? 'empty-trash' : 'empty-conversation'}
+        title={I18n.get(selectedFolder === MailsDefaultFolders.TRASH ? 'mails-list-emptytitletrash' : 'mails-list-emptytitle')}
         textColor={theme.palette.grey.black}
-        text={I18n.get('mails-list-emptytext')}
+        text={I18n.get(selectedFolder === MailsDefaultFolders.TRASH ? 'mails-list-emptytexttrash' : 'mails-list-emptytext')}
       />
     );
   };
@@ -309,7 +329,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         data={mails}
         renderItem={mail => {
           return (
-            <MailsMailPreview data={mail.item} onPress={onPressItem} isSender={props.session?.user.id === mail.item.from.id} />
+            <MailsMailPreview
+              data={mail.item}
+              onPress={onPressItem}
+              isSender={props.session?.user.id === mail.item.from.id}
+              onDelete={selectedFolder === MailsDefaultFolders.TRASH ? () => onDelete(mail.item.id) : () => onTrash(mail.item.id)}
+            />
           );
         }}
         ListEmptyComponent={renderEmpty()}
