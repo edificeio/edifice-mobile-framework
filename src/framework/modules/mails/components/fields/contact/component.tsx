@@ -9,7 +9,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextInputType } from '~/framework/components/inputs/text/component';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
 import MailsContactItem from '~/framework/modules/mails/components/contact-item';
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
@@ -96,7 +96,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
         <TouchableOpacity
           style={[styles.button, props.isOpenMoreRecipientsFields ? styles.buttonOpen : {}]}
           onPress={onToggleMoreRecipientsFields}>
-          <NamedSVG
+          <Svg
             name="ui-rafterDown"
             fill={theme.palette.grey.black}
             width={UI_SIZES.elements.icon.small}

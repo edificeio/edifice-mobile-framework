@@ -12,7 +12,7 @@ import { MailsMailPreviewProps } from './types';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { MailsMailStatePreview } from '~/framework/modules/mails/model';
 import { displayPastDate } from '~/framework/util/date';
@@ -29,7 +29,7 @@ const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) 
   return (
     <Reanimated.View style={styleAnimation}>
       <TouchableOpacity onPress={() => Alert.alert('unread')} style={[styles.swipeAction, styles.swipeUnreadAction]}>
-        <NamedSVG
+        <Svg
           name="ui-mailUnread"
           fill={theme.palette.grey.white}
           width={UI_SIZES.elements.icon.default}
@@ -37,7 +37,7 @@ const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) 
         />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => Alert.alert('delete')} style={[styles.swipeAction, styles.swipeDeleteAction]}>
-        <NamedSVG
+        <Svg
           name="ui-delete"
           fill={theme.palette.grey.white}
           width={UI_SIZES.elements.icon.default}
@@ -110,7 +110,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         <Avatar size={Size.large} sourceOrId={from.id} id="" />
         {response ? (
           <View style={styles.responseIcon}>
-            <NamedSVG
+            <Svg
               name="ui-undo"
               height={UI_SIZES.elements.icon.xsmall}
               width={UI_SIZES.elements.icon.xsmall}
@@ -126,7 +126,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
           <View style={styles.line}>
             <TextComponent>{subject ?? I18n.get('mails-list-noobject')}</TextComponent>
             {hasAttachment ? (
-              <NamedSVG
+              <Svg
                 name="ui-attachment"
                 height={UI_SIZES.elements.icon.xsmall}
                 width={UI_SIZES.elements.icon.xsmall}

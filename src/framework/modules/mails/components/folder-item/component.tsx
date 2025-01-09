@@ -6,7 +6,7 @@ import { MailsFolderItemProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 
 export const MailsFolderItem = (props: MailsFolderItemProps) => {
@@ -32,7 +32,7 @@ export const MailsFolderItem = (props: MailsFolderItemProps) => {
 
   return (
     <TouchableOpacity style={[styles.container, suppStyles(), props.selected ? styles.isSelected : {}]} onPress={onPress}>
-      <NamedSVG
+      <Svg
         name={props.icon}
         fill={theme.palette.grey.black}
         width={UI_SIZES.elements.icon.default}

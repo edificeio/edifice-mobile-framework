@@ -6,7 +6,7 @@ import { MailsContactItemProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
@@ -27,7 +27,7 @@ export const MailsContactItem = (props: MailsContactItemProps) => {
       </SmallText>
       {props.isEditing ? (
         <TouchableOpacity onPress={onDelete}>
-          <NamedSVG
+          <Svg
             name="ui-close"
             fill={theme.palette.grey.black}
             width={UI_SIZES.elements.icon.small}

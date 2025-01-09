@@ -6,7 +6,7 @@ import { AttachmentProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 
 export default function Attachment(props: AttachmentProps) {
@@ -16,7 +16,7 @@ export default function Attachment(props: AttachmentProps) {
   const renderActionIcon = () => {
     return (
       <TouchableOpacity style={styles.button} onPress={props.isEditing ? onDelete : onDownload}>
-        <NamedSVG
+        <Svg
           name={props.isEditing ? 'ui-delete' : 'ui-download'}
           fill={props.isEditing ? theme.palette.status.failure.regular : theme.palette.grey.black}
           width={UI_SIZES.elements.icon.small}
@@ -27,7 +27,7 @@ export default function Attachment(props: AttachmentProps) {
   };
   return (
     <View style={styles.container}>
-      <NamedSVG
+      <Svg
         name="ui-attachment"
         fill={theme.palette.grey.black}
         width={UI_SIZES.elements.icon.medium}
