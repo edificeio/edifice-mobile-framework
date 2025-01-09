@@ -1,4 +1,9 @@
-import { IMailsMailPreview, MailsRecipientInfo } from '~/framework/modules/mails/model';
+import {
+  IMailsMailPreview,
+  MailsMailStatePreview,
+  MailsRecipientGroupInfo,
+  MailsRecipientInfo,
+} from '~/framework/modules/mails/model';
 
 export interface MailsMailPreviewBackend {
   cc: {
@@ -10,7 +15,9 @@ export interface MailsMailPreviewBackend {
     groups: {
       id: string;
       displayName: string;
-      profile: string;
+      size: number;
+      type: string;
+      subType: string;
     }[];
   };
   cci: {
@@ -22,7 +29,9 @@ export interface MailsMailPreviewBackend {
     groups: {
       id: string;
       displayName: string;
-      profile: string;
+      size: number;
+      type: string;
+      subType: string;
     }[];
   };
   count: number;
@@ -46,7 +55,9 @@ export interface MailsMailPreviewBackend {
     groups: {
       id: string;
       displayName: string;
-      profile: string;
+      size: number;
+      type: string;
+      subType: string;
     }[];
   };
   unread: boolean;
@@ -54,17 +65,17 @@ export interface MailsMailPreviewBackend {
 
 export const mailsAdapter = (n: MailsMailPreviewBackend) => {
   const ret = {
-    cc: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientInfo[] },
-    cci: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientInfo[] },
+    cc: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientGroupInfo[] },
+    cci: { users: n.cci.users as MailsRecipientInfo[], groups: n.cci.groups as MailsRecipientGroupInfo[] },
     count: n.count,
     date: n.date,
     from: n.from as MailsRecipientInfo,
     hasAttachment: n.hasAttachment,
     id: n.id,
     response: n.response,
-    state: n.state as 'SENT' | 'DRAFT',
+    state: n.state as MailsMailStatePreview,
     subject: n.subject,
-    to: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientInfo[] },
+    to: { users: n.to.users as MailsRecipientInfo[], groups: n.to.groups as MailsRecipientGroupInfo[] },
     unread: n.unread,
   };
   return ret as IMailsMailPreview;

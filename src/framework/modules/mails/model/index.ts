@@ -1,7 +1,7 @@
 import { AccountType } from '~/framework/modules/auth/model';
 
 export enum MailsDefaultFolders {
-  DRAFTS = 'drafts',
+  DRAFTS = 'draft',
   INBOX = 'inbox',
   OUTBOX = 'outbox',
   TRASH = 'trash',
@@ -17,6 +17,14 @@ export interface MailsRecipientInfo {
   id: string;
   displayName: string;
   profile: AccountType;
+}
+
+export interface MailsRecipientGroupInfo {
+  id: string;
+  displayName: string;
+  size: number;
+  type: string; // ProfileGroup && ??
+  subType: string; // ClassGroup && ??
 }
 
 export interface IMailsMailContent {
@@ -48,17 +56,22 @@ export interface MailsFolderCount {
   count: number;
 }
 
+export enum MailsMailStatePreview {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+}
+
 export interface IMailsMailPreview {
-  cc: { users: MailsRecipientInfo[]; groups: MailsRecipientInfo[] };
-  cci: { users: MailsRecipientInfo[]; groups: MailsRecipientInfo[] };
+  cc: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
+  cci: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
   count: number;
   date: number;
   from: MailsRecipientInfo;
   hasAttachment: boolean;
   id: string;
-  state: string;
+  state: MailsMailStatePreview;
   subject: string;
-  to: { users: MailsRecipientInfo[]; groups: MailsRecipientInfo[] };
+  to: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
   response: boolean;
   unread: boolean;
 }

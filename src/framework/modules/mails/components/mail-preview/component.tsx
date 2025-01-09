@@ -14,6 +14,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { MailsMailStatePreview } from '~/framework/modules/mails/model';
 import { displayPastDate } from '~/framework/util/date';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
@@ -49,7 +50,6 @@ const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) 
 
 function formatRecipients(to, cc, cci): string {
   const formattedParts: string[] = [];
-
   if (to && to.users.length > 0) {
     const toNames = to.users.map(recipient => recipient.displayName).join(', ');
     formattedParts.push(`${I18n.get('mails-prefixto')} ${toNames}`);
@@ -70,7 +70,8 @@ function formatRecipients(to, cc, cci): string {
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread } = props.data;
-  const TextComponent = unread ? SmallBoldText : SmallText;
+  const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
+  const TextComponent = isUnread ? SmallBoldText : SmallText;
 
   const onPress = () => {
     props.onPress();
@@ -81,9 +82,13 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
 
     return (
       <TextComponent numberOfLines={1} style={styles.firstText}>
-        {state === 'DRAFT' ? (
+        {state === MailsMailStatePreview.DRAFT ? (
           <>
-            <SmallBoldText style={styles.draftText}>{I18n.get('mails-list-draft')}</SmallBoldText> {recipientsText}
+            <SmallBoldText style={styles.draftText}>
+              {I18n.get('mails-list-draft')}
+              {'  '}
+            </SmallBoldText>
+            {recipientsText}
           </>
         ) : props.isSender ? (
           recipientsText
@@ -101,7 +106,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       rightThreshold={160}
       overshootFriction={8}
       renderRightActions={swipeRightAction}>
-      <TouchableOpacity style={[styles.container, unread ? styles.containerUnread : {}]} onPress={onPress}>
+      <TouchableOpacity style={[styles.container, isUnread ? styles.containerUnread : {}]} onPress={onPress}>
         <Avatar size={Size.large} sourceOrId={from.id} id="" />
         {response ? (
           <View style={styles.responseIcon}>
@@ -119,7 +124,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
             <CaptionBoldText style={styles.date}>{displayPastDate(moment(date))}</CaptionBoldText>
           </View>
           <View style={styles.line}>
-            <TextComponent>{subject}</TextComponent>
+            <TextComponent>{subject ?? I18n.get('mails-list-noobject')}</TextComponent>
             {hasAttachment ? (
               <NamedSVG
                 name="ui-attachment"
