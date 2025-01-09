@@ -8,7 +8,7 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
-import { copyFile, DownloadDirectoryPath, exists, UploadFileItem } from 'react-native-fs';
+import { copyFile, DownloadDirectoryPath, UploadFileItem } from 'react-native-fs';
 import ImagePicker, { Image } from 'react-native-image-crop-picker';
 
 import { openDocument } from './actions';
@@ -258,12 +258,9 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   async mirrorToDownloadFolder() {
     await assertPermissions('documents.write');
     const destFolder = DownloadDirectoryPath;
-    let destPath = `${destFolder}/${this.filename}`;
-    if (await exists(destPath)) {
-      const splitFilename = this.filename.split('.');
-      const ext = splitFilename.pop();
-      destPath = `${destFolder}/${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
-    }
+    const splitFilename = this.filename.split('.');
+    const ext = splitFilename.pop();
+    let destPath = `${destFolder}/${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
     copyFile(this.filepath, destPath)
       .then(() => { })
       .catch(error => {
