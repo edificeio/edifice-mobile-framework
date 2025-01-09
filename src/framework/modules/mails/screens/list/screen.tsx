@@ -17,10 +17,13 @@ import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
-import { BodyText, HeadingXSText } from '~/framework/components/text';
+import { BodyText } from '~/framework/components/text';
+import toast from '~/framework/components/toast';
+import { Toggle } from '~/framework/components/toggle';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
@@ -77,11 +80,15 @@ const flattenFolders = (folders: IMailsFolder[]) => {
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const navigation = props.navigation;
+
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
   const [isInModalCreation, setIsInModalCreation] = React.useState<boolean>(false);
   const [mails, setMails] = React.useState<IMailsMailPreview[]>([]);
   const [folders, setFolders] = React.useState<IMailsFolder[]>([]);
-  const [folderCounts, setFolderCounts] = React.useState<Record<MailsDefaultFolders, number>>({});
+  const [folderCounts, setFolderCounts] = React.useState<Record<MailsDefaultFolders, number>>();
+  const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
+  const [isSubfolder, setIsSubfolder] = React.useState<boolean>(false);
+  const [idParentFolder, setIdParentFolder] = React.useState<string | undefined>(undefined);
 
   const loadMessages = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     try {
@@ -157,7 +164,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const switchFolder = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     setSelectedFolder(folder);
-    bottomSheetModalRef.current?.dismiss();
+    onDismissBottomSheet();
     await loadMessages(folder);
   };
 
@@ -166,7 +173,28 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   };
 
   const onDismissBottomSheet = () => {
+    bottomSheetModalRef.current?.dismiss();
     if (isInModalCreation) setIsInModalCreation(false);
+    if (isSubfolder) setIsSubfolder(false);
+    if (idParentFolder) setIdParentFolder(undefined);
+  };
+
+  const onToggleSubfolders = () => {
+    setIsSubfolder(!isSubfolder);
+    setIdParentFolder(undefined);
+  };
+
+  const onCreateNewFolder = async () => {
+    try {
+      const dataNewFolder = await mailsService.folder.create({ name: valueNewFolder, parentId: idParentFolder ?? '' });
+      switchFolder({ name: valueNewFolder, id: dataNewFolder });
+      loadFolders();
+      toast.showSuccess(I18n.get('mails-list-newfoldersuccess', { name: valueNewFolder }));
+    } catch (e) {
+      console.error('Failed to create new folder', e);
+      onDismissBottomSheet();
+      toast.showError();
+    }
   };
 
   const renderFolders = () => {
@@ -211,28 +239,43 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderCreateNewFolder = () => {
     return (
       <View>
-        <View style={styles.newFolderHeader}>
-          <HeadingXSText>{I18n.get('mails-list-newfolder')}</HeadingXSText>
-        </View>
+        <HeaderBottomSheetModal
+          title={I18n.get('mails-list-newfolder')}
+          iconRight="ui-check"
+          iconRightDisabled={(isSubfolder && !idParentFolder) || valueNewFolder.length === 0}
+          onPressRight={onCreateNewFolder}
+        />
         <InputContainer
           label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
-          input={<TextInput placeholder={I18n.get('mails-list-newfolderplaceholder')} maxLength={50} />}
+          input={
+            <TextInput
+              placeholder={I18n.get('mails-list-newfolderplaceholder')}
+              onChangeText={text => setValueNewFolder(text)}
+              value={valueNewFolder}
+              maxLength={50}
+            />
+          }
         />
         <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
-        <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
-        <View>
-          {folders.map(folder =>
-            folder.depth === 1 ? (
-              <MailsFolderItem
-                key={folder.id}
-                icon="ui-folder"
-                name={folder.name}
-                selected={true}
-                onPress={() => console.log('test')}
-              />
-            ) : null,
-          )}
+        <View style={styles.selectFolderTitle}>
+          <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
+          <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
         </View>
+        {isSubfolder ? (
+          <View style={styles.selectFolder}>
+            {folders.map(folder =>
+              folder.depth === 1 ? (
+                <MailsFolderItem
+                  key={folder.id}
+                  icon="ui-folder"
+                  name={folder.name}
+                  selected={idParentFolder === folder.id}
+                  onPress={() => (idParentFolder !== folder.id ? setIdParentFolder(folder.id) : {})}
+                />
+              ) : null,
+            )}
+          </View>
+        ) : null}
       </View>
     );
   };

@@ -16,8 +16,16 @@ export const mailsService = {
 
       return count as MailsFolderCount;
     },
-    create: async (payload: { name: string; parentID?: string }) => {
+    create: async (payload: { name: string; parentId?: string }) => {
       const api = '/conversation/folder';
+      const body = JSON.stringify({ name: payload.name, ...(payload.parentId ? { parentId: payload.parentId } : {}) });
+
+      const data = (await fetchJSONWithCache(api, {
+        body,
+        method: 'POST',
+      })) as { id: string };
+
+      return data.id;
     },
   },
   folders: {

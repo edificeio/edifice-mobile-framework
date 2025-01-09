@@ -5,7 +5,7 @@ import styles from './styles';
 import { TextInputProps } from './types';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionItalicText } from '~/framework/components/text';
 
