@@ -220,6 +220,19 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         />
         <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
         <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
+        <View>
+          {folders.map(folder =>
+            folder.depth === 1 ? (
+              <MailsFolderItem
+                key={folder.id}
+                icon="ui-folder"
+                name={folder.name}
+                selected={true}
+                onPress={() => console.log('test')}
+              />
+            ) : null,
+          )}
+        </View>
       </View>
     );
   };
