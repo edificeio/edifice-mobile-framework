@@ -22,6 +22,7 @@ import Separator from '~/framework/components/separator';
 import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
+import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
 import { IMailsMailContent, MailsDefaultFolders, MailsRecipientsType } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
@@ -167,7 +168,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       loadContent={loadData}
       renderContent={renderContent}
       renderError={() => <EmptyConnectionScreen />}
-      renderLoading={() => <SmallBoldText>Loading</SmallBoldText>}
+      renderLoading={() => <MailsPlaceholderDetails />}
     />
   );
 }
