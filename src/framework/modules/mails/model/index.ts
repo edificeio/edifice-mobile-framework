@@ -27,19 +27,21 @@ export interface MailsRecipientGroupInfo {
   subType: string; // ClassGroup && ??
 }
 
+export interface IMailsMailAttachment {
+  charset: string;
+  contentTransferEncoding: string;
+  contentType: string;
+  filename: string;
+  id: string;
+  name: string;
+  size: number;
+}
+
 export interface IMailsMailContent {
-  attachments: {
-    charset: string;
-    contentTransferEncoding: string;
-    contentType: string;
-    fileName: string;
-    id: string;
-    name: string;
-    size: number;
-  }[];
+  attachments: IMailsMailAttachment[];
   body: string;
-  cc: MailsRecipientInfo[];
-  cci: MailsRecipientInfo[];
+  cc: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
+  cci: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
   date: number;
   from: MailsRecipientInfo;
   id: string;
@@ -47,9 +49,8 @@ export interface IMailsMailContent {
   parent_id: string;
   state: string;
   subject: string;
-  text_searchable: string;
   thread_id: string;
-  to: MailsRecipientInfo[];
+  to: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
 }
 
 export interface MailsFolderCount {

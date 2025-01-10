@@ -7,11 +7,12 @@ import { AttachmentsProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
+import { IMailsMailAttachment } from '~/framework/modules/mails/model';
 
 export default function Attachments(props: AttachmentsProps) {
   const addAttachments = () => Alert.alert('add attachments');
 
-  const [attachments, setAttachments] = useState<{ name: string; uri: string }[]>(props.attachments ?? []);
+  const [attachments, setAttachments] = useState<IMailsMailAttachment[]>(props.attachments ?? []);
 
   const suppContainerStyle: ViewStyle = {
     borderStyle: props.isEditing ? 'dashed' : 'solid',
@@ -22,7 +23,7 @@ export default function Attachments(props: AttachmentsProps) {
       {attachments ? (
         <View style={styles.attachments}>
           {attachments.map(attachment => (
-            <Attachment name={attachment.name} isEditing={props.isEditing} />
+            <Attachment name={attachment.filename} isEditing={props.isEditing} />
           ))}
         </View>
       ) : null}

@@ -1,4 +1,6 @@
+import { IMailsMailAttachment } from '~/framework/modules/mails/model';
+
 export interface AttachmentsProps {
   isEditing?: boolean;
-  attachments?: { name: string; uri: string }[];
+  attachments?: IMailsMailAttachment[];
 }

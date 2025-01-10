@@ -1,6 +1,6 @@
-import { IMailsFolder, IMailsMailPreview, MailsFolderCount } from '~/framework/modules/mails/model';
+import { IMailsFolder, IMailsMailContent, IMailsMailPreview, MailsFolderCount } from '~/framework/modules/mails/model';
 import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
-import { mailsAdapter, MailsMailPreviewBackend } from './adapters/mails';
+import { mailContentAdapter, mailsAdapter, MailsMailContentBackend, MailsMailPreviewBackend } from './adapters/mails';
 
 export const mailsService = {
   attachments: {
@@ -50,12 +50,20 @@ export const mailsService = {
       // revoir forwardfrom
       const api = `/conversation/message/${params.mailId}/forward/${params.forwardFrom}`;
     },
-    //NEW
-    getContent: async (params: { mailId: string }) => {
-      const api = `conversation/api/messages/${params.mailId}`;
+    get: async (params: { mailId: string }) => {
+      const api = `/conversation/api/messages/${params.mailId}`;
+      const backendMail = (await fetchJSONWithCache(api)) as MailsMailContentBackend;
+
+      const mail = mailContentAdapter(backendMail);
+      return mail as IMailsMailContent;
     },
-    markUnread: async (payload: { id: string[]; unread: boolean }) => {
+    toggleUnread: async (payload: { ids: string[]; unread: boolean }) => {
       const api = '/conversation/toggleUnread';
+      const body = JSON.stringify({ id: payload.ids, unread: payload.unread });
+      await fetchWithCache(api, {
+        body,
+        method: 'POST',
+      });
     },
     moveToFolder: async (params: { folderId: string }, payload: { id: string[] }) => {
       const api = `/conversation/move/userfolder/${params.folderId}`;

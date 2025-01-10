@@ -1,4 +1,6 @@
 import {
+  IMailsMailAttachment,
+  IMailsMailContent,
   IMailsMailPreview,
   MailsMailStatePreview,
   MailsRecipientGroupInfo,
@@ -82,26 +84,90 @@ export const mailsAdapter = (n: MailsMailPreviewBackend) => {
 };
 
 export interface MailsMailContentBackend {
-  attachments: any[];
+  attachments: {
+    id: string;
+    name: string;
+    charset: string;
+    filename: string;
+    contentType: string;
+    contentTransferEncoding: string;
+    size: number;
+  }[];
   body: string;
-  cc: string[];
-  ccName: any; // ???
-  cci: string[];
-  cciName: string[]; // ???
+  cc: {
+    users: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+    groups: {
+      id: string;
+      displayName: string;
+      size: number;
+      type: string;
+      subType: string;
+    }[];
+  };
+  cci: {
+    users: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+    groups: {
+      id: string;
+      displayName: string;
+      size: number;
+      type: string;
+      subType: string;
+    }[];
+  };
   date: number;
-  displayNames: [string, string, boolean][]; // pq ?
-  from: string;
-  fromName: any; // Voir ce que c'est
-  id: string;
+  from: {
+    id: string;
+    displayName: string;
+    profile: string;
+  };
   language: string;
-  parent_id: any; // ??
-  state: string; // "SENT" ou ??
+  id: string;
+  parent_id: string | null;
+  state: string;
   subject: string;
-  text_searchable: string; // ??
   thread_id: string;
-  to: string[];
-  toName: any; // Voir ce que c'est
+  to: {
+    users: {
+      id: string;
+      displayName: string;
+      profile: string;
+    }[];
+    groups: {
+      id: string;
+      displayName: string;
+      size: number;
+      type: string;
+      subType: string;
+    }[];
+  };
 }
+
+export const mailContentAdapter = (n: MailsMailContentBackend) => {
+  const ret = {
+    attachments: n.attachments as IMailsMailAttachment[],
+    body: n.body,
+    cc: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientGroupInfo[] },
+    cci: { users: n.cci.users as MailsRecipientInfo[], groups: n.cci.groups as MailsRecipientGroupInfo[] },
+    date: n.date,
+    from: n.from as MailsRecipientInfo,
+    language: n.language,
+    parent_id: n.parent_id,
+    id: n.id,
+    state: n.state as MailsMailStatePreview,
+    subject: n.subject,
+    thread_id: n.thread_id,
+    to: { users: n.to.users as MailsRecipientInfo[], groups: n.to.groups as MailsRecipientGroupInfo[] },
+  };
+  return ret as IMailsMailContent;
+};
 
 export interface MailsVisiblesGroupsBackend {
   groups: {

@@ -168,8 +168,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     await loadMessages(folder);
   };
 
-  const onPressItem = () => {
-    navigation.navigate(mailsRouteNames.details, { from: selectedFolder });
+  const onPressItem = (id: string) => {
+    navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder });
   };
 
   const onDismissBottomSheet = () => {
@@ -331,7 +331,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           return (
             <MailsMailPreview
               data={mail.item}
-              onPress={onPressItem}
+              onPress={() => onPressItem(mail.item.id)}
               isSender={props.session?.user.id === mail.item.from.id}
               onDelete={selectedFolder === MailsDefaultFolders.TRASH ? () => onDelete(mail.item.id) : () => onTrash(mail.item.id)}
             />

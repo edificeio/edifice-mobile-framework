@@ -11,6 +11,7 @@ import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -20,9 +21,10 @@ import ScrollView from '~/framework/components/scrollView';
 import Separator from '~/framework/components/separator';
 import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { mailsDetailsData } from '~/framework/modules/mails/data';
-import { MailsDefaultFolders, MailsRecipientsType } from '~/framework/modules/mails/model';
+import { ContentLoader } from '~/framework/hooks/loader';
+import { IMailsMailContent, MailsDefaultFolders, MailsRecipientsType } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { mailsService } from '~/framework/modules/mails/service';
 import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
@@ -40,6 +42,17 @@ export const computeNavBar = ({
 });
 
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
+  const [mail, setMail] = React.useState<IMailsMailContent>();
+
+  const loadData = async () => {
+    try {
+      const mail = await mailsService.mail.get({ mailId: props.route.params.id });
+      setMail(mail);
+    } catch (e) {
+      console.error('Failed to fetch mail content', e);
+    }
+  };
+
   const onMarkUnread = () => {
     props.navigation.goBack();
     Alert.alert('mark unread');
@@ -113,45 +126,33 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
   const renderRecipients = () => {
     return Object.keys(MailsRecipientsType).map(recipientTypeKey => {
       const recipientType = MailsRecipientsType[recipientTypeKey];
-      if (mailsDetailsData[recipientType].length === 0) return;
+      if (mail![recipientType].length === 0) return;
       return (
         <View style={styles.recipientsItem}>
           <SmallText>{I18n.get(MailsRecipientPrefixsI18n[recipientType].name)}</SmallText>
           <SmallText style={styles.recipientsText}>
-            {mailsDetailsData[recipientType].map(recipient => recipient.displayName).join(', ')}
+            {mail![recipientType].map(recipient => recipient.displayName).join(', ')}
           </SmallText>
         </View>
       );
     });
   };
 
-  return (
+  const renderContent = () => (
     <PageView>
       <ScrollView style={styles.page}>
-        <HeadingXSText>{mailsDetailsData.subject}</HeadingXSText>
+        <HeadingXSText>{mail?.subject}</HeadingXSText>
         <View style={styles.topInfos}>
-          <Avatar size={Size.large} sourceOrId={mailsDetailsData.from.id} id="" />
+          <Avatar size={Size.large} sourceOrId={mail?.from.id} id="" />
           <View style={styles.topInfosText}>
             <View style={styles.sender}>
-              <SmallBoldText style={styles.senderName}>{mailsDetailsData.from.displayName}</SmallBoldText>
-              <SmallItalicText>{displayPastDate(moment(mailsDetailsData.date))}</SmallItalicText>
+              <SmallBoldText style={styles.senderName}>{mail?.from.displayName}</SmallBoldText>
+              <SmallItalicText>{displayPastDate(moment(mail?.date))}</SmallItalicText>
             </View>
-            {renderRecipients()}
           </View>
         </View>
-        <RichEditorViewer content={mailsDetailsData.body} />
-        <Attachments
-          attachments={[
-            { name: 'cc.png', uri: '' },
-            { name: 'dbzhdbezhdbezddferfderfrefrezd.png', uri: '' },
-            { name: 'a', uri: '' },
-            { name: 'b', uri: '' },
-            { name: 'c', uri: '' },
-            { name: 'a', uri: '' },
-            { name: 'b', uri: '' },
-            { name: 'c', uri: '' },
-          ]}
-        />
+        <RichEditorViewer content={mail?.body ?? ''} />
+        {mail!.attachments.length > 0 ? <Attachments attachments={mail?.attachments} /> : null}
         <Separator marginVertical={UI_SIZES.spacing.big} />
         <View style={styles.buttons}>
           <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-forward')} action={() => Alert.alert('forward')} />
@@ -159,5 +160,14 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
         </View>
       </ScrollView>
     </PageView>
+  );
+
+  return (
+    <ContentLoader
+      loadContent={loadData}
+      renderContent={renderContent}
+      renderError={() => <EmptyConnectionScreen />}
+      renderLoading={() => <SmallBoldText>Loading</SmallBoldText>}
+    />
   );
 }
