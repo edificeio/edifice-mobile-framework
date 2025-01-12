@@ -790,6 +790,7 @@
   "lvs-moduleconfig-appname": "LVS",
   "lvs-redirect-error-text": "Impossible de rediriger sur LVS.",
   "mails-details-reply": "Répondre",
+  "mails-details-replyall": "Répondre à tous",
   "mails-details-forward": "Transférer",
   "mails-details-move": "Déplacer",
   "mails-details-restore": "Restaurer",

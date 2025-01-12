@@ -66,8 +66,8 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
               fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
               name={`ui-${finished ? 'check' : 'clock'}`}
               style={styles.status}
-              width={UI_SIZES.elements.icon.xsmall}
-              height={UI_SIZES.elements.icon.xsmall}
+              width={UI_SIZES.elements.icon.xxsmall}
+              height={UI_SIZES.elements.icon.xxsmall}
             />
           )}
         </View>

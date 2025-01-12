@@ -11,12 +11,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     padding: UI_SIZES.spacing.tiny,
-  },
-  iconLeft: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  iconRight: {
-    marginLeft: UI_SIZES.spacing.minor,
+    columnGap: UI_SIZES.spacing.minor,
   },
   indicator: {
     height: BUTTON_ICON_SIZE,

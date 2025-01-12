@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
@@ -8,6 +8,7 @@ import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -17,19 +18,20 @@ import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
+import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import Separator from '~/framework/components/separator';
 import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
-import { IMailsMailContent, MailsDefaultFolders, MailsRecipientsType } from '~/framework/modules/mails/model';
+import { IMailsMailContent, MailsDefaultFolders } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
-import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
+import { mailsFormatRecipients } from '../../util';
 
 export const computeNavBar = ({
   navigation,
@@ -44,10 +46,13 @@ export const computeNavBar = ({
 
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
   const [mail, setMail] = React.useState<IMailsMailContent>();
+  const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; nbRecipients: number }>();
 
   const loadData = async () => {
     try {
       const mail = await mailsService.mail.get({ mailId: props.route.params.id });
+      const infosRecipients = mailsFormatRecipients(mail.to, mail.cc, mail.cci);
+      setInfosRecipients(infosRecipients);
       setMail(mail);
     } catch (e) {
       console.error('Failed to fetch mail content', e);
@@ -125,18 +130,36 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
   }, []);
 
   const renderRecipients = () => {
-    return Object.keys(MailsRecipientsType).map(recipientTypeKey => {
-      const recipientType = MailsRecipientsType[recipientTypeKey];
-      if (mail![recipientType].length === 0) return;
+    return (
+      <TouchableOpacity style={styles.recipients}>
+        <SmallText numberOfLines={1} style={styles.recipientsText}>
+          {infosRecipients?.text}
+        </SmallText>
+        <Svg
+          name="ui-rafterDown"
+          fill={theme.palette.grey.graphite}
+          height={UI_SIZES.elements.icon.xsmall}
+          width={UI_SIZES.elements.icon.xsmall}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderButtons = () => {
+    if (infosRecipients && infosRecipients.nbRecipients > 1)
       return (
-        <View style={styles.recipientsItem}>
-          <SmallText>{I18n.get(MailsRecipientPrefixsI18n[recipientType].name)}</SmallText>
-          <SmallText style={styles.recipientsText}>
-            {mail![recipientType].map(recipient => recipient.displayName).join(', ')}
-          </SmallText>
-        </View>
+        <>
+          <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />
+          <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-replyall')} action={() => Alert.alert('reply all')} />
+          <SecondaryButton iconLeft="ui-options" action={() => Alert.alert('options')} round />
+        </>
       );
-    });
+    return (
+      <>
+        <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-forward')} action={() => Alert.alert('forward')} />
+        <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />
+      </>
+    );
   };
 
   const renderContent = () => (
@@ -150,15 +173,13 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
               <SmallBoldText style={styles.senderName}>{mail?.from.displayName}</SmallBoldText>
               <SmallItalicText>{displayPastDate(moment(mail?.date))}</SmallItalicText>
             </View>
+            {renderRecipients()}
           </View>
         </View>
         <RichEditorViewer content={mail?.body ?? ''} />
         {mail!.attachments.length > 0 ? <Attachments attachments={mail?.attachments} /> : null}
         <Separator marginVertical={UI_SIZES.spacing.big} />
-        <View style={styles.buttons}>
-          <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-forward')} action={() => Alert.alert('forward')} />
-          <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />
-        </View>
+        <View style={styles.buttons}>{renderButtons()}</View>
       </ScrollView>
     </PageView>
   );

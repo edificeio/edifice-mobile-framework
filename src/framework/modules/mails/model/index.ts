@@ -13,6 +13,11 @@ export enum MailsRecipientsType {
   CCI = 'cci',
 }
 
+export interface MailsRecipients {
+  users: MailsRecipientInfo[];
+  groups: MailsRecipientGroupInfo[];
+}
+
 export interface MailsRecipientInfo {
   id: string;
   displayName: string;
@@ -40,8 +45,8 @@ export interface IMailsMailAttachment {
 export interface IMailsMailContent {
   attachments: IMailsMailAttachment[];
   body: string;
-  cc: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
-  cci: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
+  cc: MailsRecipients;
+  cci: MailsRecipients;
   date: number;
   from: MailsRecipientInfo;
   id: string;
@@ -50,7 +55,7 @@ export interface IMailsMailContent {
   state: string;
   subject: string;
   thread_id: string;
-  to: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
+  to: MailsRecipients;
 }
 
 export interface MailsFolderCount {
@@ -63,8 +68,8 @@ export enum MailsMailStatePreview {
 }
 
 export interface IMailsMailPreview {
-  cc: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
-  cci: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
+  cc: MailsRecipients;
+  cci: MailsRecipients;
   count: number;
   date: number;
   from: MailsRecipientInfo;
@@ -72,7 +77,7 @@ export interface IMailsMailPreview {
   id: string;
   state: MailsMailStatePreview;
   subject: string;
-  to: { users: MailsRecipientInfo[]; groups: MailsRecipientGroupInfo[] };
+  to: MailsRecipients;
   response: boolean;
   unread: boolean;
 }

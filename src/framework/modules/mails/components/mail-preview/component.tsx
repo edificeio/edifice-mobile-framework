@@ -15,38 +15,18 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { MailsMailStatePreview } from '~/framework/modules/mails/model';
+import { mailsFormatRecipients } from '~/framework/modules/mails/util';
 import { displayPastDate } from '~/framework/util/date';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
-
-function formatRecipients(to, cc, cci): string {
-  const formattedParts: string[] = [];
-  if (to && to.users.length > 0) {
-    const toNames = to.users.map(recipient => recipient.displayName).join(', ');
-    formattedParts.push(`${I18n.get('mails-prefixto')} ${toNames}`);
-  }
-
-  if (cc && cc.users.length > 0) {
-    const ccNames = cc.users.map(recipient => recipient.displayName).join(', ');
-    formattedParts.push(`${I18n.get('mails-prefixcc')} ${ccNames}`);
-  }
-
-  if (cci && cci.users.length > 0) {
-    const cciNames = cci.users.map(recipient => recipient.displayName).join(', ');
-    formattedParts.push(`${I18n.get('mails-prefixcci')} ${cciNames}`);
-  }
-
-  return formattedParts.length > 0 ? formattedParts.join(' ') : I18n.get('mails-list-norecipient');
-}
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread, id } = props.data;
   const { isSender, onPress, onDelete, onUnread } = props;
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
   const TextComponent = isUnread ? SmallBoldText : SmallText;
+  let infosRecipients: { text: string; nbRecipients: number } | undefined = mailsFormatRecipients(to, cc, cci);
 
   const renderFirstText = () => {
-    const recipientsText = formatRecipients(to, cc, cci);
-
     return (
       <TextComponent numberOfLines={1} style={styles.firstText}>
         {state === MailsMailStatePreview.DRAFT ? (
@@ -55,10 +35,10 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
               {I18n.get('mails-list-draft')}
               {'  '}
             </SmallBoldText>
-            {recipientsText}
+            {infosRecipients.text}
           </>
         ) : isSender ? (
-          recipientsText
+          infosRecipients.text
         ) : (
           from.displayName
         )}
@@ -109,8 +89,8 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
           <View style={styles.responseIcon}>
             <Svg
               name="ui-undo"
-              height={UI_SIZES.elements.icon.xsmall}
-              width={UI_SIZES.elements.icon.xsmall}
+              height={UI_SIZES.elements.icon.xxsmall}
+              width={UI_SIZES.elements.icon.xxsmall}
               fill={theme.palette.grey.black}
             />
           </View>
@@ -125,8 +105,8 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
             {hasAttachment ? (
               <Svg
                 name="ui-attachment"
-                height={UI_SIZES.elements.icon.xsmall}
-                width={UI_SIZES.elements.icon.xsmall}
+                height={UI_SIZES.elements.icon.xxsmall}
+                width={UI_SIZES.elements.icon.xxsmall}
                 fill={theme.palette.grey.black}
               />
             ) : null}

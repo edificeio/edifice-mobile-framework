@@ -13,13 +13,14 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.medium,
   },
-  recipientsItem: {
-    columnGap: UI_SIZES.spacing.tiny,
+  recipients: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.tiny,
   },
   recipientsText: {
-    flex: 1,
-    flexWrap: 'wrap',
+    flexShrink: 1,
   },
   sender: {
     flexDirection: 'row',
