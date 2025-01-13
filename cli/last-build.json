@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-12-03 12:35:52",
-  "notes": "Updated translations from Phrase (#174)\nfix(xmas): MB-3007, make wording dynamic to show good year\nrelease: 1.13.7-rc.2(1130702)",
-  "version": "1.13.7-rc.3(1130703)"
+  "last": "2025-01-13 23:25:49",
+  "notes": "feat(mails): WB-3595, move action in mails details screen\nfeat(mails): WB-3755, restore action in mails details screen\nfeat(mails): WB-3582, unread action in mails details screen\nfeat(mails): WB-3581, delete or trash action in mails details screen\nfeat(mails): WB-3593 , we can view user profile of sender in details screen\nfeat(mails): add bottom sheet to view details recipients in mails details screen\nfeat(mails): add MailsRecipientItem composant\nfeat(mails): grow up mails details screen\nfeat(mails): WB-3580 , add skeleton to mails details screen\nfeat(mails) WB-3579 connect mails details screen to api\nfeat(mails): WB-3591 , trash or delete mail when click on swipe delete action\nfeat(mails): WB-3586, create new folder feature\nchore: update caches\nfeat(mails): rename all NamedSVG to Svg in mails module\nmerge 1.14.0 in feat/mails\nfeat(mails): add existing folders to create new folder view\nfeat(mails) fix details\nfeat(mails): WB-3594 add count unread messages in default folders\nfeat(mails): WB-3592, add skeleton screen to list screen\nfeat(mails): WB-3590, connect folders to new api\nfeat(mails) connect listing messages to new API\nchore: update caches\nfeat(mails): add skeleton screen list\nfeat(mails): add empty screen in mails list screen\nfeat(mails): change swipe actions\nfeat(mails): add badge unread nb in MailsFolderItem component\nchore: merge 1.14.0",
+  "version": "1.14.0-alpha.1(1140002)"
 }
