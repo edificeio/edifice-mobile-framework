@@ -4,6 +4,7 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 
+import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
 
@@ -18,6 +19,7 @@ import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -26,9 +28,10 @@ import Separator from '~/framework/components/separator';
 import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
+import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
-import { IMailsMailContent, MailsDefaultFolders, MailsRecipients } from '~/framework/modules/mails/model';
+import { IMailsMailContent, MailsDefaultFolders, MailsFolderInfo, MailsRecipients } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
 import { mailsFormatRecipients } from '~/framework/modules/mails/util';
@@ -51,6 +54,8 @@ export const computeNavBar = ({
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
+  const [isInModalMove, setIsInModalMove] = React.useState<boolean>(false);
+  const [newParentFolder, setNewParentFolder] = React.useState<MailsFolderInfo>();
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
 
   const loadData = async () => {
@@ -75,8 +80,23 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
     }
   };
 
-  const onMove = () => {
-    Alert.alert('move');
+  const onOpenMoveModal = () => {
+    if (props.route.params.folders) {
+      setIsInModalMove(true);
+      bottomSheetModalRef.current?.present();
+    } else {
+      Alert.alert('pas de dossiers');
+    }
+  };
+
+  const onMove = async () => {
+    try {
+      await mailsService.mail.moveToFolder({ folderId: newParentFolder!.id }, { ids: [props.route.params.id] });
+      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
+      Toast.showSuccess(I18n.get('mails-details-toastsuccessmove'));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onRestore = async () => {
@@ -119,7 +139,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       title: I18n.get('mails-details-markunread'),
     },
     {
-      action: onMove,
+      action: onOpenMoveModal,
       icon: {
         android: 'ic_move_to_inbox',
         ios: 'arrow.up.square',
@@ -166,7 +186,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mail, props]);
+  }, [mail, newParentFolder, props]);
 
   const renderRecipients = () => {
     return (
@@ -214,14 +234,45 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
     );
   };
 
+  const renderDetailsRecipients = () => (
+    <>
+      {renderListRecipients(mail!.to, 'mails-prefixto')}
+      {hasRecipients(mail!.to) && hasRecipients(mail!.cc) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
+      {renderListRecipients(mail!.cc, 'mails-prefixcc')}
+      {hasRecipients(mail!.cc) && hasRecipients(mail!.cci) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
+      {renderListRecipients(mail!.cci, 'mails-prefixcci')}
+    </>
+  );
+
+  const renderMoveFolder = () => (
+    <>
+      <HeaderBottomSheetModal
+        title={I18n.get('mails-details-move')}
+        iconRight="ui-check"
+        iconRightDisabled={!newParentFolder}
+        onPressRight={onMove}
+      />
+      <View style={stylesFolders.containerFolders}>
+        {props.route.params.folders!.map(folder =>
+          folder.depth === 1 ? (
+            <MailsFolderItem
+              key={folder.id}
+              icon="ui-folder"
+              name={folder.name}
+              selected={newParentFolder?.id === folder.id}
+              disabled={folder.id === mail!.parent_id}
+              onPress={() => setNewParentFolder(folder)}
+            />
+          ) : null,
+        )}
+      </View>
+    </>
+  );
+
   const renderBottomSheet = () => {
     return (
-      <BottomSheetModal ref={bottomSheetModalRef}>
-        {renderListRecipients(mail!.to, 'mails-prefixto')}
-        {hasRecipients(mail!.to) && hasRecipients(mail!.cc) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
-        {renderListRecipients(mail!.cc, 'mails-prefixcc')}
-        {hasRecipients(mail!.cc) && hasRecipients(mail!.cci) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
-        {renderListRecipients(mail!.cci, 'mails-prefixcci')}
+      <BottomSheetModal ref={bottomSheetModalRef} snapPoints={['90%']} enableDynamicSizing={isInModalMove ? false : true}>
+        {isInModalMove ? renderMoveFolder() : renderDetailsRecipients()}
       </BottomSheetModal>
     );
   };

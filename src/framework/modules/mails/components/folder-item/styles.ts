@@ -4,6 +4,13 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  containerFolders: {
+    padding: UI_SIZES.spacing.minor,
+    borderWidth: UI_SIZES.border.thin,
+    borderColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.input,
+    rowGap: UI_SIZES.spacing.tiny,
+  },
   container: {
     borderRadius: UI_SIZES.radius.selector,
     columnGap: UI_SIZES.spacing.small,
@@ -15,6 +22,9 @@ export default StyleSheet.create({
   },
   isSelected: {
     backgroundColor: theme.palette.primary.pale,
+  },
+  disabled: {
+    backgroundColor: theme.palette.grey.pearl,
   },
   text: {
     flex: 1,

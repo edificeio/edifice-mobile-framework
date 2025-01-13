@@ -65,8 +65,13 @@ export const mailsService = {
         method: 'POST',
       });
     },
-    moveToFolder: async (params: { folderId: string }, payload: { id: string[] }) => {
+    moveToFolder: async (params: { folderId: string }, payload: { ids: string[] }) => {
       const api = `/conversation/move/userfolder/${params.folderId}`;
+      const body = JSON.stringify({ id: payload.ids });
+      await fetchWithCache(api, {
+        body,
+        method: 'PUT',
+      });
     },
     moveToTrash: async (payload: { ids: string[] }) => {
       const api = '/conversation/trash';

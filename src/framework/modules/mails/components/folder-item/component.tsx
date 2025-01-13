@@ -31,7 +31,10 @@ export const MailsFolderItem = (props: MailsFolderItemProps) => {
   };
 
   return (
-    <TouchableOpacity style={[styles.container, suppStyles(), props.selected ? styles.isSelected : {}]} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.container, suppStyles(), props.selected ? styles.isSelected : props.disabled ? styles.disabled : {}]}
+      disabled={props.disabled}
+      onPress={onPress}>
       <Svg
         name={props.icon}
         fill={theme.palette.grey.black}

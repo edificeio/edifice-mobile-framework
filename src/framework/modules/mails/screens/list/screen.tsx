@@ -5,6 +5,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { FlashList } from '@shopify/flash-list';
 import { connect } from 'react-redux';
 
+import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
@@ -178,7 +179,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   };
 
   const onPressItem = (id: string, unread: boolean) => {
-    navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, unread });
+    navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, unread, folders });
   };
 
   const onDismissBottomSheet = () => {
@@ -291,7 +292,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
         </View>
         {isSubfolder ? (
-          <View style={styles.selectFolder}>
+          <View style={stylesFolders.containerFolders}>
             {folders.map(folder =>
               folder.depth === 1 ? (
                 <MailsFolderItem

@@ -796,6 +796,7 @@
   "mails-details-restore": "Restaurer",
   "mails-details-markunread": "Marquer comme non lu",
   "mails-details-toastsuccessdelete": "Message supprimé",
+  "mails-details-toastsuccessmove": "Message déplacé",
   "mails-details-toastsuccessrestore": "Message restauré",
   "mails-details-toastsuccesstrash": "Message mis à la corbeille",
   "mails-details-toastsuccessunread": "Message marqué comme non-lu",

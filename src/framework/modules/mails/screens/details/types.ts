@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
+import { IMailsFolder, MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
 import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
 
 export interface MailsDetailsScreenProps {
@@ -11,6 +11,7 @@ export interface MailsDetailsScreenNavParams {
   id: string;
   from: MailsDefaultFolders | MailsFolderInfo;
   unread: boolean;
+  folders?: IMailsFolder[];
 }
 
 export interface MailsDetailsScreenPrivateProps

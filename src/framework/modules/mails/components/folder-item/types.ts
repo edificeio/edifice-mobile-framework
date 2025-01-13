@@ -4,5 +4,6 @@ export interface MailsFolderItemProps {
   selected: boolean;
   nbUnread?: number;
   depth?: number;
+  disabled?: boolean;
   onPress: () => void;
 }
