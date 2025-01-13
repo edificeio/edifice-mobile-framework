@@ -31,6 +31,7 @@ import { IMailsMailContent, MailsDefaultFolders, MailsRecipients } from '~/frame
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
 import { mailsFormatRecipients } from '~/framework/modules/mails/util';
+import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
@@ -198,7 +199,9 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
           <Avatar size={Size.large} sourceOrId={mail?.from.id} id="" />
           <View style={styles.topInfosText}>
             <View style={styles.sender}>
-              <SmallBoldText style={styles.senderName}>{mail?.from.displayName}</SmallBoldText>
+              <TouchableOpacity onPress={() => props.navigation.navigate(userRouteNames.profile, { userId: mail?.from.id })}>
+                <SmallBoldText style={styles.senderName}>{mail?.from.displayName}</SmallBoldText>
+              </TouchableOpacity>
               <SmallItalicText>{displayPastDate(moment(mail?.date))}</SmallItalicText>
             </View>
             {renderRecipients()}

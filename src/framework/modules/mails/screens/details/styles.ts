@@ -18,7 +18,6 @@ export default StyleSheet.create({
   },
   recipients: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.tiny,
   },
