@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
+import { useFocusEffect } from '@react-navigation/native';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -161,6 +162,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolder]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (props.route.params.from) {
+        loadData(props.route.params.from);
+      }
+    }, [props.route.params]),
+  );
 
   const switchFolder = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     setSelectedFolder(folder);

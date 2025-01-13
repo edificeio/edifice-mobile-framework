@@ -7,6 +7,7 @@ import moment from 'moment';
 import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
 
+import { HeaderBackButton } from '@react-navigation/elements';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
@@ -77,10 +78,24 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
     Alert.alert('restore');
   };
 
-  const onDelete = () => {
-    props.navigation.goBack();
-    Alert.alert('delete');
-    Toast.showSuccess(I18n.get('mails-details-toastsuccessdelete'));
+  const onTrash = async () => {
+    try {
+      await mailsService.mail.moveToTrash({ ids: [mail!.id] });
+      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
+      Toast.showSuccess(I18n.get('mails-details-toastsuccesstrash'));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const onDelete = async () => {
+    try {
+      await mailsService.mail.delete({ ids: [mail!.id] });
+      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
+      Toast.showSuccess(I18n.get('mails-details-toastsuccessdelete'));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const allPopupActionsMenu = [
@@ -108,7 +123,9 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       },
       title: I18n.get('mails-details-restore'),
     },
-    deleteAction({ action: onDelete }),
+    deleteAction({
+      action: props.route.params.from === MailsDefaultFolders.TRASH ? onDelete : onTrash,
+    }),
   ];
 
   const popupActionsMenu = () => {
@@ -119,6 +136,13 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
 
   React.useEffect(() => {
     props.navigation.setOptions({
+      headerLeft: () => (
+        <HeaderBackButton
+          labelVisible={false}
+          tintColor={theme.palette.grey.white as string}
+          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from })}
+        />
+      ),
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
@@ -131,7 +155,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [mail, props]);
 
   const renderRecipients = () => {
     return (
