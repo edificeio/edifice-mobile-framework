@@ -56,6 +56,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
   const loadData = async () => {
     try {
       const mail = await mailsService.mail.get({ mailId: props.route.params.id });
+      if (props.route.params.unread) await mailsService.mail.toggleUnread({ ids: [props.route.params.id], unread: false });
       const infosRecipients = mailsFormatRecipients(mail.to, mail.cc, mail.cci);
       setInfosRecipients(infosRecipients);
       setMail(mail);
@@ -64,10 +65,14 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
     }
   };
 
-  const onMarkUnread = () => {
-    props.navigation.goBack();
-    Alert.alert('mark unread');
-    Toast.showSuccess(I18n.get('mails-details-toastsuccessunread'));
+  const onMarkUnread = async () => {
+    try {
+      await mailsService.mail.toggleUnread({ ids: [props.route.params.id], unread: true });
+      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
+      Toast.showSuccess(I18n.get('mails-details-toastsuccessunread'));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onMove = () => {
