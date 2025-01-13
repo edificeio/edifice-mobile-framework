@@ -79,8 +79,14 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
     Alert.alert('move');
   };
 
-  const onRestore = () => {
-    Alert.alert('restore');
+  const onRestore = async () => {
+    try {
+      await mailsService.mail.restore({ ids: [props.route.params.id] });
+      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
+      Toast.showSuccess(I18n.get('mails-details-toastsuccessrestore'));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onTrash = async () => {

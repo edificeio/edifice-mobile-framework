@@ -80,8 +80,13 @@ export const mailsService = {
       const idsToString = params.mailIds.reduce((s, id) => s + 'id=' + id + '&', '');
       const api = `/conversation/move/root?${idsToString}`;
     },
-    restore: async (payload: { id: string[] }) => {
+    restore: async (payload: { ids: string[] }) => {
       const api = '/conversation/restore';
+      const body = JSON.stringify({ id: payload.ids });
+      await fetchWithCache(api, {
+        body,
+        method: 'PUT',
+      });
     },
     send: async (
       params: { draftId: string },
