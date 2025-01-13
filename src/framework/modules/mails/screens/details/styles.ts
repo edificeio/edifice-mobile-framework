@@ -4,6 +4,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  bottomSheetPrefix: {
+    marginBottom: UI_SIZES.spacing.minor,
+  },
   buttons: {
     columnGap: UI_SIZES.spacing.small,
     flexDirection: 'row',

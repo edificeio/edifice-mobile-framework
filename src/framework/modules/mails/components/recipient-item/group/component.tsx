@@ -3,10 +3,9 @@ import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { containerStyle } from '~/framework/modules/mails/components/recipient-item';
+import { containerStyle, MailsRecipientGroupItemProps } from '~/framework/modules/mails/components/recipient-item';
 
-import MailsRecipientAvatar from '../../avatar-recipient';
-import { MailsRecipientGroupItemProps } from '../types';
+import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
 import styles from './styles';
 
 const renderSubtitle = (nbUsers, disabled) => {

@@ -16,6 +16,7 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -25,7 +26,8 @@ import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/fram
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
-import { IMailsMailContent, MailsDefaultFolders } from '~/framework/modules/mails/model';
+import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
+import { IMailsMailContent, MailsDefaultFolders, MailsRecipients } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
 import { mailsFormatRecipients } from '~/framework/modules/mails/util';
@@ -45,6 +47,7 @@ export const computeNavBar = ({
 });
 
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
+  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
 
@@ -131,7 +134,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
 
   const renderRecipients = () => {
     return (
-      <TouchableOpacity style={styles.recipients}>
+      <TouchableOpacity onPress={() => bottomSheetModalRef.current?.present()} style={styles.recipients}>
         <SmallText numberOfLines={1} style={styles.recipientsText}>
           {infosRecipients?.text}
         </SmallText>
@@ -162,6 +165,31 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
     );
   };
 
+  const hasRecipients = (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0;
+
+  const renderListRecipients = (recipients: MailsRecipients, prefix: string) => {
+    if (!hasRecipients(recipients)) return;
+    return (
+      <View>
+        <SmallBoldText style={styles.bottomSheetPrefix}>{I18n.get(prefix)}</SmallBoldText>
+        {recipients.users.length > 0 ? recipients.users.map(user => <MailsRecipientUserItem item={user} />) : null}
+        {recipients.groups.length > 0 ? recipients.groups.map(group => <MailsRecipientGroupItem item={group} />) : null}
+      </View>
+    );
+  };
+
+  const renderBottomSheet = () => {
+    return (
+      <BottomSheetModal ref={bottomSheetModalRef}>
+        {renderListRecipients(mail!.to, 'mails-prefixto')}
+        {hasRecipients(mail!.to) && hasRecipients(mail!.cc) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
+        {renderListRecipients(mail!.cc, 'mails-prefixcc')}
+        {hasRecipients(mail!.cc) && hasRecipients(mail!.cci) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
+        {renderListRecipients(mail!.cci, 'mails-prefixcci')}
+      </BottomSheetModal>
+    );
+  };
+
   const renderContent = () => (
     <PageView>
       <ScrollView style={styles.page}>
@@ -181,6 +209,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
         <Separator marginVertical={UI_SIZES.spacing.big} />
         <View style={styles.buttons}>{renderButtons()}</View>
       </ScrollView>
+      {renderBottomSheet()}
     </PageView>
   );
 
