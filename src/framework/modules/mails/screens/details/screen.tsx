@@ -28,10 +28,10 @@ import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeh
 import { IMailsMailContent, MailsDefaultFolders } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
+import { mailsFormatRecipients } from '~/framework/modules/mails/util';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
-import { mailsFormatRecipients } from '../../util';
 
 export const computeNavBar = ({
   navigation,
@@ -46,7 +46,7 @@ export const computeNavBar = ({
 
 export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
   const [mail, setMail] = React.useState<IMailsMailContent>();
-  const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; nbRecipients: number }>();
+  const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
 
   const loadData = async () => {
     try {
@@ -146,7 +146,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
   };
 
   const renderButtons = () => {
-    if (infosRecipients && infosRecipients.nbRecipients > 1)
+    if (infosRecipients && infosRecipients.ids.length > 1)
       return (
         <>
           <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />

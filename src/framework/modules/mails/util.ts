@@ -20,7 +20,7 @@ export function mailsFormatRecipients(
   to: MailsRecipients,
   cc: MailsRecipients,
   cci: MailsRecipients,
-): { text: string; nbRecipients: number } {
+): { text: string; ids: string[] } {
   const formatPart = (prefixKey: string, recipients: MailsRecipients): string | null => {
     const names = recipients.users.map(user => user.displayName).join(', ');
     const groups = recipients.groups.map(group => group.displayName).join(', ');
@@ -28,15 +28,19 @@ export function mailsFormatRecipients(
     return combined ? `${I18n.get(prefixKey)} ${combined}` : null;
   };
 
+  const extractIds = (recipients: MailsRecipients): string[] => [
+    ...recipients.users.map(user => user.id),
+    ...recipients.groups.map(group => group.id),
+  ];
+
   const parts = [formatPart('mails-prefixto', to), formatPart('mails-prefixcc', cc), formatPart('mails-prefixcci', cci)].filter(
     Boolean,
   );
 
-  const nbRecipients =
-    to.users.length + to.groups.length + cc.users.length + cc.groups.length + cci.users.length + cci.groups.length;
+  const ids = [...extractIds(to), ...extractIds(cc), ...extractIds(cci)];
 
   return {
     text: parts.length > 0 ? parts.join(' ') : I18n.get('mails-list-norecipient'),
-    nbRecipients,
+    ids,
   };
 }

@@ -11,20 +11,28 @@ import { MailsMailPreviewProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
+import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
 import { MailsMailStatePreview } from '~/framework/modules/mails/model';
 import { mailsFormatRecipients } from '~/framework/modules/mails/util';
 import { displayPastDate } from '~/framework/util/date';
-import Avatar, { Size } from '~/ui/avatars/Avatar';
+
+const AVATAR_SIZE = getScaleWidth(48);
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread, id } = props.data;
   const { isSender, onPress, onDelete, onUnread } = props;
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
   const TextComponent = isUnread ? SmallBoldText : SmallText;
-  let infosRecipients: { text: string; nbRecipients: number } | undefined = mailsFormatRecipients(to, cc, cci);
+  let infosRecipients: { text: string; ids: string[] } = mailsFormatRecipients(to, cc, cci);
+
+  const renderAvatar = () => {
+    if (isSender && infosRecipients.ids.length > 1) return <MailsRecipientAvatar type="Group" size={AVATAR_SIZE} />;
+    if (isSender) return <MailsRecipientAvatar type="User" id={infosRecipients.ids[0]} size={AVATAR_SIZE} />;
+    return <MailsRecipientAvatar type="User" id={from.id} size={AVATAR_SIZE} />;
+  };
 
   const renderFirstText = () => {
     return (
@@ -84,7 +92,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       overshootFriction={8}
       renderRightActions={swipeRightAction}>
       <TouchableOpacity style={[styles.container, isUnread ? styles.containerUnread : {}]} onPress={onPress}>
-        <Avatar size={Size.large} sourceOrId={from.id} id="" />
+        {renderAvatar()}
         {response ? (
           <View style={styles.responseIcon}>
             <Svg
