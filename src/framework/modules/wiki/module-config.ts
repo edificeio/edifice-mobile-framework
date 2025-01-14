@@ -9,7 +9,7 @@ export default new NavigableModuleConfig<'wiki', null>({
   displayI18n: 'wiki-module-title',
   displayOrder: 0,
   displayPicture: { fill: displayColor.regular, name: 'wiki', type: 'NamedSvg' },
-  entcoreScope: ['wiki'],
+  entcoreScope: ['explorer', 'wiki'],
   matchEntcoreApp: '/wiki',
   name: 'wiki',
   storageName: 'wiki',

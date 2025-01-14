@@ -18,6 +18,8 @@ import appConf from '~/framework/util/appConf';
 import { RequestBuilder } from '~/framework/util/http/request-builder';
 import '../../service/resource';
 
+import axios from 'axios';
+
 export const computeNavBar = ({
   navigation,
   route,
@@ -49,11 +51,24 @@ export const ExplorerContext = () => {
   };
 
   const searchContext = async () => {
-    const rb = new RequestBuilder('', '').withAccount(getSession()!);
-    const url = appConf.getExpandedPlatform(getSession()!.platform)?.url;
-    const headers = rb._init?.headers;
-    odeServices.http().useBaseUrl(url).useHeaders(headers);
+    const rb = new RequestBuilder('', '').withAccount(getSession()!); // mon client homemade
+    const headers = rb._init?.headers; // je récupère les headers
+    const url = appConf.getExpandedPlatform(getSession()!.platform)?.url; // je récupère le baseUrl
+
+    const axiosInstance = axios.create();
+    // const customdata = await odeServices
+    //   .withAxiosInstance(axiosInstance)
+    //   .withBaseUrl(url)
+    //   .withHeaders(headers)
+    //   .http()
+    //   .get('/auth/oauth2/userinfo');
+
+    // console.log({ customdata });
+
     const result = await odeServices
+      .withAxiosInstance(axiosInstance)
+      .withBaseUrl(url)
+      .withHeaders(headers)
       .resource('wiki')
       .searchContext({
         ...searchParams,
@@ -70,7 +85,7 @@ export const ExplorerContext = () => {
 
     console.log({ result });
 
-    return result;
+    // return result;
   };
 
   const handleSearchContext = () => searchContext();
