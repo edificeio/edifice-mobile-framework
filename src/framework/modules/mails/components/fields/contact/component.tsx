@@ -24,7 +24,8 @@ function removeAccents(text: string): string {
 export const MailsContactField = (props: MailsContactFieldProps) => {
   const [isEditing, setIsEditing] = React.useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = React.useState<MailsVisible[]>(props.recipients);
-  const [results, setResults] = React.useState<MailsVisible[]>(props.visibles);
+  const [visibles, setVisibles] = React.useState<MailsVisible[]>(props.visibles);
+  const [results, setResults] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
 
   const inputRef = React.useRef<TextInputType>(null);
@@ -43,7 +44,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const onChangeText = (text: string) => {
     if (text.length >= 3) {
       const normalizedSearchText = removeAccents(text).toLowerCase();
-      const newResults = props.visibles.filter(visible => {
+      const newResults = visibles.filter(visible => {
         const normalizedDisplayName = removeAccents(visible.displayName).toLowerCase();
         return normalizedDisplayName.includes(normalizedSearchText);
       });
@@ -55,11 +56,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const addUser = (user: MailsVisible) => {
-    setSelectedUsers(prev => [user, ...prev]);
+    setSelectedUsers(prev => [...prev, user]);
+    setVisibles(prev => prev.filter(visible => visible.id !== user.id));
+    setResults(prev => prev.filter(result => result.id !== user.id));
   };
 
   const removeUser = (user: MailsVisible) => {
     setSelectedUsers(prev => prev.filter(selectedUser => selectedUser.id !== user.id));
+    setVisibles(prev => [user, ...prev]);
   };
 
   const onToggleMoreRecipientsFields = () => {
@@ -118,9 +122,10 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
             </SmallBoldText>
           }
           bottomInset={false}
-          renderItem={({ item }) =>
-            item.type === MailsVisibleType.GROUP ? <MailsRecipientGroupItem item={item} /> : <MailsRecipientUserItem item={item} />
-          }
+          renderItem={({ item }) => {
+            const Component = item.type === MailsVisibleType.GROUP ? MailsRecipientGroupItem : MailsRecipientUserItem;
+            return <Component item={item} onPress={addUser} />;
+          }}
         />
       ) : null}
     </>

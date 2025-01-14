@@ -6,6 +6,7 @@ import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { containerStyle, MailsRecipientGroupItemProps } from '~/framework/modules/mails/components/recipient-item';
 
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
+import { MailsVisible } from '~/framework/modules/mails/model';
 import styles from './styles';
 
 const renderSubtitle = (nbUsers, disabled) => {
@@ -21,8 +22,12 @@ const renderSubtitle = (nbUsers, disabled) => {
 const MailsRecipientGroupItem = (props: MailsRecipientGroupItemProps) => {
   const { displayName, type, id } = props.item;
 
+  const onPress = () => {
+    if (props.onPress) props.onPress(props.item as MailsVisible);
+  };
+
   return (
-    <TouchableOpacity disabled={props.onPress ? false : true} onPress={props.onPress} style={containerStyle}>
+    <TouchableOpacity disabled={props.onPress ? false : true} onPress={onPress} style={containerStyle}>
       <MailsRecipientAvatar id={id} type={type} />
       <View style={styles.flex1}>
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail" style={props.disabled ? styles.graphite : {}}>

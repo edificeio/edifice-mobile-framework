@@ -7,6 +7,7 @@ import { containerStyle, MailsRecipientUserItemProps } from '~/framework/modules
 import { accountTypeInfos } from '~/framework/util/accountType';
 
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
+import { MailsVisible } from '~/framework/modules/mails/model';
 import styles from './styles';
 
 // const renderClassrooms = classrooms => {
@@ -88,8 +89,12 @@ const MailsRecipientUserItem = (props: MailsRecipientUserItemProps) => {
   //     }
   //   };
 
+  const onPress = () => {
+    if (props.onPress) props.onPress(props.item as MailsVisible);
+  };
+
   return (
-    <TouchableOpacity disabled={props.onPress ? false : true} onPress={props.onPress} style={containerStyle}>
+    <TouchableOpacity disabled={props.onPress ? false : true} onPress={onPress} style={containerStyle}>
       <MailsRecipientAvatar id={id} type="User" />
       <View style={styles.flex1}>
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail">

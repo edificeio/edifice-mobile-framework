@@ -2,7 +2,7 @@ import { MailsRecipientGroupInfo, MailsRecipientInfo, MailsVisible } from '../..
 
 export interface MailsRecipientItemProps {
   disabled?: boolean;
-  onPress?: () => void;
+  onPress?: (recipient: MailsVisible) => void;
 }
 
 export interface MailsRecipientUserItemProps extends MailsRecipientItemProps {
