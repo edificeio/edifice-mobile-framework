@@ -11,6 +11,9 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  noUser: {
+    backgroundColor: theme.palette.status.warning.pale,
+  },
   bookmark: {
     backgroundColor: theme.palette.complementary.yellow.pale,
   },

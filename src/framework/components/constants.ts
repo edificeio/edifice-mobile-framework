@@ -96,7 +96,7 @@ export const UI_SIZES = {
   elements: {
     avatar: {
       lg: getScaleWidth(48),
-      md: getScaleWidth(36),
+      md: getScaleWidth(32),
       sm: getScaleWidth(24),
       xl: getScaleWidth(64),
       xxl: getScaleWidth(88),

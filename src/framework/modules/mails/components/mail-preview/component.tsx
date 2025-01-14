@@ -11,15 +11,13 @@ import { MailsMailPreviewProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
 import { MailsMailStatePreview } from '~/framework/modules/mails/model';
 import { mailsFormatRecipients } from '~/framework/modules/mails/util';
 import { displayPastDate } from '~/framework/util/date';
-
-const AVATAR_SIZE = getScaleWidth(48);
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread, id } = props.data;
@@ -29,9 +27,9 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   let infosRecipients: { text: string; ids: string[] } = mailsFormatRecipients(to, cc, cci);
 
   const renderAvatar = () => {
-    if (isSender && infosRecipients.ids.length > 1) return <MailsRecipientAvatar type="Group" size={AVATAR_SIZE} />;
-    if (isSender) return <MailsRecipientAvatar type="User" id={infosRecipients.ids[0]} size={AVATAR_SIZE} />;
-    return <MailsRecipientAvatar type="User" id={from.id} size={AVATAR_SIZE} />;
+    if (isSender && infosRecipients.ids.length > 1) return <MailsRecipientAvatar type="Group" />;
+    if (isSender) return <MailsRecipientAvatar type="User" id={infosRecipients.ids[0]} />;
+    return <MailsRecipientAvatar type="User" id={from.id} />;
   };
 
   const renderFirstText = () => {

@@ -22,6 +22,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
+import { AvatarSize, NewAvatar } from '~/framework/components/newavatar';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
@@ -39,7 +40,6 @@ import { mailsFormatRecipients } from '~/framework/modules/mails/util';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
-import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 export const computeNavBar = ({
   navigation,
@@ -208,22 +208,20 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
     );
   };
 
-  const renderButtons = () => {
-    if (infosRecipients && infosRecipients.ids.length > 1)
-      return (
-        <>
-          <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />
-          <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-replyall')} action={() => Alert.alert('reply all')} />
-          <SecondaryButton iconLeft="ui-options" action={() => Alert.alert('options')} round />
-        </>
-      );
-    return (
-      <>
-        <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-forward')} action={() => Alert.alert('forward')} />
-        <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />
-      </>
-    );
-  };
+  const renderButtons = () => (
+    <>
+      <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />
+      {infosRecipients && infosRecipients.ids.length > 1 ? (
+        <SecondaryButton
+          iconLeft="ui-answerall"
+          text={I18n.get('mails-details-replyall')}
+          action={() => Alert.alert('reply all')}
+        />
+      ) : (
+        <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={() => Alert.alert('forward')} />
+      )}
+    </>
+  );
 
   const hasRecipients = (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0;
 
@@ -296,7 +294,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       <ScrollView style={styles.page}>
         <HeadingXSText>{mail?.subject}</HeadingXSText>
         <View style={styles.topInfos}>
-          <Avatar size={Size.large} sourceOrId={mail?.from.id} id="" />
+          <NewAvatar size={AvatarSize.lg} userId={mail?.from.id} />
           <View style={styles.topInfosText}>
             <View style={styles.sender}>
               <TouchableOpacity onPress={() => props.navigation.navigate(userRouteNames.profile, { userId: mail?.from.id })}>

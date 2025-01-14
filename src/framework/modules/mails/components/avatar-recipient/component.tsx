@@ -5,31 +5,31 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 
-import Avatar, { Size } from '~/ui/avatars/Avatar';
+import { AvatarSize, NewAvatar, NewAvatarSizes } from '~/framework/components/newavatar';
 import styles from './styles';
 import { MailsRecipientAvatarProps } from './types';
 
 const iconType = {
   ['ShareBookmark']: 'ui-bookmark',
   ['Group']: 'ui-users',
-  ['User']: 'ui-question',
+  ['User']: 'ui-questionMark',
   ['BroadcastGroup']: 'ui-globe',
 };
 
 const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
-  const { id, type, size } = props;
+  const { id, type } = props;
 
-  if (type === 'User' && id) return <Avatar size={Size.large} sourceOrId={id} id="" />;
+  if (type === 'User' && id) return <NewAvatar userId={id} />;
   const suppViewStyles: ViewStyle = {
-    width: UI_SIZES.elements.avatar.lg,
+    width: NewAvatarSizes[AvatarSize.md],
     aspectRatio: 1,
   };
   return (
-    <View style={[suppViewStyles, styles.view, type === 'ShareBookmark' ? styles.bookmark : {}]}>
+    <View style={[suppViewStyles, styles.view, type === 'ShareBookmark' ? styles.bookmark : type === 'User' ? styles.noUser : {}]}>
       <Svg
         name={iconType[type === 'User' ? type : 'Group']}
-        height={UI_SIZES.elements.icon.xsmall}
-        width={UI_SIZES.elements.icon.xsmall}
+        height={UI_SIZES.elements.icon.xxsmall}
+        width={UI_SIZES.elements.icon.xxsmall}
         fill={theme.palette.grey.black}
       />
     </View>

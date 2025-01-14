@@ -27,6 +27,7 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    columnGap: UI_SIZES.spacing.tiny,
   },
   responseIcon: {
     marginLeft: UI_SIZES.spacing.small,
