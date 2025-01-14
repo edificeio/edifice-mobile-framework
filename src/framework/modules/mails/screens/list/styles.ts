@@ -1,11 +1,16 @@
 import { StyleSheet } from 'react-native';
 
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  customFolders: {
-    marginBottom: UI_SIZES.spacing.minor,
-    rowGap: UI_SIZES.spacing.minor,
+  bottomSheet: {
+    paddingBottom: 0,
+  },
+  flatListBottomSheet: {
+    paddingBottom: getScaleWidth(140),
+  },
+  scrollViewBottomSheet: {
+    paddingBottom: getScaleWidth(60),
   },
   defaultFolders: {
     rowGap: UI_SIZES.spacing.minor,
@@ -13,6 +18,10 @@ export default StyleSheet.create({
   newFolderButton: {
     alignSelf: 'baseline',
     marginLeft: UI_SIZES.spacing.minor,
+    marginTop: UI_SIZES.spacing.minor,
+  },
+  spacingFolder: {
+    height: UI_SIZES.spacing.tiny,
   },
   newFolderHeader: {
     alignItems: 'center',

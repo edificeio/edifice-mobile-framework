@@ -26,7 +26,7 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         enableDynamicSizing
         backdropComponent={renderBackdrop}
         {...props}>
-        <BottomSheetView style={styles.contentContainer}>{props.children}</BottomSheetView>
+        <BottomSheetView style={[styles.contentContainer, props.containerStyle]}>{props.children}</BottomSheetView>
       </BottomSheetModal>
     );
   },

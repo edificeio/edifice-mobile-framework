@@ -10,6 +10,7 @@ import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
 import { useFocusEffect } from '@react-navigation/native';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -178,8 +179,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     await loadMessages(folder);
   };
 
-  const onPressItem = (id: string, unread: boolean) => {
-    navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, unread, folders });
+  const onPressItem = (id: string) => {
+    navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
   };
 
   const onDismissBottomSheet = () => {
@@ -199,6 +200,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       const dataNewFolder = await mailsService.folder.create({ name: valueNewFolder, parentId: idParentFolder ?? '' });
       switchFolder({ name: valueNewFolder, id: dataNewFolder });
       loadFolders();
+      setValueNewFolder('');
       toast.showSuccess(I18n.get('mails-list-newfoldersuccess', { name: valueNewFolder }));
     } catch (e) {
       console.error('Failed to create new folder', e);
@@ -229,84 +231,98 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderFolders = () => {
     return (
-      <View>
-        <View style={styles.defaultFolders}>
-          {Object.keys(defaultFoldersInfos).map(folder => (
-            <MailsFolderItem
-              key={folder}
-              icon={defaultFoldersInfos[folder].icon}
-              name={I18n.get(defaultFoldersInfos[folder].title)}
-              selected={selectedFolder === folder}
-              onPress={() => switchFolder(folder as MailsDefaultFolders)}
-              nbUnread={folderCounts[folder]}
-            />
-          ))}
-        </View>
-        <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.medium} />
-        <View style={styles.customFolders}>
-          {folders.map(folder => (
-            <MailsFolderItem
-              key={folder.id}
-              icon="ui-folder"
-              name={folder.name}
-              selected={selectedFolder.id === folder.id}
-              onPress={() => switchFolder({ id: folder.id, name: folder.name })}
-              nbUnread={folder.nbUnread}
-              depth={folder.depth}
-            />
-          ))}
-        </View>
-        <TertiaryButton
-          style={styles.newFolderButton}
-          iconLeft="ui-plus"
-          text={I18n.get('mails-list-newfolder')}
-          action={() => setIsInModalCreation(true)}
-        />
-      </View>
+      <FlatList
+        data={folders}
+        contentContainerStyle={styles.flatListBottomSheet}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        ItemSeparatorComponent={() => <View style={styles.spacingFolder} />}
+        ListHeaderComponent={
+          <>
+            <View style={styles.defaultFolders}>
+              {Object.keys(defaultFoldersInfos).map(folder => (
+                <MailsFolderItem
+                  key={folder}
+                  icon={defaultFoldersInfos[folder].icon}
+                  name={I18n.get(defaultFoldersInfos[folder].title)}
+                  selected={selectedFolder === folder}
+                  onPress={() => switchFolder(folder as MailsDefaultFolders)}
+                  nbUnread={folderCounts[folder]}
+                />
+              ))}
+            </View>
+            <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.medium} />
+          </>
+        }
+        ListFooterComponent={
+          <TertiaryButton
+            style={styles.newFolderButton}
+            iconLeft="ui-plus"
+            text={I18n.get('mails-list-newfolder')}
+            action={() => setIsInModalCreation(true)}
+          />
+        }
+        renderItem={({ item }) => (
+          <MailsFolderItem
+            key={item.id}
+            icon="ui-folder"
+            name={item.name}
+            selected={selectedFolder.id === item.id}
+            onPress={() => switchFolder({ id: item.id, name: item.name })}
+            nbUnread={item.nbUnread}
+            depth={item.depth}
+          />
+        )}
+      />
     );
   };
 
   const renderCreateNewFolder = () => {
     return (
-      <View>
-        <HeaderBottomSheetModal
-          title={I18n.get('mails-list-newfolder')}
-          iconRight="ui-check"
-          iconRightDisabled={(isSubfolder && !idParentFolder) || valueNewFolder.length === 0}
-          onPressRight={onCreateNewFolder}
-        />
-        <InputContainer
-          label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
-          input={
-            <TextInput
-              placeholder={I18n.get('mails-list-newfolderplaceholder')}
-              onChangeText={text => setValueNewFolder(text)}
-              value={valueNewFolder}
-              maxLength={50}
-            />
-          }
-        />
-        <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
-        <View style={styles.selectFolderTitle}>
-          <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
-          <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
-        </View>
-        {isSubfolder ? (
-          <View style={stylesFolders.containerFolders}>
-            {folders.map(folder =>
-              folder.depth === 1 ? (
-                <MailsFolderItem
-                  key={folder.id}
-                  icon="ui-folder"
-                  name={folder.name}
-                  selected={idParentFolder === folder.id}
-                  onPress={() => (idParentFolder !== folder.id ? setIdParentFolder(folder.id) : {})}
-                />
-              ) : null,
-            )}
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+        <View style={styles.scrollViewBottomSheet}>
+          <HeaderBottomSheetModal
+            title={I18n.get('mails-list-newfolder')}
+            iconRight="ui-check"
+            iconRightDisabled={(isSubfolder && !idParentFolder) || valueNewFolder.length === 0}
+            onPressRight={onCreateNewFolder}
+          />
+          <InputContainer
+            label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
+            input={
+              <TextInput
+                placeholder={I18n.get('mails-list-newfolderplaceholder')}
+                onChangeText={text => setValueNewFolder(text)}
+                value={valueNewFolder}
+                maxLength={50}
+              />
+            }
+          />
+          <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
+          <View style={styles.selectFolderTitle}>
+            <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
+            <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
           </View>
-        ) : null}
-      </View>
+          {isSubfolder ? (
+            <View style={stylesFolders.containerFolders}>
+              <FlatList
+                data={folders}
+                renderItem={({ item }) =>
+                  item.depth === 1 ? (
+                    <MailsFolderItem
+                      key={item.id}
+                      icon="ui-folder"
+                      name={item.name}
+                      selected={idParentFolder === item.id}
+                      onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
+                    />
+                  ) : null
+                }
+              />
+            </View>
+          ) : null}
+        </View>
+      </ScrollView>
     );
   };
 
@@ -316,7 +332,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         ref={bottomSheetModalRef}
         onDismiss={onDismissBottomSheet}
         snapPoints={['90%']}
-        enableDynamicSizing={isInModalCreation ? false : true}>
+        enableDynamicSizing={isInModalCreation ? false : true}
+        containerStyle={styles.bottomSheet}>
         {isInModalCreation ? renderCreateNewFolder() : renderFolders()}
       </BottomSheetModal>
     );
@@ -341,7 +358,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           return (
             <MailsMailPreview
               data={mail.item}
-              onPress={() => onPressItem(mail.item.id, mail.item.unread)}
+              onPress={() => onPressItem(mail.item.id)}
               isSender={props.session?.user.id === mail.item.from.id}
               onDelete={selectedFolder === MailsDefaultFolders.TRASH ? () => onDelete(mail.item.id) : () => onTrash(mail.item.id)}
             />

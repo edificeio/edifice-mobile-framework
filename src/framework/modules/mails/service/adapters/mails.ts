@@ -123,6 +123,7 @@ export interface MailsMailContentBackend {
     }[];
   };
   date: number;
+  folder_id: string | null;
   from: {
     id: string;
     displayName: string;
@@ -148,6 +149,8 @@ export interface MailsMailContentBackend {
       subType: string;
     }[];
   };
+  trashed: boolean;
+  unread: boolean;
 }
 
 export const mailContentAdapter = (n: MailsMailContentBackend) => {
@@ -158,6 +161,7 @@ export const mailContentAdapter = (n: MailsMailContentBackend) => {
     cci: { users: n.cci.users as MailsRecipientInfo[], groups: n.cci.groups as MailsRecipientGroupInfo[] },
     date: n.date,
     from: n.from as MailsRecipientInfo,
+    folder_id: n.folder_id,
     language: n.language,
     parent_id: n.parent_id,
     id: n.id,
@@ -165,6 +169,8 @@ export const mailContentAdapter = (n: MailsMailContentBackend) => {
     subject: n.subject,
     thread_id: n.thread_id,
     to: { users: n.to.users as MailsRecipientInfo[], groups: n.to.groups as MailsRecipientGroupInfo[] },
+    trashed: n.trashed,
+    unread: n.unread,
   };
   return ret as IMailsMailContent;
 };

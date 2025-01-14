@@ -49,6 +49,7 @@ export interface IMailsMailContent {
   cci: MailsRecipients;
   date: number;
   from: MailsRecipientInfo;
+  folder_id: string | null;
   id: string;
   language: string;
   parent_id: string;
@@ -56,6 +57,8 @@ export interface IMailsMailContent {
   subject: string;
   thread_id: string;
   to: MailsRecipients;
+  trashed: boolean;
+  unread: boolean;
 }
 
 export interface MailsFolderCount {

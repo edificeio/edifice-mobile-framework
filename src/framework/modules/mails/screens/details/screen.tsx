@@ -9,6 +9,7 @@ import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
 
 import { HeaderBackButton } from '@react-navigation/elements';
+import { FlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
@@ -61,13 +62,16 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
   const loadData = async () => {
     try {
       const mail = await mailsService.mail.get({ mailId: props.route.params.id });
-      if (props.route.params.unread) await mailsService.mail.toggleUnread({ ids: [props.route.params.id], unread: false });
       const infosRecipients = mailsFormatRecipients(mail.to, mail.cc, mail.cci);
       setInfosRecipients(infosRecipients);
       setMail(mail);
     } catch (e) {
       console.error('Failed to fetch mail content', e);
     }
+  };
+
+  const onDismissBottomSheet = () => {
+    if (isInModalMove) setIsInModalMove(false);
   };
 
   const onMarkUnread = async () => {
@@ -235,17 +239,17 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
   };
 
   const renderDetailsRecipients = () => (
-    <>
+    <View style={styles.contentBottomSheet}>
       {renderListRecipients(mail!.to, 'mails-prefixto')}
       {hasRecipients(mail!.to) && hasRecipients(mail!.cc) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
       {renderListRecipients(mail!.cc, 'mails-prefixcc')}
       {hasRecipients(mail!.cc) && hasRecipients(mail!.cci) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
       {renderListRecipients(mail!.cci, 'mails-prefixcci')}
-    </>
+    </View>
   );
 
   const renderMoveFolder = () => (
-    <>
+    <View style={styles.contentBottomSheet}>
       <HeaderBottomSheetModal
         title={I18n.get('mails-details-move')}
         iconRight="ui-check"
@@ -253,26 +257,36 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
         onPressRight={onMove}
       />
       <View style={stylesFolders.containerFolders}>
-        {props.route.params.folders!.map(folder =>
-          folder.depth === 1 ? (
-            <MailsFolderItem
-              key={folder.id}
-              icon="ui-folder"
-              name={folder.name}
-              selected={newParentFolder?.id === folder.id}
-              disabled={folder.id === mail!.parent_id}
-              onPress={() => setNewParentFolder(folder)}
-            />
-          ) : null,
-        )}
+        <FlatList
+          data={props.route.params.folders}
+          renderItem={({ item }) =>
+            item.depth === 1 ? (
+              <MailsFolderItem
+                key={item.id}
+                icon="ui-folder"
+                name={item.name}
+                selected={newParentFolder?.id === item.id}
+                disabled={item.id === mail!.folder_id}
+                onPress={() => setNewParentFolder(item)}
+              />
+            ) : null
+          }
+        />
       </View>
-    </>
+    </View>
   );
 
   const renderBottomSheet = () => {
     return (
-      <BottomSheetModal ref={bottomSheetModalRef} snapPoints={['90%']} enableDynamicSizing={isInModalMove ? false : true}>
-        {isInModalMove ? renderMoveFolder() : renderDetailsRecipients()}
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        onDismiss={onDismissBottomSheet}
+        snapPoints={['90%']}
+        enableDynamicSizing={isInModalMove ? false : true}
+        containerStyle={styles.bottomSheet}>
+        <GHScrollView showsVerticalScrollIndicator={false} bounces={false}>
+          {isInModalMove ? renderMoveFolder() : renderDetailsRecipients()}
+        </GHScrollView>
       </BottomSheetModal>
     );
   };

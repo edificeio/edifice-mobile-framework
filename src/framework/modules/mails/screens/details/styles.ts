@@ -1,9 +1,15 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  bottomSheet: {
+    paddingBottom: 0,
+  },
+  contentBottomSheet: {
+    paddingBottom: getScaleWidth(60),
+  },
   bottomSheetPrefix: {
     marginBottom: UI_SIZES.spacing.minor,
   },
