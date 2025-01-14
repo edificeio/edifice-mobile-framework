@@ -18,6 +18,7 @@ import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/compone
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
+import Separator from '~/framework/components/separator';
 import { BodyText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';

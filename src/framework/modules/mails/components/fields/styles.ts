@@ -5,11 +5,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
-  button: {
-    padding: UI_SIZES.spacing.tiny,
-  },
-  buttonOpen: {
-    transform: [{ rotate: '180deg' }],
+  textButton: {
+    color: theme.palette.primary.regular,
   },
   container: {
     alignItems: 'flex-start',
@@ -37,5 +34,12 @@ export default StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     rowGap: UI_SIZES.spacing.minor,
+  },
+  nbResults: {
+    marginBottom: UI_SIZES.spacing.small,
+  },
+  results: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
   },
 });

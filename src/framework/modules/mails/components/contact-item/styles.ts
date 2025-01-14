@@ -22,4 +22,7 @@ export default StyleSheet.create({
     paddingRight: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.tinyExtra,
   },
+  text: {
+    flexShrink: 1,
+  },
 });

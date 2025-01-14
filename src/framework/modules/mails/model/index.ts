@@ -13,6 +13,11 @@ export enum MailsRecipientsType {
   CCI = 'cci',
 }
 
+export enum MailsVisibleType {
+  GROUP = 'group',
+  USER = 'user',
+}
+
 export interface MailsRecipients {
   users: MailsRecipientInfo[];
   groups: MailsRecipientGroupInfo[];
@@ -98,4 +103,13 @@ export interface IMailsFolder {
 export interface MailsFolderInfo {
   id: string;
   name: string;
+}
+
+export interface MailsVisible {
+  displayName: string;
+  groupDisplayName: string;
+  id: string;
+  profile: AccountType;
+  structureName: string;
+  type: MailsVisibleType;
 }

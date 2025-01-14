@@ -1,9 +1,7 @@
-import { AccountType } from '~/framework/modules/auth/model';
+import { MailsVisible } from '~/framework/modules/mails/model';
 
 export interface MailsContactItemProps {
-  name: string;
-  type: AccountType;
-  id: string;
   isEditing: boolean;
-  onDelete: (id: string) => void;
+  onDelete: (user: MailsVisible) => void;
+  user: MailsVisible;
 }

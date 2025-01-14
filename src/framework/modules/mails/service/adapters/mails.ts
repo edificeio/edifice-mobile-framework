@@ -1,3 +1,4 @@
+import { AccountType } from '~/framework/modules/auth/model';
 import {
   IMailsMailAttachment,
   IMailsMailContent,
@@ -5,6 +6,8 @@ import {
   MailsMailStatePreview,
   MailsRecipientGroupInfo,
   MailsRecipientInfo,
+  MailsVisible,
+  MailsVisibleType,
 } from '~/framework/modules/mails/model';
 
 export interface MailsMailPreviewBackend {
@@ -176,28 +179,46 @@ export const mailContentAdapter = (n: MailsMailContentBackend) => {
 };
 
 export interface MailsVisiblesGroupsBackend {
-  groups: {
-    groupDisplayName: string; // ??
-    id: string;
-    name: string;
-    profile: string; // ?? AdminLocal
-    structureName: string;
-  }[];
+  groupDisplayName: string;
+  id: string;
+  name: string;
+  profile: string;
+  structureName: string;
 }
 
 export interface MailsVisiblesUsersBackend {
-  users: {
-    displayName: string;
-    groupDisplayName: string; // ??
-    id: string;
-    profile: string;
-    structureName: string;
-  }[];
+  displayName: string;
+  groupDisplayName: string;
+  id: string;
+  profile: string;
+  structureName: string;
 }
-
-// APPEL uniquement les 3 premières lettres, retour bizarre
 
 export interface MailsVisiblesBackend {
-  groups: MailsVisiblesGroupsBackend;
-  users: MailsVisiblesUsersBackend;
+  groups: MailsVisiblesGroupsBackend[];
+  users: MailsVisiblesUsersBackend[];
 }
+
+export const mailVisiblesGroupAdapter = (n: MailsVisiblesGroupsBackend) => {
+  const ret = {
+    displayName: n.name,
+    groupDisplayName: n.groupDisplayName,
+    id: n.id,
+    profile: n.profile as AccountType,
+    structureName: n.structureName,
+    type: MailsVisibleType.GROUP,
+  };
+  return ret as MailsVisible;
+};
+
+export const mailVisiblesUserAdapter = (n: MailsVisiblesUsersBackend) => {
+  const ret = {
+    displayName: n.displayName,
+    groupDisplayName: n.groupDisplayName,
+    id: n.id,
+    profile: n.profile as AccountType,
+    structureName: n.structureName,
+    type: MailsVisibleType.USER,
+  };
+  return ret as MailsVisible;
+};

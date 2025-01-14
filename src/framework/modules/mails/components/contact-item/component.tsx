@@ -6,24 +6,24 @@ import { MailsContactItemProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { AvatarSize, NewAvatar } from '~/framework/components/newavatar';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
 export const MailsContactItem = (props: MailsContactItemProps) => {
+  const { id, displayName, profile } = props.user;
   const onDelete = () => {
-    props.onDelete(props.id);
+    props.onDelete(props.user);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.avatar} />
-      <SmallText>
-        <SmallBoldText>{props.name}</SmallBoldText>
+      <NewAvatar size={AvatarSize.sm} userId={id} />
+      <SmallText style={styles.text} numberOfLines={1}>
+        <SmallBoldText>{displayName}</SmallBoldText>
         {' - '}
-        <SmallBoldText style={{ color: accountTypeInfos[props.type].color.regular }}>
-          {accountTypeInfos[props.type].text}
-        </SmallBoldText>
+        <SmallBoldText style={{ color: accountTypeInfos[profile].color.regular }}>{accountTypeInfos[profile].text}</SmallBoldText>
       </SmallText>
       {props.isEditing ? (
         <TouchableOpacity onPress={onDelete}>

@@ -1,9 +1,8 @@
-import { MailsRecipientInfo, MailsRecipientsType } from '~/framework/modules/mails/model';
+import { MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
 
 export interface MailsContactFieldProps {
   type: MailsRecipientsType;
-  recipients: MailsRecipientInfo[];
-  isOpenMoreRecipientsFields?: boolean;
-  onDelete: (id: string) => void;
+  recipients: MailsVisible[];
   onToggleMoreRecipientsFields?: () => void;
+  visibles: MailsVisible[];
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { SmallBoldText } from '~/framework/components/text';
@@ -89,7 +89,7 @@ const MailsRecipientUserItem = (props: MailsRecipientUserItemProps) => {
   //   };
 
   return (
-    <View style={containerStyle}>
+    <TouchableOpacity disabled={props.onPress ? false : true} onPress={props.onPress} style={containerStyle}>
       <MailsRecipientAvatar id={id} type="User" />
       <View style={styles.flex1}>
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail">
@@ -100,7 +100,7 @@ const MailsRecipientUserItem = (props: MailsRecipientUserItemProps) => {
         </SmallBoldText>
         {/* {renderSubtitle()} */}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

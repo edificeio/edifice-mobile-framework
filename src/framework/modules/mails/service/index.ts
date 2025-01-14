@@ -1,6 +1,20 @@
-import { IMailsFolder, IMailsMailContent, IMailsMailPreview, MailsFolderCount } from '~/framework/modules/mails/model';
+import {
+  IMailsFolder,
+  IMailsMailContent,
+  IMailsMailPreview,
+  MailsFolderCount,
+  MailsVisible,
+} from '~/framework/modules/mails/model';
 import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
-import { mailContentAdapter, mailsAdapter, MailsMailContentBackend, MailsMailPreviewBackend } from './adapters/mails';
+import {
+  mailContentAdapter,
+  mailsAdapter,
+  MailsMailContentBackend,
+  MailsMailPreviewBackend,
+  MailsVisiblesBackend,
+  mailVisiblesGroupAdapter,
+  mailVisiblesUserAdapter,
+} from './adapters/mails';
 
 export const mailsService = {
   attachments: {
@@ -122,6 +136,13 @@ export const mailsService = {
   visibles: {
     getAll: async () => {
       const api = '/conversation/visible';
+      const backendVisibles = (await fetchJSONWithCache(api)) as MailsVisiblesBackend;
+
+      const groups = backendVisibles.groups.map(group => mailVisiblesGroupAdapter(group));
+      const users = backendVisibles.users.map(user => mailVisiblesUserAdapter(user));
+      const visibles = [...users, ...groups];
+
+      return visibles as MailsVisible[];
     },
     search: async (params: { search: string }) => {
       const api = `/conversation/visible?search=${params.search}`;
