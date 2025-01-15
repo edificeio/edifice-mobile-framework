@@ -24,7 +24,7 @@ function removeAccents(text: string): string {
 export const MailsContactField = (props: MailsContactFieldProps) => {
   const [isEditing, setIsEditing] = React.useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = React.useState<MailsVisible[]>(props.recipients);
-  const [visibles, setVisibles] = React.useState<MailsVisible[]>(props.visibles);
+  const [visibles, setVisibles] = React.useState<MailsVisible[]>(props.visibles || []);
   const [results, setResults] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
 

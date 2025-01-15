@@ -58,6 +58,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   const toggleMoreRecipientsFields = () => setMoreRecipientsFields(!moreRecipientsFields);
 
   const renderTopForm = () => {
+    if (!visibles) return;
     return (
       <View style={{ flexGrow: 1 }}>
         <MailsContactField

@@ -19,7 +19,8 @@ export default StyleSheet.create({
   },
   input: {
     ...TextSizeStyle.Medium,
-    paddingVertical: UI_SIZES.spacing.tinyExtra,
+    lineHeight: undefined,
+    paddingVertical: UI_SIZES.spacing.tiny,
   },
   middlePart: {
     flex: 1,
