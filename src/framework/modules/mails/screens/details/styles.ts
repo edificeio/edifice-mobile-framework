@@ -33,6 +33,10 @@ export default StyleSheet.create({
   sender: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    columnGap: UI_SIZES.spacing.tiny,
+  },
+  touchableSender: {
+    flex: 1,
   },
   senderName: {
     color: theme.palette.primary.regular,

@@ -357,13 +357,17 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const renderContent = () => (
     <PageView>
       <ScrollView style={styles.page}>
-        <HeadingXSText>{mail?.subject}</HeadingXSText>
+        <HeadingXSText>{mail?.subject ?? I18n.get('mails-list-noobject')}</HeadingXSText>
         <View style={styles.topInfos}>
           <NewAvatar size={AvatarSize.lg} userId={mail?.from.id} />
           <View style={styles.topInfosText}>
             <View style={styles.sender}>
-              <TouchableOpacity onPress={() => props.navigation.navigate(userRouteNames.profile, { userId: mail?.from.id })}>
-                <SmallBoldText style={styles.senderName}>{mail?.from.displayName}</SmallBoldText>
+              <TouchableOpacity
+                style={styles.touchableSender}
+                onPress={() => props.navigation.navigate(userRouteNames.profile, { userId: mail?.from.id })}>
+                <SmallBoldText style={styles.senderName} numberOfLines={1} ellipsizeMode="tail">
+                  {mail?.from.displayName}
+                </SmallBoldText>
               </TouchableOpacity>
               <SmallItalicText>{displayPastDate(moment(mail?.date))}</SmallItalicText>
             </View>
