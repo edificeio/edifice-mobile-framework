@@ -19,9 +19,9 @@ const iconType = {
 const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
   const { id, type } = props;
 
-  if (type === 'User' && id) return <NewAvatar userId={id} />;
+  if (type === 'User' && id) return <NewAvatar size={props.size ?? AvatarSize.md} userId={id} />;
   const suppViewStyles: ViewStyle = {
-    width: NewAvatarSizes[AvatarSize.md],
+    width: NewAvatarSizes[props.size ?? AvatarSize.md],
     aspectRatio: 1,
   };
   return (

@@ -312,6 +312,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardDismissMode="none"
+          keyboardShouldPersistTaps="always"
           nestedScrollEnabled
           ref={scrollRef}
           scrollEventThrottle={20}

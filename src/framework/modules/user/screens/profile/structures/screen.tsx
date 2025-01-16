@@ -12,6 +12,7 @@ import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';

@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, Keyboard, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
 import type { MailsEditScreenPrivateProps } from './types';
 
+import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { NavBarAction } from '~/framework/components/navigation';
@@ -28,6 +29,7 @@ export const computeNavBar = ({
 
 export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   const [content, setContent] = React.useState(props.route.params.body ?? '');
+  const [subject, setSubject] = React.useState('');
   const [visibles, setVisibles] = React.useState<MailsVisible[]>();
   const [to, setTo] = React.useState<MailsVisible[]>(props.route.params.to ?? []);
   const [cc, setCc] = React.useState<MailsVisible[]>(props.route.params.cc ?? []);
@@ -43,7 +45,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     }
   };
 
-  const toggleMoreRecipientsFields = () => setMoreRecipientsFields(!moreRecipientsFields);
+  const openMoreRecipientsFields = () => setMoreRecipientsFields(true);
 
   const updateVisiblesWithoutSelectedRecipients = (newVisibles: MailsVisible[]) => {
     setVisibles(newVisibles);
@@ -59,12 +61,38 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     stateSetters[type](selectedRecipients);
   };
 
+  const onSend = () => {
+    Alert.alert('send ok');
+  };
+
+  const onCheckSend = () => {
+    if (!content || !subject) {
+      Keyboard.dismiss();
+      Alert.alert(
+        I18n.get('mails-edit-missingcontenttitle'),
+        I18n.get(!content ? 'mails-edit-missingbodytext' : 'mails-edit-missingsubjecttext'),
+        [
+          {
+            onPress: onSend,
+            text: I18n.get('common-send'),
+          },
+          {
+            style: 'cancel',
+            text: I18n.get('common-cancel'),
+          },
+        ],
+      );
+    }
+  };
+
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerRight: () => <NavBarAction icon="ui-send" onPress={() => Alert.alert('send message')} />,
+      headerRight: () => (
+        <NavBarAction icon="ui-send" disabled={to.length === 0 && cc.length === 0 && cci.length === 0} onPress={onCheckSend} />
+      ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [to, cc, cci, subject, content]);
 
   React.useEffect(() => {
     if (!visibles) loadVisibles();
@@ -80,8 +108,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
           visibles={visibles}
           onChangeRecipient={onChangeRecipient}
           onBlur={updateVisiblesWithoutSelectedRecipients}
-          forceOpenMoreFields={cc.length > 0 || cci.length > 0}
-          onToggleMoreRecipientsFields={toggleMoreRecipientsFields}
+          onOpenMoreRecipientsFields={openMoreRecipientsFields}
         />
         {moreRecipientsFields ? (
           <>
@@ -101,7 +128,11 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
             />
           </>
         ) : null}
-        <MailsObjectField subject={props.route.params.subject} type={props.route.params.type} />
+        <MailsObjectField
+          subject={props.route.params.subject}
+          type={props.route.params.type}
+          onChangeText={text => setSubject(text)}
+        />
       </View>
     );
   }, [
@@ -109,10 +140,11 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     to,
     cc,
     cci,
+    subject,
     props.route.params,
     onChangeRecipient,
     updateVisiblesWithoutSelectedRecipients,
-    toggleMoreRecipientsFields,
+    openMoreRecipientsFields,
   ]);
 
   const renderBottomForm = React.useCallback(
@@ -127,7 +159,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   return (
     <RichEditorForm
       topForm={renderTopForm}
-      initialContentHtml={content}
+      initialContentHtml={props.route.params.body ?? ''}
       editorStyle={styles.editor}
       bottomForm={renderBottomForm()}
       onChangeText={value => setContent(value)}

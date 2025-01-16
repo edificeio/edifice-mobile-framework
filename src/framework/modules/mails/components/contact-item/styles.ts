@@ -20,7 +20,13 @@ export default StyleSheet.create({
     flexDirection: 'row',
     paddingLeft: UI_SIZES.spacing.tiny,
     paddingRight: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.tiny,
+  },
+  containerNumber: {
+    paddingLeft: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.tinyExtra,
+    alignSelf: 'flex-end',
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   text: {
     flexShrink: 1,

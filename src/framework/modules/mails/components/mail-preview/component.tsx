@@ -29,7 +29,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const renderAvatar = () => {
     if (isSender && infosRecipients.ids.length > 1) return <MailsRecipientAvatar type="Group" />;
     if (isSender) return <MailsRecipientAvatar type="User" id={infosRecipients.ids[0]} />;
-    return <MailsRecipientAvatar type="User" id={from.id} />;
+    return <MailsRecipientAvatar type="User" id={from?.id} />;
   };
 
   const renderFirstText = () => {
@@ -46,7 +46,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         ) : isSender ? (
           infosRecipients.text
         ) : (
-          from.displayName
+          (from?.displayName ?? '')
         )}
       </TextComponent>
     );

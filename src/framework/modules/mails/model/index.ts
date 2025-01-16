@@ -14,8 +14,8 @@ export enum MailsRecipientsType {
 }
 
 export enum MailsVisibleType {
-  GROUP = 'group',
-  USER = 'user',
+  GROUP = 'Group',
+  USER = 'User',
 }
 
 export interface MailsRecipients {

@@ -10,16 +10,20 @@ import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 
 export const MailsObjectField = (props: MailsObjectFieldProps) => {
   const { subject, type } = props;
-  const [value, setValue] = React.useState<string>('');
+  const [value, setValue] = React.useState('');
 
   React.useEffect(() => {
-    if (type === MailsEditType.FORWARD) return setValue(`${I18n.get('mails-edit-subjectforward')} ${subject ?? ''}`);
-    if (type === MailsEditType.REPLY) return setValue(`${I18n.get('mails-edit-subjectreply')} ${subject ?? ''}`);
-    return setValue(subject ?? '');
+    let formatSubject = '';
+    if (type === MailsEditType.FORWARD) formatSubject = `${I18n.get('mails-edit-subjectforward')} ${subject ?? ''}`;
+    else if (type === MailsEditType.REPLY) formatSubject = `${I18n.get('mails-edit-subjectreply')} ${subject ?? ''}`;
+    else formatSubject = subject ?? '';
+    setValue(formatSubject);
+    props.onChangeText(formatSubject);
   }, [subject, type]);
 
   const onChangeText = text => {
     setValue(text);
+    props.onChangeText(text);
   };
 
   return (

@@ -6,6 +6,5 @@ export interface MailsContactFieldProps {
   visibles: MailsVisible[];
   onChangeRecipient: (selectedRecipients: MailsVisible[], type: MailsRecipientsType) => void;
   onBlur: (visibles: MailsVisible[]) => void;
-  forceOpenMoreFields?: boolean;
-  onToggleMoreRecipientsFields?: () => void;
+  onOpenMoreRecipientsFields?: () => void;
 }

@@ -19,6 +19,5 @@ export default StyleSheet.create({
   },
   page: {
     padding: UI_SIZES.spacing.medium,
-    paddingBottom: 0,
   },
 });

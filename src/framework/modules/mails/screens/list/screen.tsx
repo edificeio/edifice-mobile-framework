@@ -359,7 +359,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             <MailsMailPreview
               data={mail.item}
               onPress={() => onPressItem(mail.item.id)}
-              isSender={props.session?.user.id === mail.item.from.id}
+              isSender={props.session?.user.id === mail.item.from?.id}
               onDelete={selectedFolder === MailsDefaultFolders.TRASH ? () => onDelete(mail.item.id) : () => onTrash(mail.item.id)}
             />
           );
@@ -369,7 +369,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       {renderBottomSheetFolders()}
     </PageView>
   );
-
   return (
     <ContentLoader
       loadContent={() => loadData(MailsDefaultFolders.INBOX)}
