@@ -125,7 +125,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           />
         </TouchableOpacity>
       );
-    if (props.type === MailsRecipientsType.TO && !ccCciPressed)
+    if (props.type === MailsRecipientsType.TO && !ccCciPressed && !props.hideCcCciButton)
       return (
         <TouchableOpacity style={styles.iconCcCci} onPress={onOpenMoreRecipientsFields}>
           <SmallBoldText style={styles.textButton}>{`${I18n.get('mails-edit-cc')}  ${I18n.get('mails-edit-cci')}`}</SmallBoldText>

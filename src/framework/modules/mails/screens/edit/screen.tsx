@@ -51,6 +51,9 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   const [cci, setCci] = React.useState<MailsVisible[]>(props.route.params.cci ?? []);
   const [moreRecipientsFields, setMoreRecipientsFields] = React.useState<boolean>(false);
 
+  const haveInitialCcCci =
+    (props.route.params.cc && props.route.params.cc.length > 0) || (props.route.params.cci && props.route.params.cci.length > 0);
+
   const loadVisibles = async () => {
     try {
       const dataVisibles = await mailsService.visibles.getAll();
@@ -126,8 +129,9 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
           onChangeRecipient={onChangeRecipient}
           onBlur={updateVisiblesWithoutSelectedRecipients}
           onOpenMoreRecipientsFields={openMoreRecipientsFields}
+          hideCcCciButton={haveInitialCcCci}
         />
-        {moreRecipientsFields ? (
+        {moreRecipientsFields || haveInitialCcCci ? (
           <>
             <MailsContactField
               type={MailsRecipientsType.CC}

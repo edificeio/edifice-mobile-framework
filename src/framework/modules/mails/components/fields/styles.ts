@@ -20,6 +20,7 @@ export default StyleSheet.create({
   containerInput: {
     flex: 1,
     flexDirection: 'row',
+    columnGap: UI_SIZES.spacing.tiny,
   },
   containerIsEditing: {
     alignItems: 'flex-end',

@@ -114,8 +114,18 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
       to = [...users, ...groups];
     }
-    //TODO cc cci
-    props.navigation.navigate(mailsRouteNames.edit, { to, subject: mail?.subject, type: MailsEditType.REPLY });
+
+    let cc: MailsVisible[] = [
+      ...mail!.cc.users.filter(user => user.id !== props.session?.user.id).map(user => convertRecipientUserInfoToVisible(user)),
+      ...mail!.cc.groups.map(group => convertRecipientGroupInfoToVisible(group)),
+    ];
+
+    let cci: MailsVisible[] = [
+      ...mail!.cci.users.filter(user => user.id !== props.session?.user.id).map(user => convertRecipientUserInfoToVisible(user)),
+      ...mail!.cci.groups.map(group => convertRecipientGroupInfoToVisible(group)),
+    ];
+
+    props.navigation.navigate(mailsRouteNames.edit, { to, cc, cci, subject: mail?.subject, type: MailsEditType.REPLY });
   };
 
   const onForward = () => {
