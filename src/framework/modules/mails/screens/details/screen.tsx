@@ -179,6 +179,30 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const allPopupActionsMenu = [
     {
+      action: onReply,
+      icon: {
+        android: 'ic_reply',
+        ios: 'arrowshape.turn.up.left',
+      },
+      title: I18n.get('mails-details-reply'),
+    },
+    {
+      action: onReplyAll,
+      icon: {
+        android: 'ic_reply',
+        ios: 'arrowshape.turn.up.left.2',
+      },
+      title: I18n.get('mails-details-replyall'),
+    },
+    {
+      action: onForward,
+      icon: {
+        android: 'ic_forward',
+        ios: 'arrowshape.turn.up.forward',
+      },
+      title: I18n.get('mails-details-forward'),
+    },
+    {
       action: onMarkUnread,
       icon: {
         android: 'ic_visibility_off',
@@ -207,11 +231,32 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     }),
   ];
 
-  const popupActionsMenu = () => {
-    if (props.route.params.from === MailsDefaultFolders.OUTBOX) return allPopupActionsMenu.slice(-1);
-    if (props.route.params.from === MailsDefaultFolders.TRASH) return allPopupActionsMenu.slice(-2);
-    return [...allPopupActionsMenu.slice(0, 2), ...allPopupActionsMenu.slice(3)];
-  };
+  const popupActionsMenu = allPopupActionsMenu.filter(action => {
+    const { from } = props.route.params;
+
+    switch (action.action) {
+      case onReply:
+      case onForward:
+        return true;
+
+      case onReplyAll:
+        return infosRecipients && infosRecipients.ids.length > 1;
+
+      case onMarkUnread:
+      case onOpenMoveModal:
+        return from !== MailsDefaultFolders.OUTBOX && from !== MailsDefaultFolders.TRASH;
+
+      case onRestore:
+        return from === MailsDefaultFolders.TRASH;
+
+      case onDelete:
+      case onTrash:
+        return true;
+
+      default:
+        return false;
+    }
+  });
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -226,7 +271,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         <NavBarActionsGroup
           elements={[
             <NavBarAction icon="ui-undo" onPress={onReply} />,
-            <PopupMenu actions={popupActionsMenu()}>
+            <PopupMenu actions={popupActionsMenu}>
               <NavBarAction icon="ui-options" />
             </PopupMenu>,
           ]}
