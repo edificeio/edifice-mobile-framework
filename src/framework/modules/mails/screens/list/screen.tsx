@@ -298,28 +298,32 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               />
             }
           />
-          <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
-          <View style={styles.selectFolderTitle}>
-            <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
-            <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
-          </View>
-          {isSubfolder ? (
-            <View style={stylesFolders.containerFolders}>
-              <FlatList
-                data={folders}
-                renderItem={({ item }) =>
-                  item.depth === 1 ? (
-                    <MailsFolderItem
-                      key={item.id}
-                      icon="ui-folder"
-                      name={item.name}
-                      selected={idParentFolder === item.id}
-                      onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
-                    />
-                  ) : null
-                }
-              />
-            </View>
+          {folders.length > 0 ? (
+            <>
+              <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
+              <View style={styles.selectFolderTitle}>
+                <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
+                <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
+              </View>
+              {isSubfolder ? (
+                <View style={stylesFolders.containerFolders}>
+                  <FlatList
+                    data={folders}
+                    renderItem={({ item }) =>
+                      item.depth === 1 ? (
+                        <MailsFolderItem
+                          key={item.id}
+                          icon="ui-folder"
+                          name={item.name}
+                          selected={idParentFolder === item.id}
+                          onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
+                        />
+                      ) : null
+                    }
+                  />
+                </View>
+              ) : null}
+            </>
           ) : null}
         </View>
       </ScrollView>
