@@ -4,16 +4,18 @@ import { Alert, Keyboard, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
-import type { MailsEditScreenPrivateProps } from './types';
+import { MailsEditType, type MailsEditScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { NavBarAction } from '~/framework/components/navigation';
+import { AccountType } from '~/framework/modules/auth/model';
 import { MailsContactField, MailsObjectField } from '~/framework/modules/mails/components/fields';
 import { MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
+import { addHtmlForward } from '~/framework/modules/mails/util';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -28,10 +30,23 @@ export const computeNavBar = ({
 });
 
 export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
-  const [content, setContent] = React.useState(props.route.params.body ?? '');
+  const initialContentHTML = React.useMemo((): string => {
+    if (props.route.params.type === MailsEditType.FORWARD)
+      return addHtmlForward(
+        props.route.params.from ?? { id: '', displayName: '', profile: AccountType.Guest },
+        props.route.params.to ?? [],
+        props.route.params.subject ?? '',
+        props.route.params.body ?? '',
+      );
+    return props.route.params.body ?? '';
+  }, []);
+
+  const [content, setContent] = React.useState(initialContentHTML);
   const [subject, setSubject] = React.useState('');
   const [visibles, setVisibles] = React.useState<MailsVisible[]>();
-  const [to, setTo] = React.useState<MailsVisible[]>(props.route.params.to ?? []);
+  const [to, setTo] = React.useState<MailsVisible[]>(
+    props.route.params.type === MailsEditType.FORWARD ? [] : (props.route.params.to ?? []),
+  );
   const [cc, setCc] = React.useState<MailsVisible[]>(props.route.params.cc ?? []);
   const [cci, setCci] = React.useState<MailsVisible[]>(props.route.params.cci ?? []);
   const [moreRecipientsFields, setMoreRecipientsFields] = React.useState<boolean>(false);
@@ -82,6 +97,8 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
           },
         ],
       );
+    } else {
+      onSend();
     }
   };
 
@@ -159,7 +176,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   return (
     <RichEditorForm
       topForm={renderTopForm}
-      initialContentHtml={props.route.params.body ?? ''}
+      initialContentHtml={initialContentHTML}
       editorStyle={styles.editor}
       bottomForm={renderBottomForm()}
       onChangeText={value => setContent(value)}

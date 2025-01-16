@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
@@ -39,16 +39,17 @@ import {
   IMailsMailContent,
   MailsDefaultFolders,
   MailsFolderInfo,
-  MailsRecipientGroupInfo,
-  MailsRecipientInfo,
   MailsRecipients,
   MailsVisible,
-  MailsVisibleType,
 } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 import { mailsService } from '~/framework/modules/mails/service';
-import { mailsFormatRecipients } from '~/framework/modules/mails/util';
+import {
+  convertRecipientGroupInfoToVisible,
+  convertRecipientUserInfoToVisible,
+  mailsFormatRecipients,
+} from '~/framework/modules/mails/util';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
@@ -63,28 +64,6 @@ export const computeNavBar = ({
     title: '',
   }),
 });
-
-function convertRecipientUserInfoToVisible(userInfo: MailsRecipientInfo): MailsVisible {
-  return {
-    id: userInfo.id,
-    displayName: userInfo.displayName,
-    profile: userInfo.profile,
-    groupDisplayName: '',
-    structureName: '',
-    type: MailsVisibleType.USER,
-  };
-}
-
-function convertRecipientGroupInfoToVisible(groupInfo: MailsRecipientGroupInfo): MailsVisible {
-  return {
-    id: groupInfo.id,
-    displayName: groupInfo.displayName,
-    profile: undefined,
-    groupDisplayName: '',
-    structureName: '',
-    type: MailsVisibleType.GROUP,
-  };
-}
 
 const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
@@ -140,67 +119,53 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   };
 
   const onForward = () => {
-    props.navigation.navigate(mailsRouteNames.edit, { body: mail?.body, subject: mail?.subject, type: MailsEditType.FORWARD });
+    let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
+    let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
+    const to: MailsVisible[] = [...users, ...groups];
+
+    props.navigation.navigate(mailsRouteNames.edit, {
+      from: mail?.from,
+      to,
+      body: mail?.body,
+      subject: mail?.subject,
+      type: MailsEditType.FORWARD,
+    });
   };
 
-  const onMarkUnread = async () => {
+  const handleMailAction = async (action: () => Promise<void>, successMessageKey: string) => {
     try {
-      await mailsService.mail.toggleUnread({ ids: [props.route.params.id], unread: true });
+      await action();
       props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
-      Toast.showSuccess(I18n.get('mails-details-toastsuccessunread'));
+      Toast.showSuccess(I18n.get(successMessageKey));
     } catch (e) {
       console.error(e);
     }
   };
+
+  const onMarkUnread = () =>
+    handleMailAction(
+      () => mailsService.mail.toggleUnread({ ids: [props.route.params.id], unread: true }),
+      'mails-details-toastsuccessunread',
+    );
 
   const onOpenMoveModal = () => {
-    if (props.route.params.folders) {
-      setIsInModalMove(true);
-      bottomSheetModalRef.current?.present();
-    } else {
-      Alert.alert('pas de dossiers');
-    }
+    setIsInModalMove(true);
+    bottomSheetModalRef.current?.present();
   };
 
-  const onMove = async () => {
-    try {
-      await mailsService.mail.moveToFolder({ folderId: newParentFolder!.id }, { ids: [props.route.params.id] });
-      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
-      Toast.showSuccess(I18n.get('mails-details-toastsuccessmove'));
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const onMove = () =>
+    handleMailAction(
+      () => mailsService.mail.moveToFolder({ folderId: newParentFolder!.id }, { ids: [props.route.params.id] }),
+      'mails-details-toastsuccessmove',
+    );
 
-  const onRestore = async () => {
-    try {
-      await mailsService.mail.restore({ ids: [props.route.params.id] });
-      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
-      Toast.showSuccess(I18n.get('mails-details-toastsuccessrestore'));
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const onRestore = () =>
+    handleMailAction(() => mailsService.mail.restore({ ids: [props.route.params.id] }), 'mails-details-toastsuccessrestore');
 
-  const onTrash = async () => {
-    try {
-      await mailsService.mail.moveToTrash({ ids: [mail!.id] });
-      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
-      Toast.showSuccess(I18n.get('mails-details-toastsuccesstrash'));
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const onTrash = () =>
+    handleMailAction(() => mailsService.mail.moveToTrash({ ids: [mail!.id] }), 'mails-details-toastsuccesstrash');
 
-  const onDelete = async () => {
-    try {
-      await mailsService.mail.delete({ ids: [mail!.id] });
-      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
-      Toast.showSuccess(I18n.get('mails-details-toastsuccessdelete'));
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const onDelete = () => handleMailAction(() => mailsService.mail.delete({ ids: [mail!.id] }), 'mails-details-toastsuccessdelete');
 
   const allPopupActionsMenu = [
     {
@@ -344,8 +309,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onDismiss={onDismissBottomSheet}
-        snapPoints={['90%']}
-        enableDynamicSizing={isInModalMove ? false : true}
+        snapPoints={isInModalMove ? ['90%'] : ['35%']}
+        enableDynamicSizing={false}
         containerStyle={styles.bottomSheet}>
         <GHScrollView showsVerticalScrollIndicator={false} bounces={false}>
           {isInModalMove ? renderMoveFolder() : renderDetailsRecipients()}

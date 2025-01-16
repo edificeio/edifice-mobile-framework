@@ -1,5 +1,13 @@
+import moment from 'moment';
 import { I18n } from '~/app/i18n';
-import { MailsRecipients, MailsRecipientsType } from './model';
+import {
+  MailsRecipientGroupInfo,
+  MailsRecipientInfo,
+  MailsRecipients,
+  MailsRecipientsType,
+  MailsVisible,
+  MailsVisibleType,
+} from './model';
 
 export const MailsRecipientPrefixsI18n = {
   [MailsRecipientsType.TO]: {
@@ -43,4 +51,30 @@ export function mailsFormatRecipients(
     text: parts.length > 0 ? parts.join(' ') : I18n.get('mails-list-norecipient'),
     ids,
   };
+}
+
+export function convertRecipientUserInfoToVisible(userInfo: MailsRecipientInfo): MailsVisible {
+  return {
+    id: userInfo.id,
+    displayName: userInfo.displayName,
+    profile: userInfo.profile,
+    groupDisplayName: '',
+    structureName: '',
+    type: MailsVisibleType.USER,
+  };
+}
+
+export function convertRecipientGroupInfoToVisible(groupInfo: MailsRecipientGroupInfo): MailsVisible {
+  return {
+    id: groupInfo.id,
+    displayName: groupInfo.displayName,
+    profile: undefined,
+    groupDisplayName: '',
+    structureName: '',
+    type: MailsVisibleType.GROUP,
+  };
+}
+
+export function addHtmlForward(from: MailsRecipientInfo, to: MailsVisible[], subject: string, body: string): string {
+  return `<br><br><div>-----Message transféré-----</div><div>De: ${from?.displayName}</div><div>Date: ${moment().format('DD/MM/YYYY hh:mm')}</div><div>Objet: ${subject}</div><div>À: ${to.map(recipient => recipient.displayName).join(', ')}</div><br>${body}`;
 }

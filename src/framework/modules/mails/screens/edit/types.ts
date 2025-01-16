@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { MailsVisible } from '~/framework/modules/mails/model';
+import { MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
 import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
 
 export enum MailsEditType {
@@ -15,6 +15,7 @@ export interface MailsEditScreenProps {
 export interface MailsEditScreenNavParams {
   body?: string;
   subject?: string;
+  from?: MailsRecipientInfo;
   to?: MailsVisible[];
   cc?: MailsVisible[];
   cci?: MailsVisible[];
