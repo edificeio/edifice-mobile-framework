@@ -805,6 +805,8 @@
   "mails-edit-objectplaceholder": "Objet du message",
   "mails-edit-result": "{{nb}} résultat",
   "mails-edit-results": "{{nb}} résultats",
+  "mails-edit-subjectforward": "TR :",
+  "mails-edit-subjectreply": "RE :",
   "mails-list-deletemessage": "Message supprimé",
   "mails-list-drafts": "Brouillons",
   "mails-list-draft": "Brouillon",

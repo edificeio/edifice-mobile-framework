@@ -10,6 +10,7 @@ import type { MailsDetailsScreenPrivateProps } from './types';
 
 import { HeaderBackButton } from '@react-navigation/elements';
 import { FlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
@@ -30,11 +31,22 @@ import Separator from '~/framework/components/separator';
 import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
+import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
-import { IMailsMailContent, MailsDefaultFolders, MailsFolderInfo, MailsRecipients } from '~/framework/modules/mails/model';
+import {
+  IMailsMailContent,
+  MailsDefaultFolders,
+  MailsFolderInfo,
+  MailsRecipientGroupInfo,
+  MailsRecipientInfo,
+  MailsRecipients,
+  MailsVisible,
+  MailsVisibleType,
+} from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 import { mailsService } from '~/framework/modules/mails/service';
 import { mailsFormatRecipients } from '~/framework/modules/mails/util';
 import { userRouteNames } from '~/framework/modules/user/navigation';
@@ -52,7 +64,29 @@ export const computeNavBar = ({
   }),
 });
 
-export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps) {
+function convertRecipientUserInfoToVisible(userInfo: MailsRecipientInfo): MailsVisible {
+  return {
+    id: userInfo.id,
+    displayName: userInfo.displayName,
+    profile: userInfo.profile,
+    groupDisplayName: '',
+    structureName: '',
+    type: MailsVisibleType.USER,
+  };
+}
+
+function convertRecipientGroupInfoToVisible(groupInfo: MailsRecipientGroupInfo): MailsVisible {
+  return {
+    id: groupInfo.id,
+    displayName: groupInfo.displayName,
+    profile: undefined,
+    groupDisplayName: '',
+    structureName: '',
+    type: MailsVisibleType.GROUP,
+  };
+}
+
+const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
   const [isInModalMove, setIsInModalMove] = React.useState<boolean>(false);
@@ -72,6 +106,41 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
 
   const onDismissBottomSheet = () => {
     if (isInModalMove) setIsInModalMove(false);
+  };
+
+  const onReply = () => {
+    let to: MailsVisible[] = [];
+    if (mail?.from.id !== props.session?.user.id) to.push(convertRecipientUserInfoToVisible(mail!.from));
+    else {
+      let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
+      let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
+      to = [...users, ...groups];
+    }
+    props.navigation.navigate(mailsRouteNames.edit, { to, subject: mail?.subject, type: MailsEditType.REPLY });
+  };
+
+  const onReplyAll = () => {
+    let to: MailsVisible[] = [];
+    if (mail?.from.id !== props.session?.user.id) {
+      to.push(convertRecipientUserInfoToVisible(mail!.from));
+      if (mail!.to.groups.length > 0 || mail!.to.users.length > 0) {
+        let users = mail!.to.users
+          .filter(user => user.id !== props.session?.user.id)
+          .map(user => convertRecipientUserInfoToVisible(user));
+        let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
+        to = [...to, ...users, ...groups];
+      }
+    } else {
+      let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
+      let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
+      to = [...users, ...groups];
+    }
+    //TODO cc cci
+    props.navigation.navigate(mailsRouteNames.edit, { to, subject: mail?.subject, type: MailsEditType.REPLY });
+  };
+
+  const onForward = () => {
+    props.navigation.navigate(mailsRouteNames.edit, { body: mail?.body, subject: mail?.subject, type: MailsEditType.FORWARD });
   };
 
   const onMarkUnread = async () => {
@@ -181,7 +250,7 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
-            <NavBarAction icon="ui-undo" onPress={() => Alert.alert('reply')} />,
+            <NavBarAction icon="ui-undo" onPress={onReply} />,
             <PopupMenu actions={popupActionsMenu()}>
               <NavBarAction icon="ui-options" />
             </PopupMenu>,
@@ -210,15 +279,11 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
 
   const renderButtons = () => (
     <>
-      <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={() => Alert.alert('reply')} />
+      <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={onReply} />
       {infosRecipients && infosRecipients.ids.length > 1 ? (
-        <SecondaryButton
-          iconLeft="ui-answerall"
-          text={I18n.get('mails-details-replyall')}
-          action={() => Alert.alert('reply all')}
-        />
+        <SecondaryButton iconLeft="ui-answerall" text={I18n.get('mails-details-replyall')} action={onReplyAll} />
       ) : (
-        <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={() => Alert.alert('forward')} />
+        <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
       )}
     </>
   );
@@ -322,4 +387,8 @@ export default function MailsDetailsScreen(props: MailsDetailsScreenPrivateProps
       renderLoading={() => <MailsPlaceholderDetails />}
     />
   );
-}
+};
+
+export default connect(() => ({
+  session: getSession(),
+}))(MailsDetailsScreen);

@@ -9,6 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { AvatarSize, NewAvatar } from '~/framework/components/newavatar';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { MailsVisibleType } from '~/framework/modules/mails/model';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
 export const MailsContactItem = (props: MailsContactItemProps) => {
@@ -22,8 +23,14 @@ export const MailsContactItem = (props: MailsContactItemProps) => {
       <NewAvatar size={AvatarSize.sm} userId={id} />
       <SmallText style={styles.text} numberOfLines={1}>
         <SmallBoldText>{displayName}</SmallBoldText>
-        {' - '}
-        <SmallBoldText style={{ color: accountTypeInfos[profile].color.regular }}>{accountTypeInfos[profile].text}</SmallBoldText>
+        {props.user.type === MailsVisibleType.USER ? (
+          <>
+            {' - '}
+            <SmallBoldText style={{ color: accountTypeInfos[profile!].color.regular }}>
+              {accountTypeInfos[profile!].text}
+            </SmallBoldText>
+          </>
+        ) : null}
       </SmallText>
       {props.isEditing ? (
         <TouchableOpacity onPress={onDelete}>

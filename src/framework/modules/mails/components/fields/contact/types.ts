@@ -3,6 +3,9 @@ import { MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/mod
 export interface MailsContactFieldProps {
   type: MailsRecipientsType;
   recipients: MailsVisible[];
-  onToggleMoreRecipientsFields?: () => void;
   visibles: MailsVisible[];
+  onChangeRecipient: (selectedRecipients: MailsVisible[], type: MailsRecipientsType) => void;
+  onBlur: (visibles: MailsVisible[]) => void;
+  forceOpenMoreFields?: boolean;
+  onToggleMoreRecipientsFields?: () => void;
 }

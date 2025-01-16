@@ -109,7 +109,7 @@ export interface MailsVisible {
   displayName: string;
   groupDisplayName: string;
   id: string;
-  profile: AccountType;
+  profile?: AccountType;
   structureName: string;
   type: MailsVisibleType;
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -27,26 +27,41 @@ export const computeNavBar = ({
 });
 
 export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
-  const [content, setContent] = React.useState('');
+  const [content, setContent] = React.useState(props.route.params.body ?? '');
   const [visibles, setVisibles] = React.useState<MailsVisible[]>();
-  const [to, setTo] = React.useState<MailsVisible[]>([]);
-  const [cc, setCc] = React.useState<MailsVisible[]>([]);
-  const [cci, setCci] = React.useState<MailsVisible[]>([]);
+  const [to, setTo] = React.useState<MailsVisible[]>(props.route.params.to ?? []);
+  const [cc, setCc] = React.useState<MailsVisible[]>(props.route.params.cc ?? []);
+  const [cci, setCci] = React.useState<MailsVisible[]>(props.route.params.cci ?? []);
   const [moreRecipientsFields, setMoreRecipientsFields] = React.useState<boolean>(false);
 
   const loadVisibles = async () => {
     try {
       const dataVisibles = await mailsService.visibles.getAll();
       setVisibles(dataVisibles);
-      console.log(dataVisibles.length);
     } catch (e) {
       console.error(e);
     }
   };
 
+  const toggleMoreRecipientsFields = () => setMoreRecipientsFields(!moreRecipientsFields);
+
+  const updateVisiblesWithoutSelectedRecipients = (newVisibles: MailsVisible[]) => {
+    setVisibles(newVisibles);
+  };
+
+  const onChangeRecipient = (selectedRecipients, type) => {
+    const stateSetters: Record<MailsRecipientsType, React.Dispatch<React.SetStateAction<MailsVisible[]>>> = {
+      to: setTo,
+      cc: setCc,
+      cci: setCci,
+    };
+
+    stateSetters[type](selectedRecipients);
+  };
+
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerRight: () => <NavBarAction icon="ui-send" onPress={() => console.log('send message')} />,
+      headerRight: () => <NavBarAction icon="ui-send" onPress={() => Alert.alert('send message')} />,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -55,9 +70,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     if (!visibles) loadVisibles();
   }, []);
 
-  const toggleMoreRecipientsFields = () => setMoreRecipientsFields(!moreRecipientsFields);
-
-  const renderTopForm = () => {
+  const renderTopForm = React.useCallback(() => {
     if (!visibles) return;
     return (
       <View style={{ flexGrow: 1 }}>
@@ -65,29 +78,56 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
           type={MailsRecipientsType.TO}
           recipients={to}
           visibles={visibles}
+          onChangeRecipient={onChangeRecipient}
+          onBlur={updateVisiblesWithoutSelectedRecipients}
+          forceOpenMoreFields={cc.length > 0 || cci.length > 0}
           onToggleMoreRecipientsFields={toggleMoreRecipientsFields}
         />
         {moreRecipientsFields ? (
           <>
-            <MailsContactField type={MailsRecipientsType.CC} recipients={cc} visibles={visibles} />
-            <MailsContactField type={MailsRecipientsType.CCI} recipients={cci} visibles={visibles} />
+            <MailsContactField
+              type={MailsRecipientsType.CC}
+              recipients={cc}
+              visibles={visibles}
+              onChangeRecipient={onChangeRecipient}
+              onBlur={updateVisiblesWithoutSelectedRecipients}
+            />
+            <MailsContactField
+              type={MailsRecipientsType.CCI}
+              recipients={cci}
+              visibles={visibles}
+              onChangeRecipient={onChangeRecipient}
+              onBlur={updateVisiblesWithoutSelectedRecipients}
+            />
           </>
         ) : null}
-        <MailsObjectField />
+        <MailsObjectField subject={props.route.params.subject} type={props.route.params.type} />
       </View>
     );
-  };
+  }, [
+    visibles,
+    to,
+    cc,
+    cci,
+    props.route.params,
+    onChangeRecipient,
+    updateVisiblesWithoutSelectedRecipients,
+    toggleMoreRecipientsFields,
+  ]);
 
-  const renderBottomForm = () => (
-    <View style={styles.bottomForm}>
-      <Attachments isEditing />
-    </View>
+  const renderBottomForm = React.useCallback(
+    () => (
+      <View style={styles.bottomForm}>
+        <Attachments isEditing />
+      </View>
+    ),
+    [],
   );
 
   return (
     <RichEditorForm
       topForm={renderTopForm}
-      initialContentHtml=""
+      initialContentHtml={content}
       editorStyle={styles.editor}
       bottomForm={renderBottomForm()}
       onChangeText={value => setContent(value)}

@@ -13,9 +13,9 @@ import FlatList from '~/framework/components/list/flat-list';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
 import MailsContactItem from '~/framework/modules/mails/components/contact-item';
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
+import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
 import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
 import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
-import { MailsRecipientGroupItem, MailsRecipientUserItem } from '../../recipient-item';
 
 function removeAccents(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Supprime les diacritiques
@@ -23,8 +23,8 @@ function removeAccents(text: string): string {
 
 export const MailsContactField = (props: MailsContactFieldProps) => {
   const [isEditing, setIsEditing] = React.useState<boolean>(false);
-  const [selectedUsers, setSelectedUsers] = React.useState<MailsVisible[]>(props.recipients);
-  const [visibles, setVisibles] = React.useState<MailsVisible[]>(props.visibles || []);
+  const [selectedRecipients, setSelectedRecipients] = React.useState<MailsVisible[]>(props.recipients ?? []);
+  const [visibles, setVisibles] = React.useState<MailsVisible[]>([]);
   const [results, setResults] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
 
@@ -38,7 +38,10 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const onBlur = () => {
+    props.onBlur(visibles);
     setIsEditing(false);
+    setShowList(false);
+    setResults([]);
   };
 
   const onChangeText = (text: string) => {
@@ -56,33 +59,41 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const addUser = (user: MailsVisible) => {
-    setSelectedUsers(prev => [...prev, user]);
+    const newSelectedRecipients = [...selectedRecipients, user];
+    setSelectedRecipients(newSelectedRecipients);
     setVisibles(prev => prev.filter(visible => visible.id !== user.id));
     setResults(prev => prev.filter(result => result.id !== user.id));
+    props.onChangeRecipient(newSelectedRecipients, props.type);
   };
 
   const removeUser = (user: MailsVisible) => {
-    setSelectedUsers(prev => prev.filter(selectedUser => selectedUser.id !== user.id));
+    const newSelectedRecipients = selectedRecipients.filter(selectedRecipient => selectedRecipient.id !== user.id);
+    setSelectedRecipients(newSelectedRecipients);
     setVisibles(prev => [user, ...prev]);
+    props.onChangeRecipient(newSelectedRecipients, props.type);
   };
 
   const onToggleMoreRecipientsFields = () => {
     if (props.onToggleMoreRecipientsFields) props.onToggleMoreRecipientsFields();
   };
 
+  React.useEffect(() => {
+    setVisibles(props.visibles);
+  }, [props.visibles]);
+
   const renderRecipients = () => {
-    if (isEditing || selectedUsers.length <= 2) {
-      return selectedUsers.map(recipient => (
+    if (isEditing || selectedRecipients.length <= 2) {
+      return selectedRecipients.map(recipient => (
         <MailsContactItem key={recipient.id} user={recipient} isEditing={isEditing} onDelete={removeUser} />
       ));
     }
 
     return (
       <>
-        <MailsContactItem key={selectedUsers[0].id} user={selectedUsers[0]} isEditing={isEditing} onDelete={removeUser} />
-        <MailsContactItem key={selectedUsers[1].id} user={selectedUsers[1]} isEditing={isEditing} onDelete={removeUser} />
+        <MailsContactItem key={selectedRecipients[0].id} user={selectedRecipients[0]} isEditing={isEditing} onDelete={removeUser} />
+        <MailsContactItem key={selectedRecipients[1].id} user={selectedRecipients[1]} isEditing={isEditing} onDelete={removeUser} />
         <View style={[stylesContactItem.container, { paddingRight: UI_SIZES.spacing.tiny }]}>
-          <SmallBoldText>+{selectedUsers.length - 2}</SmallBoldText>
+          <SmallBoldText>+{selectedRecipients.length - 2}</SmallBoldText>
         </View>
       </>
     );
@@ -93,8 +104,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       <View style={styles.container}>
         <BodyText style={styles.prefix}>{I18n.get(MailsRecipientPrefixsI18n[props.type].name)}</BodyText>
         <TouchableOpacity activeOpacity={1} disabled={isEditing} style={styles.middlePart} onPress={onFocus}>
-          {selectedUsers.length > 0 ? <View style={styles.recipientsList}>{renderRecipients()}</View> : null}
-          {isEditing || selectedUsers.length === 0 ? (
+          {selectedRecipients.length > 0 ? <View style={styles.recipientsList}>{renderRecipients()}</View> : null}
+          {isEditing || selectedRecipients.length === 0 ? (
             <RNTextInput
               ref={inputRef}
               onBlur={onBlur}
@@ -106,7 +117,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
             />
           ) : null}
         </TouchableOpacity>
-        {props.type === MailsRecipientsType.TO ? (
+        {props.type === MailsRecipientsType.TO && !props.forceOpenMoreFields ? (
           <TouchableOpacity onPress={onToggleMoreRecipientsFields}>
             <SmallBoldText style={styles.textButton}>{`${I18n.get('mails-edit-cc')} ${I18n.get('mails-edit-cci')}`}</SmallBoldText>
           </TouchableOpacity>
