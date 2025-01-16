@@ -1,6 +1,8 @@
 import moment from 'moment';
 import { I18n } from '~/app/i18n';
 import {
+  IMailsFolder,
+  MailsDefaultFolders,
   MailsRecipientGroupInfo,
   MailsRecipientInfo,
   MailsRecipients,
@@ -74,6 +76,38 @@ export function convertRecipientGroupInfoToVisible(groupInfo: MailsRecipientGrou
     type: MailsVisibleType.GROUP,
   };
 }
+
+export const flattenFolders = (folders: IMailsFolder[]) => {
+  const result: IMailsFolder[] = [];
+
+  folders.forEach(folder => {
+    result.push(folder);
+    if (folder.subFolders) {
+      result.push(...flattenFolders(folder.subFolders));
+    }
+  });
+
+  return result;
+};
+
+export const mailsDefaultFoldersInfos = {
+  [MailsDefaultFolders.INBOX]: {
+    icon: 'ui-depositeInbox',
+    title: 'mails-list-inbox',
+  },
+  [MailsDefaultFolders.OUTBOX]: {
+    icon: 'ui-send',
+    title: 'mails-list-outbox',
+  },
+  [MailsDefaultFolders.DRAFTS]: {
+    icon: 'ui-edit',
+    title: 'mails-list-drafts',
+  },
+  [MailsDefaultFolders.TRASH]: {
+    icon: 'ui-delete',
+    title: 'mails-list-trash',
+  },
+};
 
 export function addHtmlForward(from: MailsRecipientInfo, to: MailsVisible[], subject: string, body: string): string {
   return `<br><br><div>-----Message transféré-----</div><div>De: ${from?.displayName}</div><div>Date: ${moment().format('DD/MM/YYYY hh:mm')}</div><div>Objet: ${subject}</div><div>À: ${to.map(recipient => recipient.displayName).join(', ')}</div><br>${body}`;

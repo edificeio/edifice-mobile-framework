@@ -35,6 +35,7 @@ import MailsPlaceholderList from '~/framework/modules/mails/components/placehold
 import { IMailsFolder, IMailsMailPreview, MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
+import { flattenFolders, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -47,38 +48,6 @@ export const computeNavBar = ({
     title: '',
   }),
 });
-
-const defaultFoldersInfos = {
-  [MailsDefaultFolders.INBOX]: {
-    icon: 'ui-depositeInbox',
-    title: 'mails-list-inbox',
-  },
-  [MailsDefaultFolders.OUTBOX]: {
-    icon: 'ui-send',
-    title: 'mails-list-outbox',
-  },
-  [MailsDefaultFolders.DRAFTS]: {
-    icon: 'ui-edit',
-    title: 'mails-list-drafts',
-  },
-  [MailsDefaultFolders.TRASH]: {
-    icon: 'ui-delete',
-    title: 'mails-list-trash',
-  },
-};
-
-const flattenFolders = (folders: IMailsFolder[]) => {
-  const result: IMailsFolder[] = [];
-
-  folders.forEach(folder => {
-    result.push(folder);
-    if (folder.subFolders) {
-      result.push(...flattenFolders(folder.subFolders));
-    }
-  });
-
-  return result;
-};
 
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
@@ -112,12 +81,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       const counts: Record<string, number> = {};
       for (const folder of Object.values(MailsDefaultFolders)) {
         try {
-          const countData = await mailsService.folder.count({
-            folderId: folder,
-            unread: folder === MailsDefaultFolders.DRAFTS ? false : true,
-          });
-
-          counts[folder] = countData.count;
+          if (folder === MailsDefaultFolders.OUTBOX) {
+            counts[folder] = 0;
+          } else {
+            const countData = await mailsService.folder.count({
+              folderId: folder,
+              unread: folder === MailsDefaultFolders.DRAFTS ? false : true,
+            });
+            counts[folder] = countData.count;
+          }
         } catch (e) {
           console.error(`Failed to fetch count for folder: ${folder}`, e);
         }
@@ -130,8 +102,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const loadData = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     try {
-      await loadMessages(folder);
-      await loadFolders();
+      await Promise.all([loadMessages(folder), loadFolders()]);
     } catch (e) {
       console.error(e);
     }
@@ -156,8 +127,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     props.navigation.setOptions({
       headerTitle: navBarTitle(
         I18n.get(
-          Object.values(MailsDefaultFolders).includes(selectedFolder)
-            ? defaultFoldersInfos[selectedFolder as MailsDefaultFolders].title
+          typeof selectedFolder !== 'object'
+            ? mailsDefaultFoldersInfos[selectedFolder as MailsDefaultFolders].title
             : selectedFolder.name,
         ),
       ),
@@ -167,9 +138,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (props.route.params.from) {
-        loadData(props.route.params.from);
-      }
+      if (props.route.params.from) loadData(props.route.params.from);
     }, [props.route.params]),
   );
 
@@ -209,21 +178,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }
   };
 
-  const onTrash = async (id: string) => {
+  const onDelete = async (id: string, permanently?: boolean) => {
     try {
-      await mailsService.mail.moveToTrash({ ids: [id] });
+      if (permanently) {
+        await mailsService.mail.delete({ ids: [id] });
+      } else {
+        await mailsService.mail.moveToTrash({ ids: [id] });
+      }
       loadMessages(selectedFolder);
       toast.showSuccess(I18n.get('mails-list-trashmessage'));
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const onDelete = async (id: string) => {
-    try {
-      await mailsService.mail.delete({ ids: [id] });
-      loadMessages(selectedFolder);
-      toast.showSuccess(I18n.get('mails-list-deletemessage'));
     } catch (e) {
       console.error(e);
     }
@@ -240,14 +203,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         ListHeaderComponent={
           <>
             <View style={styles.defaultFolders}>
-              {Object.keys(defaultFoldersInfos).map(folder => (
+              {Object.keys(mailsDefaultFoldersInfos).map(folder => (
                 <MailsFolderItem
                   key={folder}
-                  icon={defaultFoldersInfos[folder].icon}
-                  name={I18n.get(defaultFoldersInfos[folder].title)}
+                  icon={mailsDefaultFoldersInfos[folder].icon}
+                  name={I18n.get(mailsDefaultFoldersInfos[folder].title)}
                   selected={selectedFolder === folder}
                   onPress={() => switchFolder(folder as MailsDefaultFolders)}
-                  nbUnread={folderCounts[folder]}
+                  nbUnread={folderCounts ? folderCounts[folder] : 0}
                 />
               ))}
             </View>
@@ -267,7 +230,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             key={item.id}
             icon="ui-folder"
             name={item.name}
-            selected={selectedFolder.id === item.id}
+            selected={typeof selectedFolder === 'object' && selectedFolder.id === item.id}
             onPress={() => switchFolder({ id: item.id, name: item.name })}
             nbUnread={item.nbUnread}
             depth={item.depth}
@@ -364,7 +327,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               data={mail.item}
               onPress={() => onPressItem(mail.item.id)}
               isSender={props.session?.user.id === mail.item.from?.id}
-              onDelete={selectedFolder === MailsDefaultFolders.TRASH ? () => onDelete(mail.item.id) : () => onTrash(mail.item.id)}
+              onDelete={() => onDelete(mail.item.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
             />
           );
         }}
