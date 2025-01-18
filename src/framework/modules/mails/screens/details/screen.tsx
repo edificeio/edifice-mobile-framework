@@ -14,10 +14,14 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
+import InputContainer from '~/framework/components/inputs/container';
+import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
+import TextInput from '~/framework/components/inputs/text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
@@ -28,7 +32,7 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import Separator from '~/framework/components/separator';
-import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
+import { BodyText, HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -65,16 +69,21 @@ export const computeNavBar = ({
   }),
 });
 
+const EMPTY_SVG_SIZE = getScaleWidth(150);
+
 const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
+  const { id, from, folders } = props.route.params;
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
   const [isInModalMove, setIsInModalMove] = React.useState<boolean>(false);
   const [newParentFolder, setNewParentFolder] = React.useState<MailsFolderInfo>();
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
+  const [isFolderCreation, setIsFolderCreation] = React.useState<boolean>(false);
+  const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
 
   const loadData = async () => {
     try {
-      const mail = await mailsService.mail.get({ mailId: props.route.params.id });
+      const mail = await mailsService.mail.get({ mailId: id });
       const infosRecipients = mailsFormatRecipients(mail.to, mail.cc, mail.cci);
       setInfosRecipients(infosRecipients);
       setMail(mail);
@@ -145,10 +154,21 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     });
   };
 
+  const onCreateNewFolder = async () => {
+    try {
+      const folderId = await mailsService.folder.create({ name: valueNewFolder });
+      await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
+      props.navigation.navigate(mailsRouteNames.home, { from: { id: folderId, name: valueNewFolder } });
+      Toast.showSuccess(I18n.get('mails-details-toastsuccessmove'));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const handleMailAction = async (action: () => Promise<void>, successMessageKey: string) => {
     try {
       await action();
-      props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from });
+      props.navigation.navigate(mailsRouteNames.home, { from });
       Toast.showSuccess(I18n.get(successMessageKey));
     } catch (e) {
       console.error(e);
@@ -156,10 +176,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   };
 
   const onMarkUnread = () =>
-    handleMailAction(
-      () => mailsService.mail.toggleUnread({ ids: [props.route.params.id], unread: true }),
-      'mails-details-toastsuccessunread',
-    );
+    handleMailAction(() => mailsService.mail.toggleUnread({ ids: [id], unread: true }), 'mails-details-toastsuccessunread');
 
   const onOpenMoveModal = () => {
     setIsInModalMove(true);
@@ -168,17 +185,15 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const onMove = () =>
     handleMailAction(
-      () => mailsService.mail.moveToFolder({ folderId: newParentFolder!.id }, { ids: [props.route.params.id] }),
+      () => mailsService.mail.moveToFolder({ folderId: newParentFolder!.id }, { ids: [id] }),
       'mails-details-toastsuccessmove',
     );
 
-  const onRestore = () =>
-    handleMailAction(() => mailsService.mail.restore({ ids: [props.route.params.id] }), 'mails-details-toastsuccessrestore');
+  const onRestore = () => handleMailAction(() => mailsService.mail.restore({ ids: [id] }), 'mails-details-toastsuccessrestore');
 
-  const onTrash = () =>
-    handleMailAction(() => mailsService.mail.moveToTrash({ ids: [mail!.id] }), 'mails-details-toastsuccesstrash');
+  const onTrash = () => handleMailAction(() => mailsService.mail.moveToTrash({ ids: [id] }), 'mails-details-toastsuccesstrash');
 
-  const onDelete = () => handleMailAction(() => mailsService.mail.delete({ ids: [mail!.id] }), 'mails-details-toastsuccessdelete');
+  const onDelete = () => handleMailAction(() => mailsService.mail.delete({ ids: [id] }), 'mails-details-toastsuccessdelete');
 
   const allPopupActionsMenu = [
     {
@@ -230,7 +245,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       title: I18n.get('mails-details-restore'),
     },
     deleteAction({
-      action: props.route.params.from === MailsDefaultFolders.TRASH ? onDelete : onTrash,
+      action: from === MailsDefaultFolders.TRASH ? onDelete : onTrash,
     }),
   ];
 
@@ -267,7 +282,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         <HeaderBackButton
           labelVisible={false}
           tintColor={theme.palette.grey.white as string}
-          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from: props.route.params.from })}
+          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from })}
         />
       ),
       headerRight: () => (
@@ -334,6 +349,28 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     </View>
   );
 
+  const renderCreateFolder = () => (
+    <View>
+      <HeaderBottomSheetModal
+        title={I18n.get('mails-list-newfolder')}
+        iconRight="ui-check"
+        iconRightDisabled={valueNewFolder.length === 0}
+        onPressRight={onCreateNewFolder}
+      />
+      <InputContainer
+        label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
+        input={
+          <TextInput
+            placeholder={I18n.get('mails-list-newfolderplaceholder')}
+            onChangeText={text => setValueNewFolder(text)}
+            value={valueNewFolder}
+            maxLength={50}
+          />
+        }
+      />
+    </View>
+  );
+
   const renderMoveFolder = () => (
     <View style={styles.contentBottomSheet}>
       <HeaderBottomSheetModal
@@ -342,23 +379,28 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         iconRightDisabled={!newParentFolder}
         onPressRight={onMove}
       />
-      <View style={stylesFolders.containerFolders}>
-        <FlatList
-          data={props.route.params.folders}
-          renderItem={({ item }) =>
-            item.depth === 1 ? (
-              <MailsFolderItem
-                key={item.id}
-                icon="ui-folder"
-                name={item.name}
-                selected={newParentFolder?.id === item.id}
-                disabled={item.id === mail!.folder_id}
-                onPress={() => setNewParentFolder(item)}
-              />
-            ) : null
-          }
-        />
-      </View>
+      <FlatList
+        data={folders}
+        contentContainerStyle={[stylesFolders.containerFolders, folders?.length === 0 ? styles.nofoldersContainer : {}]}
+        renderItem={({ item }) => (
+          <MailsFolderItem
+            key={item.id}
+            icon="ui-folder"
+            name={item.name}
+            depth={item.depth}
+            selected={newParentFolder?.id === item.id}
+            disabled={item.id === mail!.folder_id}
+            onPress={() => setNewParentFolder(item)}
+          />
+        )}
+        ListEmptyComponent={
+          <View style={styles.nofolders}>
+            <Svg name="empty-nofolders" width={EMPTY_SVG_SIZE} height={EMPTY_SVG_SIZE} />
+            <BodyText>{I18n.get('mails-details-nofolders')}</BodyText>
+            <PrimaryButton text={I18n.get('mails-details-createfolder')} action={() => setIsFolderCreation(true)} />
+          </View>
+        }
+      />
     </View>
   );
 
@@ -367,11 +409,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onDismiss={onDismissBottomSheet}
-        snapPoints={isInModalMove ? ['90%'] : ['35%']}
-        enableDynamicSizing={false}
+        snapPoints={['90%']}
+        enableDynamicSizing={isInModalMove || isFolderCreation ? false : true}
         containerStyle={styles.bottomSheet}>
         <GHScrollView showsVerticalScrollIndicator={false} bounces={false}>
-          {isInModalMove ? renderMoveFolder() : renderDetailsRecipients()}
+          {isFolderCreation ? renderCreateFolder() : isInModalMove ? renderMoveFolder() : renderDetailsRecipients()}
         </GHScrollView>
       </BottomSheetModal>
     );

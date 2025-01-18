@@ -5,7 +5,7 @@ import {
   MailsFolderCount,
   MailsVisible,
 } from '~/framework/modules/mails/model';
-import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, fetchWithCache, signedFetchJsonRelative } from '~/infra/fetchWithCache';
 import {
   mailContentAdapter,
   mailsAdapter,
@@ -121,8 +121,8 @@ export const mailsService = {
           : '/conversation/send';
 
       const bodyJson = JSON.stringify({ body, to, cc, cci, subject });
-      await fetchWithCache(api, {
-        bodyJson,
+      await signedFetchJsonRelative(api, {
+        body: bodyJson,
         method: 'POST',
       });
     },

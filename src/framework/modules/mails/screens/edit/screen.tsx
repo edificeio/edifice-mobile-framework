@@ -93,6 +93,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
     } catch (e) {
       console.error(e);
+      toast.showError();
     }
   };
 

@@ -70,6 +70,8 @@ const imports = {
 
   'empty-mediacentre': async () => import('ASSETS/images/empty-screen/empty-mediacentre.svg'),
 
+  'empty-nofolders': async () => import('ASSETS/images/empty-screen/nofolders.svg'),
+
   'empty-news': async () => import('ASSETS/images/empty-screen/empty-news.svg'),
 
   'empty-presences': async () => import('ASSETS/images/empty-screen/empty-presences.svg'),

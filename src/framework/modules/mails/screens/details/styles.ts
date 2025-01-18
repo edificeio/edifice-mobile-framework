@@ -49,4 +49,11 @@ export default StyleSheet.create({
   topInfosText: {
     flex: 1,
   },
+  nofoldersContainer: {
+    borderWidth: 0,
+  },
+  nofolders: {
+    alignItems: 'center',
+    rowGap: UI_SIZES.spacing.medium,
+  },
 });

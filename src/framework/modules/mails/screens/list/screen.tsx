@@ -143,7 +143,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     React.useCallback(() => {
       if (props.route.params.from) {
         switchFolder(props.route.params.from);
-        loadMessages(props.route.params.from);
+        loadFolders();
       }
     }, [props.route.params]),
   );
@@ -276,22 +276,21 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
                 <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
               </View>
               {isSubfolder ? (
-                <View style={stylesFolders.containerFolders}>
-                  <FlatList
-                    data={folders}
-                    renderItem={({ item }) =>
-                      item.depth === 1 ? (
-                        <MailsFolderItem
-                          key={item.id}
-                          icon="ui-folder"
-                          name={item.name}
-                          selected={idParentFolder === item.id}
-                          onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
-                        />
-                      ) : null
-                    }
-                  />
-                </View>
+                <FlatList
+                  data={folders}
+                  contentContainerStyle={stylesFolders.containerFolders}
+                  renderItem={({ item }) =>
+                    item.depth === 1 ? (
+                      <MailsFolderItem
+                        key={item.id}
+                        icon="ui-folder"
+                        name={item.name}
+                        selected={idParentFolder === item.id}
+                        onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
+                      />
+                    ) : null
+                  }
+                />
               ) : null}
             </>
           ) : null}
