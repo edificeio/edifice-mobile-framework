@@ -51,6 +51,7 @@ export const computeNavBar = ({
 
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
+  const flatListRef = React.useRef<FlashList<IMailsMailPreview>>(null);
   const navigation = props.navigation;
 
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
@@ -118,10 +119,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           }}
         />
       ),
-      headerRight: () => <NavBarAction icon="ui-edit" onPress={() => navigation.navigate(mailsRouteNames.edit, {})} />,
+      headerRight: () => (
+        <NavBarAction icon="ui-edit" onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })} />
+      ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedFolder]);
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -138,7 +141,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (props.route.params.from) loadData(props.route.params.from);
+      if (props.route.params.from) {
+        switchFolder(props.route.params.from);
+        loadMessages(props.route.params.from);
+      }
     }, [props.route.params]),
   );
 
@@ -146,6 +152,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     setSelectedFolder(folder);
     onDismissBottomSheet();
     await loadMessages(folder);
+    flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
 
   const onPressItem = (id: string) => {
@@ -320,13 +327,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderContent = () => (
     <PageView>
       <FlashList
+        ref={flatListRef}
         data={mails}
         renderItem={mail => {
           return (
             <MailsMailPreview
               data={mail.item}
               onPress={() => onPressItem(mail.item.id)}
-              isSender={props.session?.user.id === mail.item.from?.id}
+              isSender={props.session?.user.id === mail.item.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
               onDelete={() => onDelete(mail.item.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
             />
           );

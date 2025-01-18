@@ -95,7 +95,10 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
       to = [...users, ...groups];
     }
-    props.navigation.navigate(mailsRouteNames.edit, { to, subject: mail?.subject, type: MailsEditType.REPLY });
+    props.navigation.navigate(mailsRouteNames.edit, {
+      initialMailInfo: { id: mail!.id, to, subject: mail?.subject },
+      type: MailsEditType.REPLY,
+    });
   };
 
   const onReplyAll = () => {
@@ -125,7 +128,10 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       ...mail!.cci.groups.map(group => convertRecipientGroupInfoToVisible(group)),
     ];
 
-    props.navigation.navigate(mailsRouteNames.edit, { to, cc, cci, subject: mail?.subject, type: MailsEditType.REPLY });
+    props.navigation.navigate(mailsRouteNames.edit, {
+      initialMailInfo: { id: mail!.id, to, cc, cci, subject: mail?.subject },
+      type: MailsEditType.REPLY,
+    });
   };
 
   const onForward = () => {
@@ -134,10 +140,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     const to: MailsVisible[] = [...users, ...groups];
 
     props.navigation.navigate(mailsRouteNames.edit, {
-      from: mail?.from,
-      to,
-      body: mail?.body,
-      subject: mail?.subject,
+      initialMailInfo: { id: mail!.id, from: mail?.from, to, body: mail?.body, subject: mail?.subject },
       type: MailsEditType.FORWARD,
     });
   };

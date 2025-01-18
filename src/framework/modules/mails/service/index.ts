@@ -108,10 +108,23 @@ export const mailsService = {
       });
     },
     send: async (
-      params: { draftId: string },
+      params: { draftId?: string; inReplyTo?: string },
       payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string },
     ) => {
-      const api = `/conversation/send?id=${params.draftId}`;
+      const { draftId, inReplyTo } = params;
+      const { body, to, cc, cci, subject } = payload;
+
+      const api = inReplyTo
+        ? `/conversation/send?In-Reply-To=${params.inReplyTo}`
+        : draftId
+          ? `/conversation/send?id=${params.draftId}`
+          : '/conversation/send';
+
+      const bodyJson = JSON.stringify({ body, to, cc, cci, subject });
+      await fetchWithCache(api, {
+        bodyJson,
+        method: 'POST',
+      });
     },
     sendToDraft: async (payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string }) => {
       const api = '/conversation/draft';

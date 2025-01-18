@@ -810,6 +810,7 @@
   "mails-edit-results": "{{nb}} résultats",
   "mails-edit-subjectforward": "TR :",
   "mails-edit-subjectreply": "RE :",
+  "mails-edit-toastsuccesssend": "Message envoyé",
   "mails-list-deletemessage": "Message supprimé",
   "mails-list-drafts": "Brouillons",
   "mails-list-draft": "Brouillon",

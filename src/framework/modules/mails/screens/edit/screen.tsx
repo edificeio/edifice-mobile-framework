@@ -10,9 +10,10 @@ import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { NavBarAction } from '~/framework/components/navigation';
+import toast from '~/framework/components/toast';
 import { AccountType } from '~/framework/modules/auth/model';
 import { MailsContactField, MailsObjectField } from '~/framework/modules/mails/components/fields';
-import { MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
+import { MailsDefaultFolders, MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
 import { addHtmlForward } from '~/framework/modules/mails/util';
@@ -30,29 +31,28 @@ export const computeNavBar = ({
 });
 
 export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
+  const { initialMailInfo, type, fromFolder } = props.route.params;
   const initialContentHTML = React.useMemo((): string => {
-    if (props.route.params.type === MailsEditType.FORWARD)
+    if (type === MailsEditType.FORWARD)
       return addHtmlForward(
-        props.route.params.from ?? { id: '', displayName: '', profile: AccountType.Guest },
-        props.route.params.to ?? [],
-        props.route.params.subject ?? '',
-        props.route.params.body ?? '',
+        initialMailInfo?.from ?? { id: '', displayName: '', profile: AccountType.Guest },
+        initialMailInfo?.to ?? [],
+        initialMailInfo?.subject ?? '',
+        initialMailInfo?.body ?? '',
       );
-    return props.route.params.body ?? '';
+    return initialMailInfo?.body ?? '';
   }, []);
 
   const [content, setContent] = React.useState(initialContentHTML);
   const [subject, setSubject] = React.useState('');
   const [visibles, setVisibles] = React.useState<MailsVisible[]>();
-  const [to, setTo] = React.useState<MailsVisible[]>(
-    props.route.params.type === MailsEditType.FORWARD ? [] : (props.route.params.to ?? []),
-  );
-  const [cc, setCc] = React.useState<MailsVisible[]>(props.route.params.cc ?? []);
-  const [cci, setCci] = React.useState<MailsVisible[]>(props.route.params.cci ?? []);
+  const [to, setTo] = React.useState<MailsVisible[]>(type === MailsEditType.FORWARD ? [] : (initialMailInfo?.to ?? []));
+  const [cc, setCc] = React.useState<MailsVisible[]>(initialMailInfo?.cc ?? []);
+  const [cci, setCci] = React.useState<MailsVisible[]>(initialMailInfo?.cci ?? []);
   const [moreRecipientsFields, setMoreRecipientsFields] = React.useState<boolean>(false);
 
   const haveInitialCcCci =
-    (props.route.params.cc && props.route.params.cc.length > 0) || (props.route.params.cci && props.route.params.cci.length > 0);
+    (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0);
 
   const loadVisibles = async () => {
     try {
@@ -79,8 +79,21 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     stateSetters[type](selectedRecipients);
   };
 
-  const onSend = () => {
-    Alert.alert('send ok');
+  const onSend = async () => {
+    try {
+      const toIds = to.map(recipient => recipient.id);
+      const ccIds = cc.map(recipient => recipient.id);
+      const cciIds = cci.map(recipient => recipient.id);
+
+      await mailsService.mail.send(
+        { inReplyTo: initialMailInfo?.id ?? undefined },
+        { body: content, subject, to: toIds, cc: ccIds, cci: cciIds },
+      );
+      props.navigation.navigate(mailsRouteNames.home, { from: fromFolder ?? MailsDefaultFolders.INBOX });
+      toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onCheckSend = () => {
@@ -149,11 +162,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
             />
           </>
         ) : null}
-        <MailsObjectField
-          subject={props.route.params.subject}
-          type={props.route.params.type}
-          onChangeText={text => setSubject(text)}
-        />
+        <MailsObjectField subject={initialMailInfo?.subject} type={type} onChangeText={text => setSubject(text)} />
       </View>
     );
   }, [
@@ -162,7 +171,8 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     cc,
     cci,
     subject,
-    props.route.params,
+    initialMailInfo,
+    type,
     onChangeRecipient,
     updateVisiblesWithoutSelectedRecipients,
     openMoreRecipientsFields,
@@ -184,6 +194,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
       editorStyle={styles.editor}
       bottomForm={renderBottomForm()}
       onChangeText={value => setContent(value)}
+      saving={true}
       uploadParams={{
         parent: 'protected',
       }}
