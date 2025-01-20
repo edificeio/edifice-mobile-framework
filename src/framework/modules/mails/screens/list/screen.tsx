@@ -32,7 +32,13 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
 import MailsPlaceholderList from '~/framework/modules/mails/components/placeholder/list';
-import { IMailsFolder, IMailsMailPreview, MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
+import {
+  IMailsFolder,
+  IMailsMailPreview,
+  MailsDefaultFolders,
+  MailsFolderInfo,
+  MailsMailStatePreview,
+} from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
 import { flattenFolders, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
@@ -155,8 +161,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
 
-  const onPressItem = (id: string) => {
-    navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
+  const onPressItem = (id: string, state: MailsMailStatePreview) => {
+    if (state === MailsMailStatePreview.DRAFT) return navigation.navigate(mailsRouteNames.edit, { draftId: id });
+    return navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
   };
 
   const onDismissBottomSheet = () => {
@@ -332,7 +339,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           return (
             <MailsMailPreview
               data={mail.item}
-              onPress={() => onPressItem(mail.item.id)}
+              onPress={() => onPressItem(mail.item.id, mail.item.state)}
               isSender={props.session?.user.id === mail.item.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
               onDelete={() => onDelete(mail.item.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
             />

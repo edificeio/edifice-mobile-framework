@@ -64,8 +64,8 @@ export const mailsService = {
       // revoir forwardfrom
       const api = `/conversation/message/${params.mailId}/forward/${params.forwardFrom}`;
     },
-    get: async (params: { mailId: string }) => {
-      const api = `/conversation/api/messages/${params.mailId}`;
+    get: async (params: { id: string }) => {
+      const api = `/conversation/api/messages/${params.id}`;
       const backendMail = (await fetchJSONWithCache(api)) as MailsMailContentBackend;
 
       const mail = mailContentAdapter(backendMail);

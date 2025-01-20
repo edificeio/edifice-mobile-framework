@@ -8,15 +8,22 @@ import { MailsEditType, type MailsEditScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { NavBarAction } from '~/framework/components/navigation';
 import toast from '~/framework/components/toast';
+import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
 import { MailsContactField, MailsObjectField } from '~/framework/modules/mails/components/fields';
-import { MailsDefaultFolders, MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
+import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
+import { IMailsMailAttachment, MailsDefaultFolders, MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
-import { addHtmlForward } from '~/framework/modules/mails/util';
+import {
+  addHtmlForward,
+  convertRecipientGroupInfoToVisible,
+  convertRecipientUserInfoToVisible,
+} from '~/framework/modules/mails/util';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -31,8 +38,8 @@ export const computeNavBar = ({
 });
 
 export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
-  const { initialMailInfo, type, fromFolder } = props.route.params;
-  const initialContentHTML = React.useMemo((): string => {
+  const { initialMailInfo, draftId, type, fromFolder } = props.route.params;
+  const textInitialContentHTML = React.useMemo((): string => {
     if (type === MailsEditType.FORWARD)
       return addHtmlForward(
         initialMailInfo?.from ?? { id: '', displayName: '', profile: AccountType.Guest },
@@ -43,25 +50,18 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     return initialMailInfo?.body ?? '';
   }, []);
 
-  const [content, setContent] = React.useState(initialContentHTML);
-  const [subject, setSubject] = React.useState('');
   const [visibles, setVisibles] = React.useState<MailsVisible[]>();
+  const [initialContentHTML, setInitialContentHTML] = React.useState(textInitialContentHTML);
+  const [body, setBody] = React.useState(initialContentHTML);
+  const [subject, setSubject] = React.useState('');
   const [to, setTo] = React.useState<MailsVisible[]>(type === MailsEditType.FORWARD ? [] : (initialMailInfo?.to ?? []));
   const [cc, setCc] = React.useState<MailsVisible[]>(initialMailInfo?.cc ?? []);
   const [cci, setCci] = React.useState<MailsVisible[]>(initialMailInfo?.cci ?? []);
+  const [attachments, setAttachments] = React.useState<IMailsMailAttachment[]>([]);
   const [moreRecipientsFields, setMoreRecipientsFields] = React.useState<boolean>(false);
 
   const haveInitialCcCci =
     (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0);
-
-  const loadVisibles = async () => {
-    try {
-      const dataVisibles = await mailsService.visibles.getAll();
-      setVisibles(dataVisibles);
-    } catch (e) {
-      console.error(e);
-    }
-  };
 
   const openMoreRecipientsFields = () => setMoreRecipientsFields(true);
 
@@ -87,7 +87,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
 
       await mailsService.mail.send(
         { inReplyTo: initialMailInfo?.id ?? undefined },
-        { body: content, subject, to: toIds, cc: ccIds, cci: cciIds },
+        { body, subject, to: toIds, cc: ccIds, cci: cciIds },
       );
       props.navigation.navigate(mailsRouteNames.home, { from: fromFolder ?? MailsDefaultFolders.INBOX });
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
@@ -98,11 +98,11 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   };
 
   const onCheckSend = () => {
-    if (!content || !subject) {
+    if (!body || !subject) {
       Keyboard.dismiss();
       Alert.alert(
         I18n.get('mails-edit-missingcontenttitle'),
-        I18n.get(!content ? 'mails-edit-missingbodytext' : 'mails-edit-missingsubjecttext'),
+        I18n.get(!body ? 'mails-edit-missingbodytext' : 'mails-edit-missingsubjecttext'),
         [
           {
             onPress: onSend,
@@ -119,6 +119,48 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     }
   };
 
+  const loadData = async () => {
+    try {
+      const dataVisibles = await mailsService.visibles.getAll();
+      setVisibles(dataVisibles);
+
+      if (draftId) {
+        const draft = await mailsService.mail.get({ id: draftId });
+
+        let toDraft: MailsVisible[] = [];
+        if (draft.to.users.length > 0 || draft.to.groups.length > 0) {
+          const toUsers = draft.to.users.map(recipient => convertRecipientUserInfoToVisible(recipient));
+          const toGroups = draft.to.groups.map(recipient => convertRecipientGroupInfoToVisible(recipient));
+          toDraft = [...toUsers, ...toGroups];
+        }
+
+        let ccDraft: MailsVisible[] = [];
+        if (draft.cc.users.length > 0 || draft.cc.groups.length > 0) {
+          const ccUsers = draft.cc.users.map(recipient => convertRecipientUserInfoToVisible(recipient));
+          const ccGroups = draft.cc.groups.map(recipient => convertRecipientGroupInfoToVisible(recipient));
+          ccDraft = [...ccUsers, ...ccGroups];
+        }
+
+        let cciDraft: MailsVisible[] = [];
+        if (draft.cci.users.length > 0 || draft.cci.groups.length > 0) {
+          const cciUsers = draft.cci.users.map(recipient => convertRecipientUserInfoToVisible(recipient));
+          const cciGroups = draft.cci.groups.map(recipient => convertRecipientGroupInfoToVisible(recipient));
+          cciDraft = [...cciUsers, ...cciGroups];
+        }
+
+        setInitialContentHTML(draft.body);
+        setSubject(draft.subject);
+        setTo(toDraft);
+        setCc(ccDraft);
+        setCci(cciDraft);
+        setAttachments(draft.attachments);
+        console.log(draft.body, draft.subject, toDraft, ccDraft, cciDraft, draft.attachments);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   React.useEffect(() => {
     props.navigation.setOptions({
       headerRight: () => (
@@ -126,11 +168,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [to, cc, cci, subject, content]);
-
-  React.useEffect(() => {
-    if (!visibles) loadVisibles();
-  }, []);
+  }, [to, cc, cci, subject]);
 
   const renderTopForm = React.useCallback(() => {
     if (!visibles) return;
@@ -188,17 +226,28 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     [],
   );
 
+  const renderContent = React.useCallback(() => {
+    return (
+      <RichEditorForm
+        topForm={renderTopForm}
+        initialContentHtml={initialContentHTML}
+        editorStyle={styles.editor}
+        bottomForm={renderBottomForm()}
+        onChangeText={value => setBody(value)}
+        saving={true}
+        uploadParams={{
+          parent: 'protected',
+        }}
+      />
+    );
+  }, [initialContentHTML, renderTopForm, renderBottomForm]);
+
   return (
-    <RichEditorForm
-      topForm={renderTopForm}
-      initialContentHtml={initialContentHTML}
-      editorStyle={styles.editor}
-      bottomForm={renderBottomForm()}
-      onChangeText={value => setContent(value)}
-      saving={true}
-      uploadParams={{
-        parent: 'protected',
-      }}
+    <ContentLoader
+      loadContent={loadData}
+      renderContent={renderContent}
+      renderError={() => <EmptyConnectionScreen />}
+      renderLoading={() => <MailsPlaceholderEdit />}
     />
   );
 }

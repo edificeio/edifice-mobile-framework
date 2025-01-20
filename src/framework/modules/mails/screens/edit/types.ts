@@ -22,6 +22,7 @@ export interface MailsEditScreenNavParams {
     cc?: MailsVisible[];
     cci?: MailsVisible[];
   };
+  draftId?: string;
   type?: MailsEditType;
   fromFolder?: MailsDefaultFolders | MailsFolderInfo;
 }

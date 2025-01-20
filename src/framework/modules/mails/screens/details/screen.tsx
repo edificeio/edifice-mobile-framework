@@ -83,7 +83,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const loadData = async () => {
     try {
-      const mail = await mailsService.mail.get({ mailId: id });
+      const mail = await mailsService.mail.get({ id });
       const infosRecipients = mailsFormatRecipients(mail.to, mail.cc, mail.cci);
       setInfosRecipients(infosRecipients);
       setMail(mail);
