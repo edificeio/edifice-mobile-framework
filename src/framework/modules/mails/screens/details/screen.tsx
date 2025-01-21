@@ -260,10 +260,10 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     switch (action.action) {
       case onReply:
       case onForward:
-        return true;
+        return from !== MailsDefaultFolders.TRASH;
 
       case onReplyAll:
-        return infosRecipients && infosRecipients.ids.length > 1;
+        return infosRecipients && infosRecipients.ids.length > 1 && from !== MailsDefaultFolders.TRASH;
 
       case onMarkUnread:
       case onOpenMoveModal:
@@ -290,16 +290,21 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           onPress={() => props.navigation.navigate(mailsRouteNames.home, { from })}
         />
       ),
-      headerRight: () => (
-        <NavBarActionsGroup
-          elements={[
-            <NavBarAction icon="ui-undo" onPress={onReply} />,
-            <PopupMenu actions={popupActionsMenu}>
-              <NavBarAction icon="ui-options" />
-            </PopupMenu>,
-          ]}
-        />
-      ),
+      headerRight: () =>
+        mail?.trashed ? (
+          <PopupMenu actions={popupActionsMenu}>
+            <NavBarAction icon="ui-options" />
+          </PopupMenu>
+        ) : (
+          <NavBarActionsGroup
+            elements={[
+              <NavBarAction icon="ui-undo" onPress={onReply} />,
+              <PopupMenu actions={popupActionsMenu}>
+                <NavBarAction icon="ui-options" />
+              </PopupMenu>,
+            ]}
+          />
+        ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mail, newParentFolder, props]);
@@ -320,16 +325,22 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   };
 
-  const renderButtons = () => (
-    <>
-      <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={onReply} />
-      {infosRecipients && infosRecipients.ids.length > 1 ? (
-        <SecondaryButton iconLeft="ui-answerall" text={I18n.get('mails-details-replyall')} action={onReplyAll} />
-      ) : (
-        <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
-      )}
-    </>
-  );
+  const renderButtons = () => {
+    if (mail?.trashed) return null;
+    return (
+      <>
+        <Separator marginVertical={UI_SIZES.spacing.big} />
+        <View style={styles.buttons}>
+          <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={onReply} />
+          {infosRecipients && infosRecipients.ids.length > 1 ? (
+            <SecondaryButton iconLeft="ui-answerall" text={I18n.get('mails-details-replyall')} action={onReplyAll} />
+          ) : (
+            <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
+          )}
+        </View>
+      </>
+    );
+  };
 
   const hasRecipients = (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0;
 
@@ -448,8 +459,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         </View>
         <RichEditorViewer content={mail?.body ?? ''} />
         {mail!.attachments.length > 0 ? <Attachments attachments={mail?.attachments} /> : null}
-        <Separator marginVertical={UI_SIZES.spacing.big} />
-        <View style={styles.buttons}>{renderButtons()}</View>
+        {renderButtons()}
       </ScrollView>
       {renderBottomSheet()}
     </PageView>
