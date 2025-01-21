@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { ScrollViewProps, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
@@ -15,7 +15,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyConnectionScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
@@ -24,14 +24,14 @@ import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/h
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
-import { BodyText } from '~/framework/components/text';
+import { BodyText, TextSizeStyle } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { Toggle } from '~/framework/components/toggle';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
-import MailsPlaceholderList from '~/framework/modules/mails/components/placeholder/list';
+import { MailsPlaceholderList, MailsPlaceholderLittleList } from '~/framework/modules/mails/components/placeholder/list';
 import {
   IMailsFolder,
   IMailsMailPreview,
@@ -55,6 +55,9 @@ export const computeNavBar = ({
   }),
 });
 
+const PAGE_SIZE = 25;
+const ESTIMATED_ITEM_SIZE = UI_SIZES.spacing.small * 2 + TextSizeStyle.Normal.lineHeight * 2;
+
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const flatListRef = React.useRef<FlashList<IMailsMailPreview>>(null);
@@ -62,6 +65,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
   const [isInModalCreation, setIsInModalCreation] = React.useState<boolean>(false);
+  const [pageNb, setPageNb] = React.useState<number>(0);
+  const [sizingPage, setSizingPage] = React.useState<number>(0);
+  const [isLoadingNextPage, setIsLoadingNextPage] = React.useState<boolean>(false);
+  const [hasNextMails, setHasNextMails] = React.useState<boolean>(true);
   const [mails, setMails] = React.useState<IMailsMailPreview[]>([]);
   const [folders, setFolders] = React.useState<IMailsFolder[]>([]);
   const [folderCounts, setFolderCounts] = React.useState<Record<MailsDefaultFolders, number>>();
@@ -69,13 +76,40 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isSubfolder, setIsSubfolder] = React.useState<boolean>(false);
   const [idParentFolder, setIdParentFolder] = React.useState<string | undefined>(undefined);
 
-  const loadMessages = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+  const loadMails = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     try {
+      setPageNb(0);
+      setSizingPage(0);
+      if (!hasNextMails) setHasNextMails(true);
       const folderId = typeof folder === 'object' ? folder.id : (folder as string);
-      const mailsData = await mailsService.mails.get({ folderId, pageNb: 0, pageSize: 50, unread: false });
+      const mailsData = await mailsService.mails.get({
+        folderId,
+        pageNb: 0,
+        pageSize: PAGE_SIZE,
+        unread: false,
+      });
       setMails(mailsData);
+      setSizingPage(mailsData.length);
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const loadNextMails = async () => {
+    try {
+      if (sizingPage < PAGE_SIZE * (pageNb + 1) || !hasNextMails) return;
+      setIsLoadingNextPage(true);
+      const folderId = typeof selectedFolder === 'object' ? selectedFolder.id : selectedFolder;
+      const mailsData = await mailsService.mails.get({ folderId, pageNb: pageNb + 1, pageSize: PAGE_SIZE, unread: false });
+      if (mailsData.length === 0) return setHasNextMails(false);
+      setSizingPage(sizingPage + mailsData.length);
+      setMails([...mails, ...mailsData]);
+      setPageNb(pageNb + 1);
+    } catch (e) {
+      console.error(e);
+      toast.showError();
+    } finally {
+      setIsLoadingNextPage(false);
     }
   };
 
@@ -107,9 +141,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }
   };
 
-  const loadData = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+  const loadData = async () => {
     try {
-      await Promise.all([loadMessages(folder), loadFolders()]);
+      await Promise.all([loadMails(selectedFolder), loadFolders()]);
     } catch (e) {
       console.error(e);
     }
@@ -147,8 +181,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (props.route.params.from) {
-        switchFolder(props.route.params.from);
+      const { params } = props.route;
+      if (params.from) {
+        if (params.idMailToRemove) setMails(mails => mails.filter(mail => mail.id !== params.idMailToRemove));
+        if (params.idMailToMarkUnread)
+          setMails(mails => mails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)));
+        setSelectedFolder(params.from);
         loadFolders();
       }
     }, [props.route.params]),
@@ -157,12 +195,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const switchFolder = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     setSelectedFolder(folder);
     onDismissBottomSheet();
-    await loadMessages(folder);
+    await loadMails(folder);
     flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
   };
 
-  const onPressItem = (id: string, state: MailsMailStatePreview) => {
+  const onPressItem = (id: string, unread: boolean, state: MailsMailStatePreview) => {
     if (state === MailsMailStatePreview.DRAFT) return navigation.navigate(mailsRouteNames.edit, { draftId: id });
+    if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
     return navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
   };
 
@@ -194,13 +233,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onDelete = async (id: string, permanently?: boolean) => {
     try {
-      if (permanently) {
-        await mailsService.mail.delete({ ids: [id] });
-      } else {
-        await mailsService.mail.moveToTrash({ ids: [id] });
-      }
-      loadMessages(selectedFolder);
-      toast.showSuccess(I18n.get('mails-list-trashmessage'));
+      // if (permanently) {
+      //   await mailsService.mail.delete({ ids: [id] });
+      // } else {
+      //   await mailsService.mail.moveToTrash({ ids: [id] });
+      // }
+      // loadMails(selectedFolder);
+      // toast.showSuccess(I18n.get('mails-list-trashmessage'));
     } catch (e) {
       console.error(e);
     }
@@ -330,34 +369,36 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     );
   };
 
-  const renderContent = () => (
+  const renderFooter = () => (isLoadingNextPage ? <MailsPlaceholderLittleList /> : null);
+
+  const renderContent = (refreshControl: ScrollViewProps['refreshControl']) => (
     <PageView>
       <FlashList
         ref={flatListRef}
         data={mails}
+        estimatedItemSize={ESTIMATED_ITEM_SIZE}
+        estimatedListSize={{ height: sizingPage * ESTIMATED_ITEM_SIZE, width: UI_SIZES.screen.width }}
         renderItem={mail => {
           return (
             <MailsMailPreview
+              key={mail.item.id}
               data={mail.item}
-              onPress={() => onPressItem(mail.item.id, mail.item.state)}
+              onPress={() => onPressItem(mail.item.id, mail.item.unread, mail.item.state)}
               isSender={props.session?.user.id === mail.item.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
               onDelete={() => onDelete(mail.item.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
             />
           );
         }}
+        ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmpty()}
+        refreshControl={refreshControl}
+        onEndReached={loadNextMails}
+        onEndReachedThreshold={0.5}
       />
       {renderBottomSheetFolders()}
     </PageView>
   );
-  return (
-    <ContentLoader
-      loadContent={() => loadData(MailsDefaultFolders.INBOX)}
-      renderContent={renderContent}
-      renderError={() => <EmptyConnectionScreen />}
-      renderLoading={() => <MailsPlaceholderList />}
-    />
-  );
+  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderLoading={() => <MailsPlaceholderList />} />;
 };
 
 export default connect(() => ({

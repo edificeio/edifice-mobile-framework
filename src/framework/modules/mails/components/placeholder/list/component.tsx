@@ -18,21 +18,25 @@ const item = (firstLine, secondLine) => (
   </View>
 );
 
-export default function MailsPlaceholderList() {
-  return (
-    <Placeholder Animation={Fade}>
-      <View style={styles.page}>
-        {item(50, 100)}
-        {item(37, 55)}
-        {item(43, 70)}
-        {item(75, 85)}
-        {item(63, 72)}
-        {item(50, 100)}
-        {item(37, 55)}
-        {item(43, 70)}
-        {item(75, 85)}
-        {item(63, 72)}
-      </View>
-    </Placeholder>
-  );
-}
+export const MailsPlaceholderLittleList = () => (
+  <Placeholder Animation={Fade}>
+    <View style={styles.page}>{item(50, 80)}</View>
+  </Placeholder>
+);
+
+export const MailsPlaceholderList = () => (
+  <Placeholder Animation={Fade}>
+    <View style={styles.page}>
+      {item(50, 80)}
+      {item(37, 55)}
+      {item(43, 70)}
+      {item(75, 85)}
+      {item(63, 72)}
+      {item(50, 80)}
+      {item(37, 55)}
+      {item(43, 70)}
+      {item(75, 85)}
+      {item(63, 72)}
+    </View>
+  </Placeholder>
+);

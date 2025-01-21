@@ -33,7 +33,7 @@ import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import Separator from '~/framework/components/separator';
 import { BodyText, HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
-import Toast from '~/framework/components/toast';
+import { default as Toast, default as toast } from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
@@ -168,10 +168,15 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const handleMailAction = async (action: () => Promise<void>, successMessageKey: string) => {
     try {
       await action();
-      props.navigation.navigate(mailsRouteNames.home, { from });
       Toast.showSuccess(I18n.get(successMessageKey));
+      const navigationParams = {
+        from,
+        ...(successMessageKey === 'mails-details-toastsuccessunread' ? { idMailToMarkUnread: id } : { idMailToRemove: id }),
+      };
+      props.navigation.navigate(mailsRouteNames.home, navigationParams);
     } catch (e) {
       console.error(e);
+      toast.showError();
     }
   };
 
@@ -333,8 +338,10 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     return (
       <View>
         <SmallBoldText style={styles.bottomSheetPrefix}>{I18n.get(prefix)}</SmallBoldText>
-        {recipients.users.length > 0 ? recipients.users.map(user => <MailsRecipientUserItem item={user} />) : null}
-        {recipients.groups.length > 0 ? recipients.groups.map(group => <MailsRecipientGroupItem item={group} />) : null}
+        {recipients.users.length > 0 ? recipients.users.map(user => <MailsRecipientUserItem key={user.id} item={user} />) : null}
+        {recipients.groups.length > 0
+          ? recipients.groups.map(group => <MailsRecipientGroupItem key={group.id} item={group} />)
+          : null}
       </View>
     );
   };

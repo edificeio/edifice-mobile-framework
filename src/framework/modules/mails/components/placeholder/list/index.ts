@@ -1,3 +1,3 @@
-import MailsPlaceholderList from './component';
+import { MailsPlaceholderList, MailsPlaceholderLittleList } from './component';
 
-export default MailsPlaceholderList;
+export { MailsPlaceholderList, MailsPlaceholderLittleList };

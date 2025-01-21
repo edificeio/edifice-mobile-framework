@@ -10,6 +10,8 @@ export interface MailsListScreenProps {
 
 export interface MailsListScreenNavParams {
   from?: MailsDefaultFolders | MailsFolderInfo;
+  idMailToRemove?: string;
+  idMailToMarkUnread?: string;
 }
 
 export interface MailsListScreenPrivateProps extends NativeStackScreenProps<MailsNavigationParams, 'home'>, MailsListScreenProps {}
