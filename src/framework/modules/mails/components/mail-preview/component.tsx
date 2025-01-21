@@ -3,7 +3,7 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import moment from 'moment';
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 import styles from './styles';
@@ -21,10 +21,12 @@ import { displayPastDate } from '~/framework/util/date';
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread, id } = props.data;
-  const { isSender, onPress, onDelete, onUnread } = props;
+  const { isSender, onPress, onDelete, onToggleUnread, onRestore } = props;
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
   const TextComponent = isUnread ? SmallBoldText : SmallText;
+  const has2SwipeActions = onToggleUnread || onRestore;
   let infosRecipients: { text: string; ids: string[] } = mailsFormatRecipients(to, cc, cci);
+  const refSwipeable = React.useRef<SwipeableMethods>(null);
 
   const renderAvatar = () => {
     if (isSender && infosRecipients.ids.length > 1) return <MailsRecipientAvatar type="Group" />;
@@ -54,22 +56,31 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
 
   const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
     const styleAnimation = useAnimatedStyle(() => {
+      const widthDrag = has2SwipeActions ? 160 : 80;
       return {
         flexDirection: 'row',
-        transform: [{ translateX: drag.value + 160 }],
+        transform: [{ translateX: drag.value + widthDrag }],
       };
     });
 
+    const onPressOtherAction = () => {
+      if (onToggleUnread) onToggleUnread(id);
+      else onRestore!(id);
+      refSwipeable.current?.close();
+    };
+
     return (
       <Reanimated.View style={styleAnimation}>
-        <TouchableOpacity onPress={() => onUnread && onUnread(id)} style={[styles.swipeAction, styles.swipeUnreadAction]}>
-          <Svg
-            name="ui-mailUnread"
-            fill={theme.palette.grey.white}
-            width={UI_SIZES.elements.icon.default}
-            height={UI_SIZES.elements.icon.default}
-          />
-        </TouchableOpacity>
+        {has2SwipeActions ? (
+          <TouchableOpacity onPress={onPressOtherAction} style={[styles.swipeAction, styles.swipeOtherAction]}>
+            <Svg
+              name={onToggleUnread ? 'ui-mailUnread' : 'ui-restore'}
+              fill={theme.palette.grey.white}
+              width={UI_SIZES.elements.icon.default}
+              height={UI_SIZES.elements.icon.default}
+            />
+          </TouchableOpacity>
+        ) : null}
         <TouchableOpacity onPress={() => onDelete(id)} style={[styles.swipeAction, styles.swipeDeleteAction]}>
           <Svg
             name="ui-delete"
@@ -84,9 +95,9 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
 
   return (
     <ReanimatedSwipeable
-      friction={2}
+      ref={refSwipeable}
+      friction={1}
       enableTrackpadTwoFingerGesture
-      rightThreshold={160}
       overshootFriction={8}
       renderRightActions={swipeRightAction}>
       <TouchableOpacity style={[styles.container, isUnread ? styles.containerUnread : {}]} onPress={onPress}>

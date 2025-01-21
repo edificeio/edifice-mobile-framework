@@ -233,13 +233,32 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onDelete = async (id: string, permanently?: boolean) => {
     try {
-      // if (permanently) {
-      //   await mailsService.mail.delete({ ids: [id] });
-      // } else {
-      //   await mailsService.mail.moveToTrash({ ids: [id] });
-      // }
-      // loadMails(selectedFolder);
-      // toast.showSuccess(I18n.get('mails-list-trashmessage'));
+      if (permanently) await mailsService.mail.delete({ ids: [id] });
+      else await mailsService.mail.moveToTrash({ ids: [id] });
+      setMails(mails => mails.filter(mail => mail.id !== id));
+      loadFolders();
+      toast.showSuccess(I18n.get(permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash'));
+    } catch (e) {
+      console.error(e);
+      toast.showError();
+    }
+  };
+  const onToggleUnread = async (id: string, unread: boolean) => {
+    try {
+      await mailsService.mail.toggleUnread({ ids: [id], unread: !unread });
+      setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail)));
+      loadFolders();
+      toast.showSuccess(I18n.get(unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread'));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  const onRestore = async (id: string) => {
+    try {
+      await mailsService.mail.restore({ ids: [id] });
+      setMails(mails => mails.filter(mail => mail.id !== id));
+      loadFolders();
+      toast.showSuccess(I18n.get('mails-details-toastsuccessrestore'));
     } catch (e) {
       console.error(e);
     }
@@ -386,6 +405,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               onPress={() => onPressItem(mail.item.id, mail.item.unread, mail.item.state)}
               isSender={props.session?.user.id === mail.item.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
               onDelete={() => onDelete(mail.item.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
+              onToggleUnread={
+                selectedFolder !== MailsDefaultFolders.DRAFTS &&
+                selectedFolder !== MailsDefaultFolders.OUTBOX &&
+                selectedFolder !== MailsDefaultFolders.TRASH
+                  ? () => onToggleUnread(mail.item.id, mail.item.unread)
+                  : undefined
+              }
+              onRestore={selectedFolder === MailsDefaultFolders.TRASH ? () => onRestore(mail.item.id) : undefined}
             />
           );
         }}

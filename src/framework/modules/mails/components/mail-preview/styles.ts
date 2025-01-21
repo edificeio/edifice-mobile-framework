@@ -38,7 +38,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
     width: 80,
   },
-  swipeUnreadAction: {
+  swipeOtherAction: {
     backgroundColor: theme.palette.status.warning.regular,
   },
   swipeDeleteAction: {

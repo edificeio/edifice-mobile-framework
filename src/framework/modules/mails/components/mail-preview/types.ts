@@ -5,6 +5,6 @@ export interface MailsMailPreviewProps {
   isSender: boolean;
   onPress: () => void;
   onDelete: (id: string) => void;
-  onUnread?: (id: string) => void;
+  onToggleUnread?: (id: string) => void;
   onRestore?: (id: string) => void;
 }
