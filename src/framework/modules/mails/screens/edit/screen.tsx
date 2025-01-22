@@ -10,7 +10,8 @@ import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
-import { NavBarAction } from '~/framework/components/navigation';
+import PopupMenu from '~/framework/components/menus/popup';
+import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -53,7 +54,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   const [visibles, setVisibles] = React.useState<MailsVisible[]>();
   const [initialContentHTML, setInitialContentHTML] = React.useState(textInitialContentHTML);
   const [body, setBody] = React.useState(initialContentHTML);
-  const [subject, setSubject] = React.useState('');
+  const [subject, setSubject] = React.useState(initialMailInfo?.subject ?? '');
   const [to, setTo] = React.useState<MailsVisible[]>(type === MailsEditType.FORWARD ? [] : (initialMailInfo?.to ?? []));
   const [cc, setCc] = React.useState<MailsVisible[]>(initialMailInfo?.cc ?? []);
   const [cci, setCci] = React.useState<MailsVisible[]>(initialMailInfo?.cci ?? []);
@@ -79,6 +80,56 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     stateSetters[type](selectedRecipients);
   };
 
+  const onSendDraft = async () => {
+    try {
+      const toIds = to.map(recipient => recipient.id);
+      const ccIds = cc.map(recipient => recipient.id);
+      const cciIds = cci.map(recipient => recipient.id);
+
+      if (draftId) {
+        await mailsService.mail.updateDraft({ draftId: draftId! }, { body, subject, to: toIds, cc: ccIds, cci: cciIds });
+      } else {
+        await mailsService.mail.sendToDraft({ body, subject, to: toIds, cc: ccIds, cci: cciIds });
+      }
+      props.navigation.navigate(mailsRouteNames.home, {
+        from: fromFolder ?? MailsDefaultFolders.INBOX,
+        reload: fromFolder === MailsDefaultFolders.DRAFTS,
+      });
+      toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
+    } catch (e) {
+      console.error(e);
+      toast.showError();
+    }
+  };
+
+  const onDeleteDraft = async () => {
+    Alert.alert(I18n.get('mails-edit-deletedrafttitle'), I18n.get('mails-edit-deletedrafttext'), [
+      {
+        onPress: () => {},
+        style: 'default',
+        text: I18n.get('common-cancel'),
+      },
+      {
+        onPress: async () => {
+          try {
+            if (!draftId) return props.navigation.goBack();
+            await mailsService.mail.moveToTrash({ ids: [draftId] });
+            props.navigation.navigate(mailsRouteNames.home, {
+              from: fromFolder ?? MailsDefaultFolders.INBOX,
+              reload: fromFolder === MailsDefaultFolders.DRAFTS,
+            });
+            toast.showSuccess(I18n.get('mails-edit-toastsuccessdeletedraft'));
+          } catch (e) {
+            console.error(e);
+            toast.showError();
+          }
+        },
+        style: 'destructive',
+        text: I18n.get('common-delete'),
+      },
+    ]);
+  };
+
   const onSend = async () => {
     try {
       const toIds = to.map(recipient => recipient.id);
@@ -89,7 +140,10 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
         { inReplyTo: initialMailInfo?.id ?? undefined },
         { body, subject, to: toIds, cc: ccIds, cci: cciIds },
       );
-      props.navigation.navigate(mailsRouteNames.home, { from: fromFolder ?? MailsDefaultFolders.INBOX });
+      props.navigation.navigate(mailsRouteNames.home, {
+        from: fromFolder ?? MailsDefaultFolders.INBOX,
+        reload: fromFolder === MailsDefaultFolders.OUTBOX,
+      });
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
     } catch (e) {
       console.error(e);
@@ -161,10 +215,37 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     }
   };
 
+  const popupActionsMenu = [
+    {
+      action: onSendDraft,
+      icon: {
+        android: 'ic_pencil',
+        ios: 'pencil.and.list.clipboard',
+      },
+      title: I18n.get('mails-edit-savedraft'),
+    },
+    {
+      action: onDeleteDraft,
+      destructive: true,
+      icon: {
+        android: 'ic_delete_item',
+        ios: 'trash',
+      },
+      title: I18n.get('mails-edit-deletedraft'),
+    },
+  ];
+
   React.useEffect(() => {
     props.navigation.setOptions({
       headerRight: () => (
-        <NavBarAction icon="ui-send" disabled={to.length === 0 && cc.length === 0 && cci.length === 0} onPress={onCheckSend} />
+        <NavBarActionsGroup
+          elements={[
+            <NavBarAction icon="ui-send" disabled={to.length === 0 && cc.length === 0 && cci.length === 0} onPress={onCheckSend} />,
+            <PopupMenu actions={draftId ? popupActionsMenu : popupActionsMenu.slice(0, -1)}>
+              <NavBarAction icon="ui-options" />
+            </PopupMenu>,
+          ]}
+        />
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -201,7 +282,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
             />
           </>
         ) : null}
-        <MailsObjectField subject={initialMailInfo?.subject} type={type} onChangeText={text => setSubject(text)} />
+        <MailsObjectField subject={subject} type={type} onChangeText={text => setSubject(text)} />
       </View>
     );
   }, [

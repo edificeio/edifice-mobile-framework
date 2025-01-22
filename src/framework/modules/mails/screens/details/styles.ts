@@ -22,6 +22,9 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.medium,
   },
+  listRecipients: {
+    minHeight: 200,
+  },
   recipients: {
     flexDirection: 'row',
     alignItems: 'center',

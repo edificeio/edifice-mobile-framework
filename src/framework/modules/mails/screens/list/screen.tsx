@@ -43,6 +43,7 @@ import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mail
 import { mailsService } from '~/framework/modules/mails/service';
 import { flattenFolders, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { HTTPError } from '~/framework/util/http';
 
 export const computeNavBar = ({
   navigation,
@@ -75,6 +76,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
   const [isSubfolder, setIsSubfolder] = React.useState<boolean>(false);
   const [idParentFolder, setIdParentFolder] = React.useState<string | undefined>(undefined);
+  const [isLoadingCreateNewFolder, setIsLoadingCreateNewFolder] = React.useState<boolean>(false);
+  const [onErrorCreateFolder, setOnErrorCreateFolder] = React.useState<boolean>(false);
 
   const loadMails = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     try {
@@ -183,6 +186,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     React.useCallback(() => {
       const { params } = props.route;
       if (params.from) {
+        if (params.reload) loadMails(params.from);
         if (params.idMailToRemove) setMails(mails => mails.filter(mail => mail.id !== params.idMailToRemove));
         if (params.idMailToMarkUnread)
           setMails(mails => mails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)));
@@ -200,7 +204,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   };
 
   const onPressItem = (id: string, unread: boolean, state: MailsMailStatePreview) => {
-    if (state === MailsMailStatePreview.DRAFT) return navigation.navigate(mailsRouteNames.edit, { draftId: id });
+    if (state === MailsMailStatePreview.DRAFT)
+      return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
     if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
     return navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
   };
@@ -219,15 +224,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onCreateNewFolder = async () => {
     try {
+      setIsLoadingCreateNewFolder(true);
       const dataNewFolder = await mailsService.folder.create({ name: valueNewFolder, parentId: idParentFolder ?? '' });
       switchFolder({ name: valueNewFolder, id: dataNewFolder });
       loadFolders();
       setValueNewFolder('');
       toast.showSuccess(I18n.get('mails-list-newfoldersuccess', { name: valueNewFolder }));
     } catch (e) {
-      console.error('Failed to create new folder', e);
-      onDismissBottomSheet();
-      toast.showError();
+      const error = e instanceof HTTPError ? await e.json() : e;
+      if (error instanceof Error) return toast.showError();
+      if (error && error.error === 'conversation.error.duplicate.folder') setOnErrorCreateFolder(true);
+    } finally {
+      setIsLoadingCreateNewFolder(false);
     }
   };
 
@@ -319,7 +327,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           <HeaderBottomSheetModal
             title={I18n.get('mails-list-newfolder')}
             iconRight="ui-check"
-            iconRightDisabled={(isSubfolder && !idParentFolder) || valueNewFolder.length === 0}
+            iconRightDisabled={
+              (isSubfolder && !idParentFolder) || valueNewFolder.length === 0 || onErrorCreateFolder || isLoadingCreateNewFolder
+            }
             onPressRight={onCreateNewFolder}
           />
           <InputContainer
@@ -327,8 +337,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             input={
               <TextInput
                 placeholder={I18n.get('mails-list-newfolderplaceholder')}
-                onChangeText={text => setValueNewFolder(text)}
+                onChangeText={text => {
+                  if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+                  setValueNewFolder(text);
+                }}
                 value={valueNewFolder}
+                showError={onErrorCreateFolder}
+                annotation={onErrorCreateFolder ? I18n.get('mails-list-newfolderduplicate') : undefined}
                 maxLength={50}
               />
             }

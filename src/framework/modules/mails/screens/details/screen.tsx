@@ -8,7 +8,6 @@ import stylesFolders from '~/framework/modules/mails/components/folder-item/styl
 import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
 
-import { HeaderBackButton } from '@react-navigation/elements';
 import { FlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
@@ -107,6 +106,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     props.navigation.navigate(mailsRouteNames.edit, {
       initialMailInfo: { id: mail!.id, to, subject: mail?.subject },
       type: MailsEditType.REPLY,
+      fromFolder: from,
     });
   };
 
@@ -140,6 +140,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     props.navigation.navigate(mailsRouteNames.edit, {
       initialMailInfo: { id: mail!.id, to, cc, cci, subject: mail?.subject },
       type: MailsEditType.REPLY,
+      fromFolder: from,
     });
   };
 
@@ -151,6 +152,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     props.navigation.navigate(mailsRouteNames.edit, {
       initialMailInfo: { id: mail!.id, from: mail?.from, to, body: mail?.body, subject: mail?.subject },
       type: MailsEditType.FORWARD,
+      fromFolder: from,
     });
   };
 
@@ -158,7 +160,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     try {
       const folderId = await mailsService.folder.create({ name: valueNewFolder });
       await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
-      props.navigation.navigate(mailsRouteNames.home, { from: { id: folderId, name: valueNewFolder } });
+      props.navigation.navigate(mailsRouteNames.home, { from: { id: folderId, name: valueNewFolder }, reload: true });
       Toast.showSuccess(I18n.get('mails-details-toastsuccessmove'));
     } catch (e) {
       console.error(e);
@@ -229,7 +231,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       action: onMarkUnread,
       icon: {
         android: 'ic_visibility_off',
-        ios: 'eye.slash',
+        ios: 'envelope.badge',
       },
       title: I18n.get('mails-details-markunread'),
     },
@@ -237,7 +239,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       action: onOpenMoveModal,
       icon: {
         android: 'ic_move_to_inbox',
-        ios: 'arrow.up.square',
+        ios: 'tray.2',
       },
       title: I18n.get('mails-details-move'),
     },
@@ -283,13 +285,6 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerLeft: () => (
-        <HeaderBackButton
-          labelVisible={false}
-          tintColor={theme.palette.grey.white as string}
-          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from })}
-        />
-      ),
       headerRight: () =>
         mail?.trashed ? (
           <PopupMenu actions={popupActionsMenu}>
@@ -347,7 +342,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const renderListRecipients = (recipients: MailsRecipients, prefix: string) => {
     if (!hasRecipients(recipients)) return;
     return (
-      <View>
+      <View style={styles.listRecipients}>
         <SmallBoldText style={styles.bottomSheetPrefix}>{I18n.get(prefix)}</SmallBoldText>
         {recipients.users.length > 0 ? recipients.users.map(user => <MailsRecipientUserItem key={user.id} item={user} />) : null}
         {recipients.groups.length > 0
