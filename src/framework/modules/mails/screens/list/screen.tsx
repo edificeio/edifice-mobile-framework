@@ -269,6 +269,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       toast.showSuccess(I18n.get('mails-details-toastsuccessrestore'));
     } catch (e) {
       console.error(e);
+      toast.showError();
     }
   };
 
