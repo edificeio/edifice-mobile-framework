@@ -19,7 +19,7 @@ export const MailsObjectField = (props: MailsObjectFieldProps) => {
     else formatSubject = subject ?? '';
     setValue(formatSubject);
     props.onChangeText(formatSubject);
-  }, [subject, type]);
+  }, []);
 
   const onChangeText = text => {
     setValue(text);

@@ -212,6 +212,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     if (isInModalCreation) setIsInModalCreation(false);
     if (isSubfolder) setIsSubfolder(false);
     if (idParentFolder) setIdParentFolder(undefined);
+    if (onErrorCreateFolder) setOnErrorCreateFolder(false);
   };
 
   const onToggleSubfolders = () => {
@@ -330,7 +331,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderCreateNewFolder = () => {
     return (
-      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView
+        keyboardDismissMode="none"
+        keyboardShouldPersistTaps="always"
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
+        bounces={false}>
         <View style={styles.scrollViewBottomSheet}>
           <HeaderBottomSheetModal
             title={I18n.get('mails-list-newfolder')}

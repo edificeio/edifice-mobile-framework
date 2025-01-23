@@ -101,10 +101,10 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
               reload: fromFolder === MailsDefaultFolders.DRAFTS,
             });
             toast.showSuccess(I18n.get('mails-edit-toastsuccessdeletedraft'));
+            setIsSending(false);
           } catch (e) {
             console.error(e);
             toast.showError();
-          } finally {
             setIsSending(false);
           }
         },
@@ -131,10 +131,10 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
         reload: fromFolder === MailsDefaultFolders.DRAFTS,
       });
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
+      setIsSending(false);
     } catch (e) {
       console.error(e);
       toast.showError();
-    } finally {
       setIsSending(false);
     }
   };
@@ -155,10 +155,10 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
         reload: fromFolder === MailsDefaultFolders.OUTBOX,
       });
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
+      setIsSending(false);
     } catch (e) {
       console.error(e);
       toast.showError();
-    } finally {
       setIsSending(false);
     }
   };
@@ -215,7 +215,8 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   };
 
   const showPreventBack = () =>
-    isSending || !(to.length === 0 && cc.length === 0 && cci.length === 0 && body.trim() === '' && subject.trim() === '');
+    isSending !== true &&
+    !(to.length === 0 && cc.length === 0 && cci.length === 0 && body?.trim() === '' && subject?.trim() === '');
 
   UNSTABLE_usePreventRemove(showPreventBack(), ({ data }) => {
     Alert.alert(I18n.get('mails-edit-preventbacktitle'), I18n.get('mails-edit-preventbacktext'), [

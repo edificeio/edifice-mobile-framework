@@ -23,7 +23,7 @@ export default function Attachments(props: AttachmentsProps) {
       {attachments ? (
         <View style={styles.attachments}>
           {attachments.map(attachment => (
-            <Attachment session={props.session} data={attachment} isEditing={props.isEditing} />
+            <Attachment session={props.session} data={attachment} isEditing={props.isEditing} key={attachment.id} />
           ))}
         </View>
       ) : null}

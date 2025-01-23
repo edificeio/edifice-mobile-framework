@@ -26,7 +26,8 @@ export default function Attachment(props: AttachmentProps) {
       setLf(sf.lf);
       setIsDownload(true);
       toast.showSuccess(I18n.get('attachment-downloadsuccess'));
-    } catch {
+    } catch (e) {
+      console.error(e);
       toast.showError();
     } finally {
       setIdDownloading(false);

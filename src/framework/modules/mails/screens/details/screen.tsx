@@ -8,6 +8,7 @@ import stylesFolders from '~/framework/modules/mails/components/folder-item/styl
 import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
 
+import { HeaderBackButton } from '@react-navigation/elements';
 import { FlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
@@ -291,6 +292,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
+      headerLeft: () => (
+        <HeaderBackButton
+          labelVisible={false}
+          tintColor={theme.palette.grey.white as string}
+          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from })}
+        />
+      ),
       headerRight: () =>
         mail?.trashed ? (
           <PopupMenu actions={popupActionsMenu}>
@@ -431,7 +439,12 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         snapPoints={['90%']}
         enableDynamicSizing={isInModalMove || isFolderCreation ? false : true}
         containerStyle={styles.bottomSheet}>
-        <GHScrollView showsVerticalScrollIndicator={false} bounces={false}>
+        <GHScrollView
+          keyboardDismissMode="none"
+          keyboardShouldPersistTaps="always"
+          nestedScrollEnabled
+          showsVerticalScrollIndicator={false}
+          bounces={false}>
           {isFolderCreation ? renderCreateFolder() : isInModalMove ? renderMoveFolder() : renderDetailsRecipients()}
         </GHScrollView>
       </BottomSheetModal>

@@ -51,7 +51,7 @@ export const mailsService = {
     delete: async (payload: { ids: string[] }) => {
       const api = '/conversation/delete';
       const body = JSON.stringify({ id: payload.ids });
-      await http.fetchJsonForSession('PUT', api, { body });
+      await http.fetchForSession('PUT', api, { body });
     },
     forward: async (params: { mailId: string; forwardFrom: string }) => {
       // revoir forwardfrom
