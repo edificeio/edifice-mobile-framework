@@ -6,6 +6,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import styles from './styles';
 import { MailsEditType, type MailsEditScreenPrivateProps } from './types';
 
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
@@ -25,6 +26,7 @@ import {
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
 } from '~/framework/modules/mails/util';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -60,6 +62,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
   const [cci, setCci] = React.useState<MailsVisible[]>(initialMailInfo?.cci ?? []);
   const [attachments, setAttachments] = React.useState<IMailsMailAttachment[]>([]);
   const [moreRecipientsFields, setMoreRecipientsFields] = React.useState<boolean>(false);
+  const [isSending, setIsSending] = React.useState<boolean>(false);
 
   const haveInitialCcCci =
     (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0);
@@ -82,6 +85,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
 
   const onSendDraft = async () => {
     try {
+      setIsSending(true);
       const toIds = to.map(recipient => recipient.id);
       const ccIds = cc.map(recipient => recipient.id);
       const cciIds = cci.map(recipient => recipient.id);
@@ -99,6 +103,8 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     } catch (e) {
       console.error(e);
       toast.showError();
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -112,6 +118,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
       {
         onPress: async () => {
           try {
+            setIsSending(true);
             if (!draftId) return props.navigation.goBack();
             await mailsService.mail.moveToTrash({ ids: [draftId] });
             props.navigation.navigate(mailsRouteNames.home, {
@@ -122,6 +129,8 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
           } catch (e) {
             console.error(e);
             toast.showError();
+          } finally {
+            setIsSending(false);
           }
         },
         style: 'destructive',
@@ -132,6 +141,7 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
 
   const onSend = async () => {
     try {
+      setIsSending(true);
       const toIds = to.map(recipient => recipient.id);
       const ccIds = cc.map(recipient => recipient.id);
       const cciIds = cci.map(recipient => recipient.id);
@@ -148,6 +158,8 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     } catch (e) {
       console.error(e);
       toast.showError();
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -215,6 +227,8 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     }
   };
 
+  const showPreventBack = () =>
+    isSending || !(to.length === 0 && cc.length === 0 && cci.length === 0 && body.trim() === '' && subject.trim() === '');
   const popupActionsMenu = [
     {
       action: onSendDraft,
@@ -234,6 +248,28 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
       title: I18n.get('mails-edit-deletedraft'),
     },
   ];
+
+  UNSTABLE_usePreventRemove(showPreventBack(), ({ data }) => {
+    Alert.alert(I18n.get('mails-edit-preventbacktitle'), I18n.get('mails-edit-preventbacktext'), [
+      {
+        onPress: clearConfirmNavigationEvent,
+        style: 'default',
+        text: I18n.get('mails-edit-preventbackreturn'),
+      },
+      {
+        onPress: onSendDraft,
+        style: 'default',
+        text: I18n.get('mails-edit-preventbacksaveandquit'),
+      },
+      {
+        onPress: () => {
+          handleRemoveConfirmNavigationEvent(data.action, props.navigation);
+        },
+        style: 'destructive',
+        text: I18n.get('common-quit'),
+      },
+    ]);
+  });
 
   React.useEffect(() => {
     props.navigation.setOptions({
