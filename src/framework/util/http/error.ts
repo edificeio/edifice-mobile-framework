@@ -27,23 +27,65 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
   url: string;
   body: ReadableStream<Uint8Array> | null;
   bodyUsed: boolean;
-  clone(): Response {
+  clone(): HTTPError {
     return new HTTPError(this.response.clone(), this.message);
   }
   arrayBuffer(): Promise<ArrayBuffer> {
-    return this.response.arrayBuffer();
+    try {
+      return this.response.arrayBuffer();
+    } catch (e) {
+      if (e instanceof global.Error) throw new FetchError(FetchErrorCode.PARSE_ERROR, e.message, { cause: e });
+      else throw e;
+    }
   }
   blob(): Promise<Blob> {
-    return this.response.blob();
+    try {
+      return this.response.blob();
+    } catch (e) {
+      if (e instanceof global.Error) throw new FetchError(FetchErrorCode.PARSE_ERROR, e.message, { cause: e });
+      else throw e;
+    }
   }
   formData(): Promise<FormData> {
-    return this.response.formData();
+    try {
+      return this.response.formData();
+    } catch (e) {
+      if (e instanceof global.Error) throw new FetchError(FetchErrorCode.PARSE_ERROR, e.message, { cause: e });
+      else throw e;
+    }
   }
   json(): Promise<any> {
-    return this.response.json();
+    try {
+      return this.response.json();
+    } catch (e) {
+      if (e instanceof global.Error) throw new FetchError(FetchErrorCode.PARSE_ERROR, e.message, { cause: e });
+      else throw e;
+    }
   }
   text(): Promise<string> {
-    return this.response.text();
+    try {
+      return this.response.text();
+    } catch (e) {
+      if (e instanceof global.Error) throw new FetchError(FetchErrorCode.PARSE_ERROR, e.message, { cause: e });
+      else throw e;
+    }
+  }
+  bytes(): Promise<Uint8Array> {
+    try {
+      return this.response.bytes();
+    } catch (e) {
+      if (e instanceof global.Error) throw new FetchError(FetchErrorCode.PARSE_ERROR, e.message, { cause: e });
+      else throw e;
+    }
+  }
+  /**
+   * Read the content of the response without throwing any exception. If reading fails, return `undefined`.
+   * Usage : `const content = await error.read<ErrorContentType>(error.json);`
+   * @param parseFn One of this object method like `this.text` ou `this.json`.
+   * @returns The parsed content or `undefined`.
+   */
+  async read<T = any>(parseFn: typeof this.arrayBuffer | typeof this.blob | typeof this.formData | typeof this.json | typeof this.text | typeof this.bytes): Promise<T | undefined> {
+    return parseFn.call(this).catch(e => undefined);
   }
 }
 
