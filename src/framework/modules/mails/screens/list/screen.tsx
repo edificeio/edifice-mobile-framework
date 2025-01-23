@@ -67,7 +67,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
   const [isInModalCreation, setIsInModalCreation] = React.useState<boolean>(false);
   const [pageNb, setPageNb] = React.useState<number>(0);
-  const [sizingPage, setSizingPage] = React.useState<number>(0);
   const [isLoadingNextPage, setIsLoadingNextPage] = React.useState<boolean>(false);
   const [hasNextMails, setHasNextMails] = React.useState<boolean>(true);
   const [mails, setMails] = React.useState<IMailsMailPreview[]>([]);
@@ -82,7 +81,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const loadMails = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
     try {
       setPageNb(0);
-      setSizingPage(0);
       if (!hasNextMails) setHasNextMails(true);
       const folderId = typeof folder === 'object' ? folder.id : (folder as string);
       const mailsData = await mailsService.mails.get({
@@ -92,7 +90,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         unread: false,
       });
       setMails(mailsData);
-      setSizingPage(mailsData.length);
     } catch (e) {
       console.error(e);
     }
@@ -100,12 +97,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const loadNextMails = async () => {
     try {
-      if (sizingPage < PAGE_SIZE * (pageNb + 1) || !hasNextMails) return;
+      if (mails.length < PAGE_SIZE * (pageNb + 1) || !hasNextMails) return;
       setIsLoadingNextPage(true);
       const folderId = typeof selectedFolder === 'object' ? selectedFolder.id : selectedFolder;
       const mailsData = await mailsService.mails.get({ folderId, pageNb: pageNb + 1, pageSize: PAGE_SIZE, unread: false });
       if (mailsData.length === 0) return setHasNextMails(false);
-      setSizingPage(sizingPage + mailsData.length);
       setMails([...mails, ...mailsData]);
       setPageNb(pageNb + 1);
     } catch (e) {
@@ -212,6 +208,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onDismissBottomSheet = () => {
     bottomSheetModalRef.current?.dismiss();
+    if (valueNewFolder) setValueNewFolder('');
     if (isInModalCreation) setIsInModalCreation(false);
     if (isSubfolder) setIsSubfolder(false);
     if (idParentFolder) setIdParentFolder(undefined);
@@ -239,38 +236,48 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }
   };
 
+  const handleMailAction = async ({
+    action,
+    updateMails,
+    successMessage,
+  }: {
+    action: () => Promise<void>;
+    updateMails?: () => void;
+    successMessage: string;
+  }) => {
+    try {
+      await action();
+      if (updateMails) updateMails();
+      loadFolders();
+      toast.showSuccess(I18n.get(successMessage));
+    } catch (e) {
+      console.error(e);
+      toast.showError();
+    }
+  };
+
   const onDelete = async (id: string, permanently?: boolean) => {
-    try {
-      if (permanently) await mailsService.mail.delete({ ids: [id] });
-      else await mailsService.mail.moveToTrash({ ids: [id] });
-      setMails(mails => mails.filter(mail => mail.id !== id));
-      loadFolders();
-      toast.showSuccess(I18n.get(permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash'));
-    } catch (e) {
-      console.error(e);
-      toast.showError();
-    }
+    await handleMailAction({
+      action: () => (permanently ? mailsService.mail.delete({ ids: [id] }) : mailsService.mail.moveToTrash({ ids: [id] })),
+      updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
+      successMessage: permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash',
+    });
   };
+
   const onToggleUnread = async (id: string, unread: boolean) => {
-    try {
-      await mailsService.mail.toggleUnread({ ids: [id], unread: !unread });
-      setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail)));
-      loadFolders();
-      toast.showSuccess(I18n.get(unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread'));
-    } catch (e) {
-      console.error(e);
-    }
+    await handleMailAction({
+      action: () => mailsService.mail.toggleUnread({ ids: [id], unread: !unread }),
+      updateMails: () => setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail))),
+      successMessage: unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread',
+    });
   };
+
   const onRestore = async (id: string) => {
-    try {
-      await mailsService.mail.restore({ ids: [id] });
-      setMails(mails => mails.filter(mail => mail.id !== id));
-      loadFolders();
-      toast.showSuccess(I18n.get('mails-details-toastsuccessrestore'));
-    } catch (e) {
-      console.error(e);
-      toast.showError();
-    }
+    await handleMailAction({
+      action: () => mailsService.mail.restore({ ids: [id] }),
+      updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
+      successMessage: 'mails-details-toastsuccessrestore',
+    });
   };
 
   const renderFolders = () => {
@@ -412,7 +419,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         ref={flatListRef}
         data={mails}
         estimatedItemSize={ESTIMATED_ITEM_SIZE}
-        estimatedListSize={{ height: sizingPage * ESTIMATED_ITEM_SIZE, width: UI_SIZES.screen.width }}
+        estimatedListSize={{ height: mails.length * ESTIMATED_ITEM_SIZE, width: UI_SIZES.screen.width }}
         renderItem={mail => {
           return (
             <MailsMailPreview

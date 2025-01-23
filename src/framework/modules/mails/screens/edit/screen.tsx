@@ -83,31 +83,6 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
     stateSetters[type](selectedRecipients);
   };
 
-  const onSendDraft = async () => {
-    try {
-      setIsSending(true);
-      const toIds = to.map(recipient => recipient.id);
-      const ccIds = cc.map(recipient => recipient.id);
-      const cciIds = cci.map(recipient => recipient.id);
-
-      if (draftId) {
-        await mailsService.mail.updateDraft({ draftId: draftId! }, { body, subject, to: toIds, cc: ccIds, cci: cciIds });
-      } else {
-        await mailsService.mail.sendToDraft({ body, subject, to: toIds, cc: ccIds, cci: cciIds });
-      }
-      props.navigation.navigate(mailsRouteNames.home, {
-        from: fromFolder ?? MailsDefaultFolders.INBOX,
-        reload: fromFolder === MailsDefaultFolders.DRAFTS,
-      });
-      toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
-    } catch (e) {
-      console.error(e);
-      toast.showError();
-    } finally {
-      setIsSending(false);
-    }
-  };
-
   const onDeleteDraft = async () => {
     Alert.alert(I18n.get('mails-edit-deletedrafttitle'), I18n.get('mails-edit-deletedrafttext'), [
       {
@@ -137,6 +112,31 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
         text: I18n.get('common-delete'),
       },
     ]);
+  };
+
+  const onSendDraft = async () => {
+    try {
+      setIsSending(true);
+      const toIds = to.map(recipient => recipient.id);
+      const ccIds = cc.map(recipient => recipient.id);
+      const cciIds = cci.map(recipient => recipient.id);
+
+      if (draftId) {
+        await mailsService.mail.updateDraft({ draftId: draftId! }, { body, subject, to: toIds, cc: ccIds, cci: cciIds });
+      } else {
+        await mailsService.mail.sendToDraft({ body, subject, to: toIds, cc: ccIds, cci: cciIds });
+      }
+      props.navigation.navigate(mailsRouteNames.home, {
+        from: fromFolder ?? MailsDefaultFolders.INBOX,
+        reload: fromFolder === MailsDefaultFolders.DRAFTS,
+      });
+      toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
+    } catch (e) {
+      console.error(e);
+      toast.showError();
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const onSend = async () => {
@@ -193,26 +193,14 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
       if (draftId) {
         const draft = await mailsService.mail.get({ id: draftId });
 
-        let toDraft: MailsVisible[] = [];
-        if (draft.to.users.length > 0 || draft.to.groups.length > 0) {
-          const toUsers = draft.to.users.map(recipient => convertRecipientUserInfoToVisible(recipient));
-          const toGroups = draft.to.groups.map(recipient => convertRecipientGroupInfoToVisible(recipient));
-          toDraft = [...toUsers, ...toGroups];
-        }
+        const convertDraftRecipients = (recipients: { users: any[]; groups: any[] }): MailsVisible[] => {
+          const { users, groups } = recipients;
+          return [...users.map(convertRecipientUserInfoToVisible), ...groups.map(convertRecipientGroupInfoToVisible)];
+        };
 
-        let ccDraft: MailsVisible[] = [];
-        if (draft.cc.users.length > 0 || draft.cc.groups.length > 0) {
-          const ccUsers = draft.cc.users.map(recipient => convertRecipientUserInfoToVisible(recipient));
-          const ccGroups = draft.cc.groups.map(recipient => convertRecipientGroupInfoToVisible(recipient));
-          ccDraft = [...ccUsers, ...ccGroups];
-        }
-
-        let cciDraft: MailsVisible[] = [];
-        if (draft.cci.users.length > 0 || draft.cci.groups.length > 0) {
-          const cciUsers = draft.cci.users.map(recipient => convertRecipientUserInfoToVisible(recipient));
-          const cciGroups = draft.cci.groups.map(recipient => convertRecipientGroupInfoToVisible(recipient));
-          cciDraft = [...cciUsers, ...cciGroups];
-        }
+        const toDraft = convertDraftRecipients(draft.to);
+        const ccDraft = convertDraftRecipients(draft.cc);
+        const cciDraft = convertDraftRecipients(draft.cci);
 
         setInitialContentHTML(draft.body);
         setSubject(draft.subject);
@@ -228,25 +216,6 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
 
   const showPreventBack = () =>
     isSending || !(to.length === 0 && cc.length === 0 && cci.length === 0 && body.trim() === '' && subject.trim() === '');
-  const popupActionsMenu = [
-    {
-      action: onSendDraft,
-      icon: {
-        android: 'ic_pencil',
-        ios: 'pencil.and.list.clipboard',
-      },
-      title: I18n.get('mails-edit-savedraft'),
-    },
-    {
-      action: onDeleteDraft,
-      destructive: true,
-      icon: {
-        android: 'ic_delete_item',
-        ios: 'trash',
-      },
-      title: I18n.get('mails-edit-deletedraft'),
-    },
-  ];
 
   UNSTABLE_usePreventRemove(showPreventBack(), ({ data }) => {
     Alert.alert(I18n.get('mails-edit-preventbacktitle'), I18n.get('mails-edit-preventbacktext'), [
@@ -269,6 +238,26 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
       },
     ]);
   });
+
+  const popupActionsMenu = [
+    {
+      action: onSendDraft,
+      icon: {
+        android: 'ic_pencil',
+        ios: 'pencil.and.list.clipboard',
+      },
+      title: I18n.get('mails-edit-savedraft'),
+    },
+    {
+      action: onDeleteDraft,
+      destructive: true,
+      icon: {
+        android: 'ic_delete_item',
+        ios: 'trash',
+      },
+      title: I18n.get('mails-edit-deletedraft'),
+    },
+  ];
 
   React.useEffect(() => {
     props.navigation.setOptions({
