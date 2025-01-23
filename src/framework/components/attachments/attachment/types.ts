@@ -1,4 +1,8 @@
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
+
 export interface AttachmentProps {
-  name: string;
+  data: IDistantFileWithId;
+  session: AuthActiveAccount;
   isEditing?: boolean;
 }

@@ -49,6 +49,7 @@ import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mail
 import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 import { mailsService } from '~/framework/modules/mails/service';
 import {
+  convertAttachmentToDistantFile,
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
   mailsFormatRecipients,
@@ -79,6 +80,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
   const [isFolderCreation, setIsFolderCreation] = React.useState<boolean>(false);
   const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
+
+  const convertedAttachments = React.useMemo(
+    () => mail?.attachments.map(attachment => convertAttachmentToDistantFile(attachment, id)),
+    [mail, id],
+  );
 
   const loadData = async () => {
     try {
@@ -453,7 +459,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           </View>
         </View>
         <RichEditorViewer content={mail?.body ?? ''} />
-        {mail!.attachments.length > 0 ? <Attachments attachments={mail?.attachments} /> : null}
+        {mail!.attachments.length > 0 ? <Attachments session={props.session!} attachments={convertedAttachments} /> : null}
         {renderButtons()}
       </ScrollView>
       {renderBottomSheet()}

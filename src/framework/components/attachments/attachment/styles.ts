@@ -28,6 +28,7 @@ export default StyleSheet.create({
     width: UI_SIZES.border.thin,
   },
   text: {
+    flex: 1,
     flexShrink: 1,
     marginLeft: UI_SIZES.spacing.minor,
   },

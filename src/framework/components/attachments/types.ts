@@ -1,6 +1,8 @@
-import { IMailsMailAttachment } from '~/framework/modules/mails/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
 export interface AttachmentsProps {
+  session: AuthActiveAccount;
   isEditing?: boolean;
-  attachments?: IMailsMailAttachment[];
+  attachments?: IDistantFileWithId[];
 }

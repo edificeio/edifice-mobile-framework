@@ -10,6 +10,7 @@
   "attachment-download-invalidurl": "(lien invalide)",
   "attachment-download-open": "Ouvrir",
   "attachment-download-untitled": "Pièce jointe sans titre",
+  "attachment-downloadsuccess": "Pièce jointe téléchargée avec succès",
   "attachment-downloadsuccess-all": "Fichiers enregistrés dans Téléchargements",
   "attachment-downloadsuccess-name": "{{name}} enregistré dans Téléchargements",
   "attachment-tryagain": "Réessayer",

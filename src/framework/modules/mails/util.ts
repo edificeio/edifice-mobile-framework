@@ -1,7 +1,10 @@
 import moment from 'moment';
 import { I18n } from '~/app/i18n';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
+import { urlSigner } from '~/infra/oauth';
 import {
   IMailsFolder,
+  IMailsMailAttachment,
   MailsDefaultFolders,
   MailsRecipientGroupInfo,
   MailsRecipientInfo,
@@ -52,6 +55,16 @@ export function mailsFormatRecipients(
   return {
     text: parts.length > 0 ? parts.join(' ') : I18n.get('mails-list-norecipient'),
     ids,
+  };
+}
+
+export function convertAttachmentToDistantFile(attachment: IMailsMailAttachment, mailId: string): IDistantFileWithId {
+  return {
+    id: attachment.id,
+    filename: attachment.filename,
+    filesize: attachment.size,
+    filetype: attachment.contentType,
+    url: urlSigner.getAbsoluteUrl(`/conversation/message/${mailId}/attachment/${attachment.id}`) ?? '',
   };
 }
 

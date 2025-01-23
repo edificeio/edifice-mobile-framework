@@ -4,29 +4,73 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 import { AttachmentProps } from './types';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
+import toast from '~/framework/components/toast';
+import { LocalFile } from '~/framework/util/fileHandler';
+import { openDocument } from '~/framework/util/fileHandler/actions';
+import fileTransferService from '~/framework/util/fileHandler/service';
 
 export default function Attachment(props: AttachmentProps) {
-  const onDownload = () => Alert.alert('download');
+  const [isDownloading, setIdDownloading] = React.useState(false);
+  const [isDownload, setIsDownload] = React.useState(false);
+  const [lf, setLf] = React.useState<LocalFile>();
+
+  const onDownload = async () => {
+    try {
+      setIdDownloading(true);
+      const sf = await fileTransferService.downloadFile(props.session, props.data, {});
+      setLf(sf.lf);
+      setIsDownload(true);
+      toast.showSuccess(I18n.get('attachment-downloadsuccess'));
+    } catch {
+      toast.showError();
+    } finally {
+      setIdDownloading(false);
+    }
+  };
+
   const onDelete = () => Alert.alert('delete');
 
-  const renderActionIcon = () => {
+  const onPress = async () => {
+    try {
+      await openDocument(lf!);
+    } catch (e) {
+      toast.showError();
+    }
+  };
+
+  const renderDeleteAction = () => {
     return (
-      <TouchableOpacity style={styles.button} onPress={props.isEditing ? onDelete : onDownload}>
+      <TouchableOpacity style={styles.button} onPress={onDelete}>
         <Svg
-          name={props.isEditing ? 'ui-delete' : 'ui-download'}
-          fill={props.isEditing ? theme.palette.status.failure.regular : theme.palette.grey.black}
+          name={'ui-delete'}
+          fill={theme.palette.status.failure.regular}
           width={UI_SIZES.elements.icon.small}
           height={UI_SIZES.elements.icon.small}
         />
       </TouchableOpacity>
     );
   };
+
+  const renderDownloadAction = () => {
+    return (
+      <TouchableOpacity style={styles.button} onPress={onDownload} disabled={isDownload || isDownloading}>
+        <Svg
+          name={isDownload ? 'ui-check' : 'ui-download'}
+          fill={isDownloading || isDownload ? theme.palette.grey.graphite : theme.palette.grey.black}
+          width={UI_SIZES.elements.icon.small}
+          height={UI_SIZES.elements.icon.small}
+        />
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={styles.container} disabled={!isDownload}>
       <Svg
         name="ui-attachment"
         fill={theme.palette.grey.black}
@@ -34,10 +78,10 @@ export default function Attachment(props: AttachmentProps) {
         height={UI_SIZES.elements.icon.medium}
       />
       <BodyText style={styles.text} numberOfLines={1}>
-        {props.name}
+        {props.data.filename}
       </BodyText>
       <View style={styles.separator} />
-      {renderActionIcon()}
-    </View>
+      {props.isEditing ? renderDeleteAction() : renderDownloadAction()}
+    </TouchableOpacity>
   );
 }
