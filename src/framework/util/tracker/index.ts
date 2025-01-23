@@ -3,9 +3,10 @@
  * Collect data throught Matomo and Crashlytics.
  */
 import CookieManager from '@react-native-cookies/cookies';
+import analytics from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 import { getSession } from '~/framework/modules/auth/reducer';
-import appConf from '~/framework/util/appConf';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { urlSigner } from '~/infra/oauth';
 
@@ -101,7 +102,27 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
+  async trackDebugEvent(category: string, action: string, name?: string, value?: number) {
+    try {
+      if (!this.isReady) {
+        throw new Error('Tracker is not initialized');
+      }
+      await this._trackEvent(category, action, name, value);
+    } catch {
+      // TODO: Manage error
+    }
+  }
+
   async trackEventOfModule(
+    moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
+    action: string,
+    name?: string,
+    value?: number,
+  ) {
+    await this.trackEvent(moduleConfig.trackingName, action, name, value);
+  }
+
+  async trackDebugEventOfModule(
     moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
     action: string,
     name?: string,
@@ -126,42 +147,87 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
+  async trackDebugView(path: string[]) {
+    try {
+      if (!this.isReady) {
+        throw new Error('Tracker is not initialized');
+      }
+      await this._trackView(path);
+    } catch {
+      // TODO: Manage error
+    }
+  }
+
   async trackViewOfModule(moduleConfig: Pick<AnyNavigableModuleConfig, 'routeName'>, path: string[]) {
     await this._trackView([moduleConfig.routeName, ...path]);
   }
+
+  async trackDebugViewOfModule(moduleConfig: Pick<AnyNavigableModuleConfig, 'routeName'>, path: string[]) {
+    await this._trackView([moduleConfig.routeName, ...path]);
+  }
+
+  protected async _setCrashAttributes(attributes: Record<string, string>): Promise<boolean> {
+    throw new Error('not implemented');
+  }
+
+  async setCrashAttributes(attributes: Record<string, string>) {
+    try {
+      if (!this.isReady) {
+        throw new Error('Tracker is not initialized');
+      }
+      await this._setCrashAttributes(attributes);
+    } catch {
+      // TODO: Manage error
+    }
+  }
+
+  protected _recordCrashError(error: Error, errorName?: string): void {
+    throw new Error('not implemented');
+  }
+
+  recordCrashError(error: Error, errorName?: string) {
+    try {
+      if (!this.isReady) {
+        throw new Error('Tracker is not initialized');
+      }
+      this._recordCrashError(error, errorName);
+    } catch {
+      // TODO: Manage error
+    }
+  }
 }
 
-export interface IMatomoTrackerOptions {
-  url: string;
-  siteId: number;
-}
+// export interface IMatomoTrackerOptions {
+//   url: string;
+//   siteId: number;
+// }
 
-export class ConcreteMatomoTracker extends AbstractTracker<IMatomoTrackerOptions> {
-  async _init() {
-    return Matomo.initTracker(this.opts.url, this.opts.siteId);
-  }
+// export class ConcreteMatomoTracker extends AbstractTracker<IMatomoTrackerOptions> {
+//   async _init() {
+//     return Matomo.initTracker(this.opts.url, this.opts.siteId);
+//   }
 
-  async _setUserId(id: string) {
-    await Matomo.setUserId(id);
-    return true;
-  }
+//   async _setUserId(id: string) {
+//     await Matomo.setUserId(id);
+//     return true;
+//   }
 
-  async _setCustomDimension(id: number, name: string, value: string) {
-    await Matomo.setCustomDimension(id, value);
-    return true;
-  }
+//   async _setCustomDimension(id: number, name: string, value: string) {
+//     await Matomo.setCustomDimension(id, value);
+//     return true;
+//   }
 
-  async _trackEvent(category: string, action: string, name?: string, value?: number) {
-    await Matomo.trackEvent(category, action, name, value);
-    return true;
-  }
+//   async _trackEvent(category: string, action: string, name?: string, value?: number) {
+//     await Matomo.trackEvent(category, action, name, value);
+//     return true;
+//   }
 
-  async _trackView(path: string[]) {
-    const viewPath = path.join('/');
-    await Matomo.trackScreen(viewPath, null);
-    return true;
-  }
-}
+//   async _trackView(path: string[]) {
+//     const viewPath = path.join('/');
+//     await Matomo.trackScreen(viewPath, null);
+//     return true;
+//   }
+// }
 
 /*export class ConcreteAppCenterTracker extends AbstractTracker<undefined> {
   protected _properties = {};
@@ -201,6 +267,93 @@ export class ConcreteMatomoTracker extends AbstractTracker<IMatomoTrackerOptions
     return true;
   }
 }*/
+
+export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
+  protected _properties = {};
+
+  async _init() {
+    // Nothing to do, configuration comes from native firebase config files
+  }
+
+  protected _isDebugTracker(): boolean {
+    return true;
+  }
+
+  async _setUserId(id: string) {
+    await analytics().setUserId(id);
+    return true;
+  }
+
+  async _setCustomDimension(id: number, name: string, value: string) {
+    this._properties[name] = value;
+    return true;
+  }
+
+  async _trackView(path: string[]) {
+    const viewPath = path.join('/');
+
+    try {
+      await analytics().logScreenView({
+        screen_class: viewPath,
+        screen_name: viewPath,
+      });
+    } catch (error) {
+      console.error('Error logging screen view:', error);
+    }
+    return true;
+  }
+
+  async _trackDebugView(path: string[]) {
+    const viewPath = path.join('/');
+
+    try {
+      await analytics().logScreenView({
+        screen_class: viewPath,
+        screen_name: viewPath,
+      });
+    } catch (error) {
+      console.error('Error logging screen debug view:', error);
+    }
+    return true;
+  }
+}
+
+export class ConcreteCrashlyticsTracker extends AbstractTracker<undefined> {
+  protected _properties = {};
+
+  async _init() {
+    // Nothing to do, configuration comes from native firebase config files
+  }
+
+  protected _isDebugTracker(): boolean {
+    return true;
+  }
+
+  async _setUserId(id: string) {
+    await crashlytics().setUserId(id);
+    return true;
+  }
+
+  async _setCustomDimension(id: number, name: string, value: string) {
+    this._properties[name] = value;
+    return true;
+  }
+
+  async _trackEvent(category: string, action: string, name?: string, value?: number) {
+    console.log('checoxxx crashlytics LOG------');
+    crashlytics().log(`${category} ${action} ${name} ${value}`);
+    return true;
+  }
+
+  async _setCrashAttributes(attributes: Record<string, string>) {
+    await crashlytics().setAttributes(attributes);
+    return true;
+  }
+
+  _recordCrashError(error: Error, errorName?: string): void {
+    crashlytics().recordError(error, errorName);
+  }
+}
 
 export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   errorCount: number = 0;
@@ -344,8 +497,11 @@ export class ConcreteTrackerSet {
 }
 
 export const Trackers = new ConcreteTrackerSet(
-  new ConcreteEntcoreTracker('Entcore', undefined),
-  new ConcreteMatomoTracker('Matomo', appConf.matomo),
+  // new ConcreteEntcoreTracker('Entcore', undefined),
+  // new ConcreteAnalyticsTracker('Firebase Analytics', undefined),
+  new ConcreteCrashlyticsTracker('Firebase Crashlytics', undefined),
+
+  // new ConcreteMatomoTracker('Matomo', appConf.matomo),
   //new ConcreteAppCenterTracker('AppCenter', undefined),
 );
 

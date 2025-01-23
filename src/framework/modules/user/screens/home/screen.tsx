@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 
+import crashlytics from '@react-native-firebase/crashlytics';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -576,7 +577,29 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
 function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session'], debugVisible: boolean) {
   const currentPlatform = session?.platform.displayName;
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
+
   return React.useMemo(() => {
+    const makeMeCrash = () => {
+      try {
+        if (session) {
+          const userId = session.user.id;
+          const userType = session.user.type;
+          const userFirstName = session.user.firstName;
+          crashlytics().setUserId(userId);
+          crashlytics().setAttribute('test setAttribute avec user.type', userType);
+          crashlytics().setAttributes({
+            testName: 'test de setAttributeS',
+            userFirstName: userFirstName,
+            userType: userType,
+          });
+          // const toto = (session.toto.titi.tutu.tata.tete.tyty = 0);
+          crashlytics().crash();
+        }
+      } catch (e) {
+        console.error(e);
+        crashlytics().recordError(e as Error);
+      }
+    };
     if (debugVisible)
       return (
         <>
@@ -584,13 +607,7 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
             {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
           </SmallBoldText>
           <ButtonLineGroup>
-            <LineButton
-              title="Crash me!"
-              icon="ui-warning"
-              onPress={() => {
-                const toto = (session.toto.titi.tutu.tata.tete.tyty = 0);
-              }}
-            />
+            <LineButton title="Crash me!" icon="ui-warning" onPress={makeMeCrash} />
           </ButtonLineGroup>
           {appConf.isDebugEnabled ? (
             <>
@@ -618,7 +635,7 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
         </>
       );
     return null;
-  }, [currentPlatform, debugVisible, navigation]);
+  }, [debugVisible, currentPlatform, navigation, session]);
 }
 
 /**
