@@ -220,7 +220,6 @@ export default function MailsEditScreen(props: MailsEditScreenPrivateProps) {
         setCc(ccDraft);
         setCci(cciDraft);
         setAttachments(draft.attachments);
-        console.log(draft.body, draft.subject, toDraft, ccDraft, cciDraft, draft.attachments);
       }
     } catch (e) {
       console.error(e);
