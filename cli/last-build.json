@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-01-24 10:42:56",
-  "notes": "chore(build): yarn cache update\nUpdated translations from Phrase (#177)\nchore(analytics): matomo removal\nUpdated translations from Phrase (#176)\nfix(assets): WB-3724, WB-3725, WB-3726 fixing i18n keys\nchore: fix i18n non-standard keys\nchore(i18n): change phrase synchronization branch to 1.13.10\nfix(fileHandler): WB-3733 , fix galery action when multiple param is false\nchore: update caches\nfeat(ENT77): WB-3724, WB-3725, WB-3726, adding connectors MyClasse77, MyStage77, Salvum\nchore(data): ENABLING-182, remove matomo tracker (comment only)\nfix(auth): MB-2678 addAccount modal toast rendering\nfeat(auth): WB-3661 : refactoring forgot screen UI\nfeat(timeline): WB-3664 adding testId on plus button\nchore(i18n): change phrase sync branch\nfix(splashads): convert splashads url to lower case\nfix(splashads): convert splashads url to lowercase\nfix: WB2-2147 download each attachment with a unique filename\nrelease: 1.13.10(1131000)\nrelease: 1.13.9(1130900)\nchore(stack): yarn cache update\nchore(stack): yarn cache update\nrelease: 1.13.8-rc.1(1130801)",
-  "version": "1.13.10-rc.1(1131001)"
+  "last": "2025-01-24 13:59:07",
+  "notes": "release: 1.13.10-rc.1(1131001)",
+  "version": "1.13.10-rc.2(1131002)"
 }
