@@ -1,3 +1,4 @@
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import {
   IMailsFolder,
   IMailsMailContent,
@@ -5,6 +6,8 @@ import {
   MailsFolderCount,
   MailsVisible,
 } from '~/framework/modules/mails/model';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import fileHandlerService from '~/framework/util/fileHandler/service';
 import http from '~/framework/util/http';
 import {
   mailContentAdapter,
@@ -18,9 +21,32 @@ import {
 
 export const mailsService = {
   attachments: {
-    add: async () => {},
-    remove: async () => {
-      const api = '/conversation/message/mailId/attachment/attachmentID';
+    add: async (params: { mailId: string }, file: LocalFile, session: AuthActiveAccount) => {
+      const url = `/conversation/message/${params.mailId}/attachment`;
+      const uploadedFile = await fileHandlerService.uploadFile<SyncedFileWithId>(
+        session,
+        file,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+          url,
+        },
+        data => {
+          const json = JSON.parse(data) as { id: string };
+          return {
+            id: json.id,
+            url: `/conversation/message/${params.mailId}/attachment/${json.id}`,
+          };
+        },
+        {},
+        SyncedFileWithId,
+      );
+      return uploadedFile;
+    },
+    remove: async (params: { mailId: string; attachmentId: string }) => {
+      const api = `/conversation/message/${params.mailId}/attachment/${params.attachmentId}`;
+      await http.fetchJsonForSession('DELETE', api);
     },
   },
   folder: {
@@ -52,10 +78,6 @@ export const mailsService = {
       const api = '/conversation/delete';
       const body = JSON.stringify({ id: payload.ids });
       await http.fetchForSession('PUT', api, { body });
-    },
-    forward: async (params: { mailId: string; forwardFrom: string }) => {
-      // revoir forwardfrom
-      const api = `/conversation/message/${params.mailId}/forward/${params.forwardFrom}`;
     },
     get: async (params: { id: string }) => {
       const api = `/conversation/api/messages/${params.id}`;
@@ -101,6 +123,7 @@ export const mailsService = {
           ? `/conversation/send?id=${params.draftId}`
           : '/conversation/send';
 
+      console.log(api, 'api');
       const bodyJson = JSON.stringify({ body, to, cc, cci, subject });
       await http.fetchJsonForSession('POST', api, { body: bodyJson });
     },
@@ -109,7 +132,8 @@ export const mailsService = {
       const { body, to, cc, cci, subject } = payload;
 
       const bodyJson = JSON.stringify({ body, to, cc, cci, subject });
-      await http.fetchJsonForSession('POST', api, { body: bodyJson });
+      const draft = (await http.fetchJsonForSession('POST', api, { body: bodyJson })) as { id: string };
+      return draft.id;
     },
     updateDraft: async (
       params: { draftId: string },

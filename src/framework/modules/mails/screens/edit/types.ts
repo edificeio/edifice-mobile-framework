@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 
 import { MailsDefaultFolders, MailsFolderInfo, MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
 import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
@@ -9,7 +10,7 @@ export enum MailsEditType {
 }
 
 export interface MailsEditScreenProps {
-  // @scaffolder add props here
+  session?: AuthActiveAccount;
 }
 
 export interface MailsEditScreenNavParams {

@@ -14,7 +14,7 @@ export default StyleSheet.create({
     alignSelf: 'baseline',
   },
   container: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: theme.palette.grey.fog,
     borderColor: theme.palette.primary.light,
     borderRadius: UI_SIZES.radius.selector,

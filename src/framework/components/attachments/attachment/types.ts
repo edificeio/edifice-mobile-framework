@@ -5,4 +5,5 @@ export interface AttachmentProps {
   data: IDistantFileWithId;
   session: AuthActiveAccount;
   isEditing?: boolean;
+  removeAttachment?: (attachment: IDistantFileWithId) => Promise<void>;
 }

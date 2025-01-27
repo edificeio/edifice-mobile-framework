@@ -34,7 +34,14 @@ export default function Attachment(props: AttachmentProps) {
     }
   };
 
-  const onDelete = () => Alert.alert('delete');
+  const onDelete = () => {
+    if (props.removeAttachment) {
+      Alert.alert(I18n.get('attachment-deleteconfirmtitle'), I18n.get('attachment-deleteconfirmtext'), [
+        { text: I18n.get('common-cancel'), style: 'cancel' },
+        { text: I18n.get('common-delete'), style: 'destructive', onPress: () => props.removeAttachment!(props.data) },
+      ]);
+    }
+  };
 
   const onPress = async () => {
     try {
