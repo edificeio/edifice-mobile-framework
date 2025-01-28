@@ -176,7 +176,7 @@
   "auth-forgot-password": "Mot de passe oublié",
   "auth-forgot-password-instructions": "Entrez votre identifiant pour recevoir votre mot de passe.",
   "auth-forgot-school": "Etablissement",
-  "auth-forgot-severalemails": "Cette adresse mail est utilisée par plusieurs utilisateurs. Merci de préciser quelques informations pour recevoir votre login.",
+  "auth-forgot-severalemails": "Cette adresse mail est utilisée par plusieurs utilisateurs. Merci de préciser quelques informations pour recevoir votre identifiant.",
   "auth-forgot-severalemails-nomatch": "Les informations saisies ne correspondent pas à l'adresse mail renseignée.",
   "auth-forgot-structure": "Sélectionnez votre établissement",
   "auth-forgot-submit": "Envoyer",
