@@ -101,9 +101,10 @@ export const mailsService = {
       const body = JSON.stringify({ id: payload.ids });
       await http.fetchJsonForSession('PUT', api, { body });
     },
-    removeFromFolder: async (params: { mailIds: string[] }) => {
-      const idsToString = params.mailIds.reduce((s, id) => s + 'id=' + id + '&', '');
-      const api = `/conversation/move/root?${idsToString}`;
+    removeFromFolder: async (params: { ids: string[] }) => {
+      //const idsToString = params.ids.reduce((s, id) => s + 'id=' + id + '&', '');
+      const api = `/conversation/move/root?id=${params.ids[0]}`;
+      await http.fetchJsonForSession('PUT', api);
     },
     restore: async (payload: { ids: string[] }) => {
       const api = '/conversation/restore';

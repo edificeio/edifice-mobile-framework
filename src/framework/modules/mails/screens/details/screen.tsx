@@ -203,6 +203,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       'mails-details-toastsuccessmove',
     );
 
+  const onRemoveFromFolder = () =>
+    handleMailAction(() => mailsService.mail.removeFromFolder({ ids: [id] }), 'mails-details-toastsuccessremovefromfolder');
+
   const onRestore = () => handleMailAction(() => mailsService.mail.restore({ ids: [id] }), 'mails-details-toastsuccessrestore');
 
   const onTrash = () => handleMailAction(() => mailsService.mail.moveToTrash({ ids: [id] }), 'mails-details-toastsuccesstrash');
@@ -251,6 +254,14 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       title: I18n.get('mails-details-move'),
     },
     {
+      action: onRemoveFromFolder,
+      icon: {
+        android: 'ic_remove_from_folder',
+        ios: 'xmark.bin',
+      },
+      title: I18n.get('mails-details-removefromfolder'),
+    },
+    {
       action: onRestore,
       icon: {
         android: 'ic_restore',
@@ -276,7 +287,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
       case onMarkUnread:
       case onOpenMoveModal:
-        return from !== MailsDefaultFolders.OUTBOX && from !== MailsDefaultFolders.TRASH;
+        return from !== MailsDefaultFolders.TRASH;
+      case onRemoveFromFolder:
+        return from !== MailsDefaultFolders.TRASH && from !== MailsDefaultFolders.INBOX && from !== MailsDefaultFolders.OUTBOX;
 
       case onRestore:
         return from === MailsDefaultFolders.TRASH;
