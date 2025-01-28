@@ -136,7 +136,11 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     if (maxLength)
       return (
         <CaptionItalicText
-          style={[styles.callbackIndicator, { right: positionMaxLengthInput }]}>{`${length}/${maxLength}`}</CaptionItalicText>
+          style={[
+            styles.callbackIndicator,
+            { right: positionMaxLengthInput },
+            length === maxLength ? styles.callbackMaxLength : {},
+          ]}>{`${length}/${maxLength}`}</CaptionItalicText>
       );
   }, [maxLength, length]);
 

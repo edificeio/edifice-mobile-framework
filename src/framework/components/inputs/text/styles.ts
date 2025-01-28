@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     color: theme.palette.grey.graphite,
   },
+  callbackMaxLength: {
+    color: theme.palette.status.failure.regular,
+  },
   input: {
     ...TextSizeStyle.Medium,
     backgroundColor: theme.ui.background.card,
