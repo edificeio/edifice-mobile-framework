@@ -333,16 +333,21 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const renderRecipients = () => {
     return (
-      <TouchableOpacity onPress={() => bottomSheetModalRef.current?.present()} style={styles.recipients}>
+      <TouchableOpacity
+        onPress={() => bottomSheetModalRef.current?.present()}
+        style={styles.recipients}
+        disabled={infosRecipients?.ids.length === 0}>
         <SmallText numberOfLines={1} style={styles.recipientsText}>
           {infosRecipients?.text}
         </SmallText>
-        <Svg
-          name="ui-rafterDown"
-          fill={theme.palette.grey.graphite}
-          height={UI_SIZES.elements.icon.xsmall}
-          width={UI_SIZES.elements.icon.xsmall}
-        />
+        {infosRecipients?.ids.length ? (
+          <Svg
+            name="ui-rafterDown"
+            fill={theme.palette.grey.graphite}
+            height={UI_SIZES.elements.icon.xsmall}
+            width={UI_SIZES.elements.icon.xsmall}
+          />
+        ) : null}
       </TouchableOpacity>
     );
   };
@@ -467,7 +472,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const renderContent = () => (
     <PageView>
       <ScrollView style={styles.page}>
-        <HeadingXSText>{mail?.subject ?? I18n.get('mails-list-noobject')}</HeadingXSText>
+        <HeadingXSText>{mail?.subject && mail?.subject.length ? mail.subject : I18n.get('mails-list-noobject')}</HeadingXSText>
         <View style={styles.topInfos}>
           <NewAvatar size={AvatarSize.lg} userId={mail?.from.id} />
           <View style={styles.topInfosText}>

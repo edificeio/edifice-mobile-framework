@@ -118,7 +118,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
             <CaptionBoldText style={styles.date}>{displayPastDate(moment(date))}</CaptionBoldText>
           </View>
           <View style={styles.line}>
-            <TextComponent numberOfLines={1}>{subject ?? I18n.get('mails-list-noobject')}</TextComponent>
+            <TextComponent numberOfLines={1}>{subject && subject.length ? subject : I18n.get('mails-list-noobject')}</TextComponent>
             {hasAttachment ? (
               <Svg
                 name="ui-attachment"

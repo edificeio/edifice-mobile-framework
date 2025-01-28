@@ -200,7 +200,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   };
 
   const onPressItem = (id: string, unread: boolean, state: MailsMailStatePreview) => {
-    if (state === MailsMailStatePreview.DRAFT)
+    if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
       return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
     if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
     return navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
