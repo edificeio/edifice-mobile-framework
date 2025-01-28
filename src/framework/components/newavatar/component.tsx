@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { FastImage } from '~/framework/util/media';
-import { NewAvatarSizes } from './styles';
+import styles, { NewAvatarSizes } from './styles';
 import { AvatarSize, NewAvatarProps } from './types';
 
 const NewAvatar = (props: NewAvatarProps) => {
@@ -28,7 +28,7 @@ const NewAvatar = (props: NewAvatarProps) => {
 
   return (
     <View>
-      <FastImage style={sizeStyles} source={renderSource} />
+      <FastImage style={[styles.pic, sizeStyles]} source={renderSource} />
     </View>
   );
 };

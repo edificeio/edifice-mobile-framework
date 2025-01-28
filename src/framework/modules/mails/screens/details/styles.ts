@@ -8,6 +8,7 @@ export default StyleSheet.create({
     paddingBottom: 0,
   },
   contentBottomSheet: {
+    minHeight: 200,
     paddingBottom: getScaleWidth(60),
   },
   bottomSheetPrefix: {
@@ -21,9 +22,6 @@ export default StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.medium,
-  },
-  listRecipients: {
-    minHeight: 200,
   },
   recipients: {
     flexDirection: 'row',

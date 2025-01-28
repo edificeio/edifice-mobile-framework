@@ -35,10 +35,18 @@ export function mailsFormatRecipients(
   cci: MailsRecipients,
 ): { text: string; ids: string[] } {
   const formatPart = (prefixKey: string, recipients: MailsRecipients): string | null => {
-    const names = recipients.users.map(user => user.displayName).join(', ');
-    const groups = recipients.groups.map(group => group.displayName).join(', ');
-    const combined = [names, groups].filter(Boolean).join(' ');
-    return combined ? `${I18n.get(prefixKey)} ${combined}` : null;
+    const { users, groups } = recipients;
+    const formatDisplayName = (prefix, primary, count) => `${I18n.get(prefix)} ${primary}${count > 0 ? ` +${count}` : ''}`;
+
+    if (users.length > 0) {
+      const nbOtherUsers = users.length - 1 + groups.length;
+      return formatDisplayName(prefixKey, users[0].displayName, nbOtherUsers);
+    }
+    if (groups.length > 0) {
+      const nbOtherGroups = groups.length - 1;
+      return formatDisplayName(prefixKey, groups[0].displayName, nbOtherGroups);
+    }
+    return null;
   };
 
   const extractIds = (recipients: MailsRecipients): string[] => [

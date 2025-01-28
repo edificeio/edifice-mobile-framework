@@ -33,8 +33,8 @@ export interface MailsRecipientGroupInfo {
   id: string;
   displayName: string;
   size: number;
-  type: string; // ProfileGroup && ??
-  subType: string; // ClassGroup && ??
+  type: string;
+  subType: string;
 }
 
 export interface IMailsMailAttachment {
