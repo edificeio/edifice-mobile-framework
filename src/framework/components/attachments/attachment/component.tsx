@@ -11,7 +11,6 @@ import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 
 export default function Attachment(props: AttachmentProps) {
@@ -45,7 +44,7 @@ export default function Attachment(props: AttachmentProps) {
 
   const onPress = async () => {
     try {
-      await openDocument(lf!);
+      await lf?.open();
     } catch (e) {
       toast.showError();
     }
