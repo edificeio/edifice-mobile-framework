@@ -130,6 +130,16 @@ export const mailsDefaultFoldersInfos = {
   },
 };
 
+export function separateContentAndHistory(html: string) {
+  const historyStartIndex = html.indexOf('<hr class="ng-scope"><p class="ng-scope"></p><p class="medium-text');
+  if (historyStartIndex !== -1) {
+    const content = html.slice(0, historyStartIndex).trim();
+    const history = html.slice(historyStartIndex).trim();
+    return { content, history };
+  }
+  return { content: html.trim(), history: '' };
+}
+
 export function addHtmlForward(from: MailsRecipientInfo, to: MailsVisible[], subject: string, body: string): string {
   return `<br><br><div>-----Message transféré-----</div><div>De: ${from?.displayName}</div><div>Date: ${moment().format('DD/MM/YYYY hh:mm')}</div><div>Objet: ${subject}</div><div>À: ${to.map(recipient => recipient.displayName).join(', ')}</div><br>${body}`;
 }

@@ -14,6 +14,10 @@ export default StyleSheet.create({
   bottomSheetPrefix: {
     marginBottom: UI_SIZES.spacing.minor,
   },
+  buttonHistory: {
+    alignSelf: 'flex-start',
+    marginBottom: UI_SIZES.spacing.minor,
+  },
   buttons: {
     columnGap: UI_SIZES.spacing.small,
     flexDirection: 'row',

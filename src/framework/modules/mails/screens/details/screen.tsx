@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
+import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
@@ -54,6 +55,7 @@ import {
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
   mailsFormatRecipients,
+  separateContentAndHistory,
 } from '~/framework/modules/mails/util';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -76,11 +78,14 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const { id, from, folders } = props.route.params;
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
+  const [content, setContent] = React.useState<string>('');
+  const [history, setHistory] = React.useState<string>('');
   const [isInModalMove, setIsInModalMove] = React.useState<boolean>(false);
   const [newParentFolder, setNewParentFolder] = React.useState<MailsFolderInfo>();
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
   const [isFolderCreation, setIsFolderCreation] = React.useState<boolean>(false);
   const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
+  const [seeHistory, setSeeHistory] = React.useState<boolean>(false);
 
   const convertedAttachments = React.useMemo(
     () => mail?.attachments.map(attachment => convertAttachmentToDistantFile(attachment, id)),
@@ -91,8 +96,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     try {
       const mail = await mailsService.mail.get({ id });
       const infosRecipients = mailsFormatRecipients(mail.to, mail.cc, mail.cci);
+      const { content, history } = separateContentAndHistory(mail.body);
       setInfosRecipients(infosRecipients);
       setMail(mail);
+      setContent(content);
+      setHistory(history);
     } catch (e) {
       console.error('Failed to fetch mail content', e);
     }
@@ -352,22 +360,36 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   };
 
-  const renderButtons = () => {
+  const renderHistory = React.useCallback(() => {
+    if (!history) return <Separator marginVertical={UI_SIZES.spacing.big} />;
+    return (
+      <View style={{ marginVertical: UI_SIZES.spacing.big }}>
+        <DefaultButton
+          text="Afficher l'historique"
+          iconRight={seeHistory ? 'ui-rafterUp' : 'ui-rafterDown'}
+          contentColor={theme.palette.grey.black}
+          style={styles.buttonHistory}
+          action={() => setSeeHistory(!seeHistory)}
+        />
+        {seeHistory ? <RichEditorViewer content={history} /> : null}
+        <Separator />
+      </View>
+    );
+  }, [seeHistory, history]);
+
+  const renderButtons = React.useCallback(() => {
     if (mail?.trashed) return null;
     return (
-      <>
-        <Separator marginVertical={UI_SIZES.spacing.big} />
-        <View style={styles.buttons}>
-          <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={onReply} />
-          {infosRecipients && infosRecipients.ids.length > 1 ? (
-            <SecondaryButton iconLeft="ui-answerall" text={I18n.get('mails-details-replyall')} action={onReplyAll} />
-          ) : (
-            <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
-          )}
-        </View>
-      </>
+      <View style={styles.buttons}>
+        <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={onReply} />
+        {infosRecipients && infosRecipients.ids.length > 1 ? (
+          <SecondaryButton iconLeft="ui-answerall" text={I18n.get('mails-details-replyall')} action={onReplyAll} />
+        ) : (
+          <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
+        )}
+      </View>
     );
-  };
+  }, [infosRecipients, mail, onForward, onReply, onReplyAll]);
 
   const hasRecipients = (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0;
 
@@ -489,8 +511,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
             {renderRecipients()}
           </View>
         </View>
-        <RichEditorViewer content={mail?.body ?? ''} />
+        <RichEditorViewer content={content} />
         {mail!.attachments.length > 0 ? <Attachments session={props.session!} attachments={convertedAttachments} /> : null}
+        {renderHistory()}
         {renderButtons()}
       </ScrollView>
       {renderBottomSheet()}
