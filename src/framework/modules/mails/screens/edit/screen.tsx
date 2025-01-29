@@ -29,7 +29,6 @@ import {
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
 } from '~/framework/modules/mails/util';
-import { clearConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
@@ -269,30 +268,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   );
 
   UNSTABLE_usePreventRemove(showPreventBack, ({ data }) => {
-    Alert.alert(I18n.get('mails-edit-preventbacktitle'), I18n.get('mails-edit-preventbacktext'), [
-      {
-        onPress: clearConfirmNavigationEvent,
-        style: 'default',
-        text: I18n.get('mails-edit-preventbackreturn'),
-      },
-      {
-        onPress: onSendDraft,
-        style: 'default',
-        text: I18n.get('mails-edit-preventbacksaveandquit'),
-      },
-      {
-        onPress: async () => {
-          setIsSending(true);
-          if (draftIdSaved && !draftId) await mailsService.mail.moveToTrash({ ids: [draftIdSaved] });
-          props.navigation.navigate(mailsRouteNames.home, {
-            from: fromFolder ?? MailsDefaultFolders.INBOX,
-            reload: fromFolder === MailsDefaultFolders.DRAFTS,
-          });
-        },
-        style: 'destructive',
-        text: I18n.get('common-quit'),
-      },
-    ]);
+    onSendDraft();
   });
 
   const popupActionsMenu = [
