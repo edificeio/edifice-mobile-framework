@@ -111,11 +111,14 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
       headers
     });
     return tokenFactory(response);
-  } catch (error) {
-    error = error instanceof HTTPError ? await oAuth2ErrorFactory(error) : error;
-    if (error instanceof HTTPError) console.error('[OAuth2] Error fetching token:', error, await error.clone().text());
-    else console.error('[OAuth2] Error fetching token:', error);
-    throw error;
+  } catch (e) {
+    if (e instanceof HTTPError) {
+      console.error('[OAuth2] Error fetching token:', e, await e.clone().text());
+      throw await oAuth2ErrorFactory(e);
+    } else {
+      console.error('[OAuth2] Error fetching token:', e);
+      throw e;
+    }
   }
 }
 
