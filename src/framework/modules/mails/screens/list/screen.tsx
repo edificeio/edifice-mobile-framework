@@ -78,24 +78,27 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isLoadingCreateNewFolder, setIsLoadingCreateNewFolder] = React.useState<boolean>(false);
   const [onErrorCreateFolder, setOnErrorCreateFolder] = React.useState<boolean>(false);
 
-  const loadMails = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
-    try {
-      setPageNb(0);
-      if (!hasNextMails) setHasNextMails(true);
-      const folderId = typeof folder === 'object' ? folder.id : (folder as string);
-      const mailsData = await mailsService.mails.get({
-        folderId,
-        pageNb: 0,
-        pageSize: PAGE_SIZE,
-        unread: false,
-      });
-      setMails(mailsData);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const loadMails = React.useCallback(
+    async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+      try {
+        setPageNb(0);
+        if (!hasNextMails) setHasNextMails(true);
+        const folderId = typeof folder === 'object' ? folder.id : (folder as string);
+        const mailsData = await mailsService.mails.get({
+          folderId,
+          pageNb: 0,
+          pageSize: PAGE_SIZE,
+          unread: false,
+        });
+        setMails(mailsData);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [hasNextMails, setHasNextMails, setMails],
+  );
 
-  const loadNextMails = async () => {
+  const loadNextMails = React.useCallback(async () => {
     try {
       if (mails.length < PAGE_SIZE * (pageNb + 1) || !hasNextMails) return;
       setIsLoadingNextPage(true);
@@ -110,9 +113,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     } finally {
       setIsLoadingNextPage(false);
     }
-  };
+  }, [hasNextMails, pageNb, selectedFolder, mails, setMails, setHasNextMails, setPageNb]);
 
-  const loadFolders = async () => {
+  const loadFolders = React.useCallback(async () => {
     try {
       const foldersData = await mailsService.folders.get({ depth: 2 });
       const flattenedFolders = flattenFolders(foldersData);
@@ -138,15 +141,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [setFolders, setFolderCounts]);
 
-  const loadData = async () => {
+  const loadData = React.useCallback(async () => {
     try {
       await Promise.all([loadMails(selectedFolder), loadFolders()]);
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [loadMails, loadFolders, selectedFolder]);
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -163,7 +166,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFolder]);
+  }, [selectedFolder, navigation]);
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -176,12 +179,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFolder]);
+  }, [selectedFolder, navigation]);
 
   useFocusEffect(
     React.useCallback(() => {
       const { params } = props.route;
-      if (params.from) {
+      if (params.from && (params.reload || params.idMailToRemove || params.idMailToMarkUnread)) {
         if (params.reload) loadMails(params.from);
         if (params.idMailToRemove) setMails(mails => mails.filter(mail => mail.id !== params.idMailToRemove));
         if (params.idMailToMarkUnread)
@@ -192,35 +195,41 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }, [props.route.params]),
   );
 
-  const switchFolder = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
-    setSelectedFolder(folder);
-    onDismissBottomSheet();
-    await loadMails(folder);
-    flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
-  };
-
-  const onPressItem = (id: string, unread: boolean, state: MailsMailStatePreview) => {
-    if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
-      return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
-    if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
-    return navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
-  };
-
-  const onDismissBottomSheet = () => {
+  const onDismissBottomSheet = React.useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
     if (valueNewFolder) setValueNewFolder('');
     if (isInModalCreation) setIsInModalCreation(false);
     if (isSubfolder) setIsSubfolder(false);
     if (idParentFolder) setIdParentFolder(undefined);
     if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-  };
+  }, [valueNewFolder, isInModalCreation, isSubfolder, idParentFolder, onErrorCreateFolder]);
 
-  const onToggleSubfolders = () => {
+  const switchFolder = React.useCallback(
+    async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+      setSelectedFolder(folder);
+      onDismissBottomSheet();
+      await loadMails(folder);
+      flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+    },
+    [loadMails, setSelectedFolder, onDismissBottomSheet],
+  );
+
+  const onPressItem = React.useCallback(
+    (id: string, unread: boolean, state: MailsMailStatePreview) => {
+      if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
+        return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
+      if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
+      return navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
+    },
+    [selectedFolder, navigation, setMails, folders],
+  );
+
+  const onToggleSubfolders = React.useCallback(() => {
     setIsSubfolder(!isSubfolder);
     setIdParentFolder(undefined);
-  };
+  }, [isSubfolder, setIsSubfolder, setIdParentFolder]);
 
-  const onCreateNewFolder = async () => {
+  const onCreateNewFolder = React.useCallback(async () => {
     try {
       setIsLoadingCreateNewFolder(true);
       const dataNewFolder = await mailsService.folder.create({ name: valueNewFolder, parentId: idParentFolder ?? '' });
@@ -235,53 +244,56 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     } finally {
       setIsLoadingCreateNewFolder(false);
     }
-  };
+  }, [valueNewFolder, idParentFolder, loadFolders]);
 
-  const handleMailAction = async ({
-    action,
-    updateMails,
-    successMessage,
-  }: {
-    action: () => Promise<void>;
-    updateMails?: () => void;
-    successMessage: string;
-  }) => {
-    try {
-      await action();
-      if (updateMails) updateMails();
-      loadFolders();
-      toast.showSuccess(I18n.get(successMessage));
-    } catch (e) {
-      console.error(e);
-      toast.showError();
-    }
-  };
+  const handleMailAction = React.useCallback(
+    async ({
+      action,
+      updateMails,
+      successMessage,
+    }: {
+      action: () => Promise<void>;
+      updateMails?: () => void;
+      successMessage: string;
+    }) => {
+      try {
+        await action();
+        if (updateMails) updateMails();
+        loadFolders();
+        toast.showSuccess(I18n.get(successMessage));
+      } catch (e) {
+        console.error(e);
+        toast.showError();
+      }
+    },
+    [loadFolders],
+  );
 
-  const onDelete = async (id: string, permanently?: boolean) => {
+  const onDelete = React.useCallback(async (id: string, permanently?: boolean) => {
     await handleMailAction({
       action: () => (permanently ? mailsService.mail.delete({ ids: [id] }) : mailsService.mail.moveToTrash({ ids: [id] })),
       updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
       successMessage: permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash',
     });
-  };
+  }, []);
 
-  const onToggleUnread = async (id: string, unread: boolean) => {
+  const onToggleUnread = React.useCallback(async (id: string, unread: boolean) => {
     await handleMailAction({
       action: () => mailsService.mail.toggleUnread({ ids: [id], unread: !unread }),
       updateMails: () => setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail))),
       successMessage: unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread',
     });
-  };
+  }, []);
 
-  const onRestore = async (id: string) => {
+  const onRestore = React.useCallback(async (id: string) => {
     await handleMailAction({
       action: () => mailsService.mail.restore({ ids: [id] }),
       updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
       successMessage: 'mails-details-toastsuccessrestore',
     });
-  };
+  }, []);
 
-  const renderFolders = () => {
+  const renderFolders = React.useCallback(() => {
     return (
       <FlatList
         data={folders}
@@ -327,9 +339,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         )}
       />
     );
-  };
+  }, [folders, selectedFolder, switchFolder, folderCounts]);
 
-  const renderCreateNewFolder = () => {
+  const renderCreateNewFolder = React.useCallback(() => {
     return (
       <ScrollView
         keyboardDismissMode="none"
@@ -391,9 +403,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         </View>
       </ScrollView>
     );
-  };
+  }, [
+    folders,
+    valueNewFolder,
+    onErrorCreateFolder,
+    isLoadingCreateNewFolder,
+    isSubfolder,
+    idParentFolder,
+    onCreateNewFolder,
+    onToggleSubfolders,
+  ]);
 
-  const renderBottomSheetFolders = () => {
+  const renderBottomSheetFolders = React.useCallback(() => {
     return (
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -404,9 +425,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         {isInModalCreation ? renderCreateNewFolder() : renderFolders()}
       </BottomSheetModal>
     );
-  };
+  }, [isInModalCreation, renderCreateNewFolder, renderFolders, onDismissBottomSheet]);
 
-  const renderEmpty = () => {
+  const renderEmpty = React.useCallback(() => {
     return (
       <EmptyScreen
         svgImage={selectedFolder === MailsDefaultFolders.TRASH ? 'empty-trash' : 'empty-conversation'}
@@ -415,45 +436,49 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         text={I18n.get(selectedFolder === MailsDefaultFolders.TRASH ? 'mails-list-emptytexttrash' : 'mails-list-emptytext')}
       />
     );
-  };
+  }, [selectedFolder]);
 
-  const renderFooter = () => (isLoadingNextPage ? <MailsPlaceholderLittleList /> : null);
+  const renderFooter = React.useCallback(() => (isLoadingNextPage ? <MailsPlaceholderLittleList /> : null), [isLoadingNextPage]);
 
-  const renderContent = (refreshControl: ScrollViewProps['refreshControl']) => (
-    <PageView>
-      <FlashList
-        ref={flatListRef}
-        data={mails}
-        estimatedItemSize={ESTIMATED_ITEM_SIZE}
-        estimatedListSize={{ height: mails.length * ESTIMATED_ITEM_SIZE, width: UI_SIZES.screen.width }}
-        renderItem={mail => {
-          return (
-            <MailsMailPreview
-              key={mail.item.id}
-              data={mail.item}
-              onPress={() => onPressItem(mail.item.id, mail.item.unread, mail.item.state)}
-              isSender={props.session?.user.id === mail.item.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
-              onDelete={() => onDelete(mail.item.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
-              onToggleUnread={
-                selectedFolder !== MailsDefaultFolders.DRAFTS &&
-                selectedFolder !== MailsDefaultFolders.OUTBOX &&
-                selectedFolder !== MailsDefaultFolders.TRASH
-                  ? () => onToggleUnread(mail.item.id, mail.item.unread)
-                  : undefined
-              }
-              onRestore={selectedFolder === MailsDefaultFolders.TRASH ? () => onRestore(mail.item.id) : undefined}
-            />
-          );
-        }}
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={renderEmpty()}
-        refreshControl={refreshControl}
-        onEndReached={loadNextMails}
-        onEndReachedThreshold={0.5}
-      />
-      {renderBottomSheetFolders()}
-    </PageView>
+  const renderContent = React.useCallback(
+    (refreshControl: ScrollViewProps['refreshControl']) => (
+      <PageView>
+        <FlashList
+          ref={flatListRef}
+          data={mails}
+          estimatedItemSize={ESTIMATED_ITEM_SIZE}
+          estimatedListSize={{ height: mails.length * ESTIMATED_ITEM_SIZE, width: UI_SIZES.screen.width }}
+          renderItem={mail => {
+            return (
+              <MailsMailPreview
+                key={mail.item.id}
+                data={mail.item}
+                onPress={() => onPressItem(mail.item.id, mail.item.unread, mail.item.state)}
+                isSender={props.session?.user.id === mail.item.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
+                onDelete={() => onDelete(mail.item.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
+                onToggleUnread={
+                  selectedFolder !== MailsDefaultFolders.DRAFTS &&
+                  selectedFolder !== MailsDefaultFolders.OUTBOX &&
+                  selectedFolder !== MailsDefaultFolders.TRASH
+                    ? () => onToggleUnread(mail.item.id, mail.item.unread)
+                    : undefined
+                }
+                onRestore={selectedFolder === MailsDefaultFolders.TRASH ? () => onRestore(mail.item.id) : undefined}
+              />
+            );
+          }}
+          ListFooterComponent={renderFooter}
+          ListEmptyComponent={renderEmpty()}
+          refreshControl={refreshControl}
+          onEndReached={loadNextMails}
+          onEndReachedThreshold={0.5}
+        />
+        {renderBottomSheetFolders()}
+      </PageView>
+    ),
+    [mails, onPressItem, onDelete, onToggleUnread, onRestore, renderFooter, renderEmpty, loadNextMails],
   );
+
   return <ContentLoader loadContent={loadData} renderContent={renderContent} renderLoading={() => <MailsPlaceholderList />} />;
 };
 
