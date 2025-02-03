@@ -75,7 +75,7 @@ export const computeNavBar = ({
 const EMPTY_SVG_SIZE = getScaleWidth(150);
 
 const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
-  const { id, fromFolder, folders } = props.route.params;
+  const { id, from, folders } = props.route.params;
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
   const [content, setContent] = React.useState<string>('');
@@ -121,7 +121,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     props.navigation.navigate(mailsRouteNames.edit, {
       initialMailInfo: { id: mail!.id, to, subject: mail?.subject },
       type: MailsEditType.REPLY,
-      fromFolder,
+      fromFolder: from,
     });
   };
 
@@ -155,7 +155,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     props.navigation.navigate(mailsRouteNames.edit, {
       initialMailInfo: { id: mail!.id, to, cc, cci, subject: mail?.subject },
       type: MailsEditType.REPLY,
-      fromFolder,
+      fromFolder: from,
     });
   };
 
@@ -167,7 +167,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     props.navigation.navigate(mailsRouteNames.edit, {
       initialMailInfo: { id: mail!.id, from: mail?.from, to, body: mail?.body, subject: mail?.subject },
       type: MailsEditType.FORWARD,
-      fromFolder,
+      fromFolder: from,
     });
   };
 
@@ -175,7 +175,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     try {
       const folderId = await mailsService.folder.create({ name: valueNewFolder });
       await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
-      props.navigation.navigate(mailsRouteNames.home, { fromFolder: { id: folderId, name: valueNewFolder }, reload: true });
+      props.navigation.navigate(mailsRouteNames.home, { from: { id: folderId, name: valueNewFolder }, reload: true });
       Toast.showSuccess(I18n.get('mails-details-toastsuccessmove'));
     } catch (e) {
       console.error(e);
@@ -187,7 +187,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       await action();
       Toast.showSuccess(I18n.get(successMessageKey));
       const navigationParams = {
-        fromFolder,
+        from,
         ...(successMessageKey === 'mails-details-toastsuccessunread' ? { idMailToMarkUnread: id } : { idMailToRemove: id }),
       };
       props.navigation.navigate(mailsRouteNames.home, navigationParams);
@@ -278,33 +278,29 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       title: I18n.get('mails-details-restore'),
     },
     deleteAction({
-      action: fromFolder === MailsDefaultFolders.TRASH ? onDelete : onTrash,
+      action: from === MailsDefaultFolders.TRASH ? onDelete : onTrash,
     }),
   ];
 
   const popupActionsMenu = allPopupActionsMenu.filter(action => {
-    const { fromFolder } = props.route.params;
+    const { from } = props.route.params;
 
     switch (action.action) {
       case onReply:
       case onForward:
-        return fromFolder !== MailsDefaultFolders.TRASH;
+        return from !== MailsDefaultFolders.TRASH;
 
       case onReplyAll:
-        return infosRecipients && infosRecipients.ids.length > 1 && fromFolder !== MailsDefaultFolders.TRASH;
+        return infosRecipients && infosRecipients.ids.length > 1 && from !== MailsDefaultFolders.TRASH;
 
       case onMarkUnread:
       case onOpenMoveModal:
-        return fromFolder !== MailsDefaultFolders.TRASH;
+        return from !== MailsDefaultFolders.TRASH;
       case onRemoveFromFolder:
-        return (
-          fromFolder !== MailsDefaultFolders.TRASH &&
-          fromFolder !== MailsDefaultFolders.INBOX &&
-          fromFolder !== MailsDefaultFolders.OUTBOX
-        );
+        return from !== MailsDefaultFolders.TRASH && from !== MailsDefaultFolders.INBOX && from !== MailsDefaultFolders.OUTBOX;
 
       case onRestore:
-        return fromFolder === MailsDefaultFolders.TRASH;
+        return from === MailsDefaultFolders.TRASH;
 
       case onDelete:
       case onTrash:
@@ -321,7 +317,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         <HeaderBackButton
           labelVisible={false}
           tintColor={theme.palette.grey.white as string}
-          onPress={() => props.navigation.navigate(mailsRouteNames.home, { fromFolder })}
+          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from })}
         />
       ),
       headerRight: () =>

@@ -163,7 +163,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFolder, props.navigation]);
+  }, [selectedFolder]);
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -181,15 +181,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   useFocusEffect(
     React.useCallback(() => {
       const { params } = props.route;
-      if (params.fromFolder) {
-        if (params.reload) loadMails(params.fromFolder);
+      if (params.from) {
+        if (params.reload) loadMails(params.from);
         if (params.idMailToRemove) setMails(mails => mails.filter(mail => mail.id !== params.idMailToRemove));
         if (params.idMailToMarkUnread)
           setMails(mails => mails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)));
-        setSelectedFolder(params.fromFolder);
+        setSelectedFolder(params.from);
         loadFolders();
       }
-    }, [props.route.params, selectedFolder]),
+    }, [props.route.params]),
   );
 
   const switchFolder = async (folder: MailsDefaultFolders | MailsFolderInfo) => {
@@ -200,12 +200,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   };
 
   const onPressItem = (id: string, unread: boolean, state: MailsMailStatePreview) => {
-    if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH) {
+    if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
       return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
-    }
-
     if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
-    return navigation.navigate(mailsRouteNames.details, { id, fromFolder: selectedFolder, folders });
+    return navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
   };
 
   const onDismissBottomSheet = () => {

@@ -10,7 +10,7 @@ export interface MailsDetailsScreenProps {
 
 export interface MailsDetailsScreenNavParams {
   id: string;
-  fromFolder: MailsDefaultFolders | MailsFolderInfo;
+  from: MailsDefaultFolders | MailsFolderInfo;
   folders?: IMailsFolder[];
 }
 

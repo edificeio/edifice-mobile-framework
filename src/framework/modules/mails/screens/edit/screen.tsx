@@ -130,12 +130,12 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
             setIsSending(true);
             if (!draftIdSaved)
               return props.navigation.navigate(mailsRouteNames.home, {
-                fromFolder: fromFolder ?? MailsDefaultFolders.INBOX,
+                from: fromFolder ?? MailsDefaultFolders.INBOX,
               });
 
             await mailsService.mail.moveToTrash({ ids: [draftIdSaved] });
             props.navigation.navigate(mailsRouteNames.home, {
-              fromFolder: fromFolder ?? MailsDefaultFolders.INBOX,
+              from: fromFolder ?? MailsDefaultFolders.INBOX,
               reload: fromFolder === MailsDefaultFolders.DRAFTS,
             });
             toast.showSuccess(I18n.get('mails-edit-toastsuccessdeletedraft'));
@@ -165,7 +165,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         await mailsService.mail.sendToDraft({ body, subject, to: toIds, cc: ccIds, cci: cciIds });
       }
       props.navigation.navigate(mailsRouteNames.home, {
-        fromFolder: fromFolder ?? MailsDefaultFolders.INBOX,
+        from: fromFolder ?? MailsDefaultFolders.INBOX,
         reload: fromFolder === MailsDefaultFolders.DRAFTS,
       });
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
@@ -189,7 +189,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         { body, subject, to: toIds, cc: ccIds, cci: cciIds },
       );
       props.navigation.navigate(mailsRouteNames.home, {
-        fromFolder: fromFolder ?? MailsDefaultFolders.INBOX,
+        from: fromFolder ?? MailsDefaultFolders.INBOX,
         reload: fromFolder === MailsDefaultFolders.OUTBOX || fromFolder === MailsDefaultFolders.DRAFTS,
       });
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));

@@ -9,7 +9,7 @@ export interface MailsListScreenProps {
 }
 
 export interface MailsListScreenNavParams {
-  fromFolder?: MailsDefaultFolders | MailsFolderInfo;
+  from?: MailsDefaultFolders | MailsFolderInfo;
   idMailToRemove?: string;
   idMailToMarkUnread?: string;
   reload?: boolean;
