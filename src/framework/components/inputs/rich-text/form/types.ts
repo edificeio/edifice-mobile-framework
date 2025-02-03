@@ -18,6 +18,7 @@ export interface RichEditorFormProps {
   saving?: boolean;
   pageStyle?: ViewStyle;
   editorStyle?: ViewStyle;
+  placeholder?: string;
 }
 
 export interface RichEditorFormReduxProps {

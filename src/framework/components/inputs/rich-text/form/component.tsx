@@ -328,7 +328,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
             initialContentHTML={props.initialContentHtml ?? ''}
             initialFocus={false}
             pasteAsPlainText
-            placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
+            placeholder={props.placeholder ?? ''}
             ref={richText}
             style={[styles.richEditor, props.editorStyle]}
             useContainer

@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import theme from '~/app/theme';
 
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
@@ -19,6 +20,9 @@ export default StyleSheet.create({
     alignSelf: 'baseline',
     marginLeft: UI_SIZES.spacing.minor,
     marginTop: UI_SIZES.spacing.minor,
+  },
+  page: {
+    backgroundColor: theme.palette.grey.white,
   },
   spacingFolder: {
     height: UI_SIZES.spacing.tiny,

@@ -819,6 +819,7 @@
   "mails-details-toastsuccessunread": "Message marqué comme non-lu",
   "mails-edit-cc": "Cc",
   "mails-edit-cci": "Cci",
+  "mails-edit-contentplaceholder": "Écrivez votre message ici",
   "mails-edit-deletedraft": "Supprimer le brouillon",
   "mails-edit-deletedrafttitle": "Confirmer la suppression",
   "mails-edit-deletedrafttext": "Êtes vous sur de vouloir supprimer le brouillon ?",

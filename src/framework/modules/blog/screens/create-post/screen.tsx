@@ -170,6 +170,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         preventBackI18n={preventBackI18n}
         saving={saving}
         pageStyle={styles.page}
+        placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
       />
     );
   };

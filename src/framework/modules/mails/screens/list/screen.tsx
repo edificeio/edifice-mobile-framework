@@ -442,7 +442,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderContent = React.useCallback(
     (refreshControl: ScrollViewProps['refreshControl']) => (
-      <PageView>
+      <PageView style={styles.page}>
         <FlashList
           ref={flatListRef}
           data={mails}

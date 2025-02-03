@@ -14,6 +14,7 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
+import { PageView } from '~/framework/components/page';
 import toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -310,7 +311,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const renderTopForm = React.useCallback(() => {
     if (!visibles) return;
     return (
-      <View style={{ flexGrow: 1 }}>
+      <View>
         <MailsContactField
           type={MailsRecipientsType.TO}
           recipients={to}
@@ -370,17 +371,20 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const renderContent = React.useCallback(() => {
     return (
-      <RichEditorForm
-        topForm={renderTopForm}
-        initialContentHtml={initialContentHTML}
-        editorStyle={styles.editor}
-        bottomForm={renderBottomForm()}
-        onChangeText={value => setBody(value)}
-        saving={true}
-        uploadParams={{
-          parent: 'protected',
-        }}
-      />
+      <PageView style={styles.page}>
+        {renderTopForm()}
+        <RichEditorForm
+          initialContentHtml={initialContentHTML}
+          editorStyle={styles.editor}
+          bottomForm={renderBottomForm()}
+          onChangeText={value => setBody(value)}
+          saving={true}
+          uploadParams={{
+            parent: 'protected',
+          }}
+          placeholder={I18n.get('mails-edit-contentplaceholder')}
+        />
+      </PageView>
     );
   }, [initialContentHTML, renderBottomForm, renderTopForm, setBody]);
 
