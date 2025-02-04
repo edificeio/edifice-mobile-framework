@@ -558,8 +558,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
               </>
             )}
             <Drawer
-              isNavbar
-              isTabbar
+              withoutNavbar
+              withoutTabbar
               ref={this.drawerRef}
               items={drawerItems}
               selectedItem={navigationKey}

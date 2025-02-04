@@ -14,7 +14,6 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
 import toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -310,33 +309,26 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const renderTopForm = React.useCallback(() => {
     if (!visibles) return;
+
+    const commonProps = {
+      visibles,
+      onChangeRecipient,
+      onBlur: updateVisiblesWithoutSelectedRecipients,
+    };
+
     return (
       <View>
         <MailsContactField
           type={MailsRecipientsType.TO}
           recipients={to}
-          visibles={visibles}
-          onChangeRecipient={onChangeRecipient}
-          onBlur={updateVisiblesWithoutSelectedRecipients}
           onOpenMoreRecipientsFields={openMoreRecipientsFields}
           hideCcCciButton={haveInitialCcCci}
+          {...commonProps}
         />
         {moreRecipientsFields || haveInitialCcCci ? (
           <>
-            <MailsContactField
-              type={MailsRecipientsType.CC}
-              recipients={cc}
-              visibles={visibles}
-              onChangeRecipient={onChangeRecipient}
-              onBlur={updateVisiblesWithoutSelectedRecipients}
-            />
-            <MailsContactField
-              type={MailsRecipientsType.CCI}
-              recipients={cci}
-              visibles={visibles}
-              onChangeRecipient={onChangeRecipient}
-              onBlur={updateVisiblesWithoutSelectedRecipients}
-            />
+            <MailsContactField type={MailsRecipientsType.CC} recipients={cc} {...commonProps} />
+            <MailsContactField type={MailsRecipientsType.CCI} recipients={cci} {...commonProps} />
           </>
         ) : null}
         <MailsObjectField subject={subject} type={type} onChangeText={text => setSubject(text)} />
@@ -371,20 +363,18 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const renderContent = React.useCallback(() => {
     return (
-      <PageView style={styles.page}>
-        {renderTopForm()}
-        <RichEditorForm
-          initialContentHtml={initialContentHTML}
-          editorStyle={styles.editor}
-          bottomForm={renderBottomForm()}
-          onChangeText={value => setBody(value)}
-          saving={true}
-          uploadParams={{
-            parent: 'protected',
-          }}
-          placeholder={I18n.get('mails-edit-contentplaceholder')}
-        />
-      </PageView>
+      <RichEditorForm
+        topForm={renderTopForm()}
+        initialContentHtml={initialContentHTML}
+        editorStyle={styles.editor}
+        bottomForm={renderBottomForm()}
+        onChangeText={value => setBody(value)}
+        saving={true}
+        uploadParams={{
+          parent: 'protected',
+        }}
+        placeholder={I18n.get('mails-edit-contentplaceholder')}
+      />
     );
   }, [initialContentHTML, renderBottomForm, renderTopForm, setBody]);
 

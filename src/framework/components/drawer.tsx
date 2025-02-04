@@ -23,8 +23,8 @@ export interface IDrawerProps {
     labelStyle?: TextStyle;
     closeAfterSelecting?: boolean;
   }[];
-  isNavbar: boolean;
-  isTabbar: boolean;
+  withoutNavbar: boolean;
+  withoutTabbar: boolean;
   selectItem: (id: string) => any;
   selectedItem: string;
 }
@@ -112,9 +112,9 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
 
   constructor(props) {
     super(props);
-    const { isNavbar, isTabbar } = this.props;
+    const { withoutNavbar, withoutTabbar } = this.props;
     // Calculate backdrop max height depending on UI elements
-    this.backdropMaxHeight = UI_SIZES.getViewHeight({ isNavbar, isTabbar });
+    this.backdropMaxHeight = UI_SIZES.getViewHeight({ withoutNavbar, withoutTabbar });
     // Calculate dropdown list max height
     this.listMaxHeight = this.backdropMaxHeight - ITEM_HEIGHT + LIST_RADIUS - 2 * UI_SIZES.elements.tabbarHeight;
   }

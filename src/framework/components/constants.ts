@@ -134,14 +134,14 @@ export const UI_SIZES = {
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
   },
-  getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
-    const { isNavbar, isTabbar } = parms;
+  getViewHeight: (parms: { withoutNavbar?: boolean; withoutTabbar?: boolean } = { withoutNavbar: true, withoutTabbar: true }) => {
+    const { withoutNavbar, withoutTabbar } = parms;
     return (
       UI_SIZES.screen.height -
       UI_SIZES.screen.topInset -
       UI_SIZES.screen.bottomInset -
-      (isNavbar ? UI_SIZES.elements.navbarHeight : 0) -
-      (isTabbar ? UI_SIZES.elements.tabbarHeight : 0) +
+      (withoutNavbar ? UI_SIZES.elements.navbarHeight : 0) -
+      (withoutTabbar ? UI_SIZES.elements.tabbarHeight : 0) +
       Platform.select({ default: 24, ios: 4 })
     );
   },

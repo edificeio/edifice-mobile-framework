@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-raw-text */
 import * as React from 'react';
-import { TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import styles from '../styles';
 import { MailsContactFieldProps } from './types';
@@ -30,8 +30,16 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [visibles, setVisibles] = React.useState<MailsVisible[]>([]);
   const [results, setResults] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
+  const [keyboardHeight, setKeyboardHeight] = React.useState(0);
+  const [positionY, setPositionY] = React.useState(0);
+  const [heightInput, setHeightInput] = React.useState(0);
 
   const inputRef = React.useRef<TextInputType>(null);
+
+  const resultsHeight = React.useMemo(
+    () => UI_SIZES.getViewHeight({ withoutTabbar: false }) - positionY - heightInput - keyboardHeight,
+    [positionY, heightInput, keyboardHeight],
+  );
 
   const onFocus = () => {
     setIsEditing(true);
@@ -51,8 +59,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const onExitInput = () => {
     setSearch('');
     setIsEditing(false);
-    setShowList(false);
-    setResults([]);
+    if (showList) setShowList(false);
+    if (results.length) setResults([]);
     inputRef.current?.blur();
   };
 
@@ -65,7 +73,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
         return normalizedDisplayName.includes(normalizedSearchText);
       });
       setResults(newResults);
-      setShowList(true);
+      if (!showList) setShowList(true);
     } else {
       if (showList) setShowList(false);
     }
@@ -91,6 +99,21 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     setCcCciPressed(true);
     if (props.onOpenMoreRecipientsFields) props.onOpenMoreRecipientsFields();
   };
+
+  React.useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener('keyboardWillShow', e => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+
+    const keyboardWillHide = Keyboard.addListener('keyboardWillHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, []);
 
   React.useEffect(() => {
     setVisibles(props.visibles);
@@ -136,7 +159,12 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   return (
     <>
-      <View style={styles.container}>
+      <View
+        style={styles.container}
+        onLayout={e => {
+          if (e.nativeEvent.layout.y !== positionY) setPositionY(e.nativeEvent.layout.y);
+          if (e.nativeEvent.layout.height !== heightInput) setHeightInput(e.nativeEvent.layout.height);
+        }}>
         <BodyText style={styles.prefix}>{I18n.get(MailsRecipientPrefixsI18n[props.type].name)}</BodyText>
         <View style={[styles.containerInput, isEditing ? styles.containerIsEditing : {}]}>
           <TouchableOpacity activeOpacity={1} disabled={isEditing} style={styles.middlePart} onPress={onFocus}>
@@ -152,28 +180,45 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
                 onChangeText={onChangeText}
                 value={search}
                 returnKeyType="next"
+                autoCorrect={false}
+                autoCapitalize="none"
+                spellCheck={false}
               />
             ) : null}
           </TouchableOpacity>
           {renderInfoInInput()}
         </View>
       </View>
-      {showList && results.length ? (
-        <FlatList
-          keyboardShouldPersistTaps="always"
-          data={results}
-          contentContainerStyle={styles.results}
-          ListHeaderComponent={
-            <SmallBoldText style={styles.nbResults}>
-              {I18n.get(results.length > 1 ? 'mails-edit-results' : 'mails-edit-result', { nb: results.length })}
-            </SmallBoldText>
-          }
-          bottomInset={false}
-          renderItem={({ item }) => {
-            const Component = item.type === MailsVisibleType.GROUP ? MailsRecipientGroupItem : MailsRecipientUserItem;
-            return <Component item={item} onPress={addUser} />;
-          }}
-        />
+      {showList ? (
+        <View
+          style={{
+            top: positionY + heightInput,
+            height: resultsHeight,
+            minHeight: resultsHeight,
+          }}>
+          <FlatList
+            keyboardShouldPersistTaps="always"
+            nestedScrollEnabled
+            bounces={false}
+            data={results}
+            contentContainerStyle={[
+              styles.results,
+              {
+                minHeight: resultsHeight,
+              },
+            ]}
+            ListHeaderComponent={
+              <SmallBoldText style={styles.nbResults}>
+                {I18n.get(results.length > 1 ? 'mails-edit-results' : 'mails-edit-result', { nb: results.length })}
+              </SmallBoldText>
+            }
+            renderItem={({ item }) => {
+              const Component = item.type === MailsVisibleType.GROUP ? MailsRecipientGroupItem : MailsRecipientUserItem;
+              return <Component item={item} onPress={addUser} />;
+            }}
+            ListEmptyComponent={<SmallBoldText>Pas de résultats</SmallBoldText>}
+          />
+        </View>
       ) : null}
     </>
   );

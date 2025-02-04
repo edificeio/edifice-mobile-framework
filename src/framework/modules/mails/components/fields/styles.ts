@@ -29,7 +29,6 @@ export default StyleSheet.create({
     ...TextSizeStyle.Medium,
     lineHeight: undefined,
     paddingVertical: UI_SIZES.spacing.tiny + UI_SIZES.spacing.tinyExtra,
-    flex: 1,
   },
   middlePart: {
     flex: 1,
@@ -57,5 +56,10 @@ export default StyleSheet.create({
   results: {
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
+  },
+  viewResults: {
+    position: 'absolute',
+    zIndex: 99,
+    width: '100%',
   },
 });
