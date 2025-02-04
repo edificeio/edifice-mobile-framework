@@ -249,7 +249,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const isFederated = session?.method === InitialAuthenticationMethod.WAYF_SAML;
-  const showWhoAreWe = session?.platform.showWhoAreWe;
+  const showWhoAreWe = appConf.whoAreWeEnabled;
 
   const splashads = readSplashadsData();
   //

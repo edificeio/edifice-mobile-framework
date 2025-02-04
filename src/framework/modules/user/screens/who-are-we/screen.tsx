@@ -8,14 +8,17 @@ import Rate, { AndroidMarket } from 'react-native-rate';
 
 import styles from './styles';
 import type { UserWhoAreWeScreenPrivateProps } from './types';
+import { WhoAreWellustrationType, WhoAreWeQuoteType } from './types';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import ScrollView from '~/framework/components/scrollView';
-import { BodyText, HeadingXSText } from '~/framework/components/text';
+import { BodyBoldText, BodyText, HeadingXSText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import appConf from '~/framework/util/appConf';
+import { Image } from '~/framework/util/media';
 
 export const computeNavBar = ({
   navigation,
@@ -29,17 +32,66 @@ export const computeNavBar = ({
 });
 
 const APPLE_APP_ID = '1450246545';
-const animationSource = require('ASSETS/animations/edifice.json');
+const animationSource = require('ASSETS/animations/who-are-we.json');
+const imageSource = require('ASSETS/images/who-are-we.png');
+
+const { discoverUrl, entButton, entWebUrl, illustration, quote } = appConf.whoAreWe ?? {};
+console.log('appconffff', appConf?.whoAreWe);
 
 function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
+  const renderIllustration = React.useCallback((type?: WhoAreWellustrationType) => {
+    switch (type) {
+      case WhoAreWellustrationType.Animation:
+        return (
+          <View style={styles.animationWrapper}>
+            <LottieView source={animationSource} autoPlay loop={false} speed={0.8} style={styles.animationView} />
+          </View>
+        );
+      case WhoAreWellustrationType.Image:
+        return (
+          <View style={styles.imageWrapper}>
+            <Image source={imageSource} style={styles.imageView} resizeMode="contain" />
+          </View>
+        );
+      default:
+        return null;
+    }
+  }, []);
+
+  const renderQuote = React.useCallback((component?: WhoAreWeQuoteType) => {
+    switch (component) {
+      case WhoAreWeQuoteType.HeadingXSText:
+        return (
+          <>
+            <HeadingXSText>{I18n.get('user-whoarewe-quote-text')}</HeadingXSText>
+            <HeadingXSText style={styles.quoteAuthor}>{I18n.get('user-whoarewe-quote-author')}</HeadingXSText>
+          </>
+        );
+      case WhoAreWeQuoteType.BodyBoldText:
+        return (
+          <>
+            <BodyBoldText>{I18n.get('user-whoarewe-quote-text')}</BodyBoldText>
+            <HeadingXSText style={[styles.quoteAuthor, styles.noMarginBottom]}>
+              {I18n.get('user-whoarewe-quote-author')}
+            </HeadingXSText>
+          </>
+        );
+      default:
+        return null;
+    }
+  }, []);
+
+  const renderEntButton = React.useCallback((isEntButton?: boolean) => {
+    if (isEntButton)
+      return <SecondaryButton style={styles.buttonDiscover} text={I18n.get('user-whoarewe-entweb')} url={entWebUrl} />;
+    else return null;
+  }, []);
+
   return (
     <ScrollView bottomInset>
-      <View style={styles.animationWrapper}>
-        <LottieView source={animationSource} autoPlay loop={false} speed={0.8} style={styles.animationView} />
-      </View>
+      {renderIllustration(illustration)}
       <View style={styles.textWrapper}>
-        <HeadingXSText>{I18n.get('user-whoarewe-quote-text')}</HeadingXSText>
-        <HeadingXSText style={styles.quoteAuthor}>{I18n.get('user-whoarewe-quote-author')}</HeadingXSText>
+        {renderQuote(quote)}
         <BodyText>{I18n.get('user-whoarewe-description', { appName: DeviceInfo.getApplicationName() })}</BodyText>
         <PrimaryButton
           style={styles.buttonReview}
@@ -60,7 +112,8 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
             });
           }}
         />
-        <SecondaryButton style={styles.buttonDiscover} text={I18n.get('user-whoarewe-discoveredifice')} url="https://edifice.io" />
+        {renderEntButton(entButton)}
+        <SecondaryButton style={styles.buttonDiscover} text={I18n.get('user-whoarewe-discoveredifice')} url={discoverUrl} />
       </View>
     </ScrollView>
   );

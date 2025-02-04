@@ -10,6 +10,7 @@ import AppConfValues from '~/app/appconf';
 import { I18n } from '~/app/i18n';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AccountType } from '~/framework/modules/auth/model';
+import { WhoAreWellustrationType, WhoAreWeQuoteType } from '~/framework/modules/user/screens/who-are-we';
 
 // Platforms ======================================================================================
 
@@ -28,7 +29,6 @@ export type IPlatformAccessDeclaration = {
   redirect?: string; // Redirect url to redirect in external browser
   webTheme: string; // web theme applied to the activated accounts
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
-  showWhoAreWe?: boolean; // To show or not the team link in profile page
   showVieScolaireDashboard?: boolean; // To show or not the VieScolaire dashboard
   splashads?: string; // splashads url
 };
@@ -60,8 +60,6 @@ export class Platform {
 
   webTheme!: IPlatformAccessDeclaration['webTheme'];
 
-  showWhoAreWe!: IPlatformAccessDeclaration['showWhoAreWe'];
-
   showVieScolaireDashboard!: IPlatformAccessDeclaration['showVieScolaireDashboard'];
 
   splashads: IPlatformAccessDeclaration['splashads'];
@@ -82,7 +80,6 @@ export class Platform {
     this.wayf = pf.wayf;
     this.redirect = pf.redirect;
     this.webTheme = pf.webTheme;
-    this.showWhoAreWe = pf.showWhoAreWe;
     this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
     this.splashads = pf.splashads;
     this._webviewIdentifier = pf.webviewIdentifier;
@@ -124,6 +121,13 @@ export interface IAppConfDeclaration {
   platforms: IPlatformAccessDeclaration[];
   splashads?: string;
   webviewIdentifier: string;
+  whoAreWe?: {
+    discoverUrl?: string;
+    entButton?: boolean;
+    entWebUrl?: string;
+    illustration?: WhoAreWellustrationType;
+    quote?: WhoAreWeQuoteType;
+  };
   zendesk?: {
     appId?: string;
     clientId?: string;
@@ -160,6 +164,14 @@ export class AppConf {
   splashads?: string;
 
   webviewIdentifier: string;
+
+  whoAreWe?: {
+    discoverUrl: string;
+    entButton: boolean;
+    entWebUrl?: string;
+    illustration: WhoAreWellustrationType;
+    quote: WhoAreWeQuoteType;
+  };
 
   zendesk?: {
     appId?: string;
@@ -211,6 +223,10 @@ export class AppConf {
     return this.splashads;
   }
 
+  get whoAreWeEnabled() {
+    return this.whoAreWe;
+  }
+
   get zendeskEnabled() {
     return this.zendesk && this.zendesk.appId && this.zendesk.clientId && this.zendesk.zendeskUrl;
   }
@@ -251,11 +267,19 @@ export class AppConf {
       lang: opts.space?.lang ?? undefined,
       userType: opts.space?.userType ?? undefined,
     };
+    const whoAreWe: Partial<AppConf['whoAreWe']> = {
+      discoverUrl: opts.whoAreWe?.discoverUrl ?? undefined,
+      entButton: opts.whoAreWe?.entButton ?? undefined,
+      entWebUrl: opts.whoAreWe?.entWebUrl ?? undefined,
+      illustration: opts.whoAreWe?.illustration ?? undefined,
+      quote: opts.whoAreWe?.quote ?? undefined,
+    };
 
     this.onboarding = onboarding as AppConf['onboarding'];
     this.space = space as AppConf['space'];
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
     this.webviewIdentifier = opts.webviewIdentifier;
+    this.whoAreWe = whoAreWe as AppConf['whoAreWe'];
     this.zendesk = opts.zendesk
       ? {
           appId: opts.zendesk?.appId,
