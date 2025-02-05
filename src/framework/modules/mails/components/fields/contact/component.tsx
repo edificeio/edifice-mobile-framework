@@ -22,9 +22,12 @@ function removeAccents(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Supprime les diacritiques
 }
 
+const INITIAL_HEIGHT_INPUT = 60;
+
 export const MailsContactField = (props: MailsContactFieldProps) => {
   const [search, setSearch] = React.useState('');
   const [isEditing, setIsEditing] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [ccCciPressed, setCcCciPressed] = React.useState<boolean>(false);
   const [selectedRecipients, setSelectedRecipients] = React.useState<MailsVisible[]>(props.recipients ?? []);
   const [visibles, setVisibles] = React.useState<MailsVisible[]>([]);
@@ -33,72 +36,16 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
   const [positionY, setPositionY] = React.useState(0);
   const [heightInput, setHeightInput] = React.useState(0);
+  const [heightInputToSave, setHeightInputToSave] = React.useState(0);
+  const [heightToRemoveList, setHeightToRemoveList] = React.useState(INITIAL_HEIGHT_INPUT);
 
+  const viewContainerRef = React.useRef<View>(null);
   const inputRef = React.useRef<TextInputType>(null);
 
   const resultsHeight = React.useMemo(
-    () => UI_SIZES.getViewHeight({ withoutTabbar: false }) - positionY - heightInput - keyboardHeight,
-    [positionY, heightInput, keyboardHeight],
+    () => UI_SIZES.getViewHeight({ withoutTabbar: false }) - keyboardHeight - heightToRemoveList,
+    [heightToRemoveList, keyboardHeight],
   );
-
-  const onFocus = () => {
-    setIsEditing(true);
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 200);
-  };
-
-  const onBlur = () => {
-    props.onBlur(visibles);
-    if (results.length === 0) {
-      setSearch('');
-      setIsEditing(false);
-    }
-  };
-
-  const onExitInput = () => {
-    setSearch('');
-    setIsEditing(false);
-    if (showList) setShowList(false);
-    if (results.length) setResults([]);
-    inputRef.current?.blur();
-  };
-
-  const onChangeText = (text: string) => {
-    setSearch(text);
-    if (text.length >= 3) {
-      const normalizedSearchText = removeAccents(text).toLowerCase();
-      const newResults = visibles.filter(visible => {
-        const normalizedDisplayName = removeAccents(visible.displayName).toLowerCase();
-        return normalizedDisplayName.includes(normalizedSearchText);
-      });
-      setResults(newResults);
-      if (!showList) setShowList(true);
-    } else {
-      if (showList) setShowList(false);
-    }
-  };
-
-  const addUser = (user: MailsVisible) => {
-    setSearch('');
-    const newSelectedRecipients = [...selectedRecipients, user];
-    setSelectedRecipients(newSelectedRecipients);
-    setVisibles(prev => prev.filter(visible => visible.id !== user.id));
-    setResults(prev => prev.filter(result => result.id !== user.id));
-    props.onChangeRecipient(newSelectedRecipients, props.type);
-  };
-
-  const removeUser = (user: MailsVisible) => {
-    const newSelectedRecipients = selectedRecipients.filter(selectedRecipient => selectedRecipient.id !== user.id);
-    setSelectedRecipients(newSelectedRecipients);
-    setVisibles(prev => [user, ...prev]);
-    props.onChangeRecipient(newSelectedRecipients, props.type);
-  };
-
-  const onOpenMoreRecipientsFields = () => {
-    setCcCciPressed(true);
-    if (props.onOpenMoreRecipientsFields) props.onOpenMoreRecipientsFields();
-  };
 
   React.useEffect(() => {
     const keyboardWillShow = Keyboard.addListener('keyboardWillShow', e => {
@@ -119,16 +66,113 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     setVisibles(props.visibles);
   }, [props.visibles]);
 
+  React.useEffect(() => {
+    if (props.isStartScroll && showList) {
+      inputRef.current?.blur();
+      setShowList(false);
+    }
+  }, [props.isStartScroll]);
+
+  React.useEffect(() => {
+    if (props.inputFocused !== props.type && (isOpen || isEditing)) {
+      if (isOpen) setIsOpen(false);
+      if (isEditing) setIsEditing(false);
+    }
+  }, [props.inputFocused]);
+
+  React.useEffect(() => {
+    if (viewContainerRef.current) {
+      setTimeout(() => {
+        viewContainerRef.current!.measure((x, y, width, height, pageX, pageY) => {
+          setHeightInput(height);
+          setHeightToRemoveList(height - heightInputToSave + INITIAL_HEIGHT_INPUT);
+        });
+      }, 100);
+    }
+  }, [selectedRecipients]);
+
+  const scrollToInput = () => {
+    if (viewContainerRef.current) {
+      setTimeout(() => {
+        viewContainerRef.current!.measure((x, y, width, height, pageX, pageY) => {
+          setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
+          setHeightInput(height);
+          setHeightInputToSave(height);
+          setPositionY(y);
+          props.richEditorRef.current?.scrollTo({ y: y + height - INITIAL_HEIGHT_INPUT, animated: true });
+        });
+      }, 300);
+    }
+  };
+
+  const onOpen = () => setIsOpen(true);
+
+  const onFocus = () => {
+    scrollToInput();
+    if (!isOpen) setIsOpen(true);
+    if (search.length >= 3) setShowList(true);
+    setIsEditing(true);
+    props.onFocus(props.type);
+  };
+
+  const onBlur = () => {
+    props.onBlur(visibles);
+    setIsEditing(false);
+  };
+
+  const onRemoveContentAndExitInput = () => {
+    setSearch('');
+    if (results.length) setResults([]);
+    if (showList) setShowList(false);
+    inputRef.current?.blur();
+  };
+
+  const onChangeText = (text: string) => {
+    setSearch(text);
+    if (text.length >= 3) {
+      const normalizedSearchText = removeAccents(text).toLowerCase();
+      const newResults = visibles.filter(visible => {
+        const normalizedDisplayName = removeAccents(visible.displayName).toLowerCase();
+        return normalizedDisplayName.includes(normalizedSearchText);
+      });
+      setResults(newResults);
+      if (!showList) setShowList(true);
+    } else {
+      if (showList) setShowList(false);
+      scrollToInput();
+    }
+  };
+
+  const addUser = (user: MailsVisible) => {
+    const newSelectedRecipients = [...selectedRecipients, user];
+    setSelectedRecipients(newSelectedRecipients);
+    setVisibles(prev => prev.filter(visible => visible.id !== user.id));
+    setResults(prev => prev.filter(result => result.id !== user.id));
+    props.onChangeRecipient(newSelectedRecipients, props.type);
+  };
+
+  const removeUser = (user: MailsVisible) => {
+    const newSelectedRecipients = selectedRecipients.filter(selectedRecipient => selectedRecipient.id !== user.id);
+    setSelectedRecipients(newSelectedRecipients);
+    setVisibles(prev => [user, ...prev]);
+    props.onChangeRecipient(newSelectedRecipients, props.type);
+  };
+
+  const onOpenMoreRecipientsFields = () => {
+    setCcCciPressed(true);
+    if (props.onOpenMoreRecipientsFields) props.onOpenMoreRecipientsFields();
+  };
+
   const renderRecipients = () => {
-    if (isEditing || selectedRecipients.length <= 2) {
+    if (isOpen || selectedRecipients.length <= 2) {
       return selectedRecipients.map(recipient => (
-        <MailsContactItem key={recipient.id} user={recipient} isEditing={isEditing} onDelete={removeUser} />
+        <MailsContactItem key={recipient.id} user={recipient} isEditing={isOpen} onDelete={removeUser} />
       ));
     }
     return (
       <>
-        <MailsContactItem key={selectedRecipients[0].id} user={selectedRecipients[0]} isEditing={isEditing} onDelete={removeUser} />
-        <MailsContactItem key={selectedRecipients[1].id} user={selectedRecipients[1]} isEditing={isEditing} onDelete={removeUser} />
+        <MailsContactItem key={selectedRecipients[0].id} user={selectedRecipients[0]} isEditing={isOpen} onDelete={removeUser} />
+        <MailsContactItem key={selectedRecipients[1].id} user={selectedRecipients[1]} isEditing={isOpen} onDelete={removeUser} />
         <View style={[stylesContactItem.container, stylesContactItem.containerNumber]}>
           <SmallBoldText>+{selectedRecipients.length - 2}</SmallBoldText>
         </View>
@@ -137,9 +181,9 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const renderInfoInInput = () => {
-    if (isEditing)
+    if (search.length > 0 && isEditing)
       return (
-        <TouchableOpacity style={styles.iconClose} onPress={onExitInput}>
+        <TouchableOpacity style={styles.iconClose} onPress={onRemoveContentAndExitInput}>
           <Svg
             name="ui-close"
             fill={theme.palette.grey.black}
@@ -159,17 +203,16 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   return (
     <>
-      <View
-        style={styles.container}
-        onLayout={e => {
-          if (e.nativeEvent.layout.y !== positionY) setPositionY(e.nativeEvent.layout.y);
-          if (e.nativeEvent.layout.height !== heightInput) setHeightInput(e.nativeEvent.layout.height);
-        }}>
+      <View style={styles.container} ref={viewContainerRef}>
         <BodyText style={styles.prefix}>{I18n.get(MailsRecipientPrefixsI18n[props.type].name)}</BodyText>
-        <View style={[styles.containerInput, isEditing ? styles.containerIsEditing : {}]}>
-          <TouchableOpacity activeOpacity={1} disabled={isEditing} style={styles.middlePart} onPress={onFocus}>
+        <View style={[styles.containerInput, isOpen ? styles.containerIsEditing : {}]}>
+          <TouchableOpacity
+            activeOpacity={1}
+            disabled={isOpen || selectedRecipients.length === 0}
+            style={styles.middlePart}
+            onPress={onOpen}>
             {selectedRecipients.length > 0 ? <View style={styles.recipientsList}>{renderRecipients()}</View> : null}
-            {isEditing || selectedRecipients.length === 0 ? (
+            {isOpen || selectedRecipients.length === 0 ? (
               <RNTextInput
                 ref={inputRef}
                 onBlur={onBlur}
@@ -179,7 +222,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
                 placeholder={I18n.get(MailsRecipientPrefixsI18n[props.type].placeholder)}
                 onChangeText={onChangeText}
                 value={search}
-                returnKeyType="next"
                 autoCorrect={false}
                 autoCapitalize="none"
                 spellCheck={false}
@@ -192,9 +234,13 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       {showList ? (
         <View
           style={{
+            position: 'absolute',
+            width: '100%',
             top: positionY + heightInput,
+            backgroundColor: theme.palette.grey.white,
             height: resultsHeight,
             minHeight: resultsHeight,
+            zIndex: 99,
           }}>
           <FlatList
             keyboardShouldPersistTaps="always"

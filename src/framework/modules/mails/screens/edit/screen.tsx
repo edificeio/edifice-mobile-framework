@@ -67,6 +67,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const [moreRecipientsFields, setMoreRecipientsFields] = React.useState<boolean>(false);
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [draftIdSaved, setDraftIdSaved] = React.useState<string | undefined>(draftId ?? undefined);
+  const [inputFocused, setInputFocused] = React.useState<MailsRecipientsType | null>(null);
+  const [isStartScroll, setIsStartScroll] = React.useState<boolean>(false);
+
+  const richEditorRef = React.useRef(null);
 
   const haveInitialCcCci =
     (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0);
@@ -267,9 +271,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     [attachments, body, cc, cci, isSending, subject, to],
   );
 
-  UNSTABLE_usePreventRemove(showPreventBack, ({ data }) => {
-    onSendDraft();
-  });
+  UNSTABLE_usePreventRemove(showPreventBack, () => onSendDraft());
 
   const popupActionsMenu = [
     {
@@ -314,6 +316,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       visibles,
       onChangeRecipient,
       onBlur: updateVisiblesWithoutSelectedRecipients,
+      richEditorRef,
+      inputFocused,
+      onFocus: setInputFocused,
+      isStartScroll,
     };
 
     return (
@@ -342,6 +348,9 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     subject,
     initialMailInfo,
     type,
+    isStartScroll,
+    richEditorRef,
+    inputFocused,
     onChangeRecipient,
     updateVisiblesWithoutSelectedRecipients,
     openMoreRecipientsFields,
@@ -356,6 +365,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           addAttachmentAction={onAddAttachment}
           removeAttachmentAction={onRemoveAttachment}
         />
+        <View style={{ minHeight: 600 }} />
       </View>
     ),
     [attachments, onAddAttachment, onRemoveAttachment],
@@ -364,6 +374,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const renderContent = React.useCallback(() => {
     return (
       <RichEditorForm
+        ref={richEditorRef}
         topForm={renderTopForm()}
         initialContentHtml={initialContentHTML}
         editorStyle={styles.editor}
@@ -374,6 +385,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           parent: 'protected',
         }}
         placeholder={I18n.get('mails-edit-contentplaceholder')}
+        onScrollBeginDrag={() => {
+          setIsStartScroll(true);
+          setTimeout(() => setIsStartScroll(false), 1000);
+        }}
       />
     );
   }, [initialContentHTML, renderBottomForm, renderTopForm, setBody]);

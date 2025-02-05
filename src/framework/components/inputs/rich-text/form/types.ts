@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ViewStyle } from 'react-native';
+import { ScrollViewProps, ViewStyle } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -8,7 +8,7 @@ import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { LocalFile } from '~/framework/util/fileHandler';
 
-export interface RichEditorFormProps {
+export interface RichEditorFormProps extends ScrollViewProps {
   initialContentHtml: string;
   topForm: ReactNode | ((onChange: () => void) => ReactNode);
   bottomForm?: ReactNode;

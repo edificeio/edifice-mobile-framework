@@ -30,6 +30,9 @@ export default StyleSheet.create({
     lineHeight: undefined,
     paddingVertical: UI_SIZES.spacing.tiny + UI_SIZES.spacing.tinyExtra,
   },
+  subjectInput: {
+    flex: 1,
+  },
   middlePart: {
     flex: 1,
     rowGap: UI_SIZES.spacing.minor,

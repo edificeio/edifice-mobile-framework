@@ -21,12 +21,13 @@ import { Svg } from '~/framework/components/picture';
 import Separator from '~/framework/components/separator';
 import { BodyText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
+import { useSyncRef } from '~/framework/hooks/ref';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
-const RichEditorForm = (props: RichEditorFormAllProps) => {
+const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
   const headerHeight = useHeaderHeight();
 
   const navigation = useNavigation();
@@ -265,6 +266,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   //
 
   const scrollRef = React.useRef<ScrollView>(null);
+  const syncRef = useSyncRef(ref, scrollRef);
 
   const handleBlur = React.useCallback(() => {
     animateToolbar({ opacity: 0, ypos: 2 * UI_SIZES.elements.editor.toolbarHeight });
@@ -305,7 +307,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   );
 
   return (
-    <PageView style={[styles.page, props.pageStyle]}>
+    <PageView style={styles.page}>
       <KeyboardAvoidingView
         keyboardVerticalOffset={headerHeight}
         style={styles.container}
@@ -313,12 +315,12 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         <ScrollView
           keyboardDismissMode="none"
           keyboardShouldPersistTaps="always"
-          nestedScrollEnabled
-          ref={scrollRef}
+          ref={syncRef}
           scrollEventThrottle={20}
           alwaysBounceVertical={false}
           bounces
-          style={styles.scrollView}>
+          style={[styles.scrollView, props.pageStyle]}
+          {...props}>
           {realTopForm}
           <RichEditor
             disabled={false}
@@ -348,8 +350,13 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       </KeyboardAvoidingView>
     </PageView>
   );
-};
+});
 
-export default connect(state => ({
-  oneSessionId: authSelectors.oneSessionId(state),
-}))(RichEditorForm);
+export default connect(
+  state => ({
+    oneSessionId: authSelectors.oneSessionId(state),
+  }),
+  null,
+  null,
+  { forwardRef: true },
+)(RichEditorForm);
