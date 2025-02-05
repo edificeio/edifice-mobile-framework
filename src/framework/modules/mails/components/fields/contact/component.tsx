@@ -245,6 +245,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           <FlatList
             keyboardShouldPersistTaps="always"
             nestedScrollEnabled
+            showsVerticalScrollIndicator={false}
             bounces={false}
             data={results}
             contentContainerStyle={[
