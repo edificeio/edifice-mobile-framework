@@ -476,7 +476,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         {renderBottomSheetFolders()}
       </PageView>
     ),
-    [mails, onPressItem, onDelete, onToggleUnread, onRestore, renderFooter, renderEmpty, loadNextMails],
+    [mails, onPressItem, onDelete, onToggleUnread, onRestore, renderFooter, renderEmpty, loadNextMails, renderBottomSheetFolders],
   );
 
   return <ContentLoader loadContent={loadData} renderContent={renderContent} renderLoading={() => <MailsPlaceholderList />} />;
