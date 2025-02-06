@@ -18,7 +18,7 @@ import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
-import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
@@ -86,6 +86,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [isFolderCreation, setIsFolderCreation] = React.useState<boolean>(false);
   const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
   const [seeHistory, setSeeHistory] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<boolean>(false);
 
   const convertedAttachments = React.useMemo(
     () => mail?.attachments.map(attachment => convertAttachmentToDistantFile(attachment, id)),
@@ -103,6 +104,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       setHistory(history);
     } catch (e) {
       console.error('Failed to fetch mail content', e);
+      setError(true);
     }
   };
 
@@ -396,7 +398,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const renderListRecipients = (recipients: MailsRecipients, prefix: string) => {
     if (!hasRecipients(recipients)) return;
     return (
-      <View style={styles.listRecipients}>
+      <View>
         <SmallBoldText style={styles.bottomSheetPrefix}>{I18n.get(prefix)}</SmallBoldText>
         {recipients.users.length > 0 ? recipients.users.map(user => <MailsRecipientUserItem key={user.id} item={user} />) : null}
         {recipients.groups.length > 0
@@ -491,34 +493,37 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   };
 
-  const renderContent = () => (
-    <PageView>
-      <ScrollView style={styles.page}>
-        <HeadingXSText>{mail?.subject && mail?.subject.length ? mail.subject : I18n.get('mails-list-noobject')}</HeadingXSText>
-        <View style={styles.topInfos}>
-          <NewAvatar size={AvatarSize.lg} userId={mail?.from.id} />
-          <View style={styles.topInfosText}>
-            <View style={styles.sender}>
-              <TouchableOpacity
-                style={styles.touchableSender}
-                onPress={() => props.navigation.navigate(userRouteNames.profile, { userId: mail?.from.id })}>
-                <SmallBoldText style={styles.senderName} numberOfLines={1} ellipsizeMode="tail">
-                  {mail?.from.displayName}
-                </SmallBoldText>
-              </TouchableOpacity>
-              <SmallItalicText>{displayPastDate(moment(mail?.date))}</SmallItalicText>
+  const renderContent = () => {
+    if (error) return <EmptyContentScreen />;
+    return (
+      <PageView>
+        <ScrollView style={styles.page}>
+          <HeadingXSText>{mail?.subject && mail?.subject.length ? mail.subject : I18n.get('mails-list-noobject')}</HeadingXSText>
+          <View style={styles.topInfos}>
+            <NewAvatar size={AvatarSize.lg} userId={mail?.from.id} />
+            <View style={styles.topInfosText}>
+              <View style={styles.sender}>
+                <TouchableOpacity
+                  style={styles.touchableSender}
+                  onPress={() => props.navigation.navigate(userRouteNames.profile, { userId: mail?.from.id })}>
+                  <SmallBoldText style={styles.senderName} numberOfLines={1} ellipsizeMode="tail">
+                    {mail?.from.displayName}
+                  </SmallBoldText>
+                </TouchableOpacity>
+                <SmallItalicText>{displayPastDate(moment(mail?.date))}</SmallItalicText>
+              </View>
+              {renderRecipients()}
             </View>
-            {renderRecipients()}
           </View>
-        </View>
-        <RichEditorViewer content={content} />
-        {mail!.attachments.length > 0 ? <Attachments session={props.session!} attachments={convertedAttachments} /> : null}
-        {renderHistory()}
-        {renderButtons()}
-      </ScrollView>
-      {renderBottomSheet()}
-    </PageView>
-  );
+          <RichEditorViewer content={content} />
+          {mail!.attachments.length > 0 ? <Attachments session={props.session!} attachments={convertedAttachments} /> : null}
+          {renderHistory()}
+          {renderButtons()}
+        </ScrollView>
+        {renderBottomSheet()}
+      </PageView>
+    );
+  };
 
   return (
     <ContentLoader
