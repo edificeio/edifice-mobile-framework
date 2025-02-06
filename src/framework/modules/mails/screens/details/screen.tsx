@@ -450,7 +450,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       />
       <FlatList
         data={folders}
-        contentContainerStyle={[stylesFolders.containerFolders, folders?.length === 0 ? styles.nofoldersContainer : {}]}
+        contentContainerStyle={[
+          stylesFolders.containerFolders,
+          styles.flatListBottomSheet,
+          folders?.length === 0 ? styles.nofoldersContainer : {},
+        ]}
         renderItem={({ item }) => (
           <MailsFolderItem
             key={item.id}

@@ -22,6 +22,7 @@ export default StyleSheet.create({
     columnGap: UI_SIZES.spacing.small,
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    paddingBottom: UI_SIZES.spacing.large,
   },
   page: {
     backgroundColor: theme.palette.grey.white,
@@ -60,5 +61,8 @@ export default StyleSheet.create({
   nofolders: {
     alignItems: 'center',
     rowGap: UI_SIZES.spacing.medium,
+  },
+  flatListBottomSheet: {
+    paddingBottom: UI_SIZES.screen.bottomInset,
   },
 });

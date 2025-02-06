@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
@@ -307,48 +308,50 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   );
 
   return (
-    <PageView style={styles.page}>
-      <KeyboardAvoidingView
-        keyboardVerticalOffset={headerHeight}
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView
-          keyboardDismissMode="none"
-          keyboardShouldPersistTaps="always"
-          ref={syncRef}
-          scrollEventThrottle={20}
-          alwaysBounceVertical={false}
-          bounces
-          style={[styles.scrollView, props.pageStyle]}
-          {...props}>
-          {realTopForm}
-          <RichEditor
-            disabled={false}
-            enterKeyHint="enter"
-            editorStyle={styles.container}
-            firstFocusEnd={false}
-            initialContentHTML={props.initialContentHtml ?? ''}
-            initialFocus={false}
-            pasteAsPlainText
-            placeholder={props.placeholder ?? ''}
-            ref={richText}
-            style={[styles.richEditor, props.editorStyle]}
-            useContainer
-            useComposition={false}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            onCursorPosition={handleCursorPosition}
-            onFocus={handleFocus}
-            autoCorrect
-            autoCapitalize
-            oneSessionId={props.oneSessionId}
-          />
-          {bottomForm}
-        </ScrollView>
-        {isFocused ? toolbar() : null}
-        {choosePicsMenu()}
-      </KeyboardAvoidingView>
-    </PageView>
+    <BottomSheetModalProvider>
+      <PageView style={styles.page}>
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={headerHeight}
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <ScrollView
+            keyboardDismissMode="none"
+            keyboardShouldPersistTaps="always"
+            ref={syncRef}
+            scrollEventThrottle={20}
+            alwaysBounceVertical={false}
+            bounces
+            style={[styles.scrollView, props.pageStyle]}
+            {...props}>
+            {realTopForm}
+            <RichEditor
+              disabled={false}
+              enterKeyHint="enter"
+              editorStyle={styles.container}
+              firstFocusEnd={false}
+              initialContentHTML={props.initialContentHtml ?? ''}
+              initialFocus={false}
+              pasteAsPlainText
+              placeholder={props.placeholder ?? ''}
+              ref={richText}
+              style={[styles.richEditor, props.editorStyle]}
+              useContainer
+              useComposition={false}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onCursorPosition={handleCursorPosition}
+              onFocus={handleFocus}
+              autoCorrect
+              autoCapitalize
+              oneSessionId={props.oneSessionId}
+            />
+            {bottomForm}
+          </ScrollView>
+          {isFocused ? toolbar() : null}
+          {choosePicsMenu()}
+        </KeyboardAvoidingView>
+      </PageView>
+    </BottomSheetModalProvider>
   );
 });
 

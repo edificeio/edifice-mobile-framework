@@ -246,7 +246,9 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         const ccDraft = convertDraftRecipients(draft.cc);
         const cciDraft = convertDraftRecipients(draft.cci);
         const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftIdSaved));
+        const initialIdsRecipients = [...toDraft, ...ccDraft, ...cciDraft].map(recipient => recipient.id);
 
+        setAllInputsSelectedRecipients(initialIdsRecipients);
         setInitialContentHTML(draft.body);
         setSubject(draft.subject);
         setTo(toDraft);

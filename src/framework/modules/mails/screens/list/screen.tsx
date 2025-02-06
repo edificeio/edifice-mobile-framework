@@ -384,7 +384,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               {isSubfolder ? (
                 <FlatList
                   data={folders}
-                  contentContainerStyle={stylesFolders.containerFolders}
+                  contentContainerStyle={[stylesFolders.containerFolders, styles.flatListBottomSheet]}
                   renderItem={({ item }) =>
                     item.depth === 1 ? (
                       <MailsFolderItem

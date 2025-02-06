@@ -8,7 +8,7 @@ export default StyleSheet.create({
     paddingBottom: 0,
   },
   flatListBottomSheet: {
-    paddingBottom: getScaleWidth(140),
+    paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.spacing.small,
   },
   scrollViewBottomSheet: {
     paddingBottom: getScaleWidth(60),
