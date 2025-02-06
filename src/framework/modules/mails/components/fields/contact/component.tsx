@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-raw-text */
 import * as React from 'react';
-import { Keyboard, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
+import { Animated, Keyboard, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import styles from '../styles';
 import { MailsContactFieldProps } from './types';
@@ -34,10 +34,10 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [results, setResults] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
-  const [positionY, setPositionY] = React.useState(0);
-  const [heightInput, setHeightInput] = React.useState(0);
   const [heightInputToSave, setHeightInputToSave] = React.useState(0);
   const [heightToRemoveList, setHeightToRemoveList] = React.useState(INITIAL_HEIGHT_INPUT);
+
+  const topPositionResults = React.useRef(new Animated.Value(0)).current;
 
   const viewContainerRef = React.useRef<View>(null);
   const inputRef = React.useRef<TextInputType>(null);
@@ -84,7 +84,12 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     if (viewContainerRef.current) {
       setTimeout(() => {
         viewContainerRef.current!.measure((x, y, width, height, pageX, pageY) => {
-          setHeightInput(height);
+          Animated.spring(topPositionResults, {
+            toValue: y + height,
+            useNativeDriver: true,
+            friction: 8,
+            tension: 50,
+          }).start();
           setHeightToRemoveList(height - heightInputToSave + INITIAL_HEIGHT_INPUT);
         });
       }, 100);
@@ -96,9 +101,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       setTimeout(() => {
         viewContainerRef.current!.measure((x, y, width, height, pageX, pageY) => {
           setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
-          setHeightInput(height);
           setHeightInputToSave(height);
-          setPositionY(y);
+          topPositionResults.setValue(y + height);
           props.richEditorRef.current?.scrollTo({ y: y + height - INITIAL_HEIGHT_INPUT, animated: true });
         });
       }, 300);
@@ -232,11 +236,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
         </View>
       </View>
       {showList ? (
-        <View
+        <Animated.View
           style={{
             position: 'absolute',
             width: '100%',
-            top: positionY + heightInput,
+            transform: [{ translateY: topPositionResults }],
             backgroundColor: theme.palette.grey.white,
             height: resultsHeight,
             minHeight: resultsHeight,
@@ -265,7 +269,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
             }}
             ListEmptyComponent={<SmallBoldText>Pas de résultats</SmallBoldText>}
           />
-        </View>
+        </Animated.View>
       ) : null}
     </>
   );
