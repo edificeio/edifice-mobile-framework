@@ -29,8 +29,10 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [isEditing, setIsEditing] = React.useState<boolean>(false);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [ccCciPressed, setCcCciPressed] = React.useState<boolean>(false);
+  const [allInputsSelectedRecipients, setAllInputsSelectedRecipients] = React.useState<string[]>(
+    props.allInputsSelectedRecipients ?? [],
+  );
   const [selectedRecipients, setSelectedRecipients] = React.useState<MailsVisible[]>(props.recipients ?? []);
-  const [visibles, setVisibles] = React.useState<MailsVisible[]>([]);
   const [results, setResults] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
@@ -63,8 +65,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   }, []);
 
   React.useEffect(() => {
-    setVisibles(props.visibles);
-  }, [props.visibles]);
+    setAllInputsSelectedRecipients(props.allInputsSelectedRecipients);
+  }, [props.allInputsSelectedRecipients]);
 
   React.useEffect(() => {
     if (props.isStartScroll && showList) {
@@ -119,10 +121,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     props.onFocus(props.type);
   };
 
-  const onBlur = () => {
-    props.onBlur(visibles);
-    setIsEditing(false);
-  };
+  const onBlur = () => setIsEditing(false);
 
   const onRemoveContentAndExitInput = () => {
     setSearch('');
@@ -135,7 +134,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     setSearch(text);
     if (text.length >= 3) {
       const normalizedSearchText = removeAccents(text).toLowerCase();
-      const newResults = visibles.filter(visible => {
+      const newResults = props.visibles.filter(visible => {
         const normalizedDisplayName = removeAccents(visible.displayName).toLowerCase();
         return normalizedDisplayName.includes(normalizedSearchText);
       });
@@ -150,16 +149,13 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const addUser = (user: MailsVisible) => {
     const newSelectedRecipients = [...selectedRecipients, user];
     setSelectedRecipients(newSelectedRecipients);
-    setVisibles(prev => prev.filter(visible => visible.id !== user.id));
-    setResults(prev => prev.filter(result => result.id !== user.id));
-    props.onChangeRecipient(newSelectedRecipients, props.type);
+    props.onChangeRecipient(newSelectedRecipients, props.type, user.id);
   };
 
   const removeUser = (user: MailsVisible) => {
     const newSelectedRecipients = selectedRecipients.filter(selectedRecipient => selectedRecipient.id !== user.id);
     setSelectedRecipients(newSelectedRecipients);
-    setVisibles(prev => [user, ...prev]);
-    props.onChangeRecipient(newSelectedRecipients, props.type);
+    props.onChangeRecipient(newSelectedRecipients, props.type, user.id);
   };
 
   const onOpenMoreRecipientsFields = () => {
@@ -265,7 +261,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
             }
             renderItem={({ item }) => {
               const Component = item.type === MailsVisibleType.GROUP ? MailsRecipientGroupItem : MailsRecipientUserItem;
-              return <Component item={item} onPress={addUser} />;
+              return <Component item={item} onPress={addUser} selected={allInputsSelectedRecipients.includes(item.id)} />;
             }}
             ListEmptyComponent={<SmallBoldText>Pas de résultats</SmallBoldText>}
           />

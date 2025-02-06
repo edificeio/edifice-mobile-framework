@@ -1,14 +1,8 @@
 import { MailsRecipientGroupInfo, MailsRecipientInfo, MailsVisible } from '../../model';
 
-export interface MailsRecipientItemProps {
+export interface MailsRecipientContainerProps {
   disabled?: boolean;
+  selected?: boolean;
   onPress?: (recipient: MailsVisible) => void;
-}
-
-export interface MailsRecipientUserItemProps extends MailsRecipientItemProps {
-  item: MailsRecipientInfo | MailsVisible; //TODO: lea conflit à revoir
-}
-
-export interface MailsRecipientGroupItemProps extends MailsRecipientItemProps {
-  item: MailsRecipientGroupInfo | MailsVisible; //TODO: lea conflit à revoir
+  item: MailsRecipientInfo | MailsRecipientGroupInfo | MailsVisible;
 }

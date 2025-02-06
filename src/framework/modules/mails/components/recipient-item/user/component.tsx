@@ -1,13 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { SmallBoldText } from '~/framework/components/text';
-import { containerStyle, MailsRecipientUserItemProps } from '~/framework/modules/mails/components/recipient-item';
+import { MailsRecipientContainer, MailsRecipientContainerProps } from '~/framework/modules/mails/components/recipient-item';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
-import { MailsVisible } from '~/framework/modules/mails/model';
+import { MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
 import styles from './styles';
 
 // const renderClassrooms = classrooms => {
@@ -57,9 +57,9 @@ import styles from './styles';
 //   );
 // };
 
-const MailsRecipientUserItem = (props: MailsRecipientUserItemProps) => {
+const MailsRecipientUserItem = (props: MailsRecipientContainerProps) => {
   //   const { id, displayName, classrooms, relatives, profile, children, disciplines, functions } = props.item;
-  const { id, displayName, profile } = props.item;
+  const { id, displayName, profile } = props.item as MailsRecipientInfo | MailsVisible;
 
   //   const renderSubtitle = () => {
   //     switch (profile) {
@@ -89,12 +89,8 @@ const MailsRecipientUserItem = (props: MailsRecipientUserItemProps) => {
   //     }
   //   };
 
-  const onPress = () => {
-    if (props.onPress) props.onPress(props.item as MailsVisible);
-  };
-
   return (
-    <TouchableOpacity disabled={props.onPress ? false : true} onPress={onPress} style={containerStyle}>
+    <MailsRecipientContainer {...props}>
       <MailsRecipientAvatar id={id} type="User" />
       <View style={styles.flex1}>
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail">
@@ -105,7 +101,7 @@ const MailsRecipientUserItem = (props: MailsRecipientUserItemProps) => {
         </SmallBoldText>
         {/* {renderSubtitle()} */}
       </View>
-    </TouchableOpacity>
+    </MailsRecipientContainer>
   );
 };
 

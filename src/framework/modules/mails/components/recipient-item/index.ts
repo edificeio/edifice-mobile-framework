@@ -1,18 +1,8 @@
-import { ViewStyle } from 'react-native';
+import { MailsRecipientContainerProps } from './types';
 
-import { UI_SIZES } from '~/framework/components/constants';
-import { MailsRecipientGroupItemProps, MailsRecipientUserItemProps } from './types';
-
+import { MailsRecipientContainer } from './container';
 import { MailsRecipientGroupItem } from './group';
 import { MailsRecipientUserItem } from './user';
 
-export const containerStyle: ViewStyle = {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingHorizontal: UI_SIZES.spacing.tiny,
-  paddingVertical: UI_SIZES.spacing.minor,
-  columnGap: UI_SIZES.spacing.minor,
-};
-
-export { MailsRecipientGroupItem, MailsRecipientUserItem };
-export type { MailsRecipientGroupItemProps, MailsRecipientUserItemProps };
+export { MailsRecipientContainer, MailsRecipientGroupItem, MailsRecipientUserItem };
+export type { MailsRecipientContainerProps };

@@ -57,6 +57,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   }, []);
 
   const [visibles, setVisibles] = React.useState<MailsVisible[]>();
+  const [allInputsSelectedRecipients, setAllInputsSelectedRecipients] = React.useState<string[]>([]);
   const [initialContentHTML, setInitialContentHTML] = React.useState(textInitialContentHTML);
   const [body, setBody] = React.useState(textInitialContentHTML);
   const [subject, setSubject] = React.useState(initialMailInfo?.subject ?? '');
@@ -76,10 +77,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0);
 
   const openMoreRecipientsFields = () => setMoreRecipientsFields(true);
-
-  const updateVisiblesWithoutSelectedRecipients = (newVisibles: MailsVisible[]) => {
-    setVisibles(newVisibles);
-  };
 
   const onAddAttachment = async attachment => {
     try {
@@ -111,7 +108,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     }
   };
 
-  const onChangeRecipient = (selectedRecipients, type) => {
+  const onChangeRecipient = (selectedRecipients, type, userId) => {
     const stateSetters: Record<MailsRecipientsType, React.Dispatch<React.SetStateAction<MailsVisible[]>>> = {
       to: setTo,
       cc: setCc,
@@ -119,6 +116,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     };
 
     stateSetters[type](selectedRecipients);
+
+    if (allInputsSelectedRecipients?.includes(userId))
+      setAllInputsSelectedRecipients(prev => prev.filter(recipientId => recipientId !== userId));
+    else setAllInputsSelectedRecipients(prev => [...prev, userId]);
   };
 
   const onDeleteDraft = async () => {
@@ -315,7 +316,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     const commonProps = {
       visibles,
       onChangeRecipient,
-      onBlur: updateVisiblesWithoutSelectedRecipients,
+      allInputsSelectedRecipients,
       richEditorRef,
       inputFocused,
       onFocus: setInputFocused,
@@ -351,8 +352,8 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     isStartScroll,
     richEditorRef,
     inputFocused,
+    allInputsSelectedRecipients,
     onChangeRecipient,
-    updateVisiblesWithoutSelectedRecipients,
     openMoreRecipientsFields,
   ]);
 
