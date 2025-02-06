@@ -386,7 +386,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 onPress={() => {
                   navigation.navigate(userRouteNames.whoAreWe, {});
                 }}
-                icon="ui-edifice"
+                icon={appConf.whoAreWe?.icon || 'ui-edifice'}
                 testID="account-who-are-we"
               />
             ) : null}

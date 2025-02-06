@@ -15,6 +15,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, BodyText, HeadingXSText } from '~/framework/components/text';
+import { getPlatform } from '~/framework/modules/auth/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
@@ -31,12 +32,10 @@ export const computeNavBar = ({
   }),
 });
 
-const APPLE_APP_ID = '1450246545';
 const animationSource = require('ASSETS/animations/who-are-we.json');
 const imageSource = require('ASSETS/images/who-are-we.png');
 
-const { discoverUrl, entButton, entWebUrl, illustration, quote } = appConf.whoAreWe ?? {};
-console.log('appconffff', appConf?.whoAreWe);
+const { appleId, discoverUrl, entButton, illustration, quote } = appConf.whoAreWe ?? {};
 
 function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
   const renderIllustration = React.useCallback((type?: WhoAreWellustrationType) => {
@@ -82,8 +81,8 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
   }, []);
 
   const renderEntButton = React.useCallback((isEntButton?: boolean) => {
-    if (isEntButton)
-      return <SecondaryButton style={styles.buttonDiscover} text={I18n.get('user-whoarewe-entweb')} url={entWebUrl} />;
+    const pf = getPlatform();
+    if (isEntButton) return <SecondaryButton style={styles.buttonDiscover} text={I18n.get('user-whoarewe-entweb')} url={pf?.url} />;
     else return null;
   }, []);
 
@@ -98,7 +97,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
           text={I18n.get('user-whoarewe-reviewapp')}
           action={() => {
             const options = {
-              AppleAppID: APPLE_APP_ID,
+              AppleAppID: appleId,
               GooglePackageName: DeviceInfo.getBundleId(),
               inAppDelay: 0,
               preferInApp: Platform.OS !== 'android',

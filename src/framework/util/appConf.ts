@@ -24,46 +24,31 @@ export type IPlatformAccessDeclaration = {
   logoType?: PictureProps['type']; // The logo type
   name: string; // unique name of the access point
   oauth: [string, string]; // oAuth2 configuration as [clientId, clientSecret]
-  url: string; // Access url WITHOUT trailing slash and WITH protocol
-  wayf?: string; // WAYF url to redirect onto federation login process instead of standard one
   redirect?: string; // Redirect url to redirect in external browser
-  webTheme: string; // web theme applied to the activated accounts
-  webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
   showVieScolaireDashboard?: boolean; // To show or not the VieScolaire dashboard
   splashads?: string; // splashads url
+  url: string; // Access url WITHOUT trailing slash and WITH protocol
+  wayf?: string; // WAYF url to redirect onto federation login process instead of standard one
+  webTheme: string; // web theme applied to the activated accounts
+  webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
 };
 
 export class Platform {
   auth: IPlatformAccessDeclaration['auth'];
-
   displayName!: IPlatformAccessDeclaration['displayName'];
-
   federation: IPlatformAccessDeclaration['federation'];
-
   hidden: IPlatformAccessDeclaration['hidden'];
-
   logo: IPlatformAccessDeclaration['logo'];
-
   logoStyle: IPlatformAccessDeclaration['logoStyle'];
-
   logoType: Required<IPlatformAccessDeclaration>['logoType'];
-
   name!: IPlatformAccessDeclaration['name'];
-
   _oauth!: IPlatformAccessDeclaration['oauth'];
-
   url!: IPlatformAccessDeclaration['url'];
-
   wayf: IPlatformAccessDeclaration['wayf'];
-
   redirect: IPlatformAccessDeclaration['redirect'];
-
-  webTheme!: IPlatformAccessDeclaration['webTheme'];
-
   showVieScolaireDashboard!: IPlatformAccessDeclaration['showVieScolaireDashboard'];
-
   splashads: IPlatformAccessDeclaration['splashads'];
-
+  webTheme!: IPlatformAccessDeclaration['webTheme'];
   _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
 
   constructor(pf: IPlatformAccessDeclaration) {
@@ -79,14 +64,10 @@ export class Platform {
     this.url = pf.url;
     this.wayf = pf.wayf;
     this.redirect = pf.redirect;
-    this.webTheme = pf.webTheme;
     this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
     this.splashads = pf.splashads;
+    this.webTheme = pf.webTheme;
     this._webviewIdentifier = pf.webviewIdentifier;
-  }
-
-  get webviewIdentifier() {
-    return this._webviewIdentifier ?? appConf.webviewIdentifier;
   }
 
   get oauth() {
@@ -94,6 +75,10 @@ export class Platform {
       client_id: this._oauth[0],
       client_secret: this._oauth[1],
     };
+  }
+
+  get webviewIdentifier() {
+    return this._webviewIdentifier ?? appConf.webviewIdentifier;
   }
 }
 
@@ -122,9 +107,10 @@ export interface IAppConfDeclaration {
   splashads?: string;
   webviewIdentifier: string;
   whoAreWe?: {
+    appleId?: string;
     discoverUrl?: string;
     entButton?: boolean;
-    entWebUrl?: string;
+    icon?: string;
     illustration?: WhoAreWellustrationType;
     quote?: WhoAreWeQuoteType;
   };
@@ -139,11 +125,8 @@ export interface IAppConfDeclaration {
 
 export class AppConf {
   debugEnabled = false;
-
   i18nOTA = false;
-
   level: '1d' | '2d' = '2d'; // 2d by default
-
   matomo: { url: string; siteId: number };
 
   onboarding: {
@@ -166,9 +149,10 @@ export class AppConf {
   webviewIdentifier: string;
 
   whoAreWe?: {
+    appleId: string;
     discoverUrl: string;
     entButton: boolean;
-    entWebUrl?: string;
+    icon: string;
     illustration: WhoAreWellustrationType;
     quote: WhoAreWeQuoteType;
   };
@@ -268,9 +252,10 @@ export class AppConf {
       userType: opts.space?.userType ?? undefined,
     };
     const whoAreWe: Partial<AppConf['whoAreWe']> = {
+      appleId: opts.whoAreWe?.appleId ?? undefined,
       discoverUrl: opts.whoAreWe?.discoverUrl ?? undefined,
       entButton: opts.whoAreWe?.entButton ?? undefined,
-      entWebUrl: opts.whoAreWe?.entWebUrl ?? undefined,
+      icon: opts.whoAreWe?.icon ?? undefined,
       illustration: opts.whoAreWe?.illustration ?? undefined,
       quote: opts.whoAreWe?.quote ?? undefined,
     };
