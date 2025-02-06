@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-02-05 19:50:33",
-  "notes": "update(stack): update yarn cache\nUpdated translations from Phrase (#183)\nUpdated translations from Phrase (#182)\nupdate(stack): yarn cache update\nfix: WB2-2147 remove download button from attachments\nfeat(appConf): WB-3807 adding whoAreWe\nUpdated translations from Phrase (#181)\nRevert \"chore(ENT77): WB-3808 removing salvum connector\"\nchore(ENT77): WB-3808 removing salvum connector\nfix(auth): WB-3797 activation without phone in payload\nUpdated translations from Phrase (#180)\nfix(auth): WB-3661 forgotScreen dropdown direction\nUpdated translations from Phrase (#179)\nfix(pcn): WB-3722, change ios icon name\nfix(component): WB-3783 avatar background color\nUpdated translations from Phrase (#178)\nrelease: 1.13.10-rc.2(1131002)",
-  "version": "1.13.10-rc.3(1131003)"
+  "last": "2025-02-06 12:34:56",
+  "notes": "fix: WB-3807 whoAreWe rate && icon\nrelease: 1.13.10-rc.3(1131003)",
+  "version": "1.13.10-rc.4(1131004)"
 }
