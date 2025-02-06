@@ -30,7 +30,7 @@ const versionFile = 'cli/prepare-build.json';
 
 const buildType = process.argv.slice(2)[0];
 if (!['alpha', 'comm', 'peda', 'rc', 'poc', 'major', 'minor', 'rev'].includes(buildType)) {
-  console.error('!!! Argument should be "alpha", "rc", "poc", "major", "minor" or "rev" !!!');
+  console.error('!!! Argument should be "alpha", "comm", "peda", "rc", "poc", "major", "minor" or "rev" !!!');
   process.exit(1);
 }
 
