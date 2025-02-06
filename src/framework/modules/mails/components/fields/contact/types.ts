@@ -13,4 +13,5 @@ export interface MailsContactFieldProps {
   onChangeRecipient: (selectedRecipients: MailsVisible[], type: MailsRecipientsType, userId: string) => void;
   onFocus: (type: MailsRecipientsType) => void;
   onOpenMoreRecipientsFields?: () => void;
+  onToggleShowList: (showList: boolean) => void;
 }

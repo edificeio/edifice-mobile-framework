@@ -70,6 +70,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const [draftIdSaved, setDraftIdSaved] = React.useState<string | undefined>(draftId ?? undefined);
   const [inputFocused, setInputFocused] = React.useState<MailsRecipientsType | null>(null);
   const [isStartScroll, setIsStartScroll] = React.useState<boolean>(false);
+  const [scrollEnabled, setScrollEnabled] = React.useState<boolean>(true);
 
   const richEditorRef = React.useRef(null);
 
@@ -321,6 +322,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       inputFocused,
       onFocus: setInputFocused,
       isStartScroll,
+      onToggleShowList: showList => setScrollEnabled(!showList),
     };
 
     return (
@@ -381,6 +383,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         editorStyle={styles.editor}
         bottomForm={renderBottomForm()}
         onChangeText={value => setBody(value)}
+        scrollEnabled={scrollEnabled}
         saving={true}
         uploadParams={{
           parent: 'protected',
@@ -392,7 +395,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         }}
       />
     );
-  }, [initialContentHTML, renderBottomForm, renderTopForm, setBody]);
+  }, [initialContentHTML, scrollEnabled, renderBottomForm, renderTopForm, setBody]);
 
   return (
     <ContentLoader

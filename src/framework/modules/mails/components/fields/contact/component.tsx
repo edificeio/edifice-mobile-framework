@@ -49,6 +49,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     [heightToRemoveList, keyboardHeight],
   );
 
+  const toggleShowList = () => {
+    setShowList(!showList);
+    props.onToggleShowList(!showList);
+  };
+
   React.useEffect(() => {
     const keyboardWillShow = Keyboard.addListener('keyboardWillShow', e => {
       setKeyboardHeight(e.endCoordinates.height);
@@ -71,7 +76,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   React.useEffect(() => {
     if (props.isStartScroll && showList) {
       inputRef.current?.blur();
-      setShowList(false);
+      toggleShowList();
     }
   }, [props.isStartScroll]);
 
@@ -116,7 +121,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const onFocus = () => {
     scrollToInput();
     if (!isOpen) setIsOpen(true);
-    if (search.length >= 3) setShowList(true);
+    if (search.length >= 3) toggleShowList();
     setIsEditing(true);
     props.onFocus(props.type);
   };
@@ -126,8 +131,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const onRemoveContentAndExitInput = () => {
     setSearch('');
     if (results.length) setResults([]);
-    if (showList) setShowList(false);
-    inputRef.current?.blur();
+    if (showList) toggleShowList();
   };
 
   const onChangeText = (text: string) => {
@@ -139,9 +143,9 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
         return normalizedDisplayName.includes(normalizedSearchText);
       });
       setResults(newResults);
-      if (!showList) setShowList(true);
+      if (!showList) toggleShowList();
     } else {
-      if (showList) setShowList(false);
+      if (showList) toggleShowList();
       scrollToInput();
     }
   };
@@ -181,7 +185,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const renderInfoInInput = () => {
-    if (search.length > 0 && isEditing)
+    if (search.length > 0)
       return (
         <TouchableOpacity style={styles.iconClose} onPress={onRemoveContentAndExitInput}>
           <Svg
