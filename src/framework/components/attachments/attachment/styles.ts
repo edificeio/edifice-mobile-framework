@@ -32,4 +32,10 @@ export default StyleSheet.create({
     flexShrink: 1,
     marginLeft: UI_SIZES.spacing.minor,
   },
+  modal: {
+    flex: 1,
+    backgroundColor: theme.palette.grey.darkness,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
 });

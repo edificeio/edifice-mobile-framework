@@ -74,56 +74,67 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const richEditorRef = React.useRef(null);
 
-  const haveInitialCcCci =
-    (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0);
+  const haveInitialCcCci = React.useMemo(
+    () => (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0),
+    [initialMailInfo],
+  );
 
   const openMoreRecipientsFields = () => setMoreRecipientsFields(true);
 
-  const onAddAttachment = async attachment => {
-    try {
-      let mailId = '';
-      if (draftIdSaved) {
-        mailId = draftIdSaved;
-      } else {
-        const toIds = to.map(recipient => recipient.id);
-        const ccIds = cc.map(recipient => recipient.id);
-        const cciIds = cci.map(recipient => recipient.id);
+  const onAddAttachment = React.useCallback(
+    async attachment => {
+      try {
+        let mailId = '';
+        if (draftIdSaved) {
+          mailId = draftIdSaved;
+        } else {
+          const toIds = to.map(recipient => recipient.id);
+          const ccIds = cc.map(recipient => recipient.id);
+          const cciIds = cci.map(recipient => recipient.id);
 
-        mailId = await mailsService.mail.sendToDraft({ body, subject, to: toIds, cc: ccIds, cci: cciIds });
-        setDraftIdSaved(mailId);
+          mailId = await mailsService.mail.sendToDraft({ body, subject, to: toIds, cc: ccIds, cci: cciIds });
+          setDraftIdSaved(mailId);
+        }
+        const fileUploaded = await mailsService.attachments.add({ mailId }, attachment, props.session!);
+        return fileUploaded;
+      } catch (e) {
+        console.error(e);
       }
-      const fileUploaded = await mailsService.attachments.add({ mailId }, attachment, props.session!);
-      return fileUploaded;
-    } catch (e) {
-      console.error(e);
-    }
-  };
+    },
+    [body, cc, cci, draftIdSaved, subject, to, props.session],
+  );
 
-  const onRemoveAttachment = async attachment => {
-    try {
-      await mailsService.attachments.remove({ mailId: draftIdSaved!, attachmentId: attachment.id });
-      setAttachments(attachments.filter(att => att.id !== attachment.id));
-    } catch (e) {
-      console.error(e);
-      toast.showError();
-    }
-  };
+  const onRemoveAttachment = React.useCallback(
+    async attachment => {
+      try {
+        await mailsService.attachments.remove({ mailId: draftIdSaved!, attachmentId: attachment.id });
+        setAttachments(attachments.filter(att => att.id !== attachment.id));
+      } catch (e) {
+        console.error(e);
+        toast.showError();
+      }
+    },
+    [attachments, draftIdSaved],
+  );
 
-  const onChangeRecipient = (selectedRecipients, type, userId) => {
-    const stateSetters: Record<MailsRecipientsType, React.Dispatch<React.SetStateAction<MailsVisible[]>>> = {
-      to: setTo,
-      cc: setCc,
-      cci: setCci,
-    };
+  const onChangeRecipient = React.useCallback(
+    (selectedRecipients, type, userId) => {
+      const stateSetters: Record<MailsRecipientsType, React.Dispatch<React.SetStateAction<MailsVisible[]>>> = {
+        to: setTo,
+        cc: setCc,
+        cci: setCci,
+      };
 
-    stateSetters[type](selectedRecipients);
+      stateSetters[type](selectedRecipients);
 
-    if (allInputsSelectedRecipients?.includes(userId))
-      setAllInputsSelectedRecipients(prev => prev.filter(recipientId => recipientId !== userId));
-    else setAllInputsSelectedRecipients(prev => [...prev, userId]);
-  };
+      if (allInputsSelectedRecipients?.includes(userId))
+        setAllInputsSelectedRecipients(prev => prev.filter(recipientId => recipientId !== userId));
+      else setAllInputsSelectedRecipients(prev => [...prev, userId]);
+    },
+    [allInputsSelectedRecipients],
+  );
 
-  const onDeleteDraft = async () => {
+  const onDeleteDraft = React.useCallback(async () => {
     Alert.alert(I18n.get('mails-edit-deletedrafttitle'), I18n.get('mails-edit-deletedrafttext'), [
       {
         onPress: () => {},
@@ -156,9 +167,9 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         text: I18n.get('common-delete'),
       },
     ]);
-  };
+  }, [draftIdSaved, fromFolder]);
 
-  const onSendDraft = async () => {
+  const onSendDraft = React.useCallback(async () => {
     try {
       setIsSending(true);
       const toIds = to.map(recipient => recipient.id);
@@ -181,9 +192,9 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       toast.showError();
       setIsSending(false);
     }
-  };
+  }, [to, cc, cci, draftIdSaved, body, subject, fromFolder]);
 
-  const onSend = async () => {
+  const onSend = React.useCallback(async () => {
     try {
       setIsSending(true);
       const toIds = to.map(recipient => recipient.id);
@@ -205,7 +216,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       toast.showError();
       setIsSending(false);
     }
-  };
+  }, [to, cc, cci, initialMailInfo, draftIdSaved, body, subject, fromFolder]);
 
   const onCheckSend = React.useCallback(() => {
     if (!body || !subject) {
@@ -227,9 +238,9 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     } else {
       onSend();
     }
-  }, [body, subject]);
+  }, [body, subject, onSend]);
 
-  const loadData = async () => {
+  const loadData = React.useCallback(async () => {
     try {
       const dataVisibles = await mailsService.visibles.getAll();
       setVisibles(dataVisibles);
@@ -260,7 +271,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [draftId, draftIdSaved]);
 
   const showPreventBack = React.useMemo(
     () =>
@@ -278,25 +289,28 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   UNSTABLE_usePreventRemove(showPreventBack, () => onSendDraft());
 
-  const popupActionsMenu = [
-    {
-      action: onSendDraft,
-      icon: {
-        android: 'ic_pencil',
-        ios: 'pencil.and.list.clipboard',
+  const popupActionsMenu = React.useMemo(
+    () => [
+      {
+        action: onSendDraft,
+        icon: {
+          android: 'ic_pencil',
+          ios: 'pencil.and.list.clipboard',
+        },
+        title: I18n.get('mails-edit-savedraft'),
       },
-      title: I18n.get('mails-edit-savedraft'),
-    },
-    {
-      action: onDeleteDraft,
-      destructive: true,
-      icon: {
-        android: 'ic_delete_item',
-        ios: 'trash',
+      {
+        action: onDeleteDraft,
+        destructive: true,
+        icon: {
+          android: 'ic_delete_item',
+          ios: 'trash',
+        },
+        title: I18n.get('mails-edit-deletedraft'),
       },
-      title: I18n.get('mails-edit-deletedraft'),
-    },
-  ];
+    ],
+    [onDeleteDraft, onSendDraft],
+  );
 
   React.useEffect(() => {
     props.navigation.setOptions({

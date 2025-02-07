@@ -29,7 +29,7 @@ const MailsRecipientGroupItem = (props: MailsRecipientContainerProps) => {
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail" style={props.disabled ? styles.graphite : {}}>
           {displayName}
         </SmallBoldText>
-        {/* {props.item.size ? renderSubtitle(props.item.size, props.disabled) : null} */}
+        {props.item.size ? renderSubtitle(props.item.size, props.disabled) : null}
       </View>
     </MailsRecipientContainer>
   );
