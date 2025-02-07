@@ -256,6 +256,29 @@ class Attachment extends React.PureComponent<
               </SmallText>
             </View>
           </Pressable>
+          {Platform.OS !== 'ios' ? (
+            <View>
+              {!editMode ? (
+                <RNGHTouchableOpacity
+                  onPress={async () => {
+                    await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
+                      requestAnimationFrame(() => {
+                        if (onDownloadFile) onDownloadFile(notifierId, lf);
+                      });
+                    }).catch(() => {
+                      // TODO: Manage error
+                    });
+                  }}
+                  style={{ paddingLeft: UI_SIZES.spacing.small }}>
+                  <IconButton
+                    iconName="download"
+                    iconColor={theme.palette.grey.black}
+                    buttonStyle={{ backgroundColor: theme.palette.grey.fog }}
+                  />
+                </RNGHTouchableOpacity>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       </View>
     );
