@@ -9,7 +9,6 @@ import {
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import http from '~/framework/util/http';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import {
   mailContentAdapter,
   mailsAdapter,
@@ -135,10 +134,7 @@ export const mailsService = {
 
       const bodyJson = JSON.stringify({ body, to, cc, cci, subject });
 
-      const draft = await fetchJSONWithCache(api, {
-        body: bodyJson,
-        method: 'POST',
-      });
+      const draft = (await http.fetchJsonForSession('POST', api, { body: bodyJson })) as { id: string };
       return draft.id;
     },
     updateDraft: async (

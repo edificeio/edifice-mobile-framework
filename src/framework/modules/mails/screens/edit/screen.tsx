@@ -207,7 +207,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     }
   };
 
-  const onCheckSend = () => {
+  const onCheckSend = React.useCallback(() => {
     if (!body || !subject) {
       Keyboard.dismiss();
       Alert.alert(
@@ -227,7 +227,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     } else {
       onSend();
     }
-  };
+  }, [body, subject]);
 
   const loadData = async () => {
     try {
@@ -250,6 +250,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
         setAllInputsSelectedRecipients(initialIdsRecipients);
         setInitialContentHTML(draft.body);
+        setBody(draft.body);
         setSubject(draft.subject);
         setTo(toDraft);
         setCc(ccDraft);
@@ -311,7 +312,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [to, cc, cci, subject, draftIdSaved, body, onCheckSend]);
+  }, [to, cc, cci, subject, draftIdSaved, onCheckSend]);
 
   const renderTopForm = React.useCallback(() => {
     if (!visibles) return;
