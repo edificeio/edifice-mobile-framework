@@ -215,92 +215,174 @@ const imports = {
 
   'textbook-default': async () => import('ASSETS/images/textbook-default.svg'),
 
-  timeLineGenerator: async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
-
   // UI Icons
   'ui-addUser': async () => import('ASSETS/icons/uiIcons/addUser.svg'),
+
+  timeLineGenerator: async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
+
   'ui-alert-triangle': async () => import('ASSETS/icons/uiIcons/alert-triangle.svg'),
+
   'ui-alertCircle': async () => import('ASSETS/icons/uiIcons/alertCircle.svg'),
+
   'ui-anniversary': async () => import('ASSETS/icons/uiIcons/anniversary.svg'),
+
   'ui-answer': async () => import('ASSETS/icons/uiIcons/answer.svg'),
-  'ui-answerall': async () => import('ASSETS/icons/uiIcons/answerall.svg'),
+
   'ui-applications': async () => import('ASSETS/icons/uiIcons/applications.svg'),
+
   'ui-arrowDown': async () => import('ASSETS/icons/uiIcons/arrowDown.svg'),
+
   'ui-arrowLeft': async () => import('ASSETS/icons/uiIcons/arrowLeft.svg'),
+
   'ui-arrowRight': async () => import('ASSETS/icons/uiIcons/arrowRight.svg'),
+
   'ui-arrowUp': async () => import('ASSETS/icons/uiIcons/arrowUp.svg'),
+
   'ui-attachment': async () => import('ASSETS/icons/uiIcons/attachment.svg'),
+
   'ui-audio': async () => import('ASSETS/icons/uiIcons/audio.svg'),
+
   'ui-backpack': async () => import('ASSETS/icons/uiIcons/backpack.svg'),
+
   'ui-block': async () => import('ASSETS/icons/uiIcons/block.svg'),
+
   'ui-bold': async () => import('ASSETS/icons/uiIcons/bold.svg'),
+
   'ui-book': async () => import('ASSETS/icons/uiIcons/book.svg'),
+
   'ui-bookmark': async () => import('ASSETS/icons/uiIcons/bookmark.svg'),
+
   'ui-burgerMenu': async () => import('ASSETS/icons/uiIcons/burgerMenu.svg'),
+
   'ui-calendar': async () => import('ASSETS/icons/uiIcons/calendar.svg'),
+
   'ui-calendarLight': async () => import('ASSETS/icons/uiIcons/calendarLight.svg'),
+
   'ui-camera': async () => import('ASSETS/icons/uiIcons/camera.svg'),
+
   'ui-check': async () => import('ASSETS/icons/uiIcons/check.svg'),
+
   'ui-checkbox-check': async () => import('ASSETS/icons/uiIcons/checkboxCheck.svg'),
+
   'ui-checkbox-mixed': async () => import('ASSETS/icons/uiIcons/checkbox-mixed.svg'),
+
   'ui-checkbox-off': async () => import('ASSETS/icons/uiIcons/checkbox-off.svg'),
+
   'ui-checkbox-on': async () => import('ASSETS/icons/uiIcons/checkbox-on.svg'),
+
   'ui-checkbox-partial': async () => import('ASSETS/icons/uiIcons/checkboxPartial.svg'),
+
   'ui-checklist': async () => import('ASSETS/icons/uiIcons/checklist.svg'),
+
   'ui-christmas': async () => import('ASSETS/icons/uiIcons/christmas.svg'),
+
   'ui-class': async () => import('ASSETS/icons/uiIcons/class.svg'),
+
   'ui-clock': async () => import('ASSETS/icons/uiIcons/clock.svg'),
+
   'ui-clock-alert': async () => import('ASSETS/icons/uiIcons/clock-alert.svg'),
+
   'ui-close': async () => import('ASSETS/icons/uiIcons/close.svg'),
+
   'ui-closeFullScreen': async () => import('ASSETS/icons/uiIcons/closeFullScreen.svg'),
+
   'ui-copy': async () => import('ASSETS/icons/uiIcons/copy.svg'),
+
   'ui-cottage': async () => import('ASSETS/icons/uiIcons/cottage.svg'),
+
   'ui-cut': async () => import('ASSETS/icons/uiIcons/cut.svg'),
+
   'ui-delete': async () => import('ASSETS/icons/uiIcons/delete.svg'),
+
   'ui-depositeInbox': async () => import('ASSETS/icons/uiIcons/depositeInbox.svg'),
+
   'ui-download': async () => import('ASSETS/icons/uiIcons/download.svg'),
+
   'ui-drag': async () => import('ASSETS/icons/uiIcons/drag.svg'),
+
   'ui-edifice': async () => import('ASSETS/icons/uiIcons/edifice.svg'),
+
   'ui-edit': async () => import('ASSETS/icons/uiIcons/edit.svg'),
+
   'ui-environment': async () => import('ASSETS/icons/uiIcons/environment.svg'),
+
   'ui-error': async () => import('ASSETS/icons/uiIcons/error.svg'),
+
   'ui-error-past': async () => import('ASSETS/icons/uiIcons/error-past.svg'),
+
   'ui-external-link': async () => import('ASSETS/icons/uiIcons/external-link.svg'),
+
   'ui-externalLink': async () => import('ASSETS/icons/uiIcons/externalLink.svg'),
+
   'ui-eye': async () => import('ASSETS/icons/uiIcons/eye.svg'),
+
   'ui-eyeSlash': async () => import('ASSETS/icons/uiIcons/eyeSlash.svg'),
+
   'ui-filter': async () => import('ASSETS/icons/uiIcons/filter.svg'),
+
   'ui-flag': async () => import('ASSETS/icons/uiIcons/flag.svg'),
+
   'ui-folder': async () => import('ASSETS/icons/uiIcons/folder.svg'),
+
   'ui-folderMove': async () => import('ASSETS/icons/uiIcons/folderMove.svg'),
+
   'ui-forgoing': async () => import('ASSETS/icons/uiIcons/forgoing.svg'),
+
   'ui-forgoing-check': async () => import('ASSETS/icons/uiIcons/forgoing-check.svg'),
+
   'ui-forgoing-error': async () => import('ASSETS/icons/uiIcons/forgoing-error.svg'),
+
   'ui-fullScreen': async () => import('ASSETS/icons/uiIcons/fullScreen.svg'),
+
   'ui-globe': async () => import('ASSETS/icons/uiIcons/globe.svg'),
+
   'ui-hide': async () => import('ASSETS/icons/uiIcons/hide.svg'),
+
   'ui-home': async () => import('ASSETS/icons/uiIcons/home.svg'),
+
   'ui-hourglass': async () => import('ASSETS/icons/uiIcons/hourglass.svg'),
+
   'ui-image': async () => import('ASSETS/icons/uiIcons/image.svg'),
+
+  'ui-image-preview': async () => import('ASSETS/icons/uiIcons/image-preview.svg'),
+
   'ui-inbox': async () => import('ASSETS/icons/uiIcons/inbox.svg'),
+
   'ui-infoCircle': async () => import('ASSETS/icons/uiIcons/infoCircle.svg'),
+
   'ui-internet': async () => import('ASSETS/icons/uiIcons/internet.svg'),
   'ui-italic': async () => import('ASSETS/icons/uiIcons/italic.svg'),
+
   'ui-keyboardHide': async () => import('ASSETS/icons/uiIcons/keyboardHide.svg'),
+
   'ui-laptop': async () => import('ASSETS/icons/uiIcons/laptop.svg'),
+
   'ui-leave': async () => import('ASSETS/icons/uiIcons/leave.svg'),
+
   'ui-listOrder': async () => import('ASSETS/icons/uiIcons/listOrder.svg'),
+
   'ui-loader': async () => import('ASSETS/icons/uiIcons/loader.svg'),
+
   'ui-lock': async () => import('ASSETS/icons/uiIcons/lock.svg'),
+
   'ui-lock-alternate': async () => import('ASSETS/icons/uiIcons/lock-alternate.svg'),
+
   'ui-logout': async () => import('ASSETS/icons/uiIcons/logout.svg'),
+
   'ui-mail': async () => import('ASSETS/icons/uiIcons/mail.svg'),
+
   'ui-mailRead': async () => import('ASSETS/icons/uiIcons/mailRead.svg'),
-  'ui-mailUnread': async () => import('ASSETS/icons/uiIcons/unreadMail.svg'),
+
+  'ui-mailUnread': async () => import('ASSETS/icons/uiIcons/mailUnread.svg'),
+
   'ui-megaphone': async () => import('ASSETS/icons/uiIcons/megaphone.svg'),
+
   'ui-messageInfo': async () => import('ASSETS/icons/uiIcons/messageInfo.svg'),
+
   'ui-mic': async () => import('ASSETS/icons/uiIcons/mic.svg'),
+
   'ui-mic-preview': async () => import('ASSETS/icons/uiIcons/mic-preview.svg'),
+
   'ui-minus': async () => import('ASSETS/icons/uiIcons/minus.svg'),
   'ui-move': async () => import('ASSETS/icons/uiIcons/move.svg'),
   'ui-notif': async () => import('ASSETS/icons/uiIcons/notif.svg'),
@@ -314,7 +396,6 @@ const imports = {
   'ui-plus': async () => import('ASSETS/icons/uiIcons/plus.svg'),
   'ui-print': async () => import('ASSETS/icons/uiIcons/print.svg'),
   'ui-question': async () => import('ASSETS/icons/uiIcons/question.svg'),
-  'ui-questionMark': async () => import('ASSETS/icons/uiIcons/questionMark.svg'),
   'ui-radio-checked': async () => import('ASSETS/icons/uiIcons/radio-checked.svg'),
   'ui-radio-unchecked': async () => import('ASSETS/icons/uiIcons/radio-unchecked.svg'),
   'ui-rafterDown': async () => import('ASSETS/icons/uiIcons/rafterDown.svg'),

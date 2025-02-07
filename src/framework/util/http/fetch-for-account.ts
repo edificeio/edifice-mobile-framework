@@ -34,7 +34,7 @@ export async function fetchForAccount(
     // ToDo ? What to do if the refresh token fails?
   }
   const request = new RequestBuilder(...parseFetchArguments(methodOrUrl, urlOrInit, init)).withAccount(account).build();
-  console.debug('[HTTP] Fetch for account :', account.user.displayName, request.method, request.url);
+  console.debug('[HTTP] Fetch for account :', account.user.displayName, request.method, request.url, JSON.stringify(request));
   return await _fetch(request);
 }
 
