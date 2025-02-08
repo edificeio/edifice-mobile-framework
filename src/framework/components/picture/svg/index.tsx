@@ -228,6 +228,8 @@ const imports = {
 
   'ui-answer': async () => import('ASSETS/icons/uiIcons/answer.svg'),
 
+  'ui-answerall': async () => import('ASSETS/icons/uiIcons/answerall.svg'),
+
   'ui-applications': async () => import('ASSETS/icons/uiIcons/applications.svg'),
 
   'ui-arrowDown': async () => import('ASSETS/icons/uiIcons/arrowDown.svg'),
@@ -373,7 +375,7 @@ const imports = {
 
   'ui-mailRead': async () => import('ASSETS/icons/uiIcons/mailRead.svg'),
 
-  'ui-mailUnread': async () => import('ASSETS/icons/uiIcons/mailUnread.svg'),
+  'ui-mailUnread': async () => import('ASSETS/icons/uiIcons/unreadMail.svg'),
 
   'ui-megaphone': async () => import('ASSETS/icons/uiIcons/megaphone.svg'),
 
@@ -396,6 +398,7 @@ const imports = {
   'ui-plus': async () => import('ASSETS/icons/uiIcons/plus.svg'),
   'ui-print': async () => import('ASSETS/icons/uiIcons/print.svg'),
   'ui-question': async () => import('ASSETS/icons/uiIcons/question.svg'),
+  'ui-questionMark': async () => import('ASSETS/icons/uiIcons/questionMark.svg'),
   'ui-radio-checked': async () => import('ASSETS/icons/uiIcons/radio-checked.svg'),
   'ui-radio-unchecked': async () => import('ASSETS/icons/uiIcons/radio-unchecked.svg'),
   'ui-rafterDown': async () => import('ASSETS/icons/uiIcons/rafterDown.svg'),
