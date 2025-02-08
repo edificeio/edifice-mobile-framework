@@ -175,11 +175,15 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       const toIds = to.map(recipient => recipient.id);
       const ccIds = cc.map(recipient => recipient.id);
       const cciIds = cci.map(recipient => recipient.id);
+      const bodyText = body === '' ? '<div></div>' : body;
 
       if (draftIdSaved) {
-        await mailsService.mail.updateDraft({ draftId: draftIdSaved }, { body, subject, to: toIds, cc: ccIds, cci: cciIds });
+        await mailsService.mail.updateDraft(
+          { draftId: draftIdSaved },
+          { body: bodyText, subject, to: toIds, cc: ccIds, cci: cciIds },
+        );
       } else {
-        await mailsService.mail.sendToDraft({ body, subject, to: toIds, cc: ccIds, cci: cciIds });
+        await mailsService.mail.sendToDraft({ body: bodyText, subject, to: toIds, cc: ccIds, cci: cciIds });
       }
       props.navigation.navigate(mailsRouteNames.home, {
         from: fromFolder ?? MailsDefaultFolders.INBOX,
@@ -200,10 +204,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       const toIds = to.map(recipient => recipient.id);
       const ccIds = cc.map(recipient => recipient.id);
       const cciIds = cci.map(recipient => recipient.id);
+      const bodyText = body === '' ? '<div></div>' : body;
 
       await mailsService.mail.send(
         { inReplyTo: initialMailInfo?.id ?? undefined, draftId: draftIdSaved },
-        { body, subject, to: toIds, cc: ccIds, cci: cciIds },
+        { body: bodyText, subject, to: toIds, cc: ccIds, cci: cciIds },
       );
       props.navigation.navigate(mailsRouteNames.home, {
         from: fromFolder ?? MailsDefaultFolders.INBOX,
