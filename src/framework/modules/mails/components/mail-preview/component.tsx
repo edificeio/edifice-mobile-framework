@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-raw-text */
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { LayoutAnimation, TouchableOpacity, View } from 'react-native';
 
 import moment from 'moment';
 import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -27,6 +27,14 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const has2SwipeActions = onToggleUnread || onRestore;
   let infosRecipients: { text: string; ids: string[] } = mailsFormatRecipients(to, cc, cci);
   const refSwipeable = React.useRef<SwipeableMethods>(null);
+
+  React.useEffect(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+    return () => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    };
+  }, []);
 
   const renderAvatar = () => {
     if (isSender && infosRecipients.ids.length > 1) return <MailsRecipientAvatar type="Group" />;
