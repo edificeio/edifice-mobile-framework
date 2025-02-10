@@ -162,7 +162,8 @@ class Attachment extends React.PureComponent<
           requestAnimationFrame(() => {
             if (this.props.onDownloadFile) this.props.onDownloadFile(notifierId, lf, I18n.get('attachment-downloadsuccess-all'));
           });
-        }).catch(() => {
+        }).catch(e => {
+          console.error('Attachment download', e);
           // TODO: Manage error
         });
       }
@@ -220,7 +221,7 @@ class Attachment extends React.PureComponent<
                     (editMode && (att as ILocalAttachment).name) ||
                       (att as IRemoteAttachment).filename ||
                       (att as IRemoteAttachment).displayName ||
-                      '',
+                      ''
                   )}
                   style={{ marginRight: UI_SIZES.spacing.minor }}
                 />
@@ -265,7 +266,8 @@ class Attachment extends React.PureComponent<
                       requestAnimationFrame(() => {
                         if (onDownloadFile) onDownloadFile(notifierId, lf);
                       });
-                    }).catch(() => {
+                    }).catch(e => {
+                      console.error('Attachment download', e);
                       // TODO: Manage error
                     });
                   }}
@@ -297,7 +299,7 @@ class Attachment extends React.PureComponent<
           filepath: att.uri,
           filetype: att.mime,
         },
-        { _needIOSReleaseSecureAccess: false },
+        { _needIOSReleaseSecureAccess: false }
       ) as LocalFile;
     const file = editMode ? toLocalFile(attachment as ILocalAttachment) : newDownloadedFile;
     if (!this.attId) {
@@ -317,7 +319,8 @@ class Attachment extends React.PureComponent<
         onOpenFile(notifierId, file, navigation);
       }
     } else {
-      this.startDownload(attachment as IRemoteAttachment).catch(() => {
+      this.startDownload(attachment as IRemoteAttachment).catch(e => {
+        console.error('Attachment download', e);
         /*TODO: Manage error*/
       });
     }
@@ -352,7 +355,7 @@ class Attachment extends React.PureComponent<
                 progress: res.bytesWritten / res.contentLength,
               });
             },
-          },
+          }
         )
         .then(lf => {
           this.setState({ newDownloadedFile: lf });
@@ -363,12 +366,13 @@ class Attachment extends React.PureComponent<
           });
           if (callback) callback(lf);
         })
-        .catch(() => {
+        .catch(e => {
           if (this.props.onError) this.props.onError();
           this.setState({
             downloadState: DownloadState.Error,
             progress: 0,
           });
+          console.error('Attachment startDownload', e);
         });
     };
     this.props.dispatch(downloadAction(df));
