@@ -13,7 +13,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture';
+import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -95,7 +95,8 @@ const openFile = (notifierId: string, file: SyncedFile | undefined) => {
     if (file) {
       try {
         file.open();
-      } catch {
+      } catch (err) {
+        console.error('Open file failed: ', (err as Error).message);
         Toast.showError(I18n.get('attachment-download-error'));
       }
     }
@@ -109,7 +110,8 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
         file.mirrorToDownloadFolder();
         //Toast.hide(lastToast);
         lastToast = Toast.showSuccess(toastMessage ?? I18n.get('attachment-downloadsuccess-name', { name: file.filename }));
-      } catch {
+      } catch (err) {
+        console.error('Open file failed: ', (err as Error).message);
         Toast.showError(I18n.get('attachment-download-error'));
       }
     }
@@ -162,7 +164,8 @@ class Attachment extends React.PureComponent<
           requestAnimationFrame(() => {
             if (this.props.onDownloadFile) this.props.onDownloadFile(notifierId, lf, I18n.get('attachment-downloadsuccess-all'));
           });
-        }).catch(() => {
+        }).catch(e => {
+          console.error('Attachment download failed: ', e);
           // TODO: Manage error
         });
       }
@@ -256,6 +259,30 @@ class Attachment extends React.PureComponent<
               </SmallText>
             </View>
           </Pressable>
+          {Platform.OS !== 'ios' ? (
+            <View>
+              {!editMode ? (
+                <RNGHTouchableOpacity
+                  onPress={async () => {
+                    await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
+                      requestAnimationFrame(() => {
+                        if (onDownloadFile) onDownloadFile(notifierId, lf);
+                      });
+                    }).catch(e => {
+                      console.error('Attachment download failed: ', e);
+                      // TODO: Manage error
+                    });
+                  }}
+                  style={{ paddingLeft: UI_SIZES.spacing.small }}>
+                  <IconButton
+                    iconName="download"
+                    iconColor={theme.palette.grey.black}
+                    buttonStyle={{ backgroundColor: theme.palette.grey.fog }}
+                  />
+                </RNGHTouchableOpacity>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       </View>
     );
@@ -287,14 +314,15 @@ class Attachment extends React.PureComponent<
       if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
         try {
           if (file) await openDocument(file, navigation);
-        } catch {
-          // TODO: handle error
+        } catch (err) {
+          console.error('Open document failed: ', (err as Error).message);
         }
       } else {
         onOpenFile(notifierId, file, navigation);
       }
     } else {
-      this.startDownload(attachment as IRemoteAttachment).catch(() => {
+      this.startDownload(attachment as IRemoteAttachment).catch(e => {
+        console.error('Attachment download failed: ', e);
         /*TODO: Manage error*/
       });
     }
@@ -340,12 +368,13 @@ class Attachment extends React.PureComponent<
           });
           if (callback) callback(lf);
         })
-        .catch(() => {
+        .catch(e => {
           if (this.props.onError) this.props.onError();
           this.setState({
             downloadState: DownloadState.Error,
             progress: 0,
           });
+          console.error('Attachment startDownload failed:', e);
         });
     };
     this.props.dispatch(downloadAction(df));
