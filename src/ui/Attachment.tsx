@@ -95,7 +95,8 @@ const openFile = (notifierId: string, file: SyncedFile | undefined) => {
     if (file) {
       try {
         file.open();
-      } catch {
+      } catch (err) {
+        console.debug('Open file failed: ', (err as Error).message);
         Toast.showError(I18n.get('attachment-download-error'));
       }
     }
@@ -109,7 +110,8 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
         file.mirrorToDownloadFolder();
         //Toast.hide(lastToast);
         lastToast = Toast.showSuccess(toastMessage ?? I18n.get('attachment-downloadsuccess-name', { name: file.filename }));
-      } catch {
+      } catch (err) {
+        console.debug('Open file failed: ', (err as Error).message);
         Toast.showError(I18n.get('attachment-download-error'));
       }
     }
@@ -312,8 +314,8 @@ class Attachment extends React.PureComponent<
       if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
         try {
           if (file) await openDocument(file, navigation);
-        } catch {
-          // TODO: handle error
+        } catch (err) {
+          console.debug('Open document failed: ', (err as Error).message);
         }
       } else {
         onOpenFile(notifierId, file, navigation);
