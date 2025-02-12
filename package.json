@@ -59,7 +59,7 @@
     "prepare-rev": "node cli/prepare-build.js rev",
     "prettier-all": "npx prettier src/**/*.*",
     "prettier-fix": "npx prettier --write src/**/*.*",
-    "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && node --max_old_space_size=16000 node_modules/react-native/cli.js start --reset-cache",
+    "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && npx react-native start --reset-cache --experimental-debugger",
     "scaffold": "run(){ node cli/scaffold.js $@; }; run",
     "ts-all": "tsc --noEmit"
   },
