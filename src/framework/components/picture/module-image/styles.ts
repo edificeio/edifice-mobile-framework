@@ -16,8 +16,4 @@ export default StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  moduleImageContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });
