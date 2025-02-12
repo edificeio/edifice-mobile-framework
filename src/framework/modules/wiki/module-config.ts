@@ -6,9 +6,10 @@ export const displayColor = appConf.is1d ? theme.palette.complementary.red : the
 
 export default new NavigableModuleConfig<'wiki', null>({
   displayAs: 'myAppsModule',
+  displayColor,
   displayI18n: 'wiki-module-title',
   displayOrder: 0,
-  displayPicture: { fill: displayColor.regular, name: 'wiki', type: 'Svg' },
+  displayPicture: { name: 'wiki', type: 'Svg' },
   entcoreScope: ['wiki'],
   matchEntcoreApp: '/wiki',
   name: 'wiki',
