@@ -1,47 +1,21 @@
 import * as React from 'react';
-import { View, ViewProps } from 'react-native';
 
-import { FlashList, FlashListProps, ListRenderItem, ViewToken } from '@shopify/flash-list';
+import { FlashListProps, ViewToken } from '@shopify/flash-list';
 
-import styles from './styles';
 import type { ResourceExplorerTemplate } from './types';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
-import { BodyText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import ResourceGrid from '~/framework/modules/explorer/components/resource-grid';
 import { ExplorerData, Folder, Resource } from '~/framework/modules/explorer/model/types';
 import service from '~/framework/modules/explorer/service/index';
 import { HTTPError } from '~/framework/util/http';
-
-const contentContainerStyle: FlashListProps<ExplorerData['items'][0]>['contentContainerStyle'] = {
-  padding: UI_SIZES.spacing.big / 2,
-};
-
-const elementContainerStyle: ViewProps['style'] = {
-  margin: UI_SIZES.spacing.big / 2,
-  overflow: 'hidden',
-};
-
-const ResourceExplorerItem: ListRenderItem<ExplorerData['items'][0]> = ({ index, item }) => {
-  return (
-    <View style={elementContainerStyle}>
-      <BodyText style={styles.item}>{item === null ? `(${index})` : item.name}</BodyText>
-    </View>
-  );
-};
 
 const estimatedListSize = {
   height: UI_SIZES.getViewHeight(),
   width: UI_SIZES.screen.width,
 };
-
-const keyExtractor: FlashListProps<ExplorerData['items'][0]>['keyExtractor'] = (item, index) => {
-  // console.debug('keyExtractor', index, item);
-  return item === null ? index.toString() : `${item.resourceType}${item.id}`;
-};
-
-const getItemType: FlashListProps<ExplorerData['items'][0]>['getItemType'] = item => item?.resourceType ?? 0;
 
 const viewabilityConfig: FlashListProps<ExplorerData['items'][0]>['viewabilityConfig'] = {
   itemVisiblePercentThreshold: 0,
@@ -51,7 +25,7 @@ const viewabilityConfig: FlashListProps<ExplorerData['items'][0]>['viewabilityCo
 
 const PAGE_SIZE = 24;
 
-export function ResourceExplorerTemplate({ moduleConfig: { displayPicture } }: ResourceExplorerTemplate.AllProps) {
+export function ResourceExplorerTemplate({ moduleConfig }: ResourceExplorerTemplate.AllProps) {
   const [data, setData] = React.useState<ExplorerData>({ items: [], nbFolders: 0, nbResources: 0 });
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
   const dataRef = React.useRef(data);
@@ -181,23 +155,18 @@ export function ResourceExplorerTemplate({ moduleConfig: { displayPicture } }: R
   const renderContent: ContentLoaderProps['renderContent'] = React.useCallback(
     refreshControl => {
       return (
-        <FlashList
+        <ResourceGrid
+          moduleConfig={moduleConfig}
           data={data.items}
-          numColumns={2}
-          renderItem={ResourceExplorerItem}
           extraData={extraData}
-          estimatedItemSize={TextSizeStyle.Medium.lineHeight * 5 + 4}
           estimatedListSize={estimatedListSize}
-          keyExtractor={keyExtractor}
-          getItemType={getItemType}
           refreshControl={refreshControl}
           viewabilityConfig={viewabilityConfig}
           onViewableItemsChanged={onViewableItemsChanged}
-          contentContainerStyle={contentContainerStyle}
         />
       );
     },
-    [data.items, extraData, onViewableItemsChanged],
+    [data.items, extraData, moduleConfig, onViewableItemsChanged],
   );
 
   return (
