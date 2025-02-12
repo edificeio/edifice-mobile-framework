@@ -1,8 +1,8 @@
 import { Temporal } from '@js-temporal/polyfill';
 
-import type { ExplorerNode, ExplorerPageData, ResourceHistory } from '../model/types';
 import type { API } from './types';
 
+import type { ExplorerNode, ExplorerPageData, ResourceHistory } from '~/framework/modules/explorer/model/types';
 import http from '~/framework/util/http';
 
 const hydrateResourceHistory = (

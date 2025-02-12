@@ -1,6 +1,6 @@
 import type { Temporal } from '@js-temporal/polyfill';
 
-import type { API } from '../service/types';
+import type { API } from '~/framework/modules/explorer/service/types';
 
 export interface ResourceHistory {
   updatedAt: Temporal.Instant; // timestamp

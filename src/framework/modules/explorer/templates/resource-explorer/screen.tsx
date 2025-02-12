@@ -3,8 +3,6 @@ import { View, ViewProps } from 'react-native';
 
 import { FlashList, FlashListProps, ListRenderItem, ViewToken } from '@shopify/flash-list';
 
-import { ExplorerData, Folder, Resource } from '../../model/types';
-import service from '../../service/index';
 import styles from './styles';
 import type { ResourceExplorerTemplate } from './types';
 
@@ -12,6 +10,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { BodyText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { ExplorerData, Folder, Resource } from '~/framework/modules/explorer/model/types';
+import service from '~/framework/modules/explorer/service/index';
 import { HTTPError } from '~/framework/util/http';
 
 const contentContainerStyle: FlashListProps<ExplorerData['items'][0]>['contentContainerStyle'] = {
