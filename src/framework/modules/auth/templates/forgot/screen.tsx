@@ -28,9 +28,7 @@ import { ValidatorBuilder } from '~/utils/form';
 
 const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
 
-const iconRafterDownComponent = () => (
-  <Svg name="ui-rafterDown" fill={theme.palette.grey.black} style={styles.dropDownArrow} />
-);
+const iconRafterDownComponent = () => <Svg name="ui-rafterDown" fill={theme.palette.grey.black} style={styles.dropDownArrow} />;
 const iconRafterUpComponent = () => <Svg name="ui-rafterUp" fill={theme.palette.grey.black} style={styles.dropDownArrow} />;
 
 export const ForgotPage: React.FC<ForgotScreenPrivateProps> = props => {
@@ -192,7 +190,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = props => {
             returnKeyLabel={I18n.get('auth-forgot-submit')}
             returnKeyType="done"
             showError={hasError}
-            showIconCallback
+            showStatusIcon
             spellCheck={false}
             value={login}
           />
