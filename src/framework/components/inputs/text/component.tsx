@@ -136,11 +136,9 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
     if (maxLength)
       return (
-        <View style={isActuallyMultiline ? styles.maxLengthIndicatorMultiline : styles.maxLengthIndicator}>
-          <CaptionItalicText style={[styles.maxLengthText, isMaxLength && { color: theme.palette.status.failure.regular }]}>
-            {limitCounter}
-          </CaptionItalicText>
-        </View>
+        <CaptionItalicText style={[styles.maxLengthText, isMaxLength && { color: theme.palette.status.failure.regular }]}>
+          {limitCounter}
+        </CaptionItalicText>
       );
   }, [isMaxLength, maxLength, numberOfContentLines, props.multiline, value?.length]);
 

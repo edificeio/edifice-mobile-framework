@@ -5,6 +5,8 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import type { WikiHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import MultilineTextInput from '~/framework/components/inputs/multiline';
+import TextInput from '~/framework/components/inputs/text';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
@@ -22,9 +24,13 @@ export const computeNavBar = ({
 });
 
 export default function WikiHomeScreen(props: WikiHomeScreenPrivateProps) {
+  const [v1, setV1] = React.useState<string>('');
+  const [v2, setV2] = React.useState<string>('');
   return (
     <PageView>
       <BodyBoldText>wiki home screen</BodyBoldText>
+      <TextInput maxLength={40} value={v1} onChangeText={setV1} />
+      <MultilineTextInput maxLength={10000} numberOfLines={3} value={v2} onChangeText={setV2} />
     </PageView>
   );
 }
