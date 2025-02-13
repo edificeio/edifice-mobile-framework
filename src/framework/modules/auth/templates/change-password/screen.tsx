@@ -218,7 +218,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
             ) : (
               <PasswordInput
                 placeholder={I18n.get('auth-changepassword-placeholder')}
-                showIconCallback
+                showStatusIcon
                 showError={formModel.showOldPasswordError(oldPassword)}
                 value={oldPassword}
                 onChangeText={formModel.oldPassword.changeCallback(onChange('oldPassword'))}
@@ -242,7 +242,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
           input={
             <PasswordInput
               placeholder={I18n.get('auth-changepassword-placeholder')}
-              showIconCallback
+              showStatusIcon
               showError={formModel.showNewPasswordError(newPassword)}
               value={newPassword}
               onChangeText={formModel.newPassword.changeCallback(onChange('newPassword'))}
@@ -265,7 +265,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
           input={
             <PasswordInput
               placeholder={I18n.get('auth-changepassword-placeholder')}
-              showIconCallback
+              showStatusIcon
               showError={formModel.showPasswordConfirmError(confirm)}
               value={confirm}
               onChangeText={formModel.confirm.changeCallback(onChange('confirm'))}
