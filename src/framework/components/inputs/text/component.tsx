@@ -1,5 +1,5 @@
-import React, { forwardRef, useCallback, useMemo, useState } from 'react';
-import { ColorValue, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
+import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { ColorValue, Platform, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
 import { TextInputProps } from './types';
@@ -7,16 +7,16 @@ import { TextInputProps } from './types';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { CaptionItalicText } from '~/framework/components/text';
+import { CaptionItalicText, TextSizeStyle } from '~/framework/components/text';
 
 const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
-
 export type TextInputType = RNTextInput;
 
 const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
   const {
     annotation,
     disabled,
+    maxLength,
     onBlur,
     onFocus,
     onToggle,
@@ -34,6 +34,13 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isToggle, setIsToggle] = useState<boolean>(false);
+  const [numberOfContentLines, setNumberOfContentLines] = useState<number>(1);
+
+  useEffect(() => {
+    if (!value || value.length === 0) {
+      setNumberOfContentLines(1);
+    }
+  }, [value]);
 
   const isShowIconCallback = useMemo(
     () => (showError || showSuccess) && showIconCallback,
@@ -104,6 +111,39 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       );
   }, [isShowIconCallback, positionIconCallbackInput, showError]);
 
+  const isMaxLength = useMemo(() => {
+    return value?.length === maxLength;
+  }, [value?.length, maxLength]);
+
+  const handleContentSizeChange = useCallback(
+    event => {
+      if (value && value.length > 0) {
+        const { height } = event.nativeEvent.contentSize;
+        const androidFixedLineHeight = TextSizeStyle.Medium.lineHeight + 2;
+        const lineHeight = Platform.OS === 'ios' ? TextSizeStyle.Medium.lineHeight : androidFixedLineHeight;
+        const lines = Math.floor(height / lineHeight);
+        setNumberOfContentLines(Math.max(1, lines));
+      }
+    },
+    [value],
+  );
+
+  const renderMaxLengthIndicator = useCallback(() => {
+    const valueLength = value?.length;
+    const limitCounter = `${valueLength}/${maxLength}`;
+    const isMultiline = props.multiline;
+    const isActuallyMultiline = isMultiline && numberOfContentLines > 1;
+
+    if (maxLength)
+      return (
+        <View style={isActuallyMultiline ? styles.maxLengthIndicatorMultiline : styles.maxLengthIndicator}>
+          <CaptionItalicText style={[styles.maxLengthText, isMaxLength && { color: theme.palette.status.failure.regular }]}>
+            {limitCounter}
+          </CaptionItalicText>
+        </View>
+      );
+  }, [isMaxLength, maxLength, numberOfContentLines, props.multiline, value?.length]);
+
   const renderToggle = useCallback(() => {
     if (toggleIconOn && toggleIconOff)
       return (
@@ -126,6 +166,8 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       <View style={styles.viewInput} testID={testID ?? ''}>
         <RNTextInput
           {...props}
+          maxLength={maxLength}
+          onContentSizeChange={handleContentSizeChange}
           onFocus={e => handleFocus(e)}
           onBlur={e => handleBlur(e)}
           placeholderTextColor={theme.palette.grey.stone}
@@ -135,15 +177,32 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
             styles.input,
             { borderColor: colorStatus(), paddingRight },
             { ...(disabled ? styles.inputDisabled : null) },
+            { ...(maxLength ? styles.inputWithMaxLength : null) },
             style,
           ]}
         />
 
         {renderIconInput()}
         {renderToggle()}
+        {renderMaxLengthIndicator()}
       </View>
     );
-  }, [props, ref, disabled, paddingRight, colorStatus, style, renderIconInput, renderToggle, handleFocus, handleBlur, testID]);
+  }, [
+    testID,
+    props,
+    maxLength,
+    handleContentSizeChange,
+    ref,
+    disabled,
+    colorStatus,
+    paddingRight,
+    style,
+    renderIconInput,
+    renderToggle,
+    renderMaxLengthIndicator,
+    handleFocus,
+    handleBlur,
+  ]);
 
   const renderAnnotation = useCallback(() => {
     if (annotation)

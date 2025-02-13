@@ -33,6 +33,29 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.grey.pearl,
     color: theme.palette.grey.graphite,
   },
+  inputWithMaxLength: {
+    paddingRight: UI_SIZES.spacing.medium + 45,
+    position: 'relative',
+  },
+  maxLengthIndicator: {
+    alignItems: 'center',
+    height: '100%',
+    justifyContent: 'center',
+    minWidth: UI_SIZES.dimensions.width.mediumPlus + UI_SIZES.dimensions.width.larger,
+    position: 'absolute',
+    right: UI_SIZES.spacing.medium,
+  },
+  maxLengthIndicatorMultiline: {
+    alignItems: 'center',
+    bottom: Platform.OS === 'android' ? UI_SIZES.spacing.medium : UI_SIZES.spacing.big - UI_SIZES.spacing._LEGACY_tiny,
+    minWidth: UI_SIZES.dimensions.width.mediumPlus + UI_SIZES.dimensions.width.larger,
+    position: 'absolute',
+    right: UI_SIZES.spacing.medium,
+  },
+  maxLengthText: {
+    color: theme.palette.grey.graphite,
+    textAlign: 'right',
+  },
   toggle: {
     borderColor: theme.ui.border.input,
     borderLeftWidth: 1,
