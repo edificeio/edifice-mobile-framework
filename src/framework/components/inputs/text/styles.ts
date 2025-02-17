@@ -34,22 +34,19 @@ const styles = StyleSheet.create({
     color: theme.palette.grey.graphite,
   },
   inputWithMaxLength: {
-    paddingRight: UI_SIZES.spacing.medium + 45,
+    paddingRight: UI_SIZES.spacing.medium,
     position: 'relative',
   },
   maxLengthText: {
     alignItems: 'center',
-    backgroundColor: 'red',
+    backgroundColor: 'blue',
     color: theme.palette.grey.graphite,
     justifyContent: 'center',
     lineHeight: TextSizeStyle.Medium.lineHeight,
-
-    // minWidth: UI_SIZES.dimensions.width.mediumPlus + UI_SIZES.dimensions.width.larger,
     position: 'absolute',
-
     right: UI_SIZES.spacing.medium,
     textAlign: 'right',
-    top: Platform.OS === 'android' ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
+    // top: Platform.OS === 'android' ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
   },
   toggle: {
     borderColor: theme.ui.border.input,
