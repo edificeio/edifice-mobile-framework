@@ -7,6 +7,8 @@ import { MultilineTextInputProps } from './types';
 import TextInput, { styles as stylesTextInput } from '~/framework/components/inputs/text';
 import { TextSizeStyle } from '~/framework/components/text';
 
+const IOS_TEXTINPUT_LINE_HEIGHT = 1.2786885246;
+
 const MultilineTextInput = forwardRef<RNTextInput, MultilineTextInputProps>((props: MultilineTextInputProps, ref) => {
   const { numberOfLines } = props;
   const initialHeight = TextSizeStyle.Medium.lineHeight! * numberOfLines + 2 * stylesTextInput.input.paddingTop;

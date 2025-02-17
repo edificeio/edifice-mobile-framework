@@ -1,13 +1,5 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ColorValue,
-  NativeSyntheticEvent,
-  Platform,
-  TextInput as RNTextInput,
-  TextInputContentSizeChangeEventData,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { forwardRef, useCallback, useMemo, useState } from 'react';
+import { ColorValue, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
 import { TextInputProps } from './types';
@@ -15,7 +7,7 @@ import { TextInputProps } from './types';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { CaptionItalicText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionItalicText } from '~/framework/components/text';
 
 const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
 export type TextInputType = RNTextInput;
@@ -42,27 +34,8 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isToggle, setIsToggle] = useState<boolean>(false);
-  const [numberOfContentLines, setNumberOfContentLines] = useState<number>(1);
-  const counterInitialPosition = UI_SIZES.spacing.medium;
-  const [counterPosition, setCounterPosition] = useState<number>(counterInitialPosition);
+  // const [numberOfContentLines, setNumberOfContentLines] = useState<number>(1);
   const [counterWidth, setCounterWidth] = useState<number>(0);
-
-  useEffect(() => {
-    if (!value || value.length === 0) {
-      setNumberOfContentLines(1);
-    }
-  }, [value]);
-
-  useEffect(() => {
-    if (value && value.length > 0) {
-      const basePadding = Platform.OS === 'android' ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium;
-      const lineHeight = Platform.OS === 'ios' ? TextSizeStyle.Medium.lineHeight : TextSizeStyle.Medium.lineHeight + 2;
-      const topPositionxx = basePadding + lineHeight * (numberOfContentLines - 1);
-      setCounterPosition(topPositionxx);
-
-      console.log('itopPositionxx in UE-------------------------', topPositionxx, 'nb of cont lines', numberOfContentLines);
-    }
-  }, [numberOfContentLines, value]);
 
   const isShowIconCallback = useMemo(
     () => (showError || showSuccess) && showIconCallback,
@@ -137,20 +110,6 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     return value?.length === maxLength;
   }, [value?.length, maxLength]);
 
-  const handleContentSizeChange = useCallback(
-    (event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-      if (value && value.length > 0) {
-        const { height } = event.nativeEvent.contentSize;
-        const androidFixedLineHeight = TextSizeStyle.Medium.lineHeight + 2;
-        const lineHeight = Platform.OS === 'ios' ? TextSizeStyle.Medium.lineHeight : androidFixedLineHeight;
-        const lines = Math.floor(height / lineHeight);
-
-        setNumberOfContentLines(Math.max(1, lines));
-      }
-    },
-    [value],
-  );
-
   const setCurrentCounterWidth = event => {
     const { width } = event.nativeEvent.layout;
     setCounterWidth(width);
@@ -159,7 +118,6 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
   const renderMaxLengthIndicator = useCallback(() => {
     const valueLength = value?.length;
     const lengthCounter = `${valueLength}/${maxLength}`;
-    const isMultiline = props.multiline;
 
     if (maxLength)
       return (
@@ -168,14 +126,14 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
             styles.maxLengthText,
             isMaxLength && { color: theme.palette.status.failure.regular },
             {
-              top: counterPosition,
+              bottom: UI_SIZES.spacing.medium,
             },
           ]}
           onLayout={setCurrentCounterWidth}>
           {lengthCounter}
         </CaptionItalicText>
       );
-  }, [isMaxLength, maxLength, props.multiline, counterPosition, value?.length]);
+  }, [isMaxLength, maxLength, value?.length]);
 
   const renderToggle = useCallback(() => {
     if (toggleIconOn && toggleIconOff)
@@ -200,7 +158,6 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
         <RNTextInput
           {...props}
           maxLength={maxLength}
-          onContentSizeChange={handleContentSizeChange}
           onFocus={e => handleFocus(e)}
           onBlur={e => handleBlur(e)}
           placeholderTextColor={theme.palette.grey.stone}
@@ -226,7 +183,6 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     testID,
     props,
     maxLength,
-    handleContentSizeChange,
     ref,
     disabled,
     colorStatus,

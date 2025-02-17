@@ -39,10 +39,9 @@ const styles = StyleSheet.create({
   },
   maxLengthText: {
     alignItems: 'center',
-    backgroundColor: 'blue',
+    // backgroundColor: 'blue',
     color: theme.palette.grey.graphite,
     justifyContent: 'center',
-    lineHeight: TextSizeStyle.Medium.lineHeight,
     position: 'absolute',
     right: UI_SIZES.spacing.medium,
     textAlign: 'right',
