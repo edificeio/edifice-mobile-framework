@@ -26,11 +26,13 @@ export const computeNavBar = ({
 export default function WikiHomeScreen(props: WikiHomeScreenPrivateProps) {
   const [v1, setV1] = React.useState<string>('');
   const [v2, setV2] = React.useState<string>('');
+  const [v3, setV3] = React.useState<string>('');
   return (
     <PageView>
       <BodyBoldText>wiki home screen</BodyBoldText>
       <TextInput maxLength={40} value={v1} onChangeText={setV1} />
       <MultilineTextInput maxLength={10000} numberOfLines={3} value={v2} onChangeText={setV2} />
+      <MultilineTextInput maxLength={100} numberOfLines={1} value={v3} onChangeText={setV3} />
     </PageView>
   );
 }

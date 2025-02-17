@@ -1,13 +1,13 @@
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
-import { ColorValue, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
+import { ColorValue, PixelRatio, Platform, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
+import styles, { TEXTINPUT_LINE_HEIGHT } from './styles';
 import { TextInputProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { CaptionItalicText } from '~/framework/components/text';
+import { CaptionItalicText, TextSizeStyle } from '~/framework/components/text';
 
 const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
 export type TextInputType = RNTextInput;
@@ -126,7 +126,19 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
             styles.maxLengthText,
             isMaxLength && { color: theme.palette.status.failure.regular },
             {
-              bottom: UI_SIZES.spacing.medium,
+              // Computing of vertical alignment of the label = Padding + half of the difference between the two sizes of texts.
+              // TextInput sizing logic depends on the OS. On Android, we need to compensate the line-height included to the padding-bottom.
+              bottom: Platform.select({
+                android:
+                  (TextSizeStyle.Medium.lineHeight - TextSizeStyle.Small.lineHeight) / 2 +
+                  UI_SIZES.spacing.medium -
+                  ((styles.input.fontSize * TEXTINPUT_LINE_HEIGHT - TextSizeStyle.Small.lineHeight) * PixelRatio.getFontScale()) /
+                    2,
+                default:
+                  styles.input.paddingBottom -
+                  ((styles.input.fontSize * TEXTINPUT_LINE_HEIGHT - TextSizeStyle.Small.lineHeight) * PixelRatio.getFontScale()) /
+                    2,
+              }),
             },
           ]}
           onLayout={setCurrentCounterWidth}>

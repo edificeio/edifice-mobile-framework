@@ -60,9 +60,7 @@ export const HeadingFontStyle = Platform.select({
 
 export type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Bigger' | 'Huge' | 'Giant';
 
-const getNormalizedLineHeight = (fontSize: number): number => {
-  return Platform.OS === 'android' ? getScaleFontSize(fontSize) * PixelRatio.getFontScale() : getScaleFontSize(fontSize);
-};
+const getNormalizedLineHeight = (fontSize: number): number => getScaleFontSize(fontSize);
 
 export const TextSizeStyle = {
   Big: {
