@@ -4,30 +4,38 @@ import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { check, checkMultiple, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
 
+export const ANDROID_10_SDK = 29;
+export const ANDROID_13_SDK = 33;
+
 const permissionsScenarios = {
   'camera': Platform.select<true | Permission>({
     android: PERMISSIONS.ANDROID.CAMERA,
     ios: PERMISSIONS.IOS.CAMERA,
   })!,
   'documents.read': Platform.select<true | Permission>({
-    android: DeviceInfo.getApiLevelSync() >= 29 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    android: DeviceInfo.getApiLevelSync() >= ANDROID_10_SDK ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
     ios: true,
   })!,
   'documents.write': Platform.select<true | Permission>({
-    android: DeviceInfo.getApiLevelSync() >= 29 ? true : PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+    android: DeviceInfo.getApiLevelSync() >= ANDROID_10_SDK ? true : PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
     ios: true,
   })!,
   'galery.read': Platform.select<true | Permission>({
-    android: DeviceInfo.getApiLevelSync() >= 29 ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    android:
+      DeviceInfo.getApiLevelSync() >= ANDROID_13_SDK
+        ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
+        : DeviceInfo.getApiLevelSync() < ANDROID_10_SDK
+          ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
+          : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
   'galery.write': Platform.select<true | Permission>({
     android:
-      DeviceInfo.getApiLevelSync() >= 33
+      DeviceInfo.getApiLevelSync() >= ANDROID_13_SDK
         ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
-        : DeviceInfo.getApiLevelSync() < 29
+        : DeviceInfo.getApiLevelSync() < ANDROID_10_SDK
           ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE
-          : true, // 30 - 32
+          : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
   })!,
 };

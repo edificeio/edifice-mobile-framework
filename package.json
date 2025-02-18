@@ -63,7 +63,7 @@
     "prepare-rev": "node cli/prepare-build.js rev",
     "prettier-all": "npx prettier src/**/*.*",
     "prettier-fix": "npx prettier --write src/**/*.*",
-    "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && node --max_old_space_size=16000 node_modules/react-native/cli.js start --reset-cache",
+    "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && node --max_old_space_size=16000 node_modules/react-native/cli.js start --reset-cache --experimental-debugger",
     "scaffold": "node cli/scaffold.js",
     "ts-all": "tsc --noEmit"
   },
@@ -128,7 +128,7 @@
     "react": "18.3.1",
     "react-i18next": "15.1.2",
     "react-is": "18.3.1",
-    "react-native": "0.75.4",
+    "react-native": "0.75.5",
     "react-native-action-sheet": "2.2.0",
     "react-native-app-link": "1.0.1",
     "react-native-blob-util": "0.19.11",

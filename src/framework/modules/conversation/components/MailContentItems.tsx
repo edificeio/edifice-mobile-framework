@@ -270,7 +270,7 @@ export const RenderPJs = ({
                   onPress={async () => {
                     try {
                       const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
-                      await sf.mirrorToDownloadFolder();
+                      await sf.moveToDownloadFolder();
                       Toast.showSuccess(I18n.get('conversation-mailcontent-downloadsuccess-name', { name: sf.filename }));
                     } catch {
                       Toast.showError(I18n.get('conversation-mailcontent-download-error'));
