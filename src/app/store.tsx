@@ -13,7 +13,7 @@
 import * as React from 'react';
 
 import { connect } from 'react-redux';
-import { applyMiddleware, combineReducers, compose, createStore, Reducer, Store } from 'redux';
+import { Action, applyMiddleware, combineReducers, compose, createStore, Reducer, Store } from 'redux';
 import { thunk } from 'redux-thunk';
 
 declare var window: any;
@@ -23,8 +23,8 @@ declare var window: any;
 export class Reducers {
   static $items: { [key: string]: Reducer } = {};
 
-  static register(name: string, item: Reducer) {
-    this.$items[name] = item;
+  static register<State, ActionType extends Action>(name: string, item: Reducer<State, ActionType>) {
+    this.$items[name] = item as Reducer;
     return item; // Allow chaining
   }
 
