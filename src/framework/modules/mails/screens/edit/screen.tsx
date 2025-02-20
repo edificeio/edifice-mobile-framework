@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Alert, Keyboard, View } from 'react-native';
 
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { connect } from 'react-redux';
 
 import styles from './styles';
-import { MailsEditType, type MailsEditScreenPrivateProps } from './types';
+import { type MailsEditScreenPrivateProps, MailsEditType } from './types';
 
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
-import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
@@ -44,11 +44,11 @@ export const computeNavBar = ({
 });
 
 const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
-  const { initialMailInfo, draftId, type, fromFolder } = props.route.params;
+  const { draftId, fromFolder, initialMailInfo, type } = props.route.params;
   const textInitialContentHTML = React.useMemo((): string => {
     if (type === MailsEditType.FORWARD)
       return addHtmlForward(
-        initialMailInfo?.from ?? { id: '', displayName: '', profile: AccountType.Guest },
+        initialMailInfo?.from ?? { displayName: '', id: '', profile: AccountType.Guest },
         initialMailInfo?.to ?? [],
         initialMailInfo?.subject ?? '',
         initialMailInfo?.body ?? '',
@@ -92,7 +92,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           const ccIds = cc.map(recipient => recipient.id);
           const cciIds = cci.map(recipient => recipient.id);
 
-          mailId = await mailsService.mail.sendToDraft({ body, subject, to: toIds, cc: ccIds, cci: cciIds });
+          mailId = await mailsService.mail.sendToDraft({ body, cc: ccIds, cci: cciIds, subject, to: toIds });
           setDraftIdSaved(mailId);
         }
         const fileUploaded = await mailsService.attachments.add({ mailId }, attachment, props.session!);
@@ -107,7 +107,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const onRemoveAttachment = React.useCallback(
     async attachment => {
       try {
-        await mailsService.attachments.remove({ mailId: draftIdSaved!, attachmentId: attachment.id });
+        await mailsService.attachments.remove({ attachmentId: attachment.id, mailId: draftIdSaved! });
         setAttachments(attachments.filter(att => att.id !== attachment.id));
       } catch (e) {
         console.error(e);
@@ -120,9 +120,9 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const onChangeRecipient = React.useCallback(
     (selectedRecipients, type, userId) => {
       const stateSetters: Record<MailsRecipientsType, React.Dispatch<React.SetStateAction<MailsVisible[]>>> = {
-        to: setTo,
         cc: setCc,
         cci: setCci,
+        to: setTo,
       };
 
       stateSetters[type](selectedRecipients);
@@ -180,10 +180,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       if (draftIdSaved) {
         await mailsService.mail.updateDraft(
           { draftId: draftIdSaved },
-          { body: bodyText, subject, to: toIds, cc: ccIds, cci: cciIds },
+          { body: bodyText, cc: ccIds, cci: cciIds, subject, to: toIds },
         );
       } else {
-        await mailsService.mail.sendToDraft({ body: bodyText, subject, to: toIds, cc: ccIds, cci: cciIds });
+        await mailsService.mail.sendToDraft({ body: bodyText, cc: ccIds, cci: cciIds, subject, to: toIds });
       }
       props.navigation.navigate(mailsRouteNames.home, {
         from: fromFolder ?? MailsDefaultFolders.INBOX,
@@ -207,8 +207,8 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       const bodyText = body === '' ? '<div></div>' : body;
 
       await mailsService.mail.send(
-        { inReplyTo: initialMailInfo?.id ?? undefined, draftId: draftIdSaved },
-        { body: bodyText, subject, to: toIds, cc: ccIds, cci: cciIds },
+        { draftId: draftIdSaved, inReplyTo: initialMailInfo?.id ?? undefined },
+        { body: bodyText, cc: ccIds, cci: cciIds, subject, to: toIds },
       );
       props.navigation.navigate(mailsRouteNames.home, {
         from: fromFolder ?? MailsDefaultFolders.INBOX,
@@ -254,7 +254,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         const draft = await mailsService.mail.get({ id: draftId! });
 
         const convertDraftRecipients = (recipients: { users: any[]; groups: any[] }): MailsVisible[] => {
-          const { users, groups } = recipients;
+          const { groups, users } = recipients;
           return [...users.map(convertRecipientUserInfoToVisible), ...groups.map(convertRecipientGroupInfoToVisible)];
         };
 
@@ -337,14 +337,14 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     if (!visibles) return;
 
     const commonProps = {
-      visibles,
-      onChangeRecipient,
       allInputsSelectedRecipients,
-      richEditorRef,
       inputFocused,
-      onFocus: setInputFocused,
       isStartScroll,
+      onChangeRecipient,
+      onFocus: setInputFocused,
       onToggleShowList: showList => setScrollEnabled(!showList),
+      richEditorRef,
+      visibles,
     };
 
     return (
@@ -387,13 +387,13 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         <Attachments
           isEditing
           attachments={attachments}
-          addAttachmentAction={onAddAttachment}
+          //addAttachmentAction={onAddAttachment}
           removeAttachmentAction={onRemoveAttachment}
         />
         <View style={{ minHeight: 600 }} />
       </View>
     ),
-    [attachments, onAddAttachment, onRemoveAttachment],
+    [attachments, onRemoveAttachment],
   );
 
   const renderContent = React.useCallback(() => {

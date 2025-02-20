@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { connect } from 'react-redux';
@@ -8,19 +9,16 @@ import { connect } from 'react-redux';
 import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
-import DefaultButton from '~/framework/components/buttons/default';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import ActionButtonBottomSheetModal from '~/framework/components/modals/bottom-sheet/action-button';
+import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import { PageView } from '~/framework/components/page';
-import { Svg } from '~/framework/components/picture';
 import Separator from '~/framework/components/separator';
-import { BodyText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { useSyncRef } from '~/framework/hooks/ref';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
@@ -201,32 +199,10 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   const choosePicsMenu = () => {
     return (
       <BottomSheetModal ref={choosePicsMenuRef} onDismiss={handleChoosePicsMenuDismissed}>
-        <DefaultButton
-          iconLeft="ui-image"
-          text={I18n.get('pickfile-image')}
-          contentColor={theme.palette.complementary.green.regular}
-          disabled
-          style={styles.choosePicsMenuTitle}
-        />
-        <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleTakePic}>
-          <Svg
-            height={UI_SIZES.elements.icon.default}
-            width={UI_SIZES.elements.icon.default}
-            name="ui-camera"
-            fill={theme.palette.grey.black}
-          />
-          <BodyText>{I18n.get('pickfile-take')}</BodyText>
-        </TouchableOpacity>
+        <HeaderBottomSheetModal title={I18n.get('pickfile-image')} />
+        <ActionButtonBottomSheetModal title={I18n.get('pickfile-take')} icon="ui-camera" onPress={handleTakePic} />
         <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.minor} />
-        <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleChoosePics}>
-          <Svg
-            height={UI_SIZES.elements.icon.default}
-            width={UI_SIZES.elements.icon.default}
-            name="ui-smartphone"
-            fill={theme.palette.grey.black}
-          />
-          <BodyText>{I18n.get('pickfile-pick')}</BodyText>
-        </TouchableOpacity>
+        <ActionButtonBottomSheetModal title={I18n.get('pickfile-pick')} icon="ui-smartphone" onPress={handleChoosePics} />
       </BottomSheetModal>
     );
   };

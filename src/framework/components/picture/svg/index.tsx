@@ -70,9 +70,9 @@ const imports = {
 
   'empty-mediacentre': async () => import('ASSETS/images/empty-screen/empty-mediacentre.svg'),
 
-  'empty-nofolders': async () => import('ASSETS/images/empty-screen/nofolders.svg'),
-
   'empty-news': async () => import('ASSETS/images/empty-screen/empty-news.svg'),
+
+  'empty-nofolders': async () => import('ASSETS/images/empty-screen/nofolders.svg'),
 
   'empty-presences': async () => import('ASSETS/images/empty-screen/empty-presences.svg'),
 
@@ -215,10 +215,12 @@ const imports = {
 
   'textbook-default': async () => import('ASSETS/images/textbook-default.svg'),
 
-  // UI Icons
-  'ui-addUser': async () => import('ASSETS/icons/uiIcons/addUser.svg'),
-
   timeLineGenerator: async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
+
+  // UI Icons
+  'ui-addFile': async () => import('ASSETS/icons/uiIcons/addFile.svg'),
+
+  'ui-addUser': async () => import('ASSETS/icons/uiIcons/addUser.svg'),
 
   'ui-alert-triangle': async () => import('ASSETS/icons/uiIcons/alert-triangle.svg'),
 
@@ -387,6 +389,7 @@ const imports = {
 
   'ui-minus': async () => import('ASSETS/icons/uiIcons/minus.svg'),
   'ui-move': async () => import('ASSETS/icons/uiIcons/move.svg'),
+  'ui-multimedia': async () => import('ASSETS/icons/uiIcons/multimedia.svg'),
   'ui-notif': async () => import('ASSETS/icons/uiIcons/notif.svg'),
   'ui-options': async () => import('ASSETS/icons/uiIcons/options.svg'),
   'ui-orderedList': async () => import('ASSETS/icons/uiIcons/orderedList.svg'),

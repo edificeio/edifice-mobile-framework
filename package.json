@@ -78,6 +78,7 @@
     "@react-native-clipboard/clipboard": "1.15.0",
     "@react-native-community/cli": "15.1.2",
     "@react-native-community/datetimepicker": "8.2.0",
+    "@react-native-community/eslint-config": "3.2.0",
     "@react-native-community/netinfo": "11.4.1",
     "@react-native-community/progress-bar-android": "1.0.5",
     "@react-native-community/push-notification-ios": "1.11.0",

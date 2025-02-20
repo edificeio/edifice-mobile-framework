@@ -14,6 +14,7 @@
   "attachment-downloadsuccess-all": "Fichiers enregistrés dans Téléchargements",
   "attachment-downloadsuccess-name": "{{name}} enregistré dans Téléchargements",
   "attachment-removeerror": "Erreur lors de la suppression de la pièce jointe",
+  "attachment-title": "Ajout d'une pièce jointe",
   "attachment-tryagain": "Réessayer",
   "audience-reactbutton": "Réagir",
   "audience-reaction_1": "Merci",
