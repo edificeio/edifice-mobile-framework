@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { ScrollViewProps, View } from 'react-native';
 
+import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
-import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
-import { useFocusEffect } from '@react-navigation/native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -30,6 +29,7 @@ import { Toggle } from '~/framework/components/toggle';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
+import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
 import { MailsPlaceholderList, MailsPlaceholderLittleList } from '~/framework/modules/mails/components/placeholder/list';
 import {
@@ -191,6 +191,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           setMails(mails => mails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)));
         setSelectedFolder(params.from);
         loadFolders();
+      } else {
+        loadFolders();
       }
     }, [props.route.params]),
   );
@@ -219,7 +221,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
         return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
       if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
-      return navigation.navigate(mailsRouteNames.details, { id, from: selectedFolder, folders });
+      return navigation.navigate(mailsRouteNames.details, { folders, from: selectedFolder, id });
     },
     [selectedFolder, navigation, setMails, folders],
   );
@@ -233,7 +235,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     try {
       setIsLoadingCreateNewFolder(true);
       const dataNewFolder = await mailsService.folder.create({ name: valueNewFolder, parentId: idParentFolder ?? '' });
-      switchFolder({ name: valueNewFolder, id: dataNewFolder });
+      switchFolder({ id: dataNewFolder, name: valueNewFolder });
       loadFolders();
       setValueNewFolder('');
       toast.showSuccess(I18n.get('mails-list-newfoldersuccess', { name: valueNewFolder }));
@@ -249,8 +251,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const handleMailAction = React.useCallback(
     async ({
       action,
-      updateMails,
       successMessage,
+      updateMails,
     }: {
       action: () => Promise<void>;
       updateMails?: () => void;
@@ -272,24 +274,24 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const onDelete = React.useCallback(async (id: string, permanently?: boolean) => {
     await handleMailAction({
       action: () => (permanently ? mailsService.mail.delete({ ids: [id] }) : mailsService.mail.moveToTrash({ ids: [id] })),
-      updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
       successMessage: permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash',
+      updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
     });
   }, []);
 
   const onToggleUnread = React.useCallback(async (id: string, unread: boolean) => {
     await handleMailAction({
       action: () => mailsService.mail.toggleUnread({ ids: [id], unread: !unread }),
-      updateMails: () => setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail))),
       successMessage: unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread',
+      updateMails: () => setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail))),
     });
   }, []);
 
   const onRestore = React.useCallback(async (id: string) => {
     await handleMailAction({
       action: () => mailsService.mail.restore({ ids: [id] }),
-      updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
       successMessage: 'mails-details-toastsuccessrestore',
+      updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
     });
   }, []);
 
