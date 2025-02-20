@@ -54,7 +54,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         initialMailInfo?.body ?? '',
       );
     return initialMailInfo?.body ?? '';
-  }, []);
+  }, [initialMailInfo, type]);
 
   const [visibles, setVisibles] = React.useState<MailsVisible[]>();
   const [allInputsSelectedRecipients, setAllInputsSelectedRecipients] = React.useState<string[]>([]);
@@ -167,7 +167,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         text: I18n.get('common-delete'),
       },
     ]);
-  }, [draftIdSaved, fromFolder]);
+  }, [draftIdSaved, fromFolder, props.navigation]);
 
   const onSendDraft = React.useCallback(async () => {
     try {
@@ -196,7 +196,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       toast.showError();
       setIsSending(false);
     }
-  }, [to, cc, cci, draftIdSaved, body, subject, fromFolder]);
+  }, [to, cc, cci, body, draftIdSaved, props.navigation, fromFolder, subject]);
 
   const onSend = React.useCallback(async () => {
     try {
@@ -221,7 +221,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       toast.showError();
       setIsSending(false);
     }
-  }, [to, cc, cci, initialMailInfo, draftIdSaved, body, subject, fromFolder]);
+  }, [to, cc, cci, body, draftIdSaved, initialMailInfo?.id, subject, props.navigation, fromFolder]);
 
   const onCheckSend = React.useCallback(() => {
     if (!body || !subject) {
@@ -367,18 +367,17 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     );
   }, [
     visibles,
+    allInputsSelectedRecipients,
+    inputFocused,
+    isStartScroll,
+    onChangeRecipient,
     to,
+    haveInitialCcCci,
+    moreRecipientsFields,
     cc,
     cci,
     subject,
-    initialMailInfo,
     type,
-    isStartScroll,
-    richEditorRef,
-    inputFocused,
-    allInputsSelectedRecipients,
-    onChangeRecipient,
-    openMoreRecipientsFields,
   ]);
 
   const renderBottomForm = React.useCallback(

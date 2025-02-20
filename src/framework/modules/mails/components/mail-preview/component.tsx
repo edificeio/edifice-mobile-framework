@@ -20,8 +20,8 @@ import { mailsFormatRecipients } from '~/framework/modules/mails/util';
 import { displayPastDate } from '~/framework/util/date';
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
-  const { cc, cci, date, from, hasAttachment, state, subject, to, response, unread, id } = props.data;
-  const { isSender, onPress, onDelete, onToggleUnread, onRestore } = props;
+  const { cc, cci, date, from, hasAttachment, id, response, state, subject, to, unread } = props.data;
+  const { isSender, onDelete, onPress, onRestore, onToggleUnread } = props;
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
   const TextComponent = isUnread ? SmallBoldText : SmallText;
   const has2SwipeActions = onToggleUnread || onRestore;

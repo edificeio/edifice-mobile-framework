@@ -85,23 +85,23 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       if (isOpen) setIsOpen(false);
       if (isEditing) setIsEditing(false);
     }
-  }, [props.inputFocused]);
+  }, [isEditing, isOpen, props.inputFocused, props.type]);
 
   React.useEffect(() => {
     if (viewContainerRef.current) {
       setTimeout(() => {
         viewContainerRef.current!.measure((x, y, width, height, pageX, pageY) => {
           Animated.spring(topPositionResults, {
-            toValue: y + height,
-            useNativeDriver: true,
             friction: 8,
             tension: 50,
+            toValue: y + height,
+            useNativeDriver: true,
           }).start();
           setHeightToRemoveList(height - heightInputToSave + INITIAL_HEIGHT_INPUT);
         });
       }, 100);
     }
-  }, [selectedRecipients]);
+  }, [heightInputToSave, selectedRecipients, topPositionResults]);
 
   const scrollToInput = () => {
     if (viewContainerRef.current) {
@@ -110,7 +110,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
           setHeightInputToSave(height);
           topPositionResults.setValue(y + height);
-          props.richEditorRef.current?.scrollTo({ y: y + height - INITIAL_HEIGHT_INPUT, animated: true });
+          props.richEditorRef.current?.scrollTo({ animated: true, y: y + height - INITIAL_HEIGHT_INPUT });
         });
       }, 300);
     }
@@ -237,15 +237,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       </View>
       {showList ? (
         <Animated.View
-          style={{
-            position: 'absolute',
-            width: '100%',
-            transform: [{ translateY: topPositionResults }],
-            backgroundColor: theme.palette.grey.white,
-            height: resultsHeight,
-            minHeight: resultsHeight,
-            zIndex: 99,
-          }}>
+          style={[
+            styles.resultsList,
+            {
+              height: resultsHeight,
+              minHeight: resultsHeight,
+              transform: [{ translateY: topPositionResults }],
+            },
+          ]}>
           <FlatList
             keyboardShouldPersistTaps="always"
             nestedScrollEnabled

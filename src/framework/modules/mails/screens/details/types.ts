@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
 
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IMailsFolder, MailsDefaultFolders, MailsFolderInfo } from '~/framework/modules/mails/model';
 import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
 

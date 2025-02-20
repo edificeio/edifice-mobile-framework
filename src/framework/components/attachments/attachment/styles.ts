@@ -21,6 +21,12 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
   },
+  modal: {
+    alignContent: 'center',
+    backgroundColor: theme.palette.grey.darkness,
+    flex: 1,
+    justifyContent: 'center',
+  },
   separator: {
     backgroundColor: theme.palette.grey.cloudy,
     height: SEPARATOR_HEIGHT,
@@ -31,11 +37,5 @@ export default StyleSheet.create({
     flex: 1,
     flexShrink: 1,
     marginLeft: UI_SIZES.spacing.minor,
-  },
-  modal: {
-    flex: 1,
-    backgroundColor: theme.palette.grey.darkness,
-    alignContent: 'center',
-    justifyContent: 'center',
   },
 });

@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import { HeaderBackButton } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
+import { FlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
 
-import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
 
-import { HeaderBackButton } from '@react-navigation/elements';
-import { FlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler';
-import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
@@ -38,6 +37,7 @@ import { default as Toast, default as toast } from '~/framework/components/toast
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
+import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
 import {
@@ -75,11 +75,11 @@ export const computeNavBar = ({
 const EMPTY_SVG_SIZE = getScaleWidth(150);
 
 const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
-  const { id, from, folders } = props.route.params;
+  const { folders, from, id } = props.route.params;
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
-  const [content, setContent] = React.useState<string>('');
-  const [history, setHistory] = React.useState<string>('');
+  const [mailContent, setMailContent] = React.useState<string>('');
+  const [mailHistory, setMailHistory] = React.useState<string>('');
   const [isInModalMove, setIsInModalMove] = React.useState<boolean>(false);
   const [newParentFolder, setNewParentFolder] = React.useState<MailsFolderInfo>();
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
@@ -95,13 +95,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const loadData = async () => {
     try {
-      const mail = await mailsService.mail.get({ id });
-      const infosRecipients = mailsFormatRecipients(mail.to, mail.cc, mail.cci);
-      const { content, history } = separateContentAndHistory(mail.body);
-      setInfosRecipients(infosRecipients);
-      setMail(mail);
-      setContent(content);
-      setHistory(history);
+      const mailData = await mailsService.mail.get({ id });
+      const _infosRecipients = mailsFormatRecipients(mailData.to, mailData.cc, mailData.cci);
+      const { content, history } = separateContentAndHistory(mailData.body);
+      setInfosRecipients(_infosRecipients);
+      setMail(mailData);
+      setMailContent(content);
+      setMailHistory(history);
     } catch (e) {
       console.error('Failed to fetch mail content', e);
       setError(true);
@@ -112,7 +112,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     if (isInModalMove) setIsInModalMove(false);
   };
 
-  const onReply = () => {
+  const onReply = React.useCallback(() => {
     let to: MailsVisible[] = [];
     if (mail?.from.id !== props.session?.user.id) to.push(convertRecipientUserInfoToVisible(mail!.from));
     else {
@@ -121,13 +121,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       to = [...users, ...groups];
     }
     props.navigation.navigate(mailsRouteNames.edit, {
-      initialMailInfo: { id: mail!.id, to, subject: mail?.subject },
-      type: MailsEditType.REPLY,
       fromFolder: from,
+      initialMailInfo: { id: mail!.id, subject: mail?.subject, to },
+      type: MailsEditType.REPLY,
     });
-  };
+  }, [from, mail, props]);
 
-  const onReplyAll = () => {
+  const onReplyAll = React.useCallback(() => {
     let to: MailsVisible[] = [];
     if (mail?.from.id !== props.session?.user.id) {
       to.push(convertRecipientUserInfoToVisible(mail!.from));
@@ -155,23 +155,23 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     ];
 
     props.navigation.navigate(mailsRouteNames.edit, {
-      initialMailInfo: { id: mail!.id, to, cc, cci, subject: mail?.subject },
-      type: MailsEditType.REPLY,
       fromFolder: from,
+      initialMailInfo: { cc, cci, id: mail!.id, subject: mail?.subject, to },
+      type: MailsEditType.REPLY,
     });
-  };
+  }, [from, mail, props]);
 
-  const onForward = () => {
+  const onForward = React.useCallback(() => {
     let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
     let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
     const to: MailsVisible[] = [...users, ...groups];
 
     props.navigation.navigate(mailsRouteNames.edit, {
-      initialMailInfo: { id: mail!.id, from: mail?.from, to, body: mail?.body, subject: mail?.subject },
-      type: MailsEditType.FORWARD,
       fromFolder: from,
+      initialMailInfo: { body: mail?.body, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
+      type: MailsEditType.FORWARD,
     });
-  };
+  }, [from, mail, props]);
 
   const onCreateNewFolder = async () => {
     try {
@@ -363,7 +363,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   };
 
   const renderHistory = React.useCallback(() => {
-    if (!history) return <Separator marginVertical={UI_SIZES.spacing.big} />;
+    if (!mailHistory) return <Separator marginVertical={UI_SIZES.spacing.big} />;
     return (
       <View style={{ marginVertical: UI_SIZES.spacing.big }}>
         <DefaultButton
@@ -373,11 +373,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           style={styles.buttonHistory}
           action={() => setSeeHistory(!seeHistory)}
         />
-        {seeHistory ? <RichEditorViewer content={history} /> : null}
+        {seeHistory ? <RichEditorViewer content={mailHistory} /> : null}
         <Separator />
       </View>
     );
-  }, [seeHistory, history]);
+  }, [seeHistory, mailHistory]);
 
   const renderButtons = React.useCallback(() => {
     if (mail?.trashed) return null;
@@ -519,7 +519,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
               {renderRecipients()}
             </View>
           </View>
-          <RichEditorViewer content={content} />
+          <RichEditorViewer content={mailContent} />
           {mail!.attachments.length > 0 ? <Attachments session={props.session!} attachments={convertedAttachments} /> : null}
           {renderHistory()}
           {renderButtons()}

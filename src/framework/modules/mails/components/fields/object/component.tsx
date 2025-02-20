@@ -19,6 +19,7 @@ export const MailsObjectField = (props: MailsObjectFieldProps) => {
     else formatSubject = subject ?? '';
     setValue(formatSubject);
     props.onChangeText(formatSubject);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onChangeText = text => {

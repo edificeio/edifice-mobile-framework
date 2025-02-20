@@ -1,19 +1,19 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
 
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
-
-import { AvatarSize, NewAvatar, NewAvatarSizes } from '~/framework/components/newavatar';
 import styles from './styles';
 import { MailsRecipientAvatarProps } from './types';
 
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { AvatarSize, NewAvatar, NewAvatarSizes } from '~/framework/components/newavatar';
+import { Svg } from '~/framework/components/picture';
+
 const iconType = {
-  ['ShareBookmark']: 'ui-bookmark',
-  ['Group']: 'ui-users',
-  ['User']: 'ui-questionMark',
   ['BroadcastGroup']: 'ui-globe',
+  ['Group']: 'ui-users',
+  ['ShareBookmark']: 'ui-bookmark',
+  ['User']: 'ui-questionMark',
 };
 
 const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
@@ -22,8 +22,8 @@ const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
   if (type === 'User' && id) return <NewAvatar size={props.size ?? AvatarSize.md} userId={id} />;
 
   const suppViewStyles: ViewStyle = {
-    width: NewAvatarSizes[props.size ?? AvatarSize.md],
     aspectRatio: 1,
+    width: NewAvatarSizes[props.size ?? AvatarSize.md],
   };
   return (
     <View style={[suppViewStyles, styles.view, type === 'ShareBookmark' ? styles.bookmark : type === 'User' ? styles.noUser : {}]}>

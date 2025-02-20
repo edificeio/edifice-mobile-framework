@@ -1,13 +1,13 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import styles from './styles';
+
 import { I18n } from '~/app/i18n';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { MailsRecipientContainer, MailsRecipientContainerProps } from '~/framework/modules/mails/components/recipient-item';
-
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
+import { MailsRecipientContainer, MailsRecipientContainerProps } from '~/framework/modules/mails/components/recipient-item';
 import { MailsRecipientGroupInfo, MailsVisible } from '~/framework/modules/mails/model';
-import styles from './styles';
 
 const renderSubtitle = (nbUsers, disabled) => {
   //if (disabled) return <SmallText style={styles.graphite}>{I18n.get('conversation-newmail-broadcastgroupsubtitle')}</SmallText>;
@@ -20,7 +20,7 @@ const renderSubtitle = (nbUsers, disabled) => {
 };
 
 const MailsRecipientGroupItem = (props: MailsRecipientContainerProps) => {
-  const { displayName, type, id } = props.item as MailsRecipientGroupInfo | MailsVisible;
+  const { displayName, id, type } = props.item as MailsRecipientGroupInfo | MailsVisible;
 
   return (
     <MailsRecipientContainer {...props}>

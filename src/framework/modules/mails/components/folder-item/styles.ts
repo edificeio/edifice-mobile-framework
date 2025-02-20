@@ -4,39 +4,39 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  containerFolders: {
-    padding: UI_SIZES.spacing.minor,
-    borderWidth: UI_SIZES.border.thin,
-    borderColor: theme.palette.grey.cloudy,
-    borderRadius: UI_SIZES.radius.input,
-    rowGap: UI_SIZES.spacing.tiny,
-  },
   container: {
+    alignItems: 'center',
     borderRadius: UI_SIZES.radius.selector,
     columnGap: UI_SIZES.spacing.small,
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.minor,
   },
-  isSelected: {
-    backgroundColor: theme.palette.primary.pale,
+  containerFolders: {
+    borderColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.input,
+    borderWidth: UI_SIZES.border.thin,
+    padding: UI_SIZES.spacing.minor,
+    rowGap: UI_SIZES.spacing.tiny,
   },
   disabled: {
     backgroundColor: theme.palette.grey.pearl,
   },
-  text: {
-    flex: 1,
+  isSelected: {
+    backgroundColor: theme.palette.primary.pale,
   },
   nbUnread: {
     backgroundColor: theme.palette.secondary.regular,
-    paddingHorizontal: UI_SIZES.spacing.minor,
-
     borderRadius: UI_SIZES.radius.big,
+
     flexDirection: 'row',
+    paddingHorizontal: UI_SIZES.spacing.minor,
   },
   nbUnreadText: {
     color: theme.palette.grey.white,
+  },
+  text: {
+    flex: 1,
   },
 });

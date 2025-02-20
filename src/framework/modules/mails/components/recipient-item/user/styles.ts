@@ -6,10 +6,10 @@ export default StyleSheet.create({
   black: {
     color: theme.palette.grey.black,
   },
-  graphite: {
-    color: theme.palette.grey.graphite,
-  },
   flex1: {
     flex: 1,
+  },
+  graphite: {
+    color: theme.palette.grey.graphite,
   },
 });

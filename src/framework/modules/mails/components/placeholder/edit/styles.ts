@@ -4,38 +4,38 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  input: {
-    paddingVertical: UI_SIZES.spacing.small,
+  attachments: {
     paddingHorizontal: UI_SIZES.spacing.medium,
-    borderBottomWidth: UI_SIZES.border.thin,
-    borderColor: theme.palette.grey.cloudy,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
+  body: {
+    backgroundColor: theme.palette.grey.pearl,
+    borderRadius: UI_SIZES.radius.card,
+    height: 160,
+    width: '100%',
   },
   content: {
     padding: UI_SIZES.spacing.medium,
   },
-  body: {
-    height: 160,
-    width: '100%',
+  h22: {
+    backgroundColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.card,
-    backgroundColor: theme.palette.grey.pearl,
-  },
-  attachments: {
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    height: 22,
+    marginBottom: 0,
   },
 
-  h22: {
-    height: 22,
-    borderRadius: UI_SIZES.radius.card,
-    marginBottom: 0,
-    backgroundColor: theme.palette.grey.cloudy,
-  },
   h46: {
-    height: 46,
-    borderRadius: UI_SIZES.radius.selector,
-    marginBottom: 0,
     backgroundColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.selector,
+    height: 46,
+    marginBottom: 0,
+  },
+  input: {
+    borderBottomWidth: UI_SIZES.border.thin,
+    borderColor: theme.palette.grey.cloudy,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
   },
 });

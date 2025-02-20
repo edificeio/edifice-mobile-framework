@@ -1,3 +1,13 @@
+import {
+  mailContentAdapter,
+  mailsAdapter,
+  MailsMailContentBackend,
+  MailsMailPreviewBackend,
+  MailsVisiblesBackend,
+  mailVisiblesGroupAdapter,
+  mailVisiblesUserAdapter,
+} from './adapters/mails';
+
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import {
   IMailsFolder,
@@ -9,15 +19,6 @@ import {
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import http from '~/framework/util/http';
-import {
-  mailContentAdapter,
-  mailsAdapter,
-  MailsMailContentBackend,
-  MailsMailPreviewBackend,
-  MailsVisiblesBackend,
-  mailVisiblesGroupAdapter,
-  mailVisiblesUserAdapter,
-} from './adapters/mails';
 
 export const mailsService = {
   attachments: {
@@ -86,11 +87,6 @@ export const mailsService = {
       const mail = mailContentAdapter(backendMail);
       return mail as IMailsMailContent;
     },
-    toggleUnread: async (payload: { ids: string[]; unread: boolean }) => {
-      const api = '/conversation/toggleUnread';
-      const body = JSON.stringify({ id: payload.ids, unread: payload.unread });
-      await http.fetchJsonForSession('POST', api, { body });
-    },
     moveToFolder: async (params: { folderId: string }, payload: { ids: string[] }) => {
       const api = `/conversation/move/userfolder/${params.folderId}`;
       const body = JSON.stringify({ id: payload.ids });
@@ -116,7 +112,7 @@ export const mailsService = {
       payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string },
     ) => {
       const { draftId, inReplyTo } = params;
-      const { body, to, cc, cci, subject } = payload;
+      const { body, cc, cci, subject, to } = payload;
 
       const api = inReplyTo
         ? `/conversation/send?In-Reply-To=${params.inReplyTo}`
@@ -124,25 +120,29 @@ export const mailsService = {
           ? `/conversation/send?id=${params.draftId}`
           : '/conversation/send';
 
-      console.log(api, 'api');
-      const bodyJson = JSON.stringify({ body, to, cc, cci, subject });
+      const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
       await http.fetchJsonForSession('POST', api, { body: bodyJson });
     },
     sendToDraft: async (payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string }) => {
       const api = '/conversation/draft';
-      const { body, to, cc, cci, subject } = payload;
+      const { body, cc, cci, subject, to } = payload;
 
-      const bodyJson = JSON.stringify({ body, to, cc, cci, subject });
+      const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
 
       const draft = (await http.fetchJsonForSession('POST', api, { body: bodyJson })) as { id: string };
       return draft.id;
+    },
+    toggleUnread: async (payload: { ids: string[]; unread: boolean }) => {
+      const api = '/conversation/toggleUnread';
+      const body = JSON.stringify({ id: payload.ids, unread: payload.unread });
+      await http.fetchJsonForSession('POST', api, { body });
     },
     updateDraft: async (
       params: { draftId: string },
       payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string },
     ) => {
       const api = `/conversation/draft/${params.draftId}`;
-      const { body, to, cc, cci, subject } = payload;
+      const { body, cc, cci, subject, to } = payload;
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
       await http.fetchJsonForSession('PUT', api, { body: bodyJson });

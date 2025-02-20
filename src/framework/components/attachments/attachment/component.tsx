@@ -37,7 +37,7 @@ export default function Attachment(props: AttachmentProps) {
   const onOpen = async () => {
     try {
       await lf?.open();
-    } catch (e) {
+    } catch {
       toast.showError();
     }
   };

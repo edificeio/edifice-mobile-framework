@@ -1,4 +1,5 @@
 import { ScrollView } from 'react-native';
+
 import { MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
 
 export interface MailsContactFieldProps {

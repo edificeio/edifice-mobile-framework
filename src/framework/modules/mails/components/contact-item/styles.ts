@@ -23,10 +23,10 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.tiny,
   },
   containerNumber: {
-    paddingLeft: UI_SIZES.spacing.minor,
-    paddingVertical: UI_SIZES.spacing.tinyExtra,
     alignSelf: 'flex-end',
     marginBottom: UI_SIZES.spacing.tiny,
+    paddingLeft: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.tinyExtra,
   },
   text: {
     flexShrink: 1,

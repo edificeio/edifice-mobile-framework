@@ -1,7 +1,5 @@
 import moment from 'moment';
-import { I18n } from '~/app/i18n';
-import { IDistantFileWithId } from '~/framework/util/fileHandler';
-import { urlSigner } from '~/infra/oauth';
+
 import {
   IMailsFolder,
   IMailsMailAttachment,
@@ -13,6 +11,10 @@ import {
   MailsVisible,
   MailsVisibleType,
 } from './model';
+
+import { I18n } from '~/app/i18n';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
+import { urlSigner } from '~/infra/oauth';
 
 export const MailsRecipientPrefixsI18n = {
   [MailsRecipientsType.TO]: {
@@ -35,7 +37,7 @@ export function mailsFormatRecipients(
   cci: MailsRecipients,
 ): { text: string; ids: string[] } {
   const formatPart = (prefixKey: string, recipients: MailsRecipients): string | null => {
-    const { users, groups } = recipients;
+    const { groups, users } = recipients;
     const formatDisplayName = (prefix, primary, count) => `${I18n.get(prefix)} ${primary}${count > 0 ? ` +${count}` : ''}`;
 
     if (users.length > 0) {
@@ -61,27 +63,27 @@ export function mailsFormatRecipients(
   const ids = [...extractIds(to), ...extractIds(cc), ...extractIds(cci)];
 
   return {
-    text: parts.length > 0 ? parts.join(' ') : I18n.get('mails-list-norecipient'),
     ids,
+    text: parts.length > 0 ? parts.join(' ') : I18n.get('mails-list-norecipient'),
   };
 }
 
 export function convertAttachmentToDistantFile(attachment: IMailsMailAttachment, mailId: string): IDistantFileWithId {
   return {
-    id: attachment.id,
     filename: attachment.filename,
     filesize: attachment.size,
     filetype: attachment.contentType,
+    id: attachment.id,
     url: urlSigner.getAbsoluteUrl(`/conversation/message/${mailId}/attachment/${attachment.id}`) ?? '',
   };
 }
 
 export function convertRecipientUserInfoToVisible(userInfo: MailsRecipientInfo): MailsVisible {
   return {
-    id: userInfo.id,
     displayName: userInfo.displayName,
-    profile: userInfo.profile,
     groupDisplayName: '',
+    id: userInfo.id,
+    profile: userInfo.profile,
     structureName: '',
     type: MailsVisibleType.USER,
   };
@@ -89,10 +91,10 @@ export function convertRecipientUserInfoToVisible(userInfo: MailsRecipientInfo):
 
 export function convertRecipientGroupInfoToVisible(groupInfo: MailsRecipientGroupInfo): MailsVisible {
   return {
-    id: groupInfo.id,
     displayName: groupInfo.displayName,
-    profile: undefined,
     groupDisplayName: '',
+    id: groupInfo.id,
+    profile: undefined,
     structureName: '',
     type: MailsVisibleType.GROUP,
   };

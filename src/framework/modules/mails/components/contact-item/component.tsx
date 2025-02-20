@@ -14,7 +14,7 @@ import { MailsVisibleType } from '~/framework/modules/mails/model';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
 export const MailsContactItem = (props: MailsContactItemProps) => {
-  const { id, displayName, profile } = props.user;
+  const { displayName, id, profile } = props.user;
   const onDelete = () => {
     props.onDelete(props.user);
   };

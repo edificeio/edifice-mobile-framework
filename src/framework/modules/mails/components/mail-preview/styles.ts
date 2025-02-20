@@ -24,10 +24,10 @@ export default StyleSheet.create({
   },
   line: {
     alignItems: 'center',
+    columnGap: UI_SIZES.spacing.tiny,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    columnGap: UI_SIZES.spacing.tiny,
   },
   responseIcon: {
     marginLeft: UI_SIZES.spacing.small,
@@ -38,11 +38,11 @@ export default StyleSheet.create({
     justifyContent: 'center',
     width: 80,
   },
-  swipeOtherAction: {
-    backgroundColor: theme.palette.status.warning.regular,
-  },
   swipeDeleteAction: {
     backgroundColor: theme.palette.status.failure.regular,
+  },
+  swipeOtherAction: {
+    backgroundColor: theme.palette.status.warning.regular,
   },
   texts: {
     flex: 1,

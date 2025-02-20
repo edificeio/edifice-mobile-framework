@@ -5,37 +5,40 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
-  textButton: {
-    color: theme.palette.primary.regular,
-  },
   container: {
+    alignItems: 'flex-start',
     borderBottomWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.primary.light,
     columnGap: UI_SIZES.spacing.minor,
     flexDirection: 'row',
-    alignItems: 'flex-start',
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
   },
   containerInput: {
+    columnGap: UI_SIZES.spacing.tiny,
     flex: 1,
     flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.tiny,
   },
   containerIsEditing: {
     alignItems: 'flex-end',
+  },
+  iconCcCci: {
+    marginVertical: UI_SIZES.spacing.tiny,
+  },
+  iconClose: {
+    marginVertical: UI_SIZES.spacing.tinyExtra,
   },
   input: {
     ...TextSizeStyle.Medium,
     lineHeight: undefined,
     paddingVertical: UI_SIZES.spacing.tiny + UI_SIZES.spacing.tinyExtra,
   },
-  subjectInput: {
-    flex: 1,
-  },
   middlePart: {
     flex: 1,
     rowGap: UI_SIZES.spacing.minor,
+  },
+  nbResults: {
+    marginBottom: UI_SIZES.spacing.small,
   },
   prefix: {
     color: theme.palette.grey.graphite,
@@ -47,22 +50,25 @@ export default StyleSheet.create({
     flexWrap: 'wrap',
     rowGap: UI_SIZES.spacing.minor,
   },
-  iconClose: {
-    marginVertical: UI_SIZES.spacing.tinyExtra,
-  },
-  iconCcCci: {
-    marginVertical: UI_SIZES.spacing.tiny,
-  },
-  nbResults: {
-    marginBottom: UI_SIZES.spacing.small,
-  },
   results: {
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
   },
+  resultsList: {
+    backgroundColor: theme.palette.grey.white,
+    position: 'absolute',
+    width: '100%',
+    zIndex: 99,
+  },
+  subjectInput: {
+    flex: 1,
+  },
+  textButton: {
+    color: theme.palette.primary.regular,
+  },
   viewResults: {
     position: 'absolute',
-    zIndex: 99,
     width: '100%',
+    zIndex: 99,
   },
 });

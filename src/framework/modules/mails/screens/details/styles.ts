@@ -7,10 +7,6 @@ export default StyleSheet.create({
   bottomSheet: {
     paddingBottom: 0,
   },
-  contentBottomSheet: {
-    minHeight: 200,
-    paddingBottom: getScaleWidth(60),
-  },
   bottomSheetPrefix: {
     marginBottom: UI_SIZES.spacing.minor,
   },
@@ -24,25 +20,36 @@ export default StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: UI_SIZES.spacing.large,
   },
+  contentBottomSheet: {
+    minHeight: 200,
+    paddingBottom: getScaleWidth(60),
+  },
+  flatListBottomSheet: {
+    paddingBottom: UI_SIZES.screen.bottomInset,
+  },
+  nofolders: {
+    alignItems: 'center',
+    rowGap: UI_SIZES.spacing.medium,
+  },
+  nofoldersContainer: {
+    borderWidth: 0,
+  },
   page: {
     backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.medium,
   },
   recipients: {
-    flexDirection: 'row',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.tiny,
+    flexDirection: 'row',
   },
   recipientsText: {
     flexShrink: 1,
   },
   sender: {
+    columnGap: UI_SIZES.spacing.tiny,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    columnGap: UI_SIZES.spacing.tiny,
-  },
-  touchableSender: {
-    flex: 1,
   },
   senderName: {
     color: theme.palette.primary.regular,
@@ -55,14 +62,7 @@ export default StyleSheet.create({
   topInfosText: {
     flex: 1,
   },
-  nofoldersContainer: {
-    borderWidth: 0,
-  },
-  nofolders: {
-    alignItems: 'center',
-    rowGap: UI_SIZES.spacing.medium,
-  },
-  flatListBottomSheet: {
-    paddingBottom: UI_SIZES.screen.bottomInset,
+  touchableSender: {
+    flex: 1,
   },
 });

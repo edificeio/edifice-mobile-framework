@@ -70,8 +70,8 @@ export interface MailsMailPreviewBackend {
 
 export const mailsAdapter = (n: MailsMailPreviewBackend) => {
   const ret = {
-    cc: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientGroupInfo[] },
-    cci: { users: n.cci.users as MailsRecipientInfo[], groups: n.cci.groups as MailsRecipientGroupInfo[] },
+    cc: { groups: n.cc.groups as MailsRecipientGroupInfo[], users: n.cc.users as MailsRecipientInfo[] },
+    cci: { groups: n.cci.groups as MailsRecipientGroupInfo[], users: n.cci.users as MailsRecipientInfo[] },
     count: n.count,
     date: n.date,
     from: n.from as MailsRecipientInfo,
@@ -80,7 +80,7 @@ export const mailsAdapter = (n: MailsMailPreviewBackend) => {
     response: n.response,
     state: n.state as MailsMailStatePreview,
     subject: n.subject,
-    to: { users: n.to.users as MailsRecipientInfo[], groups: n.to.groups as MailsRecipientGroupInfo[] },
+    to: { groups: n.to.groups as MailsRecipientGroupInfo[], users: n.to.users as MailsRecipientInfo[] },
     unread: n.unread,
   };
   return ret as IMailsMailPreview;
@@ -160,18 +160,18 @@ export const mailContentAdapter = (n: MailsMailContentBackend) => {
   const ret = {
     attachments: n.attachments as IMailsMailAttachment[],
     body: n.body,
-    cc: { users: n.cc.users as MailsRecipientInfo[], groups: n.cc.groups as MailsRecipientGroupInfo[] },
-    cci: { users: n.cci.users as MailsRecipientInfo[], groups: n.cci.groups as MailsRecipientGroupInfo[] },
+    cc: { groups: n.cc.groups as MailsRecipientGroupInfo[], users: n.cc.users as MailsRecipientInfo[] },
+    cci: { groups: n.cci.groups as MailsRecipientGroupInfo[], users: n.cci.users as MailsRecipientInfo[] },
     date: n.date,
-    from: n.from as MailsRecipientInfo,
     folder_id: n.folder_id,
+    from: n.from as MailsRecipientInfo,
+    id: n.id,
     language: n.language,
     parent_id: n.parent_id,
-    id: n.id,
     state: n.state as MailsMailStatePreview,
     subject: n.subject,
     thread_id: n.thread_id,
-    to: { users: n.to.users as MailsRecipientInfo[], groups: n.to.groups as MailsRecipientGroupInfo[] },
+    to: { groups: n.to.groups as MailsRecipientGroupInfo[], users: n.to.users as MailsRecipientInfo[] },
     trashed: n.trashed,
     unread: n.unread,
   };
