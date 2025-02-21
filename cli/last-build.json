@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-02-13 12:10:06",
-  "notes": "update(yarn): yarn cache && patch update\nchore(debug): increase heap size when debugging\nchore(debug): Launch debuger on start\nchore(i18n): change phrase sync branch\nrelease: 1.13.12(1131200)\nfix: WB2-2147 fix download files permissions on android\nrelease: 1.13.11(1131100)\nrelease: 1.13.10-rc.5(1131005)",
-  "version": "1.13.12-alpha.1(1131201)"
+  "last": "2025-02-20 19:32:30",
+  "notes": "fix(push): ENABLING-215, review push badge management && fix tabbar size calculation\nUpdated translations from Phrase (#185)\nchore: yarn cache\nfix: WB2-2147 scan downloaded files with MediaStore API\nupdate(stack): rn 0.75.5 update\nfix(zimbra): AMV2-657 decode body href\nrelease: 1.13.12-alpha.1(1131201)",
+  "version": "1.13.12-rc.1(1131202)"
 }
