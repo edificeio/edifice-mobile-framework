@@ -64,6 +64,20 @@ export const mailsService = {
       const data = (await http.fetchJsonForSession('POST', api, { body })) as { id: string };
       return data.id;
     },
+    delete: async (params: { id: string }) => {
+      const api = `/conversation/folder/trash/${params.id}`;
+      await http.fetchJsonForSession('PUT', api);
+    },
+    // move: async (params: { id: string }, payload: { parentId: string }) => {
+    //   const api = `/conversation/folder/${params.id}`;
+    //   const body = JSON.stringify({ parentId: payload.parentId });
+    //   await http.fetchJsonForSession('PUT', api, { body });
+    // },
+    rename: async (params: { id: string }, payload: { name: string }) => {
+      const api = `/conversation/folder/${params.id}`;
+      const body = JSON.stringify({ name: payload.name });
+      await http.fetchJsonForSession('PUT', api, { body });
+    },
   },
   folders: {
     get: async (params: { depth: number }) => {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollViewProps, View } from 'react-native';
+import { Alert, ScrollViewProps, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -18,9 +18,11 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
+import { deleteAction } from '~/framework/components/menus/actions';
+import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
-import { NavBarAction } from '~/framework/components/navigation';
+import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
 import { BodyText, TextSizeStyle } from '~/framework/components/text';
@@ -151,6 +153,44 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }
   }, [loadMails, loadFolders, selectedFolder]);
 
+  const onRenameFolder = React.useCallback(() => {
+    Alert.alert('Rename folder', 'This feature is not implemented yet');
+  }, []);
+
+  const onMoveFolder = React.useCallback(() => {
+    Alert.alert('Move folder', 'This feature is not implemented yet');
+  }, []);
+
+  const onDeleteFolder = React.useCallback(() => {
+    Alert.alert('Delete folder', 'This feature is not implemented yet');
+  }, []);
+
+  const allPopupActionsMenu = React.useMemo(
+    () => [
+      {
+        action: onRenameFolder,
+        icon: {
+          android: 'ic_pencil',
+          ios: 'pencil',
+        },
+        title: I18n.get('mails-list-renamefolder'),
+      },
+      {
+        action: onMoveFolder,
+        icon: {
+          android: 'ic_move_folder',
+          ios: 'square.and.arrow.up.on.square',
+        },
+        title: I18n.get('mails-list-movefolder'),
+      },
+      deleteAction({
+        action: onDeleteFolder,
+        title: I18n.get('mails-details-deletefolder'),
+      }),
+    ],
+    [onDeleteFolder, onMoveFolder, onRenameFolder],
+  );
+
   React.useEffect(() => {
     props.navigation.setOptions({
       headerLeft: () => (
@@ -162,11 +202,20 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         />
       ),
       headerRight: () => (
-        <NavBarAction icon="ui-edit" onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })} />
+        <NavBarActionsGroup
+          elements={[
+            <NavBarAction
+              icon="ui-edit"
+              onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })}
+            />,
+            <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : []}>
+              <NavBarAction icon="ui-options" />
+            </PopupMenu>,
+          ]}
+        />
       ),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFolder, navigation]);
+  }, [selectedFolder, navigation, props.navigation, allPopupActionsMenu]);
 
   React.useEffect(() => {
     props.navigation.setOptions({
