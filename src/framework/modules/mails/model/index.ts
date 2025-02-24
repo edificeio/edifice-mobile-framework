@@ -59,6 +59,7 @@ export interface IMailsMailContent {
   language: string;
   parent_id: string;
   state: string;
+  original_format_exists: boolean;
   subject: string;
   thread_id: string;
   to: MailsRecipients;

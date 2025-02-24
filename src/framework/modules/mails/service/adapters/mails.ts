@@ -137,6 +137,7 @@ export interface MailsMailContentBackend {
   parent_id: string | null;
   state: string;
   subject: string;
+  original_format_exists: boolean;
   thread_id: string;
   to: {
     users: {
@@ -167,6 +168,7 @@ export const mailContentAdapter = (n: MailsMailContentBackend) => {
     from: n.from as MailsRecipientInfo,
     id: n.id,
     language: n.language,
+    original_format_exists: n.original_format_exists,
     parent_id: n.parent_id,
     state: n.state as MailsMailStatePreview,
     subject: n.subject,

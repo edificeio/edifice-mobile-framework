@@ -94,8 +94,8 @@ export const mailsService = {
       const body = JSON.stringify({ id: payload.ids });
       await http.fetchForSession('PUT', api, { body });
     },
-    get: async (params: { id: string }) => {
-      const api = `/conversation/api/messages/${params.id}`;
+    get: async (params: { id: string; originalFormat?: boolean }) => {
+      const api = `/conversation/api/messages/${params.id}${params.originalFormat ? '?originalFormat=true' : ''}`;
       const backendMail = (await http.fetchJsonForSession('GET', api)) as MailsMailContentBackend;
 
       const mail = mailContentAdapter(backendMail);

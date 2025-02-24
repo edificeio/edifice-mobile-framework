@@ -16,6 +16,7 @@ import Attachments from '~/framework/components/attachments';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
@@ -362,6 +363,15 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   };
 
+  const renderOriginalContent = React.useCallback(() => {
+    const navigateToOriginalContent = () => {
+      props.navigation.navigate(mailsRouteNames.originalContent, { id });
+    };
+
+    if (!mail?.original_format_exists) return;
+    return <TertiaryButton text="Voir le contenu en version original" action={navigateToOriginalContent} />;
+  }, [id, mail?.original_format_exists, props.navigation]);
+
   const renderHistory = React.useCallback(() => {
     if (!mailHistory) return <Separator marginVertical={UI_SIZES.spacing.big} />;
     return (
@@ -521,6 +531,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           </View>
           <RichEditorViewer content={mailContent} />
           {mail!.attachments.length > 0 ? <Attachments session={props.session!} attachments={convertedAttachments} /> : null}
+          {renderOriginalContent()}
           {renderHistory()}
           {renderButtons()}
         </ScrollView>
