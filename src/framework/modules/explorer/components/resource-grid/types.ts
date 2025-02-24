@@ -1,6 +1,6 @@
 import type { FlashListProps, ListRenderItem } from '@shopify/flash-list';
 
-import type { ExplorerData, Folder, Resource } from '~/framework/modules/explorer/model/types';
+import type { ExplorerFolderData, Folder, Resource } from '~/framework/modules/explorer/model/types';
 import type { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export namespace ResourceGrid {
@@ -10,7 +10,7 @@ export namespace ResourceGrid {
     onPressResource?: (r: Resource) => void;
     onPressFolder?: (f: Folder) => void;
   }
-  export type BaseItemT = ExplorerData['items'][0];
+  export type BaseItemT = ExplorerFolderData['items'][0];
 
   export type ResourceExplorerItemProps = Parameters<ListRenderItem<ResourceGrid.BaseItemT>>[0] &
     Pick<ResourceGrid.Props<ResourceGrid.BaseItemT>, 'onPressFolder' | 'onPressResource' | 'moduleConfig'>;

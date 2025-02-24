@@ -1,13 +1,16 @@
 import type { ParamListBase } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { createExplorerSelectors } from '../../store';
+
 import type { Folder, FolderId, Resource } from '~/framework/modules/explorer/model/types';
 import type { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export namespace ResourceExplorerTemplate {
   export interface Props {
-    moduleConfig: Pick<AnyNavigableModuleConfig, 'displayPicture' | 'displayColor'>;
+    moduleConfig: Pick<AnyNavigableModuleConfig, 'displayPicture' | 'displayColor' | 'namespaceActionType'>;
     onOpenResource?: (r: Resource) => void;
+    selectors: ReturnType<typeof createExplorerSelectors>;
   }
 
   export interface NavParams {

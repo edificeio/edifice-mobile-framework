@@ -6,8 +6,9 @@ import type { WikiHomeScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
-import moduleConfig from '~/framework/modules/wiki//module-config';
+import moduleConfig from '~/framework/modules/wiki/module-config';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
+import { selectors } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -35,6 +36,7 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
       route={route as ResourceExplorerTemplate.NavigationProps['route']}
       moduleConfig={moduleConfig}
       onOpenResource={onOpenResource}
+      selectors={selectors.explorer}
     />
   );
 }

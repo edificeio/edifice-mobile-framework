@@ -1,6 +1,8 @@
 import * as React from 'react';
 
 import { FlashListProps, ViewToken } from '@shopify/flash-list';
+import { useDispatch, useSelector } from 'react-redux';
+import { Dispatch } from 'redux';
 
 import type { ResourceExplorerTemplate } from './types';
 
@@ -10,8 +12,9 @@ import { PageView } from '~/framework/components/page';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import ResourceGrid from '~/framework/modules/explorer/components/resource-grid';
 import { ResourceGrid as ResourceGridTypes } from '~/framework/modules/explorer/components/resource-grid/types';
-import { ExplorerData, Folder, Resource, RootFolderId } from '~/framework/modules/explorer/model/types';
+import { ExplorerFolderData, RootFolderId } from '~/framework/modules/explorer/model/types';
 import service from '~/framework/modules/explorer/service/index';
+import { ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
 import { HTTPError } from '~/framework/util/http';
 
 const estimatedListSize = {
@@ -19,7 +22,7 @@ const estimatedListSize = {
   width: UI_SIZES.screen.width,
 };
 
-const viewabilityConfig: FlashListProps<ExplorerData['items'][0]>['viewabilityConfig'] = {
+const viewabilityConfig: FlashListProps<ExplorerFolderData['items'][0]>['viewabilityConfig'] = {
   itemVisiblePercentThreshold: 0,
   minimumViewTime: 250,
   waitForInteraction: false,
@@ -30,13 +33,21 @@ const WINDOW_SLOP = 12; // How many margin to compute which items to load outsid
 
 const placeholderData = new Array(8).fill(null);
 
-export function ResourceExplorerTemplate({ moduleConfig, navigation, onOpenResource, route }: ResourceExplorerTemplate.AllProps) {
+export function ResourceExplorerTemplate({
+  moduleConfig,
+  navigation,
+  onOpenResource,
+  route,
+  selectors,
+}: ResourceExplorerTemplate.AllProps) {
   const { folderId = RootFolderId.ROOT } = route.params;
 
-  const [data, setData] = React.useState<ExplorerData>({ items: [], nbFolders: 0, nbResources: 0 });
+  const folderContent = useSelector(selectors.folder(folderId));
+  const dispatch = useDispatch<Dispatch<ExplorerAction>>();
+  const actions = useExplorerActions(moduleConfig);
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
-  const dataRef = React.useRef(data);
-  dataRef.current = data;
+  const folderContentRef = React.useRef(folderContent);
+  folderContentRef.current = folderContent;
 
   // Pages currenlty fetching
   const fetchingPages = React.useRef<Set<number>>(new Set());
@@ -45,8 +56,6 @@ export function ResourceExplorerTemplate({ moduleConfig, navigation, onOpenResou
     async (start_idx: number, reloadAll: boolean = false) => {
       // DUMMY WAIT
       // if (__DEV__) await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Call Page API
       try {
         const response = await service.resources.get({
           application: 'wiki',
@@ -56,49 +65,19 @@ export function ResourceExplorerTemplate({ moduleConfig, navigation, onOpenResou
           resource_type: 'wiki',
           start_idx: start_idx,
         });
-
-        // Merge Page Data into existent
-        setData(previousData => {
-          // console.debug(previousData, data);
-          const newItems: (Folder | Resource | null)[] = [...response.folders, ...new Array(response.pagination.total).fill(null)];
-          const keepOldResources = !reloadAll && previousData.nbResources === response.pagination.total;
-          // Fill resources with old or new data
-          // console.debug('BEFORE', response.pagination.pageStart, newItems);
-          // console.debug(
-          //   'RESPONSE',
-          //   response.pagination.pageStart,
-          //   response.resources.map(e => e.name),
-          // );
-          for (let iResource = 0; iResource < response.pagination.total; ++iResource) {
-            if (
-              iResource >= response.pagination.pageStart &&
-              iResource < response.pagination.pageStart + response.pagination.pageSize
-            ) {
-              // console.debug(
-              //   `INSERT (${response.folders.length} + ${response.pagination.pageStart} +) ${iResource - response.pagination.pageStart} at ${response.folders.length + iResource} (${response.resources[iResource - response.pagination.pageStart].name})`,
-              // );
-              newItems[response.folders.length + iResource] = response.resources[iResource - response.pagination.pageStart];
-            } else if (keepOldResources) {
-              // console.debug('copy OLD resource from', previousData.nbFolders + iResource, 'to', response.folders.length + iResource);
-              newItems[response.folders.length + iResource] = previousData.items[previousData.nbFolders + iResource];
-            }
-          }
-          // console.debug('AFTER', newItems);
-          return {
-            items: newItems,
-            nbFolders: response.folders.length,
-            nbResources: response.pagination.total,
-          };
-        });
+        dispatch(actions.loadPage(folderId, response, reloadAll));
       } catch (e) {
         if (e instanceof HTTPError) console.error(await e.read(e.text));
         else console.error(e?.toString());
         throw e;
       }
     },
-    [folderId],
+    [actions, dispatch, folderId],
   );
 
+  /**
+   * Algorithm here computes which pages are visible for current scroll position & call fetchOage() for surrounding pages.
+   */
   const onViewableItemsChanged = React.useCallback(
     ({ viewableItems }: { viewableItems: ViewToken[]; changed: ViewToken[] }) => {
       const firstVisibleItem = viewableItems.at(0)?.index;
@@ -112,8 +91,8 @@ export function ResourceExplorerTemplate({ moduleConfig, navigation, onOpenResou
       ) {
         return;
       }
-      const firstVisibleResource = firstVisibleItem - dataRef.current.nbFolders - WINDOW_SLOP;
-      const lastVisibleResource = lastVisibleItem - dataRef.current.nbFolders + WINDOW_SLOP;
+      const firstVisibleResource = firstVisibleItem - folderContentRef.current.nbFolders - WINDOW_SLOP;
+      const lastVisibleResource = lastVisibleItem - folderContentRef.current.nbFolders + WINDOW_SLOP;
       // console.info(`VISIBLE RESOURCES FROM ${firstVisibleResource} to ${lastVisibleResource}`);
 
       const firstVisiblePage = Math.max(0, firstVisibleResource - (firstVisibleResource % PAGE_SIZE)) / PAGE_SIZE;
@@ -129,7 +108,7 @@ export function ResourceExplorerTemplate({ moduleConfig, navigation, onOpenResou
       for (const page of pagesToCheck) {
         let mustFetch: boolean = false;
         for (let i = page; i < page + PAGE_SIZE; ++i) {
-          if (dataRef.current.items[i + dataRef.current.nbFolders] === null) {
+          if (folderContentRef.current.items[i + folderContentRef.current.nbFolders] === null) {
             mustFetch = true;
             break;
           }
@@ -148,7 +127,7 @@ export function ResourceExplorerTemplate({ moduleConfig, navigation, onOpenResou
 
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(() => loadPage(0, true), [loadPage]);
 
-  const onPressFolder = React.useCallback<NonNullable<ResourceGridTypes.Props<(typeof data.items)[0]>['onPressFolder']>>(
+  const onPressFolder = React.useCallback<NonNullable<ResourceGridTypes.Props<(typeof folderContent.items)[0]>['onPressFolder']>>(
     f => navigation.push(route.name, { folderId: f.id }),
     [navigation, route.name],
   );
@@ -159,7 +138,7 @@ export function ResourceExplorerTemplate({ moduleConfig, navigation, onOpenResou
         <ResourceGrid
           key="data"
           moduleConfig={moduleConfig}
-          data={data.items}
+          data={folderContent.items}
           estimatedListSize={estimatedListSize}
           refreshControl={refreshControl}
           viewabilityConfig={viewabilityConfig}
@@ -170,7 +149,7 @@ export function ResourceExplorerTemplate({ moduleConfig, navigation, onOpenResou
         />
       );
     },
-    [moduleConfig, data.items, onViewableItemsChanged, onPressFolder, onOpenResource],
+    [moduleConfig, folderContent.items, onViewableItemsChanged, onPressFolder, onOpenResource],
   );
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(

@@ -47,7 +47,7 @@ export interface Resource extends ExplorerNode {
   thumbnail?: string;
 }
 
-export interface ExplorerData {
+export interface ExplorerFolderData {
   items: (Folder | Resource | null)[]; // null is used to fill array of loading resources from other pages
   nbResources: number;
   nbFolders: number;
