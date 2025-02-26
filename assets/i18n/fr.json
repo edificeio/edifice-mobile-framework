@@ -850,6 +850,7 @@
   "mails-list-norecipient": "Aucun destinataire",
   "mails-list-outbox": "Messages envoyés",
   "mails-list-renamefolder": "Renommer le dossier",
+  "mails-list-toastsuccessdeletefolder": "Dossier supprimé",
   "mails-list-trash": "Corbeille",
   "mails-prefixcc": "Cc:",
   "mails-prefixcc-placeholder": "Destinataires en copie",

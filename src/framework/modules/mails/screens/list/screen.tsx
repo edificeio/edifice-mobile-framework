@@ -153,6 +153,57 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }
   }, [loadMails, loadFolders, selectedFolder]);
 
+  const onDismissBottomSheet = React.useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+    if (valueNewFolder) setValueNewFolder('');
+    if (isInModalCreation) setIsInModalCreation(false);
+    if (isSubfolder) setIsSubfolder(false);
+    if (idParentFolder) setIdParentFolder(undefined);
+    if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+  }, [valueNewFolder, isInModalCreation, isSubfolder, idParentFolder, onErrorCreateFolder]);
+
+  const switchFolder = React.useCallback(
+    async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+      setSelectedFolder(folder);
+      onDismissBottomSheet();
+      await loadMails(folder);
+      flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+    },
+    [loadMails, setSelectedFolder, onDismissBottomSheet],
+  );
+
+  const onPressItem = React.useCallback(
+    (id: string, unread: boolean, state: MailsMailStatePreview) => {
+      if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
+        return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
+      if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
+      return navigation.navigate(mailsRouteNames.details, { folders, from: selectedFolder, id });
+    },
+    [selectedFolder, navigation, setMails, folders],
+  );
+
+  const onToggleSubfolders = React.useCallback(() => {
+    setIsSubfolder(!isSubfolder);
+    setIdParentFolder(undefined);
+  }, [isSubfolder, setIsSubfolder, setIdParentFolder]);
+
+  const onCreateNewFolder = React.useCallback(async () => {
+    try {
+      setIsLoadingCreateNewFolder(true);
+      const dataNewFolder = await mailsService.folder.create({ name: valueNewFolder, parentId: idParentFolder ?? '' });
+      switchFolder({ id: dataNewFolder, name: valueNewFolder });
+      loadFolders();
+      setValueNewFolder('');
+      toast.showSuccess(I18n.get('mails-list-newfoldersuccess', { name: valueNewFolder }));
+    } catch (e) {
+      const error = e instanceof HTTPError ? await e.json() : e;
+      if (error instanceof Error) return toast.showError();
+      if (error && error.error === 'conversation.error.duplicate.folder') setOnErrorCreateFolder(true);
+    } finally {
+      setIsLoadingCreateNewFolder(false);
+    }
+  }, [valueNewFolder, idParentFolder, switchFolder, loadFolders]);
+
   const onRenameFolder = React.useCallback(() => {
     Alert.alert('Rename folder', 'This feature is not implemented yet');
   }, []);
@@ -161,9 +212,17 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     Alert.alert('Move folder', 'This feature is not implemented yet');
   }, []);
 
-  const onDeleteFolder = React.useCallback(() => {
-    Alert.alert('Delete folder', 'This feature is not implemented yet');
-  }, []);
+  const onDeleteFolder = React.useCallback(async () => {
+    try {
+      await mailsService.folder.delete({ id: (selectedFolder as MailsFolderInfo).id });
+      switchFolder(MailsDefaultFolders.INBOX);
+      loadFolders();
+      toast.showSuccess(I18n.get('mails-list-toastsuccessdeletefolder'));
+    } catch (e) {
+      console.error(e);
+      toast.showError();
+    }
+  }, [loadFolders, selectedFolder, switchFolder]);
 
   const allPopupActionsMenu = React.useMemo(
     () => [
@@ -245,57 +304,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       }
     }, [loadFolders, loadMails, props.route]),
   );
-
-  const onDismissBottomSheet = React.useCallback(() => {
-    bottomSheetModalRef.current?.dismiss();
-    if (valueNewFolder) setValueNewFolder('');
-    if (isInModalCreation) setIsInModalCreation(false);
-    if (isSubfolder) setIsSubfolder(false);
-    if (idParentFolder) setIdParentFolder(undefined);
-    if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-  }, [valueNewFolder, isInModalCreation, isSubfolder, idParentFolder, onErrorCreateFolder]);
-
-  const switchFolder = React.useCallback(
-    async (folder: MailsDefaultFolders | MailsFolderInfo) => {
-      setSelectedFolder(folder);
-      onDismissBottomSheet();
-      await loadMails(folder);
-      flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
-    },
-    [loadMails, setSelectedFolder, onDismissBottomSheet],
-  );
-
-  const onPressItem = React.useCallback(
-    (id: string, unread: boolean, state: MailsMailStatePreview) => {
-      if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
-        return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
-      if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
-      return navigation.navigate(mailsRouteNames.details, { folders, from: selectedFolder, id });
-    },
-    [selectedFolder, navigation, setMails, folders],
-  );
-
-  const onToggleSubfolders = React.useCallback(() => {
-    setIsSubfolder(!isSubfolder);
-    setIdParentFolder(undefined);
-  }, [isSubfolder, setIsSubfolder, setIdParentFolder]);
-
-  const onCreateNewFolder = React.useCallback(async () => {
-    try {
-      setIsLoadingCreateNewFolder(true);
-      const dataNewFolder = await mailsService.folder.create({ name: valueNewFolder, parentId: idParentFolder ?? '' });
-      switchFolder({ id: dataNewFolder, name: valueNewFolder });
-      loadFolders();
-      setValueNewFolder('');
-      toast.showSuccess(I18n.get('mails-list-newfoldersuccess', { name: valueNewFolder }));
-    } catch (e) {
-      const error = e instanceof HTTPError ? await e.json() : e;
-      if (error instanceof Error) return toast.showError();
-      if (error && error.error === 'conversation.error.duplicate.folder') setOnErrorCreateFolder(true);
-    } finally {
-      setIsLoadingCreateNewFolder(false);
-    }
-  }, [valueNewFolder, idParentFolder, switchFolder, loadFolders]);
 
   const handleMailAction = React.useCallback(
     async ({
