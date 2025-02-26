@@ -18,8 +18,10 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
+import { AuthActiveAccount } from '../modules/auth/model';
 import { handleCloseModalActions } from './helper';
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
@@ -39,7 +41,6 @@ import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
-import { AuthActiveAccount } from '../modules/auth/model';
 
 //  88888888888       888      888b    888                   d8b                   888
 //      888           888      8888b   888                   Y8P                   888
@@ -195,6 +196,9 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
     // We effectively want to have this deps to minimise re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appsJson]);
+
+  // Avoid bug when launching app after first push
+  const insets = useSafeAreaInsets();
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(({ navigation, route }) => {
       return {
@@ -226,7 +230,7 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
           borderTopColor: theme.palette.grey.cloudy,
           borderTopWidth: 1,
           elevation: 1,
-          height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
+          height: UI_SIZES.elements.tabbarHeight + insets.bottom, // Avoid bug when launching app after first push
           ...getAndroidTabBarStyleForNavState(navigation.getState()),
         },
       };
