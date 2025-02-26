@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import type { ExplorerFolderData, ExplorerPageData, FolderId } from './model/types';
+import type { ExplorerFolderContent, ExplorerPageData, Folder, FolderId } from './model/types';
 
 import { IGlobalState } from '~/app/store';
 import { IUnkownModuleConfig } from '~/framework/util/moduleTool';
@@ -9,10 +9,13 @@ import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 export type ExplorerAction = { type: `${string}_LOAD_PAGE`; flushPreviousData: boolean; folderId: FolderId } & ExplorerPageData;
 
 export interface ExplorerState {
-  [folderId: FolderId]: ExplorerFolderData;
+  [folderId: FolderId]: {
+    content?: ExplorerFolderContent;
+    metadata?: Folder;
+  };
 }
 
-const emptyFolderData: ExplorerFolderData = { items: [], nbFolders: 0, nbResources: 0 };
+export const emptyFolderData: ExplorerFolderContent = { items: [], nbFolders: 0, nbResources: 0 };
 
 export const createExplorerReducer = (moduleConfig: Pick<IUnkownModuleConfig, 'namespaceActionType'>) => {
   return createSessionReducer<ExplorerState, ExplorerAction>(
@@ -26,8 +29,8 @@ export const createExplorerReducer = (moduleConfig: Pick<IUnkownModuleConfig, 'n
         // - Resources are merged else
 
         // 1. Replace all folders + initiate resource array with the good length
-        const oldFolderContent = state[action.folderId];
-        const newItems: ExplorerFolderData['items'] = [...action.folders, ...new Array(action.pagination.total).fill(null)];
+        const oldFolderContent = state[action.folderId]?.content ?? emptyFolderData;
+        const newItems: ExplorerFolderContent['items'] = [...action.folders, ...new Array(action.pagination.total).fill(null)];
         const keepOldResources = !action.flushPreviousData && oldFolderContent.nbResources === action.pagination.total;
         // 2. Iterate over all resource and merge data if applicable
         for (let iResource = 0; iResource < action.pagination.total; ++iResource) {
@@ -41,12 +44,19 @@ export const createExplorerReducer = (moduleConfig: Pick<IUnkownModuleConfig, 'n
         }
         // 3. Return with replacing totals
         return {
+          // Previous data
           ...state,
+          // Current folder (content)
           [action.folderId]: {
-            items: newItems,
-            nbFolders: action.folders.length,
-            nbResources: action.pagination.total,
+            ...state[action.folderId],
+            content: {
+              items: newItems,
+              nbFolders: action.folders.length,
+              nbResources: action.pagination.total,
+            },
           },
+          // children of current folder (metadata)
+          ...action.folders.reduce<ExplorerState>((acc, f) => ({ ...acc, [f.id]: { ...acc[f.id], metadata: f } }), {}),
         };
       },
     },
@@ -70,5 +80,5 @@ export const createExplorerSelectors = (
   moduleConfig: Pick<IUnkownModuleConfig, 'namespaceActionType'>,
   selector: (state: IGlobalState) => ExplorerState,
 ) => ({
-  folder: (folderId: FolderId) => (state: IGlobalState) => selector(state)[folderId] ?? emptyFolderData,
+  folder: (folderId: FolderId) => (state: IGlobalState) => selector(state)[folderId] ?? {},
 });

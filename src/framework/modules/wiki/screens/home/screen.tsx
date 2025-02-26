@@ -1,26 +1,17 @@
 import * as React from 'react';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-
 import type { WikiHomeScreen } from './types';
 
 import { I18n } from '~/app/i18n';
+import { EmptyScreen } from '~/framework/components/empty-screens';
+import { RootFolderId } from '~/framework/modules/explorer/model/types';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
+import { createResourceExplorerNavBar } from '~/framework/modules/explorer/templates/resource-explorer/screen';
 import moduleConfig from '~/framework/modules/wiki/module-config';
-import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
+import { wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import { selectors } from '~/framework/modules/wiki/store';
-import { navBarOptions } from '~/framework/navigation/navBar';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('wiki-home-title'),
-  }),
-});
+export const homeNavBar = createResourceExplorerNavBar('wiki-home-title', selectors.explorer);
 
 export default function WikiHomeScreen({ navigation, route, ...props }: WikiHomeScreen.AllProps) {
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
@@ -29,6 +20,37 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
     },
     [navigation],
   );
+
+  const hasCreateRight = false; // ToDo
+
+  const emptyComponent = React.useMemo(
+    () =>
+      route.params.folderId === RootFolderId.ROOT ? (
+        hasCreateRight ? (
+          <EmptyScreen
+            svgImage="empty-wiki"
+            title={I18n.get('wiki-explorer-emptyscreen-root-create-title')}
+            text={I18n.get('wiki-explorer-emptyscreen-root-create-text')}
+            buttonText={I18n.get('wiki-explorer-emptyscreen-root-create-button')}
+          />
+        ) : (
+          <EmptyScreen
+            svgImage="empty-wiki"
+            title={I18n.get('wiki-explorer-emptyscreen-root-title')}
+            text={I18n.get('wiki-explorer-emptyscreen-root-text')}
+          />
+        )
+      ) : (
+        <EmptyScreen
+          svgImage="empty-folder"
+          title={I18n.get('wiki-explorer-emptyscreen-folder-title')}
+          text={I18n.get('wiki-explorer-emptyscreen-folder-text')}
+          {...(hasCreateRight ? { buttonText: 'wiki-explorer-emptyscreen-folder-create-button' } : undefined)}
+        />
+      ),
+    [route.params.folderId, hasCreateRight],
+  );
+
   return (
     <ResourceExplorer
       {...props}
@@ -37,6 +59,7 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
       moduleConfig={moduleConfig}
       onOpenResource={onOpenResource}
       selectors={selectors.explorer}
+      emptyComponent={emptyComponent}
     />
   );
 }

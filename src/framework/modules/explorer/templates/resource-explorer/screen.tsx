@@ -6,15 +6,18 @@ import { Dispatch } from 'redux';
 
 import type { ResourceExplorerTemplate } from './types';
 
+import { I18n } from '~/app/i18n';
+import { getStore } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import ResourceGrid from '~/framework/modules/explorer/components/resource-grid';
 import { ResourceGrid as ResourceGridTypes } from '~/framework/modules/explorer/components/resource-grid/types';
-import { ExplorerFolderData, RootFolderId } from '~/framework/modules/explorer/model/types';
+import { ExplorerFolderContent, RootFolderId } from '~/framework/modules/explorer/model/types';
 import service from '~/framework/modules/explorer/service/index';
-import { ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
+import { emptyFolderData, ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/http';
 
 const estimatedListSize = {
@@ -22,7 +25,7 @@ const estimatedListSize = {
   width: UI_SIZES.screen.width,
 };
 
-const viewabilityConfig: FlashListProps<ExplorerFolderData['items'][0]>['viewabilityConfig'] = {
+const viewabilityConfig: FlashListProps<ExplorerFolderContent['items'][0]>['viewabilityConfig'] = {
   itemVisiblePercentThreshold: 0,
   minimumViewTime: 250,
   waitForInteraction: false,
@@ -33,7 +36,22 @@ const WINDOW_SLOP = 12; // How many margin to compute which items to load outsid
 
 const placeholderData = new Array(8).fill(null);
 
+export const createResourceExplorerNavBar =
+  (homeFolderi18n: string, selectors: ResourceExplorerTemplate.AllProps['selectors']) =>
+  ({ navigation, route }) => {
+    const { folderId = RootFolderId.ROOT } = route.params;
+    const { metadata } = selectors.folder(folderId)(getStore().getState());
+    return {
+      ...navBarOptions({
+        navigation,
+        route,
+        title: metadata?.name ?? I18n.get(homeFolderi18n),
+      }),
+    };
+  };
+
 export function ResourceExplorerTemplate({
+  emptyComponent,
   moduleConfig,
   navigation,
   onOpenResource,
@@ -42,12 +60,12 @@ export function ResourceExplorerTemplate({
 }: ResourceExplorerTemplate.AllProps) {
   const { folderId = RootFolderId.ROOT } = route.params;
 
-  const folderContent = useSelector(selectors.folder(folderId));
+  const { content = emptyFolderData } = useSelector(selectors.folder(folderId));
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();
   const actions = useExplorerActions(moduleConfig);
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
-  const folderContentRef = React.useRef(folderContent);
-  folderContentRef.current = folderContent;
+  const folderContentRef = React.useRef(content);
+  folderContentRef.current = content;
 
   // Pages currenlty fetching
   const fetchingPages = React.useRef<Set<number>>(new Set());
@@ -127,7 +145,7 @@ export function ResourceExplorerTemplate({
 
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(() => loadPage(0, true), [loadPage]);
 
-  const onPressFolder = React.useCallback<NonNullable<ResourceGridTypes.Props<(typeof folderContent.items)[0]>['onPressFolder']>>(
+  const onPressFolder = React.useCallback<NonNullable<ResourceGridTypes.Props<(typeof content.items)[0]>['onPressFolder']>>(
     f => navigation.push(route.name, { folderId: f.id }),
     [navigation, route.name],
   );
@@ -138,18 +156,18 @@ export function ResourceExplorerTemplate({
         <ResourceGrid
           key="data"
           moduleConfig={moduleConfig}
-          data={folderContent.items}
+          data={content.items}
           estimatedListSize={estimatedListSize}
           refreshControl={refreshControl}
           viewabilityConfig={viewabilityConfig}
           onViewableItemsChanged={onViewableItemsChanged}
           onPressFolder={onPressFolder}
           onPressResource={onOpenResource}
-          ListEmptyComponent={EmptyContentScreen}
+          ListEmptyComponent={emptyComponent ?? EmptyContentScreen}
         />
       );
     },
-    [moduleConfig, folderContent.items, onViewableItemsChanged, onPressFolder, onOpenResource],
+    [moduleConfig, content.items, onViewableItemsChanged, onPressFolder, onOpenResource, emptyComponent],
   );
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(

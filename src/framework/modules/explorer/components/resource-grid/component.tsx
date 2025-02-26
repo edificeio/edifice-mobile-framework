@@ -6,7 +6,7 @@ import { estimatedItemSize, ResourceExplorerItem } from './item-component';
 import styles from './styles';
 import type { ResourceGrid } from './types';
 
-import type { ExplorerFolderData } from '~/framework/modules/explorer/model/types';
+import type { ExplorerFolderContent } from '~/framework/modules/explorer/model/types';
 
 const defaultKeyExtractor: ResourceGrid.Props<ResourceGrid.BaseItemT>['keyExtractor'] = (item, index) => {
   return item === null ? index.toString() : `${item.resourceType}${item.id}`;
@@ -14,7 +14,7 @@ const defaultKeyExtractor: ResourceGrid.Props<ResourceGrid.BaseItemT>['keyExtrac
 
 const getItemType: FlashListProps<ResourceGrid.BaseItemT>['getItemType'] = item => item?.resourceType ?? 0;
 
-export function ResourceGrid<T extends ExplorerFolderData['items'][0]>({
+export function ResourceGrid<T extends ExplorerFolderContent['items'][0]>({
   keyExtractor,
   moduleConfig,
   onPressFolder,

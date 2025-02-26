@@ -1,5 +1,6 @@
 import type { ParamListBase } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FlashListProps } from '@shopify/flash-list';
 
 import { createExplorerSelectors } from '../../store';
 
@@ -11,6 +12,7 @@ export namespace ResourceExplorerTemplate {
     moduleConfig: Pick<AnyNavigableModuleConfig, 'displayPicture' | 'displayColor' | 'namespaceActionType'>;
     onOpenResource?: (r: Resource) => void;
     selectors: ReturnType<typeof createExplorerSelectors>;
+    emptyComponent?: FlashListProps<any>['ListEmptyComponent'];
   }
 
   export interface NavParams {
