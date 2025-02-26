@@ -35,6 +35,7 @@ export default StyleSheet.create({
   },
   itemThumbnail: {
     aspectRatio: UI_SIZES.aspectRatios.thumbnail,
+    borderRadius: 0,
   },
   itemThumbnailPlaceholder: {
     aspectRatio: UI_SIZES.aspectRatios.thumbnail,

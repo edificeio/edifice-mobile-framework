@@ -11,22 +11,29 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/override/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
+import ModuleImage from '~/framework/components/picture/module-image';
 import { CaptionText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import { explorerItemIsFolder, explorerItemIsLoading } from '~/framework/modules/explorer/model';
-import { Image } from '~/framework/util/media';
 
 export const estimatedItemSize = 200; // Measured estimated height of an item from the react-native inspector. @see https://shopify.github.io/flash-list/docs/estimated-item-size
 
 const resourceExplorerResourceItemStyle = [styles.item, styles.resourceItem];
 export const ResourceExplorerResourceItem: React.FC<ResourceGrid.ResourceExplorerResourceItemProps> = ({
   item,
+  moduleConfig,
   onPressResource,
 }) => {
   return (
     <TouchableOpacity
       style={resourceExplorerResourceItemStyle}
       onPress={React.useCallback(() => onPressResource?.(item), [item, onPressResource])}>
-      <Image style={styles.itemThumbnail} source={{ uri: item.thumbnail }} />
+      <ModuleImage
+        moduleConfig={moduleConfig}
+        style={styles.itemThumbnail}
+        source={React.useMemo(() => (item.thumbnail ? { uri: item.thumbnail } : undefined), [item.thumbnail])}
+        iconSize={UI_SIZES.elements.icon.xxlarge}
+      />
+      {/* <Image style={styles.itemThumbnail} source={{ uri: item.thumbnail }} /> */}
       <View style={styles.labelContainer}>
         <SmallBoldText style={styles.labelCaption} numberOfLines={1}>
           {item.name}
@@ -53,8 +60,8 @@ export const ResourceExplorerFolderItem: React.FC<ResourceGrid.ResourceExplorerF
         <Svg
           name="ui-folder"
           fill={moduleConfig?.displayColor?.regular ?? theme.palette.primary.regular}
-          width={UI_SIZES.elements.icon.xxlarge}
-          height={UI_SIZES.elements.icon.xxlarge}
+          width={UI_SIZES.elements.icon.xxxlarge}
+          height={UI_SIZES.elements.icon.xxxlarge}
         />
       </View>
       <View style={styles.labelContainer}>
