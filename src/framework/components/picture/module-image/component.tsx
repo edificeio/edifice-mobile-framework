@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageProps, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderMedia } from 'rn-placeholder';
 
@@ -8,7 +8,7 @@ import { ImageFallbackProps, ImageLoaderProps, ImageLoadingState, ModuleImagePro
 
 import theme from '~/app/theme';
 import { Icon, Svg } from '~/framework/components/picture';
-import { Image } from '~/framework/util/media';
+import { Image, ImageProps } from '~/framework/util/media';
 
 const DEFAULT_MODULE_CONFIG: Required<ModuleImageProps['moduleConfig']> = {
   displayColor: {
