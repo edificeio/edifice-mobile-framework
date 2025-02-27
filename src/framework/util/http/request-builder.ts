@@ -116,6 +116,17 @@ export class RequestBuilder {
     return this;
   }
 
+  public withSearchParams(params: string[][] | Record<string, string> | string | URLSearchParams) {
+    const navParams = new URLSearchParams(params);
+    const url = new URL(this._url);
+    navParams.forEach((v, k) => {
+      // No, this is not an error, `URLSearchParams.forEach` callback arguments are swapped for some reason :c
+      url.searchParams.append(k, v);
+    });
+    this._url = url;
+    return this;
+  }
+
   /**
    * Builds and returns a new `Request` object with the specified URL and initialization options.
    *
