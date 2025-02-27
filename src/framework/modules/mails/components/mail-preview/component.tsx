@@ -36,13 +36,39 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
     };
   }, []);
 
-  const renderAvatar = () => {
+  const renderAttachmentIcon = React.useCallback(() => {
+    if (!hasAttachment) return null;
+    return (
+      <Svg
+        name="ui-attachment"
+        height={UI_SIZES.elements.icon.xxsmall}
+        width={UI_SIZES.elements.icon.xxsmall}
+        fill={theme.palette.grey.black}
+      />
+    );
+  }, [hasAttachment]);
+
+  const renderResponseIcon = React.useCallback(() => {
+    if (!response) return null;
+    return (
+      <View style={styles.responseIcon}>
+        <Svg
+          name="ui-undo"
+          height={UI_SIZES.elements.icon.xxsmall}
+          width={UI_SIZES.elements.icon.xxsmall}
+          fill={theme.palette.grey.black}
+        />
+      </View>
+    );
+  }, [response]);
+
+  const renderAvatar = React.useCallback(() => {
     if (isSender && infosRecipients.ids.length > 1) return <MailsRecipientAvatar type="Group" />;
     if (isSender) return <MailsRecipientAvatar type="User" id={infosRecipients.ids[0]} />;
     return <MailsRecipientAvatar type="User" id={from?.id} />;
-  };
+  }, [from?.id, infosRecipients.ids, isSender]);
 
-  const renderFirstText = () => {
+  const renderFirstText = React.useCallback(() => {
     return (
       <TextComponent numberOfLines={1} style={styles.firstText}>
         {state === MailsMailStatePreview.DRAFT ? (
@@ -60,7 +86,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         )}
       </TextComponent>
     );
-  };
+  }, [TextComponent, from?.displayName, infosRecipients.text, isSender, state]);
 
   const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
     const styleAnimation = useAnimatedStyle(() => {
@@ -110,16 +136,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       renderRightActions={swipeRightAction}>
       <TouchableOpacity style={[styles.container, isUnread ? styles.containerUnread : {}]} onPress={onPress}>
         {renderAvatar()}
-        {response ? (
-          <View style={styles.responseIcon}>
-            <Svg
-              name="ui-undo"
-              height={UI_SIZES.elements.icon.xxsmall}
-              width={UI_SIZES.elements.icon.xxsmall}
-              fill={theme.palette.grey.black}
-            />
-          </View>
-        ) : null}
+        {renderResponseIcon()}
         <View style={styles.texts}>
           <View style={styles.line}>
             {renderFirstText()}
@@ -127,14 +144,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
           </View>
           <View style={styles.line}>
             <TextComponent numberOfLines={1}>{subject && subject.length ? subject : I18n.get('mails-list-noobject')}</TextComponent>
-            {hasAttachment ? (
-              <Svg
-                name="ui-attachment"
-                height={UI_SIZES.elements.icon.xxsmall}
-                width={UI_SIZES.elements.icon.xxsmall}
-                fill={theme.palette.grey.black}
-              />
-            ) : null}
+            {renderAttachmentIcon()}
           </View>
         </View>
       </TouchableOpacity>

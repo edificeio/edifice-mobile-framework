@@ -25,6 +25,7 @@ const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
     aspectRatio: 1,
     width: NewAvatarSizes[props.size ?? AvatarSize.md],
   };
+
   return (
     <View style={[suppViewStyles, styles.view, type === 'ShareBookmark' ? styles.bookmark : type === 'User' ? styles.noUser : {}]}>
       <Svg

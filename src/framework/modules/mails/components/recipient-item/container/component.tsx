@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Animated, TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
@@ -41,20 +41,25 @@ const MailsRecipientContainer = (props: React.PropsWithChildren<MailsRecipientCo
     if (props.onPress) props.onPress(props.item as MailsVisible);
   };
 
+  const renderIconIsSelected = useCallback(() => {
+    if (!props.selected) return null;
+    return (
+      <Animated.View style={[styles.selectedView, { opacity: opacityView }]}>
+        <Animated.View style={{ opacity: opacityIcon, transform: [{ translateX: positionXIcon }] }}>
+          <Svg
+            name="ui-success"
+            fill={theme.palette.grey.graphite}
+            height={UI_SIZES.elements.icon.small}
+            width={UI_SIZES.elements.icon.small}
+          />
+        </Animated.View>
+      </Animated.View>
+    );
+  }, [opacityIcon, opacityView, positionXIcon, props.selected]);
+
   return (
     <TouchableOpacity disabled={props.onPress && !props.selected ? false : true} onPress={onPress}>
-      {props.selected ? (
-        <Animated.View style={[styles.selectedView, { opacity: opacityView }]}>
-          <Animated.View style={{ opacity: opacityIcon, transform: [{ translateX: positionXIcon }] }}>
-            <Svg
-              name="ui-success"
-              fill={theme.palette.grey.graphite}
-              height={UI_SIZES.elements.icon.small}
-              width={UI_SIZES.elements.icon.small}
-            />
-          </Animated.View>
-        </Animated.View>
-      ) : null}
+      {renderIconIsSelected()}
       <View style={[styles.container, props.selected ? styles.containerSelected : {}]}>{props.children}</View>
     </TouchableOpacity>
   );

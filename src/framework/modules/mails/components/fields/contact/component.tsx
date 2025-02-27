@@ -19,7 +19,7 @@ import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework
 import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
 
 function removeAccents(text: string): string {
-  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Supprime les diacritiques
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 const INITIAL_HEIGHT_INPUT = 60;
@@ -106,7 +106,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const scrollToInput = () => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        viewContainerRef.current!.measure((x, y, width, height, pageX, pageY) => {
+        viewContainerRef.current!.measure((x, y, width, height) => {
           setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
           setHeightInputToSave(height);
           topPositionResults.setValue(y + height);

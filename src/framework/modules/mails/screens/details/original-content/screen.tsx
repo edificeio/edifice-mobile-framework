@@ -38,7 +38,7 @@ const MailsDetailsOriginalContentScreen = (props: MailsDetailsOriginalContentScr
     }
   };
 
-  const renderContent = () => {
+  const renderContent = React.useCallback(() => {
     if (error) return <EmptyContentScreen />;
     return (
       <PageView>
@@ -52,7 +52,8 @@ const MailsDetailsOriginalContentScreen = (props: MailsDetailsOriginalContentScr
         </ScrollView>
       </PageView>
     );
-  };
+  }, [content, error]);
+
   return <ContentLoader loadContent={loadData} renderContent={renderContent} />;
 };
 

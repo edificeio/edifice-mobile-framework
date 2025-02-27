@@ -109,9 +109,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     }
   };
 
-  const onDismissBottomSheet = () => {
+  const onDismissBottomSheet = React.useCallback(() => {
     if (isInModalMove) setIsInModalMove(false);
-  };
+  }, [isInModalMove]);
 
   const onReply = React.useCallback(() => {
     let to: MailsVisible[] = [];
@@ -174,7 +174,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     });
   }, [from, mail, props]);
 
-  const onCreateNewFolder = async () => {
+  const onCreateNewFolder = React.useCallback(async () => {
     try {
       const folderId = await mailsService.folder.create({ name: valueNewFolder });
       await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
@@ -183,22 +183,25 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [id, props.navigation, valueNewFolder]);
 
-  const handleMailAction = async (action: () => Promise<void>, successMessageKey: string) => {
-    try {
-      await action();
-      Toast.showSuccess(I18n.get(successMessageKey));
-      const navigationParams = {
-        from,
-        ...(successMessageKey === 'mails-details-toastsuccessunread' ? { idMailToMarkUnread: id } : { idMailToRemove: id }),
-      };
-      props.navigation.navigate(mailsRouteNames.home, navigationParams);
-    } catch (e) {
-      console.error(e);
-      toast.showError();
-    }
-  };
+  const handleMailAction = React.useCallback(
+    async (action: () => Promise<void>, successMessageKey: string) => {
+      try {
+        await action();
+        Toast.showSuccess(I18n.get(successMessageKey));
+        const navigationParams = {
+          from,
+          ...(successMessageKey === 'mails-details-toastsuccessunread' ? { idMailToMarkUnread: id } : { idMailToRemove: id }),
+        };
+        props.navigation.navigate(mailsRouteNames.home, navigationParams);
+      } catch (e) {
+        console.error(e);
+        toast.showError();
+      }
+    },
+    [from, id, props.navigation],
+  );
 
   const onMarkUnread = () =>
     handleMailAction(() => mailsService.mail.toggleUnread({ ids: [id], unread: true }), 'mails-details-toastsuccessunread');
@@ -208,11 +211,14 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     bottomSheetModalRef.current?.present();
   };
 
-  const onMove = () =>
-    handleMailAction(
-      () => mailsService.mail.moveToFolder({ folderId: newParentFolder!.id }, { ids: [id] }),
-      'mails-details-toastsuccessmove',
-    );
+  const onMove = React.useCallback(
+    () =>
+      handleMailAction(
+        () => mailsService.mail.moveToFolder({ folderId: newParentFolder!.id }, { ids: [id] }),
+        'mails-details-toastsuccessmove',
+      ),
+    [handleMailAction, id, newParentFolder],
+  );
 
   const onRemoveFromFolder = () =>
     handleMailAction(() => mailsService.mail.removeFromFolder({ ids: [id] }), 'mails-details-toastsuccessremovefromfolder');
@@ -342,7 +348,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mail, newParentFolder, props]);
 
-  const renderRecipients = () => {
+  const renderRecipients = React.useCallback(() => {
     return (
       <TouchableOpacity
         onPress={() => bottomSheetModalRef.current?.present()}
@@ -361,7 +367,12 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         ) : null}
       </TouchableOpacity>
     );
-  };
+  }, [infosRecipients]);
+
+  const renderAttachments = React.useCallback(() => {
+    if (mail!.attachments.length <= 0) return;
+    return <Attachments session={props.session!} attachments={convertedAttachments} />;
+  }, [convertedAttachments, mail, props.session]);
 
   const renderOriginalContent = React.useCallback(() => {
     const navigateToOriginalContent = () => {
@@ -405,7 +416,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const hasRecipients = (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0;
 
-  const renderListRecipients = (recipients: MailsRecipients, prefix: string) => {
+  const renderListRecipients = React.useCallback((recipients: MailsRecipients, prefix: string) => {
     if (!hasRecipients(recipients)) return;
     return (
       <View>
@@ -416,78 +427,87 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           : null}
       </View>
     );
-  };
+  }, []);
 
-  const renderDetailsRecipients = () => (
-    <View style={styles.contentBottomSheet}>
-      {renderListRecipients(mail!.to, 'mails-prefixto')}
-      {hasRecipients(mail!.to) && hasRecipients(mail!.cc) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
-      {renderListRecipients(mail!.cc, 'mails-prefixcc')}
-      {hasRecipients(mail!.cc) && hasRecipients(mail!.cci) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
-      {renderListRecipients(mail!.cci, 'mails-prefixcci')}
-    </View>
+  const renderDetailsRecipients = React.useCallback(
+    () => (
+      <View style={styles.contentBottomSheet}>
+        {renderListRecipients(mail!.to, 'mails-prefixto')}
+        {hasRecipients(mail!.to) && hasRecipients(mail!.cc) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
+        {renderListRecipients(mail!.cc, 'mails-prefixcc')}
+        {hasRecipients(mail!.cc) && hasRecipients(mail!.cci) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
+        {renderListRecipients(mail!.cci, 'mails-prefixcci')}
+      </View>
+    ),
+    [mail, renderListRecipients],
   );
 
-  const renderCreateFolder = () => (
-    <View>
-      <HeaderBottomSheetModal
-        title={I18n.get('mails-list-newfolder')}
-        iconRight="ui-check"
-        iconRightDisabled={valueNewFolder.length === 0}
-        onPressRight={onCreateNewFolder}
-      />
-      <InputContainer
-        label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
-        input={
-          <TextInput
-            placeholder={I18n.get('mails-list-newfolderplaceholder')}
-            onChangeText={text => setValueNewFolder(text)}
-            value={valueNewFolder}
-            maxLength={50}
-          />
-        }
-      />
-    </View>
+  const renderCreateFolder = React.useCallback(
+    () => (
+      <View>
+        <HeaderBottomSheetModal
+          title={I18n.get('mails-list-newfolder')}
+          iconRight="ui-check"
+          iconRightDisabled={valueNewFolder.length === 0}
+          onPressRight={onCreateNewFolder}
+        />
+        <InputContainer
+          label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
+          input={
+            <TextInput
+              placeholder={I18n.get('mails-list-newfolderplaceholder')}
+              onChangeText={text => setValueNewFolder(text)}
+              value={valueNewFolder}
+              maxLength={50}
+            />
+          }
+        />
+      </View>
+    ),
+    [onCreateNewFolder, valueNewFolder],
   );
 
-  const renderMoveFolder = () => (
-    <View style={styles.contentBottomSheet}>
-      <HeaderBottomSheetModal
-        title={I18n.get('mails-details-move')}
-        iconRight="ui-check"
-        iconRightDisabled={!newParentFolder}
-        onPressRight={onMove}
-      />
-      <FlatList
-        data={folders}
-        contentContainerStyle={[
-          stylesFolders.containerFolders,
-          styles.flatListBottomSheet,
-          folders?.length === 0 ? styles.nofoldersContainer : {},
-        ]}
-        renderItem={({ item }) => (
-          <MailsFolderItem
-            key={item.id}
-            icon="ui-folder"
-            name={item.name}
-            depth={item.depth}
-            selected={newParentFolder?.id === item.id}
-            disabled={item.id === mail!.folder_id}
-            onPress={() => setNewParentFolder(item)}
-          />
-        )}
-        ListEmptyComponent={
-          <View style={styles.nofolders}>
-            <Svg name="empty-nofolders" width={EMPTY_SVG_SIZE} height={EMPTY_SVG_SIZE} />
-            <BodyText>{I18n.get('mails-details-nofolders')}</BodyText>
-            <PrimaryButton text={I18n.get('mails-details-createfolder')} action={() => setIsFolderCreation(true)} />
-          </View>
-        }
-      />
-    </View>
+  const renderMoveFolder = React.useCallback(
+    () => (
+      <View style={styles.contentBottomSheet}>
+        <HeaderBottomSheetModal
+          title={I18n.get('mails-details-move')}
+          iconRight="ui-check"
+          iconRightDisabled={!newParentFolder}
+          onPressRight={onMove}
+        />
+        <FlatList
+          data={folders}
+          contentContainerStyle={[
+            stylesFolders.containerFolders,
+            styles.flatListBottomSheet,
+            folders?.length === 0 ? styles.nofoldersContainer : {},
+          ]}
+          renderItem={({ item }) => (
+            <MailsFolderItem
+              key={item.id}
+              icon="ui-folder"
+              name={item.name}
+              depth={item.depth}
+              selected={newParentFolder?.id === item.id}
+              disabled={item.id === mail!.folder_id}
+              onPress={() => setNewParentFolder(item)}
+            />
+          )}
+          ListEmptyComponent={
+            <View style={styles.nofolders}>
+              <Svg name="empty-nofolders" width={EMPTY_SVG_SIZE} height={EMPTY_SVG_SIZE} />
+              <BodyText>{I18n.get('mails-details-nofolders')}</BodyText>
+              <PrimaryButton text={I18n.get('mails-details-createfolder')} action={() => setIsFolderCreation(true)} />
+            </View>
+          }
+        />
+      </View>
+    ),
+    [folders, mail, newParentFolder, onMove],
   );
 
-  const renderBottomSheet = () => {
+  const renderBottomSheet = React.useCallback(() => {
     return (
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -505,9 +525,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         </GHScrollView>
       </BottomSheetModal>
     );
-  };
+  }, [isFolderCreation, isInModalMove, onDismissBottomSheet, renderCreateFolder, renderDetailsRecipients, renderMoveFolder]);
 
-  const renderContent = () => {
+  const renderContent = React.useCallback(() => {
     if (error) return <EmptyContentScreen />;
     return (
       <PageView>
@@ -530,7 +550,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
             </View>
           </View>
           <RichEditorViewer content={mailContent} />
-          {mail!.attachments.length > 0 ? <Attachments session={props.session!} attachments={convertedAttachments} /> : null}
+          {renderAttachments()}
           {renderOriginalContent()}
           {renderHistory()}
           {renderButtons()}
@@ -538,7 +558,21 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         {renderBottomSheet()}
       </PageView>
     );
-  };
+  }, [
+    error,
+    mail?.date,
+    mail?.from.displayName,
+    mail?.from.id,
+    mail?.subject,
+    mailContent,
+    props.navigation,
+    renderAttachments,
+    renderBottomSheet,
+    renderButtons,
+    renderHistory,
+    renderOriginalContent,
+    renderRecipients,
+  ]);
 
   return (
     <ContentLoader

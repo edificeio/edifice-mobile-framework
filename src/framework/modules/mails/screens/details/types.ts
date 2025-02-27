@@ -16,6 +16,4 @@ export interface MailsDetailsScreenNavParams {
 
 export interface MailsDetailsScreenPrivateProps
   extends NativeStackScreenProps<MailsNavigationParams, 'details'>,
-    MailsDetailsScreenProps {
-  // @scaffolder add HOC props here
-}
+    MailsDetailsScreenProps {}

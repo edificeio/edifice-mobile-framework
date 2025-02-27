@@ -21,14 +21,14 @@ export const MailsFolderItem = (props: MailsFolderItemProps) => {
     return {};
   };
 
-  const renderUnread = () => {
+  const renderUnread = React.useCallback(() => {
     if (!props.nbUnread) return;
     return (
       <View style={styles.nbUnread}>
         <SmallBoldText style={styles.nbUnreadText}>{props.nbUnread}</SmallBoldText>
       </View>
     );
-  };
+  }, [props.nbUnread]);
 
   return (
     <TouchableOpacity
