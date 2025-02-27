@@ -831,6 +831,7 @@
   "mails-edit-toastsuccessdeletedraft": "Brouillon supprimé",
   "mails-edit-toastsuccesssavedraft": "Brouillon sauvegardé",
   "mails-edit-toastsuccesssend": "Message envoyé",
+  "mails-list-configuresignature": "Paramétrer la signature",
   "mails-list-deletefolder": "Supprimer le dossier",
   "mails-list-deletefoldertext": "Êtes-vous sûr de vouloir supprimer le dossier ? Les messages seront mis à la corbeille.",
   "mails-list-drafts": "Brouillons",

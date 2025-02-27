@@ -240,6 +240,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     Alert.alert('Select mode', 'This feature is not implemented yet');
   }, []);
 
+  const onConfigureSignature = React.useCallback(async () => {
+    Alert.alert('Signature mode', 'This feature is not implemented yet');
+  }, []);
+
   const onDeleteFolder = React.useCallback(() => {
     Alert.alert(I18n.get('mails-list-deletefolder'), I18n.get('mails-list-deletefoldertext'), [
       {
@@ -275,6 +279,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         title: I18n.get('mails-list-select'),
       },
       {
+        action: onConfigureSignature,
+        icon: {
+          android: 'ic_signature',
+          ios: 'scribble',
+        },
+        title: I18n.get('mails-list-configuresignature'),
+      },
+      {
         action: onRenameFolder,
         icon: {
           android: 'ic_pencil',
@@ -292,10 +304,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       },
       deleteAction({
         action: onDeleteFolder,
-        title: I18n.get('mails-details-deletefolder'),
+        title: I18n.get('mails-list-deletefolder'),
       }),
     ],
-    [onDeleteFolder, onMoveFolder, onRenameFolder],
+    [onConfigureSignature, onDeleteFolder, onMoveFolder, onRenameFolder, onSelectMode],
   );
 
   React.useEffect(() => {
@@ -315,7 +327,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               icon="ui-edit"
               onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })}
             />,
-            <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 1)}>
+            <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 2)}>
               <NavBarAction icon="ui-options" />
             </PopupMenu>,
           ]}
