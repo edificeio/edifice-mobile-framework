@@ -832,6 +832,7 @@
   "mails-edit-toastsuccesssavedraft": "Brouillon sauvegardé",
   "mails-edit-toastsuccesssend": "Message envoyé",
   "mails-list-deletefolder": "Supprimer le dossier",
+  "mails-list-deletefoldertext": "Êtes-vous sûr de vouloir supprimer le dossier ? Les messages seront mis à la corbeille.",
   "mails-list-drafts": "Brouillons",
   "mails-list-draft": "Brouillon",
   "mails-list-emptytext": "Avec la Messagerie, communiquez facilement avec la communauté de l’école. Vos messages prennent leur envol !",

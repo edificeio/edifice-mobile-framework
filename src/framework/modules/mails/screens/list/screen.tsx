@@ -212,16 +212,28 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     Alert.alert('Move folder', 'This feature is not implemented yet');
   }, []);
 
-  const onDeleteFolder = React.useCallback(async () => {
-    try {
-      await mailsService.folder.delete({ id: (selectedFolder as MailsFolderInfo).id });
-      switchFolder(MailsDefaultFolders.INBOX);
-      loadFolders();
-      toast.showSuccess(I18n.get('mails-list-toastsuccessdeletefolder'));
-    } catch (e) {
-      console.error(e);
-      toast.showError();
-    }
+  const onDeleteFolder = React.useCallback(() => {
+    Alert.alert(I18n.get('mails-list-deletefolder'), I18n.get('mails-list-deletefoldertext'), [
+      {
+        style: 'default',
+        text: I18n.get('common-cancel'),
+      },
+      {
+        onPress: async () => {
+          try {
+            await mailsService.folder.delete({ id: (selectedFolder as MailsFolderInfo).id });
+            switchFolder(MailsDefaultFolders.INBOX);
+            loadFolders();
+            toast.showSuccess(I18n.get('mails-list-toastsuccessdeletefolder'));
+          } catch (e) {
+            console.error(e);
+            toast.showError();
+          }
+        },
+        style: 'destructive',
+        text: I18n.get('common-delete'),
+      },
+    ]);
   }, [loadFolders, selectedFolder, switchFolder]);
 
   const allPopupActionsMenu = React.useMemo(
