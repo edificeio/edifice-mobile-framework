@@ -101,6 +101,11 @@ export interface IMailsFolder {
   subFolders?: IMailsFolder[];
 }
 
+export interface IMailsSignaturePreferences {
+  useSignature: boolean;
+  signature: string;
+}
+
 export interface MailsFolderInfo {
   id: string;
   name: string;

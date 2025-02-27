@@ -13,6 +13,7 @@ import {
   IMailsFolder,
   IMailsMailContent,
   IMailsMailPreview,
+  IMailsSignaturePreferences,
   MailsFolderCount,
   MailsVisible,
 } from '~/framework/modules/mails/model';
@@ -171,7 +172,19 @@ export const mailsService = {
       return mails as IMailsMailPreview[];
     },
   },
-  signature: {},
+  signature: {
+    get: async () => {
+      const api = '/userbook/preference/conversation';
+      const preferences = (await http.fetchJsonForSession('GET', api)) as { preference: IMailsSignaturePreferences };
+
+      return preferences.preference as IMailsSignaturePreferences;
+    },
+    update: async (payload: { signature: string; useSignature: boolean }) => {
+      const api = '/userbook/preference/conversation';
+      const body = JSON.stringify(payload);
+      await http.fetchJsonForSession('PUT', api, { body });
+    },
+  },
   visibles: {
     getAll: async () => {
       const api = '/conversation/visible';

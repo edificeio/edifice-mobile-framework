@@ -232,17 +232,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     bottomSheetModalRef.current?.present();
   }, [selectedFolder]);
 
-  const onMoveFolder = React.useCallback(() => {
-    Alert.alert('Move folder', 'This feature is not implemented yet');
-  }, []);
-
   const onSelectMode = React.useCallback(async () => {
     Alert.alert('Select mode', 'This feature is not implemented yet');
   }, []);
 
   const onConfigureSignature = React.useCallback(async () => {
-    Alert.alert('Signature mode', 'This feature is not implemented yet');
-  }, []);
+    navigation.navigate(mailsRouteNames.signature, {});
+  }, [navigation]);
 
   const onDeleteFolder = React.useCallback(() => {
     Alert.alert(I18n.get('mails-list-deletefolder'), I18n.get('mails-list-deletefoldertext'), [
@@ -294,20 +290,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         },
         title: I18n.get('mails-list-renamefolder'),
       },
-      {
-        action: onMoveFolder,
-        icon: {
-          android: 'ic_move_folder',
-          ios: 'square.and.arrow.up.on.square',
-        },
-        title: I18n.get('mails-list-movefolder'),
-      },
       deleteAction({
         action: onDeleteFolder,
         title: I18n.get('mails-list-deletefolder'),
       }),
     ],
-    [onConfigureSignature, onDeleteFolder, onMoveFolder, onRenameFolder, onSelectMode],
+    [onConfigureSignature, onDeleteFolder, onRenameFolder, onSelectMode],
   );
 
   React.useEffect(() => {
