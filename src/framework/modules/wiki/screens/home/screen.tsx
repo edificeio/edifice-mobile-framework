@@ -5,10 +5,12 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import type { WikiHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
+import ImageInput from '~/framework/modules/wiki/components/image-input';
+import moduleConfig from '~/framework/modules/wiki/module-config';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { Asset } from '~/framework/util/fileHandler/types';
 
 export const computeNavBar = ({
   navigation,
@@ -22,9 +24,12 @@ export const computeNavBar = ({
 });
 
 export default function WikiHomeScreen(props: WikiHomeScreenPrivateProps) {
+  const [imageUrl, setImageUrl] = React.useState<Pick<Asset, 'uri'> | undefined>(undefined);
+
   return (
-    <PageView>
+    <>
       <BodyBoldText>wiki home screen</BodyBoldText>
-    </PageView>
+      <ImageInput moduleConfig={moduleConfig} value={imageUrl} onChange={setImageUrl} />
+    </>
   );
 }
