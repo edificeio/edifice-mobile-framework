@@ -1,47 +1,38 @@
 import React from 'react';
-import { ImageProps, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderMedia } from 'rn-placeholder';
 
 import styles from './styles';
-import { ImageFallbackProps, ImageLoaderProps, ImageLoadingState, ModuleImageProps } from './types';
+import { ImageFallbackProps, ImageLoaderProps, ImageLoadingState, ModuleConfigForFallbackImage, ModuleImageProps } from './types';
 
 import theme from '~/app/theme';
 import { Icon, Svg } from '~/framework/components/picture';
-import { Image } from '~/framework/util/media';
+import { Image, ImageProps } from '~/framework/util/media';
 
-const DEFAULT_MODULE_CONFIG: Required<ModuleImageProps['moduleConfig']> = {
+const DEFAULT_MODULE_CONFIG: ModuleConfigForFallbackImage = {
   displayColor: {
     pale: theme.palette.grey.pearl,
     regular: theme.palette.grey.grey,
-  },
-  displayPicture: {
-    name: 'image-not-found',
-    type: 'Svg',
   },
 };
 
 const DEFAULT_ICON_SIZE = '58%';
 
-const ImageFallback: React.FC<ImageFallbackProps> = ({
-  iconSize,
-  imageProps,
-  moduleConfig: {
-    displayColor = DEFAULT_MODULE_CONFIG.displayColor,
-    displayPicture = DEFAULT_MODULE_CONFIG.displayPicture,
-  } = DEFAULT_MODULE_CONFIG,
-}) => {
+const ImageFallback: React.FC<ImageFallbackProps> = ({ fallbackIcon, iconSize, imageProps, moduleConfig }) => {
+  const displayColor = moduleConfig?.displayColor ?? DEFAULT_MODULE_CONFIG?.displayColor;
+  const displayPicture = moduleConfig?.displayPicture ?? fallbackIcon;
   const svgContainerStyle = React.useMemo(
     () =>
-      displayPicture.type === 'Svg' ? [styles.moduleImage, { backgroundColor: displayColor?.pale }, imageProps.style] : undefined,
-    [displayColor?.pale, imageProps.style, displayPicture.type],
+      displayPicture?.type === 'Svg' ? [styles.moduleImage, { backgroundColor: displayColor?.pale }, imageProps.style] : undefined,
+    [displayColor?.pale, imageProps.style, displayPicture?.type],
   );
   const imageContainerStyle = React.useMemo(
-    () => (displayPicture.type === 'Image' ? [styles.moduleImage, imageProps.style] : undefined),
-    [displayPicture.type, imageProps.style],
+    () => (displayPicture?.type === 'Image' ? [styles.moduleImage, imageProps.style] : undefined),
+    [displayPicture?.type, imageProps.style],
   );
 
-  switch (displayPicture.type) {
+  switch (displayPicture?.type) {
     case 'Svg':
       return (
         <View style={svgContainerStyle}>
@@ -62,7 +53,10 @@ const ImageFallback: React.FC<ImageFallbackProps> = ({
 };
 
 const ImageLoader: React.FC<ImageLoaderProps> = ({ imageProps }) => {
-  const imageLoaderStyle = React.useMemo(() => [styles.moduleImage, imageProps.style], [imageProps.style]);
+  const imageLoaderStyle = React.useMemo(
+    () => [styles.moduleImage, styles.imageLoaderWrapper, imageProps.style],
+    [imageProps.style],
+  );
 
   return (
     <Placeholder Animation={Fade} style={imageLoaderStyle}>
@@ -71,14 +65,31 @@ const ImageLoader: React.FC<ImageLoaderProps> = ({ imageProps }) => {
   );
 };
 
-const ModuleImage: React.FC<ModuleImageProps> = ({ iconSize, moduleConfig, onError, onLoad, ...props }) => {
+const ModuleImage: React.FC<ModuleImageProps> = ({ fallbackIcon, iconSize, moduleConfig, onError, onLoad, ...props }) => {
   // Restore loading state when source changes
-  const prevSource = React.useRef(props.source);
   const [imageLoadingState, setImageLoadingState] = React.useState<ImageLoadingState>(ImageLoadingState.Loading);
-  if (prevSource.current !== props.source) {
-    setImageLoadingState(ImageLoadingState.Loading);
-    prevSource.current = props.source;
-  }
+  const prevSrcSet = React.useRef(props.srcSet);
+  const prevSrc = React.useRef(props.src);
+  const prevSource = React.useRef(props.source);
+  const isSourceEmpty = !props.source && !props.src && !props.srcSet;
+  const mergedModuleImageStyle = React.useMemo(() => [styles.moduleImageContainer, props.style], [props.style]);
+
+  React.useEffect(() => {
+    if (isSourceEmpty) {
+      setImageLoadingState(ImageLoadingState.Error);
+    } else {
+      if (prevSrcSet.current !== props.srcSet) {
+        setImageLoadingState(ImageLoadingState.Loading);
+        prevSrcSet.current = props.srcSet;
+      } else if (prevSrc.current !== props.src) {
+        setImageLoadingState(ImageLoadingState.Loading);
+        prevSrc.current = props.src;
+      } else if (prevSource.current !== props.source) {
+        setImageLoadingState(ImageLoadingState.Loading);
+        prevSource.current = props.source;
+      }
+    }
+  }, [isSourceEmpty, props.source, props.src, props.srcSet]);
 
   const onImageLoadSuccess = React.useCallback<NonNullable<ImageProps['onLoad']>>(
     e => {
@@ -96,9 +107,9 @@ const ModuleImage: React.FC<ModuleImageProps> = ({ iconSize, moduleConfig, onErr
   );
 
   return (
-    <View style={styles.moduleImageContainer}>
-      {imageLoadingState === ImageLoadingState.Error ? (
-        <ImageFallback moduleConfig={moduleConfig} imageProps={props} iconSize={iconSize} />
+    <View style={mergedModuleImageStyle}>
+      {imageLoadingState === ImageLoadingState.Error || props.source?.uri === undefined ? (
+        <ImageFallback fallbackIcon={fallbackIcon} moduleConfig={moduleConfig} imageProps={props} iconSize={iconSize} />
       ) : (
         <>
           <Image {...props} onLoad={onImageLoadSuccess} onError={onImageLoadError} />

@@ -1,5 +1,7 @@
 import deepmerge from 'deepmerge';
 
+import wikiModuleConfig from '../wiki/module-config';
+
 import theme from '~/app/theme';
 import appConf from '~/framework/util/appConf';
 import { IAppBadgeInfo, IAppBadgesInfoDeclaration } from '~/framework/util/moduleTool';
@@ -38,7 +40,7 @@ export let APPBADGES: {
   USERBOOK: { color: variableColor, icon: { name: 'adressBook', type: 'Svg' } },
   USERBOOK_MOOD: { color: variableColor, icon: { name: 'adressBook', type: 'Svg' } },
   USERBOOK_MOTTO: { color: variableColor, icon: { name: 'adressBook', type: 'Svg' } },
-  WIKI: { color: theme.palette.complementary.purple.regular, icon: { name: 'wiki', type: 'Svg' } },
+  WIKI: { color: wikiModuleConfig.displayColor.regular, icon: { name: 'wiki', type: 'Svg' } },
   WORKSPACE: { color: theme.palette.complementary.red.regular, icon: { name: 'files', type: 'Svg' } },
 };
 

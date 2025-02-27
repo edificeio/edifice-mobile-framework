@@ -48,7 +48,7 @@ const processImage = async (pic: Image) => {
       {
         mode: 'contain',
         onlyScaleDown: false,
-      }
+      },
     );
     return {
       ...response,
@@ -117,7 +117,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     } catch {
       Alert.alert(
         I18n.get('document-permissionblocked-title'),
-        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() })
+        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
       );
     }
   }
@@ -146,11 +146,13 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
       await this.imageCallback(images, callback, synchrone, callbackOnce);
     } catch (e) {
-      console.error(e);
-      Alert.alert(
-        I18n.get('gallery-readpermissionblocked-title'),
-        I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() })
-      );
+      if (e instanceof Error && (e as { code?: unknown }).code === 'E_PICKER_CANCELLED') {
+        await this.imageCallback([], callback, synchrone, callbackOnce);
+        return;
+      } else {
+        console.error(e);
+        toast.showError(I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
+      }
     }
   }
 
@@ -169,11 +171,9 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       if (e instanceof Error && (e as { code?: unknown }).code === 'E_PICKER_CANCELLED') {
         await this.imageCallback([], callback, synchrone, callbackOnce);
         return;
+      } else {
+        toast.showError(I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
       }
-      Alert.alert(
-        I18n.get('camera-permissionblocked-title'),
-        I18n.get('camera-permissionblocked-text', { appName: DeviceInfo.getApplicationName() })
-      );
     }
   }
 
@@ -195,7 +195,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     file: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem,
     opts: {
       _needIOSReleaseSecureAccess: boolean;
-    }
+    },
   ) {
     this._needIOSReleaseSecureAccess = opts._needIOSReleaseSecureAccess;
     this.filename =

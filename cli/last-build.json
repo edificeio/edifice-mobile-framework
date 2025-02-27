@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-01-06 19:18:20",
-  "notes": "release: 1.14.0(1140000)\nfix(schoolbook): MB-2250 fixing title margin\nfeat(homework): WB2-2228 adding media preview in title\nchore(stack): yarn cache update\nMerge commit '4acd55a89a762a41c32eec7dcae69f654c8da3cf' into dev/pedago\nchore(stack): yarn cache update\nchore(stack): yarn cache update\nrelease: 1.13.8-rc.1(1130801)",
-  "version": "1.14.0-alpha.1(1140001)"
+  "last": "2025-03-03 23:29:30",
+  "notes": "chore: yarn cache update\nfix: WB2-2163 fix non-touchable button on timeline notifications\nchore: yarn cache update\nMerge branch 'dev/1.14.0' into dev/peda\nMerge commit '829d224913b218ded29f4100a2aa96eb7e442469' into dev/1.14.0\nMerge remote-tracking branch 'origin/dev/1.14.0' into dev/peda\nfix: WB2-2500 fix Timetable corner cases\nfix(homework): WB2-2289 fix media icons position\nchore: yarn cache update\nUpdated translations from Phrase\nrelease: 1.14.0-peda.1(1140002)",
+  "version": "1.14.0-peda.2(1140003)"
 }

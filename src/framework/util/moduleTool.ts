@@ -5,15 +5,15 @@
 import React from 'react';
 import { ColorValue } from 'react-native';
 
-import type { Reducer } from 'redux';
+import type { Action, Reducer } from 'redux';
 
-import type { AuthActiveAccount } from '../modules/auth/model';
 import type { StorageSlice } from './storage/slice';
 import type { StorageTypeMap } from './storage/types';
 
 import { IGlobalState } from '~/app/store';
 import theme, { IShades } from '~/app/theme';
 import type { PictureProps } from '~/framework/components/picture';
+import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
 
@@ -194,7 +194,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.isReady = true;
   }
 
-  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) { }
+  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {}
 
   assignValues(values: Partial<IModuleConfigDeclaration<any>>) {
     Object.assign(this, values);
@@ -213,8 +213,8 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
 export interface IModuleBase<Name extends string, ConfigType extends IModuleConfig<Name, State>, State> {
   config: ConfigType;
 }
-export interface IModuleRedux<State> {
-  reducer: Reducer<State>;
+export interface IModuleRedux<State, ActionType extends Action> {
+  reducer: Reducer<State, ActionType>;
 }
 export interface IModuleStorage<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
@@ -227,11 +227,12 @@ export interface IModule<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
+  ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
 > extends IModuleBase<Name, ConfigType, State>,
-  IModuleRedux<State>,
-  IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {
+    IModuleRedux<State, ActionType>,
+    IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {
   // ToDo add Module methods here
 }
 
@@ -239,11 +240,12 @@ export interface IModuleDeclaration<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
+  ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
 > extends IModuleBase<Name, ConfigType, State>,
-  IModuleRedux<State>,
-  IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> { }
+    IModuleRedux<State, ActionType>,
+    IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {}
 
 /**
  * Use this class constructor to init a module from its definition.
@@ -254,20 +256,29 @@ export class Module<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
+  ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-> implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
+> implements IModule<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
+{
   // Gathered from declaration
   config: ConfigType;
 
-  reducer: Reducer<State>;
+  reducer: Reducer<State, ActionType>;
 
   storage?: StorageSlice<ModuleStorageSliceTypeMap> | undefined;
 
   preferences?: StorageSlice<ModulePreferencesSliceTypeMap> | undefined;
 
   constructor(
-    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
+    moduleDeclaration: IModuleDeclaration<
+      Name,
+      ConfigType,
+      State,
+      ActionType,
+      ModuleStorageSliceTypeMap,
+      ModulePreferencesSliceTypeMap
+    >,
   ) {
     this.config = moduleDeclaration.config;
     this.reducer = moduleDeclaration.reducer;
@@ -282,7 +293,7 @@ export class Module<
     this.handleInit(params);
   }
 
-  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) { }
+  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {}
 
   get isReady() {
     return true;
@@ -290,12 +301,12 @@ export class Module<
 
   get() {
     if (!this.isReady) throw new Error(`Try to get non-initialized module '${this.config.name}'`);
-    return this as Required<Module<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>>;
+    return this as Required<Module<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>>;
   }
 }
 
-export type UnknownModule = Module<string, IModuleConfig<string, unknown>, unknown>;
-export type AnyModule = Module<string, IModuleConfig<string, any>, any>;
+export type UnknownModule = Module<string, IModuleConfig<string, unknown>, unknown, Action>;
+export type AnyModule = Module<string, IModuleConfig<string, any>, any, Action>;
 
 //  888b    888                   d8b                   888      888          888b     d888               888          888           .d8888b.                     .d888 d8b
 //  8888b   888                   Y8P                   888      888          8888b   d8888               888          888          d88P  Y88b                   d88P"  Y8P
@@ -333,26 +344,26 @@ interface INavigableModuleConfigDisplay {
 }
 interface IModuleConfigDeclarationDisplay {
   displayI18n:
-  | INavigableModuleConfigDisplay['displayI18n']
-  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayI18n']);
+    | INavigableModuleConfigDisplay['displayI18n']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayI18n']);
   displayAs?:
-  | INavigableModuleConfigDisplay['displayAs']
-  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayAs']);
+    | INavigableModuleConfigDisplay['displayAs']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayAs']);
   displayOrder?:
-  | INavigableModuleConfigDisplay['displayOrder']
-  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayOrder']);
+    | INavigableModuleConfigDisplay['displayOrder']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayOrder']);
   displayPicture?:
-  | INavigableModuleConfigDisplay['displayPicture']
-  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPicture']);
+    | INavigableModuleConfigDisplay['displayPicture']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPicture']);
   displayPictureFocus?:
-  | INavigableModuleConfigDisplay['displayPictureFocus']
-  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureFocus']);
+    | INavigableModuleConfigDisplay['displayPictureFocus']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureFocus']);
   displayBadges?:
-  | INavigableModuleConfigDisplay['displayBadges']
-  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
+    | INavigableModuleConfigDisplay['displayBadges']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
   displayColor?:
-  | INavigableModuleConfigDisplay['displayColor']
-  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayColor']);
+    | INavigableModuleConfigDisplay['displayColor']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayColor']);
   routeName?: INavigableModuleConfigDisplay['routeName'];
   testID?: string;
 }
@@ -370,7 +381,8 @@ export type AnyNavigableModuleConfig = INavigableModuleConfig<string, any>;
 
 export class NavigableModuleConfig<Name extends string, State>
   extends ModuleConfig<Name, State>
-  implements INavigableModuleConfig<Name, State> {
+  implements INavigableModuleConfig<Name, State>
+{
   // gathered from declaration
 
   routeName: INavigableModuleConfig<Name, State>['routeName'];
@@ -530,20 +542,30 @@ export interface INavigableModuleBase<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
+  ActionType extends Action,
   Root extends React.ReactElement,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-> extends IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
+> extends IModule<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
   getRoot(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }): Root;
 }
 export interface INavigableModule<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
+  ActionType extends Action,
   Root extends React.ReactElement,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-> extends INavigableModuleBase<Name, ConfigType, State, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
+> extends INavigableModuleBase<
+    Name,
+    ConfigType,
+    State,
+    ActionType,
+    Root,
+    ModuleStorageSliceTypeMap,
+    ModulePreferencesSliceTypeMap
+  > {
   // ToDo add Module methods here
 }
 
@@ -551,25 +573,28 @@ export interface INavigableModuleDeclaration<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
+  ActionType extends Action,
   Root extends React.ReactElement,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-> extends INavigableModuleBase<Name, ConfigType, State, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
-  IModuleRedux<State> { }
+> extends INavigableModuleBase<Name, ConfigType, State, ActionType, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
+    IModuleRedux<State, ActionType> {}
 
 export class NavigableModule<
-  Name extends string,
-  ConfigType extends INavigableModuleConfig<Name, State>,
-  State,
-  Root extends React.ReactElement,
-  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
-  ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
->
-  extends Module<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
-  implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
+    Name extends string,
+    ConfigType extends INavigableModuleConfig<Name, State>,
+    State,
+    ActionType extends Action,
+    Root extends React.ReactElement,
+    ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+    ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
+  >
+  extends Module<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
+  implements IModule<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
+{
   // Gathered from declaration
 
-  getRoot: INavigableModule<Name, ConfigType, State, Root>['getRoot'];
+  getRoot: INavigableModule<Name, ConfigType, State, ActionType, Root>['getRoot'];
 
   // Self-managed
 
@@ -580,6 +605,7 @@ export class NavigableModule<
       Name,
       ConfigType,
       State,
+      ActionType,
       Root,
       ModuleStorageSliceTypeMap,
       ModulePreferencesSliceTypeMap
@@ -609,13 +635,19 @@ export class NavigableModule<
 
   get() {
     return super.get() as Required<
-      NavigableModule<Name, ConfigType, State, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
+      NavigableModule<Name, ConfigType, State, ActionType, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
     >;
   }
 }
 
-export type UnknownNavigableModule = NavigableModule<string, INavigableModuleConfig<string, unknown>, unknown, React.ReactElement>;
-export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, React.ReactElement>;
+export type UnknownNavigableModule = NavigableModule<
+  string,
+  INavigableModuleConfig<string, unknown>,
+  unknown,
+  Action,
+  React.ReactElement
+>;
+export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, Action, React.ReactElement>;
 
 //  888b     d888               888          888                 d8888
 //  8888b   d8888               888          888                d88888
