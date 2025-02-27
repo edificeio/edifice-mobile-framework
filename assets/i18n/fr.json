@@ -854,6 +854,7 @@
   "mails-list-renamefolder": "Renommer le dossier",
   "mails-list-renamefolderlabel": "Nouveau nom",
   "mails-list-renamefoldersuccess": "Nom du dossier modifié",
+  "mails-list-select": "Sélectionner",
   "mails-list-toastsuccessdeletefolder": "Dossier supprimé",
   "mails-list-trash": "Corbeille",
   "mails-prefixcc": "Cc:",
