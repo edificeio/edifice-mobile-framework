@@ -13,6 +13,11 @@ import { selectors } from '~/framework/modules/wiki/store';
 
 export const homeNavBar = createResourceExplorerNavBar('wiki-home-title', selectors.explorer);
 
+const wikiExplorerContext = {
+  application: 'wiki',
+  resource_type: 'wiki',
+};
+
 export default function WikiHomeScreen({ navigation, route, ...props }: WikiHomeScreen.AllProps) {
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
@@ -60,6 +65,7 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
       onOpenResource={onOpenResource}
       selectors={selectors.explorer}
       emptyComponent={emptyComponent}
+      context={wikiExplorerContext}
     />
   );
 }

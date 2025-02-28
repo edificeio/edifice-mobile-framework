@@ -8,4 +8,5 @@ export const explorerItemIsLoading = (item: ExplorerFolderContent['items'][0]) =
 
 export const explorerItemIsFolder = (item: ExplorerFolderContent['items'][0]): item is Folder => item?.resourceType === 'folder';
 
-export const explorerItemIsResource = (item: ExplorerFolderContent['items'][0]): item is Resource => item?.resourceType !== 'folder';
+export const explorerItemIsResource = (item: ExplorerFolderContent['items'][0]): item is Resource =>
+  item?.resourceType !== 'folder';
