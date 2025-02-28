@@ -1564,7 +1564,7 @@
   "user-profilechange-success": "Su información ha sido modificada.",
   "user-profiletypes-guest": "Invitado",
   "user-profiletypes-personnel": "Personal",
-  "user-profiletypes-relative": "Padre",
+  "user-profiletypes-relative": "Padre/madre",
   "user-profiletypes-structure": "Escuela",
   "user-profiletypes-student": "Alumno",
   "user-profiletypes-teacher": "Profesor",
