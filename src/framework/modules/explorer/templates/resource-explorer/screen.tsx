@@ -51,6 +51,7 @@ export const createResourceExplorerNavBar =
   };
 
 export function ResourceExplorerTemplate({
+  context,
   emptyComponent,
   moduleConfig,
   navigation,
@@ -76,11 +77,10 @@ export function ResourceExplorerTemplate({
       // if (__DEV__) await new Promise(resolve => setTimeout(resolve, 2000));
       try {
         const response = await service.resources.get({
-          application: 'wiki',
+          ...context, // 'application' & 'resource_type' fields
           folder: folderId,
           order_by: 'updatedAt:desc',
           page_size: PAGE_SIZE,
-          resource_type: 'wiki',
           start_idx: start_idx,
         });
         dispatch(actions.loadPage(folderId, response, reloadAll));
@@ -90,7 +90,7 @@ export function ResourceExplorerTemplate({
         throw e;
       }
     },
-    [actions, dispatch, folderId],
+    [actions, dispatch, folderId, context],
   );
 
   /**
