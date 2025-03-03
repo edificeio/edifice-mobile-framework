@@ -12,9 +12,9 @@ import type { StorageTypeMap } from './storage/types';
 
 import { IGlobalState } from '~/app/store';
 import type { PictureProps } from '~/framework/components/picture';
+import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
-import type { AuthActiveAccount } from '../modules/auth/model';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -267,7 +267,7 @@ export class Module<
   preferences?: StorageSlice<ModulePreferencesSliceTypeMap> | undefined;
 
   constructor(
-    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
+    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
   ) {
     this.config = moduleDeclaration.config;
     this.reducer = moduleDeclaration.reducer;
@@ -542,7 +542,7 @@ export class NavigableModule<
       Root,
       ModuleStorageSliceTypeMap,
       ModulePreferencesSliceTypeMap
-    >,
+    >
   ) {
     const { getRoot } = moduleDeclaration;
     super(moduleDeclaration);
@@ -610,7 +610,7 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
           matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
           session,
         });
-      }),
+      })
     );
   }
 
@@ -620,7 +620,7 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
         acc[m.config.reducerName] = m.reducer;
         return acc;
       },
-      {} as { [key: string]: Reducer<unknown> },
+      {} as { [key: string]: Reducer<unknown> }
     );
   }
 
@@ -635,9 +635,9 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   initModules(session: AuthActiveAccount) {
     this.forEach(m => {
       m.init({
-        session,
         matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
         matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
+        session,
       });
     });
     return this;
@@ -646,9 +646,9 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   initModuleConfigs(session: AuthActiveAccount) {
     this.forEach(m => {
       m.config.init({
-        session,
         matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
         matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
+        session,
       });
     });
     return this;
@@ -670,8 +670,8 @@ export class NavigableModuleArray<
           matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
           matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
           session: session,
-        }),
-      ),
+        })
+      )
     );
   }
 }
@@ -769,7 +769,7 @@ export const getGlobalRegister = <RegisterType extends CustomRegister<unknown, u
  * @returns
  */
 export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule = AnyNavigableModule>(
-  modules: ModuleArray<ModuleType>,
+  modules: ModuleArray<ModuleType>
 ) => {
   // 1. Clear previous data
   const registers = new Set<CustomRegister<any, any>>();
