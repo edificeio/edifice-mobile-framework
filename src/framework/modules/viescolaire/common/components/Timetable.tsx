@@ -14,12 +14,12 @@ export const COURSE_WIDTH = UI_SIZES.screen.width - TIME_COLUMN_WIDTH - UI_SIZES
 
 const styles = StyleSheet.create({
   courseContainer: {
+    borderBottomWidth: UI_SIZES.border.thin,
+    borderColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.small,
     overflow: 'hidden',
     paddingVertical: UI_SIZES.spacing.tiny / 2,
     position: 'absolute',
-    borderColor: theme.palette.grey.cloudy,
-    borderBottomWidth: UI_SIZES.border.thin,
-    borderRadius: UI_SIZES.radius.small,
   },
   timeSlotLineContainer: {
     alignItems: 'center',
@@ -46,9 +46,9 @@ export const minutes = (m: Moment): number => {
 
 export const momentForDay = (m: Moment, day: Moment): Moment => {
   return m.clone().set({
-    year: day.year(),
-    month: day.month(),
     date: day.date(),
+    month: day.month(),
+    year: day.year(),
   });
 };
 
@@ -104,12 +104,12 @@ const getDefaultSlots = (): ISlot[] => {
 const computeSlotLines = (
   date: Moment,
   slots: ISlot[],
-  courses: ITimetableCourse[],
+  courses: ITimetableCourse[]
 ): [ITimeSlotLineProps[], moment.Moment, moment.Moment] => {
   const lines: Map<string, ITimeSlotLineProps> = new Map();
   const setLine = (m: moment.Moment) => {
-    lines.set(m.format('HH:mm'), {
-      style: { top: (SLOT_HOUR_HEIGHT * minutes(m)) / 60 },
+    lines.set(m.format('DD HH:mm'), {
+      style: { top: SLOT_HOUR_HEIGHT * m.diff(date.startOf('day'), 'hour') },
       text: m.format('HH:mm'),
     });
   };
@@ -121,27 +121,29 @@ const computeSlotLines = (
     let slotEnd = momentForDay(slot.endHour, date);
     setLine(slotStart);
     setLine(slotEnd);
-    if (slotStart.isBefore(startTime)) startTime = slotStart;
-    if (slotEnd.isAfter(endTime)) endTime = slotEnd;
+    if (slotStart.isSameOrBefore(startTime)) startTime = slotStart;
+    if (slotEnd.isSameOrAfter(endTime)) endTime = slotEnd;
   });
   // Compute max/min for courses + create extra slots for every hour if necesary
   courses.forEach(course => {
     let courseStart = momentForDay(course.startDate, date);
     let courseEnd = momentForDay(course.endDate, date);
-    if (courseStart.isBefore(startTime)) {
-      const current = endTime.clone().startOf('hour').add(1, 'hour');
-      while (current.isAfter(courseEnd)) {
-        current.subtract(1, 'hour');
+    if (courseStart.isSameOrBefore(startTime)) {
+      const current = startTime.clone().startOf('hour');
+      do {
         setLine(current);
-      }
+        current.subtract(1, 'hour');
+      } while (current.isAfter(courseStart));
+      setLine(current);
       startTime = current;
     }
-    if (courseEnd.isAfter(endTime)) {
+    if (courseEnd.isSameOrAfter(endTime)) {
       const current = endTime.clone().startOf('hour');
-      while (current.isBefore(courseEnd)) {
-        current.add(1, 'hour');
+      do {
         setLine(current);
-      }
+        current.add(1, 'hour');
+      } while (current.isBefore(courseEnd));
+      setLine(current);
       endTime = current;
     }
   });
@@ -149,7 +151,7 @@ const computeSlotLines = (
 };
 
 const organizeColumns = <CourseType extends ITimetableCourse>(
-  courses: CourseType[],
+  courses: CourseType[]
 ): [CourseType[], CourseType[], CourseType[]] => {
   const columns: [CourseType[], CourseType[], CourseType[]] = [[], [], []];
   const elementsColumns: number[] = [];
@@ -173,11 +175,11 @@ const organizeColumns = <CourseType extends ITimetableCourse>(
       m =>
         JSON.stringify(m) !== JSON.stringify(course) &&
         m.startDate.isSame(course.startDate) &&
-        (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate)),
+        (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate))
     );
     // event m starts and ends at the same time as d
     const isSameTime = courses.findIndex(
-      m => JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate),
+      m => JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate)
     );
     if ((isSameTime > -1 || iStartSameEndMiddle > -1) && col === 0) {
       if (elementsColumns.length > 0) {
@@ -212,7 +214,7 @@ const TimetableCourse = <CourseType extends ITimetableCourse>({
       top,
       width: half ? COURSE_WIDTH / 2 : COURSE_WIDTH,
     }),
-    [half, top, bottom],
+    [half, top, bottom]
   );
   return <View style={[styles.courseContainer, positionStyle]}>{renderCourse(course)}</View>;
 };
@@ -221,30 +223,33 @@ const getCourseKey = (course: ITimetableCourse) => `${course.startDate.format()}
 
 export default <CourseType extends ITimetableCourse>({
   courses,
-  slots,
-  displaySunday = false,
   date = moment(),
+  // displaySunday = false,
   renderCourse,
   renderCourseHalf,
-  renderHeader,
+  // renderHeader,
+  slots,
 }: ITimetableProps<CourseType>) => {
   const realSlots = slots.length ? slots : getDefaultSlots();
   const coursesThisDay = courses.filter(d => d.startDate.isSame(date, 'day'));
   const [slotLines, startTime, endTime] = React.useMemo(
     () => computeSlotLines(date, realSlots, coursesThisDay),
-    [realSlots, coursesThisDay],
+    [date, realSlots, coursesThisDay]
   );
   const organizedCourses = organizeColumns(coursesThisDay);
 
+  const contentContainerStyle = React.useMemo(
+    () => ({
+      backgroundColor: theme.palette.grey.fog,
+      height: endTime.diff(startTime, 'hour') * SLOT_HOUR_HEIGHT + LINE_HEIGHT,
+      position: 'relative' as const,
+      top: -(minutes(startTime) / 60) * SLOT_HOUR_HEIGHT,
+    }),
+    [endTime, startTime]
+  );
+
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        backgroundColor: theme.palette.grey.fog,
-        height: ((minutes(endTime) - minutes(startTime)) / 60) * SLOT_HOUR_HEIGHT + LINE_HEIGHT,
-        position: 'relative',
-        top: -(minutes(startTime) / 60) * SLOT_HOUR_HEIGHT,
-      }}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={contentContainerStyle}>
       {slotLines.map((slot, index) => (
         <TimeSlotLine key={index} {...slot} />
       ))}
