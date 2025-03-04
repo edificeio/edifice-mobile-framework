@@ -1,6 +1,8 @@
+// eslint-disable-next-line react-native/split-platform-components
 import { PermissionsAndroid, Platform } from 'react-native';
 
 import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -80,30 +82,22 @@ class FirebaseCloudMessagingService {
       // console.debug('[FirebaseMessagingService] ensureNotificationPermissionsIOS - Device permission to receive notifications is denied');
       return false;
     }
-    // console.debug('[FirebaseMessagingService] ensureNotificationPermissionsIOS - Device permission to receive notifications is granted');
-
-    // Not sure the folowing code is needed
-    // if (messaging().isDeviceRegisteredForRemoteMessages === false) {
-    //   console.warn('[FirebaseMessagingService] ensureNotificationPermissionsIOS - Registering for remote messages');
-    //   await messaging().registerDeviceForRemoteMessages();
-    //   console.debug('[FirebaseMessagingService] ensureNotificationPermissionsIOS - Remote messages registered successfully');
-    // } else {
-    //   console.debug('[FirebaseMessagingService] ensureNotificationPermissionsIOS - Remote messages already registered');
-    // }
-    // console.debug('[FirebaseMessagingService] ensureNotificationPermissionsIOS - APNS token is', await messaging().getAPNSToken());
-
     return true;
   }
 
   /** Ensure that the app has the necessary permissions to receive notifications on Android. Ask user for permission if needed. */
   protected async ensureNotificationPermissionsAndroid() {
-    const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-    if (result === PermissionsAndroid.RESULTS.GRANTED) {
-      // console.debug('[FirebaseMessagingService] ensureNotificationPermissionsAndroid - Device permission to receive notifications is granted');
+    const apiLevel = await DeviceInfo.getApiLevel();
+    console.debug('ApiLevel = ', apiLevel);
+    if (apiLevel < 33) {
       return true;
+    } else {
+      const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      if (result === PermissionsAndroid.RESULTS.GRANTED) {
+        return true;
+      }
+      return false;
     }
-    // console.debug('[FirebaseMessagingService] ensureNotificationPermissionsAndroid - Device permission to receive notifications is denied');
-    return false;
   }
 
   /** Read current FCM token for given device or generate a new one from firebase sdk. */
