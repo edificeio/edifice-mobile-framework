@@ -88,7 +88,6 @@ class FirebaseCloudMessagingService {
   /** Ensure that the app has the necessary permissions to receive notifications on Android. Ask user for permission if needed. */
   protected async ensureNotificationPermissionsAndroid() {
     const apiLevel = await DeviceInfo.getApiLevel();
-    console.debug('ApiLevel = ', apiLevel);
     if (apiLevel < 33) {
       return true;
     } else {
