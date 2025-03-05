@@ -115,7 +115,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       if (!mail || !mail.attachments.length || !session) throw new Error();
       for (const attachment of mail.attachments) {
         const syncedFile = await fileTransferService.downloadFile(session, attachment, {});
-        await syncedFile.mirrorToDownloadFolder();
+        await syncedFile.moveToDownloadFolder();
       }
       if (mail.attachments.length > 1) {
         Toast.showSuccess(I18n.get('zimbra-mail-download-success-count', { count: mail.attachments.length }));

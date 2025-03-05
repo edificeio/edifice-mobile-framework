@@ -8,7 +8,7 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
-import { copyFile, DownloadDirectoryPath, UploadFileItem } from 'react-native-fs';
+import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
 import ImagePicker, { Image } from 'react-native-image-crop-picker';
 
 import { openDocument } from './actions';
@@ -254,19 +254,17 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   }
 
   /**
-   * Copy file into user downloads folder
+   * Move file into user downloads folder
    */
-  async mirrorToDownloadFolder() {
+  async moveToDownloadFolder() {
     await assertPermissions('documents.write');
     const destFolder = DownloadDirectoryPath;
     const splitFilename = this.filename.split('.');
     const ext = splitFilename.pop();
-    let destPath = `${destFolder}/${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
-    copyFile(this.filepath, destPath)
-      .then(() => {})
-      .catch(error => {
-        throw error;
-      });
+    const destPath = `${destFolder}/${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
+    await moveFile(this.filepath, destPath);
+    this.setPath(destPath);
+    if (Platform.OS === 'android') await scanFile(destPath);
   }
 }
 
@@ -332,7 +330,7 @@ export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements L
 
   setPath = (path: string) => LocalFile.prototype.setPath.call(this.lf, path);
 
-  mirrorToDownloadFolder = () => LocalFile.prototype.mirrorToDownloadFolder.call(this.lf);
+  moveToDownloadFolder = () => LocalFile.prototype.moveToDownloadFolder.call(this.lf);
 }
 
 export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {

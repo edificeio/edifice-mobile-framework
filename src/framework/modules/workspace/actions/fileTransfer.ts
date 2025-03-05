@@ -234,7 +234,7 @@ export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch,
     for (const file of files) {
       const distanteFile = convertIFileToIDistantFile(file);
       const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
-      await syncedFile.mirrorToDownloadFolder();
+      await syncedFile.moveToDownloadFolder();
       syncedFiles.push(syncedFile);
     }
     dispatch(workspaceDownloadActionsCreators.receipt(syncedFiles));
