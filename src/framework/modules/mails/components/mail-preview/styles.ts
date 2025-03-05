@@ -4,11 +4,17 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  checkbox: {
+    marginRight: UI_SIZES.spacing.small,
+  },
   container: {
     alignItems: 'center',
     flexDirection: 'row',
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
+  },
+  containerChecked: {
+    backgroundColor: theme.palette.primary.pale,
   },
   containerUnread: {
     backgroundColor: theme.palette.secondary.pale,

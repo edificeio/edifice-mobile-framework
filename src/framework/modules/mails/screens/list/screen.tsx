@@ -3,7 +3,6 @@ import { Alert, ScrollViewProps, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FlashList } from '@shopify/flash-list';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
@@ -13,6 +12,7 @@ import type { MailsListScreenPrivateProps } from './types';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
+import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
@@ -25,7 +25,7 @@ import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/h
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
-import { BodyText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { Toggle } from '~/framework/components/toggle';
 import { ContentLoader } from '~/framework/hooks/loader';
@@ -64,11 +64,10 @@ export const computeNavBar = ({
 });
 
 const PAGE_SIZE = 25;
-const ESTIMATED_ITEM_SIZE = UI_SIZES.spacing.small * 2 + TextSizeStyle.Normal.lineHeight * 2;
 
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const flatListRef = React.useRef<FlashList<IMailsMailPreview>>(null);
+  const flatListRef = React.useRef<FlatList<IMailsMailPreview>>(null);
   const navigation = props.navigation;
 
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
@@ -84,6 +83,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [idParentFolder, setIdParentFolder] = React.useState<string | undefined>(undefined);
   const [isLoadingCreateNewFolder, setIsLoadingCreateNewFolder] = React.useState<boolean>(false);
   const [onErrorCreateFolder, setOnErrorCreateFolder] = React.useState<boolean>(false);
+  const [isSelectionMode, setIsSelectionMode] = React.useState<boolean>(false);
+  const [selectedMails, setSelectedMails] = React.useState<string[]>([]);
 
   const loadMails = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo) => {
@@ -232,9 +233,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     bottomSheetModalRef.current?.present();
   }, [selectedFolder]);
 
-  const onSelectMode = React.useCallback(async () => {
-    Alert.alert('Select mode', 'This feature is not implemented yet');
+  const onActiveSelectMode = React.useCallback(() => {
+    setIsSelectionMode(true);
   }, []);
+
+  const onDisableSelectMode = React.useCallback(() => {
+    setIsSelectionMode(false);
+    if (selectedMails.length) setSelectedMails([]);
+  }, [selectedMails]);
 
   const onConfigureSignature = React.useCallback(async () => {
     navigation.navigate(mailsRouteNames.signature, {});
@@ -267,7 +273,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const allPopupActionsMenu = React.useMemo(
     () => [
       {
-        action: onSelectMode,
+        action: onActiveSelectMode,
         icon: {
           android: 'ic_check',
           ios: 'checkmark',
@@ -295,7 +301,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         title: I18n.get('mails-list-deletefolder'),
       }),
     ],
-    [onConfigureSignature, onDeleteFolder, onRenameFolder, onSelectMode],
+    [onConfigureSignature, onDeleteFolder, onRenameFolder, onActiveSelectMode],
   );
 
   React.useEffect(() => {
@@ -337,6 +343,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolder, navigation]);
 
+  React.useEffect(() => {
+    props.navigation.setOptions({
+      headerShown: !isSelectionMode,
+    });
+    props.navigation.setParams({ tabBarVisible: !isSelectionMode });
+  }, [isSelectionMode, props.navigation]);
+
   useFocusEffect(
     React.useCallback(() => {
       const { params } = props.route;
@@ -348,7 +361,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         setSelectedFolder(params.from);
         loadFolders();
       } else {
-        loadFolders();
+        //loadFolders();
       }
     }, [loadFolders, loadMails, props.route]),
   );
@@ -408,6 +421,53 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     },
     [handleMailAction],
   );
+
+  const onSelectMail = React.useCallback(
+    (id: string) => {
+      if (selectedMails.includes(id)) setSelectedMails(prev => prev.filter(mailId => mailId !== id));
+      else setSelectedMails(prev => [...prev, id]);
+    },
+    [selectedMails],
+  );
+
+  const onSelectAll = React.useCallback(() => {
+    if (selectedMails.length === mails.length) setSelectedMails([]);
+    else setSelectedMails(mails.map(mail => mail.id));
+  }, [mails, selectedMails]);
+
+  const featureNotImplemented = React.useCallback(() => {
+    Alert.alert('This feature is not implemented yet');
+  }, []);
+
+  const renderTopSelectMode = React.useCallback(() => {
+    if (!isSelectionMode) return;
+    return (
+      <View style={[styles.selectMode, styles.selectModeTop]}>
+        <View style={styles.selectModeTopText}>
+          <Checkbox onPress={onSelectAll} checked={mails.length === selectedMails.length} />
+          <BodyBoldText>{I18n.get('mails-list-selectall')}</BodyBoldText>
+        </View>
+        <TertiaryButton text={I18n.get('common-cancel')} action={onDisableSelectMode} style={styles.selectModeTopButton} />
+      </View>
+    );
+  }, [isSelectionMode, mails, onDisableSelectMode, onSelectAll, selectedMails]);
+
+  const renderBottomSelectMode = React.useCallback(() => {
+    if (!isSelectionMode) return;
+    return (
+      <View style={[styles.selectMode, styles.selectModeBottom]}>
+        <BodyBoldText style={styles.selectModeBottomText}>
+          {I18n.get(selectedMails.length > 1 ? 'mails-list-selectcountplural' : 'mails-list-selectcount', {
+            nb: selectedMails.length,
+          })}
+        </BodyBoldText>
+        <TertiaryButton iconLeft="ui-mailUnread" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
+        <TertiaryButton iconLeft="ui-mailRead" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
+        <TertiaryButton iconLeft="ui-folderMove" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
+        <TertiaryButton iconLeft="ui-delete" contentColor={theme.palette.status.failure.regular} action={featureNotImplemented} />
+      </View>
+    );
+  }, [featureNotImplemented, isSelectionMode, selectedMails.length]);
 
   const renderFolders = React.useCallback(() => {
     return (
@@ -597,60 +657,74 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         title={I18n.get(selectedFolder === MailsDefaultFolders.TRASH ? 'mails-list-emptytitletrash' : 'mails-list-emptytitle')}
         textColor={theme.palette.grey.black}
         text={I18n.get(selectedFolder === MailsDefaultFolders.TRASH ? 'mails-list-emptytexttrash' : 'mails-list-emptytext')}
+        customStyle={styles.emptyscreen}
       />
     );
   }, [selectedFolder]);
 
   const renderFooter = React.useCallback(() => (isLoadingNextPage ? <MailsPlaceholderLittleList /> : null), [isLoadingNextPage]);
 
+  const renderMailPreview = React.useCallback(
+    (mail: IMailsMailPreview) => (
+      <MailsMailPreview
+        key={mail.id}
+        data={mail}
+        onPress={() => onPressItem(mail.id, mail.unread, mail.state)}
+        isSender={props.session?.user.id === mail.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
+        isSelectMode={isSelectionMode}
+        isSelected={selectedMails.includes(mail.id)}
+        onSelect={onSelectMail}
+        onDelete={() => onDelete(mail.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
+        onToggleUnread={
+          selectedFolder !== MailsDefaultFolders.DRAFTS &&
+          selectedFolder !== MailsDefaultFolders.OUTBOX &&
+          selectedFolder !== MailsDefaultFolders.TRASH
+            ? () => onToggleUnread(mail.id, mail.unread)
+            : undefined
+        }
+        onRestore={selectedFolder === MailsDefaultFolders.TRASH ? () => onRestore(mail.id) : undefined}
+      />
+    ),
+    [
+      isSelectionMode,
+      onDelete,
+      onPressItem,
+      onRestore,
+      onSelectMail,
+      onToggleUnread,
+      props.session?.user.id,
+      selectedFolder,
+      selectedMails,
+    ],
+  );
+
   const renderContent = React.useCallback(
     (refreshControl: ScrollViewProps['refreshControl']) => (
       <PageView style={styles.page}>
-        <FlashList
+        {renderTopSelectMode()}
+        <FlatList
           ref={flatListRef}
           data={mails}
-          estimatedItemSize={ESTIMATED_ITEM_SIZE}
-          estimatedListSize={{ height: mails.length * ESTIMATED_ITEM_SIZE, width: UI_SIZES.screen.width }}
-          renderItem={mail => {
-            return (
-              <MailsMailPreview
-                key={mail.item.id}
-                data={mail.item}
-                onPress={() => onPressItem(mail.item.id, mail.item.unread, mail.item.state)}
-                isSender={props.session?.user.id === mail.item.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
-                onDelete={() => onDelete(mail.item.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
-                onToggleUnread={
-                  selectedFolder !== MailsDefaultFolders.DRAFTS &&
-                  selectedFolder !== MailsDefaultFolders.OUTBOX &&
-                  selectedFolder !== MailsDefaultFolders.TRASH
-                    ? () => onToggleUnread(mail.item.id, mail.item.unread)
-                    : undefined
-                }
-                onRestore={selectedFolder === MailsDefaultFolders.TRASH ? () => onRestore(mail.item.id) : undefined}
-              />
-            );
-          }}
+          renderItem={mail => renderMailPreview(mail.item)}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmpty()}
           refreshControl={refreshControl}
           onEndReached={loadNextMails}
           onEndReachedThreshold={0.5}
         />
+        {renderBottomSelectMode()}
         {renderBottomSheetFolders()}
       </PageView>
     ),
     [
+      renderTopSelectMode,
       mails,
       renderFooter,
       renderEmpty,
       loadNextMails,
+      renderBottomSelectMode,
       renderBottomSheetFolders,
-      props.session?.user.id,
-      selectedFolder,
-      onPressItem,
-      onDelete,
-      onToggleUnread,
-      onRestore,
+      renderMailPreview,
     ],
   );
 

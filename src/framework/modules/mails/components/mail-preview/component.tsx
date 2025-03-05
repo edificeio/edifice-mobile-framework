@@ -11,6 +11,7 @@ import { MailsMailPreviewProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -21,7 +22,8 @@ import { displayPastDate } from '~/framework/util/date';
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, id, response, state, subject, to, unread } = props.data;
-  const { isSender, onDelete, onPress, onRestore, onToggleUnread } = props;
+  const { isSelected, isSelectMode, isSender, onDelete, onPress, onRestore, onSelect, onToggleUnread } = props;
+
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
   const TextComponent = isUnread ? SmallBoldText : SmallText;
   const has2SwipeActions = onToggleUnread || onRestore;
@@ -35,6 +37,15 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     };
   }, []);
+
+  const onCheck = React.useCallback(() => {
+    onSelect(id);
+  }, [id, onSelect]);
+
+  const renderSelectIcon = React.useCallback(() => {
+    if (!isSelectMode) return null;
+    return <Checkbox checked={isSelected} onPress={onCheck} customContainerStyle={styles.checkbox} />;
+  }, [isSelectMode, isSelected, onCheck]);
 
   const renderAttachmentIcon = React.useCallback(() => {
     if (!hasAttachment) return null;
@@ -134,7 +145,11 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       enableTrackpadTwoFingerGesture
       overshootFriction={8}
       renderRightActions={swipeRightAction}>
-      <TouchableOpacity style={[styles.container, isUnread ? styles.containerUnread : {}]} onPress={onPress}>
+      <TouchableOpacity
+        style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
+        disabled={isSelectMode}
+        onPress={onPress}>
+        {renderSelectIcon()}
         {renderAvatar()}
         {renderResponseIcon()}
         <View style={styles.texts}>

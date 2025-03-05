@@ -21,7 +21,7 @@ import {
 import { connect } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
-import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
+import { getTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
@@ -34,12 +34,12 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
-import { AuthActiveAccount } from '../modules/auth/model';
 
 //  88888888888       888      888b    888                   d8b                   888
 //      888           888      8888b   888                   Y8P                   888
@@ -227,7 +227,7 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
           borderTopWidth: 1,
           elevation: 1,
           height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
-          ...getAndroidTabBarStyleForNavState(navigation.getState()),
+          ...getTabBarStyleForNavState(navigation.getState()),
         },
       };
     }, []);

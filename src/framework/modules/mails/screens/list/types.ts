@@ -13,6 +13,8 @@ export interface MailsListScreenNavParams {
   idMailToRemove?: string;
   idMailToMarkUnread?: string;
   reload?: boolean;
+  // to manage tabbar visibility when is on select mode
+  tabBarVisible?: boolean;
 }
 
 export interface MailsListScreenPrivateProps extends NativeStackScreenProps<MailsNavigationParams, 'home'>, MailsListScreenProps {}

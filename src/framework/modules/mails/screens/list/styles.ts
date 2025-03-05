@@ -10,6 +10,9 @@ export default StyleSheet.create({
   defaultFolders: {
     rowGap: UI_SIZES.spacing.minor,
   },
+  emptyscreen: {
+    backgroundColor: theme.palette.grey.white,
+  },
   flatListBottomSheet: {
     paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.spacing.small,
   },
@@ -35,6 +38,41 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: UI_SIZES.spacing.medium,
+  },
+  selectMode: {
+    backgroundColor: theme.palette.grey.white,
+    elevation: 6,
+    flexDirection: 'row',
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    shadowColor: theme.palette.grey.darkness,
+    shadowOffset: { height: -6, width: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+  },
+  selectModeBottom: {
+    alignItems: 'baseline',
+    columnGap: UI_SIZES.spacing.medium,
+    height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
+    paddingTop: UI_SIZES.spacing.small,
+  },
+  selectModeBottomText: {
+    flex: 1,
+    paddingVertical: UI_SIZES.spacing.tiny,
+  },
+  selectModeTop: {
+    alignContent: 'flex-end',
+    alignItems: 'flex-end',
+    height: UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset,
+    justifyContent: 'space-between',
+    paddingBottom: UI_SIZES.spacing.small,
+  },
+  selectModeTopButton: {
+    alignSelf: 'flex-end',
+  },
+  selectModeTopText: {
+    columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
+    paddingBottom: UI_SIZES.spacing.tiny,
   },
   spacingFolder: {
     height: UI_SIZES.spacing.tiny,
