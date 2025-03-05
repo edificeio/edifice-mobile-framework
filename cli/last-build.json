@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-03-05 08:36:04",
-  "notes": "fix(typo): Unwanted log statement removal\nfix(push): Manage Android Api Level < 33\nrelease: 1.13.12-rc.2(1131203)",
-  "version": "1.13.12-rc.3(1131204)"
+  "last": "2025-03-05 09:09:07",
+  "notes": "release: 1.13.12-rc.3(1131204)",
+  "version": "1.13.12-rc.4(1131205)"
 }
