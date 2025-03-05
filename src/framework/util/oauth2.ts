@@ -1,4 +1,5 @@
 import moment from 'moment';
+
 import { getStore } from '~/app/store';
 import {
   accountIsActive,
@@ -111,8 +112,8 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
     };
     const headers = {
       Accept: 'application/json, application/x-www-form-urlencoded',
-      'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: createDeviceAuthenticationHeader(platform.oauth.client_id, platform.oauth.client_secret),
+      'Content-Type': 'application/x-www-form-urlencoded',
     };
     const response = await http.fetchJsonForPlatform<API.OAuth2ResponseOK>(platform, 'POST', '/auth/oauth2/token', {
       body: new URLSearchParams(body).toString(),
@@ -141,9 +142,9 @@ const tokenFactory = (data: Partial<API.OAuth2ResponseOK>): AuthTokenSet => {
     throw new FetchError(FetchErrorCode.BAD_RESPONSE, `[OAuth2] Incomplete token data`);
   return {
     access: {
+      expiresAt: moment().add(data.expires_in, 'seconds').toISOString(),
       type: data.token_type,
       value: data.access_token,
-      expiresAt: moment().add(data.expires_in, 'seconds').toISOString(),
     },
     refresh: {
       value: data.refresh_token,
@@ -157,6 +158,15 @@ const tokenFactory = (data: Partial<API.OAuth2ResponseOK>): AuthTokenSet => {
  */
 export const getOAuth2Token = {
   /**
+   * Fetches an OAuth2 token using a custom token.
+   *
+   * @param platform - The platform for which the token is being requested.
+   * @param customToken - The custom token.
+   * @returns A promise that resolves to the fetched token.
+   */
+  withCustomToken: (platform: Platform, customToken: string) => fetchToken(platform, 'custom_token', { custom_token: customToken }),
+
+  /**
    * Fetches an OAuth2 token using login and password credentials.
    *
    * @param platform - The platform for which the token is being requested.
@@ -165,7 +175,17 @@ export const getOAuth2Token = {
    * @returns A promise that resolves to the fetched token.
    */
   withLoginPassword: (platform: Platform, credentials: AuthCredentials) =>
-    fetchToken(platform, 'password', { username: credentials.username, password: credentials.password }),
+    fetchToken(platform, 'password', { password: credentials.password, username: credentials.username }),
+
+  /**
+   * Fetches an OAuth2 token using a refresh token.
+   *
+   * @param platform - The platform for which the token is being requested.
+   * @param refreshToken - The refresh token.
+   * @returns A promise that resolves to the fetched token.
+   */
+  withRefreshToken: async (platform: Platform, refreshToken: AuthTokenSet['refresh']) =>
+    fetchToken(platform, 'refresh_token', { refresh_token: refreshToken.value }),
 
   /**
    * Fetches an OAuth2 token using a SAML2 assertion.
@@ -187,25 +207,6 @@ export const getOAuth2Token = {
       }
     }
   },
-
-  /**
-   * Fetches an OAuth2 token using a custom token.
-   *
-   * @param platform - The platform for which the token is being requested.
-   * @param customToken - The custom token.
-   * @returns A promise that resolves to the fetched token.
-   */
-  withCustomToken: (platform: Platform, customToken: string) => fetchToken(platform, 'custom_token', { custom_token: customToken }),
-
-  /**
-   * Fetches an OAuth2 token using a refresh token.
-   *
-   * @param platform - The platform for which the token is being requested.
-   * @param refreshToken - The refresh token.
-   * @returns A promise that resolves to the fetched token.
-   */
-  withRefreshToken: async (platform: Platform, refreshToken: AuthTokenSet['refresh']) =>
-    fetchToken(platform, 'refresh_token', { refresh_token: refreshToken.value }),
 };
 
 /**

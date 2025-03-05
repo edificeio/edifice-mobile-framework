@@ -1,10 +1,10 @@
+import { FetchError, FetchErrorCode } from './error';
+import { parseFetchArguments } from './fetch';
+import { _fetch, _parseJson, RequestBuilder } from './request-builder';
+
 import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { isTokenExpired, refreshTokenForAccount } from '~/framework/util/oauth2';
-
-import { FetchError, FetchErrorCode } from './error';
-import { parseFetchArguments } from './fetch';
-import { RequestBuilder, _fetch, _parseJson } from './request-builder';
 
 export async function fetchForAccount(
   account: AuthSavedLoggedInAccount | AuthActiveAccount,

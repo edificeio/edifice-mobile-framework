@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 import styles from './styles';
 import { ForgotScreenEventProps, ForgotScreenLoadingState, ForgotScreenPrivateProps, ForgotScreenStructure } from './types';
 

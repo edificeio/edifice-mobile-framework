@@ -7,6 +7,7 @@ import { ColorValue } from 'react-native';
 
 import type { Reducer } from 'redux';
 
+import type { AuthActiveAccount } from '../modules/auth/model';
 import type { StorageSlice } from './storage/slice';
 import type { StorageTypeMap } from './storage/types';
 
@@ -14,7 +15,6 @@ import { IGlobalState } from '~/app/store';
 import type { PictureProps } from '~/framework/components/picture';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
-import type { AuthActiveAccount } from '../modules/auth/model';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -635,9 +635,9 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   initModules(session: AuthActiveAccount) {
     this.forEach(m => {
       m.init({
-        session,
         matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
         matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
+        session,
       });
     });
     return this;
@@ -646,9 +646,9 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   initModuleConfigs(session: AuthActiveAccount) {
     this.forEach(m => {
       m.config.init({
-        session,
         matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
         matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
+        session,
       });
     });
     return this;

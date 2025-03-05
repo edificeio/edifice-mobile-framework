@@ -18,7 +18,6 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import Navigation from '~/framework/navigation/RootNavigator';
 import appConf from '~/framework/util/appConf';
-import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
 import { AppModules as AllModulesBackup2 } from '~/framework/util/oauth2';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
@@ -29,6 +28,7 @@ import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
   const currentState = React.useRef<AppStateStatus>();
+
   const handleAppStateChange = React.useCallback(
     (nextAppState: AppStateStatus) => {
       currentState.current = nextAppState;
@@ -41,22 +41,18 @@ function useAppState() {
         I18n.setLanguage().then(lng => {
           if (newLocale !== currentLocale) setCurrentLocale(lng);
         });
-        // Reset badge value
-        setCurrentBadgeValue(0);
-      } else if (nextAppState === 'background') {
-        // Track background state
       }
     },
     [currentLocale],
   );
+
   React.useEffect(() => {
     const appStateListener = AppState.addEventListener('change', handleAppStateChange);
-    // Reset badge value
-    setCurrentBadgeValue(0);
     return () => {
       appStateListener.remove();
     };
   }, [handleAppStateChange]);
+
   return currentState;
 }
 
@@ -72,37 +68,21 @@ function useTrackers() {
 interface AppProps extends IStoreProp {}
 
 function App(props: AppProps) {
-  const currentState = useAppState();
+  const onRemoteNotification = notification => {
+    const result = PushNotificationIOS.FetchResult.NoData;
+    notification.finish(result);
+  };
 
-  const onRemoteNotification =
-    Platform.OS === 'ios'
-      ? // eslint-disable-next-line react-hooks/rules-of-hooks
-        React.useCallback(notification => {
-          const isClicked = notification.getData().userInteraction === 1;
-          if (isClicked || currentState.current === 'active') {
-            setCurrentBadgeValue(0);
-          } else {
-            setCurrentBadgeValue(getCurrentBadgeValue() + 1);
-          }
-          // Use the appropriate result based on what you needed to do for this notification
-          const result = PushNotificationIOS.FetchResult.NoData;
-          notification.finish(result);
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [])
-      : undefined;
-
+  useAppState();
   useTrackers();
 
   React.useEffect(() => {
-    if (Platform.OS !== 'ios') return;
     const type = 'notification';
-    PushNotificationIOS.addEventListener(type, onRemoteNotification!);
-    inAppMessaging().setMessagesDisplaySuppressed(true).finally();
+    PushNotificationIOS.addEventListener(type, onRemoteNotification);
+    if (Platform.OS === 'ios') inAppMessaging().setMessagesDisplaySuppressed(true).finally();
     return () => {
-      if (Platform.OS !== 'ios') return;
       PushNotificationIOS.removeEventListener(type);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const content = (
