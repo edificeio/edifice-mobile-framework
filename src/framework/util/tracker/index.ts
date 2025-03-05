@@ -271,6 +271,11 @@ export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
     return true;
   }
 
+  protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
+    analytics().logEvent(`${category}:${action}`, { name, value, ...this._properties });
+    return true;
+  }
+
   async _trackView(path: string[]) {
     const viewPath = path.join('/');
     await analytics().logScreenView({
@@ -282,8 +287,6 @@ export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
 }
 
 export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
-  protected _properties = {};
-
   protected _isDebugTracker(): boolean {
     return true;
   }
@@ -294,7 +297,7 @@ export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
   }
 
   async _setCustomDimension(id: number, name: string, value: string) {
-    this._properties[name] = value;
+    crashlytics().setAttribute(name, value);
     return true;
   }
 
