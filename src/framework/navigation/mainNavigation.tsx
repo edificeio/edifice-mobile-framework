@@ -21,7 +21,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { AuthActiveAccount } from '../modules/auth/model';
 import { handleCloseModalActions } from './helper';
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
@@ -36,6 +35,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -65,7 +65,7 @@ const PictureWithXmas = connect((state: IGlobalState) => ({
 
 const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
-  props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0]
+  props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPicture };
   props.size = UI_SIZES.elements.tabbarIconSize;
@@ -164,7 +164,7 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   const tabModulesCache = tabModules.get();
   const moduleTabStackCache = React.useMemo(
     () => tabModulesCache.map(module => <TabStack module={module} key={module.config.name} />),
-    [tabModulesCache]
+    [tabModulesCache],
   );
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
@@ -176,7 +176,7 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
             .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [appsJson]
+    [appsJson],
   );
   const tabRoutes = React.useMemo(() => {
     return availableTabModules.map(module => {
@@ -200,41 +200,44 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   // Avoid bug when launching app after first push
   const insets = useSafeAreaInsets();
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
-    React.useCallback(({ navigation, route }) => {
-      return {
-        // Prevent navBar flickering with this option
-        freezeOnBlur: true,
-        headerShown: false,
-        lazy: false,
-        tabBarActiveTintColor: theme.palette.primary.regular.toString(),
-        // 😡 F U React Nav 6, using plain string instead of ColorValue
-        tabBarHideOnKeyboard: Platform.select({ android: true, ios: false }),
+    React.useCallback(
+      ({ navigation, route }) => {
+        return {
+          // Prevent navBar flickering with this option
+          freezeOnBlur: true,
+          headerShown: false,
+          lazy: false,
+          tabBarActiveTintColor: theme.palette.primary.regular.toString(),
+          // 😡 F U React Nav 6, using plain string instead of ColorValue
+          tabBarHideOnKeyboard: Platform.select({ android: true, ios: false }),
 
-        tabBarIconStyle: {
-          height: UI_SIZES.elements.tabbarIconSize,
-          marginTop: UI_SIZES.elements.tabbarLabelMarginTop,
-          width: UI_SIZES.elements.tabbarIconSize,
-        },
+          tabBarIconStyle: {
+            height: UI_SIZES.elements.tabbarIconSize,
+            marginTop: UI_SIZES.elements.tabbarLabelMarginTop,
+            width: UI_SIZES.elements.tabbarIconSize,
+          },
 
-        // 😡 F U React Nav 6, using plain string instead of ColorValue
-        tabBarInactiveTintColor: theme.ui.text.light.toString(),
+          // 😡 F U React Nav 6, using plain string instead of ColorValue
+          tabBarInactiveTintColor: theme.ui.text.light.toString(),
 
-        tabBarLabelStyle: {
-          fontSize: 12,
-          lineHeight: undefined,
-          marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom,
-        },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            lineHeight: undefined,
+            marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom,
+          },
 
-        tabBarStyle: {
-          backgroundColor: theme.ui.background.card,
-          borderTopColor: theme.palette.grey.cloudy,
-          borderTopWidth: 1,
-          elevation: 1,
-          height: UI_SIZES.elements.tabbarHeight + insets.bottom, // Avoid bug when launching app after first push
-          ...getAndroidTabBarStyleForNavState(navigation.getState()),
-        },
-      };
-    }, []);
+          tabBarStyle: {
+            backgroundColor: theme.ui.background.card,
+            borderTopColor: theme.palette.grey.cloudy,
+            borderTopWidth: 1,
+            elevation: 1,
+            height: UI_SIZES.elements.tabbarHeight + insets.bottom, // Avoid bug when launching app after first push
+            ...getAndroidTabBarStyleForNavState(navigation.getState()),
+          },
+        };
+      },
+      [insets.bottom],
+    );
   return React.useMemo(() => {
     return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
   }, [screenOptions, tabRoutes]);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageProps, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderMedia } from 'rn-placeholder';
 
@@ -8,7 +8,7 @@ import { ImageFallbackProps, ImageLoaderProps, ImageLoadingState, ModuleImagePro
 
 import theme from '~/app/theme';
 import { Icon, Svg } from '~/framework/components/picture';
-import { Image } from '~/framework/util/media';
+import { Image, ImageProps } from '~/framework/util/media';
 
 const DEFAULT_MODULE_CONFIG: Required<ModuleImageProps['moduleConfig']> = {
   displayColor: {
@@ -62,7 +62,10 @@ const ImageFallback: React.FC<ImageFallbackProps> = ({
 };
 
 const ImageLoader: React.FC<ImageLoaderProps> = ({ imageProps }) => {
-  const imageLoaderStyle = React.useMemo(() => [styles.moduleImage, imageProps.style], [imageProps.style]);
+  const imageLoaderStyle = React.useMemo(
+    () => [styles.moduleImage, styles.imageLoaderWrapper, imageProps.style],
+    [imageProps.style],
+  );
 
   return (
     <Placeholder Animation={Fade} style={imageLoaderStyle}>
@@ -73,11 +76,13 @@ const ImageLoader: React.FC<ImageLoaderProps> = ({ imageProps }) => {
 
 const ModuleImage: React.FC<ModuleImageProps> = ({ iconSize, moduleConfig, onError, onLoad, ...props }) => {
   // Restore loading state when source changes
-  const prevSource = React.useRef(props.source);
-  const [imageLoadingState, setImageLoadingState] = React.useState<ImageLoadingState>(ImageLoadingState.Loading);
-  if (prevSource.current !== props.source) {
-    setImageLoadingState(ImageLoadingState.Loading);
-    prevSource.current = props.source;
+  const [prevSource, setPrevSource] = React.useState<typeof props.source | null>(null);
+  const [imageLoadingState, setImageLoadingState] = React.useState<ImageLoadingState>(
+    props.source ? ImageLoadingState.Loading : ImageLoadingState.Error,
+  );
+  if (prevSource !== props.source) {
+    setImageLoadingState(props.source ? ImageLoadingState.Loading : ImageLoadingState.Error);
+    setPrevSource(props.source);
   }
 
   const onImageLoadSuccess = React.useCallback<NonNullable<ImageProps['onLoad']>>(
@@ -95,17 +100,13 @@ const ModuleImage: React.FC<ModuleImageProps> = ({ iconSize, moduleConfig, onErr
     [onError],
   );
 
-  return (
-    <View style={styles.moduleImageContainer}>
-      {imageLoadingState === ImageLoadingState.Error ? (
-        <ImageFallback moduleConfig={moduleConfig} imageProps={props} iconSize={iconSize} />
-      ) : (
-        <>
-          <Image {...props} onLoad={onImageLoadSuccess} onError={onImageLoadError} />
-          {imageLoadingState === ImageLoadingState.Loading && <ImageLoader imageProps={props} />}
-        </>
-      )}
-    </View>
+  return imageLoadingState === ImageLoadingState.Error ? (
+    <ImageFallback moduleConfig={moduleConfig} imageProps={props} iconSize={iconSize} />
+  ) : (
+    <>
+      <Image {...props} onLoad={onImageLoadSuccess} onError={onImageLoadError} />
+      {imageLoadingState === ImageLoadingState.Loading && <ImageLoader imageProps={props} />}
+    </>
   );
 };
 
