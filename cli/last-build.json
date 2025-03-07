@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-02-10 12:34:26",
-  "notes": "update(stack): yarn cache update\nchore(debug): log statements review\nchore(debug): add some log on open && download file\nchore: add Attachment component error logs\nfix(whoarwe): WB-3807, review Who Are We section creation\nRevert \"fix: WB2-2147 remove download button from attachments\"\nrelease: 1.13.10-rc.4(1131004)",
-  "version": "1.13.10-rc.5(1131005)"
+  "last": "2025-03-05 09:09:07",
+  "notes": "release: 1.13.12-rc.3(1131204)",
+  "version": "1.13.12-rc.4(1131205)"
 }
