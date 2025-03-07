@@ -38,21 +38,30 @@ export const useLoadingState = (load: () => Promise<void>, initialLoadingState =
       setLoadingState(LoadingState.INIT);
       load()
         .then(() => setLoadingState(LoadingState.DONE))
-        .catch(() => setLoadingState(LoadingState.INIT_FAILED));
+        .catch(e => {
+          console.error('Loading failed', e);
+          setLoadingState(LoadingState.INIT_FAILED);
+        });
     }
   }, [load, loadingState]);
   const reload = () => {
     setLoadingState(LoadingState.RETRY);
     load()
       .then(() => setLoadingState(LoadingState.DONE))
-      .catch(() => setLoadingState(LoadingState.INIT_FAILED));
+      .catch(e => {
+        console.error('Loading failed', e);
+        setLoadingState(LoadingState.INIT_FAILED);
+      });
   };
   const refresh = () => {
     if (loadingState === LoadingState.DONE) {
       setLoadingState(LoadingState.REFRESH);
       load()
         .then(() => setLoadingState(LoadingState.DONE))
-        .catch(() => setLoadingState(LoadingState.REFRESH_FAILED));
+        .catch(e => {
+          console.warn(e);
+          setLoadingState(LoadingState.REFRESH_FAILED);
+        });
     }
   };
   const refreshSilent = () => {
@@ -60,7 +69,10 @@ export const useLoadingState = (load: () => Promise<void>, initialLoadingState =
       setLoadingState(LoadingState.REFRESH_SILENT);
       load()
         .then(() => setLoadingState(LoadingState.DONE))
-        .catch(() => setLoadingState(LoadingState.REFRESH_FAILED));
+        .catch(e => {
+          console.warn(e);
+          setLoadingState(LoadingState.REFRESH_FAILED);
+        });
     }
   };
   return { loadingState, refresh, refreshSilent, reload };

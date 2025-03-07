@@ -5,8 +5,11 @@ import type { API } from './types';
 import type { ExplorerNode, ExplorerPageData, ResourceHistory } from '~/framework/modules/explorer/model/types';
 import http from '~/framework/util/http';
 
-const hydrateResourceHistory = (
-  data: API.Explorer.ResourcesPageOK['folders'][0] | API.Explorer.ResourcesPageOK['resources'][0],
+export const hydrateResourceHistory = (
+  data: Pick<
+    API.Explorer.ResourcesPageOK['folders'][0] | API.Explorer.ResourcesPageOK['resources'][0],
+    'createdAt' | 'creatorId' | 'creatorName' | 'updatedAt' | 'updaterId' | 'updaterName'
+  >,
 ): ResourceHistory => ({
   createdAt: Temporal.Instant.fromEpochMilliseconds(data.createdAt),
   creatorId: data.creatorId,
