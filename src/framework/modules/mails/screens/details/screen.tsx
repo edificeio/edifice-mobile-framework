@@ -4,7 +4,6 @@ import { TouchableOpacity, View } from 'react-native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import { FlatList, ScrollView as GHScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -14,37 +13,33 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
 import DefaultButton from '~/framework/components/buttons/default';
-import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
-import InputContainer from '~/framework/components/inputs/container';
-import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
-import TextInput from '~/framework/components/inputs/text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { AvatarSize, NewAvatar } from '~/framework/components/newavatar';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import Separator from '~/framework/components/separator';
-import { BodyText, HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
+import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
-import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
-import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
+import MailsFoldersBottomSheet from '~/framework/modules/mails/components/folders-bottom-sheet';
+import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';
 import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
 import {
   IMailsMailContent,
   MailsDefaultFolders,
   MailsFolderInfo,
+  MailsListTypeModal,
   MailsRecipients,
   MailsVisible,
 } from '~/framework/modules/mails/model';
@@ -73,21 +68,18 @@ export const computeNavBar = ({
   }),
 });
 
-const EMPTY_SVG_SIZE = getScaleWidth(150);
-
 const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const { folders, from, id } = props.route.params;
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
   const [mailContent, setMailContent] = React.useState<string>('');
   const [mailHistory, setMailHistory] = React.useState<string>('');
-  const [isInModalMove, setIsInModalMove] = React.useState<boolean>(false);
   const [newParentFolder, setNewParentFolder] = React.useState<MailsFolderInfo>();
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
-  const [isFolderCreation, setIsFolderCreation] = React.useState<boolean>(false);
   const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
   const [seeHistory, setSeeHistory] = React.useState<boolean>(false);
   const [error, setError] = React.useState<boolean>(false);
+  const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
 
   const convertedAttachments = React.useMemo(
     () => mail?.attachments.map(attachment => convertAttachmentToDistantFile(attachment, id)),
@@ -110,8 +102,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   };
 
   const onDismissBottomSheet = React.useCallback(() => {
-    if (isInModalMove) setIsInModalMove(false);
-  }, [isInModalMove]);
+    if (typeModal) setTypeModal(undefined);
+  }, [typeModal]);
 
   const onReply = React.useCallback(() => {
     let to: MailsVisible[] = [];
@@ -207,7 +199,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     handleMailAction(() => mailsService.mail.toggleUnread({ ids: [id], unread: true }), 'mails-details-toastsuccessunread');
 
   const onOpenMoveModal = () => {
-    setIsInModalMove(true);
+    setTypeModal(MailsListTypeModal.MOVE);
     bottomSheetModalRef.current?.present();
   };
 
@@ -444,68 +436,45 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const renderCreateFolder = React.useCallback(
     () => (
-      <View>
-        <HeaderBottomSheetModal
-          title={I18n.get('mails-list-newfolder')}
-          iconRight="ui-check"
-          iconRightDisabled={valueNewFolder.length === 0}
-          onPressRight={onCreateNewFolder}
-        />
-        <InputContainer
-          label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
-          input={
-            <TextInput
-              placeholder={I18n.get('mails-list-newfolderplaceholder')}
-              onChangeText={text => setValueNewFolder(text)}
-              value={valueNewFolder}
-              maxLength={50}
-            />
-          }
-        />
-      </View>
+      <MailsInputBottomSheet
+        title={I18n.get('mails-list-newfolder')}
+        action={onCreateNewFolder}
+        inputLabel={I18n.get('mails-list-newfolderlabel')}
+        inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
+        setInputValue={text => setValueNewFolder(text)}
+        inputValue={valueNewFolder}
+        disabledAction={valueNewFolder.length === 0}
+      />
     ),
     [onCreateNewFolder, valueNewFolder],
   );
 
   const renderMoveFolder = React.useCallback(
     () => (
-      <View style={styles.contentBottomSheet}>
-        <HeaderBottomSheetModal
-          title={I18n.get('mails-details-move')}
-          iconRight="ui-check"
-          iconRightDisabled={!newParentFolder}
-          onPressRight={onMove}
-        />
-        <FlatList
-          data={folders}
-          contentContainerStyle={[
-            stylesFolders.containerFolders,
-            styles.flatListBottomSheet,
-            folders?.length === 0 ? styles.nofoldersContainer : {},
-          ]}
-          renderItem={({ item }) => (
-            <MailsFolderItem
-              key={item.id}
-              icon="ui-folder"
-              name={item.name}
-              depth={item.depth}
-              selected={newParentFolder?.id === item.id}
-              disabled={item.id === mail!.folder_id}
-              onPress={() => setNewParentFolder(item)}
-            />
-          )}
-          ListEmptyComponent={
-            <View style={styles.nofolders}>
-              <Svg name="empty-nofolders" width={EMPTY_SVG_SIZE} height={EMPTY_SVG_SIZE} />
-              <BodyText>{I18n.get('mails-details-nofolders')}</BodyText>
-              <PrimaryButton text={I18n.get('mails-details-createfolder')} action={() => setIsFolderCreation(true)} />
-            </View>
-          }
-        />
-      </View>
+      <MailsFoldersBottomSheet
+        title={I18n.get('mails-details-move')}
+        action={onMove}
+        disabledAction={!newParentFolder}
+        folders={folders}
+        mailFolderId={mail!.folder_id}
+        newParentFolderId={newParentFolder?.id}
+        onPressCreateFolderButton={() => setTypeModal(MailsListTypeModal.CREATE)}
+        onPressFolder={setNewParentFolder}
+      />
     ),
     [folders, mail, newParentFolder, onMove],
   );
+
+  const renderContentBottomSheet = React.useCallback(() => {
+    switch (typeModal) {
+      case MailsListTypeModal.CREATE:
+        return renderCreateFolder();
+      case MailsListTypeModal.MOVE:
+        return renderMoveFolder();
+      default:
+        return renderDetailsRecipients();
+    }
+  }, [typeModal, renderCreateFolder, renderMoveFolder, renderDetailsRecipients]);
 
   const renderBottomSheet = React.useCallback(() => {
     return (
@@ -513,19 +482,12 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         ref={bottomSheetModalRef}
         onDismiss={onDismissBottomSheet}
         snapPoints={['90%']}
-        enableDynamicSizing={isInModalMove || isFolderCreation ? false : true}
+        enableDynamicSizing={typeModal ? false : true}
         containerStyle={styles.bottomSheet}>
-        <GHScrollView
-          keyboardDismissMode="none"
-          keyboardShouldPersistTaps="always"
-          nestedScrollEnabled
-          showsVerticalScrollIndicator={false}
-          bounces={false}>
-          {isFolderCreation ? renderCreateFolder() : isInModalMove ? renderMoveFolder() : renderDetailsRecipients()}
-        </GHScrollView>
+        {renderContentBottomSheet()}
       </BottomSheetModal>
     );
-  }, [isFolderCreation, isInModalMove, onDismissBottomSheet, renderCreateFolder, renderDetailsRecipients, renderMoveFolder]);
+  }, [onDismissBottomSheet, renderContentBottomSheet, typeModal]);
 
   const renderContent = React.useCallback(() => {
     if (error) return <EmptyContentScreen />;

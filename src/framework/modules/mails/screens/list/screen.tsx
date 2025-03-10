@@ -3,7 +3,7 @@ import { Alert, ScrollViewProps, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -15,13 +15,9 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import InputContainer from '~/framework/components/inputs/container';
-import { LabelIndicator } from '~/framework/components/inputs/container/label';
-import TextInput from '~/framework/components/inputs/text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
@@ -32,6 +28,7 @@ import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
+import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
 import { MailsPlaceholderList, MailsPlaceholderLittleList } from '~/framework/modules/mails/components/placeholder/list';
 import {
@@ -39,6 +36,7 @@ import {
   IMailsMailPreview,
   MailsDefaultFolders,
   MailsFolderInfo,
+  MailsListTypeModal,
   MailsMailStatePreview,
 } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
@@ -46,11 +44,6 @@ import { mailsService } from '~/framework/modules/mails/service';
 import { flattenFolders, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/http';
-
-enum MailsListTypeModalCreation {
-  CREATE = 'CREATE',
-  RENAME = 'RENAME',
-}
 
 export const computeNavBar = ({
   navigation,
@@ -71,7 +64,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const navigation = props.navigation;
 
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
-  const [typeModalCreation, setTypeModalCreation] = React.useState<MailsListTypeModalCreation | undefined>(undefined);
+  const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
   const [pageNb, setPageNb] = React.useState<number>(0);
   const [isLoadingNextPage, setIsLoadingNextPage] = React.useState<boolean>(false);
   const [hasNextMails, setHasNextMails] = React.useState<boolean>(true);
@@ -162,11 +155,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const onDismissBottomSheet = React.useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
     if (valueFolderName) setValueFolderName('');
-    if (typeModalCreation) setTypeModalCreation(undefined);
+    if (typeModal) setTypeModal(undefined);
     if (isSubfolder) setIsSubfolder(false);
     if (idParentFolder) setIdParentFolder(undefined);
     if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-  }, [valueFolderName, typeModalCreation, isSubfolder, idParentFolder, onErrorCreateFolder]);
+  }, [valueFolderName, typeModal, isSubfolder, idParentFolder, onErrorCreateFolder]);
 
   const switchFolder = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo) => {
@@ -182,7 +175,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     (id: string, unread: boolean, state: MailsMailStatePreview) => {
       if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
         return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
-      if (unread) setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
+      if (unread) setMails(prevMails => prevMails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
       return navigation.navigate(mailsRouteNames.details, { folders, from: selectedFolder, id });
     },
     [selectedFolder, navigation, setMails, folders],
@@ -193,43 +186,55 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     setIdParentFolder(undefined);
   }, [isSubfolder, setIsSubfolder, setIdParentFolder]);
 
-  const onCreateNewFolder = React.useCallback(async () => {
-    try {
-      setIsLoadingCreateNewFolder(true);
-      const dataNewFolder = await mailsService.folder.create({ name: valueFolderName, parentId: idParentFolder ?? '' });
-      switchFolder({ id: dataNewFolder, name: valueFolderName });
-      loadFolders();
-      onDismissBottomSheet();
-      toast.showSuccess(I18n.get('mails-list-newfoldersuccess', { name: valueFolderName }));
-    } catch (e) {
-      const error = e instanceof HTTPError ? await e.json() : e;
-      if (error instanceof Error) return toast.showError();
-      if (error && error.error === 'conversation.error.duplicate.folder') setOnErrorCreateFolder(true);
-    } finally {
-      setIsLoadingCreateNewFolder(false);
-    }
-  }, [valueFolderName, idParentFolder, switchFolder, loadFolders, onDismissBottomSheet]);
+  const handleFolderOperation = React.useCallback(
+    async (operation: 'create' | 'rename', successMessage: string) => {
+      try {
+        setIsLoadingCreateNewFolder(true);
 
-  const onRenameFolderAction = React.useCallback(async () => {
-    try {
-      setIsLoadingCreateNewFolder(true);
-      await mailsService.folder.rename({ id: (selectedFolder as MailsFolderInfo).id }, { name: valueFolderName });
-      setSelectedFolder({ id: (selectedFolder as MailsFolderInfo).id, name: valueFolderName });
-      loadFolders();
-      onDismissBottomSheet();
-      toast.showSuccess(I18n.get('mails-list-renamefoldersuccess'));
-    } catch (e) {
-      const error = e instanceof HTTPError ? await e.json() : e;
-      if (error instanceof Error) return toast.showError();
-      if (error && error.error === 'conversation.error.duplicate.folder') setOnErrorCreateFolder(true);
-    } finally {
-      setIsLoadingCreateNewFolder(false);
-    }
-  }, [loadFolders, onDismissBottomSheet, selectedFolder, valueFolderName]);
+        if (operation === 'create') {
+          const dataNewFolder = await mailsService.folder.create({
+            name: valueFolderName,
+            parentId: idParentFolder ?? '',
+          });
+          switchFolder({ id: dataNewFolder, name: valueFolderName });
+        } else if (operation === 'rename') {
+          await mailsService.folder.rename({ id: (selectedFolder as MailsFolderInfo).id }, { name: valueFolderName });
+          setSelectedFolder({
+            id: (selectedFolder as MailsFolderInfo).id,
+            name: valueFolderName,
+          });
+        }
+
+        loadFolders();
+        onDismissBottomSheet();
+        toast.showSuccess(successMessage);
+      } catch (e) {
+        const error = e instanceof HTTPError ? await e.json() : e;
+        if (error instanceof Error) {
+          toast.showError();
+          return;
+        }
+        if (error?.error === 'conversation.error.duplicate.folder') {
+          setOnErrorCreateFolder(true);
+        }
+      } finally {
+        setIsLoadingCreateNewFolder(false);
+      }
+    },
+    [valueFolderName, idParentFolder, selectedFolder, switchFolder, loadFolders, onDismissBottomSheet],
+  );
+
+  const onCreateFolderAction = React.useCallback(() => {
+    return handleFolderOperation('create', I18n.get('mails-list-newfoldersuccess', { name: valueFolderName }));
+  }, [handleFolderOperation, valueFolderName]);
+
+  const onRenameFolderAction = React.useCallback(() => {
+    return handleFolderOperation('rename', I18n.get('mails-list-renamefoldersuccess'));
+  }, [handleFolderOperation]);
 
   const onRenameFolder = React.useCallback(() => {
     setValueFolderName((selectedFolder as MailsFolderInfo).name);
-    setTypeModalCreation(MailsListTypeModalCreation.RENAME);
+    setTypeModal(MailsListTypeModal.RENAME);
     bottomSheetModalRef.current?.present();
   }, [selectedFolder]);
 
@@ -269,6 +274,92 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       },
     ]);
   }, [loadFolders, selectedFolder, switchFolder]);
+
+  const handleMailAction = React.useCallback(
+    async ({
+      action,
+      successMessage,
+      updateMails,
+    }: {
+      action: () => Promise<void>;
+      updateMails?: () => void;
+      successMessage: string;
+    }) => {
+      try {
+        await action();
+        if (updateMails) updateMails();
+        loadFolders();
+        toast.showSuccess(I18n.get(successMessage));
+      } catch (e) {
+        console.error(e);
+        toast.showError();
+      }
+    },
+    [loadFolders],
+  );
+
+  const onDelete = React.useCallback(
+    async (ids: string[], permanently?: boolean) => {
+      await handleMailAction({
+        action: () => (permanently ? mailsService.mail.delete({ ids }) : mailsService.mail.moveToTrash({ ids })),
+        successMessage: permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash',
+        updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
+      });
+    },
+    [handleMailAction],
+  );
+
+  const onToggleUnread = React.useCallback(
+    async (id: string, unread: boolean) => {
+      await handleMailAction({
+        action: () => mailsService.mail.toggleUnread({ ids: [id], unread: !unread }),
+        successMessage: unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread',
+        updateMails: () => setMails(prevMails => prevMails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail))),
+      });
+    },
+    [handleMailAction],
+  );
+
+  const onRestore = React.useCallback(
+    async (id: string) => {
+      await handleMailAction({
+        action: () => mailsService.mail.restore({ ids: [id] }),
+        successMessage: 'mails-details-toastsuccessrestore',
+        updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
+      });
+    },
+    [handleMailAction],
+  );
+
+  const onSelectMail = React.useCallback(
+    (id: string) => {
+      if (selectedMails.includes(id)) setSelectedMails(prev => prev.filter(mailId => mailId !== id));
+      else setSelectedMails(prev => [...prev, id]);
+    },
+    [selectedMails],
+  );
+
+  const onSelectAll = React.useCallback(() => {
+    if (selectedMails.length === mails.length) setSelectedMails([]);
+    else setSelectedMails(mails.map(mail => mail.id));
+  }, [mails, selectedMails]);
+
+  const onActionMultiple = React.useCallback(
+    async (action: () => Promise<void>) => {
+      try {
+        action();
+        setSelectedMails([]);
+        setIsSelectionMode(false);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [setSelectedMails, setIsSelectionMode],
+  );
+
+  const featureNotImplemented = React.useCallback(() => {
+    Alert.alert('This feature is not implemented yet');
+  }, []);
 
   const allPopupActionsMenu = React.useMemo(
     () => [
@@ -355,9 +446,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       const { params } = props.route;
       if (params.from && (params.reload || params.idMailToRemove || params.idMailToMarkUnread)) {
         if (params.reload) loadMails(params.from);
-        if (params.idMailToRemove) setMails(mails => mails.filter(mail => mail.id !== params.idMailToRemove));
+        if (params.idMailToRemove) setMails(prevMails => prevMails.filter(mail => mail.id !== params.idMailToRemove));
         if (params.idMailToMarkUnread)
-          setMails(mails => mails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)));
+          setMails(prevMails => prevMails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)));
         setSelectedFolder(params.from);
         loadFolders();
       } else {
@@ -365,92 +456,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       }
     }, [loadFolders, loadMails, props.route]),
   );
-
-  const handleMailAction = React.useCallback(
-    async ({
-      action,
-      successMessage,
-      updateMails,
-    }: {
-      action: () => Promise<void>;
-      updateMails?: () => void;
-      successMessage: string;
-    }) => {
-      try {
-        await action();
-        if (updateMails) updateMails();
-        loadFolders();
-        toast.showSuccess(I18n.get(successMessage));
-      } catch (e) {
-        console.error(e);
-        toast.showError();
-      }
-    },
-    [loadFolders],
-  );
-
-  const onDelete = React.useCallback(
-    async (ids: string[], permanently?: boolean) => {
-      await handleMailAction({
-        action: () => (permanently ? mailsService.mail.delete({ ids }) : mailsService.mail.moveToTrash({ ids })),
-        successMessage: permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash',
-        updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
-      });
-    },
-    [handleMailAction],
-  );
-
-  const onToggleUnread = React.useCallback(
-    async (id: string, unread: boolean) => {
-      await handleMailAction({
-        action: () => mailsService.mail.toggleUnread({ ids: [id], unread: !unread }),
-        successMessage: unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread',
-        updateMails: () => setMails(mails => mails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail))),
-      });
-    },
-    [handleMailAction],
-  );
-
-  const onRestore = React.useCallback(
-    async (id: string) => {
-      await handleMailAction({
-        action: () => mailsService.mail.restore({ ids: [id] }),
-        successMessage: 'mails-details-toastsuccessrestore',
-        updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
-      });
-    },
-    [handleMailAction],
-  );
-
-  const onSelectMail = React.useCallback(
-    (id: string) => {
-      if (selectedMails.includes(id)) setSelectedMails(prev => prev.filter(mailId => mailId !== id));
-      else setSelectedMails(prev => [...prev, id]);
-    },
-    [selectedMails],
-  );
-
-  const onSelectAll = React.useCallback(() => {
-    if (selectedMails.length === mails.length) setSelectedMails([]);
-    else setSelectedMails(mails.map(mail => mail.id));
-  }, [mails, selectedMails]);
-
-  const onActionMultiple = React.useCallback(
-    async (action: () => Promise<void>) => {
-      try {
-        action();
-        setSelectedMails([]);
-        setIsSelectionMode(false);
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [setSelectedMails, setIsSelectionMode],
-  );
-
-  const featureNotImplemented = React.useCallback(() => {
-    Alert.alert('This feature is not implemented yet');
-  }, []);
 
   const renderTopSelectMode = React.useCallback(() => {
     if (!isSelectionMode) return;
@@ -518,7 +523,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             style={styles.newFolderButton}
             iconLeft="ui-plus"
             text={I18n.get('mails-list-newfolder')}
-            action={() => setTypeModalCreation(MailsListTypeModalCreation.CREATE)}
+            action={() => setTypeModal(MailsListTypeModal.CREATE)}
           />
         }
         renderItem={({ item }) => (
@@ -538,65 +543,47 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderCreateNewFolder = React.useCallback(() => {
     return (
-      <ScrollView
-        keyboardDismissMode="none"
-        keyboardShouldPersistTaps="always"
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        bounces={false}>
-        <View style={styles.scrollViewBottomSheet}>
-          <HeaderBottomSheetModal
-            title={I18n.get('mails-list-newfolder')}
-            iconRight="ui-check"
-            iconRightDisabled={
-              (isSubfolder && !idParentFolder) || valueFolderName.length === 0 || onErrorCreateFolder || isLoadingCreateNewFolder
-            }
-            onPressRight={onCreateNewFolder}
-          />
-          <InputContainer
-            label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: I18n.get('mails-list-newfolderlabel') }}
-            input={
-              <TextInput
-                placeholder={I18n.get('mails-list-newfolderplaceholder')}
-                onChangeText={text => {
-                  if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-                  setValueFolderName(text);
-                }}
-                value={valueFolderName}
-                showError={onErrorCreateFolder}
-                annotation={onErrorCreateFolder ? I18n.get('mails-list-newfolderduplicate') : undefined}
-                maxLength={50}
+      <MailsInputBottomSheet
+        title={I18n.get('mails-list-newfolder')}
+        inputLabel={I18n.get('mails-list-newfolderlabel')}
+        inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
+        setInputValue={text => {
+          if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+          setValueFolderName(text);
+        }}
+        inputValue={valueFolderName}
+        onError={onErrorCreateFolder}
+        action={onCreateFolderAction}
+        disabledAction={
+          (isSubfolder && !idParentFolder) || valueFolderName.length === 0 || onErrorCreateFolder || isLoadingCreateNewFolder
+        }>
+        {folders.length > 0 ? (
+          <>
+            <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
+            <View style={styles.selectFolderTitle}>
+              <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
+              <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
+            </View>
+            {isSubfolder ? (
+              <FlatList
+                data={folders}
+                contentContainerStyle={[stylesFolders.containerFolders, styles.flatListBottomSheet]}
+                renderItem={({ item }) =>
+                  item.depth === 1 ? (
+                    <MailsFolderItem
+                      key={item.id}
+                      icon="ui-folder"
+                      name={item.name}
+                      selected={idParentFolder === item.id}
+                      onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
+                    />
+                  ) : null
+                }
               />
-            }
-          />
-          {folders.length > 0 ? (
-            <>
-              <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
-              <View style={styles.selectFolderTitle}>
-                <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
-                <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
-              </View>
-              {isSubfolder ? (
-                <FlatList
-                  data={folders}
-                  contentContainerStyle={[stylesFolders.containerFolders, styles.flatListBottomSheet]}
-                  renderItem={({ item }) =>
-                    item.depth === 1 ? (
-                      <MailsFolderItem
-                        key={item.id}
-                        icon="ui-folder"
-                        name={item.name}
-                        selected={idParentFolder === item.id}
-                        onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
-                      />
-                    ) : null
-                  }
-                />
-              ) : null}
-            </>
-          ) : null}
-        </View>
-      </ScrollView>
+            ) : null}
+          </>
+        ) : null}
+      </MailsInputBottomSheet>
     );
   }, [
     folders,
@@ -605,56 +592,40 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     isLoadingCreateNewFolder,
     isSubfolder,
     idParentFolder,
-    onCreateNewFolder,
+    onCreateFolderAction,
     onToggleSubfolders,
   ]);
 
   const renderRenameFolder = React.useCallback(() => {
     return (
-      <ScrollView
-        keyboardDismissMode="none"
-        keyboardShouldPersistTaps="always"
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        bounces={false}>
-        <HeaderBottomSheetModal
-          title={I18n.get('mails-list-rename')}
-          iconRight="ui-check"
-          iconRightDisabled={
-            onErrorCreateFolder || valueFolderName.length === 0 || valueFolderName === (selectedFolder as MailsFolderInfo).name
-          }
-          onPressRight={onRenameFolderAction}
-        />
-        <InputContainer
-          label={{ icon: 'ui-folder', text: I18n.get('mails-list-renamefolderlabel') }}
-          input={
-            <TextInput
-              placeholder={I18n.get('mails-list-newfolderplaceholder')}
-              onChangeText={text => {
-                if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-                setValueFolderName(text);
-              }}
-              value={valueFolderName}
-              showError={onErrorCreateFolder}
-              annotation={onErrorCreateFolder ? I18n.get('mails-list-newfolderduplicate') : undefined}
-              maxLength={50}
-            />
-          }
-        />
-      </ScrollView>
+      <MailsInputBottomSheet
+        title={I18n.get('mails-list-rename')}
+        inputLabel={I18n.get('mails-list-renamefolderlabel')}
+        inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
+        setInputValue={text => {
+          if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+          setValueFolderName(text);
+        }}
+        inputValue={valueFolderName}
+        onError={onErrorCreateFolder}
+        action={onRenameFolderAction}
+        disabledAction={
+          onErrorCreateFolder || valueFolderName.length === 0 || valueFolderName === (selectedFolder as MailsFolderInfo).name
+        }
+      />
     );
   }, [valueFolderName, selectedFolder, onRenameFolderAction, onErrorCreateFolder]);
 
   const renderContentBottomSheet = React.useCallback(() => {
-    switch (typeModalCreation) {
-      case MailsListTypeModalCreation.CREATE:
+    switch (typeModal) {
+      case MailsListTypeModal.CREATE:
         return renderCreateNewFolder();
-      case MailsListTypeModalCreation.RENAME:
+      case MailsListTypeModal.RENAME:
         return renderRenameFolder();
       default:
         return renderFolders();
     }
-  }, [typeModalCreation, renderCreateNewFolder, renderRenameFolder, renderFolders]);
+  }, [typeModal, renderCreateNewFolder, renderRenameFolder, renderFolders]);
 
   const renderBottomSheetFolders = React.useCallback(() => {
     return (
@@ -662,12 +633,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         ref={bottomSheetModalRef}
         onDismiss={onDismissBottomSheet}
         snapPoints={['90%']}
-        enableDynamicSizing={typeModalCreation ? false : true}
+        enableDynamicSizing={typeModal ? false : true}
         containerStyle={styles.bottomSheet}>
         {renderContentBottomSheet()}
       </BottomSheetModal>
     );
-  }, [onDismissBottomSheet, typeModalCreation, renderContentBottomSheet]);
+  }, [onDismissBottomSheet, typeModal, renderContentBottomSheet]);
 
   const renderEmpty = React.useCallback(() => {
     return (

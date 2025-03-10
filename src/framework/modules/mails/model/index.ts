@@ -18,6 +18,12 @@ export enum MailsVisibleType {
   USER = 'User',
 }
 
+export enum MailsListTypeModal {
+  CREATE = 'CREATE',
+  RENAME = 'RENAME',
+  MOVE = 'MOVE',
+}
+
 export interface MailsRecipients {
   users: MailsRecipientInfo[];
   groups: MailsRecipientGroupInfo[];
