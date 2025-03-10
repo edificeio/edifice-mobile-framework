@@ -26,6 +26,11 @@
 		<string>????</string>
 		<key>CFBundleVersion</key>
 		<string>1131205</string>
+		<string>1.13.13</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleVersion</key>
+		<string>1131300</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>http</string>

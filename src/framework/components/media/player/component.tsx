@@ -145,6 +145,7 @@ function MediaPlayer(props: MediaPlayerProps) {
       }
       src.uri = new URL(source.uri).href;
     }
+    console.debug('SRC = ', src);
     return src;
   }, [source]);
 
