@@ -390,11 +390,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   );
 
   const onDelete = React.useCallback(
-    async (id: string, permanently?: boolean) => {
+    async (ids: string[], permanently?: boolean) => {
       await handleMailAction({
-        action: () => (permanently ? mailsService.mail.delete({ ids: [id] }) : mailsService.mail.moveToTrash({ ids: [id] })),
+        action: () => (permanently ? mailsService.mail.delete({ ids }) : mailsService.mail.moveToTrash({ ids })),
         successMessage: permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash',
-        updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
+        updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
     },
     [handleMailAction],
@@ -435,6 +435,19 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     else setSelectedMails(mails.map(mail => mail.id));
   }, [mails, selectedMails]);
 
+  const onActionMultiple = React.useCallback(
+    async (action: () => Promise<void>) => {
+      try {
+        action();
+        setSelectedMails([]);
+        setIsSelectionMode(false);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [setSelectedMails, setIsSelectionMode],
+  );
+
   const featureNotImplemented = React.useCallback(() => {
     Alert.alert('This feature is not implemented yet');
   }, []);
@@ -464,10 +477,16 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         <TertiaryButton iconLeft="ui-mailUnread" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
         <TertiaryButton iconLeft="ui-mailRead" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
         <TertiaryButton iconLeft="ui-folderMove" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
-        <TertiaryButton iconLeft="ui-delete" contentColor={theme.palette.status.failure.regular} action={featureNotImplemented} />
+        <TertiaryButton
+          iconLeft="ui-delete"
+          contentColor={theme.palette.status.failure.regular}
+          action={() =>
+            onActionMultiple(() => onDelete(selectedMails, selectedFolder === MailsDefaultFolders.TRASH ? true : false))
+          }
+        />
       </View>
     );
-  }, [featureNotImplemented, isSelectionMode, selectedMails.length]);
+  }, [featureNotImplemented, isSelectionMode, onActionMultiple, onDelete, selectedFolder, selectedMails]);
 
   const renderFolders = React.useCallback(() => {
     return (
@@ -674,7 +693,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         isSelectMode={isSelectionMode}
         isSelected={selectedMails.includes(mail.id)}
         onSelect={onSelectMail}
-        onDelete={() => onDelete(mail.id, selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
+        onDelete={() => onDelete([mail.id], selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
         onToggleUnread={
           selectedFolder !== MailsDefaultFolders.DRAFTS &&
           selectedFolder !== MailsDefaultFolders.OUTBOX &&
