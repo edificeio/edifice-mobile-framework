@@ -65,6 +65,7 @@ const imports = {
   'ui-external-link': async () => import('ASSETS/icons/uiIcons/external-link.svg'),
   adressBook: async () => import('ASSETS/icons/moduleIcons/adressBook.svg'),
   'ui-externalLink': async () => import('ASSETS/icons/uiIcons/externalLink.svg'),
+  appointments: async () => import('ASSETS/icons/moduleIcons/appointments.svg'),
   archives: async () => import('ASSETS/icons/moduleIcons/archives.svg'),
   'ui-eye': async () => import('ASSETS/icons/uiIcons/eye.svg'),
   blog: async () => import('ASSETS/icons/moduleIcons/blog.svg'),

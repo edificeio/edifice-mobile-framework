@@ -11,6 +11,7 @@ const variableColor = appConf.is1d ? theme.palette.primary.regular : theme.palet
 export let APPBADGES: {
   [key: string]: IAppBadgeInfo;
 } = {
+  APPOINTMENTS: { color: theme.palette.complementary.green.regular, icon: { name: 'appointments', type: 'NamedSvg' } },
   ARCHIVE: { color: theme.palette.complementary.yellow.regular, icon: { name: 'archives', type: 'NamedSvg' } },
   BLOG: { color: theme.palette.complementary.indigo.regular, icon: { name: 'blog', type: 'NamedSvg' } },
   CALENDAR: { color: theme.palette.complementary.yellow.regular, icon: { name: 'calendar', type: 'NamedSvg' } },
