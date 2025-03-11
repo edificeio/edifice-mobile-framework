@@ -4,7 +4,7 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 export default new NavigableModuleConfig<'peertube', null>({
   displayAs: 'myAppsConnector',
   displayI18n: 'peertube-moduleconfig-appname',
-  displayPicture: { fill: theme.palette.complementary.red.regular, name: 'peertube', type: 'Svg' },
+  displayPicture: { fill: theme.palette.complementary.red.regular, name: 'peertube', type: 'NamedSvg' },
   entcoreScope: ['cas'],
 
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('PEERTUBE'),

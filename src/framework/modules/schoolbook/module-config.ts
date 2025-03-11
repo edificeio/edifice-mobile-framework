@@ -6,7 +6,7 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 export default new NavigableModuleConfig<'schoolbook', ISchoolbookState>({
   displayAs: 'myAppsModule',
   displayI18n: 'schoolbook-moduleconfig-tabname',
-  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'homeLiaisonDiary', type: 'Svg' },
+  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'homeLiaisonDiary', type: 'NamedSvg' },
   entcoreScope: ['schoolbook'],
 
   matchEntcoreApp: '/schoolbook',

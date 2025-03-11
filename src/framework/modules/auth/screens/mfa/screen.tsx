@@ -24,7 +24,8 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Picture, Svg } from '~/framework/components/picture';
+import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
@@ -322,7 +323,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
             {isEmailOrMobileMFA ? (
-              <Svg
+              <NamedSVG
                 name={`user-${isEmailMFA ? 'email' : 'smartphone'}`}
                 width={UI_SIZES.elements.thumbnail}
                 height={UI_SIZES.elements.thumbnail}
@@ -387,7 +388,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
             ) : isCodeStateDisplayed ? (
               <>
                 <Picture
-                  type="Svg"
+                  type="NamedSvg"
                   name={`pictos-${isCodeCorrect ? 'success-outline' : 'error'}`}
                   fill={codeStateColor}
                   width={33}
@@ -410,7 +411,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
             onPress={onResendCode}
             testID={testIds.resend}>
             <Picture
-              type="Svg"
+              type="NamedSvg"
               name="pictos-redo"
               fill={theme.palette.grey.black}
               width={UI_SIZES.dimensions.width.medium}

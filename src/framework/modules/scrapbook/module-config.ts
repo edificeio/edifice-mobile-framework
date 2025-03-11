@@ -5,7 +5,7 @@ export default new NavigableModuleConfig<'scrapbook', null>({
   displayAs: 'myAppsModule',
   displayI18n: 'scrapbook-appname',
   displayOrder: 0,
-  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'scrapbook', type: 'Svg' },
+  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'scrapbook', type: 'NamedSvg' },
 
   entcoreScope: ['scrapbook'],
   matchEntcoreApp: '/scrapbook',

@@ -17,7 +17,7 @@ function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
 export default new NavigableModuleConfig<'diary', IDiaryReduxState>({
   displayAs: 'myAppsSecondaryModule',
   displayI18n: 'diary-moduleconfig-appname',
-  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'diary', type: 'Svg' },
+  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'diary', type: 'NamedSvg' },
   entcoreScope: ['diary'],
 
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),

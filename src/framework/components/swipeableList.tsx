@@ -52,7 +52,7 @@ import { useScrollToTop } from '@react-navigation/native';
 import { IPropsSwipeListView, RowMap, SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 
 import { UI_SIZES, UI_STYLES } from './constants';
-import { Svg } from './picture';
+import { NamedSVG } from './picture';
 import { SmallText } from './text';
 
 import theme from '~/app/theme';
@@ -153,7 +153,7 @@ const SwipeAction = <ItemT extends { key: string }>(
           ]}>
           {overlapElement}
           {props.actionIcon ? (
-            <Svg
+            <NamedSVG
               width={props.actionIconSize ?? 16}
               height={props.actionIconSize ?? 16}
               fill={props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.primary.regular)}

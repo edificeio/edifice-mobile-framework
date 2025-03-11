@@ -10,7 +10,7 @@ const fillApp = theme.palette.complementary[fillColor].regular;
 export default new NavigableModuleConfig<'news', NewsState>({
   displayAs: 'myAppsModule',
   displayI18n: 'news-moduleconfig-tabname',
-  displayPicture: { fill: fillApp, name: 'newsFeed', type: 'Svg' },
+  displayPicture: { fill: fillApp, name: 'newsFeed', type: 'NamedSvg' },
   entcoreScope: ['actualites'],
 
   matchEntcoreApp: '/actualites',

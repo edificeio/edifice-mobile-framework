@@ -6,7 +6,7 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 export default new NavigableModuleConfig<'support', ReturnType<typeof reducer>>({
   displayAs: 'myAppsSecondaryModule',
   displayI18n: 'support-appname',
-  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'support', type: 'Svg' },
+  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'support', type: 'NamedSvg' },
   entcoreScope: ['support'],
 
   matchEntcoreApp: '/support',

@@ -207,7 +207,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 cached: true,
                 name: 'ui-calendar',
-                type: 'Svg',
+                type: 'NamedSvg',
               }}
               {...(() => {
                 const taf = getSummaryItem(
@@ -235,7 +235,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 cached: true,
                 name: 'ui-success',
-                type: 'Svg',
+                type: 'NamedSvg',
               }}
               {...(() => {
                 const note = getSummaryItem(data.PageReleveDeNotes?.DevoirsPast, data.PageReleveDeNotes?.DevoirsFuture);
@@ -258,7 +258,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 cached: true,
                 name: 'ui-skills',
-                type: 'Svg',
+                type: 'NamedSvg',
               }}
               {...(() => {
                 const comp = getSummaryItem(data.PageCompetences?.CompetencesPast, data.PageCompetences?.CompetencesFuture);
@@ -279,7 +279,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 cached: true,
                 name: 'ui-flag',
-                type: 'Svg',
+                type: 'NamedSvg',
               }}
               {...(() => {
                 const vsco = getSummaryItem(data.PageVieScolaire?.VieScolairePast, data.PageVieScolaire?.VieScolaireFuture);

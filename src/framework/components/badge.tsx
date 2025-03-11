@@ -2,11 +2,10 @@ import * as React from 'react';
 import { ColorValue, StyleSheet, View } from 'react-native';
 
 import { UI_SIZES } from './constants';
-import { Picture, Svg } from './picture';
+import { NamedSVG, Picture, PictureProps } from './picture';
 import { CaptionBoldText } from './text';
 
 import theme from '~/app/theme';
-import { PictureProps } from './picture';
 
 export interface IBadgeProps {
   content: number | string | PictureProps;
@@ -32,11 +31,11 @@ export const Badge = ({ color, content }: IBadgeProps) => {
     } else if (typeof content === 'number') {
       return <CaptionBoldText style={{ color: theme.ui.text.inverse }}>{content > 99 ? '99+' : content}</CaptionBoldText>;
     } else if (typeof content === 'string') {
-      return <Svg height={12} width={12} color={theme.ui.text.inverse} name={content} />;
+      return <NamedSVG height={12} width={12} color={theme.ui.text.inverse} name={content} />;
     } else {
       if (content.type === 'Icon') {
         return <Picture {...content} size={12} color={theme.ui.text.inverse} />;
-      } else if (content.type === 'Svg') {
+      } else if (content.type === 'NamedSvg') {
         return <Picture fill={theme.ui.text.inverse} {...content} style={[styles.badgePicture, content.style as object]} />;
       } else {
         return <Picture {...content} style={[styles.badgePicture, content.style as object]} />;

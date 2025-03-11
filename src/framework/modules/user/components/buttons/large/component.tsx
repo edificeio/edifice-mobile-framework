@@ -6,14 +6,14 @@ import { LargeButtonProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 
 export const LargeButton = ({ action, icon, style, text }: LargeButtonProps) => {
   return (
     <TouchableOpacity onPress={action} style={[styles.container, style]}>
       <View style={styles.iconContainer}>
-        <Svg
+        <NamedSVG
           name={icon}
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}

@@ -77,7 +77,7 @@ const createTabIcon = (
     dp.size = dp.size ?? props.size;
     dp.color = dp.color ?? props.color;
     dp.name = dp.name ?? 'more_vert';
-  } else if (dp.type === 'Svg') {
+  } else if (dp.type === 'NamedSvg') {
     dp.name = dp.name ?? 'ui-options';
     dp.height = props.size;
     dp.width = props.size;

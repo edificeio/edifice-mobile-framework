@@ -1,6 +1,6 @@
 import { ImageProps, ImageURISource } from 'react-native';
 
-import { SvgProps } from '~/framework/components/picture';
+import { NamedSVGProps } from '~/framework/components/picture';
 
 export enum Size {
   sm = 'sm',
@@ -33,7 +33,7 @@ export interface SingleSourceAvatarProps extends CommonSingleAvatarProps, Single
 // Svg avatar
 
 export interface SingleSvgAvatarSpecificProps {
-  svg: SvgProps;
+  svg: NamedSVGProps;
 }
 
 export interface SingleSvgAvatarProps extends CommonSingleAvatarProps, SingleSvgAvatarSpecificProps {}

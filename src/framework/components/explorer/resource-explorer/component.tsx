@@ -36,7 +36,8 @@ import {
   ResourceExplorerProps,
 } from '~/framework/components/explorer/resource-explorer/types';
 import GridList from '~/framework/components/GridList';
-import { Icon, Picture, PictureProps } from '~/framework/components/picture';
+import { Icon } from '~/framework/components/icon';
+import { Picture, PictureProps } from '~/framework/components/picture';
 import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media';
 

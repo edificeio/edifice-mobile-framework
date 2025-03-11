@@ -5,7 +5,7 @@ import { FastImageProps, default as RNFastImage } from 'react-native-fast-image'
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { urlSigner } from '~/infra/oauth';
 
 interface IMediaCommonAttributes {
@@ -60,7 +60,7 @@ const style = StyleSheet.create({
 
 export const UnavailableImage = () => (
   <View style={style.image}>
-    <Svg style={style.svg} name="image-not-found" fill={theme.palette.grey.stone} />
+    <NamedSVG style={style.svg} name="image-not-found" fill={theme.palette.grey.stone} />
   </View>
 );
 

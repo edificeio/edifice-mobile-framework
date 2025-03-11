@@ -8,13 +8,13 @@ import { ThumbnailThreadProps } from './types';
 
 import theme from '~/app/theme';
 import { getScaleHeight } from '~/framework/components/constants';
-import { Svg, SvgProps } from '~/framework/components/picture';
+import { NamedSVG, NamedSVGProps } from '~/framework/components/picture';
 import { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
 import moduleConfig, { fillColor } from '~/framework/modules/news/module-config';
 import { Image } from '~/framework/util/media';
 
 const Selected = () => (
-  <View style={[styles.thumbnailSelectedItem, { borderColor: (moduleConfig.displayPicture as SvgProps).fill }]} />
+  <View style={[styles.thumbnailSelectedItem, { borderColor: (moduleConfig.displayPicture as NamedSVGProps).fill }]} />
 );
 
 export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...props }: ThumbnailThreadProps) {
@@ -51,20 +51,20 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
     return (
       <View style={[globalStyle, styles.thumbnailContainerSelected]}>
         <Selected />
-        <Svg name="newsFeed" fill={(moduleConfig.displayPicture as SvgProps).fill} height={heightSVGNoIcon} />
+        <NamedSVG name="newsFeed" fill={(moduleConfig.displayPicture as NamedSVGProps).fill} height={heightSVGNoIcon} />
       </View>
     );
   }
   if (status === ThreadItemStatus.DISABLED) {
     return (
       <View style={[globalStyle, styles.thumbnailNoIconDisabled]}>
-        <Svg name="newsFeed" fill={theme.palette.grey.graphite} height={heightSVGNoIcon} />
+        <NamedSVG name="newsFeed" fill={theme.palette.grey.graphite} height={heightSVGNoIcon} />
       </View>
     );
   }
   return (
     <View style={globalStyle}>
-      <Svg name="newsFeed" fill={(moduleConfig.displayPicture as SvgProps).fill} height={heightSVGNoIcon} />
+      <NamedSVG name="newsFeed" fill={(moduleConfig.displayPicture as NamedSVGProps).fill} height={heightSVGNoIcon} />
     </View>
   );
 }

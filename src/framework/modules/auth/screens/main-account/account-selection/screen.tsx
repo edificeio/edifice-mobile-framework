@@ -13,7 +13,7 @@ import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleWidth } from '~/framework/components/constants';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
-import { Svg } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/actions';
@@ -127,7 +127,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   return (
     <PageView style={styles.page}>
       <View style={styles.topContainer}>
-        <Svg name="multi-account" width={getScaleWidth(130)} height={getScaleWidth(130)} />
+        <NamedSVG name="multi-account" width={getScaleWidth(130)} height={getScaleWidth(130)} />
         <View style={styles.textContainer}>
           <HeadingXSText>{I18n.get('auth-accountselection-heading')}</HeadingXSText>
           <SmallText style={styles.description}>{I18n.get('auth-accountselection-description')}</SmallText>
@@ -140,7 +140,12 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
             data.length === 1 ? (
               <TouchableOpacity onPress={onAddAccount} style={styles.addAccount}>
                 <View style={styles.addAccountRound}>
-                  <Svg name="ui-plus" fill={theme.palette.primary.regular} height={getScaleWidth(48)} width={getScaleWidth(48)} />
+                  <NamedSVG
+                    name="ui-plus"
+                    fill={theme.palette.primary.regular}
+                    height={getScaleWidth(48)}
+                    width={getScaleWidth(48)}
+                  />
                 </View>
                 <SmallBoldText style={styles.addAccountText}>{I18n.get('auth-accountbutton-add')}</SmallBoldText>
               </TouchableOpacity>

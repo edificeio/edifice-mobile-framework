@@ -27,8 +27,7 @@ import { OverviewCardProps } from './pictureCard';
 import theme from '~/app/theme';
 import { Badge } from '~/framework/components/badge';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { Icon, Picture, PictureProps, Svg } from '~/framework/components/picture';
-
+import { Icon, NamedSVG, Picture, PictureProps } from '~/framework/components/picture';
 import { BodyText, CaptionItalicText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media';
@@ -260,7 +259,7 @@ function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.Com
   const { cardComponent, children, picture, pictureStyle, pictureWrapperStyle, style, title, ...rest } = props;
   if (picture) {
     if (picture.type === 'Image') picture.resizeMode = 'contain';
-    if (picture.type === 'Svg') {
+    if (picture.type === 'NamedSvg') {
       picture.fill = theme.ui.text.inverse;
       picture.width = OverviewCardBase.styles.picture.width;
       picture.height = OverviewCardBase.styles.picture.height;
@@ -315,7 +314,7 @@ export function TouchableOverviewCard(props: OverviewCardProps & TouchableOpacit
     <OverviewCardBase
       cardComponent={TouchableContentCard}
       headerIndicator={
-        <Svg
+        <NamedSVG
           key="chevron"
           width={UI_SIZES.dimensions.width.larger}
           height={UI_SIZES.dimensions.width.larger} // width again to ensure it's a square !

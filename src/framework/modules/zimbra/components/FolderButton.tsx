@@ -5,7 +5,7 @@ import { DrawerItem } from '@react-navigation/drawer';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { IFolder } from '~/framework/modules/zimbra/model';
 
 const styles = StyleSheet.create({
@@ -50,7 +50,7 @@ export const FolderButton = (props: FolderButtonProps) => {
         />
         {folder.folders.length ? (
           <TouchableOpacity onPress={() => setExpanded(!isExpanded)} style={styles.expandActionContainer}>
-            <Svg
+            <NamedSVG
               name={isExpanded ? 'ui-rafterUp' : 'ui-rafterDown'}
               width={18}
               height={18}

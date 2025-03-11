@@ -6,7 +6,7 @@ import type { CallSummaryProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { Svg } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
 import { Call, CallEventType } from '~/framework/modules/viescolaire/presences/model';
 
@@ -26,13 +26,13 @@ export default function CallSummary(props: CallSummaryProps) {
       <HeadingSText>{I18n.get('presences-call-summary-heading')}</HeadingSText>
       <View style={[styles.rowContainer, styles.wrap, styles.eventTypeGap]}>
         <View style={[styles.rowContainer, styles.presentCountContainer]}>
-          <Svg name="presences" width={22} height={22} fill={theme.palette.status.success.regular} />
+          <NamedSVG name="presences" width={22} height={22} fill={theme.palette.status.success.regular} />
           <BodyText style={styles.eventTypeText}>{I18n.get('presences-call-summary-present')}</BodyText>
           <BodyBoldText>{`${studentCount - absentCount}/${studentCount}`}</BodyBoldText>
         </View>
         <View style={[styles.rowContainer, styles.eventTypeGap]}>
           <View style={styles.secondaryEventContainer}>
-            <Svg
+            <NamedSVG
               name="ui-clock-alert"
               width={22}
               height={22}
@@ -41,7 +41,7 @@ export default function CallSummary(props: CallSummaryProps) {
             <BodyBoldText style={latenessCount ? styles.secondaryEventText : styles.lightText}>{latenessCount}</BodyBoldText>
           </View>
           <View style={styles.secondaryEventContainer}>
-            <Svg
+            <NamedSVG
               name="ui-leave"
               width={22}
               height={22}
@@ -52,7 +52,7 @@ export default function CallSummary(props: CallSummaryProps) {
         </View>
       </View>
       <View style={styles.rowContainer}>
-        <Svg
+        <NamedSVG
           name="ui-error"
           width={22}
           height={22}
