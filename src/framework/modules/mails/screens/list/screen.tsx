@@ -310,11 +310,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   );
 
   const onToggleUnread = React.useCallback(
-    async (id: string, unread: boolean) => {
+    async (ids: string[], unread: boolean) => {
       await handleMailAction({
-        action: () => mailsService.mail.toggleUnread({ ids: [id], unread: !unread }),
+        action: () => mailsService.mail.toggleUnread({ ids, unread: !unread }),
         successMessage: unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread',
-        updateMails: () => setMails(prevMails => prevMails.map(mail => (mail.id === id ? { ...mail, unread: !unread } : mail))),
+        updateMails: () =>
+          setMails(prevMails => prevMails.map(mail => (ids.includes(mail.id) ? { ...mail, unread: !unread } : mail))),
       });
     },
     [handleMailAction],
@@ -325,7 +326,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       await handleMailAction({
         action: () => mailsService.mail.restore({ ids: [id] }),
         successMessage: 'mails-details-toastsuccessrestore',
-        updateMails: () => setMails(mails => mails.filter(mail => mail.id !== id)),
+        updateMails: () => setMails(prevMails => prevMails.filter(mail => mail.id !== id)),
       });
     },
     [handleMailAction],
@@ -479,8 +480,16 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             nb: selectedMails.length,
           })}
         </BodyBoldText>
-        <TertiaryButton iconLeft="ui-mailUnread" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
-        <TertiaryButton iconLeft="ui-mailRead" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
+        <TertiaryButton
+          iconLeft="ui-mailUnread"
+          contentColor={theme.palette.primary.regular}
+          action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
+        />
+        <TertiaryButton
+          iconLeft="ui-mailRead"
+          contentColor={theme.palette.primary.regular}
+          action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
+        />
         <TertiaryButton iconLeft="ui-folderMove" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
         <TertiaryButton
           iconLeft="ui-delete"
@@ -491,7 +500,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         />
       </View>
     );
-  }, [featureNotImplemented, isSelectionMode, onActionMultiple, onDelete, selectedFolder, selectedMails]);
+  }, [featureNotImplemented, isSelectionMode, onActionMultiple, onDelete, onToggleUnread, selectedFolder, selectedMails]);
 
   const renderFolders = React.useCallback(() => {
     return (
@@ -669,7 +678,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           selectedFolder !== MailsDefaultFolders.DRAFTS &&
           selectedFolder !== MailsDefaultFolders.OUTBOX &&
           selectedFolder !== MailsDefaultFolders.TRASH
-            ? () => onToggleUnread(mail.id, mail.unread)
+            ? () => onToggleUnread([mail.id], mail.unread)
             : undefined
         }
         onRestore={selectedFolder === MailsDefaultFolders.TRASH ? () => onRestore(mail.id) : undefined}
