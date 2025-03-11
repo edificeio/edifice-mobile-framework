@@ -110,3 +110,5 @@ export const initDraftFromMail = (mail: IMail, draftType: DraftType): Partial<ID
       return {};
   }
 };
+
+export const isSignatureRich = (content: string): boolean => /<\/?[a-z][\s\S]*>/i.test(content);

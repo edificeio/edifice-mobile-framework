@@ -1699,6 +1699,7 @@
   "zimbra-composer-signaturemodal-action": "Ajouter",
   "zimbra-composer-signaturemodal-error-text": "Une erreur est survenue. Veuillez réessayer plus tard.",
   "zimbra-composer-signaturemodal-globaluse": "Ajouter à tous mes futurs messages",
+  "zimbra-composer-signaturemodal-richinfo": "La signature n'est pas modifiable sur cet appareil car il s'agit de texte enrichi, nous vous invitons à la modifier sur le web",
   "zimbra-composer-signaturemodal-title": "Signature",
   "zimbra-composer-uploadingerror": "Veuillez attendre l'ajout complet de la pièce jointe",
   "zimbra-mail-deletealert-message": "Voulez-vous vraiment supprimer définitivement le(s) mail(s) sélectionné(s) ?",
