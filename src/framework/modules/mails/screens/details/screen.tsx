@@ -38,7 +38,6 @@ import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/mod
 import {
   IMailsMailContent,
   MailsDefaultFolders,
-  MailsFolderInfo,
   MailsListTypeModal,
   MailsRecipients,
   MailsVisible,
@@ -74,7 +73,6 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [mail, setMail] = React.useState<IMailsMailContent>();
   const [mailContent, setMailContent] = React.useState<string>('');
   const [mailHistory, setMailHistory] = React.useState<string>('');
-  const [newParentFolder, setNewParentFolder] = React.useState<MailsFolderInfo>();
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
   const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
   const [seeHistory, setSeeHistory] = React.useState<boolean>(false);
@@ -204,12 +202,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   };
 
   const onMove = React.useCallback(
-    () =>
-      handleMailAction(
-        () => mailsService.mail.moveToFolder({ folderId: newParentFolder!.id }, { ids: [id] }),
-        'mails-details-toastsuccessmove',
-      ),
-    [handleMailAction, id, newParentFolder],
+    (folderId: string) =>
+      handleMailAction(() => mailsService.mail.moveToFolder({ folderId }, { ids: [id] }), 'mails-details-toastsuccessmove'),
+    [handleMailAction, id],
   );
 
   const onRemoveFromFolder = () =>
@@ -337,8 +332,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           />
         ),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mail, newParentFolder, props]);
+  }, [from, mail, onReply, popupActionsMenu, props]);
 
   const renderRecipients = React.useCallback(() => {
     return (
@@ -452,17 +446,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const renderMoveFolder = React.useCallback(
     () => (
       <MailsFoldersBottomSheet
-        title={I18n.get('mails-details-move')}
-        action={onMove}
-        disabledAction={!newParentFolder}
+        onMove={onMove}
         folders={folders}
         mailFolderId={mail!.folder_id}
-        newParentFolderId={newParentFolder?.id}
         onPressCreateFolderButton={() => setTypeModal(MailsListTypeModal.CREATE)}
-        onPressFolder={setNewParentFolder}
       />
     ),
-    [folders, mail, newParentFolder, onMove],
+    [folders, mail, onMove],
   );
 
   const renderContentBottomSheet = React.useCallback(() => {

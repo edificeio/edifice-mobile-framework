@@ -1,12 +1,8 @@
 import { IMailsFolder } from '~/framework/modules/mails/model';
 
 export interface MailsFoldersBottomSheetProps {
-  title: string;
-  disabledAction: boolean;
-  action: () => void;
+  onMove: (folderId: string) => void;
   folders: IMailsFolder[] | undefined;
-  onPressCreateFolderButton: () => void;
-  onPressFolder: (folder: IMailsFolder) => void;
-  newParentFolderId: string | undefined;
+  onPressCreateFolderButton?: () => void;
   mailFolderId: string | null;
 }

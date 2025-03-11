@@ -14,10 +14,13 @@ import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/h
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
+import { MailsFolderInfo } from '~/framework/modules/mails/model';
 
 const EMPTY_SVG_SIZE = getScaleWidth(150);
 
 const MailsFoldersBottomSheet = (props: MailsFoldersBottomSheetProps) => {
+  const [selectedFolder, setSelectedFolder] = React.useState<MailsFolderInfo>();
+
   return (
     <ScrollView
       keyboardDismissMode="none"
@@ -27,10 +30,10 @@ const MailsFoldersBottomSheet = (props: MailsFoldersBottomSheetProps) => {
       bounces={false}>
       <View style={styles.contentBottomSheet}>
         <HeaderBottomSheetModal
-          title={props.title}
+          title={I18n.get('mails-details-move')}
           iconRight="ui-check"
-          iconRightDisabled={props.disabledAction}
-          onPressRight={props.action}
+          iconRightDisabled={!selectedFolder}
+          onPressRight={() => props.onMove(selectedFolder!.id)}
         />
         <FlatList
           data={props.folders}
@@ -45,9 +48,9 @@ const MailsFoldersBottomSheet = (props: MailsFoldersBottomSheetProps) => {
               icon="ui-folder"
               name={item.name}
               depth={item.depth}
-              selected={props.newParentFolderId === item.id}
+              selected={selectedFolder?.id === item.id}
               disabled={item.id === props.mailFolderId}
-              onPress={() => props.onPressFolder(item)}
+              onPress={() => setSelectedFolder(item)}
             />
           )}
           ListEmptyComponent={

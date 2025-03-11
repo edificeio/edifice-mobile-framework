@@ -28,6 +28,7 @@ import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
+import MailsFoldersBottomSheet from '~/framework/modules/mails/components/folders-bottom-sheet';
 import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
 import { MailsPlaceholderList, MailsPlaceholderLittleList } from '~/framework/modules/mails/components/placeholder/list';
@@ -196,7 +197,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             name: valueFolderName,
             parentId: idParentFolder ?? '',
           });
-          switchFolder({ id: dataNewFolder, name: valueFolderName });
+          if (!isSelectionMode) switchFolder({ id: dataNewFolder, name: valueFolderName });
+          else {
+            onActionMultiple(() => onMove(selectedMails, dataNewFolder));
+          }
         } else if (operation === 'rename') {
           await mailsService.folder.rename({ id: (selectedFolder as MailsFolderInfo).id }, { name: valueFolderName });
           setSelectedFolder({
@@ -221,7 +225,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         setIsLoadingCreateNewFolder(false);
       }
     },
-    [valueFolderName, idParentFolder, selectedFolder, switchFolder, loadFolders, onDismissBottomSheet],
+    [
+      loadFolders,
+      onDismissBottomSheet,
+      valueFolderName,
+      idParentFolder,
+      isSelectionMode,
+      switchFolder,
+      onActionMultiple,
+      onMove,
+      selectedMails,
+      selectedFolder,
+    ],
   );
 
   const onCreateFolderAction = React.useCallback(() => {
@@ -332,6 +347,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     [handleMailAction],
   );
 
+  const onMove = React.useCallback(
+    async (ids: string[], folderId: string) => {
+      bottomSheetModalRef.current?.dismiss();
+      await handleMailAction({
+        action: () => mailsService.mail.moveToFolder({ folderId }, { ids }),
+        successMessage: 'mails-details-toastsuccessmove',
+        updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
+      });
+    },
+    [handleMailAction],
+  );
+
   const onSelectMail = React.useCallback(
     (id: string) => {
       if (selectedMails.includes(id)) setSelectedMails(prev => prev.filter(mailId => mailId !== id));
@@ -357,10 +384,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     },
     [setSelectedMails, setIsSelectionMode],
   );
-
-  const featureNotImplemented = React.useCallback(() => {
-    Alert.alert('This feature is not implemented yet');
-  }, []);
 
   const allPopupActionsMenu = React.useMemo(
     () => [
@@ -490,7 +513,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           contentColor={theme.palette.primary.regular}
           action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
         />
-        <TertiaryButton iconLeft="ui-folderMove" contentColor={theme.palette.primary.regular} action={featureNotImplemented} />
+        <TertiaryButton
+          iconLeft="ui-folderMove"
+          contentColor={theme.palette.primary.regular}
+          action={() => {
+            setTypeModal(MailsListTypeModal.MOVE);
+            bottomSheetModalRef.current?.present();
+          }}
+        />
         <TertiaryButton
           iconLeft="ui-delete"
           contentColor={theme.palette.status.failure.regular}
@@ -500,7 +530,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         />
       </View>
     );
-  }, [featureNotImplemented, isSelectionMode, onActionMultiple, onDelete, onToggleUnread, selectedFolder, selectedMails]);
+  }, [isSelectionMode, onActionMultiple, onDelete, onToggleUnread, selectedFolder, selectedMails]);
 
   const renderFolders = React.useCallback(() => {
     return (
@@ -625,16 +655,29 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     );
   }, [valueFolderName, selectedFolder, onRenameFolderAction, onErrorCreateFolder]);
 
+  const renderMove = React.useCallback(() => {
+    return (
+      <MailsFoldersBottomSheet
+        onMove={folderId => onActionMultiple(() => onMove(selectedMails, folderId))}
+        folders={folders}
+        mailFolderId={selectedFolder.id ?? null}
+        onPressCreateFolderButton={() => setTypeModal(MailsListTypeModal.CREATE)}
+      />
+    );
+  }, [folders, selectedFolder, onActionMultiple, onMove, selectedMails]);
+
   const renderContentBottomSheet = React.useCallback(() => {
     switch (typeModal) {
       case MailsListTypeModal.CREATE:
         return renderCreateNewFolder();
       case MailsListTypeModal.RENAME:
         return renderRenameFolder();
+      case MailsListTypeModal.MOVE:
+        return renderMove();
       default:
         return renderFolders();
     }
-  }, [typeModal, renderCreateNewFolder, renderRenameFolder, renderFolders]);
+  }, [typeModal, renderCreateNewFolder, renderRenameFolder, renderMove, renderFolders]);
 
   const renderBottomSheetFolders = React.useCallback(() => {
     return (
