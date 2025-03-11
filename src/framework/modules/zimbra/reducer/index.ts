@@ -29,12 +29,8 @@ const initialState: IZimbraReduxStateData = {
   },
   rootFolders: [],
   signature: {
-    id: '',
-    preference: {
-      signature: '',
-      useSignature: false,
-    },
-    zimbraENTSignatureExists: false,
+    content: '',
+    useSignature: false,
   },
 };
 
