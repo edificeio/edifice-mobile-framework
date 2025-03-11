@@ -147,8 +147,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       renderRightActions={swipeRightAction}>
       <TouchableOpacity
         style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
-        disabled={isSelectMode}
-        onPress={onPress}>
+        onPress={isSelectMode ? onCheck : onPress}>
         {renderSelectIcon()}
         {renderAvatar()}
         {renderResponseIcon()}
