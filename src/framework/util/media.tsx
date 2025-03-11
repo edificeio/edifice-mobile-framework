@@ -17,13 +17,13 @@ interface IMediaCommonAttributes {
   mime?: string;
 }
 
-export interface IImageAttributes extends IMediaCommonAttributes {}
+export interface IImageAttributes extends IMediaCommonAttributes { }
 export interface IVideoAttributes extends IMediaCommonAttributes {
   poster?: string | ImageURISource;
   ratio?: number;
 }
 
-export interface IAudioAttributes extends IMediaCommonAttributes {}
+export interface IAudioAttributes extends IMediaCommonAttributes { }
 
 export interface IImageMedia extends IImageAttributes {
   type: 'image';
