@@ -3,9 +3,8 @@ import {
   mailsAdapter,
   MailsMailContentBackend,
   MailsMailPreviewBackend,
-  MailsVisiblesBackend,
-  mailVisiblesGroupAdapter,
-  mailVisiblesUserAdapter,
+  MailsVisibleBackend,
+  mailVisibleAdapter,
 } from './adapters/mails';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
@@ -187,13 +186,10 @@ export const mailsService = {
   },
   visibles: {
     getAll: async () => {
-      const api = '/conversation/visible';
-      const backendVisibles = (await http.fetchJsonForSession('GET', api)) as MailsVisiblesBackend;
+      const api = '/communication/visible/search';
+      const backendVisibles = (await http.fetchJsonForSession('GET', api)) as MailsVisibleBackend[];
 
-      const groups = backendVisibles.groups.map(group => mailVisiblesGroupAdapter(group));
-      const users = backendVisibles.users.map(user => mailVisiblesUserAdapter(user));
-      const visibles = [...users, ...groups];
-
+      const visibles = backendVisibles.map(visible => mailVisibleAdapter(visible));
       return visibles as MailsVisible[];
     },
     search: async (params: { search: string }) => {

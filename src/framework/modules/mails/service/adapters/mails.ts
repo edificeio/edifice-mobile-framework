@@ -180,47 +180,28 @@ export const mailContentAdapter = (n: MailsMailContentBackend) => {
   return ret as IMailsMailContent;
 };
 
-export interface MailsVisiblesGroupsBackend {
-  groupDisplayName: string;
+export interface MailsVisibleBackend {
   id: string;
-  name: string;
-  profile: string;
-  structureName: string;
-}
-
-export interface MailsVisiblesUsersBackend {
   displayName: string;
-  groupDisplayName: string;
-  id: string;
   profile: string;
-  structureName: string;
+  nbUsers?: number;
+  groupType?: string;
+  usedIn: ('TO' | 'CC' | 'CCI')[];
+  type: 'User' | 'Group' | 'ShareBookmark';
+  children?: { id: string; displayName: string }[];
+  relatives?: { id: string; displayName: string }[];
 }
 
-export interface MailsVisiblesBackend {
-  groups: MailsVisiblesGroupsBackend[];
-  users: MailsVisiblesUsersBackend[];
-}
-
-export const mailVisiblesGroupAdapter = (n: MailsVisiblesGroupsBackend) => {
-  const ret = {
-    displayName: n.name,
-    groupDisplayName: n.groupDisplayName,
-    id: n.id,
-    profile: n.profile as AccountType,
-    structureName: n.structureName,
-    type: MailsVisibleType.GROUP,
-  };
-  return ret as MailsVisible;
-};
-
-export const mailVisiblesUserAdapter = (n: MailsVisiblesUsersBackend) => {
+export const mailVisibleAdapter = (n: MailsVisibleBackend) => {
   const ret = {
     displayName: n.displayName,
-    groupDisplayName: n.groupDisplayName,
     id: n.id,
     profile: n.profile as AccountType,
-    structureName: n.structureName,
-    type: MailsVisibleType.USER,
+    type: n.type as MailsVisibleType,
+    ...(n.nbUsers && { nbUsers: n.nbUsers }),
+    ...(n.groupType && { groupType: n.groupType }),
+    ...(n.children && { children: n.children }),
+    ...(n.relatives && { relatives: n.relatives }),
   };
   return ret as MailsVisible;
 };

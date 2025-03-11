@@ -16,6 +16,7 @@ export enum MailsRecipientsType {
 export enum MailsVisibleType {
   GROUP = 'Group',
   USER = 'User',
+  SHAREBOOKMARK = 'ShareBookmark',
 }
 
 export enum MailsListTypeModal {
@@ -119,9 +120,11 @@ export interface MailsFolderInfo {
 
 export interface MailsVisible {
   displayName: string;
-  groupDisplayName: string;
   id: string;
   profile?: AccountType;
-  structureName: string;
   type: MailsVisibleType;
+  groupType?: string;
+  nbUsers?: number;
+  children?: { id: string; displayName: string }[];
+  relatives?: { id: string; displayName: string }[];
 }

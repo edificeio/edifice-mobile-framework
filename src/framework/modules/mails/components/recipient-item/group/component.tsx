@@ -20,7 +20,7 @@ const renderSubtitle = (nbUsers, disabled) => {
 };
 
 const MailsRecipientGroupItem = (props: MailsRecipientContainerProps) => {
-  const { displayName, id, type } = props.item as MailsRecipientGroupInfo | MailsVisible;
+  const { displayName, id, nbUsers, size, type } = props.item as MailsRecipientGroupInfo | MailsVisible;
 
   return (
     <MailsRecipientContainer {...props}>
@@ -29,7 +29,7 @@ const MailsRecipientGroupItem = (props: MailsRecipientContainerProps) => {
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail" style={props.disabled ? styles.graphite : {}}>
           {displayName}
         </SmallBoldText>
-        {props.item.size ? renderSubtitle(props.item.size, props.disabled) : null}
+        {size || nbUsers ? renderSubtitle(size ?? nbUsers, props.disabled) : null}
       </View>
     </MailsRecipientContainer>
   );

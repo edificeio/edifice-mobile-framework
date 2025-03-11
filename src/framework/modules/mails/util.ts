@@ -81,10 +81,8 @@ export function convertAttachmentToDistantFile(attachment: IMailsMailAttachment,
 export function convertRecipientUserInfoToVisible(userInfo: MailsRecipientInfo): MailsVisible {
   return {
     displayName: userInfo.displayName,
-    groupDisplayName: '',
     id: userInfo.id,
     profile: userInfo.profile,
-    structureName: '',
     type: MailsVisibleType.USER,
   };
 }
@@ -92,10 +90,10 @@ export function convertRecipientUserInfoToVisible(userInfo: MailsRecipientInfo):
 export function convertRecipientGroupInfoToVisible(groupInfo: MailsRecipientGroupInfo): MailsVisible {
   return {
     displayName: groupInfo.displayName,
-    groupDisplayName: '',
+    groupType: groupInfo.subType,
     id: groupInfo.id,
+    nbUsers: groupInfo.size,
     profile: undefined,
-    structureName: '',
     type: MailsVisibleType.GROUP,
   };
 }

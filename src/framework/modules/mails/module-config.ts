@@ -5,7 +5,7 @@ export default new NavigableModuleConfig<'mails', null>({
   displayI18n: 'mails-tabname',
   displayPicture: { name: 'messagerie-off', type: 'Icon' },
 
-  entcoreScope: ['conversation', 'userbook'],
+  entcoreScope: ['conversation', 'userbook', 'communication'],
   matchEntcoreApp: '/conversation/conversation',
   name: 'mails',
   storageName: 'mails',
