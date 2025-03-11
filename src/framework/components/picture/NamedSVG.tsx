@@ -126,6 +126,7 @@ const imports = {
 
   'ui-internet': async () => import('ASSETS/icons/uiIcons/internet.svg'),
 
+  magneto: async () => import('ASSETS/icons/moduleIcons/magneto.svg'),
   mediacentre: async () => import('ASSETS/icons/moduleIcons/mediacentre.svg'),
 
   'ui-italic': async () => import('ASSETS/icons/uiIcons/italic.svg'),
