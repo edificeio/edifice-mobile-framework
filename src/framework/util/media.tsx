@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { ImageProps, ImageURISource, Image as RNImage, StyleSheet, View } from 'react-native';
+import { ImageURISource, Image as RNImage, ImageProps as RNImageProps, StyleSheet, View } from 'react-native';
 
 import { FastImageProps, default as RNFastImage } from 'react-native-fast-image';
+
+import { imagePropsForSession } from './http/source';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -15,13 +17,13 @@ interface IMediaCommonAttributes {
   mime?: string;
 }
 
-export interface IImageAttributes extends IMediaCommonAttributes {}
+export interface IImageAttributes extends IMediaCommonAttributes { }
 export interface IVideoAttributes extends IMediaCommonAttributes {
   poster?: string | ImageURISource;
   ratio?: number;
 }
 
-export interface IAudioAttributes extends IMediaCommonAttributes {}
+export interface IAudioAttributes extends IMediaCommonAttributes { }
 
 export interface IImageMedia extends IImageAttributes {
   type: 'image';
@@ -64,12 +66,15 @@ export const UnavailableImage = () => (
   </View>
 );
 
+export interface ImageProps extends RNImageProps {
+  thumbnail?: string;
+}
+
 export class Image extends React.PureComponent<ImageProps> {
   render() {
+    const { thumbnail, ...imageProps } = this.props;
     try {
-      const { source, ...rest } = this.props;
-      const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
-      return <RNImage source={hasSource ? urlSigner.signURISource(source) : undefined} {...rest} />;
+      return <RNImage {...imagePropsForSession(imageProps, thumbnail)} />;
     } catch {
       return <UnavailableImage {...this.props} />;
     }
