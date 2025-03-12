@@ -558,7 +558,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       <>
         {moveButton}
         <TertiaryButton
-          iconLeft="ui-options"
+          iconLeft="ui-deleteFromFolder"
           disabled={selectedMails.length === 0}
           contentColor={theme.palette.primary.regular}
           action={() => onActionMultiple(() => onRemoveFromFolder(selectedMails))}

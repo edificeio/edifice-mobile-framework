@@ -298,6 +298,8 @@ const imports = {
 
   'ui-delete': async () => import('ASSETS/icons/uiIcons/delete.svg'),
 
+  'ui-deleteFromFolder': async () => import('ASSETS/icons/uiIcons/deletefromfolder.svg'),
+
   'ui-depositeInbox': async () => import('ASSETS/icons/uiIcons/depositeInbox.svg'),
 
   'ui-download': async () => import('ASSETS/icons/uiIcons/download.svg'),
