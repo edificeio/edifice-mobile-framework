@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,6 +13,26 @@ import TextInput from '~/framework/components/inputs/text';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 
 const MailsInputBottomSheet = (props: React.PropsWithChildren<MailsInputBottomSheetProps>) => {
+  const [value, setValue] = React.useState<string>(props.initialInputValue ?? '');
+  const [error, setError] = React.useState<boolean>(false);
+
+  const disabledAction = useMemo(
+    () => value.length === 0 || error || props.initialInputValue === value || props.disabledAction,
+    [value, error, props.initialInputValue, props.disabledAction],
+  );
+
+  const onChangeText = useCallback(
+    (text: string) => {
+      setValue(text);
+      if (error) setError(false);
+    },
+    [error],
+  );
+
+  useEffect(() => {
+    setError(props.onError ?? false);
+  }, [props.onError]);
+
   return (
     <ScrollView
       keyboardDismissMode="none"
@@ -24,18 +44,18 @@ const MailsInputBottomSheet = (props: React.PropsWithChildren<MailsInputBottomSh
         <HeaderBottomSheetModal
           title={props.title}
           iconRight="ui-check"
-          iconRightDisabled={props.disabledAction}
-          onPressRight={props.action}
+          iconRightDisabled={disabledAction}
+          onPressRight={() => props.onSend(value)}
         />
         <InputContainer
           label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: props.inputLabel }}
           input={
             <TextInput
               placeholder={props.inputPlaceholder}
-              onChangeText={props.setInputValue}
-              value={props.inputValue}
-              showError={props.onError}
-              annotation={props.onError ? I18n.get('mails-list-newfolderduplicate') : undefined}
+              onChangeText={onChangeText}
+              value={value}
+              showError={error}
+              annotation={error ? I18n.get('mails-list-newfolderduplicate') : undefined}
               maxLength={50}
             />
           }

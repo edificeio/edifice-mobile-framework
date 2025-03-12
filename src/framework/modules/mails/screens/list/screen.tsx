@@ -28,9 +28,9 @@ import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
-import MailsFoldersBottomSheet from '~/framework/modules/mails/components/folders-bottom-sheet';
 import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';
 import MailsMailPreview from '~/framework/modules/mails/components/mail-preview';
+import MailsMoveBottomSheet from '~/framework/modules/mails/components/move-bottom-sheet';
 import { MailsPlaceholderList, MailsPlaceholderLittleList } from '~/framework/modules/mails/components/placeholder/list';
 import {
   IMailsFolder,
@@ -72,7 +72,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [mails, setMails] = React.useState<IMailsMailPreview[]>([]);
   const [folders, setFolders] = React.useState<IMailsFolder[]>([]);
   const [folderCounts, setFolderCounts] = React.useState<Record<MailsDefaultFolders, number>>();
-  const [valueFolderName, setValueFolderName] = React.useState<string>('');
   const [isSubfolder, setIsSubfolder] = React.useState<boolean>(false);
   const [idParentFolder, setIdParentFolder] = React.useState<string | undefined>(undefined);
   const [isLoadingCreateNewFolder, setIsLoadingCreateNewFolder] = React.useState<boolean>(false);
@@ -155,12 +154,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onDismissBottomSheet = React.useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
-    if (valueFolderName) setValueFolderName('');
     if (typeModal) setTypeModal(undefined);
     if (isSubfolder) setIsSubfolder(false);
     if (idParentFolder) setIdParentFolder(undefined);
     if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-  }, [valueFolderName, typeModal, isSubfolder, idParentFolder, onErrorCreateFolder]);
+  }, [typeModal, isSubfolder, idParentFolder, onErrorCreateFolder]);
 
   const switchFolder = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo) => {
@@ -188,8 +186,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, [isSubfolder, setIsSubfolder, setIdParentFolder]);
 
   const handleFolderOperation = React.useCallback(
-    async (operation: 'create' | 'rename', successMessage: string) => {
+    async (operation: 'create' | 'rename', valueFolderName: string, successMessage: string) => {
       try {
+        if (onErrorCreateFolder) setOnErrorCreateFolder(false);
         setIsLoadingCreateNewFolder(true);
 
         if (operation === 'create') {
@@ -228,7 +227,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     [
       loadFolders,
       onDismissBottomSheet,
-      valueFolderName,
       idParentFolder,
       isSelectionMode,
       switchFolder,
@@ -239,19 +237,24 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     ],
   );
 
-  const onCreateFolderAction = React.useCallback(() => {
-    return handleFolderOperation('create', I18n.get('mails-list-newfoldersuccess', { name: valueFolderName }));
-  }, [handleFolderOperation, valueFolderName]);
+  const onCreateFolderAction = React.useCallback(
+    (valueFolderName: string) => {
+      return handleFolderOperation('create', valueFolderName, I18n.get('mails-list-newfoldersuccess', { name: valueFolderName }));
+    },
+    [handleFolderOperation],
+  );
 
-  const onRenameFolderAction = React.useCallback(() => {
-    return handleFolderOperation('rename', I18n.get('mails-list-renamefoldersuccess'));
-  }, [handleFolderOperation]);
+  const onRenameFolderAction = React.useCallback(
+    (valueFolderName: string) => {
+      return handleFolderOperation('rename', valueFolderName, I18n.get('mails-list-renamefoldersuccess'));
+    },
+    [handleFolderOperation],
+  );
 
   const onRenameFolder = React.useCallback(() => {
-    setValueFolderName((selectedFolder as MailsFolderInfo).name);
     setTypeModal(MailsListTypeModal.RENAME);
     bottomSheetModalRef.current?.present();
-  }, [selectedFolder]);
+  }, []);
 
   const onActiveSelectMode = React.useCallback(() => {
     setIsSelectionMode(true);
@@ -586,16 +589,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         title={I18n.get('mails-list-newfolder')}
         inputLabel={I18n.get('mails-list-newfolderlabel')}
         inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
-        setInputValue={text => {
-          if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-          setValueFolderName(text);
-        }}
-        inputValue={valueFolderName}
         onError={onErrorCreateFolder}
-        action={onCreateFolderAction}
-        disabledAction={
-          (isSubfolder && !idParentFolder) || valueFolderName.length === 0 || onErrorCreateFolder || isLoadingCreateNewFolder
-        }>
+        onSend={onCreateFolderAction}
+        disabledAction={(isSubfolder && !idParentFolder) || isLoadingCreateNewFolder}
+        initialInputValue="">
         {folders.length > 0 ? (
           <>
             <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
@@ -626,7 +623,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     );
   }, [
     folders,
-    valueFolderName,
     onErrorCreateFolder,
     isLoadingCreateNewFolder,
     isSubfolder,
@@ -641,23 +637,16 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         title={I18n.get('mails-list-rename')}
         inputLabel={I18n.get('mails-list-renamefolderlabel')}
         inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
-        setInputValue={text => {
-          if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-          setValueFolderName(text);
-        }}
-        inputValue={valueFolderName}
         onError={onErrorCreateFolder}
-        action={onRenameFolderAction}
-        disabledAction={
-          onErrorCreateFolder || valueFolderName.length === 0 || valueFolderName === (selectedFolder as MailsFolderInfo).name
-        }
+        onSend={onRenameFolderAction}
+        initialInputValue={(selectedFolder as MailsFolderInfo).name ?? ''}
       />
     );
-  }, [valueFolderName, selectedFolder, onRenameFolderAction, onErrorCreateFolder]);
+  }, [selectedFolder, onRenameFolderAction, onErrorCreateFolder]);
 
   const renderMove = React.useCallback(() => {
     return (
-      <MailsFoldersBottomSheet
+      <MailsMoveBottomSheet
         onMove={folderId => onActionMultiple(() => onMove(selectedMails, folderId))}
         folders={folders}
         mailFolderId={selectedFolder.id ?? null}

@@ -31,8 +31,8 @@ import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/fram
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
-import MailsFoldersBottomSheet from '~/framework/modules/mails/components/folders-bottom-sheet';
 import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';
+import MailsMoveBottomSheet from '~/framework/modules/mails/components/move-bottom-sheet';
 import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
 import {
@@ -74,7 +74,6 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [mailContent, setMailContent] = React.useState<string>('');
   const [mailHistory, setMailHistory] = React.useState<string>('');
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
-  const [valueNewFolder, setValueNewFolder] = React.useState<string>('');
   const [seeHistory, setSeeHistory] = React.useState<boolean>(false);
   const [error, setError] = React.useState<boolean>(false);
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
@@ -164,16 +163,19 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     });
   }, [from, mail, props]);
 
-  const onCreateNewFolder = React.useCallback(async () => {
-    try {
-      const folderId = await mailsService.folder.create({ name: valueNewFolder });
-      await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
-      props.navigation.navigate(mailsRouteNames.home, { from: { id: folderId, name: valueNewFolder }, reload: true });
-      Toast.showSuccess(I18n.get('mails-details-toastsuccessmove'));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [id, props.navigation, valueNewFolder]);
+  const onCreateNewFolder = React.useCallback(
+    async (valueNewFolder: string) => {
+      try {
+        const folderId = await mailsService.folder.create({ name: valueNewFolder });
+        await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
+        props.navigation.navigate(mailsRouteNames.home, { from: { id: folderId, name: valueNewFolder }, reload: true });
+        Toast.showSuccess(I18n.get('mails-details-toastsuccessmove'));
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [id, props.navigation],
+  );
 
   const handleMailAction = React.useCallback(
     async (action: () => Promise<void>, successMessageKey: string) => {
@@ -432,20 +434,17 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     () => (
       <MailsInputBottomSheet
         title={I18n.get('mails-list-newfolder')}
-        action={onCreateNewFolder}
+        onSend={onCreateNewFolder}
         inputLabel={I18n.get('mails-list-newfolderlabel')}
         inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
-        setInputValue={text => setValueNewFolder(text)}
-        inputValue={valueNewFolder}
-        disabledAction={valueNewFolder.length === 0}
       />
     ),
-    [onCreateNewFolder, valueNewFolder],
+    [onCreateNewFolder],
   );
 
   const renderMoveFolder = React.useCallback(
     () => (
-      <MailsFoldersBottomSheet
+      <MailsMoveBottomSheet
         onMove={onMove}
         folders={folders}
         mailFolderId={mail!.folder_id}

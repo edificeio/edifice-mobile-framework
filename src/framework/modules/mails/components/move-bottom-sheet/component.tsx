@@ -5,7 +5,7 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 
 import MailsFolderItem from '../folder-item';
 import styles from './styles';
-import { MailsFoldersBottomSheetProps } from './types';
+import { MailsMoveBottomSheetProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -18,7 +18,7 @@ import { MailsFolderInfo } from '~/framework/modules/mails/model';
 
 const EMPTY_SVG_SIZE = getScaleWidth(150);
 
-const MailsFoldersBottomSheet = (props: MailsFoldersBottomSheetProps) => {
+const MailsMoveBottomSheet = (props: MailsMoveBottomSheetProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<MailsFolderInfo>();
 
   return (
@@ -66,4 +66,4 @@ const MailsFoldersBottomSheet = (props: MailsFoldersBottomSheetProps) => {
   );
 };
 
-export default MailsFoldersBottomSheet;
+export default MailsMoveBottomSheet;
