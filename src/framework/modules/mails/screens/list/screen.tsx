@@ -225,6 +225,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       }
     },
     [
+      onErrorCreateFolder,
       loadFolders,
       onDismissBottomSheet,
       idParentFolder,
