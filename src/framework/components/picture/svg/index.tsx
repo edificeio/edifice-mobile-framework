@@ -165,12 +165,19 @@ const imports = {
   rbs: async () => import('ASSETS/icons/moduleIcons/rbs.svg'),
 
   reaction_1: async () => import('ASSETS/images/reactions/reaction1.svg'),
+
   'reaction_1-round': async () => import('ASSETS/images/reactions/reaction1_round.svg'),
+
   reaction_2: async () => import('ASSETS/images/reactions/reaction2.svg'),
+
   'reaction_2-round': async () => import('ASSETS/images/reactions/reaction2_round.svg'),
+
   reaction_3: async () => import('ASSETS/images/reactions/reaction3.svg'),
+
   'reaction_3-round': async () => import('ASSETS/images/reactions/reaction3_round.svg'),
+
   reaction_4: async () => import('ASSETS/images/reactions/reaction4.svg'),
+
   'reaction_4-round': async () => import('ASSETS/images/reactions/reaction4_round.svg'),
 
   report: async () => import('ASSETS/icons/moduleIcons/report.svg'),
@@ -357,6 +364,7 @@ const imports = {
   'ui-infoCircle': async () => import('ASSETS/icons/uiIcons/infoCircle.svg'),
 
   'ui-internet': async () => import('ASSETS/icons/uiIcons/internet.svg'),
+
   'ui-italic': async () => import('ASSETS/icons/uiIcons/italic.svg'),
 
   'ui-keyboardHide': async () => import('ASSETS/icons/uiIcons/keyboardHide.svg'),

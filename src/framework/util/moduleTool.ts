@@ -13,6 +13,7 @@ import type { StorageTypeMap } from './storage/types';
 
 import { IGlobalState } from '~/app/store';
 import type { PictureProps } from '~/framework/components/picture';
+import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
 

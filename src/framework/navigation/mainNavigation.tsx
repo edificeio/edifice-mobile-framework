@@ -21,7 +21,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { AuthActiveAccount } from '../modules/auth/model';
 import { handleCloseModalActions } from './helper';
 import { getTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
@@ -36,6 +35,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';

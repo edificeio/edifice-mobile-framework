@@ -17,6 +17,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
   const {
     annotation,
     disabled,
+    maxLength,
     onBlur,
     onFocus,
     onToggle,
@@ -30,7 +31,6 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     toggleIconOff,
     toggleIconOn,
     value,
-    maxLength,
   } = props;
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -44,25 +44,25 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
   // padding right input management if have icon success || error or if have toggle icon or both :)
   const paddingRight = useMemo(() => {
-    let value = UI_SIZES.spacing.medium;
-    if (toggleIconOn && toggleIconOff) value += ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small;
-    if (isShowIconCallback) value += ICON_INPUT_SIZE + UI_SIZES.spacing.minor;
-    if (maxLength) value += getScaleWidth(36) + UI_SIZES.spacing.minor;
-    return value;
+    let val = UI_SIZES.spacing.medium;
+    if (toggleIconOn && toggleIconOff) val += ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small;
+    if (isShowIconCallback) val += ICON_INPUT_SIZE + UI_SIZES.spacing.minor;
+    if (maxLength) val += getScaleWidth(36) + UI_SIZES.spacing.minor;
+    return val;
   }, [toggleIconOn, toggleIconOff, isShowIconCallback, maxLength]);
   // position icon success || error management if have toggle icon or not
   const positionIconCallbackInput = useMemo(() => {
-    let value = UI_SIZES.spacing.medium;
-    if (toggleIconOn && toggleIconOff) value += 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE;
-    return value;
+    let val = UI_SIZES.spacing.medium;
+    if (toggleIconOn && toggleIconOff) val += 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE;
+    return val;
   }, [toggleIconOn, toggleIconOff]);
 
   const positionMaxLengthInput = useMemo(() => {
-    let value = UI_SIZES.spacing.medium;
-    if (toggleIconOn && toggleIconOff) value += 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE;
-    if (isShowIconCallback) value += ICON_INPUT_SIZE + UI_SIZES.spacing.minor;
-    return value;
-  }, [toggleIconOn, toggleIconOff, showIconCallback]);
+    let val = UI_SIZES.spacing.medium;
+    if (toggleIconOn && toggleIconOff) val += 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE;
+    if (isShowIconCallback) val += ICON_INPUT_SIZE + UI_SIZES.spacing.minor;
+    return val;
+  }, [toggleIconOn, toggleIconOff, isShowIconCallback]);
 
   const colorStatus = useCallback((): ColorValue => {
     if (showError) return theme.palette.status.failure.regular;
@@ -142,7 +142,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
             length === maxLength ? styles.callbackMaxLength : {},
           ]}>{`${length}/${maxLength}`}</CaptionItalicText>
       );
-  }, [maxLength, length]);
+  }, [maxLength, positionMaxLengthInput, length]);
 
   const renderInput = useCallback(() => {
     return (
@@ -168,19 +168,19 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       </View>
     );
   }, [
+    testID,
     props,
+    handleChangeText,
     ref,
     disabled,
-    paddingRight,
     colorStatus,
+    paddingRight,
     style,
+    renderMaxLength,
     renderIconInput,
     renderToggle,
     handleFocus,
     handleBlur,
-    testID,
-    length,
-    maxLength,
   ]);
 
   const renderAnnotation = useCallback(() => {
