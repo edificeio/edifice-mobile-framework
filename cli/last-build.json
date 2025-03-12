@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-03-12 08:38:02",
-  "notes": "Merging feat/peda/wiki in dev/peda\nrelease: 1.14.0-peda.2(1140003)",
-  "version": "1.14.0-peda.3(1140004)"
+  "last": "2025-03-12 16:00:36",
+  "notes": "fix(wiki): WB2-2445 fixing modal navigation option\nrelease: 1.14.0-peda.3(1140004)",
+  "version": "1.14.0-peda.4(1140005)"
 }
