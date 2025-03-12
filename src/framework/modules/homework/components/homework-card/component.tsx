@@ -13,6 +13,9 @@ import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
 import { IMedia } from '~/framework/util/notifications';
 import HtmlToText from '~/infra/htmlConverter/text';
 
+const noMargin: number = 0;
+const overlapMargin: number = -(UI_SIZES.spacing.tiny + UI_SIZES.spacing._LEGACY_tiny);
+
 const HomeworkCard = ({ content, date, finished, onPress, style, title }: HomeworkCardProps) => {
   const isPastDate = date.isBefore(today(), 'day');
   const dayOfTheWeek = getDayOfTheWeek(date);
@@ -20,9 +23,9 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
   const arrowColor = isPastDate ? theme.palette.grey.stone : dayColor;
   const formattedContent = content && HtmlToText(content, false).render;
 
-  const renderTitle = React.useCallback(() => {
+  const renderMediaIcons = React.useCallback(() => {
     /**
-     * We want to render title along with icons representing media types featured in the task
+     * Render icons representing media types featured in the task
      */
     const mediaTypes: IMedia[] = content ? extractMediaFromHtml(content) || [] : [];
     const mediaTypesPerTask = [...new Set(mediaTypes.map(media => media.type))];
@@ -34,17 +37,16 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
     };
 
     if (mediaTypesPerTask.length === 0) {
-      return <View style={styles.viewTitle}>{title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}</View>;
+      return;
     } else {
       return (
-        <View style={styles.viewTitle}>
-          {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
+        <View style={styles.viewMediaIcons}>
           {mediaTypesPerTask.map((type, index) => (
             <Svg
               key={index}
               name={mediaIcons[type]}
               style={{
-                marginLeft: index === 0 ? UI_SIZES.spacing.tiny : -(UI_SIZES.spacing.tiny + UI_SIZES.spacing._LEGACY_tiny),
+                marginLeft: index === 0 ? noMargin : overlapMargin,
                 zIndex: mediaTypesPerTask.length + index,
               }}
               width={UI_SIZES.elements.icon.medium}
@@ -54,13 +56,13 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
         </View>
       );
     }
-  }, [content, title]);
+  }, [content]);
 
   return (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
       <View style={styles.viewTexts}>
         <View style={styles.viewTitle}>
-          {renderTitle()}
+          <View>{title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}</View>
           {finished === undefined ? null : (
             <Svg
               fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
@@ -72,10 +74,11 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
           )}
         </View>
         {formattedContent ? (
-          <SmallText style={{ marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
+          <SmallText style={styles.taskContent} numberOfLines={2}>
             {formattedContent}
           </SmallText>
         ) : null}
+        {renderMediaIcons()}
       </View>
       <View style={styles.viewArrow}>
         <Icon name="arrow_right" color={arrowColor} size={TextSizeStyle.Medium.fontSize} style={{ left: UI_SIZES.spacing.tiny }} />

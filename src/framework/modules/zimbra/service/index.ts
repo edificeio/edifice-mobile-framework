@@ -106,7 +106,7 @@ const mailAdapter = (data: IBackendMail, platformUrl: string): IMail => {
   return {
     attachments: data.attachments.map(attachment => attachmentAdapter(attachment, platformUrl, data.id)),
     bcc: data.bcc,
-    body: data.body,
+    body: data.body.replaceAll('&#61;', '='), // AMV2-657 prevent encoded href
     cc: data.cc,
     date: moment(data.date),
     displayNames: data.displayNames,

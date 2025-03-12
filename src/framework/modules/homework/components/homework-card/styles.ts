@@ -20,9 +20,15 @@ export default StyleSheet.create({
   status: {
     marginLeft: UI_SIZES.spacing.minor,
   },
+  taskContent: { marginTop: UI_SIZES.spacing.tiny },
   viewArrow: {
     justifyContent: 'center',
     marginLeft: UI_SIZES.spacing.small,
+  },
+  viewMediaIcons: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: UI_SIZES.spacing.tiny,
   },
   viewTexts: {
     flex: 1,

@@ -147,12 +147,12 @@ export class AppConf {
   webviewIdentifier: string;
 
   whoAreWe?: {
-    appleId: string;
-    discoverUrl: string;
-    entButton: boolean;
-    icon: string;
-    illustration: WhoAreWellustrationType;
-    quote: WhoAreWeQuoteType;
+    appleId?: string;
+    discoverUrl?: string;
+    entButton?: boolean;
+    icon?: string;
+    illustration?: WhoAreWellustrationType;
+    quote?: WhoAreWeQuoteType;
   };
 
   zendesk?: {
@@ -206,7 +206,7 @@ export class AppConf {
   }
 
   get whoAreWeEnabled() {
-    return this.whoAreWe;
+    return this.whoAreWe && this.whoAreWe.appleId;
   }
 
   get zendeskEnabled() {
@@ -249,20 +249,22 @@ export class AppConf {
       lang: opts.space?.lang ?? undefined,
       userType: opts.space?.userType ?? undefined,
     };
-    const whoAreWe: Partial<AppConf['whoAreWe']> = {
-      appleId: opts.whoAreWe?.appleId ?? undefined,
-      discoverUrl: opts.whoAreWe?.discoverUrl ?? undefined,
-      entButton: opts.whoAreWe?.entButton ?? undefined,
-      icon: opts.whoAreWe?.icon ?? undefined,
-      illustration: opts.whoAreWe?.illustration ?? undefined,
-      quote: opts.whoAreWe?.quote ?? undefined,
-    };
-
     this.onboarding = onboarding as AppConf['onboarding'];
     this.space = space as AppConf['space'];
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
     this.webviewIdentifier = opts.webviewIdentifier;
-    this.whoAreWe = whoAreWe as AppConf['whoAreWe'];
+
+    this.whoAreWe = opts.whoAreWe
+      ? {
+          appleId: opts.whoAreWe?.appleId,
+          discoverUrl: opts.whoAreWe?.discoverUrl,
+          entButton: opts.whoAreWe?.entButton,
+          icon: opts.whoAreWe?.icon,
+          illustration: opts.whoAreWe?.illustration,
+          quote: opts.whoAreWe?.quote,
+        }
+      : undefined;
+
     this.zendesk = opts.zendesk
       ? {
           appId: opts.zendesk?.appId,
