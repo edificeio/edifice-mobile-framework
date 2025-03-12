@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { View } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { WikiCreateScreen } from './types';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import TextInput from '~/framework/components/inputs/text';
 import { SmallBoldText } from '~/framework/components/text';
 import ImageInput from '~/framework/modules/wiki/components/image-input';
@@ -32,9 +34,11 @@ export default function WikiCreateScreen(props: WikiCreateScreen.AllProps) {
   return (
     <>
       <ImageInput moduleConfig={moduleConfig} value={imageUrl} onChange={setImageUrl} />
-      <SmallBoldText>This is a dummy screen only for test purposes</SmallBoldText>
-      <TextInput maxLength={80} value={firstInputValue} onChangeText={setFirstInputValue} />
-      <TextInput multiline maxLength={400} value={secondInputValue} onChangeText={setSecondInputValue} />
+      <View style={{ marginTop: UI_SIZES.spacing.medium, padding: UI_SIZES.spacing.small }}>
+        <SmallBoldText>This is a dummy screen only for test purposes</SmallBoldText>
+        <TextInput maxLength={80} value={firstInputValue} onChangeText={setFirstInputValue} />
+        <TextInput multiline maxLength={400} value={secondInputValue} onChangeText={setSecondInputValue} />
+      </View>
     </>
   );
 }
