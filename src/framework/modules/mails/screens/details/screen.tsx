@@ -169,7 +169,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         const folderId = await mailsService.folder.create({ name: valueNewFolder });
         await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
         props.navigation.navigate(mailsRouteNames.home, { from: { id: folderId, name: valueNewFolder }, reload: true });
-        Toast.showSuccess(I18n.get('mails-details-toastsuccessmove'));
+        Toast.showSuccess(I18n.get('mails-toastsuccessmove'));
       } catch (e) {
         console.error(e);
       }
@@ -184,7 +184,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         Toast.showSuccess(I18n.get(successMessageKey));
         const navigationParams = {
           from,
-          ...(successMessageKey === 'mails-details-toastsuccessunread' ? { idMailToMarkUnread: id } : { idMailToRemove: id }),
+          ...(successMessageKey === 'mails-toastsuccessunread' ? { idMailToMarkUnread: id } : { idMailToRemove: id }),
         };
         props.navigation.navigate(mailsRouteNames.home, navigationParams);
       } catch (e) {
@@ -196,7 +196,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   );
 
   const onMarkUnread = () =>
-    handleMailAction(() => mailsService.mail.toggleUnread({ ids: [id], unread: true }), 'mails-details-toastsuccessunread');
+    handleMailAction(() => mailsService.mail.toggleUnread({ ids: [id], unread: true }), 'mails-toastsuccessunread');
 
   const onOpenMoveModal = () => {
     setTypeModal(MailsListTypeModal.MOVE);
@@ -205,18 +205,18 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const onMove = React.useCallback(
     (folderId: string) =>
-      handleMailAction(() => mailsService.mail.moveToFolder({ folderId }, { ids: [id] }), 'mails-details-toastsuccessmove'),
+      handleMailAction(() => mailsService.mail.moveToFolder({ folderId }, { ids: [id] }), 'mails-toastsuccessmove'),
     [handleMailAction, id],
   );
 
   const onRemoveFromFolder = () =>
-    handleMailAction(() => mailsService.mail.removeFromFolder({ ids: [id] }), 'mails-details-toastsuccessremovefromfolder');
+    handleMailAction(() => mailsService.mail.removeFromFolder({ ids: [id] }), 'mails-toastsuccessremovefromfolder');
 
-  const onRestore = () => handleMailAction(() => mailsService.mail.restore({ ids: [id] }), 'mails-details-toastsuccessrestore');
+  const onRestore = () => handleMailAction(() => mailsService.mail.restore({ ids: [id] }), 'mails-toastsuccessrestore');
 
-  const onTrash = () => handleMailAction(() => mailsService.mail.moveToTrash({ ids: [id] }), 'mails-details-toastsuccesstrash');
+  const onTrash = () => handleMailAction(() => mailsService.mail.moveToTrash({ ids: [id] }), 'mails-toastsuccesstrash');
 
-  const onDelete = () => handleMailAction(() => mailsService.mail.delete({ ids: [id] }), 'mails-details-toastsuccessdelete');
+  const onDelete = () => handleMailAction(() => mailsService.mail.delete({ ids: [id] }), 'mails-toastsuccessdelete');
 
   const allPopupActionsMenu = [
     {

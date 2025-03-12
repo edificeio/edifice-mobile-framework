@@ -7,9 +7,6 @@ export default StyleSheet.create({
     minHeight: 200,
     paddingBottom: getScaleWidth(60),
   },
-  flatListBottomSheet: {
-    paddingBottom: UI_SIZES.screen.bottomInset,
-  },
   nofolders: {
     alignItems: 'center',
     rowGap: UI_SIZES.spacing.medium,

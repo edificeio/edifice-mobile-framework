@@ -24,16 +24,6 @@ export default StyleSheet.create({
     minHeight: 200,
     paddingBottom: getScaleWidth(60),
   },
-  flatListBottomSheet: {
-    paddingBottom: UI_SIZES.screen.bottomInset,
-  },
-  nofolders: {
-    alignItems: 'center',
-    rowGap: UI_SIZES.spacing.medium,
-  },
-  nofoldersContainer: {
-    borderWidth: 0,
-  },
   page: {
     backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.medium,

@@ -321,7 +321,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     async (ids: string[], permanently?: boolean) => {
       await handleMailAction({
         action: () => (permanently ? mailsService.mail.delete({ ids }) : mailsService.mail.moveToTrash({ ids })),
-        successMessage: permanently ? 'mails-details-toastsuccessdelete' : 'mails-details-toastsuccesstrash',
+        successMessage: permanently ? 'mails-toastsuccessdelete' : 'mails-toastsuccesstrash',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
     },
@@ -332,7 +332,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     async (ids: string[], unread: boolean) => {
       await handleMailAction({
         action: () => mailsService.mail.toggleUnread({ ids, unread: !unread }),
-        successMessage: unread ? 'mails-details-toastsuccessread' : 'mails-details-toastsuccessunread',
+        successMessage: unread ? 'mails-toastsuccessread' : 'mails-toastsuccessunread',
         updateMails: () =>
           setMails(prevMails => prevMails.map(mail => (ids.includes(mail.id) ? { ...mail, unread: !unread } : mail))),
       });
@@ -341,11 +341,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   );
 
   const onRestore = React.useCallback(
-    async (id: string) => {
+    async (ids: string[]) => {
       await handleMailAction({
-        action: () => mailsService.mail.restore({ ids: [id] }),
-        successMessage: 'mails-details-toastsuccessrestore',
-        updateMails: () => setMails(prevMails => prevMails.filter(mail => mail.id !== id)),
+        action: () => mailsService.mail.restore({ ids }),
+        successMessage: 'mails-toastsuccessrestore',
+        updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
     },
     [handleMailAction],
@@ -356,7 +356,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       bottomSheetModalRef.current?.dismiss();
       await handleMailAction({
         action: () => mailsService.mail.moveToFolder({ folderId }, { ids }),
-        successMessage: 'mails-details-toastsuccessmove',
+        successMessage: 'mails-toastsuccessmove',
+        updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
+      });
+    },
+    [handleMailAction],
+  );
+
+  const onRemoveFromFolder = React.useCallback(
+    async (ids: string[]) => {
+      await handleMailAction({
+        action: () => mailsService.mail.removeFromFolder({ ids }),
+        successMessage: 'mails-toastsuccessremovefromfolder',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
     },
@@ -500,6 +511,63 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderBottomSelectMode = React.useCallback(() => {
     if (!isSelectionMode) return;
+
+    const moveButton = (
+      <TertiaryButton
+        iconLeft="ui-folderMove"
+        contentColor={theme.palette.primary.regular}
+        disabled={selectedMails.length === 0}
+        action={() => {
+          setTypeModal(MailsListTypeModal.MOVE);
+          bottomSheetModalRef.current?.present();
+        }}
+      />
+    );
+
+    const actionsByFolder: Record<string, React.ReactNode> = {
+      [MailsDefaultFolders.INBOX]: (
+        <>
+          <TertiaryButton
+            iconLeft="ui-mailUnread"
+            contentColor={theme.palette.primary.regular}
+            disabled={selectedMails.length === 0}
+            action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
+          />
+          <TertiaryButton
+            iconLeft="ui-mailRead"
+            contentColor={theme.palette.primary.regular}
+            disabled={selectedMails.length === 0}
+            action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
+          />
+          {moveButton}
+        </>
+      ),
+      [MailsDefaultFolders.TRASH]: (
+        <TertiaryButton
+          iconLeft="ui-restore"
+          contentColor={theme.palette.primary.regular}
+          disabled={selectedMails.length === 0}
+          action={() => onActionMultiple(() => onRestore(selectedMails))}
+        />
+      ),
+      [MailsDefaultFolders.OUTBOX]: moveButton,
+      [MailsDefaultFolders.DRAFTS]: moveButton,
+    };
+
+    const renderActions = selectedFolder.name ? (
+      <>
+        {moveButton}
+        <TertiaryButton
+          iconLeft="ui-options"
+          disabled={selectedMails.length === 0}
+          contentColor={theme.palette.primary.regular}
+          action={() => onActionMultiple(() => onRemoveFromFolder(selectedMails))}
+        />
+      </>
+    ) : (
+      actionsByFolder[selectedFolder as MailsDefaultFolders]
+    );
+
     return (
       <View style={[styles.selectMode, styles.selectModeBottom]}>
         <BodyBoldText style={styles.selectModeBottomText}>
@@ -507,34 +575,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             nb: selectedMails.length,
           })}
         </BodyBoldText>
-        <TertiaryButton
-          iconLeft="ui-mailUnread"
-          contentColor={theme.palette.primary.regular}
-          action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
-        />
-        <TertiaryButton
-          iconLeft="ui-mailRead"
-          contentColor={theme.palette.primary.regular}
-          action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
-        />
-        <TertiaryButton
-          iconLeft="ui-folderMove"
-          contentColor={theme.palette.primary.regular}
-          action={() => {
-            setTypeModal(MailsListTypeModal.MOVE);
-            bottomSheetModalRef.current?.present();
-          }}
-        />
+        {renderActions}
         <TertiaryButton
           iconLeft="ui-delete"
           contentColor={theme.palette.status.failure.regular}
+          disabled={selectedMails.length === 0}
           action={() =>
             onActionMultiple(() => onDelete(selectedMails, selectedFolder === MailsDefaultFolders.TRASH ? true : false))
           }
         />
       </View>
     );
-  }, [isSelectionMode, onActionMultiple, onDelete, onToggleUnread, selectedFolder, selectedMails]);
+  }, [isSelectionMode, onActionMultiple, onDelete, onRemoveFromFolder, onRestore, onToggleUnread, selectedFolder, selectedMails]);
 
   const renderFolders = React.useCallback(() => {
     return (
@@ -604,7 +656,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             {isSubfolder ? (
               <FlatList
                 data={folders}
-                contentContainerStyle={[stylesFolders.containerFolders, styles.flatListBottomSheet]}
+                contentContainerStyle={[stylesFolders.containerFolders]}
                 renderItem={({ item }) =>
                   item.depth === 1 ? (
                     <MailsFolderItem
@@ -697,26 +749,25 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderFooter = React.useCallback(() => (isLoadingNextPage ? <MailsPlaceholderLittleList /> : null), [isLoadingNextPage]);
 
   const renderMailPreview = React.useCallback(
-    (mail: IMailsMailPreview) => (
-      <MailsMailPreview
-        key={mail.id}
-        data={mail}
-        onPress={() => onPressItem(mail.id, mail.unread, mail.state)}
-        isSender={props.session?.user.id === mail.from?.id && selectedFolder !== MailsDefaultFolders.INBOX}
-        isSelectMode={isSelectionMode}
-        isSelected={selectedMails.includes(mail.id)}
-        onSelect={onSelectMail}
-        onDelete={() => onDelete([mail.id], selectedFolder === MailsDefaultFolders.TRASH ? true : false)}
-        onToggleUnread={
-          selectedFolder !== MailsDefaultFolders.DRAFTS &&
-          selectedFolder !== MailsDefaultFolders.OUTBOX &&
-          selectedFolder !== MailsDefaultFolders.TRASH
-            ? () => onToggleUnread([mail.id], mail.unread)
-            : undefined
-        }
-        onRestore={selectedFolder === MailsDefaultFolders.TRASH ? () => onRestore(mail.id) : undefined}
-      />
-    ),
+    (mail: IMailsMailPreview) => {
+      const isSender = props.session?.user.id === mail.from?.id && selectedFolder !== MailsDefaultFolders.INBOX;
+      const isDraft = mail.state === MailsMailStatePreview.DRAFT;
+      const isTrashed = selectedFolder === MailsDefaultFolders.TRASH;
+      return (
+        <MailsMailPreview
+          key={mail.id}
+          data={mail}
+          onPress={() => onPressItem(mail.id, mail.unread, mail.state)}
+          isSender={isSender}
+          isSelectMode={isSelectionMode}
+          isSelected={selectedMails.includes(mail.id)}
+          onSelect={onSelectMail}
+          onDelete={() => onDelete([mail.id], isTrashed ? true : false)}
+          onToggleUnread={!isDraft && !isSender && !isTrashed ? () => onToggleUnread([mail.id], mail.unread) : undefined}
+          onRestore={isTrashed ? () => onRestore([mail.id]) : undefined}
+        />
+      );
+    },
     [
       isSelectionMode,
       onDelete,

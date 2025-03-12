@@ -37,11 +37,7 @@ const MailsMoveBottomSheet = (props: MailsMoveBottomSheetProps) => {
         />
         <FlatList
           data={props.folders}
-          contentContainerStyle={[
-            stylesFolders.containerFolders,
-            styles.flatListBottomSheet,
-            props.folders?.length === 0 ? styles.nofoldersContainer : {},
-          ]}
+          contentContainerStyle={[stylesFolders.containerFolders, props.folders?.length === 0 ? styles.nofoldersContainer : {}]}
           renderItem={({ item }) => (
             <MailsFolderItem
               key={item.id}

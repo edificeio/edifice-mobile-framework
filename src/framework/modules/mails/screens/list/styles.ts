@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   bottomSheet: {
@@ -29,9 +29,6 @@ export default StyleSheet.create({
   },
   page: {
     backgroundColor: theme.palette.grey.white,
-  },
-  scrollViewBottomSheet: {
-    paddingBottom: getScaleWidth(60),
   },
   selectFolderTitle: {
     alignItems: 'center',
