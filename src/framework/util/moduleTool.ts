@@ -7,7 +7,6 @@ import { ColorValue } from 'react-native';
 
 import type { Reducer } from 'redux';
 
-import type { AuthActiveAccount } from '../modules/auth/model';
 import type { StorageSlice } from './storage/slice';
 import type { StorageTypeMap } from './storage/types';
 
