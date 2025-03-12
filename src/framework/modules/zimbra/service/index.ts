@@ -172,8 +172,9 @@ const recipientDirectoryAdapter = (data: IBackendRecipientDirectory, query: stri
 
 const signatureAdapter = (data: IBackendSignature): ISignature => {
   const preference = JSON.parse(data.preference);
+  const content = decode(preference.signature);
   return {
-    content: extractTextFromHtml(decode(preference.signature)) ?? '',
+    content: (content.includes('&lt;') ? extractTextFromHtml(content) : content) ?? '',
     useSignature: preference.useSignature,
   };
 };
