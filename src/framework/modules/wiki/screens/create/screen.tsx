@@ -3,6 +3,7 @@ import { ImageSourcePropType } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import ResourceThumbnail from '../../components/resource-thumbnail';
 import type { WikiCreateScreen } from './types';
 
 import ImageInput from '~/framework/modules/wiki/components/image-input';
@@ -27,6 +28,7 @@ export default function WikiCreateScreen(props: WikiCreateScreen.AllProps) {
   return (
     <>
       <ImageInput moduleConfig={moduleConfig} value={imageUrl} onChange={setImageUrl} />
+      <ResourceThumbnail imageSource={imageUrl} />
     </>
   );
 }
