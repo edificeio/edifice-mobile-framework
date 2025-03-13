@@ -20,15 +20,15 @@ enum ScaleDimensionType {
 const getScaleDimension = (dimension: number, type: ScaleDimensionType) =>
   Math.round(
     dimension *
-      Math.max(
-        Math.min(
-          type === ScaleDimensionType.HEIGHT
-            ? screenDimensions.height / standardScreenDimensions.height
-            : screenDimensions.width / standardScreenDimensions.width,
-          SCALE_DIMENSION_MAX,
-        ),
-        SCALE_DIMENSION_MIN,
+    Math.max(
+      Math.min(
+        type === ScaleDimensionType.HEIGHT
+          ? screenDimensions.height / standardScreenDimensions.height
+          : screenDimensions.width / standardScreenDimensions.width,
+        SCALE_DIMENSION_MAX,
       ),
+      SCALE_DIMENSION_MIN,
+    ),
   );
 
 export const getScaleFontSize = (size: number) => getScaleDimension(size, ScaleDimensionType.FONT);
@@ -65,6 +65,10 @@ export const UI_SIZES = {
   border: {
     small: 2,
     thin: 1,
+  },
+  cardSpacing: {
+    major: getScaleWidth(40),
+    small: getScaleWidth(10),
   },
   dimensions: {
     height: {
@@ -120,7 +124,7 @@ export const UI_SIZES = {
       xxxlarge: getScaleWidth(96),
     },
     image: {
-      medium: getScaleWidth(120),
+      medium: getScaleWidth(160),
     },
 
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },

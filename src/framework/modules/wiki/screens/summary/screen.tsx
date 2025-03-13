@@ -12,10 +12,12 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import ResourceHeader from '~/framework/modules/wiki/components/resource-header';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import http from '~/framework/util/http';
 
 export const computeNavBar = ({
   navigation,
@@ -26,6 +28,7 @@ export const computeNavBar = ({
     route,
     title: I18n.get('wiki-summary-title'),
   }),
+  headerShadowVisible: false,
 });
 
 export default function WikiSummaryScreen({
@@ -45,10 +48,15 @@ export default function WikiSummaryScreen({
     [resourceId],
   );
 
+  const imageSource = React.useMemo(() => {
+    return wikiData.thumbnail ? http.imagePropsForSession({ source: { uri: wikiData.thumbnail } }) : undefined;
+  }, [wikiData.thumbnail]);
+
   const renderContent: ContentLoaderProps['renderContent'] = React.useCallback(
     refreshControl => {
       return (
         <ScrollView refreshControl={refreshControl}>
+          <ResourceHeader canAddDescription={true} image={imageSource} description={wikiData.description} />
           <BodyBoldText>loaded :) {resourceId}</BodyBoldText>
           <BodyBoldText>{wikiData.name}</BodyBoldText>
           <BodyBoldText>{wikiData.description}</BodyBoldText>
@@ -61,7 +69,7 @@ export default function WikiSummaryScreen({
         </ScrollView>
       );
     },
-    [resourceId, wikiData.description, wikiData.name, wikiData.pages],
+    [imageSource, resourceId, wikiData.description, wikiData.name, wikiData.pages],
   );
 
   return (
