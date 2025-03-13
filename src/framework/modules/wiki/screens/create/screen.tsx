@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { ImageSourcePropType } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import ResourceThumbnail from '../../components/resource-thumbnail';
+import ResourceThumbnailLoader from '../../components/resource-thumbnail-loader';
 import type { WikiCreateScreen } from './types';
 
-import ImageInput from '~/framework/modules/wiki/components/image-input';
-import moduleConfig from '~/framework/modules/wiki/module-config';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+const picsum = { uri: 'https://picsum.photos/200' };
 
 export const computeNavBar = ({
   navigation,
@@ -23,12 +23,10 @@ export const computeNavBar = ({
 });
 
 export default function WikiCreateScreen(props: WikiCreateScreen.AllProps) {
-  const [imageUrl, setImageUrl] = React.useState<ImageSourcePropType | undefined>(undefined);
-
   return (
     <>
-      <ImageInput moduleConfig={moduleConfig} value={imageUrl} onChange={setImageUrl} />
-      <ResourceThumbnail imageSource={imageUrl} />
+      <ResourceThumbnail imageSource={picsum} />
+      <ResourceThumbnailLoader />
     </>
   );
 }
