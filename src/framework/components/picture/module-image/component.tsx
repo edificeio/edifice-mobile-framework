@@ -106,9 +106,17 @@ const ModuleImage: React.FC<ModuleImageProps> = ({ fallbackIcon, iconSize, modul
     [onError],
   );
 
+  const shouldShowFallback = React.useMemo(
+    () =>
+      imageLoadingState === ImageLoadingState.Error ||
+      !props.source ||
+      (typeof props.source === 'object' && 'uri' in props.source && props.source.uri === undefined),
+    [imageLoadingState, props.source],
+  );
+
   return (
     <View style={mergedModuleImageStyle}>
-      {imageLoadingState === ImageLoadingState.Error || props.source?.uri === undefined ? (
+      {shouldShowFallback ? (
         <ImageFallback fallbackIcon={fallbackIcon} moduleConfig={moduleConfig} imageProps={props} iconSize={iconSize} />
       ) : (
         <>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ImageSourcePropType } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -8,7 +9,6 @@ import ImageInput from '~/framework/modules/wiki/components/image-input';
 import moduleConfig from '~/framework/modules/wiki/module-config';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Asset } from '~/framework/util/fileHandler/types';
 
 export const computeNavBar = ({
   navigation,
@@ -22,7 +22,7 @@ export const computeNavBar = ({
 });
 
 export default function WikiCreateScreen(props: WikiCreateScreen.AllProps) {
-  const [imageUrl, setImageUrl] = React.useState<Pick<Asset, 'uri'> | undefined>(undefined);
+  const [imageUrl, setImageUrl] = React.useState<ImageSourcePropType | undefined>(undefined);
 
   return (
     <>
