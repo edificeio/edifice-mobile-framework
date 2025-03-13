@@ -1219,6 +1219,7 @@
   "support-createticket-subject": "Sujet",
   "support-createticket-successmessage": "Demande #{{id}} créée avec succès. Retrouvez le suivi sur la version web du module.",
   "support-createticket-title": "Assistance ENT",
+  "text-ellipsis": "…",
   "textpreview-readmore": "lire plus",
   "textpreview-seeless": "Voir moins",
   "textpreview-seemore": "Voir plus",

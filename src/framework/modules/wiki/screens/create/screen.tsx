@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ResourceThumbnail } from '../../components/resource-thumbnail';
 import type { WikiCreateScreen } from './types';
 
+import { ResourceThumbnail } from '~/framework/modules/wiki/components/resource-thumbnail';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
