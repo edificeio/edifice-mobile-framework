@@ -817,6 +817,7 @@
   "mediacentre-filter-all": "Tous",
   "mediacentre-home-advancedsearch": "Recherche avancée",
   "mediacentre-home-emptyscreen-default": "Vous n'avez pas de ressource pour l'instant",
+  "mediacentre-home-emptyscreen-search": "Aucun résultat pour cette recherche",
   "mediacentre-home-error-text": "Une erreur est survenue. Veuillez réessayer plus tard.",
   "mediacentre-home-favorite-added": "Cette ressource a été ajoutée dans vos favoris",
   "mediacentre-home-favorite-removed": "Cette ressource a été supprimée de vos favoris",
