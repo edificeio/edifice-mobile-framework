@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-03-05 09:09:07",
-  "notes": "release: 1.13.12-rc.3(1131204)",
-  "version": "1.13.12-rc.4(1131205)"
+  "last": "2025-03-14 11:20:27",
+  "notes": "Updated translations from Phrase (#190)\nfeat(build): ENABLING-223, ENABLING-224: Replace AppCenter && Matomo by Firebase Equivalent\nfix(zimbra): decode signature\nupdate(stack): yarn cache update\nfeat(homework-assistance): AMV2-615 get feedback description and link from config\nfeat(mediacentre): AMV2-659 add notif handler\nRevert \"chore: MB-2998 restore mediacentre version 1.13.4\"\nfeat(i18n): AMV2-658 add mediacentre notification i18n\nfeat(homework-assistance): AMV2-615 add feedback menu\nfeat(homework-assistance): AMV2-614 display resources in home screen\nfeat(homework-assistance): replace tryActionLegacy with tryAction, enhance typing\nfix(homework-assistance): AMV2-656 fix date exclusions check\nfeat(zimbra): MO-440 disable rich signature edition\nfeat: add magneto notif i18n and module icon\nfeat: add appointments i18n and module icon\nchore: change phrase sync branch after 1.13.12 release\nrelease: 1.13.13(1131300)\nrelease: 1.13.12-rc.4(1131205)",
+  "version": "1.13.13-alpha.1(1131301)"
 }
