@@ -1,18 +1,11 @@
-import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-const myStage77ConnectorAddress = 'https://mystage77.fr/s3e/sso';
-
-function hasConnectorApp(entcoreApp: IEntcoreApp): boolean {
-  return entcoreApp.address.includes(myStage77ConnectorAddress);
-}
-
-export default new NavigableModuleConfig<'https://mystage77.fr/s3e/sso', null>({
+export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsConnector',
   displayI18n: 'myStage77-moduleconfig-appname',
   displayPicture: { source: require('ASSETS/icons/moduleIcons/connector77.png'), type: 'Image' },
   entcoreScope: ['cas'],
-
-  matchEntcoreApp: entcoreApp => hasConnectorApp(entcoreApp),
-  name: myStage77ConnectorAddress,
-  storageName: myStage77ConnectorAddress,
+  matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('MYSTAGE77'),
+  name: 'mystage77',
+  storageName: 'mystage77',
 });

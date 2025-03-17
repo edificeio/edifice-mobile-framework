@@ -11,7 +11,6 @@ export default new NavigableModuleConfig<'lvs', null>({
   displayI18n: 'lvs-moduleconfig-appname',
   displayPicture: { name: 'lvs', type: 'NamedSvg' },
   entcoreScope: ['lvs'],
-
   matchEntcoreApp: entcoreApp => hasConnectorApp(entcoreApp),
   name: 'lvs',
   storageName: 'lvs',

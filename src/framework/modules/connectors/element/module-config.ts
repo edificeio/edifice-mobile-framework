@@ -5,7 +5,6 @@ export default new NavigableModuleConfig<'element', null>({
   displayI18n: 'element-moduleconfig-appname',
   displayPicture: { name: 'element', type: 'NamedSvg' },
   entcoreScope: ['cas'],
-
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('RIOT'),
   name: 'element',
   storageName: 'element',
