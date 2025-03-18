@@ -20,13 +20,15 @@ export default function Attachment(props: AttachmentProps) {
     try {
       setIsDownloading(true);
       const sf = await fileTransferService.downloadFile(props.session, props.data, {});
+      setIsDownloading(false);
       setLf(sf.lf);
-      await sf.lf.open();
+      setTimeout(() => {
+        sf.lf.open();
+      }, 0);
     } catch (e) {
+      setIsDownloading(false);
       console.error(e);
       toast.showError();
-    } finally {
-      setIsDownloading(false);
     }
   };
 
