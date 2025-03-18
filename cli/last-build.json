@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-03-14 19:42:03",
-  "notes": "release: 1.13.13-alpha.5(1131305)",
-  "version": "1.13.13-alpha.6(1131306)"
+  "last": "2025-03-18 15:59:42",
+  "notes": "update(yarn): yarn cache update\nfix: WB2-2035, decode html entites before opening a link\nfix(connectors): review/refactor some connectors\nrelease: 1.13.13-alpha.6(1131306)",
+  "version": "1.13.13-rc.1(1131307)"
 }
