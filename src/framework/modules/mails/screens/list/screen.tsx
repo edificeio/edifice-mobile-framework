@@ -491,7 +491,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         setSelectedFolder(params.from);
         loadFolders();
       } else {
-        //loadFolders();
+        loadFolders();
       }
     }, [loadFolders, loadMails, props.route]),
   );
