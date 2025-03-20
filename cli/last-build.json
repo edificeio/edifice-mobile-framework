@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-03-19 12:06:55",
-  "notes": "update(stack): update yarn cache\nrelease: 1.13.13-rc.1(1131307)",
-  "version": "1.13.13-rc.2(1131308)"
+  "last": "2025-03-20 19:15:03",
+  "notes": "update(stack): yarn cache update\nrefacto(connectors): refactor all connectors definitions\nrelease: 1.13.13-rc.2(1131308)",
+  "version": "1.13.13-rc.3(1131309)"
 }
