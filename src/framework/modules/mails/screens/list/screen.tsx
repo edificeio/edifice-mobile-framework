@@ -530,13 +530,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           <TertiaryButton
             iconLeft="ui-mailUnread"
             contentColor={theme.palette.primary.regular}
-            disabled={selectedMails.length === 0}
+            disabled={selectedMails.length === 0 || selectedMails.every(mailId => mails.find(mail => mail.id === mailId)?.unread)}
             action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
           />
           <TertiaryButton
             iconLeft="ui-mailRead"
             contentColor={theme.palette.primary.regular}
-            disabled={selectedMails.length === 0}
+            disabled={selectedMails.length === 0 || selectedMails.every(mailId => !mails.find(mail => mail.id === mailId)?.unread)}
             action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
           />
           {moveButton}
