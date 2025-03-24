@@ -1,15 +1,9 @@
-import * as React from 'react';
-import { Platform, RefreshControl, ScrollView, TextInput, View } from 'react-native';
-
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import DropDownPicker from 'react-native-dropdown-picker';
+import * as React from 'react';
+import { Platform, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
-
-import styles from './styles';
-import { HomeworkAssistanceRequestScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -18,8 +12,10 @@ import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import TextInput from '~/framework/components/inputs/text';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
+import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AccountType, getFlattenedChildren } from '~/framework/modules/auth/model';
@@ -36,8 +32,11 @@ import {
   homeworkAssistanceRouteNames,
 } from '~/framework/modules/homework-assistance/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+
+import styles from './styles';
+import { HomeworkAssistanceRequestScreenDispatchProps, HomeworkAssistanceRequestScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -71,8 +70,8 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
 
   const fetchData = async () => {
     try {
-      await props.fetchConfig();
-      await props.fetchServices();
+      await props.tryFetchConfig();
+      await props.tryFetchServices();
     } catch {
       throw new Error();
     }
@@ -108,7 +107,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       if (!selectedService) throw new Error();
       setSendingRequest(true);
       const student = children ? children.find(c => c.value === child) : undefined;
-      await props.addRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
+      await props.tryAddRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
       setSendingRequest(false);
       props.navigation.goBack();
       Toast.showSuccess(I18n.get('homeworkassistance-request-successmessage'));
@@ -136,18 +135,16 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       <ScrollView contentContainerStyle={styles.container}>
         <View>
           {props.children ? (
-            <DropDownPicker
+            <DropdownPicker
               open={isChildDropdownOpen}
               value={child}
               items={props.children}
               setOpen={setChildDropdownOpen}
               setValue={setChild}
               style={styles.dropdownContainer}
-              dropDownContainerStyle={styles.dropdownContainer}
-              textStyle={styles.dropdownText}
             />
           ) : undefined}
-          <DropDownPicker
+          <DropdownPicker
             open={isServiceDropdownOpen}
             value={service}
             items={props.services}
@@ -156,8 +153,6 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
             placeholder={I18n.get('homeworkassistance-request-subject-placeholder')}
             style={styles.dropdownContainer}
             containerStyle={{ zIndex: -1 }}
-            dropDownContainerStyle={styles.dropdownContainer}
-            textStyle={styles.dropdownText}
           />
           <View style={{ zIndex: -2 }}>
             <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-request-phonenumber')}</SmallText>
@@ -258,24 +253,12 @@ export default connect(
       structureName: session?.user.structures?.[0].name ?? '',
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<HomeworkAssistanceRequestScreenDispatchProps>(
       {
-        addRequest: tryActionLegacy(
-          postHomeworkAssistanceRequestAction,
-          undefined,
-          true,
-        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['addRequest'],
-        fetchConfig: tryActionLegacy(
-          fetchHomeworkAssistanceConfigAction,
-          undefined,
-          true,
-        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchConfig'],
-        fetchServices: tryActionLegacy(
-          fetchHomeworkAssistanceServicesAction,
-          undefined,
-          true,
-        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchServices'],
+        tryAddRequest: tryAction(postHomeworkAssistanceRequestAction),
+        tryFetchConfig: tryAction(fetchHomeworkAssistanceConfigAction),
+        tryFetchServices: tryAction(fetchHomeworkAssistanceServicesAction),
       },
       dispatch,
     ),

@@ -16,7 +16,6 @@ const imports = {
   admin: async () => import('ASSETS/icons/moduleIcons/admin.svg'),
 
   adressBook: async () => import('ASSETS/icons/moduleIcons/adressBook.svg'),
-
   archives: async () => import('ASSETS/icons/moduleIcons/archives.svg'),
 
   blog: async () => import('ASSETS/icons/moduleIcons/blog.svg'),
@@ -220,10 +219,10 @@ const imports = {
 
   'textbook-default': async () => import('ASSETS/images/textbook-default.svg'),
 
+  timeLineGenerator: async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
+
   // UI Icons
   'ui-addUser': async () => import('ASSETS/icons/uiIcons/addUser.svg'),
-
-  timeLineGenerator: async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
 
   'ui-alert-triangle': async () => import('ASSETS/icons/uiIcons/alert-triangle.svg'),
 

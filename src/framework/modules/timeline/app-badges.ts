@@ -21,6 +21,7 @@ export let APPBADGES: {
   FORMULAIRE: { color: theme.palette.complementary.purple.regular, icon: { name: 'form', type: 'Svg' } },
   FORUM: { color: theme.palette.complementary.blue.regular, icon: { name: 'forum', type: 'Svg' } },
   HOMEWORKS: { color: theme.palette.complementary.green.regular, icon: { name: 'homework1D', type: 'Svg' } },
+  MAGNETO: { color: theme.palette.complementary.yellow.regular, icon: { name: 'magneto', type: 'Svg' } },
   MESSAGERIE: { color: theme.palette.complementary.yellow.regular, icon: { name: 'messages', type: 'Svg' } },
   MINDMAP: { color: theme.palette.complementary.blue.regular, icon: { name: 'siteMap', type: 'Svg' } },
   NEWS: { color: theme.palette.complementary.blue.regular, icon: { name: 'newsFeed', type: 'Svg' } },
