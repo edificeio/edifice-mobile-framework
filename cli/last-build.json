@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-03-20 19:15:03",
-  "notes": "update(stack): yarn cache update\nrefacto(connectors): refactor all connectors definitions\nrelease: 1.13.13-rc.2(1131308)",
-  "version": "1.13.13-rc.3(1131309)"
+  "last": "2025-03-25 20:17:21",
+  "notes": "Updated translations from Phrase (#194)\nfeat(i18n): add calendar notiftype key\nchore: remove log\nchore: yarn cache update\nfix: WB2-2500 fix Timetable corner cases\nfix(edt): WB2-2259 fix Timetable scroll begin\nfix(edt): WB2-1972 rewrite Timetable component\nfix(blog): WB2-2241 add blog comments pagination on scroll\nfix(android): WB2-2417 fix statusbar hidden when `<Modal>` open\nfeat(homework): WB2-2228 adding media icons on homework preview\nfix(schoolbook): MB-2250 fixing title margin\nfix(whoarwe): who are we button not working\nrelease: 1.13.13-rc.3(1131309)",
+  "version": "1.13.13-rc.4(1131310)"
 }
