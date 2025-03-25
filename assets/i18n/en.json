@@ -1291,6 +1291,7 @@
   "timeline-notiftype-blog-share": "Blog shared",
   "timeline-notiftype-blog-submit-post": "Blog post submitted",
   "timeline-notiftype-calendar-create": "Create an event",
+  "timeline-notiftype-calendar-reminder": "Reminder of an event",
   "timeline-notiftype-calendar-share": "Calendar shared",
   "timeline-notiftype-calendar-update": "Edit an event",
   "timeline-notiftype-collaborativeeditor-share": "Pad shared",
