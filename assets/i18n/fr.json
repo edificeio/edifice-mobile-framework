@@ -1291,6 +1291,7 @@
   "timeline-notiftype-blog-share": "Partage d'un blog",
   "timeline-notiftype-blog-submit-post": "Soumission d'un billet de blog",
   "timeline-notiftype-calendar-create": "Création d'un événement",
+  "timeline-notiftype-calendar-reminder": "Rappel d'un événement",
   "timeline-notiftype-calendar-share": "Partage d'un agenda",
   "timeline-notiftype-calendar-update": "Mise à jour d'un événement",
   "timeline-notiftype-collaborativeeditor-share": "Partage d'un Pad",
