@@ -48,7 +48,7 @@ import {
 import BlogPostDetails from '~/framework/modules/blog/components/blog-post-details';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { BlogPostComment, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
+import { BlogPostComment, BlogPostComments, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import {
   commentBlogPostResourceRight,
   deleteCommentBlogPostResourceRight,
@@ -93,9 +93,11 @@ const ListComponent = Platform.select<React.ComponentType<any>>({
   ios: FlatList,
 })!;
 
+const PAGE_SIZE = 20;
+
 function BlogPostDetailsFlatList(props: {
   contentSetRef;
-  initialNumToRender;
+  // initialNumToRender;
   data;
   blogInfos;
   blogPostData;
@@ -108,15 +110,19 @@ function BlogPostDetailsFlatList(props: {
   footer;
   session;
 }) {
+  const [commentsMax, setCommentsMax] = React.useState(PAGE_SIZE);
+  console.log('commentsMax', commentsMax);
+  const dataSlice = React.useMemo(() => (props.data as BlogPostComments).slice(0, commentsMax), [props.data, commentsMax]);
+
   return (
     <Viewport.Tracker>
       <>
         <ListComponent
           ref={props.contentSetRef}
-          initialNumToRender={props.initialNumToRender}
+          // initialNumToRender={props.initialNumToRender}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.content}
-          data={props.data}
+          data={dataSlice}
           keyExtractor={BlogPostDetailsScreen.contentKeyExtractor}
           ListHeaderComponent={
             props.blogInfos && props.blogPostData ? (
@@ -134,6 +140,8 @@ function BlogPostDetailsFlatList(props: {
           style={styles.contentStyle2}
           onContentSizeChange={props.onContentSizeChange}
           onLayout={props.onLayout}
+          onEndReached={() => setCommentsMax(commentsMax + PAGE_SIZE)}
+          onEndReachedThreshold={1}
           {...React.useMemo(() => Platform.select({ android: { stickyFooter: props.footer }, ios: {} }), [props.footer])}
         />
         {React.useMemo(() => Platform.select({ android: null, ios: props.footer }), [props.footer])}
@@ -575,7 +583,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           blogPostData={blogPostData}
           onReady={this.removePlaceholder}
           contentSetRef={this.contentSetRef}
-          initialNumToRender={blogPostComments?.length}
           renderItem={this.contentRenderItem}
           onRefresh={this.doRefresh}
           loadingState={loadingState}
