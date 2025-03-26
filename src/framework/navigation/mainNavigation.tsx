@@ -18,10 +18,10 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
+import DeviceInfo from 'react-native-device-info';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { AuthActiveAccount } from '../modules/auth/model';
 import { handleCloseModalActions } from './helper';
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
@@ -36,6 +36,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -199,6 +200,8 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
 
   // Avoid bug when launching app after first push
   const insets = useSafeAreaInsets();
+  const bottom = UI_SIZES.screen.bottomInset ?? insets?.bottom;
+
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(({ navigation, route }) => {
       return {
@@ -230,7 +233,12 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
           borderTopColor: theme.palette.grey.cloudy,
           borderTopWidth: 1,
           elevation: 1,
-          height: UI_SIZES.elements.tabbarHeight + insets.bottom, // Avoid bug when launching app after first push
+          height:
+            UI_SIZES.elements.tabbarHeight +
+            Platform.select({
+              default: 0,
+              ios: DeviceInfo.isTablet() ? 32 : bottom || 0,
+            }),
           ...getAndroidTabBarStyleForNavState(navigation.getState()),
         },
       };

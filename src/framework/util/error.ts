@@ -71,7 +71,7 @@ export namespace Error {
   //                                                                                                   Y8b d88P 888
   //                                                                                                    "Y88P"  888
 
-  export enum AnyErrorType { }
+  export enum AnyErrorType {}
 
   export class ErrorWithType<Types = AnyErrorType> extends global.Error {
     constructor(
