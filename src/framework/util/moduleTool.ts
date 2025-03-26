@@ -7,10 +7,12 @@ import { ColorValue } from 'react-native';
 
 import type { Reducer } from 'redux';
 
+import type { AuthActiveAccount } from '../modules/auth/model';
 import type { StorageSlice } from './storage/slice';
 import type { StorageTypeMap } from './storage/types';
 
 import { IGlobalState } from '~/app/store';
+import theme, { IShades } from '~/app/theme';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
@@ -193,7 +195,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.isReady = true;
   }
 
-  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {}
+  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) { }
 
   assignValues(values: Partial<IModuleConfigDeclaration<any>>) {
     Object.assign(this, values);
@@ -229,8 +231,8 @@ export interface IModule<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
 > extends IModuleBase<Name, ConfigType, State>,
-    IModuleRedux<State>,
-    IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {
+  IModuleRedux<State>,
+  IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {
   // ToDo add Module methods here
 }
 
@@ -241,8 +243,8 @@ export interface IModuleDeclaration<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
 > extends IModuleBase<Name, ConfigType, State>,
-    IModuleRedux<State>,
-    IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {}
+  IModuleRedux<State>,
+  IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> { }
 
 /**
  * Use this class constructor to init a module from its definition.
@@ -255,8 +257,7 @@ export class Module<
   State,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-> implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
-{
+> implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
   // Gathered from declaration
   config: ConfigType;
 
@@ -282,7 +283,7 @@ export class Module<
     this.handleInit(params);
   }
 
-  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {}
+  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) { }
 
   get isReady() {
     return true;
@@ -328,27 +329,31 @@ interface INavigableModuleConfigDisplay {
   displayPicture?: PictureProps; // Picture used to show the module acces link/button
   displayPictureFocus?: PictureProps; // Picture used to show the modulle acces link/button when its active
   displayBadges?: IAppBadgesInfoDeclaration; // Updates to app badges
+  displayColor?: IShades; // Main color palette of the module used to tint components
   routeName: string; // Technical route name of the module. Must be unique (by default, same as the module name).
 }
 interface IModuleConfigDeclarationDisplay {
   displayI18n:
-    | INavigableModuleConfigDisplay['displayI18n']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayI18n']);
+  | INavigableModuleConfigDisplay['displayI18n']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayI18n']);
   displayAs?:
-    | INavigableModuleConfigDisplay['displayAs']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayAs']);
+  | INavigableModuleConfigDisplay['displayAs']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayAs']);
   displayOrder?:
-    | INavigableModuleConfigDisplay['displayOrder']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayOrder']);
+  | INavigableModuleConfigDisplay['displayOrder']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayOrder']);
   displayPicture?:
-    | INavigableModuleConfigDisplay['displayPicture']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPicture']);
+  | INavigableModuleConfigDisplay['displayPicture']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPicture']);
   displayPictureFocus?:
-    | INavigableModuleConfigDisplay['displayPictureFocus']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureFocus']);
+  | INavigableModuleConfigDisplay['displayPictureFocus']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureFocus']);
   displayBadges?:
-    | INavigableModuleConfigDisplay['displayBadges']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
+  | INavigableModuleConfigDisplay['displayBadges']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
+  displayColor?:
+  | INavigableModuleConfigDisplay['displayColor']
+  | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayColor']);
   routeName?: INavigableModuleConfigDisplay['routeName'];
   testID?: string;
 }
@@ -366,8 +371,7 @@ export type AnyNavigableModuleConfig = INavigableModuleConfig<string, any>;
 
 export class NavigableModuleConfig<Name extends string, State>
   extends ModuleConfig<Name, State>
-  implements INavigableModuleConfig<Name, State>
-{
+  implements INavigableModuleConfig<Name, State> {
   // gathered from declaration
 
   routeName: INavigableModuleConfig<Name, State>['routeName'];
@@ -386,6 +390,8 @@ export class NavigableModuleConfig<Name extends string, State>
 
   #_displayBadges?: INavigableModuleConfigDeclaration<Name>['displayBadges'];
 
+  #_displayColor?: INavigableModuleConfigDeclaration<Name>['displayColor'];
+
   // computed values after init
 
   #displayI18n?: INavigableModuleConfig<Name, State>['displayI18n'];
@@ -400,8 +406,20 @@ export class NavigableModuleConfig<Name extends string, State>
 
   #displayBadges?: INavigableModuleConfig<Name, State>['displayBadges'];
 
+  #displayColor?: INavigableModuleConfig<Name, State>['displayColor'];
+
   constructor(decl: INavigableModuleConfigDeclaration<Name>) {
-    const { displayAs, displayBadges, displayI18n, displayOrder, displayPicture, displayPictureFocus, routeName, ...rest } = decl;
+    const {
+      displayAs,
+      displayBadges,
+      displayColor,
+      displayI18n,
+      displayOrder,
+      displayPicture,
+      displayPictureFocus,
+      routeName,
+      ...rest
+    } = decl;
     super(rest);
     this.#_displayI18n = displayI18n;
     this.#_displayAs = displayAs;
@@ -409,6 +427,7 @@ export class NavigableModuleConfig<Name extends string, State>
     this.#_displayPicture = displayPicture;
     this.#_displayPictureFocus = displayPictureFocus ?? displayPicture;
     this.#_displayBadges = displayBadges;
+    this.#_displayColor = displayColor;
     this.routeName = routeName ?? this.name;
   }
 
@@ -426,6 +445,8 @@ export class NavigableModuleConfig<Name extends string, State>
         : this.#_displayPictureFocus;
     this.#displayBadges =
       typeof this.#_displayBadges === 'function' ? this.#_displayBadges(matchingApps, matchingWidgets) : this.#_displayBadges;
+    this.#displayColor =
+      typeof this.#_displayColor === 'function' ? this.#_displayColor(matchingApps, matchingWidgets) : this.#_displayColor;
   }
 
   get displayI18n() {
@@ -447,11 +468,17 @@ export class NavigableModuleConfig<Name extends string, State>
 
   get displayPicture() {
     if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    if (this.#displayPicture?.type === 'Svg' && this.#displayPicture.fill === undefined) {
+      return { ...this.#displayPicture, fill: this.displayColor.regular };
+    }
     return this.#displayPicture;
   }
 
   get displayPictureFocus() {
     if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    if (this.#displayPictureFocus?.type === 'Svg' && this.#displayPictureFocus.fill === undefined) {
+      return { ...this.#displayPictureFocus, fill: this.displayColor.regular };
+    }
     return this.#displayPictureFocus;
   }
 
@@ -460,11 +487,27 @@ export class NavigableModuleConfig<Name extends string, State>
     return this.#displayBadges;
   }
 
+  get displayColor() {
+    if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    return this.#displayColor ?? theme.palette.primary;
+  }
+
   assignValues(values: Partial<INavigableModuleConfigDeclaration<any>>) {
-    const { displayAs, displayBadges, displayI18n, displayOrder, displayPicture, displayPictureFocus, routeName, ...rest } = values;
+    const {
+      displayAs,
+      displayBadges,
+      displayColor,
+      displayI18n,
+      displayOrder,
+      displayPicture,
+      displayPictureFocus,
+      routeName,
+      ...rest
+    } = values;
     super.assignValues(rest);
     if (displayAs) this.#_displayAs = displayAs;
     if (displayBadges) this.#_displayBadges = displayBadges;
+    if (displayColor) this.#_displayColor = displayColor;
     if (displayI18n) this.#_displayI18n = displayI18n;
     if (displayPicture) this.#_displayPicture = displayPicture;
     if (displayPictureFocus) this.#_displayPictureFocus = displayPictureFocus;
@@ -513,19 +556,18 @@ export interface INavigableModuleDeclaration<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
 > extends INavigableModuleBase<Name, ConfigType, State, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
-    IModuleRedux<State> {}
+  IModuleRedux<State> { }
 
 export class NavigableModule<
-    Name extends string,
-    ConfigType extends INavigableModuleConfig<Name, State>,
-    State,
-    Root extends React.ReactElement,
-    ModuleStorageSliceTypeMap extends StorageTypeMap = object,
-    ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-  >
+  Name extends string,
+  ConfigType extends INavigableModuleConfig<Name, State>,
+  State,
+  Root extends React.ReactElement,
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
+>
   extends Module<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
-  implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
-{
+  implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
   // Gathered from declaration
 
   getRoot: INavigableModule<Name, ConfigType, State, Root>['getRoot'];
