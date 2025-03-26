@@ -7,14 +7,13 @@ export default StyleSheet.create({
     height: '100%',
     width: '100%',
   },
+  imageLoaderWrapper: {
+    position: 'absolute',
+  },
   moduleImage: {
     alignItems: 'center',
     borderRadius: UI_SIZES.radius.medium,
     justifyContent: 'center',
     overflow: 'hidden',
-  },
-  moduleImageContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

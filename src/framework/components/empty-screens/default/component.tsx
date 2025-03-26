@@ -30,7 +30,7 @@ const EmptyScreen = ({
   title,
 }: {
   svgImage: string;
-  title: string;
+  title?: string;
   text?: string;
   buttonText?: string;
   buttonUrl?: string;
