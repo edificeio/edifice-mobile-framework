@@ -1,6 +1,5 @@
 import { ImageProps, ImageURISource } from 'react-native';
 
-import { FetchError, FetchErrorCode } from './error';
 import { RequestBuilder } from './request-builder';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
@@ -53,8 +52,9 @@ export const imagePropsForAccount = (
 
 export const imagePropsForSession = (props: ImageProps, thumbnail?: string) => {
   const account = getSession();
+  // if not logged not sure if image has a domain name, so we're note sure that URL will be parsable to add thumbnail param.
   if (!account) {
-    throw new FetchError(FetchErrorCode.NOT_LOGGED);
+    return props;
   }
   return imagePropsForAccount(account, props, thumbnail);
 };
