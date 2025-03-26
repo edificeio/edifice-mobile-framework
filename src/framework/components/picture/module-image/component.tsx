@@ -103,14 +103,18 @@ const ModuleImage: React.FC<ModuleImageProps> = ({ fallbackIcon, iconSize, modul
     [onError],
   );
 
-  return imageLoadingState === ImageLoadingState.Error ? (
-    <ImageFallback fallbackIcon={fallbackIcon} moduleConfig={moduleConfig} imageProps={props} iconSize={iconSize} />
-  ) : (
-    <>
-      <Image {...props} onLoad={onImageLoadSuccess} onError={onImageLoadError} />
-      {imageLoadingState === ImageLoadingState.Loading && <ImageLoader imageProps={props} />}
-    </>
-  );
+  try {
+    if (imageLoadingState === ImageLoadingState.Error) throw imageLoadingState;
+    else
+      return (
+        <>
+          <Image {...props} onLoad={onImageLoadSuccess} onError={onImageLoadError} />
+          {imageLoadingState === ImageLoadingState.Loading && <ImageLoader imageProps={props} />}
+        </>
+      );
+  } catch {
+    return <ImageFallback fallbackIcon={fallbackIcon} moduleConfig={moduleConfig} imageProps={props} iconSize={iconSize} />;
+  }
 };
 
 export default ModuleImage;

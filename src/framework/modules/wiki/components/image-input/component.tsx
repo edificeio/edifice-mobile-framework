@@ -23,9 +23,8 @@ const MODULE_IMAGE_FALLBACK_ICON: ModuleImageProps['fallbackIcon'] = {
   type: 'Svg',
 };
 
-const ImageInput: React.FC<ImageInputProps> = ({ moduleConfig, moduleImageStyle, onChange, style, value: _value }) => {
+const ImageInput: React.FC<ImageInputProps> = ({ moduleConfig, moduleImageStyle, onChange, style, value }) => {
   const choosePicsMenuRef = React.useRef<BottomSheetModalMethods>(null);
-  const value = React.useMemo(() => _value && _value.uri ? {uri: _value.uri!} : undefined, [_value]);
 
   const mergedModuleImageStyle = React.useMemo(() => [styles.moduleImageContainer, moduleImageStyle], [moduleImageStyle]);
 
@@ -48,7 +47,7 @@ const ImageInput: React.FC<ImageInputProps> = ({ moduleConfig, moduleImageStyle,
     try {
       await LocalFile.pickFromGallery(
         (selectedImage: Asset) => {
-          onChange?.(selectedImage[0]?.uri);
+          onChange?.(selectedImage[0]?.uri ? { uri: selectedImage[0].uri } : undefined);
         },
         false,
         true,
@@ -64,7 +63,7 @@ const ImageInput: React.FC<ImageInputProps> = ({ moduleConfig, moduleImageStyle,
     try {
       await LocalFile.pickFromCamera(
         (capturedImage: Asset) => {
-          onChange?.(capturedImage[0]?.uri);
+          onChange?.(capturedImage[0]?.uri ? { uri: capturedImage[0].uri } : undefined);
         },
         false,
         true,
