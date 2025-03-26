@@ -83,6 +83,9 @@ module.exports = {
     ],
     'react-hooks/exhaustive-deps': 'error',
     'react-hooks/rules-of-hooks': 'error',
+    'react-native/no-raw-text': ['error', {
+      skip: ['HeadingXLText', 'HeadingLText', 'HeadingMText', 'HeadingSText', 'HeadingXSText', 'HeadingXXSText', 'BodyText', 'BodyBoldText', 'BodyItalicText', 'BodyBoldItalicText', 'SmallText', 'SmallBoldText', 'SmallItalicText', 'SmallBoldItalicText', 'CaptionText', 'CaptionBoldText', 'CaptionItalicText', 'CaptionBoldItalicText', 'SmallInverseText', 'SmallActionText', 'NestedText', 'NestedBoldText', 'NestedItalicText', 'NestedActionText'],
+    }],
     'sort-destructure-keys/sort-destructure-keys': [2, { caseSensitive: false }],
     'sort-imports': [
       'error',
