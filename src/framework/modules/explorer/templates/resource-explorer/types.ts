@@ -5,6 +5,7 @@ import { FlashListProps } from '@shopify/flash-list';
 import { createExplorerSelectors } from '../../store';
 
 import type { Folder, FolderId, Resource } from '~/framework/modules/explorer/model/types';
+import { API } from '~/framework/modules/explorer/service/types';
 import type { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export namespace ResourceExplorerTemplate {
@@ -13,6 +14,7 @@ export namespace ResourceExplorerTemplate {
     onOpenResource?: (r: Resource) => void;
     selectors: ReturnType<typeof createExplorerSelectors>;
     emptyComponent?: FlashListProps<any>['ListEmptyComponent'];
+    context: API.Explorer.ContextQuery;
   }
 
   export interface NavParams {
