@@ -8,7 +8,7 @@ export default new NavigableModuleConfig<'wiki', null>({
   displayAs: 'myAppsModule',
   displayI18n: 'wiki-module-title',
   displayOrder: 0,
-  displayPicture: { fill: displayColor.regular, name: 'wiki', type: 'NamedSvg' },
+  displayPicture: { fill: displayColor.regular, name: 'wiki', type: 'Svg' },
   entcoreScope: ['wiki'],
   matchEntcoreApp: '/wiki',
   name: 'wiki',
