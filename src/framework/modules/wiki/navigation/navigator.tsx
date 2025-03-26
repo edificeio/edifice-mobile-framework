@@ -17,7 +17,7 @@ export default () =>
       <Stack.Screen name={wikiRouteNames.home} component={WikiHomeScreen} options={homeNavBar} initialParams={{}} />
       <Stack.Screen name={wikiRouteNames.summary} component={WikiSummaryScreen} options={summaryNavBar} initialParams={{}} />
       <Stack.Screen name={wikiRouteNames.reader} component={WikiReaderScreen} options={readerNavBar} initialParams={{}} />
-      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+      <Stack.Group screenOptions={{ presentation: 'containedModal' }}>
         <Stack.Screen name={wikiRouteNames.create} component={WikiCreateScreen} options={createNavBar} initialParams={{}} />
       </Stack.Group>
     </>
