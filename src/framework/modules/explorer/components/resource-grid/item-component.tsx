@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { PixelRatio, TouchableOpacity, View } from 'react-native';
 
 import { ListRenderItem } from '@shopify/flash-list';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
@@ -17,6 +17,8 @@ import { explorerItemIsFolder, explorerItemIsLoading } from '~/framework/modules
 
 export const estimatedItemSize = 200; // Measured estimated height of an item from the react-native inspector. @see https://shopify.github.io/flash-list/docs/estimated-item-size
 
+const thumbnailSize = `${150 * PixelRatio.get()}x0`;
+
 const resourceExplorerResourceItemStyle = [styles.item, styles.resourceItem];
 export const ResourceExplorerResourceItem: React.FC<ResourceGrid.ResourceExplorerResourceItemProps> = ({
   item,
@@ -32,8 +34,8 @@ export const ResourceExplorerResourceItem: React.FC<ResourceGrid.ResourceExplore
         style={styles.itemThumbnail}
         source={React.useMemo(() => (item.thumbnail ? { uri: item.thumbnail } : undefined), [item.thumbnail])}
         iconSize={UI_SIZES.elements.icon.xxlarge}
+        thumbnail={thumbnailSize}
       />
-      {/* <Image style={styles.itemThumbnail} source={{ uri: item.thumbnail }} /> */}
       <View style={styles.labelContainer}>
         <SmallBoldText style={styles.labelCaption} numberOfLines={1}>
           {item.name}
