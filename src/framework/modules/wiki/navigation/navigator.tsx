@@ -6,6 +6,7 @@ import { WikiNavigationParams, wikiRouteNames } from '.';
 
 import moduleConfig from '~/framework/modules/wiki/module-config';
 import WikiHomeScreen from '~/framework/modules/wiki/screens/home';
+import WikiReaderScreen, { computeNavBar as readerNavBar } from '~/framework/modules/wiki/screens/reader';
 import WikiSummaryScreen, { computeNavBar as summaryNavBar } from '~/framework/modules/wiki/screens/summary';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 
@@ -14,5 +15,6 @@ export default () =>
     <>
       <Stack.Screen name={wikiRouteNames.home} component={WikiHomeScreen} options={homeNavBar} initialParams={{}} />
       <Stack.Screen name={wikiRouteNames.summary} component={WikiSummaryScreen} options={summaryNavBar} initialParams={{}} />
+      <Stack.Screen name={wikiRouteNames.reader} component={WikiReaderScreen} options={readerNavBar} initialParams={{}} />
     </>
   ));
