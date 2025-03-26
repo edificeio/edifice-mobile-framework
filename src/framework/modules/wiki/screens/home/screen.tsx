@@ -4,6 +4,8 @@ import type { WikiHomeScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import PopupMenu from '~/framework/components/menus/popup';
+import { NavBarAction } from '~/framework/components/navigation';
 import { RootFolderId } from '~/framework/modules/explorer/model/types';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { createResourceExplorerNavBar } from '~/framework/modules/explorer/templates/resource-explorer/screen';
@@ -19,6 +21,20 @@ const wikiExplorerContext = {
 };
 
 export default function WikiHomeScreen({ navigation, route, ...props }: WikiHomeScreen.AllProps) {
+  const popupActions = React.useMemo(
+    () => [
+      {
+        action: () => navigation.navigate(wikiRouteNames.create, {}),
+        icon: {
+          android: 'ic_plus',
+          ios: 'plus.square',
+        },
+        title: 'nouveau cours',
+      },
+    ],
+    [navigation],
+  );
+
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
       navigation.navigate(wikiRouteNames.summary, { resourceId: r.assetId });
@@ -55,6 +71,16 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
       ),
     [route.params.folderId, hasCreateRight],
   );
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <PopupMenu actions={popupActions}>
+          <NavBarAction icon="ui-options" />
+        </PopupMenu>
+      ),
+    });
+  }, [navigation, popupActions]);
 
   return (
     <ResourceExplorer

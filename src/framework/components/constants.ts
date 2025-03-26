@@ -119,6 +119,9 @@ export const UI_SIZES = {
       xxsmall: getScaleWidth(12),
       xxxlarge: getScaleWidth(96),
     },
+    image: {
+      medium: getScaleWidth(120),
+    },
 
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
 

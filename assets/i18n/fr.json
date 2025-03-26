@@ -1636,6 +1636,8 @@
   "wiki-explorer-emptyscreen-root-title": "Pas encore de cours",
   "wiki-home-title": "Cours et Wiki",
   "wiki-module-title": "Cours et Wiki",
+  "wiki-image-delete": "Supprimer l'image",
+  "wiki-image-change": "Changer l'image",
   "workspace-filelist-deletealert-message": "Voulez-vous vraiment supprimer définitivement le(s) fichier(s) ?",
   "workspace-filelist-deletealert-title": "Suppression de fichier",
   "workspace-filelist-emptyscreen-owner-text": "Stockez ici vos documents personnels : photos, vidéos, audio, fichiers PDF, ...",
