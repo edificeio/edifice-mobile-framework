@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import type { ExplorerFolderContent, ExplorerPageData, Folder, FolderId } from './model/types';
+import explorerModuleConfig from './module-config';
 
 import { IGlobalState } from '~/app/store';
 import { IUnkownModuleConfig } from '~/framework/util/moduleTool';
@@ -21,7 +22,7 @@ export const createExplorerReducer = (moduleConfig: Pick<IUnkownModuleConfig, 'n
   return createSessionReducer<ExplorerState, ExplorerAction>(
     {},
     {
-      [moduleConfig.namespaceActionType('LOAD_PAGE')]: (state, action) => {
+      [moduleConfig.namespaceActionType(explorerModuleConfig.namespaceActionType('LOAD_PAGE'))]: (state, action) => {
         // This complicated algorithm merges old data with new data :
         // - Folders are always all replaced
         // - Totals are always replaced
@@ -67,7 +68,7 @@ export const createExplorerActions = (moduleConfig: Pick<IUnkownModuleConfig, 'n
   loadPage: (folderId: FolderId, data: ExplorerPageData, flushPreviousData: boolean = false): ExplorerAction => ({
     flushPreviousData,
     folderId,
-    type: moduleConfig.namespaceActionType('LOAD_PAGE') as `${string}_LOAD_PAGE`,
+    type: moduleConfig.namespaceActionType(explorerModuleConfig.namespaceActionType('LOAD_PAGE')) as `${string}_LOAD_PAGE`,
     ...data,
   }),
 });

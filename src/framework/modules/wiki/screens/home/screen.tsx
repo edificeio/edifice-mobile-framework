@@ -21,7 +21,7 @@ const wikiExplorerContext = {
 export default function WikiHomeScreen({ navigation, route, ...props }: WikiHomeScreen.AllProps) {
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
-      navigation.navigate(wikiRouteNames.summary, { resourceId: r.id });
+      navigation.navigate(wikiRouteNames.summary, { resourceId: r.assetId });
     },
     [navigation],
   );
