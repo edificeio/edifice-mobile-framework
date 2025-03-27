@@ -15,23 +15,33 @@ const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResource
   updatedAt: Temporal.Instant.from((data.modified ?? data.created).$date),
 });
 
-const hydrateWikiData = (data: API.Wiki.ListPagesResponse): Wiki => {
-  const pagesAsMap = new Map(data.pages.map(page => [page._id, { ...page, depth: 0 }]));
+const walkDepthCompute = (
+  page: API.Wiki.ListPagesResponse['pages'][0] & { depth?: number },
+  id: string,
+  all: Map<string, API.Wiki.ListPagesResponse['pages'][0] & { depth?: number }>,
+  currentDepth: number = 0,
+) => {
+  if (page.depth !== undefined) return;
+  page.depth = currentDepth;
+  if (page.children === undefined) return;
+  for (const childData of page.children) {
+    const child = all.get(childData._id);
+    if (!child) return;
+    walkDepthCompute(child, child._id, all, currentDepth + 1);
+  }
+};
 
-  pagesAsMap.forEach(page => {
-    let currentPage: typeof page | undefined = page;
-    while (currentPage?.parentId) {
-      ++page.depth;
-      currentPage = pagesAsMap.get(currentPage.parentId);
-    }
-    pagesAsMap.set(page._id, page);
-  });
+const hydrateWikiData = (data: API.Wiki.ListPagesResponse): Wiki => {
+  const pagesAsMap = new Map<string, API.Wiki.ListPagesResponse['pages'][0] & { depth?: number }>(
+    data.pages.sort((a, b) => a.position - b.position).map(page => [page._id, { ...page, depth: undefined }]),
+  );
+  pagesAsMap.forEach(walkDepthCompute);
 
   return {
     description: data.description,
     pages: Array.from(pagesAsMap, ([_id, page]) => ({
       childrenIds: page.children?.map(child => child._id) ?? [],
-      depth: page.depth!,
+      depth: page.depth ?? 0,
       id: page._id,
       isVisible: page.isVisible,
       parentId: page.parentId ?? undefined,

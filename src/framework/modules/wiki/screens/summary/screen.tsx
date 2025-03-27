@@ -55,7 +55,7 @@ export default function WikiSummaryScreen({
           <BodyBoldText>– – – – –</BodyBoldText>
           {wikiData.pages.map(page => (
             <BodyText key={page.id}>
-              {new Array(page.depth).fill('–').join(' ')} {page.title} {page.isVisible ? '<.>' : '</>'}
+              {page.position} {new Array(page.depth).fill('–').join(' ')} {page.title} {page.isVisible ? '<.>' : '</>'}
             </BodyText>
           ))}
         </ScrollView>
