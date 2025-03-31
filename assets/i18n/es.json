@@ -1290,6 +1290,7 @@
   "timeline-notiftype-blog-share": "Blog compartido",
   "timeline-notiftype-blog-submit-post": "Presentación de una entrada de blog",
   "timeline-notiftype-calendar-create": "Crear un evento",
+  "timeline-notiftype-calendar-reminder": "Recordatorio de un evento",
   "timeline-notiftype-calendar-share": "Agenda compartida",
   "timeline-notiftype-calendar-update": "Editar un evento",
   "timeline-notiftype-collaborativeeditor-share": "Pad compartido",

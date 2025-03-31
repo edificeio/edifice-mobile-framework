@@ -33,7 +33,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
     const mediaIcons: { [key: string]: string } = {
       audio: 'ui-mic-preview',
       image: 'ui-image-preview',
-      video: 'ui-recordVideo-preview',
+      video: 'ui-record-video-preview',
     };
 
     if (mediaTypesPerTask.length === 0) {
