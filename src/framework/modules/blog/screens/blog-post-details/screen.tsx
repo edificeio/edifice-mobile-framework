@@ -77,12 +77,12 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   usePreventBack({
     showAlert: infoComment.changed,
     text: I18n.get(
-      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
+      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`
     ),
     title: I18n.get(
       infoComment.isPublication
         ? 'blog-postdetails-confirmation-unsaved-publication'
-        : 'blog-postdetails-confirmation-unsaved-modification',
+        : 'blog-postdetails-confirmation-unsaved-modification'
     ),
   });
   return null;
@@ -111,7 +111,6 @@ function BlogPostDetailsFlatList(props: {
   session;
 }) {
   const [commentsMax, setCommentsMax] = React.useState(PAGE_SIZE);
-  console.log('commentsMax', commentsMax);
   const dataSlice = React.useMemo(() => (props.data as BlogPostComments).slice(0, commentsMax), [props.data, commentsMax]);
 
   return (
@@ -506,7 +505,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               }
             }
           }, 50);
-        },
+        }
       );
 
       this.hideSubscription = Keyboard.addListener(
@@ -514,7 +513,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         () => {
           if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
             this.setState({ isCommentFieldFocused: false });
-        },
+        }
       );
     }
   }
@@ -744,7 +743,7 @@ const mapStateToProps: (s: IGlobalState) => BlogPostDetailsScreenDataProps = s =
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
+  getState: () => IGlobalState
 ) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
   dispatch,
 
@@ -775,7 +774,7 @@ const mapDispatchToProps: (
   // TS BUG: dispatch mishandled
   handleUpdateBlogPostComment: async (
     blogPostCommentId: { blogId: string; postId: string; commentId: string },
-    comment: string,
+    comment: string
   ) => {
     return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
   },

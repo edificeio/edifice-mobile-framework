@@ -6,13 +6,14 @@ function hasConnectorApp(entcoreApp: IEntcoreApp): boolean {
   return entcoreApp.address.toUpperCase().includes(LVSTestString) || LVSRegex.test(entcoreApp.address);
 }
 
-export default new NavigableModuleConfig<'lvs', null>({
+const LVS = 'lvs';
+
+export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsConnector',
   displayI18n: 'lvs-moduleconfig-appname',
   displayPicture: { name: 'lvs', type: 'Svg' },
   entcoreScope: ['lvs'],
-
   matchEntcoreApp: entcoreApp => hasConnectorApp(entcoreApp),
-  name: 'lvs',
-  storageName: 'lvs',
+  name: LVS,
+  storageName: LVS,
 });

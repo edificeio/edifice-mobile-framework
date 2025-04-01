@@ -13,6 +13,7 @@ const variableColor = appConf.is1d ? theme.palette.primary.regular : theme.palet
 export let APPBADGES: {
   [key: string]: IAppBadgeInfo;
 } = {
+  APPOINTMENTS: { color: theme.palette.complementary.green.regular, icon: { name: 'appointments', type: 'Svg' } },
   ARCHIVE: { color: theme.palette.complementary.yellow.regular, icon: { name: 'archives', type: 'Svg' } },
   BLOG: { color: theme.palette.complementary.indigo.regular, icon: { name: 'blog', type: 'Svg' } },
   CALENDAR: { color: theme.palette.complementary.yellow.regular, icon: { name: 'calendar', type: 'Svg' } },
@@ -23,6 +24,7 @@ export let APPBADGES: {
   FORMULAIRE: { color: theme.palette.complementary.purple.regular, icon: { name: 'form', type: 'Svg' } },
   FORUM: { color: theme.palette.complementary.blue.regular, icon: { name: 'forum', type: 'Svg' } },
   HOMEWORKS: { color: theme.palette.complementary.green.regular, icon: { name: 'homework1D', type: 'Svg' } },
+  MAGNETO: { color: theme.palette.complementary.yellow.regular, icon: { name: 'magneto', type: 'Svg' } },
   MESSAGERIE: { color: theme.palette.complementary.yellow.regular, icon: { name: 'messages', type: 'Svg' } },
   MINDMAP: { color: theme.palette.complementary.blue.regular, icon: { name: 'siteMap', type: 'Svg' } },
   NEWS: { color: theme.palette.complementary.blue.regular, icon: { name: 'newsFeed', type: 'Svg' } },
@@ -33,7 +35,7 @@ export let APPBADGES: {
   RBS: { color: theme.palette.complementary.pink.regular, icon: { name: 'rbs', type: 'Svg' } },
   SCHOOLBOOK: { color: theme.palette.complementary.green.regular, icon: { name: 'homeLiaisonDiary', type: 'Svg' } },
   SCRAPBOOK: { color: theme.palette.complementary.green.regular, icon: { name: 'scrapbook', type: 'Svg' } },
-  SHAREBIGFILES: { color: theme.palette.complementary.purple.regular, icon: { name: 'shareBigFiles', type: 'Svg' } },
+  SHAREBIGFILES: { color: theme.palette.complementary.purple.regular, icon: { name: 'share-big-files', type: 'Svg' } },
   SUPPORT: { color: theme.palette.complementary.green.regular, icon: { name: 'support', type: 'Svg' } },
   TIMELINE: { color: theme.palette.complementary.indigo.regular, icon: { name: 'report', type: 'Svg' } },
   TIMELINEGENERATOR: { color: theme.palette.complementary.yellow.regular, icon: { name: 'timeLineGenerator', type: 'Svg' } },
