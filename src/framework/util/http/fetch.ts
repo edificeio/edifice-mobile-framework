@@ -16,21 +16,38 @@ export function parseFetchArguments(
   let _method: Request['method'] | undefined = RequestBuilder.defaultMethod;
   let _url: string | URL;
   let _init: RequestInit | undefined;
-  if (arguments[0] !== undefined) {
-    _url = methodOrUrl as string | URL;
-  } else if (arguments[0] !== undefined && arguments[1] !== undefined) {
+
+  /**
+   * There is 4 usages for this method :
+   * Case 1 : url + undefined + undefined
+   * Case 2 : method + url + undefined
+   * Case 3 : url + init + undefined
+   * Case 4 : method + url + init
+   */
+
+  if (urlOrInit === undefined) {
+    // Case 1
+    _url = methodOrUrl;
+    _init = undefined;
+  } else if (init === undefined) {
+    // Case 2 or 3
     if (typeof urlOrInit === 'string' || urlOrInit instanceof URL) {
+      // Case 2
       _method = methodOrUrl as Request['method'];
-      _url = urlOrInit as string | URL;
+      _url = urlOrInit;
+      _init = undefined;
     } else {
-      _url = methodOrUrl as string | URL;
-      _init = urlOrInit as RequestInit;
+      // Case 3
+      _url = methodOrUrl;
+      _init = urlOrInit;
     }
   } else {
+    // Case 4
     _method = methodOrUrl as Request['method'];
     _url = urlOrInit as string | URL;
-    _init = init as RequestInit;
+    _init = init;
   }
+
   return [_method, _url, _init] as const;
 }
 
