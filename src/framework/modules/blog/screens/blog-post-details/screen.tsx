@@ -111,7 +111,6 @@ function BlogPostDetailsFlatList(props: {
   session;
 }) {
   const [commentsMax, setCommentsMax] = React.useState(PAGE_SIZE);
-  console.log('commentsMax', commentsMax);
   const dataSlice = React.useMemo(() => (props.data as BlogPostComments).slice(0, commentsMax), [props.data, commentsMax]);
 
   return (
