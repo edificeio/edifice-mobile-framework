@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-03-18 23:34:27",
-  "notes": "fix(mails): WB-299 fix badge unread count\nfix(attachment): WB-3584 fix when open attachment other format audio, video or pic\nchore: updates caches\nupdate(stack): update yarn cache\nupdate(stack): update react-native-shake due to android build errors\nchore: updates caches\nSquashed commit of the following:\nfeat(mails): change folderMove icon && add deleteFromFolder icon\nfeat(mails): WB-3602 add good action in select mode depending selected folder\nchore(mails) fix lint error\nchore(mails) same refact\nfeat(mails): WB-3846 add move feature on selected mails\nfeat(mails): WB-3894 add unread / read feature on selected mails\nfeat(mails): WB-3583 , modif endpoint search visible and add children & relatives details in user search\nfeat(mails): WB-3602 select when click on all the mail\nchore(mails) refact & add MailsInputBottomSheet && MailsFoldersBottomSheet components\nfeat(mails): WB-3895 delete all selected mails\nrelease: 1.14.0-comm.2(1140003)",
-  "version": "1.14.0-comm.3(1140004)"
+  "last": "2025-04-01 14:15:06",
+  "notes": "update(stack): update yarn cache\nfix(mails): WB-3894 - fix disables unread & read buttons in select mode\nrelease: 1.14.0-comm.3(1140004)",
+  "version": "1.14.0-comm.4(1140005)"
 }
