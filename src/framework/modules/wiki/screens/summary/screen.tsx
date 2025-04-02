@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,6 +30,7 @@ export const computeNavBar = ({
 });
 
 export default function WikiSummaryScreen({
+  navigation,
   route: {
     params: { resourceId },
   },
@@ -54,14 +56,19 @@ export default function WikiSummaryScreen({
           <BodyBoldText>{wikiData.description}</BodyBoldText>
           <BodyBoldText>– – – – –</BodyBoldText>
           {wikiData.pages.map(page => (
-            <BodyText key={page.id}>
-              {page.position} {new Array(page.depth).fill('–').join(' ')} {page.title} {page.isVisible ? '<.>' : '</>'}
-            </BodyText>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate({ name: wikiRouteNames.reader, params: { pageId: page.id, resourceId } });
+              }}>
+              <BodyText key={page.id}>
+                {page.position} {new Array(page.depth).fill('–').join(' ')} {page.title} {page.isVisible ? '<.>' : '</>'}
+              </BodyText>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       );
     },
-    [resourceId, wikiData.description, wikiData.name, wikiData.pages],
+    [navigation, resourceId, wikiData.description, wikiData.name, wikiData.pages],
   );
 
   return (
