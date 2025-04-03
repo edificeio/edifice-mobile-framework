@@ -15,6 +15,10 @@ export default StyleSheet.create({
   bottomNavigationRight: {
     marginLeft: 'auto',
   },
+  bottomSheetNewPageButton: {
+    alignSelf: 'baseline',
+    marginLeft: UI_SIZES.spacing.minor,
+  },
   content: {
     margin: UI_SIZES.spacing.big,
   },
@@ -48,6 +52,9 @@ export default StyleSheet.create({
   },
   page: {
     backgroundColor: theme.ui.background.card,
+  },
+  separatorSpacing: {
+    paddingHorizontal: UI_SIZES.spacing.tiny,
   },
   topNavigation: {
     alignItems: 'stretch',

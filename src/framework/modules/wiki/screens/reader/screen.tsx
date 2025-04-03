@@ -14,14 +14,17 @@ import { getStore, IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { AvatarSizes } from '~/framework/components/avatar/styles';
 import GhostButton from '~/framework/components/buttons/ghost';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
+import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import PageHeader from '~/framework/modules/wiki/components/page-header';
 import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
+import PageListBottomSheet from '~/framework/modules/wiki/components/page-list/page-list-bottom-sheet';
 import { Wiki, WikiPage } from '~/framework/modules/wiki/model';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import service from '~/framework/modules/wiki/service';
@@ -92,10 +95,15 @@ export function WikiReaderScreenLoaded({
     () => (pageIndex !== -1 ? wiki.pages.at(pageIndex + 1)?.id : undefined),
     [pageIndex, wiki.pages],
   );
+  const pageListBottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
+  const openPagesBottomSheet = React.useCallback(() => {
+    pageListBottomSheetRef.current?.present();
+  }, []);
 
   return (
     <>
       <ScrollView refreshControl={refreshControl}>
+        <PrimaryButton text="Pages" action={openPagesBottomSheet} />
         <View style={styles.topNavigation} />
         <PageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
           <HeadingMText>{page.title}</HeadingMText>
@@ -133,6 +141,20 @@ export function WikiReaderScreenLoaded({
             }}
           />
         </View>
+        <PageListBottomSheet
+          currentPageId={page.id}
+          onPress={onGoToPage}
+          ref={pageListBottomSheetRef}
+          wikiData={wiki} /* Create page button for next version
+      ListFooterComponent={
+        <>
+          <View style={styles.separatorSpacing}>
+            <Separator marginVertical={UI_SIZES.spacing.medium} />
+          </View>
+          <TertiaryButton style={styles.bottomSheetNewPageButton} iconLeft="ui-plus" text={I18n.get('wiki-pagelist-newpage')} />
+        </>
+      } */
+        />
       </ScrollView>
       {!webViewReady && <View style={styles.webViewPlaceholder}>{renderLoading?.()}</View>}
     </>

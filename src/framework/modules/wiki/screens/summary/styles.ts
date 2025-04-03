@@ -1,8 +1,20 @@
 import { StyleSheet } from 'react-native';
 
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+
 export default StyleSheet.create({
-  // @scaffolder add styles here.
-  // Please use UI_STYLES for basic ones (like flex:1, flex:0, etc...) instead redefine them here.
-  // Never use inline colors, pick them from theme.
-  // Never use inline dimensions/spacers, pick them from UI_SIZES.
+  newPageButton: {
+    alignSelf: 'baseline',
+    marginBottom: UI_SIZES.spacing.big,
+    marginLeft: UI_SIZES.spacing.big,
+    marginTop: UI_SIZES.spacing.minor,
+  },
+  page: {
+    backgroundColor: theme.ui.background.card,
+  },
+  pageListTitle: {
+    marginBottom: UI_SIZES.spacing.medium,
+    marginHorizontal: UI_SIZES.spacing.big,
+  },
 });

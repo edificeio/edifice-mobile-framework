@@ -63,6 +63,7 @@ export const UI_SIZES = {
     thumbnail: 7 / 5,
   },
   border: {
+    normal: 3,
     small: 2,
     thin: 1,
   },

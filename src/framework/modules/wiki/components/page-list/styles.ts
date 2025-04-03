@@ -1,39 +1,51 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
-const listItemBaseStyle = {
+const listItemBaseStyle: ViewStyle = {
   backgroundColor: theme.palette.grey.white,
   borderColor: theme.palette.grey.cloudy,
-  borderLeftWidth: 1,
-  borderRightWidth: 1,
-  height: getScaleWidth(48),
-  marginHorizontal: UI_SIZES.spacing.big,
+  borderLeftWidth: UI_SIZES.border.thin,
+  borderRightWidth: UI_SIZES.border.thin,
   paddingHorizontal: UI_SIZES.spacing.medium,
   paddingVertical: UI_SIZES.spacing.small,
 };
 
-const indentedItemBaseStyle = {
-  marginLeft: UI_SIZES.spacing.medium + UI_SIZES.spacing.big,
-  // marginTop: -UI_SIZES.spacing.small,
-  marginTop: getScaleWidth(-11), // il y a un décalage avec spacing.small qui vaut 12, donc 11
+const childItemBaseStyle = {
+  marginLeft: UI_SIZES.spacing.major,
+  marginTop: -UI_SIZES.spacing.small + UI_SIZES.border.thin,
+};
+
+const bottomSheetItemBaseStyle: ViewStyle = {
+  paddingVertical: UI_SIZES.spacing.minor,
 };
 
 const styles = StyleSheet.create({
-  firstChildStyle: {
+  bottomSheetChild: {
+    ...bottomSheetItemBaseStyle,
+    paddingLeft: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny,
+    paddingRight: UI_SIZES.spacing.medium,
+  },
+  bottomSheetFocusedItem: {
+    backgroundColor: theme.palette.primary.pale,
+    borderRadius: UI_SIZES.radius.card,
+  },
+  bottomSheetRootLevelItem: {
+    ...bottomSheetItemBaseStyle,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+  },
+  firstChild: {
     ...listItemBaseStyle,
-    ...indentedItemBaseStyle,
+    ...childItemBaseStyle,
     borderTopLeftRadius: 0,
-    // backgroundColor: 'blue',
     borderTopRightRadius: 0,
   },
-  lastChildStyle: {
+  lastChild: {
     ...listItemBaseStyle,
-    ...indentedItemBaseStyle,
+    ...childItemBaseStyle,
     borderBottomRightRadius: UI_SIZES.radius.card,
     borderBottomWidth: 3,
-    // backgroundColor: 'green',
     borderColor: theme.palette.grey.cloudy,
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
@@ -43,26 +55,31 @@ const styles = StyleSheet.create({
     ...listItemBaseStyle,
     borderBottomLeftRadius: UI_SIZES.radius.card,
     borderBottomRightRadius: UI_SIZES.radius.card,
-    borderBottomWidth: 3,
-    borderRightWidth: 1,
+    borderBottomWidth: UI_SIZES.border.normal,
+    borderRightWidth: UI_SIZES.border.thin,
     borderTopLeftRadius: UI_SIZES.radius.card,
     borderTopRightRadius: UI_SIZES.radius.card,
-    borderTopWidth: 1,
+    borderTopWidth: UI_SIZES.border.thin,
+    marginHorizontal: UI_SIZES.spacing.big,
+  },
+  listItemContent: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   listItemWithChild: {
     ...listItemBaseStyle,
     borderBottomLeftRadius: UI_SIZES.radius.card,
-    // backgroundColor: 'yellow',
     borderBottomRightRadius: 0,
-    borderBottomWidth: 3,
+    borderBottomWidth: UI_SIZES.border.normal,
     borderTopLeftRadius: UI_SIZES.radius.card,
     borderTopRightRadius: UI_SIZES.radius.card,
-    borderTopWidth: 1,
+    borderTopWidth: UI_SIZES.border.thin,
+    marginHorizontal: UI_SIZES.spacing.big,
   },
-  middleChildStyle: {
+  middleChild: {
     ...listItemBaseStyle,
-    ...indentedItemBaseStyle,
-    // backgroundColor: 'red',
+    ...childItemBaseStyle,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
     borderBottomWidth: 0,
@@ -70,16 +87,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     borderTopWidth: 0,
   },
-  newPageButton: {
-    alignSelf: 'baseline',
-    marginLeft: UI_SIZES.spacing.minor,
-    marginTop: UI_SIZES.spacing.minor,
-  },
-  pageListTitle: {
-    marginBottom: UI_SIZES.spacing.medium,
-    marginHorizontal: UI_SIZES.spacing.big,
-  },
-  spacingFolder: {
+  spacingItem: {
     height: UI_SIZES.spacing.minor,
   },
 });

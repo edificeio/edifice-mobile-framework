@@ -4,14 +4,17 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import styles from './styles';
 import type { WikiSummaryScreen } from './types';
 
+import { I18n } from '~/app/i18n';
 import { getStore, IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
-import { BodyBoldText } from '~/framework/components/text';
+import { BodyBoldText, HeadingMText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { PageList } from '~/framework/modules/wiki/components/page-list';
+import { PageListProps } from '~/framework/modules/wiki/components/page-list/types';
 import ResourceHeader from '~/framework/modules/wiki/components/resource-header';
 import { Wiki } from '~/framework/modules/wiki/model';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
@@ -51,8 +54,20 @@ export function WikiSummaryScreenLoaded({
     <PageList
       refreshControl={refreshControl}
       wikiData={wiki}
-      header={<ResourceHeader canAddDescription={true} image={imageSource} description={wiki.description} />}
-      onPress={page => navigation.navigate({ name: wikiRouteNames.reader, params: { pageId: page.id, resourceId: wiki.assetId } })}
+      ListHeaderComponent={
+        <>
+          <ResourceHeader canAddDescription={true} image={imageSource} description={wiki.description} />
+          <HeadingMText style={styles.pageListTitle}>{I18n.get('wiki-pagelist-title')}</HeadingMText>
+        </>
+      }
+      onPressItem={React.useCallback<NonNullable<PageListProps['onPressItem']>>(
+        pageId => navigation.navigate({ name: wikiRouteNames.reader, params: { pageId, resourceId: wiki.assetId } }),
+        [navigation, wiki.assetId],
+      )} /* Create page button for next version
+  ListFooterComponent={
+    <TertiaryButton style={styles.newPageButton} iconLeft="ui-plus" text={I18n.get('wiki-pagelist-newpage')} />
+  }
+    */
     />
   );
 }
@@ -87,7 +102,7 @@ export default function WikiSummaryScreen({
   );
 
   return (
-    <PageView>
+    <PageView style={styles.page}>
       <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={renderLoading} />
     </PageView>
   );

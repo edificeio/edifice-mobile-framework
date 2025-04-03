@@ -2,123 +2,127 @@ import React from 'react';
 import { FlatList, FlatListProps, TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
+import { PageListProps, WikiListItemProps } from './types';
 
-import { I18n } from '~/app/i18n';
-import TertiaryButton from '~/framework/components/buttons/tertiary';
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { BodyText, HeadingMText } from '~/framework/components/text';
-import type { Wiki, WikiPage } from '~/framework/modules/wiki/model';
-
-interface WikiListItemProps {
-  name: string;
-  depth: number;
-  id: string;
-  onPress: () => void;
-  position: number;
-  isVisible: boolean;
-  childrenIds: string[];
-  parentId?: string;
-  wikiData: any;
-}
-
-export const PageListTitle: React.FC = () => {
-  return <HeadingMText style={styles.pageListTitle}>{I18n.get('wiki-pagelist-title')}</HeadingMText>;
-};
+import { BodyBoldText, BodyText } from '~/framework/components/text';
+import IconChip from '~/framework/modules/wiki/components/icon-chip';
 
 const WikiListItem: React.FC<WikiListItemProps> = props => {
+  const isCurrentPage = props.currentPageId === props.id;
   const hasChild = props.childrenIds.length > 0;
 
   const listItemStyle = React.useMemo(() => {
-    const getChildPositionStyle = () => {
-      if (!props.parentId) return {};
-      const parent = props.wikiData.pages.find((page: any) => page.id === props.parentId);
-      const childArray = parent.childrenIds;
-      const childIndex = childArray.indexOf(props.id);
-      const parentHasChildren = parent.childrenIds.length > 1;
+    const getChildItemStyle = () => {
+      if (!props.parentId || props.depth === 0 || props.borderless) return {};
+      const parent = props.wikiData.pages.find(page => page.id === props.parentId);
+      const childrenArray = parent && parent.childrenIds;
+      const childIndex = childrenArray && childrenArray.indexOf(props.id);
+      const parentHasChildren = parent && childrenArray && parent.childrenIds.length > 1;
 
       if (childIndex === 0) {
         return [
-          styles.firstChildStyle,
+          styles.firstChild,
           {
             borderBottomLeftRadius: parentHasChildren ? 0 : UI_SIZES.radius.card,
             borderBottomRightRadius: parentHasChildren ? 0 : UI_SIZES.radius.card,
           },
         ];
-      } else if (childIndex === childArray.length - 1) {
-        return styles.lastChildStyle;
-      } else if (childIndex > 0) {
-        return styles.middleChildStyle;
+      } else if (childrenArray && childIndex === childrenArray.length - 1) {
+        return styles.lastChild;
+      } else if (childIndex !== undefined && childIndex > 0) {
+        return styles.middleChild;
       } else {
-        return {};
+        return undefined;
       }
     };
 
-    const rootLevelItemStyle = hasChild ? styles.listItemWithChild : styles.listItemChildless;
-    const indentedItemStyle = getChildPositionStyle();
+    const getRootLevelItemStyle = () => {
+      if (props.borderless) {
+        return hasChild || props.depth === 0 ? styles.bottomSheetRootLevelItem : styles.bottomSheetChild;
+      } else {
+        return hasChild ? styles.listItemWithChild : styles.listItemChildless;
+      }
+    };
 
-    return [rootLevelItemStyle, indentedItemStyle];
-  }, [hasChild, props.id, props.parentId, props.wikiData.pages]);
+    const rootLevelItemStyle = getRootLevelItemStyle();
+    const childItemStyle = props.borderless && props.parentId ? styles.bottomSheetChild : getChildItemStyle();
+
+    return [rootLevelItemStyle, childItemStyle];
+  }, [hasChild, props.depth, props.id, props.borderless, props.parentId, props.wikiData.pages]);
+
+  const currentPageAttributes = React.useMemo(() => {
+    return {
+      iconChipContainerColor: isCurrentPage ? theme.palette.grey.white : theme.palette.complementary.blue.pale,
+      style: isCurrentPage ? styles.bottomSheetFocusedItem : undefined,
+    };
+  }, [isCurrentPage]);
+
+  const { id, onPressItem: onPress } = props;
 
   return (
-    <View style={listItemStyle}>
-      <TouchableOpacity onPress={props.onPress}>
-        <BodyText>{props.name}</BodyText>
+    <View style={React.useMemo(() => [listItemStyle, currentPageAttributes.style], [currentPageAttributes.style, listItemStyle])}>
+      <TouchableOpacity
+        onPress={React.useCallback(() => {
+          onPress?.(id);
+        }, [onPress, id])}>
+        <View style={styles.listItemContent}>
+          {isCurrentPage ? <BodyBoldText>{props.name}</BodyBoldText> : <BodyText>{props.name}</BodyText>}
+          {!props.isVisible && (
+            <IconChip
+              icon="ui-hide"
+              iconColor={theme.palette.complementary.blue.regular}
+              iconContainerColor={currentPageAttributes.iconChipContainerColor}
+            />
+          )}
+        </View>
       </TouchableOpacity>
     </View>
   );
 };
 
-export const PageList = ({
-  header,
-  onPress,
+const ItemSeparatorComponent = () => <View style={styles.spacingItem} />;
+
+export const PageList: React.FC<PageListProps> = ({
+  borderless = false,
+  currentPageId,
+  ListFooterComponent,
+  ListHeaderComponent,
+  onPressItem: onPress,
   refreshControl,
   wikiData,
-}: {
-  wikiData: Wiki;
-  header: React.ReactElement;
-  onPress?: (page: WikiPage) => void;
-  refreshControl: FlatListProps<WikiPage>['refreshControl'];
 }) => {
-  const renderPageList = React.useCallback(() => {
-    return (
-      <FlatList
-        refreshControl={refreshControl}
-        data={wikiData?.pages}
-        showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View style={styles.spacingFolder} />}
-        ListHeaderComponent={
-          <View>
-            {header}
-            <PageListTitle />
-          </View>
-        }
-        ListFooterComponent={
-          <TertiaryButton
-            style={styles.newPageButton}
-            iconLeft="ui-plus"
-            text={I18n.get('wiki-pagelist-newpage')}
-            action={() => console.log('new page')}
-          />
-        }
-        renderItem={({ item }) => (
-          <WikiListItem
-            key={item.id}
-            depth={item.depth}
-            isVisible={item.isVisible}
-            name={item.title}
-            onPress={() => {
-              onPress?.(item);
-            }}
-            parentId={item.parentId}
-            position={item.position}
-            childrenIds={item.childrenIds}
-            wikiData={wikiData}
-            id={item.id}
-          />
-        )}
+  const renderItem = React.useCallback(
+    ({ item }) => (
+      <WikiListItem
+        borderless={borderless}
+        childrenIds={item.childrenIds}
+        currentPageId={currentPageId}
+        depth={item.depth}
+        id={item.id}
+        isVisible={item.isVisible}
+        name={item.title}
+        onPressItem={onPress}
+        parentId={item.parentId}
+        position={item.position}
+        wikiData={wikiData}
       />
-    );
-  }, [header, onPress, wikiData]);
+    ),
+    [currentPageId, borderless, onPress, wikiData],
+  );
 
-  return renderPageList();
+  return (
+    <FlatList
+      data={wikiData?.pages}
+      ItemSeparatorComponent={ItemSeparatorComponent}
+      ListFooterComponent={ListFooterComponent}
+      ListHeaderComponent={ListHeaderComponent}
+      refreshControl={refreshControl}
+      renderItem={renderItem}
+      keyExtractor={React.useCallback<
+        NonNullable<FlatListProps<NonNullable<PageListProps['wikiData']['pages'][0]>>['keyExtractor']>
+      >(item => item.id, [])}
+    />
+  );
 };

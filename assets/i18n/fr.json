@@ -1643,6 +1643,8 @@
   "wiki-page-hidden": "Masquée",
   "wiki-page-next": "Page suivante",
   "wiki-page-previous": "Page précédente",
+  "wiki-pagelist-title": "Liste des pages",
+  "wiki-pagelist-newpage": "Nouvelle page",
   "wiki-page-published-at": "Publié le {{date}}",
   "workspace-filelist-deletealert-message": "Voulez-vous vraiment supprimer définitivement le(s) fichier(s) ?",
   "workspace-filelist-deletealert-title": "Suppression de fichier",
