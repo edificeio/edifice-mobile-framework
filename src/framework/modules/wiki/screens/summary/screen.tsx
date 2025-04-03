@@ -45,6 +45,8 @@ export default function WikiSummaryScreen({
     dispatch(actions.loadWiki(data));
   }, [dispatch, resourceId]);
 
+  // console.log('wikiData', wikiData?.pages);
+
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
     () => <BodyBoldText>LOADING {resourceId}</BodyBoldText>,
     [resourceId],
@@ -73,6 +75,9 @@ export default function WikiSummaryScreen({
               </BodyText>
             </TouchableOpacity>
           ))}
+          <BodyBoldText style={{ marginBottom: 10 }}>{wikiData.name}</BodyBoldText>
+
+          <PageList wikiData={wikiData} />
         </ScrollView>
       );
     },
