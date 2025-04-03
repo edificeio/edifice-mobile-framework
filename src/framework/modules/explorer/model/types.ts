@@ -3,8 +3,8 @@ import type { Temporal } from '@js-temporal/polyfill';
 import type { API } from '~/framework/modules/explorer/service/types';
 
 export interface ResourceHistory {
-  updatedAt: Temporal.Instant; // timestamp
-  updaterName: string;
+  updatedAt?: Temporal.Instant; // timestamp
+  updaterName?: string;
   updaterId?: string; // Optional in case of updater is a deleted user.
   createdAt: Temporal.Instant; // timestamp
   creatorName: string;

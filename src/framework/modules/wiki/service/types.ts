@@ -48,7 +48,27 @@ export namespace API {
       rights: ResourceRights[];
     }
 
-    export interface GetPagePayload {}
-    export interface GetPageResponse {}
+    export interface GetPagePayload extends ListPagesPayload {
+      pageId: string;
+    }
+    export interface GetPageResponse {
+      _id: string;
+      author: string;
+      title: string;
+      authorName: string;
+      content: string;
+      lastContributer?: string;
+      lastContributerName?: string;
+      contentVersion: number;
+      created: { $date: string };
+      modified?: { $date: string };
+      isVisible: boolean;
+      parentId: string | null;
+      position: number;
+      jsonContent: {
+        type: 'doc';
+        content: object[]; // Not typed but not used in the mobile app
+      };
+    }
   }
 }

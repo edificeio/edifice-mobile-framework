@@ -2,7 +2,7 @@
  * Data model for the module wiki
  */
 
-import { Resource } from '~/framework/modules/explorer/model/types';
+import { Resource, ResourceHistory } from '~/framework/modules/explorer/model/types';
 
 export type WikiResourceMetadata = Pick<
   Resource,
@@ -22,4 +22,9 @@ export interface WikiPageMetaData {
   depth: number;
   parentId?: WikiPageMetaData['id'];
   childrenIds: WikiPageMetaData['id'][];
+}
+
+export interface WikiPage extends Pick<WikiPageMetaData, 'id' | 'isVisible' | 'title'>, ResourceHistory {
+  content: string;
+  contentVersion: number;
 }

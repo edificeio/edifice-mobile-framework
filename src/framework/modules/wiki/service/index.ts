@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill';
 
-import { Wiki, WikiResourceMetadata } from '../model';
+import { Wiki, WikiPage, WikiResourceMetadata } from '../model';
 import { API } from './types';
 
 import http from '~/framework/util/http';
@@ -52,7 +52,27 @@ const hydrateWikiData = (data: API.Wiki.ListPagesResponse): Wiki => {
   };
 };
 
+const hydrateWikiPageData = (data: API.Wiki.GetPageResponse): WikiPage => ({
+  content: data.content,
+  contentVersion: data.contentVersion,
+  createdAt: Temporal.Instant.from(data.created.$date),
+  creatorId: data.author,
+  creatorName: data.authorName,
+  id: data._id,
+  isVisible: data.isVisible,
+  title: data.title,
+  updatedAt: data.modified ? Temporal.Instant.from(data.modified.$date) : undefined,
+  updaterId: data.lastContributer,
+  updaterName: data.lastContributerName,
+});
+
 export default {
+  page: {
+    get: async (opts: API.Wiki.GetPagePayload) => {
+      const rawData: API.Wiki.GetPageResponse = await http.fetchJsonForSession(`/wiki/${opts.id}/page/${opts.pageId}`);
+      return hydrateWikiPageData(rawData);
+    },
+  },
   wiki: {
     get: async (opts: API.Wiki.ListPagesPayload) => {
       const rawData: API.Wiki.ListPagesResponse = await http.fetchJsonForSession(`/wiki/${opts.id}`);
