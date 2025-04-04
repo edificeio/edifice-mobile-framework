@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-04-03 12:00:52",
-  "notes": "fix(android): AD_ID permission addition\nUpdated translations from Phrase (#195)\nrelease: 1.13.13-rc.4(1131310)",
-  "version": "1.13.13-rc.5(1131311)"
+  "last": "2025-04-04 11:01:41",
+  "notes": "release: 1.13.13-rc.5(1131311)",
+  "version": "1.13.13-rc.6(1131312)"
 }
