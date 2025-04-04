@@ -4,6 +4,8 @@
  */
 import { Alert, Linking } from 'react-native';
 
+import { decode } from 'html-entities';
+
 import { I18n } from '~/app/i18n';
 import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 
@@ -36,7 +38,7 @@ export async function openUrl(
       throw new Error('openUrl : no url provided.');
     }
 
-    let finalUrl = urlSigner.getAbsoluteUrl(url);
+    let finalUrl = urlSigner.getAbsoluteUrl(decode(url));
 
     if (autoLogin) {
       try {

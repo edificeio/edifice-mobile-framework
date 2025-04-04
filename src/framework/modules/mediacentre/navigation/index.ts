@@ -6,8 +6,8 @@ import type { MediacentreHomeScreenNavParams } from '~/framework/modules/mediace
 import type { MediacentreResourceListScreenNavParams } from '~/framework/modules/mediacentre/screens/resource-list';
 
 export const mediacentreRouteNames = {
-  home: `${moduleConfig.routeName}` as 'home',
   filter: `${moduleConfig.routeName}/filter` as 'filter',
+  home: `${moduleConfig.routeName}` as 'home',
   resourceList: `${moduleConfig.routeName}/resource-list` as 'resourceList',
 };
 export interface MediacentreNavigationParams extends ParamListBase {

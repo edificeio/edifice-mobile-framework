@@ -11,8 +11,6 @@ import { actions as selectedStructureActions } from '~/framework/modules/mediace
 import { mediacentreService } from '~/framework/modules/mediacentre/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
-import { AccountType } from '../../auth/model';
-
 export const resourcesActionsCreators = createAsyncActionCreators(actionTypes.fetchResources);
 export const fetchResourcesAction =
   (structureId: string): ThunkAction<Promise<MediacentreResources>, any, any, any> =>
@@ -26,8 +24,7 @@ export const fetchResourcesAction =
         mediacentreService.signets.get(session),
         mediacentreService.textbooks.get(session, structureId),
       ]);
-      if (!externals.length && session.user.type === AccountType.Relative)
-        externals = await mediacentreService.globalResources.get(session);
+      if (!externals.length) externals = await mediacentreService.globalResources.get(session);
       externals = externals.filter(r => !r.isTextbook);
       const resources = { externals, pins, signets, textbooks };
       dispatch(resourcesActionsCreators.receipt(resources));

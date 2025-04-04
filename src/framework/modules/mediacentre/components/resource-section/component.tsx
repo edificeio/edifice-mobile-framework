@@ -1,6 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import styles from './styles';
+import { ResourceSectionProps } from './types';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -10,18 +13,15 @@ import { BodyText } from '~/framework/components/text';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 
-import styles from './styles';
-import { ResourceSectionProps } from './types';
-
 const ResourceSection: React.FunctionComponent<ResourceSectionProps> = ({
   disableShowAll = false,
-  resources,
-  type,
   iconName,
   isResourceFavorite,
   onAddFavorite,
   onRemoveFavorite,
   openResourceList,
+  resources,
+  type,
 }) => {
   const headingColor = disableShowAll ? theme.ui.text.regular : theme.palette.primary.regular;
 
@@ -41,7 +41,7 @@ const ResourceSection: React.FunctionComponent<ResourceSectionProps> = ({
     <View>
       <TouchableOpacity onPress={handlePressShowAll} disabled={disableShowAll} style={styles.headerContainer}>
         {iconName ? <NamedSVG name={iconName} fill={headingColor} width={20} /> : null}
-        <BodyText style={{ color: headingColor }}>{I18n.get(`mediacentre-sectiontype-${type}`)}</BodyText>
+        <BodyText style={{ color: headingColor }}>{I18n.get(`mediacentre-home-section-${type}`)}</BodyText>
         {!disableShowAll ? <NamedSVG name="ui-rafterRight" fill={headingColor} width={20} height={20} /> : null}
       </TouchableOpacity>
       <FlatList

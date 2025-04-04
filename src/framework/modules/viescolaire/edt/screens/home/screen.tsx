@@ -68,10 +68,10 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     { key: 'saturday', title: I18n.get('date-saturday') },
   ]);
   const [startDate, setStartDate] = React.useState<Moment>(
-    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day'),
+    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day')
   );
   const [selectedDate, setSelectedDate] = React.useState<Moment>(
-    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day'),
+    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day')
   );
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -167,7 +167,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     return props.teachers.find(teacher => teacher.id === teacherIds[0])?.displayName ?? '';
   };
 
-  const renderCourse = (course: IEdtCourse) => {
+  const renderCourse = (course: IEdtCourse): React.ReactElement => {
     const isTeacher = props.userType === AccountType.Teacher;
     const className = course.classes.length ? course.classes[0] : course.groups[0];
     const firstText = isTeacher ? className : course.subject.name;
@@ -177,13 +177,13 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
     return (
       <View style={[styles.courseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
-        <View style={styles.subjectView}>
+        <View style={[styles.subjectView, styles.halfSplitLineView, styles.firstTextLine]}>
           <SmallText numberOfLines={1}>{firstText}</SmallText>
-          <CaptionText style={{ color: theme.palette.grey.graphite }} numberOfLines={1}>
+          <CaptionText style={[styles.halfTextStyle, { color: theme.palette.grey.graphite }]} numberOfLines={1}>
             {secondText}
           </CaptionText>
         </View>
-        <View>
+        <View style={[styles.halfSplitLineView, styles.firstTextLine]}>
           {course.roomLabels[0]?.length ? (
             <View style={styles.roomView}>
               <CaptionBoldText numberOfLines={1}>
@@ -207,7 +207,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
     return (
       <View style={[styles.halfCourseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
-        <View style={styles.halfSplitLineView}>
+        <View style={[styles.halfSplitLineView, styles.firstTextLine]}>
           <SmallText style={styles.halfTextStyle} numberOfLines={1}>
             {firstText}
           </SmallText>
@@ -252,7 +252,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   }, [selectedDate]);
 
   const renderTabbar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> }
   ) => {
     return (
       <TabBar
@@ -387,6 +387,6 @@ export default connect(
         tryFetchTeachers: tryAction(fetchEdtTeachersAction),
         tryFetchUserChildren: tryAction(fetchEdtUserChildrenAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(EdtHomeScreen);

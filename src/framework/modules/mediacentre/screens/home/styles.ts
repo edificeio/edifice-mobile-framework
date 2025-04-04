@@ -7,8 +7,8 @@ export default StyleSheet.create({
     rowGap: UI_SIZES.spacing.minor,
   },
   listHeaderContainer: {
-    rowGap: UI_SIZES.spacing.small,
     margin: UI_SIZES.spacing.small,
+    rowGap: UI_SIZES.spacing.small,
   },
   listHeaderZIndex: {
     zIndex: 99,

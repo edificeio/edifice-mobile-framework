@@ -4,10 +4,9 @@ import { RefreshControl, ScrollView, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
-import { HomeworkAssistanceHomeScreenPrivateProps } from './types';
+import { HomeworkAssistanceHomeScreenDispatchProps, HomeworkAssistanceHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -19,14 +18,19 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { fetchHomeworkAssistanceConfigAction } from '~/framework/modules/homework-assistance/actions';
+import {
+  fetchHomeworkAssistanceConfigAction,
+  fetchHomeworkAssistanceResourcesAction,
+} from '~/framework/modules/homework-assistance/actions';
+import FeedbackMenu from '~/framework/modules/homework-assistance/components/feedback-menu';
+import ResourceList from '~/framework/modules/homework-assistance/components/resource-list';
 import moduleConfig from '~/framework/modules/homework-assistance/module-config';
 import {
   HomeworkAssistanceNavigationParams,
   homeworkAssistanceRouteNames,
 } from '~/framework/modules/homework-assistance/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export const computeNavBar = ({
@@ -49,18 +53,25 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
+  const fetchInfo = async () => {
+    try {
+      await props.tryFetchConfig();
+      await props.tryFetchResources();
+    } catch {
+      throw new Error();
+    }
+  };
+
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
-    props
-      .fetchConfig()
+    fetchInfo()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
   const reload = () => {
     setLoadingState(AsyncPagedLoadingState.RETRY);
-    props
-      .fetchConfig()
+    fetchInfo()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
@@ -73,7 +84,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
-  const goToRequest = () => props.navigation.navigate(homeworkAssistanceRouteNames.request);
+  const goToRequest = () => props.navigation.navigate(homeworkAssistanceRouteNames.request, {});
 
   const renderError = () => {
     return (
@@ -85,29 +96,36 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
 
   const renderInformation = () => {
     if (!props.config) return renderError();
-    const { body, days, header, info, time } = props.config.messages;
+    const { body, days, descriptionLink, header, info, link, time } = props.config.messages;
+
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
-        <SmallText style={styles.primaryText}>{body}</SmallText>
-        <NamedSVG name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
-        <View>
-          <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
-          <View style={styles.rowContainer}>
-            <NamedSVG name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
-            <SmallText style={styles.secondaryText}>{days}</SmallText>
+      <>
+        <ScrollView contentContainerStyle={[styles.container, props.resources.length ? styles.containerPadding : {}]}>
+          <View style={styles.configContainer}>
+            <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
+            <SmallText style={styles.primaryText}>{body}</SmallText>
+            <NamedSVG name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
+            <View>
+              <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
+              <View style={styles.rowContainer}>
+                <NamedSVG name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
+                <SmallText style={styles.secondaryText}>{days}</SmallText>
+              </View>
+              <View style={styles.rowContainer}>
+                <NamedSVG name="ui-clock" width={24} height={24} fill={theme.palette.secondary.regular} />
+                <SmallText style={styles.secondaryText}>{time}</SmallText>
+              </View>
+              <View style={styles.rowContainer}>
+                <NamedSVG name="ui-infoCircle" width={24} height={24} fill={theme.palette.secondary.regular} />
+                <SmallText style={styles.secondaryText}>{info}</SmallText>
+              </View>
+            </View>
+            <PrimaryButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} />
           </View>
-          <View style={styles.rowContainer}>
-            <NamedSVG name="ui-clock" width={24} height={24} fill={theme.palette.secondary.regular} />
-            <SmallText style={styles.secondaryText}>{time}</SmallText>
-          </View>
-          <View style={styles.rowContainer}>
-            <NamedSVG name="ui-infoCircle" width={24} height={24} fill={theme.palette.secondary.regular} />
-            <SmallText style={styles.secondaryText}>{info}</SmallText>
-          </View>
-        </View>
-        <PrimaryButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} />
-      </ScrollView>
+          {props.resources.length ? <ResourceList resources={props.resources} /> : null}
+        </ScrollView>
+        <FeedbackMenu description={descriptionLink} link={link} />
+      </>
     );
   };
 
@@ -137,17 +155,15 @@ export default connect(
       initialLoadingState: homeworkAssistanceState.config.isPristine
         ? AsyncPagedLoadingState.PRISTINE
         : AsyncPagedLoadingState.DONE,
+      resources: homeworkAssistanceState.resources.data,
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<HomeworkAssistanceHomeScreenDispatchProps>(
       {
-        fetchConfig: tryActionLegacy(
-          fetchHomeworkAssistanceConfigAction,
-          undefined,
-          true,
-        ) as unknown as HomeworkAssistanceHomeScreenPrivateProps['fetchConfig'],
+        tryFetchConfig: tryAction(fetchHomeworkAssistanceConfigAction),
+        tryFetchResources: tryAction(fetchHomeworkAssistanceResourcesAction),
       },
       dispatch,
     ),

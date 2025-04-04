@@ -1,7 +1,11 @@
-import Clipboard from '@react-native-clipboard/clipboard';
 import * as React from 'react';
 import { memo } from 'react';
 import { View } from 'react-native';
+
+import Clipboard from '@react-native-clipboard/clipboard';
+
+import { defaultStyles, pinStyles, previewStyles } from './styles';
+import { ResourceCardProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -16,15 +20,12 @@ import { Source } from '~/framework/modules/mediacentre/model';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media';
 
-import { defaultStyles, pinStyles, previewStyles } from './styles';
-import { ResourceCardProps } from './types';
-
 const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
   isFavorite,
-  resource,
-  variant = 'default',
   onAddFavorite,
   onRemoveFavorite,
+  resource,
+  variant = 'default',
 }) => {
   const handlePress = () => {
     if (resource.source === Source.SIGNET) {
@@ -61,7 +62,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
             <View style={pinStyles.rightContainer}>
               <SmallText numberOfLines={1}>{resource.title}</SmallText>
               {resource.pinnedDescription ? (
-                <CaptionText numberOfLines={1} style={UI_STYLES.flexShrink1}>
+                <CaptionText numberOfLines={2} style={UI_STYLES.flexShrink1}>
                   {resource.pinnedDescription}
                 </CaptionText>
               ) : null}
@@ -112,7 +113,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
         <Image source={{ uri: resource.image }} style={defaultStyles.imageContainer} />
         <View style={defaultStyles.innerContainer}>
           <View style={defaultStyles.titleContainer}>
-            <BodyText numberOfLines={1} style={UI_STYLES.flexShrink1}>
+            <BodyText numberOfLines={2} style={defaultStyles.titleText}>
               {resource.title}
             </BodyText>
             {renderTypeIcon()}

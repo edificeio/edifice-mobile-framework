@@ -1,13 +1,15 @@
 import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-export default new NavigableModuleConfig<'peertube', null>({
+const PEERTUBE = 'peertube';
+
+export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsConnector',
   displayI18n: 'peertube-moduleconfig-appname',
-  displayPicture: { fill: theme.palette.complementary.red.regular, name: 'peertube', type: 'NamedSvg' },
+  displayPicture: { fill: theme.palette.complementary.red.regular, name: PEERTUBE, type: 'NamedSvg' },
   entcoreScope: ['cas'],
 
-  matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('PEERTUBE'),
-  name: 'peertube',
-  storageName: 'peertube',
+  matchEntcoreApp: entcoreApp => entcoreApp.name.toLowerCase().includes(PEERTUBE),
+  name: PEERTUBE,
+  storageName: PEERTUBE,
 });

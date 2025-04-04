@@ -1,6 +1,5 @@
 export enum Source {
   GAR = 'fr.openent.mediacentre.source.GAR',
-  GLOBAL_RESOURCE = 'fr.openent.mediacentre.source.GlobalResource',
   MOODLE = 'fr.openent.mediacentre.source.Moodle',
   SIGNET = 'fr.openent.mediacentre.source.Signet',
 }
