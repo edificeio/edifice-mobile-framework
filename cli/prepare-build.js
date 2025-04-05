@@ -4,7 +4,7 @@
 // Automatic build number generation
 //
 // Args:
-//   - alpha|comm|peda|rc|poc to prepare build number for alpha || comm || peda || poc || rc
+//   - alpha|rc|poc to prepare build number for alpha || comm || peda || poc || rc
 //   - major|minor|rev to prepare build number for new major || minor || rev version
 //
 // Update:
