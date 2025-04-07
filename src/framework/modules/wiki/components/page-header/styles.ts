@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export const styles = StyleSheet.create({
   backgroundContainer: {
@@ -12,42 +12,52 @@ export const styles = StyleSheet.create({
     top: 0,
     zIndex: 0,
   },
-  container: {
-    position: 'relative',
-    width: '100%',
-  },
-  contentContainer: {
-    position: 'relative',
-    width: '100%',
-    zIndex: 3,
-  },
-  headerContainerHidden: {
+  backgroundContainerHidden: {
     backgroundColor: theme.palette.grey.white,
-    height: getScaleWidth(164),
   },
-  headerContainerHiddenInner: {
-    paddingHorizontal: UI_SIZES.spacing.big,
-    paddingVertical: getScaleWidth(38),
-  },
-  headerContainerVisible: {
+  backgroundContainerVisible: {
     backgroundColor: theme.palette.primary.pale,
     borderBottomWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.primary.light,
     borderTopWidth: UI_SIZES.border.thin,
+  },
+  backgroundPatternContainer: { height: '100%', overflow: 'hidden', paddingVertical: UI_SIZES.border.small, width: '100%' },
+  container: {
+    alignItems: 'stretch',
+    gap: UI_SIZES.spacing.minor,
+    paddingBottom: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
-    paddingVertical: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
+    position: 'relative',
+    width: '100%',
   },
-  svgBackground: {
+  svgLowerLine: {
+    bottom: 0,
     position: 'absolute',
   },
-  visibilityIndicatorBorder: {
-    position: 'absolute',
-  },
-  visibilityIndicatorContainer: {
-    backgroundColor: theme.palette.grey.fog,
-    left: UI_SIZES.spacing.big,
+  svgUpperLine: {
     position: 'absolute',
     top: 0,
+  },
+  visibilityIconContainer: {
+    height: UI_SIZES.elements.icon.xsmall,
+    width: UI_SIZES.elements.icon.xsmall,
+  },
+  visibilityIndicator: {
+    backgroundColor: theme.palette.grey.fog,
+    borderBottomLeftRadius: UI_SIZES.radius.medium,
+    borderBottomRightRadius: UI_SIZES.radius.medium,
+  },
+  visibilityIndicatorBorder: {
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+  },
+  visibilityIndicatorContainer: {
+    left: UI_SIZES.spacing.big,
+    position: 'absolute',
+    top: UI_SIZES.border.small,
     zIndex: 1,
   },
   visibilityIndicatorInner: {
@@ -57,5 +67,8 @@ export const styles = StyleSheet.create({
     paddingBottom: UI_SIZES.spacing.tiny,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingTop: UI_SIZES.spacing.tiny,
+  },
+  visibilityIndicatorText: {
+    color: theme.palette.complementary.blue.regular,
   },
 });

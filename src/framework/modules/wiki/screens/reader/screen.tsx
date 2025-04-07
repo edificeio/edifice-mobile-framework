@@ -5,7 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { WikiPage } from '../../model';
 import styles from './styles';
 import type { WikiReaderScreen } from './types';
 
@@ -17,6 +16,9 @@ import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText, HeadingMText, SmallText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import PageHeader from '~/framework/modules/wiki/components/page-header';
+import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
+import { WikiPage } from '~/framework/modules/wiki/model';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
@@ -52,7 +54,6 @@ export default function WikiReaderScreen({
     () => (pageIndex !== -1 ? wikiData.pages.at(pageIndex + 1)?.id : undefined),
     [pageIndex, wikiData.pages],
   );
-  console.debug('INDEX', wikiData.pages, pageId, pageIndex, prevPageId, nextPageId);
 
   const switchToPage = React.useCallback(
     (id: WikiPage['id']) => {
@@ -66,9 +67,9 @@ export default function WikiReaderScreen({
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {
     const newWikiData = await service.wiki.get({ id: resourceId });
     const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
-    console.debug('LOAD PAGE', pageId, newPageData.id, newPageData.title);
     dispatch(actions.loadWiki(newWikiData));
     dispatch(actions.loadPage(resourceId, newPageData));
+    setIsPageVisible(newPageData.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN);
   }, [dispatch, resourceId, pageId]);
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
@@ -80,14 +81,21 @@ export default function WikiReaderScreen({
     [resourceId],
   );
 
+  const [isPageVisible, setIsPageVisible] = React.useState<HeaderStatus>(
+    pageData.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN,
+  );
+
+  // const togglePageVisibility = React.useCallback(() => {
+  //   setIsPageVisible(prevState => (prevState === HeaderStatus.VISIBLE ? HeaderStatus.HIDDEN : HeaderStatus.VISIBLE));
+  // }, []);
+
   const renderContent: ContentLoaderProps['renderContent'] = React.useCallback(
     refreshControl => {
       return (
         <>
           <ScrollView refreshControl={refreshControl}>
             <View style={styles.topNavigation} />
-            <View style={styles.header}>
-              {!pageData.isVisible && <BodyBoldText>{I18n.get('wiki-page-hidden')}</BodyBoldText>}
+            <PageHeader status={isPageVisible}>
               <HeadingMText>{pageData.title}</HeadingMText>
               <View style={styles.headerAuthorInfo}>
                 <SingleAvatar userId={pageData.creatorId} size="md" />
@@ -98,7 +106,7 @@ export default function WikiReaderScreen({
                   </SmallText>
                 </View>
               </View>
-            </View>
+            </PageHeader>
             <View style={styles.content}>
               <RichEditorViewer content={pageData.content} onLoad={() => setWebViewReady(true)} />
             </View>
@@ -126,12 +134,12 @@ export default function WikiReaderScreen({
       );
     },
     [
+      isPageVisible,
       nextPageId,
       pageData.content,
       pageData.createdAt,
       pageData.creatorId,
       pageData.creatorName,
-      pageData.isVisible,
       pageData.title,
       pageData.updatedAt,
       prevPageId,
