@@ -18,11 +18,9 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
-import DeviceInfo from 'react-native-device-info';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { AuthActiveAccount } from '../modules/auth/model';
 import { handleCloseModalActions } from './helper';
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
@@ -173,9 +171,9 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
     () =>
       sessionIfExists
         ? tabModules
-            .get()
-            .filterAvailables(sessionIfExists)
-            .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
+          .get()
+          .filterAvailables(sessionIfExists)
+          .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [appsJson],
