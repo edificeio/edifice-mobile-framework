@@ -54,9 +54,9 @@ export default StyleSheet.create({
     paddingVertical: 0,
   },
   postContent: {
+    columnGap: UI_SIZES.spacing.medium,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    columnGap: UI_SIZES.spacing.medium
   },
   shadowWrapper: {
     borderRadius: UI_SIZES.radius.medium,
