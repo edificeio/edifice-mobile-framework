@@ -9,12 +9,13 @@ const listItemBaseStyle = {
   borderLeftWidth: 1,
   borderRightWidth: 1,
   height: getScaleWidth(48),
+  marginHorizontal: UI_SIZES.spacing.big,
   paddingHorizontal: UI_SIZES.spacing.medium,
   paddingVertical: UI_SIZES.spacing.small,
 };
 
 const indentedItemBaseStyle = {
-  marginLeft: UI_SIZES.spacing.medium,
+  marginLeft: UI_SIZES.spacing.medium + UI_SIZES.spacing.big,
   // marginTop: -UI_SIZES.spacing.small,
   marginTop: getScaleWidth(-11), // il y a un décalage avec spacing.small qui vaut 12, donc 11
 };
@@ -74,13 +75,9 @@ const styles = StyleSheet.create({
     marginLeft: UI_SIZES.spacing.minor,
     marginTop: UI_SIZES.spacing.minor,
   },
-  pageListContainer: {
-    alignSelf: 'center',
-    marginHorizontal: UI_SIZES.spacing.big,
-    width: getScaleWidth(327),
-  },
   pageListTitle: {
     marginBottom: UI_SIZES.spacing.medium,
+    marginHorizontal: UI_SIZES.spacing.big,
   },
   spacingFolder: {
     height: UI_SIZES.spacing.minor,

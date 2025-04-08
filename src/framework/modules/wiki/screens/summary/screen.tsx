@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,8 +10,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
-import { BodyBoldText, BodyText } from '~/framework/components/text';
+import { BodyBoldText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { PageList } from '~/framework/modules/wiki/components/page-list';
 import ResourceHeader from '~/framework/modules/wiki/components/resource-header';
@@ -48,22 +46,12 @@ export function WikiSummaryScreenLoaded({
   }, [wiki.thumbnail]);
 
   return (
-    <ScrollView refreshControl={refreshControl}>
-      <ResourceHeader canAddDescription={true} image={imageSource} description={wiki.description} />
-      {wiki.pages.map(page => (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate({ name: wikiRouteNames.reader, params: { pageId: page.id, resourceId: wiki.assetId } });
-          }}>
-          <BodyText key={page.id}>
-            {page.position} {new Array(page.depth).fill('–').join(' ')} {page.title} {page.isVisible ? '<.>' : '</>'}
-          </BodyText>
-        </TouchableOpacity>
-      ))}
-      <BodyBoldText style={{ marginBottom: 10 }}>{wiki.name}</BodyBoldText>
-
-      <PageList wikiData={wiki} />
-    </ScrollView>
+    <PageList
+      refreshControl={refreshControl}
+      wikiData={wiki}
+      header={<ResourceHeader canAddDescription={true} image={imageSource} description={wiki.description} />}
+      onPress={page => navigation.navigate({ name: wikiRouteNames.reader, params: { pageId: page.id, resourceId: wiki.assetId } })}
+    />
   );
 }
 

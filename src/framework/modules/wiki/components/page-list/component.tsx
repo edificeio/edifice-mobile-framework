@@ -1,13 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { FlatList, FlatListProps, TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
 
 import { I18n } from '~/app/i18n';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
-import FlatList from '~/framework/components/list/flat-list';
 import { BodyText, HeadingMText } from '~/framework/components/text';
+import type { Wiki, WikiPage } from '~/framework/modules/wiki/model';
 
 interface WikiListItemProps {
   name: string;
@@ -68,16 +68,30 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
   );
 };
 
-export const PageList: React.FC = ({ wikiData }) => {
+export const PageList = ({
+  header,
+  onPress,
+  refreshControl,
+  wikiData,
+}: {
+  wikiData: Wiki;
+  header: React.ReactElement;
+  onPress?: (page: WikiPage) => void;
+  refreshControl: FlatListProps<WikiPage>['refreshControl'];
+}) => {
   const renderPageList = React.useCallback(() => {
     return (
       <FlatList
+        refreshControl={refreshControl}
         data={wikiData?.pages}
-        contentContainerStyle={styles.pageListContainer}
         showsVerticalScrollIndicator={false}
-        bounces={false}
         ItemSeparatorComponent={() => <View style={styles.spacingFolder} />}
-        ListHeaderComponent={<PageListTitle />}
+        ListHeaderComponent={
+          <View>
+            {header}
+            <PageListTitle />
+          </View>
+        }
         ListFooterComponent={
           <TertiaryButton
             style={styles.newPageButton}
@@ -92,7 +106,9 @@ export const PageList: React.FC = ({ wikiData }) => {
             depth={item.depth}
             isVisible={item.isVisible}
             name={item.title}
-            onPress={() => console.log('pressed')}
+            onPress={() => {
+              onPress?.(item);
+            }}
             parentId={item.parentId}
             position={item.position}
             childrenIds={item.childrenIds}
@@ -102,7 +118,7 @@ export const PageList: React.FC = ({ wikiData }) => {
         )}
       />
     );
-  }, [wikiData]);
+  }, [header, onPress, wikiData]);
 
   return renderPageList();
 };
