@@ -68,8 +68,6 @@ export default function WikiSummaryScreen({
     dispatch(actions.loadWiki(data));
   }, [dispatch, resourceId]);
 
-  // console.log('wikiData', wikiData?.pages);
-
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
     () => <BodyBoldText>LOADING {resourceId}</BodyBoldText>,
     [resourceId],

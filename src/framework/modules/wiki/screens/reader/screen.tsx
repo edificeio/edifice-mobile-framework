@@ -34,6 +34,7 @@ export const computeNavBar = ({
     route,
     title: I18n.get('wiki-reader-title'),
   }),
+  animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
 });
 
 export function WikiReaderScreenLoaded({
@@ -46,12 +47,12 @@ export function WikiReaderScreenLoaded({
   page: WikiPage;
   wiki: Wiki;
   refreshControl: ScrollViewProps['refreshControl'];
-  onGoToPage: (id: WikiPage['id']) => void;
+  onGoToPage: (id: WikiPage['id'], reverse?: boolean) => void;
   renderLoading: ContentLoaderProps['renderLoading'];
 }) {
   const [webViewReady, setWebViewReady] = React.useState(false);
 
-  const pageIndex = React.useMemo(() => wiki.pages.findIndex(p => (p.id = page.id)), [page, wiki.pages]);
+  const pageIndex = React.useMemo(() => wiki.pages.findIndex(p => p.id === page.id), [page, wiki.pages]);
   const prevPageId = React.useMemo(() => (pageIndex > 0 ? wiki.pages.at(pageIndex - 1)?.id : undefined), [pageIndex, wiki.pages]);
   const nextPageId = React.useMemo(
     () => (pageIndex !== -1 ? wiki.pages.at(pageIndex + 1)?.id : undefined),
@@ -83,7 +84,7 @@ export function WikiReaderScreenLoaded({
             disabled={!prevPageId}
             text={I18n.get('wiki-page-previous')}
             action={() => {
-              onGoToPage(prevPageId!);
+              onGoToPage(prevPageId!, true);
             }}
           />
           <TertiaryButton
@@ -112,8 +113,8 @@ export default function WikiReaderScreen({
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction | WikiPageAction>>();
 
   const switchToPage = React.useCallback(
-    (id: WikiPage['id']) => {
-      navigation.replace(wikiRouteNames.reader, { pageId: id, resourceId });
+    (id: WikiPage['id'], reverse?: boolean) => {
+      navigation.replace(wikiRouteNames.reader, { pageId: id, resourceId, reverseAnimation: reverse });
     },
     [navigation, resourceId],
   );

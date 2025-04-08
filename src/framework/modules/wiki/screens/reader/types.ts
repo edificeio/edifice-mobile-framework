@@ -8,6 +8,7 @@ export namespace WikiReaderScreen {
   export interface NavParams {
     resourceId: Resource['id'];
     pageId: WikiPageMetaData['id'];
+    reverseAnimation?: boolean;
   }
 
   export type NavigationProps = NativeStackScreenProps<WikiNavigationParams, 'reader'>;
