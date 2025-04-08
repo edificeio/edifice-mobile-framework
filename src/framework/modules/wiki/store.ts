@@ -63,5 +63,5 @@ export const actions = {
 export const selectors = {
   explorer: createExplorerSelectors(moduleConfig, state => moduleConfig.getState(state).explorer),
   page: (id: keyof WikiStore['pages']) => (state: IGlobalState) => moduleConfig.getState(state).pages[id],
-  wiki: (id: keyof WikiStore['wikis']) => (state: IGlobalState) => moduleConfig.getState(state).wikis[id],
+  wiki: (id: keyof WikiStore['wikis']) => (state: IGlobalState) => moduleConfig.getState(state).wikis[id] as Wiki | undefined,
 };

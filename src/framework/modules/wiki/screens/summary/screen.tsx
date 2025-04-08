@@ -9,11 +9,14 @@ import type { WikiSummaryScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { PageList } from '~/framework/modules/wiki/components/page-list';
 import ResourceHeader from '~/framework/modules/wiki/components/resource-header';
+import { Wiki } from '~/framework/modules/wiki/model';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction } from '~/framework/modules/wiki/store';
@@ -32,13 +35,45 @@ export const computeNavBar = ({
   headerShadowVisible: false,
 });
 
+export function WikiSummaryScreenLoaded({
+  navigation,
+  refreshControl,
+  wiki,
+}: Pick<WikiSummaryScreen.AllProps, 'navigation'> & {
+  wiki: Wiki;
+  refreshControl: Parameters<ContentLoaderProps['renderContent']>[0];
+}) {
+  const imageSource = React.useMemo(() => {
+    return wiki.thumbnail ? http.imagePropsForSession({ source: { uri: wiki.thumbnail } }) : undefined;
+  }, [wiki.thumbnail]);
+
+  return (
+    <ScrollView refreshControl={refreshControl}>
+      <ResourceHeader canAddDescription={true} image={imageSource} description={wiki.description} />
+      {wiki.pages.map(page => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate({ name: wikiRouteNames.reader, params: { pageId: page.id, resourceId: wiki.assetId } });
+          }}>
+          <BodyText key={page.id}>
+            {page.position} {new Array(page.depth).fill('–').join(' ')} {page.title} {page.isVisible ? '<.>' : '</>'}
+          </BodyText>
+        </TouchableOpacity>
+      ))}
+      <BodyBoldText style={{ marginBottom: 10 }}>{wiki.name}</BodyBoldText>
+
+      <PageList wikiData={wiki} />
+    </ScrollView>
+  );
+}
+
 export default function WikiSummaryScreen({
   navigation,
   route: {
     params: { resourceId },
   },
 }: WikiSummaryScreen.AllProps) {
-  const wikiData = useSelector(selectors.wiki(resourceId)) ?? {};
+  const wikiData = useSelector(selectors.wiki(resourceId));
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction>>();
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {
     const data = await service.wiki.get({ id: resourceId });
@@ -52,36 +87,14 @@ export default function WikiSummaryScreen({
     [resourceId],
   );
 
-  const imageSource = React.useMemo(() => {
-    return wikiData.thumbnail ? http.imagePropsForSession({ source: { uri: wikiData.thumbnail } }) : undefined;
-  }, [wikiData.thumbnail]);
-
   const renderContent: ContentLoaderProps['renderContent'] = React.useCallback(
-    refreshControl => {
-      return (
-        <ScrollView refreshControl={refreshControl}>
-          <ResourceHeader canAddDescription={true} image={imageSource} description={wikiData.description} />
-          <BodyBoldText>loaded :) {resourceId}</BodyBoldText>
-          <BodyBoldText>{wikiData.name}</BodyBoldText>
-          <BodyBoldText>{wikiData.description}</BodyBoldText>
-          <BodyBoldText>– – – – –</BodyBoldText>
-          {wikiData.pages.map(page => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate({ name: wikiRouteNames.reader, params: { pageId: page.id, resourceId } });
-              }}>
-              <BodyText key={page.id}>
-                {page.position} {new Array(page.depth).fill('–').join(' ')} {page.title} {page.isVisible ? '<.>' : '</>'}
-              </BodyText>
-            </TouchableOpacity>
-          ))}
-          <BodyBoldText style={{ marginBottom: 10 }}>{wikiData.name}</BodyBoldText>
-
-          <PageList wikiData={wikiData} />
-        </ScrollView>
-      );
-    },
-    [imageSource, navigation, resourceId, wikiData.description, wikiData.name, wikiData.pages],
+    refreshControl =>
+      wikiData ? (
+        <WikiSummaryScreenLoaded navigation={navigation} wiki={wikiData} refreshControl={refreshControl} />
+      ) : (
+        <EmptyContentScreen />
+      ),
+    [navigation, wikiData],
   );
 
   return (
