@@ -6,8 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { WikiSummaryScreen } from './types';
 
-import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
+import { getStore, IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
@@ -24,14 +23,17 @@ import http from '~/framework/util/http';
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.summary>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('wiki-summary-title'),
-  }),
-  headerShadowVisible: false,
-});
+}: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.summary>): NativeStackNavigationOptions => {
+  const wikiData = selectors.wiki(route.params.resourceId)(getStore().getState());
+  return {
+    ...navBarOptions({
+      navigation,
+      route,
+      title: wikiData?.name ?? '',
+    }),
+    headerShadowVisible: false,
+  };
+};
 
 export function WikiSummaryScreenLoaded({
   navigation,
@@ -66,7 +68,8 @@ export default function WikiSummaryScreen({
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {
     const data = await service.wiki.get({ id: resourceId });
     dispatch(actions.loadWiki(data));
-  }, [dispatch, resourceId]);
+    navigation.setOptions({ title: data.name });
+  }, [dispatch, navigation, resourceId]);
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
     () => <BodyBoldText>LOADING {resourceId}</BodyBoldText>,

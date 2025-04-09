@@ -10,7 +10,7 @@ import styles from './styles';
 import type { WikiReaderScreen } from './types';
 
 import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
+import { getStore, IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { AvatarSizes } from '~/framework/components/avatar/styles';
 import GhostButton from '~/framework/components/buttons/ghost';
@@ -31,14 +31,17 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.reader>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('wiki-reader-title'),
-  }),
-  animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
-});
+}: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.reader>): NativeStackNavigationOptions => {
+  const wikiPageData = selectors.page(route.params.pageId)(getStore().getState());
+  return {
+    ...navBarOptions({
+      navigation,
+      route,
+      title: wikiPageData?.title ?? '',
+    }),
+    animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
+  };
+};
 
 const PageHeaderLoader = () => (
   <View>
@@ -158,7 +161,8 @@ export default function WikiReaderScreen({
     const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
     dispatch(actions.loadWiki(newWikiData));
     dispatch(actions.loadPage(resourceId, newPageData));
-  }, [dispatch, resourceId, pageId]);
+    navigation.setOptions({ title: newPageData.title });
+  }, [resourceId, pageId, dispatch, navigation]);
 
   const renderLoading = React.useCallback(
     () => (
