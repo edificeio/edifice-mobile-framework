@@ -11,7 +11,7 @@ import type { WikiReaderScreen } from './types';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
-import TertiaryButton from '~/framework/components/buttons/tertiary';
+import GhostButton from '~/framework/components/buttons/ghost';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
 import { PageView } from '~/framework/components/page';
@@ -79,7 +79,8 @@ export function WikiReaderScreenLoaded({
           <RichEditorViewer content={page.content} onLoad={() => setWebViewReady(true)} />
         </View>
         <View style={styles.bottomNavigation}>
-          <TertiaryButton
+          <GhostButton
+            outline
             iconLeft="ui-arrowLeft"
             disabled={!prevPageId}
             text={I18n.get('wiki-page-previous')}
@@ -87,7 +88,9 @@ export function WikiReaderScreenLoaded({
               onGoToPage(prevPageId!, true);
             }}
           />
-          <TertiaryButton
+          <GhostButton
+            style={styles.bottomNavigationRight}
+            outline
             iconRight="ui-arrowRight"
             disabled={!nextPageId}
             text={I18n.get('wiki-page-next')}

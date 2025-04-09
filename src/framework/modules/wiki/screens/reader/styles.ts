@@ -5,8 +5,15 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   bottomNavigation: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: UI_SIZES.spacing.tiny,
+    justifyContent: 'space-between',
     paddingBottom: UI_SIZES.spacing.medium,
-    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingHorizontal: UI_SIZES.spacing.small,
+  },
+  bottomNavigationRight: {
+    marginLeft: 'auto',
   },
   content: {
     margin: UI_SIZES.spacing.big,
