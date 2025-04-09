@@ -4,6 +4,7 @@ import { ScrollView, ScrollViewProps, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import styles from './styles';
 import type { WikiReaderScreen } from './types';
@@ -11,13 +12,15 @@ import type { WikiReaderScreen } from './types';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
+import { AvatarSizes } from '~/framework/components/avatar/styles';
 import GhostButton from '~/framework/components/buttons/ghost';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
 import { PageView } from '~/framework/components/page';
-import { BodyBoldText, HeadingMText, SmallText } from '~/framework/components/text';
+import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import PageHeader from '~/framework/modules/wiki/components/page-header';
+import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
 import { Wiki, WikiPage } from '~/framework/modules/wiki/model';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
@@ -36,6 +39,34 @@ export const computeNavBar = ({
   }),
   animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
 });
+
+const PageHeaderLoader = () => (
+  <View>
+    <View style={styles.topNavigation} />
+    <Placeholder>
+      <PageHeaderPlaceholder>
+        <PlaceholderLine noMargin height={TextSizeStyle.Bigger.lineHeight} style={styles.headerPlaceholderTitle} />
+        <View style={styles.headerAuthorInfo}>
+          <PlaceholderMedia isRound size={AvatarSizes.md} style={styles.headerPlaceholderAvatar} />
+          <View style={styles.headerAuthorInfoText}>
+            <PlaceholderLine
+              width={70}
+              noMargin
+              height={TextSizeStyle.Medium.lineHeight - 4}
+              style={styles.headerPlaceholderInfo}
+            />
+            <PlaceholderLine
+              width={40}
+              noMargin
+              height={TextSizeStyle.Normal.lineHeight - 4}
+              style={styles.headerPlaceholderInfo}
+            />
+          </View>
+        </View>
+      </PageHeaderPlaceholder>
+    </Placeholder>
+  </View>
+);
 
 export function WikiReaderScreenLoaded({
   onGoToPage,
@@ -132,10 +163,19 @@ export default function WikiReaderScreen({
   const renderLoading = React.useCallback(
     () => (
       <View style={styles.loader}>
-        <BodyBoldText>LOADING {resourceId}</BodyBoldText>
+        <PageHeaderLoader />
+        <View style={styles.content}>
+          <Placeholder>
+            <View style={styles.contentLoader}>
+              <PlaceholderLine noMargin height={TextSizeStyle.Big.lineHeight} />
+              <PlaceholderLine noMargin height={TextSizeStyle.Big.lineHeight} />
+              <PlaceholderLine noMargin height={TextSizeStyle.Big.lineHeight} width={70} />
+            </View>
+          </Placeholder>
+        </View>
       </View>
     ),
-    [resourceId],
+    [],
   );
 
   // const togglePageVisibility = React.useCallback(() => {

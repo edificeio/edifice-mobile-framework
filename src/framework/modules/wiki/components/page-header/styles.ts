@@ -23,13 +23,19 @@ export const styles = StyleSheet.create({
   },
   backgroundPatternContainer: { height: '100%', overflow: 'hidden', paddingVertical: UI_SIZES.border.small, width: '100%' },
   container: {
-    alignItems: 'stretch',
-    gap: UI_SIZES.spacing.minor,
     paddingBottom: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingTop: UI_SIZES.spacing.medium,
     position: 'relative',
     width: '100%',
+  },
+  content: { alignItems: 'stretch', gap: UI_SIZES.spacing.minor },
+  placeholderStyle: {
+    backgroundColor: theme.palette.grey.fog,
+    borderBottomWidth: UI_SIZES.border.thin,
+    borderColor: theme.palette.grey.cloudy,
+    borderTopWidth: UI_SIZES.border.thin,
+    marginVertical: -1,
   },
   svgLowerLine: {
     bottom: 0,

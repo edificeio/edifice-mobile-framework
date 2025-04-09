@@ -18,6 +18,7 @@ export default StyleSheet.create({
   content: {
     margin: UI_SIZES.spacing.big,
   },
+  contentLoader: { gap: UI_SIZES.spacing.minor },
   header: {
     alignItems: 'stretch',
     backgroundColor: theme.palette.primary.pale,
@@ -37,6 +38,10 @@ export default StyleSheet.create({
   headerAuthorInfoText: {
     flex: 1,
   },
+  headerAuthorInfoTextPlaceholder: { gap: UI_SIZES.spacing.tiny },
+  headerPlaceholderAvatar: { margin: -UI_SIZES.border.small },
+  headerPlaceholderInfo: { marginVertical: UI_SIZES.spacing.tiny },
+  headerPlaceholderTitle: { marginVertical: -UI_SIZES.border.thin },
   loader: {
     backgroundColor: theme.ui.background.card,
     flex: 1,

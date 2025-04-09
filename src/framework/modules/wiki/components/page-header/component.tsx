@@ -111,7 +111,7 @@ const animationConfig = {
   Easing: Easing.out(Easing.ease),
 };
 
-const PageHeader: React.FC<PageHeaderProps> = ({ children, status }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ children, status, style }) => {
   const hiddenOpacity = useAnimatedValue(status === HeaderStatus.VISIBLE ? 0 : 1);
   const animatedPaddingTop = useAnimatedValue(getPaddingTop(status));
   const animatedMarginVertical = useAnimatedValue(getMarginVertical(status));
@@ -175,7 +175,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ children, status }) => {
   );
 
   return (
-    <Animated.View style={containerStyle}>
+    <Animated.View style={React.useMemo(() => [containerStyle, style], [containerStyle, style])}>
       <Animated.View style={visibleHeaderStyle} />
       <Animated.View style={hiddenHeaderStyle}>
         <View style={styles.backgroundPatternContainer}>
@@ -187,9 +187,15 @@ const PageHeader: React.FC<PageHeaderProps> = ({ children, status }) => {
       <Animated.View style={hiddenIndicatorStyle}>
         <VisibilityIndicator />
       </Animated.View>
-      <View onLayout={onLayout}>{children}</View>
+      <View style={styles.content} onLayout={onLayout}>
+        {children}
+      </View>
     </Animated.View>
   );
 };
+
+export const PageHeaderPlaceholder = ({ children }: Pick<ViewProps, 'children'>) => (
+  <View style={[styles.container, styles.placeholderStyle, styles.content]}>{children}</View>
+);
 
 export default PageHeader;
