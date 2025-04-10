@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-04-10 21:27:49",
-  "notes": "chore: yarn cache update\nadding list loader\nfix: child pages are sort by position\nfixing ResourceDescription margin\nadding selectButton with loader\nchore: remove add wiki button\nfix: image did not show\nfeat: empty-screen for summary\ncommit after review\nfix: svg decoration color\nfeat: navBar title\nfeat: wiki reader placeholder\nchore: reader navigation buttons\nfix: switching to next/previous page\nchore: refacto reader screen\nchore: refacto summary screen list\nchore: refacto summary screen\nchore: yarn cache update\nwip, first list variant\nfeat(wiki): WB2-2296 : adding wikiResourceDescription\nfeat(wiki): WB2-2304 adding PageHeader\nchore : merge fix\nchore: yarn cache update\nwip pageHeader\nchore:yarn cache update\nrelease: 1.14.0-peda.5(1140006)",
-  "version": "1.14.0-peda.6(1140007)"
+  "last": "2025-04-10 22:19:34",
+  "notes": "release: 1.14.0-peda.6(1140007)",
+  "version": "1.14.0-peda.7(1140008)"
 }
