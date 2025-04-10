@@ -1,7 +1,7 @@
-import { ImageSourcePropType } from 'react-native';
+import { ImageProps } from 'react-native';
 
 export interface ResourceHeaderProps {
-  image?: ImageSourcePropType | undefined;
+  image?: ImageProps | undefined;
   description?: string;
   canAddDescription: boolean;
 }

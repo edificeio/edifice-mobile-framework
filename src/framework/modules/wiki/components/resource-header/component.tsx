@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-
 import styles from './styles';
 import { ResourceHeaderProps } from './types';
 
@@ -98,7 +97,7 @@ const ResourceHeader: React.FC<ResourceHeaderProps> = ({ canAddDescription = fal
         name="ui-edifice-shape-half-circle"
       />
       <View style={styles.thumbnailAndCardContainer}>
-        <ResourceThumbnail source={image} />
+        <ResourceThumbnail {...image} />
         {description && (
           <ResourceDescription
             content={description}

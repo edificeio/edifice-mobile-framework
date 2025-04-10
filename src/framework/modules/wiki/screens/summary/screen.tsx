@@ -47,7 +47,7 @@ export function WikiSummaryScreenLoaded({
   wiki: Wiki;
   refreshControl: Parameters<ContentLoaderProps['renderContent']>[0];
 }) {
-  const imageSource = React.useMemo(() => {
+  const imageSourceProps = React.useMemo(() => {
     return wiki.thumbnail ? http.imagePropsForSession({ source: { uri: wiki.thumbnail } }) : undefined;
   }, [wiki.thumbnail]);
 
@@ -57,7 +57,7 @@ export function WikiSummaryScreenLoaded({
       wikiData={wiki}
       ListHeaderComponent={
         <>
-          <ResourceHeader canAddDescription={true} image={imageSource} description={wiki.description} />
+          <ResourceHeader canAddDescription={true} image={imageSourceProps} description={wiki.description} />
           {wiki.pages.length > 0 && <HeadingMText style={styles.pageListTitle}>{I18n.get('wiki-pagelist-title')}</HeadingMText>}
         </>
       }
