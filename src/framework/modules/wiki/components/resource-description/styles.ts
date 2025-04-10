@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.mediumPlus,
     elevation: 4,
-    marginHorizontal: UI_SIZES.spacing.medium,
+    marginHorizontal: UI_SIZES.spacing.big,
     padding: UI_SIZES.spacing.medium,
     position: 'relative',
     shadowColor: theme.palette.grey.darkness,
