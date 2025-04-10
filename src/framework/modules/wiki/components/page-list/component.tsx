@@ -87,6 +87,7 @@ const ItemSeparatorComponent = () => <View style={styles.spacingItem} />;
 export const PageList: React.FC<PageListProps> = ({
   borderless = false,
   currentPageId,
+  ListEmptyComponent,
   ListFooterComponent,
   ListHeaderComponent,
   onPressItem: onPress,
@@ -118,6 +119,7 @@ export const PageList: React.FC<PageListProps> = ({
       ItemSeparatorComponent={ItemSeparatorComponent}
       ListFooterComponent={ListFooterComponent}
       ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={ListEmptyComponent}
       refreshControl={refreshControl}
       renderItem={renderItem}
       keyExtractor={React.useCallback<

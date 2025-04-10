@@ -9,7 +9,8 @@ import type { WikiSummaryScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { getStore, IGlobalState } from '~/app/store';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import { getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
+import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText, HeadingMText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
@@ -57,8 +58,17 @@ export function WikiSummaryScreenLoaded({
       ListHeaderComponent={
         <>
           <ResourceHeader canAddDescription={true} image={imageSource} description={wiki.description} />
-          <HeadingMText style={styles.pageListTitle}>{I18n.get('wiki-pagelist-title')}</HeadingMText>
+          {wiki.pages.length > 0 && <HeadingMText style={styles.pageListTitle}>{I18n.get('wiki-pagelist-title')}</HeadingMText>}
         </>
+      }
+      ListEmptyComponent={
+        <EmptyScreen
+          svgImage="empty-wiki-summary"
+          title={I18n.get('wiki-empty-summary-title')}
+          text={I18n.get('wiki-empty-summary-text')}
+          customStyle={styles.emptyPage}
+          imageHeight={getScaleImageSize(UI_SIZES.elements.image.small)}
+        />
       }
       onPressItem={React.useCallback<NonNullable<PageListProps['onPressItem']>>(
         pageId => navigation.navigate({ name: wikiRouteNames.reader, params: { pageId, resourceId: wiki.assetId } }),

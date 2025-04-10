@@ -52,6 +52,7 @@ const imports = {
   'empty-trash': async () => import('ASSETS/images/empty-screen/empty-trash.svg'),
   'empty-viesco': async () => import('ASSETS/images/empty-screen/empty-viesco.svg'),
   'empty-wiki': async () => import('ASSETS/images/empty-screen/empty-wiki.svg'),
+  'empty-wiki-summary': async () => import('ASSETS/images/empty-screen/empty-wiki-summary.svg'),
   'empty-workspace': async () => import('ASSETS/images/empty-screen/empty-workspace.svg'),
   'empty-zimbra': async () => import('ASSETS/images/empty-screen/empty-zimbra.svg'),
   'exercices': async () => import('ASSETS/icons/moduleIcons/exercices.svg'),

@@ -20,15 +20,15 @@ enum ScaleDimensionType {
 const getScaleDimension = (dimension: number, type: ScaleDimensionType) =>
   Math.round(
     dimension *
-    Math.max(
-      Math.min(
-        type === ScaleDimensionType.HEIGHT
-          ? screenDimensions.height / standardScreenDimensions.height
-          : screenDimensions.width / standardScreenDimensions.width,
-        SCALE_DIMENSION_MAX,
+      Math.max(
+        Math.min(
+          type === ScaleDimensionType.HEIGHT
+            ? screenDimensions.height / standardScreenDimensions.height
+            : screenDimensions.width / standardScreenDimensions.width,
+          SCALE_DIMENSION_MAX,
+        ),
+        SCALE_DIMENSION_MIN,
       ),
-      SCALE_DIMENSION_MIN,
-    ),
   );
 
 export const getScaleFontSize = (size: number) => getScaleDimension(size, ScaleDimensionType.FONT);
@@ -125,7 +125,8 @@ export const UI_SIZES = {
       xxxlarge: getScaleWidth(96),
     },
     image: {
-      medium: getScaleWidth(160),
+      medium: getScaleImageSize(160),
+      small: getScaleImageSize(64),
     },
 
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },

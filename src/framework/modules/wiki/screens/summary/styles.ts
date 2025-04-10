@@ -4,6 +4,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  emptyPage: { backgroundColor: undefined, paddingTop: 0 },
   newPageButton: {
     alignSelf: 'baseline',
     marginBottom: UI_SIZES.spacing.big,

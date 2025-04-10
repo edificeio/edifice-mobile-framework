@@ -24,4 +24,5 @@ export interface PageListProps {
   onPressItem?: (pageId: WikiPageMetaData['id']) => void;
   refreshControl?: FlatListProps<WikiPage>['refreshControl'];
   wikiData: Pick<Wiki, 'pages'>;
+  ListEmptyComponent?: FlatListProps<Wiki['pages'][0]>['ListEmptyComponent'];
 }
