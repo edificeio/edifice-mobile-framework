@@ -1,14 +1,21 @@
 import * as React from 'react';
+import { View } from 'react-native';
 
-import { Fade, Placeholder, PlaceholderMedia } from 'rn-placeholder';
+import { Placeholder, PlaceholderLine } from 'rn-placeholder';
 
 import { styles } from './styles';
 
+import { getScaleWidth } from '~/framework/components/constants';
+
 const ResourceDescriptionLoader: React.FC = () => {
   return (
-    <Placeholder Animation={Fade}>
-      <PlaceholderMedia style={styles.resourceLoaderContent} />
-    </Placeholder>
+    <View style={styles.cardContainer}>
+      <Placeholder>
+        <PlaceholderLine noMargin height={getScaleWidth(16)} style={styles.linePlaceholder} />
+        <PlaceholderLine noMargin height={getScaleWidth(16)} style={styles.linePlaceholder} />
+        <PlaceholderLine noMargin height={getScaleWidth(16)} style={styles.tinyLinePlaceholder} />
+      </Placeholder>
+    </View>
   );
 };
 
