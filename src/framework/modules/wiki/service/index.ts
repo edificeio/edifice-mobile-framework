@@ -40,7 +40,7 @@ const hydrateWikiData = (data: API.Wiki.ListPagesResponse): Wiki => {
   return {
     description: data.description,
     pages: Array.from(pagesAsMap, ([_id, page]) => ({
-      childrenIds: page.children?.map(child => child._id) ?? [],
+      childrenIds: page.children?.sort((a, b) => a.position - b.position).map(child => child._id) ?? [],
       depth: page.depth ?? 0,
       id: page._id,
       isVisible: page.isVisible,
