@@ -72,15 +72,15 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
     [route.params.folderId, hasCreateRight],
   );
 
-  React.useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <PopupMenu actions={popupActions}>
-          <NavBarAction icon="ui-options" />
-        </PopupMenu>
-      ),
-    });
-  }, [navigation, popupActions]);
+  // React.useEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <PopupMenu actions={popupActions}>
+  //         <NavBarAction icon="ui-options" />
+  //       </PopupMenu>
+  //     ),
+  //   });
+  // }, [navigation, popupActions]);
 
   return (
     <ResourceExplorer
