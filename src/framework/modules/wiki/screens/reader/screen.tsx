@@ -14,7 +14,7 @@ import { getStore, IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { AvatarSizes } from '~/framework/components/avatar/styles';
 import GhostButton from '~/framework/components/buttons/ghost';
-import PrimaryButton from '~/framework/components/buttons/primary';
+import { getScaleWidth } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
@@ -25,11 +25,14 @@ import PageHeader from '~/framework/modules/wiki/components/page-header';
 import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
 import PageListBottomSheet from '~/framework/modules/wiki/components/page-list/page-list-bottom-sheet';
+import SelectButton from '~/framework/modules/wiki/components/select-button';
 import { Wiki, WikiPage } from '~/framework/modules/wiki/model';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+const BUTTON_PLACEHOLDER_HEIGHT = getScaleWidth(40);
 
 export const computeNavBar = ({
   navigation,
@@ -103,8 +106,14 @@ export function WikiReaderScreenLoaded({
   return (
     <>
       <ScrollView refreshControl={refreshControl}>
-        <PrimaryButton text="Pages" action={openPagesBottomSheet} />
         <View style={styles.topNavigation} />
+        <SelectButton
+          text={I18n.get('wiki-select-page-button')}
+          action={openPagesBottomSheet}
+          iconLeft="ui-textPage"
+          iconRight="ui-unfold"
+          wrapperStyle={styles.selectButtonWrapper}
+        />
         <PageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
           <HeadingMText>{page.title}</HeadingMText>
           <View style={styles.headerAuthorInfo}>
@@ -189,6 +198,11 @@ export default function WikiReaderScreen({
   const renderLoading = React.useCallback(
     () => (
       <View style={styles.loader}>
+        <Placeholder>
+          <View style={styles.selectButtonWrapper}>
+            <PlaceholderLine noMargin height={BUTTON_PLACEHOLDER_HEIGHT} />
+          </View>
+        </Placeholder>
         <PageHeaderLoader />
         <View style={styles.content}>
           <Placeholder>

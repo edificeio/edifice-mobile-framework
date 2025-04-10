@@ -26,6 +26,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     style,
     testID,
     text,
+    TextComponent = SmallBoldText,
     url,
   } = props;
   const [layoutWidth, setLayoutWidth] = useState(0);
@@ -76,9 +77,9 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     return (
       <>
         {renderIcon(iconLeft, 'left')}
-        <SmallBoldText numberOfLines={1} style={[styles.text, contentColorStyle]}>
+        <TextComponent numberOfLines={1} style={[styles.text, contentColorStyle]}>
           {text}
-        </SmallBoldText>
+        </TextComponent>
         {renderIcon(iconRight, 'right')}
       </>
     );

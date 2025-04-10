@@ -53,13 +53,21 @@ export default StyleSheet.create({
   page: {
     backgroundColor: theme.ui.background.card,
   },
+  selectButtonWrapper: {
+    backgroundColor: theme.palette.grey.fog,
+    borderRadius: UI_SIZES.radius.card,
+    gap: UI_SIZES.spacing.minor,
+    marginHorizontal: UI_SIZES.spacing.big,
+    marginVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
   separatorSpacing: {
     paddingHorizontal: UI_SIZES.spacing.tiny,
   },
   topNavigation: {
     alignItems: 'stretch',
     paddingHorizontal: UI_SIZES.spacing.big,
-    paddingVertical: UI_SIZES.spacing.minor,
   },
   webViewPlaceholder: {
     height: '100%',

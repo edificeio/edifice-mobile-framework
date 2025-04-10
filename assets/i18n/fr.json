@@ -1648,6 +1648,7 @@
   "wiki-page-published-at": "Publié le {{date}}",
   "wiki-pagelist-newpage": "Nouvelle page",
   "wiki-pagelist-title": "Liste des pages",
+  "wiki-select-page-button": "Pages",
   "workspace-filelist-deletealert-message": "Voulez-vous vraiment supprimer définitivement le(s) fichier(s) ?",
   "workspace-filelist-deletealert-title": "Suppression de fichier",
   "workspace-filelist-emptyscreen-owner-text": "Stockez ici vos documents personnels : photos, vidéos, audio, fichiers PDF, ...",

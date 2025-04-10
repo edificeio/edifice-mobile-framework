@@ -264,6 +264,7 @@ const imports = {
   'ui-unarchive': async () => import('ASSETS/icons/uiIcons/unarchive.svg'),
   'ui-underline': async () => import('ASSETS/icons/uiIcons/underline.svg'),
   'ui-undo': async () => import('ASSETS/icons/uiIcons/undo.svg'),
+  'ui-unfold': async () => import('ASSETS/icons/uiIcons/unfold.svg'),
   'ui-unorderedList': async () => import('ASSETS/icons/uiIcons/unorderedList.svg'),
   'ui-upcoming': async () => import('ASSETS/icons/uiIcons/upcoming.svg'),
   'ui-upload': async () => import('ASSETS/icons/uiIcons/upload.svg'),
