@@ -1,5 +1,8 @@
 import { Temporal } from '@js-temporal/polyfill';
+import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
+import { AuthActiveAccount } from '../../auth/model';
+import { getSession } from '../../auth/reducer';
 import { Wiki, WikiPage, WikiResourceMetadata } from '../model';
 import { API } from './types';
 
@@ -14,6 +17,25 @@ const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResource
   thumbnail: data.thumbnail,
   updatedAt: Temporal.Instant.from((data.modified ?? data.created).$date),
 });
+
+const computeRights = (data: Pick<API.Wiki.ListPagesResponse, 'rights'>, session: AuthActiveAccount) => {
+  const rights: string[] = [];
+  for (const rightStr of data.rights) {
+    const right = rightStr.split(':'); // 0: target, 1: id, 2: right if not creator
+    switch (right[0]) {
+      case 'creator':
+        if (right[1] === session.user.id) rights.push(right[0]);
+        break;
+      case 'user':
+        if (right[1] === session.user.id) rights.push(right[2]);
+        break;
+      case 'group':
+        if (session.user.groups.includes(right[1])) rights.push(right[2]);
+        break;
+    }
+  }
+  return rights;
+};
 
 const walkDepthCompute = (
   page: API.Wiki.ListPagesResponse['pages'][0] & { depth?: number },
@@ -31,9 +53,22 @@ const walkDepthCompute = (
   }
 };
 
-const hydrateWikiData = (data: API.Wiki.ListPagesResponse): Wiki => {
+const rightsThatSeeHiddenPages = new Set(['creator', 'manager']); // Business rule here. Need to be implemented into the backend.
+
+const hydrateWikiData = (data: API.Wiki.ListPagesResponse, session: AuthActiveAccount): Wiki => {
+  const rights = computeRights(data, session);
+
+  const pagesAsArray: [
+    API.Wiki.ListPagesResponse['pages'][0]['_id'],
+    API.Wiki.ListPagesResponse['pages'][0] & { depth?: number },
+  ][] = [];
+  const showHiddenPages: boolean = !isDisjointFrom(rightsThatSeeHiddenPages, new Set(rights)); // Business rule here. Need to be implemented into the backend.
+  for (const page of data.pages) {
+    if (!page.isVisible && !showHiddenPages) continue; // Business rule here. Need to be implemented into the backend.
+    pagesAsArray.push([page._id, { ...page, depth: undefined }]);
+  }
   const pagesAsMap = new Map<string, API.Wiki.ListPagesResponse['pages'][0] & { depth?: number }>(
-    data.pages.sort((a, b) => a.position - b.position).map(page => [page._id, { ...page, depth: undefined }]),
+    pagesAsArray.sort((a, b) => a[1].position - b[1].position),
   );
   pagesAsMap.forEach(walkDepthCompute);
 
@@ -49,6 +84,7 @@ const hydrateWikiData = (data: API.Wiki.ListPagesResponse): Wiki => {
       title: page.title,
     })),
     ...hydrateWikiResourceInfo(data),
+    rights,
   };
 };
 
@@ -76,7 +112,7 @@ export default {
   wiki: {
     get: async (opts: API.Wiki.ListPagesPayload) => {
       const rawData: API.Wiki.ListPagesResponse = await http.fetchJsonForSession(`/wiki/${opts.id}`);
-      return hydrateWikiData(rawData);
+      return hydrateWikiData(rawData, getSession()!);
     },
   },
 };

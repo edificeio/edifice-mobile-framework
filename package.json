@@ -193,6 +193,7 @@
     "rn-placeholder": "3.0.3",
     "sax": "1.4.1",
     "saxophone": "0.8.0",
+    "set.prototype.isdisjointfrom": "1.1.5",
     "ts-polyfill": "3.8.2",
     "unorm": "1.6.0",
     "whatwg-fetch": "3.6.20",

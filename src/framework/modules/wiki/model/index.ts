@@ -12,6 +12,7 @@ export type WikiResourceMetadata = Pick<
 export interface Wiki extends WikiResourceMetadata {
   description?: string;
   pages: WikiPageMetaData[];
+  rights: string[];
 }
 
 export interface WikiPageMetaData {
