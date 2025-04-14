@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
   bottomNavigation: {
@@ -54,9 +55,11 @@ export default StyleSheet.create({
     backgroundColor: theme.ui.background.card,
   },
   selectButtonWrapper: {
+    alignSelf: 'stretch',
     backgroundColor: theme.palette.grey.fog,
     borderRadius: UI_SIZES.radius.card,
     gap: UI_SIZES.spacing.minor,
+    height: TextSizeStyle.Medium.lineHeight + 2 * UI_SIZES.spacing.minor,
     marginHorizontal: UI_SIZES.spacing.big,
     marginVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,

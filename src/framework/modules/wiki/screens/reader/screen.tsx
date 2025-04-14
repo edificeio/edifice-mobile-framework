@@ -14,7 +14,6 @@ import { getStore, IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { AvatarSizes } from '~/framework/components/avatar/styles';
 import GhostButton from '~/framework/components/buttons/ghost';
-import { getScaleWidth } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
@@ -31,8 +30,6 @@ import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/n
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-const BUTTON_PLACEHOLDER_HEIGHT = getScaleWidth(40);
 
 export const computeNavBar = ({
   navigation,
@@ -199,9 +196,7 @@ export default function WikiReaderScreen({
     () => (
       <View style={styles.loader}>
         <Placeholder>
-          <View style={styles.selectButtonWrapper}>
-            <PlaceholderLine noMargin height={BUTTON_PLACEHOLDER_HEIGHT} />
-          </View>
+          <View style={styles.selectButtonWrapper}>{/* <PlaceholderLine noMargin height={BUTTON_PLACEHOLDER_HEIGHT} /> */}</View>
         </Placeholder>
         <PageHeaderLoader />
         <View style={styles.content}>
