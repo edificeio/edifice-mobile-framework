@@ -11,10 +11,11 @@ export const hydrateResourceHistory = (
     'createdAt' | 'creatorId' | 'creatorName' | 'updatedAt' | 'updaterId' | 'updaterName'
   >,
 ): ResourceHistory => ({
-  createdAt: Temporal.Instant.fromEpochMilliseconds(data.createdAt),
+  // createdAt & updatedAt needs to be protected from undefined values as backend can sometimes no provide them for some reason
+  createdAt: Temporal.Instant.fromEpochMilliseconds(data.createdAt ?? data.updatedAt) ?? Temporal.Now.instant(),
   creatorId: data.creatorId,
   creatorName: data.creatorName,
-  updatedAt: Temporal.Instant.fromEpochMilliseconds(data.updatedAt),
+  updatedAt: Temporal.Instant.fromEpochMilliseconds(data.updatedAt ?? data.createdAt) ?? Temporal.Now.instant(),
   updaterId: data.updaterId,
   updaterName: data.updaterName,
 });
