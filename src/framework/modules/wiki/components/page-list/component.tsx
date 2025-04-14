@@ -10,15 +10,16 @@ import { BodyBoldText, BodyText } from '~/framework/components/text';
 import IconChip from '~/framework/modules/wiki/components/icon-chip';
 
 const WikiListItem: React.FC<WikiListItemProps> = props => {
-  const isCurrentPage = props.currentPageId === props.id;
-  const hasChild = props.childrenIds.length > 0;
+  const { borderless, childrenIds, currentPageId, depth, id, isVisible, name, onPressItem: onPress, parentId, wikiData } = props;
+  const isCurrentPage = currentPageId === id;
+  const hasChild = childrenIds.length > 0;
 
   const listItemStyle = React.useMemo(() => {
     const getChildItemStyle = () => {
-      if (!props.parentId || props.depth === 0 || props.borderless) return {};
-      const parent = props.wikiData.pages.find(page => page.id === props.parentId);
+      if (!parentId || depth === 0 || borderless) return {};
+      const parent = wikiData.pages.find(page => page.id === parentId);
       const childrenArray = parent && parent.childrenIds;
-      const childIndex = childrenArray && childrenArray.indexOf(props.id);
+      const childIndex = childrenArray && childrenArray.indexOf(id);
       const parentHasChildren = parent && childrenArray && parent.childrenIds.length > 1;
 
       if (childIndex === 0) {
@@ -39,18 +40,18 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
     };
 
     const getRootLevelItemStyle = () => {
-      if (props.borderless) {
-        return hasChild || props.depth === 0 ? styles.bottomSheetRootLevelItem : styles.bottomSheetChild;
+      if (borderless) {
+        return hasChild || depth === 0 ? styles.bottomSheetRootLevelItem : styles.bottomSheetChild;
       } else {
         return hasChild ? styles.listItemWithChild : styles.listItemChildless;
       }
     };
 
     const rootLevelItemStyle = getRootLevelItemStyle();
-    const childItemStyle = props.borderless && props.parentId ? styles.bottomSheetChild : getChildItemStyle();
+    const childItemStyle = borderless && parentId ? styles.bottomSheetChild : getChildItemStyle();
 
     return [rootLevelItemStyle, childItemStyle];
-  }, [hasChild, props.depth, props.id, props.borderless, props.parentId, props.wikiData.pages]);
+  }, [borderless, parentId, depth, wikiData.pages, id, hasChild]);
 
   const currentPageAttributes = React.useMemo(() => {
     return {
@@ -59,7 +60,9 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
     };
   }, [isCurrentPage]);
 
-  const { id, onPressItem: onPress } = props;
+  const hiddenListItemTextStyle = React.useMemo(() => {
+    return !isVisible ? styles.hiddenListItemText : undefined;
+  }, [isVisible]);
 
   return (
     <View style={React.useMemo(() => [listItemStyle, currentPageAttributes.style], [currentPageAttributes.style, listItemStyle])}>
@@ -68,8 +71,16 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
           onPress?.(id);
         }, [onPress, id])}>
         <View style={styles.listItemContent}>
-          {isCurrentPage ? <BodyBoldText>{props.name}</BodyBoldText> : <BodyText>{props.name}</BodyText>}
-          {!props.isVisible && (
+          {isCurrentPage ? (
+            <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={hiddenListItemTextStyle}>
+              {name}
+            </BodyBoldText>
+          ) : (
+            <BodyText numberOfLines={1} ellipsizeMode="tail" style={hiddenListItemTextStyle}>
+              {name}
+            </BodyText>
+          )}
+          {!isVisible && (
             <IconChip
               icon="ui-hide"
               iconColor={theme.palette.complementary.blue.regular}

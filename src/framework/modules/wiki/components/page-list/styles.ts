@@ -41,6 +41,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
   },
+  hiddenListItemText: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    marginRight: UI_SIZES.spacing.minor,
+  },
   lastChild: {
     ...listItemBaseStyle,
     ...childItemBaseStyle,
@@ -65,7 +70,6 @@ const styles = StyleSheet.create({
   listItemContent: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   listItemWithChild: {
     ...listItemBaseStyle,
