@@ -69,6 +69,7 @@ const imports = {
   'messages': async () => import('ASSETS/icons/moduleIcons/messages.svg'),
   'moodle': async () => import('ASSETS/icons/moduleIcons/moodle.svg'),
   'multi-account': async () => import('ASSETS/images/multi-account.svg'),
+  'nabook': async () => import('ASSETS/icons/moduleIcons/nabook.svg'),
   'newsFeed': async () => import('ASSETS/icons/moduleIcons/newsFeed.svg'),
   'pad': async () => import('ASSETS/icons/moduleIcons/pad.svg'),
   'pages': async () => import('ASSETS/icons/moduleIcons/pages.svg'),

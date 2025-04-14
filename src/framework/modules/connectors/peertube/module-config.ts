@@ -6,7 +6,7 @@ const PEERTUBE = 'peertube';
 export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsConnector',
   displayI18n: 'peertube-moduleconfig-appname',
-  displayPicture: { fill: theme.palette.complementary.red.regular, name: 'peertube', type: 'Svg' },
+  displayPicture: { fill: theme.palette.complementary.red.regular, name: PEERTUBE, type: 'Svg' },
   entcoreScope: ['cas'],
   matchEntcoreApp: entcoreApp => entcoreApp.name.toLowerCase().includes(PEERTUBE),
   name: PEERTUBE,

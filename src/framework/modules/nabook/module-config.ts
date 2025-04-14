@@ -1,12 +1,13 @@
-import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-export default new NavigableModuleConfig<'nabook', null>({
+const NABOOK = 'nabook';
+
+export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsModule',
   displayI18n: 'nabook-tabname',
-  displayPicture: { fill: theme.palette.complementary.orange.regular, name: 'ui-tool', type: 'NamedSvg' },
-  entcoreScope: ['nabook'],
+  displayPicture: { name: NABOOK, type: 'Svg' },
+  entcoreScope: [NABOOK],
   matchEntcoreApp: '/nabook',
-  name: 'nabook',
-  storageName: 'nabook',
+  name: NABOOK,
+  storageName: NABOOK,
 });

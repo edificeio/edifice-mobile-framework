@@ -5,7 +5,7 @@ const MOODLE = 'moodle';
 export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsConnector',
   displayI18n: 'moodle-moduleconfig-appname',
-  displayPicture: { name: 'moodle', type: 'Svg' },
+  displayPicture: { name: MOODLE, type: 'dSvg' },
   entcoreScope: ['cas'],
   matchEntcoreApp: `/${MOODLE}`,
   name: MOODLE,
