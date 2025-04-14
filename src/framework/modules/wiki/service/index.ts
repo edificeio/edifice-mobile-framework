@@ -65,7 +65,10 @@ const hydrateWikiData = (data: API.Wiki.ListPagesResponse, session: AuthActiveAc
   const showHiddenPages: boolean = !isDisjointFrom(rightsThatSeeHiddenPages, new Set(rights)); // Business rule here. Need to be implemented into the backend.
   for (const page of data.pages) {
     if (!page.isVisible && !showHiddenPages) continue; // Business rule here. Need to be implemented into the backend.
-    pagesAsArray.push([page._id, { ...page, depth: undefined }]);
+    pagesAsArray.push([
+      page._id,
+      { ...page, children: page.children?.filter(p => p.isVisible === true || showHiddenPages), depth: undefined }, // Business rule here. Need to be implemented into the backend.
+    ]);
   }
   const pagesAsMap = new Map<string, API.Wiki.ListPagesResponse['pages'][0] & { depth?: number }>(
     pagesAsArray.sort((a, b) => a[1].position - b[1].position),
