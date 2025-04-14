@@ -48,7 +48,7 @@ const walkDepthCompute = (
   if (page.children === undefined) return;
   for (const childData of page.children) {
     const child = all.get(childData._id);
-    if (!child) return;
+    if (!child) continue;
     walkDepthCompute(child, child._id, all, currentDepth + 1);
   }
 };
