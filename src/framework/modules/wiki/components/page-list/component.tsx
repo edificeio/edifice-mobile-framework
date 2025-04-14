@@ -1,11 +1,12 @@
 import React from 'react';
-import { FlatList, FlatListProps, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
 import { PageListProps, WikiListItemProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import FlatList, { FlatListProps } from '~/framework/components/list/flat-list';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import IconChip from '~/framework/modules/wiki/components/icon-chip';
 
@@ -126,6 +127,7 @@ export const PageList: React.FC<PageListProps> = ({
 
   return (
     <FlatList
+      contentContainerStyle={styles.listContainer}
       data={wikiData?.pages}
       ItemSeparatorComponent={ItemSeparatorComponent}
       ListFooterComponent={ListFooterComponent}

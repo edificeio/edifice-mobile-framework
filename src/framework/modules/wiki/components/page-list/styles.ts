@@ -56,6 +56,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     borderTopWidth: 0,
   },
+  listContainer: {
+    paddingBottom: UI_SIZES.spacing.big,
+  },
   listItemChildless: {
     ...listItemBaseStyle,
     borderBottomLeftRadius: UI_SIZES.radius.card,
