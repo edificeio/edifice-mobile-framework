@@ -6,7 +6,7 @@ import { PageListProps, WikiListItemProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import FlatList, { FlatListProps } from '~/framework/components/list/flat-list';
+import { FlatListProps } from '~/framework/components/list/flat-list';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import IconChip from '~/framework/modules/wiki/components/icon-chip';
 
@@ -99,6 +99,7 @@ const ItemSeparatorComponent = () => <View style={styles.spacingItem} />;
 export const PageList: React.FC<PageListProps> = ({
   borderless = false,
   currentPageId,
+  ListComponent,
   ListEmptyComponent,
   ListFooterComponent,
   ListHeaderComponent,
@@ -106,6 +107,10 @@ export const PageList: React.FC<PageListProps> = ({
   refreshControl,
   wikiData,
 }) => {
+  const listContainerStyle = React.useMemo(() => {
+    return borderless ? styles.bottomSheetListContainer : styles.listContainer;
+  }, [borderless]);
+
   const renderItem = React.useCallback(
     ({ item }) => (
       <WikiListItem
@@ -126,8 +131,8 @@ export const PageList: React.FC<PageListProps> = ({
   );
 
   return (
-    <FlatList
-      contentContainerStyle={styles.listContainer}
+    <ListComponent
+      contentContainerStyle={listContainerStyle}
       data={wikiData?.pages}
       ItemSeparatorComponent={ItemSeparatorComponent}
       ListFooterComponent={ListFooterComponent}

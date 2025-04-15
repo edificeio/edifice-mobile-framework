@@ -11,17 +11,22 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
     const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
       return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
     };
+
+    const newStyle = React.useMemo(() => {
+      return props.style !== undefined ? props.style : styles.contentContainer;
+    }, [props.style]);
+
     return (
       <BottomSheetModal
         ref={ref}
         index={0}
-        //snapPoints={animatedSnapPoints}
+        // snapPoints={['25%', '50%', '90%']}
         //handleHeight={animatedHandleHeight}
         //contentHeight={animatedContentHeight}
         enableDynamicSizing
         backdropComponent={renderBackdrop}
         {...props}>
-        <BottomSheetView style={styles.contentContainer}>{props.children}</BottomSheetView>
+        <BottomSheetView style={newStyle}>{props.children}</BottomSheetView>
       </BottomSheetModal>
     );
   },

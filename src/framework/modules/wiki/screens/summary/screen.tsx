@@ -13,6 +13,7 @@ import { I18n } from '~/app/i18n';
 import { getStore, IGlobalState } from '~/app/store';
 import { getScaleImageSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import { HeadingMText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
@@ -61,6 +62,7 @@ export function WikiSummaryScreenLoaded({
     <PageList
       refreshControl={refreshControl}
       wikiData={wiki}
+      ListComponent={FlatList}
       ListHeaderComponent={
         <>
           <ResourceHeader canAddDescription={true} image={imageSourceProps} description={wiki.description} />

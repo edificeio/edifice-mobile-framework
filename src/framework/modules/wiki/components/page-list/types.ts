@@ -1,5 +1,8 @@
 import { FlatListProps } from 'react-native';
 
+import { FlatList as RNFlatlist } from 'react-native-gesture-handler';
+
+import FlatList from '~/framework/components/list/flat-list';
 import type { Wiki, WikiPage, WikiPageMetaData } from '~/framework/modules/wiki/model';
 
 export interface WikiListItemProps {
@@ -19,6 +22,7 @@ export interface WikiListItemProps {
 export interface PageListProps {
   borderless?: boolean;
   currentPageId?: string;
+  ListComponent: typeof FlatList | typeof RNFlatlist;
   ListFooterComponent?: FlatListProps<Wiki['pages'][0]>['ListFooterComponent'];
   ListHeaderComponent?: FlatListProps<Wiki['pages'][0]>['ListHeaderComponent'];
   onPressItem?: (pageId: WikiPageMetaData['id']) => void;

@@ -31,6 +31,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.primary.pale,
     borderRadius: UI_SIZES.radius.card,
   },
+  bottomSheetListContainer: {
+    paddingBottom: UI_SIZES.spacing.big,
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingTop: 0,
+  },
   bottomSheetRootLevelItem: {
     ...bottomSheetItemBaseStyle,
     paddingHorizontal: UI_SIZES.spacing.medium,

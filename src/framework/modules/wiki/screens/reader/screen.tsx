@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { ScrollView, ScrollViewProps, View } from 'react-native';
+import { ScrollViewProps, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
@@ -147,11 +148,14 @@ export function WikiReaderScreenLoaded({
             }}
           />
         </View>
-        <PageListBottomSheet
-          currentPageId={page.id}
-          onPress={onGoToPage}
-          ref={pageListBottomSheetRef}
-          wikiData={wiki} /* Create page button for next version
+      </ScrollView>
+      {!webViewReady && <View style={styles.webViewPlaceholder}>{renderLoading?.()}</View>}
+      <PageListBottomSheet
+        currentPageId={page.id}
+        ListComponent={FlatList}
+        onPress={onGoToPage}
+        ref={pageListBottomSheetRef}
+        wikiData={wiki} /* Create page button for next version
       ListFooterComponent={
         <>
           <View style={styles.separatorSpacing}>
@@ -160,9 +164,7 @@ export function WikiReaderScreenLoaded({
           <TertiaryButton style={styles.bottomSheetNewPageButton} iconLeft="ui-plus" text={I18n.get('wiki-pagelist-newpage')} />
         </>
       } */
-        />
-      </ScrollView>
-      {!webViewReady && <View style={styles.webViewPlaceholder}>{renderLoading?.()}</View>}
+      />
     </>
   );
 }
