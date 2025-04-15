@@ -7,6 +7,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   CommonActions,
@@ -171,9 +172,9 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
     () =>
       sessionIfExists
         ? tabModules
-          .get()
-          .filterAvailables(sessionIfExists)
-          .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
+            .get()
+            .filterAvailables(sessionIfExists)
+            .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [appsJson],
@@ -241,7 +242,11 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
       [insets.bottom],
     );
   return React.useMemo(() => {
-    return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
+    return (
+      <BottomSheetModalProvider>
+        <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>
+      </BottomSheetModalProvider>
+    );
   }, [screenOptions, tabRoutes]);
 }
 

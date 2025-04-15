@@ -91,7 +91,7 @@ export const PageView = (props: PageViewProps) => {
     </PageViewStyle>
   );
 
-  return <BottomSheetModalProvider>{page}</BottomSheetModalProvider>;
+  return isModal ? <BottomSheetModalProvider>{page}</BottomSheetModalProvider> : page;
 };
 
 export const KeyboardPageView = (
