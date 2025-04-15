@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollViewProps, View } from 'react-native';
+import { LayoutChangeEvent, ScrollViewProps, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
@@ -101,6 +101,17 @@ export function WikiReaderScreenLoaded({
     pageListBottomSheetRef.current?.present();
   }, []);
 
+  const [buttonHeight, setButtonHeight] = React.useState<number | null>(null);
+
+  const onSelectButtonLayout = React.useCallback((event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout;
+    setButtonHeight(height);
+  }, []);
+
+  const selectButtonWrapperHeight = React.useMemo(() => {
+    if (buttonHeight) return buttonHeight + styles.selectButtonWrapper.marginVertical * 2;
+  }, [buttonHeight]);
+
   return (
     <>
       <ScrollView refreshControl={refreshControl}>
@@ -111,6 +122,7 @@ export function WikiReaderScreenLoaded({
           iconLeft="ui-textPage"
           iconRight="ui-unfold"
           wrapperStyle={styles.selectButtonWrapper}
+          onLayout={onSelectButtonLayout}
         />
         <PageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
           <HeadingMText>{page.title}</HeadingMText>
@@ -155,6 +167,7 @@ export function WikiReaderScreenLoaded({
         ListComponent={FlatList}
         onPress={onGoToPage}
         ref={pageListBottomSheetRef}
+        additionalTopInset={selectButtonWrapperHeight}
         wikiData={wiki} /* Create page button for next version
       ListFooterComponent={
         <>

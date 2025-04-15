@@ -6,13 +6,13 @@ import { PageListBottomSheetProps } from './types';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 
 const PageListBottomSheet = React.forwardRef<BottomSheetModalMethods, PageListBottomSheetProps>(
-  ({ currentPageId, ListComponent, ListFooterComponent, onPress, wikiData }, ref) => {
+  ({ additionalTopInset, currentPageId, ListComponent, ListFooterComponent, onPress, wikiData }, ref) => {
     const hidePagesBottomSheet = React.useCallback(() => {
       (ref as React.RefObject<BottomSheetModalMethods>)?.current?.dismiss();
     }, [ref]);
 
     return (
-      <BottomSheetModal ref={ref} onDismiss={hidePagesBottomSheet} style={false}>
+      <BottomSheetModal additionalTopInset={additionalTopInset} ref={ref} onDismiss={hidePagesBottomSheet} style={false}>
         <PageList
           borderless={true}
           currentPageId={currentPageId}
