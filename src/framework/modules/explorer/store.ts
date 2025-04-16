@@ -81,5 +81,6 @@ export const createExplorerSelectors = (
   moduleConfig: Pick<IUnkownModuleConfig, 'namespaceActionType'>,
   selector: (state: IGlobalState) => ExplorerState,
 ) => ({
-  folder: (folderId: FolderId) => (state: IGlobalState) => selector(state)[folderId] ?? {},
+  folder: (folderId: FolderId) => (state: IGlobalState) =>
+    (selector(state)[folderId] ?? undefined) as ExplorerState[keyof ExplorerState] | undefined,
 });

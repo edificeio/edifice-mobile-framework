@@ -40,12 +40,12 @@ export const createResourceExplorerNavBar =
   (homeFolderi18n: string, selectors: ResourceExplorerTemplate.AllProps['selectors']) =>
   ({ navigation, route }) => {
     const { folderId = RootFolderId.ROOT } = route.params;
-    const { metadata } = selectors.folder(folderId)(getStore().getState());
+    const folder = selectors.folder(folderId)(getStore().getState());
     return {
       ...navBarOptions({
         navigation,
         route,
-        title: metadata?.name ?? I18n.get(homeFolderi18n),
+        title: folder?.metadata?.name ?? I18n.get(homeFolderi18n),
       }),
     };
   };
@@ -61,7 +61,8 @@ export function ResourceExplorerTemplate({
 }: ResourceExplorerTemplate.AllProps) {
   const { folderId = RootFolderId.ROOT } = route.params;
 
-  const { content = emptyFolderData } = useSelector(selectors.folder(folderId));
+  const folder = useSelector(selectors.folder(folderId));
+  const content = folder?.content ?? emptyFolderData;
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();
   const actions = useExplorerActions(moduleConfig);
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
