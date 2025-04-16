@@ -804,6 +804,7 @@
   "mails-details-forward": "Transférer",
   "mails-details-move": "Déplacer",
   "mails-details-nofolders": "Vous n’avez pas encore créé de dossiers",
+  "mails-details-originalcontent" :  "Voir le contenu en version original",
   "mails-details-restore": "Restaurer",
   "mails-details-markunread": "Marquer comme non lu",
   "mails-edit-cc": "Cc",

@@ -24,6 +24,9 @@ export default StyleSheet.create({
     minHeight: 200,
     paddingBottom: getScaleWidth(60),
   },
+  originalContent: {
+    alignSelf: 'flex-start',
+  },
   page: {
     backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.medium,

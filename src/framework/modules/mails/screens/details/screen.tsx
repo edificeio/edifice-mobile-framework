@@ -368,7 +368,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     };
 
     if (!mail?.original_format_exists) return;
-    return <TertiaryButton text="Voir le contenu en version original" action={navigateToOriginalContent} />;
+    return (
+      <TertiaryButton
+        style={styles.originalContent}
+        text={I18n.get('mails-details-originalcontent')}
+        action={navigateToOriginalContent}
+      />
+    );
   }, [id, mail?.original_format_exists, props.navigation]);
 
   const renderHistory = React.useCallback(() => {
