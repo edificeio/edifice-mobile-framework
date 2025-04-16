@@ -46,12 +46,13 @@ export const computeNavBar = ({
 const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const { draftId, fromFolder, initialMailInfo, type } = props.route.params;
   const textInitialContentHTML = React.useMemo((): string => {
-    if (type === MailsEditType.FORWARD)
+    if (type === MailsEditType.REPLY || type === MailsEditType.FORWARD)
       return addHtmlForward(
         initialMailInfo?.from ?? { displayName: '', id: '', profile: AccountType.Guest },
         initialMailInfo?.to ?? [],
         initialMailInfo?.subject ?? '',
         initialMailInfo?.body ?? '',
+        type,
       );
     return initialMailInfo?.body ?? '';
   }, [initialMailInfo, type]);

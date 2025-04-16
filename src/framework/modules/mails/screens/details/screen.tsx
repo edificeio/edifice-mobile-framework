@@ -112,7 +112,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     }
     props.navigation.navigate(mailsRouteNames.edit, {
       fromFolder: from,
-      initialMailInfo: { id: mail!.id, subject: mail?.subject, to },
+      initialMailInfo: { body: mail?.body, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
   }, [from, mail, props]);
@@ -146,7 +146,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
     props.navigation.navigate(mailsRouteNames.edit, {
       fromFolder: from,
-      initialMailInfo: { cc, cci, id: mail!.id, subject: mail?.subject, to },
+      initialMailInfo: { body: mail?.body, cc, cci, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
   }, [from, mail, props]);

@@ -11,6 +11,7 @@ import {
   MailsVisible,
   MailsVisibleType,
 } from './model';
+import { MailsEditType } from './screens/edit';
 
 import { I18n } from '~/app/i18n';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
@@ -140,6 +141,14 @@ export function separateContentAndHistory(html: string) {
   return { content: html.trim(), history: '' };
 }
 
-export function addHtmlForward(from: MailsRecipientInfo, to: MailsVisible[], subject: string, body: string): string {
-  return `<br><br><div>-----Message transféré-----</div><div>De: ${from?.displayName}</div><div>Date: ${moment().format('DD/MM/YYYY hh:mm')}</div><div>Objet: ${subject}</div><div>À: ${to.map(recipient => recipient.displayName).join(', ')}</div><br>${body}`;
+export function addHtmlForward(
+  from: MailsRecipientInfo,
+  to: MailsVisible[],
+  subject: string,
+  body: string,
+  type: MailsEditType,
+): string {
+  const text = `<div>De: ${from?.displayName}</div><div>Date: ${moment().format('DD/MM/YYYY hh:mm')}</div><div>Objet: ${subject}</div><div>À: ${to.map(recipient => recipient.displayName).join(', ')}</div><br>${body}`;
+  if (type === MailsEditType.FORWARD) return `<br><br><div>-----Message transféré-----</div>${text}`;
+  return `<br><br>${text}`;
 }
