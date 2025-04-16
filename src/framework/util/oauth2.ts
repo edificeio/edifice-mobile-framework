@@ -224,6 +224,7 @@ export const getOAuth2Token = {
  * 1. Retrieves a new token using the refresh token from the account.
  * 2. Updates the account in the store and storage with the new token.
  * 3. If the account is active, updates the legacy OAuth2 client with the new token.
+ * 4. MUTATES THE ACCOUNT GIVEN AS PARAMETER WITH THE NEW TOKENS
  */
 export const refreshTokenForAccount = async (account: AuthSavedLoggedInAccount | AuthActiveAccount) => {
   // 1. Get new token
@@ -231,12 +232,13 @@ export const refreshTokenForAccount = async (account: AuthSavedLoggedInAccount |
   if (!platform) throw new AccountError(AccountErrorCode.INVALID_PLATFORM_CONFIG, `Platform not foune: ${account.platform}`);
   const newTokens = await getOAuth2Token.withRefreshToken(platform, account.tokens.refresh);
 
-  // 2. Update account in store + storage
-  getStore().dispatch(authActions.refreshToken(account.user.id, newTokens));
+  // 2. Update account in store + storage + parameter
+  account.tokens = newTokens; // Update account in parameter
+  getStore().dispatch(authActions.refreshToken(account.user.id, newTokens)); // Update redux store
   const serialisedAccount = isSerializedLoggedInAccount(account) ? account : getSerializedLoggedInAccountInfo(account);
   writeUpdateAccount(serialisedAccount); // Update Storage
 
-  // 3. If this account is active, update LEGACY OAuth2 client woth new token
+  // 3. If this account is active, update LEGACY OAuth2 client token
   if (accountIsActive(account)) {
     OAuth2RessourceOwnerPasswordClient.connection?.importToken(newTokens);
   }
