@@ -221,5 +221,3 @@ export const genericHitSlop: Insets = {
   right: UI_SIZES.spacing.minor,
   top: UI_SIZES.spacing.minor,
 };
-
-console.error('INSETS = ', initialWindowMetrics?.insets);
