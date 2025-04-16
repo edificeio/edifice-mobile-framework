@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Animated, Easing, useAnimatedValue, View, ViewProps } from 'react-native';
+import { Animated, Easing, LayoutChangeEvent, useAnimatedValue, View, ViewProps } from 'react-native';
 
 import RNSvg, { ClipPath, Line, Linecap, Path, Rect, VectorEffect } from 'react-native-svg';
 
@@ -167,7 +167,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ children, status, style }) => {
   const [measuredHeight, setMeasuredHeight] = React.useState<number | undefined>(undefined);
 
   const onLayout = React.useCallback(
-    (event: any) => {
+    (event: LayoutChangeEvent) => {
       const { height } = event.nativeEvent.layout;
       setMeasuredHeight(height + UI_SIZES.spacing.medium + getPaddingTop(HeaderStatus.HIDDEN) - 2 * UI_SIZES.border.small);
     },

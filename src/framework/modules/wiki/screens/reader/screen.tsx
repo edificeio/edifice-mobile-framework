@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { LayoutChangeEvent, ScrollViewProps, View } from 'react-native';
+import { LayoutChangeEvent, ScrollView, ScrollViewProps, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';

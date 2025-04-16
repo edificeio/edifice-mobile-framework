@@ -21,9 +21,6 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
       <BottomSheetModal
         ref={ref}
         index={0}
-        // snapPoints={['25%', '50%', '90%']}
-        //handleHeight={animatedHandleHeight}
-        //contentHeight={animatedContentHeight}
         enableDynamicSizing
         backdropComponent={renderBackdrop}
         topInset={useHeaderHeight() + (props.additionalTopInset ?? 0)}
