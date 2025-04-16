@@ -1418,6 +1418,8 @@
   "timeline-notiftype-userbook-userbookmotto": "Changement de devise",
   "timeline-notiftype-wiki-comment-added": "Ajout de commentaire dans un Wiki",
   "timeline-notiftype-wiki-page-created": "Nouvelle page dans un Wiki",
+  "timeline-notiftype-wiki-page-deleted": "Suppression d’une page",
+  "timeline-notiftype-wiki-page-updated": "Modification du contenu d’une page",
   "timeline-notiftype-wiki-shared": "Partage d'un Wiki",
   "timeline-notiftype-workspace-comment": "Ajout de commentaire sur un fichier",
   "timeline-notiftype-workspace-comment-folder": "Ajout de commentaire sur un dossier",
