@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ScrollViewProps, View } from 'react-native';
+import { Alert, ScrollViewProps, TouchableOpacity, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -500,10 +500,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     if (!isSelectionMode) return;
     return (
       <View style={[styles.selectMode, styles.selectModeTop]}>
-        <View style={styles.selectModeTopText}>
+        <TouchableOpacity onPress={onSelectAll} style={styles.selectModeTopText}>
           <Checkbox onPress={onSelectAll} checked={mails.length === selectedMails.length} />
           <BodyBoldText>{I18n.get('mails-list-selectall')}</BodyBoldText>
-        </View>
+        </TouchableOpacity>
         <TertiaryButton text={I18n.get('common-cancel')} action={onDisableSelectMode} style={styles.selectModeTopButton} />
       </View>
     );
@@ -758,6 +758,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           key={mail.id}
           data={mail}
           onPress={() => onPressItem(mail.id, mail.unread, mail.state)}
+          onLongPress={onActiveSelectMode}
           isSender={isSender}
           isSelectMode={isSelectionMode}
           isSelected={selectedMails.includes(mail.id)}
@@ -773,6 +774,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       onDelete,
       onPressItem,
       onRestore,
+      onActiveSelectMode,
       onSelectMail,
       onToggleUnread,
       props.session?.user.id,

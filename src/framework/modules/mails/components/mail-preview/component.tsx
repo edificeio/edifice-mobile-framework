@@ -114,6 +114,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       refSwipeable.current?.close();
     };
 
+    if (isSelectMode) return;
     return (
       <Reanimated.View style={styleAnimation}>
         {has2SwipeActions ? (
@@ -147,7 +148,8 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       renderRightActions={swipeRightAction}>
       <TouchableOpacity
         style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
-        onPress={isSelectMode ? onCheck : onPress}>
+        onPress={isSelectMode ? onCheck : onPress}
+        onLongPress={isSelectMode ? undefined : props.onLongPress}>
         {renderSelectIcon()}
         {renderAvatar()}
         {renderResponseIcon()}
