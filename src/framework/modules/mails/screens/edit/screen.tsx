@@ -330,8 +330,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   }, [to, cc, cci, subject, draftIdSaved, onCheckSend]);
 
   const renderTopForm = React.useCallback(() => {
-    if (!visibles) return;
-
     const commonProps = {
       allInputsSelectedRecipients,
       inputFocused,
@@ -392,6 +390,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   );
 
   const renderContent = React.useCallback(() => {
+    if (!visibles) return <EmptyConnectionScreen />;
     return (
       <RichEditorForm
         ref={richEditorRef}
@@ -412,7 +411,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         }}
       />
     );
-  }, [initialContentHTML, scrollEnabled, renderBottomForm, renderTopForm, setBody]);
+  }, [visibles, renderTopForm, initialContentHTML, renderBottomForm, scrollEnabled]);
 
   return (
     <ContentLoader
