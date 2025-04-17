@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-04-10 22:38:34",
-  "notes": "release: 1.14.0-peda.7(1140008)",
-  "version": "1.14.0-peda.8(1140009)"
+  "last": "2025-04-17 09:36:26",
+  "notes": "chore: yarn cache update\nMerge branch 'dev/1.14.0' into feat/peda/wiki\nchore: yarn cache update\nMerge commit '67c97dc4089e8db87ccc4fa30467bf99f244c421' into dev/1.14.0\nfix: remove double border on account-selector\nfix: WB2-2706 add missing notification translations\nfix(typo): unwanted console statement removal\nupdate(stack): update yarn cache\nfix(explorer): remove object creation in redux selector\nfix(oauth2): refresh account wasn't usable immediately\nfix(wiki): fixing imports, types, cleaning\nfix(wiki): WB2-2716 fixing bottomSheet opening height\nfix(tabbar): ENABLING-219, insets fallback set up\nfix(wiki): WB2-2715 : android bottomSheet scroll\nfix: bottomsheets now does appear in front of tabBar\nfix(wiki): page switcher button style for loader state\nfix(wiki): remove hidden pages also from children array\nfix(wiki): missing computation of children when there are hidden ones\nfeat(nabook): ENABLING-245, grant acces to Nabook only for students and relatives\nfix(explorer): sometimes backend is glitched and does not provide creation timestamps\nfix(wiki): WB2-2720 adding paddingBottom to PageList\nchore(build): Force Android AD_ID permission when merging Manifest\nfix(wiki): WB2-2711 fixing icon style for masked pages\nSquashed commit of the following:\nfix: pages are really hidden for non-managers of wiki\nfeat(nabook): ENABLING-237, modif icone module\nrelease: 1.14.0-peda.8(1140009)",
+  "version": "1.14.14-peda.1(1141410)"
 }
