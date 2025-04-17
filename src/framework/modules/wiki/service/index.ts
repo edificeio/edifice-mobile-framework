@@ -7,6 +7,7 @@ import { Wiki, WikiPage, WikiResourceMetadata } from '../model';
 import { API } from './types';
 
 import http from '~/framework/util/http';
+import { ArrayElement } from '~/utils/types';
 
 const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResourceMetadata => ({
   assetId: data._id, // Explorer.assetId = Wiki.id. Explorer.id is something else that does not depend on the application.
@@ -37,47 +38,46 @@ const computeRights = (data: Pick<API.Wiki.ListPagesResponse, 'rights'>, session
   return rights;
 };
 
-const walkDepthCompute = (
-  page: API.Wiki.ListPagesResponse['pages'][0] & { depth?: number },
-  id: string,
-  all: Map<string, API.Wiki.ListPagesResponse['pages'][0] & { depth?: number }>,
-  currentDepth: number = 0,
-) => {
-  if (page.depth !== undefined) return;
-  page.depth = currentDepth;
-  if (page.children === undefined) return;
-  for (const childData of page.children) {
-    const child = all.get(childData._id);
-    if (!child) continue;
-    walkDepthCompute(child, child._id, all, currentDepth + 1);
-  }
-};
-
 const rightsThatSeeHiddenPages = new Set(['creator', 'manager']); // Business rule here. Need to be implemented into the backend.
 
 const hydrateWikiData = (data: API.Wiki.ListPagesResponse, session: AuthActiveAccount): Wiki => {
   const rights = computeRights(data, session);
-
-  const pagesAsArray: [
-    API.Wiki.ListPagesResponse['pages'][0]['_id'],
-    API.Wiki.ListPagesResponse['pages'][0] & { depth?: number },
-  ][] = [];
   const showHiddenPages: boolean = !isDisjointFrom(rightsThatSeeHiddenPages, new Set(rights)); // Business rule here. Need to be implemented into the backend.
-  for (const page of data.pages) {
-    if (!page.isVisible && !showHiddenPages) continue; // Business rule here. Need to be implemented into the backend.
-    pagesAsArray.push([
-      page._id,
-      { ...page, children: page.children?.filter(p => p.isVisible === true || showHiddenPages), depth: undefined }, // Business rule here. Need to be implemented into the backend.
-    ]);
+  const sortByPosition = (a: { position: number }, b: { position: number }) => a.position - b.position;
+  const preorderedPages = data.pages.sort(sortByPosition);
+
+  const pagesAsMap = new Map<string, ArrayElement<API.Wiki.ListPagesResponse['pages']>>();
+  for (let i = 0; i < preorderedPages.length; i++) {
+    pagesAsMap.set(preorderedPages[i]._id, preorderedPages[i]);
   }
-  const pagesAsMap = new Map<string, API.Wiki.ListPagesResponse['pages'][0] & { depth?: number }>(
-    pagesAsArray.sort((a, b) => a[1].position - b[1].position),
-  );
-  pagesAsMap.forEach(walkDepthCompute);
+
+  const orderedPagesAsMap = new Map<string, ArrayElement<API.Wiki.ListPagesResponse['pages']> & { depth?: number }>();
+
+  const addChildrenPagesInMap = (children: ArrayElement<API.Wiki.ListPagesResponse['pages']>['children'], currentDepth: number) => {
+    if (!children) return;
+    for (const child of children.sort(sortByPosition)) {
+      addPageInMap(pagesAsMap.get(child._id), currentDepth);
+    }
+  };
+
+  const addPageInMap = (page: ArrayElement<API.Wiki.ListPagesResponse['pages']> | undefined, currentDepth: number) => {
+    if (!page) return;
+    if (!orderedPagesAsMap.has(page._id)) orderedPagesAsMap.set(page._id, { ...page, depth: currentDepth });
+    addChildrenPagesInMap(page.children, currentDepth + 1);
+  };
+
+  pagesAsMap.forEach(page => {
+    addPageInMap(page, 0);
+  });
+
+  let orderedPagesAsArray = Array.from(orderedPagesAsMap.values());
+  if (!showHiddenPages) {
+    orderedPagesAsArray = orderedPagesAsArray.filter(page => page.isVisible);
+  }
 
   return {
     description: data.description,
-    pages: Array.from(pagesAsMap, ([_id, page]) => ({
+    pages: orderedPagesAsArray.map(page => ({
       childrenIds: page.children?.sort((a, b) => a.position - b.position).map(child => child._id) ?? [],
       depth: page.depth ?? 0,
       id: page._id,
