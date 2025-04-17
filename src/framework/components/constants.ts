@@ -1,11 +1,19 @@
 import { Dimensions, Insets, PixelRatio, Platform, StyleSheet } from 'react-native';
 
-import DeviceInfo, { hasNotch } from 'react-native-device-info';
+import DeviceInfo, { hasDynamicIsland, hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
-export const deviceFontScale = () => PixelRatio.getFontScale();
+const fallbackInsets = Platform.select({
+  default: { bottom: 0, left: 0, right: 0, top: 0 },
+  ios: { bottom: 34, left: 0, right: 0, top: hasDynamicIsland() ? 64 : hasNotch() ? 44 : 0 },
+});
+
+const insets = initialWindowMetrics?.insets || fallbackInsets;
+
 const screenDimensions = Dimensions.get('window');
 const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
+
+export const deviceFontScale = () => PixelRatio.getFontScale();
 
 const SCALE_DIMENSION_MAX = 1.5;
 const SCALE_DIMENSION_MIN = 0.75;
@@ -128,8 +136,8 @@ export const UI_SIZES = {
     statusbarHeight: Platform.select({ default: 0, ios: 19 }),
     tabbarHeight: 56,
     tabbarIconSize: Platform.select({ default: 19, ios: 25 }),
-    tabbarLabelMarginBottom: Platform.select({ default: 6, ios: initialWindowMetrics?.insets?.bottom ? 0 : 4 }),
-    tabbarLabelMarginTop: Platform.select({ default: 8, ios: initialWindowMetrics?.insets?.bottom ? 0 : 4 }),
+    tabbarLabelMarginBottom: Platform.select({ default: 6, ios: insets.bottom ? 0 : 4 }),
+    tabbarLabelMarginTop: Platform.select({ default: 8, ios: insets.bottom ? 0 : 4 }),
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
   },
@@ -160,13 +168,13 @@ export const UI_SIZES = {
   screen: {
     bottomInset: Platform.select({
       default: 0,
-      ios: DeviceInfo.isTablet() ? 32 : initialWindowMetrics?.insets?.bottom || 0,
+      ios: DeviceInfo.isTablet() ? 32 : insets.bottom,
     }),
     height: screenDimensions.height,
     scale: screenDimensions.scale,
     topInset: Platform.select({
-      default: hasNotch() ? initialWindowMetrics?.insets?.top || 0 : 0,
-      ios: initialWindowMetrics?.insets?.top || 0,
+      default: hasNotch() ? insets.top : 0,
+      ios: insets.top,
     }),
     width: screenDimensions.width,
   },
