@@ -6,6 +6,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 export const styles = StyleSheet.create({
   resourceThumbnailContainer: {
     alignSelf: 'center',
+    backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.mediumPlus + UI_SIZES.elements.border.large,
     borderWidth: UI_SIZES.elements.border.large,
