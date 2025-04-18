@@ -1,8 +1,4 @@
 export interface ISignature {
-  preference: {
-    useSignature: boolean;
-    signature: string;
-  };
-  zimbraENTSignatureExists: boolean;
-  id: string;
+  content: string;
+  useSignature: boolean;
 }

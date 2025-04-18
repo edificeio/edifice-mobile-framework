@@ -1,14 +1,13 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import type { IMediacentreReduxState } from './reducer';
+const MEDIACENTRE = 'mediacentre';
 
-export default new NavigableModuleConfig<'mediacentre', IMediacentreReduxState>({
-  name: 'mediacentre',
-  entcoreScope: ['mediacentre'],
-  matchEntcoreApp: '/mediacentre',
-  storageName: 'mediacentre',
-
-  displayI18n: 'mediacentre-moduleconfig-appname',
+export default new NavigableModuleConfig<string, MediacentreReduxState>({
   displayAs: 'myAppsSecondaryModule',
-  displayPicture: { type: 'Svg', name: 'mediacentre' },
+  displayI18n: 'mediacentre-moduleconfig-appname',
+  displayPicture: { name: MEDIACENTRE, type: 'Svg' },
+  entcoreScope: [MEDIACENTRE],
+  matchEntcoreApp: '/mediacentre',
+  name: MEDIACENTRE,
+  storageName: MEDIACENTRE,
 });

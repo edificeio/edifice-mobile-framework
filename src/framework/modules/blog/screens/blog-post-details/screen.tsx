@@ -48,7 +48,7 @@ import {
 import BlogPostDetails from '~/framework/modules/blog/components/blog-post-details';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { BlogPostComment, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
+import { BlogPostComment, BlogPostComments, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import {
   commentBlogPostResourceRight,
   deleteCommentBlogPostResourceRight,
@@ -77,12 +77,12 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   usePreventBack({
     showAlert: infoComment.changed,
     text: I18n.get(
-      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
+      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`
     ),
     title: I18n.get(
       infoComment.isPublication
         ? 'blog-postdetails-confirmation-unsaved-publication'
-        : 'blog-postdetails-confirmation-unsaved-modification',
+        : 'blog-postdetails-confirmation-unsaved-modification'
     ),
   });
   return null;
@@ -93,9 +93,11 @@ const ListComponent = Platform.select<React.ComponentType<any>>({
   ios: FlatList,
 })!;
 
+const PAGE_SIZE = 20;
+
 function BlogPostDetailsFlatList(props: {
   contentSetRef;
-  initialNumToRender;
+  // initialNumToRender;
   data;
   blogInfos;
   blogPostData;
@@ -108,15 +110,18 @@ function BlogPostDetailsFlatList(props: {
   footer;
   session;
 }) {
+  const [commentsMax, setCommentsMax] = React.useState(PAGE_SIZE);
+  const dataSlice = React.useMemo(() => (props.data as BlogPostComments).slice(0, commentsMax), [props.data, commentsMax]);
+
   return (
     <Viewport.Tracker>
       <>
         <ListComponent
           ref={props.contentSetRef}
-          initialNumToRender={props.initialNumToRender}
+          // initialNumToRender={props.initialNumToRender}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.content}
-          data={props.data}
+          data={dataSlice}
           keyExtractor={BlogPostDetailsScreen.contentKeyExtractor}
           ListHeaderComponent={
             props.blogInfos && props.blogPostData ? (
@@ -134,6 +139,8 @@ function BlogPostDetailsFlatList(props: {
           style={styles.contentStyle2}
           onContentSizeChange={props.onContentSizeChange}
           onLayout={props.onLayout}
+          onEndReached={() => setCommentsMax(commentsMax + PAGE_SIZE)}
+          onEndReachedThreshold={1}
           {...React.useMemo(() => Platform.select({ android: { stickyFooter: props.footer }, ios: {} }), [props.footer])}
         />
         {React.useMemo(() => Platform.select({ android: null, ios: props.footer }), [props.footer])}
@@ -498,7 +505,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               }
             }
           }, 50);
-        },
+        }
       );
 
       this.hideSubscription = Keyboard.addListener(
@@ -506,7 +513,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         () => {
           if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
             this.setState({ isCommentFieldFocused: false });
-        },
+        }
       );
     }
   }
@@ -575,7 +582,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           blogPostData={blogPostData}
           onReady={this.removePlaceholder}
           contentSetRef={this.contentSetRef}
-          initialNumToRender={blogPostComments?.length}
           renderItem={this.contentRenderItem}
           onRefresh={this.doRefresh}
           loadingState={loadingState}
@@ -737,7 +743,7 @@ const mapStateToProps: (s: IGlobalState) => BlogPostDetailsScreenDataProps = s =
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
+  getState: () => IGlobalState
 ) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
   dispatch,
 
@@ -768,7 +774,7 @@ const mapDispatchToProps: (
   // TS BUG: dispatch mishandled
   handleUpdateBlogPostComment: async (
     blogPostCommentId: { blogId: string; postId: string; commentId: string },
-    comment: string,
+    comment: string
   ) => {
     return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
   },

@@ -13,21 +13,21 @@ import type { SvgProps as RNSvgProps } from 'react-native-svg';
 
 const imports = {
   // ModuleIcons
-  admin: async () => import('ASSETS/icons/moduleIcons/admin.svg'),
+  'admin': async () => import('ASSETS/icons/moduleIcons/admin.svg'),
 
-  adressBook: async () => import('ASSETS/icons/moduleIcons/adressBook.svg'),
+  'adressBook': async () => import('ASSETS/icons/moduleIcons/adressBook.svg'),
 
-  archives: async () => import('ASSETS/icons/moduleIcons/archives.svg'),
+  'archives': async () => import('ASSETS/icons/moduleIcons/archives.svg'),
 
-  blog: async () => import('ASSETS/icons/moduleIcons/blog.svg'),
+  'blog': async () => import('ASSETS/icons/moduleIcons/blog.svg'),
 
-  calendar: async () => import('ASSETS/icons/moduleIcons/calendar.svg'),
+  'calendar': async () => import('ASSETS/icons/moduleIcons/calendar.svg'),
 
-  collaborativeWall: async () => import('ASSETS/icons/moduleIcons/collaborativeWall.svg'),
+  'collaborativeWall': async () => import('ASSETS/icons/moduleIcons/collaborativeWall.svg'),
 
-  community: async () => import('ASSETS/icons/moduleIcons/community.svg'),
+  'community': async () => import('ASSETS/icons/moduleIcons/community.svg'),
 
-  competences: async () => import('ASSETS/icons/moduleIcons/competences.svg'),
+  'competences': async () => import('ASSETS/icons/moduleIcons/competences.svg'),
 
   'days-friday': async () => import('ASSETS/images/days/friday.svg'),
 
@@ -42,11 +42,11 @@ const imports = {
 
   'days-wednesday': async () => import('ASSETS/images/days/wednesday.svg'),
 
-  diary: async () => import('ASSETS/icons/moduleIcons/diary.svg'),
+  'diary': async () => import('ASSETS/icons/moduleIcons/diary.svg'),
 
-  edt: async () => import('ASSETS/icons/moduleIcons/edt.svg'),
+  'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
 
-  element: async () => import('ASSETS/icons/moduleIcons/element.svg'),
+  'element': async () => import('ASSETS/icons/moduleIcons/element.svg'),
 
   'empty-blog': async () => import('ASSETS/images/empty-screen/empty-blog.svg'),
 
@@ -94,45 +94,45 @@ const imports = {
 
   'empty-zimbra': async () => import('ASSETS/images/empty-screen/empty-zimbra.svg'),
 
-  exercices: async () => import('ASSETS/icons/moduleIcons/exercices.svg'),
+  'exercices': async () => import('ASSETS/icons/moduleIcons/exercices.svg'),
 
-  files: async () => import('ASSETS/icons/moduleIcons/files.svg'),
+  'files': async () => import('ASSETS/icons/moduleIcons/files.svg'),
 
-  form: async () => import('ASSETS/icons/moduleIcons/form.svg'),
+  'form': async () => import('ASSETS/icons/moduleIcons/form.svg'),
 
   'form-default': async () => import('ASSETS/images/form-default.svg'),
 
-  forum: async () => import('ASSETS/icons/moduleIcons/forum.svg'),
+  'forum': async () => import('ASSETS/icons/moduleIcons/forum.svg'),
 
-  homeLiaisonDiary: async () => import('ASSETS/icons/moduleIcons/homeLiaisonDiary.svg'),
+  'homeLiaisonDiary': async () => import('ASSETS/icons/moduleIcons/homeLiaisonDiary.svg'),
 
   'homework-assistance-home': async () => import('ASSETS/images/homework-assistance-home.svg'),
 
-  homework1D: async () => import('ASSETS/icons/moduleIcons/homework1D.svg'),
+  'homework1D': async () => import('ASSETS/icons/moduleIcons/homework1D.svg'),
 
-  homework2D: async () => import('ASSETS/icons/moduleIcons/homework2D.svg'),
+  'homework2D': async () => import('ASSETS/icons/moduleIcons/homework2D.svg'),
 
-  homeworkAssistance: async () => import('ASSETS/icons/moduleIcons/homeworkAssistance.svg'),
+  'homeworkAssistance': async () => import('ASSETS/icons/moduleIcons/homeworkAssistance.svg'),
 
   'image-not-found': async () => import('ASSETS/images/empty-screen/image-not-found.svg'),
 
-  lvs: async () => import('ASSETS/icons/moduleIcons/lvs.svg'),
+  'lvs': async () => import('ASSETS/icons/moduleIcons/lvs.svg'),
 
-  mediacentre: async () => import('ASSETS/icons/moduleIcons/mediacentre.svg'),
+  'mediacentre': async () => import('ASSETS/icons/moduleIcons/mediacentre.svg'),
 
-  messages: async () => import('ASSETS/icons/moduleIcons/messages.svg'),
+  'messages': async () => import('ASSETS/icons/moduleIcons/messages.svg'),
 
-  moodle: async () => import('ASSETS/icons/moduleIcons/moodle.svg'),
+  'moodle': async () => import('ASSETS/icons/moduleIcons/moodle.svg'),
 
   'multi-account': async () => import('ASSETS/images/multi-account.svg'),
 
-  newsFeed: async () => import('ASSETS/icons/moduleIcons/newsFeed.svg'),
+  'newsFeed': async () => import('ASSETS/icons/moduleIcons/newsFeed.svg'),
 
-  pad: async () => import('ASSETS/icons/moduleIcons/pad.svg'),
+  'pad': async () => import('ASSETS/icons/moduleIcons/pad.svg'),
 
-  pages: async () => import('ASSETS/icons/moduleIcons/pages.svg'),
+  'pages': async () => import('ASSETS/icons/moduleIcons/pages.svg'),
 
-  peertube: async () => import('ASSETS/icons/moduleIcons/peertube.svg'),
+  'peertube': async () => import('ASSETS/icons/moduleIcons/peertube.svg'),
 
   'pictos-answer': async () => import('ASSETS/images/pictos/answer.svg'),
 
@@ -156,31 +156,31 @@ const imports = {
 
   'pictos-success-outline': async () => import('ASSETS/images/pictos/success-outline.svg'),
 
-  poll: async () => import('ASSETS/icons/moduleIcons/poll.svg'),
+  'poll': async () => import('ASSETS/icons/moduleIcons/poll.svg'),
 
-  presences: async () => import('ASSETS/icons/moduleIcons/presences.svg'),
+  'presences': async () => import('ASSETS/icons/moduleIcons/presences.svg'),
 
   'rack:': async () => import('ASSETS/icons/moduleIcons/rack.svg'),
 
-  rbs: async () => import('ASSETS/icons/moduleIcons/rbs.svg'),
+  'rbs': async () => import('ASSETS/icons/moduleIcons/rbs.svg'),
 
-  reaction_1: async () => import('ASSETS/images/reactions/reaction1.svg'),
+  'reaction_1': async () => import('ASSETS/images/reactions/reaction1.svg'),
 
   'reaction_1-round': async () => import('ASSETS/images/reactions/reaction1_round.svg'),
 
-  reaction_2: async () => import('ASSETS/images/reactions/reaction2.svg'),
+  'reaction_2': async () => import('ASSETS/images/reactions/reaction2.svg'),
 
   'reaction_2-round': async () => import('ASSETS/images/reactions/reaction2_round.svg'),
 
-  reaction_3: async () => import('ASSETS/images/reactions/reaction3.svg'),
+  'reaction_3': async () => import('ASSETS/images/reactions/reaction3.svg'),
 
   'reaction_3-round': async () => import('ASSETS/images/reactions/reaction3_round.svg'),
 
-  reaction_4: async () => import('ASSETS/images/reactions/reaction4.svg'),
+  'reaction_4': async () => import('ASSETS/images/reactions/reaction4.svg'),
 
   'reaction_4-round': async () => import('ASSETS/images/reactions/reaction4_round.svg'),
 
-  report: async () => import('ASSETS/icons/moduleIcons/report.svg'),
+  'report': async () => import('ASSETS/icons/moduleIcons/report.svg'),
 
   'schoolbook-canteen': async () => import('ASSETS/images/schoolbook/canteen.svg'),
 
@@ -194,13 +194,13 @@ const imports = {
 
   'schoolbook-various': async () => import('ASSETS/images/schoolbook/various.svg'),
 
-  scrapbook: async () => import('ASSETS/icons/moduleIcons/scrapbook.svg'),
+  'scrapbook': async () => import('ASSETS/icons/moduleIcons/scrapbook.svg'),
 
-  shareBigFiles: async () => import('ASSETS/icons/moduleIcons/shareBigFiles.svg'),
+  'shareBigFiles': async () => import('ASSETS/icons/moduleIcons/shareBigFiles.svg'),
 
-  siteMap: async () => import('ASSETS/icons/moduleIcons/siteMap.svg'),
+  'siteMap': async () => import('ASSETS/icons/moduleIcons/siteMap.svg'),
 
-  skills: async () => import('ASSETS/icons/moduleIcons/skills.svg'),
+  'skills': async () => import('ASSETS/icons/moduleIcons/skills.svg'),
 
   'space-edi': async () => import('ASSETS/images/space/edi.svg'),
 
@@ -216,13 +216,13 @@ const imports = {
 
   'space-star3': async () => import('ASSETS/images/space/star3.svg'),
 
-  stats: async () => import('ASSETS/icons/moduleIcons/stats.svg'),
+  'stats': async () => import('ASSETS/icons/moduleIcons/stats.svg'),
 
-  support: async () => import('ASSETS/icons/moduleIcons/support.svg'),
+  'support': async () => import('ASSETS/icons/moduleIcons/support.svg'),
 
   'textbook-default': async () => import('ASSETS/images/textbook-default.svg'),
 
-  timeLineGenerator: async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
+  'timeLineGenerator': async () => import('ASSETS/icons/moduleIcons/timeLineGenerator.svg'),
 
   // UI Icons
   'ui-addFile': async () => import('ASSETS/icons/uiIcons/addFile.svg'),
@@ -364,7 +364,6 @@ const imports = {
   'ui-infoCircle': async () => import('ASSETS/icons/uiIcons/infoCircle.svg'),
 
   'ui-internet': async () => import('ASSETS/icons/uiIcons/internet.svg'),
-
   'ui-italic': async () => import('ASSETS/icons/uiIcons/italic.svg'),
 
   'ui-keyboardHide': async () => import('ASSETS/icons/uiIcons/keyboardHide.svg'),
@@ -419,8 +418,8 @@ const imports = {
   'ui-rafterRight': async () => import('ASSETS/icons/uiIcons/rafterRight.svg'),
   'ui-rafterUp': async () => import('ASSETS/icons/uiIcons/rafterUp.svg'),
   'ui-reaction': async () => import('ASSETS/icons/uiIcons/reaction.svg'),
+  'ui-record-video-preview': async () => import('ASSETS/icons/uiIcons/record-video-preview.svg'),
   'ui-recordVideo': async () => import('ASSETS/icons/uiIcons/recordVideo.svg'),
-  'ui-recordVideo-preview': async () => import('ASSETS/icons/uiIcons/recordVideo-preview.svg'),
   'ui-recordVoice': async () => import('ASSETS/icons/uiIcons/recordVoice.svg'),
   'ui-redo': async () => import('ASSETS/icons/uiIcons/redo.svg'),
   'ui-refresh': async () => import('ASSETS/icons/uiIcons/refresh.svg'),
@@ -468,13 +467,13 @@ const imports = {
   'ui-warning': async () => import('ASSETS/icons/uiIcons/warning.svg'),
   'ui-wavering': async () => import('ASSETS/icons/uiIcons/wavering.svg'),
   'ui-write': async () => import('ASSETS/icons/uiIcons/write.svg'),
-  user: async () => import('ASSETS/icons/moduleIcons/user.svg'),
+  'user': async () => import('ASSETS/icons/moduleIcons/user.svg'),
   'user-email': async () => import('ASSETS/images/user/email.svg'),
   'user-smartphone': async () => import('ASSETS/images/user/smartphone.svg'),
   'userpage-header': async () => import('ASSETS/images/userpage-header.svg'),
-  wekan: async () => import('ASSETS/icons/moduleIcons/wekan.svg'),
-  wiki: async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
-  xmas: async () => import('ASSETS/images/xmas.svg'),
+  'wekan': async () => import('ASSETS/icons/moduleIcons/wekan.svg'),
+  'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
+  'xmas': async () => import('ASSETS/images/xmas.svg'),
 };
 
 let importsCache = {};

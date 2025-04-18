@@ -223,7 +223,7 @@ class Attachment extends React.PureComponent<
                     (editMode && (att as ILocalAttachment).name) ||
                       (att as IRemoteAttachment).filename ||
                       (att as IRemoteAttachment).displayName ||
-                      '',
+                      ''
                   )}
                   style={{ marginRight: UI_SIZES.spacing.minor }}
                 />
@@ -301,7 +301,7 @@ class Attachment extends React.PureComponent<
           filepath: att.uri,
           filetype: att.mime,
         },
-        { _needIOSReleaseSecureAccess: false },
+        { _needIOSReleaseSecureAccess: false }
       ) as LocalFile;
     const file = editMode ? toLocalFile(attachment as ILocalAttachment) : newDownloadedFile;
     if (!this.attId) {
@@ -357,7 +357,7 @@ class Attachment extends React.PureComponent<
                 progress: res.bytesWritten / res.contentLength,
               });
             },
-          },
+          }
         )
         .then(lf => {
           this.setState({ newDownloadedFile: lf });

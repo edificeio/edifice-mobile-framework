@@ -7,7 +7,6 @@ import moment, { Moment } from 'moment';
 import ViewOverflow from 'react-native-view-overflow';
 import { ThunkDispatch } from 'redux-thunk';
 
-import HomeworkCard from './homework-card';
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
 import HomeworkTimeline from './HomeworkTimeline';
 
@@ -22,6 +21,7 @@ import { pageGutterSize, PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
+import HomeworkCard from '~/framework/modules/homework/components/homework-card';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';

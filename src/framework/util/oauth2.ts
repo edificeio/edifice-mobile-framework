@@ -111,8 +111,8 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
       scope: createScope(),
     };
     const headers = {
-      Accept: 'application/json, application/x-www-form-urlencoded',
-      Authorization: createDeviceAuthenticationHeader(platform.oauth.client_id, platform.oauth.client_secret),
+      'Accept': 'application/json, application/x-www-form-urlencoded',
+      'Authorization': createDeviceAuthenticationHeader(platform.oauth.client_id, platform.oauth.client_secret),
       'Content-Type': 'application/x-www-form-urlencoded',
     };
     const response = await http.fetchJsonForPlatform<API.OAuth2ResponseOK>(platform, 'POST', '/auth/oauth2/token', {
