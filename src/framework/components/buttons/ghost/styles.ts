@@ -5,7 +5,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   ghost: {
-    paddingHorizontal: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   outline: {
     borderColor: theme.palette.grey.cloudy,
