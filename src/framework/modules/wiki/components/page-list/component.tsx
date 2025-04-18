@@ -11,19 +11,32 @@ import { BodyBoldText, BodyText } from '~/framework/components/text';
 import IconChip from '~/framework/modules/wiki/components/icon-chip';
 
 const WikiListItem: React.FC<WikiListItemProps> = props => {
-  const { borderless, childrenIds, currentPageId, depth, id, isVisible, name, onPressItem: onPress, parentId, wikiData } = props;
+  const {
+    borderless,
+    childrenIds,
+    currentPageId,
+    depth,
+    id,
+    index,
+    isVisible,
+    name,
+    onPressItem: onPress,
+    parentId,
+    wikiData,
+  } = props;
   const isCurrentPage = currentPageId === id;
   const hasChild = childrenIds.length > 0;
 
   const listItemStyle = React.useMemo(() => {
     const getChildItemStyle = () => {
-      if (!parentId || depth === 0 || borderless) return {};
-      const parent = wikiData.pages.find(page => page.id === parentId);
-      const childrenArray = parent && parent.childrenIds;
-      const childIndex = childrenArray && childrenArray.indexOf(id);
-      const parentHasChildren = parent && childrenArray && parent.childrenIds.length > 1;
+      const previousPage = index > 0 ? wikiData.pages[index - 1] : undefined;
+      const nextPage = index < wikiData.pages.length - 1 ? wikiData.pages[index + 1] : undefined;
 
-      if (childIndex === 0) {
+      const isFirstChild = previousPage ? previousPage.id === parentId : false;
+      const isLastChild = nextPage ? !nextPage.parentId || nextPage.parentId !== parentId : true;
+      const parentHasChildren = nextPage && nextPage.parentId === id;
+      if (!parentId || depth === 0 || borderless) return {};
+      if (isFirstChild) {
         return [
           styles.firstChild,
           {
@@ -31,9 +44,9 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
             borderBottomRightRadius: parentHasChildren ? 0 : UI_SIZES.radius.card,
           },
         ];
-      } else if (childrenArray && childIndex === childrenArray.length - 1) {
+      } else if (isLastChild) {
         return styles.lastChild;
-      } else if (childIndex !== undefined && childIndex > 0) {
+      } else if (!isFirstChild && !isLastChild) {
         return styles.middleChild;
       } else {
         return undefined;
@@ -52,7 +65,7 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
     const childItemStyle = borderless && parentId ? styles.bottomSheetChild : getChildItemStyle();
 
     return [rootLevelItemStyle, childItemStyle];
-  }, [borderless, parentId, depth, wikiData.pages, id, hasChild]);
+  }, [borderless, parentId, index, wikiData.pages, depth, hasChild]);
 
   const currentPageAttributes = React.useMemo(() => {
     return {
@@ -112,7 +125,7 @@ export const PageList: React.FC<PageListProps> = ({
   }, [borderless]);
 
   const renderItem = React.useCallback(
-    ({ item }) => (
+    ({ index, item }) => (
       <WikiListItem
         borderless={borderless}
         childrenIds={item.childrenIds}
@@ -125,6 +138,7 @@ export const PageList: React.FC<PageListProps> = ({
         parentId={item.parentId}
         position={item.position}
         wikiData={wikiData}
+        index={index}
       />
     ),
     [currentPageId, borderless, onPress, wikiData],

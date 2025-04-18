@@ -17,6 +17,7 @@ export interface WikiListItemProps {
   parentId?: string;
   position: number;
   wikiData: Pick<Wiki, 'pages'>;
+  index: number;
 }
 
 export interface PageListProps {
