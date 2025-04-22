@@ -83,6 +83,7 @@ export function ResourceExplorerTemplate({
           order_by: 'updatedAt:desc',
           page_size: PAGE_SIZE,
           start_idx: start_idx,
+          trashed: false,
         });
         dispatch(actions.loadPage(folderId, response, reloadAll));
       } catch (e) {
