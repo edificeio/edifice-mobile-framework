@@ -26,16 +26,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   navBarTitleStyleAndroid: {
-    width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin,
+    width:
+      UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 2 * UI_SIZES.elements.navbarMargin - 4 * UI_SIZES.spacing.tiny,
+  },
+  navBarTitleStyleAndroid3icons: {
+    width:
+      UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin - 7 * UI_SIZES.spacing.tiny,
   },
 });
 
-export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) =>
+export const navBarTitle = (title?: string, style?: TextStyle, testID?: string, nbNavBarIcon?: number) =>
   Platform.select({
     android: () => (
       <BodyBoldText
         numberOfLines={1}
-        style={[styles.navBarTitleStyle, styles.navBarTitleStyleAndroid, style ?? {}]}
+        style={[
+          styles.navBarTitleStyle,
+          nbNavBarIcon === 3 ? styles.navBarTitleStyleAndroid3icons : styles.navBarTitleStyleAndroid,
+          style ?? {},
+        ]}
         testID={testID}>
         {title ?? ''}
       </BodyBoldText>

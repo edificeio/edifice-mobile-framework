@@ -468,6 +468,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             ? mailsDefaultFoldersInfos[selectedFolder as MailsDefaultFolders].title
             : selectedFolder.name,
         ),
+        undefined,
+        undefined,
+        3,
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
