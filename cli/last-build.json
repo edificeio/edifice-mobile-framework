@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-04-01 14:15:06",
-  "notes": "update(stack): update yarn cache\nfix(mails): WB-3894 - fix disables unread & read buttons in select mode\nrelease: 1.14.0-comm.3(1140004)",
-  "version": "1.14.0-comm.4(1140005)"
+  "last": "2025-04-22 23:12:11",
+  "notes": "fix(mails): WB-3952 , fix hitbox on burger menu in list screen\nupdate(stack): yarn cache update\nMerge branch 'feat/mails' of github.com:edificeio/edifice-mobile-framework into feat/mails\nmerge 1.14.0\nupdate(stack): yarn cache update\nfix(mails): WB-3710 fiw when airplane mode on edit screen\nfix(mails): fix some bugs on select mode\nchore(mails) move new mails modules to tabbar\nfix(mails): WB-3818, fear to left original content button\nfix(mails): WB-3598 add history when reply & reply all\nrelease: 1.14.0-comm.4(1140005)",
+  "version": "1.14.0-comm.5(1140006)"
 }
