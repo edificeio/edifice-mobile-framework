@@ -29,7 +29,7 @@ const ImageFallback: React.FC<ImageFallbackProps> = ({ fallbackIcon, iconSize, i
 
   const containerStyle = React.useMemo(() => {
     if (displayPicture.type === 'Svg' || displayPicture.type === 'Icon')
-      return [styles.moduleImage, { backgroundColor: displayColor.pale }, imageProps.style];
+      return [styles.moduleImage, imageProps.style, { backgroundColor: displayColor.pale }];
     else if (displayPicture.type === 'Image') return [styles.moduleImage, imageProps.style];
     else return undefined;
   }, [displayColor.pale, displayPicture.type, imageProps.style]);
