@@ -62,6 +62,7 @@ export const styles = StyleSheet.create({
   },
   visibilityIndicatorContainer: {
     left: UI_SIZES.spacing.big,
+    pointerEvents: 'none',
     position: 'absolute',
     top: UI_SIZES.border.small,
     zIndex: 1,
