@@ -65,7 +65,7 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
     const childItemStyle = borderless && parentId ? styles.bottomSheetChild : getChildItemStyle();
 
     return [rootLevelItemStyle, childItemStyle];
-  }, [borderless, parentId, index, wikiData.pages, depth, hasChild]);
+  }, [borderless, parentId, index, wikiData.pages, id, depth, hasChild]);
 
   const currentPageAttributes = React.useMemo(() => {
     return {
