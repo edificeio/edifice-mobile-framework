@@ -109,6 +109,8 @@ const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
     return <BodyText>{expanded ? content : (truncatedContent ?? content)}</BodyText>;
   }, [content, expanded, truncatedContent]);
 
+  // console.info(`"${content}"`, minNumberOfLines, lineCount);
+
   // beofre rendering, we set the size of all the elements involved in animation
   React.useLayoutEffect(() => {
     (async () => {
@@ -121,11 +123,12 @@ const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
       const measuredContent = await RNTextSize.measure({
         ...TEXT_FONT_SPECS,
         allowFontScaling: true,
+        lineInfoForLine: 0,
         text: content,
         usePreciseWidth: true,
         width: textWidth,
       });
-      const measuredLineHeight = (measuredContent.height * lineHeightRatio) / measuredContent.lineCount;
+      const measuredLineHeight = (measuredContent.lineInfo?.bottom ?? 0) * lineHeightRatio;
       setCollapsedCardHeight(() => {
         const value = measuredLineHeight * Math.min(minNumberOfLines, measuredContent.lineCount);
         animatedHeight.setValue(value);
