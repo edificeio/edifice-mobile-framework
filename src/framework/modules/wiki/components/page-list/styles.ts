@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: UI_SIZES.radius.card,
   },
   bottomSheetListContainer: {
-    paddingBottom: UI_SIZES.spacing.big,
+    paddingBottom: UI_SIZES.spacing.big + UI_SIZES.screen.bottomInset,
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingTop: 0,
   },

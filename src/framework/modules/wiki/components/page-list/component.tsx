@@ -146,6 +146,7 @@ export const PageList: React.FC<PageListProps> = ({
 
   return (
     <ListComponent
+      bottomInset={false}
       contentContainerStyle={listContainerStyle}
       data={wikiData?.pages}
       ItemSeparatorComponent={ItemSeparatorComponent}
