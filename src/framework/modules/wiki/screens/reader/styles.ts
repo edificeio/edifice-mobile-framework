@@ -10,6 +10,7 @@ export default StyleSheet.create({
     flexWrap: 'wrap',
     gap: UI_SIZES.spacing.tiny,
     justifyContent: 'space-between',
+    marginTop: 'auto',
     paddingBottom: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.small,
   },
@@ -53,6 +54,9 @@ export default StyleSheet.create({
   },
   page: {
     backgroundColor: theme.ui.background.card,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   selectButtonWrapper: {
     alignSelf: 'stretch',

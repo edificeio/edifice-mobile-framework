@@ -114,7 +114,7 @@ export function WikiReaderScreenLoaded({
 
   return (
     <>
-      <ScrollView refreshControl={refreshControl}>
+      <ScrollView refreshControl={refreshControl} contentContainerStyle={styles.scrollContent}>
         <View style={styles.topNavigation} />
         <SelectButton
           text={I18n.get('wiki-select-page-button')}
