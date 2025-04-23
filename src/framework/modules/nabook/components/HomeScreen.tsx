@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   title: { fontSize: getScaleWidth(24), marginBottom: getScaleWidth(12) },
 });
 
-export default function HomeScreen(props: HomeScreenProps) {
+const HomeScreen = (props: HomeScreenProps) => {
   const { token } = props;
 
   const [codeClasse, setCodeClasse] = React.useState<string | null>(null);
@@ -92,12 +92,14 @@ export default function HomeScreen(props: HomeScreenProps) {
           method: 'GET',
         });
         if (res.status !== 200) {
+          console.error('[🛑] Nabook | HomeScreen: Failed to load class code');
           setError('Failed to load class code');
           setIsLoading(false);
           return;
         }
         const json = await res.json();
         if (!json || !json.code) {
+          console.error('[🛑] Nabook | HomeScreen: Invalid response from server');
           setError('Invalid response from server');
           setIsLoading(false);
           return;
@@ -106,7 +108,7 @@ export default function HomeScreen(props: HomeScreenProps) {
         setCodeClasse(json.code);
         setIsLoading(false);
       } catch (e) {
-        console.error('Error fetching class code:', e);
+        console.error('[🛑] Nabook | HomeScreen: Error fetching class code:', e);
         setError('Failed to load class code');
         setIsLoading(false);
       }
@@ -154,4 +156,6 @@ export default function HomeScreen(props: HomeScreenProps) {
       </ScrollView>
     </PageView>
   );
-}
+};
+
+export default HomeScreen;

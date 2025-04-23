@@ -88,24 +88,9 @@ export default function NabookHomeScreen(_props: NabookHomeScreenPrivateProps) {
       </PageView>
     );
 
-  if (screen === 'welcome')
-    return (
-      <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
-        <WelcomeScreen next={() => setScreen('onboard')} />
-      </PageView>
-    );
+  if (screen === 'welcome') return <WelcomeScreen next={() => setScreen('onboard')} />;
 
-  if (screen === 'onboard')
-    return (
-      <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
-        <OnboardScreen next={() => setScreen('home')} />
-      </PageView>
-    );
+  if (screen === 'onboard') return <OnboardScreen next={() => setScreen('home')} />;
 
-  if (screen === 'home')
-    return (
-      <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
-        <HomeScreen token={nbkTk} />
-      </PageView>
-    );
+  if (screen === 'home') return <HomeScreen token={nbkTk} />;
 }
