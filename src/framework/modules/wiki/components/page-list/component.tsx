@@ -5,67 +5,13 @@ import styles from './styles';
 import { PageListProps, WikiListItemProps } from './types';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { FlatListProps } from '~/framework/components/list/flat-list';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import IconChip from '~/framework/modules/wiki/components/icon-chip';
 
 const WikiListItem: React.FC<WikiListItemProps> = props => {
-  const {
-    borderless,
-    childrenIds,
-    currentPageId,
-    depth,
-    id,
-    index,
-    isVisible,
-    name,
-    onPressItem: onPress,
-    parentId,
-    wikiData,
-  } = props;
+  const { borderless, currentPageId, depth, id, index, isVisible, name, onPressItem: onPress, parentId, wikiData } = props;
   const isCurrentPage = currentPageId === id;
-  const hasChild = childrenIds.length > 0;
-
-  const listItemStyle = React.useMemo(() => {
-    const getChildItemStyle = () => {
-      const previousPage = index > 0 ? wikiData.pages[index - 1] : undefined;
-      const nextPage = index < wikiData.pages.length - 1 ? wikiData.pages[index + 1] : undefined;
-
-      const isFirstChild = previousPage ? previousPage.id === parentId : false;
-      const isLastChild = nextPage ? !nextPage.parentId || nextPage.parentId !== parentId : true;
-      const parentHasChildren = nextPage && nextPage.parentId === id;
-      if (!parentId || depth === 0 || borderless) return {};
-      if (isFirstChild) {
-        return [
-          styles.firstChild,
-          {
-            borderBottomLeftRadius: parentHasChildren ? 0 : UI_SIZES.radius.card,
-            borderBottomRightRadius: parentHasChildren ? 0 : UI_SIZES.radius.card,
-          },
-        ];
-      } else if (isLastChild) {
-        return styles.lastChild;
-      } else if (!isFirstChild && !isLastChild) {
-        return styles.middleChild;
-      } else {
-        return undefined;
-      }
-    };
-
-    const getRootLevelItemStyle = () => {
-      if (borderless) {
-        return hasChild || depth === 0 ? styles.bottomSheetRootLevelItem : styles.bottomSheetChild;
-      } else {
-        return hasChild ? styles.listItemWithChild : styles.listItemChildless;
-      }
-    };
-
-    const rootLevelItemStyle = getRootLevelItemStyle();
-    const childItemStyle = borderless && parentId ? styles.bottomSheetChild : getChildItemStyle();
-
-    return [rootLevelItemStyle, childItemStyle];
-  }, [borderless, parentId, index, wikiData.pages, id, depth, hasChild]);
 
   const currentPageAttributes = React.useMemo(() => {
     return {
@@ -78,8 +24,50 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
     return !isVisible ? styles.hiddenListItemText : undefined;
   }, [isVisible]);
 
+  // Compute siblings info the putt he right style properties
+
+  const previousPage = index > 0 ? wikiData.pages[index - 1] : undefined;
+  const nextPage = index < wikiData.pages.length - 1 ? wikiData.pages[index + 1] : undefined;
+  const isParent = depth === 0;
+  const isParentWithChildren = isParent && nextPage && nextPage.parentId === id;
+  const isFirstChild = !isParent && previousPage ? previousPage.id === parentId : false;
+  const isLastChild = !isParent && (nextPage ? !nextPage.parentId || nextPage.parentId !== parentId : true);
+
+  const listItemLayoutStyle = React.useMemo(
+    () => [
+      styles.listItemLayoutCommon,
+      borderless ? styles.listItemLayoutBorderless : styles.listItemLayoutBordered,
+      isParent
+        ? [styles.listItemLayoutParent, borderless ? styles.listItemLayoutParentBorderless : styles.listItemLayoutParentBordered]
+        : [styles.listItemLayoutChild, borderless ? styles.listItemLayoutChildBorderless : styles.listItemLayoutChildBordered],
+      isParentWithChildren
+        ? [
+            styles.listItemLayoutParentWithChildren,
+            borderless ? styles.listItemLayoutParentWithChildrenBorderless : styles.listItemLayoutParentWithChildrenBordered,
+          ]
+        : undefined,
+      isFirstChild
+        ? [
+            styles.listItemLayoutChildFirst,
+            borderless ? styles.listItemLayoutChildFirstBorderless : styles.listItemLayoutChildFirstBordered,
+          ]
+        : undefined,
+      isLastChild
+        ? [
+            styles.listItemLayoutChildLast,
+            borderless ? styles.listItemLayoutChildLastBorderless : styles.listItemLayoutChildLastBordered,
+          ]
+        : undefined,
+    ],
+    [borderless, isFirstChild, isLastChild, isParent, isParentWithChildren],
+  );
+
   return (
-    <View style={React.useMemo(() => [listItemStyle, currentPageAttributes.style], [currentPageAttributes.style, listItemStyle])}>
+    <View
+      style={React.useMemo(
+        () => [listItemLayoutStyle, currentPageAttributes.style],
+        [currentPageAttributes.style, listItemLayoutStyle],
+      )}>
       <TouchableOpacity
         onPress={React.useCallback(() => {
           onPress?.(id);
