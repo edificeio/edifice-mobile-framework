@@ -13,15 +13,15 @@ export namespace API {
         title: string;
         author: string;
         authorName: string;
-        created: { $date: string };
-        modified?: { $date: string };
+        created?: { $date: string };
+        modified: { $date: string };
         comments?: {
           _id: string;
           author: string;
           authorName: string;
           comment: string;
-          created: { $date: string };
-          modified?: { $date: string };
+          created?: { $date: string };
+          modified: { $date: string };
         }[];
         contentPlain: string;
         isVisible: boolean;
@@ -37,8 +37,8 @@ export namespace API {
         position: number;
       }[];
       thumbnail?: string;
-      created: { $date: string };
-      modified?: { $date: string };
+      created?: { $date: string };
+      modified: { $date: string };
       owner: {
         userId: string;
         displayName: string;
@@ -60,8 +60,8 @@ export namespace API {
       lastContributer?: string;
       lastContributerName?: string;
       contentVersion: number;
-      created: { $date: string };
-      modified?: { $date: string };
+      created?: { $date: string };
+      modified: { $date: string };
       isVisible: boolean;
       parentId: string | null;
       position: number;

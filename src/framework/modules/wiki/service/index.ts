@@ -11,12 +11,12 @@ import { ArrayElement } from '~/utils/types';
 
 const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResourceMetadata => ({
   assetId: data._id, // Explorer.assetId = Wiki.id. Explorer.id is something else that does not depend on the application.
-  createdAt: Temporal.Instant.from(data.created.$date),
+  createdAt: Temporal.Instant.from((data.created ?? data.modified).$date),
   creatorId: data.owner.userId,
   creatorName: data.owner.displayName,
   name: data.title,
   thumbnail: data.thumbnail,
-  updatedAt: Temporal.Instant.from((data.modified ?? data.created).$date),
+  updatedAt: Temporal.Instant.from(data.modified.$date),
 });
 
 const computeRights = (data: Pick<API.Wiki.ListPagesResponse, 'rights'>, session: AuthActiveAccount) => {
@@ -94,7 +94,7 @@ const hydrateWikiData = (data: API.Wiki.ListPagesResponse, session: AuthActiveAc
 const hydrateWikiPageData = (data: API.Wiki.GetPageResponse): WikiPage => ({
   content: data.content,
   contentVersion: data.contentVersion,
-  createdAt: Temporal.Instant.from(data.created.$date),
+  createdAt: Temporal.Instant.from((data.created ?? data.modified).$date),
   creatorId: data.author,
   creatorName: data.authorName,
   id: data._id,
