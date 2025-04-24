@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-04-19 18:20:08",
-  "notes": "feat(nabook): INTEG-845, add relative/student nabook onboarding\nfix(typo): unwanted console statement removal\nupdate(stack): update yarn cache\nfix(tabbar): ENABLING-219, insets fallback set up\nfeat(nabook): ENABLING-245, grant acces to Nabook only for students and relatives\nchore(build): Force Android AD_ID permission when merging Manifest\nfeat(nabook): ENABLING-237, modif icone module\nfeat(zendesk): log statements when in debug mode\nchore: Change Phrase sync branche\nSquashed commit of the following:\nupdate(stack): update yarn cache\nSquashed commit of the following:\nfeat(nabook): ENABLING-234, nabook module skeleton addition\nrelease: 1.13.14(1131400)\nupdate(stack): yarn cache update\nrelease: 1.13.13-rc.4(1131310)",
-  "version": "1.13.14-rc.1(1131401)"
+  "last": "2025-04-24 19:24:39",
+  "notes": "Updated translations from Phrase (#197)\nfix(fonts + typo): duplicate nabook fonts files, improve error log, fix typo\nrelease: 1.13.14-rc.1(1131401)",
+  "version": "1.13.14-rc.2(1131402)"
 }
