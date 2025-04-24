@@ -39,9 +39,11 @@ export const computeNavBar = ({
   const wikiPageData = selectors.page(route.params.pageId)(getStore().getState());
   return {
     ...navBarOptions({
+      backButtonTestID: 'page-back-button',
       navigation,
       route,
       title: wikiPageData?.title ?? '',
+      titleTestID: 'wiki-title',
     }),
     animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
   };
@@ -52,10 +54,20 @@ const PageHeaderLoader = () => (
     <View style={styles.topNavigation} />
     <Placeholder>
       <PageHeaderPlaceholder>
-        <PlaceholderLine noMargin height={TextSizeStyle.Bigger.lineHeight} style={styles.headerPlaceholderTitle} />
+        <PlaceholderLine
+          noMargin
+          height={TextSizeStyle.Bigger.lineHeight}
+          style={styles.headerPlaceholderTitle}
+          testID="page-title-loader"
+        />
         <View style={styles.headerAuthorInfo}>
-          <PlaceholderMedia isRound size={AvatarSizes.md} style={styles.headerPlaceholderAvatar} />
-          <View style={styles.headerAuthorInfoText}>
+          <PlaceholderMedia
+            isRound
+            size={AvatarSizes.md}
+            style={styles.headerPlaceholderAvatar}
+            testID="page-author-avatar-loader"
+          />
+          <View style={styles.headerAuthorInfoText} testID="page-author-info-loader">
             <PlaceholderLine
               width={70}
               noMargin
@@ -123,20 +135,23 @@ export function WikiReaderScreenLoaded({
           iconRight="ui-unfold"
           wrapperStyle={styles.selectButtonWrapper}
           onLayout={onSelectButtonLayout}
+          testID="page-select-button"
         />
         <PageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
-          <HeadingMText>{page.title}</HeadingMText>
+          <HeadingMText testID="page-title">{page.title}</HeadingMText>
           <View style={styles.headerAuthorInfo}>
-            <SingleAvatar userId={page.creatorId} size="md" />
+            <SingleAvatar userId={page.creatorId} size="md" testID="page-author-avatar" />
             <View style={styles.headerAuthorInfoText}>
-              <BodyBoldText numberOfLines={1}>{page.creatorName}</BodyBoldText>
-              <SmallText numberOfLines={1}>
+              <BodyBoldText numberOfLines={1} testID="page-author-name">
+                {page.creatorName}
+              </BodyBoldText>
+              <SmallText numberOfLines={1} testID="page-date">
                 {I18n.get('wiki-page-published-at', { date: I18n.date(page.updatedAt ?? page.createdAt) })}
               </SmallText>
             </View>
           </View>
         </PageHeader>
-        <View style={styles.content}>
+        <View style={styles.content} testID="page-content">
           <RichEditorViewer content={page.content} onLoad={() => setWebViewReady(true)} />
         </View>
         <View style={styles.bottomNavigation}>
@@ -144,6 +159,7 @@ export function WikiReaderScreenLoaded({
             outline
             iconLeft="ui-arrowLeft"
             disabled={!prevPageId}
+            testID="previous-page-button"
             text={I18n.get('wiki-page-previous')}
             action={() => {
               onGoToPage(prevPageId!, true);
@@ -154,6 +170,7 @@ export function WikiReaderScreenLoaded({
             outline
             iconRight="ui-arrowRight"
             disabled={!nextPageId}
+            testID="next-page-button"
             text={I18n.get('wiki-page-next')}
             action={() => {
               onGoToPage(nextPageId!);
@@ -211,12 +228,14 @@ export default function WikiReaderScreen({
     () => (
       <View style={styles.loader}>
         <Placeholder>
-          <View style={styles.selectButtonWrapper}>{/* <PlaceholderLine noMargin height={BUTTON_PLACEHOLDER_HEIGHT} /> */}</View>
+          <View style={styles.selectButtonWrapper} testID="page-select-button-loader">
+            {/* <PlaceholderLine noMargin height={BUTTON_PLACEHOLDER_HEIGHT} /> */}
+          </View>
         </Placeholder>
         <PageHeaderLoader />
         <View style={styles.content}>
           <Placeholder>
-            <View style={styles.contentLoader}>
+            <View style={styles.contentLoader} testID="page-content-loader">
               <PlaceholderLine noMargin height={TextSizeStyle.Big.lineHeight} />
               <PlaceholderLine noMargin height={TextSizeStyle.Big.lineHeight} />
               <PlaceholderLine noMargin height={TextSizeStyle.Big.lineHeight} width={70} />

@@ -11,7 +11,7 @@ const SelectButton: React.FC<SelectButtonProps> = props => {
   const { action, wrapperStyle } = props;
 
   return (
-    <TouchableOpacity onPress={action}>
+    <TouchableOpacity onPress={action} {...(props.testID && { testID: props.testID })}>
       <DefaultButton {...props} style={wrapperStyle} TextComponent={BodyText} contentColor={theme.palette.grey.black} />
     </TouchableOpacity>
   );

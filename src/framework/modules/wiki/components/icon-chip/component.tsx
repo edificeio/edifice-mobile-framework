@@ -6,14 +6,14 @@ import { IconChipProps } from './types';
 
 import { Svg } from '~/framework/components/picture';
 
-const IconChip: React.FC<IconChipProps> = ({ icon, iconColor, iconContainerColor }) => {
+const IconChip: React.FC<IconChipProps> = ({ icon, iconColor, iconContainerColor, testId }) => {
   const iconContainerStyle: StyleProp<ViewStyle> = React.useMemo(
     () => [styles.iconContainer, { backgroundColor: iconContainerColor }],
     [iconContainerColor],
   );
 
   return (
-    <View style={iconContainerStyle}>
+    <View style={iconContainerStyle} {...(testId && { testID: testId })}>
       <Svg name={icon} fill={iconColor} height={ICON_HEIGHT} width={ICON_WIDTH} />
     </View>
   );

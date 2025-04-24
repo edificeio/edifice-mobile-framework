@@ -42,21 +42,21 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
         : [styles.listItemLayoutChild, borderless ? styles.listItemLayoutChildBorderless : styles.listItemLayoutChildBordered],
       isParentWithChildren
         ? [
-            styles.listItemLayoutParentWithChildren,
-            borderless ? styles.listItemLayoutParentWithChildrenBorderless : styles.listItemLayoutParentWithChildrenBordered,
-          ]
+          styles.listItemLayoutParentWithChildren,
+          borderless ? styles.listItemLayoutParentWithChildrenBorderless : styles.listItemLayoutParentWithChildrenBordered,
+        ]
         : undefined,
       isFirstChild
         ? [
-            styles.listItemLayoutChildFirst,
-            borderless ? styles.listItemLayoutChildFirstBorderless : styles.listItemLayoutChildFirstBordered,
-          ]
+          styles.listItemLayoutChildFirst,
+          borderless ? styles.listItemLayoutChildFirstBorderless : styles.listItemLayoutChildFirstBordered,
+        ]
         : undefined,
       isLastChild
         ? [
-            styles.listItemLayoutChildLast,
-            borderless ? styles.listItemLayoutChildLastBorderless : styles.listItemLayoutChildLastBordered,
-          ]
+          styles.listItemLayoutChildLast,
+          borderless ? styles.listItemLayoutChildLastBorderless : styles.listItemLayoutChildLastBordered,
+        ]
         : undefined,
     ],
     [borderless, isFirstChild, isLastChild, isParent, isParentWithChildren],
@@ -67,7 +67,8 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
       style={React.useMemo(
         () => [listItemLayoutStyle, currentPageAttributes.style],
         [currentPageAttributes.style, listItemLayoutStyle],
-      )}>
+      )}
+      testID={`list-item-number-${index}`}>
       <TouchableOpacity
         onPress={React.useCallback(() => {
           onPress?.(id);
@@ -87,6 +88,7 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
               icon="ui-hide"
               iconColor={theme.palette.complementary.blue.regular}
               iconContainerColor={currentPageAttributes.iconChipContainerColor}
+              testId="hidden-icon"
             />
           )}
         </View>

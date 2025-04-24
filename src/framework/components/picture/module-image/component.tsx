@@ -35,7 +35,7 @@ const ImageFallback: React.FC<ImageFallbackProps> = ({ fallbackIcon, iconSize, i
   }, [displayColor.pale, displayPicture.type, imageProps.style]);
 
   return (
-    <View style={containerStyle}>
+    <View style={containerStyle} testID="wiki-image-fallback">
       {displayPicture.type === 'Svg' ? (
         <Svg {...displayPicture} height={iconSize ?? DEFAULT_ICON_SIZE} width={iconSize ?? DEFAULT_ICON_SIZE} />
       ) : displayPicture.type === 'Icon' ? (
@@ -55,7 +55,7 @@ const ImageLoader: React.FC<ImageLoaderProps> = ({ imageProps }) => {
 
   return (
     <Placeholder Animation={Fade} style={imageLoaderStyle}>
-      <PlaceholderMedia style={styles.imageLoader} />
+      <PlaceholderMedia style={styles.imageLoader} testID="wiki-image-loader" />
     </Placeholder>
   );
 };
@@ -108,7 +108,7 @@ const ModuleImage: React.FC<ModuleImageProps> = ({ fallbackIcon, iconSize, modul
     else
       return (
         <>
-          <Image {...props} onLoad={onImageLoadSuccess} onError={onImageLoadError} />
+          <Image {...props} onLoad={onImageLoadSuccess} onError={onImageLoadError} testID="wiki-image" />
           {imageLoadingState === ImageLoadingState.Loading && <ImageLoader imageProps={props} />}
         </>
       );

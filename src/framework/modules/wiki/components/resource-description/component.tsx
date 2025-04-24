@@ -35,7 +35,7 @@ const ExpandButton: React.FC<ExpandButtonProps> = ({ isExpanded, onButtonLayout 
   );
 
   return (
-    <View style={expandButtonStyle} onLayout={onExpandButtonLayout}>
+    <View style={expandButtonStyle} onLayout={onExpandButtonLayout} testID="wiki-expansion-indicator">
       {isExpanded ? (
         <>
           <SmallBoldText style={styles.expandButtonText}>{I18n.get('textpreview-seeless')}</SmallBoldText>
@@ -204,7 +204,7 @@ const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
   }, [animateCard, expanded, onToggleVisibility]);
 
   return (
-    <Animated.View style={[animatedMarginTopStyle, animatedMarginBottomStyle]}>
+    <Animated.View style={[animatedMarginTopStyle, animatedMarginBottomStyle]} testID={'wiki-description'}>
       <TouchableOpacity onPress={toggleCardAnimation}>
         <Animated.View style={animatedHeightStyle}>
           {contentElement}

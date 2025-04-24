@@ -9,7 +9,7 @@ import { getScaleWidth } from '~/framework/components/constants';
 
 const ResourceDescriptionLoader: React.FC = () => {
   return (
-    <View style={styles.cardContainer}>
+    <View style={styles.cardContainer} testID="wiki-description-loader">
       <Placeholder>
         <PlaceholderLine noMargin height={getScaleWidth(16)} style={styles.linePlaceholder} />
         <PlaceholderLine noMargin height={getScaleWidth(16)} style={styles.linePlaceholder} />

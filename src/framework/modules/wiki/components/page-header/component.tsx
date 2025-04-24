@@ -58,7 +58,7 @@ const SvgLowerLine = () => (
   </RNSvg>
 );
 const VisibilityIndicator = () => (
-  <View style={styles.visibilityIndicator}>
+  <View style={styles.visibilityIndicator} testID="visibility-indicator">
     <View style={styles.visibilityIndicatorInner}>
       <View style={styles.visibilityIconContainer}>
         <Svg

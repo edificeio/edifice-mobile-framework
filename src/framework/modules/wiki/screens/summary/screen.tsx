@@ -38,9 +38,11 @@ export const computeNavBar = ({
   const wikiData = selectors.wiki(route.params.resourceId)(getStore().getState());
   return {
     ...navBarOptions({
+      backButtonTestID: 'wiki-back-button',
       navigation,
       route,
       title: wikiData?.name ?? '',
+      titleTestID: 'wiki-title',
     }),
     headerShadowVisible: false,
   };
@@ -66,7 +68,11 @@ export function WikiSummaryScreenLoaded({
       ListHeaderComponent={
         <>
           <ResourceHeader canAddDescription={true} image={imageSourceProps} description={wiki.description} />
-          {wiki.pages.length > 0 && <HeadingMText style={styles.pageListTitle}>{I18n.get('wiki-pagelist-title')}</HeadingMText>}
+          {wiki.pages.length > 0 && (
+            <HeadingMText style={styles.pageListTitle} testID="page-list-title">
+              {I18n.get('wiki-pagelist-title')}
+            </HeadingMText>
+          )}
         </>
       }
       ListEmptyComponent={
@@ -110,8 +116,13 @@ export default function WikiSummaryScreen({
         <ResourceHeaderLoader />
         <View style={styles.listContainerPlaceholder}>
           <Placeholder>
-            <PlaceholderLine noMargin height={TITLE_PLACEHOLDER_HEIGHT} style={styles.titlePlaceholder} />
-            <View style={styles.listContentPlaceholder}>
+            <PlaceholderLine
+              noMargin
+              height={TITLE_PLACEHOLDER_HEIGHT}
+              style={styles.titlePlaceholder}
+              testID="page-list-title-loader"
+            />
+            <View style={styles.listContentPlaceholder} testID="page-list-content-loader">
               <PlaceholderLine noMargin height={LINE_PLACEHOLDER_HEIGHT} style={styles.linePlaceholder} />
               <PlaceholderLine noMargin height={LINE_PLACEHOLDER_HEIGHT} style={styles.linePlaceholder} />
             </View>
