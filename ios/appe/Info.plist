@@ -68,6 +68,11 @@
 			<string>Font-Italic.ttf</string>
 			<string>Font-Regular.ttf</string>
 			<string>Comfortaa-Bold.ttf</string>
+			<string>NabookRoboto.ttf</string>
+			<string>NabookPoppinsBoldItalic.ttf</string>
+			<string>NabookPoppinsItalic.ttf</string>
+			<string>NabookPoppinsSemiBold.ttf</string>
+			<string>NabookPoppinsRegular.ttf</string>
 		</array>
 		<key>UIBackgroundModes</key>
 		<array>
