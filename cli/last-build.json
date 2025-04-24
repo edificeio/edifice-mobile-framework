@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-04-18 17:31:58",
-  "notes": "fiw: WB2-2714 put white backgound into resourceThumbnail\nfix: WB2-2729 fix ghost button paddings\nfix: WB2-2713 page border style was wrong\nfix: reimplement page sorting algorithm\nfix: build version\nrelease: 1.14.14-peda.1(1141410)",
-  "version": "1.14.14-peda.2(1141411)"
+  "last": "2025-04-19 18:20:08",
+  "notes": "feat(nabook): INTEG-845, add relative/student nabook onboarding\nfix(typo): unwanted console statement removal\nupdate(stack): update yarn cache\nfix(tabbar): ENABLING-219, insets fallback set up\nfeat(nabook): ENABLING-245, grant acces to Nabook only for students and relatives\nchore(build): Force Android AD_ID permission when merging Manifest\nfeat(nabook): ENABLING-237, modif icone module\nfeat(zendesk): log statements when in debug mode\nchore: Change Phrase sync branche\nSquashed commit of the following:\nupdate(stack): update yarn cache\nSquashed commit of the following:\nfeat(nabook): ENABLING-234, nabook module skeleton addition\nrelease: 1.13.14(1131400)\nupdate(stack): yarn cache update\nrelease: 1.13.13-rc.4(1131310)",
+  "version": "1.13.14-rc.1(1131401)"
 }

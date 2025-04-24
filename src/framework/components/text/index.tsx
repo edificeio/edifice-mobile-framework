@@ -4,6 +4,7 @@
  * Do not use default React Native <Text> component, please use this one instead.
  * Don't forget to use <NestedText> instead of <Text> for nested text styles.
  */
+// eslint-disable-next-line no-restricted-imports
 import { PixelRatio, Platform, Text as RNText, TextStyle } from 'react-native';
 
 import styled from '@emotion/native';
