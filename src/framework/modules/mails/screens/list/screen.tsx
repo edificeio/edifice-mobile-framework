@@ -504,7 +504,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     return (
       <View style={[styles.selectMode, styles.selectModeTop]}>
         <TouchableOpacity onPress={onSelectAll} style={styles.selectModeTopText}>
-          <Checkbox onPress={onSelectAll} checked={mails.length === selectedMails.length} />
+          <Checkbox
+            onPress={onSelectAll}
+            checked={mails.length === selectedMails.length}
+            partialyChecked={selectedMails.length > 0 && mails.length !== selectedMails.length}
+          />
           <BodyBoldText>{I18n.get('mails-list-selectall')}</BodyBoldText>
         </TouchableOpacity>
         <TertiaryButton text={I18n.get('common-cancel')} action={onDisableSelectMode} style={styles.selectModeTopButton} />
