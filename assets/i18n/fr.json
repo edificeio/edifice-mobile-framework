@@ -866,6 +866,7 @@
   "mails-signature-header": "Signature",
   "mails-signature-placeholder": "Votre signature de mail ici",
   "mails-signature-title": "Paramétrer la signature",
+  "mails-signature-toastsuccess": "Vos modifications ont bien été prises en compte",
   "mails-tabname": "Messagerie",
   "mails-toastsuccessdelete": "Message(s) supprimé(s)",
   "mails-toastsuccessmove": "Message(s) déplacé(s)",

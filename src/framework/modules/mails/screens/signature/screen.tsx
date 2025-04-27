@@ -34,6 +34,10 @@ export const computeNavBar = ({
 const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
   const [useSignature, setUseSignature] = React.useState<boolean>(false);
   const [signature, setSignature] = React.useState<string>('');
+  const [initialValue, setInitialValue] = React.useState({
+    signature: '',
+    useSignature: false,
+  });
 
   const loadContent = async () => {
     try {
@@ -42,6 +46,10 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
 
       setUseSignature(dataJson.useSignature);
       setSignature(dataJson.signature);
+      setInitialValue({
+        signature: dataJson.signature,
+        useSignature: dataJson.useSignature,
+      });
     } catch (e) {
       console.error(e);
     }
@@ -59,7 +67,7 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
     try {
       await mailsService.signature.update({ signature, useSignature });
       props.navigation.goBack();
-      toast.showSuccess('good');
+      toast.showSuccess(I18n.get('mails-signature-toastsuccess'));
     } catch (e) {
       console.error(e);
       toast.showError();
@@ -68,9 +76,15 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerRight: () => <NavBarAction icon="ui-check" onPress={onSave} />,
+      headerRight: () => (
+        <NavBarAction
+          icon="ui-check"
+          onPress={onSave}
+          disabled={initialValue.signature === signature && initialValue.useSignature === useSignature}
+        />
+      ),
     });
-  }, [props.navigation, onSave]);
+  }, [props.navigation, onSave, initialValue.signature, initialValue.useSignature, signature, useSignature]);
 
   const renderContent = React.useCallback(() => {
     return (
@@ -84,7 +98,7 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
           <MultilineTextInput
             placeholder={I18n.get('mails-signature-placeholder')}
             numberOfLines={4}
-            maxLength={50}
+            maxLength={800}
             value={signature}
             onChangeText={onChangeText}
           />
