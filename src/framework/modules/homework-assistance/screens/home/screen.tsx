@@ -165,6 +165,6 @@ export default connect(
         tryFetchConfig: tryAction(fetchHomeworkAssistanceConfigAction),
         tryFetchResources: tryAction(fetchHomeworkAssistanceResourcesAction),
       },
-      dispatch,
-    ),
+      dispatch
+    )
 )(HomeworkAssistanceHomeScreen);

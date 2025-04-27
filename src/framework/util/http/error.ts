@@ -8,7 +8,7 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
   constructor(
     private response: Response,
     message?: string,
-    options?: ErrorOptions,
+    options?: ErrorOptions
   ) {
     super(message ?? `[HTTP] Error ${response.status}:  ${response.statusText}`, options);
     this.name = 'HTTPError';
@@ -18,31 +18,31 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
     this.status = response.status;
     this.statusText = response.statusText;
     this.type = response.type;
+  bytes(): Promise<Uint8Array> {
+    throw new Error("Method not implemented.");
+  }
+  ["constructor"]: Function;
+  toString(): string {
+    throw new Error("Method not implemented.");
+  }
+  toLocaleString(): string {
+    throw new Error("Method not implemented.");
+  }
+  valueOf(): Object {
+    throw new Error("Method not implemented.");
+  }
+  hasOwnProperty(v: PropertyKey): boolean {
+    throw new Error("Method not implemented.");
+  }
+  isPrototypeOf(v: Object): boolean {
+    throw new Error("Method not implemented.");
+  }
+  propertyIsEnumerable(v: PropertyKey): boolean {
+    throw new Error("Method not implemented.");
+  }
     this.url = response.url;
     this.body = response.body;
     this.bodyUsed = response.bodyUsed;
-  }
-  bytes(): Promise<Uint8Array> {
-    throw new Error('Method not implemented.');
-  }
-  ['constructor']: Function;
-  toString(): string {
-    throw new Error('Method not implemented.');
-  }
-  toLocaleString(): string {
-    throw new Error('Method not implemented.');
-  }
-  valueOf(): Object {
-    throw new Error('Method not implemented.');
-  }
-  hasOwnProperty(v: PropertyKey): boolean {
-    throw new Error('Method not implemented.');
-  }
-  isPrototypeOf(v: Object): boolean {
-    throw new Error('Method not implemented.');
-  }
-  propertyIsEnumerable(v: PropertyKey): boolean {
-    throw new Error('Method not implemented.');
   }
   headers: Headers;
   ok: boolean;
