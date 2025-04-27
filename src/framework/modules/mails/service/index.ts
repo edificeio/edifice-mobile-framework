@@ -65,8 +65,8 @@ export const mailsService = {
       return data.id;
     },
     delete: async (params: { id: string }) => {
-      const api = `/conversation/folder/trash/${params.id}`;
-      await http.fetchJsonForSession('PUT', api);
+      const api = `/conversation/api/folders/${params.id}`;
+      await http.fetchJsonForSession('DELETE', api);
     },
     // move: async (params: { id: string }, payload: { parentId: string }) => {
     //   const api = `/conversation/folder/${params.id}`;
