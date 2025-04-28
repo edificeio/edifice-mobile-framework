@@ -33,9 +33,14 @@ const commonSvgLineProps = {
   x2: 375,
 };
 
-const SvgBackground = ({ height = '100%' }: { height?: number | string }) => (
+const SvgBackground = ({ height = undefined }: { height?: number }) => (
   <>
-    <RNSvg width="100%" height={height} viewBox="0 0 375 164">
+    <RNSvg
+      height={'100%'}
+      width={'100%'}
+      style={React.useMemo(() => ({ minHeight: height }), [height])}
+      viewBox="0 0 375 164"
+      preserveAspectRatio="xMidYMid slice">
       <Path d="M-7.5 -5H52.5L-67.5 169H-127.5L-7.5 -5Z" {...commonSvgBackgroundProps} />
       <Path d="M82.5 -5H142.5L22.5 169H-37.5L82.5 -5Z" {...commonSvgBackgroundProps} />
       <Path d="M172.5 -5H232.5L112.5 169H52.5L172.5 -5Z" {...commonSvgBackgroundProps} />
@@ -95,13 +100,14 @@ const VisibilityIndicator = () => (
   </View>
 );
 
+const hiddenHeaderPaddingTop =
+  UI_SIZES.spacing.medium +
+  UI_SIZES.elements.icon.xsmall +
+  styles.visibilityIndicatorInner.paddingBottom +
+  styles.visibilityIndicatorInner.paddingTop;
+
 const getPaddingTop: (status?: HeaderStatus) => number = status =>
-  status === HeaderStatus.VISIBLE
-    ? UI_SIZES.spacing.medium
-    : UI_SIZES.spacing.medium +
-      /**/ UI_SIZES.elements.icon.xsmall +
-      /**/ styles.visibilityIndicatorInner.paddingBottom +
-      /**/ styles.visibilityIndicatorInner.paddingTop;
+  status === HeaderStatus.VISIBLE ? UI_SIZES.spacing.medium : hiddenHeaderPaddingTop;
 
 const getMarginVertical: (status?: HeaderStatus) => number = status =>
   status === HeaderStatus.VISIBLE ? -UI_SIZES.border.thin : -UI_SIZES.border.small;

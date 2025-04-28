@@ -21,7 +21,12 @@ export const styles = StyleSheet.create({
     borderColor: theme.palette.primary.light,
     borderTopWidth: UI_SIZES.border.thin,
   },
-  backgroundPatternContainer: { height: '100%', overflow: 'hidden', paddingVertical: UI_SIZES.border.small, width: '100%' },
+  backgroundPatternContainer: {
+    height: '100%',
+    overflow: 'hidden',
+    paddingVertical: UI_SIZES.border.small,
+    width: '100%',
+  },
   container: {
     paddingBottom: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
