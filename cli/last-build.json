@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-04-19 18:20:08",
-  "notes": "feat(nabook): INTEG-845, add relative/student nabook onboarding\nfix(typo): unwanted console statement removal\nupdate(stack): update yarn cache\nfix(tabbar): ENABLING-219, insets fallback set up\nfeat(nabook): ENABLING-245, grant acces to Nabook only for students and relatives\nchore(build): Force Android AD_ID permission when merging Manifest\nfeat(nabook): ENABLING-237, modif icone module\nfeat(zendesk): log statements when in debug mode\nchore: Change Phrase sync branche\nSquashed commit of the following:\nupdate(stack): update yarn cache\nSquashed commit of the following:\nfeat(nabook): ENABLING-234, nabook module skeleton addition\nrelease: 1.13.14(1131400)\nupdate(stack): yarn cache update\nrelease: 1.13.13-rc.4(1131310)",
-  "version": "1.13.14-rc.1(1131401)"
+  "last": "2025-04-28 16:45:35",
+  "notes": "fix: WB2-2237 try to fix thumbnails in carousel\nchore: add 'explorer' scope in wiki module\nfix(wiki): WB2-2744 hidden header svg height\nfeat(wiki): WB2-2202, WB2-2203, WB2-2309 adding notifications handler\nfeat(wiki): WB2-2453 adding testIds\nchore: yarn cache update\nMerge branch 'dev/1.14.0' into feat/peda/wiki\nMerge branch 'dev/1.13.14' into dev/1.14.0\nfix: WB2-2706 replaces wiki i18n by updated values\nfix: WB2-2742 creation date was mistyped\nfix(fonts + typo): duplicate nabook fonts files, improve error log, fix typo\nfix: WB2-2719 fix page list bordering styles\nfix(wiki): bottom insets on both lists\nfix: better measure of reasource-description line-height\nfix: resource-thumbnail background priority\nfix: page select button was not clickable under visibility indicator\nfix: WB2-2735 put bottom navigation at the bottom\nfix: do not show trashed elements in explorer\nfix: missing react hook dependency\nrelease: 1.13.14-rc.1(1131401)",
+  "version": "1.14.0-peda.11(1140013)"
 }
