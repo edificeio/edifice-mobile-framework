@@ -57,7 +57,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     return initialMailInfo?.body ?? '';
   }, [initialMailInfo, type]);
 
-  const [visibles, setVisibles] = React.useState<MailsVisible[]>();
   const [allInputsSelectedRecipients, setAllInputsSelectedRecipients] = React.useState<string[]>([]);
   const [initialContentHTML, setInitialContentHTML] = React.useState(textInitialContentHTML);
   const [body, setBody] = React.useState(textInitialContentHTML);
@@ -243,9 +242,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const loadData = React.useCallback(async () => {
     try {
-      const dataVisibles = await mailsService.visibles.getAll();
-      setVisibles(dataVisibles);
-
       if (draftIdSaved) {
         const draft = await mailsService.mail.get({ id: draftId! });
 
@@ -338,7 +334,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       onFocus: setInputFocused,
       onToggleShowList: showList => setScrollEnabled(!showList),
       richEditorRef,
-      visibles,
     };
 
     return (
@@ -360,7 +355,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       </View>
     );
   }, [
-    visibles,
     allInputsSelectedRecipients,
     inputFocused,
     isStartScroll,
@@ -390,7 +384,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   );
 
   const renderContent = React.useCallback(() => {
-    if (!visibles) return <EmptyConnectionScreen />;
     return (
       <RichEditorForm
         ref={richEditorRef}
@@ -411,7 +404,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         }}
       />
     );
-  }, [visibles, renderTopForm, initialContentHTML, renderBottomForm, scrollEnabled]);
+  }, [renderTopForm, initialContentHTML, renderBottomForm, scrollEnabled]);
 
   return (
     <ContentLoader

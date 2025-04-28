@@ -2,6 +2,8 @@
 import * as React from 'react';
 import { Animated, Keyboard, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
+import debounce from 'lodash.debounce';
+
 import styles from '../styles';
 import { MailsContactFieldProps } from './types';
 
@@ -11,11 +13,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextInputType } from '~/framework/components/inputs/text/component';
 import FlatList from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';
-import { BodyText, SmallBoldText } from '~/framework/components/text';
+import { BodyText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import MailsContactItem from '~/framework/modules/mails/components/contact-item';
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
 import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
+import { mailsService } from '~/framework/modules/mails/service';
 import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
 
 function removeAccents(text: string): string {
@@ -26,9 +29,9 @@ const INITIAL_HEIGHT_INPUT = 60;
 
 export const MailsContactField = (props: MailsContactFieldProps) => {
   const [search, setSearch] = React.useState('');
-  const [isEditing, setIsEditing] = React.useState<boolean>(false);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [ccCciPressed, setCcCciPressed] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [allInputsSelectedRecipients, setAllInputsSelectedRecipients] = React.useState<string[]>(
     props.allInputsSelectedRecipients ?? [],
   );
@@ -38,6 +41,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
   const [heightInputToSave, setHeightInputToSave] = React.useState(0);
   const [heightToRemoveList, setHeightToRemoveList] = React.useState(INITIAL_HEIGHT_INPUT);
+  const [focused, setFocused] = React.useState(false);
 
   const topPositionResults = React.useRef(new Animated.Value(0)).current;
 
@@ -81,11 +85,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   }, [props.isStartScroll]);
 
   React.useEffect(() => {
-    if (props.inputFocused !== props.type && (isOpen || isEditing)) {
-      if (isOpen) setIsOpen(false);
-      if (isEditing) setIsEditing(false);
+    if (props.inputFocused !== props.type && isOpen && !focused) setIsOpen(false);
+  }, [focused, isOpen, props.inputFocused, props.type]);
+
+  React.useEffect(() => {
+    if (props.inputFocused !== props.type) {
+      setFocused(false);
     }
-  }, [isEditing, isOpen, props.inputFocused, props.type]);
+  }, [props.inputFocused, props.type]);
 
   React.useEffect(() => {
     if (viewContainerRef.current) {
@@ -116,17 +123,17 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     }
   };
 
-  const onOpen = () => setIsOpen(true);
+  const onOpen = () => {
+    setFocused(true);
+    setIsOpen(true);
+  };
 
   const onFocus = () => {
     scrollToInput();
     if (!isOpen) setIsOpen(true);
     if (search.length >= 3) toggleShowList();
-    setIsEditing(true);
     props.onFocus(props.type);
   };
-
-  const onBlur = () => setIsEditing(false);
 
   const onRemoveContentAndExitInput = () => {
     setSearch('');
@@ -134,15 +141,31 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     if (showList) toggleShowList();
   };
 
+  const fetchSearch = async (query: string) => {
+    try {
+      const dataResults = await mailsService.visibles.getBySearch({ query });
+      setResults(dataResults);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSearch = React.useCallback(
+    debounce(text => {
+      fetchSearch(text);
+    }, 500),
+    [],
+  );
+
   const onChangeText = (text: string) => {
     setSearch(text);
     if (text.length >= 3) {
       const normalizedSearchText = removeAccents(text).toLowerCase();
-      const newResults = props.visibles.filter(visible => {
-        const normalizedDisplayName = removeAccents(visible.displayName).toLowerCase();
-        return normalizedDisplayName.includes(normalizedSearchText);
-      });
-      setResults(newResults);
+      if (!loading) setLoading(true);
+      debouncedSearch(normalizedSearchText);
       if (!showList) toggleShowList();
     } else {
       if (showList) toggleShowList();
@@ -219,7 +242,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
             {isOpen || selectedRecipients.length === 0 ? (
               <RNTextInput
                 ref={inputRef}
-                onBlur={onBlur}
                 onFocus={onFocus}
                 style={styles.input}
                 placeholderTextColor={theme.palette.grey.graphite}
@@ -245,29 +267,48 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               transform: [{ translateY: topPositionResults }],
             },
           ]}>
-          <FlatList
-            keyboardShouldPersistTaps="always"
-            nestedScrollEnabled
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-            data={results}
-            contentContainerStyle={[
-              styles.results,
-              {
-                minHeight: resultsHeight,
-              },
-            ]}
-            ListHeaderComponent={
-              <SmallBoldText style={styles.nbResults}>
-                {I18n.get(results.length > 1 ? 'mails-edit-results' : 'mails-edit-result', { nb: results.length })}
-              </SmallBoldText>
-            }
-            renderItem={({ item }) => {
-              const Component = item.type === MailsVisibleType.GROUP ? MailsRecipientGroupItem : MailsRecipientUserItem;
-              return <Component item={item} onPress={addUser} selected={allInputsSelectedRecipients.includes(item.id)} />;
-            }}
-            ListEmptyComponent={<SmallBoldText>Pas de résultats</SmallBoldText>}
-          />
+          {loading ? (
+            <View style={[styles.results, styles.loading]}>
+              <Svg
+                name="ui-loader"
+                fill={theme.palette.primary.regular}
+                width={UI_SIZES.elements.icon.medium}
+                height={UI_SIZES.elements.icon.medium}
+              />
+              <SmallBoldText>{I18n.get('mails-edit-loading')}</SmallBoldText>
+            </View>
+          ) : (
+            <FlatList
+              keyboardShouldPersistTaps="always"
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+              data={results}
+              contentContainerStyle={[
+                styles.results,
+                {
+                  minHeight: resultsHeight,
+                },
+              ]}
+              ListHeaderComponent={
+                results.length > 0 ? (
+                  <SmallBoldText style={styles.nbResults}>
+                    {I18n.get(results.length > 1 ? 'mails-edit-results' : 'mails-edit-result', { nb: results.length })}
+                  </SmallBoldText>
+                ) : null
+              }
+              renderItem={({ item }) => {
+                const Component = item.type === MailsVisibleType.GROUP ? MailsRecipientGroupItem : MailsRecipientUserItem;
+                return <Component item={item} onPress={addUser} selected={allInputsSelectedRecipients.includes(item.id)} />;
+              }}
+              ListEmptyComponent={
+                <View style={styles.noResults}>
+                  <HeadingSText style={styles.noResultsText}>{I18n.get('mails-edit-noresulttitle', { text: search })}</HeadingSText>
+                  <SmallText style={styles.noResultsText}>{I18n.get('mails-edit-noresulttext')}</SmallText>
+                </View>
+              }
+            />
+          )}
         </Animated.View>
       ) : null}
     </>

@@ -185,15 +185,13 @@ export const mailsService = {
     },
   },
   visibles: {
-    getAll: async () => {
-      const api = '/communication/visible/search';
+    getBySearch: async (params: { query: string }) => {
+      const api = `/communication/visible/search?query=${params.query}`;
+
       const backendVisibles = (await http.fetchJsonForSession('GET', api)) as MailsVisibleBackend[];
 
       const visibles = backendVisibles.map(visible => mailVisibleAdapter(visible));
       return visibles as MailsVisible[];
-    },
-    search: async (params: { search: string }) => {
-      const api = `/conversation/visible?search=${params.search}`;
     },
   },
 };

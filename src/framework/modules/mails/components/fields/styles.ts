@@ -33,12 +33,24 @@ export default StyleSheet.create({
     lineHeight: undefined,
     paddingVertical: UI_SIZES.spacing.tiny + UI_SIZES.spacing.tinyExtra,
   },
+  loading: {
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.tiny,
+    flexDirection: 'row',
+  },
   middlePart: {
     flex: 1,
     rowGap: UI_SIZES.spacing.minor,
   },
   nbResults: {
     marginBottom: UI_SIZES.spacing.small,
+  },
+  noResults: {
+    paddingTop: UI_SIZES.spacing.medium,
+    rowGap: UI_SIZES.spacing.small,
+  },
+  noResultsText: {
+    textAlign: 'center',
   },
   prefix: {
     color: theme.palette.grey.graphite,
