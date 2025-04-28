@@ -12,7 +12,7 @@ export default new NavigableModuleConfig<'wiki', WikiStore>({
   displayI18n: 'wiki-module-title',
   displayOrder: 0,
   displayPicture: { name: 'wiki', type: 'Svg' },
-  entcoreScope: ['wiki'],
+  entcoreScope: ['wiki', 'explorer'],
   matchEntcoreApp: '/wiki',
   name: 'wiki',
   storageName: 'wiki',
