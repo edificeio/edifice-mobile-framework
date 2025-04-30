@@ -81,6 +81,7 @@ export interface MailsFolderCount {
 export enum MailsMailStatePreview {
   DRAFT = 'DRAFT',
   SENT = 'SENT',
+  RECALL = 'RECALL',
 }
 
 export interface IMailsMailPreview {

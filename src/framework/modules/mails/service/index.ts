@@ -171,6 +171,12 @@ export const mailsService = {
       return mails as IMailsMailPreview[];
     },
   },
+  recall: {
+    post: async (params: { id: string }) => {
+      const api = `/conversation/messages/${params.id}/recall`;
+      await http.fetchJsonForSession('POST', api);
+    },
+  },
   signature: {
     get: async () => {
       const api = '/userbook/preference/conversation';
