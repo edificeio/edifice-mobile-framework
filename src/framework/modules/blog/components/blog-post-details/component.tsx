@@ -9,7 +9,7 @@ import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { HeadingSText, SmallBoldText } from '~/framework/components/text';
 import Audience from '~/framework/modules/audience/components';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import type { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
+import { type Blog, type BlogPostWithAudience, countComments } from '~/framework/modules/blog/reducer';
 import { hasPermissionManager } from '~/framework/modules/blog/rights';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 
@@ -26,6 +26,8 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
   const richContent = React.useMemo(() => {
     return <RichEditorViewer content={post.content} onLoad={onReady} />;
   }, [post.content, onReady]);
+
+  const totalComments = React.useMemo(() => countComments(post), [post]);
 
   return (
     <View style={styles.container}>
@@ -51,7 +53,7 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
       {post.state === 'PUBLISHED' && blog.visibility !== 'PUBLIC' ? (
         <Audience
           containerStyle={styles.footer}
-          nbComments={post.comments?.length}
+          nbComments={totalComments}
           nbViews={post.audience?.views}
           infosReactions={post.audience?.reactions}
           referer={{ module: 'blog', resourceId: post._id, resourceType: 'post' }}

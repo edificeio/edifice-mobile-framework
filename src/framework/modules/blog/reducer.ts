@@ -52,6 +52,7 @@ export interface BlogPostComment {
   id: string;
   modified?: Moment;
   state: string;
+  deleted?: boolean;
 }
 
 export type BlogPostComments = BlogPostComment[];
@@ -257,6 +258,8 @@ export interface BlogFolderWithResources extends BlogFolder {
 export interface BlogFolderWithChildren extends BlogFolder {
   children?: BlogFolderWithChildren[];
 }
+
+export const countComments = (post: BlogPost) => post.comments?.reduce((acc, c) => (c.deleted ? acc : acc + 1), 0) ?? 0;
 
 const reducer = combineReducers({
   blogs: createSessionAsyncReducer(initialState.blogs, actionTypes.blogs),
