@@ -16,6 +16,8 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 
+const ICON_SIZE_NAVBAR = UI_SIZES.elements.navbarIconSize + 2 * UI_SIZES.spacing.tiny;
+
 const styles = StyleSheet.create({
   backbutton: {
     marginHorizontal: 0,
@@ -26,12 +28,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   navBarTitleStyleAndroid: {
-    width:
-      UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 2 * UI_SIZES.elements.navbarMargin - 4 * UI_SIZES.spacing.tiny,
+    width: UI_SIZES.screen.width - 2 * ICON_SIZE_NAVBAR - 2 * UI_SIZES.elements.navbarMargin,
   },
   navBarTitleStyleAndroid3icons: {
-    width:
-      UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin - 7 * UI_SIZES.spacing.tiny,
+    width: UI_SIZES.screen.width - 4 * ICON_SIZE_NAVBAR - 2 * UI_SIZES.elements.navbarMargin - 1 * UI_SIZES.spacing.tiny,
   },
 });
 
