@@ -89,7 +89,7 @@ export default () =>
       'type': 'WIKI',
     },
     {
-      'event-type': ['COMMENT-ADDED', 'PAGE-UPDATED', 'PAGE-CREATED', 'PAGE-VISIBLE'],
+      'event-type': ['PAGE-UPDATED', 'PAGE-CREATED', 'PAGE-VISIBLE'],
       'notifHandlerAction': handlePageNotificationAction,
       'type': 'WIKI',
     },
