@@ -272,7 +272,7 @@ export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
   }
 
   protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
-    analytics().logEvent(`${category}:${action}`, { name, value, ...this._properties });
+    //analytics().logEvent(`${category}_${action}`.slice(0, 39), { name, value, ...this._properties });
     return true;
   }
 
@@ -366,7 +366,7 @@ export class ConcreteTrackerSet {
   }
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {
-    console.debug('[Tracking] Event :', [category, action, name, value].join(' | '));
+    console.debug('[Tracking] Event :', [category, action, name, value].join(''));
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
 
