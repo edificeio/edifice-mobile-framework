@@ -650,6 +650,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { session } = this.props;
     const { blogInfos, blogPostData, updateCommentLoadingState } = this.state;
 
+    if (blogPostComment.deleted === true) {
+      return null;
+    }
+
     const isUpdatingComment = updateCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasUpdateCommentBlogPostRight =
       session && blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
