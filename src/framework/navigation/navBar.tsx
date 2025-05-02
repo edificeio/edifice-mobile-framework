@@ -16,7 +16,7 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 
-const ICON_SIZE_NAVBAR = UI_SIZES.elements.navbarIconSize + 2 * UI_SIZES.spacing.tiny;
+const NAVBAR_BUTTON_WIDTH = UI_SIZES.elements.navbarIconSize + 2 * UI_SIZES.spacing.tiny;
 
 const styles = StyleSheet.create({
   backbutton: {
@@ -27,22 +27,29 @@ const styles = StyleSheet.create({
     color: theme.ui.text.inverse,
     textAlign: 'center',
   },
-  navBarTitleStyleAndroid: {
-    width: UI_SIZES.screen.width - 2 * ICON_SIZE_NAVBAR - 2 * UI_SIZES.elements.navbarMargin,
-  },
-  navBarTitleStyleAndroid3icons: {
-    width: UI_SIZES.screen.width - 4 * ICON_SIZE_NAVBAR - 2 * UI_SIZES.elements.navbarMargin - 1 * UI_SIZES.spacing.tiny,
-  },
 });
 
-export const navBarTitle = (title?: string, style?: TextStyle, testID?: string, nbNavBarIcon?: number) =>
-  Platform.select({
+export const navBarTitle = (
+  title?: string,
+  style?: TextStyle,
+  testID?: string,
+  nbButtonsLeft?: number,
+  nbButtonsRight?: number,
+) => {
+  const maxNbButtons = Math.max(nbButtonsLeft ?? 1, nbButtonsRight ?? 1);
+  return Platform.select({
     android: () => (
       <BodyBoldText
         numberOfLines={1}
         style={[
           styles.navBarTitleStyle,
-          nbNavBarIcon === 3 ? styles.navBarTitleStyleAndroid3icons : styles.navBarTitleStyleAndroid,
+          {
+            width:
+              UI_SIZES.screen.width -
+              2 * UI_SIZES.elements.navbarMargin -
+              maxNbButtons * 2 * NAVBAR_BUTTON_WIDTH -
+              (maxNbButtons - 1) * UI_SIZES.spacing.tiny,
+          },
           style ?? {},
         ]}
         testID={testID}>
@@ -51,6 +58,7 @@ export const navBarTitle = (title?: string, style?: TextStyle, testID?: string, 
     ),
     default: title,
   });
+};
 
 export const navBarOptions: (props: {
   route: RouteProp<AuthNavigationParams, string>;

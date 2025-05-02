@@ -470,7 +470,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         ),
         undefined,
         undefined,
-        3,
+        1,
+        2,
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
