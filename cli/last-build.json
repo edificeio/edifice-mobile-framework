@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-03 14:33:46",
-  "notes": "Merge branch 'dev/1.13.14' of https://github.com/edificeio/edifice-mobile-framework into dev/1.13.14\nfix(nabook): add error msg when student does not have any relatives or school connection\nfix(blog): WB2-2753 skip deleted comments\nfix(analytics): ENABLING-259, Disable logEvent\nrelease: 1.13.14-rc.2(1131402)",
-  "version": "1.13.14-rc.3(1131403)"
+  "last": "2025-05-03 17:19:11",
+  "notes": "update(stack): yarn cache update\nrelease: 1.13.14-rc.3(1131403)",
+  "version": "1.13.14-rc.4(1131404)"
 }
