@@ -55,14 +55,14 @@ let _overrides_localRepoPath; // Will be computed after;
 // Copied files / Merged json files
 const _override_copyMergePaths = {
   [_override_entryPoint]: 'override.json', // Applied override information
-  i18n: 'assets/i18n/override', // I18n overrides
+  'i18n': 'assets/i18n/override', // I18n overrides
   '.phrase.yml': './.phrase.yml', // Phrase configuration file
   'phrase.json': './phrase.json', // Phrase secrets
   'appconf.ts': 'src/app/override/appconf.ts', // App configuration + included platforms
-  platforms: 'src/platforms', // All possible platforms. Only used ones will be included into the bundle
+  'platforms': 'src/platforms', // All possible platforms. Only used ones will be included into the bundle
   'modules.ts': 'src/app/override/modules.ts', // Included modules in the override
   'theme.ts': 'src/app/override/theme.ts', // Theme override
-  assets: 'assets', // All specific assets
+  'assets': 'assets', // All specific assets
   'android/google-services.json': 'android/app/google-services.json', // Firebase Android config
   'android/res': 'android/app/src/main/res', // Android specific native assets
   'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
@@ -77,7 +77,9 @@ const _override_copyMergePaths = {
 const _override_specialUpdates = {
   'ios.plist': 'ios/appe/Info.plist',
   'ios.pbxproj': 'ios/appe.xcodeproj/project.pbxproj',
-  android: 'android/gradle.properties',
+  'ios.entetilements': 'ios/appe/appe.entitlements',
+  'android.properties': 'android/gradle.properties',
+  'android.manifest': 'android/app/src/main/AndroidManifest.xml',
 };
 
 const _override_forceCopy = ['assets/animations/audio/disque.json', 'android/app/google-services.json'];
@@ -587,6 +589,8 @@ async function _override_performSpecialUpdates() {
   const appnameAndroid = overrideJson['appname.android'] || overrideJson.appname;
   if (!overrideJson.override) throw new Error(`Missing override information in ${_override_entryPoint}.`);
   const override = overrideJson.override;
+  const deeplinksName = overrideJson['deeplinks.name'];
+  const deeplinksUurl = overrideJson['deeplinks.url'];
 
   // 2. iOS plist
   const infoPlistPath = path.resolve(_projectPathAbsolute, _override_specialUpdates['ios.plist']);
@@ -594,7 +598,9 @@ async function _override_performSpecialUpdates() {
   infoPlist = infoPlist
     .replace(/(<key>CFBundleIdentifier<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + appidIos + '$3')
     .replace(/(<key>CFBundleDisplayName<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + appnameIos + '$3')
-    .replace(/(<key>BundleVersionOverride<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + override + '$3');
+    .replace(/(<key>BundleVersionOverride<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + override + '$3')
+    .replace(/(<key>CFBundleURLName<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + appidIos + '$3')
+    .replace(/(<key>CFBundleURLSchemes<\/key>\s*<array>\s*<string>)(.*)(<\/string>)/, '$1' + appnameIos.toLowerCase() + '$3');
   opts.verbose && console.info(`Update ${_override_specialUpdates['ios.plist']}`);
   await writeFile(infoPlistPath, infoPlist);
   ret.push(_override_specialUpdates['ios.plist']);
@@ -607,16 +613,34 @@ async function _override_performSpecialUpdates() {
   await writeFile(pbxprojPath, pbxproj);
   ret.push(_override_specialUpdates['ios.pbxproj']);
 
-  // 4. Android Gradle Properties
-  const gradlePropertiesPath = path.resolve(_projectPathAbsolute, _override_specialUpdates.android);
+  // 4. iOS entetilements
+  const entitlementsPath = path.resolve(_projectPathAbsolute, _override_specialUpdates['ios.entetilements']);
+  let entitlementsContent = await readFile(entitlementsPath, { encoding: 'utf-8' });
+  entitlementsContent = entitlementsContent.replace(/<string>applinks:<\/string>/, `<string>applinks:${appUrlDeeplink}<\/string>`);
+  await writeFile(entitlementsPath, entitlementsContent);
+  opts.verbose && console.info(`Update ${_override_specialUpdates['ios.entetilements']}`);
+  ret.push(_override_specialUpdates['ios.entetilements']);
+
+  // 5. Android Gradle Properties
+  const gradlePropertiesPath = path.resolve(_projectPathAbsolute, _override_specialUpdates['android.properties']);
   let gradleProperties = await readFile(gradlePropertiesPath, { encoding: 'utf-8' });
   gradleProperties = gradleProperties
     .replace(/(APPID=)(.*)/, '$1' + appidAndroid)
     .replace(/(APPNAME=)(.*)/, '$1' + appnameAndroid.toUnicode())
     .replace(/(APPOVERRIDE=)(.*)/, '$1' + override);
-  opts.verbose && console.info(`Update ${_override_specialUpdates.android}`);
+  opts.verbose && console.info(`Update ${_override_specialUpdates['android.properties']}`);
   await writeFile(gradlePropertiesPath, gradleProperties);
-  ret.push(_override_specialUpdates.android);
+  ret.push(_override_specialUpdates['android.properties']);
+
+  // 6. android AndroidManifest
+  const androidManifestPath = path.resolve(_projectPathAbsolute, _override_specialUpdates['android.manifest']);
+  let androidManifestContent = await readFile(androidManifestPath, { encoding: 'utf-8' });
+  androidManifestContent = androidManifestContent
+    .replace(/android:host="appe\.edifice\.io"/, `android:host="${deeplinksUurl}"`)
+    .replace(/android:pathPrefix="\/some-path"/, `android:pathPrefix="${deeplinksName}"`);
+  await writeFile(androidManifestPath, androidManifestContent);
+  opts.verbose && console.info(`Updated ${_override_specialUpdates['android.manifest']}`);
+  ret.push(_override_specialUpdates['android.manifest']);
 
   return ret;
 }

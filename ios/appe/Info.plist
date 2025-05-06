@@ -26,6 +26,19 @@
 		<string>????</string>
 		<key>CFBundleVersion</key>
 		<string>1131403</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLName</key>
+        <string>com.ode.appe</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>appeapp</string>
+        </array>
+      </dict>
+    </array>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>http</string>
