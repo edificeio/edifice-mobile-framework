@@ -8,10 +8,13 @@ export default StyleSheet.create({
   commonView: {
     alignItems: 'center',
     alignSelf: 'center',
+    columnGap: UI_SIZES.spacing.minor,
     flexDirection: 'row',
     justifyContent: 'center',
     padding: UI_SIZES.spacing.tiny,
-    columnGap: UI_SIZES.spacing.minor,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   indicator: {
     height: BUTTON_ICON_SIZE,

@@ -96,6 +96,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
         styles.commonView,
         style,
         { ...(loading || loadingButton ? { height: layoutHeight, width: layoutWidth } : undefined) },
+        disabled ? styles.disabled : undefined,
       ]}
       onPress={onPressAction}
       {...(loading || disabled ? { disabled: true } : {})}

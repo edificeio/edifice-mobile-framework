@@ -523,7 +523,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     const moveButton = (
       <TertiaryButton
         iconLeft="ui-folderMove"
-        contentColor={theme.palette.primary.regular}
         disabled={selectedMails.length === 0}
         action={() => {
           setTypeModal(MailsListTypeModal.MOVE);
@@ -537,13 +536,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         <>
           <TertiaryButton
             iconLeft="ui-mailUnread"
-            contentColor={theme.palette.primary.regular}
             disabled={selectedMails.length === 0 || selectedMails.every(mailId => mails.find(mail => mail.id === mailId)?.unread)}
             action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
           />
           <TertiaryButton
             iconLeft="ui-mailRead"
-            contentColor={theme.palette.primary.regular}
             disabled={selectedMails.length === 0 || selectedMails.every(mailId => !mails.find(mail => mail.id === mailId)?.unread)}
             action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
           />
@@ -553,13 +550,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       [MailsDefaultFolders.TRASH]: (
         <TertiaryButton
           iconLeft="ui-restore"
-          contentColor={theme.palette.primary.regular}
           disabled={selectedMails.length === 0}
           action={() => onActionMultiple(() => onRestore(selectedMails))}
         />
       ),
       [MailsDefaultFolders.OUTBOX]: moveButton,
-      [MailsDefaultFolders.DRAFTS]: moveButton,
+      [MailsDefaultFolders.DRAFTS]: null,
     };
 
     const renderActions = selectedFolder.name ? (
@@ -568,7 +564,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         <TertiaryButton
           iconLeft="ui-deleteFromFolder"
           disabled={selectedMails.length === 0}
-          contentColor={theme.palette.primary.regular}
           action={() => onActionMultiple(() => onRemoveFromFolder(selectedMails))}
         />
       </>
@@ -594,7 +589,17 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         />
       </View>
     );
-  }, [isSelectionMode, onActionMultiple, onDelete, onRemoveFromFolder, onRestore, onToggleUnread, selectedFolder, selectedMails]);
+  }, [
+    isSelectionMode,
+    mails,
+    onActionMultiple,
+    onDelete,
+    onRemoveFromFolder,
+    onRestore,
+    onToggleUnread,
+    selectedFolder,
+    selectedMails,
+  ]);
 
   const renderFolders = React.useCallback(() => {
     return (
