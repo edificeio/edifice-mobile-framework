@@ -60,18 +60,18 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   }, [hasAttachment]);
 
   const renderResponseIcon = React.useCallback(() => {
-    if (!response) return null;
+    if (!response && state !== MailsMailStatePreview.RECALL) return null;
     return (
       <View style={styles.responseIcon}>
         <Svg
-          name="ui-undo"
+          name={!response ? 'ui-recall' : 'ui-undo'}
           height={UI_SIZES.elements.icon.xxsmall}
           width={UI_SIZES.elements.icon.xxsmall}
           fill={theme.palette.grey.black}
         />
       </View>
     );
-  }, [response]);
+  }, [response, state]);
 
   const renderAvatar = React.useCallback(() => {
     if (isSender && infosRecipients.ids.length > 1) return <MailsRecipientAvatar type="Group" />;

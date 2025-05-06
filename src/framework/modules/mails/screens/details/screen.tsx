@@ -56,6 +56,12 @@ import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 
+const isDateOlderThan60Minutes = (date: moment.Moment) => {
+  const now = moment();
+  const diff = now.diff(date, 'minutes');
+  return diff > 60;
+};
+
 export const computeNavBar = ({
   navigation,
   route,
@@ -195,6 +201,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     [from, id, props.navigation],
   );
 
+  const onRecall = () => handleMailAction(() => mailsService.mail.recall({ id }), 'mails-toastsuccessrecall');
+
   const onMarkUnread = () =>
     handleMailAction(() => mailsService.mail.toggleUnread({ ids: [id], unread: true }), 'mails-toastsuccessunread');
 
@@ -244,6 +252,14 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       title: I18n.get('mails-details-forward'),
     },
     {
+      action: onRecall,
+      icon: {
+        android: 'ic_recall',
+        ios: 'arrow.uturn.backward.circle',
+      },
+      title: I18n.get('mails-details-recallpopup'),
+    },
+    {
       action: onMarkUnread,
       icon: {
         android: 'ic_visibility_off',
@@ -290,7 +306,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
       case onReplyAll:
         return infosRecipients && infosRecipients.ids.length > 1 && from !== MailsDefaultFolders.TRASH;
-
+      case onRecall:
+        return props.session?.user.id === mail?.from.id && !isDateOlderThan60Minutes(moment(mail?.date));
       case onMarkUnread:
       case onOpenMoveModal:
         return from !== MailsDefaultFolders.TRASH;
@@ -299,7 +316,6 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
       case onRestore:
         return from === MailsDefaultFolders.TRASH;
-
       case onDelete:
       case onTrash:
         return true;

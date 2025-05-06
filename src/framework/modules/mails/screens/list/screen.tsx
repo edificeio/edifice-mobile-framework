@@ -645,6 +645,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, [folders, selectedFolder, switchFolder, folderCounts]);
 
   const renderCreateNewFolder = React.useCallback(() => {
+    const onlyParentFolders = folders.filter(folder => folder.depth === 1);
     return (
       <MailsInputBottomSheet
         title={I18n.get('mails-list-newfolder')}
@@ -663,19 +664,17 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             </View>
             {isSubfolder ? (
               <FlatList
-                data={folders}
+                data={onlyParentFolders}
                 contentContainerStyle={[stylesFolders.containerFolders]}
-                renderItem={({ item }) =>
-                  item.depth === 1 ? (
-                    <MailsFolderItem
-                      key={item.id}
-                      icon="ui-folder"
-                      name={item.name}
-                      selected={idParentFolder === item.id}
-                      onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
-                    />
-                  ) : null
-                }
+                renderItem={({ item }) => (
+                  <MailsFolderItem
+                    key={item.id}
+                    icon="ui-folder"
+                    name={item.name}
+                    selected={idParentFolder === item.id}
+                    onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
+                  />
+                )}
               />
             ) : null}
           </>

@@ -418,6 +418,7 @@ const imports = {
   'ui-rafterRight': async () => import('ASSETS/icons/uiIcons/rafterRight.svg'),
   'ui-rafterUp': async () => import('ASSETS/icons/uiIcons/rafterUp.svg'),
   'ui-reaction': async () => import('ASSETS/icons/uiIcons/reaction.svg'),
+  'ui-recall': async () => import('ASSETS/icons/uiIcons/recall.svg'),
   'ui-record-video-preview': async () => import('ASSETS/icons/uiIcons/record-video-preview.svg'),
   'ui-recordVideo': async () => import('ASSETS/icons/uiIcons/recordVideo.svg'),
   'ui-recordVoice': async () => import('ASSETS/icons/uiIcons/recordVoice.svg'),
