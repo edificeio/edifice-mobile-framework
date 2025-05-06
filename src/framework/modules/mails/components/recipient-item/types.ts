@@ -3,6 +3,6 @@ import { MailsRecipientGroupInfo, MailsRecipientInfo, MailsVisible } from '../..
 export interface MailsRecipientContainerProps {
   disabled?: boolean;
   selected?: boolean;
-  onPress?: (recipient: MailsVisible) => void;
+  onPress?: (recipients: MailsVisible[]) => void;
   item: MailsRecipientInfo | MailsRecipientGroupInfo | MailsVisible;
 }

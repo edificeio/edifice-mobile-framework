@@ -29,7 +29,7 @@ const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
   return (
     <View style={[suppViewStyles, styles.view, type === 'ShareBookmark' ? styles.bookmark : type === 'User' ? styles.noUser : {}]}>
       <Svg
-        name={iconType[type === 'User' ? type : 'Group']}
+        name={iconType[type]}
         height={UI_SIZES.elements.icon.xxsmall}
         width={UI_SIZES.elements.icon.xxsmall}
         fill={theme.palette.grey.black}

@@ -205,3 +205,46 @@ export const mailVisibleAdapter = (n: MailsVisibleBackend) => {
   };
   return ret as MailsVisible;
 };
+
+export interface MailsGroupBookmarkBackend {
+  id: string;
+  name: string;
+  nbUsers: number;
+  activationCode: boolean;
+  groupType: string;
+  profile: string;
+  sortName: string;
+}
+
+export interface MailsUserBookmarkBackend {
+  id: string;
+  displayName: string;
+  profile: string;
+  activationCode: boolean;
+}
+
+export interface MailsBookmarkBackend {
+  id: string;
+  name: string;
+  groups: MailsGroupBookmarkBackend[];
+  users: MailsUserBookmarkBackend[];
+}
+
+export const mailGroupBookmarkAdapter = (n: MailsGroupBookmarkBackend) => {
+  const ret = {
+    displayName: n.name,
+    id: n.id,
+    type: MailsVisibleType.GROUP,
+  };
+  return ret as MailsVisible;
+};
+
+export const mailUserBookmarkAdapter = (n: MailsUserBookmarkBackend) => {
+  const ret = {
+    displayName: n.displayName,
+    id: n.id,
+    profile: n.profile as AccountType,
+    type: MailsVisibleType.USER,
+  };
+  return ret as MailsVisible;
+};

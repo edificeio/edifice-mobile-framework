@@ -117,22 +117,15 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     [attachments, draftIdSaved],
   );
 
-  const onChangeRecipient = React.useCallback(
-    (selectedRecipients, type, userId) => {
-      const stateSetters: Record<MailsRecipientsType, React.Dispatch<React.SetStateAction<MailsVisible[]>>> = {
-        cc: setCc,
-        cci: setCci,
-        to: setTo,
-      };
+  const onChangeRecipient = React.useCallback((selectedRecipients, type) => {
+    const stateSetters: Record<MailsRecipientsType, React.Dispatch<React.SetStateAction<MailsVisible[]>>> = {
+      cc: setCc,
+      cci: setCci,
+      to: setTo,
+    };
 
-      stateSetters[type](selectedRecipients);
-
-      if (allInputsSelectedRecipients?.includes(userId))
-        setAllInputsSelectedRecipients(prev => prev.filter(recipientId => recipientId !== userId));
-      else setAllInputsSelectedRecipients(prev => [...prev, userId]);
-    },
-    [allInputsSelectedRecipients],
-  );
+    stateSetters[type](selectedRecipients);
+  }, []);
 
   const onDeleteDraft = React.useCallback(async () => {
     Alert.alert(I18n.get('mails-edit-deletedrafttitle'), I18n.get('mails-edit-deletedrafttext'), [
@@ -327,7 +320,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const renderTopForm = React.useCallback(() => {
     const commonProps = {
-      allInputsSelectedRecipients,
       inputFocused,
       isStartScroll,
       onChangeRecipient,
@@ -354,19 +346,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         <MailsObjectField subject={subject} type={type} onChangeText={text => setSubject(text)} />
       </View>
     );
-  }, [
-    allInputsSelectedRecipients,
-    inputFocused,
-    isStartScroll,
-    onChangeRecipient,
-    to,
-    haveInitialCcCci,
-    moreRecipientsFields,
-    cc,
-    cci,
-    subject,
-    type,
-  ]);
+  }, [inputFocused, isStartScroll, onChangeRecipient, to, haveInitialCcCci, moreRecipientsFields, cc, cci, subject, type]);
 
   const renderBottomForm = React.useCallback(
     () => (

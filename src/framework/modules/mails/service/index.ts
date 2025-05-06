@@ -1,9 +1,12 @@
 import {
   mailContentAdapter,
+  mailGroupBookmarkAdapter,
   mailsAdapter,
+  MailsBookmarkBackend,
   MailsMailContentBackend,
   MailsMailPreviewBackend,
   MailsVisibleBackend,
+  mailUserBookmarkAdapter,
   mailVisibleAdapter,
 } from './adapters/mails';
 
@@ -48,6 +51,18 @@ export const mailsService = {
     remove: async (params: { mailId: string; attachmentId: string }) => {
       const api = `/conversation/message/${params.mailId}/attachment/${params.attachmentId}`;
       await http.fetchJsonForSession('DELETE', api);
+    },
+  },
+  bookmark: {
+    getById: async (params: { id: string }) => {
+      const api = `/directory/sharebookmark/${params.id}`;
+      const backendBookmark = (await http.fetchJsonForSession('GET', api)) as MailsBookmarkBackend;
+
+      const groups = backendBookmark.groups.map(group => mailGroupBookmarkAdapter(group));
+      const users = backendBookmark.users.map(user => mailUserBookmarkAdapter(user));
+
+      const bookmark = [...groups, ...users];
+      return bookmark as MailsVisible[];
     },
   },
   folder: {

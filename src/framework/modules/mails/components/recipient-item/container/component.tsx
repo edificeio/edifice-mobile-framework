@@ -8,6 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { MailsRecipientContainerProps } from '~/framework/modules/mails/components/recipient-item';
 import { MailsVisible } from '~/framework/modules/mails/model';
+import { mailsService } from '~/framework/modules/mails/service';
 
 const MailsRecipientContainer = (props: React.PropsWithChildren<MailsRecipientContainerProps>) => {
   const opacityView = React.useRef(new Animated.Value(0)).current;
@@ -37,8 +38,18 @@ const MailsRecipientContainer = (props: React.PropsWithChildren<MailsRecipientCo
     }
   }, [opacityIcon, opacityView, positionXIcon, props.selected]);
 
-  const onPress = () => {
-    if (props.onPress) props.onPress(props.item as MailsVisible);
+  const onPress = async () => {
+    if (!props.onPress) return;
+    if (props.item.type === 'ShareBookmark') {
+      try {
+        const items = await mailsService.bookmark.getById({ id: props.item.id });
+        props.onPress(items as MailsVisible[]);
+      } catch (e) {
+        console.error('Error while opening share bookmark', e);
+      }
+    } else {
+      props.onPress([props.item] as MailsVisible[]);
+    }
   };
 
   const renderIconIsSelected = useCallback(() => {

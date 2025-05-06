@@ -32,9 +32,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [ccCciPressed, setCcCciPressed] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [allInputsSelectedRecipients, setAllInputsSelectedRecipients] = React.useState<string[]>(
-    props.allInputsSelectedRecipients ?? [],
-  );
   const [selectedRecipients, setSelectedRecipients] = React.useState<MailsVisible[]>(props.recipients ?? []);
   const [results, setResults] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
@@ -72,10 +69,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       keyboardWillHide.remove();
     };
   }, []);
-
-  React.useEffect(() => {
-    setAllInputsSelectedRecipients(props.allInputsSelectedRecipients);
-  }, [props.allInputsSelectedRecipients]);
 
   React.useEffect(() => {
     if (props.isStartScroll && showList) {
@@ -173,16 +166,18 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     }
   };
 
-  const addUser = (user: MailsVisible) => {
-    const newSelectedRecipients = [...selectedRecipients, user];
+  const addUser = (items: MailsVisible[]) => {
+    items = items.filter(item => !selectedRecipients.some(selectedRecipient => selectedRecipient.id === item.id));
+    const newSelectedRecipients = [...selectedRecipients, ...items];
     setSelectedRecipients(newSelectedRecipients);
-    props.onChangeRecipient(newSelectedRecipients, props.type, user.id);
+    props.onChangeRecipient(newSelectedRecipients, props.type);
+    scrollToInput();
   };
 
   const removeUser = (user: MailsVisible) => {
     const newSelectedRecipients = selectedRecipients.filter(selectedRecipient => selectedRecipient.id !== user.id);
     setSelectedRecipients(newSelectedRecipients);
-    props.onChangeRecipient(newSelectedRecipients, props.type, user.id);
+    props.onChangeRecipient(newSelectedRecipients, props.type);
   };
 
   const onOpenMoreRecipientsFields = () => {
@@ -298,8 +293,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
                 ) : null
               }
               renderItem={({ item }) => {
-                const Component = item.type === MailsVisibleType.GROUP ? MailsRecipientGroupItem : MailsRecipientUserItem;
-                return <Component item={item} onPress={addUser} selected={allInputsSelectedRecipients.includes(item.id)} />;
+                const Component = item.type === MailsVisibleType.USER ? MailsRecipientUserItem : MailsRecipientGroupItem;
+                return <Component item={item} onPress={addUser} selected={selectedRecipients.includes(item.id)} />;
               }}
               ListEmptyComponent={
                 <View style={styles.noResults}>
