@@ -9,6 +9,7 @@ import type { NabookHomeScreenPrivateProps } from './types';
 import { I18n } from '~/app/i18n';
 import { PageView } from '~/framework/components/page';
 import { getPlatform } from '~/framework/modules/auth/reducer';
+import ErrorScreen from '~/framework/modules/nabook/components/ErrorScreen';
 import HomeScreen from '~/framework/modules/nabook/components/HomeScreen';
 import OnboardScreen from '~/framework/modules/nabook/components/OnboardScreen';
 import WelcomeScreen from '~/framework/modules/nabook/components/WelcomeScreen';
@@ -38,9 +39,12 @@ export const computeNavBar = ({
   }),
 });
 
-export default function NabookHomeScreen(_props: NabookHomeScreenPrivateProps) {
+export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
+  const { navigation } = props;
+
   const [nbkTk, setNBKTk] = React.useState<any | null>(null);
   const [screen, setScreen] = React.useState<string | null>(null);
+  const [msgError, setMsgError] = React.useState<string | null>(null);
 
   const load = async () => {
     const t = await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
@@ -64,6 +68,14 @@ export default function NabookHomeScreen(_props: NabookHomeScreenPrivateProps) {
         method: 'POST',
       });
       const json = await res.json();
+
+      if (!json || json.error) {
+        console.error('[🛑] Nabook | Screen: Cannot load token:', json);
+        setMsgError(json.msg || 'Erreur inconnue');
+        setScreen('error');
+        return;
+      }
+
       setNBKTk(json);
 
       // if (json.created && json.type === 'teacher') setScreen('welcome-teacher');
@@ -72,6 +84,8 @@ export default function NabookHomeScreen(_props: NabookHomeScreenPrivateProps) {
       else setScreen('home');
     } catch (e) {
       console.error('🚀 ~ load ~ e:', e);
+      setMsgError("Erreur de chargement de l'application");
+      setScreen('error');
     }
   };
 
@@ -87,6 +101,8 @@ export default function NabookHomeScreen(_props: NabookHomeScreenPrivateProps) {
         </View>
       </PageView>
     );
+
+  if (screen === 'error') return <ErrorScreen msg={msgError} getBack={navigation.goBack} />;
 
   if (screen === 'welcome') return <WelcomeScreen next={() => setScreen('onboard')} />;
 
