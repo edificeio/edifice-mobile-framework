@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.13.13",
+  "version": "1.13.14",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -64,7 +64,7 @@
     "prettier-all": "npx prettier src/**/*.*",
     "prettier-fix": "npx prettier --write src/**/*.*",
     "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && node --max_old_space_size=16000 node_modules/react-native/cli.js start --reset-cache --experimental-debugger",
-    "scaffold": "run(){ node cli/scaffold.js $@; }; run",
+    "scaffold": "node cli/scaffold.js",
     "ts-all": "tsc --noEmit"
   },
   "dependencies": {

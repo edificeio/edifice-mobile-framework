@@ -87,11 +87,11 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1131312
-        versionName "1.13.13"
+        versionCode 1131405
+        versionName "1.13.14"
         manifestPlaceholders.applicationName = APPNAME
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.6\""
+        buildConfigField "String", "BundleVersionType", "\"rc.5\""
         resValue "string", "app_name", "${APPNAME}"
         ndk {
             debugSymbolLevel 'FULL'
@@ -145,7 +145,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation("com.fasterxml.jackson.core:jackson-core:2.11.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.11.1")
-    implementation("com.google.android.gms:play-services-base:18.5.0")
+    implementation("com.google.android.gms:play-services-base:18.6.0")
     // Fix Duplicate class
     implementation('org.jetbrains:annotations:16.0.2')
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))

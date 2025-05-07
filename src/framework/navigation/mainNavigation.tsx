@@ -19,7 +19,6 @@ import {
   StackActions,
 } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
@@ -199,9 +198,6 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   }, [appsJson]);
 
   // Avoid bug when launching app after first push
-  const insets = useSafeAreaInsets();
-  const bottom = UI_SIZES.screen.bottomInset ?? insets?.bottom;
-
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(({ navigation, route }) => {
       return {
@@ -237,7 +233,7 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
             UI_SIZES.elements.tabbarHeight +
             Platform.select({
               default: 0,
-              ios: DeviceInfo.isTablet() ? 32 : bottom || 0,
+              ios: DeviceInfo.isTablet() ? 32 : UI_SIZES.screen.bottomInset,
             }),
           ...getAndroidTabBarStyleForNavState(navigation.getState()),
         },

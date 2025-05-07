@@ -39,6 +39,11 @@
 		91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */; };
 		91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */; };
 		91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */; };
+		AF3322982DB137020021465B /* NabookPoppinsBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322932DB137020021465B /* NabookPoppinsBoldItalic.ttf */; };
+		AF3322992DB137020021465B /* NabookPoppinsSemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322962DB137020021465B /* NabookPoppinsSemiBold.ttf */; };
+		AF33229A2DB137020021465B /* NabookRoboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322972DB137020021465B /* NabookRoboto.ttf */; };
+		AF33229B2DB137020021465B /* NabookPoppinsItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */; };
+		AF33229C2DB137020021465B /* NabookPoppinsRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */; };
 		F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */; };
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
 		F06C18682B61837F00FBA3A2 /* splash-screen.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18652B61837F00FBA3A2 /* splash-screen.png */; };
@@ -105,6 +110,11 @@
 		91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Bold.ttf"; sourceTree = "<group>"; };
 		91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Regular.ttf"; sourceTree = "<group>"; };
 		95CC73870D22D38A2E17B6AA /* libPods-appe-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appe-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF3322932DB137020021465B /* NabookPoppinsBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsBoldItalic.ttf; sourceTree = "<group>"; };
+		AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsItalic.ttf; sourceTree = "<group>"; };
+		AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsRegular.ttf; sourceTree = "<group>"; };
+		AF3322962DB137020021465B /* NabookPoppinsSemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsSemiBold.ttf; sourceTree = "<group>"; };
+		AF3322972DB137020021465B /* NabookRoboto.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookRoboto.ttf; sourceTree = "<group>"; };
 		C4A5206ADA9B3A8E0AD26FB7 /* Pods-appe-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-appe-tvOSTests/Pods-appe-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		DAAB12508AD5F6829B136F0F /* Pods-appe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe.release.xcconfig"; path = "Target Support Files/Pods-appe/Pods-appe.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -194,6 +204,11 @@
 		74EC2C3F26E63F04008EB301 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				AF3322932DB137020021465B /* NabookPoppinsBoldItalic.ttf */,
+				AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */,
+				AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */,
+				AF3322962DB137020021465B /* NabookPoppinsSemiBold.ttf */,
+				AF3322972DB137020021465B /* NabookRoboto.ttf */,
 				1D20447D2B6BD6C60020EABA /* ecriturea_italic.woff */,
 				1D20447E2B6BD6C60020EABA /* ecriturea_regular.woff */,
 				1D20445D2B6BD1500020EABA /* font_bold.woff */,
@@ -364,6 +379,11 @@
 				1D2044712B6BD1810020EABA /* ibmplexmono_italic.woff in Resources */,
 				1D2044722B6BD1810020EABA /* ibmplexmono_regular.woff in Resources */,
 				1D2044732B6BD1810020EABA /* lora_bold.woff in Resources */,
+				AF3322982DB137020021465B /* NabookPoppinsBoldItalic.ttf in Resources */,
+				AF3322992DB137020021465B /* NabookPoppinsSemiBold.ttf in Resources */,
+				AF33229A2DB137020021465B /* NabookRoboto.ttf in Resources */,
+				AF33229B2DB137020021465B /* NabookPoppinsItalic.ttf in Resources */,
+				AF33229C2DB137020021465B /* NabookPoppinsRegular.ttf in Resources */,
 				1D2044742B6BD1810020EABA /* lora_bolditalic.woff in Resources */,
 				1D2044752B6BD1810020EABA /* lora_italic.woff in Resources */,
 				1D2044762B6BD1810020EABA /* lora_regular.woff in Resources */,
