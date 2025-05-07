@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-04-30 09:32:53",
-  "notes": "fix(mails): WB-3953 fix android navbar title\nclean caches\nfeat(mails): WB-3899 , recall message part 1\nfix(mails): WB-3583, WB-3588 add query to usersearch and fix some bugs\nfix merge error\nmerge 1.14.0\nfix(mails): WB-3602 add partialyChecked in select mode\nfeat(mails): WB-3842 add some chnges on signature screen\nfix(mails): WB-3601 implement new endpoint to delete folders\nfeat(mails): add download button on attachment\nfix(mails) add i18n tabname\nrelease: 1.14.0-comm.5(1140006)",
-  "version": "1.14.0-comm.6(1140007)"
+  "last": "2025-05-07 17:05:57",
+  "notes": "feat(mails): WB-3588, search mode\nfeat(text-input): add anotation max length\nfeat(mails): WB-3583, add bookmark in user search\nfix(mails): WB-4038, cannot move draft\nfeat(mails): WB-3899, recall message\nfix(mails): WB-3959, clean code title navbar android\nrelease: 1.14.0-comm.6(1140007)",
+  "version": "1.14.0-comm.7(1140008)"
 }
