@@ -15,6 +15,7 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import SearchInput from '~/framework/components/inputs/search';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
@@ -77,10 +78,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isLoadingCreateNewFolder, setIsLoadingCreateNewFolder] = React.useState<boolean>(false);
   const [onErrorCreateFolder, setOnErrorCreateFolder] = React.useState<boolean>(false);
   const [isSelectionMode, setIsSelectionMode] = React.useState<boolean>(false);
+  const [isSearchMode, setIsSearchMode] = React.useState<boolean>(false);
   const [selectedMails, setSelectedMails] = React.useState<string[]>([]);
+  const [search, setSearch] = React.useState<string>('');
 
   const loadMails = React.useCallback(
-    async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+    async (folder: MailsDefaultFolders | MailsFolderInfo, searchValue?: string) => {
       try {
         setPageNb(0);
         if (!hasNextMails) setHasNextMails(true);
@@ -89,14 +92,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           folderId,
           pageNb: 0,
           pageSize: PAGE_SIZE,
-          unread: false,
+          search: searchValue ?? '',
         });
         setMails(mailsData);
       } catch (e) {
         console.error(e);
       }
     },
-    [hasNextMails, setHasNextMails, setMails],
+    [hasNextMails],
   );
 
   const loadNextMails = React.useCallback(async () => {
@@ -104,7 +107,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       if (mails.length < PAGE_SIZE * (pageNb + 1) || !hasNextMails) return;
       setIsLoadingNextPage(true);
       const folderId = typeof selectedFolder === 'object' ? selectedFolder.id : selectedFolder;
-      const mailsData = await mailsService.mails.get({ folderId, pageNb: pageNb + 1, pageSize: PAGE_SIZE, unread: false });
+      const mailsData = await mailsService.mails.get({ folderId, pageNb: pageNb + 1, pageSize: PAGE_SIZE, search });
       if (mailsData.length === 0) return setHasNextMails(false);
       setMails([...mails, ...mailsData]);
       setPageNb(pageNb + 1);
@@ -114,7 +117,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     } finally {
       setIsLoadingNextPage(false);
     }
-  }, [hasNextMails, pageNb, selectedFolder, mails, setMails, setHasNextMails, setPageNb]);
+  }, [mails, pageNb, hasNextMails, selectedFolder, search]);
 
   const loadFolders = React.useCallback(async () => {
     try {
@@ -146,11 +149,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const loadData = React.useCallback(async () => {
     try {
-      await Promise.all([loadMails(selectedFolder), loadFolders()]);
+      await Promise.all([loadMails(selectedFolder, search), loadFolders()]);
     } catch (e) {
       console.error(e);
     }
-  }, [loadMails, loadFolders, selectedFolder]);
+  }, [loadMails, selectedFolder, search, loadFolders]);
 
   const onDismissBottomSheet = React.useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
@@ -256,6 +259,16 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     setTypeModal(MailsListTypeModal.RENAME);
     bottomSheetModalRef.current?.present();
   }, []);
+
+  const onActiveSearchMode = React.useCallback(() => {
+    setIsSearchMode(true);
+  }, []);
+
+  const onDisabledSearchMode = React.useCallback(() => {
+    setIsSearchMode(false);
+    setSearch('');
+    loadMails(selectedFolder, '');
+  }, [loadMails, selectedFolder]);
 
   const onActiveSelectMode = React.useCallback(() => {
     setIsSelectionMode(true);
@@ -411,6 +424,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         title: I18n.get('mails-list-select'),
       },
       {
+        action: onActiveSearchMode,
+        icon: {
+          android: 'ic_signature',
+          ios: 'magnifyingglass',
+        },
+        title: I18n.get('common-search'),
+      },
+      {
         action: onConfigureSignature,
         icon: {
           android: 'ic_signature',
@@ -431,7 +452,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         title: I18n.get('mails-list-deletefolder'),
       }),
     ],
-    [onConfigureSignature, onDeleteFolder, onRenameFolder, onActiveSelectMode],
+    [onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder],
   );
 
   React.useEffect(() => {
@@ -451,7 +472,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               icon="ui-edit"
               onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })}
             />,
-            <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 2)}>
+            <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
               <NavBarAction icon="ui-options" />
             </PopupMenu>,
           ]}
@@ -479,10 +500,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerShown: !isSelectionMode,
+      headerShown: !isSelectionMode && !isSearchMode,
     });
     props.navigation.setParams({ tabBarVisible: !isSelectionMode });
-  }, [isSelectionMode, props.navigation]);
+  }, [isSearchMode, isSelectionMode, props.navigation]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -500,24 +521,39 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }, [loadFolders, loadMails, props.route]),
   );
 
-  const renderTopSelectMode = React.useCallback(() => {
-    if (!isSelectionMode) return;
+  const renderSearch = React.useCallback(() => {
+    return <SearchInput value={search} onChangeText={setSearch} onSubmitEditing={() => loadMails(selectedFolder, search)} />;
+  }, [loadMails, search, selectedFolder]);
+
+  const renderAllSelect = React.useCallback(() => {
+    return (
+      <TouchableOpacity onPress={onSelectAll} style={styles.selectModeTopText}>
+        <Checkbox
+          onPress={onSelectAll}
+          checked={mails.length === selectedMails.length}
+          partialyChecked={selectedMails.length > 0 && mails.length !== selectedMails.length}
+        />
+        <BodyBoldText>{I18n.get('mails-list-selectall')}</BodyBoldText>
+      </TouchableOpacity>
+    );
+  }, [mails.length, onSelectAll, selectedMails.length]);
+
+  const renderTopMode = React.useCallback(() => {
+    if (!isSelectionMode && !isSearchMode) return;
     return (
       <View style={[styles.selectMode, styles.selectModeTop]}>
-        <TouchableOpacity onPress={onSelectAll} style={styles.selectModeTopText}>
-          <Checkbox
-            onPress={onSelectAll}
-            checked={mails.length === selectedMails.length}
-            partialyChecked={selectedMails.length > 0 && mails.length !== selectedMails.length}
-          />
-          <BodyBoldText>{I18n.get('mails-list-selectall')}</BodyBoldText>
-        </TouchableOpacity>
-        <TertiaryButton text={I18n.get('common-cancel')} action={onDisableSelectMode} style={styles.selectModeTopButton} />
+        {isSearchMode && renderSearch()}
+        {isSelectionMode && renderAllSelect()}
+        <TertiaryButton
+          text={I18n.get('common-cancel')}
+          action={isSelectionMode ? onDisableSelectMode : onDisabledSearchMode}
+          style={styles.selectModeTopButton}
+        />
       </View>
     );
-  }, [isSelectionMode, mails, onDisableSelectMode, onSelectAll, selectedMails]);
+  }, [isSearchMode, isSelectionMode, onDisableSelectMode, onDisabledSearchMode, renderAllSelect, renderSearch]);
 
-  const renderBottomSelectMode = React.useCallback(() => {
+  const renderBottomMode = React.useCallback(() => {
     if (!isSelectionMode) return;
 
     const moveButton = (
@@ -798,7 +834,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderContent = React.useCallback(
     (refreshControl: ScrollViewProps['refreshControl']) => (
       <PageView style={styles.page}>
-        {renderTopSelectMode()}
+        {renderTopMode()}
         <FlatList
           ref={flatListRef}
           data={mails}
@@ -809,20 +845,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           onEndReached={loadNextMails}
           onEndReachedThreshold={0.5}
         />
-        {renderBottomSelectMode()}
+        {renderBottomMode()}
         {renderBottomSheetFolders()}
       </PageView>
     ),
-    [
-      renderTopSelectMode,
-      mails,
-      renderFooter,
-      renderEmpty,
-      loadNextMails,
-      renderBottomSelectMode,
-      renderBottomSheetFolders,
-      renderMailPreview,
-    ],
+    [renderTopMode, mails, renderFooter, renderEmpty, loadNextMails, renderBottomMode, renderBottomSheetFolders, renderMailPreview],
   );
 
   return <ContentLoader loadContent={loadData} renderContent={renderContent} renderLoading={() => <MailsPlaceholderList />} />;

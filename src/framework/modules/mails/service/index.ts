@@ -183,8 +183,8 @@ export const mailsService = {
     },
   },
   mails: {
-    get: async (params: { folderId: string; pageNb: number; pageSize: number; unread: boolean }) => {
-      const api = `/conversation/api/folders/${params.folderId}/messages?page=${params.pageNb}&page_size=${params.pageSize}&unread=${params.unread}`;
+    get: async (params: { folderId: string; pageNb: number; pageSize: number; search?: string }) => {
+      const api = `/conversation/api/folders/${params.folderId}/messages?${params.search?.length ? `search="${params.search}&"` : ''}page=${params.pageNb}&page_size=${params.pageSize}`;
       const backendMails = (await http.fetchJsonForSession('GET', api)) as MailsMailPreviewBackend[];
 
       const mails = backendMails.map(mail => mailsAdapter(mail));

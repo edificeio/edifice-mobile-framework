@@ -30,6 +30,10 @@ export default StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
   },
+  searchInput: {
+    paddingRight: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
   selectFolderTitle: {
     alignItems: 'center',
     flexDirection: 'row',
