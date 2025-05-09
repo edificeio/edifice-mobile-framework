@@ -512,9 +512,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   useFocusEffect(
     React.useCallback(() => {
       const { params } = props.route;
-      if (params.from && (params.reload || params.idMailToRemove || params.idMailToMarkUnread)) {
+      if (params.from && (params.reload || params.idMailToRemove || params.idMailToMarkUnread || params.idMailToRecall)) {
         if (params.reload) loadMails(params.from);
         if (params.idMailToRemove) setMails(prevMails => prevMails.filter(mail => mail.id !== params.idMailToRemove));
+        if (params.idMailToRecall)
+          setMails(prevMails =>
+            prevMails.map(mail => (mail.id === params.idMailToRecall ? { ...mail, state: MailsMailStatePreview.RECALL } : mail)),
+          );
         if (params.idMailToMarkUnread)
           setMails(prevMails => prevMails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)));
         setSelectedFolder(params.from);

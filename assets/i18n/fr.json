@@ -802,6 +802,7 @@
   "lvs-redirect-error-text": "Impossible de rediriger sur LVS.",
   "mails-details-createfolder": "Créer un dossier",
   "mails-details-recallpopup": "Rappeler le message",
+  "mails-details-recallscreen": "L’expéditeur à rappelé ce message, son contenu n’est donc plus visible.",
   "mails-details-recalltext": "Les destinataires ne pourrons plus voir le contenu du mail, mais ils verront que vous avez rappelé un message. Êtes vous sur de vouloir rappeler le message ?",
   "mails-details-recalltitle": "Rappeler le message ?",
   "mails-details-removefromfolder": "Retirer du dossier",

@@ -16,7 +16,7 @@ import DefaultButton from '~/framework/components/buttons/default';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen, EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -39,10 +39,12 @@ import {
   IMailsMailContent,
   MailsDefaultFolders,
   MailsListTypeModal,
+  MailsMailStatePreview,
   MailsRecipients,
   MailsVisible,
 } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { getRecallMessageRight } from '~/framework/modules/mails/rights';
 import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 import { mailsService } from '~/framework/modules/mails/service';
 import {
@@ -190,7 +192,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         Toast.showSuccess(I18n.get(successMessageKey));
         const navigationParams = {
           from,
-          ...(successMessageKey === 'mails-toastsuccessunread' ? { idMailToMarkUnread: id } : { idMailToRemove: id }),
+          ...(successMessageKey === 'mails-toastsuccessunread'
+            ? { idMailToMarkUnread: id }
+            : successMessageKey === 'mails-toastsuccessrecall'
+              ? { idMailToRecall: id }
+              : { idMailToRemove: id }),
         };
         props.navigation.navigate(mailsRouteNames.home, navigationParams);
       } catch (e) {
@@ -307,7 +313,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       case onReplyAll:
         return infosRecipients && infosRecipients.ids.length > 1 && from !== MailsDefaultFolders.TRASH;
       case onRecall:
-        return props.session?.user.id === mail?.from.id && !isDateOlderThan60Minutes(moment(mail?.date));
+        return (
+          props.session?.user.id === mail?.from.id &&
+          !isDateOlderThan60Minutes(moment(mail?.date)) &&
+          getRecallMessageRight(props.session!)
+        );
       case onMarkUnread:
       case onOpenMoveModal:
         return from !== MailsDefaultFolders.TRASH;
@@ -372,6 +382,18 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       </TouchableOpacity>
     );
   }, [infosRecipients]);
+
+  const renderRecall = React.useCallback(
+    () => (
+      <EmptyScreen
+        customStyle={{ backgroundColor: theme.palette.grey.white }}
+        svgImage="empty-recall"
+        title=""
+        text={I18n.get('mails-details-recallscreen')}
+      />
+    ),
+    [],
+  );
 
   const renderAttachments = React.useCallback(() => {
     if (mail!.attachments.length <= 0) return;
@@ -522,11 +544,17 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
               {renderRecipients()}
             </View>
           </View>
-          <RichEditorViewer content={mailContent} />
-          {renderAttachments()}
-          {renderOriginalContent()}
-          {renderHistory()}
-          {renderButtons()}
+          {mail?.state === MailsMailStatePreview.RECALL ? (
+            renderRecall()
+          ) : (
+            <>
+              <RichEditorViewer content={mailContent} />
+              {renderAttachments()}
+              {renderOriginalContent()}
+              {renderHistory()}
+              {renderButtons()}
+            </>
+          )}
         </ScrollView>
         {renderBottomSheet()}
       </PageView>
@@ -536,6 +564,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     mail?.date,
     mail?.from.displayName,
     mail?.from.id,
+    mail?.state,
     mail?.subject,
     mailContent,
     props.navigation,
@@ -544,6 +573,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     renderButtons,
     renderHistory,
     renderOriginalContent,
+    renderRecall,
     renderRecipients,
   ]);
 

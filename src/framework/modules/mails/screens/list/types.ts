@@ -11,6 +11,7 @@ export interface MailsListScreenProps {
 export interface MailsListScreenNavParams {
   from?: MailsDefaultFolders | MailsFolderInfo;
   idMailToRemove?: string;
+  idMailToRecall?: string;
   idMailToMarkUnread?: string;
   reload?: boolean;
   // to manage tabbar visibility when is on select mode

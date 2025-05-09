@@ -127,8 +127,8 @@ export const mailsService = {
       await http.fetchJsonForSession('PUT', api, { body });
     },
     recall: async (params: { id: string }) => {
-      const api = `/conversation/messages/${params.id}/recall`;
-      await http.fetchJsonForSession('POST', api);
+      const api = `/conversation/api/messages/${params.id}/recall`;
+      await http.fetchForSession('POST', api);
     },
     removeFromFolder: async (params: { ids: string[] }) => {
       params.ids.forEach(async id => {
@@ -189,12 +189,6 @@ export const mailsService = {
 
       const mails = backendMails.map(mail => mailsAdapter(mail));
       return mails as IMailsMailPreview[];
-    },
-  },
-  recall: {
-    post: async (params: { id: string }) => {
-      const api = `/conversation/messages/${params.id}/recall`;
-      await http.fetchJsonForSession('POST', api);
     },
   },
   signature: {

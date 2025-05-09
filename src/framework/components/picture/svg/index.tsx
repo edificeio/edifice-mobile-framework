@@ -78,6 +78,8 @@ const imports = {
 
   'empty-pronote-uri': async () => import('ASSETS/images/empty-screen/pronote-error-uri.svg'),
 
+  'empty-recall': async () => import('ASSETS/images/empty-screen/empty-recall.svg'),
+
   'empty-schoolbook': async () => import('ASSETS/images/empty-screen/empty-schoolbook.svg'),
 
   'empty-search': async () => import('ASSETS/images/empty-screen/empty-search.svg'),
