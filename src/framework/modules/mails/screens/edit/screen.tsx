@@ -57,7 +57,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     return initialMailInfo?.body ?? '';
   }, [initialMailInfo, type]);
 
-  const [allInputsSelectedRecipients, setAllInputsSelectedRecipients] = React.useState<string[]>([]);
   const [initialContentHTML, setInitialContentHTML] = React.useState(textInitialContentHTML);
   const [body, setBody] = React.useState(textInitialContentHTML);
   const [subject, setSubject] = React.useState(initialMailInfo?.subject ?? '');
@@ -247,9 +246,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         const ccDraft = convertDraftRecipients(draft.cc);
         const cciDraft = convertDraftRecipients(draft.cci);
         const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftIdSaved));
-        const initialIdsRecipients = [...toDraft, ...ccDraft, ...cciDraft].map(recipient => recipient.id);
 
-        setAllInputsSelectedRecipients(initialIdsRecipients);
         setInitialContentHTML(draft.body);
         setBody(draft.body);
         setSubject(draft.subject);
@@ -257,11 +254,18 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         setCc(ccDraft);
         setCci(cciDraft);
         setAttachments(convertedAttachments);
+      } else if (type !== MailsEditType.REPLY && type !== MailsEditType.FORWARD) {
+        const signatureData = await mailsService.signature.get();
+        const signatureDataJson = JSON.parse(signatureData);
+        if (signatureDataJson.useSignature) {
+          setInitialContentHTML(`<br><br>${signatureDataJson.signature}`);
+          setBody(`<br><br>${signatureDataJson.signature}`);
+        }
       }
     } catch (e) {
       console.error(e);
     }
-  }, [draftId, draftIdSaved]);
+  }, [draftId, draftIdSaved, type]);
 
   const showPreventBack = React.useMemo(
     () =>

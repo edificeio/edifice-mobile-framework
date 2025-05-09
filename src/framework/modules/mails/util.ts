@@ -132,7 +132,7 @@ export const mailsDefaultFoldersInfos = {
 };
 
 export function separateContentAndHistory(html: string) {
-  const historyStartIndex = html.indexOf('<hr class="ng-scope"><p class="ng-scope"></p><p class="medium-text');
+  const historyStartIndex = html.indexOf('<hr>');
   if (historyStartIndex !== -1) {
     const content = html.slice(0, historyStartIndex).trim();
     const history = html.slice(historyStartIndex).trim();
