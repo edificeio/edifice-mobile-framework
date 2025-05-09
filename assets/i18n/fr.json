@@ -857,6 +857,8 @@
   "mails-list-renamefolder": "Renommer le dossier",
   "mails-list-renamefolderlabel": "Nouveau nom",
   "mails-list-renamefoldersuccess": "Nom du dossier modifié",
+  "mails-list-searchnoresultstext": "Désolé, il n’y a rien sous ce nom-là... Aucun message ne correspond à votre recherche. Modifiez les critères et tentez à nouveau !",
+  "mails-list-searchnoresultstitle": "Pas de résultats pour votre recherche",
   "mails-list-select": "Sélectionner",
   "mails-list-selectall": "Tout sélectionner",
   "mails-list-selectcount": "{{nb}} sélectionné",

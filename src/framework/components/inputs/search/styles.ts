@@ -9,9 +9,17 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   icon: {
-    left: UI_SIZES.spacing.medium,
     position: 'absolute',
     zIndex: 1,
+  },
+  iconClear: {
+    right: UI_SIZES.spacing.small,
+  },
+  iconSearch: {
+    left: UI_SIZES.spacing.small,
+  },
+  input: {
+    paddingVertical: UI_SIZES.spacing.tiny,
   },
 });
 

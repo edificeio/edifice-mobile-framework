@@ -63,6 +63,7 @@ export default StyleSheet.create({
   selectModeTop: {
     alignContent: 'flex-end',
     alignItems: 'flex-end',
+    columnGap: UI_SIZES.spacing.small,
     height: UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset,
     justifyContent: 'space-between',
     paddingBottom: UI_SIZES.spacing.small,

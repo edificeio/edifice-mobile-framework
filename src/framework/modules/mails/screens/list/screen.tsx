@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ScrollViewProps, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -63,6 +63,7 @@ const PAGE_SIZE = 25;
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const flatListRef = React.useRef<FlatList<IMailsMailPreview>>(null);
+  const searchInputRef = React.useRef<TextInput>(null);
   const navigation = props.navigation;
 
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
@@ -262,6 +263,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onActiveSearchMode = React.useCallback(() => {
     setIsSearchMode(true);
+    setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 500);
   }, []);
 
   const onDisabledSearchMode = React.useCallback(() => {
@@ -522,7 +526,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   );
 
   const renderSearch = React.useCallback(() => {
-    return <SearchInput value={search} onChangeText={setSearch} onSubmitEditing={() => loadMails(selectedFolder, search)} />;
+    return (
+      <SearchInput
+        value={search}
+        onChangeText={setSearch}
+        onSubmitEditing={() => loadMails(selectedFolder, search)}
+        ref={searchInputRef}
+      />
+    );
   }, [loadMails, search, selectedFolder]);
 
   const renderAllSelect = React.useCallback(() => {
@@ -783,16 +794,30 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, [onDismissBottomSheet, typeModal, renderContentBottomSheet]);
 
   const renderEmpty = React.useCallback(() => {
+    let svgImage = 'empty-conversation';
+    let titleKey = 'mails-list-emptytitle';
+    let textKey = 'mails-list-emptytext';
+
+    if (isSearchMode && search.length > 0) {
+      svgImage = 'empty-search';
+      titleKey = 'mails-list-searchnoresultstitle';
+      textKey = 'mails-list-searchnoresultstext';
+    } else if (selectedFolder === MailsDefaultFolders.TRASH) {
+      svgImage = 'empty-trash';
+      titleKey = 'mails-list-emptytitletrash';
+      textKey = 'mails-list-emptytexttrash';
+    }
+
     return (
       <EmptyScreen
-        svgImage={selectedFolder === MailsDefaultFolders.TRASH ? 'empty-trash' : 'empty-conversation'}
-        title={I18n.get(selectedFolder === MailsDefaultFolders.TRASH ? 'mails-list-emptytitletrash' : 'mails-list-emptytitle')}
+        svgImage={svgImage}
+        title={I18n.get(titleKey)}
         textColor={theme.palette.grey.black}
-        text={I18n.get(selectedFolder === MailsDefaultFolders.TRASH ? 'mails-list-emptytexttrash' : 'mails-list-emptytext')}
+        text={I18n.get(textKey)}
         customStyle={styles.emptyscreen}
       />
     );
-  }, [selectedFolder]);
+  }, [isSearchMode, search.length, selectedFolder]);
 
   const renderFooter = React.useCallback(() => (isLoadingNextPage ? <MailsPlaceholderLittleList /> : null), [isLoadingNextPage]);
 
