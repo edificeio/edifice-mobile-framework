@@ -17,7 +17,7 @@ const MailsInputBottomSheet = (props: React.PropsWithChildren<MailsInputBottomSh
   const [error, setError] = React.useState<boolean>(false);
 
   const disabledAction = useMemo(
-    () => value.length === 0 || error || props.initialInputValue === value || props.disabledAction,
+    () => value.trim().length === 0 || error || props.initialInputValue === value || props.disabledAction,
     [value, error, props.initialInputValue, props.disabledAction],
   );
 
@@ -45,7 +45,7 @@ const MailsInputBottomSheet = (props: React.PropsWithChildren<MailsInputBottomSh
           title={props.title}
           iconRight="ui-check"
           iconRightDisabled={disabledAction}
-          onPressRight={() => props.onSend(value)}
+          onPressRight={() => props.onSend(value.trim())}
         />
         <InputContainer
           label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: props.inputLabel }}
