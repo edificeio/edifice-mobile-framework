@@ -129,7 +129,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       const counts: Record<string, number> = {};
       for (const folder of Object.values(MailsDefaultFolders)) {
         try {
-          if (folder === MailsDefaultFolders.OUTBOX) {
+          if (folder === MailsDefaultFolders.OUTBOX || folder === MailsDefaultFolders.TRASH) {
             counts[folder] = 0;
           } else {
             const countData = await mailsService.folder.count({
