@@ -99,6 +99,21 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
     );
   }, [TextComponent, from?.displayName, infosRecipients.text, isSender, state]);
 
+  const renderIconSwipeAction = React.useCallback(() => {
+    let iconName = 'ui-mailUnread';
+    if (unread === true) iconName = 'ui-mailRead';
+    if (!onToggleUnread) iconName = 'ui-restore';
+
+    return (
+      <Svg
+        name={iconName}
+        fill={theme.palette.grey.white}
+        width={UI_SIZES.elements.icon.default}
+        height={UI_SIZES.elements.icon.default}
+      />
+    );
+  }, [onToggleUnread, unread]);
+
   const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
     const styleAnimation = useAnimatedStyle(() => {
       const widthDrag = has2SwipeActions ? 160 : 80;
@@ -119,12 +134,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       <Reanimated.View style={styleAnimation}>
         {has2SwipeActions ? (
           <TouchableOpacity onPress={onPressOtherAction} style={[styles.swipeAction, styles.swipeOtherAction]}>
-            <Svg
-              name={onToggleUnread ? 'ui-mailUnread' : 'ui-restore'}
-              fill={theme.palette.grey.white}
-              width={UI_SIZES.elements.icon.default}
-              height={UI_SIZES.elements.icon.default}
-            />
+            {renderIconSwipeAction()}
           </TouchableOpacity>
         ) : null}
         <TouchableOpacity onPress={() => onDelete(id)} style={[styles.swipeAction, styles.swipeDeleteAction]}>
