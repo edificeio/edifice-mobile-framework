@@ -294,7 +294,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               }
               renderItem={({ item }) => {
                 const Component = item.type === MailsVisibleType.USER ? MailsRecipientUserItem : MailsRecipientGroupItem;
-                return <Component item={item} onPress={addUser} selected={selectedRecipients.includes(item.id)} />;
+                const isSelected = selectedRecipients.some(selectedRecipient => selectedRecipient.id === item.id);
+                return <Component item={item} onPress={addUser} selected={isSelected} />;
               }}
               ListEmptyComponent={
                 <View style={styles.noResults}>
