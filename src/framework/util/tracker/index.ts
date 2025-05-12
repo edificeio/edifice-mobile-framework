@@ -37,7 +37,7 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Init procedure. Override _init() function to create custom trackers.
-  protected async _init() {}
+  protected async _init() { }
 
   async init() {
     try {
@@ -97,7 +97,7 @@ export abstract class AbstractTracker<OptionsType> {
     moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
     action: string,
     name?: string,
-    value?: number,
+    value?: number
   ) {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
@@ -121,7 +121,7 @@ export abstract class AbstractTracker<OptionsType> {
     moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
     action: string,
     name?: string,
-    value?: number,
+    value?: number
   ) {
     await this.trackDebugEvent(moduleConfig.trackingName, action, name, value);
   }
@@ -232,6 +232,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       homeworkAssistance: 'HomeworkAssistance',
       mediacentre: 'Mediacentre',
       messagerie: 'Conversation', // duplicates conversation because of a tracking keyword issue
+      nabook: 'Nabook',
       news: 'Actualites',
       presences: 'Presences',
       schoolbook: 'SchoolBook',
@@ -239,6 +240,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       support: 'Support',
       user: 'MyAccount',
       // viesco: 'Presences', // not used anymore
+      wiki: 'Wiki',
       workspace: 'Workspace',
       zimbra: 'Zimbra',
     };
@@ -248,7 +250,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
         new Request(`${platform!.url}/infra/event/mobile/store`, {
           body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
           method: 'POST',
-        }),
+        })
       );
       this.lastModulename = moduleName;
       willLog = moduleAccessMap[moduleName];
@@ -382,7 +384,7 @@ export class ConcreteTrackerSet {
     moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
     action: string,
     name?: string,
-    value?: number,
+    value?: number
   ) {
     await Promise.all(this._trackers.map(t => t.trackDebugEventOfModule(moduleConfig, action, name, value)));
   }
@@ -404,7 +406,7 @@ export class ConcreteTrackerSet {
 export const Trackers = new ConcreteTrackerSet(
   new ConcreteEntcoreTracker('Entcore', undefined),
   new ConcreteAnalyticsTracker('Analytics', undefined),
-  new ConcreteCrashsTracker('Crashs', undefined),
+  new ConcreteCrashsTracker('Crashs', undefined)
 );
 
 export const TRACKING_ACTION_SUFFIX_SUCCESS = 'Succès';
