@@ -225,7 +225,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   return (
     <>
-      <View style={styles.container} ref={viewContainerRef}>
+      <View style={[styles.container, selectedRecipients.length === 0 ? styles.containerEmpty : {}]} ref={viewContainerRef}>
         <BodyText style={styles.prefix}>{I18n.get(MailsRecipientPrefixsI18n[props.type].name)}</BodyText>
         <View style={[styles.containerInput, isOpen ? styles.containerIsEditing : {}]}>
           <TouchableOpacity

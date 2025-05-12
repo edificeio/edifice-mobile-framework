@@ -14,6 +14,9 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
   },
+  containerEmpty: {
+    alignItems: 'center',
+  },
   containerInput: {
     columnGap: UI_SIZES.spacing.tiny,
     flex: 1,
