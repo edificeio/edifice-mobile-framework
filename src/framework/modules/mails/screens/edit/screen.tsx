@@ -29,7 +29,7 @@ import {
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
 } from '~/framework/modules/mails/util';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
 export const computeNavBar = ({
@@ -318,6 +318,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           ]}
         />
       ),
+      headerTitle: navBarTitle('', undefined, undefined, 1, 2),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [to, cc, cci, subject, draftIdSaved, onCheckSend]);
