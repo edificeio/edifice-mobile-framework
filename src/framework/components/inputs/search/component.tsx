@@ -2,15 +2,16 @@ import React, { forwardRef, useCallback, useMemo } from 'react';
 import { TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
+import { SearchInputProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import TextInput, { TextInputProps } from '~/framework/components/inputs/text';
+import TextInput from '~/framework/components/inputs/text';
 import { ICON_INPUT_SIZE } from '~/framework/components/inputs/text/component';
 import { Svg } from '~/framework/components/picture';
 
-const SearchInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
+const SearchInput = forwardRef<RNTextInput, SearchInputProps>((props: SearchInputProps, ref) => {
   const [value, setValue] = React.useState<string>(props.value ?? '');
 
   const paddingLeft = useMemo(() => 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE, []);
@@ -24,6 +25,7 @@ const SearchInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputPro
   const clearInput = useCallback(() => {
     setValue('');
     props.onChangeText?.('');
+    props.onClear?.();
   }, [props]);
 
   const renderClearIcon = useMemo(() => {

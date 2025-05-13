@@ -22,6 +22,7 @@ import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/component
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
+import StatusBar from '~/framework/components/status-bar';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { Toggle } from '~/framework/components/toggle';
@@ -536,6 +537,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         onChangeText={setSearch}
         onSubmitEditing={() => loadMails(selectedFolder, search)}
         ref={searchInputRef}
+        onClear={() => loadMails(selectedFolder, '')}
       />
     );
   }, [loadMails, search, selectedFolder]);
@@ -556,15 +558,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderTopMode = React.useCallback(() => {
     if (!isSelectionMode && !isSearchMode) return;
     return (
-      <View style={[styles.selectMode, styles.selectModeTop]}>
-        {isSearchMode && renderSearch()}
-        {isSelectionMode && renderAllSelect()}
-        <TertiaryButton
-          text={I18n.get('common-cancel')}
-          action={isSelectionMode ? onDisableSelectMode : onDisabledSearchMode}
-          style={styles.selectModeTopButton}
-        />
-      </View>
+      <>
+        <StatusBar type="white" />
+        <View style={[styles.selectMode, styles.selectModeTop, isSelectionMode ? styles.selectModeShadow : {}]}>
+          {isSearchMode && renderSearch()}
+          {isSelectionMode && renderAllSelect()}
+          <TertiaryButton
+            text={I18n.get('common-cancel')}
+            action={isSelectionMode ? onDisableSelectMode : onDisabledSearchMode}
+            style={styles.selectModeTopButton}
+          />
+        </View>
+      </>
     );
   }, [isSearchMode, isSelectionMode, onDisableSelectMode, onDisabledSearchMode, renderAllSelect, renderSearch]);
 
@@ -623,7 +628,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     );
 
     return (
-      <View style={[styles.selectMode, styles.selectModeBottom]}>
+      <View style={[styles.selectMode, styles.selectModeShadow, styles.selectModeBottom]}>
         <BodyBoldText style={styles.selectModeBottomText}>
           {I18n.get(selectedMails.length > 1 ? 'mails-list-selectcountplural' : 'mails-list-selectcount', {
             nb: selectedMails.length,

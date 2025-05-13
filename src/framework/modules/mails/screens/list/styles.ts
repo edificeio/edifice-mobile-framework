@@ -42,13 +42,8 @@ export default StyleSheet.create({
   },
   selectMode: {
     backgroundColor: theme.palette.grey.white,
-    elevation: 6,
     flexDirection: 'row',
     paddingHorizontal: UI_SIZES.spacing.medium,
-    shadowColor: theme.palette.grey.darkness,
-    shadowOffset: { height: -6, width: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 15,
   },
   selectModeBottom: {
     alignItems: 'baseline',
@@ -60,6 +55,13 @@ export default StyleSheet.create({
     flex: 1,
     paddingVertical: UI_SIZES.spacing.tiny,
   },
+  selectModeShadow: {
+    elevation: 6,
+    shadowColor: theme.palette.grey.darkness,
+    shadowOffset: { height: -6, width: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+  },
   selectModeTop: {
     alignContent: 'flex-end',
     alignItems: 'flex-end',
@@ -70,6 +72,7 @@ export default StyleSheet.create({
   },
   selectModeTopButton: {
     alignSelf: 'flex-end',
+    marginBottom: UI_SIZES.spacing.tinyExtra,
   },
   selectModeTopText: {
     columnGap: UI_SIZES.spacing.minor,

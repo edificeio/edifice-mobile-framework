@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
     left: UI_SIZES.spacing.small,
   },
   input: {
-    paddingVertical: UI_SIZES.spacing.tiny,
+    paddingBottom: UI_SIZES.spacing.minor,
+    paddingTop: UI_SIZES.spacing.minor,
   },
 });
 
