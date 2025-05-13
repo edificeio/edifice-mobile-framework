@@ -50,10 +50,10 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     [heightToRemoveList, keyboardHeight],
   );
 
-  const toggleShowList = () => {
+  const toggleShowList = React.useCallback(() => {
     setShowList(!showList);
     props.onToggleShowList(!showList);
-  };
+  }, [props, showList]);
 
   React.useEffect(() => {
     const keyboardWillShow = Keyboard.addListener('keyboardWillShow', e => {
@@ -75,7 +75,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       inputRef.current?.blur();
       toggleShowList();
     }
-  }, [props.isStartScroll]);
+  }, [props.isStartScroll, showList, toggleShowList]);
 
   React.useEffect(() => {
     if (props.inputFocused !== props.type && isOpen && !focused) setIsOpen(false);

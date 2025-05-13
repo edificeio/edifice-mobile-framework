@@ -3,7 +3,7 @@ import { Alert, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList as GHFlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -16,6 +16,7 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import SearchInput from '~/framework/components/inputs/search';
+import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
@@ -63,7 +64,7 @@ const PAGE_SIZE = 25;
 
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const flatListRef = React.useRef<FlatList<IMailsMailPreview>>(null);
+  const flatListRef = React.useRef<GHFlatList<IMailsMailPreview>>(null);
   const searchInputRef = React.useRef<TextInput>(null);
   const navigation = props.navigation;
 
@@ -659,7 +660,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderFolders = React.useCallback(() => {
     return (
-      <FlatList
+      <GHFlatList
         data={folders}
         contentContainerStyle={styles.flatListBottomSheet}
         showsVerticalScrollIndicator={false}
@@ -724,7 +725,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
             </View>
             {isSubfolder ? (
-              <FlatList
+              <GHFlatList
                 data={onlyParentFolders}
                 contentContainerStyle={[stylesFolders.containerFolders]}
                 renderItem={({ item }) => (
