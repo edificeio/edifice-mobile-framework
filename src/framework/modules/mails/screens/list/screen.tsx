@@ -71,6 +71,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
   const [pageNb, setPageNb] = React.useState<number>(0);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isLoadingNextPage, setIsLoadingNextPage] = React.useState<boolean>(false);
   const [hasNextMails, setHasNextMails] = React.useState<boolean>(true);
   const [mails, setMails] = React.useState<IMailsMailPreview[]>([]);
@@ -168,10 +169,17 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const switchFolder = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo) => {
-      setSelectedFolder(folder);
-      onDismissBottomSheet();
-      await loadMails(folder);
-      flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+      try {
+        setIsLoading(true);
+        setSelectedFolder(folder);
+        onDismissBottomSheet();
+        await loadMails(folder);
+        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
     },
     [loadMails, setSelectedFolder, onDismissBottomSheet],
   );
@@ -866,28 +874,44 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     ],
   );
 
+  const renderPlaceholder = React.useCallback(() => <MailsPlaceholderList />, []);
+
   const renderContent = React.useCallback(
-    (refreshControl: ScrollViewProps['refreshControl']) => (
-      <PageView style={styles.page}>
-        {renderTopMode()}
-        <FlatList
-          ref={flatListRef}
-          data={mails}
-          renderItem={mail => renderMailPreview(mail.item)}
-          ListFooterComponent={renderFooter}
-          ListEmptyComponent={renderEmpty()}
-          refreshControl={refreshControl}
-          onEndReached={loadNextMails}
-          onEndReachedThreshold={0.5}
-        />
-        {renderBottomMode()}
-        {renderBottomSheetFolders()}
-      </PageView>
-    ),
-    [renderTopMode, mails, renderFooter, renderEmpty, loadNextMails, renderBottomMode, renderBottomSheetFolders, renderMailPreview],
+    (refreshControl: ScrollViewProps['refreshControl']) =>
+      isLoading ? (
+        renderPlaceholder()
+      ) : (
+        <PageView style={styles.page}>
+          {renderTopMode()}
+          <FlatList
+            ref={flatListRef}
+            data={mails}
+            renderItem={mail => renderMailPreview(mail.item)}
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={renderEmpty()}
+            refreshControl={refreshControl}
+            onEndReached={loadNextMails}
+            onEndReachedThreshold={0.5}
+          />
+          {renderBottomMode()}
+          {renderBottomSheetFolders()}
+        </PageView>
+      ),
+    [
+      isLoading,
+      renderPlaceholder,
+      renderTopMode,
+      mails,
+      renderFooter,
+      renderEmpty,
+      loadNextMails,
+      renderBottomMode,
+      renderBottomSheetFolders,
+      renderMailPreview,
+    ],
   );
 
-  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderLoading={() => <MailsPlaceholderList />} />;
+  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderLoading={renderPlaceholder} />;
 };
 
 export default connect(() => ({
