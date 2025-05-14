@@ -326,6 +326,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const renderTopForm = React.useCallback(() => {
     const commonProps = {
       inputFocused,
+      isAdml: props.session?.user.isAdml ?? false,
       isStartScroll,
       onChangeRecipient,
       onFocus: setInputFocused,
@@ -351,7 +352,19 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         <MailsObjectField subject={subject} type={type} onChangeText={text => setSubject(text)} />
       </View>
     );
-  }, [inputFocused, isStartScroll, onChangeRecipient, to, haveInitialCcCci, moreRecipientsFields, cc, cci, subject, type]);
+  }, [
+    inputFocused,
+    props.session?.user.isAdml,
+    isStartScroll,
+    onChangeRecipient,
+    to,
+    haveInitialCcCci,
+    moreRecipientsFields,
+    cc,
+    cci,
+    subject,
+    type,
+  ]);
 
   const renderBottomForm = React.useCallback(
     () => (

@@ -8,6 +8,7 @@ export interface MailsContactFieldProps {
   richEditorRef: React.RefObject<ScrollView>;
   inputFocused: MailsRecipientsType | null;
   isStartScroll: boolean;
+  isAdml: boolean;
   hideCcCciButton?: boolean;
   onChangeRecipient: (selectedRecipients: MailsVisible[], type: MailsRecipientsType) => void;
   onFocus: (type: MailsRecipientsType) => void;

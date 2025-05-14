@@ -827,6 +827,7 @@
   "mails-edit-noresulttext": "Essayez de rechercher avec d’autres mots clés, orthographe ou ensemble de caractères.",
   "mails-edit-noresulttitle": "Aucun résultat pour \"{{text}}\"",
   "mails-edit-objectplaceholder": "Objet du message",
+  "mails-edit-placeholderadml": "Saisissez 3 caractères minimum",
   "mails-edit-result": "{{nb}} résultat",
   "mails-edit-results": "{{nb}} résultats",
   "mails-edit-savedraft": "Enregistrer le brouillon",

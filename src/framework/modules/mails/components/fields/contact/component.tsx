@@ -39,6 +39,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [heightInputToSave, setHeightInputToSave] = React.useState(0);
   const [heightToRemoveList, setHeightToRemoveList] = React.useState(INITIAL_HEIGHT_INPUT);
   const [focused, setFocused] = React.useState(false);
+  const [inputFocused, setInputFocused] = React.useState(false);
 
   const topPositionResults = React.useRef(new Animated.Value(0)).current;
 
@@ -123,9 +124,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   const onFocus = () => {
     scrollToInput();
+    setInputFocused(true);
     if (!isOpen) setIsOpen(true);
     if (search.length >= 3) toggleShowList();
     props.onFocus(props.type);
+  };
+
+  const onBlur = () => {
+    setInputFocused(false);
   };
 
   const onRemoveContentAndExitInput = () => {
@@ -154,8 +160,9 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   );
 
   const onChangeText = (text: string) => {
+    const minTextLength = props.isAdml ? 3 : 1;
     setSearch(text);
-    if (text.length >= 3) {
+    if (text.length >= minTextLength) {
       const normalizedSearchText = removeAccents(text).toLowerCase();
       if (!loading) setLoading(true);
       debouncedSearch(normalizedSearchText);
@@ -238,9 +245,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               <RNTextInput
                 ref={inputRef}
                 onFocus={onFocus}
+                onBlur={onBlur}
                 style={styles.input}
                 placeholderTextColor={theme.palette.grey.graphite}
-                placeholder={I18n.get(MailsRecipientPrefixsI18n[props.type].placeholder)}
+                placeholder={
+                  props.isAdml && inputFocused
+                    ? I18n.get('mails-edit-placeholderadml')
+                    : I18n.get(MailsRecipientPrefixsI18n[props.type].placeholder)
+                }
                 onChangeText={onChangeText}
                 value={search}
                 autoCorrect={false}
