@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-09 15:37:56",
-  "notes": "fix(mails) add selected state in user search\nfix(mails) add trim in name folders\nfix(mails) remove count unread message in trash box\nfix(mails): WB-3842 add signature when create message\nfix(mails) fix icon swipe action in mail preview\nfeat(mails): WB-3899 , recall message\nfeat(mails): WB-3588, fix search in mails module\nrelease: 1.14.0-comm.7(1140008)",
-  "version": "1.14.0-comm.8(1140009)"
+  "last": "2025-05-14 09:36:46",
+  "notes": "fix(mails): WB-4111 add placeholder when switch folder\nfix(mails): WB-4133 fix pull to refresh\nfix(mails): WB-3588 fix ui searchInput && adjust search mode\nfix(mails): WB-4132 fix alignment contact field\nfix(mails): WB-4142 fix wording delete folder\nfix(mails): WB-3952 , fix click on back button android in edit screen\nrelease: 1.14.0-comm.8(1140009)",
+  "version": "1.14.0-comm.9(1140010)"
 }
