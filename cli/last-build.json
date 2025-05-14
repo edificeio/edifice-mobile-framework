@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-14 09:36:46",
-  "notes": "fix(mails): WB-4111 add placeholder when switch folder\nfix(mails): WB-4133 fix pull to refresh\nfix(mails): WB-3588 fix ui searchInput && adjust search mode\nfix(mails): WB-4132 fix alignment contact field\nfix(mails): WB-4142 fix wording delete folder\nfix(mails): WB-3952 , fix click on back button android in edit screen\nrelease: 1.14.0-comm.8(1140009)",
-  "version": "1.14.0-comm.9(1140010)"
+  "last": "2025-05-14 10:05:55",
+  "notes": "clean caches\nrelease: 1.14.0-comm.9(1140010)",
+  "version": "1.14.0-comm.10(1140011)"
 }
