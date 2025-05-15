@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { Moment } from 'moment';
 
 import {
   IMailsFolder,
@@ -11,7 +11,6 @@ import {
   MailsVisible,
   MailsVisibleType,
 } from './model';
-import { MailsEditType } from './screens/edit';
 
 import { I18n } from '~/app/i18n';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
@@ -132,7 +131,7 @@ export const mailsDefaultFoldersInfos = {
 };
 
 export function separateContentAndHistory(html: string) {
-  const historyStartIndex = html.indexOf('<hr>');
+  const historyStartIndex = html.indexOf('<div class="conversation-history">');
   if (historyStartIndex !== -1) {
     const content = html.slice(0, historyStartIndex).trim();
     const history = html.slice(historyStartIndex).trim();
@@ -143,12 +142,35 @@ export function separateContentAndHistory(html: string) {
 
 export function addHtmlForward(
   from: MailsRecipientInfo,
+  date: Moment,
   to: MailsVisible[],
+  cc: MailsVisible[],
   subject: string,
   body: string,
-  type: MailsEditType,
 ): string {
-  const text = `<div>De: ${from?.displayName}</div><div>Date: ${moment().format('DD/MM/YYYY hh:mm')}</div><div>Objet: ${subject}</div><div>À: ${to.map(recipient => recipient.displayName).join(', ')}</div><br>${body}`;
-  if (type === MailsEditType.FORWARD) return `<br><br><div>-----Message transféré-----</div>${text}`;
-  return `<br><br>${text}`;
+  const text = `<div>
+            <p><span style="font-size: 14px; font-weight:400;">--------- ${I18n.get('mails-edit-addhtmltransfer')} ---------</span></p>
+            <p><span style="font-size: 14px; font-weight:400;">${I18n.get('mails-edit-addhtmlfrom') + from.displayName}</span></p>
+            <p><span style="font-size: 14px; font-weight:400;">${I18n.get('mails-edit-addhtmldate') + date.format('DD/MM/YYYY HH:mm')}</span></p>
+            <p><span style="font-size: 14px; font-weight:400;">${I18n.get('mails-edit-addhtmlsubject') + subject}</span></p>
+            <p><span style="font-size: 14px; font-weight:400;">${I18n.get('mails-edit-addhtmlto') + to.map(recipient => recipient.displayName).join(', ')}</span></p>
+            ${cc.length ? '<p><span style="font-size: 14px; font-weight:400;">' + I18n.get('mails-edit-addhtmlcc') + cc.map(recipient => recipient.displayName).join(', ') + '</span></p>' : ''}
+          <p>
+            ${body}
+          </p>
+        </div>`;
+  return text;
+}
+
+export function addHtmlReply(from: MailsRecipientInfo, date: Moment, to: MailsVisible[], cc: MailsVisible[], body: string): string {
+  const text = `
+  <div class="conversation-history">
+          <p><span style="font-size: 14px; font-weight:400;"><em>${I18n.get('mails-edit-addhtmlfrom') + ' ' + from.displayName + ', ' + (date ? I18n.get('mails-edit-addhtmlformatdate', { date: date.format('DD/MM/YYYY'), time: date.format('HH:mm') }) : '')}</em></span></p>
+          <p><span style="font-size: 14px; font-weight:400; color: #909090;"><em>${I18n.get('mails-edit-addhtmlto') + to.map(recipient => recipient.displayName).join(', ')}</em></span></p>
+          ${cc.length ? '<p><span style="font-size: 14px; font-weight:400;color: #909090;"><em>' + I18n.get('mails-edit-addhtmlcc') + cc.map(recipient => recipient.displayName).join(', ') + '</em></span></p>' : ''}
+          <div class="conversation-history-body">
+            ${body}
+          </div>
+        </div>`;
+  return text;
 }

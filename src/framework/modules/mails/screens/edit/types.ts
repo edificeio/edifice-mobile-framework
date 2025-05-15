@@ -18,6 +18,7 @@ export interface MailsEditScreenNavParams {
     id: string;
     body?: string;
     subject?: string;
+    date?: number;
     from?: MailsRecipientInfo;
     to?: MailsVisible[];
     cc?: MailsVisible[];

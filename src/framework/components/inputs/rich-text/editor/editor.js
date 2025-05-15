@@ -169,6 +169,7 @@ function createHTML(options = {}) {
         img {max-width: 100vw; max-height: 100vw; height: auto; width: auto; border-radius: ${UI_SIZES.radius.small}px; margin: ${UI_SIZES.spacing.tiny}px auto; display: flex;}
         ul, ol {list-style-position: outside; }
         li p {margin: 0; padding: 0;}
+        .conversation-history > div {margin-left: 10px; padding-left: 10px; border-left: 1px ridge #C7C7C7;}
     </style>
 </head>
 <body>

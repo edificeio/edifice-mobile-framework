@@ -12,7 +12,6 @@ import type { MailsDetailsScreenPrivateProps } from './types';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Attachments from '~/framework/components/attachments';
-import DefaultButton from '~/framework/components/buttons/default';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -31,6 +30,7 @@ import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/fram
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
+import MailsHistoryButton from '~/framework/modules/mails/components/history-button';
 import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';
 import MailsMoveBottomSheet from '~/framework/modules/mails/components/move-bottom-sheet';
 import MailsPlaceholderDetails from '~/framework/modules/mails/components/placeholder/details';
@@ -82,7 +82,6 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [mailContent, setMailContent] = React.useState<string>('');
   const [mailHistory, setMailHistory] = React.useState<string>('');
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
-  const [seeHistory, setSeeHistory] = React.useState<boolean>(false);
   const [error, setError] = React.useState<boolean>(false);
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
 
@@ -120,7 +119,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     }
     props.navigation.navigate(mailsRouteNames.edit, {
       fromFolder: from,
-      initialMailInfo: { body: mail?.body, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
+      initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
   }, [from, mail, props]);
@@ -154,7 +153,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
     props.navigation.navigate(mailsRouteNames.edit, {
       fromFolder: from,
-      initialMailInfo: { body: mail?.body, cc, cci, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
+      initialMailInfo: { body: mail?.body, cc, cci, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
   }, [from, mail, props]);
@@ -166,7 +165,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
     props.navigation.navigate(mailsRouteNames.edit, {
       fromFolder: from,
-      initialMailInfo: { body: mail?.body, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
+      initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.FORWARD,
     });
   }, [from, mail, props]);
@@ -417,20 +416,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const renderHistory = React.useCallback(() => {
     if (!mailHistory) return <Separator marginVertical={UI_SIZES.spacing.big} />;
-    return (
-      <View style={{ marginVertical: UI_SIZES.spacing.big }}>
-        <DefaultButton
-          text="Afficher l'historique"
-          iconRight={seeHistory ? 'ui-rafterUp' : 'ui-rafterDown'}
-          contentColor={theme.palette.grey.black}
-          style={styles.buttonHistory}
-          action={() => setSeeHistory(!seeHistory)}
-        />
-        {seeHistory ? <RichEditorViewer content={mailHistory} /> : null}
-        <Separator />
-      </View>
-    );
-  }, [seeHistory, mailHistory]);
+    return <MailsHistoryButton content={mailHistory} />;
+  }, [mailHistory]);
 
   const renderButtons = React.useCallback(() => {
     if (mail?.trashed) return null;

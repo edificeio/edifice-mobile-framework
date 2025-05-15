@@ -3,6 +3,7 @@ import { Alert, Keyboard, View } from 'react-native';
 
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -12,6 +13,7 @@ import { I18n } from '~/app/i18n';
 import Attachments from '~/framework/components/attachments';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
+import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import toast from '~/framework/components/toast';
@@ -25,6 +27,7 @@ import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mail
 import { mailsService } from '~/framework/modules/mails/service';
 import {
   addHtmlForward,
+  addHtmlReply,
   convertAttachmentToDistantFile,
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
@@ -43,22 +46,16 @@ export const computeNavBar = ({
   }),
 });
 
+const convertDraftRecipients = (recipients: { users: any[]; groups: any[] }): MailsVisible[] => {
+  const { groups, users } = recipients;
+  return [...users.map(convertRecipientUserInfoToVisible), ...groups.map(convertRecipientGroupInfoToVisible)];
+};
+
 const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const { draftId, fromFolder, initialMailInfo, type } = props.route.params;
-  const textInitialContentHTML = React.useMemo((): string => {
-    if (type === MailsEditType.REPLY || type === MailsEditType.FORWARD)
-      return addHtmlForward(
-        initialMailInfo?.from ?? { displayName: '', id: '', profile: AccountType.Guest },
-        initialMailInfo?.to ?? [],
-        initialMailInfo?.subject ?? '',
-        initialMailInfo?.body ?? '',
-        type,
-      );
-    return initialMailInfo?.body ?? '';
-  }, [initialMailInfo, type]);
 
-  const [initialContentHTML, setInitialContentHTML] = React.useState(textInitialContentHTML);
-  const [body, setBody] = React.useState(textInitialContentHTML);
+  const [initialContentHTML, setInitialContentHTML] = React.useState('');
+  const [body, setBody] = React.useState('');
   const [subject, setSubject] = React.useState(initialMailInfo?.subject ?? '');
   const [to, setTo] = React.useState<MailsVisible[]>(type === MailsEditType.FORWARD ? [] : (initialMailInfo?.to ?? []));
   const [cc, setCc] = React.useState<MailsVisible[]>(initialMailInfo?.cc ?? []);
@@ -234,18 +231,13 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const loadData = React.useCallback(async () => {
     try {
-      if (draftIdSaved) {
-        const draft = await mailsService.mail.get({ id: draftId! });
-
-        const convertDraftRecipients = (recipients: { users: any[]; groups: any[] }): MailsVisible[] => {
-          const { groups, users } = recipients;
-          return [...users.map(convertRecipientUserInfoToVisible), ...groups.map(convertRecipientGroupInfoToVisible)];
-        };
+      if (draftId) {
+        const draft = await mailsService.mail.get({ id: draftId });
 
         const toDraft = convertDraftRecipients(draft.to);
         const ccDraft = convertDraftRecipients(draft.cc);
         const cciDraft = convertDraftRecipients(draft.cci);
-        const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftIdSaved));
+        const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftId));
 
         setInitialContentHTML(draft.body);
         setBody(draft.body);
@@ -254,18 +246,39 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         setCc(ccDraft);
         setCci(cciDraft);
         setAttachments(convertedAttachments);
-      } else if (type !== MailsEditType.REPLY && type !== MailsEditType.FORWARD) {
+      } else {
         const signatureData = await mailsService.signature.get();
-        const signatureDataJson = JSON.parse(signatureData);
-        if (signatureDataJson.useSignature) {
-          setInitialContentHTML(`<br><br>${signatureDataJson.signature}`);
-          setBody(`<br><br>${signatureDataJson.signature}`);
+        const { signature, useSignature } = JSON.parse(signatureData);
+
+        const initialDate = moment(initialMailInfo?.date);
+        const initialFrom = initialMailInfo?.from ?? { displayName: '', id: '', profile: AccountType.Guest };
+        const initialTo = initialMailInfo?.to ?? [];
+        const initialCc = initialMailInfo?.cc ?? [];
+        const initialSubject = initialMailInfo?.subject ?? '';
+        const initialBody = initialMailInfo?.body ?? '';
+
+        const applyContent = (htmlContent: string) => {
+          const content = useSignature ? `<br>${signature}<br>${htmlContent}` : htmlContent;
+          setInitialContentHTML(content);
+          setBody(content);
+        };
+
+        if (type === MailsEditType.REPLY) {
+          const replyHtml = addHtmlReply(initialFrom, initialDate, initialTo, initialCc, initialBody);
+          applyContent(replyHtml);
+        } else if (type === MailsEditType.FORWARD) {
+          const forwardHtml = addHtmlForward(initialFrom, initialDate, initialTo, initialCc, initialSubject, initialBody);
+          applyContent(forwardHtml);
+        } else if (useSignature) {
+          const signatureHtml = `<br>${signature}`;
+          setInitialContentHTML(signatureHtml);
+          setBody(signatureHtml);
         }
       }
     } catch (e) {
       console.error(e);
     }
-  }, [draftId, draftIdSaved, type]);
+  }, [draftId, initialMailInfo, type]);
 
   const showPreventBack = React.useMemo(
     () =>
@@ -293,15 +306,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         },
         title: I18n.get('mails-edit-savedraft'),
       },
-      {
-        action: onDeleteDraft,
-        destructive: true,
-        icon: {
-          android: 'ic_delete_item',
-          ios: 'trash',
-        },
-        title: I18n.get('mails-edit-deletedraft'),
-      },
+      deleteAction({ action: onDeleteDraft, title: I18n.get('mails-edit-deletedraft') }),
     ],
     [onDeleteDraft, onSendDraft],
   );
