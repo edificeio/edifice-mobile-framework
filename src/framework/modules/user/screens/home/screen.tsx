@@ -57,6 +57,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+import Recorder from '~/framework/util/audiofiles/recorder/component';
 import { formatSource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { useZendesk } from '~/framework/util/zendesk';
@@ -691,6 +692,9 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
           {navBarDecoration}
           {avatarButton}
           {profileMenu}
+        </View>
+        <View style={{ backgroundColor: 'lightblue', height: 400 }}>
+          <Recorder />
         </View>
         {accountMenu}
         <View style={styles.sectionBottom}>
