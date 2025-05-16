@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-07 14:50:48",
-  "notes": "update(stack): yarn cache update\nrelease: 1.13.14-rc.4(1131404)",
-  "version": "1.13.14-rc.5(1131405)"
+  "last": "2025-05-16 15:28:01",
+  "notes": "Merge commit 'eb344ac1a75b53a43c975b2c438d9fce8e900fb7' into feat/peda/wiki\nMerge commit 'd9fe02c5d3bda2ca9eb15187a7cc4ff7d57e9d23' into dev/1.14.0\nrelease: 1.13.15(1131500)\nupdate(stack): yarn cache update\nfeat(i18n): Set Phrase Sync branch to dev/1.13.15\nrelease: 1.13.14-rc.5(1131405)",
+  "version": "1.14.0-peda.12(1140014)"
 }
