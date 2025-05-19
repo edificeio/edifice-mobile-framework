@@ -140,10 +140,10 @@ export function WikiReaderScreenLoaded({
         <PageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
           <HeadingMText testID="page-title">{page.title}</HeadingMText>
           <View style={styles.headerAuthorInfo}>
-            <SingleAvatar userId={page.creatorId} size="md" testID="page-author-avatar" />
+            <SingleAvatar userId={page.updaterId ?? page.creatorId} size="md" testID="page-author-avatar" />
             <View style={styles.headerAuthorInfoText}>
               <BodyBoldText numberOfLines={1} testID="page-author-name">
-                {page.creatorName}
+                {page.updaterName ?? page.creatorName}
               </BodyBoldText>
               <SmallText numberOfLines={1} testID="page-date">
                 {I18n.get('wiki-page-published-at', { date: I18n.date(page.updatedAt ?? page.createdAt) })}
