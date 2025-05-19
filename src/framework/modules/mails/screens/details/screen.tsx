@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 
 import { HeaderBackButton } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -17,7 +17,6 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen, EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
-import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
@@ -84,6 +83,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
   const [error, setError] = React.useState<boolean>(false);
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
+
+  const canRecall =
+    props.session?.user.id === mail?.from.id &&
+    !isDateOlderThan60Minutes(moment(mail?.date)) &&
+    getRecallMessageRight(props.session!);
+  const isRecall = mail?.state === MailsMailStatePreview.RECALL;
+  const isRecallAndNotSender = mail?.state === MailsMailStatePreview.RECALL && mail?.from.id !== props.session?.user.id;
 
   const convertedAttachments = React.useMemo(
     () => mail?.attachments.map(attachment => convertAttachmentToDistantFile(attachment, id)),
@@ -206,7 +212,19 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     [from, id, props.navigation],
   );
 
-  const onRecall = () => handleMailAction(() => mailsService.mail.recall({ id }), 'mails-toastsuccessrecall');
+  const onRecall = () => {
+    Alert.alert(I18n.get('mails-details-recalltitle'), I18n.get('mails-details-recalltext'), [
+      {
+        style: 'cancel',
+        text: I18n.get('common-cancel'),
+      },
+      {
+        onPress: () => handleMailAction(() => mailsService.mail.recall({ id }), 'mails-toastsuccessrecall'),
+        style: 'default',
+        text: I18n.get('mails-details-recall'),
+      },
+    ]);
+  };
 
   const onMarkUnread = () =>
     handleMailAction(() => mailsService.mail.toggleUnread({ ids: [id], unread: true }), 'mails-toastsuccessunread');
@@ -238,6 +256,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         android: 'ic_reply',
         ios: 'arrowshape.turn.up.left',
       },
+      id: 'reply',
       title: I18n.get('mails-details-reply'),
     },
     {
@@ -246,6 +265,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         android: 'ic_reply',
         ios: 'arrowshape.turn.up.left.2',
       },
+      id: 'replyAll',
       title: I18n.get('mails-details-replyall'),
     },
     {
@@ -254,6 +274,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         android: 'ic_forward',
         ios: 'arrowshape.turn.up.forward',
       },
+      id: 'forward',
       title: I18n.get('mails-details-forward'),
     },
     {
@@ -262,6 +283,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         android: 'ic_recall',
         ios: 'arrow.uturn.backward.circle',
       },
+      id: 'recall',
       title: I18n.get('mails-details-recallpopup'),
     },
     {
@@ -270,6 +292,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         android: 'ic_visibility_off',
         ios: 'envelope.badge',
       },
+      id: 'markUnread',
       title: I18n.get('mails-details-markunread'),
     },
     {
@@ -278,6 +301,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         android: 'ic_move_to_inbox',
         ios: 'tray.2',
       },
+      id: 'move',
       title: I18n.get('mails-details-move'),
     },
     {
@@ -286,6 +310,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         android: 'ic_remove_from_folder',
         ios: 'xmark.bin',
       },
+      id: 'removeFromFolder',
       title: I18n.get('mails-details-removefromfolder'),
     },
     {
@@ -294,41 +319,42 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         android: 'ic_restore',
         ios: 'arrow.uturn.backward.circle',
       },
+      id: 'restore',
       title: I18n.get('mails-details-restore'),
     },
-    deleteAction({
+    {
       action: from === MailsDefaultFolders.TRASH ? onDelete : onTrash,
-    }),
+      destructive: true,
+      icon: {
+        android: 'ic_delete_item',
+        ios: 'trash',
+      },
+      id: 'delete',
+      title: I18n.get('common-delete'),
+    },
   ];
 
-  const popupActionsMenu = allPopupActionsMenu.filter(action => {
+  const popupActionsMenu = allPopupActionsMenu.filter(({ id }) => {
     const { from } = props.route.params;
 
-    switch (action.action) {
-      case onReply:
-      case onForward:
+    switch (id) {
+      case 'reply':
+        return !isRecall;
+      case 'replyAll':
+        return infosRecipients && infosRecipients.ids.length > 1 && from !== MailsDefaultFolders.TRASH && !isRecall;
+      case 'forward':
+        return from !== MailsDefaultFolders.TRASH && !isRecallAndNotSender;
+      case 'recall':
+        return canRecall;
+      case 'markUnread':
+      case 'move':
         return from !== MailsDefaultFolders.TRASH;
-
-      case onReplyAll:
-        return infosRecipients && infosRecipients.ids.length > 1 && from !== MailsDefaultFolders.TRASH;
-      case onRecall:
-        return (
-          props.session?.user.id === mail?.from.id &&
-          !isDateOlderThan60Minutes(moment(mail?.date)) &&
-          getRecallMessageRight(props.session!)
-        );
-      case onMarkUnread:
-      case onOpenMoveModal:
-        return from !== MailsDefaultFolders.TRASH;
-      case onRemoveFromFolder:
-        return from !== MailsDefaultFolders.TRASH && from !== MailsDefaultFolders.INBOX && from !== MailsDefaultFolders.OUTBOX;
-
-      case onRestore:
+      case 'removeFromFolder':
+        return ![MailsDefaultFolders.TRASH, MailsDefaultFolders.INBOX, MailsDefaultFolders.OUTBOX].includes(from);
+      case 'restore':
         return from === MailsDefaultFolders.TRASH;
-      case onDelete:
-      case onTrash:
+      case 'delete':
         return true;
-
       default:
         return false;
     }
@@ -344,7 +370,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         />
       ),
       headerRight: () =>
-        mail?.trashed ? (
+        mail?.trashed || isRecall ? (
           <PopupMenu actions={popupActionsMenu}>
             <NavBarAction icon="ui-options" />
           </PopupMenu>
@@ -359,7 +385,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           />
         ),
     });
-  }, [from, mail, onReply, popupActionsMenu, props]);
+  }, [from, mail, isRecall, onReply, popupActionsMenu, props]);
 
   const renderRecipients = React.useCallback(() => {
     return (
@@ -387,8 +413,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       <EmptyScreen
         customStyle={{ backgroundColor: theme.palette.grey.white }}
         svgImage="empty-recall"
-        title=""
-        text={I18n.get('mails-details-recallscreen')}
+        title={I18n.get('mails-details-recallscreentitle')}
+        text={I18n.get('mails-details-recallscreentext')}
       />
     ),
     [],
@@ -420,18 +446,30 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   }, [mailHistory]);
 
   const renderButtons = React.useCallback(() => {
-    if (mail?.trashed) return null;
+    if (mail?.trashed || isRecallAndNotSender) return null;
+
+    const isMultipleRecipients = infosRecipients && infosRecipients.ids.length > 1;
+    const renderForwardButton = () => (
+      <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
+    );
+    const renderReplyButton = () => <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={onReply} />;
+    const renderReplyAllButton = () => (
+      <SecondaryButton iconLeft="ui-answerall" text={I18n.get('mails-details-replyall')} action={onReplyAll} />
+    );
+
     return (
       <View style={styles.buttons}>
-        <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={onReply} />
-        {infosRecipients && infosRecipients.ids.length > 1 ? (
-          <SecondaryButton iconLeft="ui-answerall" text={I18n.get('mails-details-replyall')} action={onReplyAll} />
+        {isRecall ? (
+          renderForwardButton()
         ) : (
-          <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
+          <>
+            {renderReplyButton()}
+            {isMultipleRecipients ? renderReplyAllButton() : renderForwardButton()}
+          </>
         )}
       </View>
     );
-  }, [infosRecipients, mail, onForward, onReply, onReplyAll]);
+  }, [infosRecipients, isRecall, isRecallAndNotSender, mail?.trashed, onForward, onReply, onReplyAll]);
 
   const hasRecipients = (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0;
 
@@ -531,7 +569,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
               {renderRecipients()}
             </View>
           </View>
-          {mail?.state === MailsMailStatePreview.RECALL ? (
+          {isRecallAndNotSender ? (
             renderRecall()
           ) : (
             <>
@@ -548,11 +586,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   }, [
     error,
-    mail?.date,
-    mail?.from.displayName,
-    mail?.from.id,
-    mail?.state,
-    mail?.subject,
+    isRecallAndNotSender,
+    mail,
     mailContent,
     props.navigation,
     renderAttachments,
