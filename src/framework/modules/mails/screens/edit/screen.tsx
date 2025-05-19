@@ -248,7 +248,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         setAttachments(convertedAttachments);
       } else {
         const signatureData = await mailsService.signature.get();
-        const { signature, useSignature } = JSON.parse(signatureData);
+        const { signature, useSignature } = signatureData ? JSON.parse(signatureData) : { signature: '', useSignature: false };
 
         const initialDate = moment(initialMailInfo?.date);
         const initialFrom = initialMailInfo?.from ?? { displayName: '', id: '', profile: AccountType.Guest };
@@ -258,7 +258,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         const initialBody = initialMailInfo?.body ?? '';
 
         const applyContent = (htmlContent: string) => {
-          const content = useSignature ? `<br>${signature}<br>${htmlContent}` : htmlContent;
+          const content = useSignature ? `<br>${signature}<br>${htmlContent}` : `<br>${htmlContent}`;
           setInitialContentHTML(content);
           setBody(content);
         };
