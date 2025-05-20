@@ -92,6 +92,7 @@ const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
   const animatedHeightStyle: ViewProps['style'] = React.useMemo(() => {
     // when expanded, we add the button height to the card height in order to display "see-less" one line below the text
     const totalHeight = expanded && expandButtonHeight ? Animated.add(animatedHeight, expandButtonHeight) : animatedHeight;
+
     return { height: totalHeight };
   }, [animatedHeight, expandButtonHeight, expanded]);
 
@@ -108,8 +109,6 @@ const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
   const contentElement = React.useMemo(() => {
     return <BodyText>{expanded ? content : (truncatedContent ?? content)}</BodyText>;
   }, [content, expanded, truncatedContent]);
-
-  // console.info(`"${content}"`, minNumberOfLines, lineCount);
 
   // beofre rendering, we set the size of all the elements involved in animation
   React.useLayoutEffect(() => {

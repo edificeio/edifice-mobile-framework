@@ -32,10 +32,7 @@ export const styles = StyleSheet.create({
   },
   expandedButton: {
     ...EXPAND_BUTTON_BASE_STYLE,
-    bottom: 0,
     justifyContent: 'flex-end',
-    position: 'absolute',
-    right: 0,
   },
   unexpandedButton: {
     ...EXPAND_BUTTON_BASE_STYLE,
