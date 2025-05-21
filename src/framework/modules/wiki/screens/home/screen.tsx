@@ -4,13 +4,13 @@ import type { WikiHomeScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import PopupMenu from '~/framework/components/menus/popup';
-import { NavBarAction } from '~/framework/components/navigation';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { RootFolderId } from '~/framework/modules/explorer/model/types';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { createResourceExplorerNavBar } from '~/framework/modules/explorer/templates/resource-explorer/screen';
 import moduleConfig from '~/framework/modules/wiki/module-config';
 import { wikiRouteNames } from '~/framework/modules/wiki/navigation';
+import { hasWikiCreationRights } from '~/framework/modules/wiki/rights';
 import { selectors } from '~/framework/modules/wiki/store';
 
 export const homeNavBar = createResourceExplorerNavBar('wiki-home-title', selectors.explorer);
@@ -42,7 +42,8 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
     [navigation],
   );
 
-  const hasCreateRight = false; // ToDo
+  const session = getSession();
+  const hasCreateRight = session && hasWikiCreationRights(session);
 
   const emptyComponent = React.useMemo(
     () =>
@@ -53,6 +54,7 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
             title={I18n.get('wiki-explorer-emptyscreen-root-create-title')}
             text={I18n.get('wiki-explorer-emptyscreen-root-create-text')}
             buttonText={I18n.get('wiki-explorer-emptyscreen-root-create-button')}
+            buttonUrl="/wiki"
           />
         ) : (
           <EmptyScreen
@@ -67,6 +69,8 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
           title={I18n.get('wiki-explorer-emptyscreen-folder-title')}
           text={I18n.get('wiki-explorer-emptyscreen-folder-text')}
           {...(hasCreateRight ? { buttonText: 'wiki-explorer-emptyscreen-folder-create-button' } : undefined)}
+          buttonText={I18n.get('wiki-explorer-emptyscreen-root-create-button')}
+          buttonUrl="/wiki"
         />
       ),
     [route.params.folderId, hasCreateRight],
