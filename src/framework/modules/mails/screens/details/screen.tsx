@@ -75,7 +75,7 @@ export const computeNavBar = ({
 });
 
 const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
-  const { folders, from, id } = props.route.params;
+  const { folders, fromFolder, id } = props.route.params;
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
   const [mailContent, setMailContent] = React.useState<string>('');
@@ -124,11 +124,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       to = [...users, ...groups];
     }
     props.navigation.navigate(mailsRouteNames.edit, {
-      fromFolder: from,
+      fromFolder,
       initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
-  }, [from, mail, props]);
+  }, [fromFolder, mail, props]);
 
   const onReplyAll = React.useCallback(() => {
     let to: MailsVisible[] = [];
@@ -158,11 +158,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     ];
 
     props.navigation.navigate(mailsRouteNames.edit, {
-      fromFolder: from,
+      fromFolder,
       initialMailInfo: { body: mail?.body, cc, cci, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
-  }, [from, mail, props]);
+  }, [fromFolder, mail, props]);
 
   const onForward = React.useCallback(() => {
     let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
@@ -170,11 +170,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     const to: MailsVisible[] = [...users, ...groups];
 
     props.navigation.navigate(mailsRouteNames.edit, {
-      fromFolder: from,
+      fromFolder,
       initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.FORWARD,
     });
-  }, [from, mail, props]);
+  }, [fromFolder, mail, props]);
 
   const onCreateNewFolder = React.useCallback(
     async (valueNewFolder: string) => {
@@ -196,7 +196,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         await action();
         Toast.showSuccess(I18n.get(successMessageKey));
         const navigationParams = {
-          from,
+          from: fromFolder,
           ...(successMessageKey === 'mails-toastsuccessunread'
             ? { idMailToMarkUnread: id }
             : successMessageKey === 'mails-toastsuccessrecall'
@@ -209,7 +209,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         toast.showError();
       }
     },
-    [from, id, props.navigation],
+    [fromFolder, id, props.navigation],
   );
 
   const onRecall = () => {
@@ -323,7 +323,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       title: I18n.get('mails-details-restore'),
     },
     {
-      action: from === MailsDefaultFolders.TRASH ? onDelete : onTrash,
+      action: fromFolder === MailsDefaultFolders.TRASH ? onDelete : onTrash,
       destructive: true,
       icon: {
         android: 'ic_delete_item',
@@ -335,24 +335,22 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   ];
 
   const popupActionsMenu = allPopupActionsMenu.filter(({ id }) => {
-    const { from } = props.route.params;
-
     switch (id) {
       case 'reply':
         return !isRecall;
       case 'replyAll':
-        return infosRecipients && infosRecipients.ids.length > 1 && from !== MailsDefaultFolders.TRASH && !isRecall;
+        return infosRecipients && infosRecipients.ids.length > 1 && fromFolder !== MailsDefaultFolders.TRASH && !isRecall;
       case 'forward':
-        return from !== MailsDefaultFolders.TRASH && !isRecallAndNotSender;
+        return fromFolder !== MailsDefaultFolders.TRASH && !isRecallAndNotSender;
       case 'recall':
         return canRecall;
       case 'markUnread':
       case 'move':
-        return from !== MailsDefaultFolders.TRASH;
+        return fromFolder !== MailsDefaultFolders.TRASH;
       case 'removeFromFolder':
-        return ![MailsDefaultFolders.TRASH, MailsDefaultFolders.INBOX, MailsDefaultFolders.OUTBOX].includes(from);
+        return ![MailsDefaultFolders.TRASH, MailsDefaultFolders.INBOX, MailsDefaultFolders.OUTBOX].includes(fromFolder);
       case 'restore':
-        return from === MailsDefaultFolders.TRASH;
+        return fromFolder === MailsDefaultFolders.TRASH;
       case 'delete':
         return true;
       default:
@@ -366,7 +364,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         <HeaderBackButton
           labelVisible={false}
           tintColor={theme.palette.grey.white as string}
-          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from })}
+          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from: fromFolder })}
         />
       ),
       headerRight: () =>
@@ -385,7 +383,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           />
         ),
     });
-  }, [from, mail, isRecall, onReply, popupActionsMenu, props]);
+  }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder]);
 
   const renderRecipients = React.useCallback(() => {
     return (

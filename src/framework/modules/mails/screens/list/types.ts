@@ -9,11 +9,11 @@ export interface MailsListScreenProps {
 }
 
 export interface MailsListScreenNavParams {
-  from?: MailsDefaultFolders | MailsFolderInfo;
   idMailToRemove?: string;
   idMailToRecall?: string;
   idMailToMarkUnread?: string;
   reload?: boolean;
+  from?: MailsDefaultFolders | MailsFolderInfo;
   // to manage tabbar visibility when is on select mode
   tabBarVisible?: boolean;
 }

@@ -181,7 +181,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         setIsLoading(false);
       }
     },
-    [loadMails, setSelectedFolder, onDismissBottomSheet],
+    [loadMails, onDismissBottomSheet],
   );
 
   const onPressItem = React.useCallback(
@@ -189,7 +189,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
         return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
       if (unread) setMails(prevMails => prevMails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
-      return navigation.navigate(mailsRouteNames.details, { folders, from: selectedFolder, id });
+      return navigation.navigate(mailsRouteNames.details, { folders, fromFolder: selectedFolder, id });
     },
     [selectedFolder, navigation, setMails, folders],
   );
@@ -536,7 +536,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       } else {
         loadFolders();
       }
-    }, [loadFolders, loadMails, props.route]),
+      if (params.from) props.navigation.setParams({ from: undefined });
+    }, [loadFolders, loadMails, props.navigation, props.route]),
   );
 
   const renderSearch = React.useCallback(() => {

@@ -26,7 +26,7 @@ export interface MailsEditScreenNavParams {
   };
   draftId?: string;
   type?: MailsEditType;
-  fromFolder?: MailsDefaultFolders | MailsFolderInfo;
+  fromFolder: MailsDefaultFolders | MailsFolderInfo;
 }
 
 export interface MailsEditScreenPrivateProps extends NativeStackScreenProps<MailsNavigationParams, 'edit'>, MailsEditScreenProps {
