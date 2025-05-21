@@ -1431,7 +1431,7 @@
   "timeline-notiftype-userbook-delete-email": "Suppression d'un email invalide (hard-bounce)",
   "timeline-notiftype-userbook-userbookmood": "Changement d'humeur",
   "timeline-notiftype-userbook-userbookmotto": "Changement de devise",
-  "timeline-notiftype-wiki-comment-added": "Commentaire dans un cours (seulement pour l’auteur de la page et les gestionnaires du cours)",
+  "timeline-notiftype-wiki-comment-added": "Commentaire dans un cours (seulement pour l’auteur de la page et les gestionnaires du cours) (à venir)",
   "timeline-notiftype-wiki-page-created": "Nouvelle page dans un cours",
   "timeline-notiftype-wiki-page-deleted": "Suppression d’une page dont je suis l'auteur",
   "timeline-notiftype-wiki-page-updated": "Modification d’une page d'un cours",
