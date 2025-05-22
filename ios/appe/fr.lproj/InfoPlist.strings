@@ -2,3 +2,4 @@
 "NSMicrophoneUsageDescription"="Le microphone sera utilisé pour envoyer des sons et des vidéos sur votre réseau éducatif.";
 "NSPhotoLibraryUsageDescription"="La galerie photos sera utilisée pour envoyer des photos sur votre réseau éducatif et pour choisir votre photo de profil.";
 "NSPhotoLibraryAddUsageDescription"="La galerie photos sera utilisée pour envoyer des photos sur votre réseau éducatif et pour choisir votre photo de profil.";
+"NSMicrophoneUsageDescription"="Le microphone sera utilisé pour enregistrer de l'audio.";
