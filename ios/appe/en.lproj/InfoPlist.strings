@@ -1,3 +1,4 @@
 "NSCameraUsageDescription"="The camra will be used to send pictures to your educational network and to choose your profile photo.";
 "NSPhotoLibraryUsageDescription"="The photo gallery will be used to send pictures to your educational network and to choose your profile photo.";
 "NSPhotoLibraryAddUsageDescription"="The photo gallery will be used to send pictures to your educational network and to choose your profile photo.";
+"NSMicrophoneUsageDescription"="The microphone will be used to record audio.";
