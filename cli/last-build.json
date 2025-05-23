@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-23 10:38:43",
-  "notes": "release: 1.14.0-peda.13(1140015)",
-  "version": "1.14.0-peda.14(1140016)"
+  "last": "2025-05-23 11:46:22",
+  "notes": "Merge branch 'dev/peda' into feat/peda/wiki\nMerge branch 'dev/1.14.0' of https://github.com/edificeio/edifice-mobile-framework into dev/1.14.0\nfeat(nabook): ENABLING-291, now student's code can be copied to clipboard\nUpdated translations from Phrase (#200)\nrelease: 1.14.0-peda.14(1140016)",
+  "version": "1.14.0-peda.15(1140017)"
 }
