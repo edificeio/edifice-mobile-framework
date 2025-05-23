@@ -8,7 +8,6 @@ import { MailsSignatureScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
@@ -34,29 +33,19 @@ export const computeNavBar = ({
 const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
   const [useSignature, setUseSignature] = React.useState<boolean>(false);
   const [signature, setSignature] = React.useState<string>('');
-  const [initialValue, setInitialValue] = React.useState({
-    signature: '',
-    useSignature: false,
-  });
+  const [initialValue, setInitialValue] = React.useState<boolean>();
 
   const loadContent = async () => {
     try {
       const data = await mailsService.signature.get();
-      const dataJson = JSON.parse(data);
+      const dataJson = data ? JSON.parse(data) : { signature: '', useSignature: false };
 
       setUseSignature(dataJson.useSignature);
       setSignature(dataJson.signature);
-      setInitialValue({
-        signature: dataJson.signature,
-        useSignature: dataJson.useSignature,
-      });
+      setInitialValue(dataJson.useSignature);
     } catch (e) {
       console.error(e);
     }
-  };
-
-  const onChangeText = (text: string) => {
-    setSignature(text);
   };
 
   const onToggleSignature = React.useCallback(async () => {
@@ -76,15 +65,9 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerRight: () => (
-        <NavBarAction
-          icon="ui-check"
-          onPress={onSave}
-          disabled={initialValue.signature === signature && initialValue.useSignature === useSignature}
-        />
-      ),
+      headerRight: () => <NavBarAction icon="ui-check" onPress={onSave} disabled={initialValue === useSignature} />,
     });
-  }, [props.navigation, onSave, initialValue.signature, initialValue.useSignature, signature, useSignature]);
+  }, [props.navigation, onSave, initialValue, signature, useSignature]);
 
   const renderContent = React.useCallback(() => {
     return (
@@ -95,17 +78,10 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
             <Toggle checked={useSignature} onCheckChange={onToggleSignature} color={theme.palette.primary} />
           </View>
           <CaptionText style={styles.textContent}>{I18n.get('mails-signature-content')}</CaptionText>
-          <MultilineTextInput
-            placeholder={I18n.get('mails-signature-placeholder')}
-            numberOfLines={4}
-            maxLength={800}
-            value={signature}
-            onChangeText={onChangeText}
-          />
         </ScrollView>
       </PageView>
     );
-  }, [onToggleSignature, signature, useSignature]);
+  }, [onToggleSignature, useSignature]);
 
   return <ContentLoader loadContent={loadContent} renderContent={renderContent} />;
 };
