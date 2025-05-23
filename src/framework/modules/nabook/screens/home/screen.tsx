@@ -49,7 +49,12 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
   const load = async () => {
     const t = await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
 
-    if (!getPlatform() || !t) return;
+    if (!getPlatform() || !t) {
+      console.error('[🛑] Nabook | Screen: Cannot load token:', t, getPlatform());
+      setMsgError('Platforme inconnue ou pas de session active');
+      setScreen('error');
+      return;
+    }
 
     try {
       const r = (await signedFetchJson(`${getPlatform()?.url}/nabook/conf`)) as {

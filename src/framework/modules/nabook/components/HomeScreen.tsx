@@ -2,12 +2,17 @@ import * as React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { ActivityIndicator, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import Clipboard from '@react-native-clipboard/clipboard';
 import FastImage from 'react-native-fast-image';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+import { getPlatform } from '../../auth/reducer';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import { getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
-import { getPlatform } from '~/framework/modules/auth/reducer';
+import Toast from '~/framework/components/toast';
 import BtnNBK from '~/framework/modules/nabook/components/BtnNBK';
 import { NBK_BASE_URL, NBK_COLORS, ONE_LINK_NBK } from '~/framework/modules/nabook/utils/constants';
 import textStyle from '~/framework/modules/nabook/utils/textStyle';
@@ -40,6 +45,12 @@ const styles = StyleSheet.create({
     marginBottom: getScaleWidth(16),
     marginTop: getScaleWidth(20),
   },
+  codeClasseContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'center',
+  },
   containerCasque: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -61,7 +72,7 @@ const styles = StyleSheet.create({
   },
   content: { fontSize: getScaleWidth(16), textAlign: 'center' },
   divider: { backgroundColor: NBK_COLORS.white, flex: 1, height: 3 },
-  error: { color: NBK_COLORS.orange },
+  error: { color: NBK_COLORS.orange, marginBottom: getScaleWidth(16), marginTop: getScaleWidth(20) },
   or: {
     fontSize: getScaleWidth(14),
   },
@@ -99,7 +110,6 @@ const HomeScreen = (props: HomeScreenProps) => {
         }
         const json = await res.json();
         if (!json || !json.code) {
-          console.error('[🛑] Nabook | HomeScreen: Invalid response from server');
           setError('Pas de code attribué');
           setIsLoading(false);
           return;
@@ -121,6 +131,13 @@ const HomeScreen = (props: HomeScreenProps) => {
     if (supported) await Linking.openURL(ONE_LINK_NBK);
   };
 
+  const copyCode = async () => {
+    if (codeClasse) {
+      Clipboard.setString('codeClasse');
+      Toast.showSuccess(I18n.get('nabook-homescreen-code-copied'));
+    }
+  };
+
   return (
     <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -138,7 +155,12 @@ const HomeScreen = (props: HomeScreenProps) => {
               ) : error ? (
                 <Text style={[textStyle.info, styles.error]}>{error}</Text>
               ) : (
-                <Text style={[textStyle.codeClasse, styles.codeClasse]}>{codeClasse}</Text>
+                <View style={styles.codeClasseContainer}>
+                  <Text onPress={copyCode} style={[textStyle.codeClasse, styles.codeClasse]}>
+                    {codeClasse}
+                  </Text>
+                  <Icon name={'content-copy'} size={25} color={theme.ui.text.inverse} onPress={copyCode} />
+                </View>
               )}
               <Text style={textStyle.info}>{I18n.get('nabook-homescreen-info-code')}</Text>
             </View>

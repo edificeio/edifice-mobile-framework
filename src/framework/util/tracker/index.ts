@@ -1,5 +1,5 @@
 import CookieManager from '@react-native-cookies/cookies';
-import analytics from '@react-native-firebase/analytics';
+//import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
 
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -37,7 +37,7 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Init procedure. Override _init() function to create custom trackers.
-  protected async _init() { }
+  protected async _init() {}
 
   async init() {
     try {
@@ -97,7 +97,7 @@ export abstract class AbstractTracker<OptionsType> {
     moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
     action: string,
     name?: string,
-    value?: number
+    value?: number,
   ) {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
@@ -121,7 +121,7 @@ export abstract class AbstractTracker<OptionsType> {
     moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
     action: string,
     name?: string,
-    value?: number
+    value?: number,
   ) {
     await this.trackDebugEvent(moduleConfig.trackingName, action, name, value);
   }
@@ -250,7 +250,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
         new Request(`${platform!.url}/infra/event/mobile/store`, {
           body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
           method: 'POST',
-        })
+        }),
       );
       this.lastModulename = moduleName;
       willLog = moduleAccessMap[moduleName];
@@ -260,7 +260,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 }
 
-export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
+/*export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
   protected _properties = {};
 
   async _setUserId(id: string) {
@@ -274,7 +274,7 @@ export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
   }
 
   protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
-    //analytics().logEvent(`${category}_${action}`.slice(0, 39), { name, value, ...this._properties });
+    analytics().logEvent(`${category}_${action}`.slice(0, 39), { name, value, ...this._properties });
     return true;
   }
 
@@ -286,7 +286,7 @@ export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
     });
     return true;
   }
-}
+}*/
 
 export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
   protected _isDebugTracker(): boolean {
@@ -384,7 +384,7 @@ export class ConcreteTrackerSet {
     moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
     action: string,
     name?: string,
-    value?: number
+    value?: number,
   ) {
     await Promise.all(this._trackers.map(t => t.trackDebugEventOfModule(moduleConfig, action, name, value)));
   }
@@ -405,8 +405,8 @@ export class ConcreteTrackerSet {
 
 export const Trackers = new ConcreteTrackerSet(
   new ConcreteEntcoreTracker('Entcore', undefined),
-  new ConcreteAnalyticsTracker('Analytics', undefined),
-  new ConcreteCrashsTracker('Crashs', undefined)
+  //new ConcreteAnalyticsTracker('Analytics', undefined),
+  new ConcreteCrashsTracker('Crashs', undefined),
 );
 
 export const TRACKING_ACTION_SUFFIX_SUCCESS = 'Succès';
