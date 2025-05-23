@@ -51,7 +51,7 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
 
     if (!getPlatform() || !t) {
       console.error('[🛑] Nabook | Screen: Cannot load token:', t, getPlatform());
-      setMsgError('Platforme inconnue ou pas de session active');
+      setMsgError(I18n.get('nabook-error-no-session'));
       setScreen('error');
       return;
     }
@@ -76,7 +76,7 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
 
       if (!json || json.error) {
         console.error('[🛑] Nabook | Screen: Cannot load token:', json);
-        setMsgError(json.msg || 'Erreur inconnue');
+        setMsgError(json.msgCode || I18n.get('nabook-error-unknown'));
         setScreen('error');
         return;
       }
@@ -89,7 +89,7 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
       else setScreen('home');
     } catch (e) {
       console.error('🚀 ~ load ~ e:', e);
-      setMsgError("Erreur de chargement de l'application");
+      setMsgError(I18n.get('nabook-error-loading'));
       setScreen('error');
     }
   };

@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import BtnNBK from './BtnNBK';
 
+import { I18n } from '~/app/i18n';
 import { getScaleHeight, getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NBK_COLORS } from '~/framework/modules/nabook/utils/constants';
@@ -35,11 +36,11 @@ const ErrorScreen = (props: ErrorScreenProps) => {
   return (
     <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
       <View style={styles.container}>
-        <Text style={textStyle.bodyRoboto}>L'application Nabook n'a pas pu être chargée</Text>
+        <Text style={textStyle.bodyRoboto}>{I18n.get('nabook-error-title')}</Text>
         <View style={styles.errorTextContainer}>
-          <Text style={textStyle.bodyRoboto}>{msg || 'Erreur inconnue'}</Text>
+          <Text style={textStyle.bodyRoboto}>{msg || I18n.get('nabook-error-unknown')}</Text>
         </View>
-        <BtnNBK txt="Retour" clicked={getBack} />
+        <BtnNBK txt={I18n.get('nabook-btn-back')} clicked={getBack} />
       </View>
     </PageView>
   );
