@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-21 20:07:02",
-  "notes": "Revert \"chore(wiki): PEDAGO-2777 updating comment added traduction key\"\nfeat(wiki): PEDAGO-2775 adding create wiki  web redirection\nchore(wiki): PEDAGO-2777 updating comment added traduction key\nfix(wiki): PEDAGO-2758 see less button position Google Pixel\nfix(wiki): WB2-2779 adding updater name and avatar\nrelease: 1.14.0-peda.12(1140014)",
-  "version": "1.14.0-peda.13(1140015)"
+  "last": "2025-05-23 10:38:43",
+  "notes": "release: 1.14.0-peda.13(1140015)",
+  "version": "1.14.0-peda.14(1140016)"
 }
