@@ -109,6 +109,14 @@ export const mailsService = {
       const body = JSON.stringify({ id: payload.ids });
       await http.fetchForSession('PUT', api, { body });
     },
+    forward: async (params: { id: string }) => {
+      const api = `/conversation/draft?In-Reply-To=${params.id}`;
+      const bodyJson = JSON.stringify({ body: '', cc: [], cci: [], subject: '', to: [] });
+      const data = (await http.fetchJsonForSession('POST', api, { body: bodyJson })) as { id: string };
+      const api2 = `/conversation/message/${data.id}/forward/${params.id}`;
+      await http.fetchForSession('PUT', api2);
+      return data.id;
+    },
     get: async (params: { id: string; originalFormat?: boolean }) => {
       const api = `/conversation/api/messages/${params.id}${params.originalFormat ? '?originalFormat=true' : ''}`;
       const backendMail = (await http.fetchJsonForSession('GET', api)) as MailsMailContentBackend;

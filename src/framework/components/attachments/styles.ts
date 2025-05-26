@@ -21,5 +21,6 @@ export default StyleSheet.create({
     borderStyle: 'dashed',
     borderWidth: UI_SIZES.border.thin,
     padding: UI_SIZES.spacing.minor,
+    rowGap: UI_SIZES.spacing.minor,
   },
 });

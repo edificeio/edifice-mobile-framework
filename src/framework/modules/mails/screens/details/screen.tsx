@@ -164,17 +164,32 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     });
   }, [fromFolder, mail, props]);
 
-  const onForward = React.useCallback(() => {
-    let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
-    let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
-    const to: MailsVisible[] = [...users, ...groups];
+  const onForward = React.useCallback(async () => {
+    try {
+      const draftId = await mailsService.mail.forward({ id });
+      let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
+      let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
+      const to: MailsVisible[] = [...users, ...groups];
 
-    props.navigation.navigate(mailsRouteNames.edit, {
-      fromFolder,
-      initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
-      type: MailsEditType.FORWARD,
-    });
-  }, [fromFolder, mail, props]);
+      props.navigation.navigate(mailsRouteNames.edit, {
+        draftId,
+        fromFolder,
+        initialMailInfo: {
+          attachments: convertedAttachments,
+          body: mail?.body,
+          date: mail?.date,
+          from: mail?.from,
+          id: mail!.id,
+          subject: mail?.subject,
+          to,
+        },
+        type: MailsEditType.FORWARD,
+      });
+    } catch (e) {
+      console.error('Failed to forward mail', e);
+      toast.showError();
+    }
+  }, [convertedAttachments, fromFolder, id, mail, props.navigation]);
 
   const onCreateNewFolder = React.useCallback(
     async (valueNewFolder: string) => {

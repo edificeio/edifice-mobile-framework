@@ -231,7 +231,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const loadData = React.useCallback(async () => {
     try {
-      if (draftId) {
+      if (draftId && type !== MailsEditType.FORWARD) {
         const draft = await mailsService.mail.get({ id: draftId });
 
         const toDraft = convertDraftRecipients(draft.to);

@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { MailsDefaultFolders, MailsFolderInfo, MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
 import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
 export enum MailsEditType {
   REPLY,
@@ -23,6 +24,7 @@ export interface MailsEditScreenNavParams {
     to?: MailsVisible[];
     cc?: MailsVisible[];
     cci?: MailsVisible[];
+    attachments?: IDistantFileWithId[];
   };
   draftId?: string;
   type?: MailsEditType;
