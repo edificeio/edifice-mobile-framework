@@ -99,6 +99,7 @@
     "@react-navigation/native": "6.1.18",
     "@react-navigation/native-stack": "6.11.0",
     "@shopify/flash-list": "1.7.2",
+    "@simform_solutions/react-native-audio-waveform": "^2.1.5",
     "@skele/components": "1.0.0-alpha.40",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
