@@ -87,11 +87,11 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1131405
-        versionName "1.13.14"
+        versionCode 1131501
+        versionName "1.13.15"
         manifestPlaceholders.applicationName = APPNAME
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.5\""
+        buildConfigField "String", "BundleVersionType", "\"rc.1\""
         resValue "string", "app_name", "${APPNAME}"
         ndk {
             debugSymbolLevel 'FULL'
