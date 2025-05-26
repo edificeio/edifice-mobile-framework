@@ -104,13 +104,13 @@ const HomeScreen = (props: HomeScreenProps) => {
         });
         if (res.status !== 200) {
           console.error('[🛑] Nabook | HomeScreen: Failed to load class code', token.accessToken);
-          setError('Impossible de charger le code élève');
+          setError(I18n.get('nabook-error-student-code'));
           setIsLoading(false);
           return;
         }
         const json = await res.json();
         if (!json || !json.code) {
-          setError('Pas de code attribué');
+          setError(I18n.get('nabook-error-no-student-code'));
           setIsLoading(false);
           return;
         }
@@ -119,7 +119,7 @@ const HomeScreen = (props: HomeScreenProps) => {
         setIsLoading(false);
       } catch (e) {
         console.error('[🛑] Nabook | HomeScreen: Error fetching class code:', e);
-        setError('Erreur lors du chargement du code élève');
+        setError(I18n.get('nabook-error-student-code'));
         setIsLoading(false);
       }
     };

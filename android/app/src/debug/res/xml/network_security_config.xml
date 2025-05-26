@@ -13,4 +13,10 @@
         <domain includeSubdomains="true">extranet.ac-reims.fr</domain>
         <domain includeSubdomains="true">moncompte.ac-nantes.fr</domain>
     </domain-config>
+    <domain-config>
+        <domain includeSubdomains="false">ent-ecoles.ac-reims.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
 </network-security-config>
