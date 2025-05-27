@@ -1,19 +1,20 @@
 import React, { useRef, useState } from 'react';
-import { PermissionsAndroid, Platform, TouchableOpacity, View } from 'react-native';
+import { NativeEventEmitter, NativeModules, PermissionsAndroid, Platform, TouchableOpacity, View } from 'react-native';
+
+const { AudioWaveform, AudioWaveformsEventEmitter } = NativeModules;
 
 import {
   IWaveformRef,
   PermissionStatus,
   RecorderState,
   UpdateFrequency,
-  useAudioPermission,
-  Waveform,
+  useAudioPermission
 } from '@simform_solutions/react-native-audio-waveform';
 import RNFS from 'react-native-fs';
 
+import CustomWaveform from './CustomWaveForm';
 import styles from './styles';
 
-import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
@@ -22,8 +23,12 @@ const AudioRecorder = () => {
   const waveformRef = useRef<IWaveformRef>(null);
   const [recorderState, setRecorderState] = useState<RecorderState>(RecorderState.stopped);
   const candleHeightScale = React.useMemo(() => (Platform.OS === 'ios' ? 1 : 6), []);
-
   const { checkHasAudioRecorderPermission, getAudioRecorderPermission } = useAudioPermission();
+
+  const [isRecording, setIsRecording] = useState(false);
+
+  // Simule une amplitude aléatoire (remplace par la vraie valeur de ton micro)
+  const getNextAmplitude = () => Math.random();
 
   const requestPermissionIfNeeded = async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
@@ -45,13 +50,16 @@ const AudioRecorder = () => {
 
     if (recorderState === RecorderState.stopped) {
       await waveformRef.current?.startRecord({ updateFrequency: UpdateFrequency.high });
+      setIsRecording(true);
       setRecorderState(RecorderState.recording);
     } else if (recorderState === RecorderState.recording) {
       await waveformRef.current?.pauseRecord();
+      setIsRecording(false);
       setRecorderState(RecorderState.paused);
     } else if (recorderState === RecorderState.paused) {
       await waveformRef.current?.resumeRecord();
       setRecorderState(RecorderState.recording);
+      setIsRecording(true);
     }
   };
 
@@ -75,6 +83,7 @@ const AudioRecorder = () => {
   };
 
   const handleStopRecordPress = async () => {
+    setIsRecording(false);
     if (recorderState !== RecorderState.stopped) {
       try {
         const audioFilePath = await waveformRef.current?.stopRecord();
@@ -93,9 +102,32 @@ const AudioRecorder = () => {
     }
   };
 
+  React.useEffect(() => {
+    let emitter: NativeEventEmitter | null = null;
+    let subscription: any;
+
+    if (Platform.OS === 'ios' && AudioWaveformsEventEmitter) {
+      emitter = new NativeEventEmitter(AudioWaveformsEventEmitter);
+    } else if (Platform.OS === 'android' && AudioWaveform) {
+      emitter = new NativeEventEmitter(AudioWaveform);
+    }
+
+    if (emitter) {
+      subscription = emitter.addListener('onCurrentRecordingWaveformData', event => {
+        // event.currentDecibel (Android) ou event.currentDecibel (iOS)
+        console.log('📈 Live amplitude data:', event);
+        // Utilise event.currentDecibel pour ton CustomWaveform
+      });
+    }
+
+    return () => {
+      if (subscription) subscription.remove();
+    };
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Waveform
+      {/* <Waveform
         ref={waveformRef}
         candleHeightScale={candleHeightScale}
         candleSpace={2}
@@ -104,6 +136,14 @@ const AudioRecorder = () => {
         mode="live"
         onRecorderStateChange={setRecorderState}
         waveColor={theme.palette.primary.regular as string}
+      /> */}
+      <CustomWaveform
+        width={300}
+        height={40}
+        isRecording={isRecording}
+        getNextAmplitude={getNextAmplitude}
+        speed={80} // vitesse d'apparition des barres (ms)
+        maxBars={60}
       />
       <View style={styles.buttonsContainer}>
         <TouchableOpacity onPress={handleRecorderPress} style={styles.button}>
