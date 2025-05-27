@@ -23,8 +23,8 @@ jobs:
         if: ${{ failure() }}
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_CHANNEL: monitor-mobile
+          SLACK_CHANNEL: general
           SLACK_COLOR: ${{ job.status }}
-          SLACK_MESSAGE: 'Sync phrase-translations completed : ${{ job.status }}'
-          SLACK_TITLE: 'Sync phrase-translations'
+          SLACK_MESSAGE: 'Merge phrase-translations completed : ${{ job.status }}'
+          SLACK_TITLE: 'Merge phrase-translations'
           SLACK_WEBHOOK: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
