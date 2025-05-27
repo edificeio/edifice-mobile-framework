@@ -15,7 +15,7 @@ jobs:
 
       - name: Accept PR from Phrase
         run: |
-          gh pr merge ${{ github.event.pull_request.number }} --squash --delete-branch
+          gh pr merge ${{ github.event.pull_request.number }} --squash
         env:
           GH_TOKEN: ${{ secrets.PHRASE_TRANSLATIONS }}
 
