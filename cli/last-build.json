@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-27 11:49:29",
-  "notes": "release: 1.14.0-rc.1(1140020)",
-  "version": "1.14.0-rc.2(1140021)"
+  "last": "2025-05-27 21:30:01",
+  "notes": "chore(i18n): auto merge phrase PRs action update\nUpdated translations from Phrase (#202)\nchore(i18n): auto merge phrase PRs action update\nchore(i18n): auto merge phrase PRs action addition\nrelease: 1.14.0-rc.2(1140021)",
+  "version": "1.14.0-rc.3(1140022)"
 }
