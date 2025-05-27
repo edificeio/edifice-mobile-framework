@@ -2,38 +2,29 @@ name: Merge phrase-translations
 
 on:
   pull_request:
-    branches:
-      - phrase-translations
-    types:
-      - edited
-      - labeled
-      - opened
-      - ready_for_review
-      - reopened
-      - synchronize
-      - unlabeled
-      - unlocked
+    types: [opened, synchronize]
 
 jobs:
-  automerge:
+  update_wordings:
     runs-on: ubuntu-latest
-
+    # Only run for PRs from specific branch
+    if: github.event.pull_request.head.ref == 'phrase-translations'
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Auto Merge Pull Request
-        uses: pascalgn/automerge-action@v0.11.0
+      - name: Accept PR from Phrase
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --squash --delete-branch
         env:
-          GITHUB_TOKEN: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
-          MERGE_LABELS: ''
-          MERGE_METHOD: 'squash'
+          GH_TOKEN: ${{ secrets.PHRASE_TRANSLATIONS }}
 
       - name: Slack Notification on error
+        if: ${{ failure() }}
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_CHANNEL: general
+          SLACK_CHANNEL: monitor-mobile
           SLACK_COLOR: ${{ job.status }}
-          SLACK_MESSAGE: 'Merge phrase-translations completed : ${{ job.status }}'
-          SLACK_TITLE: 'Merge phrase-translations'
+          SLACK_MESSAGE: 'Sync phrase-translations completed : ${{ job.status }}'
+          SLACK_TITLE: 'Sync phrase-translations'
           SLACK_WEBHOOK: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
