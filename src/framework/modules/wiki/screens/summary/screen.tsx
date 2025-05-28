@@ -18,7 +18,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import { HeadingMText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
-import { useMediaImport } from '~/framework/modules/media/provider';
+import { useMediaImport } from '~/framework/modules/media/hooks/import';
 import { PageList } from '~/framework/modules/wiki/components/page-list';
 import { PageListProps } from '~/framework/modules/wiki/components/page-list/types';
 import ResourceHeader from '~/framework/modules/wiki/components/resource-header';
@@ -98,11 +98,11 @@ export function WikiSummaryScreenLoaded({
   );
 }
 
-const importOptions = {
+const customOptions = {
   video: {
     options: [
       {
-        callback: async () => ({ foo: 'bar' as const }),
+        callback: async () => [],
         i18n: 'Custom choice',
         icon: 'ui-video',
       },
@@ -158,7 +158,7 @@ export default function WikiSummaryScreen({
     [navigation, wikiData],
   );
 
-  const { element, prompt } = useMediaImport(importOptions);
+  const { element, prompt } = useMediaImport({ parent: 'protected' });
 
   return (
     <PageView style={styles.page}>
@@ -167,9 +167,9 @@ export default function WikiSummaryScreen({
         action={async () => {
           try {
             const ret = await prompt('video');
-            console.info(ret);
-          } catch {
-            console.info('catched');
+            console.info("C'est bon regarde :", ret);
+          } catch (e) {
+            console.error('catched', JSON.stringify(e));
           }
         }}
       />

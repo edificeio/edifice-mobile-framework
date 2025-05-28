@@ -1,1 +1,0 @@
-export { useMediaImport } from './component';
