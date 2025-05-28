@@ -32,12 +32,12 @@ type IEntcoreWorkspaceDocument = {
   _id: string;
   name: string;
   metadata: {
-    name: 'file';
-    filename: string;
+    'name': 'file';
+    'filename': string;
     'content-type': string;
     'content-transfer-encoding': string;
-    charset: 'UTF-8';
-    size: number;
+    'charset': 'UTF-8';
+    'size': number;
   };
   deleted: boolean;
   eParent: string | null;
@@ -185,6 +185,7 @@ const workspaceService = {
           url: datajson.public ? `/workspace/pub/document/${id}` : `/workspace/document/${id}`,
         };
       };
+      console.debug('startUploadFile', url);
       return fileTransferService.startUploadFile<SyncedFileWithId>(session, file, { ...params, url }, adapter, callbacks);
     },
     uploadFile: (session: AuthLoggedAccount, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {

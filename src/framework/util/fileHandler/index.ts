@@ -193,11 +193,11 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
   constructor(
     file: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem,
-    opts: {
+    opts?: {
       _needIOSReleaseSecureAccess: boolean;
     },
   ) {
-    this._needIOSReleaseSecureAccess = opts._needIOSReleaseSecureAccess;
+    this._needIOSReleaseSecureAccess = opts?._needIOSReleaseSecureAccess ?? true;
     this.filename =
       (file as LocalFile.CustomUploadFileItem).filename || (file as DocumentPickerResponse).name || (file as Asset).fileName!;
     this._filepathNative = (file as LocalFile.CustomUploadFileItem).filepath || (file as DocumentPickerResponse | Asset).uri!;
