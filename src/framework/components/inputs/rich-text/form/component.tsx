@@ -159,10 +159,17 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     choosePicsMenuRef.current?.dismiss();
   };
 
-  const showChoosePicsMenu = () => {
+  const showChoosePicsMenu = (type: 'image' | 'video') => {
     richText?.current?.lockContentEditor();
     blurRichText();
-    choosePicsMenuRef.current?.present();
+    switch (type) {
+      case 'image':
+        choosePicsMenuRef.current?.present();
+        break;
+      case 'video':
+        choosePicsMenuRef.current?.present();
+        break;
+    }
   };
 
   const handleChoosePics = async () => {

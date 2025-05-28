@@ -25,7 +25,11 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         backdropComponent={renderBackdrop}
         topInset={useHeaderHeight() + (props.additionalTopInset ?? 0)}
         {...props}>
-        <BottomSheetView style={newStyle}>{props.children}</BottomSheetView>
+        {typeof props.children === 'function' ? (
+          data => <BottomSheetView style={newStyle}>{props.children(data.data)}</BottomSheetView>
+        ) : (
+          <BottomSheetView style={newStyle}>{props.children}</BottomSheetView>
+        )}
       </BottomSheetModal>
     );
   },
