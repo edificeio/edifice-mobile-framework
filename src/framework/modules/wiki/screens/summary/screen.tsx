@@ -11,12 +11,14 @@ import type { WikiSummaryScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { getStore, IGlobalState } from '~/app/store';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { getScaleImageSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import { HeadingMText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { useMediaImport } from '~/framework/modules/media/provider';
 import { PageList } from '~/framework/modules/wiki/components/page-list';
 import { PageListProps } from '~/framework/modules/wiki/components/page-list/types';
 import ResourceHeader from '~/framework/modules/wiki/components/resource-header';
@@ -96,6 +98,18 @@ export function WikiSummaryScreenLoaded({
   );
 }
 
+const importOptions = {
+  video: {
+    options: [
+      {
+        callback: async () => ({ foo: 'bar' as const }),
+        i18n: 'Custom choice',
+        icon: 'ui-video',
+      },
+    ],
+  },
+};
+
 export default function WikiSummaryScreen({
   navigation,
   route: {
@@ -144,9 +158,23 @@ export default function WikiSummaryScreen({
     [navigation, wikiData],
   );
 
+  const { element, prompt } = useMediaImport(importOptions);
+
   return (
     <PageView style={styles.page}>
+      <PrimaryButton
+        text="IMPORT"
+        action={async () => {
+          try {
+            const ret = await prompt('video');
+            console.info(ret);
+          } catch {
+            console.info('catched');
+          }
+        }}
+      />
       <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={renderLoading} />
+      {element}
     </PageView>
   );
 }

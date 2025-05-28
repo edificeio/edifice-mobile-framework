@@ -4,7 +4,7 @@ import type RichEditor from '~/framework/components/inputs/rich-text/editor/Rich
 
 export interface RichToolbarProps {
   editor?: RichEditor;
-  showBottomSheet: Function;
+  showBottomSheet: (type: 'image' | 'video') => void;
 }
 
 export interface RichToolbarState {

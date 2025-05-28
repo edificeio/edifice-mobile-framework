@@ -100,7 +100,7 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
 
   showBottomSheet() {
     this.editor?.blurContentEditor();
-    this.props.showBottomSheet();
+    this.props.showBottomSheet('image');
   }
 
   startAnimation() {
@@ -172,6 +172,12 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
                   fill={theme.palette.complementary.green.regular}
                   icon="ui-image"
                   key="bottomSheet"
+                />,
+                <RichToolbarCustomItem
+                  action={this.showBottomSheet}
+                  fill={theme.palette.complementary.purple.regular}
+                  icon="ui-recordVideo"
+                  key="bottomSheetVideo"
                 />,
                 <RichToolbarCustomItem icon="ui-text-options" key="text" action={this.startAnimation} />,
               ]}
