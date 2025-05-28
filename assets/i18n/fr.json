@@ -1277,6 +1277,8 @@
   "timeline-apptype-minetest": "Minetest",
   "timeline-apptype-minibadge": "Minibadge",
   "timeline-apptype-moodle": "Moodle",
+  "timeline-apptype-nabook": "Nabook",
+  "timeline-apptype-nabooklecturenotification": "Lecture à faire",
   "timeline-apptype-news": "Actualités",
   "timeline-apptype-override-timeline": "Message flash",
   "timeline-apptype-pages": "Pages",
