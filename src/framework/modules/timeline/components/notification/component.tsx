@@ -4,6 +4,8 @@ import { TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 import { ITimelineNotificationProps } from './types';
 
+import { I18n } from '~/app/i18n';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { SmallItalicText, SmallText } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timeline/components/notification-top-info';
@@ -50,6 +52,9 @@ export function TimelineNotification(props: ITimelineNotificationProps) {
           </SmallText>
         ) : null}
         {media ? <View style={styles.contentNotif}>{renderMediaPreview(media, uri)}</View> : null}
+        {notificationAction && media?.length ? (
+          <TertiaryButton text={I18n.get('resource-preview-read-more')} iconRight="ui-arrowRight" style={styles.notifReadMore} />
+        ) : null}
       </>
     );
     // Since notifications are immutable, we can memoize them only by id safely.

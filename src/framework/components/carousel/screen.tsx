@@ -32,7 +32,7 @@ import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { IMAGE_MAX_DIMENSION, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
@@ -140,14 +140,13 @@ export function Carousel(props: ICarouselProps) {
         const source = urlSigner.signURISource(d.src);
         const uri = new URL(source.uri);
         uri.searchParams.delete('thumbnail');
-        uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x0`);
         source.uri = uri.toString();
         source.cache = 'web';
         return {
           props: { source },
         };
       }),
-    [data]
+    [data],
   );
 
   const [indexDisplay, setIndexDisplay] = React.useState((route.params.startIndex ?? 0) + 1);
@@ -160,7 +159,7 @@ export function Carousel(props: ICarouselProps) {
 
   const getButtons = React.useCallback(
     (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} />,
-    [imageViewerRef]
+    [imageViewerRef],
   );
 
   const downloadFile = React.useCallback(
@@ -172,7 +171,7 @@ export function Carousel(props: ICarouselProps) {
       const sf = await fileTransferService.downloadFile(assertSession(), { filetype: foundData?.mime, url: realUrl }, {});
       return sf;
     },
-    [data]
+    [data],
   );
 
   const getSyncedFile = React.useCallback(
@@ -185,14 +184,14 @@ export function Carousel(props: ICarouselProps) {
           new LocalFile({ filename: '', filepath: realUrl!, filetype: foundData?.mime! }, { _needIOSReleaseSecureAccess: false }),
           {
             url: realUrl!,
-          }
+          },
         );
       } else {
         sf = await downloadFile(url);
       }
       return sf;
     },
-    [data, downloadFile]
+    [data, downloadFile],
   );
 
   const onSave = React.useCallback(
@@ -206,7 +205,7 @@ export function Carousel(props: ICarouselProps) {
           if (e instanceof PermissionError) {
             Alert.alert(
               I18n.get('carousel-savetocameraroll-permissionblocked-title'),
-              I18n.get('carousel-savetocameraroll-permissionblocked-text', { appName: DeviceInfo.getApplicationName() })
+              I18n.get('carousel-savetocameraroll-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
             );
             return undefined;
           } else {
@@ -228,7 +227,7 @@ export function Carousel(props: ICarouselProps) {
         Toast.showError(I18n.get('carousel-savetocameraroll-error'));
       }
     },
-    [getSyncedFile]
+    [getSyncedFile],
   );
 
   const onShare = React.useCallback(
@@ -246,7 +245,7 @@ export function Carousel(props: ICarouselProps) {
         if (e instanceof PermissionError) {
           Alert.alert(
             I18n.get('carousel-share-permissionblocked-title'),
-            I18n.get('carousel-share-permissionblocked-text', { appName: DeviceInfo.getApplicationName() })
+            I18n.get('carousel-share-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
           );
           return undefined;
         } else {
@@ -254,7 +253,7 @@ export function Carousel(props: ICarouselProps) {
         }
       }
     },
-    [getSyncedFile]
+    [getSyncedFile],
   );
 
   const loadingComponent = React.useMemo(() => <Loading />, []);
@@ -286,7 +285,7 @@ export function Carousel(props: ICarouselProps) {
           route.params.data.length !== 1
             ? I18n.get('carousel-counter', { current: indexDisplay, total: route.params.data.length })
             : '',
-          styles.title
+          styles.title,
         ),
       });
     } else {
@@ -307,7 +306,7 @@ export function Carousel(props: ICarouselProps) {
       if (route.params.referer) {
         markViewAudience(route.params.referer);
       }
-    }, [route.params.referer])
+    }, [route.params.referer]),
   );
 
   // Cache management
@@ -354,7 +353,7 @@ export function Carousel(props: ICarouselProps) {
     ),
     // We want to remove `navigation` and `startIndex` from the dependencies here to avoid re-rendering when navState changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading]
+    [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading],
   );
 
   const navBarAndStatusBarHeight = useHeaderHeight();

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { AppState, AppStateStatus, Platform } from 'react-native';
 
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import DeviceInfo from 'react-native-device-info';
@@ -89,9 +88,7 @@ function App(props: AppProps) {
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={props.store}>
-          <BottomSheetModalProvider>
-            <Navigation />
-          </BottomSheetModalProvider>
+          <Navigation />
         </Provider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

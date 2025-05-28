@@ -1,0 +1,30 @@
+name: Merge phrase-translations
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  update_wordings:
+    runs-on: ubuntu-latest
+    # Only run for PRs from specific branch
+    if: github.event.pull_request.head.ref == 'phrase-translations'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Accept PR from Phrase
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --squash
+        env:
+          GH_TOKEN: ${{ secrets.PHRASE_TRANSLATIONS }}
+
+      - name: Slack Notification on error
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: 'Merge phrase-translations completed : ${{ job.status }}'
+          SLACK_TITLE: 'Merge phrase-translations'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}

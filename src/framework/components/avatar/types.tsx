@@ -20,7 +20,7 @@ export interface SingleUserAvatarSpecificProps {
   userId: string;
 }
 
-export interface SingleUserAvatarProps extends CommonSingleAvatarProps, SingleUserAvatarSpecificProps {}
+export interface SingleUserAvatarProps extends CommonSingleAvatarProps, Partial<SingleUserAvatarSpecificProps> {}
 
 // Custom source avatar
 

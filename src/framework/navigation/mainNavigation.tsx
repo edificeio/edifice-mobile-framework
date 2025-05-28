@@ -7,6 +7,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   CommonActions,
@@ -21,7 +22,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { AuthActiveAccount } from '../modules/auth/model';
 import { handleCloseModalActions } from './helper';
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
@@ -36,6 +36,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -65,7 +66,7 @@ const PictureWithXmas = connect((state: IGlobalState) => ({
 
 const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
-  props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0]
+  props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPicture };
   props.size = UI_SIZES.elements.tabbarIconSize;
@@ -164,7 +165,7 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   const tabModulesCache = tabModules.get();
   const moduleTabStackCache = React.useMemo(
     () => tabModulesCache.map(module => <TabStack module={module} key={module.config.name} />),
-    [tabModulesCache]
+    [tabModulesCache],
   );
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
@@ -176,7 +177,7 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
             .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [appsJson]
+    [appsJson],
   );
   const tabRoutes = React.useMemo(() => {
     return availableTabModules.map(module => {
@@ -199,6 +200,8 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
 
   // Avoid bug when launching app after first push
   const insets = useSafeAreaInsets();
+  const bottom = UI_SIZES.screen.bottomInset ?? insets?.bottom;
+
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(
       ({ navigation, route }) => {
@@ -236,10 +239,14 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
           },
         };
       },
-      [insets.bottom]
+      [insets.bottom],
     );
   return React.useMemo(() => {
-    return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
+    return (
+      <BottomSheetModalProvider>
+        <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>
+      </BottomSheetModalProvider>
+    );
   }, [screenOptions, tabRoutes]);
 }
 

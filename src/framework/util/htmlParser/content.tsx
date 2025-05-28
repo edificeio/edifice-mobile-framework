@@ -4,15 +4,14 @@ import { decode } from 'html-entities';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { IMedia } from '~/framework//util/notifications';
 import { UI_SIZES } from '~/framework/components/constants';
 import MediaButton from '~/framework/components/media/button';
 import { SmallItalicText } from '~/framework/components/text';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { formatSource } from '~/framework/util/media';
-import { IRemoteAttachment } from '~/ui/Attachment';
-import { AttachmentGroup } from '~/ui/AttachmentGroup';
+import { INotificationMedia } from '~/framework/util/notifications';
+import AttachmentCount from '~/ui/AttachmentCount';
 import Images from '~/ui/Images';
 
 /**
@@ -74,7 +73,7 @@ export const extractMediaFromHtml = (html: string) => {
       index: foundAttachmentGroup.index,
     }));
 
-  const unsortedMedia = [] as IMedia[];
+  const unsortedMedia = [] as INotificationMedia[];
 
   foundImages &&
     foundImages.forEach(foundImage => {
@@ -135,17 +134,14 @@ export const extractMediaFromHtml = (html: string) => {
   return unsortedMedia.sort((a, b) => a.index - b.index);
 };
 
-const renderAttachementsPreview = (medias: IMedia[], referer: AudienceParameter) => {
-  const mediaAttachments: IMedia[] = [];
-  for (const mediaItem of medias) {
-    if (mediaAttachments.length === 4 || mediaItem.type !== 'attachment') break;
-    mediaAttachments.push(mediaItem);
-  }
-  const attachments = mediaAttachments.map(mediaAtt => ({
-    displayName: mediaAtt.name,
-    url: mediaAtt.src as string,
+const renderAttachementsPreview = (medias: INotificationMedia[], referer: AudienceParameter) => {
+  const mediaAttachments: INotificationMedia[] = medias.filter(m => m.type === 'attachment');
+  const attachments: (INotificationMedia & { type: 'attachment' })[] = mediaAttachments.map(mediaAtt => ({
+    type: 'attachment',
+    name: mediaAtt.name,
+    src: mediaAtt.src as string,
   }));
-  return <AttachmentGroup attachments={attachments as IRemoteAttachment[]} containerStyle={{ flex: 1 }} referer={referer} />;
+  return <AttachmentCount attachments={attachments} />;
 };
 
 export const extractVideoResolution = (resolutionAsString: string) => {
@@ -160,7 +156,7 @@ const notAvailableMediaTexts = {
   video: 'htmlparser-video-notavailable',
 };
 
-const renderAudioVideoPreview = (media: IMedia, referer: AudienceParameter) => {
+const renderAudioVideoPreview = (media: INotificationMedia, referer: AudienceParameter) => {
   const videoDimensions = media['video-resolution'] ? extractVideoResolution(media['video-resolution']) : undefined;
   const videoId = media['document-id'] as string | undefined;
   if (!media.src) {
@@ -181,12 +177,12 @@ const renderAudioVideoPreview = (media: IMedia, referer: AudienceParameter) => {
   );
 };
 
-const renderIframePreview = (media: IMedia, referer: AudienceParameter) => {
+const renderIframePreview = (media: INotificationMedia, referer: AudienceParameter) => {
   return <MediaButton type="web" source={formatSource(media.src as string)} referer={referer} />;
 };
 
-const renderImagesPreview = (medias: IMedia[], referer: AudienceParameter) => {
-  const images: IMedia[] = [];
+const renderImagesPreview = (medias: INotificationMedia[], referer: AudienceParameter) => {
+  const images: INotificationMedia[] = [];
   for (const mediaItem of medias) {
     if (mediaItem.type !== 'image') break;
     images.push(mediaItem);
@@ -202,7 +198,7 @@ const renderImagesPreview = (medias: IMedia[], referer: AudienceParameter) => {
  * Renders first medias from an input media array
  * @param medias
  */
-export const renderMediaPreview = (medias: IMedia[], referer: AudienceParameter) => {
+export const renderMediaPreview = (medias: INotificationMedia[], referer: AudienceParameter) => {
   const firstMedia = medias && medias[0];
   const components = {
     attachment: () => renderAttachementsPreview(medias, referer),

@@ -79,19 +79,19 @@ export interface IEntcoreTimelinePreference {
 }
 export interface IEntcoreTimelinePreferenceContent {
   config:
-    | {
-        [notifKey: string]: {
-          defaultFrequency: string;
-          type?: string;
-          'event-type'?: string;
-          'app-name'?: string;
-          'app-address'?: string;
-          key?: string;
-          'push-notif'?: boolean;
-          restriction?: string;
-        };
-      }
-    | undefined;
+  | {
+    [notifKey: string]: {
+      defaultFrequency: string;
+      type?: string;
+      'event-type'?: string;
+      'app-name'?: string;
+      'app-address'?: string;
+      key?: string;
+      'push-notif'?: boolean;
+      restriction?: string;
+    };
+  }
+  | undefined;
   page: number;
   type: string[];
 }
