@@ -76,7 +76,7 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
 
       if (!json || json.error) {
         console.error('[🛑] Nabook | Screen: Cannot load token:', json);
-        setMsgError(json.msgCode || I18n.get('nabook-error-unknown'));
+        setMsgError(I18n.get(json.msgCode) || I18n.get('nabook-error-unknown'));
         setScreen('error');
         return;
       }
