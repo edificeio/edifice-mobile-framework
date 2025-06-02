@@ -27,84 +27,85 @@ interface MediaBottomSheetModalInternalData<T> {
 type LocalMediaImportResult = LocalFile[];
 
 interface MediaImportChoiceOption {
-  callback: () => Promise<LocalMediaImportResult>;
+  onPress: () => Promise<LocalMediaImportResult>;
   i18n: string;
   icon: string;
 }
 
-interface MediaImportChoice {
+type MediaImportChoices = {
   options: MediaImportChoiceOption[];
+  element?: React.ReactNode;
   title: { color: ColorValue; i18n: string; icon: string };
-}
+};
+type MediaImportChoicesHook = () => MediaImportChoices;
 
 const allowedMediaTypes: IMedia['type'][] = ['image', 'audio', 'video'];
-const defaultMediaImportChoices: Record<ArrayElement<typeof allowedMediaTypes>, MediaImportChoice> = {
-  audio: {
+type MediaImportChoicesHookByType = Record<ArrayElement<typeof allowedMediaTypes>, MediaImportChoicesHook>;
+type PartialMediaImportChoicesHookByType = Partial<
+  Record<
+    ArrayElement<typeof allowedMediaTypes>,
+    () => Omit<MediaImportChoices, 'title'> & Pick<Partial<MediaImportChoices>, 'title'>
+  >
+>;
+type MediaImportChoicesByType = Record<ArrayElement<typeof allowedMediaTypes>, MediaImportChoices>;
+
+const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
+  audio: () => ({
     options: [
-      { callback: () => {}, i18n: 'From files', icon: 'ui-audio' },
-      { callback: () => {}, i18n: 'Record audio', icon: 'ui-audio' },
+      { i18n: 'From files', icon: 'ui-audio', onPress: async () => [] },
+      { i18n: 'Record audio', icon: 'ui-audio', onPress: async () => [] },
     ],
     title: { color: theme.palette.complementary.green.regular, i18n: 'Choose audio', icon: 'ui-audio' },
-  },
-  image: {
+  }),
+  image: () => ({
     options: [
-      { callback: () => {}, i18n: 'From galery', icon: 'ui-image' },
-      { callback: () => {}, i18n: 'Take picture', icon: 'ui-camera' },
+      { i18n: 'From galery', icon: 'ui-image', onPress: async () => [] },
+      { i18n: 'Take picture', icon: 'ui-camera', onPress: async () => [] },
     ],
     title: { color: theme.palette.complementary.blue.regular, i18n: 'Choose image', icon: 'ui-audio' },
-  },
-  video: {
-    options: [
-      {
-        callback: () => {},
-        i18n: 'From galery',
-        icon: 'ui-image',
-      },
-      {
-        callback: async () => {
-          const video = await ImagePicker.openCamera({
-            mediaType: 'video',
-          });
-          return [
-            new LocalFile({
-              filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
-              filepath: video.path,
-              fileSize: video.size,
-            }),
-          ];
+  }),
+  video: () => {
+    // utiliser createRef ici au lieu de useRef car cette fonction sera appelée au sein d'un useMemo().
+    const bottomSheetRef = React.createRef<BottomSheetModalMethods>();
+    return {
+      element: (
+        <>
+          <BodyBoldText>{'(BottomSheet visible dans video -> from galery)'}</BodyBoldText>
+          <BottomSheet ref={bottomSheetRef}>
+            <BodyBoldText>BONJOUR</BodyBoldText>
+          </BottomSheet>
+        </>
+      ),
+      options: [
+        {
+          i18n: 'From galery',
+          icon: 'ui-image',
+          onPress: async () => {
+            bottomSheetRef.current?.present();
+            return [];
+          },
         },
-        i18n: 'Record video',
-        icon: 'ui-camera',
-      },
-    ],
-    title: { color: theme.palette.complementary.purple.regular, i18n: 'Choose video', icon: 'ui-video' },
+        {
+          i18n: 'Record video',
+          icon: 'ui-camera',
+          onPress: async () => {
+            const video = await ImagePicker.openCamera({
+              mediaType: 'video',
+            });
+            return [
+              new LocalFile({
+                filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
+                filepath: video.path,
+                fileSize: video.size,
+              }),
+            ];
+          },
+        },
+      ],
+      title: { color: theme.palette.complementary.purple.regular, i18n: 'Choose video', icon: 'ui-video' },
+    };
   },
 };
-
-// const uploadFile = React.useCallback(
-// (file: UploadFile, index: number) => {
-//   if (file.status === UploadStatus.PENDING || file.status === UploadStatus.OK) return;
-//   if (!session) {
-//     updateFileStatusAndID({ file, status: UploadStatus.KO });
-//     return;
-//   }
-//   uploadingTasksRef.current.add(file);
-//   updateFileStatusAndID({ file, status: UploadStatus.PENDING });
-//   workspaceService.file
-//     .uploadFile(session, file.localFile, route.params.uploadParams)
-//     .then(resp => {
-//       updateFileStatusAndID({ file, id: resp.df.id, status: UploadStatus.OK });
-//     })
-//     .catch(error => {
-//       console.error(`Import File Upload Failed: ${error}`);
-//       updateFileStatusAndID({ error: textErrorUploadFile(error), file, status: UploadStatus.KO });
-//     })
-//     .finally(() => {
-//       uploadingTasksRef.current.delete(file);
-//     });
-// },
-//   [route.params.uploadParams, session, updateFileStatusAndID],
-// );
 
 const uploadMedia = async (
   session: AuthActiveAccount,
@@ -122,21 +123,37 @@ const uploadMedia = async (
 
 export const useMediaImport = (
   uploadParams: IWorkspaceUploadParams,
-  additionnalMediaImportChoices: Partial<Record<ArrayElement<typeof allowedMediaTypes>, Partial<MediaImportChoice>>> = {},
+  useAdditionnalMediaImportChoices: PartialMediaImportChoicesHookByType = {},
 ) => {
-  const mediaImportChoices = React.useMemo(() => {
-    const res: typeof defaultMediaImportChoices = { ...defaultMediaImportChoices };
+  const completeChoicesByType = React.useMemo(() => {
+    const choicesByType = allowedMediaTypes.reduce<Partial<MediaImportChoicesByType>>((acc, type) => {
+      const defaultChoicesOfType = useDefaultMediaImportChoicesByType[type]();
+      acc[type] = defaultChoicesOfType;
+      return acc;
+    }, {}) as MediaImportChoicesByType;
+
     for (const type of allowedMediaTypes) {
-      res[type] = {
-        options: [...defaultMediaImportChoices[type]!.options, ...(additionnalMediaImportChoices[type]?.options ?? [])],
-        title: { ...defaultMediaImportChoices[type]!.title, ...additionnalMediaImportChoices[type]?.title },
-      };
+      const additionnalChoicesOfType = useAdditionnalMediaImportChoices[type]?.();
+      if (!additionnalChoicesOfType) continue;
+      choicesByType[type].options.push(...additionnalChoicesOfType.options);
+      if (choicesByType[type].element || additionnalChoicesOfType.element) {
+        choicesByType[type].element = (
+          <>
+            {choicesByType[type].element}
+            {additionnalChoicesOfType.element}
+          </>
+        );
+      }
+      if (additionnalChoicesOfType.title) {
+        choicesByType[type].title = additionnalChoicesOfType.title;
+      }
     }
-    return res;
-  }, [additionnalMediaImportChoices]);
+
+    return choicesByType;
+  }, [useAdditionnalMediaImportChoices]);
 
   const bottomSheetsRefs = React.useRef<Record<ArrayElement<typeof allowedMediaTypes>, null | BottomSheetModalMethods>>(
-    Object.fromEntries(allowedMediaTypes.map(k => [k, null])) as Record<ArrayElement<typeof allowedMediaTypes>, null>,
+    Object.fromEntries(allowedMediaTypes.map(type => [type, null])) as Record<ArrayElement<typeof allowedMediaTypes>, null>,
   );
   const currentBottomSheetRef = React.useRef<null | BottomSheetModalMethods>(null);
   const promiseExecutorRef = React.useRef<MediaBottomSheetModalInternalData<IMedia[] | undefined>>();
@@ -158,7 +175,7 @@ export const useMediaImport = (
     async (callback: () => Promise<LocalMediaImportResult | undefined>) => {
       try {
         const localMedia = await callback();
-        if (!localMedia) return cancelMediaImport();
+        if (!localMedia || localMedia.length === 0) return cancelMediaImport();
         const session = getSession();
         if (!session) throw new FetchError(FetchErrorCode.NOT_LOGGED);
         const distantFiles = await uploadMedia(session, localMedia, uploadParams);
@@ -220,25 +237,28 @@ export const useMediaImport = (
   const element = React.useMemo(
     () => (
       <>
-        {(Object.keys(mediaImportChoices) as typeof allowedMediaTypes).map(k => (
-          <BottomSheet
-            ref={ref => {
-              bottomSheetsRefs.current[k] = ref;
-            }}
-            key={k}
-            onDismiss={onDismiss}>
-            <>
-              <BodyBoldText>{I18n.get(mediaImportChoices[k].title.i18n)}</BodyBoldText>
-              {mediaImportChoices[k].options.map(o => (
-                <PrimaryButton key={o.i18n} text={I18n.get(o.i18n)} action={() => onValidate(o.callback)} />
-              ))}
-              <PrimaryButton text="Cancel" action={dismissCurrentBottomSheet} />
-            </>
-          </BottomSheet>
+        {(Object.keys(completeChoicesByType) as typeof allowedMediaTypes).map(type => (
+          <>
+            <BottomSheet
+              ref={ref => {
+                bottomSheetsRefs.current[type] = ref;
+              }}
+              key={type}
+              onDismiss={onDismiss}>
+              <>
+                <BodyBoldText>{I18n.get(completeChoicesByType[type].title.i18n)}</BodyBoldText>
+                {completeChoicesByType[type].options.map(o => (
+                  <PrimaryButton key={o.i18n} text={I18n.get(o.i18n)} action={() => onValidate(o.onPress)} />
+                ))}
+                <PrimaryButton text="Cancel" action={dismissCurrentBottomSheet} />
+              </>
+            </BottomSheet>
+            {completeChoicesByType[type].element || null}
+          </>
         ))}
       </>
     ),
-    [dismissCurrentBottomSheet, mediaImportChoices, onDismiss, onValidate],
+    [dismissCurrentBottomSheet, completeChoicesByType, onDismiss, onValidate],
   );
 
   const prompt = React.useCallback(

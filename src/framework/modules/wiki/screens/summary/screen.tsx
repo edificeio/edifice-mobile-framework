@@ -16,7 +16,7 @@ import { getScaleImageSize, getScaleWidth, UI_SIZES } from '~/framework/componen
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
-import { HeadingMText } from '~/framework/components/text';
+import { BodyBoldText, HeadingMText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { useMediaImport } from '~/framework/modules/media/hooks/import';
 import { PageList } from '~/framework/modules/wiki/components/page-list';
@@ -158,7 +158,15 @@ export default function WikiSummaryScreen({
     [navigation, wikiData],
   );
 
-  const { element, prompt } = useMediaImport({ parent: 'protected' });
+  const { element, prompt } = useMediaImport(
+    { parent: 'protected' },
+    {
+      video: () => ({
+        element: <BodyBoldText>TESTEUH</BodyBoldText>,
+        options: [{ i18n: 'custom-choice-video', icon: 'ui-video', onPress: async () => [] }],
+      }),
+    },
+  );
 
   return (
     <PageView style={styles.page}>
