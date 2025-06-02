@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-29 00:02:43",
-  "notes": "fix: PEDAGO-2830 temporary fix for chained signing methods\nMerge branch 'dev/1.14.0' of https://github.com/edificeio/edifice-mobile-framework into dev/1.14.0\nfix(nabook): fix translation error msg\nUpdated translations from Phrase (#204)\nUpdated translations from Phrase (#203)\nrelease: 1.14.0-rc.3(1140022)",
-  "version": "1.14.0-rc.4(1140023)"
+  "last": "2025-06-02 18:47:35",
+  "notes": "update(stack): yarn cache update\nUpdated translations from Phrase (#205)\nrelease: 1.14.0-rc.4(1140023)",
+  "version": "1.14.0-rc.5(1140024)"
 }
