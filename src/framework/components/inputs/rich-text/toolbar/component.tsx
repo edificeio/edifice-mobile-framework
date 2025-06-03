@@ -14,6 +14,7 @@ import { actions } from '~/framework/components/inputs/rich-text/editor/const';
 import type RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text/toolbar/list';
 import { Svg } from '~/framework/components/picture';
+import { IMedia } from '~/framework/util/media';
 
 const toolbarTextOptions = [
   actions.setBold,
@@ -43,6 +44,7 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
     this.inverseAnimation = this.inverseAnimation.bind(this);
     this.setSelectedItems = this.setSelectedItems.bind(this);
     this.showBottomSheet = this.showBottomSheet.bind(this);
+    this.promptMedia = this.promptMedia.bind(this);
     this.startAnimation = this.startAnimation.bind(this);
   }
 
@@ -101,6 +103,11 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
   showBottomSheet() {
     this.editor?.blurContentEditor();
     this.props.showBottomSheet('image');
+  }
+
+  promptMedia(type: IMedia['type']) {
+    this.editor?.blurContentEditor();
+    this.props.onPromptMedia(type);
   }
 
   startAnimation() {
@@ -174,7 +181,7 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
                   key="bottomSheet"
                 />,
                 <RichToolbarCustomItem
-                  action={this.showBottomSheet}
+                  action={() => this.promptMedia('video')}
                   fill={theme.palette.complementary.purple.regular}
                   icon="ui-recordVideo"
                   key="bottomSheetVideo"

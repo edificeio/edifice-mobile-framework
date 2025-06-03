@@ -85,4 +85,7 @@ export const ui = {
   },
   insertElementTimeout: 100,
   updateHeightTimeout: 1000,
+  video: {
+    class: 'video-wrapper',
+  },
 };

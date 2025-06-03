@@ -70,7 +70,6 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
     return {
       element: (
         <>
-          <BodyBoldText>{'(BottomSheet visible dans video -> from galery)'}</BodyBoldText>
           <BottomSheet ref={bottomSheetRef}>
             <BodyBoldText>BONJOUR</BodyBoldText>
           </BottomSheet>

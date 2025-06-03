@@ -5,6 +5,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { connect } from 'react-redux';
 
+import { RichToolbarProps } from '../toolbar/types';
 import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
@@ -21,7 +22,9 @@ import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
+import { useMediaImport } from '~/framework/modules/media/hooks/import';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { IMedia } from '~/framework/util/media';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
@@ -258,10 +261,48 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     [toolbarOpacity, toolbarYPos],
   );
 
+  const { element: mediaImportElements, prompt: promptMedia } = useMediaImport({ parent: 'protected' });
+
+  const addMediaItem = (item: IMedia) => {
+    switch (item.type) {
+      case 'image':
+        richText.current?.insertHTML(
+          `<img class="${ui.image.class}" src="${item.src}" width="${ui.image.width}" height="${ui.image.height}">`,
+        );
+        break;
+      case 'video':
+        richText.current?.insertHTML(
+          `<div class="${ui.video.class}"><video src="${item.src}" controls="true" data-document-is-captation="true" data-document-id="" data-video-resolution=""/></div>`,
+        );
+        break;
+      case 'audio':
+        break;
+    }
+  };
+
+  const addMedia: RichToolbarProps['onPromptMedia'] = React.useCallback(
+    async type => {
+      richText?.current?.lockContentEditor();
+      blurRichText();
+      const media = await promptMedia(type);
+      if (!media || media.length === 0) return;
+      const addMediaItemByIndex = (i: number) => {
+        if (media[i]) {
+          addMediaItem(media[i]);
+          setTimeout(() => {
+            addMediaItemByIndex(i + 1);
+          });
+        }
+      };
+      setTimeout(() => addMediaItemByIndex(0));
+    },
+    [promptMedia],
+  );
+
   const toolbar = () => {
     return (
       <Animated.View style={[styles.toolbar, { transform: [{ translateY: toolbarYPos }] }, { opacity: toolbarOpacity }]}>
-        <RichToolbar editor={richText} showBottomSheet={showChoosePicsMenu} />
+        <RichToolbar editor={richText} showBottomSheet={showChoosePicsMenu} onPromptMedia={addMedia} />
       </Animated.View>
     );
   };
@@ -349,6 +390,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         </ScrollView>
         {isFocused ? toolbar() : null}
         {choosePicsMenu()}
+        {mediaImportElements}
       </KeyboardAvoidingView>
     </PageView>
   );
