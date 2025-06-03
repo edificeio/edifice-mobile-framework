@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-06-03 11:44:52",
-  "notes": "update(stack): yarn cache update\nMerge branch 'dev/1.14.0' of https://github.com/edificeio/edifice-mobile-framework into dev/1.14.0\nfix(nabook): copy the class code correctly\nrelease: 1.14.0-rc.5(1140024)",
-  "version": "1.14.0-rc.6(1140025)"
+  "last": "2025-06-03 19:40:59",
+  "notes": "fix(wayf): SUPPORT-2883, modifie network config for creteil wayf\nrelease: 1.14.0-rc.6(1140025)",
+  "version": "1.14.0-rc.7(1140026)"
 }
