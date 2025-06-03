@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-06-02 18:47:35",
-  "notes": "update(stack): yarn cache update\nUpdated translations from Phrase (#205)\nrelease: 1.14.0-rc.4(1140023)",
-  "version": "1.14.0-rc.5(1140024)"
+  "last": "2025-06-03 11:44:52",
+  "notes": "update(stack): yarn cache update\nMerge branch 'dev/1.14.0' of https://github.com/edificeio/edifice-mobile-framework into dev/1.14.0\nfix(nabook): copy the class code correctly\nrelease: 1.14.0-rc.5(1140024)",
+  "version": "1.14.0-rc.6(1140025)"
 }
