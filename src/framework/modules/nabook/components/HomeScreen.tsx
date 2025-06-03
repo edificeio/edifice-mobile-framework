@@ -133,7 +133,7 @@ const HomeScreen = (props: HomeScreenProps) => {
 
   const copyCode = async () => {
     if (codeClasse) {
-      Clipboard.setString('codeClasse');
+      Clipboard.setString(codeClasse);
       Toast.showSuccess(I18n.get('nabook-homescreen-code-copied'));
     }
   };
