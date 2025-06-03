@@ -81,7 +81,7 @@ export class RequestBuilder {
       headers: {
         ...RequestBuilder.defaultHeaders,
         ...(deviceId ? { 'X-Device-Id': getDeviceId() } : {}),
-        ...headers,
+        // ...headers,  // TMP Fix for PEDAGO-2830
       },
       ...restInit,
       method,
@@ -105,11 +105,14 @@ export class RequestBuilder {
     // Format the URL with the account platform base URL
     this._url = RequestBuilder.formatUrlForAccount(this._url, account);
 
+    // TMP Fix for PEDAGO-2830
+    const { Authorization, ...restHeaders } = this._init?.headers;
+
     // Put the authrozation header in the request
     this._init = {
       ...this._init,
       headers: {
-        ...this._init?.headers,
+        ...restHeaders,
         Authorization: `${account.tokens.access.type} ${account.tokens.access.value}`,
       },
     };
@@ -133,6 +136,7 @@ export class RequestBuilder {
    * @returns {Request} A new `Request` object configured with the URL and initialization options.
    */
   public build(): Request {
+    console.debug('BUILD', this._init);
     return new Request(typeof this._url === 'string' ? this._url : this._url.href, this._init);
   }
 }
