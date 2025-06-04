@@ -11,10 +11,10 @@ import {
 import { useAudioRecorder } from '@simform_solutions/react-native-audio-waveform/lib/hooks';
 import RNFS from 'react-native-fs';
 
-import CustomWaveform from './CustomWaveForm';
 import styles from './styles';
 
 import { Svg } from '~/framework/components/picture';
+import CustomWaveform from '~/framework/util/audioFiles/waveform/';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
 
@@ -26,7 +26,6 @@ const AudioRecorder = () => {
   const [recorderState, setRecorderState] = useState<RecorderState>(RecorderState.stopped);
   const { checkHasAudioRecorderPermission, getAudioRecorderPermission } = useAudioPermission();
   const [currentAmplitude, setCurrentAmplitude] = useState<number>(0);
-  const [recordingTime, setRecordingTime] = useState(0);
 
   const requestPermissionIfNeeded = React.useCallback(async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
@@ -123,26 +122,6 @@ const AudioRecorder = () => {
     };
   }, []);
 
-  React.useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (recorderState === RecorderState.recording) {
-      interval = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [recorderState]);
-
-  React.useEffect(() => {
-    if (recorderState === RecorderState.stopped) {
-      setRecordingTime(0);
-    }
-  }, [recorderState]);
-
-  const timerValue = `${String(Math.floor(recordingTime / 60)).padStart(1, '0')}:${String(recordingTime % 60).padStart(2, '0')}`;
-
   return (
     <View style={styles.container}>
       {/* <Waveform
@@ -159,10 +138,9 @@ const AudioRecorder = () => {
         amplitude={currentAmplitude}
         height={40}
         recorderState={recorderState}
-        speed={1 / 60} // vitesse d'apparition des barres (ms)
+        speed={1 / 30} // vitesse d'apparition des barres (ms)
         maxBars={60}
         ref={waveformRef}
-        timerValue={timerValue}
       />
       <View style={styles.buttonsContainer}>
         <TouchableOpacity onPress={handleRecorderPress} style={styles.button}>
