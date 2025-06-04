@@ -1,11 +1,16 @@
 import * as React from 'react';
 
-import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
+import type { BottomSheetMethods, BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useHeaderHeight } from '@react-navigation/elements';
 
 import styles from './styles';
-import type { CustomBottomSheetModalProps } from './types';
+import type { CustomBottomSheetModalProps, CustomNonModalBottomSheetProps } from './types';
 
 export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
   (props: CustomBottomSheetModalProps, ref) => {
@@ -31,6 +36,25 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
           <BottomSheetView style={newStyle}>{props.children}</BottomSheetView>
         )}
       </BottomSheetModal>
+    );
+  },
+);
+
+export const CustomNonModalBottomSheet = React.forwardRef<BottomSheetMethods, CustomNonModalBottomSheetProps>(
+  (props: CustomNonModalBottomSheetProps, ref) => {
+    const newStyle = React.useMemo(() => {
+      return props.style !== undefined ? props.style : styles.contentContainer;
+    }, [props.style]);
+
+    return (
+      <BottomSheet
+        ref={ref}
+        index={0}
+        enableDynamicSizing
+        topInset={useHeaderHeight() + (props.additionalTopInset ?? 0)}
+        {...props}>
+        <BottomSheetView style={newStyle}>{props.children}</BottomSheetView>
+      </BottomSheet>
     );
   },
 );
