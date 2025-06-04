@@ -1,30 +1,20 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { IWaveformRef, RecorderState } from '@simform_solutions/react-native-audio-waveform';
 import Svg, { Rect } from 'react-native-svg';
+
+import { CustomWaveformProps } from './types';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 
-interface CustomWaveformProps {
-  height: number;
-  barWidth?: number;
-  barSpace?: number;
-  barColor?: string;
-  dotColor?: string;
-  speed?: number; // ms between each bar
-  maxBars?: number;
-  amplitude: number;
-  recorderState?: RecorderState;
-  timerValue?: string;
-  onPauseRecord?: () => Promise<boolean>;
-  onResumeRecord?: () => Promise<boolean>;
-  onStartRecord?: () => Promise<boolean>;
-  onStopRecord?: () => Promise<boolean>;
-}
+const MIN_AMP_OUT = 0;
+const MAX_AMP_OUT = 1;
+const MIN_BAR_HEIGHT = 2;
 
+// This function scales the values of the decibels captured by the mic
 function interpolate(value: number, minIn: number, maxIn: number, minOut: number, maxOut: number): number {
   if (value <= minIn) return minOut;
   if (value >= maxIn) return maxOut;
@@ -38,16 +28,15 @@ const CustomWaveform = forwardRef<IWaveformRef, CustomWaveformProps>(
       barColor = theme.palette.primary.regular,
       barSpace = 3,
       barWidth = 2,
-      // dotColor = theme.palette.primary.regular,
       height,
       maxBars = 50,
       recorderState,
       speed = 50,
-      timerValue,
     },
     ref,
   ) => {
     const [bars, setBars] = useState<number[]>([]);
+    const [recordingTime, setRecordingTime] = useState(0);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const oldAmp = useRef(amplitude);
@@ -56,23 +45,29 @@ const CustomWaveform = forwardRef<IWaveformRef, CustomWaveformProps>(
     }
     oldAmp.current = amplitude;
 
+    /**
+     * minAmpIn / maxAmpIn  : min/max decibel value captured by the mic that we will use as 0(min) and 1(max) on the scale
+     * randomness : adds a random variation to the barHeight to make the waveform look more dynamic, based on the value of the previous barHeight
+     */
+    const { maxAmpIn, minAmpIn, randomness } = React.useMemo(() => {
+      if (Platform.OS === 'ios') {
+        return { maxAmpIn: 0.39, minAmpIn: 0, randomness: 0.4 };
+      } else {
+        return { maxAmpIn: 0.095, minAmpIn: 0.05, randomness: 0.2 };
+      }
+    }, []);
+
+    // This useEffect handles the waveform bars display and height calculation
     useEffect(() => {
       if (recorderState === RecorderState.recording) {
         intervalRef.current = setInterval(() => {
           if (typeof amplitude === 'number' && !isNaN(amplitude) && isFinite(amplitude)) {
             setBars(prev => {
-              const minAmpIn = 0.05; // seuil pour le point
-              const maxAmpIn = 0.095;
-              const minAmpOut = 0;
-              const maxAmpOut = 1;
-              const randomness = 0.2;
-
-              let normalizedAmp = interpolate(amplitude, minAmpIn, maxAmpIn, minAmpOut, maxAmpOut);
-              normalizedAmp *= Math.random() * randomness + 1 - randomness / 2; // ajoute un peu de variation aléatoire
+              let normalizedAmp = interpolate(amplitude, minAmpIn, maxAmpIn, MIN_AMP_OUT, MAX_AMP_OUT);
+              normalizedAmp *= Math.random() * randomness + 1 - randomness / 2;
               normalizedAmp = Math.pow((1 - Math.cos(normalizedAmp * Math.PI)) / 2, 2.5);
 
-              const minBarHeight = 2;
-              const barHeight = Math.max(minBarHeight, normalizedAmp * height);
+              const barHeight = Math.max(MIN_BAR_HEIGHT, normalizedAmp * height);
               return [barHeight, ...prev].slice(0, maxBars);
             });
           }
@@ -83,7 +78,24 @@ const CustomWaveform = forwardRef<IWaveformRef, CustomWaveformProps>(
       return () => {
         if (intervalRef.current) clearInterval(intervalRef.current);
       };
-    }, [speed, maxBars, amplitude, recorderState, height]);
+    }, [speed, maxBars, amplitude, recorderState, height, minAmpIn, maxAmpIn, randomness]);
+
+    // This useEffect handles the recording time display
+    React.useEffect(() => {
+      let interval: NodeJS.Timeout | null = null;
+      if (recorderState === RecorderState.recording) {
+        interval = setInterval(() => {
+          setRecordingTime(prev => prev + 1);
+        }, 1000);
+      } else if (recorderState === RecorderState.stopped) {
+        setRecordingTime(0);
+      }
+      return () => {
+        if (interval) clearInterval(interval);
+      };
+    }, [recorderState]);
+
+    const timerValue = `${String(Math.floor(recordingTime / 60)).padStart(1, '0')}:${String(recordingTime % 60).padStart(2, '0')}`;
 
     return (
       <View
@@ -116,7 +128,7 @@ const CustomWaveform = forwardRef<IWaveformRef, CustomWaveformProps>(
             })}
         </Svg>
         <View style={{ alignItems: 'flex-end', height, justifyContent: 'center', width: UI_SIZES.dimensions.width.largePlus }}>
-          <BodyText>{timerValue ?? '00:00'}</BodyText>
+          <BodyText>{timerValue ?? '0:00'}</BodyText>
         </View>
       </View>
     );
