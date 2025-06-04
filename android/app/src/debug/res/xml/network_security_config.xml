@@ -5,7 +5,6 @@
         <domain includeSubdomains="true">127.0.0.1</domain>
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">authentification.ac-martinique.fr</domain>
-        <domain includeSubdomains="true">externet.ac-creteil.fr</domain>
         <domain includeSubdomains="true">id.ac-nice.fr</domain>
         <domain includeSubdomains="true">appli.ac-aix-marseille.fr</domain>
         <domain includeSubdomains="true">aaa-idp.ac-nantes.fr</domain>
@@ -15,6 +14,12 @@
     </domain-config>
     <domain-config>
         <domain includeSubdomains="false">ent-ecoles.ac-reims.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="false">externet.ac-creteil.fr</domain>
         <trust-anchors>
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
