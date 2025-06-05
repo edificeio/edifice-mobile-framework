@@ -13,19 +13,26 @@ import RNFS from 'react-native-fs';
 
 import styles from './styles';
 
+import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
+import { BodyText } from '~/framework/components/text';
 import CustomWaveform from '~/framework/util/audioFiles/waveform/';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
+
+const PlayerComponent = () => <BodyText>PLAYEEEER</BodyText>;
 
 const { AudioWaveform, AudioWaveformsEventEmitter } = NativeModules;
 
 const AudioRecorder = () => {
   const recorder = useAudioRecorder();
+  const { checkHasAudioRecorderPermission, getAudioRecorderPermission } = useAudioPermission();
   const waveformRef = useRef<IWaveformRef>(null);
   const [recorderState, setRecorderState] = useState<RecorderState>(RecorderState.stopped);
-  const { checkHasAudioRecorderPermission, getAudioRecorderPermission } = useAudioPermission();
   const [currentAmplitude, setCurrentAmplitude] = useState<number>(0);
+  const [isRecordDeleted, setIsRecordDeleted] = useState<boolean>(false);
+  const [isRecordFulfilled, setIsRecordFulfilled] = useState<boolean>(false);
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
 
   const requestPermissionIfNeeded = React.useCallback(async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
@@ -61,26 +68,11 @@ const AudioRecorder = () => {
     }
   };
 
-  const handleRecorderPress = async () => {
-    const hasPermission = await requestPermissionIfNeeded();
-    if (!hasPermission) return;
-
-    if (recorderState === RecorderState.stopped) {
-      await recorder.startRecording({ updateFrequency: UpdateFrequency.high });
-      setRecorderState(RecorderState.recording);
-    } else if (recorderState === RecorderState.recording) {
-      await recorder.pauseRecording();
-      setRecorderState(RecorderState.paused);
-    } else if (recorderState === RecorderState.paused) {
-      await recorder.resumeRecording();
-      setRecorderState(RecorderState.recording);
-    }
-  };
-
-  const handleStopRecordPress = async () => {
+  const onStopRecord = async () => {
     if (recorderState !== RecorderState.stopped) {
       try {
         const audioFilePath = await recorder.stopRecording();
+        setIsRecordFulfilled(true);
         setRecorderState(RecorderState.stopped);
 
         if (audioFilePath) {
@@ -93,6 +85,35 @@ const AudioRecorder = () => {
       } catch (error) {
         console.error('Error stopping the recording:', error);
       }
+    }
+  };
+
+  const onDeleteRecord = async () => {
+    await recorder.stopRecording();
+    setRecorderState(RecorderState.stopped);
+    setIsRecordDeleted(true);
+    setIsRecordFulfilled(false);
+  };
+
+  const onPauseRecord = async () => {
+    if (recorderState === RecorderState.recording) {
+      await recorder.pauseRecording();
+      setRecorderState(RecorderState.paused);
+    }
+  };
+
+  const onResumeRecord = async () => {
+    if (recorderState === RecorderState.paused) {
+      await recorder.resumeRecording();
+      setRecorderState(RecorderState.recording);
+    }
+  };
+
+  const onStartRecord = async () => {
+    if (recorderState === RecorderState.stopped) {
+      setIsRecordDeleted(false);
+      await recorder.startRecording({ updateFrequency: UpdateFrequency.high });
+      setRecorderState(RecorderState.recording);
     }
   };
 
@@ -111,7 +132,7 @@ const AudioRecorder = () => {
     if (emitter) {
       console.log('emitttttt', emitter);
       subscription = emitter.addListener('onCurrentRecordingWaveformData', event => {
-        console.log('📈 Live amplitude data:', event, performance.now() - timeRef.current);
+        // console.log('📈 Live amplitude data:', event, performance.now() - timeRef.current);
         timeRef.current = performance.now();
         setCurrentAmplitude(event.currentDecibel ?? 0);
       });
@@ -122,38 +143,82 @@ const AudioRecorder = () => {
     };
   }, []);
 
-  return (
+  React.useEffect(() => {
+    console.log(recorderState, 'recorderState-----');
+  }, [recorderState]);
+
+  // Request audio permission on component mount
+  React.useEffect(() => {
+    async function getAudioPermission() {
+      const isPermissionGranted = await requestPermissionIfNeeded();
+      setHasPermission(isPermissionGranted);
+    }
+    getAudioPermission();
+  }, [requestPermissionIfNeeded]);
+
+  const deleteButtonStyle = React.useMemo(
+    () => [
+      styles.buttonDelete,
+      { opacity: recorderState === RecorderState.recording || recorderState === RecorderState.paused ? 1 : 0 },
+    ],
+    [recorderState],
+  );
+
+  const pauseButtonStyle = React.useMemo(
+    () => [
+      styles.buttonPause,
+      { opacity: recorderState === RecorderState.recording || recorderState === RecorderState.paused ? 1 : 0 },
+    ],
+    [recorderState],
+  );
+
+  return isRecordFulfilled ? (
+    <PlayerComponent />
+  ) : (
     <View style={styles.container}>
-      {/* <Waveform
-        ref={waveformRef}
-        candleHeightScale={candleHeightScale}
-        candleSpace={2}
-        candleWidth={3}
-        containerStyle={styles.waveform}
-        mode="live"
-        onRecorderStateChange={setRecorderState}
-        waveColor={theme.palette.primary.regular as string}
-      /> */}
-      <CustomWaveform
-        amplitude={currentAmplitude}
-        height={40}
-        recorderState={recorderState}
-        speed={1 / 30} // vitesse d'apparition des barres (ms)
-        maxBars={60}
-        ref={waveformRef}
-      />
+      <View style={styles.waveformContainer}>
+        {recorderState === RecorderState.stopped && (!isRecordFulfilled || isRecordDeleted) ? (
+          <BodyText style={styles.placeholderText}>Touchez pour commencer</BodyText>
+        ) : (
+          <CustomWaveform
+            amplitude={currentAmplitude}
+            height={40}
+            recorderState={recorderState}
+            speed={1 / 30}
+            maxBars={60}
+            ref={waveformRef}
+          />
+        )}
+      </View>
+
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity onPress={handleRecorderPress} style={styles.button}>
+        <TouchableOpacity
+          onPress={onDeleteRecord}
+          style={deleteButtonStyle}
+          disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
+          <Svg height={20} width={20} fill={theme.palette.grey.darkness} name="ui-delete" />
+        </TouchableOpacity>
+
+        {recorderState === RecorderState.stopped && (!isRecordFulfilled || isRecordDeleted) ? (
+          <TouchableOpacity onPress={onStartRecord} style={styles.buttonPlayStop}>
+            <Svg height={20} width={20} fill={theme.palette.grey.white} name="ui-mic" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={onStopRecord} style={styles.buttonPlayStop}>
+            <Svg height={20} width={20} fill={theme.palette.grey.white} name="ui-stop" />
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          onPress={recorderState === RecorderState.paused ? onResumeRecord : onPauseRecord}
+          style={pauseButtonStyle}
+          disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
           <Svg
             height={20}
             width={20}
-            fill={'black'}
-            name={recorderState === RecorderState.stopped || recorderState === RecorderState.paused ? 'ui-mic' : 'ui-pause'}
+            fill={theme.palette.grey.white}
+            name={recorderState === RecorderState.paused ? 'ui-mic' : 'ui-pause-filled'}
           />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={handleStopRecordPress} style={styles.button}>
-          <Svg height={20} width={20} fill={'black'} name={'pictos-close'} />
         </TouchableOpacity>
       </View>
     </View>

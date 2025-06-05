@@ -1,29 +1,52 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
-  button: {
-    alignSelf: 'center',
+  buttonDelete: {
+    padding: UI_SIZES.spacing.minor,
+  },
+  buttonPause: {
+    alignItems: 'center',
     backgroundColor: theme.palette.primary.regular,
-    borderRadius: 50,
-    padding: 20,
+    borderRadius: UI_SIZES.radius.extraLarge,
+    height: UI_SIZES.elements.icon.xlarge,
+    justifyContent: 'center',
+    padding: UI_SIZES.spacing.minor,
+    width: UI_SIZES.elements.icon.xlarge,
+  },
+  buttonPlayStop: {
+    alignItems: 'center',
+    backgroundColor: theme.palette.complementary.red.regular,
+    borderRadius: UI_SIZES.radius.extraLarge,
+    height: UI_SIZES.elements.icon.default * 2,
+    justifyContent: 'center',
+    padding: UI_SIZES.spacing.minor,
+    width: UI_SIZES.elements.icon.default * 2,
   },
   buttonsContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    width: getScaleWidth(327),
   },
   container: {
-    backgroundColor: '#fff',
+    alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    paddingBottom: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.big * 2,
   },
-  waveform: {
-    borderColor: '#ccc',
-    borderRadius: 8,
-    borderWidth: 1,
-    marginBottom: 30,
+  placeholderText: {
+    color: theme.palette.grey.graphite,
+  },
+  waveformContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: UI_SIZES.spacing.medium,
+    width: getScaleWidth(327),
   },
 });
 
