@@ -106,14 +106,18 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
   },
 };
 
-const uploadMedia = async (
+const uploadSingleMedia = async (session: AuthActiveAccount, file: LocalFile, uploadParams: IWorkspaceUploadParams) => {
+  return workspaceService.file.uploadFile(session, file, uploadParams);
+};
+
+const uploadAllMedia = async (
   session: AuthActiveAccount,
   localMedia: LocalMediaImportResult,
   uploadParams: IWorkspaceUploadParams,
 ) => {
   if (localMedia.length <= 0) return;
   else if (localMedia.length === 1) {
-    const distantFile = await workspaceService.file.uploadFile(session, localMedia[0], uploadParams);
+    const distantFile = await uploadSingleMedia(session, localMedia[0], uploadParams);
     return [distantFile];
   } else {
     // ToDo open media import modal and return promise
@@ -177,7 +181,7 @@ export const useMediaImport = (
         if (!localMedia || localMedia.length === 0) return cancelMediaImport();
         const session = getSession();
         if (!session) throw new FetchError(FetchErrorCode.NOT_LOGGED);
-        const distantFiles = await uploadMedia(session, localMedia, uploadParams);
+        const distantFiles = await uploadAllMedia(session, localMedia, uploadParams);
         if (!distantFiles) throw new FetchError(FetchErrorCode.BAD_RESPONSE);
         console.debug('DISTANT FILES', distantFiles);
         const media = distantFiles?.map(file => ({ mime: file.df.filetype, src: file.df.url, type: 'video' }) as IMedia);

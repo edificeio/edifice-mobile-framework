@@ -261,7 +261,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     [toolbarOpacity, toolbarYPos],
   );
 
-  const { element: mediaImportElements, prompt: promptMedia } = useMediaImport({ parent: 'protected' });
+  const { element: mediaImportElements, prompt: promptMedia } = useMediaImport(props.uploadParams);
 
   const addMediaItem = (item: IMedia) => {
     switch (item.type) {

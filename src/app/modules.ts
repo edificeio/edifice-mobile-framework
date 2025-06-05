@@ -26,6 +26,7 @@ export default () => {
       require('~/framework/modules/timeline'),
       require('~/framework/modules/audience').default,
       require('~/framework/modules/explorer').default,
+      require('~/framework/modules/media').default,
 
       // Included modules from override
       ...(IncludedModules || []),
