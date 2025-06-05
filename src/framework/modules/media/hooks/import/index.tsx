@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ColorValue } from 'react-native';
+import { ColorValue, View } from 'react-native';
 
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import DeviceInfo from 'react-native-device-info';
 import ImagePicker from 'react-native-image-crop-picker';
 
@@ -12,8 +13,10 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import BottomSheet, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import { CustomNonModalBottomSheet } from '~/framework/components/modals/bottom-sheet/component';
 import { BodyBoldText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
+import AudioRecorder from '~/framework/util/audioFiles/recorder';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 import { IMedia } from '~/framework/util/media';
@@ -50,13 +53,58 @@ type PartialMediaImportChoicesHookByType = Partial<
 type MediaImportChoicesByType = Record<ArrayElement<typeof allowedMediaTypes>, MediaImportChoices>;
 
 const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
-  audio: () => ({
-    options: [
-      { i18n: 'From files', icon: 'ui-audio', onPress: async () => [] },
-      { i18n: 'Record audio', icon: 'ui-audio', onPress: async () => [] },
-    ],
-    title: { color: theme.palette.complementary.green.regular, i18n: 'Choose audio', icon: 'ui-audio' },
-  }),
+  audio: () => {
+    // utiliser createRef ici au lieu de useRef car cette fonction sera appelée au sein d'un useMemo().
+    const audioRecordBottomSheetRef = React.createRef<BottomSheetMethods>();
+
+    return {
+      element: (
+        <>
+          <CustomNonModalBottomSheet ref={audioRecordBottomSheetRef}>
+            <View style={{ height: 400 }}>
+              <BodyBoldText>BONJOUR</BodyBoldText>
+              <AudioRecorder />
+            </View>
+          </CustomNonModalBottomSheet>
+        </>
+      ),
+      options: [
+        {
+          i18n: 'From files',
+          icon: 'ui-audio',
+          onPress: async () => {
+            return [];
+          },
+        },
+        {
+          i18n: 'Record audio',
+          icon: 'ui-audio',
+          // onPress: async () => {
+          //   const video = await ImagePicker.openCamera({
+          //     mediaType: 'video',
+          //   });
+          //   return [
+          //     new LocalFile({
+          //       filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
+          //       filepath: video.path,
+          //       fileSize: video.size,
+          //     }),
+          //   ];
+          // },
+          onPress: async () => {
+            audioRecordBottomSheetRef.current?.expand();
+            return [];
+          },
+        },
+      ],
+      title: { color: theme.palette.complementary.purple.regular, i18n: 'Choose audio', icon: 'ui-audio' },
+    };
+  },
+  // options: [
+  //   { i18n: 'From files', icon: 'ui-audio', onPress: async () => [] },
+  //   { i18n: 'Record audio', icon: 'ui-audio', onPress: async () => [] },
+  // ],
+  // title: { color: theme.palette.complementary.green.regular, i18n: 'Choose audio', icon: 'ui-audio' },
   image: () => ({
     options: [
       { i18n: 'From galery', icon: 'ui-image', onPress: async () => [] },
