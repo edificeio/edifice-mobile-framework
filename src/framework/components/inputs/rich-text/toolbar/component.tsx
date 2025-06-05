@@ -186,6 +186,12 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
                   icon="ui-recordVideo"
                   key="bottomSheetVideo"
                 />,
+                <RichToolbarCustomItem
+                  action={() => this.promptMedia('audio')}
+                  fill={theme.palette.complementary.red.regular}
+                  icon="ui-mic"
+                  key="bottomSheetAudio"
+                />,
                 <RichToolbarCustomItem icon="ui-text-options" key="text" action={this.startAnimation} />,
               ]}
             />
