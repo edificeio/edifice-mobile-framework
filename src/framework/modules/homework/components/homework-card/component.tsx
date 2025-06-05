@@ -6,11 +6,11 @@ import { HomeworkCardProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon, NamedSVG } from '~/framework/components/picture';
+import { Icon, Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
-import { IMedia } from '~/framework/util/notifications';
+import { INotificationMedia } from '~/framework/util/notifications';
 import HtmlToText from '~/infra/htmlConverter/text';
 
 const noMargin: number = 0;
@@ -27,7 +27,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
     /**
      * Render icons representing media types featured in the task
      */
-    const mediaTypes: IMedia[] = content ? extractMediaFromHtml(content) || [] : [];
+    const mediaTypes: INotificationMedia[] = content ? extractMediaFromHtml(content) || [] : [];
     const mediaTypesPerTask = [...new Set(mediaTypes.map(media => media.type))];
 
     const mediaIcons: { [key: string]: string } = {
@@ -42,7 +42,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
       return (
         <View style={styles.viewMediaIcons}>
           {mediaTypesPerTask.map((type, index) => (
-            <NamedSVG
+            <Svg
               key={index}
               name={mediaIcons[type]}
               style={{
@@ -64,7 +64,7 @@ const HomeworkCard = ({ content, date, finished, onPress, style, title }: Homewo
         <View style={styles.viewTitle}>
           <View>{title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}</View>
           {finished === undefined ? null : (
-            <NamedSVG
+            <Svg
               fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
               name={`ui-${finished ? 'check' : 'clock'}`}
               style={styles.status}

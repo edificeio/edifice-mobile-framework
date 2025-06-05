@@ -29,8 +29,8 @@ const versionFile = 'cli/prepare-build.json';
 //
 
 const buildType = process.argv.slice(2)[0];
-if (!['alpha', 'rc', 'poc', 'major', 'minor', 'rev'].includes(buildType)) {
-  console.error('!!! Argument should be "alpha", "rc", "poc", "major", "minor" or "rev" !!!');
+if (!['alpha', 'comm', 'peda', 'rc', 'poc', 'major', 'minor', 'rev'].includes(buildType)) {
+  console.error('!!! Argument should be "alpha", "comm", "peda", "rc", "poc", "major", "minor" or "rev" !!!');
   process.exit(1);
 }
 
@@ -135,7 +135,7 @@ try {
 //
 
 try {
-  if (['alpha', 'rc', 'poc'].includes(buildType)) {
+  if (['alpha', 'comm', 'peda', 'rc', 'poc'].includes(buildType)) {
     // ¡¡¡ Update notes before last !!!
     // eslint-disable-next-line no-useless-escape
     lastContent.notes = execSync(`git --no-pager log --pretty=format:\"%s\" --since=\"${lastContent.last}\"`)

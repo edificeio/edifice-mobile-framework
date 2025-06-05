@@ -1,4 +1,4 @@
-import { ColorValue, TouchableOpacityProps } from 'react-native';
+import { ColorValue, TextProps, TouchableOpacityProps } from 'react-native';
 
 export interface DefaultButtonProps extends Omit<TouchableOpacityProps, 'onPress' | 'onPressIn' | 'onPressOut'> {
   text?: string;
@@ -11,4 +11,5 @@ export interface DefaultButtonProps extends Omit<TouchableOpacityProps, 'onPress
   loading?: boolean;
   round?: boolean;
   action?: () => void;
+  TextComponent?: React.ComponentType<TextProps>;
 }

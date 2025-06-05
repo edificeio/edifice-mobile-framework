@@ -8,7 +8,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import FlatList from '~/framework/components/list/flat-list';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
@@ -40,9 +40,9 @@ const ResourceSection: React.FunctionComponent<ResourceSectionProps> = ({
   return (
     <View>
       <TouchableOpacity onPress={handlePressShowAll} disabled={disableShowAll} style={styles.headerContainer}>
-        {iconName ? <NamedSVG name={iconName} fill={headingColor} width={20} /> : null}
+        {iconName ? <Svg name={iconName} fill={headingColor} width={20} /> : null}
         <BodyText style={{ color: headingColor }}>{I18n.get(`mediacentre-home-section-${type}`)}</BodyText>
-        {!disableShowAll ? <NamedSVG name="ui-rafterRight" fill={headingColor} width={20} height={20} /> : null}
+        {!disableShowAll ? <Svg name="ui-rafterRight" fill={headingColor} width={20} height={20} /> : null}
       </TouchableOpacity>
       <FlatList
         horizontal

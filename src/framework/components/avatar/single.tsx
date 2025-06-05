@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Image, ImageProps } from 'react-native';
 
+import { UI_SIZES } from '../constants';
 import { AvatarSizes } from './styles';
 import {
   CommonSingleAvatarProps,
@@ -28,9 +29,12 @@ const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
       props.style,
       {
         backgroundColor: theme.ui.background.card,
-        borderRadius: AvatarSizes[props.size] / 2,
-        height: AvatarSizes[props.size],
-        width: AvatarSizes[props.size],
+        borderColor: theme.palette.grey.white,
+        borderRadius: AvatarSizes[props.size] / 2 + UI_SIZES.border.small * 2,
+        borderWidth: UI_SIZES.border.small,
+        height: AvatarSizes[props.size] + UI_SIZES.border.small * 2,
+        margin: -UI_SIZES.border.small * 2,
+        width: AvatarSizes[props.size] + UI_SIZES.border.small * 2,
       },
     ],
     [props.size, props.style],

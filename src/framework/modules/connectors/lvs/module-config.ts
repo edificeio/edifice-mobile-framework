@@ -11,7 +11,7 @@ const LVS = 'lvs';
 export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsConnector',
   displayI18n: 'lvs-moduleconfig-appname',
-  displayPicture: { name: LVS, type: 'NamedSvg' },
+  displayPicture: { name: LVS, type: 'Svg' },
   entcoreScope: [LVS],
   matchEntcoreApp: entcoreApp => hasConnectorApp(entcoreApp),
   name: LVS,

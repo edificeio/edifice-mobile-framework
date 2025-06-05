@@ -1,15 +1,14 @@
-import CookieManager from "@react-native-cookies/cookies";
-import DeviceInfo from "react-native-device-info";
+import CookieManager from '@react-native-cookies/cookies';
+import DeviceInfo from 'react-native-device-info';
 
-import { AuthActiveAccount, AuthSavedLoggedInAccount } from "~/framework/modules/auth/model";
-import { getDeviceId } from "~/framework/modules/auth/reducer";
-import appConf, { Platform } from "~/framework/util/appConf";
+import { FetchError, FetchErrorCode, HTTPError } from './error';
+
+import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
+import { getDeviceId } from '~/framework/modules/auth/reducer';
+import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 
-import { FetchError, FetchErrorCode, HTTPError } from "./error";
-
 export class RequestBuilder {
-
   /**
    * Formats a given URL for a specific platform.
    *
@@ -50,7 +49,7 @@ export class RequestBuilder {
    * @returns The HTTP method as a non-nullable string. If the method is not specified, defaults to 'GET'.
    */
   static getMethod(requestInfo: RequestInfo | URL, init?: RequestInit): NonNullable<Request['method']> {
-    return requestInfo instanceof Request ? requestInfo.method ?? init?.method : init?.method ?? 'GET';
+    return requestInfo instanceof Request ? (requestInfo.method ?? init?.method) : (init?.method ?? 'GET');
   }
 
   /**
@@ -82,8 +81,10 @@ export class RequestBuilder {
       headers: {
         ...RequestBuilder.defaultHeaders,
         ...(deviceId ? { 'X-Device-Id': getDeviceId() } : {}),
-        ...headers
-      }, ...restInit, method
+        // ...headers,  // TMP Fix for PEDAGO-2830
+      },
+      ...restInit,
+      method,
     };
   }
 
@@ -104,13 +105,28 @@ export class RequestBuilder {
     // Format the URL with the account platform base URL
     this._url = RequestBuilder.formatUrlForAccount(this._url, account);
 
+    // TMP Fix for PEDAGO-2830
+    const { Authorization, ...restHeaders } = this._init?.headers;
+
     // Put the authrozation header in the request
     this._init = {
       ...this._init,
       headers: {
-        ...this._init?.headers, Authorization: `${account.tokens.access.type} ${account.tokens.access.value}`
-      }
+        ...restHeaders,
+        Authorization: `${account.tokens.access.type} ${account.tokens.access.value}`,
+      },
     };
+    return this;
+  }
+
+  public withSearchParams(params: string[][] | Record<string, string> | string | URLSearchParams) {
+    const navParams = new URLSearchParams(params);
+    const url = new URL(this._url);
+    navParams.forEach((v, k) => {
+      // No, this is not an error, `URLSearchParams.forEach` callback arguments are swapped for some reason :c
+      url.searchParams.append(k, v);
+    });
+    this._url = url;
     return this;
   }
 
@@ -120,7 +136,8 @@ export class RequestBuilder {
    * @returns {Request} A new `Request` object configured with the URL and initialization options.
    */
   public build(): Request {
-    return new Request(this._url, this._init);
+    console.debug('BUILD', this._init);
+    return new Request(typeof this._url === 'string' ? this._url : this._url.href, this._init);
   }
 }
 
@@ -143,14 +160,14 @@ const _performFetch = async (info: RequestInfo | URL, init?: RequestInit): Promi
     throw new FetchError(
       FetchErrorCode.NETWORK_ERROR,
       `Failed to fetch resource: ${RequestBuilder.getMethod(info, init)} ${RequestBuilder.getUrl(info)}`,
-      { cause: e }
+      { cause: e },
     );
   }
   if (!response.ok) {
     throw new HTTPError(response);
   }
   return response;
-}
+};
 
 const MAX_FETCH_TIMEOUT_MS = 30000; // 30 seconds
 
@@ -166,32 +183,34 @@ const MAX_FETCH_TIMEOUT_MS = 30000; // 30 seconds
  *
  * @throws {Error} If the request times out, an AbortError is thrown.
  */
-const _timeoutFetch = (fetchFn: typeof fetch) => async (info: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), MAX_FETCH_TIMEOUT_MS);
-  try {
-    return await fetchFn(info, { ...init, signal: controller.signal });
-  } catch (e) {
-    const deepError = Error.getDeepError(e);
-    if (deepError instanceof global.Error && deepError.name === 'AbortError') {
-      throw new FetchError(FetchErrorCode.TIMEOUT, undefined, { cause: e });
+const _timeoutFetch =
+  (fetchFn: typeof fetch) =>
+  async (info: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), MAX_FETCH_TIMEOUT_MS);
+    try {
+      return await fetchFn(info, { ...init, signal: controller.signal });
+    } catch (e) {
+      const deepError = Error.getDeepError(e);
+      if (deepError instanceof global.Error && deepError.name === 'AbortError') {
+        throw new FetchError(FetchErrorCode.TIMEOUT, undefined, { cause: e });
+      }
+      throw e;
+    } finally {
+      clearTimeout(timeout);
     }
-    throw e;
-  } finally {
-    clearTimeout(timeout);
-  }
-}
+  };
 
 const _realFetch = _timeoutFetch(_performFetch);
 
-export const _fetch = (async (info: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+export const _fetch = async (info: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   try {
     return await _realFetch(info, init);
   } catch (e) {
     console.error(e instanceof global.Error ? e.constructor.name : 'Error', (e as Error.WithCode<unknown>).code, e);
     throw e;
   }
-});
+};
 
 /**
  * Parses the JSON from a fetch response.
@@ -204,10 +223,10 @@ export const _fetch = (async (info: RequestInfo | URL, init?: RequestInit): Prom
  */
 export const _parseJson = async <ResponseType>(r: Response) => {
   try {
-    return r.json() as Promise<ResponseType>;
+    return (await r.json()) as Promise<ResponseType>;
   } catch (e) {
     const error = new FetchError(FetchErrorCode.PARSE_ERROR, 'Failed to parse response JSON', { cause: e });
-    console.error(error);
+    console.error(error, '\n', await r.clone().text());
     throw error;
   }
-}
+};

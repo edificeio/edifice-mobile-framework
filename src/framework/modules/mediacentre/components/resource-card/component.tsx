@@ -12,7 +12,7 @@ import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
 import { UI_STYLES } from '~/framework/components/constants';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -48,7 +48,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
 
     return (
       <View style={defaultStyles.iconContainer}>
-        <NamedSVG name={iconName} fill={theme.palette.grey.graphite} width={16} height={16} />
+        <Svg name={iconName} fill={theme.palette.grey.graphite} width={16} height={16} />
       </View>
     );
   };
@@ -71,7 +71,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
           <View style={pinStyles.lowerContainer}>
             {resource.isParent ? (
               <View style={pinStyles.highlightContainer}>
-                <NamedSVG name="ui-sparkle" fill={theme.ui.text.light} width={12} height={12} />
+                <Svg name="ui-sparkle" fill={theme.ui.text.light} width={12} height={12} />
                 <CaptionText numberOfLines={1} style={pinStyles.lightText}>
                   {I18n.get('mediacentre-resourcecard-highlight')}
                 </CaptionText>

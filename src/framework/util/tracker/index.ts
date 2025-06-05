@@ -1,5 +1,5 @@
 import CookieManager from '@react-native-cookies/cookies';
-import analytics from '@react-native-firebase/analytics';
+//import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
 
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -232,6 +232,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       homeworkAssistance: 'HomeworkAssistance',
       mediacentre: 'Mediacentre',
       messagerie: 'Conversation', // duplicates conversation because of a tracking keyword issue
+      nabook: 'Nabook',
       news: 'Actualites',
       presences: 'Presences',
       schoolbook: 'SchoolBook',
@@ -239,6 +240,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       support: 'Support',
       user: 'MyAccount',
       // viesco: 'Presences', // not used anymore
+      wiki: 'Wiki',
       workspace: 'Workspace',
       zimbra: 'Zimbra',
     };
@@ -258,7 +260,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 }
 
-export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
+/*export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
   protected _properties = {};
 
   async _setUserId(id: string) {
@@ -272,7 +274,7 @@ export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
   }
 
   protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
-    //analytics().logEvent(`${category}_${action}`.slice(0, 39), { name, value, ...this._properties });
+    analytics().logEvent(`${category}_${action}`.slice(0, 39), { name, value, ...this._properties });
     return true;
   }
 
@@ -284,7 +286,7 @@ export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
     });
     return true;
   }
-}
+}*/
 
 export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
   protected _isDebugTracker(): boolean {
@@ -403,7 +405,7 @@ export class ConcreteTrackerSet {
 
 export const Trackers = new ConcreteTrackerSet(
   new ConcreteEntcoreTracker('Entcore', undefined),
-  new ConcreteAnalyticsTracker('Analytics', undefined),
+  //new ConcreteAnalyticsTracker('Analytics', undefined),
   new ConcreteCrashsTracker('Crashs', undefined),
 );
 

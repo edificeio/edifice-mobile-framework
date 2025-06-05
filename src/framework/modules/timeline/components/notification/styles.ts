@@ -35,4 +35,8 @@ export default StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
+  notifReadMore: {
+    marginTop: UI_SIZES.spacing.small,
+    alignSelf: 'flex-end',
+  },
 });

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { TouchableOpacity, ViewStyle } from 'react-native';
 
-import theme from '~/app/theme';
-import { NamedSVG } from '~/framework/components/picture';
-
 import styles from './styles';
+
+import theme from '~/app/theme';
+import { Svg } from '~/framework/components/picture';
 
 export type FeedbackMenuButtonProps = {
   isDisabled?: boolean;
@@ -12,10 +12,10 @@ export type FeedbackMenuButtonProps = {
   action?: () => void;
 };
 
-const FeedbackMenuButton: React.FunctionComponent<FeedbackMenuButtonProps> = ({ isDisabled = false, style, action }) => {
+const FeedbackMenuButton: React.FunctionComponent<FeedbackMenuButtonProps> = ({ action, isDisabled = false, style }) => {
   return (
     <TouchableOpacity onPress={action} disabled={isDisabled} style={[styles.container, style]}>
-      <NamedSVG name="ui-comment-quote" width={24} height={24} fill={theme.palette.grey.white} />
+      <Svg name="ui-comment-quote" width={24} height={24} fill={theme.palette.grey.white} />
     </TouchableOpacity>
   );
 };

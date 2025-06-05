@@ -251,7 +251,6 @@ export class AppConf {
       lang: opts.space?.lang ?? undefined,
       userType: opts.space?.userType ?? undefined,
     };
-
     this.onboarding = onboarding as AppConf['onboarding'];
     this.space = space as AppConf['space'];
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
@@ -260,7 +259,6 @@ export class AppConf {
     this.whoAreWe = opts.whoAreWe
       ? {
           appleId: opts.whoAreWe?.appleId,
-
           discoverUrl: opts.whoAreWe?.discoverUrl,
           entButton: opts.whoAreWe?.entButton,
           icon: opts.whoAreWe?.icon,

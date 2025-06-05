@@ -93,7 +93,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private static DEFAULT_HEADERS = {
     // tslint:disable-next-line:prettier
-    Accept: 'application/json, application/x-www-form-urlencoded',
+    'Accept': 'application/json, application/x-www-form-urlencoded',
     'Content-Type': 'application/x-www-form-urlencoded',
     'X-Device-Id': uniqueId,
   };
@@ -210,7 +210,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers: {
           ...init?.headers,
           'Accept-Language': I18n.getLanguage(),
-          Authorization: 'Bearer ' + token.access_token,
+          'Authorization': 'Bearer ' + token.access_token,
           'X-APP': 'mobile',
           'X-APP-NAME': DeviceInfo.getApplicationName(),
           'X-APP-VERSION': DeviceInfo.getReadableVersion(),
@@ -792,7 +792,7 @@ export const urlSigner = {
 /**
  * Initialize the old stateful oauth2 client for signed requests client.
  * @deprecated Use new http/oAuth2 client instead.
- * @param platform 
+ * @param platform
  */
 export function initOAuth2(platform: Platform) {
   OAuth2RessourceOwnerPasswordClient.connection = new OAuth2RessourceOwnerPasswordClient(
@@ -805,7 +805,7 @@ export function initOAuth2(platform: Platform) {
 
 /**
  * @deprecated
- * @returns 
+ * @returns
  */
 export function destroyOAuth2Legacy() {
   return OAuth2RessourceOwnerPasswordClient.connection?.eraseToken();

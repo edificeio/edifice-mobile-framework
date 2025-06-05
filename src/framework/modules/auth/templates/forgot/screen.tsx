@@ -18,7 +18,7 @@ import TextInput from '~/framework/components/inputs/text';
 import { TextInputType } from '~/framework/components/inputs/text/component';
 import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { forgotAction } from '~/framework/modules/auth/actions';
 import { API } from '~/framework/modules/auth/service.ts';
@@ -28,10 +28,8 @@ import { ValidatorBuilder } from '~/utils/form';
 
 const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
 
-const iconRafterDownComponent = () => (
-  <NamedSVG name="ui-rafterDown" fill={theme.palette.grey.black} style={styles.dropDownArrow} />
-);
-const iconRafterUpComponent = () => <NamedSVG name="ui-rafterUp" fill={theme.palette.grey.black} style={styles.dropDownArrow} />;
+const iconRafterDownComponent = () => <Svg name="ui-rafterDown" fill={theme.palette.grey.black} style={styles.dropDownArrow} />;
+const iconRafterUpComponent = () => <Svg name="ui-rafterUp" fill={theme.palette.grey.black} style={styles.dropDownArrow} />;
 
 export const ForgotPage: React.FC<ForgotScreenPrivateProps> = props => {
   const { navigation, route } = props;
@@ -192,7 +190,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = props => {
             returnKeyLabel={I18n.get('auth-forgot-submit')}
             returnKeyType="done"
             showError={hasError}
-            showIconCallback
+            showStatusIcon
             spellCheck={false}
             value={login}
           />

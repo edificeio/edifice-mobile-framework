@@ -21,7 +21,7 @@ import PasswordInput from '~/framework/components/inputs/password';
 import InputPhone from '~/framework/components/inputs/phone/';
 import { KeyboardPageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallActionText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
@@ -211,7 +211,7 @@ export class ActivationScreen extends React.PureComponent<
       <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
           <View style={styles.infos}>
-            <NamedSVG name="ui-userSearchColor" />
+            <Svg name="ui-userSearchColor" />
             <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome')}</HeadingSText>
             <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-form-infos')}</SmallText>
           </View>
@@ -228,7 +228,7 @@ export class ActivationScreen extends React.PureComponent<
                 onChangeText={formModel.password.changeCallback(this.onFieldChange('password'))}
                 placeholder={I18n.get('auth-activation-password-placeholder')}
                 showError={formModel.showPasswordError(password)}
-                showIconCallback
+                showStatusIcon
                 testID="activation-password"
                 testIDToggle="activation-see-password"
                 value={password}
@@ -249,7 +249,7 @@ export class ActivationScreen extends React.PureComponent<
                 onChangeText={formModel.confirm.changeCallback(this.onFieldChange('confirmPassword'))}
                 placeholder={I18n.get('auth-activation-password-placeholder')}
                 showError={formModel.showConfirmError(confirmPassword)}
-                showIconCallback
+                showStatusIcon
                 testID="activation-confirmed-password"
                 testIDToggle="activation-see-confirmed-password"
                 value={confirmPassword}
@@ -274,7 +274,7 @@ export class ActivationScreen extends React.PureComponent<
                 onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
                 placeholder={I18n.get('auth-activation-email-placeholder')}
                 showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
-                showIconCallback
+                showStatusIcon
                 testID="activation-email"
                 value={mail}
               />

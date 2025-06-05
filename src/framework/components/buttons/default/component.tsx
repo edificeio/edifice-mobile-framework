@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 
 import styles, { BUTTON_ICON_SIZE } from './styles';
 import { DefaultButtonProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { openUrl } from '~/framework/util/linking';
@@ -26,6 +26,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     style,
     testID,
     text,
+    TextComponent = SmallBoldText,
     url,
   } = props;
   const [layoutWidth, setLayoutWidth] = useState(0);
@@ -60,7 +61,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     if ((!iconName && !url) || (!!url && position === 'left')) return;
     const iconStyle = position === 'right' ? styles.iconRight : styles.iconLeft;
     return (
-      <NamedSVG
+      <Svg
         name={iconName ?? 'pictos-external-link'}
         width={BUTTON_ICON_SIZE}
         height={BUTTON_ICON_SIZE}
@@ -76,16 +77,18 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     return (
       <>
         {renderIcon(iconLeft, 'left')}
-        <SmallBoldText numberOfLines={1} style={[styles.text, contentColorStyle]}>
+        <TextComponent numberOfLines={1} style={[styles.text, contentColorStyle]}>
           {text}
-        </SmallBoldText>
+        </TextComponent>
         {renderIcon(iconRight, 'right')}
       </>
     );
   };
 
+  const WrapperComponent = url || action ? TouchableOpacity : View;
+
   return (
-    <TouchableOpacity
+    <WrapperComponent
       onLayout={memorizeWidthButton.bind(this)}
       {...props}
       style={[
@@ -93,10 +96,10 @@ export const DefaultButton = (props: DefaultButtonProps) => {
         style,
         { ...(loading || loadingButton ? { height: layoutHeight, width: layoutWidth } : undefined) },
       ]}
-      onPress={onPressAction}
+      {...(url || action ? { onPress: onPressAction } : undefined)}
       {...(loading || disabled ? { disabled: true } : {})}
       {...(testID ? { testID } : {})}>
       {renderContent()}
-    </TouchableOpacity>
+    </WrapperComponent>
   );
 };

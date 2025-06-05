@@ -5,7 +5,7 @@ const ELEMENT = 'element';
 export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsConnector',
   displayI18n: 'element-moduleconfig-appname',
-  displayPicture: { name: ELEMENT, type: 'NamedSvg' },
+  displayPicture: { name: ELEMENT, type: 'Svg' },
   entcoreScope: ['cas'],
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('RIOT'),
   name: ELEMENT,

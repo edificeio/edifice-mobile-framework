@@ -7,7 +7,7 @@ import { ResourceFilterListProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { NamedSVG } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { ResourceFilter } from '~/framework/modules/mediacentre/model';
 
 const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
@@ -30,7 +30,7 @@ const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
 
   return (
     <View style={styles.mainContainer}>
-      {hasFilter ? <NamedSVG name="ui-filter" width={20} height={20} fill={theme.ui.text.regular} /> : null}
+      {hasFilter ? <Svg name="ui-filter" width={20} height={20} fill={theme.ui.text.regular} /> : null}
       {filters.sources.length > 1 ? (
         <FilterButton
           text={I18n.get('mediacentre-resourcelist-filter-sources')}

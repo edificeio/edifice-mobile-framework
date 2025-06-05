@@ -1,15 +1,13 @@
-import { AccountType } from '~/framework/modules/auth/model';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-const AuthorizedAccounts = [AccountType.Relative, AccountType.Student]; // TODO: AccountType.Teacher when needed
+const NABOOK = 'nabook';
 
-export default new NavigableModuleConfig<'nabook', null>({
+export default new NavigableModuleConfig<string, null>({
   displayAs: 'myAppsModule',
   displayI18n: 'nabook-tabname',
-  displayPicture: { name: 'nabook', type: 'NamedSvg' },
-  entcoreScope: ['nabook'],
-  hasRight: ({ matchingApps, session }) => matchingApps.length > 0 && AuthorizedAccounts.includes(session.user.type),
+  displayPicture: { name: NABOOK, type: 'Svg' },
+  entcoreScope: [NABOOK],
   matchEntcoreApp: '/nabook',
-  name: 'nabook',
-  storageName: 'nabook',
+  name: NABOOK,
+  storageName: NABOOK,
 });
