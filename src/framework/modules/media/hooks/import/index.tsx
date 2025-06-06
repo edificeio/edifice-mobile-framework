@@ -60,7 +60,7 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
     return {
       element: (
         <>
-          <CustomNonModalBottomSheet ref={audioRecordBottomSheetRef}>
+          <CustomNonModalBottomSheet ref={audioRecordBottomSheetRef} enablePanDownToClose index={-1}>
             <View style={{ height: 400 }}>
               <BodyBoldText>BONJOUR</BodyBoldText>
               <AudioRecorder />
