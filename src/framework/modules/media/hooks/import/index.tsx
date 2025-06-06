@@ -16,7 +16,7 @@ import BottomSheet, { BottomSheetModalMethods } from '~/framework/components/mod
 import { CustomNonModalBottomSheet } from '~/framework/components/modals/bottom-sheet/component';
 import { BodyBoldText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import AudioRecorder from '~/framework/util/audioFiles/recorder';
+import AudioRecorder from '~/framework/util/audio-files/recorder';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 import { IMedia } from '~/framework/util/media';

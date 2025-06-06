@@ -16,7 +16,7 @@ import styles from './styles';
 import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import CustomWaveform from '~/framework/util/audioFiles/waveform/';
+import CustomWaveform from '~/framework/util/audio-files/waveform';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
 
