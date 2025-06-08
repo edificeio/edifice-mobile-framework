@@ -16,7 +16,7 @@ import styles from './styles';
 import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import CustomWaveform from '~/framework/util/audio-files/waveform';
+import CustomWaveform from '~/framework/util/audioFiles/waveform';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
 
@@ -53,6 +53,7 @@ const AudioRecorder = () => {
     try {
       const fileStats = await RNFS.stat(filePath);
       const fileName = filePath.split('/').pop();
+      console.log('fileName---------', fileName);
       console.log('fileStaaaats', fileStats);
 
       return {

@@ -18,7 +18,7 @@ import { CustomNonModalBottomSheet } from '~/framework/components/modals/bottom-
 import { BodyBoldText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { usePromiseNavigate } from '~/framework/navigation/promise';
-import AudioRecorder from '~/framework/util/audio-files/recorder';
+import AudioRecorder from '~/framework/util/audioFiles/recorder';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 import { IMedia } from '~/framework/util/media';
