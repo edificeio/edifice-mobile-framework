@@ -83,12 +83,12 @@ export interface INamedResourceNotification extends IResourceIdNotification {
 export interface IEnrichedNotification extends ITimelineNotification {
   preview: {
     text: string;
-    media: IMedia[];
+    media: INotificationMedia[];
     images: string[]; // Obsolete. Use media field instead.
   };
 }
 
-export interface IMedia {
+export interface INotificationMedia {
   type: 'image' | 'video' | 'audio' | 'iframe' | 'attachment';
   src: string | { src: ImageURISource; alt: string };
   name?: string;

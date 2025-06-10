@@ -14,7 +14,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
-import { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 
 const NAVBAR_BUTTON_WIDTH = UI_SIZES.elements.navbarIconSize + 2 * UI_SIZES.spacing.tiny;
 
@@ -61,7 +60,7 @@ export const navBarTitle = (
 };
 
 export const navBarOptions: (props: {
-  route: RouteProp<AuthNavigationParams, string>;
+  route: RouteProp<ParamListBase, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;
   title?: string;
   titleStyle?: TextStyle;

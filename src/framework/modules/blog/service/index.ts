@@ -9,23 +9,23 @@ import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetch, signedFetchJson } from '~/infra/fetchWithCache';
 
 export interface IEntcoreBlog {
-  _id: string;
-  visibility: string;
-  title: string;
-  thumbnail?: string;
-  trashed?: boolean;
+  '_id': string;
+  'visibility': string;
+  'title': string;
+  'thumbnail'?: string;
+  'trashed'?: boolean;
   'comment-type': string;
   'publish-type': string;
-  description?: string;
-  created: { $date: number };
-  modified: { $date: number };
-  author: { userId: string; username: string; login: string };
-  shared?: ({
+  'description'?: string;
+  'created': { $date: number };
+  'modified': { $date: number };
+  'author': { userId: string; username: string; login: string };
+  'shared'?: ({
     [key: string]: boolean | string | undefined;
   } & {
     [key in 'userId' | 'groupId']: string;
   })[];
-  fetchPosts?: Omit<IEntcoreBlogPost, 'content'>[];
+  'fetchPosts'?: Omit<IEntcoreBlogPost, 'content'>[];
 }
 export type IEntcoreBlogList = IEntcoreBlog[];
 
@@ -77,6 +77,7 @@ export interface IEntcoreBlogPostComment {
   id: string;
   modified?: { $date: number };
   state: string;
+  deleted?: boolean;
 }
 
 export type IEntcoreBlogPostComments = IEntcoreBlogPostComment[];
@@ -112,23 +113,23 @@ export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>
 
 export const blogAdapter = (blog: IEntcoreBlog) => {
   const ret = {
-    author: {
+    'author': {
       login: blog.author.login,
       userId: blog.author.userId,
       username: blog.author.username,
     },
     'comment-type': blog['comment-type'],
-    created: moment(blog.created.$date),
-    description: blog.description,
-    fetchPosts: blog.fetchPosts?.map(bp => blogFetchPostAdapter(bp)),
-    id: blog._id,
-    modified: moment(blog.modified.$date),
+    'created': moment(blog.created.$date),
+    'description': blog.description,
+    'fetchPosts': blog.fetchPosts?.map(bp => blogFetchPostAdapter(bp)),
+    'id': blog._id,
+    'modified': moment(blog.modified.$date),
     'publish-type': blog['publish-type'],
-    shared: blog.shared,
-    thumbnail: blog.thumbnail,
-    title: blog.title,
-    trashed: blog.trashed,
-    visibility: blog.visibility,
+    'shared': blog.shared,
+    'thumbnail': blog.thumbnail,
+    'title': blog.title,
+    'trashed': blog.trashed,
+    'visibility': blog.visibility,
   };
   return ret as Blog;
 };

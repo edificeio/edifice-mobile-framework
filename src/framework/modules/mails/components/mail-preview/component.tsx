@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-raw-text */
 import * as React from 'react';
 import { LayoutAnimation, TouchableOpacity, View } from 'react-native';
 
@@ -52,8 +51,8 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
     return (
       <Svg
         name="ui-attachment"
-        height={UI_SIZES.elements.icon.xxsmall}
-        width={UI_SIZES.elements.icon.xxsmall}
+        height={UI_SIZES.elements.icon.xsmall}
+        width={UI_SIZES.elements.icon.xsmall}
         fill={theme.palette.grey.black}
       />
     );
@@ -65,8 +64,8 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       <View style={styles.responseIcon}>
         <Svg
           name={!response ? 'ui-recall' : 'ui-undo'}
-          height={UI_SIZES.elements.icon.xxsmall}
-          width={UI_SIZES.elements.icon.xxsmall}
+          height={UI_SIZES.elements.icon.xsmall}
+          width={UI_SIZES.elements.icon.xsmall}
           fill={theme.palette.grey.black}
         />
       </View>

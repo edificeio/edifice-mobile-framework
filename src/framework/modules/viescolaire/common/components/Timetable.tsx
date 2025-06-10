@@ -104,7 +104,7 @@ const getDefaultSlots = (): ISlot[] => {
 const computeSlotLines = (
   date: Moment,
   slots: ISlot[],
-  courses: ITimetableCourse[]
+  courses: ITimetableCourse[],
 ): [ITimeSlotLineProps[], moment.Moment, moment.Moment] => {
   const lines: Map<string, ITimeSlotLineProps> = new Map();
   const setLine = (m: moment.Moment) => {
@@ -151,7 +151,7 @@ const computeSlotLines = (
 };
 
 const organizeColumns = <CourseType extends ITimetableCourse>(
-  courses: CourseType[]
+  courses: CourseType[],
 ): [CourseType[], CourseType[], CourseType[]] => {
   const columns: [CourseType[], CourseType[], CourseType[]] = [[], [], []];
   const elementsColumns: number[] = [];
@@ -175,11 +175,11 @@ const organizeColumns = <CourseType extends ITimetableCourse>(
       m =>
         JSON.stringify(m) !== JSON.stringify(course) &&
         m.startDate.isSame(course.startDate) &&
-        (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate))
+        (m.endDate.isBefore(course.endDate) || m.endDate.isAfter(course.endDate)),
     );
     // event m starts and ends at the same time as d
     const isSameTime = courses.findIndex(
-      m => JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate)
+      m => JSON.stringify(m) !== JSON.stringify(course) && m.startDate.isSame(course.startDate) && m.endDate.isSame(course.endDate),
     );
     if ((isSameTime > -1 || iStartSameEndMiddle > -1) && col === 0) {
       if (elementsColumns.length > 0) {
@@ -214,7 +214,7 @@ const TimetableCourse = <CourseType extends ITimetableCourse>({
       top,
       width: half ? COURSE_WIDTH / 2 : COURSE_WIDTH,
     }),
-    [half, top, bottom]
+    [half, top, bottom],
   );
   return <View style={[styles.courseContainer, positionStyle]}>{renderCourse(course)}</View>;
 };
@@ -234,7 +234,7 @@ export default <CourseType extends ITimetableCourse>({
   const coursesThisDay = courses.filter(d => d.startDate.isSame(date, 'day'));
   const [slotLines, startTime, endTime] = React.useMemo(
     () => computeSlotLines(date, realSlots, coursesThisDay),
-    [date, realSlots, coursesThisDay]
+    [date, realSlots, coursesThisDay],
   );
   const organizedCourses = organizeColumns(coursesThisDay);
 
@@ -245,7 +245,7 @@ export default <CourseType extends ITimetableCourse>({
       position: 'relative' as const,
       top: -(minutes(startTime) / 60) * SLOT_HOUR_HEIGHT,
     }),
-    [endTime, startTime]
+    [endTime, startTime],
   );
 
   return (

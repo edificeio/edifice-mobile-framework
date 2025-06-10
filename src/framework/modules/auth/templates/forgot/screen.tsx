@@ -190,7 +190,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = props => {
             returnKeyLabel={I18n.get('auth-forgot-submit')}
             returnKeyType="done"
             showError={hasError}
-            showIconCallback
+            showStatusIcon
             spellCheck={false}
             value={login}
           />

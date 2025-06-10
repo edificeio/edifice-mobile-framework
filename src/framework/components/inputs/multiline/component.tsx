@@ -1,15 +1,22 @@
 import React, { forwardRef } from 'react';
-import { TextInput as RNTextInput } from 'react-native';
+import { PixelRatio, Platform, TextInput as RNTextInput } from 'react-native';
 
 import styles from './styles';
 import { MultilineTextInputProps } from './types';
 
-import TextInput, { styles as stylesTextInput } from '~/framework/components/inputs/text';
-import { TextSizeStyle } from '~/framework/components/text';
+import TextInput from '~/framework/components/inputs/text';
+import stylesTextInput, { TEXTINPUT_LINE_HEIGHT } from '~/framework/components/inputs/text/styles';
 
 const MultilineTextInput = forwardRef<RNTextInput, MultilineTextInputProps>((props: MultilineTextInputProps, ref) => {
   const { numberOfLines } = props;
-  const initialHeight = TextSizeStyle.Medium.lineHeight! * numberOfLines + 2 * stylesTextInput.input.paddingTop;
+  // Properly compute the height of N lines of text depending on the OS.
+  const initialHeight = Platform.select({
+    android: stylesTextInput.input.fontSize * TEXTINPUT_LINE_HEIGHT * PixelRatio.getFontScale() * numberOfLines,
+    default:
+      stylesTextInput.input.paddingTop +
+      stylesTextInput.input.paddingBottom +
+      stylesTextInput.input.fontSize * TEXTINPUT_LINE_HEIGHT * PixelRatio.getFontScale() * numberOfLines,
+  });
 
   return (
     <TextInput

@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -73,6 +73,7 @@
     "@emotion/react": "11.13.5",
     "@flyerhq/react-native-android-uri-path": "2.3.0",
     "@gorhom/bottom-sheet": "5.0.6",
+    "@js-temporal/polyfill": "0.4.4",
     "@react-native-async-storage/async-storage": "2.1.0",
     "@react-native-camera-roll/camera-roll": "7.9.0",
     "@react-native-clipboard/clipboard": "1.15.0",
@@ -194,6 +195,7 @@
     "rn-placeholder": "3.0.3",
     "sax": "1.4.1",
     "saxophone": "0.8.0",
+    "set.prototype.isdisjointfrom": "1.1.5",
     "ts-polyfill": "3.8.2",
     "unorm": "1.6.0",
     "whatwg-fetch": "3.6.20",
@@ -220,8 +222,7 @@
     "@react-native/metro-config": "0.75.5",
     "@react-native/typescript-config": "0.75.5",
     "@trivago/prettier-plugin-sort-imports": "4.3.0",
-    "@types/html-to-text": "^9",
-    "@types/lodash.debounce": "^4",
+    "@types/html-to-text": "9.0.4",
     "@types/mime": "4.0.0",
     "@types/react": "18.3.12",
     "@types/react-is": "18.3.0",

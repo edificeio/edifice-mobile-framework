@@ -71,18 +71,25 @@ module.exports = {
     'prettier/prettier': [
       'error',
       {
-        arrowParens: 'avoid',
-        bracketSameLine: true,
-        bracketSpacing: true,
-        quoteProps: 'consistent',
-        singleQuote: true,
-        tabWidth: 2,
-        trailingComma: 'es5',
-        useTabs: false,
+        "arrowParens": "avoid",
+        "bracketSpacing": true,
+        "importOrder": ["^[~/]", "^[./]"],
+        "importOrderSeparation": true,
+        "importOrderSortSpecifiers": true,
+        "jsxBracketSameLine": true,
+        "printWidth": 132,
+        "semi": true,
+        "singleQuote": true,
+        "tabWidth": 2,
+        "quoteProps": 'consistent',
+        "trailingComma": "all"
       },
     ],
     'react-hooks/exhaustive-deps': 'error',
     'react-hooks/rules-of-hooks': 'error',
+    'react-native/no-raw-text': ['error', {
+      skip: ['HeadingXLText', 'HeadingLText', 'HeadingMText', 'HeadingSText', 'HeadingXSText', 'HeadingXXSText', 'BodyText', 'BodyBoldText', 'BodyItalicText', 'BodyBoldItalicText', 'SmallText', 'SmallBoldText', 'SmallItalicText', 'SmallBoldItalicText', 'CaptionText', 'CaptionBoldText', 'CaptionItalicText', 'CaptionBoldItalicText', 'SmallInverseText', 'SmallActionText', 'NestedText', 'NestedBoldText', 'NestedItalicText', 'NestedActionText'],
+    }],
     'sort-destructure-keys/sort-destructure-keys': [2, { caseSensitive: false }],
     'sort-imports': [
       'error',

@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-05-23 09:24:16",
-  "notes": "fix(mails) hide edit signature\nchore(mails) clean code\nfeat(mails): WB-3899 recall message\nfix(mails): fix error when dont have signature\nfix(mails): WB-4136, WB-4137 fix history, forward and signature\nfeat(mails): WB-4135 change placeholder when focus contact field and is adml, start search from 1 length for no adml\nrelease: 1.14.0-comm.10(1140011)",
-  "version": "1.14.0-comm.11(1140012)"
+  "last": "2025-06-03 19:40:59",
+  "notes": "fix(wayf): SUPPORT-2883, modifie network config for creteil wayf\nrelease: 1.14.0-rc.6(1140025)",
+  "version": "1.14.0-rc.7(1140026)"
 }

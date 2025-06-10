@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 
 import styles, { BUTTON_ICON_SIZE } from './styles';
 import { DefaultButtonProps } from './types';
@@ -25,6 +25,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     style,
     testID,
     text,
+    TextComponent = SmallBoldText,
     url,
   } = props;
   const [layoutWidth, setLayoutWidth] = useState(0);
@@ -82,14 +83,18 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     return (
       <>
         {renderIcon(iconLeft, 'left')}
-        {renderText()}
+        <TextComponent numberOfLines={1} style={[styles.text, contentColorStyle]}>
+          {text}
+        </TextComponent>
         {renderIcon(iconRight, 'right')}
       </>
     );
   };
 
+  const WrapperComponent = url || action ? TouchableOpacity : View;
+
   return (
-    <TouchableOpacity
+    <WrapperComponent
       onLayout={memorizeWidthButton.bind(this)}
       {...props}
       style={[
@@ -98,10 +103,10 @@ export const DefaultButton = (props: DefaultButtonProps) => {
         { ...(loading || loadingButton ? { height: layoutHeight, width: layoutWidth } : undefined) },
         disabled ? styles.disabled : undefined,
       ]}
-      onPress={onPressAction}
+      {...(url || action ? { onPress: onPressAction } : undefined)}
       {...(loading || disabled ? { disabled: true } : {})}
       {...(testID ? { testID } : {})}>
       {renderContent()}
-    </TouchableOpacity>
+    </WrapperComponent>
   );
 };

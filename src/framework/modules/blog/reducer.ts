@@ -16,23 +16,23 @@ import { resourceRightFilter } from '~/framework/util/resourceRights';
 // Types
 
 export interface Blog {
-  id: string;
-  visibility: string;
-  title: string;
-  thumbnail?: string;
-  trashed?: boolean;
+  'id': string;
+  'visibility': string;
+  'title': string;
+  'thumbnail'?: string;
+  'trashed'?: boolean;
   'comment-type': string;
   'publish-type': string;
-  description?: string;
-  created: Moment;
-  modified: Moment;
-  author: { userId: string; username: string; login: string };
-  shared?: ({
+  'description'?: string;
+  'created': Moment;
+  'modified': Moment;
+  'author': { userId: string; username: string; login: string };
+  'shared'?: ({
     [key: string]: boolean | string | undefined;
   } & {
     [key in 'userId' | 'groupId']: string;
   })[];
-  fetchPosts: Omit<BlogPost, 'content'>[];
+  'fetchPosts': Omit<BlogPost, 'content'>[];
 }
 export type BlogList = Blog[];
 
@@ -52,6 +52,7 @@ export interface BlogPostComment {
   id: string;
   modified?: Moment;
   state: string;
+  deleted?: boolean;
 }
 
 export type BlogPostComments = BlogPostComment[];
@@ -257,6 +258,8 @@ export interface BlogFolderWithResources extends BlogFolder {
 export interface BlogFolderWithChildren extends BlogFolder {
   children?: BlogFolderWithChildren[];
 }
+
+export const countComments = (post: BlogPost) => post.comments?.reduce((acc, c) => (c.deleted ? acc : acc + 1), 0) ?? 0;
 
 const reducer = combineReducers({
   blogs: createSessionAsyncReducer(initialState.blogs, actionTypes.blogs),

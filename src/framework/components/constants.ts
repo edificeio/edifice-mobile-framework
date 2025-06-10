@@ -71,8 +71,13 @@ export const UI_SIZES = {
     thumbnail: 7 / 5,
   },
   border: {
+    normal: 3,
     small: 2,
     thin: 1,
+  },
+  cardSpacing: {
+    major: getScaleWidth(40),
+    small: getScaleWidth(10),
   },
   dimensions: {
     height: {
@@ -122,9 +127,14 @@ export const UI_SIZES = {
       medium: getScaleWidth(22),
       small: getScaleWidth(20),
       xlarge: getScaleWidth(36),
-      xsmall: getScaleWidth(18),
-      xxsmall: getScaleWidth(16),
-      xxxsmall: getScaleWidth(12),
+      xsmall: getScaleWidth(16),
+      xxlarge: getScaleWidth(64),
+      xxsmall: getScaleWidth(12),
+      xxxlarge: getScaleWidth(96),
+    },
+    image: {
+      medium: getScaleImageSize(160),
+      small: getScaleImageSize(64),
     },
 
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },

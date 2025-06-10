@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
+
+import styles from './styles';
+import { HeaderBottomSheetModalProps } from './types';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
-import styles from './styles';
-import { HeaderBottomSheetModalProps } from './types';
 
 export const HeaderBottomSheetModal = (props: HeaderBottomSheetModalProps) => {
   return (
