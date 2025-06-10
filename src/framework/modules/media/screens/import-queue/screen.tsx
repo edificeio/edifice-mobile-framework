@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, View } from 'react-native';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import styles from './styles';
-import { ImportQueueScreenProps, UploadStatus, UploadTask, UploadTaskDone, UploadTaskFailed, UploadTaskToDo } from './types';
+import { ImportQueueScreenProps, UploadStatus, UploadTask, UploadTaskDone, UploadTaskFailed } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -12,7 +12,6 @@ import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
-import { WithModalPromise } from '~/framework/components/modals/provider';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -21,6 +20,7 @@ import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { WithScreenPromise } from '~/framework/navigation/promise';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { Image, IMedia } from '~/framework/util/media';
 
@@ -53,7 +53,7 @@ const formatTask = (file: LocalFile) =>
   ({
     file,
     status: UploadStatus.IDLE,
-  }) as UploadTaskToDo;
+  }) as UploadTask;
 
 const textErrorUploadFile: (error) => string = error => {
   // Full storage management
@@ -94,10 +94,10 @@ const renderPlaceholder = () => {
 
 const MAX_PARALLEL_UPLOADS_TASKS = 6;
 
-export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, ImportQueueScreenProps.AllProps>(
+export default WithScreenPromise<IMedia[], ImportQueueScreenProps.PromiseData, ImportQueueScreenProps.AllProps>(
   function FileImportScreen(props) {
     const {
-      modalPromiseData: { files, uploadFn },
+      modalPromiseData: { files, mediaType, uploadFn },
       navigation,
       rejectModalPromise,
       resolveModalPromise,
@@ -106,7 +106,7 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
     const session = getSession();
 
     // Allows exit the screen without confirmation prompt.
-    const [allFilesImported, setAllFilesImported] = React.useState(false);
+    const [importValidated, setAllFilesImported] = React.useState(false);
 
     // The list of files to import and their import status
     const uploadTasksRef = React.useRef<UploadTask[]>(files ? files.map(formatTask) : []);
@@ -114,14 +114,14 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
     const uploadingTasksRef = React.useRef<Set<UploadTask>>(new Set());
 
     // Arbitrary value that forces the list to update
-    const [uploadTaskNumber, setUploadTaskNumber] = React.useState(0);
+    const [uploadTaskUniqueNumber, setUploadTaskUniqueNumber] = React.useState(0);
 
     const updateTaskStatusAndID = React.useCallback(
       (task: UploadTask, { error, file, status }: { status: UploadStatus; file?: SyncedFileWithId; error?: string }) => {
         task.status = status;
         if (file) (task as UploadTaskDone).file = file;
         if (error) (task as UploadTaskFailed).error = error;
-        setUploadTaskNumber(val => val + 1); // Update view
+        setUploadTaskUniqueNumber(val => val + 1); // Update view
       },
       [],
     );
@@ -166,7 +166,7 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
           return;
         }
         uploadTasksRef.current = tasks;
-        setUploadTaskNumber(val => val + 1);
+        setUploadTaskUniqueNumber(val => val + 1);
         uploadRemainingFiles();
       },
       [uploadRemainingFiles, navigation],
@@ -185,7 +185,7 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
 
     usePreventBack({
       actionOnBack: removeAllFiles,
-      showAlert: uploadTasksRef.current.length > 0 && !allFilesImported,
+      showAlert: uploadTasksRef.current.length > 0 && !importValidated,
       text: I18n.get('import-back-confirm-text'),
       title: I18n.get('import-back-confirm-title'),
     });
@@ -208,7 +208,7 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
                 setAllFilesImported(true);
               }}
               disabled={
-                !uploadTaskNumber ||
+                !uploadTaskUniqueNumber ||
                 (fileCount > 0 &&
                   uploadTasksRef.current.some(
                     f => f.status === UploadStatus.PENDING || f.status === UploadStatus.IDLE || f.status === UploadStatus.KO,
@@ -221,32 +221,33 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
             ? navBarTitle(I18n.get('import-title_zero'), headerTitleStyle)
             : navBarTitle(I18n.get('import-title_other', { count: fileCount }), headerTitleStyle),
       });
-    }, [navigation, uploadTaskNumber]);
+    }, [navigation, uploadTaskUniqueNumber]);
 
     React.useEffect(() => {
-      if (allFilesImported) {
-        navigation.navigate(route.params.redirectTo.name, {
-          ...route.params.redirectTo.params,
-          importResult: uploadTasksRef.current.map(f => ({
-            status: f.status,
-            workspaceID: f.workspaceID,
-          })),
-        });
-      }
-    }, [allFilesImported, navigation, route]);
-
-    React.useEffect(() => {
-      if (uploadTasksRef.current.length === 0 && uploadTaskNumber) {
+      if (importValidated) {
         navigation.goBack();
+        const mediaResult = uploadTasksRef.current.reduce<IMedia[]>((acc, task) => {
+          if (task.status !== UploadStatus.OK) return acc;
+          acc.push({ mime: task.file.filetype, src: task.file.df.url, type: mediaType });
+          return acc;
+        }, []);
+        resolveModalPromise(mediaResult);
       }
-    }, [uploadTaskNumber, navigation]);
+    }, [importValidated, mediaType, navigation, resolveModalPromise, route]);
+
+    React.useEffect(() => {
+      if (uploadTasksRef.current.length === 0 && uploadTaskUniqueNumber) {
+        navigation.goBack();
+        resolveModalPromise([]);
+      }
+    }, [uploadTaskUniqueNumber, navigation, resolveModalPromise]);
 
     // Refresh remaining tasks everytime a file has been handled.
     React.useEffect(() => {
-      if (uploadTaskNumber) {
+      if (uploadTaskUniqueNumber) {
         uploadRemainingFiles();
       }
-    }, [uploadTaskNumber, uploadRemainingFiles]);
+    }, [uploadTaskUniqueNumber, uploadRemainingFiles]);
 
     const removeFile = React.useCallback(
       async (index: number) => {
@@ -259,12 +260,12 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
           },
           {
             onPress: () => {
-              const file = uploadTasksRef.current[index];
-              if (file.workspaceID === undefined) {
+              const task = uploadTasksRef.current[index];
+              if (task.status !== UploadStatus.OK || task.file.id === undefined) {
                 updateTasks(uploadTasksRef.current.filter((_, i) => i !== index));
               } else {
                 workspaceService.files
-                  .trash(session, [file.workspaceID!])
+                  .trash(session, [task.file.id])
                   .then(() => {
                     updateTasks(uploadTasksRef.current.filter((_, i) => i !== index));
                   })
@@ -282,9 +283,9 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
     );
 
     const retryFile = async (index: number) => {
-      const file = uploadTasksRef.current[index];
-      file.status = UploadStatus.PENDING;
-      startUploadTask(file, index);
+      const task = uploadTasksRef.current[index];
+      task.status = UploadStatus.IDLE;
+      startUploadTask(task);
     };
 
     const fileStatusIcon = (index: number, status: UploadStatus) => {
@@ -300,22 +301,22 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
       }
     };
 
-    const renderThumbnail = (file: UploadFile) => {
-      if (file.status === UploadStatus.OK) return <Image style={styles.addFilesResultsType} src={file.localFile._filepathNative} />;
+    const renderThumbnail = (task: UploadTask) => {
+      if (task.status === UploadStatus.OK) return <Image style={styles.addFilesResultsType} src={task.file._filepathNative} />;
       return (
         <View
           style={[
             styles.addFilesResultsType,
             {
               backgroundColor:
-                file.status === UploadStatus.KO ? theme.palette.status.failure.pale : theme.palette.complementary.green.pale,
+                task.status === UploadStatus.KO ? theme.palette.status.failure.pale : theme.palette.complementary.green.pale,
             },
           ]}>
           <Svg
-            name={file.status === UploadStatus.KO ? 'ui-error' : 'ui-image'}
+            name={task.status === UploadStatus.KO ? 'ui-error' : 'ui-image'}
             height={UI_SIZES.elements.icon.small}
             width={UI_SIZES.elements.icon.small}
-            fill={file.status === UploadStatus.KO ? theme.palette.status.failure.regular : theme.palette.grey.black}
+            fill={task.status === UploadStatus.KO ? theme.palette.status.failure.regular : theme.palette.grey.black}
           />
         </View>
       );
@@ -323,39 +324,41 @@ export default WithModalPromise<IMedia[], ImportQueueScreenProps.PromiseData, Im
 
     React.useEffect(() => {
       return () => {
-        resolveModalPromise([]);
+        rejectModalPromise(
+          new Error(
+            'media import-queue screen cdlosed without resolving promise. This is an issue that need to be adressed in media/import-queue screen.',
+          ),
+        );
       };
+      // This hook need to be called once
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!session) return <EmptyContentScreen />;
 
     return (
       <PageView>
-        {!uploadTaskNumber ? (
-          renderPlaceholder()
-        ) : (
-          <FlatList
-            data={uploadTasksRef.current}
-            contentContainerStyle={styles.addFilesResults}
-            alwaysBounceVertical={false}
-            renderItem={({ index, item }) => (
-              <View key={index} style={styles.addFilesResultsItem}>
-                {renderThumbnail(item)}
-                <View style={styles.addFilesResultsFile}>
-                  <SmallText numberOfLines={1}>{item.localFile.filename}</SmallText>
-                  {item.status === UploadStatus.KO ? <CaptionBoldText>{item.error}</CaptionBoldText> : null}
-                </View>
-                {fileStatusIcon(index, item.status)}
-                <IconButton
-                  icon="ui-close"
-                  style={{ marginLeft: UI_SIZES.spacing.small }}
-                  color={theme.palette.grey.black}
-                  action={() => removeFile(index)}
-                />
+        <FlatList
+          data={uploadTasksRef.current}
+          contentContainerStyle={styles.addFilesResults}
+          alwaysBounceVertical={false}
+          renderItem={({ index, item }) => (
+            <View key={index} style={styles.addFilesResultsItem}>
+              {renderThumbnail(item)}
+              <View style={styles.addFilesResultsFile}>
+                <SmallText numberOfLines={1}>{item.localFile.filename}</SmallText>
+                {item.status === UploadStatus.KO ? <CaptionBoldText>{item.error}</CaptionBoldText> : null}
               </View>
-            )}
-          />
-        )}
+              {fileStatusIcon(index, item.status)}
+              <IconButton
+                icon="ui-close"
+                style={{ marginLeft: UI_SIZES.spacing.small }}
+                color={theme.palette.grey.black}
+                action={() => removeFile(index)}
+              />
+            </View>
+          )}
+        />
       </PageView>
     );
   },

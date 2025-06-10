@@ -5,7 +5,7 @@
 
 import { NavigationAction } from '@react-navigation/native';
 
-import { StackNavigationAction } from './types';
+import { StackNavigationAction } from '.';
 
 export const NAVIGATE_CLOSE_DELAY = 333;
 

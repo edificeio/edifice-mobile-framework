@@ -19,7 +19,7 @@ import type { ActivationScreenNavParams } from '~/framework/modules/auth/templat
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import type { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
-import type { StackNavigationAction } from '~/framework/navigation/types';
+import type { StackNavigationAction } from '~/framework/navigation';
 import type { Platform } from '~/framework/util/appConf';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.

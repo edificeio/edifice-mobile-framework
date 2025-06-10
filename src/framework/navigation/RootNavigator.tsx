@@ -16,6 +16,7 @@ import { navigationRef } from './helper';
 import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
+import { ModalPromiseProvider } from './promise/provider';
 import { getState as getAppStartupState, StartupState } from './redux';
 
 import { useAppStartup } from '~/app/startup';
@@ -27,6 +28,7 @@ import type { AuthLoggedAccountMap } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getAuthNavigationState, getFirstTabRoute } from '~/framework/modules/auth/navigation/main-account/router';
 import { getState as getAuthState, IAuthState } from '~/framework/modules/auth/reducer';
+import media from '~/framework/modules/media/navigation/navigator';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
@@ -128,12 +130,15 @@ function RootNavigator(props: RootNavigatorProps) {
             initialState={navigationState}
             onStateChange={onStateChange}>
             <BottomSheetModalProvider>
-              <AppPushNotificationHandlerComponent>
-                <RootStack.Navigator screenOptions={screenOptions}>
-                  {routes}
-                  {modals}
-                </RootStack.Navigator>
-              </AppPushNotificationHandlerComponent>
+              <ModalPromiseProvider>
+                <AppPushNotificationHandlerComponent>
+                  <RootStack.Navigator screenOptions={screenOptions}>
+                    {routes}
+                    {modals}
+                    {media()}
+                  </RootStack.Navigator>
+                </AppPushNotificationHandlerComponent>
+              </ModalPromiseProvider>
             </BottomSheetModalProvider>
             <RootToastHandler />
             <SnowFlakes />

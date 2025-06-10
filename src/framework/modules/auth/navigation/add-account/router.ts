@@ -3,8 +3,8 @@ import { CommonActions, NavigationState, PartialState, StackActions } from '@rea
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
 import { IAuthState } from '~/framework/modules/auth/reducer';
+import { StackNavigationAction } from '~/framework/navigation';
 import { RouteStack } from '~/framework/navigation/helper';
-import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 export const getAddAccountLoginNextScreen: (platform: Platform) => PartialState<NavigationState>['routes'][0] = platform => {

@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { AuthNavigationParams } from '~/framework/modules/auth/navigation';
-import { StackNavigationAction } from '~/framework/navigation/types';
+import { StackNavigationAction } from '~/framework/navigation';
 
 export interface AuthIntroductionScreenProps {
   nextScreenAction: StackNavigationAction;

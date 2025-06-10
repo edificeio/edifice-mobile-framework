@@ -8,6 +8,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { AuthActiveAccount } from '../../../auth/model';
 import { getSession } from '../../../auth/reducer';
 import workspaceService, { IWorkspaceUploadParams } from '../../../workspace/service';
+import { mediaRouteNames } from '../../navigation';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -16,6 +17,7 @@ import BottomSheet, { BottomSheetModalMethods } from '~/framework/components/mod
 import { CustomNonModalBottomSheet } from '~/framework/components/modals/bottom-sheet/component';
 import { BodyBoldText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
+import { usePromiseNavigate } from '~/framework/navigation/promise';
 import AudioRecorder from '~/framework/util/audio-files/recorder';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
@@ -114,22 +116,25 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
   }),
   video: () => {
     // utiliser createRef ici au lieu de useRef car cette fonction sera appelée au sein d'un useMemo().
-    const bottomSheetRef = React.createRef<BottomSheetModalMethods>();
     return {
-      element: (
-        <>
-          <BottomSheet ref={bottomSheetRef}>
-            <BodyBoldText>BONJOUR</BodyBoldText>
-          </BottomSheet>
-        </>
-      ),
       options: [
         {
           i18n: 'From galery',
           icon: 'ui-image',
           onPress: async () => {
-            bottomSheetRef.current?.present();
-            return [];
+            const videos = await ImagePicker.openPicker({
+              maxFiles: 10,
+              mediaType: 'video',
+              multiple: true,
+            });
+            return videos.map(
+              video =>
+                new LocalFile({
+                  filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
+                  filepath: video.path,
+                  fileSize: video.size,
+                }),
+            );
           },
         },
         {
@@ -162,13 +167,14 @@ const uploadAllMedia = async (
   session: AuthActiveAccount,
   localMedia: LocalMediaImportResult,
   uploadParams: IWorkspaceUploadParams,
+  uploadMultipleMedia: (files: LocalFile[]) => Promise<IMedia[]>,
 ) => {
   if (localMedia.length <= 0) return;
   else if (localMedia.length === 1) {
     const distantFile = await uploadSingleMedia(session, localMedia[0], uploadParams);
     return [distantFile];
   } else {
-    // ToDo open media import modal and return promise
+    return uploadMultipleMedia(localMedia);
   }
 };
 
@@ -222,6 +228,17 @@ export const useMediaImport = (
     currentBottomSheetRef.current = null;
   }, [cancelMediaImport]);
 
+  const openImportModal = usePromiseNavigate(mediaRouteNames['import-queue']);
+  const uploadMultiple = React.useCallback(
+    (files: LocalFile[]) =>
+      openImportModal(undefined, {
+        files,
+        mediaType: 'video',
+        uploadFn: uploadSingleMedia,
+      }),
+    [openImportModal],
+  );
+
   const onValidate = React.useCallback(
     async (callback: () => Promise<LocalMediaImportResult | undefined>) => {
       try {
@@ -229,7 +246,7 @@ export const useMediaImport = (
         if (!localMedia || localMedia.length === 0) return cancelMediaImport();
         const session = getSession();
         if (!session) throw new FetchError(FetchErrorCode.NOT_LOGGED);
-        const distantFiles = await uploadAllMedia(session, localMedia, uploadParams);
+        const distantFiles = await uploadAllMedia(session, localMedia, uploadParams, uploadMultiple);
         if (!distantFiles) throw new FetchError(FetchErrorCode.BAD_RESPONSE);
         console.debug('DISTANT FILES', distantFiles);
         const media = distantFiles?.map(file => ({ mime: file.df.filetype, src: file.df.url, type: 'video' }) as IMedia);
@@ -282,7 +299,7 @@ export const useMediaImport = (
         currentBottomSheetRef.current = null;
       }
     },
-    [cancelMediaImport, uploadParams],
+    [cancelMediaImport, uploadMultiple, uploadParams],
   );
 
   const element = React.useMemo(

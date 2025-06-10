@@ -11,8 +11,8 @@ import {
   InitialAuthenticationMethod,
 } from '~/framework/modules/auth/model';
 import { AuthPendingRestore, getAccountsNumber, getPlatform, getSession, IAuthState } from '~/framework/modules/auth/reducer';
+import { StackNavigationAction } from '~/framework/navigation';
 import { RouteStack } from '~/framework/navigation/helper';
-import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 /**

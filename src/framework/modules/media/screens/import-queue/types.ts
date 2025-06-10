@@ -1,24 +1,24 @@
-import { ParamListBase, Route } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ModalPromiseNavigationParams } from '~/framework/components/modals/provider';
-import type { MediaLibraryNavigationParams, mediaLibraryRouteNames } from '~/framework/modules/media/navigation';
+import { MediaNavigationParams } from '../../navigation';
+
+import { ModalPromiseNavigationParams } from '~/framework/navigation/promise/types';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { IMedia } from '~/framework/util/media';
 
 export namespace ImportQueueScreenProps {
   export interface Public {}
 
-  export interface NavParams extends ModalPromiseNavigationParams {
-    redirectTo: Route<string, ParamListBase>;
-  }
+  export interface NavParams extends ModalPromiseNavigationParams {}
 
-  export type Navigation = NativeStackScreenProps<MediaLibraryNavigationParams, (typeof mediaLibraryRouteNames)['import-queue']>;
+  export type Navigation = NativeStackScreenProps<MediaNavigationParams, 'import-queue'>;
 
   export type NavBarConfig = ({ navigation, route }: Navigation) => NativeStackNavigationOptions;
 
   export interface PromiseData {
     files: LocalFile[];
     uploadFn: (file: LocalFile) => Promise<SyncedFileWithId>;
+    mediaType: IMedia['type'];
   }
 
   export interface AllProps extends Public, Navigation {}

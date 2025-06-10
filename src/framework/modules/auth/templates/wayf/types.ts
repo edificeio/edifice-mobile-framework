@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { loginFederationActionAddFirstAccount } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { IAuthState } from '~/framework/modules/auth/reducer';
-import { StackNavigationAction } from '~/framework/navigation/types';
+import { StackNavigationAction } from '~/framework/navigation';
 
 export enum WAYFPageMode {
   EMPTY = 0,
