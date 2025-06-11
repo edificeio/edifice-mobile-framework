@@ -22,7 +22,7 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { WithScreenPromise } from '~/framework/navigation/promise';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
-import { Image, IMedia } from '~/framework/util/media';
+import { Image } from '~/framework/util/media';
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness.toString(),
@@ -94,10 +94,10 @@ const renderPlaceholder = () => {
 
 const MAX_PARALLEL_UPLOADS_TASKS = 6;
 
-export default WithScreenPromise<IMedia[], ImportQueueScreenProps.PromiseData, ImportQueueScreenProps.AllProps>(
+export default WithScreenPromise<SyncedFileWithId[], ImportQueueScreenProps.PromiseData, ImportQueueScreenProps.AllProps>(
   function FileImportScreen(props) {
     const {
-      modalPromiseData: { files, mediaType, uploadFn },
+      modalPromiseData: { files, uploadFn },
       navigation,
       rejectModalPromise,
       resolveModalPromise,
@@ -161,15 +161,11 @@ export default WithScreenPromise<IMedia[], ImportQueueScreenProps.PromiseData, I
 
     const updateTasks = React.useCallback(
       (tasks: ReturnType<typeof formatTask>[]) => {
-        if (tasks.length === 0) {
-          navigation.goBack();
-          return;
-        }
         uploadTasksRef.current = tasks;
         setUploadTaskUniqueNumber(val => val + 1);
         uploadRemainingFiles();
       },
-      [uploadRemainingFiles, navigation],
+      [uploadRemainingFiles],
     );
 
     const removeAllFiles = React.useCallback(() => {
@@ -226,14 +222,14 @@ export default WithScreenPromise<IMedia[], ImportQueueScreenProps.PromiseData, I
     React.useEffect(() => {
       if (importValidated) {
         navigation.goBack();
-        const mediaResult = uploadTasksRef.current.reduce<IMedia[]>((acc, task) => {
+        const distantFiles = uploadTasksRef.current.reduce<SyncedFileWithId[]>((acc, task) => {
           if (task.status !== UploadStatus.OK) return acc;
-          acc.push({ mime: task.file.filetype, src: task.file.df.url, type: mediaType });
+          acc.push(task.file);
           return acc;
         }, []);
-        resolveModalPromise(mediaResult);
+        resolveModalPromise(distantFiles);
       }
-    }, [importValidated, mediaType, navigation, resolveModalPromise, route]);
+    }, [importValidated, navigation, resolveModalPromise, route]);
 
     React.useEffect(() => {
       if (uploadTasksRef.current.length === 0 && uploadTaskUniqueNumber) {
@@ -241,13 +237,6 @@ export default WithScreenPromise<IMedia[], ImportQueueScreenProps.PromiseData, I
         resolveModalPromise([]);
       }
     }, [uploadTaskUniqueNumber, navigation, resolveModalPromise]);
-
-    // Refresh remaining tasks everytime a file has been handled.
-    React.useEffect(() => {
-      if (uploadTaskUniqueNumber) {
-        uploadRemainingFiles();
-      }
-    }, [uploadTaskUniqueNumber, uploadRemainingFiles]);
 
     const removeFile = React.useCallback(
       async (index: number) => {
@@ -323,6 +312,7 @@ export default WithScreenPromise<IMedia[], ImportQueueScreenProps.PromiseData, I
     };
 
     React.useEffect(() => {
+      uploadRemainingFiles();
       return () => {
         rejectModalPromise(
           new Error(
@@ -330,9 +320,7 @@ export default WithScreenPromise<IMedia[], ImportQueueScreenProps.PromiseData, I
           ),
         );
       };
-      // This hook need to be called once
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [rejectModalPromise, uploadRemainingFiles]);
 
     if (!session) return <EmptyContentScreen />;
 
@@ -342,11 +330,11 @@ export default WithScreenPromise<IMedia[], ImportQueueScreenProps.PromiseData, I
           data={uploadTasksRef.current}
           contentContainerStyle={styles.addFilesResults}
           alwaysBounceVertical={false}
-          renderItem={({ index, item }) => (
+          renderItem={({ index, item }: { index: number; item: UploadTask }) => (
             <View key={index} style={styles.addFilesResultsItem}>
               {renderThumbnail(item)}
               <View style={styles.addFilesResultsFile}>
-                <SmallText numberOfLines={1}>{item.localFile.filename}</SmallText>
+                <SmallText numberOfLines={1}>{item.file.filename}</SmallText>
                 {item.status === UploadStatus.KO ? <CaptionBoldText>{item.error}</CaptionBoldText> : null}
               </View>
               {fileStatusIcon(index, item.status)}

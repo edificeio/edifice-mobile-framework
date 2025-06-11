@@ -23,7 +23,7 @@ export async function fetchForPlatform(
   init?: RequestInit,
 ): Promise<Response> {
   const request = new RequestBuilder(...parseFetchArguments(methodOrUrl, urlOrInit, init)).withPlatform(platform).build();
-  console.info('[HTTP] Fetch for platform :', platform.displayName, request.method, request.url, JSON.stringify(request));
+  // console.info('[HTTP] Fetch for platform :', platform.displayName, request.method, request.url, JSON.stringify(request));
   return await _fetch(request);
 }
 

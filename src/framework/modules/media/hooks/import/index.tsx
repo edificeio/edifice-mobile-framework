@@ -19,7 +19,7 @@ import { BodyBoldText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { usePromiseNavigate } from '~/framework/navigation/promise';
 import AudioRecorder from '~/framework/util/audio-files/recorder';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 import { IMedia } from '~/framework/util/media';
 import { ArrayElement } from '~/utils/types';
@@ -167,14 +167,18 @@ const uploadAllMedia = async (
   session: AuthActiveAccount,
   localMedia: LocalMediaImportResult,
   uploadParams: IWorkspaceUploadParams,
-  uploadMultipleMedia: (files: LocalFile[]) => Promise<IMedia[]>,
+  uploadMultipleMedia: (
+    session: AuthActiveAccount,
+    files: LocalFile[],
+    uploadParams: IWorkspaceUploadParams,
+  ) => Promise<SyncedFileWithId[]>,
 ) => {
   if (localMedia.length <= 0) return;
   else if (localMedia.length === 1) {
     const distantFile = await uploadSingleMedia(session, localMedia[0], uploadParams);
     return [distantFile];
   } else {
-    return uploadMultipleMedia(localMedia);
+    return uploadMultipleMedia(session, localMedia, uploadParams);
   }
 };
 
@@ -230,13 +234,14 @@ export const useMediaImport = (
 
   const openImportModal = usePromiseNavigate(mediaRouteNames['import-queue']);
   const uploadMultiple = React.useCallback(
-    (files: LocalFile[]) =>
+    (session: AuthActiveAccount, files: LocalFile[]) =>
       openImportModal(undefined, {
         files,
-        mediaType: 'video',
-        uploadFn: uploadSingleMedia,
+        uploadFn: (file: LocalFile) => {
+          return uploadSingleMedia(session, file, uploadParams);
+        },
       }),
-    [openImportModal],
+    [openImportModal, uploadParams],
   );
 
   const onValidate = React.useCallback(

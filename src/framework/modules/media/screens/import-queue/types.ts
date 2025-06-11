@@ -4,7 +4,6 @@ import { MediaNavigationParams } from '../../navigation';
 
 import { ModalPromiseNavigationParams } from '~/framework/navigation/promise/types';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
-import { IMedia } from '~/framework/util/media';
 
 export namespace ImportQueueScreenProps {
   export interface Public {}
@@ -18,7 +17,6 @@ export namespace ImportQueueScreenProps {
   export interface PromiseData {
     files: LocalFile[];
     uploadFn: (file: LocalFile) => Promise<SyncedFileWithId>;
-    mediaType: IMedia['type'];
   }
 
   export interface AllProps extends Public, Navigation {}
