@@ -41,12 +41,7 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: theme.palette.grey.graphite,
-  },
-  waveformContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: UI_SIZES.spacing.medium,
-    width: getScaleWidth(327),
   },
 });
 

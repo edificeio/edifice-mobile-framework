@@ -41,15 +41,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingTop: UI_SIZES.spacing.big * 2,
   },
-  placeholderText: {
-    color: theme.palette.grey.graphite,
-  },
-  waveformContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: UI_SIZES.spacing.medium,
-    width: getScaleWidth(327),
-  },
 });
 
 export default styles;
