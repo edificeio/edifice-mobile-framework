@@ -1,16 +1,16 @@
-import { RecorderState } from '@simform_solutions/react-native-audio-waveform';
+import { PlayerState, RecorderState } from '@simform_solutions/react-native-audio-waveform';
 
 export interface CustomWaveformProps {
-  height: number;
-  barWidth?: number;
-  barSpace?: number;
+  audioTotalDuration?: number;
+  amplitude?: number;
   barColor?: string;
-  speed?: number; // ms between each bar
+  barSpace?: number;
+  barWidth?: number;
   maxBars?: number;
-  amplitude: number;
+  playerState?: PlayerState;
   recorderState?: RecorderState;
-  onPauseRecord?: () => Promise<boolean>;
-  onResumeRecord?: () => Promise<boolean>;
-  onStartRecord?: () => Promise<boolean>;
-  onStopRecord?: () => Promise<boolean>;
+  recordedBars?: number[]; // Bars captured during recording to be passed to the player
+  resetPlayer?: () => void;
+  setRecordedBars?: (bars: number[]) => void;
+  speed?: number; // ms between each bar
 }

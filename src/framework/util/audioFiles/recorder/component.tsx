@@ -14,13 +14,14 @@ import RNFS from 'react-native-fs';
 import styles from './styles';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
+import { useWaveformBars } from '~/framework/util/audioFiles/hook/useWaveFormBars';
+import AudioPlayer from '~/framework/util/audioFiles/player';
 import CustomWaveform from '~/framework/util/audioFiles/waveform';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
-
-const PlayerComponent = () => <BodyText>PLAYEEEER</BodyText>;
 
 const { AudioWaveform, AudioWaveformsEventEmitter } = NativeModules;
 
@@ -31,8 +32,11 @@ const AudioRecorder = () => {
   const [recorderState, setRecorderState] = useState<RecorderState>(RecorderState.stopped);
   const [currentAmplitude, setCurrentAmplitude] = useState<number>(0);
   const [isRecordDeleted, setIsRecordDeleted] = useState<boolean>(false);
-  const [isRecordFulfilled, setIsRecordFulfilled] = useState<boolean>(false);
-  const [hasPermission, setHasPermission] = useState<boolean>(false);
+  const [showPlayer, setShowPlayer] = useState<boolean>(false);
+
+  // States of the waveForm and the URI of the file captured during recording, which need to be passed to the player
+  const { barsRef, setBars } = useWaveformBars();
+  const [audioFile, setAudioFile] = useState<string | null>(null);
 
   const requestPermissionIfNeeded = React.useCallback(async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
@@ -40,7 +44,9 @@ const AudioRecorder = () => {
       return granted === PermissionsAndroid.RESULTS.GRANTED;
     }
     const status = await checkHasAudioRecorderPermission();
-    if (status === PermissionStatus.granted) return true;
+    if (status === PermissionStatus.granted) {
+      return true;
+    }
 
     if (status === PermissionStatus.undetermined) {
       const newStatus = await getAudioRecorderPermission();
@@ -49,6 +55,7 @@ const AudioRecorder = () => {
     return false;
   }, [checkHasAudioRecorderPermission, getAudioRecorderPermission]);
 
+  // Format the audio file as an Asset before making it a LocalFile
   const processAudio = async (filePath: string): Promise<Asset> => {
     try {
       const fileStats = await RNFS.stat(filePath);
@@ -69,31 +76,11 @@ const AudioRecorder = () => {
     }
   };
 
-  const onStopRecord = async () => {
-    if (recorderState !== RecorderState.stopped) {
-      try {
-        const audioFilePath = await recorder.stopRecording();
-        setIsRecordFulfilled(true);
-        setRecorderState(RecorderState.stopped);
-
-        if (audioFilePath) {
-          const audioAsset = await processAudio(audioFilePath[0]);
-          const fileToSave = new LocalFile(audioAsset, { _needIOSReleaseSecureAccess: false });
-          console.log('fileToSave', fileToSave);
-          // open with old player
-          fileToSave.open();
-        }
-      } catch (error) {
-        console.error('Error stopping the recording:', error);
-      }
-    }
-  };
-
   const onDeleteRecord = async () => {
     await recorder.stopRecording();
     setRecorderState(RecorderState.stopped);
     setIsRecordDeleted(true);
-    setIsRecordFulfilled(false);
+    setShowPlayer(false);
   };
 
   const onPauseRecord = async () => {
@@ -111,6 +98,8 @@ const AudioRecorder = () => {
   };
 
   const onStartRecord = async () => {
+    const isPermissionGranted = await requestPermissionIfNeeded();
+    if (!isPermissionGranted) return;
     if (recorderState === RecorderState.stopped) {
       setIsRecordDeleted(false);
       await recorder.startRecording({ updateFrequency: UpdateFrequency.high });
@@ -118,8 +107,38 @@ const AudioRecorder = () => {
     }
   };
 
+  // The stopRecording function returns the URI of the recorded audio file
+  const onStopRecord = async () => {
+    if (recorderState !== RecorderState.stopped) {
+      try {
+        const audioFilePath = await recorder.stopRecording();
+        console.log('audioFilePath------------', audioFilePath);
+        setAudioFile(audioFilePath[0]);
+        setShowPlayer(true);
+        setRecorderState(RecorderState.stopped);
+
+        if (audioFilePath) {
+          const audioAsset = await processAudio(audioFilePath[0]);
+          const fileToSave = new LocalFile(audioAsset, { _needIOSReleaseSecureAccess: false });
+          console.log('fileToSave', fileToSave);
+        }
+      } catch (error) {
+        console.error('Error stopping the recording:', error);
+      }
+    }
+  };
+
+  const resetRecorderFromPlayer = () => {
+    setShowPlayer(false);
+    setIsRecordDeleted(true);
+    setAudioFile(null);
+    barsRef.current = [];
+    setBars([]);
+  };
+
   const timeRef = React.useRef<number>(0);
 
+  // Listen to the decibels captured by the mic native module
   React.useEffect(() => {
     let emitter: NativeEventEmitter | null = null;
     let subscription: any;
@@ -148,15 +167,6 @@ const AudioRecorder = () => {
     console.log(recorderState, 'recorderState-----');
   }, [recorderState]);
 
-  // Request audio permission on component mount
-  React.useEffect(() => {
-    async function getAudioPermission() {
-      const isPermissionGranted = await requestPermissionIfNeeded();
-      setHasPermission(isPermissionGranted);
-    }
-    getAudioPermission();
-  }, [requestPermissionIfNeeded]);
-
   const deleteButtonStyle = React.useMemo(
     () => [
       styles.buttonDelete,
@@ -173,21 +183,21 @@ const AudioRecorder = () => {
     [recorderState],
   );
 
-  return isRecordFulfilled ? (
-    <PlayerComponent />
+  return showPlayer ? (
+    <AudioPlayer filePath={audioFile!!} recordedBars={barsRef.current} resetRecorder={resetRecorderFromPlayer} />
   ) : (
     <View style={styles.container}>
       <View style={styles.waveformContainer}>
-        {recorderState === RecorderState.stopped && (!isRecordFulfilled || isRecordDeleted) ? (
+        {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
           <BodyText style={styles.placeholderText}>Touchez pour commencer</BodyText>
         ) : (
           <CustomWaveform
             amplitude={currentAmplitude}
-            height={40}
             recorderState={recorderState}
             speed={1 / 30}
             maxBars={60}
             ref={waveformRef}
+            setRecordedBars={setBars}
           />
         )}
       </View>
@@ -197,16 +207,31 @@ const AudioRecorder = () => {
           onPress={onDeleteRecord}
           style={deleteButtonStyle}
           disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
-          <Svg height={20} width={20} fill={theme.palette.grey.darkness} name="ui-delete" />
+          <Svg
+            height={UI_SIZES.dimensions.height.mediumPlus}
+            width={UI_SIZES.dimensions.width.mediumPlus}
+            fill={theme.palette.grey.darkness}
+            name="ui-delete"
+          />
         </TouchableOpacity>
 
-        {recorderState === RecorderState.stopped && (!isRecordFulfilled || isRecordDeleted) ? (
+        {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
           <TouchableOpacity onPress={onStartRecord} style={styles.buttonPlayStop}>
-            <Svg height={20} width={20} fill={theme.palette.grey.white} name="ui-mic" />
+            <Svg
+              height={UI_SIZES.dimensions.height.mediumPlus}
+              width={UI_SIZES.dimensions.width.mediumPlus}
+              fill={theme.palette.grey.white}
+              name="ui-mic"
+            />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={onStopRecord} style={styles.buttonPlayStop}>
-            <Svg height={20} width={20} fill={theme.palette.grey.white} name="ui-stop" />
+            <Svg
+              height={UI_SIZES.dimensions.height.mediumPlus}
+              width={UI_SIZES.dimensions.width.mediumPlus}
+              fill={theme.palette.grey.white}
+              name="ui-stop"
+            />
           </TouchableOpacity>
         )}
 
@@ -215,8 +240,8 @@ const AudioRecorder = () => {
           style={pauseButtonStyle}
           disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
           <Svg
-            height={20}
-            width={20}
+            height={UI_SIZES.dimensions.height.mediumPlus}
+            width={UI_SIZES.dimensions.width.mediumPlus}
             fill={theme.palette.grey.white}
             name={recorderState === RecorderState.paused ? 'ui-mic' : 'ui-pause-filled'}
           />
