@@ -1,7 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '../module-config';
-
+import moduleConfig from '~/framework/modules/media/module-config';
 import type { ImportQueueScreenProps } from '~/framework/modules/media/screens/import-queue/types';
 import { IMedia } from '~/framework/util/media';
 

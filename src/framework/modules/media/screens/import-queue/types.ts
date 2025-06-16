@@ -1,7 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { MediaNavigationParams } from '../../navigation';
-
+import { MediaNavigationParams } from '~/framework/modules/media/navigation';
 import { ModalPromiseNavigationParams } from '~/framework/navigation/promise/types';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 

@@ -1,4 +1,4 @@
-import { LocalFile } from '../../fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler';
 
 export interface AudioRecorderProps {
   onSave?: (file: LocalFile[]) => void;

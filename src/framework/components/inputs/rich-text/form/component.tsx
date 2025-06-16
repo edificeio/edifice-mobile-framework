@@ -5,7 +5,6 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { connect } from 'react-redux';
 
-import { RichToolbarProps } from '../toolbar/types';
 import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
@@ -16,6 +15,7 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
+import { RichToolbarProps } from '~/framework/components/inputs/rich-text/toolbar/types';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -264,6 +264,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   const { element: mediaImportElements, prompt: promptMedia } = useMediaImport(props.uploadParams);
 
   const addMediaItem = (item: IMedia) => {
+    console.debug('add media item', item);
     switch (item.type) {
       case 'image':
         richText.current?.insertHTML(
@@ -285,6 +286,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       richText?.current?.lockContentEditor();
       blurRichText();
       const media = await promptMedia(type);
+      console.debug('medias to add', media);
       if (!media || media.length === 0) return;
       const addMediaItemByIndex = (i: number) => {
         if (media[i]) {
