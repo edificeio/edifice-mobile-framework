@@ -11,6 +11,7 @@ import { useAudioRecorder } from '@simform_solutions/react-native-audio-waveform
 import RNFS from 'react-native-fs';
 
 import styles from './styles';
+import { AudioRecorderProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -25,7 +26,7 @@ import { Asset } from '~/framework/util/fileHandler/types';
 
 const { AudioWaveform, AudioWaveformsEventEmitter } = NativeModules;
 
-const AudioRecorder = () => {
+const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
   const recorder = useAudioRecorder();
   const [recorderState, setRecorderState] = useState<RecorderState>(RecorderState.stopped);
   const [currentAmplitude, setCurrentAmplitude] = useState<number>(0);

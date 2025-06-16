@@ -58,14 +58,22 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
   audio: () => {
     // utiliser createRef ici au lieu de useRef car cette fonction sera appelée au sein d'un useMemo().
     const audioRecordBottomSheetRef = React.createRef<BottomSheetMethods>();
+    const promiseExecutorRef = React.createRef<MediaBottomSheetModalInternalData<LocalFile[]>>() as React.MutableRefObject<
+      MediaBottomSheetModalInternalData<LocalFile[]> | undefined
+    >;
 
     return {
       element: (
         <>
           <CustomNonModalBottomSheet ref={audioRecordBottomSheetRef} enablePanDownToClose index={-1}>
-            <View style={{ height: 400 }}>
-              <BodyBoldText>BONJOUR</BodyBoldText>
-              <AudioRecorder />
+            <View>
+              <AudioRecorder
+                onSave={promiseExecutorRef.current?.resolve}
+                onCancel={() => {
+                  promiseExecutorRef.current?.resolve([]);
+                }}
+                onError={promiseExecutorRef.current?.reject}
+              />
             </View>
           </CustomNonModalBottomSheet>
         </>
@@ -81,21 +89,11 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
         {
           i18n: 'Record audio',
           icon: 'ui-audio',
-          // onPress: async () => {
-          //   const video = await ImagePicker.openCamera({
-          //     mediaType: 'video',
-          //   });
-          //   return [
-          //     new LocalFile({
-          //       filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
-          //       filepath: video.path,
-          //       fileSize: video.size,
-          //     }),
-          //   ];
-          // },
           onPress: async () => {
-            audioRecordBottomSheetRef.current?.expand();
-            return [];
+            return new Promise<LocalMediaImportResult>((resolve, reject) => {
+              promiseExecutorRef.current = { reject, resolve };
+              audioRecordBottomSheetRef.current?.expand();
+            });
           },
         },
       ],
@@ -247,6 +245,7 @@ export const useMediaImport = (
   const onValidate = React.useCallback(
     async (callback: () => Promise<LocalMediaImportResult | undefined>) => {
       try {
+        currentBottomSheetRef.current?.dismiss();
         const localMedia = await callback();
         if (!localMedia || localMedia.length === 0) return cancelMediaImport();
         const session = getSession();
