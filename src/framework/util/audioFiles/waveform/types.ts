@@ -3,17 +3,18 @@ import { PlayerState, RecorderState } from '@simform_solutions/react-native-audi
 type WaveFormType = 'Recorder' | 'Player';
 
 export interface CustomWaveformProps {
-  audioTotalDuration?: number;
   amplitude?: number; // Decibels captured by the native module
+  audioTotalDuration?: number;
   barColor?: string;
+  barsRef?: React.MutableRefObject<number[]>;
   barSpace?: number;
   barWidth?: number;
   maxBars?: number;
   mode: WaveFormType;
   playerState?: PlayerState;
-  recordedBars?: number[]; // Bars captured during recording to be passed to the player
+  recordedBarsForPlayer?: number[]; // Bars captured during recording to be passed to the player
   recorderState?: RecorderState;
   resetPlayer?: () => void;
-  setRecordedBars?: (bars: number[]) => void;
+  setBarsRef?: (bars: number[]) => void;
   speed?: number; // ms between each bar
 }

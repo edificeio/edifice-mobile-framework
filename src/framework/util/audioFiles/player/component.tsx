@@ -12,13 +12,15 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import CustomWaveform from '~/framework/util/audioFiles/waveform';
 
-const AudioPlayer = ({ filePath, recordedBars, resetRecorder }): ReactElement<AudioPlayerProps> => {
+const BARS_DISPLAY_SPEED = 30;
+
+const AudioPlayer = ({ filePath, recordedBarsForPlayer, resetRecorder }): ReactElement<AudioPlayerProps> => {
   const [audioTotalDuration, setAudioTotalDuration] = useState<number>(0);
   const player = useAudioPlayer();
   const [playerState, setPlayerState] = useState<PlayerState>(PlayerState.stopped);
   // playerKey is the identifier of the player's current instance
   const playerKey = React.useMemo(() => `PlayerFor${filePath}`, [filePath]);
-  const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 1 / 30), []);
+  const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 20), []);
 
   const preparePlayerForPath = async (fileUri: string) => {
     if (fileUri) {
@@ -26,7 +28,7 @@ const AudioPlayer = ({ filePath, recordedBars, resetRecorder }): ReactElement<Au
         const isPlayerReady = await player.preparePlayer({
           path: fileUri,
           playerKey: playerKey,
-          updateFrequency: UpdateFrequency.medium,
+          updateFrequency: UpdateFrequency.high,
           volume: 100,
         });
         return isPlayerReady;
@@ -112,7 +114,7 @@ const AudioPlayer = ({ filePath, recordedBars, resetRecorder }): ReactElement<Au
         maxBars={60}
         mode="Player"
         playerState={playerState}
-        recordedBars={recordedBars}
+        recordedBarsForPlayer={recordedBarsForPlayer}
         resetPlayer={resetPlayer}
         speed={barsDisplaySpeed}
       />

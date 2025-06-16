@@ -27,14 +27,14 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   audioTotalDuration,
   barColor = theme.palette.primary.regular,
   barSpace = BAR_SPACE_DEFAULT,
+  barsRef,
   barWidth = BAR_WIDTH_DEFAULT,
   maxBars = 50,
   mode,
   playerState,
-  recordedBars = [],
+  recordedBarsForPlayer = [],
   recorderState,
   resetPlayer,
-  setRecordedBars,
   speed = 50,
 }) => {
   const [recorderBars, setRecorderBars] = useState<number[]>([]);
@@ -47,7 +47,6 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   const accumulatedPlayerTimeRef = useRef(0);
 
   const [displayedPlayerBars, setDisplayedPlayerBars] = useState(0);
-  const playerBarsRef = useRef<number[]>([]);
 
   /**
    * minAmpIn / maxAmpIn  : min/max decibel value captured by the mic that we will use as 0(min) and 1(max) on the scale
@@ -71,8 +70,8 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   // Convert audioDuration from ms to seconds and avoid division by zero
   const durationSec = audioTotalDuration ? audioTotalDuration / 1000 : 1;
   const barsToRenderInPlayer = React.useMemo(() => {
-    return recordedBars ? [...recordedBars] : [];
-  }, [recordedBars]);
+    return recordedBarsForPlayer ? [...recordedBarsForPlayer] : [];
+  }, [recordedBarsForPlayer]);
   const totalRecordedBars = barsToRenderInPlayer.length;
 
   // Handles the waveform bars display and height calculation for recording mode
@@ -87,7 +86,9 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
 
             const barHeight = Math.max(BAR_MIN_HEIGHT, normalizedAmp * WAVEFORM_HEIGHT);
             // Saves the bars to display in the player
-            playerBarsRef.current = [...playerBarsRef.current, barHeight];
+            if (barsRef) {
+              barsRef.current = [...barsRef.current, barHeight];
+            }
 
             return [barHeight, ...prev].slice(0, maxBars);
           });
@@ -99,17 +100,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [speed, maxBars, amplitude, recorderState, minAmpIn, maxAmpIn, randomness]);
-
-  // @todo : voir si je peux save une seule fois à la fin sur le clic sur stop---------------------------------
-  // Saves the bars from recording to then display them in the player
-  useEffect(() => {
-    if (setRecordedBars) {
-      // console.log('allbars at the end', [...allBarsRef.current]);
-      console.log('ça va settttt--------------');
-      setRecordedBars([...playerBarsRef.current]);
-    }
-  }, [setRecordedBars]);
+  }, [speed, maxBars, amplitude, recorderState, minAmpIn, maxAmpIn, randomness, barsRef]);
 
   // Handles the waveform bars display for playback mode
   useEffect(() => {
@@ -119,7 +110,6 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
         setDisplayedPlayerBars(prev => {
           if (prev < totalRecordedBars) {
             const nextBar = prev + 1;
-            // console.log(`Barre affichée: ${nextBar}/${totalRecordedBars}`);
             return nextBar;
           } else {
             clearInterval(interval);

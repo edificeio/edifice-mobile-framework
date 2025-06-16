@@ -1,5 +1,5 @@
 export interface AudioPlayerProps {
   filePath: string;
-  recordedBars: number[];
+  recordedBarsForPlayer: number[];
   resetRecorder: () => void;
 }

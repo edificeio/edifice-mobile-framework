@@ -18,25 +18,26 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import { useWaveformBars } from '~/framework/util/audioFiles/hook/useWaveFormBars';
 import AudioPlayer from '~/framework/util/audioFiles/player';
 import CustomWaveform from '~/framework/util/audioFiles/waveform';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
 
+const BARS_DISPLAY_SPEED = 30;
+
 const { AudioWaveform, AudioWaveformsEventEmitter } = NativeModules;
 
 const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
   const recorder = useAudioRecorder();
+  const { checkHasAudioRecorderPermission, getAudioRecorderPermission } = useAudioPermission();
   const [recorderState, setRecorderState] = useState<RecorderState>(RecorderState.stopped);
   const [currentAmplitude, setCurrentAmplitude] = useState<number>(0);
   const [isRecordDeleted, setIsRecordDeleted] = useState<boolean>(false);
   const [showPlayer, setShowPlayer] = useState<boolean>(false);
   const [audioFile, setAudioFile] = useState<string | null>(null);
-  const { checkHasAudioRecorderPermission, getAudioRecorderPermission } = useAudioPermission();
-  const { barsRef, setBars } = useWaveformBars();
-  // 40 semblait ok sur iOS
-  const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 1 / 30), []);
+  const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 20), []);
+  const barsRef = React.useRef<number[]>([]);
+  const [barsForPlayer, setBarsForPlayer] = useState<number[]>([]);
 
   const requestPermissionIfNeeded = React.useCallback(async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
@@ -111,11 +112,9 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
     if (recorderState !== RecorderState.stopped) {
       try {
         const audioFilePath = await recorder.stopRecording();
-        console.log('audioFilePath------------', audioFilePath);
         setAudioFile(audioFilePath[0]);
         setRecorderState(RecorderState.stopped);
-        console.log('ça va settttt--------------', barsRef.current);
-        setBars([...barsRef.current]);
+        setBarsForPlayer([...barsRef.current]);
         setShowPlayer(true);
 
         if (audioFilePath) {
@@ -134,10 +133,10 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
     setIsRecordDeleted(true);
     setAudioFile(null);
     barsRef.current = [];
-    setBars([]);
   };
 
   // Listen to the decibels captured by the native module
+  // Triggers warning "new NativeEventEmitter()` was called with a non-null argument..."
   React.useEffect(() => {
     let emitter: NativeEventEmitter | null = null;
     let subscription: any;
@@ -175,12 +174,8 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
     [recorderState],
   );
 
-  React.useEffect(() => {
-    console.log(recorderState, 'recorderState in recorder-----');
-  }, [recorderState]);
-
   return showPlayer ? (
-    <AudioPlayer filePath={audioFile!!} recordedBars={barsRef.current} resetRecorder={resetRecorderFromPlayer} />
+    <AudioPlayer filePath={audioFile!!} recordedBarsForPlayer={barsForPlayer} resetRecorder={resetRecorderFromPlayer} />
   ) : (
     <View style={styles.container}>
       {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
@@ -191,8 +186,8 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
           maxBars={60}
           mode="Recorder"
           recorderState={recorderState}
-          setRecordedBars={setBars}
           speed={barsDisplaySpeed}
+          barsRef={barsRef}
         />
       )}
 
