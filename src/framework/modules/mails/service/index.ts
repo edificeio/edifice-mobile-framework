@@ -213,8 +213,8 @@ export const mailsService = {
     },
   },
   visibles: {
-    getBySearch: async (params: { query: string }) => {
-      const api = `/communication/visible/search?query=${params.query}`;
+    get: async () => {
+      const api = `/communication/visible/search`;
 
       const backendVisibles = (await http.fetchJsonForSession('GET', api)) as MailsVisibleBackend[];
 

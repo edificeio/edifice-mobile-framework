@@ -45,6 +45,7 @@ import {
 } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
+import { readLastCallTimestamp, writeLastCallTimestamp, writeVisibles } from '~/framework/modules/mails/storage';
 import { flattenFolders, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/http';
@@ -468,6 +469,26 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     ],
     [onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder],
   );
+
+  React.useEffect(() => {
+    //reload visibles if last call was more than 1 hour ago or never called
+    const reloadVisibles = async () => {
+      const lastCall = readLastCallTimestamp();
+      const now = Date.now();
+
+      if (now - lastCall > 3600_000 || lastCall === 0) {
+        try {
+          const visibles = await mailsService.visibles.get();
+          writeVisibles(visibles);
+          writeLastCallTimestamp(now);
+        } catch (e) {
+          console.error('[reloadVisibles] Failed to fetch visibles', e);
+        }
+      }
+    };
+
+    reloadVisibles();
+  }, []);
 
   React.useEffect(() => {
     props.navigation.setOptions({

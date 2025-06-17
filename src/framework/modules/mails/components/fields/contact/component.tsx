@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-raw-text */
 import * as React from 'react';
 import { Animated, Keyboard, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
@@ -18,7 +17,7 @@ import MailsContactItem from '~/framework/modules/mails/components/contact-item'
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
 import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
-import { mailsService } from '~/framework/modules/mails/service';
+import { readVisibles } from '~/framework/modules/mails/storage';
 import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
 
 function removeAccents(text: string): string {
@@ -33,13 +32,15 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [ccCciPressed, setCcCciPressed] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [selectedRecipients, setSelectedRecipients] = React.useState<MailsVisible[]>(props.recipients ?? []);
-  const [results, setResults] = React.useState<MailsVisible[]>([]);
+  const [filteredUsers, setFilteredUsers] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
   const [heightInputToSave, setHeightInputToSave] = React.useState(0);
   const [heightToRemoveList, setHeightToRemoveList] = React.useState(INITIAL_HEIGHT_INPUT);
   const [focused, setFocused] = React.useState(false);
   const [inputFocused, setInputFocused] = React.useState(false);
+
+  const users: MailsVisible[] = React.useMemo(() => readVisibles(), []);
 
   const topPositionResults = React.useRef(new Animated.Value(0)).current;
 
@@ -136,25 +137,51 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   const onRemoveContentAndExitInput = () => {
     setSearch('');
-    if (results.length) setResults([]);
+    if (filteredUsers.length) setFilteredUsers([]);
     if (showList) toggleShowList();
   };
 
-  const fetchSearch = async (query: string) => {
-    try {
-      const dataResults = await mailsService.visibles.getBySearch({ query });
-      setResults(dataResults);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
+  const onSearch = (query: string) => {
+    let testDisplayNames: string[] = [],
+      testNameReverseds: string[] = [];
+
+    function addSearchTerm(displayName: string): void {
+      const testDisplayName = removeAccents(displayName).toLowerCase();
+      testDisplayNames.push(testDisplayName);
+      const split = testDisplayName.split(' ');
+      testNameReverseds.push(split.length > 1 ? split[1] + ' ' + split[0] : testDisplayName);
     }
+
+    return (user: MailsVisible) => {
+      testDisplayNames = [];
+      testNameReverseds = [];
+
+      if (user.displayName) {
+        addSearchTerm(user.displayName);
+      }
+      if (user.children) {
+        user.children.forEach(child => {
+          addSearchTerm(child.displayName);
+        });
+      }
+      if (user.relatives) {
+        user.relatives.forEach(relative => {
+          addSearchTerm(relative.displayName);
+        });
+      }
+      return (
+        testDisplayNames.some(name => name.indexOf(query) !== -1) || testNameReverseds.some(name => name.indexOf(query) !== -1)
+      );
+    };
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(
     debounce(text => {
-      fetchSearch(text);
+      const filterFunction = onSearch(text);
+      const result = users.filter(user => filterFunction(user));
+      setFilteredUsers(result);
+      setLoading(false);
     }, 500),
     [],
   );
@@ -290,7 +317,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               nestedScrollEnabled
               showsVerticalScrollIndicator={false}
               bounces={false}
-              data={results}
+              data={filteredUsers}
               contentContainerStyle={[
                 styles.results,
                 {
@@ -298,9 +325,9 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
                 },
               ]}
               ListHeaderComponent={
-                results.length > 0 ? (
+                filteredUsers.length > 0 ? (
                   <SmallBoldText style={styles.nbResults}>
-                    {I18n.get(results.length > 1 ? 'mails-edit-results' : 'mails-edit-result', { nb: results.length })}
+                    {I18n.get(filteredUsers.length > 1 ? 'mails-edit-results' : 'mails-edit-result', { nb: filteredUsers.length })}
                   </SmallBoldText>
                 ) : null
               }
