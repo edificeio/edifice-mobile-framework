@@ -229,16 +229,14 @@ export const useMediaImport = (
     async (type: IMedia['type'], callback: () => Promise<LocalMediaImportResult>) => {
       try {
         cancelOnDismiss.current = false;
-        currentBottomSheetRef.current?.dismiss();
+        dismissCurrentBottomSheet();
         const localMedia = await callback();
         if (!localMedia || localMedia.length === 0) return cancelMediaImport();
         const session = getSession();
         if (!session) throw new FetchError(FetchErrorCode.NOT_LOGGED);
         const distantFiles = await uploadAllMedia(session, localMedia, uploadParams, uploadMultiple);
         if (!distantFiles) throw new FetchError(FetchErrorCode.BAD_RESPONSE);
-        console.debug('DISTANT FILES', distantFiles);
         const media = formatMedia(type, distantFiles);
-        console.debug('MEDIA', media);
         promiseExecutorRef.current?.resolve(media);
       } catch (e) {
         if (e instanceof Error) {
@@ -287,7 +285,7 @@ export const useMediaImport = (
         currentBottomSheetRef.current = null;
       }
     },
-    [cancelMediaImport, formatMedia, uploadMultiple, uploadParams],
+    [cancelMediaImport, dismissCurrentBottomSheet, formatMedia, uploadMultiple, uploadParams],
   );
 
   const element = React.useMemo(

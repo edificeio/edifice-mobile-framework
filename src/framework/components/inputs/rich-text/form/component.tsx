@@ -264,7 +264,6 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   const { element: mediaImportElements, prompt: promptMedia } = useMediaImport(props.uploadParams);
 
   const addMediaItem = (item: IMedia) => {
-    console.debug('add media item', item);
     switch (item.type) {
       case 'image':
         richText.current?.insertHTML(
@@ -286,7 +285,6 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       richText?.current?.lockContentEditor();
       blurRichText();
       const media = await promptMedia(type);
-      console.debug('medias to add', media);
       if (!media || media.length === 0) return;
       const addMediaItemByIndex = (i: number) => {
         if (media[i]) {
