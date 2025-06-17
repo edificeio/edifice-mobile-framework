@@ -4,7 +4,9 @@ import { View } from 'react-native';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import DeviceInfo from 'react-native-device-info';
 import ImagePicker from 'react-native-image-crop-picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+import styles from './styles';
 import {
   LocalMediaImportResult,
   MediaBottomSheetModalInternalData,
@@ -15,11 +17,10 @@ import {
 } from './types';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
-import PrimaryButton from '~/framework/components/buttons/primary';
+import GhostButton from '~/framework/components/buttons/ghost';
 import BottomSheet, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { CustomNonModalBottomSheet } from '~/framework/components/modals/bottom-sheet/component';
-import { BodyBoldText } from '~/framework/components/text';
+import { BodyText, SmallBoldText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -60,15 +61,8 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
       ),
       options: [
         {
-          i18n: 'From files',
-          icon: 'ui-audio',
-          onPress: async () => {
-            return [];
-          },
-        },
-        {
-          i18n: 'Record audio',
-          icon: 'ui-audio',
+          i18n: 'media-import-audio-from-microphone',
+          icon: 'ui-mic',
           onPress: async () => {
             return new Promise<LocalMediaImportResult>((resolve, reject) => {
               promiseExecutorRef.current = { reject, resolve };
@@ -76,24 +70,47 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
             });
           },
         },
+        {
+          i18n: 'media-import-audio-from-files',
+          icon: 'ui-smartphone',
+          onPress: async () => {
+            return [];
+          },
+        },
       ],
-      title: { color: theme.palette.complementary.purple.regular, i18n: 'Choose audio', icon: 'ui-audio' },
+      title: { i18n: 'media-import-audio-title' },
     };
   },
   image: () => ({
     options: [
-      { i18n: 'From galery', icon: 'ui-image', onPress: async () => [] },
-      { i18n: 'Take picture', icon: 'ui-camera', onPress: async () => [] },
+      { i18n: 'media-import-image-from-camera', icon: 'ui-camera', onPress: async () => [] },
+      { i18n: 'media-import-image-from-gallery', icon: 'ui-image', onPress: async () => [] },
     ],
-    title: { color: theme.palette.complementary.blue.regular, i18n: 'Choose image', icon: 'ui-audio' },
+    title: { i18n: 'media-import-image-title' },
   }),
   video: () => {
     // utiliser createRef ici au lieu de useRef car cette fonction sera appelée au sein d'un useMemo().
     return {
       options: [
         {
-          i18n: 'From galery',
-          icon: 'ui-image',
+          i18n: 'media-import-video-from-camera',
+          icon: 'ui-recordVideo',
+          onPress: async () => {
+            const video = await ImagePicker.openCamera({
+              mediaType: 'video',
+            });
+            return [
+              new LocalFile({
+                filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
+                filepath: video.path,
+                fileSize: video.size,
+              }),
+            ];
+          },
+        },
+        {
+          i18n: 'media-import-video-from-gallery',
+          icon: 'ui-smartphone',
           onPress: async () => {
             const videos = await ImagePicker.openPicker({
               maxFiles: 10,
@@ -110,24 +127,8 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
             );
           },
         },
-        {
-          i18n: 'Record video',
-          icon: 'ui-camera',
-          onPress: async () => {
-            const video = await ImagePicker.openCamera({
-              mediaType: 'video',
-            });
-            return [
-              new LocalFile({
-                filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
-                filepath: video.path,
-                fileSize: video.size,
-              }),
-            ];
-          },
-        },
       ],
-      title: { color: theme.palette.complementary.purple.regular, i18n: 'Choose video', icon: 'ui-video' },
+      title: { i18n: 'media-import-video-title' },
     };
   },
 };
@@ -299,21 +300,31 @@ export const useMediaImport = (
                 bottomSheetsRefs.current[type] = ref;
               }}
               key={type}
-              onDismiss={onDismiss}>
-              <>
-                <BodyBoldText>{I18n.get(completeChoicesByType[type].title.i18n)}</BodyBoldText>
-                {completeChoicesByType[type].options.map(o => (
-                  <PrimaryButton key={o.i18n} text={I18n.get(o.i18n)} action={() => onValidate(type, o.onPress)} />
+              onDismiss={onDismiss}
+              style={null}>
+              <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
+                <SmallBoldText style={styles.promptTitle}>{I18n.get(completeChoicesByType[type].title.i18n)}</SmallBoldText>
+                {completeChoicesByType[type].options.map((o, i) => (
+                  <>
+                    <GhostButton
+                      style={styles.button}
+                      iconLeft={o.icon}
+                      key={o.i18n}
+                      text={I18n.get(o.i18n)}
+                      action={() => onValidate(type, o.onPress)}
+                      TextComponent={BodyText}
+                    />
+                    {i < completeChoicesByType[type].options.length - 1 ? <View style={styles.separator} /> : null}
+                  </>
                 ))}
-                <PrimaryButton text="Cancel" action={dismissCurrentBottomSheet} />
-              </>
+              </SafeAreaView>
             </BottomSheet>
             {completeChoicesByType[type].element || null}
           </>
         ))}
       </>
     ),
-    [dismissCurrentBottomSheet, completeChoicesByType, onDismiss, onValidate],
+    [completeChoicesByType, onDismiss, onValidate],
   );
 
   const prompt = React.useCallback(

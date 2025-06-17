@@ -13,14 +13,14 @@ import styles from './styles';
 import type { CustomBottomSheetModalProps, CustomNonModalBottomSheetProps } from './types';
 
 export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
-  (props: CustomBottomSheetModalProps, ref) => {
+  ({ style: _style, ...props }: CustomBottomSheetModalProps, ref) => {
     const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
       return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
     };
 
-    const newStyle = React.useMemo(() => {
-      return props.style !== undefined ? props.style : styles.contentContainer;
-    }, [props.style]);
+    const style = React.useMemo(() => {
+      return _style !== undefined ? _style : styles.contentContainer;
+    }, [_style]);
 
     return (
       <BottomSheetModal
@@ -31,9 +31,9 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         topInset={useHeaderHeight() + (props.additionalTopInset ?? 0)}
         {...props}>
         {typeof props.children === 'function' ? (
-          data => <BottomSheetView style={newStyle}>{props.children(data.data)}</BottomSheetView>
+          data => <BottomSheetView style={style}>{props.children(data.data)}</BottomSheetView>
         ) : (
-          <BottomSheetView style={newStyle}>{props.children}</BottomSheetView>
+          <BottomSheetView style={style}>{props.children}</BottomSheetView>
         )}
       </BottomSheetModal>
     );

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ColorValue } from 'react-native';
 
 import { LocalFile } from '~/framework/util/fileHandler';
 import { IMedia } from '~/framework/util/media';
@@ -22,7 +21,7 @@ export interface MediaImportChoiceOption {
 export type MediaImportChoices = {
   options: MediaImportChoiceOption[];
   element?: React.ReactNode;
-  title: { color: ColorValue; i18n: string; icon: string };
+  title: { i18n: string };
 };
 export type MediaImportChoicesHook = () => MediaImportChoices;
 export type MediaTypeList = IMedia['type'][];
