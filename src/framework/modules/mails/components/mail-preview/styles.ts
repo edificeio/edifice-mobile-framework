@@ -22,6 +22,9 @@ export default StyleSheet.create({
   date: {
     color: theme.palette.grey.graphite,
   },
+  defaultFolder: {
+    marginLeft: UI_SIZES.spacing.small,
+  },
   draftText: {
     color: theme.palette.status.failure.regular,
   },

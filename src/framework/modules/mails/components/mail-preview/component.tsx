@@ -21,9 +21,10 @@ import { displayPastDate } from '~/framework/util/date';
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, id, response, state, subject, to, unread } = props.data;
-  const { isSelected, isSelectMode, isSender, onDelete, onPress, onRestore, onSelect, onToggleUnread } = props;
+  const { isInPersonalFolder, isSelected, isSelectMode, isSender, onDelete, onPress, onRestore, onSelect, onToggleUnread } = props;
 
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
+  const isDraft = state === MailsMailStatePreview.DRAFT;
   const TextComponent = isUnread ? SmallBoldText : SmallText;
   const has2SwipeActions = onToggleUnread || onRestore;
   let infosRecipients: { text: string; ids: string[] } = mailsFormatRecipients(to, cc, cci);
@@ -78,10 +79,25 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
     return <MailsRecipientAvatar type="User" id={from?.id} />;
   }, [from?.id, infosRecipients.ids, isSender]);
 
+  const renderDefaultFolder = React.useCallback(() => {
+    if (!isInPersonalFolder) return null;
+    const iconName = isDraft ? 'ui-edit' : isSender ? 'ui-send' : 'ui-depositeInbox';
+    return (
+      <View style={styles.defaultFolder}>
+        <Svg
+          name={iconName}
+          height={UI_SIZES.elements.icon.xsmall}
+          width={UI_SIZES.elements.icon.xsmall}
+          fill={theme.palette.grey.black}
+        />
+      </View>
+    );
+  }, [isDraft, isInPersonalFolder, isSender]);
+
   const renderFirstText = React.useCallback(() => {
     return (
       <TextComponent numberOfLines={1} style={styles.firstText}>
-        {state === MailsMailStatePreview.DRAFT ? (
+        {isDraft ? (
           <>
             <SmallBoldText style={styles.draftText}>
               {I18n.get('mails-list-draft')}
@@ -161,6 +177,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         onLongPress={isSelectMode ? undefined : props.onLongPress}>
         {renderSelectIcon()}
         {renderAvatar()}
+        {renderDefaultFolder()}
         {renderResponseIcon()}
         <View style={styles.texts}>
           <View style={styles.line}>

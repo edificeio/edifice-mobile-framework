@@ -874,6 +874,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           onLongPress={onActiveSelectMode}
           isSender={isSender}
           isSelectMode={isSelectionMode}
+          isInPersonalFolder={typeof selectedFolder === 'object'}
           isSelected={selectedMails.includes(mail.id)}
           onSelect={onSelectMail}
           onDelete={() => onDelete([mail.id], isTrashed ? true : false)}
