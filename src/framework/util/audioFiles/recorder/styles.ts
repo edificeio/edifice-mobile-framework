@@ -33,15 +33,19 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    paddingBottom: UI_SIZES.spacing.large,
+    flexDirection: 'column',
     paddingHorizontal: UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.spacing.big * 2,
+    width: getScaleWidth(327),
   },
   placeholderText: {
     color: theme.palette.grey.graphite,
+  },
+  placeholderTextContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
+    width: getScaleWidth(327),
   },
 });
 

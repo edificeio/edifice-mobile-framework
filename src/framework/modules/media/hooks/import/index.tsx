@@ -46,7 +46,11 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
     return {
       element: (
         <>
-          <CustomNonModalBottomSheet ref={audioRecordBottomSheetRef} enablePanDownToClose index={-1}>
+          <CustomNonModalBottomSheet
+            ref={audioRecordBottomSheetRef}
+            enablePanDownToClose
+            index={-1}
+            style={styles.nonModalBottomSheet}>
             <View>
               <AudioRecorder
                 onSave={promiseExecutorRef.current?.resolve}

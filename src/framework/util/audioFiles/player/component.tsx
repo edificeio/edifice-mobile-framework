@@ -108,7 +108,7 @@ const AudioPlayer = ({ filePath, recordedBarsForPlayer, resetRecorder }): ReactE
   }, [filePath, playerKey]);
 
   return (
-    <View style={styles.container}>
+    <>
       <CustomWaveform
         audioTotalDuration={audioTotalDuration}
         maxBars={60}
@@ -147,7 +147,7 @@ const AudioPlayer = ({ filePath, recordedBarsForPlayer, resetRecorder }): ReactE
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </>
   );
 };
 

@@ -16,6 +16,10 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingTop: UI_SIZES.spacing.minor,
   },
+  nonModalBottomSheet: {
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
   promptTitle: {
     alignSelf: 'stretch',
     flex: 1,

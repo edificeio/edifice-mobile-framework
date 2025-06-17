@@ -4,11 +4,16 @@ import { Platform, View } from 'react-native';
 import { PlayerState, RecorderState } from '@simform_solutions/react-native-audio-waveform';
 import Svg, { Rect } from 'react-native-svg';
 
-import styles, { BAR_MIN_HEIGHT, BAR_SPACE_DEFAULT, BAR_WIDTH_DEFAULT, WAVEFORM_HEIGHT, WAVEFORM_WIDTH } from './styles';
+import styles, {
+  BAR_MIN_HEIGHT,
+  BAR_SPACE_DEFAULT,
+  BAR_WIDTH_DEFAULT,
+  WAVEFORM_CONTAINER_HEIGHT,
+  WAVEFORM_CONTAINER_WIDTH,
+} from './styles';
 import { CustomWaveformProps } from './types';
 
 import theme from '~/app/theme';
-import { getScaleWidth } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 
 const TIMER_PLACEHOLDER = '0:00';
@@ -48,6 +53,10 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
 
   const [displayedPlayerBars, setDisplayedPlayerBars] = useState(0);
 
+  const waveformWidth = React.useMemo(() => {
+    return maxBars * barWidth + (maxBars - 1) * barSpace;
+  }, [barSpace, barWidth, maxBars]);
+
   /**
    * minAmpIn / maxAmpIn  : min/max decibel value captured by the mic that we will use as 0(min) and 1(max) on the scale
    * randomness : adds a random variation to the barHeight to make the waveform look more dynamic, based on the value of the previous barHeight
@@ -84,7 +93,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
             normalizedAmp *= Math.random() * randomness + 1 - randomness / 2;
             normalizedAmp = Math.pow((1 - Math.cos(normalizedAmp * Math.PI)) / 2, 2.5);
 
-            const barHeight = Math.max(BAR_MIN_HEIGHT, normalizedAmp * WAVEFORM_HEIGHT);
+            const barHeight = Math.max(BAR_MIN_HEIGHT, normalizedAmp * WAVEFORM_CONTAINER_HEIGHT);
             // Saves the bars to display in the player
             if (barsRef) {
               barsRef.current = [...barsRef.current, barHeight];
@@ -185,12 +194,12 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
       return recorderBars
         .filter(amp => typeof amp === 'number' && !isNaN(amp) && isFinite(amp))
         .map((bar, i) => {
-          const x = getScaleWidth(327) - (i + 1) * (barWidth + barSpace);
+          const x = waveformWidth - (i + 1) * (barWidth + barSpace);
           return (
             <Rect
               key={i}
               x={x}
-              y={(WAVEFORM_HEIGHT - bar) / 2}
+              y={(WAVEFORM_CONTAINER_HEIGHT - bar) / 2}
               width={barWidth}
               height={bar}
               rx={barWidth / 2}
@@ -218,7 +227,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
           <Rect
             key={barIndex}
             x={x}
-            y={(WAVEFORM_HEIGHT - bar) / 2}
+            y={(WAVEFORM_CONTAINER_HEIGHT - bar) / 2}
             width={barWidth}
             height={bar}
             rx={barWidth / 2}
@@ -228,7 +237,17 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
         );
       });
     }
-  }, [recorderState, recorderBars, barWidth, barSpace, barColor, maxBars, displayedPlayerBars, barsToRenderInPlayer]);
+  }, [
+    recorderState,
+    recorderBars,
+    waveformWidth,
+    barWidth,
+    barSpace,
+    barColor,
+    maxBars,
+    displayedPlayerBars,
+    barsToRenderInPlayer,
+  ]);
 
   const waveformContainerStyle = React.useMemo(
     () => [
@@ -241,7 +260,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   return (
     <View style={waveformContainerStyle}>
       <View style={styles.waveform}>
-        <Svg width={WAVEFORM_WIDTH} height={WAVEFORM_HEIGHT}>
+        <Svg width={WAVEFORM_CONTAINER_WIDTH} height={WAVEFORM_CONTAINER_HEIGHT}>
           {renderWaveformBars()}
         </Svg>
       </View>

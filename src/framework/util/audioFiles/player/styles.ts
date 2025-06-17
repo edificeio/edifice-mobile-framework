@@ -33,14 +33,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: getScaleWidth(327),
   },
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    paddingBottom: UI_SIZES.spacing.large,
-    paddingHorizontal: UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.spacing.big * 2,
-  },
 });
 
 export default styles;

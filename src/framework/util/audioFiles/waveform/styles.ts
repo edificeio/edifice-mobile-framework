@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-export const WAVEFORM_HEIGHT = 35;
-export const WAVEFORM_WIDTH = getScaleWidth(327) - UI_SIZES.dimensions.width.largePlus;
+export const WAVEFORM_CONTAINER_HEIGHT = 35;
+export const WAVEFORM_CONTAINER_WIDTH = getScaleWidth(327) - UI_SIZES.dimensions.width.largePlus;
 export const BAR_SPACE_DEFAULT = 3;
 export const BAR_WIDTH_DEFAULT = 2;
 export const BAR_MIN_HEIGHT = 2;

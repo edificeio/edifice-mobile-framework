@@ -174,68 +174,74 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
     [recorderState],
   );
 
-  return showPlayer ? (
-    <AudioPlayer filePath={audioFile!!} recordedBarsForPlayer={barsForPlayer} resetRecorder={resetRecorderFromPlayer} />
-  ) : (
+  return (
     <View style={styles.container}>
-      {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
-        <BodyText style={styles.placeholderText}>{I18n.get('audio-recorder-placeholder')}</BodyText>
+      {showPlayer ? (
+        <AudioPlayer filePath={audioFile!!} recordedBarsForPlayer={barsForPlayer} resetRecorder={resetRecorderFromPlayer} />
       ) : (
-        <CustomWaveform
-          amplitude={currentAmplitude}
-          maxBars={60}
-          mode="Recorder"
-          recorderState={recorderState}
-          speed={barsDisplaySpeed}
-          barsRef={barsRef}
-        />
+        <>
+          {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
+            <View style={styles.placeholderTextContainer}>
+              <BodyText style={styles.placeholderText}>{I18n.get('audio-recorder-placeholder')}</BodyText>
+            </View>
+          ) : (
+            <CustomWaveform
+              amplitude={currentAmplitude}
+              maxBars={60}
+              mode="Recorder"
+              recorderState={recorderState}
+              speed={barsDisplaySpeed}
+              barsRef={barsRef}
+            />
+          )}
+
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              onPress={onDeleteRecord}
+              style={deleteButtonStyle}
+              disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
+              <Svg
+                height={UI_SIZES.dimensions.height.mediumPlus}
+                width={UI_SIZES.dimensions.width.mediumPlus}
+                fill={theme.palette.grey.darkness}
+                name="ui-delete"
+              />
+            </TouchableOpacity>
+
+            {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
+              <TouchableOpacity onPress={onStartRecord} style={styles.buttonPlayStop}>
+                <Svg
+                  height={UI_SIZES.dimensions.height.mediumPlus}
+                  width={UI_SIZES.dimensions.width.mediumPlus}
+                  fill={theme.palette.grey.white}
+                  name="ui-mic"
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={onStopRecord} style={styles.buttonPlayStop}>
+                <Svg
+                  height={UI_SIZES.dimensions.height.mediumPlus}
+                  width={UI_SIZES.dimensions.width.mediumPlus}
+                  fill={theme.palette.grey.white}
+                  name="ui-stop"
+                />
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity
+              onPress={recorderState === RecorderState.paused ? onResumeRecord : onPauseRecord}
+              style={pauseButtonStyle}
+              disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
+              <Svg
+                height={UI_SIZES.dimensions.height.mediumPlus}
+                width={UI_SIZES.dimensions.width.mediumPlus}
+                fill={theme.palette.grey.white}
+                name={recorderState === RecorderState.paused ? 'ui-mic' : 'ui-pause-filled'}
+              />
+            </TouchableOpacity>
+          </View>
+        </>
       )}
-
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          onPress={onDeleteRecord}
-          style={deleteButtonStyle}
-          disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
-          <Svg
-            height={UI_SIZES.dimensions.height.mediumPlus}
-            width={UI_SIZES.dimensions.width.mediumPlus}
-            fill={theme.palette.grey.darkness}
-            name="ui-delete"
-          />
-        </TouchableOpacity>
-
-        {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
-          <TouchableOpacity onPress={onStartRecord} style={styles.buttonPlayStop}>
-            <Svg
-              height={UI_SIZES.dimensions.height.mediumPlus}
-              width={UI_SIZES.dimensions.width.mediumPlus}
-              fill={theme.palette.grey.white}
-              name="ui-mic"
-            />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={onStopRecord} style={styles.buttonPlayStop}>
-            <Svg
-              height={UI_SIZES.dimensions.height.mediumPlus}
-              width={UI_SIZES.dimensions.width.mediumPlus}
-              fill={theme.palette.grey.white}
-              name="ui-stop"
-            />
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          onPress={recorderState === RecorderState.paused ? onResumeRecord : onPauseRecord}
-          style={pauseButtonStyle}
-          disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
-          <Svg
-            height={UI_SIZES.dimensions.height.mediumPlus}
-            width={UI_SIZES.dimensions.width.mediumPlus}
-            fill={theme.palette.grey.white}
-            name={recorderState === RecorderState.paused ? 'ui-mic' : 'ui-pause-filled'}
-          />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
