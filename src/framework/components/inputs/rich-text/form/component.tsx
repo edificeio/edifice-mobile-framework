@@ -271,9 +271,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         );
         break;
       case 'video':
-        richText.current?.insertHTML(
-          `<div class="${ui.video.class}"><video src="${item.src}" controls="true" data-document-is-captation="true" data-document-id="" data-video-resolution=""/></div>`,
-        );
+        richText.current?.insertHTML(`<div class="${ui.video.class}"><video src="${item.src}"/></div>`);
         break;
       case 'audio':
         break;
@@ -292,9 +290,17 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           setTimeout(() => {
             addMediaItemByIndex(i + 1);
           });
+        } else {
+          richText.current?.insertHTML('<br>');
+          setTimeout(() => {
+            richText.current?.finalizeInsertion();
+          });
         }
       };
-      setTimeout(() => addMediaItemByIndex(0));
+      addMediaItemByIndex(0);
+      // richText.current?.finalizeInsertion();
+      richText.current?.unlockContentEditor();
+      richText.current?.focusContentEditor();
     },
     [promptMedia],
   );
