@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import DeviceInfo from 'react-native-device-info';
+import { pick } from 'react-native-document-picker';
 import { Video } from 'react-native-image-crop-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -71,8 +72,22 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
         {
           i18n: 'media-import-audio-from-files',
           icon: 'ui-smartphone',
+          // onPress: async () => {
+          //   return [];
+          // },
           onPress: async () => {
-            return [];
+            try {
+              const [pickResult] = await pick();
+              console.log('Picked file BEFORE--------:', pickResult);
+              const fileToSave = new LocalFile(pickResult);
+              console.log('LocalFile file AFTER--------:', fileToSave);
+              return [fileToSave];
+              // const [pickResult] = await pick({mode:'import'}) // equivalent
+              // do something with the picked file
+            } catch (err: unknown) {
+              // see error handling
+              console.error(err);
+            }
           },
         },
       ],
