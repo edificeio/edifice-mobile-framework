@@ -35,6 +35,13 @@ import { IMedia, IVideoMedia } from '~/framework/util/media';
 import { ArrayElement } from '~/utils/types';
 
 const allowedMediaTypes: MediaTypeList = ['image', 'audio', 'video'];
+const allowedAudioFormats = ['mid', 'mp3'];
+
+function getFileExtension(filename: string): string | undefined {
+  const lastDot = filename.lastIndexOf('.');
+  if (lastDot === -1 || lastDot === filename.length - 1) return undefined;
+  return filename.slice(lastDot + 1).toLowerCase();
+}
 
 const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
   audio: () => {
@@ -72,20 +79,19 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
         {
           i18n: 'media-import-audio-from-files',
           icon: 'ui-smartphone',
-          // onPress: async () => {
-          //   return [];
-          // },
           onPress: async () => {
             try {
               const [pickResult] = await pick();
-              console.log('Picked file BEFORE--------:', pickResult);
+              const fileName = pickResult?.name;
+              if (fileName && fileName !== undefined) {
+                const check = getFileExtension(fileName);
+                if (!allowedAudioFormats.includes(check)) {
+                  promiseExecutorRef?.current?.reject([]);
+                }
+              }
               const fileToSave = new LocalFile(pickResult);
-              console.log('LocalFile file AFTER--------:', fileToSave);
               return [fileToSave];
-              // const [pickResult] = await pick({mode:'import'}) // equivalent
-              // do something with the picked file
             } catch (err: unknown) {
-              // see error handling
               console.error(err);
             }
           },
