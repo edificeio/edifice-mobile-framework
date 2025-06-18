@@ -177,6 +177,41 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     }
   }
 
+  static async pickVideoFromCamera(useFrontCamera?: boolean) {
+    const video = await ImagePicker.openCamera({
+      mediaType: 'video',
+      useFrontCamera,
+    });
+    return new LocalFile(
+      {
+        ...video,
+        duration: video.duration ?? undefined,
+        filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
+        filepath: video.path,
+        fileSize: video.size,
+      },
+      {
+        isCaptation: true,
+      },
+    );
+  }
+
+  static async pickVideosFromGalery() {
+    const videos = await ImagePicker.openPicker({
+      maxFiles: 10,
+      mediaType: 'video',
+      multiple: true,
+    });
+    return videos.map(
+      video =>
+        new LocalFile({
+          filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
+          filepath: video.path,
+          fileSize: video.size,
+        }),
+    );
+  }
+
   filename: string; // Name of the file including extension
 
   filepath: string; // Absolute url to the file on the device, starting by '/'
@@ -191,10 +226,13 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
   _needIOSReleaseSecureAccess?: boolean; // Recommended by react-native-fs. A LocalFile created with pick() must be free when it's no more used.
 
+  isCaptation: boolean; // File is recorded from this device
+
   constructor(
     file: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem,
     opts?: {
-      _needIOSReleaseSecureAccess: boolean;
+      _needIOSReleaseSecureAccess?: boolean;
+      isCaptation?: boolean;
     },
   ) {
     this._needIOSReleaseSecureAccess = opts?._needIOSReleaseSecureAccess ?? true;
@@ -204,6 +242,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     this.filepath = LocalFile.formatUrlForUpload(this._filepathNative);
     this.filetype = (file as LocalFile.CustomUploadFileItem).filetype || (file as DocumentPickerResponse | Asset).type!;
     this.nativeInfo = file as DocumentPickerResponse | Asset;
+    this.isCaptation = opts?.isCaptation ?? false;
   }
 
   setExtension(ext: string) {

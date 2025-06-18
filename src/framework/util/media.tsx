@@ -15,15 +15,18 @@ interface IMediaCommonAttributes {
   link?: string;
   alt?: string;
   mime?: string;
+  id?: string;
+  isCaptation?: boolean;
 }
 
-export interface IImageAttributes extends IMediaCommonAttributes { }
+export interface IImageAttributes extends IMediaCommonAttributes {}
 export interface IVideoAttributes extends IMediaCommonAttributes {
   poster?: string | ImageURISource;
-  ratio?: number;
+  width?: number;
+  height?: number;
 }
 
-export interface IAudioAttributes extends IMediaCommonAttributes { }
+export interface IAudioAttributes extends IMediaCommonAttributes {}
 
 export interface IImageMedia extends IImageAttributes {
   type: 'image';

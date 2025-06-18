@@ -325,6 +325,11 @@ export default class RichEditor extends Component {
     this.webviewBridge = ref;
   }
 
+  onTerminate(event) {
+    event.persist();
+    console.error('Webview Error', event);
+  }
+
   renderWebView() {
     const that = this;
     const { editorStyle, html, onLink, style, useContainer, ...rest } = that.props;
@@ -357,6 +362,7 @@ export default class RichEditor extends Component {
           onShouldStartLoadWithRequest={() => !that.htmlLoaded}
           setSupportMultipleWindows={false}
           webviewDebuggingEnabled={__DEV__}
+          onContentProcessDidTerminate={that.onTerminate}
         />
         {Platform.OS === 'android' && <TextInput ref={ref => (that._input = ref)} style={styles._input} />}
       </>

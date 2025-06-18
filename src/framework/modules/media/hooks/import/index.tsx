@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import DeviceInfo from 'react-native-device-info';
-import ImagePicker from 'react-native-image-crop-picker';
+import { Video } from 'react-native-image-crop-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -30,7 +30,7 @@ import { usePromiseNavigate } from '~/framework/navigation/promise';
 import AudioRecorder from '~/framework/util/audioFiles/recorder';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
-import { IMedia } from '~/framework/util/media';
+import { IMedia, IVideoMedia } from '~/framework/util/media';
 import { ArrayElement } from '~/utils/types';
 
 const allowedMediaTypes: MediaTypeList = ['image', 'audio', 'video'];
@@ -100,36 +100,13 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
           i18n: 'media-import-video-from-camera',
           icon: 'ui-recordVideo',
           onPress: async () => {
-            const video = await ImagePicker.openCamera({
-              mediaType: 'video',
-            });
-            return [
-              new LocalFile({
-                filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
-                filepath: video.path,
-                fileSize: video.size,
-              }),
-            ];
+            return [await LocalFile.pickVideoFromCamera()];
           },
         },
         {
           i18n: 'media-import-video-from-gallery',
           icon: 'ui-smartphone',
-          onPress: async () => {
-            const videos = await ImagePicker.openPicker({
-              maxFiles: 10,
-              mediaType: 'video',
-              multiple: true,
-            });
-            return videos.map(
-              video =>
-                new LocalFile({
-                  filename: video.filename ?? video.path.split('/').at(-1)?.split('.').at(0) ?? 'file',
-                  filepath: video.path,
-                  fileSize: video.size,
-                }),
-            );
-          },
+          onPress: () => LocalFile.pickVideosFromGalery(),
         },
       ],
       title: { i18n: 'media-import-video-title' },
@@ -225,7 +202,14 @@ export const useMediaImport = (
 
   const formatMedia = React.useCallback(
     (type: IMedia['type'], files: SyncedFileWithId[]): IMedia[] =>
-      files.map(file => ({ mime: file.df.filetype, src: file.df.url, type })),
+      files.map(file => {
+        const res: IMedia = { id: file.id, isCaptation: file.lf.isCaptation, mime: file.df.filetype, src: file.df.url, type };
+        if (type === 'video') {
+          (res as IVideoMedia).width = (file.lf.nativeInfo as Video).width;
+          (res as IVideoMedia).height = (file.lf.nativeInfo as Video).height;
+        }
+        return res;
+      }),
     [],
   );
 

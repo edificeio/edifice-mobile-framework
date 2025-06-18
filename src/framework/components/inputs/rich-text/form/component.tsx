@@ -271,7 +271,17 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         );
         break;
       case 'video':
-        richText.current?.insertHTML(`<div class="${ui.video.class}"><video src="${item.src}"/></div>`);
+        const attrs: Map<string, string> = new Map();
+        attrs.set('src', typeof item.src === 'string' ? item.src : (item.src.uri ?? ''));
+        if (item.id) attrs.set('data-document-id', item.id);
+        if (item.width) attrs.set('width', item.width.toString());
+        if (item.height) attrs.set('width', item.height.toString());
+        if (item.isCaptation) attrs.set('data-document-is-captation', 'true');
+        richText.current?.insertHTML(
+          `<div class="${ui.video.class}"><video ${Array.from(attrs)
+            .map(([k, v]) => `${k}="${v}"`)
+            .join(' ')}/></div>`,
+        );
         break;
       case 'audio':
         break;
