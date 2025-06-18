@@ -34,7 +34,7 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
   const [currentAmplitude, setCurrentAmplitude] = useState<number>(0);
   const [isRecordDeleted, setIsRecordDeleted] = useState<boolean>(false);
   const [showPlayer, setShowPlayer] = useState<boolean>(false);
-  const [audioFile, setAudioFile] = useState<string | null>(null);
+  const [audioFile, setAudioFile] = useState<LocalFile | null>(null);
   const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 20), []);
   const barsRef = React.useRef<number[]>([]);
   const [barsForPlayer, setBarsForPlayer] = useState<number[]>([]);
@@ -60,15 +60,14 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
     try {
       const fileStats = await RNFS.stat(filePath);
       const fileName = filePath.split('/').pop();
-      console.log('fileName---------', fileName);
-      console.log('fileStaaaats', fileStats);
 
       return {
         fileName,
         fileSize: fileStats.size,
         originalPath: filePath,
         type: 'audio',
-        uri: `file://${filePath}`,
+        // uri: `file://${filePath}`,
+        uri: filePath,
       };
     } catch (error) {
       console.error('Error formatting audio as Asset:', error as Error);
@@ -112,15 +111,14 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
     if (recorderState !== RecorderState.stopped) {
       try {
         const audioFilePath = await recorder.stopRecording();
-        setAudioFile(audioFilePath[0]);
         setRecorderState(RecorderState.stopped);
-        setBarsForPlayer([...barsRef.current]);
-        setShowPlayer(true);
 
         if (audioFilePath) {
           const audioAsset = await formatAudioAsset(audioFilePath[0]);
           const fileToSave = new LocalFile(audioAsset, { _needIOSReleaseSecureAccess: false });
-          console.log('fileToSave', fileToSave);
+          setAudioFile(fileToSave);
+          setBarsForPlayer([...barsRef.current]);
+          setShowPlayer(true);
         }
       } catch (error) {
         console.error('Error stopping the recording:', error);
@@ -174,74 +172,77 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
     [recorderState],
   );
 
-  return (
+  return showPlayer ? (
+    <AudioPlayer
+      audioFile={audioFile!!}
+      onCancel={onCancel}
+      onError={onError}
+      onSave={onSave}
+      recordedBarsForPlayer={barsForPlayer}
+      resetRecorder={resetRecorderFromPlayer}
+    />
+  ) : (
     <View style={styles.container}>
-      {showPlayer ? (
-        <AudioPlayer filePath={audioFile!!} recordedBarsForPlayer={barsForPlayer} resetRecorder={resetRecorderFromPlayer} />
+      {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
+        <View style={styles.placeholderTextContainer}>
+          <BodyText style={styles.placeholderText}>{I18n.get('audio-recorder-placeholder')}</BodyText>
+        </View>
       ) : (
-        <>
-          {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
-            <View style={styles.placeholderTextContainer}>
-              <BodyText style={styles.placeholderText}>{I18n.get('audio-recorder-placeholder')}</BodyText>
-            </View>
-          ) : (
-            <CustomWaveform
-              amplitude={currentAmplitude}
-              maxBars={60}
-              mode="Recorder"
-              recorderState={recorderState}
-              speed={barsDisplaySpeed}
-              barsRef={barsRef}
-            />
-          )}
-
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              onPress={onDeleteRecord}
-              style={deleteButtonStyle}
-              disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
-              <Svg
-                height={UI_SIZES.dimensions.height.mediumPlus}
-                width={UI_SIZES.dimensions.width.mediumPlus}
-                fill={theme.palette.grey.darkness}
-                name="ui-delete"
-              />
-            </TouchableOpacity>
-
-            {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
-              <TouchableOpacity onPress={onStartRecord} style={styles.buttonPlayStop}>
-                <Svg
-                  height={UI_SIZES.dimensions.height.mediumPlus}
-                  width={UI_SIZES.dimensions.width.mediumPlus}
-                  fill={theme.palette.grey.white}
-                  name="ui-mic"
-                />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={onStopRecord} style={styles.buttonPlayStop}>
-                <Svg
-                  height={UI_SIZES.dimensions.height.mediumPlus}
-                  width={UI_SIZES.dimensions.width.mediumPlus}
-                  fill={theme.palette.grey.white}
-                  name="ui-stop"
-                />
-              </TouchableOpacity>
-            )}
-
-            <TouchableOpacity
-              onPress={recorderState === RecorderState.paused ? onResumeRecord : onPauseRecord}
-              style={pauseButtonStyle}
-              disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
-              <Svg
-                height={UI_SIZES.dimensions.height.mediumPlus}
-                width={UI_SIZES.dimensions.width.mediumPlus}
-                fill={theme.palette.grey.white}
-                name={recorderState === RecorderState.paused ? 'ui-mic' : 'ui-pause-filled'}
-              />
-            </TouchableOpacity>
-          </View>
-        </>
+        <CustomWaveform
+          amplitude={currentAmplitude}
+          maxBars={60}
+          mode="Recorder"
+          recorderState={recorderState}
+          speed={barsDisplaySpeed}
+          barsRef={barsRef}
+        />
       )}
+
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          onPress={onDeleteRecord}
+          style={deleteButtonStyle}
+          disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
+          <Svg
+            height={UI_SIZES.dimensions.height.mediumPlus}
+            width={UI_SIZES.dimensions.width.mediumPlus}
+            fill={theme.palette.grey.darkness}
+            name="ui-delete"
+          />
+        </TouchableOpacity>
+
+        {recorderState === RecorderState.stopped && (!showPlayer || isRecordDeleted) ? (
+          <TouchableOpacity onPress={onStartRecord} style={styles.buttonPlayStop}>
+            <Svg
+              height={UI_SIZES.dimensions.height.mediumPlus}
+              width={UI_SIZES.dimensions.width.mediumPlus}
+              fill={theme.palette.grey.white}
+              name="ui-mic"
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={onStopRecord} style={styles.buttonPlayStop}>
+            <Svg
+              height={UI_SIZES.dimensions.height.mediumPlus}
+              width={UI_SIZES.dimensions.width.mediumPlus}
+              fill={theme.palette.grey.white}
+              name="ui-stop"
+            />
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          onPress={recorderState === RecorderState.paused ? onResumeRecord : onPauseRecord}
+          style={pauseButtonStyle}
+          disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
+          <Svg
+            height={UI_SIZES.dimensions.height.mediumPlus}
+            width={UI_SIZES.dimensions.width.mediumPlus}
+            fill={theme.palette.grey.white}
+            name={recorderState === RecorderState.paused ? 'ui-mic' : 'ui-pause-filled'}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

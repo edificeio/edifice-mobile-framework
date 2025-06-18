@@ -1,9 +1,10 @@
-import React, { ReactElement, useState } from 'react';
+import React, { useState } from 'react';
 import { Platform, TouchableOpacity, View } from 'react-native';
 
 import { PlayerState, UpdateFrequency, useAudioPlayer } from '@simform_solutions/react-native-audio-waveform';
 import { DurationType, FinishMode } from '@simform_solutions/react-native-audio-waveform/lib/constants';
 
+import { LocalFile } from '../../fileHandler';
 import styles from './styles';
 import { AudioPlayerProps } from './types';
 
@@ -14,10 +15,11 @@ import CustomWaveform from '~/framework/util/audioFiles/waveform';
 
 const BARS_DISPLAY_SPEED = 30;
 
-const AudioPlayer = ({ filePath, recordedBarsForPlayer, resetRecorder }): ReactElement<AudioPlayerProps> => {
+const AudioPlayer = ({ audioFile, onCancel, onError, onSave, recordedBarsForPlayer, resetRecorder }: AudioPlayerProps) => {
   const [audioTotalDuration, setAudioTotalDuration] = useState<number>(0);
   const player = useAudioPlayer();
   const [playerState, setPlayerState] = useState<PlayerState>(PlayerState.stopped);
+  const filePath = audioFile.nativeInfo.uri;
   // playerKey is the identifier of the player's current instance
   const playerKey = React.useMemo(() => `PlayerFor${filePath}`, [filePath]);
   const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 20), []);
@@ -93,6 +95,11 @@ const AudioPlayer = ({ filePath, recordedBarsForPlayer, resetRecorder }): ReactE
     setPlayerState(PlayerState.stopped);
   };
 
+  const onSaveFile = (fileToSave: LocalFile) => {
+    console.log('Saving audio file:', fileToSave, onSave);
+    onSave?.([fileToSave]);
+  };
+
   const resetPlayer = async () => {
     await player.stopPlayer({ playerKey });
     setPlayerState(PlayerState.stopped);
@@ -108,7 +115,7 @@ const AudioPlayer = ({ filePath, recordedBarsForPlayer, resetRecorder }): ReactE
   }, [filePath, playerKey]);
 
   return (
-    <>
+    <View style={styles.container}>
       <CustomWaveform
         audioTotalDuration={audioTotalDuration}
         maxBars={60}
@@ -138,7 +145,7 @@ const AudioPlayer = ({ filePath, recordedBarsForPlayer, resetRecorder }): ReactE
           />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => console.log('save file to workspace function to do')} style={styles.buttonPause}>
+        <TouchableOpacity onPress={() => onSaveFile(audioFile)} style={styles.buttonSave}>
           <Svg
             height={UI_SIZES.dimensions.height.mediumPlus}
             width={UI_SIZES.dimensions.width.mediumPlus}
@@ -147,7 +154,7 @@ const AudioPlayer = ({ filePath, recordedBarsForPlayer, resetRecorder }): ReactE
           />
         </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 };
 
