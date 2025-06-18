@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-const WAVEFORM_AND_BUTTONS_CONTAINER_HEIGHT = getScaleWidth(100) + UI_SIZES.spacing.minor * 2 + UI_SIZES.spacing.medium;
+export const WAVEFORM_AND_BUTTONS_CONTAINER_HEIGHT = getScaleWidth(100) + UI_SIZES.spacing.minor * 2 + UI_SIZES.spacing.medium;
 
 const styles = StyleSheet.create({
   buttonDelete: {

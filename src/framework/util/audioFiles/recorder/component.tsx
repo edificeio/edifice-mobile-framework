@@ -23,8 +23,6 @@ import CustomWaveform from '~/framework/util/audioFiles/waveform';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
 
-const BARS_DISPLAY_SPEED = 30;
-
 const { AudioWaveform, AudioWaveformsEventEmitter } = NativeModules;
 
 const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProps) => {
@@ -66,7 +64,6 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
         fileSize: fileStats.size,
         originalPath: filePath,
         type: 'audio',
-        // uri: `file://${filePath}`,
         uri: filePath,
       };
     } catch (error) {
@@ -146,7 +143,6 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
 
     if (emitter) {
       subscription = emitter.addListener('onCurrentRecordingWaveformData', event => {
-        // console.log('📈 Live amplitude data:', event, performance.now() - timeRef.current);
         setCurrentAmplitude(event.currentDecibel ?? 0);
       });
     }

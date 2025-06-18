@@ -6,20 +6,18 @@ import { DurationType, FinishMode } from '@simform_solutions/react-native-audio-
 
 import styles from './styles';
 import { AudioPlayerProps } from './types';
-import { LocalFile } from '../../fileHandler';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import CustomWaveform from '~/framework/util/audioFiles/waveform';
-
-const BARS_DISPLAY_SPEED = 30;
+import { LocalFile } from '~/framework/util/fileHandler';
 
 const AudioPlayer = ({ audioFile, bottomSheetRef, promiseExecutorRef, recordedBarsForPlayer, resetRecorder }: AudioPlayerProps) => {
   const [audioTotalDuration, setAudioTotalDuration] = useState<number>(0);
   const player = useAudioPlayer();
   const [playerState, setPlayerState] = useState<PlayerState>(PlayerState.stopped);
-  const filePath = audioFile.nativeInfo.uri;
+  const filePath = audioFile?.nativeInfo.uri;
   // playerKey is the identifier of the player's current instance
   const playerKey = React.useMemo(() => `PlayerFor${filePath}`, [filePath]);
   const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 20), []);
@@ -61,6 +59,7 @@ const AudioPlayer = ({ audioFile, bottomSheetRef, promiseExecutorRef, recordedBa
   };
 
   const preparePlayerAndGetDuration = async () => {
+    if (!filePath) return;
     try {
       const prepare = await preparePlayerForPath(filePath);
       if (prepare) {
@@ -91,20 +90,23 @@ const AudioPlayer = ({ audioFile, bottomSheetRef, promiseExecutorRef, recordedBa
 
   const onDeleteFile = async () => {
     await player.stopPlayer({ playerKey });
-    resetRecorder();
+    promiseExecutorRef?.current?.resolve([]);
+    bottomSheetRef?.current?.close();
     setPlayerState(PlayerState.stopped);
+    resetRecorder();
   };
 
   const onSaveFile = (fileToSave: LocalFile) => {
     promiseExecutorRef?.current?.resolve([fileToSave]);
     bottomSheetRef?.current?.close();
+    resetRecorder();
   };
 
   const resetPlayer = async () => {
     await player.stopPlayer({ playerKey });
     setPlayerState(PlayerState.stopped);
     // On a reset, we have to re-prepare the player for the next playback
-    await preparePlayerForPath(filePath);
+    filePath && (await preparePlayerForPath(filePath));
   };
 
   // Prepare player on every source file change
