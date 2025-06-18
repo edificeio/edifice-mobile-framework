@@ -1,4 +1,4 @@
 import { MailsContactField } from './contact/component';
-import { MailsObjectField } from './object/component';
+import { MailsSubjectField } from './subject/component';
 
-export { MailsContactField, MailsObjectField };
+export { MailsContactField, MailsSubjectField };

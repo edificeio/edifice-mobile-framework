@@ -51,6 +51,7 @@ import {
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
   mailsFormatRecipients,
+  renderSubject,
   separateContentAndHistory,
 } from '~/framework/modules/mails/util';
 import { userRouteNames } from '~/framework/modules/user/navigation';
@@ -571,7 +572,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     return (
       <PageView>
         <ScrollView style={styles.page}>
-          <HeadingXSText>{mail?.subject && mail?.subject.length ? mail.subject : I18n.get('mails-list-noobject')}</HeadingXSText>
+          <HeadingXSText>{renderSubject(mail?.subject, isRecall)}</HeadingXSText>
           <View style={styles.topInfos}>
             <NewAvatar size={AvatarSize.lg} userId={mail?.from.id} />
             <View style={styles.topInfosText}>
@@ -605,17 +606,18 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   }, [
     error,
-    isRecallAndNotSender,
     mail,
-    props.navigation,
-    renderAttachments,
-    renderBottomSheet,
-    renderButtons,
-    renderHistory,
-    renderContentViewer,
-    renderOriginalContent,
-    renderRecall,
+    isRecall,
     renderRecipients,
+    isRecallAndNotSender,
+    renderRecall,
+    renderContentViewer,
+    renderAttachments,
+    renderOriginalContent,
+    renderHistory,
+    renderButtons,
+    renderBottomSheet,
+    props.navigation,
   ]);
 
   return (

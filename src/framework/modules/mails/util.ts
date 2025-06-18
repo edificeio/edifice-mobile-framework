@@ -174,3 +174,9 @@ export function addHtmlReply(from: MailsRecipientInfo, date: Moment, to: MailsVi
         </div>`;
   return text;
 }
+
+export const renderSubject = (subject: string | undefined, isRecall: boolean) => {
+  if (isRecall) return I18n.get('mails-details-recallsubject');
+  if (!subject || subject.length === 0) return I18n.get('mails-list-nosubject');
+  return subject;
+};

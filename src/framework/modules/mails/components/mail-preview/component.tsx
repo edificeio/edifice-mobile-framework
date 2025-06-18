@@ -16,7 +16,7 @@ import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
 import { MailsMailStatePreview } from '~/framework/modules/mails/model';
-import { mailsFormatRecipients } from '~/framework/modules/mails/util';
+import { mailsFormatRecipients, renderSubject } from '~/framework/modules/mails/util';
 import { displayPastDate } from '~/framework/util/date';
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
@@ -59,7 +59,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
     );
   }, [hasAttachment]);
 
-  const renderResponseIcon = React.useCallback(() => {
+  const renderIcon = React.useCallback(() => {
     if (!response && state !== MailsMailStatePreview.RECALL) return null;
     return (
       <View style={styles.responseIcon}>
@@ -112,7 +112,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         )}
       </TextComponent>
     );
-  }, [TextComponent, from?.displayName, infosRecipients.text, isSender, state]);
+  }, [TextComponent, from?.displayName, infosRecipients.text, isDraft, isSender]);
 
   const renderIconSwipeAction = React.useCallback(() => {
     let iconName = 'ui-mailUnread';
@@ -178,14 +178,14 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         {renderSelectIcon()}
         {renderAvatar()}
         {renderDefaultFolder()}
-        {renderResponseIcon()}
+        {renderIcon()}
         <View style={styles.texts}>
           <View style={styles.line}>
             {renderFirstText()}
             <CaptionBoldText style={styles.date}>{displayPastDate(moment(date))}</CaptionBoldText>
           </View>
           <View style={styles.line}>
-            <TextComponent numberOfLines={1}>{subject && subject.length ? subject : I18n.get('mails-list-noobject')}</TextComponent>
+            <TextComponent numberOfLines={1}>{renderSubject(subject, state === MailsMailStatePreview.RECALL)}</TextComponent>
             {renderAttachmentIcon()}
           </View>
         </View>

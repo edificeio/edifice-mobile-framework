@@ -2,13 +2,13 @@ import * as React from 'react';
 import { TextInput as RNTextInput, View } from 'react-native';
 
 import styles from '../styles';
-import { MailsObjectFieldProps } from './types';
+import { MailsSubjectFieldProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 
-export const MailsObjectField = (props: MailsObjectFieldProps) => {
+export const MailsSubjectField = (props: MailsSubjectFieldProps) => {
   const { subject, type } = props;
   const [value, setValue] = React.useState('');
 

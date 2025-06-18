@@ -20,7 +20,7 @@ import toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { MailsContactField, MailsObjectField } from '~/framework/modules/mails/components/fields';
+import { MailsContactField, MailsSubjectField } from '~/framework/modules/mails/components/fields';
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsDefaultFolders, MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
@@ -354,7 +354,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
             <MailsContactField type={MailsRecipientsType.CCI} recipients={cci} {...commonProps} />
           </>
         ) : null}
-        <MailsObjectField subject={subject} type={type} onChangeText={text => setSubject(text)} />
+        <MailsSubjectField subject={subject} type={type} onChangeText={text => setSubject(text)} />
       </View>
     );
   }, [
