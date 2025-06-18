@@ -78,6 +78,9 @@ export const messages = {
 };
 
 export const ui = {
+  audio: {
+    class: 'audio-wrapper',
+  },
   image: {
     class: 'custom-image',
     height: 'NaN',

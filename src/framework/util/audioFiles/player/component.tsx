@@ -4,9 +4,9 @@ import { Platform, TouchableOpacity, View } from 'react-native';
 import { PlayerState, UpdateFrequency, useAudioPlayer } from '@simform_solutions/react-native-audio-waveform';
 import { DurationType, FinishMode } from '@simform_solutions/react-native-audio-waveform/lib/constants';
 
-import { LocalFile } from '../../fileHandler';
 import styles from './styles';
 import { AudioPlayerProps } from './types';
+import { LocalFile } from '../../fileHandler';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -15,7 +15,7 @@ import CustomWaveform from '~/framework/util/audioFiles/waveform';
 
 const BARS_DISPLAY_SPEED = 30;
 
-const AudioPlayer = ({ audioFile, onCancel, onError, onSave, recordedBarsForPlayer, resetRecorder }: AudioPlayerProps) => {
+const AudioPlayer = ({ audioFile, bottomSheetRef, promiseExecutorRef, recordedBarsForPlayer, resetRecorder }: AudioPlayerProps) => {
   const [audioTotalDuration, setAudioTotalDuration] = useState<number>(0);
   const player = useAudioPlayer();
   const [playerState, setPlayerState] = useState<PlayerState>(PlayerState.stopped);
@@ -96,8 +96,8 @@ const AudioPlayer = ({ audioFile, onCancel, onError, onSave, recordedBarsForPlay
   };
 
   const onSaveFile = (fileToSave: LocalFile) => {
-    console.log('Saving audio file:', fileToSave, onSave);
-    onSave?.([fileToSave]);
+    promiseExecutorRef?.current?.resolve([fileToSave]);
+    bottomSheetRef?.current?.close();
   };
 
   const resetPlayer = async () => {

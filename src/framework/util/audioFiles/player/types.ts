@@ -1,10 +1,12 @@
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+
+import { MediaBottomSheetModalInternalData } from '~/framework/modules/media/hooks/import/types';
 import { LocalFile } from '~/framework/util/fileHandler';
 
 export interface AudioPlayerProps {
   audioFile: LocalFile;
-  onSave?: (file: LocalFile[]) => void;
-  onCancel?: () => void;
-  onError?: () => unknown;
+  promiseExecutorRef?: React.RefObject<MediaBottomSheetModalInternalData<LocalFile[]>>;
+  bottomSheetRef?: React.RefObject<BottomSheetMethods>;
   recordedBarsForPlayer: number[];
   resetRecorder: () => void;
 }

@@ -270,7 +270,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           `<img class="${ui.image.class}" src="${item.src}" width="${ui.image.width}" height="${ui.image.height}">`,
         );
         break;
-      case 'video':
+      case 'video': {
         const attrs: Map<string, string> = new Map();
         attrs.set('src', typeof item.src === 'string' ? item.src : (item.src.uri ?? ''));
         if (item.id) attrs.set('data-document-id', item.id);
@@ -283,8 +283,19 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
             .join(' ')}/></div>`,
         );
         break;
-      case 'audio':
+      }
+      case 'audio': {
+        const attrs: Map<string, string> = new Map();
+        attrs.set('src', typeof item.src === 'string' ? item.src : (item.src.uri ?? ''));
+        if (item.id) attrs.set('data-document-id', item.id);
+        if (item.isCaptation) attrs.set('data-document-is-captation', 'true');
+        richText.current?.insertHTML(
+          `<div class="${ui.audio.class}"><audio ${Array.from(attrs)
+            .map(([k, v]) => `${k}="${v}"`)
+            .join(' ')}/></div>`,
+        );
         break;
+      }
     }
   };
 

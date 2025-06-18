@@ -38,6 +38,7 @@ export interface IVideoMedia extends IVideoAttributes {
 
 export interface IAudioMedia extends IAudioAttributes {
   type: 'audio';
+  duration?: number;
 }
 
 export type IMedia = IImageMedia | IVideoMedia | IAudioMedia;

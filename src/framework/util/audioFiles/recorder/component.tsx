@@ -27,7 +27,7 @@ const BARS_DISPLAY_SPEED = 30;
 
 const { AudioWaveform, AudioWaveformsEventEmitter } = NativeModules;
 
-const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
+const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProps) => {
   const recorder = useAudioRecorder();
   const { checkHasAudioRecorderPermission, getAudioRecorderPermission } = useAudioPermission();
   const [recorderState, setRecorderState] = useState<RecorderState>(RecorderState.stopped);
@@ -175,9 +175,8 @@ const AudioRecorder = ({ onCancel, onError, onSave }: AudioRecorderProps) => {
   return showPlayer ? (
     <AudioPlayer
       audioFile={audioFile!!}
-      onCancel={onCancel}
-      onError={onError}
-      onSave={onSave}
+      promiseExecutorRef={promiseExecutorRef}
+      bottomSheetRef={bottomSheetRef}
       recordedBarsForPlayer={barsForPlayer}
       resetRecorder={resetRecorderFromPlayer}
     />
