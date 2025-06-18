@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -77,7 +77,6 @@
     "@react-native-async-storage/async-storage": "2.1.0",
     "@react-native-camera-roll/camera-roll": "7.9.0",
     "@react-native-clipboard/clipboard": "1.15.0",
-    "@react-native-community/cli": "15.1.2",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-community/netinfo": "11.4.1",
     "@react-native-community/progress-bar-android": "1.0.5",
@@ -215,11 +214,12 @@
     "@commitlint/config-conventional": "19.6.0",
     "@jumpn/react-native-jetifier": "0.1.4",
     "@nicolo-ribaudo/semver-v6": "6.3.3",
+    "@react-native-community/cli": "15.1.2",
     "@react-native-community/eslint-config": "3.2.0",
-    "@react-native/babel-preset": "0.75.4",
-    "@react-native/eslint-config": "0.75.4",
-    "@react-native/metro-config": "0.75.4",
-    "@react-native/typescript-config": "0.75.4",
+    "@react-native/babel-preset": "0.75.5",
+    "@react-native/eslint-config": "0.75.5",
+    "@react-native/metro-config": "0.75.5",
+    "@react-native/typescript-config": "0.75.5",
     "@trivago/prettier-plugin-sort-imports": "4.3.0",
     "@types/html-to-text": "9.0.4",
     "@types/mime": "4.0.0",
@@ -269,12 +269,14 @@
     "typescript": "5.6.3"
   },
   "resolutions": {
-    "set-value": "4.1.0",
-    "tsconfig-paths": "4.0.0",
-    "react-native-gesture-handler": "2.21.2",
-    "@react-native-community/cli-platform-apple": "15.1.2",
+    "@react-native-community/cli": "15.1.2",
+    "@react-native-community/cli-platform-android": "15.1.2",
     "@react-native-community/cli-platform-ios": "15.1.2",
-    "@react-native-community/cli-platform-android": "15.1.2"
+    "react-native": "0.75.5",
+    "react-native-gesture-handler": "2.21.2",
+    "react-native-gradle-plugin": "0.75.5",
+    "set-value": "4.1.0",
+    "tsconfig-paths": "4.0.0"
   },
   "eslintIgnore": [
     ".eslintrc.js",
