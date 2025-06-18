@@ -90,6 +90,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     getRecallMessageRight(props.session!);
   const isRecall = mail?.state === MailsMailStatePreview.RECALL;
   const isRecallAndNotSender = mail?.state === MailsMailStatePreview.RECALL && mail?.from.id !== props.session?.user.id;
+  const isContentEmpty = React.useMemo(() => mailContent === '' || mailContent === '<p></p>', [mailContent]);
 
   const convertedAttachments = React.useMemo(
     () => mail?.attachments.map(attachment => convertAttachmentToDistantFile(attachment, id)),
@@ -400,6 +401,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     });
   }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder]);
 
+  const renderContentViewer = React.useCallback(() => {
+    if (isContentEmpty) return;
+    return <RichEditorViewer content={mailContent} />;
+  }, [isContentEmpty, mailContent]);
+
   const renderRecipients = React.useCallback(() => {
     return (
       <TouchableOpacity
@@ -586,7 +592,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
             renderRecall()
           ) : (
             <>
-              <RichEditorViewer content={mailContent} />
+              {renderContentViewer()}
               {renderAttachments()}
               {renderOriginalContent()}
               {renderHistory()}
@@ -601,12 +607,12 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     error,
     isRecallAndNotSender,
     mail,
-    mailContent,
     props.navigation,
     renderAttachments,
     renderBottomSheet,
     renderButtons,
     renderHistory,
+    renderContentViewer,
     renderOriginalContent,
     renderRecall,
     renderRecipients,
