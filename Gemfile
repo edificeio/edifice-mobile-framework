@@ -4,7 +4,7 @@ ruby '>= 2.6.10'
 
 gem 'activesupport', '>= 6.1.7.5', '!= 7.1.0'
 gem 'cocoapods', '>= 1.13', '!= 1.15.0', '!= 1.15.1'
-gem 'concurrent-ruby', '<= 1.3.4'
+gem 'concurrent-ruby', '< 1.3.4'
 gem 'fastlane'
 gem 'nokogiri', '~> 1.15.5'
 gem 'xcodeproj', '< 1.26.0'
