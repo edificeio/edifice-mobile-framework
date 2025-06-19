@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { UploadedAttachment } from '~/framework/components/attachments/modal-import/types';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { UploadedAttachment } from '~/framework/modules/mails/components/attachments/modal-import/types';
 import { MailsDefaultFolders, MailsFolderInfo, MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
 import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';

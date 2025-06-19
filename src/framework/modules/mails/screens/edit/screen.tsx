@@ -10,7 +10,6 @@ import styles from './styles';
 import { type MailsEditScreenPrivateProps, MailsEditType } from './types';
 
 import { I18n } from '~/app/i18n';
-import Attachments from '~/framework/components/attachments';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
@@ -20,6 +19,7 @@ import toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import Attachments from '~/framework/modules/mails/components/attachments';
 import { MailsContactField, MailsSubjectField } from '~/framework/modules/mails/components/fields';
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsDefaultFolders, MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';

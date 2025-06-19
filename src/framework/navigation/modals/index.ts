@@ -3,13 +3,13 @@
  */
 import { ParamListBase } from '@react-navigation/native';
 
-import { AttachmentsImportScreenProps } from '~/framework/components/attachments/modal-import';
 import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
 import type { MediaPlayerParams } from '~/framework/components/media/player/types';
 import { AudienceReactionsScreenNavParams } from '~/framework/modules/audience/screens/reactions/types';
 import { AudienceViewsScreenNavParams } from '~/framework/modules/audience/screens/views/types';
+import { AttachmentsImportScreenProps } from '~/framework/modules/mails/components/attachments/modal-import';
 import { SplashadsScreenNavParams } from '~/framework/modules/splashads/screen/types';
 
 export enum ModalsRouteNames {

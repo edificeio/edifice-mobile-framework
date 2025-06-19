@@ -2,9 +2,6 @@ import * as React from 'react';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
 
-import AttachmentsImportScreen, {
-  computeNavBar as AttachmentsImportAddNavBar,
-} from '~/framework/components/attachments/modal-import';
 import CarouselScreen from '~/framework/components/carousel';
 import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
@@ -12,6 +9,9 @@ import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
 import AudienceReactionsScreen, { computeNavBar as audienceReactionsNavBar } from '~/framework/modules/audience/screens/reactions';
 import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/audience/screens/views';
+import AttachmentsImportScreen, {
+  computeNavBar as AttachmentsImportAddNavBar,
+} from '~/framework/modules/mails/components/attachments/modal-import';
 import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';

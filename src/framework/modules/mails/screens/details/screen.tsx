@@ -11,7 +11,6 @@ import type { MailsDetailsScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import Attachments from '~/framework/components/attachments';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -29,6 +28,7 @@ import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/fram
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
+import Attachments from '~/framework/modules/mails/components/attachments';
 import MailsHistoryButton from '~/framework/modules/mails/components/history-button';
 import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';
 import MailsMoveBottomSheet from '~/framework/modules/mails/components/move-bottom-sheet';
