@@ -278,7 +278,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         if (item.height) attrs.set('width', item.height.toString());
         if (item.isCaptation) attrs.set('data-document-is-captation', 'true');
         richText.current?.insertHTML(
-          `<div class="${ui.video.class}"><video ${Array.from(attrs)
+          `<div contenteditable="false" class="${ui.video.class}"><video ${Array.from(attrs)
             .map(([k, v]) => `${k}="${v}"`)
             .join(' ')}/></div>`,
         );
@@ -290,7 +290,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         if (item.id) attrs.set('data-document-id', item.id);
         if (item.isCaptation) attrs.set('data-document-is-captation', 'true');
         richText.current?.insertHTML(
-          `<div class="${ui.audio.class}"><audio ${Array.from(attrs)
+          `<div contenteditable="false" class="${ui.audio.class}"><audio ${Array.from(attrs)
             .map(([k, v]) => `${k}="${v}"`)
             .join(' ')}/></div>`,
         );
