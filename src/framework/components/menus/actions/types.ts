@@ -1,4 +1,4 @@
-import { DocumentPickerResponse } from 'react-native-document-picker';
+import { DocumentPickerResponse } from '@react-native-documents/picker';
 
 import { Asset } from '~/framework/util/fileHandler/types';
 

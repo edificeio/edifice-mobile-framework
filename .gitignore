@@ -6,6 +6,7 @@ local.properties
 *.iml
 *.hprof
 .cxx/
+.kotlin/
 android/app/release
 android/app/src/main/assets/index.android.bundle
 
