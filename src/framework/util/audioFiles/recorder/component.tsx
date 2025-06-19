@@ -63,7 +63,7 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
         fileName,
         fileSize: fileStats.size,
         originalPath: filePath,
-        type: 'audio',
+        type: undefined, // will be known from extension
         uri: filePath,
       };
     } catch (error) {

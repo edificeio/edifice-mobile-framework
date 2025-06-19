@@ -198,7 +198,6 @@ const fileTransferService = {
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     const url = session.platform.url + params.url;
-    console.debug('URL', url);
     const job = RNFS.uploadFiles({
       begin: callbacks?.onBegin,
       binaryStreamOnly: params.binaryStreamOnly,
