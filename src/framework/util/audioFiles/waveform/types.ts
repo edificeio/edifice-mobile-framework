@@ -11,6 +11,7 @@ export interface CustomWaveformProps {
   barWidth?: number;
   maxBars?: number;
   mode: WaveFormType;
+  stopRecorder?: () => Promise<void>;
   playerState?: PlayerState;
   recordedBarsForPlayer?: number[]; // Bars captured during recording to be passed to the player
   recorderState?: RecorderState;

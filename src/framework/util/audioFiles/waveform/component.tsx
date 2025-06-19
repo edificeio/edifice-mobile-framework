@@ -17,6 +17,7 @@ import theme from '~/app/theme';
 import { BodyText } from '~/framework/components/text';
 
 const TIMER_PLACEHOLDER = '0:00';
+const RECORDING_TIME_LIMIT = 180;
 const MIN_AMP_OUT = 0;
 const MAX_AMP_OUT = 1;
 
@@ -41,6 +42,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   recorderState,
   resetPlayer,
   speed = 50,
+  stopRecorder,
 }) => {
   const [recorderBars, setRecorderBars] = useState<number[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,7 +52,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   const [playerTime, setPlayerTime] = useState(0);
   const playerStartTimeRef = useRef<number | null>(null);
   const accumulatedPlayerTimeRef = useRef(0);
-
+  const hasStoppedRef = useRef(false);
   const [displayedPlayerBars, setDisplayedPlayerBars] = useState(0);
 
   const waveformWidth = React.useMemo(() => {
@@ -114,7 +116,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   // Handles the waveform bars display for playback mode
   useEffect(() => {
     if (playerState === PlayerState.playing) {
-      setDisplayedPlayerBars(0); // reset au début de la lecture
+      setDisplayedPlayerBars(0);
       let interval = setInterval(() => {
         setDisplayedPlayerBars(prev => {
           if (prev < totalRecordedBars) {
@@ -128,12 +130,11 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
       }, speed);
       return () => clearInterval(interval);
     } else if (playerState === PlayerState.stopped) {
-      setDisplayedPlayerBars(0); // reset si on stoppe
+      setDisplayedPlayerBars(0);
     }
   }, [playerState, totalRecordedBars, speed]);
 
   // TIMER FOR RECORDING MODE
-  // This useEffect keeps precise track of the timer value for recording mode
   useEffect(() => {
     if (recorderState === RecorderState.recording) {
       recordingStartTimeRef.current = Date.now();
@@ -147,7 +148,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
     }
   }, [recorderState]);
 
-  // This useEffect updates the displayed timer value for recording mode
+  // Update the displayed timer value for recording mode
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (recorderState === RecorderState.recording && recordingStartTimeRef.current) {
@@ -159,6 +160,28 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
       if (interval) clearInterval(interval);
     };
   }, [recorderState]);
+
+  // Stop recording when time limit is reached
+  useEffect(() => {
+    if (
+      stopRecorder &&
+      recorderState === RecorderState.recording &&
+      recordingTime >= RECORDING_TIME_LIMIT &&
+      !hasStoppedRef.current
+    ) {
+      hasStoppedRef.current = true;
+      const stop = async () => {
+        setRecordingTime(0);
+        await stopRecorder();
+      };
+      stop();
+    }
+
+    // Resets the ref for next recording attempt
+    if (recorderState !== RecorderState.recording) {
+      hasStoppedRef.current = false;
+    }
+  }, [recordingTime, recorderState, stopRecorder]);
 
   // TIMER FOR PLAYBACK MODE
   useEffect(() => {

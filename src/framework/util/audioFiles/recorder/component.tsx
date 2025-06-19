@@ -185,19 +185,20 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
       ) : (
         <CustomWaveform
           amplitude={currentAmplitude}
+          barsRef={barsRef}
           maxBars={60}
           mode="Recorder"
           recorderState={recorderState}
           speed={barsDisplaySpeed}
-          barsRef={barsRef}
+          stopRecorder={onStopRecord}
         />
       )}
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           onPress={onDeleteRecord}
-          style={deleteButtonStyle}
-          disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}>
+          disabled={!(recorderState === RecorderState.recording || recorderState === RecorderState.paused)}
+          style={deleteButtonStyle}>
           <Svg
             height={UI_SIZES.dimensions.height.mediumPlus}
             width={UI_SIZES.dimensions.width.mediumPlus}
