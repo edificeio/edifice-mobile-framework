@@ -185,7 +185,9 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
             <CaptionBoldText style={styles.date}>{displayPastDate(moment(date))}</CaptionBoldText>
           </View>
           <View style={styles.line}>
-            <TextComponent numberOfLines={1}>{renderSubject(subject, state === MailsMailStatePreview.RECALL)}</TextComponent>
+            <TextComponent numberOfLines={1} style={styles.firstText}>
+              {renderSubject(subject, state === MailsMailStatePreview.RECALL)}
+            </TextComponent>
             {renderAttachmentIcon()}
           </View>
         </View>

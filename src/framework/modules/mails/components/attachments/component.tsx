@@ -39,8 +39,12 @@ export default function Attachments(props: AttachmentsProps) {
     }
   };
 
-  const navigateToAttachmentImport = (source: 'galery' | 'camera' | 'documents') => {
+  const onPressAddAttachments = () => {
     if (!props.draftId) return;
+    bottomSheetModalRef.current?.present();
+  };
+
+  const navigateToAttachmentImport = (source: 'galery' | 'camera' | 'documents') => {
     bottomSheetModalRef.current?.dismiss();
     setTimeout(() => {
       // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
@@ -82,7 +86,7 @@ export default function Attachments(props: AttachmentsProps) {
 
   return (
     <View style={[styles.container, suppContainerStyle]}>
-      {attachments ? (
+      {attachments.length > 0 ? (
         <View style={styles.attachments}>
           {attachments.map(attachment => (
             <Attachment
@@ -100,7 +104,7 @@ export default function Attachments(props: AttachmentsProps) {
           iconLeft="ui-plus"
           text={I18n.get('attachment-attachments')}
           style={styles.button}
-          action={() => bottomSheetModalRef.current?.present()}
+          action={onPressAddAttachments}
         />
       ) : null}
       {renderBottomSheetMenu()}
