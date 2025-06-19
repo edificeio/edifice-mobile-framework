@@ -37,10 +37,32 @@ import { ArrayElement } from '~/utils/types';
 const allowedMediaTypes: MediaTypeList = ['image', 'audio', 'video'];
 const allowedAudioFormats = ['mid', 'mp3'];
 
-function getFileExtension(filename: string): string | undefined {
+function getAudioFileFormat(filename: string): string | undefined {
   const lastDot = filename.lastIndexOf('.');
   if (lastDot === -1 || lastDot === filename.length - 1) return undefined;
   return filename.slice(lastDot + 1).toLowerCase();
+}
+
+async function pickAudioFile(
+  promiseExecutorRef: React.MutableRefObject<MediaBottomSheetModalInternalData<LocalFile[]> | undefined>,
+) {
+  try {
+    const [pickResult] = await pick();
+    const fileName = pickResult?.name;
+    if (fileName) {
+      const format = getAudioFileFormat(fileName);
+      if (!format || !allowedAudioFormats.includes(format)) {
+        promiseExecutorRef?.current?.reject?.([]);
+        return [];
+      }
+    }
+    const fileToSave = new LocalFile(pickResult);
+    return [fileToSave];
+  } catch (e) {
+    console.error(e);
+    promiseExecutorRef?.current?.reject?.([]);
+    return [];
+  }
 }
 
 const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
@@ -80,20 +102,7 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
           i18n: 'media-import-audio-from-files',
           icon: 'ui-smartphone',
           onPress: async () => {
-            try {
-              const [pickResult] = await pick();
-              const fileName = pickResult?.name;
-              if (fileName && fileName !== undefined) {
-                const check = getFileExtension(fileName);
-                if (!allowedAudioFormats.includes(check)) {
-                  promiseExecutorRef?.current?.reject([]);
-                }
-              }
-              const fileToSave = new LocalFile(pickResult);
-              return [fileToSave];
-            } catch (err: unknown) {
-              console.error(err);
-            }
+            return pickAudioFile(promiseExecutorRef);
           },
         },
       ],
