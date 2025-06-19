@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ViewStyle } from 'react-native';
 
 import { BottomSheetModal as RNBottomSheetModal } from '@gorhom/bottom-sheet';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import Attachment from './attachment';
 import styles from './styles';
@@ -15,23 +16,17 @@ import ActionButtonBottomSheetModal from '~/framework/components/modals/bottom-s
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import Separator from '~/framework/components/separator';
 import toast from '~/framework/components/toast';
+import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
+const MODAL_DISMISS_DELAY = 500;
+
 export default function Attachments(props: AttachmentsProps) {
-  const [attachments, setAttachments] = useState<IDistantFileWithId[]>(props.attachments ?? []);
+  const [attachments, setAttachments] = useState<IDistantFileWithId[]>([]);
 
   const bottomSheetModalRef = React.useRef<RNBottomSheetModal>(null);
-
-  // const addAttachment = async attachment => {
-  //   try {
-  //     if (!props.addAttachmentAction) return;
-  //     const attachmentLoaded = await props.addAttachmentAction(attachment);
-  //     setAttachments(attachments => [...attachments, attachmentLoaded]);
-  //   } catch (e) {
-  //     console.error(e);
-  //     toast.showError(I18n.get('attachment-adderror'));
-  //   }
-  // };
+  const navigation = useNavigation();
+  const route = useRoute();
 
   const removeAttachment = async attachment => {
     try {
@@ -44,6 +39,30 @@ export default function Attachments(props: AttachmentsProps) {
     }
   };
 
+  const navigateToAttachmentImport = (source: 'galery' | 'camera' | 'documents') => {
+    if (!props.draftId) return;
+    bottomSheetModalRef.current?.dismiss();
+    setTimeout(() => {
+      // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
+      navigation.navigate({
+        name: ModalsRouteNames.AttachmentsImport,
+        params: {
+          draftId: props.draftId,
+          redirectTo: route,
+          source,
+        },
+      });
+    }, MODAL_DISMISS_DELAY);
+  };
+
+  const handleChoosePics = () => navigateToAttachmentImport('galery');
+  const handleTakePic = () => navigateToAttachmentImport('camera');
+  const handleChooseDocs = () => navigateToAttachmentImport('documents');
+
+  useEffect(() => {
+    if (props.attachments) setAttachments(props.attachments);
+  }, [props.attachments]);
+
   const suppContainerStyle: ViewStyle = {
     borderStyle: props.isEditing ? 'dashed' : 'solid',
   };
@@ -52,11 +71,11 @@ export default function Attachments(props: AttachmentsProps) {
     return (
       <BottomSheetModal ref={bottomSheetModalRef}>
         <HeaderBottomSheetModal title={I18n.get('attachment-title')} />
-        <ActionButtonBottomSheetModal title={I18n.get('pickfile-take')} icon="ui-camera" onPress={() => {}} />
+        <ActionButtonBottomSheetModal title={I18n.get('pickfile-take')} icon="ui-camera" onPress={handleTakePic} />
         <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.minor} />
-        <ActionButtonBottomSheetModal title={I18n.get('pickfile-pick')} icon="ui-multimedia" onPress={() => {}} />
+        <ActionButtonBottomSheetModal title={I18n.get('pickfile-pick')} icon="ui-multimedia" onPress={handleChoosePics} />
         <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.minor} />
-        <ActionButtonBottomSheetModal title={I18n.get('pickfile-document')} icon="ui-addFile" onPress={() => {}} />
+        <ActionButtonBottomSheetModal title={I18n.get('pickfile-document')} icon="ui-addFile" onPress={handleChooseDocs} />
       </BottomSheetModal>
     );
   };

@@ -32,7 +32,7 @@ export const MailsSubjectField = (props: MailsSubjectFieldProps) => {
       <RNTextInput
         style={[styles.input, styles.subjectInput]}
         placeholderTextColor={theme.palette.grey.graphite}
-        placeholder={I18n.get('mails-edit-objectplaceholder')}
+        placeholder={I18n.get('mails-edit-subjectplaceholder')}
         value={value}
         onChangeText={onChangeText}
       />

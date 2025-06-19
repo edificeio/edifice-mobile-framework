@@ -215,6 +215,7 @@ const imports = {
   'ui-mic-preview': async () => import('ASSETS/icons/uiIcons/mic-preview.svg'),
   'ui-minus': async () => import('ASSETS/icons/uiIcons/minus.svg'),
   'ui-move': async () => import('ASSETS/icons/uiIcons/move.svg'),
+  'ui-multimedia': async () => import('ASSETS/icons/uiIcons/multimedia.svg'),
   'ui-notif': async () => import('ASSETS/icons/uiIcons/notif.svg'),
   'ui-options': async () => import('ASSETS/icons/uiIcons/options.svg'),
   'ui-orderedList': async () => import('ASSETS/icons/uiIcons/orderedList.svg'),

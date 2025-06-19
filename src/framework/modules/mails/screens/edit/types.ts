@@ -1,5 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { UploadedAttachment } from '~/framework/components/attachments/modal-import/types';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { MailsDefaultFolders, MailsFolderInfo, MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
 import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
@@ -29,6 +30,7 @@ export interface MailsEditScreenNavParams {
   draftId?: string;
   type?: MailsEditType;
   fromFolder: MailsDefaultFolders | MailsFolderInfo;
+  importAttachmentsResult?: UploadedAttachment[];
 }
 
 export interface MailsEditScreenPrivateProps extends NativeStackScreenProps<MailsNavigationParams, 'edit'>, MailsEditScreenProps {

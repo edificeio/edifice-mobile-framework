@@ -77,33 +77,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
   const openMoreRecipientsFields = () => setMoreRecipientsFields(true);
 
-  const onAddAttachment = React.useCallback(
-    async attachment => {
-      try {
-        let mailId = '';
-        if (draftIdSaved) {
-          mailId = draftIdSaved;
-        } else {
-          const toIds = to.map(recipient => recipient.id);
-          const ccIds = cc.map(recipient => recipient.id);
-          const cciIds = cci.map(recipient => recipient.id);
-
-          mailId = await mailsService.mail.sendToDraft({ body, cc: ccIds, cci: cciIds, subject, to: toIds });
-          setDraftIdSaved(mailId);
-        }
-        const fileUploaded = await mailsService.attachments.add({ mailId }, attachment, props.session!);
-        return fileUploaded;
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [body, cc, cci, draftIdSaved, subject, to, props.session],
-  );
-
   const onRemoveAttachment = React.useCallback(
     async attachment => {
       try {
-        await mailsService.attachments.remove({ attachmentId: attachment.id, mailId: draftIdSaved! });
+        await mailsService.attachments.remove({ attachmentId: attachment.id, draftId: draftIdSaved! });
         setAttachments(attachments.filter(att => att.id !== attachment.id));
       } catch (e) {
         console.error(e);
@@ -247,6 +224,9 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         setCci(cciDraft);
         setAttachments(convertedAttachments);
       } else {
+        const newDraftId = await mailsService.mail.sendToDraft({ body: '', cc: [], cci: [], subject: '', to: [] });
+        setDraftIdSaved(newDraftId);
+
         const signatureData = await mailsService.signature.get();
         const { signature, useSignature } = signatureData ? JSON.parse(signatureData) : { signature: '', useSignature: false };
 
@@ -280,19 +260,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     }
   }, [draftId, initialMailInfo, type]);
 
-  const showPreventBack = React.useMemo(
-    () =>
-      isSending !== true &&
-      !(
-        to.length === 0 &&
-        cc.length === 0 &&
-        cci.length === 0 &&
-        body?.trim() === '' &&
-        subject?.trim() === '' &&
-        attachments.length === 0
-      ),
-    [attachments, body, cc, cci, isSending, subject, to],
-  );
+  const showPreventBack = React.useMemo(() => isSending !== true, [isSending]);
 
   UNSTABLE_usePreventRemove(showPreventBack, () => onSendDraft());
 
@@ -327,6 +295,14 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [to, cc, cci, subject, draftIdSaved, onCheckSend]);
+
+  React.useEffect(() => {
+    // Cf. ToDo about changing typing for Modals nav params
+    if (props.route.params?.importAttachmentsResult?.length > 0) {
+      setAttachments(prevAttachments => [...prevAttachments, ...props.route.params.importAttachmentsResult]);
+      props.navigation.setParams({ importAttachmentsResult: undefined });
+    }
+  }, [props.route.params?.importAttachmentsResult, props.navigation]);
 
   const renderTopForm = React.useCallback(() => {
     const commonProps = {
@@ -374,16 +350,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const renderBottomForm = React.useCallback(
     () => (
       <View style={styles.bottomForm}>
-        <Attachments
-          isEditing
-          attachments={attachments}
-          //addAttachmentAction={onAddAttachment}
-          removeAttachmentAction={onRemoveAttachment}
-        />
+        <Attachments isEditing attachments={attachments} removeAttachmentAction={onRemoveAttachment} draftId={draftIdSaved} />
         <View style={{ minHeight: 600 }} />
       </View>
     ),
-    [attachments, onRemoveAttachment],
+    [attachments, draftIdSaved, onRemoveAttachment],
   );
 
   const renderContent = React.useCallback(() => {

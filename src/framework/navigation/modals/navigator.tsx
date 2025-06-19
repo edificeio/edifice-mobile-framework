@@ -2,6 +2,9 @@ import * as React from 'react';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
 
+import AttachmentsImportScreen, {
+  computeNavBar as AttachmentsImportAddNavBar,
+} from '~/framework/components/attachments/modal-import';
 import CarouselScreen from '~/framework/components/carousel';
 import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
@@ -38,6 +41,12 @@ export default (
         name={ModalsRouteNames.FileImport}
         options={FileAddNavBar}
         component={FileImportScreen}
+        initialParams={{}}
+      />
+      <RootStack.Screen
+        name={ModalsRouteNames.AttachmentsImport}
+        options={AttachmentsImportAddNavBar}
+        component={AttachmentsImportScreen}
         initialParams={{}}
       />
       <RootStack.Screen

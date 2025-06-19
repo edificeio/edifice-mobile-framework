@@ -5,6 +5,7 @@ export interface AttachmentsProps {
   session: AuthActiveAccount;
   isEditing?: boolean;
   attachments?: IDistantFileWithId[];
+  draftId?: string;
   addAttachmentAction?: (attachment: IDistantFileWithId) => Promise<SyncedFileWithId>;
   removeAttachmentAction?: (attachment: IDistantFileWithId) => Promise<void>;
 }

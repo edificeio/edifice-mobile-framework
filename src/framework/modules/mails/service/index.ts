@@ -25,8 +25,8 @@ import http from '~/framework/util/http';
 
 export const mailsService = {
   attachments: {
-    add: async (params: { mailId: string }, file: LocalFile, session: AuthActiveAccount) => {
-      const url = `/conversation/message/${params.mailId}/attachment`;
+    add: async (params: { draftId: string }, file: LocalFile, session: AuthActiveAccount) => {
+      const url = `/conversation/message/${params.draftId}/attachment`;
       const uploadedFile = await fileHandlerService.uploadFile<SyncedFileWithId>(
         session,
         file,
@@ -40,7 +40,7 @@ export const mailsService = {
           const json = JSON.parse(data) as { id: string };
           return {
             id: json.id,
-            url: `/conversation/message/${params.mailId}/attachment/${json.id}`,
+            url: `/conversation/message/${params.draftId}/attachment/${json.id}`,
           };
         },
         {},
@@ -48,8 +48,8 @@ export const mailsService = {
       );
       return uploadedFile;
     },
-    remove: async (params: { mailId: string; attachmentId: string }) => {
-      const api = `/conversation/message/${params.mailId}/attachment/${params.attachmentId}`;
+    remove: async (params: { draftId: string; attachmentId: string }) => {
+      const api = `/conversation/message/${params.draftId}/attachment/${params.attachmentId}`;
       await http.fetchJsonForSession('DELETE', api);
     },
   },
