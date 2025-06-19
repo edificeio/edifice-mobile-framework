@@ -54,14 +54,14 @@ async function pickAudioFile(
       if (!format || !allowedAudioFormats.includes(format)) {
         const error = new Error('User tried to upload an audio file with an unsupported format.');
         (error as any).code = 'E_AUDIO_FORMAT';
-        promiseExecutorRef?.current?.reject?.([]);
+        promiseExecutorRef?.current?.reject?.(error);
         throw error;
       }
     }
     const fileToSave = new LocalFile(pickResult);
     return [fileToSave];
   } catch (e) {
-    promiseExecutorRef?.current?.reject?.([]);
+    promiseExecutorRef?.current?.reject?.(e);
     throw e;
   }
 }
@@ -255,6 +255,8 @@ export const useMediaImport = (
         if (e instanceof Error) {
           switch (e.code) {
             case 'E_PICKER_CANCELLED':
+            case 'E_DOCUMENT_PICKER_CANCELED':
+            case 'DOCUMENT_PICKER_CANCELED':
               return cancelMediaImport();
             case 'E_PICKER_CANNOT_RUN_CAMERA_ON_SIMULATOR':
               toast.showError(I18n.get('media-cannot-use-camera-in-simulator'));
