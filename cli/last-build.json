@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-06-03 19:40:59",
-  "notes": "fix(wayf): SUPPORT-2883, modifie network config for creteil wayf\nrelease: 1.14.0-rc.6(1140025)",
-  "version": "1.14.0-rc.7(1140026)"
+  "last": "2025-06-19 15:26:46",
+  "notes": "fix(mails) fix details\nchore: clean caches\nmerge 1.14.1\nchore(mails): move attachments component in mails modules\nfeat(mails): COCO-3597 add attachments feature\nfix(mails): COCO-3899 add subject recall message\nfix(mails) COCO-3584 improve experience when have no content in mail\nfeat(mails) COCO-4155, add default folder icon when mail is in personnal folder\nfeat(mails): COCO-4199 : search in front\nmerge 1.14.1",
+  "version": "1.14.1-comm.1(1140101)"
 }
