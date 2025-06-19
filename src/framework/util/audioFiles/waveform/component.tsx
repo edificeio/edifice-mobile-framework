@@ -113,26 +113,33 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
     };
   }, [speed, maxBars, amplitude, recorderState, minAmpIn, maxAmpIn, randomness, barsRef]);
 
-  // Handles the waveform bars display for playback mode
   useEffect(() => {
     if (playerState === PlayerState.playing) {
-      setDisplayedPlayerBars(0);
-      let interval = setInterval(() => {
-        setDisplayedPlayerBars(prev => {
-          if (prev < totalRecordedBars) {
-            const nextBar = prev + 1;
-            return nextBar;
-          } else {
-            clearInterval(interval);
-            return prev;
-          }
-        });
-      }, speed);
-      return () => clearInterval(interval);
+      const barsCount = Math.floor((playerTime / durationSec) * totalRecordedBars);
+      setDisplayedPlayerBars(Math.min(barsCount, totalRecordedBars));
     } else if (playerState === PlayerState.stopped) {
       setDisplayedPlayerBars(0);
     }
-  }, [playerState, totalRecordedBars, speed]);
+  }, [playerTime, playerState, durationSec, totalRecordedBars]);
+
+  // Update displayedPlayerBars on every frame to make the waveform animate smoothly
+  useEffect(() => {
+    if (playerState === PlayerState.playing) {
+      let frameId: number;
+      const start = performance.now();
+      const animate = (now: number) => {
+        const elapsed = (now - start) / 1000 + accumulatedPlayerTimeRef.current;
+        const ratio = Math.min(elapsed / durationSec, 1);
+        const barsCount = Math.floor(ratio * totalRecordedBars);
+        setDisplayedPlayerBars(barsCount);
+        if (ratio < 1 && playerState === PlayerState.playing) {
+          frameId = requestAnimationFrame(animate);
+        }
+      };
+      frameId = requestAnimationFrame(animate);
+      return () => cancelAnimationFrame(frameId);
+    }
+  }, [playerState, durationSec, totalRecordedBars]);
 
   // TIMER FOR RECORDING MODE
   useEffect(() => {
