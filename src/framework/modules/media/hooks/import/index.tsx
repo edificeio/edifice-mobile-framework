@@ -52,16 +52,17 @@ async function pickAudioFile(
     if (fileName) {
       const format = getAudioFileFormat(fileName);
       if (!format || !allowedAudioFormats.includes(format)) {
+        const error = new Error('User tried to upload an audio file with an unsupported format.');
+        (error as any).code = 'E_AUDIO_FORMAT';
         promiseExecutorRef?.current?.reject?.([]);
-        return [];
+        throw error;
       }
     }
     const fileToSave = new LocalFile(pickResult);
     return [fileToSave];
   } catch (e) {
-    console.error(e);
     promiseExecutorRef?.current?.reject?.([]);
-    return [];
+    throw e;
   }
 }
 
@@ -263,6 +264,9 @@ export const useMediaImport = (
               break;
             case 'E_NO_CAMERA_PERMISSION':
               toast.showError(I18n.get('media-permission-camera-denied', { appName: DeviceInfo.getApplicationName() }));
+              break;
+            case 'E_AUDIO_FORMAT':
+              toast.showError(I18n.get('audio-file-format-error'));
               break;
             // case 'E_NO_IMAGE_DATA_FOUND':
             //   break;

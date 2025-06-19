@@ -23,6 +23,7 @@
   "audience-views-title": "Audience",
   "audience-views-uniqueviews": "Personnes ont vu le billet",
   "audience-views-views": "Vues au total",
+  "audio-file-format-error": "Seuls les formats .mp3 et .mid sont autorisés",
   "audio-recorder-placeholder": "Touchez pour commencer",
   "auth-account-select-error": "Une erreur est survenue.",
   "auth-accountbutton-add": "Ajouter un compte",

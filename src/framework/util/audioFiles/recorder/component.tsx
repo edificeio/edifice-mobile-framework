@@ -68,6 +68,7 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
       };
     } catch (error) {
       console.error('Error formatting audio as Asset:', error as Error);
+      promiseExecutorRef?.current?.resolve([]);
       throw error;
     }
   };
@@ -119,6 +120,7 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
         }
       } catch (error) {
         console.error('Error stopping the recording:', error);
+        promiseExecutorRef?.current?.resolve([]);
       }
     }
   };
