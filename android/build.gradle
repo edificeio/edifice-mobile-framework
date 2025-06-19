@@ -12,11 +12,10 @@ buildscript {
         mavenCentral()
         maven { url 'https://jcenter.bintray.com'}
         maven { url 'https://zendesk.jfrog.io/zendesk/repo' }
-        maven { url "$rootDir/../node_modules/react-native/ReactAndroid/src/main/java" }
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
-        classpath("com.facebook.react:react-native-gradle-plugin:0.78.2")
+        classpath("com.facebook.react:react-native-gradle-plugin:0.79.4")
         classpath("com.google.firebase:firebase-appdistribution-gradle:5.1.1")
         classpath("com.google.firebase:firebase-crashlytics-gradle:3.0.3")
         classpath("com.google.gms:google-services:4.4.2")
