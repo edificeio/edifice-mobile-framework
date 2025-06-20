@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Image, ImageProps } from 'react-native';
 
-import { UI_SIZES } from '../constants';
-import { AvatarSizes } from './styles';
 import {
   CommonSingleAvatarProps,
   SingleAvatarOnlySpecificProps,
@@ -19,6 +17,8 @@ import {
 } from './types';
 
 import theme from '~/app/theme';
+import { AvatarSizes } from '~/framework/components/avatar/styles';
+import { UI_SIZES } from '~/framework/components/constants';
 import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { urlSigner } from '~/infra/oauth';
@@ -51,8 +51,8 @@ export const buildAvatarSourceForAccount = (account: AuthSavedAccount | AuthLogg
   const uri = buildAbsoluteUserAvatarUrlWithPlatform(account.user.id, appConf.getExpandedPlatform(account.platform));
   return uri
     ? {
-        uri,
-      }
+      uri,
+    }
     : undefined;
 };
 

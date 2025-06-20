@@ -2,10 +2,9 @@ import type { ParamListBase } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashListProps } from '@shopify/flash-list';
 
-import { createExplorerSelectors } from '../../store';
-
 import type { Folder, FolderId, Resource } from '~/framework/modules/explorer/model/types';
 import { API } from '~/framework/modules/explorer/service/types';
+import { createExplorerSelectors } from '~/framework/modules/explorer/store';
 import type { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export namespace ResourceExplorerTemplate {
@@ -30,7 +29,7 @@ export namespace ResourceExplorerTemplate {
 
   export type NavBarConfig = ({ navigation, route }: NavigationProps) => NativeStackNavigationOptions;
 
-  export interface AllProps extends Props, NavigationProps {}
+  export interface AllProps extends Props, NavigationProps { }
 
   export type ScreenProps = Omit<AllProps, keyof Props>;
 }

@@ -1,8 +1,7 @@
 import deepmerge from 'deepmerge';
 
-import wikiModuleConfig from '../wiki/module-config';
-
 import theme from '~/app/theme';
+import wikiModuleConfig from '~/framework/modules/wiki/module-config';
 import appConf from '~/framework/util/appConf';
 import { IAppBadgeInfo, IAppBadgesInfoDeclaration } from '~/framework/util/moduleTool';
 

@@ -6,13 +6,12 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { getPlatform } from '../../auth/reducer';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
+import { getPlatform } from '~/framework/modules/auth/reducer';
 import BtnNBK from '~/framework/modules/nabook/components/BtnNBK';
 import { NBK_BASE_URL, NBK_COLORS, ONE_LINK_NBK } from '~/framework/modules/nabook/utils/constants';
 import textStyle from '~/framework/modules/nabook/utils/textStyle';
