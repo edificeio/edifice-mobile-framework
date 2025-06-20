@@ -6,6 +6,7 @@ export interface MailsMailPreviewProps {
   isInPersonalFolder?: boolean;
   isSelected: boolean;
   isSelectMode: boolean;
+  isTrashed: boolean;
   onSelect: (id: string) => void;
   onPress: () => void;
   onLongPress?: () => void;

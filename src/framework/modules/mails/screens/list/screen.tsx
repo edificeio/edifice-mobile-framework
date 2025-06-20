@@ -876,6 +876,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           isSelectMode={isSelectionMode}
           isInPersonalFolder={typeof selectedFolder === 'object'}
           isSelected={selectedMails.includes(mail.id)}
+          isTrashed={isTrashed}
           onSelect={onSelectMail}
           onDelete={() => onDelete([mail.id], isTrashed ? true : false)}
           onToggleUnread={!isDraft && !isSender && !isTrashed ? () => onToggleUnread([mail.id], mail.unread) : undefined}

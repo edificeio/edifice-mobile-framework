@@ -21,7 +21,18 @@ import { displayPastDate } from '~/framework/util/date';
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, id, response, state, subject, to, unread } = props.data;
-  const { isInPersonalFolder, isSelected, isSelectMode, isSender, onDelete, onPress, onRestore, onSelect, onToggleUnread } = props;
+  const {
+    isInPersonalFolder,
+    isSelected,
+    isSelectMode,
+    isSender,
+    isTrashed,
+    onDelete,
+    onPress,
+    onRestore,
+    onSelect,
+    onToggleUnread,
+  } = props;
 
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
   const isDraft = state === MailsMailStatePreview.DRAFT;
@@ -80,7 +91,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   }, [from?.id, infosRecipients.ids, isSender]);
 
   const renderDefaultFolder = React.useCallback(() => {
-    if (!isInPersonalFolder) return null;
+    if (!isInPersonalFolder && !isTrashed) return null;
     const iconName = isDraft ? 'ui-edit' : isSender ? 'ui-send' : 'ui-depositeInbox';
     return (
       <View style={styles.defaultFolder}>
@@ -92,7 +103,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         />
       </View>
     );
-  }, [isDraft, isInPersonalFolder, isSender]);
+  }, [isDraft, isInPersonalFolder, isSender, isTrashed]);
 
   const renderFirstText = React.useCallback(() => {
     return (
