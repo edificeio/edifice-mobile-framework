@@ -10,7 +10,7 @@ import { AudioPlayerProps } from './types';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import CustomWaveform from '~/framework/util/audioFiles/waveform';
+import CustomWaveform from '~/framework/modules/media/components/audio/waveform';
 import { LocalFile } from '~/framework/util/fileHandler';
 
 const AudioPlayer = ({ audioFile, bottomSheetRef, promiseExecutorRef, recordedBarsForPlayer, resetRecorder }: AudioPlayerProps) => {

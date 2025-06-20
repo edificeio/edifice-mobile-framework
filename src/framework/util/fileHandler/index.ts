@@ -212,6 +212,29 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     );
   }
 
+  static getExtension(filename: string): string | undefined {
+    const lastDot = filename.lastIndexOf('.');
+    if (lastDot === -1 || lastDot === filename.length - 1) return undefined;
+    return filename.slice(lastDot + 1).toLowerCase();
+  }
+
+  static allowedAudioFormats = ['mid', 'mp3'];
+
+  static async pickAudioFromDocuments() {
+    await assertPermissions('documents.read');
+    const [pickResult] = await DocumentPicker.pick();
+    const fileName = pickResult?.name;
+    if (fileName) {
+      const format = LocalFile.getExtension(fileName);
+      if (!format || !LocalFile.allowedAudioFormats.includes(format)) {
+        const error = new Error('User tried to upload an audio file with an unsupported format.');
+        (error as any).code = 'E_AUDIO_FORMAT';
+        throw error;
+      }
+    }
+    return new LocalFile(pickResult);
+  }
+
   filename: string; // Name of the file including extension
 
   filepath: string; // Absolute url to the file on the device, starting by '/'

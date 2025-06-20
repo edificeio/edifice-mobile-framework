@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
-import { WAVEFORM_AND_BUTTONS_CONTAINER_HEIGHT } from '~/framework/util/audioFiles/recorder/styles';
+import { WAVEFORM_AND_BUTTONS_CONTAINER_HEIGHT } from '~/framework/modules/media/components/audio/recorder/styles';
 
 const styles = StyleSheet.create({
   buttonDelete: {

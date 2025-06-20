@@ -3,7 +3,6 @@ import { View } from 'react-native';
 
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import DeviceInfo from 'react-native-device-info';
-import { pick } from 'react-native-document-picker';
 import { Video } from 'react-native-image-crop-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -25,46 +24,16 @@ import { BodyText, SmallBoldText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import AudioRecorder from '~/framework/modules/media/components/audio/recorder';
 import { mediaRouteNames } from '~/framework/modules/media/navigation';
 import workspaceService, { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { usePromiseNavigate } from '~/framework/navigation/promise';
-import AudioRecorder from '~/framework/util/audioFiles/recorder';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 import { IMedia, IVideoMedia } from '~/framework/util/media';
 import { ArrayElement } from '~/utils/types';
 
 const allowedMediaTypes: MediaTypeList = ['image', 'audio', 'video'];
-const allowedAudioFormats = ['mid', 'mp3'];
-
-function getAudioFileFormat(filename: string): string | undefined {
-  const lastDot = filename.lastIndexOf('.');
-  if (lastDot === -1 || lastDot === filename.length - 1) return undefined;
-  return filename.slice(lastDot + 1).toLowerCase();
-}
-
-async function pickAudioFile(
-  promiseExecutorRef: React.MutableRefObject<MediaBottomSheetModalInternalData<LocalFile[]> | undefined>,
-) {
-  try {
-    const [pickResult] = await pick();
-    const fileName = pickResult?.name;
-    if (fileName) {
-      const format = getAudioFileFormat(fileName);
-      if (!format || !allowedAudioFormats.includes(format)) {
-        const error = new Error('User tried to upload an audio file with an unsupported format.');
-        (error as any).code = 'E_AUDIO_FORMAT';
-        promiseExecutorRef?.current?.reject?.(error);
-        throw error;
-      }
-    }
-    const fileToSave = new LocalFile(pickResult);
-    return [fileToSave];
-  } catch (e) {
-    promiseExecutorRef?.current?.reject?.(e);
-    throw e;
-  }
-}
 
 const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
   audio: () => {
@@ -103,7 +72,7 @@ const useDefaultMediaImportChoicesByType: MediaImportChoicesHookByType = {
           i18n: 'media-import-audio-from-files',
           icon: 'ui-smartphone',
           onPress: async () => {
-            return pickAudioFile(promiseExecutorRef);
+            return [await LocalFile.pickAudioFromDocuments()];
           },
         },
       ],

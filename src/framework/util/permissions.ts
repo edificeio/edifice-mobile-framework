@@ -38,6 +38,10 @@ const permissionsScenarios = {
           : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
   })!,
+  'microphone': Platform.select<true | Permission>({
+    android: PERMISSIONS.ANDROID.RECORD_AUDIO,
+    ios: true,
+  }),
 };
 
 export class PermissionError extends Error {
@@ -84,7 +88,7 @@ export const assertPermissions = async (scenario: keyof typeof permissionsScenar
     throw new PermissionError(
       `Assert permission scenario "${scenario} not granted. Permissions not granted : \n - ${missingPermissions.map(pair => `${pair[0]} -> ${pair[1]}`).join('\n - ')}"`,
       missingPermissions[0][0],
-      missingPermissions[0][1]
+      missingPermissions[0][1],
     );
   }
 

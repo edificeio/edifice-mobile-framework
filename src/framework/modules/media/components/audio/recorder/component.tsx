@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NativeEventEmitter, NativeModules, PermissionsAndroid, Platform, TouchableOpacity, View } from 'react-native';
+import { NativeEventEmitter, NativeModules, Platform, TouchableOpacity, View } from 'react-native';
 
 import {
   PermissionStatus,
@@ -18,10 +18,11 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import AudioPlayer from '~/framework/util/audioFiles/player';
-import CustomWaveform from '~/framework/util/audioFiles/waveform';
+import AudioPlayer from '~/framework/modules/media/components/audio/player';
+import CustomWaveform from '~/framework/modules/media/components/audio/waveform';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Asset } from '~/framework/util/fileHandler/types';
+import { assertPermissions } from '~/framework/util/permissions';
 
 const { AudioWaveform, AudioWaveformsEventEmitter } = NativeModules;
 
@@ -38,10 +39,7 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
   const [barsForPlayer, setBarsForPlayer] = useState<number[]>([]);
 
   const requestPermissionIfNeeded = React.useCallback(async (): Promise<boolean> => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    }
+    await assertPermissions('microphone');
     const status = await checkHasAudioRecorderPermission();
     if (status === PermissionStatus.granted) {
       return true;
