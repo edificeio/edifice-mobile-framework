@@ -185,7 +185,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       <TouchableOpacity
         style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
         onPress={isSelectMode ? onCheck : onPress}
-        onLongPress={isSelectMode ? undefined : props.onLongPress}>
+        onLongPress={isSelectMode ? () => {} : props.onLongPress}>
         {renderSelectIcon()}
         {renderAvatar()}
         {renderDefaultFolder()}

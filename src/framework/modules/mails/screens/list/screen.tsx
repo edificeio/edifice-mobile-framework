@@ -285,7 +285,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     loadMails(selectedFolder, '');
   }, [loadMails, selectedFolder]);
 
-  const onActiveSelectMode = React.useCallback(() => {
+  const onActiveSelectMode = React.useCallback((mailId: string) => {
+    setSelectedMails([mailId]);
     setIsSelectionMode(true);
   }, []);
 
@@ -871,7 +872,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           key={mail.id}
           data={mail}
           onPress={() => onPressItem(mail.id, mail.unread, mail.state)}
-          onLongPress={onActiveSelectMode}
+          onLongPress={() => onActiveSelectMode(mail.id)}
           isSender={isSender}
           isSelectMode={isSelectionMode}
           isInPersonalFolder={typeof selectedFolder === 'object'}
