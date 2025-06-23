@@ -242,7 +242,9 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   return React.useMemo(() => {
     return (
       <BottomSheetModalProvider>
-        <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>
+        <Tab.Navigator id="tabs" screenOptions={screenOptions}>
+          {tabRoutes}
+        </Tab.Navigator>
       </BottomSheetModalProvider>
     );
   }, [screenOptions, tabRoutes]);

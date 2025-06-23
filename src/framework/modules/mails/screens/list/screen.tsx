@@ -90,6 +90,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const loadMails = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo, searchValue?: string) => {
       try {
+        setIsLoading(true);
         setPageNb(0);
         if (!hasNextMails) setHasNextMails(true);
         const folderId = typeof folder === 'object' ? folder.id : (folder as string);
@@ -102,6 +103,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         setMails(mailsData);
       } catch (e) {
         console.error(e);
+      } finally {
+        setIsLoading(false);
       }
     },
     [hasNextMails],
@@ -171,15 +174,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const switchFolder = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo) => {
       try {
-        setIsLoading(true);
         setSelectedFolder(folder);
         onDismissBottomSheet();
         await loadMails(folder);
         flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
       } catch (e) {
         console.error(e);
-      } finally {
-        setIsLoading(false);
       }
     },
     [loadMails, onDismissBottomSheet],
@@ -470,6 +470,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     ],
     [onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder],
   );
+
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.getParent('tabs').addListener('tabPress', () => {
+      setSelectedFolder(MailsDefaultFolders.INBOX);
+      loadMails(MailsDefaultFolders.INBOX);
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   React.useEffect(() => {
     //reload visibles if last call was more than 1 hour ago or never called
