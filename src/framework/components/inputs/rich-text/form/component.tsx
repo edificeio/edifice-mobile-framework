@@ -243,7 +243,8 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   //
 
   const scrollRef = React.useRef<ScrollView>(null);
-  const syncRef = useSyncRef(ref, scrollRef);
+  const scrollSyncRef = useSyncRef(ref, scrollRef);
+  const editorSyncRef = props.editorRef ? useSyncRef(props.editorRef, richText) : undefined;
 
   const handleBlur = React.useCallback(() => {
     animateToolbar({ opacity: 0, ypos: 2 * UI_SIZES.elements.editor.toolbarHeight });
@@ -293,7 +294,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
           <ScrollView
             keyboardDismissMode="none"
             keyboardShouldPersistTaps="always"
-            ref={syncRef}
+            ref={scrollSyncRef}
             scrollEventThrottle={20}
             alwaysBounceVertical={false}
             bounces
@@ -309,7 +310,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
               initialFocus={false}
               pasteAsPlainText
               placeholder={props.placeholder ?? ''}
-              ref={richText}
+              ref={editorSyncRef}
               style={[styles.richEditor, props.editorStyle]}
               useContainer
               useComposition={false}

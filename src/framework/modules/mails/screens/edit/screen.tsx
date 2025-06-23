@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Keyboard, View } from 'react-native';
+import { Alert, Keyboard, ScrollView, View } from 'react-native';
 
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -11,7 +11,7 @@ import { type MailsEditScreenPrivateProps, MailsEditType } from './types';
 
 import { I18n } from '~/app/i18n';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import { RichEditorForm } from '~/framework/components/inputs/rich-text';
+import { RichEditor, RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
@@ -68,7 +68,8 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const [isStartScroll, setIsStartScroll] = React.useState<boolean>(false);
   const [scrollEnabled, setScrollEnabled] = React.useState<boolean>(true);
 
-  const richEditorRef = React.useRef(null);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  const editorRef = React.useRef<RichEditor>(null);
 
   const haveInitialCcCci = React.useMemo(
     () => (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0),
@@ -76,6 +77,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   );
 
   const openMoreRecipientsFields = () => setMoreRecipientsFields(true);
+
+  const onPressAddAttachments = React.useCallback(() => {
+    editorRef.current?.blurContentEditor();
+  }, [editorRef]);
 
   const onRemoveAttachment = React.useCallback(
     async attachment => {
@@ -312,7 +317,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       onChangeRecipient,
       onFocus: setInputFocused,
       onToggleShowList: showList => setScrollEnabled(!showList),
-      richEditorRef,
+      scrollViewRef,
     };
 
     return (
@@ -350,17 +355,24 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const renderBottomForm = React.useCallback(
     () => (
       <View style={styles.bottomForm}>
-        <Attachments isEditing attachments={attachments} removeAttachmentAction={onRemoveAttachment} draftId={draftIdSaved} />
+        <Attachments
+          isEditing
+          attachments={attachments}
+          removeAttachmentAction={onRemoveAttachment}
+          draftId={draftIdSaved}
+          onPressAddAttachments={onPressAddAttachments}
+        />
         <View style={{ minHeight: 600 }} />
       </View>
     ),
-    [attachments, draftIdSaved, onRemoveAttachment],
+    [attachments, draftIdSaved, onRemoveAttachment, onPressAddAttachments],
   );
 
   const renderContent = React.useCallback(() => {
     return (
       <RichEditorForm
-        ref={richEditorRef}
+        ref={scrollViewRef}
+        editorRef={editorRef}
         topForm={renderTopForm()}
         initialContentHtml={initialContentHTML}
         editorStyle={styles.editor}

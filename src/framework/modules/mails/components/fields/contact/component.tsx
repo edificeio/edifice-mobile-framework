@@ -112,7 +112,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
           setHeightInputToSave(height);
           topPositionResults.setValue(y + height);
-          props.richEditorRef.current?.scrollTo({ animated: true, y: y + height - INITIAL_HEIGHT_INPUT });
+          props.scrollViewRef.current?.scrollTo({ animated: true, y: y + height - INITIAL_HEIGHT_INPUT });
         });
       }, 300);
     }

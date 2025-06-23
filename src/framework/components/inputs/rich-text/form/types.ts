@@ -3,6 +3,7 @@ import { ScrollViewProps, ViewStyle } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
@@ -19,6 +20,7 @@ export interface RichEditorFormProps extends ScrollViewProps {
   pageStyle?: ViewStyle;
   editorStyle?: ViewStyle;
   placeholder?: string;
+  editorRef?: React.Ref<RichEditor>;
 }
 
 export interface RichEditorFormReduxProps {

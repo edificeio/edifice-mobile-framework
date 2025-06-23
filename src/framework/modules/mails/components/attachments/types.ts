@@ -8,4 +8,5 @@ export interface AttachmentsProps {
   draftId?: string;
   addAttachmentAction?: (attachment: IDistantFileWithId) => Promise<SyncedFileWithId>;
   removeAttachmentAction?: (attachment: IDistantFileWithId) => Promise<void>;
+  onPressAddAttachments?: () => void;
 }

@@ -41,6 +41,7 @@ export default function Attachments(props: AttachmentsProps) {
 
   const onPressAddAttachments = () => {
     if (!props.draftId) return;
+    if (props.onPressAddAttachments) props.onPressAddAttachments();
     bottomSheetModalRef.current?.present();
   };
 
