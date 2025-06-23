@@ -34,7 +34,6 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
   const [isRecordDeleted, setIsRecordDeleted] = useState<boolean>(false);
   const [showPlayer, setShowPlayer] = useState<boolean>(false);
   const [audioFile, setAudioFile] = useState<LocalFile | null>(null);
-  const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 20), []);
   const barsRef = React.useRef<number[]>([]);
   const [barsForPlayer, setBarsForPlayer] = useState<number[]>([]);
 
@@ -189,7 +188,6 @@ const AudioRecorder = ({ bottomSheetRef, promiseExecutorRef }: AudioRecorderProp
           maxBars={60}
           mode="Recorder"
           recorderState={recorderState}
-          speed={barsDisplaySpeed}
           stopRecorder={onStopRecord}
         />
       )}

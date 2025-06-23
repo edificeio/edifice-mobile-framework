@@ -41,7 +41,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   recordedBarsForPlayer = [],
   recorderState,
   resetPlayer,
-  speed = 50,
+  speed = 30,
   stopRecorder,
 }) => {
   const [recorderBars, setRecorderBars] = useState<number[]>([]);

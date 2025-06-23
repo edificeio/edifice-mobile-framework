@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { PlayerState, UpdateFrequency, useAudioPlayer } from '@simform_solutions/react-native-audio-waveform';
 import { DurationType, FinishMode } from '@simform_solutions/react-native-audio-waveform/lib/constants';
@@ -20,7 +20,6 @@ const AudioPlayer = ({ audioFile, bottomSheetRef, promiseExecutorRef, recordedBa
   const filePath = audioFile?.nativeInfo.uri;
   // playerKey is the identifier of the player's current instance
   const playerKey = React.useMemo(() => `PlayerFor${filePath}`, [filePath]);
-  const barsDisplaySpeed = React.useMemo(() => (Platform.OS === 'ios' ? 30 : 20), []);
 
   const preparePlayerForPath = async (fileUri: string) => {
     if (fileUri) {
@@ -125,7 +124,6 @@ const AudioPlayer = ({ audioFile, bottomSheetRef, promiseExecutorRef, recordedBa
         playerState={playerState}
         recordedBarsForPlayer={recordedBarsForPlayer}
         resetPlayer={resetPlayer}
-        speed={barsDisplaySpeed}
       />
 
       <View style={styles.buttonsContainer}>
