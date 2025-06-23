@@ -89,7 +89,7 @@ const CustomWaveform: React.FC<CustomWaveformProps> = ({
   useEffect(() => {
     if (recorderState === RecorderState.recording) {
       intervalRef.current = setInterval(() => {
-        if (typeof amplitude === 'number' && !isNaN(amplitude) && isFinite(amplitude)) {
+        if (typeof amplitude === 'number' && !isNaN(amplitude) && isFinite(amplitude) && amplitude !== 0) {
           setRecorderBars(prev => {
             let normalizedAmp = interpolate(amplitude, minAmpIn, maxAmpIn, MIN_AMP_OUT, MAX_AMP_OUT);
             normalizedAmp *= Math.random() * randomness + 1 - randomness / 2;
