@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -827,6 +827,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         ref={bottomSheetModalRef}
         onDismiss={onDismissBottomSheet}
         snapPoints={['90%']}
+        maxDynamicContentSize={(Dimensions.get('window').height - UI_SIZES.elements.navbarHeight) * 0.9}
         enableDynamicSizing={typeModal ? false : true}
         containerStyle={styles.bottomSheet}>
         {renderContentBottomSheet()}
