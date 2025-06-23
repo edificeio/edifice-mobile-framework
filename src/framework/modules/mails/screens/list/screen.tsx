@@ -598,7 +598,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           <TertiaryButton
             text={I18n.get('common-cancel')}
             action={isSelectionMode ? onDisableSelectMode : onDisabledSearchMode}
-            style={styles.selectModeTopButton}
+            style={[styles.selectModeTopButton, isSearchMode ? styles.searchModeTopButton : {}]}
           />
         </View>
       </>

@@ -30,9 +30,8 @@ export default StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
   },
-  searchInput: {
-    paddingRight: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing.minor,
+  searchModeTopButton: {
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   selectFolderTitle: {
     alignItems: 'center',
@@ -68,11 +67,10 @@ export default StyleSheet.create({
     columnGap: UI_SIZES.spacing.small,
     height: UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset,
     justifyContent: 'space-between',
-    paddingBottom: UI_SIZES.spacing.small,
+    paddingBottom: UI_SIZES.spacing.tiny,
   },
   selectModeTopButton: {
     alignSelf: 'flex-end',
-    marginBottom: UI_SIZES.spacing.tinyExtra,
   },
   selectModeTopText: {
     columnGap: UI_SIZES.spacing.minor,

@@ -38,7 +38,7 @@ const SearchInput = forwardRef<RNTextInput, SearchInputProps>((props: SearchInpu
   }, [clearInput, value]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: ICON_INPUT_SIZE + UI_SIZES.spacing.minor * 2 + UI_SIZES.border.thin * 2 }]}>
       <Svg
         name="ui-search"
         fill={theme.palette.grey.black}
