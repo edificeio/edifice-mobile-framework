@@ -69,7 +69,7 @@
   },
   "dependencies": {
     "@bam.tech/react-native-image-resizer": "3.0.11",
-    "@edifice.io/community-client-rest": "1.0.0-develop-pedago.4",
+    "@edifice.io/community-client-rest-rn": "1.0.0-develop-pedago.4",
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.13.5",
     "@flyerhq/react-native-android-uri-path": "2.3.0",

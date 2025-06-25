@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { CommunityClient } from '@edifice.io/community-client-rest';
+import { CommunityClient } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { CommunitiesHomeScreenPrivateProps } from './types';
