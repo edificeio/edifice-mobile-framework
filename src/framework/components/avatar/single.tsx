@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Image, ImageProps } from 'react-native';
 
-import { AvatarSizes } from './styles';
 import {
   CommonSingleAvatarProps,
   SingleAvatarOnlySpecificProps,
@@ -18,6 +17,8 @@ import {
 } from './types';
 
 import theme from '~/app/theme';
+import { AvatarSizes } from '~/framework/components/avatar/styles';
+import { UI_SIZES } from '~/framework/components/constants';
 import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { urlSigner } from '~/infra/oauth';
@@ -28,9 +29,12 @@ const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
       props.style,
       {
         backgroundColor: theme.ui.background.card,
-        borderRadius: AvatarSizes[props.size] / 2,
-        height: AvatarSizes[props.size],
-        width: AvatarSizes[props.size],
+        borderColor: theme.palette.grey.white,
+        borderRadius: AvatarSizes[props.size] / 2 + UI_SIZES.border.small * 2,
+        borderWidth: UI_SIZES.border.small,
+        height: AvatarSizes[props.size] + UI_SIZES.border.small * 2,
+        margin: -UI_SIZES.border.small * 2,
+        width: AvatarSizes[props.size] + UI_SIZES.border.small * 2,
       },
     ],
     [props.size, props.style],
@@ -47,8 +51,8 @@ export const buildAvatarSourceForAccount = (account: AuthSavedAccount | AuthLogg
   const uri = buildAbsoluteUserAvatarUrlWithPlatform(account.user.id, appConf.getExpandedPlatform(account.platform));
   return uri
     ? {
-        uri,
-      }
+      uri,
+    }
     : undefined;
 };
 

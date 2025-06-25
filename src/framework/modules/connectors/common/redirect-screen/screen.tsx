@@ -41,7 +41,7 @@ function ConnectorRedirectScreen(props: ConnectorRedirectScreenPrivateProps) {
     }
 
     if (url) {
-      openUrl(`/auth/redirect?url=${url}`);
+      openUrl(`/auth/redirect?url=${encodeURIComponent(url)}`);
     } else {
       Toast.showError(I18n.get('auth-change-mobile-error-text'));
     }

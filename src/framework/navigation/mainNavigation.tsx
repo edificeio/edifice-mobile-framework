@@ -7,6 +7,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   CommonActions,
@@ -199,44 +200,53 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
 
   // Avoid bug when launching app after first push
   const insets = useSafeAreaInsets();
+  const bottom = UI_SIZES.screen.bottomInset ?? insets?.bottom;
+
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
-    React.useCallback(({ navigation, route }) => {
-      return {
-        // Prevent navBar flickering with this option
-        freezeOnBlur: true,
-        headerShown: false,
-        lazy: false,
-        tabBarActiveTintColor: theme.palette.primary.regular.toString(),
-        // 😡 F U React Nav 6, using plain string instead of ColorValue
-        tabBarHideOnKeyboard: Platform.select({ android: true, ios: false }),
+    React.useCallback(
+      ({ navigation, route }) => {
+        return {
+          // Prevent navBar flickering with this option
+          freezeOnBlur: true,
+          headerShown: false,
+          lazy: false,
+          tabBarActiveTintColor: theme.palette.primary.regular.toString(),
+          // 😡 F U React Nav 6, using plain string instead of ColorValue
+          tabBarHideOnKeyboard: Platform.select({ android: true, ios: false }),
 
-        tabBarIconStyle: {
-          height: UI_SIZES.elements.tabbarIconSize,
-          marginTop: UI_SIZES.elements.tabbarLabelMarginTop,
-          width: UI_SIZES.elements.tabbarIconSize,
-        },
+          tabBarIconStyle: {
+            height: UI_SIZES.elements.tabbarIconSize,
+            marginTop: UI_SIZES.elements.tabbarLabelMarginTop,
+            width: UI_SIZES.elements.tabbarIconSize,
+          },
 
-        // 😡 F U React Nav 6, using plain string instead of ColorValue
-        tabBarInactiveTintColor: theme.ui.text.light.toString(),
+          // 😡 F U React Nav 6, using plain string instead of ColorValue
+          tabBarInactiveTintColor: theme.ui.text.light.toString(),
 
-        tabBarLabelStyle: {
-          fontSize: 12,
-          lineHeight: undefined,
-          marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom,
-        },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            lineHeight: undefined,
+            marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom,
+          },
 
-        tabBarStyle: {
-          backgroundColor: theme.ui.background.card,
-          borderTopColor: theme.palette.grey.cloudy,
-          borderTopWidth: 1,
-          elevation: 1,
-          height: UI_SIZES.elements.tabbarHeight + insets.bottom, // Avoid bug when launching app after first push
-          ...getAndroidTabBarStyleForNavState(navigation.getState()),
-        },
-      };
-    }, []);
+          tabBarStyle: {
+            backgroundColor: theme.ui.background.card,
+            borderTopColor: theme.palette.grey.cloudy,
+            borderTopWidth: 1,
+            elevation: 1,
+            height: UI_SIZES.elements.tabbarHeight + insets.bottom, // Avoid bug when launching app after first push
+            ...getAndroidTabBarStyleForNavState(navigation.getState()),
+          },
+        };
+      },
+      [insets.bottom],
+    );
   return React.useMemo(() => {
-    return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
+    return (
+      <BottomSheetModalProvider>
+        <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>
+      </BottomSheetModalProvider>
+    );
   }, [screenOptions, tabRoutes]);
 }
 

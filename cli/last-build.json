@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-12-03 12:35:52",
-  "notes": "Updated translations from Phrase (#174)\nfix(xmas): MB-3007, make wording dynamic to show good year\nrelease: 1.13.7-rc.2(1130702)",
-  "version": "1.13.7-rc.3(1130703)"
+  "last": "2025-06-03 19:40:59",
+  "notes": "fix(wayf): SUPPORT-2883, modifie network config for creteil wayf\nrelease: 1.14.0-rc.6(1140025)",
+  "version": "1.14.0-rc.7(1140026)"
 }

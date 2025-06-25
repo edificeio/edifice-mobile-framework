@@ -172,13 +172,10 @@ const recipientDirectoryAdapter = (data: IBackendRecipientDirectory, query: stri
 
 const signatureAdapter = (data: IBackendSignature): ISignature => {
   const preference = JSON.parse(data.preference);
+  const content = decode(preference.signature);
   return {
-    id: data.id,
-    preference: {
-      signature: extractTextFromHtml(decode(preference.signature)) as string,
-      useSignature: preference.useSignature,
-    },
-    zimbraENTSignatureExists: data.zimbraENTSignatureExists,
+    content: (content.includes('&lt;') ? extractTextFromHtml(content) : content) ?? '',
+    useSignature: preference.useSignature,
   };
 };
 

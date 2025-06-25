@@ -32,6 +32,10 @@ class ZendeskUnified: NSObject {
     if let accountKey = accountKey {
       initializeChat(accountKey: accountKey)
     }
+    #if DEBUG
+    CoreLogger.enabled = true
+    CoreLogger.logLevel = .info
+    #endif
   }
 
   @objc(setAnonymousIdentity:withResolver:withRejecter:)

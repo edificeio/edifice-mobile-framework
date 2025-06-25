@@ -13,9 +13,7 @@ export default () =>
         name={myStage77RouteNames.home}
         component={ConnectorRedirectScreen}
         options={homeNavBar}
-        initialParams={{
-          url: 'https://mystage77.fr/s3e/sso',
-        }}
+        initialParams={{ url: 'https://mystage77.fr/s3e/sso' }}
       />
     </>
   ));

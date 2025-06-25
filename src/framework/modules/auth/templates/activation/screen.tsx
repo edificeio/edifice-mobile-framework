@@ -228,7 +228,7 @@ export class ActivationScreen extends React.PureComponent<
                 onChangeText={formModel.password.changeCallback(this.onFieldChange('password'))}
                 placeholder={I18n.get('auth-activation-password-placeholder')}
                 showError={formModel.showPasswordError(password)}
-                showIconCallback
+                showStatusIcon
                 testID="activation-password"
                 testIDToggle="activation-see-password"
                 value={password}
@@ -249,7 +249,7 @@ export class ActivationScreen extends React.PureComponent<
                 onChangeText={formModel.confirm.changeCallback(this.onFieldChange('confirmPassword'))}
                 placeholder={I18n.get('auth-activation-password-placeholder')}
                 showError={formModel.showConfirmError(confirmPassword)}
-                showIconCallback
+                showStatusIcon
                 testID="activation-confirmed-password"
                 testIDToggle="activation-see-confirmed-password"
                 value={confirmPassword}
@@ -274,7 +274,7 @@ export class ActivationScreen extends React.PureComponent<
                 onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
                 placeholder={I18n.get('auth-activation-email-placeholder')}
                 showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
-                showIconCallback
+                showStatusIcon
                 testID="activation-email"
                 value={mail}
               />

@@ -1,12 +1,10 @@
-import type { Moment } from 'moment';
+import { ITimetableCourse } from '~/framework/modules/viescolaire/common/components/Timetable';
 
-export interface IEdtCourse {
+export interface IEdtCourse extends ITimetableCourse {
   classes: string[];
-  endDate: Moment;
   groups: string[];
   id: string;
   roomLabels: string[];
-  startDate: Moment;
   subject: {
     id: string;
     name: string;

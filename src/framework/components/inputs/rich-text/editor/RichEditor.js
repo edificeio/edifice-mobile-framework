@@ -202,12 +202,6 @@ export default class RichEditor extends Component {
     const { disabled } = this.props;
     if (disabled) {
       openUrl(url);
-      /*const links = linksUrls.map(href => ({
-      type: 'link',
-      src: { uri: href },
-    }));
-    openCarousel({ data: links, startIndex: linksUrls.indexOf(url) });*/
-      // TODO: https://edifice-community.atlassian.net/browse/MB-2437
     }
   }
 

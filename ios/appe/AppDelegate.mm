@@ -1,6 +1,3 @@
-#import <AppCenterReactNative.h>
-#import <AppCenterReactNativeAnalytics.h>
-#import <AppCenterReactNativeCrashes.h>
 #import <Firebase.h>
 #import <RNCPushNotificationIOS.h>
 #import <React/RCTBundleURLProvider.h>
@@ -36,16 +33,14 @@ static NSString* RECEIVED_PUSHES_KEY = @"RECEIVED_PUSHES";
   [Orientation setOrientation:UIInterfaceOrientationMaskPortrait];
 
   //
-  // AppCenter Initialization
-  //
-  [AppCenterReactNative register];
-  [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
-  [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
-
-  //
   // React Native Firebase Initialization
   //
-  if (![FIRApp defaultApp]) [FIRApp configure];
+  if (![FIRApp defaultApp]) {
+    [FIRApp configure];
+    #if DEBUG
+    [FIRConfiguration sharedInstance].loggerLevel = FIRLoggerLevelDebug;
+    #endif
+  }
 
   // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];

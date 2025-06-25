@@ -86,31 +86,30 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
     else return null;
   }, []);
 
+  function rateApp() {
+    const options = {
+      AppleAppID: appleId,
+      GooglePackageName: DeviceInfo.getBundleId(),
+      inAppDelay: 0,
+      openAppStoreIfInAppFails: true,
+      preferInApp: Platform.OS !== 'android',
+      preferredAndroidMarket: AndroidMarket.Google,
+    };
+    Rate.rate(options, (success, error) => {
+      if (error) {
+        Alert.alert(I18n.get('user-whoarewe-error-title'), I18n.get('user-whoarewe-error-text'));
+        console.error(`WhoAreWeScreen Rate.rate() error: ${error}`);
+      }
+    });
+  }
+
   return (
     <ScrollView bottomInset>
       {renderIllustration(illustration)}
       <View style={styles.textWrapper}>
         {renderQuote(quote)}
         <BodyText>{I18n.get('user-whoarewe-description', { appName: DeviceInfo.getApplicationName() })}</BodyText>
-        <PrimaryButton
-          style={styles.buttonReview}
-          text={I18n.get('user-whoarewe-reviewapp')}
-          action={() => {
-            const options = {
-              AppleAppID: appleId,
-              GooglePackageName: DeviceInfo.getBundleId(),
-              inAppDelay: 0,
-              preferInApp: Platform.OS !== 'android',
-              preferredAndroidMarket: AndroidMarket.Google,
-            };
-            Rate.rate(options, (success, error) => {
-              if (error) {
-                Alert.alert(I18n.get('user-whoarewe-error-title'), I18n.get('user-whoarewe-error-text'));
-                console.error(`WhoAreWeScreen Rate.rate() error: ${error}`);
-              }
-            });
-          }}
-        />
+        <PrimaryButton style={styles.buttonReview} text={I18n.get('user-whoarewe-reviewapp')} action={rateApp} />
         {renderEntButton(entButton)}
         <SecondaryButton style={styles.buttonDiscover} text={I18n.get('user-whoarewe-discoveredifice')} url={discoverUrl} />
       </View>

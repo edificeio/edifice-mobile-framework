@@ -6,9 +6,8 @@
 import * as React from 'react';
 import { ImageProps } from 'react-native';
 
-import { Icon, IconProps } from '../icon';
-import { Svg, SvgProps } from '../svg';
-
+import { Icon, IconProps } from '~/framework/components/picture/icon';
+import { Svg, SvgProps } from '~/framework/components/picture/svg';
 import { Image } from '~/framework/util/media';
 
 export interface IAnyPictureSource {

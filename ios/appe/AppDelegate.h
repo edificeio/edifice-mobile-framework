@@ -4,5 +4,3 @@
 
 @interface AppDelegate : RCTAppDelegate <UNUserNotificationCenterDelegate>
 @end
-
-

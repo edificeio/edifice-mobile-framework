@@ -32,7 +32,7 @@ import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { IMAGE_MAX_DIMENSION, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
@@ -140,7 +140,6 @@ export function Carousel(props: ICarouselProps) {
         const source = urlSigner.signURISource(d.src);
         const uri = new URL(source.uri);
         uri.searchParams.delete('thumbnail');
-        uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x0`);
         source.uri = uri.toString();
         source.cache = 'web';
         return {

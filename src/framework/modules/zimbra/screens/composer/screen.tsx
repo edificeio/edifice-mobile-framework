@@ -29,7 +29,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { getZimbraWorkflowInformation } from '~/framework/modules/zimbra/rights';
 import { zimbraService } from '~/framework/modules/zimbra/service';
-import { initDraftFromMail } from '~/framework/modules/zimbra/utils/drafts';
+import { initDraftFromMail, isSignatureRich } from '~/framework/modules/zimbra/utils/drafts';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
@@ -43,6 +43,7 @@ interface ZimbraComposerScreenState {
   isDeleted: boolean;
   isSending: boolean;
   isSettingId: boolean;
+  isSignatureRich: boolean;
   signature: string;
   signatureModalRef: React.RefObject<ModalBoxHandle>;
   useSignature: boolean;
@@ -90,6 +91,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       isDeleted: false,
       isSending: false,
       isSettingId: false,
+      isSignatureRich: false,
       signature: '',
       signatureModalRef: React.createRef<ModalBoxHandle>(),
       useSignature: false,
@@ -109,8 +111,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     this.setNavbar();
     const signature = await this.props.tryFetchSignature();
     this.setState({
-      signature: signature.preference.signature,
-      useSignature: signature.preference.useSignature,
+      isSignatureRich: isSignatureRich(signature.content),
+      signature: signature.content,
+      useSignature: signature.useSignature,
     });
   };
 
@@ -436,14 +439,18 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
               {signature && useSignature ? (
                 <>
                   <View style={styles.separatorContainer} />
-                  <TextInput
-                    value={signature}
-                    onChangeText={text => this.setState({ signature: text })}
-                    multiline
-                    textAlignVertical="top"
-                    scrollEnabled={false}
-                    style={styles.signatureInput}
-                  />
+                  {this.state.isSignatureRich ? (
+                    <HtmlContentView html={signature} />
+                  ) : (
+                    <TextInput
+                      value={signature}
+                      onChangeText={text => this.setState({ signature: text })}
+                      multiline
+                      textAlignVertical="top"
+                      scrollEnabled={false}
+                      style={styles.signatureInput}
+                    />
+                  )}
                 </>
               ) : null}
             </ScrollView>

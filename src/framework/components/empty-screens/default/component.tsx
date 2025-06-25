@@ -23,6 +23,7 @@ const EmptyScreen = ({
   buttonUrl,
   customStyle,
   customTitleStyle,
+  imageHeight: _imageHeight,
   svgFillColor,
   svgImage,
   text,
@@ -30,7 +31,7 @@ const EmptyScreen = ({
   title,
 }: {
   svgImage: string;
-  title: string;
+  title?: string;
   text?: string;
   buttonText?: string;
   buttonUrl?: string;
@@ -40,9 +41,10 @@ const EmptyScreen = ({
   customTitleStyle?: TextStyle;
   svgFillColor?: ColorValue;
   textColor?: ColorValue;
+  imageHeight?: number;
 }) => {
   const imageWidth = getScaleImageSize(280);
-  const imageHeight = getScaleImageSize(200);
+  const imageHeight = _imageHeight ?? getScaleImageSize(200);
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
     <PageViewStyle

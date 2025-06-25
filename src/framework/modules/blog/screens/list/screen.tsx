@@ -28,7 +28,7 @@ import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder
 import BlogPostResourceCard from '~/framework/modules/blog/components/post-resource-card';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { Blog, BlogPost, BlogPostList, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
+import { Blog, BlogPost, BlogPostList, BlogPostWithAudience, countComments } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight, hasPermissionManager } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
@@ -56,12 +56,14 @@ const BlogPostListItem = ({ blog, post, session }: { blog: Blog; post: BlogPostW
 
   const dateAsMoment = React.useMemo(() => moment(post.created), [post.created]);
 
+  const totalComments = React.useMemo(() => countComments(post), [post]);
+
   return (
     <BlogPostResourceCard
       action={onOpenBlogPost}
       authorId={post.author.userId}
       authorName={post.author.username}
-      comments={post.comments?.length as number}
+      comments={totalComments}
       contentHtml={post.content}
       date={dateAsMoment}
       title={post.title}

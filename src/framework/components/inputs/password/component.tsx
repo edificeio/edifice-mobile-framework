@@ -1,9 +1,11 @@
 import React from 'react';
 import { TextInput as RNTextInput } from 'react-native';
 
-import TextInput, { TextInputProps } from '~/framework/components/inputs/text';
+import { PasswordInputProps } from './types';
 
-const PasswordInput = React.forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
+import TextInput from '~/framework/components/inputs/text';
+
+const PasswordInput = React.forwardRef<RNTextInput, PasswordInputProps>((props, ref) => {
   const [showPassword, setShowPassword] = React.useState(false);
   return (
     <TextInput

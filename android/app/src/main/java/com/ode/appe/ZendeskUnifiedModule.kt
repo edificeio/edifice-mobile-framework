@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import com.zendesk.logger.Logger
 import zendesk.answerbot.AnswerBot
 import zendesk.answerbot.AnswerBotEngine
 import zendesk.chat.Chat
@@ -57,16 +58,16 @@ class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
     val clientId = config.getString("clientId")
     val zendeskUrl = config.getString("zendeskUrl")
     val accountKey = config.getString("accountKey")
-
     if (appId == null || clientId == null || zendeskUrl == null) {
       return
     }
-
     initializeZendesk(appId, clientId, zendeskUrl)
-
     if (accountKey != null) {
       initializeChat(accountKey)
     }
+    if (BuildConfig.DEBUG) {
+        Logger.setLoggable(true);
+     }
   }
 
   @ReactMethod

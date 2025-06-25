@@ -471,7 +471,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
                   row[item.key]?.closeRow();
                 },
                 actionColor: theme.palette.status.failure.regular,
-                actionIcon: 'ui-trash',
+                actionIcon: 'ui-delete',
                 actionText: I18n.get('zimbra-maillist-delete'),
               },
             ],

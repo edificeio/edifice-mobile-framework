@@ -5,6 +5,7 @@
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import { NavigationContainer, NavigationState } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
@@ -126,12 +127,14 @@ function RootNavigator(props: RootNavigatorProps) {
             ref={navigationRef}
             initialState={navigationState}
             onStateChange={onStateChange}>
-            <AppPushNotificationHandlerComponent>
-              <RootStack.Navigator screenOptions={screenOptions}>
-                {routes}
-                {modals}
-              </RootStack.Navigator>
-            </AppPushNotificationHandlerComponent>
+            <BottomSheetModalProvider>
+              <AppPushNotificationHandlerComponent>
+                <RootStack.Navigator screenOptions={screenOptions}>
+                  {routes}
+                  {modals}
+                </RootStack.Navigator>
+              </AppPushNotificationHandlerComponent>
+            </BottomSheetModalProvider>
             <RootToastHandler />
             <SnowFlakes />
           </NavigationContainer>
