@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { CommunityClient } from '@edifice.io/community-client-rest-rn';
+import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { CommunitiesHomeScreenPrivateProps } from './types';
@@ -24,20 +25,21 @@ export const computeNavBar = ({
 });
 
 export default function CommunitiesHomeScreen(props: CommunitiesHomeScreenPrivateProps) {
-  React.useEffect(() => {
-    (async () => {
-      const session = getSession();
-      if (!session) return;
-      const client = new CommunityClient({
-        baseUrl: session.platform.url,
-        defaultHeaders: {
-          Authorization: `Bearer ${session.tokens.access.value}`,
-        },
-      });
-      const communities = await client.getCommunities();
-      console.info('COMMUNITIES', communities);
-    })();
+  const fetchData = React.useCallback(() => {
+    const session = getSession();
+    if (!session) return;
+    const client = new CommunityClient({
+      baseUrl: session.platform.url + '/communities',
+      defaultHeaders: {
+        Authorization: `Bearer ${session.tokens.access.value}`,
+      },
+    });
+    client.getCommunities().then(data => {
+      console.info('COMMUNITIES', data);
+    });
   }, []);
+
+  useFocusEffect(fetchData);
 
   return (
     <PageView>
