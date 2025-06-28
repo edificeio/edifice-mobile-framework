@@ -2,6 +2,7 @@ import UIKit
 import Firebase
 import UserNotifications
 
+
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     var window: UIWindow?
@@ -28,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        
         // Force portrait mode
         Orientation.setOrientation(UIInterfaceOrientationMask.portrait)
         
@@ -35,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
             #if DEBUG
-            FirebaseConfiguration.shared.setLoggerLevel(.debug)
+            //FirebaseConfiguration.shared.setLoggerLevel(.debug)
             #endif
         }
         
@@ -62,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         // Show SplashScreen
         RNSplashScreen.showSplash("SplashScreen", inRootView: rootViewController.view)
-        
+      
         return true
     }
     
