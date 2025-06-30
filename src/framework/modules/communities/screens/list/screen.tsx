@@ -4,7 +4,7 @@ import { CommunityClient } from '@edifice.io/community-client-rest-rn';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { CommunitiesHomeScreenPrivateProps } from './types';
+import type { CommunitiesListScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { PageView } from '~/framework/components/page';
@@ -16,16 +16,17 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.list>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('communities-home-title'),
+    title: I18n.get('communities-list-title'),
   }),
 });
 
-export default function CommunitiesHomeScreen(props: CommunitiesHomeScreenPrivateProps) {
+export default function CommunitiesListScreen({ navigation, route }: CommunitiesListScreen.AllProps) {
   const fetchData = React.useCallback(() => {
+    console.debug('FETCH');
     const session = getSession();
     if (!session) return;
     const client = new CommunityClient({
@@ -43,7 +44,7 @@ export default function CommunitiesHomeScreen(props: CommunitiesHomeScreenPrivat
 
   return (
     <PageView>
-      <BodyBoldText>communities home screen</BodyBoldText>
+      <BodyBoldText>communities list screen</BodyBoldText>
     </PageView>
   );
 }
