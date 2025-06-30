@@ -5,7 +5,7 @@ import { CommunitiesListScreen } from '../screens/list';
 import moduleConfig from '~/framework/modules/communities/module-config';
 
 export const communitiesRouteNames = {
-  list: `${moduleConfig.routeName}/list` as 'list',
+  list: `${moduleConfig.routeName}` as 'list',
 };
 export interface CommunitiesNavigationParams extends ParamListBase {
   list: CommunitiesListScreen.NavParams;
