@@ -24,7 +24,7 @@ export const computeNavBar = ({
   }),
 });
 
-export default function CommunitiesListScreen({ navigation, route }: CommunitiesListScreen.AllProps) {
+export default function CommunitiesListScreen({}: CommunitiesListScreen.AllProps) {
   const fetchData = React.useCallback(() => {
     console.debug('FETCH');
     const session = getSession();

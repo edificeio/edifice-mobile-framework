@@ -4,6 +4,6 @@ import type { CommunitiesNavigationParams } from '~/framework/modules/communitie
 
 export namespace CommunitiesListScreen {
   export interface NavParams {}
-  export type NavigationProps = NativeStackScreenProps<CommunitiesNavigationParams, 'home'>;
+  export type NavigationProps = NativeStackScreenProps<CommunitiesNavigationParams, 'list'>;
   export type AllProps = CommunitiesListScreen.NavigationProps;
 }
