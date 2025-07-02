@@ -5,14 +5,15 @@ import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { CommunitiesListScreen } from './types';
+import moduleConfig from '../../module-config';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import http from '~/framework/util/http';
 
 export const computeNavBar = ({
   navigation,
@@ -28,20 +29,11 @@ export const computeNavBar = ({
 export default function CommunitiesListScreen({ navigation }: CommunitiesListScreen.AllProps) {
   const [communities, setCommunities] = React.useState<CommunityResponseDto[]>([]);
   const fetchData = React.useCallback(() => {
-    console.debug('FETCH');
-    const session = getSession();
-    if (!session) return;
-    const client = new CommunityClient({
-      baseUrl: session.platform.url + '/communities',
-      defaultHeaders: {
-        Authorization: `Bearer ${session.tokens.access.value}`,
-      },
-    });
-    client.getCommunities().then(data => {
-      console.info('COMMUNITIES', data);
-      const dataArray = Object.values(data.items);
-      setCommunities(dataArray);
-    });
+    (async () => {
+      const commus = await http.sessionApi(moduleConfig, CommunityClient).getCommunities();
+      console.info('COMMUNITIES', commus);
+      setCommunities(commus.items);
+    })();
   }, []);
 
   useFocusEffect(fetchData);
