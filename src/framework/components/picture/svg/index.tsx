@@ -205,6 +205,7 @@ const imports = {
   'ui-mailRead': async () => import('ASSETS/icons/uiIcons/mailRead.svg'),
   'ui-mailUnread': async () => import('ASSETS/icons/uiIcons/mailUnread.svg'),
   'ui-megaphone': async () => import('ASSETS/icons/uiIcons/megaphone.svg'),
+  'ui-members': async () => import('ASSETS/icons/uiIcons/members.svg'),
   'ui-messageInfo': async () => import('ASSETS/icons/uiIcons/messageInfo.svg'),
   'ui-mic': async () => import('ASSETS/icons/uiIcons/mic.svg'),
   'ui-mic-preview': async () => import('ASSETS/icons/uiIcons/mic-preview.svg'),

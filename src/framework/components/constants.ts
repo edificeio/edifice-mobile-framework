@@ -28,15 +28,15 @@ enum ScaleDimensionType {
 const getScaleDimension = (dimension: number, type: ScaleDimensionType) =>
   Math.round(
     dimension *
-      Math.max(
-        Math.min(
-          type === ScaleDimensionType.HEIGHT
-            ? screenDimensions.height / standardScreenDimensions.height
-            : screenDimensions.width / standardScreenDimensions.width,
-          SCALE_DIMENSION_MAX,
-        ),
-        SCALE_DIMENSION_MIN,
+    Math.max(
+      Math.min(
+        type === ScaleDimensionType.HEIGHT
+          ? screenDimensions.height / standardScreenDimensions.height
+          : screenDimensions.width / standardScreenDimensions.width,
+        SCALE_DIMENSION_MAX,
       ),
+      SCALE_DIMENSION_MIN,
+    ),
   );
 
 export const getScaleFontSize = (size: number) => getScaleDimension(size, ScaleDimensionType.FONT);
@@ -118,6 +118,10 @@ export const UI_SIZES = {
       default: 2,
       large: 4,
       thin: 1,
+    },
+    communities: {
+      cardSmallHeight: getScaleWidth(128),
+      cardSmallWidth: getScaleWidth(327),
     },
     editor: {
       toolbarHeight: getScaleWidth(20) + 2 * getScaleWidth(8) + getScaleWidth(4) * 2,
