@@ -36,9 +36,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // React Native Firebase Initialization
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
-            #if DEBUG
-            //FirebaseConfiguration.shared.setLoggerLevel(.debug)
-            #endif
         }
         
         // Define UNUserNotificationCenter
@@ -95,12 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        do {
-            incrementApplicationBadge()
-            RNCPushNotificationIOS.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler)
-        } catch {
-            // Handle exception silently
-        }
+        incrementApplicationBadge()
+        RNCPushNotificationIOS.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler)
     }
     
     // MARK: - UNUserNotificationCenterDelegate
@@ -111,7 +104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.sound, .alert, .badge])
+        completionHandler([.sound, .badge])
     }
 }
 
@@ -119,7 +112,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 extension AppDelegate: RCTBridgeDelegate {
     
-    func sourceURL(for bridge: RCTBridge!) -> URL! {
+  func sourceURL(for bridge: RCTBridge) -> URL? {
         return bundleURL()
     }
     
