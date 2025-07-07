@@ -8,7 +8,7 @@ import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
-import type { {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps } from './types';
+import type { {{moduleName | toCamelCase | capitalize}}HomeScreen } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -21,7 +21,7 @@ export const computeNavBar = ({
   }),
 });
 
-export default function {{moduleName | toCamelCase | capitalize}}HomeScreen(props: {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps) {
+export default function {{moduleName | toCamelCase | capitalize}}HomeScreen(props: {{moduleName | toCamelCase | capitalize}}HomeScreen.AllProps) {
   return (
     <PageView>
       <BodyBoldText>{{moduleName | toCamelCase}} home screen</BodyBoldText>

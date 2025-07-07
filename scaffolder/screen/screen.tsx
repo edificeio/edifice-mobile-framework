@@ -8,7 +8,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '~/framework/modules/{{moduleName}}/navigation';
 import styles from './styles';
-import type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenPrivateProps } from './types';
+import type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -21,7 +21,7 @@ export const computeNavBar = ({
   }),
 });
 
-export default function {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen(props: {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenPrivateProps) {
+export default function {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen(props: {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen.AllProps) {
   return (
     <PageView>
       <BodyBoldText>{{moduleName | toCamelCase}} {{screenName | toCamelCase}} screen</BodyBoldText>

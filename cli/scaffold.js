@@ -55,16 +55,14 @@ async function useScaffoldScreen(template, vars) {
   );
 }
 
-async function useScaffoldTemplate(template, vars) {
+async function useScaffoldNotifications(template, vars) {
   const varsArray = Object.entries(vars).map(([k, v]) => `${k}=${v}`);
   await cmd(
     'node_modules/scaffolder-cli/dist/index.js',
     'create',
     template,
     '--path-prefix',
-    `/src/framework/modules/${vars.moduleName}/templates`,
-    '-f',
-    vars.screenName,
+    `/src/framework/modules/${vars.moduleName}`,
     ...varsArray,
   );
 }
@@ -126,27 +124,25 @@ function screenCommandYargs(command, help) {
   ];
 }
 
-function templateCommandYargs(command, help) {
+function notificationsCommandYargs(command, help) {
   return [
-    `${command} <module-name> <screen-name>`,
+    `${command} <module-name>`,
     help,
     yargs => {
       yargs.positional('moduleName', {
         type: 'string',
-        describe: 'what module name the new screen belongs to. Use kebab-case.',
-      });
-      yargs.positional('screenName', {
-        type: 'string',
-        describe: 'what module screen to create. Use kebab-case.',
+        describe: 'in which existing module to create the notification handler. Use kebab-case (the module\'s folder name).',
       });
     },
     async function (argv) {
       try {
-        await useScaffoldTemplate(command, { moduleName: argv.moduleName, screenName: argv.screenName });
+        await useScaffoldNotifications(command, { moduleName: argv.moduleName });
 
         console.info(
-          `\x1b[32mTemplate \`${argv.screenName}\` created in module \`${argv.moduleName}\`. You have to add it manually to a module screen to make it visible in the app. \x1b[0m`,
+          `\x1b[32mNotifcation handler for module \`${argv.moduleName}\` created. You have to import it manually from module's \`index.ts\` to make it work. \x1b[0m`,
         );
+        console.info(`\x1b[32mCopy the following line in \`~/framework/modules/${argv.moduleName}/index.ts\`:\x1b[0m`);
+        console.info(`\x1b[1m\x1b[35m\n  import setupNotifications '~/framework/modules/${argv.moduleName}/notif-handler';\n\n  setupNotifications();\n\x1b[0m`);
       } catch {
         console.error(`\x1b[1m\x1b[31mAn error has occured. See the error message above. \n\x1b[0m`);
       }
@@ -163,28 +159,9 @@ const main = () => {
   require('yargs')
     .showHelpOnFail(true, 'Specify --help for available options')
     .scriptName('scaffold')
-    .command(...moduleCommandYargs('module-tab', 'Generates module <module-name> that will be displyed in the tab bar.'))
-    .command(
-      ...moduleCommandYargs(
-        'module-tab-redux',
-        'Generates module <module-name> with redux integration that will be displyed in the tab bar.',
-      ),
-    )
-    .command(...moduleCommandYargs('module-myapps', 'Generates module <module-name> that will be displyed in My Apps screen.'))
-    .command(
-      ...moduleCommandYargs(
-        'module-myapps-redux',
-        'Generates module <module-name> with redux integration that will be displyed in My Apps screen.',
-      ),
-    )
+    .command(...moduleCommandYargs('module', 'Generates module <module-name> that will be displyed in My Apps screen.'))
     .command(...screenCommandYargs('screen', 'Generates screen <screen-name> in module <module-name>.'))
-    .command(
-      ...screenCommandYargs('screen-redux', 'Generates screen <screen-name> in module <module-name> with redux integration.'),
-    )
-    .command(...templateCommandYargs('template', 'Generates template <screen-name> in module <module-name>.'))
-    .command(
-      ...templateCommandYargs('template-redux', 'Generates template <screen-name> in module <module-name> with redux integration.'),
-    )
+    .command(...notificationsCommandYargs('notifications', 'Generates notif-handler in module <module-name>.'))
     .help()
     .demandCommand().argv;
 };
