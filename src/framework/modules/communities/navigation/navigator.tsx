@@ -14,6 +14,7 @@ export default () =>
     <>
       <Stack.Screen name={communitiesRouteNames.list} component={CommunitiesListScreen} options={listNavBar} initialParams={{}} />
       <Stack.Screen name={communitiesRouteNames.home} component={CommunitiesHomeScreen} options={homeNavBar} initialParams={{}} />
+
       <Stack.Screen
         name={communitiesRouteNames.documents}
         component={CommunitiesDocumentsScreen}
