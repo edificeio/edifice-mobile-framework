@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-06-24 09:42:48",
-  "notes": "fix(mails) COCO-4143 when tab press go to inbox\nfix(mails) COCO-4169 fix height bottomsheet\nfix(mails) COCO-4280 fix search bar\nfix(mails) COCO-3951 dismiss keyboard when press add attachments button\nfix(mails) COCO-4283 fix longpress\nfeat(mails) COCO-4155 add default folder icon in trash folder\nrelease: 1.14.1-comm.1(1140101)",
-  "version": "1.14.1-comm.2(1140102)"
+  "last": "2025-07-09 09:16:20",
+  "notes": "release: 1.14.1-comm.2(1140102)",
+  "version": "1.14.1-comm.3(1140103)"
 }
