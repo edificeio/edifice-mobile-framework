@@ -42,7 +42,7 @@ export default function CommunitiesListScreen({ navigation }: CommunitiesListScr
     <PageView>
       <BodyBoldText>communities list screen</BodyBoldText>
       {communities &&
-        communities.map((c: any) => (
+        communities.map(c => (
           <PrimaryButton
             key={c.id}
             text={c.title}
@@ -50,7 +50,7 @@ export default function CommunitiesListScreen({ navigation }: CommunitiesListScr
             style={{ marginVertical: 2 }}
           />
         ))}
-      <PrimaryButton text="HomeScreen" action={() => navigation.navigate(communitiesRouteNames.home, {})} />
+      {/* <PrimaryButton text="HomeScreen" action={() => navigation.navigate(communitiesRouteNames.home, {})} /> */}
     </PageView>
   );
 }
