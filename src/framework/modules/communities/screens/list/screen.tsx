@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { InvitationClient, InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
+import { InvitationClient, InvitationResponseDto, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
@@ -15,6 +15,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import CommunityCardSmall from '~/framework/modules/communities/components/community-card-small';
 import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small-loader/component';
+import CommunityListFilters from '~/framework/modules/communities/components/community-list-filters';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -35,27 +36,70 @@ export const computeNavBar = ({
 });
 
 export default function CommunitiesListScreen({ navigation }: CommunitiesListScreen.AllProps) {
-  const [communities, setCommunities] = React.useState<(InvitationResponseDto | typeof LOADING_ITEM_DATA)[]>([]);
+  const [allCommunities, setAllCommunities] = React.useState<(InvitationResponseDto | typeof LOADING_ITEM_DATA)[]>([]);
+  const [pendingCommunities, setPendingCommunities] = React.useState<(InvitationResponseDto | typeof LOADING_ITEM_DATA)[]>([]);
+  const [isShowingPendings, setIsShowingPendings] = React.useState(false);
+  const [totalPendingInvitations, setTotalPendingInvitations] = React.useState<number>(0);
 
   const loadData = React.useCallback(async (page: number, reloadAll?: boolean) => {
-    const newData = await http
+    // Fetch all communities
+    const allRes = await http
       .sessionApi(moduleConfig, InvitationClient)
       .getUserInvitations({ fields: ['stats', 'community'], page: page + 1, size: PAGE_SIZE });
-    setCommunities(prevData => {
+
+    setAllCommunities(prevData => {
       const mergedData = staleOrSplice(
         prevData,
-        { from: page * PAGE_SIZE, items: newData.items, total: newData.meta.totalItems },
+        { from: page * PAGE_SIZE, items: allRes.items, total: allRes.meta.totalItems },
+        reloadAll,
+      );
+      return mergedData;
+    });
+
+    // Fetch pending invitations
+    const pendingRes = await http.sessionApi(moduleConfig, InvitationClient).getUserInvitations({
+      fields: ['stats', 'community'],
+      page: page + 1,
+      size: PAGE_SIZE,
+      status: InvitationStatus.PENDING,
+    });
+
+    setTotalPendingInvitations(pendingRes.meta.totalItems);
+
+    setPendingCommunities(prevData => {
+      const mergedData = staleOrSplice(
+        prevData,
+        { from: page * PAGE_SIZE, items: pendingRes.items, total: pendingRes.meta.totalItems },
         reloadAll,
       );
       return mergedData;
     });
   }, []);
 
+  const displayedCommunities = React.useMemo(
+    () => (isShowingPendings ? pendingCommunities : allCommunities),
+    [allCommunities, pendingCommunities, isShowingPendings],
+  );
+
   const navigateToCommunityHomePage = React.useCallback(
     (communityId: number) => {
       navigation.navigate(communitiesRouteNames.home, { communityId });
     },
     [navigation],
+  );
+
+  const estimatedListSize = React.useMemo(
+    () => ({
+      height:
+        UI_SIZES.screen.height - UI_SIZES.elements.navbarHeight - UI_SIZES.elements.tabbarHeight - UI_SIZES.screen.bottomInset,
+      width: UI_SIZES.screen.width,
+    }),
+    [],
+  );
+
+  const keyExtractor = React.useCallback<NonNullable<PaginatedListProps<InvitationResponseDto>['keyExtractor']>>(
+    (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item + item.id.toString()),
+    [],
   );
 
   const renderItem = React.useCallback(
@@ -74,40 +118,17 @@ export default function CommunitiesListScreen({ navigation }: CommunitiesListScr
     [navigateToCommunityHomePage],
   );
 
-  const renderPlaceholderItem = React.useCallback(() => <CommunityCardSmallLoader />, []);
-
   const renderItemSeparator = React.useCallback(() => <View style={styles.itemSeparator} />, []);
-
-  const estimatedListSize = React.useMemo(
-    () => ({
-      height:
-        UI_SIZES.screen.height - UI_SIZES.elements.navbarHeight - UI_SIZES.elements.tabbarHeight - UI_SIZES.screen.bottomInset,
-      width: UI_SIZES.screen.width,
-    }),
-    [],
-  );
-
-  const keyExtractor = React.useCallback<NonNullable<PaginatedListProps<InvitationResponseDto>['keyExtractor']>>(
-    (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item + item.id.toString()),
-    [],
-  );
+  const renderPlaceholderItem = React.useCallback(() => <CommunityCardSmallLoader />, []);
 
   return (
     <PageView>
       <PaginatedList
-        data={communities}
+        data={displayedCommunities}
         estimatedItemSize={UI_SIZES.elements.communities.cardSmallHeight}
         estimatedListSize={estimatedListSize}
         ItemSeparatorComponent={renderItemSeparator}
         keyExtractor={keyExtractor}
-        ListFooterComponent={<View />}
-        ListFooterComponentStyle={{ marginBottom: UI_SIZES.spacing.big }}
-        ListHeaderComponent={<View />}
-        ListHeaderComponentStyle={{ marginBottom: UI_SIZES.spacing.big }}
-        onPageReached={loadData}
-        pageSize={PAGE_SIZE}
-        renderItem={renderItem}
-        renderPlaceholderItem={renderPlaceholderItem}
         ListEmptyComponent={
           <EmptyScreen
             svgImage="empty-timeline"
@@ -115,6 +136,20 @@ export default function CommunitiesListScreen({ navigation }: CommunitiesListScr
             text={I18n.get('communities-list-empty-text')}
           />
         }
+        ListFooterComponent={<View />}
+        ListFooterComponentStyle={{ marginBottom: UI_SIZES.spacing.big }}
+        ListHeaderComponent={
+          <CommunityListFilters
+            pendingInvitationsCount={totalPendingInvitations}
+            showPendingOnly={isShowingPendings}
+            onTogglePending={() => setIsShowingPendings(prev => !prev)}
+          />
+        }
+        ListHeaderComponentStyle={{ marginBottom: UI_SIZES.spacing.big }}
+        onPageReached={loadData}
+        pageSize={PAGE_SIZE}
+        renderItem={renderItem}
+        renderPlaceholderItem={renderPlaceholderItem}
       />
     </PageView>
   );
