@@ -1,18 +1,24 @@
 import * as React from 'react';
+import { View } from 'react-native';
 
 import { InvitationClient, InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
-import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import styles from './styles';
 import type { CommunitiesListScreen } from './types';
 
 import { I18n } from '~/app/i18n';
+import { UI_SIZES } from '~/framework/components/constants';
+import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { PageView } from '~/framework/components/page';
 import CommunityCardSmall from '~/framework/modules/communities/components/community-card-small';
+import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small-loader/component';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import http from '~/framework/util/http';
+
+const PAGE_SIZE = 48;
 
 export const computeNavBar = ({
   navigation,
@@ -26,41 +32,87 @@ export const computeNavBar = ({
 });
 
 export default function CommunitiesListScreen({ navigation }: CommunitiesListScreen.AllProps) {
-  const [communities, setCommunities] = React.useState<InvitationResponseDto[]>([]);
+  const [communities, setCommunities] = React.useState<(InvitationResponseDto | typeof LOADING_ITEM_DATA)[]>([]);
 
-  const fetchData = React.useCallback(() => {
-    (async () => {
-      const data = await http.sessionApi(moduleConfig, InvitationClient).getUserInvitations({ fields: ['stats', 'community'] });
-      setCommunities(data.items);
-    })();
+  const loadData = React.useCallback(async (page: number, reloadAll?: boolean) => {
+    const newData = await http
+      .sessionApi(moduleConfig, InvitationClient)
+      .getUserInvitations({ fields: ['stats', 'community'], page: page + 1, size: PAGE_SIZE });
+    setCommunities(prevData => {
+      const mergedData = staleOrSplice(
+        prevData,
+        { from: page * PAGE_SIZE, items: newData.items, total: newData.meta.totalItems },
+        reloadAll,
+      );
+      return mergedData;
+    });
   }, []);
 
-  useFocusEffect(fetchData);
-
   const navigateToCommunityHomePage = React.useCallback(
-    (communityId: string) => {
+    (communityId: number) => {
       navigation.navigate(communitiesRouteNames.home, { communityId });
     },
     [navigation],
   );
 
+  const renderItem = React.useCallback(
+    ({ item }: { item: InvitationResponseDto }) =>
+      item.community ? (
+        <CommunityCardSmall
+          key={item.id}
+          title={item.community.title}
+          image={item.community.image}
+          invitationStatus={item.status}
+          membersCount={item.communityStats?.totalMembers}
+          moduleConfig={moduleConfig}
+          onPress={() => navigateToCommunityHomePage(item.id)}
+        />
+      ) : null,
+    [navigateToCommunityHomePage],
+  );
+
+  const renderPlaceholderItem = React.useCallback(() => <CommunityCardSmallLoader />, []);
+
+  const renderItemSeparator = React.useCallback(() => <View style={styles.itemSeparator} />, []);
+
+  const estimatedListSize = React.useMemo(
+    () => ({
+      height:
+        UI_SIZES.screen.height - UI_SIZES.elements.navbarHeight - UI_SIZES.elements.tabbarHeight - UI_SIZES.screen.bottomInset,
+      width: UI_SIZES.screen.width,
+    }),
+    [],
+  );
+
+  const keyExtractor = React.useCallback<NonNullable<PaginatedListProps<InvitationResponseDto>['keyExtractor']>>(
+    (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item + item.id.toString()),
+    [],
+  );
+
   return (
-    // virer align items quand il y aura la liste
-    <PageView gutters="both" style={{ alignItems: 'center' }}>
-      {communities &&
-        communities.map((c: InvitationResponseDto) =>
-          c.community ? (
-            <CommunityCardSmall
-              key={c.id}
-              title={c.community.title}
-              image={c.community.image}
-              invitationStatus={c.status}
-              membersCount={c.communityStats?.totalMembers}
-              moduleConfig={moduleConfig}
-              onPress={() => navigateToCommunityHomePage(String(c.id))}
-            />
-          ) : undefined,
-        )}
+    <PageView>
+      <PaginatedList
+        data={communities}
+        estimatedItemSize={UI_SIZES.elements.communities.cardSmallHeight}
+        estimatedListSize={estimatedListSize}
+        ItemSeparatorComponent={renderItemSeparator}
+        keyExtractor={keyExtractor}
+        ListFooterComponent={<View />}
+        ListFooterComponentStyle={{ marginBottom: UI_SIZES.spacing.big }}
+        ListHeaderComponent={<View />}
+        ListHeaderComponentStyle={{ marginBottom: UI_SIZES.spacing.big }}
+        onPageReached={loadData}
+        pageSize={PAGE_SIZE}
+        renderItem={renderItem}
+        renderPlaceholderItem={renderPlaceholderItem}
+        ListEmptyComponent={
+          <EmptyScreen
+            svgImage="empty-timeline"
+            title={I18n.get('communities-list-empty-title')}
+            text={I18n.get('communities-list-empty-text')}
+          />
+        }
+      />
     </PageView>
   );
 }

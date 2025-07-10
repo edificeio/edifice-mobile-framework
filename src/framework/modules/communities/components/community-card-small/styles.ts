@@ -21,11 +21,10 @@ export const styles = StyleSheet.create({
     color: theme.palette.grey.white,
   },
   cardContainer: {
+    alignSelf: 'center',
     borderRadius: UI_SIZES.radius.mediumPlus,
     flexDirection: 'column',
     height: UI_SIZES.elements.communities.cardSmallHeight,
-    // virer margin top quand yaura la liste
-    marginTop: 20,
     overflow: 'hidden',
     position: 'relative',
     width: UI_SIZES.elements.communities.cardSmallWidth,
