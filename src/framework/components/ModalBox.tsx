@@ -66,7 +66,7 @@ export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(({ conte
           <TouchableOpacity onPress={doDismissModal}>
             <Picture
               type="Svg"
-              name="pictos-close"
+              name="ui-close"
               width={UI_SIZES.dimensions.width.large}
               height={UI_SIZES.dimensions.height.large}
               fill={theme.palette.grey.black}

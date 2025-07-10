@@ -109,20 +109,23 @@ const computeEstimatedVisibleElements = (
   return Math.ceil(estimatedListSize.height / estimatedItemSize) * (numColumns ?? 1);
 };
 
-export default function PaginatedList<TItem>({
-  data,
-  getVisibleItemIndex,
-  onItemsError,
-  onItemsReached,
-  onPageError,
-  onPageReached,
-  pageSize,
-  renderItem: _renderItem,
-  renderPlaceholderItem,
-  viewabilityConfig,
-  windowSize = 3,
-  ...flashListProps
-}: Readonly<PaginatedListProps<TItem>>) {
+export default React.forwardRef(function PaginatedList<TItem>(
+  {
+    data,
+    getVisibleItemIndex,
+    onItemsError,
+    onItemsReached,
+    onPageError,
+    onPageReached,
+    pageSize,
+    renderItem: _renderItem,
+    renderPlaceholderItem,
+    viewabilityConfig,
+    windowSize = 3,
+    ...flashListProps
+  }: PaginatedListProps<TItem>,
+  ref: React.ForwardedRef<FlashList<TItem | typeof LOADING_ITEM_DATA>>,
+) {
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
   const dataRef = React.useRef(data);
   dataRef.current = data;
@@ -207,6 +210,7 @@ export default function PaginatedList<TItem>({
     refreshControl => {
       return (
         <FlashList
+          ref={ref}
           key="data"
           data={data}
           viewabilityConfig={viewabilityConfig ?? defaultViewabilityConfig}
@@ -217,7 +221,7 @@ export default function PaginatedList<TItem>({
         />
       );
     },
-    [data, flashListProps, onViewableItemsChanged, renderItem, viewabilityConfig],
+    [data, flashListProps, onViewableItemsChanged, ref, renderItem, viewabilityConfig],
   );
 
   // useState is used instead of useRef with a readonly manner to be able to use a init function (refs cannot take function as initialiser)
@@ -256,7 +260,7 @@ export default function PaginatedList<TItem>({
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(() => loadData(0, true), [loadData]);
 
   return <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={renderLoading} />;
-}
+});
 
 export const staleOrSplice = <TItem,>(
   currentData: (TItem | typeof LOADING_ITEM_DATA)[],

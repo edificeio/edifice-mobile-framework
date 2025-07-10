@@ -1,13 +1,13 @@
-import { InvitationStatus } from '@edifice.io/community-client-rest-rn';
+import { ViewStyle } from 'react-native';
 
-import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { InvitationStatus } from '@edifice.io/community-client-rest-rn';
 
 export interface CommunityCardSmallProps {
   hasNewContent?: boolean;
-  image?: string | undefined;
+  image?: string;
   invitationStatus: InvitationStatus;
+  itemSeparatorStyle?: ViewStyle;
   membersCount?: number;
-  moduleConfig: AnyNavigableModuleConfig;
   onPress: () => void;
-  title: string | undefined;
+  title?: string;
 }

@@ -3,6 +3,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { CommunityClient, MembershipClient } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useSelector } from 'react-redux';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
@@ -21,6 +22,7 @@ import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { communitiesSelectors } from '~/framework/modules/communities/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import http from '~/framework/util/http';
 
