@@ -4,11 +4,13 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  itemSeparator: {
-    height: UI_SIZES.spacing.medium,
-  },
-  listContainer: {
+  emptyScreen: {
     backgroundColor: theme.palette.grey.white,
-    flex: 1,
+  },
+  itemSeparator: {
+    marginBottom: UI_SIZES.spacing.medium,
+  },
+  listPadding: {
+    paddingVertical: UI_SIZES.spacing.big,
   },
 });

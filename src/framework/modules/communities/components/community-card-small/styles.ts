@@ -1,11 +1,10 @@
-import { StyleSheet, ViewStyle } from 'react-native';
+import { PixelRatio, StyleSheet, ViewStyle } from 'react-native';
 
 import { InvitationStatus } from '@edifice.io/community-client-rest-rn';
 
-import { SMALL_CARD_METRICS } from '.';
-
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
 const CARD_CONTAINER_STYLE: ViewStyle = {
   alignSelf: 'stretch',
@@ -15,6 +14,10 @@ const CARD_CONTAINER_STYLE: ViewStyle = {
   overflow: 'hidden',
   position: 'relative',
 };
+
+const IMAGE_HEIGHT = getScaleWidth(80);
+const LOADER_HEIGHT =
+  TextSizeStyle.Medium.lineHeight * PixelRatio.getFontScale() + IMAGE_HEIGHT + 2 * (UI_SIZES.border.small + UI_SIZES.spacing.small);
 
 export const getCardStyle = (invitationStatus: InvitationStatus) => {
   switch (invitationStatus) {
@@ -37,15 +40,23 @@ export const styles = StyleSheet.create({
   cardPending: {
     ...CARD_CONTAINER_STYLE,
     borderColor: theme.palette.status.failure.light,
-    borderWidth: SMALL_CARD_METRICS.maxBorderWidth,
+    borderWidth: UI_SIZES.border.small,
   },
   imgContainer: {
     // give a border radius to override the one from ModuleImage
     borderRadius: 0,
-    height: SMALL_CARD_METRICS.imgHeight,
+    height: IMAGE_HEIGHT,
+  },
+  loaderCard: {
+    borderRadius: UI_SIZES.radius.mediumPlus,
+    height: LOADER_HEIGHT,
+    width: '100%',
+  },
+  loaderCardContainer: {
+    marginHorizontal: UI_SIZES.spacing.big,
   },
   titleContainer: {
     backgroundColor: theme.palette.grey.white,
-    padding: SMALL_CARD_METRICS.titlePadding,
+    padding: UI_SIZES.spacing.small,
   },
 });

@@ -10,8 +10,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 
-const CommunityMembersPill = ({ membersCount }: CommunityMembersPillProps) => {
-  const memberString = membersCount > 1 ? I18n.get('communities-members') : I18n.get('communities-member');
+const CommunityMembersPill = ({ membersCount }: Readonly<CommunityMembersPillProps>) => {
+  const memberString = I18n.get(membersCount > 1 ? 'communities-members' : 'communities-member', { count: membersCount });
+
   return (
     <View style={styles.pillContainer}>
       <Svg
@@ -20,9 +21,7 @@ const CommunityMembersPill = ({ membersCount }: CommunityMembersPillProps) => {
         height={UI_SIZES.elements.icon.xsmall}
         fill={theme.palette.grey.black}
       />
-      <CaptionText style={styles.membersText}>
-        {membersCount} {memberString}
-      </CaptionText>
+      <CaptionText style={styles.membersText}>{memberString}</CaptionText>
     </View>
   );
 };
