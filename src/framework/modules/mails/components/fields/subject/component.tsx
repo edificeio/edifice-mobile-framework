@@ -14,8 +14,10 @@ export const MailsSubjectField = (props: MailsSubjectFieldProps) => {
 
   React.useEffect(() => {
     let formatSubject = '';
-    if (type === MailsEditType.FORWARD) formatSubject = `${I18n.get('mails-edit-subjectforward')} ${subject ?? ''}`;
-    else if (type === MailsEditType.REPLY) formatSubject = `${I18n.get('mails-edit-subjectreply')} ${subject ?? ''}`;
+    if (type === MailsEditType.FORWARD && !subject?.startsWith(I18n.get('mails-edit-subjectforward')))
+      formatSubject = `${I18n.get('mails-edit-subjectforward')} ${subject ?? ''}`;
+    else if (type === MailsEditType.REPLY && !subject?.startsWith(I18n.get('mails-edit-subjectreply')))
+      formatSubject = `${I18n.get('mails-edit-subjectreply')} ${subject ?? ''}`;
     else formatSubject = subject ?? '';
     setValue(formatSubject);
     props.onChangeText(formatSubject);
