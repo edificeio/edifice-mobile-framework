@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-07-09 09:16:20",
-  "notes": "release: 1.14.1-comm.2(1140102)",
-  "version": "1.14.1-comm.3(1140103)"
+  "last": "2025-07-11 09:29:58",
+  "notes": "fix(mails): COCO-3705 fix forward attachments\nfix(mails): COCO-4289 dont add prefix subject if already in\nrelease: 1.14.1-comm.3(1140103)",
+  "version": "1.14.1-comm.4(1140104)"
 }
