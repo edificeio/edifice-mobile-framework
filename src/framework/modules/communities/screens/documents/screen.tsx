@@ -29,10 +29,15 @@ export const computeNavBar = ({
 });
 
 export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({ route, session }) {
+  // Store the data of the list here. It will contain both loaded and non-loaded elements.
+  // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
   const [data, setData] = React.useState<(ResourceDto | typeof LOADING_ITEM_DATA)[]>([]);
 
+  // Page size is a constant. Even if PaginatedList allows non-constant page size, it **should** be constant.
+  // Its value needs to be sufficient to fill the entire screen without the need for scrolling.
   const PAGE_SIZE = 48;
 
+  // This function fetch the data page the given page number and insert the resulting elements in the `data` array.
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       // await new Promise(resolve => setTimeout(resolve, 2000));
@@ -40,6 +45,10 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
         .sessionApi(moduleConfig, ResourceClient)
         .getResources(route.params.communityId, { page: page + 1, size: PAGE_SIZE });
       setData(prevData => {
+        // The merge logic is contained in `staleOrSplice`. It inserts the new elements at the right place in `prevData`.
+        // If `total` changes, there's a risk that the prevData is outdated, and should be flushed before inserting the new elements.
+        // The resulting array will have a number of elements equals to `total`, that can be either loaded elements (ResourceDto) or non-loaded elements (LOADING_ITEM_DATA).
+        // Old data is considered immutable, so `mergedData` is a brand-new array.
         const mergedData = staleOrSplice(
           prevData,
           { from: page * PAGE_SIZE, items: newData.items, total: newData.meta.totalItems },
@@ -51,6 +60,8 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     [route.params.communityId],
   );
 
+  // `renderItem` and `renderPlaceholderItem` must display elements of the same height.
+  // If not, it won't be beautiful :'(
   const renderItem = React.useCallback<PaginatedListProps<ResourceDto>['renderItem']>(
     info => (
       <View style={styles.item}>
@@ -73,6 +84,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     [],
   );
 
+  // For perforance purpose, estimatedListSize must be the dimensions of the container (here the screen sithout, navBar and tabBar)
   const estimatedListSize = React.useMemo(
     () => ({
       height:
@@ -82,11 +94,17 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     [],
   );
 
+  // For perforance purpose, estimatedItemSize must be the height of each element.
+  // Don't forget to use style values and text sizes (including Pixel Ratio !) to compute that.
+  // It **not** need to be pixel-perfect, but find a value that is close to reality.
   const estimatedItemSize = React.useMemo(
     () => TextSizeStyle.Medium.lineHeight * 2 * PixelRatio.getFontScale() + 2 * (styles.item.borderWidth + styles.item.padding),
     [],
   );
 
+  // Keep in mind that `keyExtractor` need to handle either loaded and non-loaded data to return the key value.
+  // Use id for loaded values
+  // Use index for non-loaded values. Add a prefix to be sure that cases where id === index won't be a problem.
   const keyExtractor = React.useCallback<NonNullable<PaginatedListProps<ResourceDto>['keyExtractor']>>(
     (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item + item.id.toString()),
     [],
