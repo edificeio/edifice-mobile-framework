@@ -229,8 +229,14 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         setCci(cciDraft);
         setAttachments(convertedAttachments);
       } else {
-        const newDraftId = await mailsService.mail.sendToDraft({ body: '', cc: [], cci: [], subject: '', to: [] });
-        setDraftIdSaved(newDraftId);
+        if (draftId) {
+          const draft = await mailsService.mail.get({ id: draftId });
+          const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftId));
+          setAttachments(convertedAttachments);
+        } else {
+          const newDraftId = await mailsService.mail.sendToDraft({ body: '', cc: [], cci: [], subject: '', to: [] });
+          setDraftIdSaved(newDraftId);
+        }
 
         const signatureData = await mailsService.signature.get();
         const { signature, useSignature } = signatureData ? JSON.parse(signatureData) : { signature: '', useSignature: false };
