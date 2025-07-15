@@ -9,6 +9,7 @@ import type { CommunitiesListScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { PageView } from '~/framework/components/page';
 import CommunityCardSmall from '~/framework/modules/communities/components/community-card-small';

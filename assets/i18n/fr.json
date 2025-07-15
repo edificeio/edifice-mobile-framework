@@ -333,6 +333,8 @@
   "common-send": "Envoyer",
   "common-space": " ",
   "communities-list-title": "Communautés",
+  "communities-list-empty-text": "Vous ne faites encore partie d'aucune communauté.",
+  "communities-list-empty-title": "C'est calme... pour l'instant !",
   "communities-member": "membre",
   "communities-members": "membres",
   "communities-badge-new": "Nouveau",
