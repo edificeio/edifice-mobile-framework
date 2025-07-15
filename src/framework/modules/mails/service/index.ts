@@ -156,11 +156,14 @@ export const mailsService = {
       const { draftId, inReplyTo } = params;
       const { body, cc, cci, subject, to } = payload;
 
-      const api = inReplyTo
-        ? `/conversation/send?In-Reply-To=${params.inReplyTo}`
-        : draftId
-          ? `/conversation/send?id=${params.draftId}`
-          : '/conversation/send';
+      const baseUrl = '/conversation/send';
+      const paramsUrl = new URLSearchParams();
+
+      if (draftId) paramsUrl.set('id', draftId);
+      if (inReplyTo) paramsUrl.set('In-Reply-To', inReplyTo);
+
+      const queryString = paramsUrl.toString();
+      const api = queryString ? `${baseUrl}?${queryString}` : baseUrl;
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
       await http.fetchJsonForSession('POST', api, { body: bodyJson });
