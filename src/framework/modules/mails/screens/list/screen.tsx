@@ -591,7 +591,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           checked={mails.length === selectedMails.length}
           partialyChecked={selectedMails.length > 0 && mails.length !== selectedMails.length}
         />
-        <BodyBoldText>{I18n.get('mails-list-selectall')}</BodyBoldText>
+        <BodyBoldText>{`(${selectedMails.length}) ${I18n.get('mails-list-selectall')}`}</BodyBoldText>
       </TouchableOpacity>
     );
   }, [mails.length, onSelectAll, selectedMails.length]);
@@ -657,6 +657,24 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
     const renderActions = selectedFolder.name ? (
       <>
+        <TertiaryButton
+          iconLeft="ui-mailUnread"
+          disabled={
+            selectedMails.length === 0 ||
+            selectedMails.every(mailId => mails.find(mail => mail.id === mailId)?.unread) ||
+            selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === props.session?.user.id)
+          }
+          action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
+        />
+        <TertiaryButton
+          iconLeft="ui-mailRead"
+          disabled={
+            selectedMails.length === 0 ||
+            selectedMails.every(mailId => !mails.find(mail => mail.id === mailId)?.unread) ||
+            selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === props.session?.user.id)
+          }
+          action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
+        />
         {moveButton}
         <TertiaryButton
           iconLeft="ui-deleteFromFolder"
@@ -670,11 +688,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
     return (
       <View style={[styles.selectMode, styles.selectModeShadow, styles.selectModeBottom]}>
-        <BodyBoldText style={styles.selectModeBottomText}>
-          {I18n.get(selectedMails.length > 1 ? 'mails-list-selectcountplural' : 'mails-list-selectcount', {
-            nb: selectedMails.length,
-          })}
-        </BodyBoldText>
         {renderActions}
         <TertiaryButton
           iconLeft="ui-delete"

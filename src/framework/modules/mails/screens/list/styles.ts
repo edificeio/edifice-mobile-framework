@@ -48,11 +48,8 @@ export default StyleSheet.create({
     alignItems: 'baseline',
     columnGap: UI_SIZES.spacing.medium,
     height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
+    justifyContent: 'flex-end',
     paddingTop: UI_SIZES.spacing.small,
-  },
-  selectModeBottomText: {
-    flex: 1,
-    paddingVertical: UI_SIZES.spacing.tiny,
   },
   selectModeShadow: {
     elevation: 6,

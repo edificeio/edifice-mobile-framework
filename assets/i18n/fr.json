@@ -875,8 +875,6 @@
   "mails-list-searchnoresultstitle": "Pas de résultats pour votre recherche",
   "mails-list-select": "Sélectionner",
   "mails-list-selectall": "Tout sélectionner",
-  "mails-list-selectcount": "{{nb}} sélectionné",
-  "mails-list-selectcountplural": "{{nb}} sélectionnés",
   "mails-list-toastsuccessdeletefolder": "Dossier supprimé",
   "mails-list-trash": "Corbeille",
   "mails-prefixcc": "Cc:",
