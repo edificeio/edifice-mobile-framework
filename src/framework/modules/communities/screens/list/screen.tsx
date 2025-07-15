@@ -11,6 +11,7 @@ import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import CommunityCardSmall from '~/framework/modules/communities/components/community-card-small';
 import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small-loader/component';
@@ -30,6 +31,7 @@ export const computeNavBar = ({
     route,
     title: I18n.get('communities-list-title'),
   }),
+  headerRight: () => <NavBarAction icon="ui-user-join" />,
 });
 
 export default function CommunitiesListScreen({ navigation }: CommunitiesListScreen.AllProps) {

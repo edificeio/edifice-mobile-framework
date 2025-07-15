@@ -271,6 +271,7 @@ const imports = {
   'ui-upcoming': async () => import('ASSETS/icons/uiIcons/upcoming.svg'),
   'ui-upload': async () => import('ASSETS/icons/uiIcons/upload.svg'),
   'ui-user': async () => import('ASSETS/icons/uiIcons/user.svg'),
+  'ui-user-join': async () => import('ASSETS/icons/uiIcons/user-join.svg'),
   'ui-users': async () => import('ASSETS/icons/uiIcons/users.svg'),
   'ui-userSearch': async () => import('ASSETS/icons/uiIcons/userSearch.svg'),
   'ui-userSearchColor': async () => import('ASSETS/icons/uiIcons/userSearchColorized.svg'),
