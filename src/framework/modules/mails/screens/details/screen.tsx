@@ -354,7 +354,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const popupActionsMenu = allPopupActionsMenu.filter(({ id }) => {
     switch (id) {
       case 'reply':
-        return !isRecall;
+        return fromFolder !== MailsDefaultFolders.TRASH && !isRecall;
       case 'replyAll':
         return infosRecipients && infosRecipients.ids.length > 1 && fromFolder !== MailsDefaultFolders.TRASH && !isRecall;
       case 'forward':
