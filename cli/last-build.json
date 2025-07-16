@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-06-03 19:40:59",
-  "notes": "fix(wayf): SUPPORT-2883, modifie network config for creteil wayf\nrelease: 1.14.0-rc.6(1140025)",
-  "version": "1.14.0-rc.7(1140026)"
+  "last": "2025-07-16 19:36:11",
+  "notes": "Yarn cache update\nfeat(communities): PEDAGO-2851 : adding navbar button\nfeat(communities): PEDAGO-2865 adding list empty screen\nfeat(communities): PEDAGO-2852 adding list to communitiesListScreen\nupdate(stack): yarn cache update\nfeat(communities): PEDAGO-2854 adding CommunityCardSmall\nchore: document usage of PaginatedList\nfeat: PEDAGO-2887 implement <PaginatedList/> component + use in documents\nchore: PEDAGO-2935 session-screen framework component\nchore: upgrade scaffolders\nchore: PEDAGO-2924 new client api factory\nchore: yarn cache update\nMerge branch 'dev/peda' into feat/peda/communities\nMerge branch 'dev/1.14.1' into dev/peda\nchore(android): change target sdk version according to google guidelines\nchore: update ts-client communities\nadding navParams type for home screen\nadding main screens with navigation\nchore: fix navigation on communities\nchore: fix type issue\nchore: clean list screen\nchore: something about ts client\nchore: install -rn\nchore: import communities client\nchore: add communities module\nSquashed commit of the following:\nupdate(stack): yarn cache update\nchore: remove unused log\nupdate(stack): yarn cache update\nchore(imports):  PEDAGO-2864 rewriting absolute imports\nfix(splashads): trailing / addition\nchore(build): android build error fix\nchore(i18n): Prepare Phrase for 1.14.1\nSquashed commit of the following:",
+  "version": "1.14.1-peda.1(1140101)"
 }
