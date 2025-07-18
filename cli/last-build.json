@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-06-03 19:40:59",
-  "notes": "fix(wayf): SUPPORT-2883, modifie network config for creteil wayf\nrelease: 1.14.0-rc.6(1140025)",
-  "version": "1.14.0-rc.7(1140026)"
+  "last": "2025-07-17 09:30:26",
+  "notes": "update(stack): yarn cache update\nfix(wayf): SUPPORT-3004, Add e-primo && educ to android network config\nupdate(stack): yarn cache update\nchore(android): change target sdk version according to google guidelines\nupdate(stack): yarn cache update\nupdate(stack): yarn cache update\nchore(imports):  PEDAGO-2864 rewriting absolute imports\nfix(splashads): trailing / addition\nchore(build): android build error fix\nchore(i18n): Prepare Phrase for 1.14.1\nSquashed commit of the following:",
+  "version": "1.14.1-rc.1(1140101)"
 }
