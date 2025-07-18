@@ -22,14 +22,13 @@ import {
 } from '~/framework/components/menus/actions';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
-import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
+import Thumbnail from '~/framework/modules/mails/components/attachments/thumbnail';
 import { mailsService } from '~/framework/modules/mails/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { Image } from '~/framework/util/media';
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness,
@@ -351,30 +350,6 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
     }
   };
 
-  const renderThumbnail = (file: UploadAttachment) => {
-    if (file.status === UploadAttachmentStatus.OK)
-      return <Image style={styles.addFilesResultsType} src={file.localFile._filepathNative} />;
-    return (
-      <View
-        style={[
-          styles.addFilesResultsType,
-          {
-            backgroundColor:
-              file.status === UploadAttachmentStatus.KO
-                ? theme.palette.status.failure.pale
-                : theme.palette.complementary.green.pale,
-          },
-        ]}>
-        <Svg
-          name={file.status === UploadAttachmentStatus.KO ? 'ui-error' : 'ui-image'}
-          height={UI_SIZES.elements.icon.small}
-          width={UI_SIZES.elements.icon.small}
-          fill={file.status === UploadAttachmentStatus.KO ? theme.palette.status.failure.regular : theme.palette.grey.black}
-        />
-      </View>
-    );
-  };
-
   if (!session) return <EmptyContentScreen />;
 
   return (
@@ -388,7 +363,7 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
           alwaysBounceVertical={false}
           renderItem={({ index, item }) => (
             <View key={index} style={styles.addFilesResultsItem}>
-              {renderThumbnail(item)}
+              <Thumbnail data={item} />
               <View style={styles.addFilesResultsFile}>
                 <SmallText numberOfLines={1}>{item.localFile.filename}</SmallText>
                 {item.status === UploadAttachmentStatus.KO ? <CaptionBoldText>{item.error}</CaptionBoldText> : null}
