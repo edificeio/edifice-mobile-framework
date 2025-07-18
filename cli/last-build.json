@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-07-11 09:29:58",
-  "notes": "fix(mails): COCO-3705 fix forward attachments\nfix(mails): COCO-4289 dont add prefix subject if already in\nrelease: 1.14.1-comm.3(1140103)",
-  "version": "1.14.1-comm.4(1140104)"
+  "last": "2025-07-18 08:50:42",
+  "notes": "feat(mails): COCO-4294 fix thumbnail when no preview\nfix(mails) COCO-4327 fix reply when are in trash folder\nfix(mails) COCO-3705 fix forward mail\nfeat(mails): COCO-4174 fix buttons when all select\nrelease: 1.14.1-comm.4(1140104)",
+  "version": "1.14.1-comm.5(1140105)"
 }
