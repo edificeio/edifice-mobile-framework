@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-07-17 09:30:26",
-  "notes": "update(stack): yarn cache update\nfix(wayf): SUPPORT-3004, Add e-primo && educ to android network config\nupdate(stack): yarn cache update\nchore(android): change target sdk version according to google guidelines\nupdate(stack): yarn cache update\nupdate(stack): yarn cache update\nchore(imports):  PEDAGO-2864 rewriting absolute imports\nfix(splashads): trailing / addition\nchore(build): android build error fix\nchore(i18n): Prepare Phrase for 1.14.1\nSquashed commit of the following:",
-  "version": "1.14.1-rc.1(1140101)"
+  "last": "2025-07-21 10:21:59",
+  "notes": "update(stack): yarn cache update\nUpdated translations from Phrase (#208)\nrelease: 1.14.1-rc.1(1140101)",
+  "version": "1.14.1-rc.2(1140102)"
 }
