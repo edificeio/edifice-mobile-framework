@@ -1,11 +1,10 @@
 import { Temporal } from '@js-temporal/polyfill';
 import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
-import { AuthActiveAccount } from '../../auth/model';
-import { getSession } from '../../auth/reducer';
-import { Wiki, WikiPage, WikiResourceMetadata } from '../model';
-import { API } from './types';
-
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
+import { API } from '~/framework/modules/wiki/service/types';
 import http from '~/framework/util/http';
 import { ArrayElement } from '~/utils/types';
 
