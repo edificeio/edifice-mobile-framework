@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-07-21 10:21:59",
-  "notes": "update(stack): yarn cache update\nUpdated translations from Phrase (#208)\nrelease: 1.14.1-rc.1(1140101)",
-  "version": "1.14.1-rc.2(1140102)"
+  "last": "2025-07-21 10:44:09",
+  "notes": "release: 1.14.1-rc.2(1140102)",
+  "version": "1.14.1-rc.3(1140103)"
 }
