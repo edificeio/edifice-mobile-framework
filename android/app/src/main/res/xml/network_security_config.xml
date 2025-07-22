@@ -3,7 +3,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">authentification.ac-martinique.fr</domain>
         <domain includeSubdomains="true">id.ac-nice.fr</domain>
-        <domain includeSubdomains="true">appli.ac-aix-marseille.fr</domain>
         <domain includeSubdomains="true">extranet.ac-guyane.fr</domain>
         <domain includeSubdomains="true">extranet.ac-reims.fr</domain>
         <domain includeSubdomains="true">moncompte.ac-nantes.fr</domain>
@@ -41,6 +40,12 @@
     </domain-config>
     <domain-config>
         <domain includeSubdomains="false">aaa-idp.ac-nantes.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="false">appli.ac-aix-marseille.fr</domain>
         <trust-anchors>
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
