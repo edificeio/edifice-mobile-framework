@@ -76,7 +76,7 @@ export const computeNavBar = ({
 });
 
 const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
-  const { folders, fromFolder, id } = props.route.params;
+  const { folders, fromFolder, fromTimeline, id } = props.route.params;
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [mail, setMail] = React.useState<IMailsMailContent>();
   const [mailContent, setMailContent] = React.useState<string>('');
@@ -381,7 +381,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         <HeaderBackButton
           labelVisible={false}
           tintColor={theme.palette.grey.white as string}
-          onPress={() => props.navigation.navigate(mailsRouteNames.home, { from: fromFolder })}
+          onPress={() =>
+            fromTimeline ? props.navigation.goBack() : props.navigation.navigate(mailsRouteNames.home, { from: fromFolder })
+          }
         />
       ),
       headerRight: () =>
@@ -400,7 +402,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           />
         ),
     });
-  }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder]);
+  }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder, fromTimeline]);
 
   const renderContentViewer = React.useCallback(() => {
     if (isContentEmpty) return;

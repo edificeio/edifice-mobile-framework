@@ -11,6 +11,7 @@ export interface MailsDetailsScreenProps {
 export interface MailsDetailsScreenNavParams {
   id: string;
   fromFolder: MailsDefaultFolders | MailsFolderInfo;
+  fromTimeline?: boolean;
   folders?: IMailsFolder[];
 }
 
