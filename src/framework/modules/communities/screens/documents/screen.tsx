@@ -9,8 +9,10 @@ import type { CommunitiesDocumentsScreen } from './types';
 import moduleConfig from '../../module-config';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
+import { Picture } from '~/framework/components/picture';
 import { sessionScreen } from '~/framework/components/screen';
 import { BodyBoldText, BodyText, TextSizeStyle } from '~/framework/components/text';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
@@ -64,11 +66,19 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   // If not, it won't be beautiful :'(
   const renderItem = React.useCallback<PaginatedListProps<ResourceDto>['renderItem']>(
     info => (
-      <View style={styles.item}>
-        <BodyBoldText numberOfLines={1}>
-          {info.index} | {info.item.title}
-        </BodyBoldText>
-        <BodyText>{info.item.id}</BodyText>
+      <View style={[styles.item, { backgroundColor: theme.apps[info.item.appName]?.accentColors.pale }]}>
+        <Picture
+          {...theme.apps[info.item.appName]?.icon}
+          fill={theme.apps[info.item.appName]?.accentColors.regular}
+          width={UI_SIZES.dimensions.height.larger}
+          height={UI_SIZES.dimensions.height.larger}
+        />
+        <View style={{ flex: 1 }}>
+          <BodyBoldText numberOfLines={1}>
+            {info.index} | {info.item.title}
+          </BodyBoldText>
+          <BodyText>{info.item.id}</BodyText>
+        </View>
       </View>
     ),
     [],
@@ -77,8 +87,10 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   const renderPlaceholderItem = React.useCallback<PaginatedListProps<ResourceDto>['renderPlaceholderItem']>(
     () => (
       <View style={styles.item}>
-        <BodyBoldText>(LOADING)</BodyBoldText>
-        <BodyText>..........</BodyText>
+        <View style={{ flex: 1 }}>
+          <BodyBoldText>(LOADING)</BodyBoldText>
+          <BodyText>..........</BodyText>
+        </View>
       </View>
     ),
     [],
@@ -112,6 +124,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
 
   return (
     <PaginatedList
+      contentContainerStyle={styles.list}
       estimatedListSize={estimatedListSize}
       estimatedItemSize={estimatedItemSize}
       numColumns={2}
