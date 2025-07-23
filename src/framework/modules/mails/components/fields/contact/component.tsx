@@ -92,7 +92,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   React.useEffect(() => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        viewContainerRef.current!.measure((x, y, width, height, pageX, pageY) => {
+        viewContainerRef.current!.measure((x, y, width, height) => {
           Animated.spring(topPositionResults, {
             friction: 8,
             tension: 50,

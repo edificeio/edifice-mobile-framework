@@ -1,5 +1,6 @@
 import { MailsVisible } from './model';
 import moduleConfig from './module-config';
+import { mailsService } from './service';
 
 import { Storage } from '~/framework/util/storage';
 
@@ -25,4 +26,15 @@ export const readVisibles = (): MailsVisible[] => storage.getJSON(MailsStorageKe
 
 export const writeVisibles = (visibles: MailsVisible[]) => {
   storage.setJSON(MailsStorageKeys.VISIBLES, visibles);
+};
+
+export const reloadVisibles = async () => {
+  const now = Date.now();
+  try {
+    const visibles = await mailsService.visibles.get();
+    writeVisibles(visibles);
+    writeLastCallTimestamp(now);
+  } catch (e) {
+    console.error('[reloadVisibles] Failed to fetch visibles', e);
+  }
 };

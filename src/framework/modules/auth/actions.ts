@@ -64,6 +64,7 @@ import {
   getSession,
   IAuthState,
 } from '~/framework/modules/auth/reducer';
+import { reloadVisibles } from '~/framework/modules/mails/storage';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import { updateShakeListenerAction } from '~/framework/modules/user/actions';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -495,6 +496,9 @@ const performLogin = async (
 
   // SplashAds
   checkAndShowSplashAds(platform, user.infos.type!);
+
+  // Reload visibles
+  reloadVisibles();
 
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
