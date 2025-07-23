@@ -10,7 +10,10 @@ import { FlashList, FlashListProps, ListRenderItemInfo, ViewToken } from '@shopi
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 
 export interface PaginatedListProps<TItem>
-  extends Omit<FlashListProps<TItem>, 'onRefresh' | 'refreshing' | 'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout'> {
+  extends Omit<
+    FlashListProps<TItem>,
+    'onRefresh' | 'refreshing' | 'refreshControl' | 'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout'
+  > {
   data?: FlashListProps<TItem | typeof LOADING_ITEM_DATA>['data'];
   keyExtractor?: FlashListProps<TItem | typeof LOADING_ITEM_DATA>['keyExtractor'];
   getItemType?: FlashListProps<TItem | typeof LOADING_ITEM_DATA>['getItemType'];
