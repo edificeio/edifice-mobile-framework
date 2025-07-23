@@ -5,8 +5,9 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'workspace', IWorkspaceState>({
   displayAs: 'myAppsModule',
+  displayColor: theme.apps.workspace.accentColors,
   displayI18n: 'workspace-moduleconfig-modulename',
-  displayPicture: { fill: theme.palette.complementary.orange.regular, name: 'files', type: 'Svg' },
+  displayPicture: theme.apps.workspace.icon,
   entcoreScope: ['workspace'],
 
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('ESPACE DOCUMENTAIRE'),

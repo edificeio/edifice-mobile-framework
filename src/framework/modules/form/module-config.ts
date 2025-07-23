@@ -6,8 +6,9 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'form', IFormReduxState>({
   displayAs: 'myAppsModule',
+  displayColor: theme.apps.formulaire.accentColors,
   displayI18n: 'form-moduleconfig-appname',
-  displayPicture: { fill: theme.palette.complementary.green.regular, name: 'form', type: 'Svg' },
+  displayPicture: theme.apps.formulaire.icon,
   entcoreScope: ['formulaire'],
   hasRight: ({ session }) => !!getFormWorkflowInformation(session).initResponse,
 

@@ -1,9 +1,11 @@
 import type { TimelineState } from './reducer';
 
+import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'timeline', TimelineState>({
   displayAs: 'tabModule',
+  displayColor: theme.apps.timeline.accentColors,
   displayI18n: 'timeline-tabname',
   displayOrder: 0,
   displayPicture: { name: 'nouveautes-off', type: 'Icon' },

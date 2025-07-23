@@ -3,9 +3,10 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'scrapbook', null>({
   displayAs: 'myAppsModule',
+  displayColor: theme.apps.scrapbook.accentColors,
   displayI18n: 'scrapbook-appname',
   displayOrder: 0,
-  displayPicture: { fill: theme.palette.complementary.blue.regular, name: 'scrapbook', type: 'Svg' },
+  displayPicture: theme.apps.scrapbook.icon,
 
   entcoreScope: ['scrapbook'],
   matchEntcoreApp: '/scrapbook',
