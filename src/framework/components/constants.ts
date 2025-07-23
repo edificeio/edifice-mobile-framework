@@ -139,7 +139,7 @@ export const UI_SIZES = {
 
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
 
-    navbarButtonSize: 32,
+    navbarButtonSize: 36,
     /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
     navbarHeight: Platform.select({ default: 56, ios: 44 }),
     navbarIconSize: 24,
