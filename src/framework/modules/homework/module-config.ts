@@ -5,8 +5,9 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>({
   displayAs: 'myAppsModule',
+  displayColor: theme.apps.homeworks.accentColors,
   displayI18n: 'homework',
-  displayPicture: { fill: theme.palette.complementary.blue.regular, name: 'homework1D', type: 'Svg' },
+  displayPicture: theme.apps.homeworks.icon,
   entcoreScope: ['homeworks'],
 
   matchEntcoreApp: '/homeworks',

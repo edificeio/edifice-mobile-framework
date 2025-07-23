@@ -5,8 +5,9 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   displayAs: 'myAppsModule',
+  displayColor: theme.apps.blog.accentColors,
   displayI18n: 'blog-tabname',
-  displayPicture: { fill: theme.palette.complementary.orange.regular, name: 'blog', type: 'Svg' },
+  displayPicture: theme.apps.blog.icon,
   entcoreScope: ['blog'],
 
   matchEntcoreApp: '/blog',

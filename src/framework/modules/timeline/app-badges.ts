@@ -1,48 +1,44 @@
 import deepmerge from 'deepmerge';
 
 import theme from '~/app/theme';
-import wikiModuleConfig from '~/framework/modules/wiki/module-config';
-import appConf from '~/framework/util/appConf';
 import { IAppBadgeInfo, IAppBadgesInfoDeclaration } from '~/framework/util/moduleTool';
 
 // all badges have default values that can be overrided with their moduleConfig.
 
-const variableColor = appConf.is1d ? theme.palette.primary.regular : theme.palette.complementary.green.regular;
-
 export let APPBADGES: {
   [key: string]: IAppBadgeInfo;
 } = {
-  APPOINTMENTS: { color: theme.palette.complementary.green.regular, icon: { name: 'appointments', type: 'Svg' } },
-  ARCHIVE: { color: theme.palette.complementary.yellow.regular, icon: { name: 'archives', type: 'Svg' } },
-  BLOG: { color: theme.palette.complementary.orange.regular, icon: { name: 'blog', type: 'Svg' } },
-  CALENDAR: { color: theme.palette.complementary.yellow.regular, icon: { name: 'calendar', type: 'Svg' } },
-  COLLABORATIVEEDITOR: { color: theme.palette.complementary.blue.regular, icon: { name: 'pad', type: 'Svg' } },
-  COLLABORATIVEWALL: { color: theme.palette.complementary.green.regular, icon: { name: 'collaborativeWall', type: 'Svg' } },
-  COMMUNITY: { color: theme.palette.complementary.purple.regular, icon: { name: 'community', type: 'Svg' } },
-  EXERCIZER: { color: theme.palette.complementary.purple.regular, icon: { name: 'exercices', type: 'Svg' } },
-  FORMULAIRE: { color: theme.palette.complementary.green.regular, icon: { name: 'form', type: 'Svg' } },
-  FORUM: { color: theme.palette.complementary.blue.regular, icon: { name: 'forum', type: 'Svg' } },
-  HOMEWORKS: { color: theme.palette.complementary.blue.regular, icon: { name: 'homework1D', type: 'Svg' } },
-  MAGNETO: { color: theme.palette.complementary.yellow.regular, icon: { name: 'magneto', type: 'Svg' } },
-  MESSAGERIE: { color: theme.palette.complementary.yellow.regular, icon: { name: 'messages', type: 'Svg' } },
-  MINDMAP: { color: theme.palette.complementary.blue.regular, icon: { name: 'siteMap', type: 'Svg' } },
-  NEWS: { color: theme.palette.complementary.orange.regular, icon: { name: 'newsFeed', type: 'Svg' } },
-  PAGES: { color: theme.palette.complementary.red.regular, icon: { name: 'pages', type: 'Svg' } },
-  POLL: { color: theme.palette.complementary.blue.regular, icon: { name: 'poll', type: 'Svg' } },
-  PRESENCES: { color: theme.palette.complementary.green.regular, icon: { name: 'presences', type: 'Svg' } },
-  RACK: { color: theme.palette.complementary.red.regular, icon: { name: 'rack', type: 'Svg' } },
-  RBS: { color: theme.palette.complementary.pink.regular, icon: { name: 'rbs', type: 'Svg' } },
-  SCHOOLBOOK: { color: theme.palette.complementary.blue.regular, icon: { name: 'homeLiaisonDiary', type: 'Svg' } },
-  SCRAPBOOK: { color: theme.palette.complementary.blue.regular, icon: { name: 'scrapbook', type: 'Svg' } },
-  SHAREBIGFILES: { color: theme.palette.complementary.purple.regular, icon: { name: 'share-big-files', type: 'Svg' } },
-  SUPPORT: { color: theme.palette.complementary.green.regular, icon: { name: 'support', type: 'Svg' } },
-  TIMELINE: { color: theme.palette.complementary.indigo.regular, icon: { name: 'report', type: 'Svg' } },
-  TIMELINEGENERATOR: { color: theme.palette.complementary.yellow.regular, icon: { name: 'timeLineGenerator', type: 'Svg' } },
-  USERBOOK: { color: variableColor, icon: { name: 'adressBook', type: 'Svg' } },
-  USERBOOK_MOOD: { color: variableColor, icon: { name: 'adressBook', type: 'Svg' } },
-  USERBOOK_MOTTO: { color: variableColor, icon: { name: 'adressBook', type: 'Svg' } },
-  WIKI: { color: wikiModuleConfig.displayColor.regular, icon: { name: 'wiki', type: 'Svg' } },
-  WORKSPACE: { color: theme.palette.complementary.orange.regular, icon: { name: 'files', type: 'Svg' } },
+  APPOINTMENTS: { color: theme.apps.appointments.accentColors.regular, icon: theme.apps.appointments.icon },
+  ARCHIVE: { color: theme.apps.archive.accentColors.regular, icon: theme.apps.archive.icon },
+  BLOG: { color: theme.apps.blog.accentColors.regular, icon: theme.apps.blog.icon },
+  CALENDAR: { color: theme.apps.calendar.accentColors.regular, icon: theme.apps.calendar.icon },
+  COLLABORATIVEEDITOR: { color: theme.apps.collaborativeeditor.accentColors.regular, icon: theme.apps.collaborativeeditor.icon },
+  COLLABORATIVEWALL: { color: theme.apps.collaborativewall.accentColors.regular, icon: theme.apps.collaborativewall.icon },
+  COMMUNITY: { color: theme.apps.community.accentColors.regular, icon: theme.apps.community.icon },
+  EXERCIZER: { color: theme.apps.exercizer.accentColors.regular, icon: theme.apps.exercizer.icon },
+  FORMULAIRE: { color: theme.apps.formulaire.accentColors.regular, icon: theme.apps.formulaire.icon },
+  FORUM: { color: theme.apps.forum.accentColors.regular, icon: theme.apps.forum.icon },
+  HOMEWORKS: { color: theme.apps.homeworks.accentColors.regular, icon: theme.apps.homeworks.icon },
+  MAGNETO: { color: theme.apps.magneto.accentColors.regular, icon: theme.apps.magneto.icon },
+  MESSAGERIE: { color: theme.apps.conversation.accentColors.regular, icon: theme.apps.conversation.icon },
+  MINDMAP: { color: theme.apps.mindmap.accentColors.regular, icon: theme.apps.mindmap.icon },
+  NEWS: { color: theme.apps.news.accentColors.regular, icon: theme.apps.news.icon },
+  PAGES: { color: theme.apps.pages.accentColors.regular, icon: theme.apps.pages.icon },
+  POLL: { color: theme.apps.poll.accentColors.regular, icon: theme.apps.poll.icon },
+  PRESENCES: { color: theme.apps.presences.accentColors.regular, icon: theme.apps.presences.icon },
+  RACK: { color: theme.apps.rack.accentColors.regular, icon: theme.apps.rack.icon },
+  RBS: { color: theme.apps.rbs.accentColors.regular, icon: theme.apps.rbs.icon },
+  SCHOOLBOOK: { color: theme.apps.schoolbook.accentColors.regular, icon: theme.apps.schoolbook.icon },
+  SCRAPBOOK: { color: theme.apps.scrapbook.accentColors.regular, icon: theme.apps.scrapbook.icon },
+  SHAREBIGFILES: { color: theme.apps.sharebigfiles.accentColors.regular, icon: theme.apps.sharebigfiles.icon },
+  SUPPORT: { color: theme.apps.support.accentColors.regular, icon: theme.apps.support.icon },
+  TIMELINE: { color: theme.apps.timeline.accentColors.regular, icon: theme.apps.timeline.icon },
+  TIMELINEGENERATOR: { color: theme.apps.timelinegenerator.accentColors.regular, icon: theme.apps.timelinegenerator.icon },
+  USERBOOK: { color: theme.apps.userbook.accentColors.regular, icon: theme.apps.userbook.icon },
+  USERBOOK_MOOD: { color: theme.apps.userbook.accentColors.regular, icon: theme.apps.userbook.icon },
+  USERBOOK_MOTTO: { color: theme.apps.userbook.accentColors.regular, icon: theme.apps.userbook.icon },
+  WIKI: { color: theme.apps.wiki.accentColors.regular, icon: theme.apps.wiki.icon },
+  WORKSPACE: { color: theme.apps.workspace.accentColors.regular, icon: theme.apps.workspace.icon },
 };
 
 export const updateAppBadges = (badges: IAppBadgesInfoDeclaration) => {

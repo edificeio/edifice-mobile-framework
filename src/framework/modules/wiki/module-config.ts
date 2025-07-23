@@ -5,10 +5,10 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'wiki', WikiStore>({
   displayAs: 'myAppsModule',
-  displayColor: theme.palette.complementary.blue,
+  displayColor: theme.apps.wiki.accentColors,
   displayI18n: 'wiki-module-title',
   displayOrder: 0,
-  displayPicture: { name: 'wiki', type: 'Svg' },
+  displayPicture: theme.apps.wiki.icon,
   entcoreScope: ['wiki', 'explorer'],
   matchEntcoreApp: '/wiki',
   name: 'wiki',

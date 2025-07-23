@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import { getScaleHeight } from '~/framework/components/constants';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
-import moduleConfig, { fillColor } from '~/framework/modules/news/module-config';
+import moduleConfig from '~/framework/modules/news/module-config';
 import { Image } from '~/framework/util/media';
 
 const Selected = () => (
@@ -24,7 +24,7 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
 
   const globalStyle = [
     styles.thumbnailItem,
-    { backgroundColor: theme.palette.complementary[fillColor].pale },
+    { backgroundColor: moduleConfig.displayColor.pale },
     { ...(square ? styles.thumbnailItemSquare : styles.thumbnailItemRectangle) },
   ];
   const heightSVGNoIcon = square ? getScaleHeight(12.5) : getScaleHeight(40);

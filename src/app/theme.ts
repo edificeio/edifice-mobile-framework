@@ -6,6 +6,9 @@ import { ColorValue } from 'react-native';
 import deepmerge from 'deepmerge';
 
 import customTheme from '~/app/override/theme';
+import type { SvgProps } from '~/framework/components/picture';
+import appConf from '~/framework/util/appConf';
+import type { ImageProps } from '~/framework/util/media';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -22,6 +25,16 @@ export interface IShades {
   regular: ColorValue;
   light: ColorValue;
   pale: ColorValue;
+}
+
+export type IntentIcon =
+  | ({ type: 'Svg' } & Pick<SvgProps, 'name'>)
+  | ({ type: 'Image' } & Pick<ImageProps, 'source' | 'src' | 'srcSet'>);
+
+export interface EntAppTheme {
+  accentColors: IShades;
+  icon: IntentIcon;
+  iconActive?: IntentIcon;
 }
 
 export interface ITheme {
@@ -58,10 +71,10 @@ export interface ITheme {
     };
     flashMessages: {
       'grey-dark': ColorValue;
-      red: ColorValue;
-      orange: ColorValue;
-      green: ColorValue;
-      blue: ColorValue;
+      'red': ColorValue;
+      'orange': ColorValue;
+      'green': ColorValue;
+      'blue': ColorValue;
     };
   };
   // UI usage of the color palette
@@ -100,12 +113,12 @@ export interface ITheme {
       acknowledge: ColorValue;
       acknowledged: ColorValue;
       categories: {
-        canteen: ColorValue;
-        event: ColorValue;
+        'canteen': ColorValue;
+        'event': ColorValue;
         'last-minute': ColorValue;
-        leisure: ColorValue;
-        outing: ColorValue;
-        various: ColorValue;
+        'leisure': ColorValue;
+        'outing': ColorValue;
+        'various': ColorValue;
       };
     };
     profileTypes: {
@@ -116,6 +129,7 @@ export interface ITheme {
       Guest: ColorValue;
     };
   };
+  apps: { [key: string]: EntAppTheme };
   // Legacy values
   legacy: {
     neutral: {
@@ -146,6 +160,156 @@ export const defaultTheme: ThemeInitializer = {
   //                                Y8b d88P
   //                                 "Y88P"
   init() {
+    (this as Partial<ITheme>).apps = {
+      'appointments': {
+        accentColors: this.palette.complementary.green,
+        icon: { name: 'appointments', type: 'Svg' },
+      },
+      'archive': {
+        accentColors: this.palette.complementary.yellow,
+        icon: { name: 'archives', type: 'Svg' },
+      },
+      'blog': {
+        accentColors: appConf.is1d ? this.palette.complementary.orange : this.palette.complementary.indigo,
+        icon: { name: 'blog', type: 'Svg' },
+      },
+      'calendar': {
+        accentColors: this.palette.complementary.yellow,
+        icon: { name: 'calendar', type: 'Svg' },
+      },
+      'collaborativeeditor': {
+        accentColors: this.palette.complementary.blue,
+        icon: { name: 'pad', type: 'Svg' },
+      },
+      'collaborativewall': {
+        accentColors: this.palette.complementary.green,
+        icon: { name: 'collaborativeWall', type: 'Svg' },
+      },
+      'communities': {
+        accentColors: this.palette.complementary.purple,
+        icon: { name: 'community', type: 'Svg' },
+      },
+      'community': {
+        accentColors: this.palette.complementary.purple,
+        icon: { name: 'community', type: 'Svg' },
+      },
+      'competences': {
+        accentColors: this.palette.complementary.red,
+        icon: { name: 'competences', type: 'Svg' },
+      },
+      'conversation': {
+        accentColors: this.palette.complementary.yellow,
+        icon: { name: 'messages', type: 'Svg' },
+      },
+      'diary': {
+        accentColors: this.palette.complementary.green,
+        icon: { name: 'diary', type: 'Svg' },
+      },
+      'edt': {
+        accentColors: this.palette.complementary.indigo,
+        icon: { name: 'edt', type: 'Svg' },
+      },
+      'exercizer': {
+        accentColors: this.palette.complementary.purple,
+        icon: { name: 'exercices', type: 'Svg' },
+      },
+      'formulaire': {
+        accentColors: this.palette.complementary.purple,
+        icon: { name: 'form', type: 'Svg' },
+      },
+      'forum': {
+        accentColors: this.palette.complementary.blue,
+        icon: { name: 'forum', type: 'Svg' },
+      },
+      'homework-assistance': {
+        accentColors: this.palette.complementary.indigo,
+        icon: { name: 'homeworkAssistance', type: 'Svg' },
+      },
+      'homeworks': {
+        accentColors: appConf.is1d ? this.palette.complementary.blue : this.palette.complementary.green,
+        icon: { name: 'homework1D', type: 'Svg' },
+      },
+      'magneto': {
+        accentColors: this.palette.complementary.yellow,
+        icon: { name: 'magneto', type: 'Svg' },
+      },
+      'mediacentre': {
+        accentColors: this.palette.primary,
+        icon: { name: 'mediacentre', type: 'Svg' },
+      },
+      'mindmap': {
+        accentColors: this.palette.complementary.blue,
+        icon: { name: 'siteMap', type: 'Svg' },
+      },
+      'nabook': {
+        accentColors: this.palette.primary,
+        icon: { name: 'nabook', type: 'Svg' },
+      },
+      'news': {
+        accentColors: appConf.is1d ? this.palette.complementary.purple : this.palette.complementary.blue,
+        icon: { name: 'newsFeed', type: 'Svg' },
+      },
+      'pages': {
+        accentColors: this.palette.complementary.red,
+        icon: { name: 'pages', type: 'Svg' },
+      },
+      'poll': {
+        accentColors: this.palette.complementary.blue,
+        icon: { name: 'poll', type: 'Svg' },
+      },
+      'presences': {
+        accentColors: this.palette.complementary.yellow,
+        icon: { name: 'presences', type: 'Svg' },
+      },
+      'rack': {
+        accentColors: this.palette.complementary.red,
+        icon: { name: 'rack', type: 'Svg' },
+      },
+      'rbs': {
+        accentColors: this.palette.complementary.pink,
+        icon: { name: 'rbs', type: 'Svg' },
+      },
+      'schoolbook': {
+        accentColors: this.palette.complementary.green,
+        icon: { name: 'homeLiaisonDiary', type: 'Svg' },
+      },
+      'scrapbook': {
+        accentColors: this.palette.complementary.green,
+        icon: { name: 'scrapbook', type: 'Svg' },
+      },
+      'sharebigfiles': {
+        accentColors: this.palette.complementary.purple,
+        icon: { name: 'share-big-files', type: 'Svg' },
+      },
+      'support': {
+        accentColors: this.palette.complementary.green,
+        icon: { name: 'support', type: 'Svg' },
+      },
+      'timeline': {
+        accentColors: this.palette.complementary.indigo,
+        icon: { name: 'report', type: 'Svg' },
+      },
+      'timelinegenerator': {
+        accentColors: this.palette.complementary.yellow,
+        icon: { name: 'timeLineGenerator', type: 'Svg' },
+      },
+      'userbook': {
+        accentColors: appConf.is1d ? this.palette.complementary.orange : this.palette.complementary.green,
+        icon: { name: 'adressBook', type: 'Svg' },
+      },
+      'wiki': {
+        accentColors: appConf.is1d ? this.palette.complementary.red : this.palette.complementary.purple,
+        icon: { name: 'wiki', type: 'Svg' },
+      },
+      'workspace': {
+        accentColors: this.palette.complementary.red,
+        icon: { name: 'files', type: 'Svg' },
+      },
+      'zimbra': {
+        accentColors: this.palette.complementary.yellow,
+        icon: { name: 'messages', type: 'Svg' },
+      },
+    };
     (this as Partial<ITheme>).ui = {
       background: {
         card: this.palette.grey.white,
@@ -212,12 +376,12 @@ export const defaultTheme: ThemeInitializer = {
         acknowledge: this.palette.status.warning.regular,
         acknowledged: this.palette.status.success.regular,
         categories: {
-          canteen: this.palette.complementary.blue.regular,
-          event: this.palette.complementary.purple.regular,
+          'canteen': this.palette.complementary.blue.regular,
+          'event': this.palette.complementary.purple.regular,
           'last-minute': this.palette.complementary.red.regular,
-          leisure: this.palette.complementary.yellow.regular,
-          outing: this.palette.complementary.green.regular,
-          various: this.palette.complementary.indigo.regular,
+          'leisure': this.palette.complementary.yellow.regular,
+          'outing': this.palette.complementary.green.regular,
+          'various': this.palette.complementary.indigo.regular,
         },
       },
     };
@@ -305,11 +469,11 @@ export const defaultTheme: ThemeInitializer = {
       },
     },
     flashMessages: {
-      blue: '#2a9cc8',
-      green: '#3cb371',
+      'blue': '#2a9cc8',
+      'green': '#3cb371',
       'grey-dark': '#5b6472',
-      orange: '#ff9057',
-      red: '#c74848',
+      'orange': '#ff9057',
+      'red': '#c74848',
     },
     grey: {
       black: '#4a4a4a',
