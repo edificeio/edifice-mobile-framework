@@ -1,11 +1,13 @@
+import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'communities', null>({
   displayAs: 'tabModule',
+  displayColor: theme.apps.communities.accentColors,
   displayI18n: 'communities.tabName',
   displayOrder: 3,
-  displayPicture: { name: 'ui-tool', type: 'Svg' },
-  displayPictureFocus: { name: 'ui-tool', type: 'Svg' },
+  displayPicture: theme.apps.communities.icon,
+  displayPictureFocus: theme.apps.communities.icon, // ToDo change active icon
 
   entcoreScope: ['communities'],
   matchEntcoreApp: '/Communities', // wtf uppercase C is mandatory for this one (weird conf expected)

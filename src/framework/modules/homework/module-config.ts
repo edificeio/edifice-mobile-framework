@@ -1,15 +1,13 @@
 import type reducer from './reducers';
 
 import theme from '~/app/theme';
-import appConf from '~/framework/util/appConf';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-
-export const moduleColor = theme.palette.complementary[appConf.is1d ? 'blue' : 'green'];
 
 export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>({
   displayAs: 'myAppsModule',
+  displayColor: theme.apps.homeworks.accentColors,
   displayI18n: 'homework',
-  displayPicture: { fill: moduleColor.regular, name: 'homework1D', type: 'Svg' },
+  displayPicture: theme.apps.homeworks.icon,
   entcoreScope: ['homeworks'],
 
   matchEntcoreApp: '/homeworks',
