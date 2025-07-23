@@ -8,12 +8,13 @@ import styles from './styles';
 import { ResourceGrid } from './types';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/override/theme';
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import ModuleImage from '~/framework/components/picture/module-image';
 import { CaptionText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import { explorerItemIsFolder, explorerItemIsLoading } from '~/framework/modules/explorer/model';
+import { EMPTY_FOLDER_ITEM_NAME } from '~/framework/modules/explorer/store';
 
 export const estimatedItemSize = 200; // Measured estimated height of an item from the react-native inspector. @see https://shopify.github.io/flash-list/docs/estimated-item-size
 
@@ -48,28 +49,30 @@ export const ResourceExplorerResourceItem: React.FC<ResourceGrid.ResourceExplore
   );
 };
 
-const resourceExplorerFolderItemStyle = [styles.item, styles.folderItem];
-export const ResourceExplorerFolderItem: React.FC<ResourceGrid.ResourceExplorerFolderItemProps> = ({
-  item,
-  moduleConfig,
-  onPressFolder,
-}) => {
+export const ResourceExplorerFolderItem: React.FC<ResourceGrid.ResourceExplorerFolderItemProps> = ({ item, onPressFolder }) => {
+  const isSpacerFolder = item.name === EMPTY_FOLDER_ITEM_NAME;
+
+  const resourceExplorerFolderItemStyle = React.useMemo(() => {
+    return isSpacerFolder ? [styles.item, styles.folderItem, styles.spacerFolder] : [styles.item, styles.folderItem];
+  }, [isSpacerFolder]);
+
   return (
     <TouchableOpacity
-      style={resourceExplorerFolderItemStyle}
-      onPress={React.useCallback(() => onPressFolder?.(item), [item, onPressFolder])}>
+      disabled={isSpacerFolder}
+      onPress={React.useCallback(() => onPressFolder?.(item), [item, onPressFolder])}
+      style={resourceExplorerFolderItemStyle}>
       <View style={styles.folderThumbnail}>
         <Svg
           name="ui-folder"
-          fill={moduleConfig?.displayColor?.regular ?? theme.palette.primary.regular}
-          width={UI_SIZES.elements.icon.xxxlarge}
-          height={UI_SIZES.elements.icon.xxxlarge}
+          fill={theme.palette.grey.black}
+          width={UI_SIZES.elements.icon.small}
+          height={UI_SIZES.elements.icon.small}
         />
-      </View>
-      <View style={styles.labelContainer}>
-        <SmallBoldText numberOfLines={2} style={styles.folderLabel}>
-          {item.name}
-        </SmallBoldText>
+        <View style={styles.folderLabelContainer}>
+          <SmallBoldText numberOfLines={1} style={styles.folderLabel}>
+            {item.name}
+          </SmallBoldText>
+        </View>
       </View>
     </TouchableOpacity>
   );
