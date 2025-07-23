@@ -362,6 +362,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       case 'recall':
         return canRecall;
       case 'markUnread':
+        return fromFolder !== MailsDefaultFolders.TRASH && mail?.from.id !== props.session?.user.id;
       case 'move':
         return fromFolder !== MailsDefaultFolders.TRASH;
       case 'removeFromFolder':
