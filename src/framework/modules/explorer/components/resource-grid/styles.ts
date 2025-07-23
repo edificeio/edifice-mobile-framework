@@ -9,18 +9,22 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.big / 2,
   },
   folderItem: {
-    padding: UI_SIZES.border.thin,
+    borderColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.input,
+    borderWidth: UI_SIZES.border.thin,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
   },
   folderLabel: {
-    color: theme.palette.grey.graphite,
+    color: theme.palette.grey.black,
     lineHeight: TextSizeStyle.Small.lineHeight,
-    position: 'relative',
-    textAlign: 'center',
+  },
+  folderLabelContainer: {
+    flex: 1,
+    marginLeft: UI_SIZES.spacing.minor,
   },
   folderThumbnail: {
-    alignItems: 'center',
-    aspectRatio: UI_SIZES.aspectRatios.thumbnail,
-    justifyContent: 'center',
+    flexDirection: 'row',
   },
   grid: {
     backgroundColor: theme.palette.complementary.orange.pale,
@@ -67,5 +71,8 @@ export default StyleSheet.create({
     backgroundColor: theme.ui.background.card,
     borderColor: theme.palette.grey.cloudy,
     borderWidth: UI_SIZES.border.thin,
+  },
+  spacerFolder: {
+    opacity: 0,
   },
 });
