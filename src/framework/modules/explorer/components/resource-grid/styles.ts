@@ -48,7 +48,7 @@ export default StyleSheet.create({
     width: '100%',
   },
   labelCaption: {
-    color: theme.palette.grey.graphite,
+    color: theme.palette.grey.black,
     lineHeight: TextSizeStyle.Small.lineHeight,
   },
   labelContainer: {
