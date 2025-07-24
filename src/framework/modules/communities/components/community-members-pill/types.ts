@@ -1,3 +1,3 @@
 export interface CommunityMembersPillProps {
-  membersCount: number | undefined;
+  membersCount: number;
 }

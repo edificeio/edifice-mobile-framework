@@ -1,42 +1,51 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
+
+import { InvitationStatus } from '@edifice.io/community-client-rest-rn';
+
+import { SMALL_CARD_METRICS } from '.';
 
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
+
+const CARD_CONTAINER_STYLE: ViewStyle = {
+  alignSelf: 'stretch',
+  borderRadius: UI_SIZES.radius.mediumPlus,
+  flexDirection: 'column',
+  marginHorizontal: UI_SIZES.spacing.big,
+  overflow: 'hidden',
+  position: 'relative',
+};
+
+export const getCardStyle = (invitationStatus: InvitationStatus) => {
+  switch (invitationStatus) {
+    case InvitationStatus.PENDING:
+      return styles.cardPending;
+    case InvitationStatus.ACCEPTED:
+    case InvitationStatus.REQUEST_ACCEPTED:
+      return styles.cardAccepted;
+    default:
+      return styles.cardAccepted;
+  }
+};
 
 export const styles = StyleSheet.create({
-  badgeContainer: {
-    alignItems: 'center',
-    backgroundColor: theme.palette.complementary.red.regular,
-    borderRadius: UI_SIZES.radius.extraLarge,
-    elevation: 10,
-    height: getScaleWidth(28),
-    justifyContent: 'center',
-    paddingHorizontal: UI_SIZES.spacing.minor,
-    position: 'absolute',
-    right: UI_SIZES.spacing.minor,
-    top: UI_SIZES.spacing.minor,
-    zIndex: 10,
+  cardAccepted: {
+    ...CARD_CONTAINER_STYLE,
+    borderColor: theme.palette.grey.cloudy,
+    borderWidth: UI_SIZES.border.thin,
   },
-  badgeText: {
-    color: theme.palette.grey.white,
-  },
-  cardContainer: {
-    alignSelf: 'center',
-    borderRadius: UI_SIZES.radius.mediumPlus,
-    flexDirection: 'column',
-    height: UI_SIZES.elements.communities.cardSmallHeight,
-    overflow: 'hidden',
-    position: 'relative',
-    width: UI_SIZES.elements.communities.cardSmallWidth,
+  cardPending: {
+    ...CARD_CONTAINER_STYLE,
+    borderColor: theme.palette.status.failure.light,
+    borderWidth: SMALL_CARD_METRICS.maxBorderWidth,
   },
   imgContainer: {
     // give a border radius to override the one from ModuleImage
     borderRadius: 0,
-    height: getScaleWidth(80),
+    height: SMALL_CARD_METRICS.imgHeight,
   },
   titleContainer: {
     backgroundColor: theme.palette.grey.white,
-    height: getScaleWidth(48),
-    padding: UI_SIZES.spacing.small,
+    padding: SMALL_CARD_METRICS.titlePadding,
   },
 });

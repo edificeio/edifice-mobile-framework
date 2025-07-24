@@ -5,7 +5,7 @@ import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 export interface CommunityCardSmallProps {
   hasNewContent?: boolean;
   image?: string | undefined;
-  invitationStatus?: InvitationStatus;
+  invitationStatus: InvitationStatus;
   membersCount?: number;
   moduleConfig: AnyNavigableModuleConfig;
   onPress: () => void;

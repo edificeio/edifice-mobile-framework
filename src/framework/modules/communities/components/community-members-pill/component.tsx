@@ -11,7 +11,6 @@ import { Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 
 const CommunityMembersPill = ({ membersCount }: CommunityMembersPillProps) => {
-  if (!membersCount) return undefined;
   const memberString = membersCount > 1 ? I18n.get('communities-members') : I18n.get('communities-member');
   return (
     <View style={styles.pillContainer}>

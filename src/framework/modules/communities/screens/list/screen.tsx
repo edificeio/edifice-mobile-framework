@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { PixelRatio, View } from 'react-native';
 
 import { InvitationClient, InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -12,8 +12,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { PageView } from '~/framework/components/page';
-import CommunityCardSmall from '~/framework/modules/communities/components/community-card-small';
+import { sessionScreen } from '~/framework/components/screen';
+import { TextSizeStyle } from '~/framework/components/text';
+import CommunityCardSmall, { SMALL_CARD_METRICS } from '~/framework/modules/communities/components/community-card-small';
 import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small-loader/component';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
@@ -34,7 +35,7 @@ export const computeNavBar = ({
   headerRight: () => <NavBarAction icon="ui-user-join" />,
 });
 
-export default function CommunitiesListScreen({ navigation }: CommunitiesListScreen.AllProps) {
+export default sessionScreen<CommunitiesListScreen.AllProps>(function CommunitiesListScreen({ navigation }) {
   const [communities, setCommunities] = React.useState<(InvitationResponseDto | typeof LOADING_ITEM_DATA)[]>([]);
 
   const loadData = React.useCallback(async (page: number, reloadAll?: boolean) => {
@@ -87,16 +88,24 @@ export default function CommunitiesListScreen({ navigation }: CommunitiesListScr
     [],
   );
 
+  const estimatedItemSize = React.useMemo(
+    () =>
+      TextSizeStyle.Medium.lineHeight * PixelRatio.getFontScale() +
+      SMALL_CARD_METRICS.imgHeight +
+      2 * (SMALL_CARD_METRICS.maxBorderWidth + SMALL_CARD_METRICS.titlePadding),
+    [],
+  );
+
   const keyExtractor = React.useCallback<NonNullable<PaginatedListProps<InvitationResponseDto>['keyExtractor']>>(
     (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item + item.id.toString()),
     [],
   );
 
   return (
-    <PageView>
+    <View style={styles.listContainer}>
       <PaginatedList
         data={communities}
-        estimatedItemSize={UI_SIZES.elements.communities.cardSmallHeight}
+        estimatedItemSize={estimatedItemSize}
         estimatedListSize={estimatedListSize}
         ItemSeparatorComponent={renderItemSeparator}
         keyExtractor={keyExtractor}
@@ -116,6 +125,6 @@ export default function CommunitiesListScreen({ navigation }: CommunitiesListScr
           />
         }
       />
-    </PageView>
+    </View>
   );
-}
+});

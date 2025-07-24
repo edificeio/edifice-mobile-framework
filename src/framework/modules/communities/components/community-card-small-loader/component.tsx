@@ -9,7 +9,7 @@ const CommunityCardSmallLoader: React.FC = () => {
   return (
     <View style={styles.cardContainer}>
       <Placeholder Animation={Fade}>
-        <PlaceholderMedia style={styles.cardContainer} />
+        <PlaceholderMedia style={styles.card} />
       </Placeholder>
     </View>
   );

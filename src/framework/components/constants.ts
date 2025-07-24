@@ -119,10 +119,6 @@ export const UI_SIZES = {
       large: 4,
       thin: 1,
     },
-    communities: {
-      cardSmallHeight: getScaleWidth(128),
-      cardSmallWidth: getScaleWidth(327),
-    },
     editor: {
       toolbarHeight: getScaleWidth(20) + 2 * getScaleWidth(8) + getScaleWidth(4) * 2,
     },
