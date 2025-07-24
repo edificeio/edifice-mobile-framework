@@ -42,7 +42,7 @@ export const ResourceExplorerResourceItem: React.FC<ResourceGrid.ResourceExplore
           {item.name}
         </SmallBoldText>
         <CaptionText style={styles.labelCaption} numberOfLines={1}>
-          {I18n.date(item.updatedAt)}
+          {I18n.date(item.updatedAt ?? item.createdAt)}
         </CaptionText>
       </View>
     </TouchableOpacity>
