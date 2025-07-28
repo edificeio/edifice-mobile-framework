@@ -10,7 +10,7 @@ export default new NavigableModuleConfig<'communities', null>({
   displayPictureFocus: theme.apps.communities.icon, // ToDo change active icon
 
   entcoreScope: ['communities'],
-  matchEntcoreApp: '/Communities', // wtf uppercase C is mandatory for this one (weird conf expected)
+  matchEntcoreApp: '/communities',
 
   name: 'communities',
   storageName: 'communities',
