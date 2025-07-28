@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-07-18 08:50:42",
-  "notes": "feat(mails): COCO-4294 fix thumbnail when no preview\nfix(mails) COCO-4327 fix reply when are in trash folder\nfix(mails) COCO-3705 fix forward mail\nfeat(mails): COCO-4174 fix buttons when all select\nrelease: 1.14.1-comm.4(1140104)",
-  "version": "1.14.1-comm.5(1140105)"
+  "last": "2025-07-28 09:30:30",
+  "notes": "fix(mails): COCO-4367 remove all conversation module && edit user profile when send mail from this screen\nfix(mails): COCO-4361, remove unread action in details view when user is sender\nfix(mails): COCO-4356, reload visibles when multicompte\nfeat(mails): COCO-4352 push notifs\nrelease: 1.14.1-comm.5(1140105)",
+  "version": "1.14.1-comm.6(1140106)"
 }
