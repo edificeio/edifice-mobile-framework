@@ -39,6 +39,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [heightToRemoveList, setHeightToRemoveList] = React.useState(INITIAL_HEIGHT_INPUT);
   const [focused, setFocused] = React.useState(false);
   const [inputFocused, setInputFocused] = React.useState(false);
+  const [containerLayout, setContainerLayout] = React.useState({ height: 0, width: 0, x: 0, y: 0 });
 
   const users: MailsVisible[] = React.useMemo(() => readVisibles(), []);
 
@@ -92,27 +93,28 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   React.useEffect(() => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        viewContainerRef.current!.measure((x, y, width, height) => {
-          Animated.spring(topPositionResults, {
-            friction: 8,
-            tension: 50,
-            toValue: y + height,
-            useNativeDriver: true,
-          }).start();
-          setHeightToRemoveList(height - heightInputToSave + INITIAL_HEIGHT_INPUT);
-        });
+        console.log('measure', containerLayout.y, containerLayout.height);
+        Animated.spring(topPositionResults, {
+          friction: 8,
+          tension: 50,
+          toValue: containerLayout.y + containerLayout.height,
+          useNativeDriver: true,
+        }).start();
+        setHeightToRemoveList(containerLayout.height - heightInputToSave + INITIAL_HEIGHT_INPUT);
       }, 100);
     }
-  }, [heightInputToSave, selectedRecipients, topPositionResults]);
+  }, [containerLayout.height, containerLayout.y, heightInputToSave, selectedRecipients, topPositionResults]);
 
   const scrollToInput = () => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        viewContainerRef.current!.measure((x, y, width, height) => {
-          setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
-          setHeightInputToSave(height);
-          topPositionResults.setValue(y + height);
-          props.scrollViewRef.current?.scrollTo({ animated: true, y: y + height - INITIAL_HEIGHT_INPUT });
+        console.log('scrollToInput', containerLayout.y, containerLayout.height);
+        setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
+        setHeightInputToSave(containerLayout.height);
+        topPositionResults.setValue(containerLayout.y + containerLayout.height);
+        props.scrollViewRef.current?.scrollTo({
+          animated: true,
+          y: containerLayout.y + containerLayout.height - INITIAL_HEIGHT_INPUT,
         });
       }, 300);
     }
@@ -259,7 +261,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   return (
     <>
-      <View style={[styles.container, selectedRecipients.length === 0 ? styles.containerEmpty : {}]} ref={viewContainerRef}>
+      <View
+        style={[styles.container, selectedRecipients.length === 0 ? styles.containerEmpty : {}]}
+        ref={viewContainerRef}
+        onLayout={e => {
+          const { height, width, x, y } = e.nativeEvent.layout;
+          console.log('onLayout', { height, width, x, y });
+          setContainerLayout({ height, width, x, y });
+        }}>
         <BodyText style={styles.prefix}>{I18n.get(MailsRecipientPrefixsI18n[props.type].name)}</BodyText>
         <View style={[styles.containerInput, isOpen ? styles.containerIsEditing : {}]}>
           <TouchableOpacity
