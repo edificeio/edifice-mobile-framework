@@ -93,7 +93,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   React.useEffect(() => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        console.log('measure', containerLayout.y, containerLayout.height);
+        // console.log('measure', containerLayout.y, containerLayout.height);
         Animated.spring(topPositionResults, {
           friction: 8,
           tension: 50,
@@ -105,10 +105,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     }
   }, [containerLayout.height, containerLayout.y, heightInputToSave, selectedRecipients, topPositionResults]);
 
-  const scrollToInput = () => {
+  const scrollToInput = React.useCallback(() => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        console.log('scrollToInput', containerLayout.y, containerLayout.height);
+        console.log(
+          'scrollToInput',
+          containerLayout.y + containerLayout.height - INITIAL_HEIGHT_INPUT,
+          Math.max(0, containerLayout.height - INITIAL_HEIGHT_INPUT),
+        );
         setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
         setHeightInputToSave(containerLayout.height);
         topPositionResults.setValue(containerLayout.y + containerLayout.height);
@@ -116,9 +120,26 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           animated: true,
           y: containerLayout.y + containerLayout.height - INITIAL_HEIGHT_INPUT,
         });
+      }, 500); // TODO: j'ai mis à 500ms pour le test, ça m'a l'air un peu lent pour la prod
+    }
+  }, [containerLayout, props.scrollViewRef, topPositionResults]);
+
+  /**
+   * J'ai retiré tout appel de scrollToInput dans les autres fonctions
+   * car il est déjà appelé dans useEffect quand la taille de la view change
+   * et ça évite de trigger le scrollToInput à chaque fois et donc une ui laggy
+   * La taille de la view change quand on ajoute ou supprime un recipient, ce qui trigger ce useEffect
+   */
+  React.useEffect(() => {
+    // Trouver la bonne condition pour ne pas faire de scroll si le champ n'est pas ouvert ou s'il n'est pas focus
+    // À chaud, je dirais que c'est ici que tu dois travailler pour éviter le scroll quand tu supprimes des recipients dans un autre champ
+    // Je n'ai pas pris le temps de chercher la bonne condition
+    if (containerLayout.height > 0 && inputFocused) {
+      setTimeout(() => {
+        scrollToInput();
       }, 300);
     }
-  };
+  }, [containerLayout, isOpen, scrollToInput, showList, inputFocused]); // TODO: mettre à jour les dépendances, je n'ai pas clean suite à quelques tests
 
   const onOpen = () => {
     setFocused(true);
@@ -126,7 +147,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const onFocus = () => {
-    scrollToInput();
+    // Je crois que c'était un test, je ne sais plus pourquoi je l'ai commenté, à voir si ça pose problème
+    // scrollToInput();
     setInputFocused(true);
     if (!isOpen) setIsOpen(true);
     if (search.length >= 3) toggleShowList();
@@ -207,7 +229,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     const newSelectedRecipients = [...selectedRecipients, ...items];
     setSelectedRecipients(newSelectedRecipients);
     props.onChangeRecipient(newSelectedRecipients, props.type);
-    scrollToInput();
+    // Evite d'appeler scrollToInput, il est déjà appelé car la taille de la view change
+    // scrollToInput();
   };
 
   const removeUser = (user: MailsVisible) => {
@@ -264,9 +287,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       <View
         style={[styles.container, selectedRecipients.length === 0 ? styles.containerEmpty : {}]}
         ref={viewContainerRef}
+        /**
+         * Pour rappel, je pense que le problème vient du fait qu'il y a une différence entre Android et iOS dans les valeurs retours de measure().
+         * Android mesure depuis le parent immédiat (il n'a pas l'air d'en trouver un à ce moment là ou il le trouve mais la view est situé à 0 dans l'espace) alors qu'iOS mesure depuis la root view ou le composant le plus haut.
+         * onLayout c'est le petit cousin de feu onComponentDidMount, ça t'assure que les valeurs retournées sont celles calculées après que le render soit fait côté natif.
+         */
         onLayout={e => {
           const { height, width, x, y } = e.nativeEvent.layout;
-          console.log('onLayout', { height, width, x, y });
+          console.log(`onLayout ${props.type} ${JSON.stringify({ height, width, x, y })}`);
           setContainerLayout({ height, width, x, y });
         }}>
         <BodyText style={styles.prefix}>{I18n.get(MailsRecipientPrefixsI18n[props.type].name)}</BodyText>
