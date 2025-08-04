@@ -12,18 +12,17 @@ import { urlSigner } from '~/infra/oauth';
 
 interface IMediaCommonAttributes {
   src: string | ImageURISource;
-  link?: string;
   alt?: string;
   mime?: string;
 }
 
-export interface IImageAttributes extends IMediaCommonAttributes { }
+export interface IImageAttributes extends IMediaCommonAttributes {}
 export interface IVideoAttributes extends IMediaCommonAttributes {
   poster?: string | ImageURISource;
   ratio?: number;
 }
 
-export interface IAudioAttributes extends IMediaCommonAttributes { }
+export interface IAudioAttributes extends IMediaCommonAttributes {}
 
 export interface IImageMedia extends IImageAttributes {
   type: 'image';
@@ -37,7 +36,15 @@ export interface IAudioMedia extends IAudioAttributes {
   type: 'audio';
 }
 
-export type IMedia = IImageMedia | IVideoMedia | IAudioMedia;
+export interface ILinkMedia extends IMediaCommonAttributes {
+  type: 'link';
+}
+
+export interface IDocumentMedia extends IMediaCommonAttributes {
+  type: 'document';
+}
+
+export type IMedia = IImageMedia | IVideoMedia | IAudioMedia | ILinkMedia | IDocumentMedia;
 
 export function formatSource(src: string | ImageURISource) {
   return typeof src === 'string' ? { uri: src } : src;
@@ -93,4 +100,10 @@ export class FastImage extends React.PureComponent<FastImageProps> {
       return <UnavailableImage {...this.props} />;
     }
   }
+}
+
+export const enum ImageLoadingState {
+  Loading,
+  Success,
+  Error,
 }

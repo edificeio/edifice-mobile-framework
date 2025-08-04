@@ -4,11 +4,11 @@ import { View } from 'react-native';
 import { Fade, Placeholder, PlaceholderMedia } from 'rn-placeholder';
 
 import styles from './styles';
-import { ImageFallbackProps, ImageLoaderProps, ImageLoadingState, ModuleConfigForFallbackImage, ModuleImageProps } from './types';
+import { ImageFallbackProps, ImageLoaderProps, ModuleConfigForFallbackImage, ModuleImageProps } from './types';
 
 import theme from '~/app/theme';
 import { Icon, Svg } from '~/framework/components/picture';
-import { Image, ImageProps } from '~/framework/util/media';
+import { Image, ImageLoadingState, ImageProps } from '~/framework/util/media';
 
 const DEFAULT_MODULE_CONFIG: Required<ModuleConfigForFallbackImage> = {
   displayColor: {
@@ -74,17 +74,15 @@ const ModuleImage: React.FC<ModuleImageProps> = ({ fallbackIcon, iconSize, modul
   React.useEffect(() => {
     if (isSourceEmpty) {
       setImageLoadingState(ImageLoadingState.Error);
-    } else {
-      if (prevSrcSet.current !== props.srcSet) {
-        setImageLoadingState(ImageLoadingState.Loading);
-        prevSrcSet.current = props.srcSet;
-      } else if (prevSrc.current !== props.src) {
-        setImageLoadingState(ImageLoadingState.Loading);
-        prevSrc.current = props.src;
-      } else if (prevSource.current !== props.source) {
-        setImageLoadingState(ImageLoadingState.Loading);
-        prevSource.current = props.source;
-      }
+    } else if (prevSrcSet.current !== props.srcSet) {
+      setImageLoadingState(ImageLoadingState.Loading);
+      prevSrcSet.current = props.srcSet;
+    } else if (prevSrc.current !== props.src) {
+      setImageLoadingState(ImageLoadingState.Loading);
+      prevSrc.current = props.src;
+    } else if (prevSource.current !== props.source) {
+      setImageLoadingState(ImageLoadingState.Loading);
+      prevSource.current = props.source;
     }
   }, [isSourceEmpty, props.source, props.src, props.srcSet]);
 

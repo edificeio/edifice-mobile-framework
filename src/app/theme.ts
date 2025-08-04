@@ -8,7 +8,7 @@ import deepmerge from 'deepmerge';
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
 import appConf from '~/framework/util/appConf';
-import type { ImageProps } from '~/framework/util/media';
+import type { ImageProps, IMedia } from '~/framework/util/media';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -130,6 +130,7 @@ export interface ITheme {
     };
   };
   apps: { [key: string]: EntAppTheme };
+  media: { [key in IMedia['type']]: IntentIcon };
   // Legacy values
   legacy: {
     neutral: {
@@ -160,6 +161,13 @@ export const defaultTheme: ThemeInitializer = {
   //                                Y8b d88P
   //                                 "Y88P"
   init() {
+    (this as Partial<ITheme>).media = {
+      audio: { name: 'ui-mic', type: 'Svg' },
+      document: { name: 'ui-textPage', type: 'Svg' },
+      image: { name: 'ui-image', type: 'Svg' },
+      link: { name: 'ui-external-link', type: 'Svg' },
+      video: { name: 'ui-recordVideo', type: 'Svg' },
+    };
     (this as Partial<ITheme>).apps = {
       'appointments': {
         accentColors: this.palette.complementary.green,

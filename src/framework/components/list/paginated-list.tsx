@@ -76,6 +76,14 @@ export interface PaginatedListProps<TItem>
    * Default to 3, that means one page before AND one page after that ones are visible in the viewport.
    */
   windowSize?: number;
+
+  /**
+   * Override the index of visible items to calculate wich page to load.
+   * This is useful when there is a bunch of non-paginated items at the beginning of the data.
+   * @param index the found index of an element
+   * @returns the index to take into account
+   */
+  getVisibleItemIndex?: (index: number) => number;
 }
 
 export const LOADING_ITEM_DATA = Symbol('LOADING_ITEM_DATA');
@@ -103,6 +111,7 @@ const computeEstimatedVisibleElements = (
 
 export default function PaginatedList<TItem>({
   data,
+  getVisibleItemIndex,
   onItemsError,
   onItemsReached,
   onPageError,
@@ -113,7 +122,7 @@ export default function PaginatedList<TItem>({
   viewabilityConfig,
   windowSize = 3,
   ...flashListProps
-}: PaginatedListProps<TItem>) {
+}: Readonly<PaginatedListProps<TItem>>) {
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
   const dataRef = React.useRef(data);
   dataRef.current = data;
@@ -129,6 +138,7 @@ export default function PaginatedList<TItem>({
       } catch (e) {
         onPageError?.(e, page);
         onItemsError?.(e, page * pageSize, pageSize);
+        throw e;
       }
     },
     [onPageReached, onItemsReached, pageSize, onPageError, onItemsError],
@@ -140,8 +150,8 @@ export default function PaginatedList<TItem>({
   const onViewableItemsChanged = React.useCallback(
     ({ viewableItems }: { viewableItems: ViewToken[]; changed: ViewToken[] }) => {
       // 1. Get visible item indices
-      const firstVisibleIndex = viewableItems.at(0)?.index;
-      const lastVisibleIndex = viewableItems.at(-1)?.index;
+      let firstVisibleIndex = viewableItems.at(0)?.index;
+      let lastVisibleIndex = viewableItems.at(-1)?.index;
       if (
         firstVisibleIndex === undefined ||
         firstVisibleIndex === null ||
@@ -150,13 +160,20 @@ export default function PaginatedList<TItem>({
       ) {
         return;
       }
+      if (getVisibleItemIndex && firstVisibleIndex !== undefined && firstVisibleIndex !== null)
+        firstVisibleIndex = getVisibleItemIndex(firstVisibleIndex);
+      if (getVisibleItemIndex && lastVisibleIndex !== undefined && lastVisibleIndex !== null)
+        lastVisibleIndex = getVisibleItemIndex(lastVisibleIndex);
+
       // 2. Includes windowSize to the computation
       const windowFirstIndex = firstVisibleIndex - Math.ceil((pageSize * (windowSize - 1)) / 2);
       const windowLastIndex = lastVisibleIndex + Math.ceil((pageSize * (windowSize - 1)) / 2);
+
       // 3. Compute the corresponding page numbers
       const windowFirstPage = Math.max(0, windowFirstIndex - (windowFirstIndex % pageSize)) / pageSize;
       const windowLastPage = Math.max(0, windowLastIndex - (windowLastIndex % pageSize)) / pageSize;
       const windowVisiblePages = Array.from({ length: windowLastPage - windowFirstPage + 1 }, (x, i) => i + windowFirstPage);
+
       // 4. Verify the need to load each visible page, and call `loadData` if applicable
       for (const page of windowVisiblePages) {
         let mustLoadPage: boolean = false;
@@ -168,13 +185,13 @@ export default function PaginatedList<TItem>({
         }
         if (mustLoadPage && !loadingPagesRef.current.has(page)) {
           loadingPagesRef.current.add(page);
-          loadData(page).then(() => {
+          loadData(page).finally(() => {
             loadingPagesRef.current.delete(page);
           });
         }
       }
     },
-    [loadData, pageSize, windowSize],
+    [getVisibleItemIndex, loadData, pageSize, windowSize],
   );
 
   const renderItem = React.useCallback<NonNullable<FlashListProps<TItem | typeof LOADING_ITEM_DATA>['renderItem']>>(
@@ -241,7 +258,7 @@ export default function PaginatedList<TItem>({
   return <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={renderLoading} />;
 }
 
-export const staleOrSplice = <TItem extends any>(
+export const staleOrSplice = <TItem,>(
   currentData: (TItem | typeof LOADING_ITEM_DATA)[],
   newData: { items: TItem[]; from: number; total: number },
   reloadAll?: boolean,

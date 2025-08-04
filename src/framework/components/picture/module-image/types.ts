@@ -12,12 +12,6 @@ export type ImageFallbackProps = Partial<PictureProps> &
 
 export type ImageLoaderProps = Pick<ImageFallbackProps, 'imageProps'>;
 
-export const enum ImageLoadingState {
-  Loading,
-  Success,
-  Error,
-}
-
 export type ModuleConfigForFallbackImage = {
   displayPicture?: AnyNavigableModuleConfig['displayPicture'];
   displayColor?: Pick<Required<AnyNavigableModuleConfig>['displayColor'], 'pale' | 'regular'>;
