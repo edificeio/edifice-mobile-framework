@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-04 17:10:06",
-  "notes": "fix(android): Downgrade firebase analytics to fix android build error\nfix(prod): SUPPORT-3033, add appli.ac-aix-marseille.fr domain configuration\nchore(i18n): Change Phrase Syncing branch\nupdate(stack): yarn cache update\nrelease: 1.14.2(1140200)\nupdate(stack): yarn cache update\nrelease: 1.14.1-rc.1(1140101)",
-  "version": "1.14.2-rc.1(1140201)"
+  "last": "2025-08-05 08:47:11",
+  "notes": "release: 1.14.2-rc.1(1140201)",
+  "version": "1.14.2-rc.2(1140202)"
 }
