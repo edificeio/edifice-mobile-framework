@@ -30,8 +30,12 @@ const handleConversationNotificationAction: NotifHandlerThunkAction =
           ? {
               name: computeTabRouteName(moduleConfig.routeName),
               params: {
-                fromTimeline: true,
-                id: notif.resource.id,
+                initial: false,
+                params: {
+                  fromTimeline: false,
+                  id: notif.resource.id,
+                },
+                screen: mailsRouteNames.details,
               },
             }
           : {
