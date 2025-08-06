@@ -4,6 +4,7 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
+import { ScrollView as GHScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -511,13 +512,15 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const renderDetailsRecipients = React.useCallback(
     () => (
-      <View style={styles.contentBottomSheet}>
-        {renderListRecipients(mail!.to, 'mails-prefixto')}
-        {hasRecipients(mail!.to) && hasRecipients(mail!.cc) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
-        {renderListRecipients(mail!.cc, 'mails-prefixcc')}
-        {hasRecipients(mail!.cc) && hasRecipients(mail!.cci) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
-        {renderListRecipients(mail!.cci, 'mails-prefixcci')}
-      </View>
+      <GHScrollView showsVerticalScrollIndicator={false} bounces={false}>
+        <View style={styles.contentBottomSheet}>
+          {renderListRecipients(mail!.to, 'mails-prefixto')}
+          {hasRecipients(mail!.to) && hasRecipients(mail!.cc) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
+          {renderListRecipients(mail!.cc, 'mails-prefixcc')}
+          {hasRecipients(mail!.cc) && hasRecipients(mail!.cci) ? <Separator marginVertical={UI_SIZES.spacing.medium} /> : null}
+          {renderListRecipients(mail!.cci, 'mails-prefixcci')}
+        </View>
+      </GHScrollView>
     ),
     [mail, renderListRecipients],
   );
