@@ -106,7 +106,7 @@ export default function Attachment(props: AttachmentProps) {
     return (
       <TouchableOpacity style={styles.button} onPress={onShare} disabled={isDownloading}>
         <Svg
-          name={'ui-download'}
+          name={'ui-share'}
           fill={theme.palette.grey.black}
           width={UI_SIZES.elements.icon.small}
           height={UI_SIZES.elements.icon.small}
