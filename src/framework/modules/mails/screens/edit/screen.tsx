@@ -150,7 +150,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       if (draftIdSaved) {
         await mailsService.mail.updateDraft({ draftId: draftIdSaved }, { body, cc: ccIds, cci: cciIds, subject, to: toIds });
       } else {
-        await mailsService.mail.sendToDraft({ body, cc: ccIds, cci: cciIds, subject, to: toIds });
+        await mailsService.mail.sendToDraft(
+          { inReplyTo: initialMailInfo?.id ?? undefined },
+          { body, cc: ccIds, cci: cciIds, subject, to: toIds },
+        );
       }
       props.navigation.navigate(mailsRouteNames.home, {
         from: fromFolder,
@@ -163,7 +166,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       toast.showError();
       setIsSending(false);
     }
-  }, [to, cc, cci, body, draftIdSaved, props.navigation, fromFolder, subject]);
+  }, [to, cc, cci, draftIdSaved, props.navigation, fromFolder, body, subject, initialMailInfo?.id]);
 
   const onSend = React.useCallback(async () => {
     try {
@@ -178,7 +181,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       );
       props.navigation.navigate(mailsRouteNames.home, {
         from: fromFolder,
-        reload: fromFolder === MailsDefaultFolders.OUTBOX || fromFolder === MailsDefaultFolders.DRAFTS,
+        reload: !(fromFolder === MailsDefaultFolders.TRASH),
       });
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
       setIsSending(false);
@@ -234,7 +237,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftId));
           setAttachments(convertedAttachments);
         } else {
-          const newDraftId = await mailsService.mail.sendToDraft({ body: '', cc: [], cci: [], subject: '', to: [] });
+          const newDraftId = await mailsService.mail.sendToDraft(
+            { inReplyTo: initialMailInfo?.id ?? undefined },
+            { body: '', cc: [], cci: [], subject: '', to: [] },
+          );
           setDraftIdSaved(newDraftId);
         }
 

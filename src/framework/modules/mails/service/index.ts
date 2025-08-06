@@ -168,8 +168,11 @@ export const mailsService = {
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
       await http.fetchJsonForSession('POST', api, { body: bodyJson });
     },
-    sendToDraft: async (payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string }) => {
-      const api = '/conversation/draft';
+    sendToDraft: async (
+      params: { inReplyTo?: string },
+      payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string },
+    ) => {
+      const api = `/conversation/draft${params.inReplyTo ? `?In-Reply-To=${params.inReplyTo}` : ''}`;
       const { body, cc, cci, subject, to } = payload;
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
