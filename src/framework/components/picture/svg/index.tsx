@@ -214,6 +214,7 @@ const imports = {
   'ui-move': async () => import('ASSETS/icons/uiIcons/move.svg'),
   'ui-notif': async () => import('ASSETS/icons/uiIcons/notif.svg'),
   'ui-options': async () => import('ASSETS/icons/uiIcons/options.svg'),
+  'ui-options-horizontal': async () => import('ASSETS/icons/uiIcons/options-horizontal.svg'),
   'ui-orderedList': async () => import('ASSETS/icons/uiIcons/orderedList.svg'),
   'ui-pause': async () => import('ASSETS/icons/uiIcons/pause.svg'),
   'ui-personBook': async () => import('ASSETS/icons/uiIcons/person_book.svg'),
