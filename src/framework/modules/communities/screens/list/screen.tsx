@@ -72,7 +72,7 @@ export const computeNavBar = ({
 
 const emptyData = [];
 
-export default sessionScreen<CommunitiesListScreen.AllProps>(function CommunitiesListScreen({
+export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function CommunitiesListScreen({
   navigation,
   route: {
     params: { filters = emptyData, pending = false },
