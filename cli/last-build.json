@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-07-28 09:30:30",
-  "notes": "fix(mails): COCO-4367 remove all conversation module && edit user profile when send mail from this screen\nfix(mails): COCO-4361, remove unread action in details view when user is sender\nfix(mails): COCO-4356, reload visibles when multicompte\nfeat(mails): COCO-4352 push notifs\nrelease: 1.14.1-comm.5(1140105)",
-  "version": "1.14.1-comm.6(1140106)"
+  "last": "2025-08-07 08:40:00",
+  "notes": "fix(mails): COCO-4406 change download icon\nfix(mails): COCO-4352 fix push notif\nfix(mails): COCO-4457 fix reload when reply\nfix(mails): COCO-4446 fix scroll in modal recipients\nfix(mails): COCO-4039 fix android when focus contact input\nfix(mails): COCO-4039 fix android when focus contact input\nrelease: 1.14.1-comm.6(1140106)",
+  "version": "1.14.1-comm.7(1140107)"
 }
