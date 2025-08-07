@@ -1,25 +1,30 @@
 import * as React from 'react';
-import { Alert, PixelRatio } from 'react-native';
+import { PixelRatio } from 'react-native';
 
-import { ResourceClient, ResourceDto, ResourceType } from '@edifice.io/community-client-rest-rn';
+import { ResourceClient, ResourceDto, ResourceType, utils } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
-import type { CommunitiesDocumentsScreen } from './types';
+import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
 import moduleConfig from '../../module-config';
 
 import { I18n } from '~/app/i18n';
+import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
 import { UI_SIZES } from '~/framework/components/constants';
 import PaginatedDocumentList from '~/framework/components/list/paginated-document-list/component';
-import { DocumentItem, FolderItem } from '~/framework/components/list/paginated-document-list/types';
+import {
+  DocumentItem,
+  DocumentItemEntApp,
+  DocumentItemWorkspace,
+  FolderItem,
+} from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { TextSizeStyle } from '~/framework/components/text';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import http from '~/framework/util/http';
-import { IMedia } from '~/framework/util/media';
 
 export const computeNavBar = ({
   navigation,
@@ -51,7 +56,7 @@ const __debug__folders__: FolderItem[] = [
   // },
 ];
 
-const documentTypeMap: Record<ResourceType, IMedia['type'] | undefined> = {
+const documentTypeMap: Record<ResourceType, DocumentItemWorkspace['type'] | undefined> = {
   [ResourceType.IMAGE]: 'image',
   [ResourceType.SOUND]: 'audio',
   [ResourceType.VIDEO]: 'video',
@@ -61,14 +66,23 @@ const documentTypeMap: Record<ResourceType, IMedia['type'] | undefined> = {
 };
 
 const formatDocuments = (data: ResourceDto[]): DocumentItem[] =>
-  data.map(({ type, ...item }) => ({
-    ...item,
-    date: Temporal.Instant.from(item.updatedAt as unknown as string),
-    extension: item.title.includes('.') ? item.title.split('.').at(-1) : undefined,
-    type: documentTypeMap[type],
-  }));
+  data.map(({ appName, type, ...item }) =>
+    appName === 'workspace'
+      ? ({
+          ...item,
+          appName: appName as ResourceDto['appName'],
+          date: Temporal.Instant.from(item.updatedAt as unknown as string),
+          extension: item.title.includes('.') ? item.title.split('.').at(-1) : undefined,
+          type: documentTypeMap[type],
+        } as DocumentItemWorkspace)
+      : ({
+          ...item,
+          appName: appName as ResourceDto['appName'],
+          date: Temporal.Instant.from(item.updatedAt as unknown as string),
+        } as DocumentItemEntApp),
+  );
 
-export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({ route, session }) {
+export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({ route }) {
   // Store the data of the list here. It will contain both loaded and non-loaded elements.
   // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
   const [data, setData] = React.useState<{
@@ -83,7 +97,6 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   // This function fetch the data page the given page number and insert the resulting elements in the `data` array.
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
-      // await new Promise(resolve => setTimeout(resolve, 2000));
       const newData = await http
         .sessionApi(moduleConfig, ResourceClient)
         .getResources(route.params.communityId, { page: page + 1, size: PAGE_SIZE });
@@ -125,8 +138,14 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     [],
   );
 
+  const openDocument = React.useCallback((doc: CommunitiesDocumentItem) => {
+    const url = utils.getResourceUrl(doc);
+    if (!url) return;
+    openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
+  }, []);
+
   return (
-    <PaginatedDocumentList
+    <PaginatedDocumentList<CommunitiesDocumentItem>
       contentContainerStyle={styles.list}
       estimatedListSize={estimatedListSize}
       estimatedItemSize={estimatedItemSize}
@@ -135,12 +154,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
       folders={data.folders}
       documents={data.documents}
       onPageReached={loadData}
-      onPressFolder={f => {
-        Alert.alert('Folder', f.title);
-      }}
-      onPressDocument={f => {
-        Alert.alert('Document', f.title);
-      }}
+      onPressDocument={openDocument}
     />
   );
 });
