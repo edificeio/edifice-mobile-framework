@@ -19,7 +19,9 @@ import { sessionScreen } from '~/framework/components/screen';
 import { TextSizeStyle } from '~/framework/components/text';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
 import http from '~/framework/util/http';
+import { IMedia } from '~/framework/util/media';
 
 export const computeNavBar = ({
   navigation,
@@ -134,7 +136,14 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   const openDocument = React.useCallback((doc: CommunitiesDocumentItem) => {
     const url = utils.getResourceUrl(doc as Parameters<typeof utils.getResourceUrl>[0]);
     if (!url) return;
-    openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
+    if (doc.appName === 'workspace') {
+      openMedia({
+        src: url,
+        type: doc.type,
+      } as IMedia);
+    } else {
+      openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
+    }
   }, []);
 
   return (
