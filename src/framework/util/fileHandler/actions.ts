@@ -132,7 +132,7 @@ const getMediaTypeFromMime = (mime: string | null | undefined): IMedia['type'] |
   }
 };
 
-export const openDocument = async (document: IDistantFile | LocalFile | IMedia) => {
+export const openDocument = async (document: IDistantFile | LocalFile | IMedia, onFail?: () => void) => {
   let mediaType: IMedia['type'] | undefined;
   let syncedFile: SyncedFile | undefined;
   let localFile: LocalFile | undefined;
@@ -159,6 +159,8 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia) 
     mediaType = (document as IMedia).type;
   }
 
+  let success = false;
+
   switch (mediaType) {
     case 'image':
       openCarousel({
@@ -170,6 +172,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia) 
           },
         ],
       });
+      success = true;
       break;
     case 'audio':
       openMediaPlayer({
@@ -177,6 +180,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia) 
         source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
         type: MediaType.AUDIO,
       });
+      success = true;
       break;
     case 'video':
       openMediaPlayer({
@@ -184,6 +188,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia) 
         source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
         type: MediaType.VIDEO,
       });
+      success = true;
       break;
     default:
       if (localFile) {
@@ -191,7 +196,12 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia) 
           showAppsSuggestions: true,
           showOpenWithDialog: true,
         });
+        success = true;
       }
+  }
+
+  if (!success) {
+    onFail?.();
   }
 
   if (syncedFile) return syncedFile;

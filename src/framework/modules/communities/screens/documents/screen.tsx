@@ -133,16 +133,18 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     [],
   );
 
-  const openDocument = React.useCallback((doc: CommunitiesDocumentItem) => {
+  const openDocument = React.useCallback(async (doc: CommunitiesDocumentItem) => {
     const url = utils.getResourceUrl(doc as Parameters<typeof utils.getResourceUrl>[0]);
     if (!url) return;
+    const openInBrowser = () => openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
     if (doc.appName === 'workspace') {
-      openMedia({
+      const opener = {
         src: url,
         type: doc.type,
-      } as IMedia);
+      } as IMedia;
+      await openMedia(opener, openInBrowser);
     } else {
-      openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
+      openInBrowser();
     }
   }, []);
 
