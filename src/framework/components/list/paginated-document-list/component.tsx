@@ -17,7 +17,7 @@ export default function PaginatedDocumentList<ItemT extends DocumentItem>({
   onPressDocument,
   onPressFolder,
   ...paginatedListProps
-}: Readonly<PaginatedDocumentListProps>) {
+}: Readonly<PaginatedDocumentListProps<ItemT>>) {
   const { data, totalFolders } = React.useMemo(
     () => createDocumentArrayProxy(folders ?? [], documents ?? [], paginatedListProps.numColumns),
     [documents, folders, paginatedListProps.numColumns],
@@ -62,7 +62,7 @@ export default function PaginatedDocumentList<ItemT extends DocumentItem>({
         ) : (
           <DocumentListItem
             {...(info as Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0])}
-            onPress={e => onPressDocument?.((info as Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0]).item, e)}
+            onPress={e => onPressDocument?.((info as Parameters<PaginatedListProps<ItemT>['renderItem']>[0]).item, e)}
           />
         );
       },

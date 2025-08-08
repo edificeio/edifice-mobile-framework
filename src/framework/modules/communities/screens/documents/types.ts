@@ -1,4 +1,4 @@
-import { ResourceDto } from '@edifice.io/community-client-rest-rn';
+import { AppName } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { DocumentItem } from '~/framework/components/list/paginated-document-list/types';
@@ -12,4 +12,4 @@ export namespace CommunitiesDocumentsScreen {
   export type AllProps = CommunitiesDocumentsScreen.NavigationProps;
 }
 
-export type CommunitiesDocumentItem = Omit<DocumentItem, 'appName'> & { appName: ResourceDto['appName'] };
+export type CommunitiesDocumentItem = DocumentItem<AppName>;

@@ -5,7 +5,7 @@ import { Temporal } from '@js-temporal/polyfill';
 import type { PaginatedListProps } from '../paginated-list';
 import type { FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 
-import { EntAppName } from '~/app/intents';
+import { EntAppNameOrSynonym } from '~/app/intents';
 import { IMedia } from '~/framework/util/media';
 
 interface DocumentItemBase {
@@ -17,28 +17,28 @@ interface DocumentItemBase {
   resourceEntId: string;
 }
 
-export interface DocumentItemEntApp<AppTypes extends EntAppName> extends DocumentItemBase {
+export interface DocumentItemEntApp<AppTypes extends EntAppNameOrSynonym> extends DocumentItemBase {
   appName: Exclude<AppTypes, 'workspace'>;
 }
 
-export interface DocumentItemWorkspaceBase<AppTypes extends EntAppName> extends DocumentItemBase {
-  appName: Extract<AppTypes, 'workspace'>;
+export interface DocumentItemWorkspaceBase extends DocumentItemBase {
+  appName: 'workspace';
 }
 
-export interface DocumentItemWorkspaceMedia<AppTypes extends EntAppName> extends DocumentItemWorkspaceBase<AppTypes> {
+export interface DocumentItemWorkspaceMedia extends DocumentItemWorkspaceBase {
   type: Exclude<IMedia['type'], 'document'>;
 }
 
-export interface DocumentItemWorkspaceDocumentMedia<AppTypes extends EntAppName> extends DocumentItemWorkspaceBase<AppTypes> {
+export interface DocumentItemWorkspaceDocumentMedia extends DocumentItemWorkspaceBase {
   type: Extract<IMedia['type'], 'document'>;
   extension?: string;
 }
 
-export type DocumentItemWorkspace<AppTypes extends EntAppName = EntAppName> =
-  | DocumentItemWorkspaceMedia<AppTypes>
-  | DocumentItemWorkspaceDocumentMedia<AppTypes>;
+export type DocumentItemWorkspace = DocumentItemWorkspaceMedia | DocumentItemWorkspaceDocumentMedia;
 
-export type DocumentItem<AppTypes extends EntAppName = EntAppName> = DocumentItemEntApp<AppTypes> | DocumentItemWorkspace;
+export type DocumentItem<AppTypes extends EntAppNameOrSynonym = EntAppNameOrSynonym> =
+  | DocumentItemEntApp<AppTypes>
+  | DocumentItemWorkspace;
 
 export interface FolderItem {
   title: string;
@@ -50,14 +50,14 @@ export type PaginatedDocumentListItemType<DocumentType extends DocumentItem> =
   | FolderItem
   | typeof FOLDER_SPACER_ITEM_DATA;
 
-export interface PaginatedDocumentListProps
+export interface PaginatedDocumentListProps<DocumentType extends DocumentItem>
   extends Omit<
-    PaginatedListProps<DocumentItem | FolderItem>,
+    PaginatedListProps<DocumentType | FolderItem>,
     'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
   > {
-  documents: PaginatedListProps<DocumentItem>['data'];
+  documents: PaginatedListProps<DocumentType>['data'];
   folders: PaginatedListProps<FolderItem>['data'];
-  overrideItemLayout?: PaginatedListProps<PaginatedDocumentListItemType<DocumentItem>>['overrideItemLayout'];
+  overrideItemLayout?: PaginatedListProps<PaginatedDocumentListItemType<DocumentType>>['overrideItemLayout'];
   onPressFolder?: (folder: FolderItem, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
-  onPressDocument?: (document: DocumentItem, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
+  onPressDocument?: (document: DocumentType, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
 }

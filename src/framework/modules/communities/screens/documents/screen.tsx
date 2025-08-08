@@ -13,12 +13,7 @@ import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
 import { UI_SIZES } from '~/framework/components/constants';
 import PaginatedDocumentList from '~/framework/components/list/paginated-document-list/component';
-import {
-  DocumentItem,
-  DocumentItemEntApp,
-  DocumentItemWorkspace,
-  FolderItem,
-} from '~/framework/components/list/paginated-document-list/types';
+import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { TextSizeStyle } from '~/framework/components/text';
@@ -65,21 +60,19 @@ const documentTypeMap: Record<ResourceType, DocumentItemWorkspace['type'] | unde
   [ResourceType.ENT]: undefined,
 };
 
-const formatDocuments = (data: ResourceDto[]): DocumentItem[] =>
-  data.map(({ appName, type, ...item }) =>
-    appName === 'workspace'
+const formatDocuments = (data: ResourceDto[]): CommunitiesDocumentItem[] =>
+  data.map(({ type, ...item }) =>
+    item.appName === 'workspace'
       ? ({
           ...item,
-          appName: appName as ResourceDto['appName'],
           date: Temporal.Instant.from(item.updatedAt as unknown as string),
           extension: item.title.includes('.') ? item.title.split('.').at(-1) : undefined,
           type: documentTypeMap[type],
         } as DocumentItemWorkspace)
       : ({
           ...item,
-          appName: appName as ResourceDto['appName'],
           date: Temporal.Instant.from(item.updatedAt as unknown as string),
-        } as DocumentItemEntApp),
+        } as Exclude<DocumentItemEntApp<ResourceDto['appName']>, 'workspace'>),
   );
 
 export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({ route }) {
@@ -87,7 +80,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
   const [data, setData] = React.useState<{
     folders: (FolderItem | typeof LOADING_ITEM_DATA)[];
-    documents: (DocumentItem | typeof LOADING_ITEM_DATA)[];
+    documents: (CommunitiesDocumentItem | typeof LOADING_ITEM_DATA)[];
   }>({ documents: [], folders: [] });
 
   // Page size is a constant. Even if PaginatedList allows non-constant page size, it **should** be constant.
@@ -139,7 +132,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   );
 
   const openDocument = React.useCallback((doc: CommunitiesDocumentItem) => {
-    const url = utils.getResourceUrl(doc);
+    const url = utils.getResourceUrl(doc as Parameters<typeof utils.getResourceUrl>[0]);
     if (!url) return;
     openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
   }, []);

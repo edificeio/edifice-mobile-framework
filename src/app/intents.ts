@@ -15,6 +15,7 @@ export type EntAppName =
   | 'diary'
   | 'edt'
   | 'exercizer'
+  | 'external_link'
   | 'formulaire'
   | 'forum'
   | 'homework-assistance'
@@ -39,6 +40,17 @@ export type EntAppName =
   | 'wiki'
   | 'workspace'
   | 'zimbra';
+
+/**
+ * Some apps have various names depending of the context :/
+ */
+export const entAppNameSynonyms = {
+  form: 'formulaire',
+} satisfies Record<string, EntAppName>;
+
+export type EntAppNameOrSynonym = EntAppName | keyof typeof entAppNameSynonyms;
+
+export const getEntAppName = (name: EntAppNameOrSynonym) => (entAppNameSynonyms[name] ?? name) as EntAppName;
 
 export enum INTENT_TYPE {
   OPEN_RESOURCE = 'OPEN_RESOURCE',
@@ -73,15 +85,16 @@ export function registerIntent<AppName extends EntAppName, IntentType extends IN
   intents[appName][type] = callback as IntentCallback<INTENT_TYPE>;
 }
 
-export function openIntent<AppName extends EntAppName, IntentType extends INTENT_TYPE>(
+export function openIntent<AppName extends EntAppNameOrSynonym, IntentType extends INTENT_TYPE>(
   appName: AppName,
   type: IntentType,
   params: Parameters<IntentCallback<IntentType>>[0],
   navigation: typeof navigationRef = navigationRef,
 ) {
-  if (intents[appName]?.[type] === undefined) {
+  const realAppName = getEntAppName(appName);
+  if (intents[realAppName]?.[type] === undefined) {
     defaultIntentCallbacks[type]?.(params);
   } else {
-    intents[appName]?.[type]?.(params, navigation);
+    intents[realAppName]?.[type]?.(params, navigation);
   }
 }
