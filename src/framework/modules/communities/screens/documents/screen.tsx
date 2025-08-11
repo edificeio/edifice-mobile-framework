@@ -30,7 +30,7 @@ import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
-import http from '~/framework/util/http';
+import { accountApi } from '~/framework/util/http';
 import { IMedia } from '~/framework/util/media';
 
 export const computeNavBar = (
@@ -109,9 +109,9 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       const [community, members, newData] = await Promise.all([
-        http.api(moduleConfig, session, CommunityClient).getCommunity(communityId),
-        http.api(moduleConfig, session, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
-        http.api(moduleConfig, session, ResourceClient).getResources(communityId, { page: page + 1, size: PAGE_SIZE }),
+        accountApi(moduleConfig, session, CommunityClient).getCommunity(communityId),
+        accountApi(moduleConfig, session, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
+        accountApi(moduleConfig, session, ResourceClient).getResources(communityId, { page: page + 1, size: PAGE_SIZE }),
       ]);
       setCommunityData({
         ...community,

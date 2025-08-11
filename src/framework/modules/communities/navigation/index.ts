@@ -3,12 +3,14 @@ import { ParamListBase } from '@react-navigation/native';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesDocumentsScreen } from '~/framework/modules/communities/screens/documents/types';
 import type { CommunitiesHomeScreen } from '~/framework/modules/communities/screens/home';
+import type { CommunitiesJoinConfirmScreen } from '~/framework/modules/communities/screens/join-confirm';
 import { CommunitiesListScreen } from '~/framework/modules/communities/screens/list';
 import { CommunitiesMembersScreen } from '~/framework/modules/communities/screens/members';
 
 export const communitiesRouteNames = {
   documents: `${moduleConfig.routeName}/documents` as 'documents',
   home: `${moduleConfig.routeName}/home` as 'home',
+  joinConfirm: `${moduleConfig.routeName}/join-confirm` as 'joinConfirm',
   list: `${moduleConfig.routeName}` as 'list',
   members: `${moduleConfig.routeName}/members` as 'members',
 };
@@ -17,4 +19,5 @@ export interface CommunitiesNavigationParams extends ParamListBase {
   home: CommunitiesHomeScreen.NavParams;
   documents: CommunitiesDocumentsScreen.NavParams;
   members: CommunitiesMembersScreen.NavParams;
+  joinConfirm: CommunitiesJoinConfirmScreen.NavParams;
 }

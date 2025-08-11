@@ -12,7 +12,7 @@ export interface CommunitiesStore {
   communitiesDetails: Record<number, Pick<CommunityResponseDto, 'title' | 'image'> & { totalMembers: number; membersId: string[] }>;
 }
 
-const communitiesActionTypes = {
+export const communitiesActionTypes = {
   LOAD_ALL_COMMUNITIES_PAGE: moduleConfig.namespaceActionType('LOAD_ALL_COMMUNITIES_PAGE') as `${string}_LOAD_ALL_COMMUNITIES_PAGE`,
   LOAD_COMMUNITY_DETAILS: moduleConfig.namespaceActionType('LOAD_COMMUNITY_DETAILS') as `${string}_LOAD_COMMUNITY_DETAILS`,
   LOAD_PENDING_COMMUNITIES_PAGE: moduleConfig.namespaceActionType(

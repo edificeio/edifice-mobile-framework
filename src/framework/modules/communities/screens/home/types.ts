@@ -8,6 +8,7 @@ import type { CommunitiesNavigationParams } from '~/framework/modules/communitie
 export namespace CommunitiesHomeScreen {
   export interface NavParams {
     communityId: number;
+    showWelcome?: boolean;
   }
   export type NavigationProps = NativeStackScreenProps<CommunitiesNavigationParams, 'home'>;
   export type AllProps = CommunitiesHomeScreen.NavigationProps;

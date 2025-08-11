@@ -7,14 +7,17 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
+import moduleConfig from '../../module-config';
 import { communitiesActions, communitiesSelectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { AvatarStack } from '~/framework/components/avatar/stack';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
+import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
 import Pill from '~/framework/components/pill';
 import { sessionScreen } from '~/framework/components/screen';
@@ -25,9 +28,8 @@ import {
   communityNavBar,
   default as useCommunityScrollableThumbnail,
 } from '~/framework/modules/communities/hooks/use-community-navbar';
-import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import http from '~/framework/util/http';
+import { accountApi } from '~/framework/util/http';
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>,
@@ -39,7 +41,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   navigation,
   refreshControl,
   route: {
-    params: { communityId },
+    params: { communityId, showWelcome = false },
   },
   title,
   totalMembers,
@@ -136,6 +138,11 @@ export const CommunitiesHomeScreenLoaded = function ({
     title,
   });
 
+  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
+  React.useEffect(() => {
+    (showWelcome ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
+  }, [showWelcome]);
+
   return (
     <>
       {statusBar}
@@ -143,6 +150,9 @@ export const CommunitiesHomeScreenLoaded = function ({
         {scrollElements}
         {pageContent}
       </ScrollView>
+      <CustomBottomSheetModal ref={bottomSheetModalRef}>
+        <PrimaryButton text="Show community" action={bottomSheetModalRef.current?.dismiss} />
+      </CustomBottomSheetModal>
     </>
   );
 };
@@ -167,8 +177,8 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
 
   const loadContent = React.useCallback(async () => {
     const [community, members] = await Promise.all([
-      http.api(moduleConfig, session, CommunityClient).getCommunity(communityId),
-      http.api(moduleConfig, session, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
+      accountApi(moduleConfig, session, CommunityClient).getCommunity(communityId),
+      accountApi(moduleConfig, session, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
     ]);
     setData({
       ...community,

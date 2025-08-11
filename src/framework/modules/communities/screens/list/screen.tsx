@@ -35,9 +35,14 @@ import { CommunityListFilterButtonLoader } from '~/framework/modules/communities
 import ListFiltersBottomSheet from '~/framework/modules/communities/components/community-list-filters/list-filters-bottom-sheet';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import { CommunitiesAction, communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
+import {
+  CommunitiesAction,
+  communitiesActions,
+  communitiesActionTypes,
+  communitiesSelectors,
+} from '~/framework/modules/communities/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import http from '~/framework/util/http';
+import { accountApi } from '~/framework/util/http';
 
 export const AVAILABLE_FILTERS = [CommunityType.CLASS, CommunityType.FREE];
 const INVITATION_FIELDS: InvitationFields[] = ['stats', 'community'];
@@ -77,10 +82,19 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
   route: {
     params: { filters = emptyData, pending = false },
   },
+  session,
 }) {
   const allCommunities = useSelector(communitiesSelectors.getAllCommunities);
   const pendingCommunities = useSelector(communitiesSelectors.getPendingCommunities);
-  const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, CommunitiesAction>>();
+  const dispatch =
+    useDispatch<
+      ThunkDispatch<
+        IGlobalState,
+        any,
+        | CommunitiesAction<typeof communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE>
+        | CommunitiesAction<typeof communitiesActionTypes.LOAD_PENDING_COMMUNITIES_PAGE>
+      >
+    >();
 
   const [totalPendingInvitations, setTotalPendingInvitations] = React.useState<number>(pendingCommunities.length);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -115,13 +129,13 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
       };
 
       const [allRes, pendingRes, totalPending] = await Promise.all([
-        http.sessionApi(moduleConfig, InvitationClient).getUserInvitations({ ...baseQueryParams, communityType: filters[0] }),
-        http.sessionApi(moduleConfig, InvitationClient).getUserInvitations({
+        accountApi(moduleConfig, session, InvitationClient).getUserInvitations({ ...baseQueryParams, communityType: filters[0] }),
+        accountApi(moduleConfig, session, InvitationClient).getUserInvitations({
           ...baseQueryParams,
           communityType: filters[0],
           status: InvitationStatus.PENDING,
         }),
-        http.sessionApi(moduleConfig, InvitationClient).getUserInvitations({
+        accountApi(moduleConfig, session, InvitationClient).getUserInvitations({
           size: 1,
           status: InvitationStatus.PENDING,
         }),
@@ -152,14 +166,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
       setTotalPendingInvitations(totalPending.meta.totalItems);
       setIsLoading(false);
     },
-    [dispatch, filters],
-  );
-
-  const navigateToCommunityHomePage = React.useCallback(
-    (communityId: number) => {
-      navigation.navigate(communitiesRouteNames.home, { communityId });
-    },
-    [navigation],
+    [dispatch, filters, session],
   );
 
   const openFiltersBottomSheet = React.useCallback(() => {
@@ -184,11 +191,17 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
           invitationStatus={item.status}
           itemSeparatorStyle={itemSeparator}
           membersCount={item.communityStats?.totalMembers}
-          onPress={() => navigateToCommunityHomePage(item.communityId)}
+          onPress={() => {
+            if (item.status === InvitationStatus.ACCEPTED || item.status === InvitationStatus.REQUEST_ACCEPTED) {
+              navigation.navigate(communitiesRouteNames.home, { communityId: item.communityId });
+            } else {
+              navigation.navigate(communitiesRouteNames.joinConfirm, { communityId: item.communityId, invitationId: item.id });
+            }
+          }}
         />
       );
     },
-    [displayedCommunities.length, navigateToCommunityHomePage],
+    [displayedCommunities.length, navigation],
   );
 
   const renderPlaceholderItem = React.useCallback(
