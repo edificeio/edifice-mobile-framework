@@ -1,4 +1,4 @@
-import { ImageProps, ImageURISource } from 'react-native';
+import { ImageProps, ImageStyle, ImageURISource, StyleProp, ViewProps } from 'react-native';
 
 import { SvgProps } from '~/framework/components/picture';
 
@@ -10,8 +10,12 @@ export enum Size {
   xxl = 'xxl',
 }
 
-export interface CommonSingleAvatarProps extends Omit<ImageProps, 'source'> {
+type AvatarStyleProp = StyleProp<Omit<ImageStyle, 'width' | 'height'>>;
+
+export interface CommonSingleAvatarProps extends Omit<ImageProps, 'source' | 'style'> {
+  style?: AvatarStyleProp;
   size: Size | keyof typeof Size; // Override width & height given in style property.
+  overlay?: React.ReactNode;
 }
 
 // User avatar
@@ -72,3 +76,10 @@ export type SingleAvatarProps =
   | SingleSvgAvatarProps
   | SingleDefaultAvatarProps
   | SingleGroupAvatarProps;
+
+export interface AvatarStackProps extends Omit<CommonSingleAvatarProps, 'style'> {
+  style?: ViewProps['style'];
+  avatarItemStyle?: CommonSingleAvatarProps['style'];
+  items: (string | SingleAvatarOnlySpecificProps)[];
+  total?: number;
+}

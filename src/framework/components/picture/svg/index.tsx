@@ -31,6 +31,7 @@ const imports = {
   'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
   'element': async () => import('ASSETS/icons/moduleIcons/element.svg'),
   'empty-blog': async () => import('ASSETS/images/empty-screen/empty-blog.svg'),
+  'empty-communities-announcements-soon': async () => import('ASSETS/images/empty-screen/empty-communities-announcements-soon.svg'),
   'empty-content': async () => import('ASSETS/images/empty-screen/empty-content.svg'),
   'empty-conversation': async () => import('ASSETS/images/empty-screen/empty-conversation.svg'),
   'empty-eula': async () => import('ASSETS/images/empty-screen/empty-eula.svg'),

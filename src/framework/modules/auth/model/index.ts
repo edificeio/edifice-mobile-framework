@@ -80,7 +80,7 @@ interface AuthSavedLoggedOutAccountCommon {
   platform: string; // name of the platform
   addTimestamp: number; // date of the account addition into the app to preserve display order.
 }
-interface AuthSavedLoggedInAccountCommon extends AuthSavedLoggedOutAccountCommon, AuthLoggedInAccountTokens { }
+interface AuthSavedLoggedInAccountCommon extends AuthSavedLoggedOutAccountCommon, AuthLoggedInAccountTokens {}
 
 // Saved account that is Credentials / Saml
 
@@ -98,11 +98,11 @@ interface AuthSavedAccountWithFederation {
 
 export interface AuthSavedLoggedOutAccountWithCredentials
   extends AuthSavedAccountWithCredentials,
-  AuthSavedLoggedOutAccountCommon { }
-export interface AuthSavedLoggedInAccountWithCredentials extends AuthSavedAccountWithCredentials, AuthSavedLoggedInAccountCommon { }
+    AuthSavedLoggedOutAccountCommon {}
+export interface AuthSavedLoggedInAccountWithCredentials extends AuthSavedAccountWithCredentials, AuthSavedLoggedInAccountCommon {}
 
-export interface AuthSavedLoggedOutAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedOutAccountCommon { }
-export interface AuthSavedLoggedInAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedInAccountCommon { }
+export interface AuthSavedLoggedOutAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedOutAccountCommon {}
+export interface AuthSavedLoggedInAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedInAccountCommon {}
 
 export type AuthSavedLoggedOutAccount = AuthSavedLoggedOutAccountWithCredentials | AuthSavedLoggedOutAccountWithSaml;
 export type AuthSavedLoggedInAccount = AuthSavedLoggedInAccountWithCredentials | AuthSavedLoggedInAccountWithSaml;
@@ -521,7 +521,9 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
   } as AuthSavedAccount;
 };
 
-export const isSerializedLoggedInAccount = (account: AuthActiveAccount | AuthSavedLoggedInAccount): account is AuthSavedLoggedInAccount => typeof account.platform === 'string';
+export const isSerializedLoggedInAccount = (
+  account: AuthActiveAccount | AuthSavedLoggedInAccount,
+): account is AuthSavedLoggedInAccount => typeof account.platform === 'string';
 
 export const getOrderedAccounts = (accounts: AuthMixedAccountMap) =>
   Object.values(accounts).sort((a, b) => a.addTimestamp - b.addTimestamp);

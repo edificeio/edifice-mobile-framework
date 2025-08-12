@@ -69,7 +69,7 @@ export default sessionScreen<CommunitiesListScreen.AllProps>(function Communitie
           invitationStatus={item.status}
           membersCount={item.communityStats?.totalMembers}
           moduleConfig={moduleConfig}
-          onPress={() => navigateToCommunityHomePage(item.id)}
+          onPress={() => navigateToCommunityHomePage(item.communityId)}
         />
       ) : null,
     [navigateToCommunityHomePage],
@@ -97,7 +97,7 @@ export default sessionScreen<CommunitiesListScreen.AllProps>(function Communitie
   );
 
   const keyExtractor = React.useCallback<NonNullable<PaginatedListProps<InvitationResponseDto>['keyExtractor']>>(
-    (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item + item.id.toString()),
+    (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item.id.toString()),
     [],
   );
 

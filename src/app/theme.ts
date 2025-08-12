@@ -98,6 +98,10 @@ export interface ITheme {
       light: ColorValue;
       inverse: ColorValue;
     };
+    overlay: {
+      medium: ColorValue;
+      light: ColorValue;
+    };
   };
   // Semantic usage of the color palette
   color: {
@@ -331,6 +335,10 @@ export const defaultTheme: ThemeInitializer = {
         listItem: this.palette.grey.cloudy,
       },
       notificationBadge: this.palette.complementary.red.regular,
+      overlay: {
+        light: '#0000008c',
+        medium: '#000000af',
+      },
       shadowColor: '#000',
       shadowColorTransparent: '#000000af',
       text: {
