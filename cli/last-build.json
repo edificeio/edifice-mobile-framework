@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-09 11:57:14",
-  "notes": "release: 1.14.2-peda.9(1140204)",
-  "version": "1.14.2-peda.10(1140205)"
+  "last": "2025-08-13 18:49:27",
+  "notes": "feat(communities): PEDAGO-2911 adding members list\nfeat(communities): PEDAGO-2850, PEDAGO-2869 adding list filters bottomsheet\nchore(communities) : update client\nfeat(communities): PEDAGO-2867, PEDAGO-2947 Community home screen (without navbar & loader)\nrelease: 1.14.2-peda.10(1140205)",
+  "version": "1.14.2-peda.11(1140206)"
 }
