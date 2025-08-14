@@ -24,7 +24,7 @@ export const ScreenView = withErrorBoundary(
 
     const content = (
       <>
-        {props.statusBar ? <StatusBar type={props.statusBar} /> : null}
+        {<StatusBar type={props.statusBar ?? 'primary'} />}
         <View style={styles.defaultScreenStyle}>{props.children}</View>
       </>
     );

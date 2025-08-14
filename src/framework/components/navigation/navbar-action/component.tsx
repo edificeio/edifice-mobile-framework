@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ColorValue, TextStyle, TouchableOpacity, View } from 'react-native';
+import { ColorValue, StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import styles from './styles';
 
@@ -8,15 +8,18 @@ import { genericHitSlop, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
 
-export default function NavBarAction(props: {
-  icon?: string;
-  title?: string;
-  titleStyle?: TextStyle;
-  disabled?: boolean;
-  color?: ColorValue;
-  testID?: string;
-  onPress?: () => void;
-}) {
+export default function NavBarAction(
+  props: Readonly<{
+    icon?: string;
+    title?: string;
+    titleStyle?: TextStyle;
+    disabled?: boolean;
+    color?: ColorValue;
+    testID?: string;
+    onPress?: () => void;
+    style?: StyleProp<ViewStyle>;
+  }>,
+) {
   const opacityIconStyle = React.useMemo(() => (props.disabled ? styles.navBarActionDisabled : undefined), [props.disabled]);
   const opacityTextStyle = React.useMemo(
     () => (props.disabled ? [styles.navBarActionText, styles.navBarActionDisabled] : styles.navBarActionText),
@@ -25,12 +28,17 @@ export default function NavBarAction(props: {
 
   const Component = props.onPress ? TouchableOpacity : View;
 
+  const buttonStyle = React.useMemo(
+    () => [styles.navBarActionWrapper, { ...(props.icon ? styles.navBarActionWrapperIcon : {}) }, props.style],
+    [props.icon, props.style],
+  );
+
   return (
     <Component
       {...(props.onPress ? { onPress: props.onPress } : {})}
       hitSlop={genericHitSlop}
       disabled={props.disabled}
-      style={[styles.navBarActionWrapper, { ...(props.icon ? styles.navBarActionWrapperIcon : {}) }]}
+      style={buttonStyle}
       {...(props.testID ? { testID: props.testID } : {})}>
       {props.icon ? (
         <Svg

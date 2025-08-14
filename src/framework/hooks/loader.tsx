@@ -2,7 +2,7 @@
  * Loading content boilerplateas a set of React hooks
  */
 import * as React from 'react';
-import { RefreshControl, ScrollView, ScrollViewProps } from 'react-native';
+import { RefreshControl, RefreshControlProps, ScrollView, ScrollViewProps } from 'react-native';
 
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -13,6 +13,7 @@ export interface ContentLoaderProps {
   renderContent: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
   renderError?: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
   renderLoading?: () => React.ReactElement;
+  refreshControlProps?: Omit<RefreshControlProps, 'refreshing' | 'onRefresh'>;
 }
 
 export interface ContentLoaderHandle {
@@ -79,7 +80,7 @@ export const useLoadingState = (load: () => Promise<void>, initialLoadingState =
 };
 
 export const ContentLoader = React.forwardRef<ContentLoaderHandle, ContentLoaderProps>(
-  ({ initialLoadingState, loadContent, renderContent, renderError, renderLoading }, ref) => {
+  ({ initialLoadingState, loadContent, refreshControlProps, renderContent, renderError, renderLoading }, ref) => {
     const { loadingState, refresh, refreshSilent, reload } = useLoadingState(loadContent, initialLoadingState);
     React.useImperativeHandle(ref, () => ({ refresh, refreshSilent }));
 
@@ -103,7 +104,7 @@ export const ContentLoader = React.forwardRef<ContentLoaderHandle, ContentLoader
               <EmptyConnectionScreen />
             </ScrollView>
           ))
-        )(<RefreshControl refreshing={loadingState === LoadingState.RETRY} onRefresh={() => reload()} />);
+        )(<RefreshControl refreshing={loadingState === LoadingState.RETRY} onRefresh={() => reload()} {...refreshControlProps} />);
     }
   },
 );

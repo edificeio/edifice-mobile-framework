@@ -67,6 +67,7 @@ export const UI_ANIMATIONS = {
 
 export const UI_SIZES = {
   aspectRatios: {
+    banner: 3,
     square: 1,
     thumbnail: 7 / 5,
   },
