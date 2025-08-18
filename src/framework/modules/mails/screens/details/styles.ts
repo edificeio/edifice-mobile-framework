@@ -18,7 +18,7 @@ export default StyleSheet.create({
   },
   contentBottomSheet: {
     minHeight: 200,
-    paddingBottom: getScaleWidth(60),
+    paddingBottom: getScaleWidth(120),
   },
   originalContent: {
     alignSelf: 'flex-start',
