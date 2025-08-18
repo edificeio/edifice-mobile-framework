@@ -471,6 +471,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     [onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder],
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        if (isSelectionMode) onDisableSelectMode();
+        if (isSearchMode) onDisabledSearchMode();
+      };
+    }, [isSearchMode, isSelectionMode, onDisableSelectMode, onDisabledSearchMode]),
+  );
+
   React.useEffect(() => {
     const unsubscribe = props.navigation.getParent('tabs').addListener('tabPress', () => {
       setSelectedFolder(MailsDefaultFolders.INBOX);
