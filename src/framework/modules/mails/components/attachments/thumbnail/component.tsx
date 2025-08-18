@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import styles from './styles';
 import { ThumbnailProps } from './types';
@@ -35,18 +35,19 @@ export default function Thumbnail(props: ThumbnailProps) {
   }, [data.localFile.filename]);
 
   const renderImage = React.useCallback(() => {
+    const filePath = Platform.OS === 'android' ? `file://${data.localFile._filepathNative}` : data.localFile._filepathNative;
     if (error) return renderErrorImage();
     return (
       <Image
         style={styles.addFilesResultsType}
-        src={data.localFile._filepathNative}
+        src={filePath}
         onError={() => {
           console.warn('Error loading image', data.localFile._filepathNative);
           setError(true);
         }}
       />
     );
-  }, [data.localFile._filepathNative, error, renderErrorImage]);
+  }, [data.localFile, error, renderErrorImage]);
 
   return data.status === UploadAttachmentStatus.OK ? (
     renderImage()
