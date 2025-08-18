@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-07 08:40:00",
-  "notes": "fix(mails): COCO-4406 change download icon\nfix(mails): COCO-4352 fix push notif\nfix(mails): COCO-4457 fix reload when reply\nfix(mails): COCO-4446 fix scroll in modal recipients\nfix(mails): COCO-4039 fix android when focus contact input\nfix(mails): COCO-4039 fix android when focus contact input\nrelease: 1.14.1-comm.6(1140106)",
-  "version": "1.14.1-comm.7(1140107)"
+  "last": "2025-08-19 00:52:15",
+  "notes": "fix(mails): COCO-4294 , fix thumbnail on android when no preview\nfix(mails): COCO-4353 , disabled select mode or search mode when unfocus\nfix(carousel): COCO-4406 fix icon in popup menu on android\nfix(mails): COCO-4446 , fix padding bottom in bottomsheet recipients\nrelease: 1.14.1-comm.7(1140107)",
+  "version": "1.14.1-comm.8(1140108)"
 }
