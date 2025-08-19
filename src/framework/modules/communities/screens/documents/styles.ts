@@ -4,6 +4,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  endSpacer: {
+    opacity: 0,
+    pointerEvents: 'none',
+  },
   item: {
     alignItems: 'stretch',
     borderColor: theme.palette.grey.cloudy,
@@ -17,5 +21,9 @@ export default StyleSheet.create({
   },
   list: {
     padding: UI_SIZES.spacing.big / 2,
+  },
+  title: {
+    marginHorizontal: UI_SIZES.spacing.big,
+    marginTop: UI_SIZES.spacing.medium,
   },
 });

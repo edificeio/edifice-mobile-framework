@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import http from '~/framework/util/http';
 import { Image } from '~/framework/util/media';
 
-export function CommunityNavbar({ image }: Readonly<CommunityNavbarProps>) {
+export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavbarProps>) {
   const imageProps = React.useMemo(() => http.imagePropsForSession({ source: { uri: image } }), [image]);
   const { top: statusBarHeight } = useSafeAreaInsets();
   const style = React.useMemo(
@@ -20,8 +20,9 @@ export function CommunityNavbar({ image }: Readonly<CommunityNavbarProps>) {
         backgroundColor: image ? theme.palette.grey.white : theme.palette.primary.regular,
         height: BANNER_BASE_HEIGHT + statusBarHeight,
       },
+      _style,
     ],
-    [image, statusBarHeight],
+    [_style, image, statusBarHeight],
   );
   return (
     <View style={style}>

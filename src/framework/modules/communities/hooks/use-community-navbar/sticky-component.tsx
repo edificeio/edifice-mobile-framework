@@ -33,12 +33,10 @@ type Instance = React.Ref<typeof Animated.View> & {
 
 export const BANNER_ACCELERATION = 5 / 3;
 
-const CommunityScrollViewStickyHeader = function ScrollViewStickyHeader({
-  ref: forwardedRef,
-  ...props
-}: {
-  ref?: React.Ref<Instance>;
-} & ScrollViewStickyHeaderProps) {
+const CommunityScrollViewStickyHeader = React.forwardRef<Instance, ScrollViewStickyHeaderProps>(function ScrollViewStickyHeader(
+  { ...props }: ScrollViewStickyHeaderProps,
+  forwardedRef,
+) {
   const { index, nextHeaderLayoutY: _nextHeaderLayoutY, scrollAnimatedValue } = props;
 
   const [measured, setMeasured] = useState<boolean>(false);
@@ -53,7 +51,7 @@ const CommunityScrollViewStickyHeader = function ScrollViewStickyHeader({
     }
     ref.setNextHeaderY = setNextHeaderLayoutY;
   }, []);
-  const ref: React.Ref<React.ElementRef<typeof Animated.View>> = useSyncRef<Instance>(callbackRef, forwardedRef!);
+  const ref: React.Ref<React.ElementRef<typeof Animated.View>> = useSyncRef<Instance>(callbackRef, forwardedRef);
 
   const [animatedTranslateY, setAnimatedTranslateY] = useState(() => {
     const inputRange: Array<number> = [-1, 0];
@@ -204,7 +202,7 @@ const CommunityScrollViewStickyHeader = function ScrollViewStickyHeader({
         })}
     </Animated.View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   fill: {

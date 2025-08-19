@@ -7,6 +7,8 @@ import React from 'react';
 
 import { FlashList, FlashListProps, ListRenderItemInfo, ViewToken } from '@shopify/flash-list';
 
+import { FlatListProps } from './flat-list';
+
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 
 export interface PaginatedListProps<TItem>
@@ -14,6 +16,7 @@ export interface PaginatedListProps<TItem>
     FlashListProps<TItem>,
     'onRefresh' | 'refreshing' | 'refreshControl' | 'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout'
   > {
+  ListComponent?: React.ComponentType<FlatListProps<TItem>>;
   data?: FlashListProps<TItem | typeof LOADING_ITEM_DATA>['data'];
   keyExtractor?: FlashListProps<TItem | typeof LOADING_ITEM_DATA>['keyExtractor'];
   getItemType?: FlashListProps<TItem | typeof LOADING_ITEM_DATA>['getItemType'];
@@ -113,6 +116,7 @@ export default React.forwardRef(function PaginatedList<TItem>(
   {
     data,
     getVisibleItemIndex,
+    ListComponent = FlashList,
     onItemsError,
     onItemsReached,
     onPageError,
@@ -209,7 +213,7 @@ export default React.forwardRef(function PaginatedList<TItem>(
   const renderContent: ContentLoaderProps['renderContent'] = React.useCallback(
     refreshControl => {
       return (
-        <FlashList
+        <ListComponent
           ref={ref}
           key="data"
           data={data}
@@ -221,7 +225,7 @@ export default React.forwardRef(function PaginatedList<TItem>(
         />
       );
     },
-    [data, flashListProps, onViewableItemsChanged, ref, renderItem, viewabilityConfig],
+    [ListComponent, data, flashListProps, onViewableItemsChanged, ref, renderItem, viewabilityConfig],
   );
 
   // useState is used instead of useRef with a readonly manner to be able to use a init function (refs cannot take function as initialiser)
@@ -246,7 +250,7 @@ export default React.forwardRef(function PaginatedList<TItem>(
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
     () => (
-      <FlashList
+      <ListComponent
         renderItem={renderPlaceholderItem}
         key="placeholder"
         data={placeholderData}
@@ -254,7 +258,7 @@ export default React.forwardRef(function PaginatedList<TItem>(
         {...flashListProps}
       />
     ),
-    [flashListProps, placeholderData, renderPlaceholderItem],
+    [ListComponent, flashListProps, placeholderData, renderPlaceholderItem],
   );
 
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(() => loadData(0, true), [loadData]);

@@ -5,34 +5,28 @@ import { ResourceClient, ResourceDto, ResourceType, utils } from '@edifice.io/co
 import { Temporal } from '@js-temporal/polyfill';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import CommunityPaginatedDocumentList from './community-paginated-document-list';
 import styles from './styles';
 import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
-import moduleConfig from '../../module-config';
+import useCommunityScrollableThumbnail, { communityNavBar } from '../../hooks/use-community-navbar';
 
 import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
 import { UI_SIZES } from '~/framework/components/constants';
-import PaginatedDocumentList from '~/framework/components/list/paginated-document-list/component';
+import FlatList from '~/framework/components/list/flat-list';
 import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
-import { TextSizeStyle } from '~/framework/components/text';
+import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
+import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
 import http from '~/framework/util/http';
 import { IMedia } from '~/framework/util/media';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('communities-documents-title'),
-  }),
-});
+export const computeNavBar = (
+  props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>,
+): NativeStackNavigationOptions => communityNavBar(props);
 
 const __debug__folders__: FolderItem[] = [
   // {
@@ -92,6 +86,9 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   // This function fetch the data page the given page number and insert the resulting elements in the `data` array.
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
+      await new Promise(resolve => {
+        setTimeout(resolve, 2000);
+      });
       const newData = await http
         .sessionApi(moduleConfig, ResourceClient)
         .getResources(route.params.communityId, { page: page + 1, size: PAGE_SIZE });
@@ -148,17 +145,35 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     }
   }, []);
 
+  const [scrollElements, statusBar, { ...scrollViewProps }] = useCommunityScrollableThumbnail({
+    // contentContainerStyle: styles.list,
+    image: undefined,
+    title: I18n.get('communities-documents-title'),
+  });
+
   return (
-    <PaginatedDocumentList<CommunitiesDocumentItem>
-      contentContainerStyle={styles.list}
-      estimatedListSize={estimatedListSize}
-      estimatedItemSize={estimatedItemSize}
-      numColumns={2}
-      pageSize={PAGE_SIZE}
-      folders={data.folders}
-      documents={data.documents}
-      onPageReached={loadData}
-      onPressDocument={openDocument}
-    />
+    <>
+      {statusBar}
+      <CommunityPaginatedDocumentList
+        // contentContainerStyle={styles.list}
+        estimatedListSize={estimatedListSize}
+        estimatedItemSize={estimatedItemSize}
+        numColumns={2}
+        pageSize={PAGE_SIZE}
+        stickyElements={[
+          ...scrollElements,
+          <HeadingXSText key="title" style={styles.title}>
+            {I18n.get('communities-documents-title')}
+          </HeadingXSText>,
+        ]}
+        folders={data.folders}
+        documents={data.documents}
+        ListComponent={FlatList}
+        showsVerticalScrollIndicator={false}
+        onPageReached={loadData}
+        onPressDocument={openDocument}
+        {...scrollViewProps}
+      />
+    </>
   );
 });

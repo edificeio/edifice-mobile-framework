@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { Image, Platform, ScrollViewProps, StatusBar, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { CommunityClient, MembershipClient } from '@edifice.io/community-client-rest-rn';
-import { HeaderBackButton } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import CommunityScrollViewStickyHeader, { BANNER_ACCELERATION } from './sticky-component';
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
 
@@ -22,47 +19,17 @@ import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
-import CommunityNavbar from '~/framework/modules/communities/components/community-navbar';
-import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/components/community-navbar/styles';
+import {
+  communityNavBar,
+  default as useCommunityScrollableThumbnail,
+} from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import http from '~/framework/util/http';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: '',
-  }),
-  headerLeft: props => (
-    <HeaderBackButton
-      {...props}
-      labelVisible={false}
-      style={styles.navBarButton}
-      onPress={navigation.goBack}
-      backImage={Platform.select({
-        default: undefined,
-        ios: () => (
-          <Image
-            style={styles.backButtonImage}
-            source={require('@react-navigation/elements/src/assets/back-icon.png')}
-            fadeDuration={0}
-          />
-        ),
-      })}
-      tintColor={theme.ui.text.regular.toString()}
-    />
-  ),
-  headerShadowVisible: false,
-  headerStyle: {
-    backgroundColor: 'transparent',
-  },
-  headerTransparent: true,
-});
+export const computeNavBar = (
+  props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>,
+): NativeStackNavigationOptions => communityNavBar(props);
 
 export const CommunitiesHomeScreenLoaded = function ({
   image,
@@ -75,7 +42,6 @@ export const CommunitiesHomeScreenLoaded = function ({
   title,
   totalMembers,
 }: Readonly<CommunitiesHomeScreen.AllPropsLoaded>) {
-  const { top: statusBarHeight } = useSafeAreaInsets();
   const membersTile = (
     <TouchableOpacity
       style={styles.tileMembers}
@@ -138,24 +104,6 @@ export const CommunitiesHomeScreenLoaded = function ({
     </View>
   );
 
-  const fixedTitleHeaderStyle = React.useMemo(
-    () => [
-      styles.titleHeaderWrapper,
-      {
-        height: UI_SIZES.elements.navbarHeight + statusBarHeight,
-        paddingTop: statusBarHeight,
-      },
-    ],
-    [statusBarHeight],
-  );
-  const fixedTitleHeader = (
-    <View style={fixedTitleHeaderStyle}>
-      <View style={styles.titleHeaderInner}>
-        <HeadingXSText numberOfLines={1}>{title}</HeadingXSText>
-      </View>
-    </View>
-  );
-
   const pageContent = (
     <View style={styles.page}>
       <HeadingXSText>{title}</HeadingXSText>
@@ -181,77 +129,21 @@ export const CommunitiesHomeScreenLoaded = function ({
     </View>
   );
 
-  const banner = <CommunityNavbar image={image} />;
+  const [scrollElements, statusBar, scrollViewProps] = useCommunityScrollableThumbnail({
+    image,
+    title,
+  });
 
-  const bannerTotalHeight = BANNER_BASE_HEIGHT + statusBarHeight;
-
-  const [shouldStatusBarDark, setShouldStatusBarDark] = React.useState(false);
-  const onScroll = React.useCallback<NonNullable<ScrollViewProps['onScroll']>>(
-    ({ nativeEvent }) => {
-      const newShouldStatusBarDark =
-        nativeEvent.contentInset.top + nativeEvent.contentOffset.y + statusBarHeight / 2 >
-        bannerTotalHeight * (1 / BANNER_ACCELERATION);
-      if (shouldStatusBarDark !== newShouldStatusBarDark) setShouldStatusBarDark(newShouldStatusBarDark);
-    },
-    [bannerTotalHeight, shouldStatusBarDark, statusBarHeight],
-  );
-
-  const contentContainerStyle = React.useMemo(
-    () =>
-      Platform.select({
-        default: undefined,
-        ios: { marginTop: -bannerTotalHeight },
-      }),
-    [bannerTotalHeight],
-  );
-  const contentInset = React.useMemo(
-    () =>
-      Platform.select({
-        default: undefined,
-        ios: {
-          bottom: -bannerTotalHeight,
-          top: bannerTotalHeight,
-        },
-      }),
-    [bannerTotalHeight],
-  );
-  const contentOffset = React.useMemo(
-    () =>
-      Platform.select({
-        default: undefined,
-        ios: { x: 0, y: -bannerTotalHeight },
-      }),
-    [bannerTotalHeight],
-  );
-
-  // Note: Weird ScrollView contentContainerStyle behaviour with vertical padding, so we use an inner View to apply the page style (iOS only).
-  // Beware : ScrollView children order matters ! This establish the zIndex of the elements relative to each other.
-  //          Also, position (as "index") is used to reference which elements are stiucky and how (with `stickyHeaderIndices` and `StickyHeaderComponent`).
   return (
     <>
-      <StatusBar
-        animated
-        backgroundColor={'transparent'}
-        barStyle={shouldStatusBarDark ? 'dark-content' : 'light-content'}
-        translucent
-      />
-      <ScrollView
-        alwaysBounceVertical={false}
-        contentContainerStyle={contentContainerStyle}
-        contentInset={contentInset}
-        contentOffset={contentOffset}
-        onScroll={onScroll}
-        refreshControl={refreshControl}
-        StickyHeaderComponent={CommunityScrollViewStickyHeader}
-        stickyHeaderIndices={CommunitiesHomeScreenLoaded.stickyHeaderIndices}>
-        {fixedTitleHeader}
-        {banner}
+      {statusBar}
+      <ScrollView alwaysBounceVertical={false} refreshControl={refreshControl} {...scrollViewProps}>
+        {scrollElements}
         {pageContent}
       </ScrollView>
     </>
   );
 };
-CommunitiesHomeScreenLoaded.stickyHeaderIndices = [0, 1];
 
 export const CommunitiesHomeScreenPlaceholder = () => <View />;
 

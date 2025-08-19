@@ -10,7 +10,7 @@ export const createDocumentArrayProxy = (
   folders: NonNullable<PaginatedListProps<FolderItem>['data']>,
   documents: NonNullable<PaginatedListProps<DocumentItem>['data']>,
   numColumns: number = 1,
-): { data: NonNullable<PaginatedListProps<PaginatedDocumentListItemType>['data']>; totalFolders: number } => {
+): { data: NonNullable<PaginatedListProps<PaginatedDocumentListItemType<DocumentItem>>['data']>; totalFolders: number } => {
   if (!Number.isInteger(numColumns) || numColumns <= 0) {
     throw new TypeError('createDocumentArrayProxy: numColumns must be a positive non-null integer.');
   }

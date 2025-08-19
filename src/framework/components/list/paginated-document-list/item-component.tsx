@@ -55,8 +55,9 @@ export function DocumentListItemIcon({
 export function DocumentListItem({
   item,
   onPress,
+  style,
 }: Readonly<Pick<Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0], 'index' | 'item'>> &
-  Pick<TouchableOpacityProps, 'onPress'>) {
+  Pick<TouchableOpacityProps, 'onPress' | 'style'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
 
   const thumbnail = React.useMemo(
@@ -76,7 +77,7 @@ export function DocumentListItem({
     [item],
   );
   return (
-    <WrapperComponent style={[styles.item, styles.itemDocument]} onPress={onPress}>
+    <WrapperComponent style={[styles.item, styles.itemDocument, style]} onPress={onPress}>
       {thumbnail}
       <View style={styles.documentMetadata}>
         <SmallBoldText style={styles.documentMetadataTitle} numberOfLines={1}>
@@ -114,8 +115,15 @@ FolderListItem.wrapperComponentStyle = [styles.item, styles.itemFolder];
 
 export function FolderSpacerListItem({
   index,
-}: Readonly<Parameters<PaginatedListProps<typeof FOLDER_SPACER_ITEM_DATA>['renderItem']>[0]>) {
-  return <FolderListItem index={index} item={FolderSpacerListItem.dummyData} style={styles.itemSpacer} />;
+  style,
+}: Readonly<Parameters<PaginatedListProps<typeof FOLDER_SPACER_ITEM_DATA>['renderItem']>[0] & Pick<ViewProps, 'style'>>) {
+  return (
+    <FolderListItem
+      index={index}
+      item={FolderSpacerListItem.dummyData}
+      style={React.useMemo(() => [styles.itemSpacer, style], [style])}
+    />
+  );
 }
 FolderSpacerListItem.dummyData = { id: 0, title: ' ' };
 
