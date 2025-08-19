@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-19 16:05:07",
-  "notes": "Revert \"release: 1.16.0(1160000)\"\nrelease: 1.16.0(1160000)\nrelease: 1.15.0(1150000)\nchore: clean caches\nmerge 1.14.3\nrelease: 1.14.1-comm.8(1140108)\nfix(mails): COCO-4294 , fix thumbnail on android when no preview\nfix(mails): COCO-4353 , disabled select mode or search mode when unfocus\nfix(carousel): COCO-4406 fix icon in popup menu on android\nfix(mails): COCO-4446 , fix padding bottom in bottomsheet recipients",
-  "version": "1.15.0-comm.1(1150001)"
+  "last": "2025-08-19 16:48:19",
+  "notes": "fix: problem merge\nrelease: 1.15.0-comm.1(1150001)",
+  "version": "1.15.0-comm.2(1150002)"
 }
