@@ -1,0 +1,24 @@
+diff --git a/node_modules/react-native-rate/ios/RNRate.m b/node_modules/react-native-rate/ios/RNRate.m
+index d1e6cb4..862298d 100644
+--- a/node_modules/react-native-rate/ios/RNRate.m
++++ b/node_modules/react-native-rate/ios/RNRate.m
+@@ -88,11 +88,14 @@ RCT_EXPORT_METHOD(rate: (NSDictionary *)options : (RCTResponseSenderBlock) callb
+ }
+ 
+ - (void) openAppStoreAndRate : (NSString *) url {
+-  dispatch_async(dispatch_get_main_queue(), ^{
+-    [[UIApplication sharedApplication] openURL: [NSURL URLWithString:url]];
+-  });
++    dispatch_async(dispatch_get_main_queue(), ^{
++        NSURL *nsurl = [NSURL URLWithString:url];
++        if (@available(iOS 10.0, *)) {
++            [[UIApplication sharedApplication] openURL:nsurl options:@{} completionHandler:nil];
++        } else {
++            [[UIApplication sharedApplication] openURL:nsurl];
++        }
++    });
+ }
+ 
+-
+-
+ @end

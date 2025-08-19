@@ -1,9 +1,8 @@
 import * as React from 'react';
 
-import { PageList } from '../component';
-import { PageListBottomSheetProps } from './types';
-
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import { PageList } from '~/framework/modules/wiki/components/page-list/component';
+import { PageListBottomSheetProps } from '~/framework/modules/wiki/components/page-list/page-list-bottom-sheet/types';
 
 const PageListBottomSheet = React.forwardRef<BottomSheetModalMethods, PageListBottomSheetProps>(
   ({ additionalTopInset, currentPageId, ListComponent, ListFooterComponent, onPress, wikiData }, ref) => {

@@ -6,8 +6,6 @@
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">authentification.ac-martinique.fr</domain>
         <domain includeSubdomains="true">id.ac-nice.fr</domain>
-        <domain includeSubdomains="true">appli.ac-aix-marseille.fr</domain>
-        <domain includeSubdomains="true">aaa-idp.ac-nantes.fr</domain>
         <domain includeSubdomains="true">extranet.ac-guyane.fr</domain>
         <domain includeSubdomains="true">extranet.ac-reims.fr</domain>
         <domain includeSubdomains="true">moncompte.ac-nantes.fr</domain>
@@ -20,6 +18,36 @@
     </domain-config>
     <domain-config>
         <domain includeSubdomains="false">externet.ac-creteil.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="false">connexion.l-educdenormandie.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="false">ent.l-educdenormandie.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="false">ent.e-primo.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="false">aaa-idp.ac-nantes.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config>
+        <domain includeSubdomains="false">appli.ac-aix-marseille.fr</domain>
         <trust-anchors>
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
