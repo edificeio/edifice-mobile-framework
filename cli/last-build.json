@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-22 19:53:59",
-  "notes": "fix: patch info for react-native\nrelease: 1.14.2-peda.12(1140207)",
-  "version": "1.14.2-peda.13(1140208)"
+  "last": "2025-08-21 12:54:14",
+  "notes": "update(stack): yarn cache update\nrelease: 1.14.4-rc.1(1140401)",
+  "version": "1.14.4-rc.2(1140402)"
 }
