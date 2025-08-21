@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-20 19:35:48",
-  "notes": "chore(i18n): Change Phrase Sync Branch\nrelease: 1.14.4(1140400)\nrelease: 1.14.3(1140300)\nrelease: 1.14.2-rc.4(1140204)",
-  "version": "1.14.4-rc.1(1140401)"
+  "last": "2025-08-21 12:54:14",
+  "notes": "update(stack): yarn cache update\nrelease: 1.14.4-rc.1(1140401)",
+  "version": "1.14.4-rc.2(1140402)"
 }
