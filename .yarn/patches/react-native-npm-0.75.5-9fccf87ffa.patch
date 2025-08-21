@@ -1,0 +1,45 @@
+diff --git a/Libraries/Components/ScrollView/ScrollView.d.ts b/Libraries/Components/ScrollView/ScrollView.d.ts
+index 2e26db757500d631d5ca503f58aa373f5032d4c2..52ff19ad1050c4183ffcd5d649db5c868d231637 100644
+--- a/Libraries/Components/ScrollView/ScrollView.d.ts
++++ b/Libraries/Components/ScrollView/ScrollView.d.ts
+@@ -19,6 +19,7 @@ import {
+ import {RefreshControlProps} from '../RefreshControl/RefreshControl';
+ import {Touchable} from '../Touchable/Touchable';
+ import {ViewProps} from '../View/ViewPropTypes';
++import type { Props as ScrollViewStickyHeaderProps } from './ScrollViewStickyHeader';
+ 
+ // See https://reactnative.dev/docs/scrollview#contentoffset
+ export interface PointProp {
+@@ -803,7 +804,7 @@ export interface ScrollViewProps
+    * transforms, for example, when you want your list to have an animated and hidable header.
+    * If component have not been provided, the default ScrollViewStickyHeader component will be used.
+    */
+-  StickyHeaderComponent?: React.ComponentType<any> | undefined;
++  StickyHeaderComponent?: React.ComponentType<ScrollViewStickyHeaderProps> | undefined;
+ }
+ 
+ declare class ScrollViewComponent extends React.Component<ScrollViewProps> {}
+diff --git a/Libraries/Components/ScrollView/ScrollView.js b/Libraries/Components/ScrollView/ScrollView.js
+index dbe5bf1f218a682b63d91b8df48a46dfaa0c0efa..538cce894f663e9ca9765f01ec956bba5f2a97b8 100644
+--- a/Libraries/Components/ScrollView/ScrollView.js
++++ b/Libraries/Components/ScrollView/ScrollView.js
+@@ -1741,6 +1741,7 @@ class ScrollView extends React.Component<Props, State> {
+           return (
+             <StickyHeaderComponent
+               key={key}
++              index={index}
+               ref={ref => this._setStickyHeaderRef(key, ref)}
+               nextHeaderLayoutY={this._headerLayoutYs.get(
+                 this._getKeyForIndex(nextIndex, children),
+diff --git a/Libraries/Components/ScrollView/ScrollViewStickyHeader.js b/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+index f22831ff7e0d24c6235421cebd26f92a6d376dcf..118176226439bfbe30a6613bdfbaee5088513002 100644
+--- a/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
++++ b/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+@@ -30,6 +30,7 @@ export type Props = $ReadOnly<{
+   scrollViewHeight: ?number,
+   nativeID?: ?string,
+   hiddenOnScroll?: ?boolean,
++  index: number;
+ }>;
+ 
+ type Instance = {

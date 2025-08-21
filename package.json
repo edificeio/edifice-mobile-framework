@@ -129,7 +129,7 @@
     "react": "18.3.1",
     "react-i18next": "15.1.2",
     "react-is": "18.3.1",
-    "react-native": "0.75.5",
+    "react-native": "patch:react-native@npm%3A0.75.5#~/.yarn/patches/react-native-npm-0.75.5-9fccf87ffa.patch",
     "react-native-action-sheet": "2.2.0",
     "react-native-app-link": "1.0.1",
     "react-native-blob-util": "0.19.11",
@@ -277,7 +277,8 @@
     "react-native-gesture-handler": "2.21.2",
     "react-native-gradle-plugin": "0.75.5",
     "set-value": "4.1.0",
-    "tsconfig-paths": "4.0.0"
+    "tsconfig-paths": "4.0.0",
+    "react-native@npm:*": "patch:react-native@npm%3A0.75.5#~/.yarn/patches/react-native-npm-0.75.5-9fccf87ffa.patch"
   },
   "eslintIgnore": [
     ".eslintrc.js",
