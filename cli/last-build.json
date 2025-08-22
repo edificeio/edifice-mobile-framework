@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-21 19:14:56",
-  "notes": "chore: patch react-native\nchore: yarn cache update\nfeat(communities): PEDAGO-2873 implement custom navbar on community documents screen\nfeat(communities): PEDAGO-2873 implement custom navbar on community home screen\nrelease: 1.14.2-peda.11(1140206)",
-  "version": "1.14.2-peda.12(1140207)"
+  "last": "2025-08-22 19:53:59",
+  "notes": "fix: patch info for react-native\nrelease: 1.14.2-peda.12(1140207)",
+  "version": "1.14.2-peda.13(1140208)"
 }
