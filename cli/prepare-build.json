@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
   "alpha": 0,
-  "build": 3,
-  "comm": 3,
+  "build": 4,
+  "comm": 4,
   "major": 1,
   "minor": 15,
   "peda": 0,
