@@ -1,14 +1,23 @@
 import * as React from 'react';
 import { PixelRatio } from 'react-native';
 
-import { ResourceClient, ResourceDto, ResourceType, utils } from '@edifice.io/community-client-rest-rn';
+import {
+  CommunityClient,
+  MembershipClient,
+  ResourceClient,
+  ResourceDto,
+  ResourceType,
+  utils,
+} from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useDispatch, useSelector } from 'react-redux';
 
 import CommunityPaginatedDocumentList from './community-paginated-document-list';
 import styles from './styles';
 import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
 import useCommunityScrollableThumbnail, { communityNavBar } from '../../hooks/use-community-navbar';
+import { communitiesActions, communitiesSelectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
@@ -71,7 +80,20 @@ const formatDocuments = (data: ResourceDto[]): CommunitiesDocumentItem[] =>
         } as Exclude<DocumentItemEntApp<ResourceDto['appName']>, 'workspace'>),
   );
 
-export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({ route }) {
+export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({
+  route: {
+    params: { communityId },
+  },
+  session,
+}) {
+  const communityData = useSelector(communitiesSelectors.getCommunityDetails(communityId));
+  const dispatch = useDispatch();
+  const setCommunityData = React.useCallback(
+    (newData: Parameters<typeof communitiesActions.loadCommunityDetails>[1]) =>
+      dispatch(communitiesActions.loadCommunityDetails(communityId, newData)),
+    [dispatch, communityId],
+  );
+
   // Store the data of the list here. It will contain both loaded and non-loaded elements.
   // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
   const [data, setData] = React.useState<{
@@ -86,12 +108,16 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   // This function fetch the data page the given page number and insert the resulting elements in the `data` array.
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
-      await new Promise(resolve => {
-        setTimeout(resolve, 2000);
+      const [community, members, newData] = await Promise.all([
+        http.api(moduleConfig, session, CommunityClient).getCommunity(communityId),
+        http.api(moduleConfig, session, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
+        http.api(moduleConfig, session, ResourceClient).getResources(communityId, { page: page + 1, size: PAGE_SIZE }),
+      ]);
+      setCommunityData({
+        ...community,
+        membersId: members.items.map(item => item.user.entId),
+        totalMembers: members.meta.totalItems,
       });
-      const newData = await http
-        .sessionApi(moduleConfig, ResourceClient)
-        .getResources(route.params.communityId, { page: page + 1, size: PAGE_SIZE });
       setData(prevData => {
         // The merge logic is contained in `staleOrSplice`. It inserts the new elements at the right place in `prevData`.
         // If `total` changes, there's a risk that the prevData is outdated, and should be flushed before inserting the new elements.
@@ -109,7 +135,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
         return { documents: mergedData, folders: __debug__folders__ };
       });
     },
-    [route.params.communityId],
+    [communityId, session, setCommunityData],
   );
 
   // For perforance purpose, estimatedListSize must be the dimensions of the container (here the screen sithout, navBar and tabBar)
@@ -147,7 +173,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
 
   const [scrollElements, statusBar, { ...scrollViewProps }] = useCommunityScrollableThumbnail({
     // contentContainerStyle: styles.list,
-    image: undefined,
+    image: communityData.image,
     title: I18n.get('communities-documents-title'),
   });
 

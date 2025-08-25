@@ -3,9 +3,11 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { CommunityClient, MembershipClient } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
+import { communitiesActions, communitiesSelectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -155,7 +157,13 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
   },
   session,
 }) {
-  const [data, setData] = React.useState<CommunitiesHomeScreen.RequiredData>();
+  const data = useSelector(communitiesSelectors.getCommunityDetails(communityId));
+  const dispatch = useDispatch();
+  const setData = React.useCallback(
+    (newData: Parameters<typeof communitiesActions.loadCommunityDetails>[1]) =>
+      dispatch(communitiesActions.loadCommunityDetails(communityId, newData)),
+    [dispatch, communityId],
+  );
 
   const loadContent = React.useCallback(async () => {
     const [community, members] = await Promise.all([
@@ -167,7 +175,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       membersId: members.items.map(item => item.user.entId),
       totalMembers: members.meta.totalItems,
     });
-  }, [communityId, session]);
+  }, [communityId, session, setData]);
 
   const renderContent: NonNullable<ContentLoaderProps['renderContent']> = React.useCallback(
     refreshControl =>
