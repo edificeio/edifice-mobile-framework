@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-19 16:48:19",
-  "notes": "fix: problem merge\nrelease: 1.15.0-comm.1(1150001)",
-  "version": "1.15.0-comm.2(1150002)"
+  "last": "2025-08-25 15:21:10",
+  "notes": "fix(mails): COCO-4513, fix backhandler android\nfix(mails): COCO-4454, fix disabled recipient when its broadcast group not in cci\nMerge branch 'dev/1.15.0' of github.com:edificeio/edifice-mobile-framework into dev/1.15.0\nfix(mails): COCO-4040, fix scroll results\nupdate(stack): yarn cache update\nupdate(stack): yarn cache update\nupdate(stack): yarn cache update\nchore(i18n): Change Phrase Sync Branch\nrelease: 1.15.0-comm.2(1150002)",
+  "version": "1.15.0-comm.3(1150003)"
 }
