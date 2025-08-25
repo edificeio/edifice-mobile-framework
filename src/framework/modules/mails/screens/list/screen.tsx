@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Dimensions, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, BackHandler, Dimensions, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -286,7 +286,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, [loadMails, selectedFolder]);
 
   const onActiveSelectMode = React.useCallback((mailId: string) => {
-    setSelectedMails([mailId]);
+    if (mailId) setSelectedMails([mailId]);
     setIsSelectionMode(true);
   }, []);
 
@@ -471,14 +471,21 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     [onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder],
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        if (isSelectionMode) onDisableSelectMode();
-        if (isSearchMode) onDisabledSearchMode();
-      };
-    }, [isSearchMode, isSelectionMode, onDisableSelectMode, onDisabledSearchMode]),
-  );
+  const handleHardwareBack = React.useCallback(() => {
+    if (isSelectionMode) onDisableSelectMode();
+    if (isSearchMode) onDisabledSearchMode();
+    setTimeout(() => {
+      navigation.goBack();
+    }, 200);
+    return true;
+  }, [isSearchMode, isSelectionMode, navigation, onDisableSelectMode, onDisabledSearchMode]);
+
+  React.useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleHardwareBack);
+    return () => {
+      backHandler.remove();
+    };
+  }, [handleHardwareBack]);
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.getParent('tabs').addListener('tabPress', () => {
@@ -590,7 +597,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         <BodyBoldText>{`(${selectedMails.length}) ${I18n.get('mails-list-selectall')}`}</BodyBoldText>
       </TouchableOpacity>
     );
-  }, [mails.length, onSelectAll, selectedMails.length]);
+  }, [mails.length, onSelectAll, selectedMails]);
 
   const renderTopMode = React.useCallback(() => {
     if (!isSelectionMode && !isSearchMode) return;

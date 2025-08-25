@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Animated, Keyboard, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
+import { Animated, Keyboard, Platform, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import debounce from 'lodash.debounce';
 
@@ -59,11 +59,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   }, [props, showList]);
 
   React.useEffect(() => {
-    const keyboardWillShow = Keyboard.addListener('keyboardDidShow', e => {
+    const keyboardWillShow = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', e => {
       setKeyboardHeight(e.endCoordinates.height);
     });
 
-    const keyboardWillHide = Keyboard.addListener('keyboardDidHide', () => {
+    const keyboardWillHide = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => {
       setKeyboardHeight(0);
     });
 
