@@ -8,7 +8,7 @@ import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
 import { MailsRecipientContainer, MailsRecipientContainerProps } from '~/framework/modules/mails/components/recipient-item';
-import { MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
+import { MailsRecipientInfo, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
 import { accountTypeInfos } from '~/framework/util/accountType';
 import { isEmpty } from '~/framework/util/object';
 
@@ -107,7 +107,7 @@ const MailsRecipientUserItem = (props: MailsRecipientContainerProps) => {
 
   return (
     <MailsRecipientContainer {...props}>
-      <MailsRecipientAvatar id={id} type="User" />
+      <MailsRecipientAvatar id={id} type={MailsVisibleType.USER} />
       <View style={styles.flex1}>
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail">
           {displayName}

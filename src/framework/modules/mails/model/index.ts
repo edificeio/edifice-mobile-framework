@@ -17,6 +17,7 @@ export enum MailsVisibleType {
   GROUP = 'Group',
   USER = 'User',
   SHAREBOOKMARK = 'ShareBookmark',
+  BROADCASTGROUP = 'BroadcastGroup',
 }
 
 export enum MailsListTypeModal {

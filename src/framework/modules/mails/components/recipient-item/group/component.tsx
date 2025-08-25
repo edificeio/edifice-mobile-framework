@@ -10,17 +10,18 @@ import { MailsRecipientContainer, MailsRecipientContainerProps } from '~/framewo
 import { MailsRecipientGroupInfo, MailsVisible } from '~/framework/modules/mails/model';
 
 const renderSubtitle = (nbUsers, disabled) => {
-  //if (disabled) return <SmallText style={styles.graphite}>{I18n.get('conversation-newmail-broadcastgroupsubtitle')}</SmallText>;
+  if (disabled) return <SmallText style={styles.graphite}>{I18n.get('mails-edit-broadcastgroupsubtitle')}</SmallText>;
   if (nbUsers)
     return (
       <SmallText style={styles.graphite}>
-        {nbUsers} {I18n.get(nbUsers > 1 ? 'conversation-newmail-communicationmembres' : 'conversation-newmail-communicationmembre')}
+        {nbUsers} {I18n.get(nbUsers > 1 ? 'mails-edit-members' : 'mails-edit-member')}
       </SmallText>
     );
 };
 
 const MailsRecipientGroupItem = (props: MailsRecipientContainerProps) => {
   const { displayName, id, nbUsers, size, type } = props.item as MailsRecipientGroupInfo | MailsVisible;
+  const { disabled } = props;
 
   return (
     <MailsRecipientContainer {...props}>
@@ -29,7 +30,7 @@ const MailsRecipientGroupItem = (props: MailsRecipientContainerProps) => {
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail" style={props.disabled ? styles.graphite : {}}>
           {displayName}
         </SmallBoldText>
-        {size || nbUsers ? renderSubtitle(size ?? nbUsers, props.disabled) : null}
+        {size || nbUsers ? renderSubtitle(size ?? nbUsers, disabled) : null}
       </View>
     </MailsRecipientContainer>
   );

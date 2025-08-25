@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { MailsRecipientContainerProps } from '~/framework/modules/mails/components/recipient-item';
-import { MailsVisible } from '~/framework/modules/mails/model';
+import { MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
 import { mailsService } from '~/framework/modules/mails/service';
 
 const MailsRecipientContainer = (props: React.PropsWithChildren<MailsRecipientContainerProps>) => {
@@ -40,7 +40,7 @@ const MailsRecipientContainer = (props: React.PropsWithChildren<MailsRecipientCo
 
   const onPress = async () => {
     if (!props.onPress) return;
-    if (props.item.type === 'ShareBookmark') {
+    if (props.item.type === MailsVisibleType.SHAREBOOKMARK) {
       try {
         const items = await mailsService.bookmark.getById({ id: props.item.id });
         props.onPress(items as MailsVisible[]);
@@ -69,7 +69,7 @@ const MailsRecipientContainer = (props: React.PropsWithChildren<MailsRecipientCo
   }, [opacityIcon, opacityView, positionXIcon, props.selected]);
 
   return (
-    <TouchableOpacity disabled={props.onPress && !props.selected ? false : true} onPress={onPress}>
+    <TouchableOpacity disabled={!(props.onPress && !props.selected && !props.disabled)} onPress={onPress}>
       {renderIconIsSelected()}
       <View style={[styles.container, props.selected ? styles.containerSelected : {}]}>{props.children}</View>
     </TouchableOpacity>

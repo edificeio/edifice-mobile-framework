@@ -369,7 +369,14 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               renderItem={({ item }) => {
                 const Component = item.type === MailsVisibleType.USER ? MailsRecipientUserItem : MailsRecipientGroupItem;
                 const isSelected = selectedRecipients.some(selectedRecipient => selectedRecipient.id === item.id);
-                return <Component item={item} onPress={addUser} selected={isSelected} />;
+                return (
+                  <Component
+                    item={item}
+                    onPress={addUser}
+                    selected={isSelected}
+                    disabled={item.type === MailsVisibleType.BROADCASTGROUP && props.type !== MailsRecipientsType.CCI}
+                  />
+                );
               }}
               ListEmptyComponent={
                 <View style={styles.noResults}>
