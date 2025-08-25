@@ -4,6 +4,7 @@ import { Alert, BackHandler, Dimensions, ScrollViewProps, TextInput, TouchableOp
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList as GHFlatList } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -67,6 +68,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const flatListRef = React.useRef<GHFlatList<IMailsMailPreview>>(null);
   const searchInputRef = React.useRef<TextInput>(null);
+  //TODO: créer un wrapper
+  const { top: statusBarHeight } = useSafeAreaInsets();
   const navigation = props.navigation;
 
   const [selectedFolder, setSelectedFolder] = React.useState<MailsDefaultFolders | MailsFolderInfo>(MailsDefaultFolders.INBOX);
@@ -604,7 +607,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     return (
       <>
         <StatusBar type="white" />
-        <View style={[styles.selectMode, styles.selectModeTop, isSelectionMode ? styles.selectModeShadow : {}]}>
+        <View
+          style={[
+            styles.selectMode,
+            styles.selectModeTop,
+            { height: UI_SIZES.elements.navbarHeight + statusBarHeight, paddingTop: statusBarHeight },
+            isSelectionMode ? styles.selectModeShadow : {},
+          ]}>
           {isSearchMode && renderSearch()}
           {isSelectionMode && renderAllSelect()}
           <TertiaryButton
@@ -615,7 +624,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         </View>
       </>
     );
-  }, [isSearchMode, isSelectionMode, onDisableSelectMode, onDisabledSearchMode, renderAllSelect, renderSearch]);
+  }, [isSearchMode, isSelectionMode, onDisableSelectMode, onDisabledSearchMode, renderAllSelect, renderSearch, statusBarHeight]);
 
   const renderBottomMode = React.useCallback(() => {
     if (!isSelectionMode) return;
