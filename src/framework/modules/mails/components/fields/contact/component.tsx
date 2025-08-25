@@ -59,11 +59,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   }, [props, showList]);
 
   React.useEffect(() => {
-    const keyboardWillShow = Keyboard.addListener('keyboardWillShow', e => {
+    const keyboardWillShow = Keyboard.addListener('keyboardDidShow', e => {
       setKeyboardHeight(e.endCoordinates.height);
     });
 
-    const keyboardWillHide = Keyboard.addListener('keyboardWillHide', () => {
+    const keyboardWillHide = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardHeight(0);
     });
 
@@ -108,11 +108,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const scrollToInput = React.useCallback(() => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        console.log(
-          'scrollToInput',
-          containerLayout.y + containerLayout.height - INITIAL_HEIGHT_INPUT,
-          Math.max(0, containerLayout.height - INITIAL_HEIGHT_INPUT),
-        );
         setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
         setHeightInputToSave(containerLayout.height);
         topPositionResults.setValue(containerLayout.y + containerLayout.height);
@@ -120,7 +115,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           animated: true,
           y: containerLayout.y + containerLayout.height - INITIAL_HEIGHT_INPUT,
         });
-      }, 500); // TODO: j'ai mis à 500ms pour le test, ça m'a l'air un peu lent pour la prod
+      }, 200);
     }
   }, [containerLayout, props.scrollViewRef, topPositionResults]);
 
@@ -282,6 +277,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     return null;
   };
 
+  const heightResults = React.useMemo(() => {
+    //TODO: à dynamiser (nb de résultats * hauteur d'un item + header + offset)
+    return filteredUsers.length * 58 + 40 + 100;
+  }, [filteredUsers]);
+
   return (
     <>
       <View
@@ -294,7 +294,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
          */
         onLayout={e => {
           const { height, width, x, y } = e.nativeEvent.layout;
-          console.log(`onLayout ${props.type} ${JSON.stringify({ height, width, x, y })}`);
           setContainerLayout({ height, width, x, y });
         }}>
         <BodyText style={styles.prefix}>{I18n.get(MailsRecipientPrefixsI18n[props.type].name)}</BodyText>
@@ -351,14 +350,13 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           ) : (
             <FlatList
               keyboardShouldPersistTaps="always"
-              nestedScrollEnabled
               showsVerticalScrollIndicator={false}
               bounces={false}
               data={filteredUsers}
               contentContainerStyle={[
                 styles.results,
                 {
-                  minHeight: resultsHeight,
+                  height: heightResults,
                 },
               ]}
               ListHeaderComponent={
