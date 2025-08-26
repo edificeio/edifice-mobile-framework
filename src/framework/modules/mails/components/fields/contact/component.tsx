@@ -265,7 +265,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const heightResults = React.useMemo(() => {
-    return filteredUsers.length * HEIGHT_RECIPIENT_CONTAINER + HEIGHT_HEADER_RESULTS + UI_SIZES.spacing.small * 2 + 100;
+    return filteredUsers.length * HEIGHT_RECIPIENT_CONTAINER + HEIGHT_HEADER_RESULTS + UI_SIZES.spacing.small * 2 + 170;
   }, [filteredUsers]);
 
   return (
