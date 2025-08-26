@@ -7,7 +7,6 @@ import { Alert, Linking } from 'react-native';
 import { decode } from 'html-entities';
 
 import { I18n } from '~/app/i18n';
-import { getSession } from '~/framework/modules/auth/reducer';
 import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 
 export interface OpenUrlCustomLabels {
@@ -39,14 +38,18 @@ export async function openUrl(
       throw new Error('openUrl : no url provided.');
     }
 
-    let finalUrl: string | undefined = url;
+    /*let finalUrl: string | undefined = url;
     const session = getSession();
 
     if (url.startsWith('https://app.test.votil.fr') && session) {
       finalUrl = `${session.platform.url}/votil`;
     }
 
-    finalUrl = urlSigner.getAbsoluteUrl(decode(url));
+    finalUrl = urlSigner.getAbsoluteUrl(decode(finalUrl));
+
+    */
+
+    let finalUrl = urlSigner.getAbsoluteUrl(decode(url));
 
     if (autoLogin) {
       try {
