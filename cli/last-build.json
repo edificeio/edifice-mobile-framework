@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-26 11:40:48",
-  "notes": "fix(mails) coco-4040, fix dynamic height recipient container calculation\nfix(mails): coco-4293j, fix loader not showing in viewPager\nrelease: 1.15.0-comm.4(1150004)",
-  "version": "1.15.0-comm.5(1150005)"
+  "last": "2025-08-26 14:50:41",
+  "notes": "fix(mails): coco-4040, fix value\nchore: update cache\nrelease: 1.15.0-comm.5(1150005)",
+  "version": "1.15.0-rc.1(1150006)"
 }
