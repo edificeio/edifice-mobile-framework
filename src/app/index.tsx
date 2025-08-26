@@ -3,6 +3,7 @@ import { AppState, AppStateStatus, Platform } from 'react-native';
 
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
+//import NewAppScreen from '@react-native/new-app-screen';
 import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
@@ -16,11 +17,10 @@ import AppModules from '~/app/modules';
 import { UI_STYLES } from '~/framework/components/constants';
 import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import Navigation from '~/framework/navigation/RootNavigator';
-import appConf from '~/framework/util/appConf';
 import { AppModules as AllModulesBackup2 } from '~/framework/util/oauth2';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
-import { ZendeskProvider } from '~/framework/util/zendesk';
+//import { ZendeskProvider } from '~/framework/util/zendesk';
 import { AllModulesBackup } from '~/infra/oauth';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
@@ -84,16 +84,20 @@ function App(props: AppProps) {
     };
   }, []);
 
+  //const safeAreaInsets = useSafeAreaInsets();
+
   const content = (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={props.store}>
+          {/* <NewAppScreen templateFileName="App.tsx" safeAreaInsets={safeAreaInsets} /> */}
           <Navigation />
         </Provider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
-  return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
+  //return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
+  return <>{content}</>;
 }
 
 // Hack to generate scopes without circular deps. ToDo: fix it !
