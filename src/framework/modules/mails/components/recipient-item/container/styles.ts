@@ -2,6 +2,9 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
+
+export const HEIGHT_RECIPIENT_CONTAINER = UI_SIZES.spacing.minor * 2 + TextSizeStyle.Normal.lineHeight * 2;
 
 export default StyleSheet.create({
   container: {

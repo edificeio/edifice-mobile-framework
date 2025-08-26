@@ -12,10 +12,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextInputType } from '~/framework/components/inputs/text/component';
 import FlatList from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';
-import { BodyText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { BodyText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import MailsContactItem from '~/framework/modules/mails/components/contact-item';
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
+import { HEIGHT_RECIPIENT_CONTAINER } from '~/framework/modules/mails/components/recipient-item/container/styles';
 import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
 import { readVisibles } from '~/framework/modules/mails/storage';
 import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
@@ -24,7 +25,8 @@ function removeAccents(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-const INITIAL_HEIGHT_INPUT = 60;
+const HEIGHT_HEADER_RESULTS = UI_SIZES.spacing.small + TextSizeStyle.Normal.lineHeight;
+const INITIAL_HEIGHT_INPUT = UI_SIZES.spacing.small * 2 + UI_SIZES.spacing.tiny * 2 + TextSizeStyle.Medium.lineHeight;
 
 export const MailsContactField = (props: MailsContactFieldProps) => {
   const [search, setSearch] = React.useState('');
@@ -93,7 +95,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   React.useEffect(() => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        // console.log('measure', containerLayout.y, containerLayout.height);
         Animated.spring(topPositionResults, {
           friction: 8,
           tension: 50,
@@ -119,22 +120,13 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     }
   }, [containerLayout, props.scrollViewRef, topPositionResults]);
 
-  /**
-   * J'ai retiré tout appel de scrollToInput dans les autres fonctions
-   * car il est déjà appelé dans useEffect quand la taille de la view change
-   * et ça évite de trigger le scrollToInput à chaque fois et donc une ui laggy
-   * La taille de la view change quand on ajoute ou supprime un recipient, ce qui trigger ce useEffect
-   */
   React.useEffect(() => {
-    // Trouver la bonne condition pour ne pas faire de scroll si le champ n'est pas ouvert ou s'il n'est pas focus
-    // À chaud, je dirais que c'est ici que tu dois travailler pour éviter le scroll quand tu supprimes des recipients dans un autre champ
-    // Je n'ai pas pris le temps de chercher la bonne condition
     if (containerLayout.height > 0 && inputFocused) {
       setTimeout(() => {
         scrollToInput();
       }, 300);
     }
-  }, [containerLayout, isOpen, scrollToInput, showList, inputFocused]); // TODO: mettre à jour les dépendances, je n'ai pas clean suite à quelques tests
+  }, [containerLayout, isOpen, scrollToInput, showList, inputFocused]);
 
   const onOpen = () => {
     setFocused(true);
@@ -142,11 +134,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const onFocus = () => {
-    // Je crois que c'était un test, je ne sais plus pourquoi je l'ai commenté, à voir si ça pose problème
-    // scrollToInput();
     setInputFocused(true);
     if (!isOpen) setIsOpen(true);
-    if (search.length >= 3) toggleShowList();
     props.onFocus(props.type);
   };
 
@@ -224,8 +213,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     const newSelectedRecipients = [...selectedRecipients, ...items];
     setSelectedRecipients(newSelectedRecipients);
     props.onChangeRecipient(newSelectedRecipients, props.type);
-    // Evite d'appeler scrollToInput, il est déjà appelé car la taille de la view change
-    // scrollToInput();
   };
 
   const removeUser = (user: MailsVisible) => {
@@ -278,8 +265,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   };
 
   const heightResults = React.useMemo(() => {
-    //TODO: à dynamiser (nb de résultats * hauteur d'un item + header + offset)
-    return filteredUsers.length * 58 + 40 + 100;
+    return filteredUsers.length * HEIGHT_RECIPIENT_CONTAINER + HEIGHT_HEADER_RESULTS + UI_SIZES.spacing.small * 2 + 100;
   }, [filteredUsers]);
 
   return (
@@ -287,11 +273,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
       <View
         style={[styles.container, selectedRecipients.length === 0 ? styles.containerEmpty : {}]}
         ref={viewContainerRef}
-        /**
-         * Pour rappel, je pense que le problème vient du fait qu'il y a une différence entre Android et iOS dans les valeurs retours de measure().
-         * Android mesure depuis le parent immédiat (il n'a pas l'air d'en trouver un à ce moment là ou il le trouve mais la view est situé à 0 dans l'espace) alors qu'iOS mesure depuis la root view ou le composant le plus haut.
-         * onLayout c'est le petit cousin de feu onComponentDidMount, ça t'assure que les valeurs retournées sont celles calculées après que le render soit fait côté natif.
-         */
         onLayout={e => {
           const { height, width, x, y } = e.nativeEvent.layout;
           setContainerLayout({ height, width, x, y });
