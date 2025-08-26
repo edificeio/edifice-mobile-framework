@@ -63,6 +63,7 @@ export const computeNavBar = ({
 });
 
 const PAGE_SIZE = 25;
+const TIMEOUT_DURATION = 300;
 
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
@@ -285,7 +286,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const onDisabledSearchMode = React.useCallback(() => {
     setIsSearchMode(false);
     setSearch('');
-    loadMails(selectedFolder, '');
+    setTimeout(() => {
+      loadMails(selectedFolder, '');
+    }, TIMEOUT_DURATION);
   }, [loadMails, selectedFolder]);
 
   const onActiveSelectMode = React.useCallback((mailId: string) => {
@@ -937,12 +940,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderPlaceholder = React.useCallback(() => <MailsPlaceholderList />, []);
 
   const renderContent = React.useCallback(
-    (refreshControl: ScrollViewProps['refreshControl']) =>
-      isLoading ? (
-        renderPlaceholder()
-      ) : (
-        <PageView style={styles.page}>
-          {renderTopMode()}
+    (refreshControl: ScrollViewProps['refreshControl']) => (
+      <PageView style={styles.page}>
+        {renderTopMode()}
+        {isLoading ? (
+          renderPlaceholder()
+        ) : (
           <FlatList
             ref={flatListRef}
             data={mails}
@@ -953,10 +956,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             onEndReached={loadNextMails}
             onEndReachedThreshold={0.5}
           />
-          {renderBottomMode()}
-          {renderBottomSheetFolders()}
-        </PageView>
-      ),
+        )}
+        {renderBottomMode()}
+        {renderBottomSheetFolders()}
+      </PageView>
+    ),
     [
       isLoading,
       renderPlaceholder,
