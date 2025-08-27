@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Alert, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -42,6 +42,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
 
   const blurRichText = () => {
     setIsFocused(false);
+    Keyboard.dismiss();
   };
 
   const focusRichText = () => {
@@ -244,7 +245,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
 
   const scrollRef = React.useRef<ScrollView>(null);
   const scrollSyncRef = useSyncRef(ref, scrollRef);
-  const editorSyncRef = props.editorRef ? useSyncRef(props.editorRef, richText) : undefined;
+  const editorSyncRef = props.editorRef ? useSyncRef(props.editorRef, richText) : richText;
 
   const handleBlur = React.useCallback(() => {
     animateToolbar({ opacity: 0, ypos: 2 * UI_SIZES.elements.editor.toolbarHeight });
