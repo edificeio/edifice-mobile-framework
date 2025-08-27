@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -42,7 +42,6 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
 
   const blurRichText = () => {
     setIsFocused(false);
-    Keyboard.dismiss();
   };
 
   const focusRichText = () => {
