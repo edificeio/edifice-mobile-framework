@@ -56,8 +56,8 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 
 const RootStack = getTypedRootStack();
 
-function RootNavigator(props: RootNavigatorProps) {
-  const { accounts, appReady, connected, dispatch, lastAddAccount, lastDeletedAccount, pending, requirement, showOnboarding } =
+function RootNavigator(props: Readonly<RootNavigatorProps>) {
+  const { accounts, appReady, connected, dispatch, /*lastAddAccount,*/ lastDeletedAccount, pending, requirement, showOnboarding } =
     props;
 
   React.useEffect(() => {
@@ -117,33 +117,29 @@ function RootNavigator(props: RootNavigatorProps) {
 
   const screenOptions = React.useMemo(() => ({ headerShown: true }), []);
 
-  const ret = React.useMemo(() => {
-    return (
-      <>
-        <SplashScreenComponent key={appReady} />
-        {appReady ? (
-          <NavigationContainer
-            // key={lastAddAccount}
-            ref={navigationRef}
-            initialState={navigationState}
-            onStateChange={onStateChange}>
-            <BottomSheetModalProvider>
-              <AppPushNotificationHandlerComponent>
-                <RootStack.Navigator screenOptions={screenOptions}>
-                  {routes}
-                  {modals}
-                </RootStack.Navigator>
-              </AppPushNotificationHandlerComponent>
-            </BottomSheetModalProvider>
-            <RootToastHandler />
-            <SnowFlakes />
-          </NavigationContainer>
-        ) : null}
-      </>
-    );
-  }, [appReady, lastAddAccount, navigationState, onStateChange, routes, screenOptions]);
-
-  return ret;
+  return (
+    <>
+      <SplashScreenComponent key={appReady} />
+      {appReady ? (
+        <NavigationContainer
+          // key={lastAddAccount}
+          ref={navigationRef}
+          initialState={navigationState}
+          onStateChange={onStateChange}>
+          <BottomSheetModalProvider>
+            <AppPushNotificationHandlerComponent>
+              <RootStack.Navigator screenOptions={screenOptions}>
+                {routes}
+                {modals}
+              </RootStack.Navigator>
+            </AppPushNotificationHandlerComponent>
+          </BottomSheetModalProvider>
+          <RootToastHandler />
+          <SnowFlakes />
+        </NavigationContainer>
+      ) : null}
+    </>
+  );
 }
 
 export default connect((state: IGlobalState) => ({

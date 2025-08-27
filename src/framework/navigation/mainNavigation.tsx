@@ -20,7 +20,7 @@ import {
   StackActions,
 } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
@@ -29,6 +29,7 @@ import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
+import { session } from '../modules/auth/redux/selectors';
 
 import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
@@ -41,7 +42,7 @@ import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/
 import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
-import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { AnyNavigableModule, AnyNavigableModuleConfig, ModuleArray } from '~/framework/util/moduleTool';
 
 //  88888888888       888      888b    888                   d8b                   888
 //      888           888      8888b   888                   Y8P                   888
@@ -157,46 +158,39 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
   );
 }
 
-export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
+export function TabNavigation() {
   // Simple Hack : session can be recreated with same values.
   // By using JSON-stringified version for useMemo() deps, we ensure that the navigation will be re-rendered only if necessary.
+  const sessionIfExists = useSelector(session);
   const appsJson = JSON.stringify(sessionIfExists?.rights.apps);
 
-  const tabModulesCache = tabModules.get();
-  const moduleTabStackCache = React.useMemo(
-    () => tabModulesCache.map(module => <TabStack module={module} key={module.config.name} />),
-    [tabModulesCache],
-  );
-  const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
-  const availableTabModules = React.useMemo(
-    () =>
-      sessionIfExists
+  const modules = React.useMemo(
+    () => {
+      return sessionIfExists
         ? tabModules
             .get()
             .filterAvailables(sessionIfExists)
             .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
-        : [],
+        : new ModuleArray<AnyNavigableModule>();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [appsJson],
+    [appsJson, tabModules.get().length],
   );
-  const tabRoutes = React.useMemo(() => {
-    return availableTabModules.map(module => {
-      const index = tabModulesCache.findIndex(tm => tm.config.name === module.config.name);
-      if (index < 0) return undefined;
 
+  const tabRoutes = React.useMemo(() => {
+    return modules.map(module => {
+      const ModuleStackComponent = () => <TabStack module={module} key={module.config.name} />;
       return (
         <Tab.Screen
           key={module.config.routeName}
           name={computeTabRouteName(module.config.routeName)}
           options={createTabOptions(module.config)}
-          listeners={tabListeners}>
-          {moduleTabStackGetterCache[index]}
-        </Tab.Screen>
+          listeners={tabListeners}
+          component={ModuleStackComponent}
+        />
       );
     });
-    // We effectively want to have this deps to minimise re-renders
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appsJson]);
+  }, [modules]);
 
   // Avoid bug when launching app after first push
   const insets = useSafeAreaInsets();
@@ -241,13 +235,12 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
       },
       [insets.bottom],
     );
-  return React.useMemo(() => {
-    return (
-      <BottomSheetModalProvider>
-        <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>
-      </BottomSheetModalProvider>
-    );
-  }, [screenOptions, tabRoutes]);
+
+  return (
+    <BottomSheetModalProvider>
+      {tabRoutes.length > 0 ? <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator> : null}
+    </BottomSheetModalProvider>
+  );
 }
 
 //   .d8888b.  888                      888      888b    888                   d8b                   888
@@ -276,16 +269,12 @@ export enum MainRouteNames {
 export function useMainNavigation(sessionIfExists?: AuthActiveAccount) {
   const RootStack = getTypedRootStack();
   setUpModulesAccess(sessionIfExists);
-  const MainTabNavigator = useTabNavigator(sessionIfExists);
-  const renderMainTabNavigator = React.useCallback(() => {
-    return MainTabNavigator;
-  }, [MainTabNavigator]);
 
   return React.useMemo(() => {
     return (
       <RootStack.Group screenOptions={navBarOptions}>
-        <RootStack.Screen name={MainRouteNames.Tabs} component={renderMainTabNavigator} options={{ headerShown: false }} />
+        <RootStack.Screen name={MainRouteNames.Tabs} component={TabNavigation} options={{ headerShown: false }} />
       </RootStack.Group>
     );
-  }, [RootStack, renderMainTabNavigator]);
+  }, [RootStack]);
 }
