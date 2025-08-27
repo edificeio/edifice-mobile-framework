@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-26 14:50:41",
-  "notes": "fix(mails): coco-4040, fix value\nchore: update cache\nrelease: 1.15.0-comm.5(1150005)",
-  "version": "1.15.0-rc.1(1150006)"
+  "last": "2025-08-27 15:19:15",
+  "notes": "chore: remove unless line\nfix(editor): fix editor ref in rich editor form\nchore(mails): remove last conversation i18n\nchore: increase java heap size\nrelease: 1.15.0-rc.1(1150006)",
+  "version": "1.15.0-rc.2(1150007)"
 }
