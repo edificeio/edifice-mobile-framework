@@ -27,7 +27,7 @@ const renderRelatives = relatives => {
   if (isEmpty(relatives)) return '';
   return (
     <SmallText numberOfLines={1} ellipsizeMode="tail" style={styles.graphite}>
-      {I18n.get('conversation-newmail-communicationrelatives')} {relatives!.map(relative => relative.displayName).join(', ')}
+      {I18n.get('mails-edit-communicationrelatives')} {relatives!.map(relative => relative.displayName).join(', ')}
     </SmallText>
   );
 };
@@ -36,7 +36,7 @@ const renderChildren = children => {
   if (isEmpty(children)) return '';
   return (
     <SmallText numberOfLines={1} ellipsizeMode="tail" style={styles.graphite}>
-      {I18n.get('conversation-newmail-communicationchildren')} {children!.map(child => child.displayName).join(', ')}
+      {I18n.get('mails-edit-communicationchildren')} {children!.map(child => child.displayName).join(', ')}
     </SmallText>
   );
 };
