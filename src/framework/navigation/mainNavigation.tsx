@@ -23,7 +23,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
-import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
+import { getTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
@@ -200,8 +200,6 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
 
   // Avoid bug when launching app after first push
   const insets = useSafeAreaInsets();
-  const bottom = UI_SIZES.screen.bottomInset ?? insets?.bottom;
-
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(
       ({ navigation, route }) => {
@@ -234,8 +232,8 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
             borderTopColor: theme.palette.grey.cloudy,
             borderTopWidth: 1,
             elevation: 1,
-            height: UI_SIZES.elements.tabbarHeight + insets.bottom, // Avoid bug when launching app after first push
-            ...getAndroidTabBarStyleForNavState(navigation.getState()),
+            height: UI_SIZES.elements.tabbarHeight + insets.bottom,
+            ...getTabBarStyleForNavState(navigation.getState()),
           },
         };
       },
@@ -244,7 +242,9 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   return React.useMemo(() => {
     return (
       <BottomSheetModalProvider>
-        <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>
+        <Tab.Navigator id="tabs" screenOptions={screenOptions}>
+          {tabRoutes}
+        </Tab.Navigator>
       </BottomSheetModalProvider>
     );
   }, [screenOptions, tabRoutes]);

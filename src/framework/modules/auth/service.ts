@@ -122,6 +122,7 @@ export interface IUserInfoBackend {
   widgets?: IEntcoreWidget[];
   authorizedActions?: IAuthorizedAction[];
   firstName?: string;
+  functions?: { [key: string]: boolean };
   lastName?: string;
   uniqueId?: string;
   groupsIds?: string[];
@@ -273,6 +274,7 @@ export function formatSession(
     groups: userinfo.groupsIds,
     homePhone: userPrivateData?.homePhone,
     id: userinfo.userId,
+    isAdml: userinfo.functions?.ADMIN_LOCAL ? true : false,
     lastName: userinfo.lastName,
     login: userinfo.login,
     loginUsed,
@@ -366,7 +368,7 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
         password: credentials.password,
       }),
       headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Device-Id': uniqueId(),
       },
@@ -396,7 +398,7 @@ export async function ensureCredentialsMatchPwdRenewCode(platform: Platform, cre
         password: credentials.password,
       }),
       headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Device-Id': uniqueId(),
       },
@@ -710,7 +712,7 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
   const res = await fetch(`${platform.url}/auth/activation/no-login`, {
     body: formdata,
     headers: {
-      Accept: 'application/json',
+      'Accept': 'application/json',
       'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'multipart/form-data',
       'X-APP': 'mobile',

@@ -96,7 +96,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
             {
               action: () => showPrivacyAlert(() => imageViewerRef.current?.share?.()),
               icon: {
-                android: 'ic-menu-share',
+                android: 'ic_share',
                 ios: 'square.and.arrow.up',
               },
               title: I18n.get('carousel-share'),

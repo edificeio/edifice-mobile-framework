@@ -7,7 +7,7 @@ import { DocumentPicked, ImagePicked, MenuAction } from './types';
 
 import { LocalFile } from '~/framework/util/fileHandler';
 
-export const imagePickedToLocalFile = (img: ImagePicked) =>
+export const imagePickedToLocalFile = (img: ImagePicked | DocumentPicked) =>
   new LocalFile(
     {
       filename: img.fileName as string,
@@ -17,4 +17,4 @@ export const imagePickedToLocalFile = (img: ImagePicked) =>
     { _needIOSReleaseSecureAccess: false },
   );
 
-export { MenuAction, DocumentPicked, ImagePicked, cameraAction, deleteAction, documentAction, galleryAction, linkAction };
+export { cameraAction, deleteAction, documentAction, DocumentPicked, galleryAction, ImagePicked, linkAction, MenuAction };

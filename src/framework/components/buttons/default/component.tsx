@@ -21,7 +21,6 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     iconRight,
     loading,
     requireSession = true,
-    round,
     showConfirmation = true,
     style,
     testID,
@@ -59,15 +58,22 @@ export const DefaultButton = (props: DefaultButtonProps) => {
 
   const renderIcon = (iconName, position) => {
     if ((!iconName && !url) || (!!url && position === 'left')) return;
-    const iconStyle = position === 'right' ? styles.iconRight : styles.iconLeft;
     return (
       <Svg
         name={iconName ?? 'pictos-external-link'}
         width={BUTTON_ICON_SIZE}
         height={BUTTON_ICON_SIZE}
         fill={contentColor ?? theme.palette.grey.graphite}
-        style={!round ? iconStyle : null}
       />
+    );
+  };
+
+  const renderText = () => {
+    if (!text) return;
+    return (
+      <SmallBoldText numberOfLines={1} style={[styles.text, contentColorStyle]}>
+        {text}
+      </SmallBoldText>
     );
   };
 
@@ -95,6 +101,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
         styles.commonView,
         style,
         { ...(loading || loadingButton ? { height: layoutHeight, width: layoutWidth } : undefined) },
+        disabled ? styles.disabled : undefined,
       ]}
       {...(url || action ? { onPress: onPressAction } : undefined)}
       {...(loading || disabled ? { disabled: true } : {})}

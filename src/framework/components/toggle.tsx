@@ -1,23 +1,25 @@
 import * as React from 'react';
 import { Platform, Switch } from 'react-native';
 
-import theme from '~/app/theme';
+import theme, { IShades } from '~/app/theme';
 
 export interface IToggleProps {
   checked: boolean;
   onCheckChange: () => void;
+  color: IShades;
   disabled?: boolean;
 }
 
-export const Toggle = ({ checked, disabled, onCheckChange }: IToggleProps) => {
+export const Toggle = ({ checked, color, disabled, onCheckChange }: IToggleProps) => {
   const trackColorOn = Platform.select({
-    android: theme.palette.secondary[disabled ? 'light' : 'regular'],
-    ios: theme.palette.secondary.regular,
+    android: color[disabled ? 'light' : 'regular'],
+    ios: color.regular,
   });
   return (
     <Switch
       value={checked}
-      onValueChange={() => onCheckChange && onCheckChange()}
+      style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }], marginRight: -7 }}
+      onValueChange={onCheckChange}
       trackColor={{ true: trackColorOn }}
       thumbColor={theme.palette.grey.white}
       disabled={disabled}

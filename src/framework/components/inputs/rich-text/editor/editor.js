@@ -114,7 +114,7 @@ function createHTML(options = {}) {
     useContainer = true,
   } = options;
 
-  const placeholderColor = theme.palette.grey.stone;
+  const placeholderColor = theme.palette.grey.graphite;
 
   return `
 <!DOCTYPE html>
@@ -130,7 +130,7 @@ function createHTML(options = {}) {
         .content {font-family: Font;color: ${theme.palette.grey.black}; width: 100%;${
           !useContainer ? 'height:100%;' : ''
         }-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
- .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%;$font-size: 16px; line-height: 24px; overflow-x: hidden; max-width: 100%; margin-top: 12px;}
+ .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%; font-size: 16px; line-height: 24px; overflow-x: hidden; max-width: 100%; margin-top: 16px;}
         [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor}; font-style: italic}
         [placeholder]:empty:focus:before { content: attr(placeholder);color: ${placeholderColor};display:block;}
         .x-todo li {list-style:none;}
@@ -169,6 +169,7 @@ function createHTML(options = {}) {
         img {max-width: 100vw; max-height: 100vw; height: auto; width: auto; border-radius: ${UI_SIZES.radius.small}px; margin: ${UI_SIZES.spacing.tiny}px auto; display: flex;}
         ul, ol {list-style-position: outside; }
         li p {margin: 0; padding: 0;}
+        .conversation-history > div {margin-left: 10px; padding-left: 10px; border-left: 1px ridge #C7C7C7;}
     </style>
 </head>
 <body>
@@ -951,4 +952,3 @@ function createHTML(options = {}) {
 
 const HTML = createHTML();
 export { createHTML, HTML, initEditor };
-

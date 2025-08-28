@@ -34,12 +34,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: UI_SIZES.spacing.minor,
   },
-  choosePicsMenuSeparator: {
-    borderBottomColor: theme.palette.grey.cloudy,
-    borderBottomWidth: 1,
-    marginHorizontal: UI_SIZES.spacing.minor,
-    marginVertical: UI_SIZES.spacing.small,
-  },
   choosePicsMenuTitle: {
     alignSelf: 'flex-start',
     marginBottom: UI_SIZES.spacing.big,
@@ -56,8 +50,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexGrow: 1,
-    padding: UI_SIZES.spacing.medium,
-    paddingBottom: 0,
   },
   toolbar: { marginTop: -UI_SIZES.elements.editor.toolbarHeight },
 });

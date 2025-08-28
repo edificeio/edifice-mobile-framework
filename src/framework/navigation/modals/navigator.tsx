@@ -9,6 +9,9 @@ import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
 import AudienceReactionsScreen, { computeNavBar as audienceReactionsNavBar } from '~/framework/modules/audience/screens/reactions';
 import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/audience/screens/views';
+import AttachmentsImportScreen, {
+  computeNavBar as AttachmentsImportAddNavBar,
+} from '~/framework/modules/mails/components/attachments/modal-import';
 import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
@@ -38,6 +41,12 @@ export default (
         name={ModalsRouteNames.FileImport}
         options={FileAddNavBar}
         component={FileImportScreen}
+        initialParams={{}}
+      />
+      <RootStack.Screen
+        name={ModalsRouteNames.AttachmentsImport}
+        options={AttachmentsImportAddNavBar}
+        component={AttachmentsImportScreen}
         initialParams={{}}
       />
       <RootStack.Screen

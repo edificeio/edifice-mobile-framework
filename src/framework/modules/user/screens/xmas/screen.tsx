@@ -46,7 +46,7 @@ const XmasScreen = ({ onSetXmasMusic, onSetXmasTheme, xmasMusic, xmasTheme }: Us
       <SmallText>{I18n.get('user-xmas-description-temporary', { nextYear: getNextYear() })}</SmallText>
       <View style={styles.toggleContainer}>
         <BodyText>{I18n.get('user-xmas-activate-theme')}</BodyText>
-        <Toggle onCheckChange={() => onSetXmasTheme(!xmasTheme)} checked={xmasTheme} />
+        <Toggle onCheckChange={() => onSetXmasTheme(!xmasTheme)} checked={xmasTheme} color={theme.palette.secondary} />
       </View>
       <View style={styles.toggleContainer}>
         <BodyText style={!xmasTheme && { color: theme.palette.grey.grey }}>{I18n.get('user-xmas-activate-music')}</BodyText>

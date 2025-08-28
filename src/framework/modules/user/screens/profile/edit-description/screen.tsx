@@ -90,7 +90,7 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
 
   return (
     <PageComponent style={styles.page}>
-      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView bounces={false}>
         <InputContainer
           label={{ text: 'Description' }}
           input={

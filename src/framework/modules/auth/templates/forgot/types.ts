@@ -5,7 +5,7 @@ import { ForgotMode } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { Platform } from '~/framework/util/appConf';
 
-export interface ForgotScreenProps {}
+export interface ForgotScreenProps { }
 
 export type ForgotScreenStructure = {
   structureId: string;

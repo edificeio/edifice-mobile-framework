@@ -1,19 +1,26 @@
 import { ReactNode } from 'react';
+import { ScrollViewProps, ViewStyle } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { LocalFile } from '~/framework/util/fileHandler';
 
-export interface RichEditorFormProps {
+export interface RichEditorFormProps extends ScrollViewProps {
   initialContentHtml: string;
   topForm: ReactNode | ((onChange: () => void) => ReactNode);
+  bottomForm?: ReactNode;
   onChangeText: (html: string) => void;
   uploadParams: IWorkspaceUploadParams;
   preventBackI18n?: { title: string; text: string };
   saving?: boolean;
+  pageStyle?: ViewStyle;
+  editorStyle?: ViewStyle;
+  placeholder?: string;
+  editorRef?: React.Ref<RichEditor>;
 }
 
 export interface RichEditorFormReduxProps {
