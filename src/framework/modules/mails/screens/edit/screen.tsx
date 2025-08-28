@@ -21,6 +21,7 @@ import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import Attachments from '~/framework/modules/mails/components/attachments';
 import { MailsContactField, MailsSubjectField } from '~/framework/modules/mails/components/fields';
+import MailsHistoryButton from '~/framework/modules/mails/components/history-button';
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsDefaultFolders, MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
@@ -61,6 +62,8 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const [cc, setCc] = React.useState<MailsVisible[]>(initialMailInfo?.cc ?? []);
   const [cci, setCci] = React.useState<MailsVisible[]>(initialMailInfo?.cci ?? []);
   const [attachments, setAttachments] = React.useState<IDistantFileWithId[]>([]);
+  const [history, setHistory] = React.useState<string>('');
+  const [isHistoryOpen, setIsHistoryOpen] = React.useState<boolean>(false);
   const [moreRecipientsFields, setMoreRecipientsFields] = React.useState<boolean>(false);
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [draftIdSaved, setDraftIdSaved] = React.useState<string | undefined>(draftId ?? undefined);
@@ -146,13 +149,17 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       const toIds = to.map(recipient => recipient.id);
       const ccIds = cc.map(recipient => recipient.id);
       const cciIds = cci.map(recipient => recipient.id);
+      const bodyToSave = isHistoryOpen ? body : `${body}${history}`;
 
       if (draftIdSaved) {
-        await mailsService.mail.updateDraft({ draftId: draftIdSaved }, { body, cc: ccIds, cci: cciIds, subject, to: toIds });
+        await mailsService.mail.updateDraft(
+          { draftId: draftIdSaved },
+          { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
+        );
       } else {
         await mailsService.mail.sendToDraft(
           { inReplyTo: initialMailInfo?.id ?? undefined },
-          { body, cc: ccIds, cci: cciIds, subject, to: toIds },
+          { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
         );
       }
       props.navigation.navigate(mailsRouteNames.home, {
@@ -166,7 +173,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       toast.showError();
       setIsSending(false);
     }
-  }, [to, cc, cci, draftIdSaved, props.navigation, fromFolder, body, subject, initialMailInfo?.id]);
+  }, [to, cc, cci, isHistoryOpen, body, history, draftIdSaved, props.navigation, fromFolder, subject, initialMailInfo?.id]);
 
   const onSend = React.useCallback(async () => {
     try {
@@ -174,10 +181,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       const toIds = to.map(recipient => recipient.id);
       const ccIds = cc.map(recipient => recipient.id);
       const cciIds = cci.map(recipient => recipient.id);
+      const bodyToSave = isHistoryOpen ? body : `${body}${history}`;
 
       await mailsService.mail.send(
         { draftId: draftIdSaved, inReplyTo: initialMailInfo?.id ?? undefined },
-        { body, cc: ccIds, cci: cciIds, subject, to: toIds },
+        { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
       );
       props.navigation.navigate(mailsRouteNames.home, {
         from: fromFolder,
@@ -190,7 +198,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       toast.showError();
       setIsSending(false);
     }
-  }, [to, cc, cci, body, draftIdSaved, initialMailInfo?.id, subject, props.navigation, fromFolder]);
+  }, [to, cc, cci, isHistoryOpen, body, history, draftIdSaved, initialMailInfo?.id, subject, props.navigation, fromFolder]);
 
   const onCheckSend = React.useCallback(() => {
     if (!body || !subject) {
@@ -262,7 +270,10 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
 
         if (type === MailsEditType.REPLY) {
           const replyHtml = addHtmlReply(initialFrom, initialDate, initialTo, initialCc, initialBody);
-          applyContent(replyHtml);
+          const signatureHtml = `<br>${signature}`;
+          setHistory(replyHtml);
+          setInitialContentHTML(signatureHtml);
+          setBody(signatureHtml);
         } else if (type === MailsEditType.FORWARD) {
           const forwardHtml = addHtmlForward(initialFrom, initialDate, initialTo, initialCc, initialSubject, initialBody);
           applyContent(forwardHtml);
@@ -276,6 +287,12 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       console.error(e);
     }
   }, [draftId, initialMailInfo, type]);
+
+  const onOpenHistory = React.useCallback(() => {
+    setIsHistoryOpen(true);
+    setInitialContentHTML(`${body}${history}`);
+    setBody(prevBody => `${prevBody}${history}`);
+  }, [body, history]);
 
   const showPreventBack = React.useMemo(() => isSending !== true, [isSending]);
 
@@ -367,6 +384,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   const renderBottomForm = React.useCallback(
     () => (
       <View style={styles.bottomForm}>
+        {history !== '' && !isHistoryOpen ? <MailsHistoryButton content={history} onPress={onOpenHistory} /> : null}
         <Attachments
           isEditing
           attachments={attachments}
@@ -377,7 +395,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         <View style={{ minHeight: 600 }} />
       </View>
     ),
-    [attachments, draftIdSaved, onRemoveAttachment, onPressAddAttachments],
+    [history, isHistoryOpen, onOpenHistory, attachments, onRemoveAttachment, draftIdSaved, onPressAddAttachments],
   );
 
   const renderContent = React.useCallback(() => {

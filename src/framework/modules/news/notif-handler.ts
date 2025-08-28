@@ -20,7 +20,7 @@ import {
 
 export interface INewsNotification extends ITimelineNotification, IResourceUriNotification {}
 
-const handleSomeNotificationAction: NotifHandlerThunkAction<INewsNotification> =
+const handleNewsPostNotificationAction: NotifHandlerThunkAction<INewsNotification> =
   (notification, trackCategory, navigation) => async (dispatch, getState) => {
     try {
       const navAction = CommonActions.navigate({
@@ -43,12 +43,38 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<INewsNotification> =
     }
   };
 
+const handleNewsThreadNotificationAction: NotifHandlerThunkAction<INewsNotification> =
+  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+    try {
+      const navAction = CommonActions.navigate({
+        name: computeTabRouteName(timelineModuleConfig.routeName),
+        params: {
+          initial: false,
+          screen: newsRouteNames.home,
+        },
+      });
+
+      handleNotificationNavigationAction(navAction);
+
+      return {
+        managed: 1,
+        trackInfo: { action: 'News', name: `${notification.type}.${notification['event-type']}` },
+      };
+    } catch {
+      return { managed: 0 };
+    }
+  };
+
 export default () =>
   registerNotifHandlers([
     {
       'event-type': ['INFO-SHARED', 'NEWS-PUBLISHED', 'NEWS-COMMENT', 'NEWS-UPDATE'],
-      // Replace this with the backend notification event-type
-      notifHandlerAction: handleSomeNotificationAction,
-      type: 'NEWS',
+      'notifHandlerAction': handleNewsPostNotificationAction,
+      'type': 'NEWS',
+    },
+    {
+      'event-type': 'THREAD-SHARED',
+      'notifHandlerAction': handleNewsThreadNotificationAction,
+      'type': 'NEWS',
     },
   ]);

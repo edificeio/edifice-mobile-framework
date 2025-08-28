@@ -87,12 +87,12 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['PUBLISH-POST', 'SUBMIT-POST', 'PUBLISH-COMMENT'],
-      notifHandlerAction: handleBlogPostNotificationAction,
-      type: 'BLOG',
+      'notifHandlerAction': handleBlogPostNotificationAction,
+      'type': 'BLOG',
     },
     {
       'event-type': 'SHARE',
-      notifHandlerAction: handleBlogNotificationAction,
-      type: 'BLOG',
+      'notifHandlerAction': handleBlogNotificationAction,
+      'type': 'BLOG',
     },
   ]);
