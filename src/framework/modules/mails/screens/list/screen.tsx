@@ -105,6 +105,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           search: searchValue ?? '',
         });
         setMails(mailsData);
+        setIsLoading(false);
       } catch (e) {
         console.error(e);
       } finally {
