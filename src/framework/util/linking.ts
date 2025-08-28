@@ -38,17 +38,6 @@ export async function openUrl(
       throw new Error('openUrl : no url provided.');
     }
 
-    /*let finalUrl: string | undefined = url;
-    const session = getSession();
-
-    if (url.startsWith('https://app.test.votil.fr') && session) {
-      finalUrl = `${session.platform.url}/votil`;
-    }
-
-    finalUrl = urlSigner.getAbsoluteUrl(decode(finalUrl));
-
-    */
-
     let finalUrl = urlSigner.getAbsoluteUrl(decode(url));
 
     if (autoLogin) {
@@ -62,10 +51,12 @@ export async function openUrl(
             finalUrl = urlObj.href;
           }
         }
-      } catch {
-        // Do nothing. We just don't have customToken.
+      } catch(e: Error) {
+        console.debug('openUrl failed to retrieve customToken');
       }
     }
+
+    console.debug('finalUrl', finalUrl);
 
     if (showConfirmation) {
       Alert.alert(
