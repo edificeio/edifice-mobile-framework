@@ -4,9 +4,13 @@
  */
 import { Alert, Linking } from 'react-native';
 
+import { CommonActions } from '@react-navigation/native';
 import { decode } from 'html-entities';
 
 import { I18n } from '~/app/i18n';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { nabookRouteNames } from '~/framework/modules/nabook/navigation/';
+import { handleNotificationNavigationAction } from '~/framework/util/notifications/routing';
 import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 
 export interface OpenUrlCustomLabels {
@@ -36,6 +40,21 @@ export async function openUrl(
   try {
     if (!url) {
       throw new Error('openUrl : no url provided.');
+    }
+
+    const session = getSession();
+
+    console.debug('Platform URL:', session?.platform.url);
+    console.debug('Requested URL:', url);
+
+    // Special case for nabook: Do not redirect to responsive but open nabook module
+    try {
+      if (session && url.startsWith(session.platform.url) && url.endsWith('nabook')) {
+        handleNotificationNavigationAction(CommonActions.navigate({ name: nabookRouteNames.home }));
+        return;
+      }
+    } catch (error) {
+      console.error('Error navigating to nabook home:', error);
     }
 
     let finalUrl = urlSigner.getAbsoluteUrl(decode(url));
