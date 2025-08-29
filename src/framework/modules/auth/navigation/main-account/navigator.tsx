@@ -34,6 +34,14 @@ import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framewo
 import AuthWayfScreen, { computeNavBar as wayfNavBar } from '~/framework/modules/auth/screens/main-account/wayf';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
+import {
+  computeNavBar as debugNavBar,
+  detailedNavBar,
+  DetailedScreen,
+  logNavBar,
+  LogScreen,
+  NetworkScreen,
+} from '~/framework/modules/user/screens/debug';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
@@ -48,6 +56,9 @@ export default function () {
     <Stack.Group screenOptions={navBarOptions}>
       <Stack.Screen name={authRouteNames.onboarding} component={AuthOnboardingScreen} options={onboardingNavBar} />
       <Stack.Screen name={authRouteNames.platforms} component={AuthPlatformsScreen} options={platformsNavBar} />
+      <Stack.Screen name={authRouteNames.detailed} component={DetailedScreen} options={detailedNavBar} initialParams={{}} />
+      <Stack.Screen name={authRouteNames.log} component={LogScreen} options={logNavBar} initialParams={{}} />
+      <Stack.Screen name={authRouteNames.network} component={NetworkScreen} options={debugNavBar} initialParams={{}} />
       <Stack.Screen
         name={authRouteNames.loginCredentials}
         component={AuthLoginCredentialsScreen}

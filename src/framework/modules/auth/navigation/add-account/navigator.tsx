@@ -27,6 +27,14 @@ import AuthPlatformsAddAccountScreen, {
   computeNavBar as platformsAddAccountNavBar,
 } from '~/framework/modules/auth/screens/add-account/platforms';
 import AuthWayfAddAccountScreen, { computeNavBar as wayfNavBar } from '~/framework/modules/auth/screens/add-account/wayf';
+import {
+  computeNavBar as debugNavBar,
+  detailedNavBar,
+  DetailedScreen,
+  logNavBar,
+  LogScreen,
+  NetworkScreen,
+} from '~/framework/modules/user/screens/debug';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
@@ -37,6 +45,9 @@ const Stack = getTypedRootStack<AuthNavigationParams>();
 export default function () {
   return (
     <Stack.Group screenOptions={navBarOptions}>
+      <Stack.Screen name={authRouteNames.detailed} component={DetailedScreen} options={detailedNavBar} initialParams={{}} />
+      <Stack.Screen name={authRouteNames.log} component={LogScreen} options={logNavBar} initialParams={{}} />
+      <Stack.Screen name={authRouteNames.network} component={NetworkScreen} options={debugNavBar} initialParams={{}} />
       <Stack.Screen
         name={authRouteNames.addAccountOnboarding as typeof authRouteNames.onboarding}
         component={AuthOnboardingScreen}

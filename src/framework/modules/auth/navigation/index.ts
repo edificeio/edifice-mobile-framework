@@ -19,6 +19,7 @@ import type { ActivationScreenNavParams } from '~/framework/modules/auth/templat
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import type { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
+import { DetailedScreenNavParams, LogScreenNavParams, NetworkScreenNavParams } from '~/framework/modules/user/screens/debug/';
 import type { StackNavigationAction } from '~/framework/navigation/types';
 import type { Platform } from '~/framework/util/appConf';
 
@@ -59,9 +60,13 @@ export const authRouteNames = {
 
   changePasswordModal: `${moduleConfig.name}/changePasswordModal` as 'changePasswordModal',
 
+  detailed: `${moduleConfig.name}/debug/log/detailed` as 'detailed',
+
   discoveryClass: `${moduleConfig.name}/discovery-class` as 'discoveryClass',
 
   forgot: `${moduleConfig.name}/forgot` as 'forgot',
+
+  log: `${moduleConfig.name}/debug/log/detailed/debug/log` as 'log',
 
   loginCredentials: `${moduleConfig.name}/login/credentials` as 'loginCredentials',
 
@@ -72,6 +77,8 @@ export const authRouteNames = {
   mfa: `${moduleConfig.name}/mfa` as 'mfa',
 
   mfaModal: `${moduleConfig.name}/mfaModal` as 'mfaModal',
+
+  network: `${moduleConfig.name}/debug/network` as 'network',
 
   // Login stack (normal version)
   onboarding: `${moduleConfig.name}/onboarding` as 'onboarding',
@@ -119,6 +126,10 @@ export interface AuthNavigationParams extends ParamListBase {
   mfa: AuthMFAScreenNavParams;
   mfaModal: AuthMFAScreenNavParams;
   discoveryClass: AuthDiscoveryClassScreenNavParams;
+  // Debug screens
+  detailed: DetailedScreenNavParams;
+  log: LogScreenNavParams;
+  network: NetworkScreenNavParams;
 }
 
 /**

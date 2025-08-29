@@ -19,7 +19,9 @@ export interface LogScreenStoreProps {}
 
 export interface LogScreenDispatchProps {}
 
-export interface LogScreenNavParams {}
+export interface LogScreenNavParams {
+  detailsRoute?: string;
+}
 
 export interface LogScreenPrivateProps
   extends NativeStackScreenProps<UserNavigationParams, 'log'>,

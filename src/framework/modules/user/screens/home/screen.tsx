@@ -599,7 +599,7 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
                     title="Debug Log"
                     icon="ui-print"
                     onPress={() => {
-                      navigation.navigate(userRouteNames.log, {});
+                      navigation.navigate(userRouteNames.log, { detailsRoute: userRouteNames.detailed });
                     }}
                   />
                 </ButtonLineGroup>

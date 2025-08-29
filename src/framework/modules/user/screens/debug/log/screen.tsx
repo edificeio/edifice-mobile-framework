@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ColorValue, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ReactJSXElement } from 'node_modules/@emotion/react/dist/declarations/types/jsx-namespace';
 import RNFS from 'react-native-fs';
@@ -88,9 +88,12 @@ export const getSeverityColor = (severity: string): ColorValue => {
 const LogCard = ({ item }): ReactJSXElement => {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const { message, severity, time } = item;
+  const route = useRoute<any>();
 
   return (
-    <TouchableOpacity style={styles.logContainer} onPress={() => navigation.navigate(userRouteNames.detailed, { logData: item })}>
+    <TouchableOpacity
+      style={styles.logContainer}
+      onPress={() => navigation.navigate(route?.params?.detailsRoute ?? userRouteNames.detailed, { logData: item })}>
       {time && severity ? (
         <View style={styles.logTimeAndSeverityContainer}>
           <BodyText style={[styles.logSeverity, { color: getSeverityColor(severity) }]}>{severity}</BodyText>
