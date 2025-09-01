@@ -121,6 +121,7 @@ export interface AuthNavigationParams extends ParamListBase {
   discoveryClass: AuthDiscoveryClassScreenNavParams;
 }
 
+
 /**
  * Simulate a nav action from the given nav state and returns the resulting nav state
  * @param action the nav action to simulate

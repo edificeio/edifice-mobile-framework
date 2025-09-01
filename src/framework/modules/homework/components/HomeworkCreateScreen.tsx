@@ -225,7 +225,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
             />
             <InputContainer
               style={styles.inputContainer}
-              label={{ icon: 'ui-textPage', text: I18n.get('homework-create-description-title') }}
+              label={{ icon: 'ui-text-page', text: I18n.get('homework-create-description-title') }}
               input={
                 <MultilineTextInput
                   ref={descriptionFieldRef}

@@ -13,14 +13,17 @@ import { AttachmentsImportScreenProps } from '~/framework/modules/mails/componen
 import { SplashadsScreenNavParams } from '~/framework/modules/splashads/screen/types';
 
 export enum ModalsRouteNames {
-  Pdf = 'pdf',
-  Carousel = 'carousel',
-  MediaPlayer = 'media-player',
-  RichTextEditor = 'rich-editor',
+  AttachmentsImport = 'attachments-import',
   AudienceReactions = 'audience-reactions',
   AudienceViews = 'audience-views',
+  Carousel = 'carousel',
   FileImport = 'file-import',
-  AttachmentsImport = 'attachments-import',
+  Infos = 'infos',
+  Log = 'log',
+  MediaPlayer = 'media-player',
+  Network = 'network',
+  Pdf = 'pdf',
+  RichTextEditor = 'rich-editor',
   SplashAds = 'splashads',
 }
 
