@@ -9,6 +9,7 @@
         <domain includeSubdomains="true">extranet.ac-guyane.fr</domain>
         <domain includeSubdomains="true">extranet.ac-reims.fr</domain>
         <domain includeSubdomains="true">moncompte.ac-nantes.fr</domain>
+        <domain includeSubdomains="true">appli.ac-versailles.fr</domain>
     </domain-config>
     <domain-config>
         <domain includeSubdomains="false">ent-ecoles.ac-reims.fr</domain>
@@ -46,7 +47,7 @@
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
     </domain-config>
-    <domain-config>
+    <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">appli.ac-aix-marseille.fr</domain>
         <trust-anchors>
             <certificates src="@raw/harica_ca"/>
