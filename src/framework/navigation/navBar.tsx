@@ -15,6 +15,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 
+const NAVBAR_BUTTON_WIDTH = UI_SIZES.elements.navbarIconSize + 2 * UI_SIZES.spacing.tiny;
+
 const styles = StyleSheet.create({
   backbutton: {
     marginHorizontal: 0,
@@ -24,23 +26,38 @@ const styles = StyleSheet.create({
     color: theme.ui.text.inverse,
     textAlign: 'center',
   },
-  navBarTitleStyleAndroid: {
-    width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin,
-  },
 });
 
-export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) =>
-  Platform.select({
+export const navBarTitle = (
+  title?: string,
+  style?: TextStyle,
+  testID?: string,
+  nbButtonsLeft?: number,
+  nbButtonsRight?: number,
+) => {
+  const maxNbButtons = Math.max(nbButtonsLeft ?? 1, nbButtonsRight ?? 1);
+  return Platform.select({
     android: () => (
       <BodyBoldText
         numberOfLines={1}
-        style={[styles.navBarTitleStyle, styles.navBarTitleStyleAndroid, style ?? {}]}
+        style={[
+          styles.navBarTitleStyle,
+          {
+            width:
+              UI_SIZES.screen.width -
+              2 * UI_SIZES.elements.navbarMargin -
+              maxNbButtons * 2 * NAVBAR_BUTTON_WIDTH -
+              (maxNbButtons - 1) * UI_SIZES.spacing.tiny,
+          },
+          style ?? {},
+        ]}
         testID={testID}>
         {title ?? ''}
       </BodyBoldText>
     ),
     default: title,
   });
+};
 
 export const navBarOptions: (props: {
   route: RouteProp<ParamListBase, string>;

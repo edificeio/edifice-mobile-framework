@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { connect } from 'react-redux';
@@ -9,23 +10,23 @@ import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
-import DefaultButton from '~/framework/components/buttons/default';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import ActionButtonBottomSheetModal from '~/framework/components/modals/bottom-sheet/action-button';
+import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import { PageView } from '~/framework/components/page';
-import { Svg } from '~/framework/components/picture';
-import { BodyText } from '~/framework/components/text';
+import Separator from '~/framework/components/separator';
 import usePreventBack from '~/framework/hooks/prevent-back';
+import { useSyncRef } from '~/framework/hooks/ref';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
-const RichEditorForm = (props: RichEditorFormAllProps) => {
+const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
   const headerHeight = useHeaderHeight();
 
   const navigation = useNavigation();
@@ -198,32 +199,10 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   const choosePicsMenu = () => {
     return (
       <BottomSheetModal ref={choosePicsMenuRef} onDismiss={handleChoosePicsMenuDismissed}>
-        <DefaultButton
-          iconLeft="ui-image"
-          text={I18n.get('pickfile-image')}
-          contentColor={theme.palette.complementary.green.regular}
-          disabled
-          style={styles.choosePicsMenuTitle}
-        />
-        <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleTakePic}>
-          <Svg
-            height={UI_SIZES.elements.icon.default}
-            width={UI_SIZES.elements.icon.default}
-            name="ui-camera"
-            fill={theme.palette.grey.black}
-          />
-          <BodyText>{I18n.get('pickfile-take')}</BodyText>
-        </TouchableOpacity>
-        <View style={styles.choosePicsMenuSeparator} />
-        <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleChoosePics}>
-          <Svg
-            height={UI_SIZES.elements.icon.default}
-            width={UI_SIZES.elements.icon.default}
-            name="ui-smartphone"
-            fill={theme.palette.grey.black}
-          />
-          <BodyText>{I18n.get('pickfile-pick')}</BodyText>
-        </TouchableOpacity>
+        <HeaderBottomSheetModal title={I18n.get('pickfile-image')} />
+        <ActionButtonBottomSheetModal title={I18n.get('pickfile-take')} icon="ui-camera" onPress={handleTakePic} />
+        <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.minor} />
+        <ActionButtonBottomSheetModal title={I18n.get('pickfile-pick')} icon="ui-smartphone" onPress={handleChoosePics} />
       </BottomSheetModal>
     );
   };
@@ -264,6 +243,8 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   //
 
   const scrollRef = React.useRef<ScrollView>(null);
+  const scrollSyncRef = useSyncRef(ref, scrollRef);
+  const editorSyncRef = props.editorRef ? useSyncRef(props.editorRef, richText) : richText;
 
   const handleBlur = React.useCallback(() => {
     animateToolbar({ opacity: 0, ypos: 2 * UI_SIZES.elements.editor.toolbarHeight });
@@ -295,7 +276,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     title: I18n.get(props.preventBackI18n?.title ?? 'richeditor-generic-alert-title'),
   });
 
-  const { topForm } = props;
+  const { bottomForm, topForm } = props;
 
   const realTopForm = React.useMemo(
     () =>
@@ -304,49 +285,58 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   );
 
   return (
-    <PageView style={styles.page}>
-      <KeyboardAvoidingView
-        keyboardVerticalOffset={headerHeight}
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView
-          keyboardDismissMode="none"
-          nestedScrollEnabled
-          ref={scrollRef}
-          scrollEventThrottle={20}
-          alwaysBounceVertical={false}
-          bounces
-          style={styles.scrollView}>
-          {realTopForm}
-          <RichEditor
-            disabled={false}
-            enterKeyHint="enter"
-            editorStyle={styles.container}
-            firstFocusEnd={false}
-            initialContentHTML={props.initialContentHtml ?? ''}
-            initialFocus={false}
-            pasteAsPlainText
-            placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
-            ref={richText}
-            style={styles.richEditor}
-            useContainer
-            useComposition={false}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            onCursorPosition={handleCursorPosition}
-            onFocus={handleFocus}
-            autoCorrect
-            autoCapitalize
-            oneSessionId={props.oneSessionId}
-          />
-        </ScrollView>
-        {isFocused ? toolbar() : null}
-        {choosePicsMenu()}
-      </KeyboardAvoidingView>
-    </PageView>
+    <BottomSheetModalProvider>
+      <PageView style={styles.page}>
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={headerHeight}
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <ScrollView
+            keyboardDismissMode="none"
+            keyboardShouldPersistTaps="always"
+            ref={scrollSyncRef}
+            scrollEventThrottle={20}
+            alwaysBounceVertical={false}
+            bounces
+            style={[styles.scrollView, props.pageStyle]}
+            {...props}>
+            {realTopForm}
+            <RichEditor
+              disabled={false}
+              enterKeyHint="enter"
+              editorStyle={styles.container}
+              firstFocusEnd={false}
+              initialContentHTML={props.initialContentHtml ?? ''}
+              initialFocus={false}
+              pasteAsPlainText
+              placeholder={props.placeholder ?? ''}
+              ref={editorSyncRef}
+              style={[styles.richEditor, props.editorStyle]}
+              useContainer
+              useComposition={false}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onCursorPosition={handleCursorPosition}
+              onFocus={handleFocus}
+              autoCorrect
+              autoCapitalize
+              oneSessionId={props.oneSessionId}
+            />
+            {bottomForm}
+          </ScrollView>
+          {isFocused ? toolbar() : null}
+          {choosePicsMenu()}
+        </KeyboardAvoidingView>
+      </PageView>
+    </BottomSheetModalProvider>
   );
-};
+});
 
-export default connect(state => ({
-  oneSessionId: authSelectors.oneSessionId(state),
-}))(RichEditorForm);
+export default connect(
+  state => ({
+    oneSessionId: authSelectors.oneSessionId(state),
+  }),
+  null,
+  null,
+  { forwardRef: true },
+)(RichEditorForm);

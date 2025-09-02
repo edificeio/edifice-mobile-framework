@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.14.4",
+  "version": "1.15.0",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -78,6 +78,7 @@
     "@react-native-camera-roll/camera-roll": "7.9.0",
     "@react-native-clipboard/clipboard": "1.15.0",
     "@react-native-community/datetimepicker": "8.2.0",
+    "@react-native-community/eslint-config": "3.2.0",
     "@react-native-community/netinfo": "11.4.1",
     "@react-native-community/progress-bar-android": "1.0.5",
     "@react-native-community/push-notification-ios": "1.11.0",
@@ -115,6 +116,7 @@
     "i18next": "23.16.8",
     "i18next-chained-backend": "4.6.2",
     "i18next-resources-to-backend": "1.2.1",
+    "lodash.debounce": "4.0.8",
     "lottie-ios": "4.5.0",
     "lottie-react-native": "7.1.0",
     "metro-config": "0.81.0",

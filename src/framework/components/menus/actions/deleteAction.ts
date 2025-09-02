@@ -10,6 +10,6 @@ export default function deleteAction(props: MenuActionProps) {
       android: 'ic_delete_item',
       ios: 'trash',
     },
-    title: I18n.get('common-delete'),
+    title: props.title ?? I18n.get('common-delete'),
   };
 }

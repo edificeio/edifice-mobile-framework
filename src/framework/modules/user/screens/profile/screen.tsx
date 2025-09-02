@@ -28,7 +28,8 @@ import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import { conversationRouteNames } from '~/framework/modules/conversation/navigation';
+import { MailsVisibleType } from '~/framework/modules/mails/model';
+import { mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
 import UserCard from '~/framework/modules/user/components/user-card';
@@ -173,37 +174,44 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const onNewMessage = () => {
-    const user = [{ displayName: userInfo?.displayName, id: userInfo?.id }];
+    const user = [{ displayName: userInfo?.displayName, id: userInfo?.id, profile: userInfo?.type, type: MailsVisibleType.USER }];
     if (userInfo?.type === AccountType.Student && !isEmpty(family) && session?.user.type !== AccountType.Student) {
       const familyUser: any = [];
-      family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
+      family?.forEach(item =>
+        familyUser.push({
+          displayName: item.relatedName,
+          id: item.relatedId,
+          profile: AccountType.Relative,
+          type: MailsVisibleType.USER,
+        }),
+      );
       showBottomMenu([
         {
           action: () =>
-            navigation.navigate(conversationRouteNames.newMail, {
-              toUsers: user,
+            navigation.navigate(mailsRouteNames.edit, {
+              initialMailInfo: user,
             }),
           title: I18n.get('user-profile-sendMessage-student'),
         },
         {
           action: () =>
-            navigation.navigate(conversationRouteNames.newMail, {
-              toUsers: familyUser,
+            navigation.navigate(mailsRouteNames.edit, {
+              initialMailInfo: familyUser,
             }),
           title: I18n.get('user-profile-sendMessage-relatives'),
         },
         {
           action: () =>
-            navigation.navigate(conversationRouteNames.newMail, {
-              toUsers: user.concat(familyUser),
+            navigation.navigate(mailsRouteNames.edit, {
+              initialMailInfo: user.concat(familyUser),
             }),
           title: I18n.get('user-profile-sendMessage-relatives&student'),
         },
       ]);
       return;
     }
-    return navigation.navigate(conversationRouteNames.newMail, {
-      toUsers: user,
+    return navigation.navigate(mailsRouteNames.edit, {
+      initialMailInfo: { to: user },
     });
   };
 

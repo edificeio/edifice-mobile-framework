@@ -9,7 +9,7 @@ import {
   loadModules,
   ModuleArray,
   NavigableModule,
-  NavigableModuleArray,
+  NavigableModuleArray
 } from '~/framework/util/moduleTool';
 
 // We first imports all modules and their code hierarchy. Registrations are executed,
