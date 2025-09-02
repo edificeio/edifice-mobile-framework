@@ -166,7 +166,10 @@ export const mailsService = {
       const api = queryString ? `${baseUrl}?${queryString}` : baseUrl;
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
-      await http.fetchJsonForSession('POST', api, { body: bodyJson });
+      // await http.fetchJsonForSession('POST', api, { body: bodyJson });
+      const response = await http.fetchJsonForSession('POST', api, { body: bodyJson });
+
+      return response;
     },
     sendToDraft: async (
       params: { inReplyTo?: string },
