@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Keyboard } from 'react-native';
+import { Alert, Keyboard, ScrollView } from 'react-native';
 
 import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
@@ -7,6 +7,8 @@ import moment from 'moment';
 import { MailsEditType } from './types';
 
 import { I18n } from '~/app/i18n';
+import { RichEditor } from '~/framework/components/inputs/rich-text';
+import { deleteAction } from '~/framework/components/menus/actions';
 import toast from '~/framework/components/toast';
 import { AccountType } from '~/framework/modules/auth/model';
 import { MailsDefaultFolders, MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
@@ -50,20 +52,30 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   const [inputFocused, setInputFocused] = React.useState<MailsRecipientsType | null>(null);
   const [isStartScroll, setIsStartScroll] = React.useState<boolean>(false);
   const [scrollEnabled, setScrollEnabled] = React.useState<boolean>(true);
+
   const [inactiveUserModalVisible, setInactiveUsersModalVisible] = React.useState<boolean>(false);
   const [inactiveUsersList, setInactiveUsersList] = React.useState<Array<string>>([]);
+  const [hasBeenSent, setHasBeenSent] = React.useState<boolean>(false);
 
   // Refs
-  const scrollViewRef = React.useRef<any>(null);
-  const editorRef = React.useRef<any>(null);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  const editorRef = React.useRef<RichEditor>(null);
 
-  // Computed values
+  // computed Vals
   const haveInitialCcCci = React.useMemo(
     () => (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0),
     [initialMailInfo],
   );
 
-  const showPreventBack = React.useMemo(() => isSending !== true, [isSending]);
+  const showPreventBack = React.useMemo(() => !isSending && !hasBeenSent, [isSending, hasBeenSent]);
+
+  const shouldSaveDraft = React.useMemo(() => {
+    const hasMainRecipient = to.length > 0;
+    const hasContent = Boolean(body.trim() || subject.trim() || attachments.length > 0);
+    const hasOptionalRecipients = cc.length > 0 || cci.length > 0;
+
+    return hasMainRecipient || hasContent || hasOptionalRecipients;
+  }, [to, cc, cci, body, subject, attachments]);
 
   // Callbacks
   const handleCloseInactiveUserModal = React.useCallback(() => {
@@ -138,14 +150,16 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         onPress: async () => {
           try {
             setIsSending(true);
-            if (!draftIdSaved) {
+            if (!draftIdSaved)
               return navigation.navigate(mailsRouteNames.home, {
                 from: fromFolder,
               });
-            }
 
             await mailsService.mail.moveToTrash({ ids: [draftIdSaved] });
-            handleNavigateToDrafts();
+            navigation.navigate(mailsRouteNames.home, {
+              from: fromFolder,
+              reload: fromFolder === MailsDefaultFolders.DRAFTS,
+            });
             toast.showSuccess(I18n.get('mails-edit-toastsuccessdeletedraft'));
             setIsSending(false);
           } catch (e) {
@@ -158,13 +172,11 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         text: I18n.get('common-delete'),
       },
     ]);
-  }, [draftIdSaved, fromFolder, navigation, handleNavigateToDrafts]);
+  }, [draftIdSaved, fromFolder, navigation]);
 
   const onSendDraft = React.useCallback(async () => {
     try {
       setIsSending(true);
-      await createDraftIfNecessary();
-
       const toIds = to.map(recipient => recipient.id);
       const ccIds = cc.map(recipient => recipient.id);
       const cciIds = cci.map(recipient => recipient.id);
@@ -181,7 +193,10 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
           { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
         );
       }
-      handleNavigateToDrafts();
+      navigation.navigate(mailsRouteNames.home, {
+        from: fromFolder,
+        reload: fromFolder === MailsDefaultFolders.DRAFTS,
+      });
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
       setIsSending(false);
     } catch (e) {
@@ -189,19 +204,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       toast.showError();
       setIsSending(false);
     }
-  }, [
-    createDraftIfNecessary,
-    to,
-    cc,
-    cci,
-    isHistoryOpen,
-    body,
-    history,
-    draftIdSaved,
-    handleNavigateToDrafts,
-    subject,
-    initialMailInfo?.id,
-  ]);
+  }, [to, cc, cci, isHistoryOpen, body, history, draftIdSaved, fromFolder, subject, initialMailInfo?.id, navigation]);
 
   const onSend = React.useCallback(async () => {
     try {
@@ -237,6 +240,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         handleCloseInactiveUserModal();
       }
 
+      setHasBeenSent(true);
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
       setIsSending(false);
     } catch (e) {
@@ -268,39 +272,6 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     }
   }, [body, subject, onSend]);
 
-  const onOpenHistory = React.useCallback(() => {
-    setIsHistoryOpen(true);
-    setInitialContentHTML(`${body}${history}`);
-    setBody(prevBody => `${prevBody}${history}`);
-  }, [body, history]);
-
-  const onScrollBeginDrag = React.useCallback(() => {
-    setIsStartScroll(true);
-    setTimeout(() => setIsStartScroll(false), 1000);
-  }, []);
-
-  const onToggleShowList = React.useCallback((showList: boolean) => {
-    setScrollEnabled(!showList);
-  }, []);
-
-  const onFocus = React.useCallback((recipianType: MailsRecipientsType | null) => {
-    setInputFocused(recipianType);
-  }, []);
-
-  const onChangeText = React.useCallback((value: string) => {
-    setBody(value);
-  }, []);
-
-  const onChangeSubject = React.useCallback((text: string) => {
-    setSubject(text);
-  }, []);
-
-  const onCloseInactiveUserModal = React.useCallback(() => {
-    setInactiveUsersModalVisible(false);
-    handleCloseInactiveUserModal();
-  }, [handleCloseInactiveUserModal]);
-
-  // Load data
   const loadData = React.useCallback(async () => {
     try {
       if (draftId && type !== MailsEditType.FORWARD) {
@@ -323,10 +294,32 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
           const draft = await mailsService.mail.get({ id: draftId });
           const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftId));
           setAttachments(convertedAttachments);
+        } else {
+          const newDraftId = await mailsService.mail.sendToDraft(
+            { inReplyTo: initialMailInfo?.id ?? undefined },
+            { body: '', cc: [], cci: [], subject: '', to: [] },
+          );
+          setDraftIdSaved(newDraftId);
         }
 
         const signatureData = await mailsService.signature.get();
-        const { signature, useSignature } = signatureData ? signatureData : { signature: '', useSignature: false };
+        let signature = '';
+        let useSignature = false;
+
+        if (signatureData) {
+          try {
+            if (typeof signatureData === 'string') {
+              const parsed = JSON.parse(signatureData);
+              signature = parsed.signature || '';
+              useSignature = parsed.useSignature || false;
+            } else {
+              signature = signatureData.signature || '';
+              useSignature = signatureData.useSignature || false;
+            }
+          } catch (e) {
+            console.error('Error parsing signature:', e);
+          }
+        }
 
         const initialDate = moment(initialMailInfo?.date);
         const initialFrom = initialMailInfo?.from ?? { displayName: '', id: '', profile: AccountType.Guest };
@@ -361,7 +354,53 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     }
   }, [draftId, initialMailInfo, type]);
 
-  // Handle attachments from route params
+  const onOpenHistory = React.useCallback(() => {
+    setIsHistoryOpen(true);
+    setInitialContentHTML(`${body}${history}`);
+    setBody(prevBody => `${prevBody}${history}`);
+  }, [body, history]);
+
+  const onScrollBeginDrag = React.useCallback(() => {
+    setIsStartScroll(true);
+    setTimeout(() => setIsStartScroll(false), 1000);
+  }, []);
+
+  const onToggleShowList = React.useCallback((showList: boolean) => {
+    setScrollEnabled(!showList);
+  }, []);
+
+  const onFocus = React.useCallback((recipianType: MailsRecipientsType | null) => {
+    setInputFocused(recipianType);
+  }, []);
+
+  const onChangeText = React.useCallback((value: string) => {
+    setBody(value);
+  }, []);
+
+  const onChangeSubject = React.useCallback((text: string) => {
+    setSubject(text);
+  }, []);
+
+  const onCloseInactiveUserModal = React.useCallback(() => {
+    setInactiveUsersModalVisible(false);
+    handleCloseInactiveUserModal();
+  }, [handleCloseInactiveUserModal]);
+
+  const popupActionsMenu = React.useMemo(
+    () => [
+      {
+        action: onSendDraft,
+        icon: {
+          android: 'ic_pencil',
+          ios: 'pencil.and.list.clipboard',
+        },
+        title: I18n.get('mails-edit-savedraft'),
+      },
+      deleteAction({ action: onDeleteDraft, title: I18n.get('mails-edit-deletedraft') }),
+    ],
+    [onDeleteDraft, onSendDraft],
+  );
+
   React.useEffect(() => {
     const importAttachmentsResult = route.params?.importAttachmentsResult;
     if (importAttachmentsResult && importAttachmentsResult.length > 0) {
@@ -371,68 +410,38 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   }, [route.params?.importAttachmentsResult, navigation]);
 
   return {
-    // Actions
     actions: {
-      // Draft actions
       createDraftIfNecessary,
-
       handleCloseInactiveUserModal,
-
-      // Navigation actions
       handleNavigateToDrafts,
-
-      // Data loading
       loadData,
-
-      // Recipients actions
       onChangeRecipient,
-
       onChangeSubject,
-
-      // Content actions
       onChangeText,
-
       onCheckSend,
-
-      // Modal actions
       onCloseInactiveUserModal,
-
       onDeleteDraft,
-
       onFocus,
-
       onOpenHistory,
-
-      // Attachments actions
       onPressAddAttachments,
-
       onRemoveAttachment,
-
-      // Scroll actions
       onScrollBeginDrag,
-
       onSend,
-
       onSendDraft,
-
       onToggleShowList,
-
       openMoreRecipientsFields,
+      setInactiveUsersModalVisible,
     },
-
-    // Computed values
     computed: {
       haveInitialCcCci,
+      popupActionsMenu,
+      shouldSaveDraft,
       showPreventBack,
     },
-
-    // Refs
     refs: {
       editorRef,
       scrollViewRef,
     },
-
-    // States
     state: {
       attachments,
       body,
@@ -447,6 +456,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       isHistoryOpen,
       isSending,
       isStartScroll,
+      mailSubjectType: type,
       moreRecipientsFields,
       scrollEnabled,
       subject,
