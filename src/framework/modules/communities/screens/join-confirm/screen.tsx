@@ -137,13 +137,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
             <Svg name="ui-notes" fill={styles.welcomeNoteTitle.color} />
             <HeadingXSText style={styles.welcomeNoteTitle}>{I18n.get('community-welcome-note')}</HeadingXSText>
           </View>
-          <BodyText>
-            {data.community?.welcomeNote}lk engl kednflk elkesdlk dflk goeirjgfoier ghieruhgoierh goier jgoerj okerjgh oierhgoiehro
-            giher oigero ijheroih ge roihg oie goiheroig eroigh oiergh oiergh oiergh oeirgh eorig eroig heoirg eorig heroig eorig
-            eorig oerihg oeirhg oerigh oerigh eorigh oerigh oerigh geroi goei engl kednflk elkesdlk dflk goeirjgfoier ghieruhgoierh
-            goier jgoerj okerjgh oierhgoiehro giher oigero ijheroih ge roihg oie goiheroig eroigh oiergh oiergh oiergh oeirgh eorig
-            eroig heoirg eorig heroig eorig eorig oerihg oeirhg oerigh oerigh eorigh oerigh oerigh geroi goei
-          </BodyText>
+          <BodyText>{data.community?.welcomeNote}</BodyText>
         </View>
         <PrimaryButton text={I18n.get('community-invitation-validate')} action={onValidate} />
         <TertiaryButton text={I18n.get('community-invitation-skip')} action={navigation.goBack} />

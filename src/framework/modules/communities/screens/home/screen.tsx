@@ -1,33 +1,34 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { CommunityClient, MembershipClient } from '@edifice.io/community-client-rest-rn';
+import { CommunityClient, InvitationResponseDto, MembershipClient } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
-import moduleConfig from '../../module-config';
 import { communitiesActions, communitiesSelectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { AvatarStack } from '~/framework/components/avatar/stack';
-import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
-import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import { LOADING_ITEM_DATA } from '~/framework/components/list/paginated-list';
+import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
 import Pill from '~/framework/components/pill';
 import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import CommunityWelcomeBottomSheetModal from '~/framework/modules/communities/components/community-welcome-bottomsheet';
 import {
   communityNavBar,
   default as useCommunityScrollableThumbnail,
 } from '~/framework/modules/communities/hooks/use-community-navbar';
+import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { accountApi } from '~/framework/util/http';
 
@@ -41,7 +42,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   navigation,
   refreshControl,
   route: {
-    params: { communityId, showWelcome = false },
+    params: { communityId, invitationId, showWelcome = false },
   },
   title,
   totalMembers,
@@ -140,8 +141,12 @@ export const CommunitiesHomeScreenLoaded = function ({
 
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   React.useEffect(() => {
-    (showWelcome ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
-  }, [showWelcome]);
+    (showWelcome && invitationId !== undefined ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
+  }, [showWelcome, invitationId]);
+
+  const invitation = useSelector(communitiesSelectors.getAllCommunities).find(
+    item => item !== LOADING_ITEM_DATA && item.id === invitationId,
+  ) as InvitationResponseDto | undefined;
 
   return (
     <>
@@ -150,9 +155,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         {scrollElements}
         {pageContent}
       </ScrollView>
-      <CustomBottomSheetModal ref={bottomSheetModalRef}>
-        <PrimaryButton text="Show community" action={bottomSheetModalRef.current?.dismiss} />
-      </CustomBottomSheetModal>
+      {invitation?.role && <CommunityWelcomeBottomSheetModal role={invitation?.role} title={title} ref={bottomSheetModalRef} />}
     </>
   );
 };

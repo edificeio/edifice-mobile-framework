@@ -193,7 +193,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
           membersCount={item.communityStats?.totalMembers}
           onPress={() => {
             if (item.status === InvitationStatus.ACCEPTED || item.status === InvitationStatus.REQUEST_ACCEPTED) {
-              navigation.navigate(communitiesRouteNames.home, { communityId: item.communityId });
+              navigation.navigate(communitiesRouteNames.home, { communityId: item.communityId, invitationId: item.id });
             } else {
               navigation.navigate(communitiesRouteNames.joinConfirm, { communityId: item.communityId, invitationId: item.id });
             }
