@@ -44,10 +44,6 @@ export async function openUrl(
 
     const session = getSession();
 
-    console.debug('Platform URL:', session?.platform.url);
-    console.debug('Requested URL:', url);
-
-    // Special case for nabook: Do not redirect to responsive but open nabook module
     try {
       if (session && url.startsWith(session.platform.url) && url.endsWith('nabook')) {
         handleNotificationNavigationAction(CommonActions.navigate({ name: nabookRouteNames.home }));
@@ -70,10 +66,12 @@ export async function openUrl(
             finalUrl = urlObj.href;
           }
         }
-      } catch {
-        // Do nothing. We just don't have customToken.
+      } catch (e) {
+        console.error('Error getting query param token: ', e);
       }
     }
+
+    console.info('Try to redirect to:', finalUrl);
 
     if (showConfirmation) {
       Alert.alert(
