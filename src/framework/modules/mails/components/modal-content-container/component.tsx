@@ -25,14 +25,11 @@ export const InactiveUserModalContentContainer: React.FC<InactiveUserModalProps>
             fill={theme.palette.status.warning.regular}
             style={styles.modalHeaderIconStyle}
           />
-          <HeadingSText style={styles.modalHeaderTitle}>Utilisateurs inactif</HeadingSText>
+          <HeadingSText style={styles.modalHeaderTitle}>{I18n.get('mails-edit-inactiveusermodaltitle')}</HeadingSText>
         </View>
-        <BodyText style={styles.modalWrapperMessageContainer}>
-          Certains destinataires que vous avez ajoutés n’ont pas activé leur compte. Ils pourront consulter votre mail qu’une fois
-          l’activation faite.
-        </BodyText>
+        <BodyText style={styles.modalWrapperMessageContainer}>{I18n.get('mails-edit-inactiveusermodalmessage')}</BodyText>
 
-        <BodyBoldText>Utilisateurs inactif :</BodyBoldText>
+        <BodyBoldText>{I18n.get('mails-edit-inactiveusermodallisttitle')}</BodyBoldText>
 
         <View style={styles.scrollContainer}>
           <ScrollView>
