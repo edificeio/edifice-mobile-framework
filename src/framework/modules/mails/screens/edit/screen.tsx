@@ -55,7 +55,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       onToggleShowList,
       openMoreRecipientsFields,
     },
-    computed: { haveInitialCcCci, popupActionsMenu, shouldSaveDraft, showPreventBack },
+    computed: { haveInitialCcCci, popupActionsMenu, shouldSaveDraft },
     refs: { editorRef, scrollViewRef },
     state: {
       attachments,
@@ -77,7 +77,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     },
   } = useMailsEditController({ navigation, route });
 
-  UNSTABLE_usePreventRemove(shouldSaveDraft && showPreventBack, () => onSendDraft());
+  UNSTABLE_usePreventRemove(shouldSaveDraft, () => onSendDraft());
 
   React.useEffect(() => {
     navigation.setOptions({
