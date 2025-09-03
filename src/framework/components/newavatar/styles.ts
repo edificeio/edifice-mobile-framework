@@ -1,7 +1,9 @@
 import { StyleSheet } from 'react-native';
+
+import { AvatarSize } from './types';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { AvatarSize } from './types';
 
 export const NewAvatarSizes = {
   [AvatarSize.sm]: UI_SIZES.elements.avatar.sm,
@@ -12,6 +14,19 @@ export const NewAvatarSizes = {
 };
 
 const styles = StyleSheet.create({
+  border: {
+    backgroundColor: theme.palette.grey.white,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
   pic: {
     backgroundColor: theme.palette.grey.white,
   },

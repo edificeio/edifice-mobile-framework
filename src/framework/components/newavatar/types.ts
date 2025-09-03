@@ -1,4 +1,5 @@
 import { ImageURISource } from 'react-native';
+
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 
 export enum AvatarSize {
@@ -14,4 +15,6 @@ export interface NewAvatarProps {
   userId?: string;
   session?: AuthActiveAccount;
   size?: AvatarSize;
+  border?: boolean;
+  onPress?: () => void;
 }
