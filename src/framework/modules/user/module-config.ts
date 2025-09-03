@@ -3,15 +3,9 @@ import type { UserState } from './reducer';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'user', UserState>({
-  displayAs: 'tabModule',
+  displayAs: '',
 
   displayI18n: 'user-moduleconfig-myaccount',
-
-  displayOrder: 5,
-
-  displayPicture: { name: 'profile-off', type: 'Icon' },
-
-  displayPictureFocus: { name: 'profile-on', type: 'Icon' },
 
   entcoreScope: [],
 
