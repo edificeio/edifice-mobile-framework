@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, BackHandler, Dimensions, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, BackHandler, Dimensions, Platform, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -64,7 +64,7 @@ export const computeNavBar = ({
 
 const PAGE_SIZE = 25;
 const TIMEOUT_DURATION = 300;
-
+const ITEM_HEIGHT = 100;
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const flatListRef = React.useRef<GHFlatList<IMailsMailPreview>>(null);
@@ -937,7 +937,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       selectedMails,
     ],
   );
-
+  const getItemLayout = React.useCallback((index: number) => ({ index, length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index }), []);
   const renderPlaceholder = React.useCallback(() => <MailsPlaceholderList />, []);
 
   const renderContent = React.useCallback(
@@ -955,7 +955,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             ListEmptyComponent={renderEmpty()}
             refreshControl={refreshControl}
             onEndReached={loadNextMails}
+            keyExtractor={item => `item#${item.id}`}
             onEndReachedThreshold={0.5}
+            getItemLayout={(_, index) => getItemLayout(index)}
+            disableVirtualization={Platform.OS === 'android'}
           />
         )}
         {renderBottomMode()}
@@ -968,6 +971,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       renderTopMode,
       mails,
       renderFooter,
+      getItemLayout,
       renderEmpty,
       loadNextMails,
       renderBottomMode,
