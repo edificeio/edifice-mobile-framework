@@ -1,74 +1,62 @@
-import { StyleSheet } from 'react-native';
+import { PixelRatio, StyleSheet } from 'react-native';
 
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
-const baseStyles = StyleSheet.create({
-  tileAvailable: {
-    backgroundColor: theme.palette.primary.pale,
-  },
-  tileBase: {
-    alignItems: 'flex-start',
-    borderRadius: UI_SIZES.radius.newCard,
-    flex: 1,
-    padding: UI_SIZES.spacing.small,
-  },
-  tileUnavailable: {
-    backgroundColor: theme.palette.grey.pearl,
-  },
-});
+const LOADER_HEIGHT = PixelRatio.getFontScale() * TextSizeStyle.Medium.lineHeight;
+
+const LOADER_TITLE = {
+  borderRadius: UI_SIZES.radius.medium,
+  height: LOADER_HEIGHT,
+};
 
 export default StyleSheet.create({
-  largeTileIcon: {
-    backgroundColor: theme.palette.primary.regular,
+  loaderBanner: {
+    borderBottomLeftRadius: UI_SIZES.radius.extraLarge,
+    borderBottomRightRadius: UI_SIZES.radius.extraLarge,
+    overflow: 'hidden',
+    width: UI_SIZES.screen.width,
+  },
+  loaderEmptyBigLine: {
+    borderRadius: UI_SIZES.radius.medium,
+    height: getScaleWidth(24),
+    width: getScaleWidth(279),
+  },
+  loaderEmptyImage: {
     borderRadius: UI_SIZES.radius.newCard,
-    padding: UI_SIZES.spacing.minor,
+    height: getScaleWidth(143),
+    width: getScaleWidth(250),
+  },
+  loaderEmptyScreen: {
+    alignItems: 'center',
+    gap: UI_SIZES.spacing.medium,
+  },
+  loaderEmptyScreenLines: {
+    alignItems: 'center',
+    gap: UI_SIZES.spacing.tiny,
+  },
+  loaderEmptySmallLine: {
+    borderRadius: UI_SIZES.radius.small,
+    height: getScaleWidth(20),
+    width: getScaleWidth(237),
+  },
+  loaderPage: {
+    gap: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingVertical: UI_SIZES.spacing.medium,
+  },
+  loaderSectionTitle: {
+    ...LOADER_TITLE,
+    width: '70%',
+  },
+  loaderSectionTitleShort: {
+    ...LOADER_TITLE,
+    width: '30%',
   },
   page: {
     gap: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingVertical: UI_SIZES.spacing.medium,
-  },
-  pill: {
-    backgroundColor: theme.palette.grey.stone,
-    borderRadius: UI_SIZES.radius.large,
-    color: theme.ui.text.inverse,
-    paddingHorizontal: UI_SIZES.spacing.minor,
-  },
-  tileCaption: {
-    flexDirection: 'row',
-    gap: UI_SIZES.spacing.minor,
-  },
-  tileCaptionDescriptionAvailable: {
-    color: theme.palette.grey.graphite,
-  },
-  tileCaptionTextAvailable: {
-    color: theme.palette.primary.regular,
-  },
-  tileCaptionTextUnavailable: {
-    color: theme.palette.grey.graphite,
-  },
-  tileConversation: {
-    ...baseStyles.tileBase,
-    ...baseStyles.tileUnavailable,
-    gap: UI_SIZES.spacing.minor,
-  },
-  tileCourses: {
-    ...baseStyles.tileBase,
-    ...baseStyles.tileUnavailable,
-    gap: UI_SIZES.spacing.minor,
-  },
-  tileDocuments: {
-    ...baseStyles.tileBase,
-    ...baseStyles.tileAvailable,
-    justifyContent: 'space-between',
-  },
-  tileMembers: {
-    ...baseStyles.tileBase,
-    ...baseStyles.tileAvailable,
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: UI_SIZES.spacing.medium,
   },
   tilesCol: {
     flex: 1,
