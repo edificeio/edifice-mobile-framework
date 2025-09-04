@@ -236,7 +236,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
         keyExtractor={keyExtractor}
         ListEmptyComponent={
           <EmptyScreen
-            svgImage="empty-timeline"
+            svgImage="empty-communities-list"
             title={I18n.get('communities-list-empty-title')}
             text={I18n.get('communities-list-empty-text')}
             customStyle={styles.emptyScreen}
