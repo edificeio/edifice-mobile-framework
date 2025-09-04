@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Platform, ScrollViewProps, StatusBar, View } from 'react-native';
+import { Image, Platform, ScrollViewProps, StatusBar, TouchableOpacity, View } from 'react-native';
 
 import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase } from '@react-navigation/native';
@@ -9,14 +9,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CommunityNavbar from './community-navbar';
 import { BANNER_BASE_HEIGHT } from './community-navbar/styles';
 import CommunityScrollViewStickyHeader, { BANNER_ACCELERATION } from './sticky-component';
-import styles from './styles';
+import styles, { NAVBAR_RIGHT_BUTTON_STYLE } from './styles';
 import { CommunityThumbnailNavbarScrollableProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
 import { HeadingXSText } from '~/framework/components/text';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
+export { NAVBAR_RIGHT_BUTTON_STYLE } from './styles';
 export type { CommunityThumbnailNavbarScrollableProps } from './types';
 export default function useCommunityScrollableThumbnail({
   contentContainerStyle: _contentContainerStyle,
@@ -125,7 +127,7 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
     <HeaderBackButton
       {...props}
       labelVisible={false}
-      style={styles.navBarButton}
+      style={styles.navBarLeftButton}
       onPress={navigation.goBack}
       backImage={Platform.select({
         default: undefined,
@@ -139,6 +141,16 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
       })}
       tintColor={theme.ui.text.regular.toString()}
     />
+  ),
+  headerRight: () => (
+    <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE}>
+      <Svg
+        name="ui-infoCircle"
+        width={UI_SIZES.elements.icon.small}
+        height={UI_SIZES.elements.icon.small}
+        fill={theme.palette.grey.black}
+      />
+    </TouchableOpacity>
   ),
   headerShadowVisible: false,
   headerStyle: {
