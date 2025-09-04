@@ -2,8 +2,6 @@ import * as React from 'react';
 
 import { TertiaryButtonProps } from './types';
 
-import { TertiaryButtonProps } from './types';
-
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 

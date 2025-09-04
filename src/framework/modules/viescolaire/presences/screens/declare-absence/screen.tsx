@@ -100,7 +100,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         />
         <InputContainer
           label={{
-            icon: 'ui-textPage',
+            icon: 'ui-text-page',
             indicator: LabelIndicator.REQUIRED,
             text: I18n.get('presences-declareabsence-reasoninput-label'),
           }}

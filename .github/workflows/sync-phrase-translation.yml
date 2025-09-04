@@ -3,7 +3,7 @@ name: Sync phrase-translations
 on:
   push:
     branches:
-      - dev/1.15.2
+      - dev/1.15.0
 
 jobs:
   sync-branch:

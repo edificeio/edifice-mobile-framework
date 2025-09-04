@@ -19,9 +19,6 @@ export default StyleSheet.create({
   indicator: {
     height: BUTTON_ICON_SIZE,
   },
-  indicator: {
-    height: BUTTON_ICON_SIZE,
-  },
   text: {
     // fix vertical alignment in android buttons
     marginTop: Platform.OS === 'android' ? -getScaleWidth(2) : 0,
