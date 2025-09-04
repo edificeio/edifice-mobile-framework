@@ -33,10 +33,10 @@ const useAvatarStyle = ({ border = true, size, style }: Pick<SingleAvatarProps, 
       border
         ? {
             borderRadius: (AvatarSizes[size] + UI_SIZES.border.small) / 2,
-            height: AvatarSizes[size] + UI_SIZES.border.small,
+            height: AvatarSizes[size] + UI_SIZES.border.small * 2,
             margin: -UI_SIZES.border.small,
             padding: UI_SIZES.border.small,
-            width: AvatarSizes[size] + UI_SIZES.border.small,
+            width: AvatarSizes[size] + UI_SIZES.border.small * 2,
           }
         : {
             borderRadius: AvatarSizes[size] / 2,
