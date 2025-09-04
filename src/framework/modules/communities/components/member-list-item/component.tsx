@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { MembershipRole } from '@edifice.io/community-client-rest-rn';
-
 import styles from './styles';
 import { MemberListItemProps } from './types';
 
@@ -10,11 +8,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
-
-const rolesI18n: Record<MembershipRole, string> = {
-  [MembershipRole.ADMIN]: 'communities-role-admin',
-  [MembershipRole.MEMBER]: 'communities-role-member',
-};
+import { rolesI18n } from '~/framework/modules/communities/model';
 
 const profilesI18n: Record<AccountType, string> = {
   [AccountType.Guest]: 'user-profiletypes-guest',

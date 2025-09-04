@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { CommunityClient, MembershipClient } from '@edifice.io/community-client-rest-rn';
+import { CommunityClient, InvitationResponseDto, MembershipClient } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
-import { communitiesActions, communitiesSelectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -15,19 +14,23 @@ import { AvatarStack } from '~/framework/components/avatar/stack';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
+import { LOADING_ITEM_DATA } from '~/framework/components/list/paginated-list';
+import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
 import Pill from '~/framework/components/pill';
 import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import CommunityWelcomeBottomSheetModal from '~/framework/modules/communities/components/community-welcome-bottomsheet';
 import {
   communityNavBar,
   default as useCommunityScrollableThumbnail,
 } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import http from '~/framework/util/http';
+import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
+import { accountApi } from '~/framework/util/transport';
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>,
@@ -39,7 +42,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   navigation,
   refreshControl,
   route: {
-    params: { communityId },
+    params: { communityId, invitationId, showWelcome = false },
   },
   title,
   totalMembers,
@@ -136,6 +139,16 @@ export const CommunitiesHomeScreenLoaded = function ({
     title,
   });
 
+  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
+  React.useEffect(() => {
+    // (showWelcome && invitationId !== undefined ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
+    (true ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
+  }, [showWelcome, invitationId]);
+
+  const invitation = useSelector(communitiesSelectors.getAllCommunities).find(
+    item => item !== LOADING_ITEM_DATA && item.id === invitationId,
+  ) as InvitationResponseDto | undefined;
+
   return (
     <>
       {statusBar}
@@ -143,6 +156,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         {scrollElements}
         {pageContent}
       </ScrollView>
+      {invitation?.role && <CommunityWelcomeBottomSheetModal role={invitation?.role} title={title} ref={bottomSheetModalRef} />}
     </>
   );
 };
@@ -167,8 +181,8 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
 
   const loadContent = React.useCallback(async () => {
     const [community, members] = await Promise.all([
-      http.api(moduleConfig, session, CommunityClient).getCommunity(communityId),
-      http.api(moduleConfig, session, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
+      accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
+      accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
     ]);
     setData({
       ...community,

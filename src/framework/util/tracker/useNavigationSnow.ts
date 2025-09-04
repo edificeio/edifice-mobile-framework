@@ -32,5 +32,5 @@ const stopSnowIfNeeded = async (
 
 export const useNavigationSnowHandler = (dispatch: ThunkDispatch<any, any, any>) => {
   const routeNameRef = React.useRef<string>();
-  return () => stopSnowIfNeeded(dispatch, routeNameRef, navigationRef.getCurrentRoute()?.name);
+  return React.useCallback(() => stopSnowIfNeeded(dispatch, routeNameRef, navigationRef.getCurrentRoute()?.name), [dispatch]);
 };

@@ -213,6 +213,7 @@ const imports = {
   'ui-mic-preview': async () => import('ASSETS/icons/uiIcons/mic-preview.svg'),
   'ui-minus': async () => import('ASSETS/icons/uiIcons/minus.svg'),
   'ui-move': async () => import('ASSETS/icons/uiIcons/move.svg'),
+  'ui-notes': async () => import('ASSETS/icons/uiIcons/notes.svg'),
   'ui-notif': async () => import('ASSETS/icons/uiIcons/notif.svg'),
   'ui-options': async () => import('ASSETS/icons/uiIcons/options.svg'),
   'ui-options-horizontal': async () => import('ASSETS/icons/uiIcons/options-horizontal.svg'),

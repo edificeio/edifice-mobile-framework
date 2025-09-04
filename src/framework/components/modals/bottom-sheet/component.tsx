@@ -8,14 +8,14 @@ import styles from './styles';
 import type { CustomBottomSheetModalProps } from './types';
 
 export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
-  (props: CustomBottomSheetModalProps, ref) => {
+  ({ style, ...props }: CustomBottomSheetModalProps, ref) => {
     const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
       return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
     };
 
     const newStyle = React.useMemo(() => {
-      return props.style !== undefined ? props.style : styles.contentContainer;
-    }, [props.style]);
+      return style !== undefined ? style : styles.contentContainer;
+    }, [style]);
 
     return (
       <BottomSheetModal

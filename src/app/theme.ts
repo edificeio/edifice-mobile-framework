@@ -101,6 +101,7 @@ export interface ITheme {
     overlay: {
       medium: ColorValue;
       light: ColorValue;
+      bar: ColorValue;
     };
   };
   // Semantic usage of the color palette
@@ -336,6 +337,7 @@ export const defaultTheme: ThemeInitializer = {
       },
       notificationBadge: this.palette.complementary.red.regular,
       overlay: {
+        bar: '#ffffffaf',
         light: '#0000008c',
         medium: '#000000af',
       },
