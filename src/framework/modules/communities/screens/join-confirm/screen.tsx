@@ -28,7 +28,8 @@ import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesSelectors } from '~/framework/modules/communities/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { accountApi, HTTPError } from '~/framework/util/http';
+import { HTTPError } from '~/framework/util/http';
+import { accountApi } from '~/framework/util/transport';
 
 export const computeNavBar = ({
   navigation,
@@ -89,7 +90,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
 }) {
   const onValidate = React.useCallback(async () => {
     try {
-      await accountApi(moduleConfig, session, InvitationClient).updateInvitationStatus(invitationId, {
+      await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {
         status: InvitationStatus.ACCEPTED,
       });
       navigation.replace(communitiesRouteNames.home, { communityId, showWelcome: true });

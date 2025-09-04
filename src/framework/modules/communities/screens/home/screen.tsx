@@ -30,7 +30,8 @@ import {
 } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import { accountApi } from '~/framework/util/http';
+import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
+import { accountApi } from '~/framework/util/transport';
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>,
@@ -180,8 +181,8 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
 
   const loadContent = React.useCallback(async () => {
     const [community, members] = await Promise.all([
-      accountApi(moduleConfig, session, CommunityClient).getCommunity(communityId),
-      accountApi(moduleConfig, session, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
+      accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
+      accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
     ]);
     setData({
       ...community,

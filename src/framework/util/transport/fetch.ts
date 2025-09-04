@@ -1,10 +1,8 @@
-import { ApiClientOptions, BaseApiClient } from '@edifice.io/community-client-rest-rn/clients/base-api.client';
 import CookieManager from '@react-native-cookies/cookies';
 import DeviceInfo, { getDeviceId } from 'react-native-device-info';
 
-import { IUnkownModuleConfig } from '../moduleTool';
+import { FetchError, FetchErrorCode, HTTPError } from '../http/error';
 import { isTokenExpired, refreshTokenForAccount } from '../oauth2';
-import { FetchError, FetchErrorCode, HTTPError } from './error';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -18,6 +16,10 @@ const DEFAULT_HEADERS = {
   'X-APP-NAME': DeviceInfo.getApplicationName(),
   'X-APP-VERSION': DeviceInfo.getReadableVersion(),
 };
+
+const deviceIdHeaderName = 'X-Device-Id';
+
+// # UTILITY FUNCTIONS
 
 /**
  * Returns the url that will be used by the provided fetch arguments
@@ -41,6 +43,8 @@ function getRequestMethod(input: Parameters<typeof fetch>[0], init: Parameters<t
   if (input instanceof Request) return input.method;
   else return 'get';
 }
+
+// # BASE FETCH
 
 /**
  * Fetches a resource from the network while handling errors and clearing cookies.
@@ -117,10 +121,12 @@ const timeoutFetch =
 
 export const baseFetch = timeoutFetch(_baseFetch);
 
+// # DEVICE FETCH
+
 export function deviceFetch(input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]) {
   const headers = {
     ...DEFAULT_HEADERS,
-    deviceId: getDeviceId(),
+    [deviceIdHeaderName]: getDeviceId(),
   };
   if (input instanceof Request) {
     input.headers.forEach((value: string, key: string) => {
@@ -133,6 +139,11 @@ export function deviceFetch(input: Parameters<typeof fetch>[0], init: Parameters
     headers,
   });
 }
+deviceFetch.text = async (...fetchArgs: Parameters<typeof fetch>) => (await deviceFetch(...fetchArgs)).text();
+deviceFetch.json = async <ReturnType>(...fetchArgs: Parameters<typeof fetch>) =>
+  (await deviceFetch(...fetchArgs)).json() as ReturnType;
+
+// # PLATFORM FETCH
 
 const getPlatformRequest = (input: Parameters<typeof fetch>[0], platform: Platform) => {
   if (typeof input === 'string') {
@@ -159,6 +170,8 @@ platformFetch.text = async (platform: Parameters<typeof getPlatformFetch>[0], ..
 platformFetch.json = async <ReturnType>(platform: Parameters<typeof getPlatformFetch>[0], ...fetchArgs: Parameters<typeof fetch>) =>
   (await platformFetch(platform, ...fetchArgs)).json() as ReturnType;
 
+// # ACCOUNT (signed) FETCH
+
 export function getAccountFetch(account: AuthSavedLoggedInAccount | AuthActiveAccount) {
   const _platformFetch = getPlatformFetch(account.platform);
   return async (input: Parameters<typeof _platformFetch>[0], init: Parameters<typeof _platformFetch>[1]) => {
@@ -184,6 +197,8 @@ accountFetch.text = async (account: Parameters<typeof getAccountFetch>[0], ...fe
 accountFetch.json = async <ReturnType>(account: Parameters<typeof getAccountFetch>[0], ...fetchArgs: Parameters<typeof fetch>) =>
   (await accountFetch(account, ...fetchArgs)).json() as ReturnType;
 
+// # SESSION (signed, active account) FETCH
+
 export function getSessionFetch() {
   const account = getSession();
   if (!account) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[useSessionFetch] No session provided');
@@ -196,32 +211,3 @@ export function sessionFetch(...fetchArgs: Parameters<typeof fetch>) {
 sessionFetch.text = async (...fetchArgs: Parameters<typeof fetch>) => (await sessionFetch(...fetchArgs)).text();
 sessionFetch.json = async <ReturnType>(...fetchArgs: Parameters<typeof fetch>) =>
   (await sessionFetch(...fetchArgs)).json() as ReturnType;
-
-export function accountApi<Client extends BaseApiClient>(
-  moduleConfig: Pick<IUnkownModuleConfig, 'apiName'>,
-  account: AuthActiveAccount | AuthSavedLoggedInAccount,
-  client: new (_options?: ApiClientOptions) => Client,
-) {
-  const platform = appConf.getExpandedPlatform(account.platform);
-  if (!platform) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[useApi] No platform provided');
-  const fetchImpl = getAccountFetch(account);
-  return new client({
-    baseUrl: platform.url + '/' + moduleConfig.apiName,
-    fetchImpl,
-  });
-}
-
-export function sessionApi<Client extends BaseApiClient>(
-  moduleConfig: Pick<IUnkownModuleConfig, 'apiName'>,
-  client: new (_options?: ApiClientOptions) => Client,
-) {
-  const account = getSession();
-  if (!account) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[useSessionApi] No session provided');
-  const platform = appConf.getExpandedPlatform(account.platform);
-  if (!platform) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[useSessionApi] No platform provided');
-  const fetchImpl = getAccountFetch(account);
-  return new client({
-    baseUrl: platform.url + '/' + moduleConfig.apiName,
-    fetchImpl,
-  });
-}

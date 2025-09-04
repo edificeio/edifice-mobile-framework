@@ -42,7 +42,7 @@ import {
   communitiesSelectors,
 } from '~/framework/modules/communities/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { accountApi } from '~/framework/util/http';
+import { accountApi } from '~/framework/util/transport';
 
 export const AVAILABLE_FILTERS = [CommunityType.CLASS, CommunityType.FREE];
 const INVITATION_FIELDS: InvitationFields[] = ['stats', 'community'];
@@ -129,13 +129,13 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
       };
 
       const [allRes, pendingRes, totalPending] = await Promise.all([
-        accountApi(moduleConfig, session, InvitationClient).getUserInvitations({ ...baseQueryParams, communityType: filters[0] }),
-        accountApi(moduleConfig, session, InvitationClient).getUserInvitations({
+        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({ ...baseQueryParams, communityType: filters[0] }),
+        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
           ...baseQueryParams,
           communityType: filters[0],
           status: InvitationStatus.PENDING,
         }),
-        accountApi(moduleConfig, session, InvitationClient).getUserInvitations({
+        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
           size: 1,
           status: InvitationStatus.PENDING,
         }),

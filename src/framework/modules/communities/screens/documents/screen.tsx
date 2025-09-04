@@ -30,8 +30,8 @@ import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
-import { accountApi } from '~/framework/util/http';
 import { IMedia } from '~/framework/util/media';
+import { accountApi } from '~/framework/util/transport';
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>,
@@ -109,9 +109,9 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       const [community, members, newData] = await Promise.all([
-        accountApi(moduleConfig, session, CommunityClient).getCommunity(communityId),
-        accountApi(moduleConfig, session, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
-        accountApi(moduleConfig, session, ResourceClient).getResources(communityId, { page: page + 1, size: PAGE_SIZE }),
+        accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
+        accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
+        accountApi(session, moduleConfig, ResourceClient).getResources(communityId, { page: page + 1, size: PAGE_SIZE }),
       ]);
       setCommunityData({
         ...community,

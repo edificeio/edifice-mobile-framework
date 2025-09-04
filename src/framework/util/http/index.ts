@@ -34,6 +34,4 @@ export default {
   // sessionApi,
 };
 
-export * from './v2';
-
 export { HTTPError };
