@@ -30,9 +30,9 @@ export const CommunityCardSmall = ({
 
   return (
     <TouchableOpacity style={cardStyle} onPress={onPress}>
+      <ModuleImage moduleConfig={moduleConfig} {...imageProps} style={styles.imgContainer} />
       {membersCount && <CommunityMembersPill membersCount={membersCount} />}
       {invitationStatus === InvitationStatus.PENDING && <CommunityInvitationBadge />}
-      <ModuleImage moduleConfig={moduleConfig} {...imageProps} style={styles.imgContainer} />
       <View style={styles.titleContainer}>
         <BodyBoldText numberOfLines={1} ellipsizeMode="tail">
           {title}

@@ -11,7 +11,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.extraLarge,
-    elevation: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     left: UI_SIZES.spacing.minor,
@@ -20,6 +19,5 @@ export const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.tiny,
     position: 'absolute',
     top: UI_SIZES.spacing.minor,
-    zIndex: 10,
   },
 });
