@@ -13,6 +13,9 @@ export namespace CommunitiesHomeScreen {
   }
   export type NavigationProps = NativeStackScreenProps<CommunitiesNavigationParams, 'home'>;
   export type AllProps = CommunitiesHomeScreen.NavigationProps;
-  export type RequiredData = Pick<CommunityResponseDto, 'title' | 'image'> & { totalMembers: number; membersId: string[] };
+  export type RequiredData = Pick<CommunityResponseDto, 'title' | 'image' | 'welcomeNote'> & {
+    totalMembers: number;
+    membersId: string[];
+  };
   export type AllPropsLoaded = CommunitiesHomeScreen.AllProps & RequiredData & Pick<ScrollViewProps, 'refreshControl'>;
 }
