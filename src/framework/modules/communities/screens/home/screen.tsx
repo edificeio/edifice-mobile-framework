@@ -3,32 +3,39 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { CommunityClient, InvitationResponseDto, MembershipClient } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
+import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { AvatarStack } from '~/framework/components/avatar/stack';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
-import Pill from '~/framework/components/pill';
 import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
-import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import CommunityInfoBottomSheet from '~/framework/modules/communities/components/community-info-bottom-sheet';
 import CommunityWelcomeBottomSheetModal from '~/framework/modules/communities/components/community-welcome-bottomsheet';
+import ConversationTile, {
+  ConversationTileLoader,
+} from '~/framework/modules/communities/components/home-screen-tiles/conversation';
+import CoursesTile, { CoursesTileLoader } from '~/framework/modules/communities/components/home-screen-tiles/courses';
+import DocumentsTile, { DocumentsTileLoader } from '~/framework/modules/communities/components/home-screen-tiles/documents';
+import MembersTile, { MembersTileLoader } from '~/framework/modules/communities/components/home-screen-tiles/members';
 import {
   communityNavBar,
   NAVBAR_RIGHT_BUTTON_STYLE,
   default as useCommunityScrollableThumbnail,
 } from '~/framework/modules/communities/hooks/use-community-navbar';
+import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-community-navbar/community-navbar/styles';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
@@ -47,6 +54,33 @@ const NavbarRightButton = ({ onPress }: { onPress: () => void }) => {
   );
 };
 
+const BannerLoader = () => {
+  const { top: statusBarHeight } = useSafeAreaInsets();
+  const bannerStyle = React.useMemo(
+    () => [styles.loaderBanner, { height: BANNER_BASE_HEIGHT + statusBarHeight }],
+    [statusBarHeight],
+  );
+
+  return <PlaceholderMedia style={bannerStyle} />;
+};
+
+const EmptyScreenLoader = () => {
+  return (
+    <View style={styles.loaderEmptyScreen}>
+      <PlaceholderMedia style={styles.loaderEmptyImage} />
+      <View style={styles.loaderEmptyScreenLines}>
+        <PlaceholderLine noMargin style={styles.loaderEmptyBigLine} />
+        <PlaceholderLine noMargin style={styles.loaderEmptySmallLine} />
+        <PlaceholderLine noMargin style={styles.loaderEmptySmallLine} />
+      </View>
+    </View>
+  );
+};
+
+const TitleLoader = ({ isShort }: { isShort?: boolean }) => {
+  return <PlaceholderLine noMargin style={[styles.loaderSectionTitle, isShort && styles.loaderSectionTitleShort]} />;
+};
+
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>,
 ): NativeStackNavigationOptions => communityNavBar(props);
@@ -63,79 +97,19 @@ export const CommunitiesHomeScreenLoaded = function ({
   totalMembers,
   welcomeNote,
 }: Readonly<CommunitiesHomeScreen.AllPropsLoaded>) {
-  const membersTile = (
-    <TouchableOpacity
-      style={styles.tileMembers}
-      onPress={React.useCallback(
-        () => navigation.navigate(communitiesRouteNames.members, { communityId }),
-        [communityId, navigation],
-      )}>
-      <AvatarStack style={UI_STYLES.flex1} size="md" items={membersId} total={totalMembers} />
-      <SmallBoldText style={styles.tileCaptionTextAvailable}>{I18n.get('communities-tile-members-title')}</SmallBoldText>
-    </TouchableOpacity>
-  );
-
-  const documentsTile = (
-    <TouchableOpacity
-      style={styles.tileDocuments}
-      onPress={React.useCallback(
-        () => navigation.navigate(communitiesRouteNames.documents, { communityId }),
-        [communityId, navigation],
-      )}>
-      <View style={styles.largeTileIcon}>
-        <Svg
-          name="ui-folder"
-          width={UI_SIZES.elements.icon.default}
-          height={UI_SIZES.elements.icon.default}
-          fill={theme.ui.text.inverse}
-        />
-      </View>
-      <SmallBoldText style={styles.tileCaptionTextAvailable}>{I18n.get('communities-tile-documents-title')}</SmallBoldText>
-      <SmallText style={styles.tileCaptionDescriptionAvailable} />
-    </TouchableOpacity>
-  );
-
-  const coursesTile = (
-    <View style={styles.tileCourses}>
-      <View style={styles.tileCaption}>
-        <Svg
-          name="ui-textPage"
-          width={UI_SIZES.elements.icon.small}
-          height={UI_SIZES.elements.icon.small}
-          fill={styles.tileCaptionTextUnavailable.color}
-        />
-        <SmallBoldText style={styles.tileCaptionTextUnavailable}>{I18n.get('communities-tile-courses-title')}</SmallBoldText>
-      </View>
-      <Pill text={I18n.get('communities-tile-soon')} color={theme.palette.grey.stone} />
-    </View>
-  );
-
-  const conversationTile = (
-    <View style={styles.tileConversation}>
-      <View style={styles.tileCaption}>
-        <Svg
-          name="ui-messageInfo"
-          width={UI_SIZES.elements.icon.small}
-          height={UI_SIZES.elements.icon.small}
-          fill={styles.tileCaptionTextUnavailable.color}
-        />
-        <SmallBoldText style={styles.tileCaptionTextUnavailable}>{I18n.get('communities-tile-conversations-title')}</SmallBoldText>
-      </View>
-      <Pill text={I18n.get('communities-tile-soon')} color={theme.palette.grey.stone} />
-    </View>
-  );
-
   const pageContent = (
     <View style={styles.page}>
       <HeadingXSText>{title}</HeadingXSText>
 
       <View style={styles.tilesCol}>
-        {membersTile}
+        <MembersTile communityId={communityId} navigation={navigation} membersId={membersId} totalMembers={totalMembers} />
         <View style={styles.tilesRow}>
-          <View style={styles.tilesCol}>{documentsTile}</View>
           <View style={styles.tilesCol}>
-            {coursesTile}
-            {conversationTile}
+            <DocumentsTile communityId={communityId} navigation={navigation} />
+          </View>
+          <View style={styles.tilesCol}>
+            <CoursesTile />
+            <ConversationTile />
           </View>
         </View>
       </View>
@@ -200,7 +174,30 @@ export const CommunitiesHomeScreenLoaded = function ({
   );
 };
 
-export const CommunitiesHomeScreenPlaceholder = () => <View />;
+export const CommunitiesHomeScreenPlaceholder = () => (
+  <ScrollView scrollEnabled={false}>
+    <Placeholder Animation={Fade}>
+      <BannerLoader />
+      <View style={styles.loaderPage}>
+        <TitleLoader />
+        <View style={styles.tilesCol}>
+          <MembersTileLoader />
+          <View style={styles.tilesRow}>
+            <View style={styles.tilesCol}>
+              <DocumentsTileLoader />
+            </View>
+            <View style={styles.tilesCol}>
+              <CoursesTileLoader />
+              <ConversationTileLoader />
+            </View>
+          </View>
+        </View>
+        <TitleLoader isShort={true} />
+        <EmptyScreenLoader />
+      </View>
+    </Placeholder>
+  </ScrollView>
+);
 
 export default sessionScreen<CommunitiesHomeScreen.AllProps>(function CommunitiesHomeScreen({
   navigation,
