@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
-import { communitiesActions, communitiesSelectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -23,14 +22,30 @@ import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import CommunityInfoBottomSheet from '~/framework/modules/communities/components/community-info-bottom-sheet';
 import CommunityWelcomeBottomSheetModal from '~/framework/modules/communities/components/community-welcome-bottomsheet';
 import {
   communityNavBar,
+  NAVBAR_RIGHT_BUTTON_STYLE,
   default as useCommunityScrollableThumbnail,
 } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { accountApi } from '~/framework/util/http';
+
+const NavbarRightButton = ({ onPress }: { onPress: () => void }) => {
+  return (
+    <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE} onPress={onPress}>
+      <Svg
+        name="ui-infoCircle"
+        width={UI_SIZES.elements.icon.small}
+        height={UI_SIZES.elements.icon.small}
+        fill={theme.palette.grey.black}
+      />
+    </TouchableOpacity>
+  );
+};
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>,
@@ -46,6 +61,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   },
   title,
   totalMembers,
+  welcomeNote,
 }: Readonly<CommunitiesHomeScreen.AllPropsLoaded>) {
   const membersTile = (
     <TouchableOpacity
@@ -139,14 +155,30 @@ export const CommunitiesHomeScreenLoaded = function ({
     title,
   });
 
-  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
+  const welcomeModalRef = React.useRef<BottomSheetModalMethods>(null);
   React.useEffect(() => {
-    (showWelcome && invitationId !== undefined ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
+    (showWelcome && invitationId !== undefined ? welcomeModalRef.current?.present : welcomeModalRef.current?.dismiss)?.();
   }, [showWelcome, invitationId]);
 
   const invitation = useSelector(communitiesSelectors.getAllCommunities).find(
     item => item !== LOADING_ITEM_DATA && item.id === invitationId,
   ) as InvitationResponseDto | undefined;
+
+  const { role, sentBy } = invitation || {};
+  const { displayName: senderName, entId: senderId } = sentBy || {};
+  const canShowInfoModal = role && senderId && senderName;
+
+  const infoModalRef = React.useRef<BottomSheetModalMethods>(null);
+
+  const openInfoModal = React.useCallback(() => {
+    infoModalRef.current?.present();
+  }, []);
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <NavbarRightButton onPress={openInfoModal} />,
+    });
+  }, [navigation, openInfoModal]);
 
   return (
     <>
@@ -155,7 +187,15 @@ export const CommunitiesHomeScreenLoaded = function ({
         {scrollElements}
         {pageContent}
       </ScrollView>
-      {invitation?.role && <CommunityWelcomeBottomSheetModal role={invitation?.role} title={title} ref={bottomSheetModalRef} />}
+      {invitation?.role && <CommunityWelcomeBottomSheetModal role={invitation?.role} title={title} ref={welcomeModalRef} />}
+      {canShowInfoModal ? (
+        <CommunityInfoBottomSheet
+          ref={infoModalRef}
+          data={{ image, role, senderId, senderName, title, totalMembers, welcomeNote }}
+        />
+      ) : (
+        <EmptyContentScreen />
+      )}
     </>
   );
 };

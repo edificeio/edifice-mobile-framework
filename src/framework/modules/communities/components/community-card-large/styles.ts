@@ -24,6 +24,15 @@ export const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.medium,
     paddingTop: UI_SIZES.spacing.small,
   },
+  infoInviterContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.minor,
+  },
+  infoInviterText: {
+    color: theme.ui.text.inverse,
+    flex: 1,
+  },
   infoRoleContainer: {
     alignItems: 'center',
     flexDirection: 'row',
