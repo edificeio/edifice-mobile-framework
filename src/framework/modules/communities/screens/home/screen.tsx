@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
-import { communitiesActions, communitiesSelectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -142,7 +141,8 @@ export const CommunitiesHomeScreenLoaded = function ({
 
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   React.useEffect(() => {
-    (showWelcome && invitationId !== undefined ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
+    // (showWelcome && invitationId !== undefined ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
+    (true ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
   }, [showWelcome, invitationId]);
 
   const invitation = useSelector(communitiesSelectors.getAllCommunities).find(

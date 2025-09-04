@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { MembershipRole } from '@edifice.io/community-client-rest-rn';
+import LottieView from 'lottie-react-native';
 import { Trans } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -36,6 +37,8 @@ const cardItems = {
   ],
 };
 
+const animationSource = require('ASSETS/animations/community/hands-clap.json');
+
 export const CommunityWelcomeBottomSheetModal = React.forwardRef<
   BottomSheetModalMethods,
   Readonly<CommunityWelcomeBottomSheetModalProps>
@@ -57,6 +60,8 @@ export const CommunityWelcomeBottomSheetModal = React.forwardRef<
           />
         </TouchableOpacity>
         <HeadingMText style={styles.text}>{I18n.get('community-join-onboarding-title')}</HeadingMText>
+
+        <LottieView autoPlay loop={false} resizeMode="contain" source={animationSource} style={styles.animation} />
         <BodyText style={styles.text}>
           <Trans i18nKey={introI18n[role]} values={{ name: title }} components={{ b: <BodyBoldText /> }} />
         </BodyText>

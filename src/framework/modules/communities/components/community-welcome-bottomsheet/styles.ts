@@ -4,6 +4,11 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  animation: {
+    alignSelf: 'center',
+    aspectRatio: 250 / 143, // This is the intended aspectRatio from this specific animation.
+    width: UI_SIZES.elements.image.large,
+  },
   card: {
     backgroundColor: theme.palette.primary.pale,
     borderRadius: UI_SIZES.radius.card,
