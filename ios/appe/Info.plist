@@ -3,17 +3,17 @@
 <plist version="1.0">
 	<dict>
 		<key>BundleVersionOverride</key>
-		<string>empty</string>
+		<string>dev/default</string>
 		<key>BundleVersionType</key>
-		<string>alpha.1</string>
+		<string></string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>fr_FR</string>
 		<key>CFBundleDisplayName</key>
-		<string>Édifice mobile</string>
+		<string>Dev Pocket</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
-		<string>com.ode.appe</string>
+		<string>com.ode.mobile</string>
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
@@ -21,11 +21,11 @@
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.15.1</string>
+		<string>1.15.2</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleVersion</key>
-		<string>1150101</string>
+		<string>1150200</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>http</string>
