@@ -1,11 +1,15 @@
-import { Error } from "~/framework/util/error";
+import { Error } from '~/framework/util/error';
 
 /**
  * HTTPError class that is Response-like but with additional error properties.
  */
 export class HTTPError extends global.Error implements Response, Error.WithCode<FetchErrorCode> {
   public readonly code: FetchErrorCode = FetchErrorCode.NOT_OK;
-  constructor(private response: Response, message?: string, options?: ErrorOptions) {
+  constructor(
+    private response: Response,
+    message?: string,
+    options?: ErrorOptions,
+  ) {
     super(message ?? `[HTTP] Error ${response.status}:  ${response.statusText}`, options);
     this.name = 'HTTPError';
     this.headers = response.headers;
@@ -84,7 +88,15 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
    * @param parseFn One of this object method like `this.text` ou `this.json`.
    * @returns The parsed content or `undefined`.
    */
-  async read<T = any>(parseFn: typeof this.arrayBuffer | typeof this.blob | typeof this.formData | typeof this.json | typeof this.text | typeof this.bytes): Promise<T | undefined> {
+  async read<T = any>(
+    parseFn:
+      | typeof this.arrayBuffer
+      | typeof this.blob
+      | typeof this.formData
+      | typeof this.json
+      | typeof this.text
+      | typeof this.bytes,
+  ): Promise<T | undefined> {
     return parseFn.call(this).catch(e => undefined);
   }
 }
@@ -106,14 +118,17 @@ export enum FetchErrorCode {
 
 /**
  * Represents a generic error that occurs during a fetch operation.
- * 
+ *
  * @param code - The error code associated with the fetch error.
  * @param args - Additional arguments passed to the `Error` constructor.
- * 
+ *
  * @see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#example
  */
 export class FetchError extends global.Error implements Error.WithCode<FetchErrorCode> {
-  constructor(public readonly code: FetchErrorCode, ...args: ConstructorParameters<typeof global.Error>) {
+  constructor(
+    public readonly code: FetchErrorCode,
+    ...args: ConstructorParameters<typeof global.Error>
+  ) {
     super(...args);
     this.name = 'FetchError'; // Note: built-in Error class break the prototype chain when extending it like this...
     Object.setPrototypeOf(this, new.target.prototype); // ... So, we need to restore the prototype chain like this.

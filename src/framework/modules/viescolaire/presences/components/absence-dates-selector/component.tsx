@@ -63,7 +63,7 @@ export default function AbsenceDatesSelector(props: AbsenceDatesSelectorProps) {
                 <IconButton
                   icon="ui-close"
                   style={styles.removeEndDateAction}
-                  size={UI_SIZES.elements.icon.xsmall}
+                  size={UI_SIZES.elements.icon.xxsmall}
                   action={changeMode}
                 />
               </View>

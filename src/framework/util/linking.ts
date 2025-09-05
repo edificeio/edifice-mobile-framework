@@ -4,9 +4,13 @@
  */
 import { Alert, Linking } from 'react-native';
 
+import { CommonActions } from '@react-navigation/native';
 import { decode } from 'html-entities';
 
 import { I18n } from '~/app/i18n';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { nabookRouteNames } from '~/framework/modules/nabook/navigation/';
+import { handleNotificationNavigationAction } from '~/framework/util/notifications/routing';
 import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 
 export interface OpenUrlCustomLabels {
@@ -38,6 +42,18 @@ export async function openUrl(
       throw new Error('openUrl : no url provided.');
     }
 
+    const session = getSession();
+
+    // Special case for nabook: Do not redirect to responsive but open nabook module
+    try {
+      if (session && url.startsWith(session.platform.url) && url.endsWith('nabook')) {
+        handleNotificationNavigationAction(CommonActions.navigate({ name: nabookRouteNames.home }));
+        return;
+      }
+    } catch (error) {
+      console.error('Error navigating to nabook home:', error);
+    }
+
     let finalUrl = urlSigner.getAbsoluteUrl(decode(url));
 
     if (autoLogin) {
@@ -51,10 +67,12 @@ export async function openUrl(
             finalUrl = urlObj.href;
           }
         }
-      } catch {
-        // Do nothing. We just don't have customToken.
+      } catch (e) {
+        console.error('Error getting query param token: ', e);
       }
     }
+
+    console.info('Try to redirect to:', finalUrl);
 
     if (showConfirmation) {
       Alert.alert(

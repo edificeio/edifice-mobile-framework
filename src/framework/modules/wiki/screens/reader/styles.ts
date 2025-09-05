@@ -63,7 +63,7 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.fog,
     borderRadius: UI_SIZES.radius.card,
     gap: UI_SIZES.spacing.minor,
-    height: TextSizeStyle.Medium.lineHeight + 2 * UI_SIZES.spacing.small,
+    height: TextSizeStyle.Medium.lineHeight + 2 * UI_SIZES.spacing.minor,
     marginHorizontal: UI_SIZES.spacing.big,
     marginVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,

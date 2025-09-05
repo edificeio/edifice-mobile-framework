@@ -40,6 +40,7 @@ export default StyleSheet.create({
   },
   sendMessage: {
     marginTop: UI_SIZES.spacing.minor,
+    alignSelf: 'flex-start',
   },
   viewNoAvatar: {
     height: 30,

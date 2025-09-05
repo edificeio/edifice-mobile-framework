@@ -12,7 +12,7 @@ export default StyleSheet.create({
     padding: UI_SIZES.border.thin,
   },
   folderLabel: {
-    color: theme.palette.grey.black,
+    color: theme.palette.grey.graphite,
     lineHeight: TextSizeStyle.Small.lineHeight,
     position: 'relative',
     textAlign: 'center',
@@ -44,7 +44,7 @@ export default StyleSheet.create({
     width: '100%',
   },
   labelCaption: {
-    color: theme.palette.grey.black,
+    color: theme.palette.grey.graphite,
     lineHeight: TextSizeStyle.Small.lineHeight,
   },
   labelContainer: {

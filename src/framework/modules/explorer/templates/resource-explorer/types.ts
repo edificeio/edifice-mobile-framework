@@ -29,7 +29,7 @@ export namespace ResourceExplorerTemplate {
 
   export type NavBarConfig = ({ navigation, route }: NavigationProps) => NativeStackNavigationOptions;
 
-  export interface AllProps extends Props, NavigationProps { }
+  export interface AllProps extends Props, NavigationProps {}
 
   export type ScreenProps = Omit<AllProps, keyof Props>;
 }
