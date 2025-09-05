@@ -23,7 +23,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionItalicText, TextSizeStyle } from '~/framework/components/text';
 
-const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
+export const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
 export type TextInputType = RNTextInput;
 
 const TextInputStatusIcon: React.FC<TextInputStatusIconProps> = ({ showError, toggleIconOff, toggleIconOn }) => {
@@ -221,13 +221,15 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
         )}
         {maxLength && <TextInputMaxLengthIndicator maxLength={maxLength} valueLength={valueLength} />}
       </View>
-      <TextInputAnnotation
-        annotation={annotation}
-        annotationStyle={annotationStyle}
-        showError={showError}
-        showSuccess={showSuccess}
-        testIDCaption={testIDCaption}
-      />
+      {annotation ? (
+        <TextInputAnnotation
+          annotation={annotation}
+          annotationStyle={annotationStyle}
+          showError={showError}
+          showSuccess={showSuccess}
+          testIDCaption={testIDCaption}
+        />
+      ) : null}
     </View>
   );
 });

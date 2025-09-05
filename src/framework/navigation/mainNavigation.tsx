@@ -23,7 +23,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useSelector } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
-import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
+import { getTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
@@ -194,7 +194,6 @@ export function TabNavigation() {
 
   // Avoid bug when launching app after first push
   const insets = useSafeAreaInsets();
-  const bottom = UI_SIZES.screen.bottomInset ?? insets?.bottom;
 
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(
@@ -228,8 +227,8 @@ export function TabNavigation() {
             borderTopColor: theme.palette.grey.cloudy,
             borderTopWidth: 1,
             elevation: 1,
-            height: UI_SIZES.elements.tabbarHeight + insets.bottom, // Avoid bug when launching app after first push
-            ...getAndroidTabBarStyleForNavState(navigation.getState()),
+            height: UI_SIZES.elements.tabbarHeight + insets.bottom,
+            ...getTabBarStyleForNavState(navigation.getState()),
           },
         };
       },
@@ -238,7 +237,11 @@ export function TabNavigation() {
 
   return (
     <BottomSheetModalProvider>
-      {tabRoutes.length > 0 ? <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator> : null}
+      {tabRoutes.length > 0 ? (
+        <Tab.Navigator id="tabs" screenOptions={screenOptions}>
+          {tabRoutes}
+        </Tab.Navigator>
+      ) : null}
     </BottomSheetModalProvider>
   );
 }

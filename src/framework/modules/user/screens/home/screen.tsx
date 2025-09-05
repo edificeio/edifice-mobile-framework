@@ -46,6 +46,7 @@ import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/typ
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
+import { DebugOptions } from '~/framework/modules/debug';
 import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
 import { readSplashadsData } from '~/framework/modules/splashads/storage';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
@@ -575,41 +576,21 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
  */
 function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session'], debugVisible: boolean) {
   const currentPlatform = session?.platform.displayName;
-  const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
     if (debugVisible)
       return (
         <>
-          <SmallBoldText style={styles.version}>
-            {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
-          </SmallBoldText>
           {appConf.isDebugEnabled ? (
-            <>
-              <View style={styles.section}>
-                <HeadingSText style={styles.sectionTitle}>Debug</HeadingSText>
-                <ButtonLineGroup>
-                  <LineButton
-                    title="Network Log"
-                    icon="ui-print"
-                    onPress={() => {
-                      navigation.navigate(userRouteNames.network, {});
-                    }}
-                  />
-                  <LineButton
-                    title="Debug Log"
-                    icon="ui-print"
-                    onPress={() => {
-                      navigation.navigate(userRouteNames.log, {});
-                    }}
-                  />
-                </ButtonLineGroup>
-              </View>
-            </>
-          ) : null}
+            <DebugOptions />
+          ) : (
+            <SmallBoldText style={styles.version}>
+              {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
+            </SmallBoldText>
+          )}
         </>
       );
     return null;
-  }, [currentPlatform, debugVisible, navigation]);
+  }, [currentPlatform, debugVisible]);
 }
 
 /**

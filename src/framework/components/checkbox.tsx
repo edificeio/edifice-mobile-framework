@@ -36,8 +36,8 @@ export const Checkbox = ({ checked, customContainerStyle, onPress, partialyCheck
       return (
         <Svg
           name="ui-checkbox-partial"
-          width={UI_SIZES.elements.icon.xsmall}
-          height={UI_SIZES.elements.icon.xsmall}
+          width={UI_SIZES.elements.icon.xxsmall}
+          height={UI_SIZES.elements.icon.xxsmall}
           fill={theme.palette.primary.regular}
         />
       );
@@ -45,8 +45,8 @@ export const Checkbox = ({ checked, customContainerStyle, onPress, partialyCheck
       return (
         <Svg
           name="ui-checkbox-check"
-          width={UI_SIZES.elements.icon.xsmall}
-          height={UI_SIZES.elements.icon.xsmall}
+          width={UI_SIZES.elements.icon.xxsmall}
+          height={UI_SIZES.elements.icon.xxsmall}
           fill={theme.ui.text.inverse}
         />
       );

@@ -133,6 +133,7 @@ interface AuthActiveUserInfoCommon extends UpdatableUserInfo {
   login: string; // May be same as loginUsed if real login was used to log in.
   structures?: UserStructureWithClasses[];
   uniqueId?: string;
+  isAdml?: boolean;
 }
 
 export interface AuthActiveUserInfoStudent extends AuthActiveUserInfoCommon {

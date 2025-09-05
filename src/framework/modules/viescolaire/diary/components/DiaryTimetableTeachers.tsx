@@ -181,7 +181,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
         onPress={() => navigation.navigate(diaryRouteNames.session, sessionListDetailsTeacherAdapter(course.session || course))}
         disabled={!isSessionPublished}>
         <Svg
-          name="ui-textPage"
+          name="ui-text-page"
           width={24}
           height={24}
           fill={isSessionPublished ? viescoTheme.palette.diary : theme.palette.grey.cloudy}

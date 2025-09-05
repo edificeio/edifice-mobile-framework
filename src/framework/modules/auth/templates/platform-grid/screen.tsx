@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -14,6 +13,7 @@ import { PageView } from '~/framework/components/page';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { AuthNavigationTemplatesParams } from '~/framework/modules/auth/navigation';
 import { navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
+import { DebugOptions } from '~/framework/modules/debug';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf, { Platform } from '~/framework/util/appConf';
 
@@ -60,7 +60,7 @@ export function AuthPlatformGridScreen(props: AuthPlatformGridScreenPrivateProps
         }
         alwaysBounceVertical={false}
         overScrollMode="never"
-        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
+        ListFooterComponent={<DebugOptions />}
         gap={UI_SIZES.spacing.big}
         gapOutside={UI_SIZES.spacing.big}
       />

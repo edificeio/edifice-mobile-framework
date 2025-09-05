@@ -12,7 +12,7 @@ import { BodyBoldText } from '~/framework/components/text';
 export const HeaderBottomSheetModal = (props: HeaderBottomSheetModalProps) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.icon} disabled={props.iconLeftDisabled} onPress={props.onPressLeft ?? (() => { })}>
+      <TouchableOpacity style={styles.icon} disabled={props.iconLeftDisabled} onPress={props.onPressLeft ?? (() => {})}>
         {props.iconLeft ? (
           <Svg
             name={props.iconLeft}
@@ -25,7 +25,7 @@ export const HeaderBottomSheetModal = (props: HeaderBottomSheetModalProps) => {
       <BodyBoldText style={styles.title} numberOfLines={1}>
         {props.title}
       </BodyBoldText>
-      <TouchableOpacity style={styles.icon} disabled={props.iconRightDisabled} onPress={props.onPressRight ?? (() => { })}>
+      <TouchableOpacity style={styles.icon} disabled={props.iconRightDisabled} onPress={props.onPressRight ?? (() => {})}>
         {props.iconRight ? (
           <Svg
             name={props.iconRight}

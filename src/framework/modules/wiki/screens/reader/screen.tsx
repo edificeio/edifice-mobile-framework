@@ -131,7 +131,7 @@ export function WikiReaderScreenLoaded({
         <SelectButton
           text={I18n.get('wiki-select-page-button')}
           action={openPagesBottomSheet}
-          iconLeft="ui-textPage"
+          iconLeft="ui-text-page"
           iconRight="ui-unfold"
           wrapperStyle={styles.selectButtonWrapper}
           onLayout={onSelectButtonLayout}
