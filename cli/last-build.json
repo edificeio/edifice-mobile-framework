@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-08-28 12:12:12",
-  "notes": "Updated translations from Phrase (#213)\nrelease: 1.15.0-rc.2(1150007)",
-  "version": "1.15.0-rc.3(1150008)"
+  "last": "2025-09-05 13:26:36",
+  "notes": "chore: yarn cache update\nMerge commit '1a75736e2e1923021eee891e5f0ba48144fd03b3' into feat/peda/communities\nchore: yarn cache update\nMerge remote-tracking branch 'origin/dev/1.15.2' into dev/peda\nMerge commit '6227c5ef55945cede551b67af902bb08b97021fa' into feat/peda/communities\nfeat(community): PEDAGO-2861 with animation\nchore: refacto transport layer\nfix(communities): PEDAGO-3090 removing shadows on pill components\nSquashed commit of the following:\nfix(communities): PEDAGO-3091 change empty state image\nfeat(community): PEDAGO-2861 without animation\nchore(build): remove definitively conversation module and replace it by mails module\nchore(i18n): change Phrase sync branch\nfix(wayf): MONCOLLEGE-294, enable clear text trafic\nfix(wayf): MONCOLLEGE-294 + SUPPORT-3168, enable clear text trafic (http) for aix-marseille && versaille\nfeat(debug): ENABLING-387, add debug options to platform selection screen\nfeat(nabook): ENABLING-382, Manage nabook urls and open nabook module\nrelease: 1.15.1(1150100)\nchore(build): unnecessary patch removal\nrelease: 1.15.0-rc.3(1150008)",
+  "version": "1.15.1-peda.1(1150101)"
 }
