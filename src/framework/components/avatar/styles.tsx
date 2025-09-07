@@ -2,6 +2,7 @@ import { ImageStyle, StyleSheet } from 'react-native';
 
 import * as Avatar from './types';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export const AvatarSizes = {
@@ -13,5 +14,18 @@ export const AvatarSizes = {
 };
 
 export default StyleSheet.create({
+  border: {
+    backgroundColor: theme.palette.grey.white,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
   singleAvatar: {} as ImageStyle,
 });

@@ -1,7 +1,7 @@
-import { AvatarSize } from '~/framework/components/newavatar';
+import { Size } from '~/framework/components/avatar';
 
 export interface MailsRecipientAvatarProps {
   id?: string;
   type: string;
-  size?: AvatarSize;
+  size?: Size | keyof typeof Size;
 }

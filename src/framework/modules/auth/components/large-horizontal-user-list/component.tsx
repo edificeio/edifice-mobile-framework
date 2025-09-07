@@ -40,7 +40,7 @@ const UserExternalListItem = <
   );
   return (
     <View style={style}>
-      <SingleAvatar {...avatarProps} />
+      <SingleAvatar {...avatarProps} border />
       {(renderUserDetails ?? UserListItemDetails)(info)}
     </View>
   );
