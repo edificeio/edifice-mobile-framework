@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Image, ImageProps } from 'react-native';
+import { Image, ImageProps, View } from 'react-native';
 
+import styles from './styles';
 import {
   CommonSingleAvatarProps,
   SingleAvatarOnlySpecificProps,
@@ -28,13 +29,10 @@ const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
     () => [
       props.style,
       {
+        aspectRatio: 1,
         backgroundColor: theme.ui.background.card,
-        borderColor: theme.palette.grey.white,
-        borderRadius: AvatarSizes[props.size] / 2 + UI_SIZES.border.small * 2,
-        borderWidth: UI_SIZES.border.small,
-        height: AvatarSizes[props.size] + UI_SIZES.border.small * 2,
-        margin: -UI_SIZES.border.small * 2,
-        width: AvatarSizes[props.size] + UI_SIZES.border.small * 2,
+        borderRadius: AvatarSizes[props.size] / 2,
+        width: AvatarSizes[props.size],
       },
     ],
     [props.size, props.style],
@@ -125,8 +123,39 @@ export function SingleAvatar(props: SingleAvatarProps) {
     setError(true);
   }, []);
 
+  const sizeValue = AvatarSizes[props.size];
+  const sizeContainer = React.useMemo(
+    () => (props.border ? sizeValue + UI_SIZES.border.small * 2 : sizeValue),
+    [props.border, sizeValue],
+  );
   const computedStyle = useAvatarStyle(props);
   const imageSource = useAvatarImage(props as SingleAvatarOnlySpecificProps, error);
 
-  return <Image style={computedStyle} source={imageSource} onError={onError} {...otherProps} />;
+  const sizeBorderStyles: any = React.useMemo(
+    () => ({
+      borderRadius: sizeContainer / 2,
+      width: sizeContainer,
+    }),
+    [sizeContainer],
+  );
+
+  const sizeContainerStyles: any = React.useMemo(
+    () => ({
+      height: sizeContainer,
+      width: sizeContainer,
+    }),
+    [sizeContainer],
+  );
+
+  const renderBorder = React.useCallback(() => {
+    if (!props.border) return null;
+    return <View style={[styles.border, sizeBorderStyles]} />;
+  }, [props.border, sizeBorderStyles]);
+
+  return (
+    <View style={[styles.container, sizeContainerStyles]}>
+      {renderBorder()}
+      <Image style={computedStyle} source={imageSource} onError={onError} {...otherProps} />
+    </View>
+  );
 }

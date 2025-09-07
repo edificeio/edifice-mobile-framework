@@ -12,6 +12,7 @@ import type { MailsDetailsScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import { SingleAvatar } from '~/framework/components/avatar';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -20,7 +21,6 @@ import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
-import { AvatarSize, NewAvatar } from '~/framework/components/newavatar';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
@@ -580,7 +580,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         <ScrollView style={styles.page}>
           <HeadingXSText>{renderSubject(mail?.subject, isRecall)}</HeadingXSText>
           <View style={styles.topInfos}>
-            <NewAvatar size={AvatarSize.lg} userId={mail?.from.id} />
+            <SingleAvatar size="lg" userId={mail?.from.id} />
             <View style={styles.topInfosText}>
               <View style={styles.sender}>
                 <TouchableOpacity

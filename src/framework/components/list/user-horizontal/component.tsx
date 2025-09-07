@@ -38,7 +38,7 @@ const UserListItem = <ItemT extends DisplayUserPublic = DisplayUserPublic>(props
   const { renderUserDetails, style, ...info } = props;
   return (
     <View style={style}>
-      <SingleAvatar userId={info.item.id} size={Size.xxl} />
+      <SingleAvatar userId={info.item.id} size={Size.xxl} border />
       {(renderUserDetails ?? UserListItemDetails)(info)}
     </View>
   );
