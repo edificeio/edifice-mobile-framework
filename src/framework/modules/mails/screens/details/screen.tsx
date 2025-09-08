@@ -85,7 +85,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
   const [error, setError] = React.useState<boolean>(false);
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const canRecall =
     props.session?.user.id === mail?.from.id &&
