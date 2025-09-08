@@ -85,6 +85,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
   const [error, setError] = React.useState<boolean>(false);
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   const canRecall =
     props.session?.user.id === mail?.from.id &&
@@ -101,6 +102,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const loadData = async () => {
     try {
+      setIsLoading(true);
+      setError(false);
       const mailData = await mailsService.mail.get({ id });
       const _infosRecipients = mailsFormatRecipients(mailData.to, mailData.cc, mailData.cci);
       const { content, history } = separateContentAndHistory(mailData.body);
@@ -111,6 +114,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     } catch (e) {
       console.error('Failed to fetch mail content', e);
       setError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -396,15 +401,15 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         ) : (
           <NavBarActionsGroup
             elements={[
-              <NavBarAction icon="ui-undo" onPress={onReply} />,
-              <PopupMenu actions={popupActionsMenu}>
+              <NavBarAction disabled={isLoading} icon="ui-undo" onPress={onReply} />,
+              <PopupMenu disabled={isLoading} actions={popupActionsMenu}>
                 <NavBarAction icon="ui-options" />
               </PopupMenu>,
             ]}
           />
         ),
     });
-  }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder, fromTimeline]);
+  }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder, fromTimeline, isLoading]);
 
   const renderContentViewer = React.useCallback(() => {
     if (isContentEmpty) return;
