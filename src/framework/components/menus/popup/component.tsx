@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, View, ViewStyle } from 'react-native';
 
 import { MenuView } from '@react-native-menu/menu';
 
@@ -21,7 +21,7 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
 
   if (props.disabled) {
     return (
-      <View style={{ opacity: 0.5 } as any} pointerEvents="none">
+      <View style={{ opacity: 0.5 } as ViewStyle} pointerEvents="none">
         {props.children}
       </View>
     );
