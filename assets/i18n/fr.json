@@ -1,4 +1,5 @@
 {
+  "News": "Actualités",
   "accountlistitem-removealert-description": "Êtes vous sur de vouloir supprimer cet identifiant ?",
   "accountlistitem-removealert-title": "Confirmer la suppression",
   "attachment-adderror": "Erreur lors de l'ajout de la pièce jointe",
@@ -376,7 +377,7 @@
   "community-join-onboarding-member-item-1": "<b>Consulter</b> les documents et les ressources de la communauté",
   "community-join-onboarding-member-item-2": "<b>Rester informé</b> des actualités de la communauté",
   "community-join-onboarding-member-item-3": "<b>Échanger</b> avec les autres membres au sein de la communauté",
-  "community-join-onboarding-ok": "Voir la communnauté",
+  "community-join-onboarding-ok": "Voir la communauté",
   "community-join-onboarding-title": "Félicitations !",
   "community-welcome-note": "Note d'accueil",
   "competences-assessment-levellegendmodal-title": "Légende",
@@ -1071,7 +1072,6 @@
   "nabook-tabname": "Nabook",
   "nabook-token-generation-error": "Erreur lors de la génération du token",
   "nabook-welcome-title": "LA PLATEFORME DE LECTURE 100% PLAISIR",
-  "News": "Actualités",
   "news-details-appname": "Actualités",
   "news-details-comment": "Commentaire",
   "news-details-comment-confirmation-unsaved-modification": "Les modifications de votre commentaire seront perdues. Êtes-vous sûr de quitter ?",
