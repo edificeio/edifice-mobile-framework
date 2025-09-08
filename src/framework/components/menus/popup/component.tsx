@@ -19,11 +19,21 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
     };
   });
 
+  if (props.disabled) {
+    return (
+      <View style={{ opacity: 0.5 } as any} pointerEvents="none">
+        {props.children}
+      </View>
+    );
+  }
+
   return (
     <View>
       <MenuView
         isAnchoredToRight
         onPressAction={({ nativeEvent }) => {
+          if (props.disabled) return;
+
           props.actions[+nativeEvent.event].action();
         }}
         actions={actionsPopup}>
