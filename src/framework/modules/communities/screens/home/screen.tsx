@@ -141,8 +141,7 @@ export const CommunitiesHomeScreenLoaded = function ({
 
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   React.useEffect(() => {
-    // (showWelcome && invitationId !== undefined ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
-    (true ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
+    (showWelcome && invitationId !== undefined ? bottomSheetModalRef.current?.present : bottomSheetModalRef.current?.dismiss)?.();
   }, [showWelcome, invitationId]);
 
   const invitation = useSelector(communitiesSelectors.getAllCommunities).find(
