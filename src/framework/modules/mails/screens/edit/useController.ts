@@ -61,15 +61,25 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     [initialMailInfo],
   );
 
+  const isMeaningfulBody = React.useMemo(() => {
+    const stripHtml = (html: string): string => {
+      return html // create an util function that handles that in the future
+        .replace(/<[^>]+>/g, '')
+        .replace(/\s+/g, '')
+        .trim();
+    };
+    return stripHtml(body) !== stripHtml(initialContentHTML);
+  }, [body, initialContentHTML]);
+
   const showPreventBack = React.useMemo(() => !isSending && !hasBeenSent, [isSending, hasBeenSent]);
 
   const shouldSaveDraft = React.useMemo(() => {
     const hasMainRecipient = to.length > 0;
-    const hasContent = Boolean(body.trim() || subject.trim() || attachments.length > 0);
+    const hasContent = Boolean(isMeaningfulBody || subject.trim() || attachments.length > 0);
     const hasOptionalRecipients = cc.length > 0 || cci.length > 0;
 
     return (hasMainRecipient || hasContent || hasOptionalRecipients) && showPreventBack;
-  }, [to, cc, cci, body, subject, attachments, showPreventBack]);
+  }, [to, cc, cci, isMeaningfulBody, subject, attachments, showPreventBack]);
 
   // Callbacks
   const handleCloseInactiveUserModal = React.useCallback(() => {
@@ -87,20 +97,6 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       }),
     [navigation, fromFolder],
   );
-
-  //   const createDraftIfNecessary = React.useCallback(async () => {
-  //     const hasMainRecipient = to.length > 0;
-  //     const hasContent = body.trim() || subject.trim() || attachments.length > 0;
-  //     const hasOptionalRecipients = cc.length > 0 || cci.length > 0;
-
-  //     if (!draftIdSaved && (hasMainRecipient || hasContent || hasOptionalRecipients)) {
-  //       const newDraftId = await mailsService.mail.sendToDraft(
-  //         { inReplyTo: initialMailInfo?.id ?? undefined },
-  //         { body: '', cc: [], cci: [], subject: '', to: [] },
-  //       );
-  //       setDraftIdSaved(newDraftId);
-  //     }
-  //   }, [to.length, body, subject, attachments.length, cc.length, cci.length, draftIdSaved, initialMailInfo?.id]);
 
   const openMoreRecipientsFields = React.useCallback(() => {
     setMoreRecipientsFields(true);
