@@ -40,6 +40,7 @@ import {
   MailsDefaultFolders,
   MailsListTypeModal,
   MailsMailStatePreview,
+  MailsRecipientGroupInfo,
   MailsRecipients,
   MailsVisible,
 } from '~/framework/modules/mails/model';
@@ -500,20 +501,31 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   }, [infosRecipients, isRecall, isRecallAndNotSender, mail?.trashed, onForward, onReply, onReplyAll]);
 
-  const hasRecipients = (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0;
+  const hasRecipients = React.useCallback(
+    (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0,
+    [],
+  );
 
-  const renderListRecipients = React.useCallback((recipients: MailsRecipients, prefix: string) => {
-    if (!hasRecipients(recipients)) return;
-    return (
-      <View>
-        <SmallBoldText style={styles.bottomSheetPrefix}>{I18n.get(prefix)}</SmallBoldText>
-        {recipients.users.length > 0 ? recipients.users.map(user => <MailsRecipientUserItem key={user.id} item={user} />) : null}
-        {recipients.groups.length > 0
-          ? recipients.groups.map(group => <MailsRecipientGroupItem key={group.id} item={group} />)
-          : null}
-      </View>
-    );
-  }, []);
+  const renderListRecipients = React.useCallback(
+    (recipients: MailsRecipients, prefix: string) => {
+      if (!hasRecipients(recipients)) return;
+
+      const groupArray = Object.entries<MailsRecipientGroupInfo>(recipients.groups)
+        .filter(([key]) => key !== 'length')
+        .map(([_, value]) => value);
+
+      return (
+        <View>
+          <SmallBoldText style={styles.bottomSheetPrefix}>{I18n.get(prefix)}</SmallBoldText>
+
+          {recipients.users.length > 0 && recipients.users.map(user => <MailsRecipientUserItem key={user.id} item={user} />)}
+
+          {groupArray.length > 0 && groupArray.map(group => <MailsRecipientGroupItem key={group.id} item={group} />)}
+        </View>
+      );
+    },
+    [hasRecipients],
+  );
 
   const renderDetailsRecipients = React.useCallback(
     () => (
@@ -527,7 +539,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         </View>
       </GHScrollView>
     ),
-    [mail, renderListRecipients],
+    [mail, renderListRecipients, hasRecipients],
   );
 
   const renderCreateFolder = React.useCallback(

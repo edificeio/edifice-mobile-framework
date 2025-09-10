@@ -10,11 +10,17 @@ import { AvatarSizes } from '~/framework/components/avatar/styles';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 
-const iconType = {
-  ['BroadcastGroup']: 'ui-globe',
-  ['Group']: 'ui-users',
-  ['ShareBookmark']: 'ui-bookmark',
-  ['User']: 'ui-questionMark',
+export const getRecipientIconName = (type: string | undefined): string => {
+  switch (type) {
+    case 'BroadcastGroup':
+      return 'ui-globe';
+    case 'ShareBookmark':
+      return 'ui-bookmark';
+    case 'User':
+      return 'ui-questionMark';
+    default:
+      return 'ui-users';
+  }
 };
 
 const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
@@ -30,7 +36,7 @@ const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
   return (
     <View style={[suppViewStyles, styles.view, type === 'ShareBookmark' ? styles.bookmark : type === 'User' ? styles.noUser : {}]}>
       <Svg
-        name={iconType[type]}
+        name={getRecipientIconName(type)}
         height={UI_SIZES.elements.icon.xsmall}
         width={UI_SIZES.elements.icon.xsmall}
         fill={theme.palette.grey.black}
