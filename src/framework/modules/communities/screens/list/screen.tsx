@@ -22,7 +22,7 @@ import { IGlobalState } from '~/app/store';
 import { SegmentedControlLoader } from '~/framework/components/buttons/segmented-control';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps } from '~/framework/components/list/paginated-list';
+import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { sessionScreen } from '~/framework/components/screen';
@@ -173,8 +173,8 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
     filtersListBottomSheetRef.current?.present();
   }, []);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedListProps<InvitationResponseDto>['keyExtractor']>>(
-    (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item.id.toString()),
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<InvitationResponseDto>['keyExtractor']>>(
+    item => item.id.toString(),
     [],
   );
 
@@ -240,7 +240,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
           pendingInvitationsCount={totalPendingInvitations}
         />
       )}
-      <PaginatedList
+      <PaginatedFlashList
         ref={paginatedListRef}
         contentContainerStyle={styles.listPadding}
         data={displayedCommunities}
