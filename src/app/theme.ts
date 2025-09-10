@@ -170,7 +170,7 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'archives', type: 'Svg' },
       },
       'blog': {
-        accentColors: appConf.is1d ? this.palette.complementary.orange : this.palette.complementary.indigo,
+        accentColors: this.palette.complementary.orange,
         icon: { name: 'blog', type: 'Svg' },
       },
       'calendar': {
@@ -194,7 +194,7 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'community', type: 'Svg' },
       },
       'competences': {
-        accentColors: this.palette.complementary.red,
+        accentColors: this.palette.complementary.green,
         icon: { name: 'competences', type: 'Svg' },
       },
       'conversation': {
@@ -202,11 +202,11 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'messages', type: 'Svg' },
       },
       'diary': {
-        accentColors: this.palette.complementary.green,
+        accentColors: this.palette.complementary.blue,
         icon: { name: 'diary', type: 'Svg' },
       },
       'edt': {
-        accentColors: this.palette.complementary.indigo,
+        accentColors: this.palette.complementary.green,
         icon: { name: 'edt', type: 'Svg' },
       },
       'exercizer': {
@@ -214,7 +214,7 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'exercices', type: 'Svg' },
       },
       'formulaire': {
-        accentColors: this.palette.complementary.purple,
+        accentColors: this.palette.complementary.green,
         icon: { name: 'form', type: 'Svg' },
       },
       'forum': {
@@ -226,7 +226,7 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'homeworkAssistance', type: 'Svg' },
       },
       'homeworks': {
-        accentColors: appConf.is1d ? this.palette.complementary.blue : this.palette.complementary.green,
+        accentColors: this.palette.complementary.blue,
         icon: { name: 'homework1D', type: 'Svg' },
       },
       'magneto': {
@@ -246,7 +246,7 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'nabook', type: 'Svg' },
       },
       'news': {
-        accentColors: appConf.is1d ? this.palette.complementary.purple : this.palette.complementary.blue,
+        accentColors: this.palette.complementary.orange,
         icon: { name: 'newsFeed', type: 'Svg' },
       },
       'pages': {
@@ -258,7 +258,7 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'poll', type: 'Svg' },
       },
       'presences': {
-        accentColors: this.palette.complementary.yellow,
+        accentColors: this.palette.complementary.green,
         icon: { name: 'presences', type: 'Svg' },
       },
       'rack': {
@@ -270,11 +270,11 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'rbs', type: 'Svg' },
       },
       'schoolbook': {
-        accentColors: this.palette.complementary.green,
+        accentColors: this.palette.complementary.orange,
         icon: { name: 'homeLiaisonDiary', type: 'Svg' },
       },
       'scrapbook': {
-        accentColors: this.palette.complementary.green,
+        accentColors: this.palette.complementary.blue,
         icon: { name: 'scrapbook', type: 'Svg' },
       },
       'sharebigfiles': {
@@ -298,11 +298,11 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'adressBook', type: 'Svg' },
       },
       'wiki': {
-        accentColors: appConf.is1d ? this.palette.complementary.red : this.palette.complementary.purple,
+        accentColors: this.palette.complementary.blue,
         icon: { name: 'wiki', type: 'Svg' },
       },
       'workspace': {
-        accentColors: this.palette.complementary.red,
+        accentColors: this.palette.complementary.orange,
         icon: { name: 'files', type: 'Svg' },
       },
       'zimbra': {
