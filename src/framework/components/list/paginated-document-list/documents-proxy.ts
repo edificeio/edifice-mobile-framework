@@ -1,4 +1,4 @@
-import { PaginatedListProps } from '../paginated-list';
+import { PaginatedFlashListProps } from '../paginated-list';
 import { DocumentItem, FolderItem, PaginatedDocumentListItemType } from './types';
 
 /**
@@ -7,10 +7,10 @@ import { DocumentItem, FolderItem, PaginatedDocumentListItemType } from './types
 export const FOLDER_SPACER_ITEM_DATA = Symbol('FOLDER_SPACER_ITEM_DATA');
 
 export const createDocumentArrayProxy = (
-  folders: NonNullable<PaginatedListProps<FolderItem>['data']>,
-  documents: NonNullable<PaginatedListProps<DocumentItem>['data']>,
+  folders: NonNullable<PaginatedFlashListProps<FolderItem>['data']>,
+  documents: NonNullable<PaginatedFlashListProps<DocumentItem>['data']>,
   numColumns: number = 1,
-): { data: NonNullable<PaginatedListProps<PaginatedDocumentListItemType<DocumentItem>>['data']>; totalFolders: number } => {
+): { data: NonNullable<PaginatedFlashListProps<PaginatedDocumentListItemType<DocumentItem>>['data']>; totalFolders: number } => {
   if (!Number.isInteger(numColumns) || numColumns <= 0) {
     throw new TypeError('createDocumentArrayProxy: numColumns must be a positive non-null integer.');
   }
