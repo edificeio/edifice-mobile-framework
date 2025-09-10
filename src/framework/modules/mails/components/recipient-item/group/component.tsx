@@ -20,12 +20,12 @@ const renderSubtitle = (nbUsers, disabled) => {
 };
 
 const MailsRecipientGroupItem = (props: MailsRecipientContainerProps) => {
-  const { displayName, id, nbUsers, size, type } = props.item as MailsRecipientGroupInfo | MailsVisible;
+  const { displayName, id, nbUsers, size, subType, type } = props.item as MailsRecipientGroupInfo & MailsVisible;
   const { disabled } = props;
 
   return (
     <MailsRecipientContainer {...props}>
-      <MailsRecipientAvatar id={id} type={type} />
+      <MailsRecipientAvatar id={id} type={subType || type} />
       <View style={styles.flex1}>
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail" style={props.disabled ? styles.graphite : {}}>
           {displayName}
