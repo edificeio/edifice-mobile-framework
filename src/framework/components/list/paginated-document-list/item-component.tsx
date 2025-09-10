@@ -1,9 +1,9 @@
 import React from 'react';
-import { PixelRatio, TouchableOpacity, TouchableOpacityProps, View, ViewProps } from 'react-native';
+import { ListRenderItemInfo, PixelRatio, TouchableOpacity, TouchableOpacityProps, View, ViewProps } from 'react-native';
 
 import { PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
+import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 import styles from './styles';
 import { DocumentItem, DocumentItemWorkspace, DocumentItemWorkspaceDocumentMedia, FolderItem } from './types';
 import ImageWithFallback from '../../picture/image-with-fallback';
@@ -11,7 +11,7 @@ import ImageWithFallback from '../../picture/image-with-fallback';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { PaginatedListProps } from '~/framework/components/list/paginated-list';
+import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { Picture, Svg } from '~/framework/components/picture';
 import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import http from '~/framework/util/http';
@@ -23,7 +23,9 @@ const isItemWorkspaceDocumentMedia = (item: DocumentItemWorkspace): item is Docu
 export function DocumentListItemIcon({
   item,
   size,
-}: Readonly<Pick<Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0], 'item'>> & { size: 'large' | 'small' }) {
+}: Readonly<
+  Pick<Parameters<(PaginatedFlashListProps<DocumentItem> & PaginatedFlatListProps<DocumentItem>)['renderItem']>[0], 'item'>
+> & { size: 'large' | 'small' }) {
   const iconSize = size === 'large' ? UI_SIZES.elements.icon.xxlarge : UI_SIZES.elements.icon.default;
   if (isItemWorkspaceResource(item)) {
     const resourceIconPictureProps = {
@@ -56,7 +58,12 @@ export function DocumentListItem({
   item,
   onPress,
   style,
-}: Readonly<Pick<Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0], 'index' | 'item'>> &
+}: Readonly<
+  Pick<
+    Parameters<(PaginatedFlashListProps<DocumentItem> & PaginatedFlatListProps<DocumentItem>)['renderItem']>[0],
+    'index' | 'item'
+  >
+> &
   Pick<TouchableOpacityProps, 'onPress' | 'style'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
 
@@ -95,7 +102,9 @@ export function FolderListItem({
   item,
   onPress,
   style,
-}: Readonly<Pick<Parameters<PaginatedListProps<FolderItem>['renderItem']>[0], 'item' | 'index'>> &
+}: Readonly<
+  Pick<Parameters<(PaginatedFlashListProps<FolderItem> & PaginatedFlatListProps<FolderItem>)['renderItem']>[0], 'item' | 'index'>
+> &
   Pick<TouchableOpacityProps, 'onPress'> &
   Pick<ViewProps, 'style'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
@@ -116,7 +125,7 @@ FolderListItem.wrapperComponentStyle = [styles.item, styles.itemFolder];
 export function FolderSpacerListItem({
   index,
   style,
-}: Readonly<Parameters<PaginatedListProps<typeof FOLDER_SPACER_ITEM_DATA>['renderItem']>[0] & Pick<ViewProps, 'style'>>) {
+}: Readonly<Pick<ListRenderItemInfo<typeof FOLDER_SPACER_ITEM_DATA>, 'index'> & Pick<ViewProps, 'style'>>) {
   return (
     <FolderListItem
       index={index}
@@ -127,9 +136,15 @@ export function FolderSpacerListItem({
 }
 FolderSpacerListItem.dummyData = { id: 0, title: ' ' };
 
-export const renderPlacerholderItem = () => {
+export function DocumentSpacerListItem({
+  style,
+}: Readonly<Pick<ListRenderItemInfo<typeof DOCUMENT_SPACER_ITEM_DATA>, 'index'> & Pick<ViewProps, 'style'>>) {
+  return <View style={[styles.item, styles.itemSpacer, style]} />;
+}
+
+export function DocumentPlaceholderItem({ style }: Pick<ViewProps, 'style'>) {
   return (
-    <View style={[styles.item, styles.itemDocument]}>
+    <View style={React.useMemo(() => [styles.item, styles.itemDocument, style], [style])}>
       <PlaceholderMedia style={styles.documentThumbnailPlaceholder} isRound={false} />
       <View style={styles.documentMetadata}>
         <PlaceholderLine
@@ -152,4 +167,4 @@ export const renderPlacerholderItem = () => {
       </View>
     </View>
   );
-};
+}

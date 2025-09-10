@@ -2,8 +2,8 @@ import { TouchableOpacityProps } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
 
-import type { PaginatedListProps } from '../paginated-list';
-import type { FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
+import type { PaginatedFlashListProps, PaginatedFlatListProps } from '../paginated-list';
+import type { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 
 import { EntAppNameOrSynonym } from '~/app/intents';
 import { IMedia } from '~/framework/util/media';
@@ -45,19 +45,30 @@ export interface FolderItem {
   id: number;
 }
 
-export type PaginatedDocumentListItemType<DocumentType extends DocumentItem> =
-  | DocumentType
+export type PaginatedDocumentListItem =
+  | DocumentItem
   | FolderItem
-  | typeof FOLDER_SPACER_ITEM_DATA;
+  | typeof FOLDER_SPACER_ITEM_DATA
+  | typeof DOCUMENT_SPACER_ITEM_DATA;
 
-export interface PaginatedDocumentListProps<DocumentType extends DocumentItem>
-  extends Omit<
-    PaginatedListProps<DocumentType | FolderItem>,
-    'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
-  > {
-  documents: PaginatedListProps<DocumentType>['data'];
-  folders: PaginatedListProps<FolderItem>['data'];
-  overrideItemLayout?: PaginatedListProps<PaginatedDocumentListItemType<DocumentType>>['overrideItemLayout'];
+export interface CommonPaginatedDocumentListProps {
+  documents: PaginatedFlashListProps<DocumentItem>['data'];
+  folders: PaginatedFlashListProps<FolderItem>['data'];
+  overrideItemLayout?: PaginatedFlashListProps<PaginatedDocumentListItem>['overrideItemLayout'];
   onPressFolder?: (folder: FolderItem, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
-  onPressDocument?: (document: DocumentType, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
+  onPressDocument?: (document: DocumentItem, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
 }
+
+export interface PaginatedDocumentFlashListProps
+  extends Omit<
+      PaginatedFlashListProps<DocumentItem | FolderItem>,
+      'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
+    >,
+    CommonPaginatedDocumentListProps {}
+
+export interface PaginatedDocumentFlatListProps
+  extends Omit<
+      PaginatedFlatListProps<PaginatedDocumentListItem>,
+      'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
+    >,
+    CommonPaginatedDocumentListProps {}

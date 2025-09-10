@@ -2,8 +2,12 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
+  emptyScreen: {
+    backgroundColor: undefined,
+  },
   endSpacer: {
     opacity: 0,
     pointerEvents: 'none',
@@ -20,9 +24,14 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
   },
   list: {
-    padding: UI_SIZES.spacing.big / 2,
+    paddingBottom: UI_SIZES.spacing.big / 2,
   },
   title: {
+    marginHorizontal: UI_SIZES.spacing.big,
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  titlePlaceholder: {
+    height: TextSizeStyle.Medium.lineHeight,
     marginHorizontal: UI_SIZES.spacing.big,
     marginTop: UI_SIZES.spacing.medium,
   },

@@ -64,8 +64,8 @@ export function AvatarStack({
 
   return (
     <View onLayout={onLayout} style={containerStyle}>
-      {avatarItemProps.map(item => (
-        <SingleAvatar size={size} {...item} />
+      {avatarItemProps.map(({ key, ...item }) => (
+        <SingleAvatar size={size} key={key} {...item} />
       ))}
     </View>
   );

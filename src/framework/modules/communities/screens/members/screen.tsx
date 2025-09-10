@@ -13,7 +13,12 @@ import VisibleItem, { VisibleItemLoader } from '~/framework/components/card/visi
 import { VisibleItemProps } from '~/framework/components/card/visible-item/types';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
+import {
+  LOADING_ITEM_DATA,
+  PaginatedFlashList,
+  PaginatedFlashListProps,
+  staleOrSplice,
+} from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { TextSizeStyle } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -22,7 +27,7 @@ import MembersListCount, { MembersListCountLoader } from '~/framework/modules/co
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import http from '~/framework/util/http';
+import { sessionApi } from '~/framework/util/transport';
 
 const ESTIMATED_ITEM_SIZE = TextSizeStyle.Normal.lineHeight * PixelRatio.getFontScale() * 2 + UI_SIZES.spacing.small * 2;
 const ESTIMATED_LIST_SIZE = {
@@ -60,14 +65,16 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
           size: PAGE_SIZE,
         };
 
-        const members = await http.sessionApi(moduleConfig, MembershipClient).getMembers(Number(communityId), baseQueryParams);
+        const members = await sessionApi(moduleConfig, MembershipClient).getMembers(Number(communityId), baseQueryParams);
 
         setAllMembers(prevData => {
-          return staleOrSplice(
-            prevData,
-            { from: page * PAGE_SIZE, items: members.items, total: members.meta.totalItems },
+          return staleOrSplice({
+            newData: members.items,
+            previousData: prevData,
             reloadAll,
-          );
+            start: page * PAGE_SIZE,
+            total: members.meta.totalItems,
+          });
         });
       } catch (e) {
         console.error('Error while loading community members list', e);
@@ -107,8 +114,8 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
     );
   }, []);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedListProps<MembershipResponseDto>['keyExtractor']>>(
-    (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : item.user.entId.toString()),
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<MembershipResponseDto>['keyExtractor']>>(
+    item => item.user.entId.toString(),
     [],
   );
 
@@ -121,7 +128,7 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
   return (
     <>
       {renderMembersCount()}
-      <PaginatedList
+      <PaginatedFlashList
         data={allMembers.length <= 1 ? [] : allMembers} // render empty screen if no members have been added yet by admin
         estimatedItemSize={ESTIMATED_ITEM_SIZE}
         estimatedListSize={ESTIMATED_LIST_SIZE}

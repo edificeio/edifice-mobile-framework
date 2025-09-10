@@ -14,7 +14,7 @@ const CoursesTile = () => (
   <View style={styles.tileCourses}>
     <View style={styles.tileCaption}>
       <Svg
-        name="ui-textPage"
+        name="ui-text-page"
         width={UI_SIZES.elements.icon.small}
         height={UI_SIZES.elements.icon.small}
         fill={styles.tileCaptionTextUnavailable.color}

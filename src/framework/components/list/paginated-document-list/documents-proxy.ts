@@ -1,25 +1,31 @@
-import { PaginatedListProps } from '../paginated-list';
-import { DocumentItem, FolderItem, PaginatedDocumentListItemType } from './types';
+import { PaginatedFlashListProps } from '../paginated-list';
+import { DocumentItem, FolderItem, PaginatedDocumentListItem } from './types';
 
 /**
  * Symbol used to represent a spacer ensuring that folders are not on the same line as documents.
  */
 export const FOLDER_SPACER_ITEM_DATA = Symbol('FOLDER_SPACER_ITEM_DATA');
 
+/**
+ * Symbol used to represent a spacer ensuring that items are a multiple of the number of columns.
+ */
+export const DOCUMENT_SPACER_ITEM_DATA = Symbol('DOCUMENT_SPACER_ITEM_DATA');
+
 export const createDocumentArrayProxy = (
-  folders: NonNullable<PaginatedListProps<FolderItem>['data']>,
-  documents: NonNullable<PaginatedListProps<DocumentItem>['data']>,
+  folders: NonNullable<PaginatedFlashListProps<FolderItem>['data']>,
+  documents: NonNullable<PaginatedFlashListProps<DocumentItem>['data']>,
   numColumns: number = 1,
-): { data: NonNullable<PaginatedListProps<PaginatedDocumentListItemType<DocumentItem>>['data']>; totalFolders: number } => {
+): { data: NonNullable<PaginatedFlashListProps<PaginatedDocumentListItem>['data']>; documentsIndexStart: number } => {
   if (!Number.isInteger(numColumns) || numColumns <= 0) {
     throw new TypeError('createDocumentArrayProxy: numColumns must be a positive non-null integer.');
   }
   const totalFolderSpacers = (numColumns - (folders.length % numColumns)) % numColumns;
+  const totalDocumentSpacers = (numColumns - (documents.length % numColumns)) % numColumns;
   const data = new Proxy(documents, {
     get(target, prop, receiver) {
       // Length of array
       if (prop === 'length') {
-        return folders.length + totalFolderSpacers + target.length;
+        return folders.length + totalFolderSpacers + target.length + totalDocumentSpacers;
       }
 
       // Index access
@@ -27,10 +33,12 @@ export const createDocumentArrayProxy = (
         const index = Number(prop);
         if (index < folders.length) {
           return folders[index];
-        } else if (index >= folders.length + totalFolderSpacers) {
+        } else if (index < folders.length + totalFolderSpacers) {
+          return FOLDER_SPACER_ITEM_DATA;
+        } else if (index < folders.length + totalFolderSpacers + target.length) {
           return target[index - folders.length - totalFolderSpacers];
         } else {
-          return FOLDER_SPACER_ITEM_DATA;
+          return DOCUMENT_SPACER_ITEM_DATA;
         }
       }
 
@@ -48,7 +56,7 @@ export const createDocumentArrayProxy = (
       // Index access
       if (typeof prop === 'string' && !isNaN(Number(prop))) {
         const index = Number(prop);
-        return index >= 0 && index < folders.length + totalFolderSpacers + target.length;
+        return index >= 0 && index < folders.length + totalFolderSpacers + target.length + totalDocumentSpacers;
       }
 
       // Other props bound to the documents array
@@ -56,7 +64,7 @@ export const createDocumentArrayProxy = (
     },
 
     ownKeys(target) {
-      return [...Array(folders.length + totalFolderSpacers + target.length).keys()].map(String);
+      return [...Array(folders.length + totalFolderSpacers + target.length + totalDocumentSpacers).keys()].map(String);
     },
 
     set(_target, _prop, _newValue, _receiver) {
@@ -64,5 +72,5 @@ export const createDocumentArrayProxy = (
     },
   });
 
-  return { data, totalFolders: folders.length + totalFolderSpacers };
+  return { data, documentsIndexStart: folders.length + totalFolderSpacers };
 };

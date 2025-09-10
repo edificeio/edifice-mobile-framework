@@ -5,81 +5,173 @@
  */
 
 import React from 'react';
+import { ListRenderItemInfo as FlatListRenderItemInfo, ViewStyle } from 'react-native';
 
-import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps } from '../paginated-list';
-import { createDocumentArrayProxy, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
-import { DocumentListItem, FolderListItem, FolderSpacerListItem, renderPlacerholderItem } from './item-component';
-import { DocumentItem, FolderItem, PaginatedDocumentListItemType, PaginatedDocumentListProps } from './types';
+import { ListRenderItemInfo as FlashListRenderItemInfo } from '@shopify/flash-list';
 
-export default function PaginatedDocumentList<ItemT extends DocumentItem>({
+import { PaginatedFlashList, PaginatedFlatList } from '../paginated-list';
+import { createDocumentArrayProxy, DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
+import {
+  DocumentListItem,
+  DocumentPlaceholderItem,
+  DocumentSpacerListItem,
+  FolderListItem,
+  FolderSpacerListItem,
+} from './item-component';
+import styles from './styles';
+import {
+  CommonPaginatedDocumentListProps,
+  DocumentItem,
+  FolderItem,
+  PaginatedDocumentFlashListProps,
+  PaginatedDocumentFlatListProps,
+  PaginatedDocumentListItem,
+} from './types';
+
+export const useDocumentPagination = <
+  InfoType extends FlatListRenderItemInfo<PaginatedDocumentListItem> | FlashListRenderItemInfo<PaginatedDocumentListItem>,
+>({
+  documents,
+  folders,
+  numColumns = 1,
+  onPressDocument,
+  onPressFolder,
+}: {
+  documents: CommonPaginatedDocumentListProps['documents'];
+  folders: CommonPaginatedDocumentListProps['folders'];
+  onPressFolder: CommonPaginatedDocumentListProps['onPressFolder'];
+  onPressDocument: CommonPaginatedDocumentListProps['onPressDocument'];
+  numColumns?: number;
+}) => {
+  const { data, documentsIndexStart } = React.useMemo(
+    () => createDocumentArrayProxy(folders ?? [], documents ?? [], numColumns),
+    [documents, folders, numColumns],
+  );
+
+  const isIndexForFolderOrSpacerItem = React.useCallback((index: number) => index < documentsIndexStart, [documentsIndexStart]);
+
+  // getItemType exists only in FlashList so no need to use the generic type
+  const getItemType = React.useCallback(
+    (item: PaginatedDocumentListItem, index: number) => {
+      if (item === FOLDER_SPACER_ITEM_DATA) return 'spacer';
+      return isIndexForFolderOrSpacerItem(index) ? 'folder' : 'document';
+    },
+    [isIndexForFolderOrSpacerItem],
+  );
+
+  const keyExtractor = React.useCallback(
+    (item: PaginatedDocumentListItem, index: number) => {
+      if (item === FOLDER_SPACER_ITEM_DATA || item === DOCUMENT_SPACER_ITEM_DATA) return 'spacer' + index.toString();
+      return (getItemType(item, index) ?? '')?.toString() + item.id;
+    },
+    [getItemType],
+  );
+
+  const getItemStyle = React.useCallback(
+    ({ index }: Pick<InfoType, 'index'>) => {
+      const outputStyle: ViewStyle = {};
+      if (index % numColumns === 0) {
+        outputStyle.marginLeft = styles.item.margin * 2;
+      }
+      if (index % numColumns === numColumns - 1) {
+        outputStyle.marginRight = styles.item.margin * 2;
+      }
+      return outputStyle;
+    },
+    [numColumns],
+  );
+
+  const renderItem = React.useCallback<(info: InfoType) => React.ReactElement>(
+    (info: InfoType) => {
+      const itemStyle = getItemStyle(info);
+      if (info.item === FOLDER_SPACER_ITEM_DATA) return <FolderSpacerListItem {...info} style={itemStyle} />;
+      if (info.item === DOCUMENT_SPACER_ITEM_DATA) return <DocumentSpacerListItem {...info} style={itemStyle} />;
+      return isIndexForFolderOrSpacerItem(info.index) ? (
+        <FolderListItem
+          {...(info as FlatListRenderItemInfo<FolderItem>)}
+          onPress={e => onPressFolder?.((info as FlatListRenderItemInfo<FolderItem>).item, e)}
+          style={itemStyle}
+        />
+      ) : (
+        <DocumentListItem
+          {...(info as FlatListRenderItemInfo<DocumentItem>)}
+          onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem>).item, e)}
+          style={itemStyle}
+        />
+      );
+    },
+    [getItemStyle, isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder],
+  );
+
+  const renderPlaceholderItem = React.useCallback<(info: Pick<InfoType, 'index'>) => React.ReactElement>(
+    ({ index }) => {
+      const itemStyle = getItemStyle({ index });
+      return <DocumentPlaceholderItem style={itemStyle} />;
+    },
+    [getItemStyle],
+  );
+
+  const getVisibleItemIndex = React.useCallback((n: number) => n - documentsIndexStart, [documentsIndexStart]);
+
+  return {
+    data,
+    getItemType,
+    getVisibleItemIndex,
+    keyExtractor,
+    renderItem,
+    renderPlaceholderItem,
+  };
+};
+
+export function PaginatedDocumentFlashList({
   documents,
   folders,
   onPressDocument,
   onPressFolder,
   ...paginatedListProps
-}: Readonly<PaginatedDocumentListProps<ItemT>>) {
-  const { data, totalFolders } = React.useMemo(
-    () => createDocumentArrayProxy(folders ?? [], documents ?? [], paginatedListProps.numColumns),
-    [documents, folders, paginatedListProps.numColumns],
-  );
-
-  const isIndexForFolderOrSpacerItem = React.useCallback((index: number) => index < totalFolders, [totalFolders]);
-
-  const getItemType: NonNullable<Readonly<PaginatedListProps<PaginatedDocumentListItemType<ItemT>>>['getItemType']> =
-    React.useCallback(
-      (item, index) => {
-        if (item === LOADING_ITEM_DATA) return 'loading';
-        if (item === FOLDER_SPACER_ITEM_DATA) return 'spacer';
-        return isIndexForFolderOrSpacerItem(index) ? 'folder' : 'document';
-      },
-      [isIndexForFolderOrSpacerItem],
-    );
-
-  const keyExtractor: NonNullable<Readonly<PaginatedListProps<PaginatedDocumentListItemType<ItemT>>>['keyExtractor']> =
-    React.useCallback(
-      (item, index) => {
-        if (item === LOADING_ITEM_DATA) return 'loading' + index.toString();
-        if (item === FOLDER_SPACER_ITEM_DATA) return 'spacer' + index.toString();
-        return (getItemType(item, index) ?? '')?.toString() + item.id;
-      },
-      [getItemType],
-    );
-
-  const renderItem: NonNullable<Readonly<PaginatedListProps<PaginatedDocumentListItemType<ItemT>>>['renderItem']> =
-    React.useCallback(
-      (
-        info:
-          | Parameters<PaginatedListProps<typeof FOLDER_SPACER_ITEM_DATA>['renderItem']>[0]
-          | Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0]
-          | Parameters<PaginatedListProps<FolderItem>['renderItem']>[0],
-      ) => {
-        if (info.item === FOLDER_SPACER_ITEM_DATA) return <FolderSpacerListItem {...info} />;
-        return isIndexForFolderOrSpacerItem(info.index) ? (
-          <FolderListItem
-            {...(info as Parameters<PaginatedListProps<FolderItem>['renderItem']>[0])}
-            onPress={e => onPressFolder?.(info.item, e)}
-          />
-        ) : (
-          <DocumentListItem
-            {...(info as Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0])}
-            onPress={e => onPressDocument?.((info as Parameters<PaginatedListProps<ItemT>['renderItem']>[0]).item, e)}
-          />
-        );
-      },
-      [isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder],
-    );
-
-  const getVisibleItemIndex: NonNullable<
-    Readonly<PaginatedListProps<PaginatedDocumentListItemType<ItemT>>>['getVisibleItemIndex']
-  > = React.useCallback(n => n - totalFolders, [totalFolders]);
+}: Readonly<PaginatedDocumentFlashListProps>) {
+  const { data, getItemType, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } = useDocumentPagination({
+    documents,
+    folders,
+    numColumns: paginatedListProps.numColumns,
+    onPressDocument,
+    onPressFolder,
+  });
 
   return (
-    <PaginatedList<PaginatedDocumentListItemType<ItemT>>
+    <PaginatedFlashList
       data={data}
       getItemType={getItemType}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
-      renderPlaceholderItem={renderPlacerholderItem}
+      renderPlaceholderItem={renderPlaceholderItem}
+      getVisibleItemIndex={getVisibleItemIndex}
+      {...paginatedListProps}
+    />
+  );
+}
+
+export function PaginatedDocumentFlatList({
+  documents,
+  folders,
+  onPressDocument,
+  onPressFolder,
+  ...paginatedListProps
+}: Readonly<PaginatedDocumentFlatListProps>) {
+  const { data, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } = useDocumentPagination({
+    documents,
+    folders,
+    numColumns: paginatedListProps.numColumns,
+    onPressDocument,
+    onPressFolder,
+  });
+
+  return (
+    <PaginatedFlatList
+      data={data}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      renderPlaceholderItem={renderPlaceholderItem}
       getVisibleItemIndex={getVisibleItemIndex}
       {...paginatedListProps}
     />
