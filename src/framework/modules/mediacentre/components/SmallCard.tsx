@@ -1,6 +1,7 @@
-import Clipboard from '@react-native-clipboard/clipboard';
 import * as React from 'react';
 import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import Clipboard from '@react-native-clipboard/clipboard';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -9,38 +10,37 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
 import { ResourceImage, SourceImage } from '~/framework/modules/mediacentre/components/ResourceImage';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
-import { openUrl } from '~/framework/util/linking';
+import { openResource } from '~/framework/modules/mediacentre/service';
 
 const styles = StyleSheet.create({
-  upperContentContainer: {
+  actionsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: UI_SIZES.spacing.tiny,
-  },
-  titleText: {
-    color: theme.palette.primary.regular,
-    flexShrink: 1,
-    marginRight: UI_SIZES.spacing.tiny,
-  },
-  lowerContentContainer: {
-    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   imageContainer: {
     height: 70,
     width: 50,
+  },
+  lowerContentContainer: {
+    flexDirection: 'row',
   },
   secondaryContainer: {
     flex: 1,
     justifyContent: 'space-between',
     marginLeft: UI_SIZES.spacing.minor,
   },
-  actionsContainer: {
+  titleText: {
+    color: theme.palette.primary.regular,
+    flexShrink: 1,
+    marginRight: UI_SIZES.spacing.tiny,
+  },
+  upperContentContainer: {
+    alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    marginBottom: UI_SIZES.spacing.tiny,
   },
 });
 
@@ -88,13 +88,7 @@ export const FavoriteIcon: React.FunctionComponent<IFavoriteIconProps> = (props:
 
 export class SmallCard extends React.PureComponent<ISmallCardProps> {
   openUrlCallback = () => {
-    if (this.props.resource.source === Source.SIGNET) {
-      return openUrl(this.props.resource.link);
-    }
-    const link = encodeURIComponent(this.props.resource.link);
-    const session = getSession();
-    if (!session) return;
-    openUrl(`${session.platform.url}/mediacentre/resource/open?url=${link}`);
+    openResource(this.props.resource);
   };
 
   copyToClipboard = () => {
@@ -104,6 +98,7 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
 
   public render() {
     const { resource } = this.props;
+
     return (
       <TouchCard onPress={this.openUrlCallback}>
         <View style={styles.upperContentContainer}>

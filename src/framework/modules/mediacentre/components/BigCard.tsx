@@ -1,6 +1,9 @@
-import Clipboard from '@react-native-clipboard/clipboard';
 import * as React from 'react';
 import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import Clipboard from '@react-native-clipboard/clipboard';
+
+import { ResourceImage, SourceImage } from './ResourceImage';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -9,11 +12,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
-import { openUrl } from '~/framework/util/linking';
-
-import { ResourceImage, SourceImage } from './ResourceImage';
+import { openResource } from '~/framework/modules/mediacentre/service';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -105,13 +105,7 @@ const FavoriteAction: React.FunctionComponent<IFavoriteActionProps> = (props: IF
 
 export class BigCard extends React.PureComponent<IBigCardProps> {
   openUrlCallback = () => {
-    if (this.props.resource.source === Source.SIGNET) {
-      return openUrl(this.props.resource.link);
-    }
-    const link = encodeURIComponent(this.props.resource.link);
-    const session = getSession();
-    if (!session) return;
-    openUrl(`${session.platform.url}/mediacentre/resource/open?url=${link}`);
+    openResource(this.props.resource);
   };
 
   copyToClipboard = () => {

@@ -1,7 +1,10 @@
-import Clipboard from '@react-native-clipboard/clipboard';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+
+import Clipboard from '@react-native-clipboard/clipboard';
 import Carousel from 'react-native-snap-carousel';
+
+import { ResourceImage } from './ResourceImage';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -9,19 +12,17 @@ import { TouchCardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
 import { FavoriteIcon, IconButton } from '~/framework/modules/mediacentre/components/SmallCard';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
-import { openUrl } from '~/framework/util/linking';
-
-import { ResourceImage } from './ResourceImage';
+import { openResource } from '~/framework/modules/mediacentre/service';
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    marginBottom: UI_SIZES.spacing.medium,
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
-  titleText: {
-    marginLeft: UI_SIZES.spacing.small,
+  cardContainer: {
+    width: 125,
   },
   cardListContainer: {
     flexDirection: 'row',
@@ -29,32 +30,31 @@ const styles = StyleSheet.create({
     margin: UI_SIZES.spacing.small,
   },
   cardSlideContainer: {
-    width: 149,
     height: 154,
     padding: UI_SIZES.spacing.small,
-  },
-  cardContainer: {
-    width: 125,
-  },
-  contentContainer: {
-    marginLeft: UI_SIZES.spacing.small,
-    padding: UI_SIZES.spacing.minor,
-    backgroundColor: theme.ui.background.card,
-    borderTopRightRadius: UI_SIZES.radius.card,
-    borderBottomRightRadius: UI_SIZES.radius.card,
+    width: 149,
   },
   cardTitleText: {
     alignSelf: 'center',
   },
-  imageContainer: {
-    width: 90,
-    height: 60,
-    alignSelf: 'center',
-    marginVertical: UI_SIZES.spacing.tiny,
+  contentContainer: {
+    backgroundColor: theme.ui.background.card,
+    borderBottomRightRadius: UI_SIZES.radius.card,
+    borderTopRightRadius: UI_SIZES.radius.card,
+    marginLeft: UI_SIZES.spacing.small,
+    padding: UI_SIZES.spacing.minor,
   },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+  imageContainer: {
+    alignSelf: 'center',
+    height: 60,
+    marginVertical: UI_SIZES.spacing.tiny,
+    width: 90,
+  },
+  mainContainer: {
+    marginBottom: UI_SIZES.spacing.medium,
+  },
+  titleText: {
+    marginLeft: UI_SIZES.spacing.small,
   },
 });
 
@@ -93,13 +93,7 @@ const getCardColors = (length: number): string[] => {
 
 const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
   const openUrlCallback = () => {
-    if (props.resource.source === Source.SIGNET) {
-      return openUrl(props.resource.link);
-    }
-    const link = encodeURIComponent(props.resource.link);
-    const session = getSession();
-    if (!session) return;
-    openUrl(`${session.platform.url}/mediacentre/resource/open?url=${link}`);
+    openResource(props.resource);
   };
   const copyToClipboard = () => {
     Clipboard.setString(props.resource.link);

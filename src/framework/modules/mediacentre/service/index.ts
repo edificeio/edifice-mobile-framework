@@ -1,6 +1,8 @@
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { IField, ISources } from '~/framework/modules/mediacentre/components/AdvancedSearchModal';
 import { IResource, IResourceList, Source } from '~/framework/modules/mediacentre/reducer';
+import { openUrl } from '~/framework/util/linking';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 interface IBackendResource {
@@ -39,7 +41,7 @@ function transformArray(array: string[]) {
 const resourcesAdapter: (data: IBackendResourceList) => IResourceList = data => {
   const resources = [] as IResource[];
   for (const resource of data) {
-    const id = resource.source === Source.SIGNET ? resource.id : resource._id ?? resource.id;
+    const id = resource.source === Source.SIGNET ? resource.id : (resource._id ?? resource.id);
     const res = {
       id,
       uid: resource.structure_uai ? resource.id + resource.structure_uai : id,
@@ -86,7 +88,7 @@ const addSource = (sources: string[], value: boolean, name: string) => {
 
 export const mediacentreService = {
   favorites: {
-    get: async (session: AuthLoggedAccount) => {
+    get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/favorites';
       const res = await fetchJSONWithCache(api);
       if (!Array.isArray(res.data)) return [];
@@ -96,7 +98,7 @@ export const mediacentreService = {
       }
       return favorites;
     },
-    add: async (session: AuthLoggedAccount, id: string, resource: IResource) => {
+    add: async (session: AuthActiveAccount, id: string, resource: IResource) => {
       const api = `/mediacentre/favorites?id=${id}`;
       const res: any = resource;
       if (resource.source === Source.SIGNET) {
@@ -107,7 +109,7 @@ export const mediacentreService = {
         body: JSON.stringify(res),
       });
     },
-    remove: async (session: AuthLoggedAccount, id: string, source: Source) => {
+    remove: async (session: AuthActiveAccount, id: string, source: Source) => {
       const api = `/mediacentre/favorites?id=${id}&source=${source}`;
       await fetchJSONWithCache(api, {
         method: 'DELETE',
@@ -115,7 +117,7 @@ export const mediacentreService = {
     },
   },
   search: {
-    getSimple: async (session: AuthLoggedAccount, sources: string[], query: string) => {
+    getSimple: async (session: AuthActiveAccount, sources: string[], query: string) => {
       const jsondata = {
         event: 'search',
         state: 'PLAIN_TEXT',
@@ -128,7 +130,7 @@ export const mediacentreService = {
       const response = await fetchJSONWithCache(api);
       return resourcesAdapter(concatResources(response));
     },
-    getAdvanced: async (session: AuthLoggedAccount, fields: IField[], checkedSources: ISources) => {
+    getAdvanced: async (session: AuthActiveAccount, fields: IField[], checkedSources: ISources) => {
       const sources: string[] = [];
       const jsondata = {
         event: 'search',
@@ -151,7 +153,7 @@ export const mediacentreService = {
     },
   },
   signets: {
-    get: async (session: AuthLoggedAccount) => {
+    get: async (session: AuthActiveAccount) => {
       const signetsResponse = await fetchJSONWithCache('/mediacentre/signets');
       const mysignetsResponse = await fetchJSONWithCache('/mediacentre/mysignets');
       return resourcesAdapter(signetsResponse.data.signets.resources)
@@ -159,7 +161,7 @@ export const mediacentreService = {
         .concat(resourcesAdapter(mysignetsResponse).filter(resource => session.user.id && resource.owner_id !== session.user.id))
         .sort(compareResources);
     },
-    getOrientation: async (session: AuthLoggedAccount) => {
+    getOrientation: async (session: AuthActiveAccount) => {
       const signetsResponse = await fetchJSONWithCache('/mediacentre/signets');
       const mysignetsResponse = await fetchJSONWithCache('/mediacentre/mysignets');
       const resources = resourcesAdapter(signetsResponse.data.signets.resources).filter(resource =>
@@ -172,12 +174,12 @@ export const mediacentreService = {
       }
       return resources.sort(compareResources);
     },
-    searchSimple: async (session: AuthLoggedAccount, query: string) => {
+    searchSimple: async (session: AuthActiveAccount, query: string) => {
       const api = `/mediacentre/signets/search?query=${query}`;
       const resources = await fetchJSONWithCache(api);
       return resourcesAdapter(resources);
     },
-    searchAdvanced: async (session: AuthLoggedAccount, fields: IField[]) => {
+    searchAdvanced: async (session: AuthActiveAccount, fields: IField[]) => {
       const api = '/mediacentre/signets/advanced';
       const body = {};
       for (const field of fields) {
@@ -191,10 +193,28 @@ export const mediacentreService = {
     },
   },
   textbooks: {
-    get: async (session: AuthLoggedAccount) => {
+    get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/textbooks';
       const res = await fetchJSONWithCache(api);
       return resourcesAdapter(res.data.textbooks);
     },
   },
+};
+
+export const openResource = async (resource: IResource) => {
+  if (resource.source === Source.SIGNET) {
+    return openUrl(resource.link);
+  }
+  const session = getSession();
+  if (!session) {
+    console.debug('[Mediacentre] openResource : No session found');
+    return;
+  }
+
+  // PEDAGO-3168 — Sometimes the given url already includes the mediacentre open api. Other times it doesn't so we must to manually format it.
+  if (resource.link.includes(`${session.platform.url}/mediacentre/resource/open?url=`)) {
+    openUrl(resource.link);
+  } else {
+    openUrl(`/mediacentre/resource/open?url=${encodeURIComponent(resource.link)}`);
+  }
 };
