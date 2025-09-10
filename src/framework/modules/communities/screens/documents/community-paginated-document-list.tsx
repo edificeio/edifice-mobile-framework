@@ -23,20 +23,20 @@ import {
 import {
   DocumentItem,
   FolderItem,
+  PaginatedDocumentFlashListProps,
   PaginatedDocumentListItemType,
-  PaginatedDocumentListProps,
 } from '~/framework/components/list/paginated-document-list/types';
-import PaginatedList, { LOADING_ITEM_DATA, PaginatedListProps } from '~/framework/components/list/paginated-list';
+import { LOADING_ITEM_DATA, PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 
 export type CommunityPaginatedDocumentListItemType = PaginatedDocumentListItemType<CommunitiesDocumentItem> | ReactElement;
 
 export const createCommunityDocumentArrayProxy = (
   stickyItems: ReactElement[],
-  folders: NonNullable<PaginatedListProps<FolderItem>['data']>,
-  documents: NonNullable<PaginatedListProps<DocumentItem>['data']>,
+  folders: NonNullable<PaginatedFlatListProps<FolderItem>['data']>,
+  documents: NonNullable<PaginatedFlatListProps<DocumentItem>['data']>,
   numColumns: number = 1,
 ): {
-  data: NonNullable<PaginatedListProps<CommunityPaginatedDocumentListItemType>['data']>;
+  data: NonNullable<PaginatedFlatListProps<CommunityPaginatedDocumentListItemType>['data']>;
   totalFolders: number;
   stickyItemsPadding: number;
   totalDocumentSpacers: number;
@@ -105,7 +105,7 @@ export default function CommunityPaginatedDocumentList({
   onPressFolder,
   stickyElements = [],
   ...paginatedListProps
-}: Readonly<PaginatedDocumentListProps<CommunitiesDocumentItem> & { stickyElements?: ReactElement[] }>) {
+}: Readonly<PaginatedDocumentFlashListProps<CommunitiesDocumentItem> & { stickyElements?: ReactElement[] }>) {
   const { data, stickyItemsPadding, totalFolders } = React.useMemo(
     () => createCommunityDocumentArrayProxy(stickyElements, folders ?? [], documents ?? [], paginatedListProps.numColumns),
     [documents, folders, paginatedListProps.numColumns, stickyElements],
@@ -122,7 +122,7 @@ export default function CommunityPaginatedDocumentList({
     [documents?.length, stickyItemsPadding, totalFolders],
   );
 
-  const getItemType: NonNullable<Readonly<PaginatedListProps<CommunityPaginatedDocumentListItemType>>['getItemType']> =
+  const getItemType: NonNullable<Readonly<PaginatedFlatListProps<CommunityPaginatedDocumentListItemType>>['getItemType']> =
     React.useCallback(
       (item, index) => {
         if (isIndexForStickyItem(index)) return 'sticky';
@@ -133,24 +133,23 @@ export default function CommunityPaginatedDocumentList({
       [isIndexForDocumentSpacer, isIndexForFolderOrSpacerItem, isIndexForStickyItem],
     );
 
-  const keyExtractor: NonNullable<Readonly<PaginatedListProps<CommunityPaginatedDocumentListItemType>>['keyExtractor']> =
+  const keyExtractor: NonNullable<Readonly<PaginatedFlatListProps<CommunityPaginatedDocumentListItemType>>['keyExtractor']> =
     React.useCallback(
       (item, index) => {
         if (isIndexForStickyItem(index)) return 'sticky' + index.toString();
-        if (item === LOADING_ITEM_DATA) return 'loading' + index.toString();
         if (item === FOLDER_SPACER_ITEM_DATA || isIndexForDocumentSpacer(index)) return 'spacer' + index.toString();
         return (getItemType(item, index) ?? '')?.toString() + (item as Exclude<typeof item, ReactElement>).id;
       },
       [getItemType, isIndexForDocumentSpacer, isIndexForStickyItem],
     );
 
-  const renderItem: NonNullable<Readonly<PaginatedListProps<CommunityPaginatedDocumentListItemType>>['renderItem']> =
+  const renderItem: NonNullable<Readonly<PaginatedFlatListProps<CommunityPaginatedDocumentListItemType>>['renderItem']> =
     React.useCallback(
       (
         info:
-          | Parameters<PaginatedListProps<typeof FOLDER_SPACER_ITEM_DATA>['renderItem']>[0]
-          | Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0]
-          | Parameters<PaginatedListProps<FolderItem>['renderItem']>[0],
+          | Parameters<PaginatedFlatListProps<typeof FOLDER_SPACER_ITEM_DATA>['renderItem']>[0]
+          | Parameters<PaginatedFlatListProps<DocumentItem>['renderItem']>[0]
+          | Parameters<PaginatedFlatListProps<FolderItem>['renderItem']>[0],
       ) => {
         const realIndex = info.index - stickyItemsPadding;
         const realNumColumns = paginatedListProps.numColumns ?? 1;
@@ -167,15 +166,15 @@ export default function CommunityPaginatedDocumentList({
         else
           return isIndexForFolderOrSpacerItem(info.index) ? (
             <FolderListItem
-              {...(info as Parameters<PaginatedListProps<FolderItem>['renderItem']>[0])}
+              {...(info as Parameters<PaginatedFlatListProps<FolderItem>['renderItem']>[0])}
               onPress={e => onPressFolder?.(info.item, e)}
             />
           ) : (
             <DocumentListItem
               style={itemWrapperStyle}
-              {...(info as Parameters<PaginatedListProps<DocumentItem>['renderItem']>[0])}
+              {...(info as Parameters<PaginatedFlatListProps<DocumentItem>['renderItem']>[0])}
               onPress={e =>
-                onPressDocument?.((info as Parameters<PaginatedListProps<CommunitiesDocumentItem>['renderItem']>[0]).item, e)
+                onPressDocument?.((info as Parameters<PaginatedFlatListProps<CommunitiesDocumentItem>['renderItem']>[0]).item, e)
               }
             />
           );
@@ -192,13 +191,12 @@ export default function CommunityPaginatedDocumentList({
     );
 
   const getVisibleItemIndex: NonNullable<
-    Readonly<PaginatedListProps<CommunityPaginatedDocumentListItemType>>['getVisibleItemIndex']
+    Readonly<PaginatedFlatListProps<CommunityPaginatedDocumentListItemType>>['getVisibleItemIndex']
   > = React.useCallback(n => n - totalFolders - stickyItemsPadding, [totalFolders, stickyItemsPadding]);
 
   return (
-    <PaginatedList<CommunityPaginatedDocumentListItemType>
+    <PaginatedFlatList<CommunityPaginatedDocumentListItemType>
       data={data}
-      getItemType={getItemType}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
       renderPlaceholderItem={React.useCallback(

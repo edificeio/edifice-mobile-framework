@@ -91,7 +91,7 @@ export interface PaginatedFlashListProps<TItem>
       FlashListProps<PaginatedListItem<TItem>>,
       'onRefresh' | 'refreshing' | 'refreshControl' | 'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem'
     > {
-  getItemType?: FlashListProps<PaginatedListItem<TItem>>['getItemType'];
+  getItemType?: FlashListProps<TItem>['getItemType'];
   overrideItemLayout?: FlashListProps<PaginatedListItem<TItem>>['overrideItemLayout'];
 
   /**
@@ -276,6 +276,7 @@ const usePagination = <TItem,>({
 export const PaginatedFlashList = React.forwardRef(function <TItem>(
   {
     data,
+    getItemType: _getItemType,
     getVisibleItemIndex,
     keyExtractor: _keyExtractor,
     onItemsError,
@@ -308,6 +309,11 @@ export const PaginatedFlashList = React.forwardRef(function <TItem>(
     windowSize,
   });
 
+  const getItemType = React.useMemo<FlashListProps<PaginatedListItem<TItem>>['getItemType']>(
+    () => (_getItemType ? (item, index) => (item === LOADING_ITEM_DATA ? 'loading' : _getItemType(item, index)) : undefined),
+    [_getItemType],
+  );
+
   const renderItem = React.useCallback<NonNullable<FlashListProps<PaginatedListItem<TItem>>['renderItem']>>(
     info => {
       return info.item === LOADING_ITEM_DATA
@@ -322,6 +328,7 @@ export const PaginatedFlashList = React.forwardRef(function <TItem>(
       return (
         <FlashList<PaginatedListItem<TItem>>
           ref={ref}
+          getItemType={getItemType}
           key="data"
           data={data}
           viewabilityConfig={viewabilityConfig ?? DEFAULT_VIEWABILIBY_CONFIG}
@@ -333,7 +340,7 @@ export const PaginatedFlashList = React.forwardRef(function <TItem>(
         />
       );
     },
-    [data, flashListProps, keyExtractor, onViewableItemsChanged, ref, renderItem, viewabilityConfig],
+    [data, flashListProps, getItemType, keyExtractor, onViewableItemsChanged, ref, renderItem, viewabilityConfig],
   );
 
   // useState is used instead of useRef with a readonly manner to be able to use a init function (refs cannot take function as initialiser)

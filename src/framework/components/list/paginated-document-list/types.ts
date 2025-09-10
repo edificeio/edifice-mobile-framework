@@ -2,7 +2,7 @@ import { TouchableOpacityProps } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
 
-import type { PaginatedListProps } from '../paginated-list';
+import type { PaginatedFlashListProps, PaginatedFlatListProps } from '../paginated-list';
 import type { FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 
 import { EntAppNameOrSynonym } from '~/app/intents';
@@ -50,14 +50,24 @@ export type PaginatedDocumentListItemType<DocumentType extends DocumentItem> =
   | FolderItem
   | typeof FOLDER_SPACER_ITEM_DATA;
 
-export interface PaginatedDocumentListProps<DocumentType extends DocumentItem>
-  extends Omit<
-    PaginatedListProps<DocumentType | FolderItem>,
-    'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
-  > {
-  documents: PaginatedListProps<DocumentType>['data'];
-  folders: PaginatedListProps<FolderItem>['data'];
-  overrideItemLayout?: PaginatedListProps<PaginatedDocumentListItemType<DocumentType>>['overrideItemLayout'];
+interface CommonPaginatedDocumentListProps<DocumentType extends DocumentItem> {
+  documents: PaginatedFlashListProps<DocumentType>['data'];
+  folders: PaginatedFlashListProps<FolderItem>['data'];
+  overrideItemLayout?: PaginatedFlashListProps<PaginatedDocumentListItemType<DocumentType>>['overrideItemLayout'];
   onPressFolder?: (folder: FolderItem, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
   onPressDocument?: (document: DocumentType, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
 }
+
+export interface PaginatedDocumentFlashListProps<DocumentType extends DocumentItem>
+  extends Omit<
+      PaginatedFlashListProps<DocumentType | FolderItem>,
+      'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
+    >,
+    CommonPaginatedDocumentListProps<DocumentType> {}
+
+export interface PaginatedDocumentFlatListProps<DocumentType extends DocumentItem>
+  extends Omit<
+      PaginatedFlatListProps<DocumentType | FolderItem>,
+      'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
+    >,
+    CommonPaginatedDocumentListProps<DocumentType> {}
