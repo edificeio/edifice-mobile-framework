@@ -1,7 +1,23 @@
-import { I18nManager, StyleSheet } from 'react-native';
+import { I18nManager, StyleSheet, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+
+const NAVBAR_BUTTON_STYLE: ViewStyle = {
+  alignItems: 'center',
+  backgroundColor: theme.ui.background.card,
+  borderRadius: UI_SIZES.radius.medium,
+  height: UI_SIZES.elements.icon.xlarge,
+  justifyContent: 'center',
+  position: 'absolute',
+  width: UI_SIZES.elements.icon.xlarge,
+};
+const NAVBAR_ICON_OFFSET = -4; // compensate native placement of back icon. This value is not scaled by the UI.
+
+export const NAVBAR_RIGHT_BUTTON_STYLE: ViewStyle = {
+  ...NAVBAR_BUTTON_STYLE,
+  right: NAVBAR_ICON_OFFSET,
+};
 
 export default StyleSheet.create({
   backButtonImage: {
@@ -13,15 +29,9 @@ export default StyleSheet.create({
     transform: [{ scaleX: I18nManager.getConstants().isRTL ? -1 : 1 }],
     width: 13, // value provided by react navigation
   },
-  navBarButton: {
-    alignItems: 'center',
-    backgroundColor: theme.ui.background.card,
-    borderRadius: UI_SIZES.radius.medium,
-    height: UI_SIZES.elements.icon.xlarge,
-    justifyContent: 'center',
-    left: -4, // compensate native placement of back icon. This value is not scaled by the UI.
-    position: 'absolute',
-    width: UI_SIZES.elements.icon.xlarge,
+  navBarLeftButton: {
+    ...NAVBAR_BUTTON_STYLE,
+    left: NAVBAR_ICON_OFFSET,
   },
   titleHeaderInner: {
     alignItems: 'center',
