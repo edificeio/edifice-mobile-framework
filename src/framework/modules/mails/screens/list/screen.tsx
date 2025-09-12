@@ -563,21 +563,46 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   useFocusEffect(
     React.useCallback(() => {
       const { params } = props.route;
-      if (params.from && (params.reload || params.idMailToRemove || params.idMailToMarkUnread || params.idMailToRecall)) {
-        if (params.reload) loadMails(params.from);
-        if (params.idMailToRemove) setMails(prevMails => prevMails.filter(mail => mail.id !== params.idMailToRemove));
-        if (params.idMailToRecall)
-          setMails(prevMails =>
-            prevMails.map(mail => (mail.id === params.idMailToRecall ? { ...mail, state: MailsMailStatePreview.RECALL } : mail)),
-          );
-        if (params.idMailToMarkUnread)
-          setMails(prevMails => prevMails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)));
-        setSelectedFolder(params.from);
-        loadFolders();
-      } else {
-        loadFolders();
+      try {
+        console.debug('ENTERIING FIRST ROW');
+
+        if (params.from && (params.reload || params.idMailToRemove || params.idMailToMarkUnread || params.idMailToRecall)) {
+          console.debug('IN FIRST ROW');
+          if (params.reload) {
+            console.debug('LOADING_MAILS');
+
+            loadMails(params.from);
+            console.debug('MAILS_LOADED');
+          }
+
+          if (params.idMailToRemove) setMails(prevMails => prevMails.filter(mail => mail.id !== params.idMailToRemove));
+          console.debug('SETTING_LOCAL_MAILS');
+          if (params.idMailToRecall)
+            setMails(prevMails =>
+              prevMails.map(mail => (mail.id === params.idMailToRecall ? { ...mail, state: MailsMailStatePreview.RECALL } : mail)),
+            );
+
+          console.debug('LOCAL_MAILS_ALREADY_SET');
+          if (params.idMailToMarkUnread)
+            setMails(prevMails =>
+              prevMails.map(mail => (mail.id === params.idMailToMarkUnread ? { ...mail, unread: true } : mail)),
+            );
+          setSelectedFolder(params.from);
+          console.debug('LOADING_FOLDERS_IN_PROGRESS');
+
+          loadFolders();
+          console.debug('FOLDERS_LOADED');
+        } else {
+          console.debug('LOADING_FOLDERS_IN_PROGRESS2');
+          loadFolders();
+          console.debug('FOLDERS_LOADED2');
+        }
+      } catch (error) {
+        console.debug('[ERROR_CUSTOM]==>', error);
+      } finally {
+        console.debug('IN_FINALY_BLOCK');
+        if (params.from) props.navigation.setParams({ from: undefined });
       }
-      if (params.from) props.navigation.setParams({ from: undefined });
     }, [loadFolders, loadMails, props.navigation, props.route]),
   );
 

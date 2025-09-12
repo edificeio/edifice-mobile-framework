@@ -29,7 +29,9 @@ export async function fetchForAccount(
   urlOrInit?: string | URL | RequestInit,
   init?: RequestInit,
 ): Promise<Response> {
+  console.debug('[HTTP]: IS_TOKEN_EXPIRED ===>', isTokenExpired(account.tokens.access));
   if (isTokenExpired(account.tokens.access)) {
+    console.debug('TOKE_SHOULD_BE_EXPIRED');
     await refreshTokenForAccount(account);
     // ToDo ? What to do if the refresh token fails?
   }

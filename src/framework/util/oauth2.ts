@@ -229,11 +229,13 @@ export const getOAuth2Token = {
 export const refreshTokenForAccount = async (account: AuthSavedLoggedInAccount | AuthActiveAccount) => {
   // 1. Get new token
   const platform = appConf.getExpandedPlatform(account.platform);
+  console.debug('[IS_PLATFORM_DEFINED] ===>', platform);
   if (!platform) throw new AccountError(AccountErrorCode.INVALID_PLATFORM_CONFIG, `Platform not foune: ${account.platform}`);
   const newTokens = await getOAuth2Token.withRefreshToken(platform, account.tokens.refresh);
 
   // 2. Update account in store + storage + parameter
   account.tokens = newTokens; // Update account in parameter
+  console.debug('[NEW_ACCOUNT_TOKEN]:=====>', newTokens, '\n[UPDATED_ACCOUNT_TOKEN]===>', account.tokens);
   getStore().dispatch(authActions.refreshToken(account.user.id, newTokens)); // Update redux store
   const serialisedAccount = isSerializedLoggedInAccount(account) ? account : getSerializedLoggedInAccountInfo(account);
   writeUpdateAccount(serialisedAccount); // Update Storage
