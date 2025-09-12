@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-05 14:00:49",
-  "notes": "release: 1.15.2(1150200)\nrelease: 1.15.1-alpha.1(1150101)",
-  "version": "1.15.2-alpha.1(1150201)"
+  "last": "2025-09-12 08:48:44",
+  "notes": "fix(android): SUPPORT-3269, PEDAGO-3166, PEDAGO-3094: review KeyboardAvoidingView behavior for Android >= 15\nfix(mediacentre): PEDAGO-3168 bad absolute url handling\nchore: yarn cache update\nfix(wayf): INTEG-1011, SUPPORT-3288, add login.ac-lyon.frdomain configuration\nupdate(stack): yarn cache update\nfix(avatar): remove newavatar component\nchore(avatar) change avatar to\nrelease: 1.15.2-alpha.1(1150201)",
+  "version": "1.15.2-rc.1(1150202)"
 }
