@@ -13,15 +13,13 @@ import {
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import {
   IMailsFolder,
-  IMailsMailContent,
-  IMailsMailPreview,
   IMailsSignaturePreferences,
+  MailsConversationPayload,
   MailsFolderCount,
-  MailsVisible,
 } from '~/framework/modules/mails/model';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
-import http from '~/framework/util/http';
+import { sessionFetch } from '~/framework/util/transport';
 
 export const mailsService = {
   attachments: {
@@ -50,38 +48,38 @@ export const mailsService = {
     },
     remove: async (params: { draftId: string; attachmentId: string }) => {
       const api = `/conversation/message/${params.draftId}/attachment/${params.attachmentId}`;
-      await http.fetchJsonForSession('DELETE', api);
+      await sessionFetch(api, { method: 'DELETE' });
     },
   },
   bookmark: {
     getById: async (params: { id: string }) => {
       const api = `/directory/sharebookmark/${params.id}`;
-      const backendBookmark = (await http.fetchJsonForSession('GET', api)) as MailsBookmarkBackend;
+      const backendBookmark = await sessionFetch.json<MailsBookmarkBackend>(api, { method: 'GET' });
 
       const groups = backendBookmark.groups.map(group => mailGroupBookmarkAdapter(group));
       const users = backendBookmark.users.map(user => mailUserBookmarkAdapter(user));
 
       const bookmark = [...groups, ...users];
-      return bookmark as MailsVisible[];
+      return bookmark;
     },
   },
   folder: {
     count: async (params: { folderId: string; unread: boolean }) => {
       const api = `/conversation/count/${params.folderId}?unread=${params.unread}`;
-      const count = await http.fetchJsonForSession('GET', api);
+      const count = await sessionFetch.json<MailsFolderCount>(api, { method: 'GET' });
 
-      return count as MailsFolderCount;
+      return count;
     },
     create: async (payload: { name: string; parentId?: string }) => {
       const api = '/conversation/folder';
       const body = JSON.stringify({ name: payload.name, ...(payload.parentId ? { parentId: payload.parentId } : {}) });
 
-      const data = (await http.fetchJsonForSession('POST', api, { body })) as { id: string };
+      const data = await sessionFetch.json<{ id: string }>(api, { body, method: 'POST' });
       return data.id;
     },
     delete: async (params: { id: string }) => {
       const api = `/conversation/api/folders/${params.id}`;
-      await http.fetchJsonForSession('DELETE', api);
+      await sessionFetch(api, { method: 'DELETE' });
     },
     // move: async (params: { id: string }, payload: { parentId: string }) => {
     //   const api = `/conversation/folder/${params.id}`;
@@ -91,68 +89,66 @@ export const mailsService = {
     rename: async (params: { id: string }, payload: { name: string }) => {
       const api = `/conversation/folder/${params.id}`;
       const body = JSON.stringify({ name: payload.name });
-      await http.fetchJsonForSession('PUT', api, { body });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
   },
   folders: {
     get: async (params: { depth: number }) => {
       const api = `/conversation/api/folders?depth=${params.depth}`;
-      const backendFolders = await http.fetchJsonForSession('GET', api);
+      const backendFolders = await sessionFetch.json<IMailsFolder[]>(api, { method: 'GET' });
       const folders = [...backendFolders];
 
-      return folders as IMailsFolder[];
+      return folders;
     },
   },
   mail: {
     delete: async (payload: { ids: string[] }) => {
       const api = '/conversation/delete';
       const body = JSON.stringify({ id: payload.ids });
-      await http.fetchForSession('PUT', api, { body });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
     forward: async (params: { id: string }) => {
       const api = `/conversation/draft?In-Reply-To=${params.id}`;
       const bodyJson = JSON.stringify({ body: '', cc: [], cci: [], subject: '', to: [] });
-      const data = (await http.fetchJsonForSession('POST', api, { body: bodyJson })) as { id: string };
+      const data = await sessionFetch.json<{ id: string }>(api, { body: bodyJson, method: 'POST' });
+
       const api2 = `/conversation/message/${data.id}/forward/${params.id}`;
-      await http.fetchForSession('PUT', api2);
+      await sessionFetch.json(api2, { method: 'PUT' });
       return data.id;
     },
     get: async (params: { id: string; originalFormat?: boolean }) => {
       const api = `/conversation/api/messages/${params.id}${params.originalFormat ? '?originalFormat=true' : ''}`;
-      const backendMail = (await http.fetchJsonForSession('GET', api)) as MailsMailContentBackend;
+      const backendMail = await sessionFetch.json<MailsMailContentBackend>(api, { method: 'GET' });
 
       const mail = mailContentAdapter(backendMail);
-      return mail as IMailsMailContent;
+      return mail;
     },
     moveToFolder: async (params: { folderId: string }, payload: { ids: string[] }) => {
       const api = `/conversation/move/userfolder/${params.folderId}`;
       const body = JSON.stringify({ id: payload.ids });
-      await http.fetchJsonForSession('PUT', api, { body });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
     moveToTrash: async (payload: { ids: string[] }) => {
       const api = '/conversation/trash';
       const body = JSON.stringify({ id: payload.ids });
-      await http.fetchJsonForSession('PUT', api, { body });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
     recall: async (params: { id: string }) => {
       const api = `/conversation/api/messages/${params.id}/recall`;
-      await http.fetchForSession('POST', api);
+      await sessionFetch(api, { method: 'POST' });
     },
     removeFromFolder: async (params: { ids: string[] }) => {
       params.ids.forEach(async id => {
         const api = `/conversation/move/root?id=${id}`;
-        await http.fetchJsonForSession('PUT', api);
+        await sessionFetch(api, { method: 'PUT' });
       });
     },
     restore: async (payload: { ids: string[] }) => {
       const api = '/conversation/restore';
       const body = JSON.stringify({ id: payload.ids });
-      await http.fetchJsonForSession('PUT', api, { body });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
-    send: async (
-      params: { draftId?: string; inReplyTo?: string },
-      payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string },
-    ) => {
+    send: async (params: { draftId?: string; inReplyTo?: string }, payload: MailsConversationPayload) => {
       const { draftId, inReplyTo } = params;
       const { body, cc, cci, subject, to } = payload;
 
@@ -167,68 +163,62 @@ export const mailsService = {
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
       // await http.fetchJsonForSession('POST', api, { body: bodyJson });
-      const response = await http.fetchJsonForSession('POST', api, { body: bodyJson });
+      const response = await sessionFetch(api, { body: bodyJson, method: 'POST' });
 
       return response;
     },
-    sendToDraft: async (
-      params: { inReplyTo?: string },
-      payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string },
-    ) => {
+    sendToDraft: async (params: { inReplyTo?: string }, payload: MailsConversationPayload) => {
       const api = `/conversation/draft${params.inReplyTo ? `?In-Reply-To=${params.inReplyTo}` : ''}`;
       const { body, cc, cci, subject, to } = payload;
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
 
-      const draft = (await http.fetchJsonForSession('POST', api, { body: bodyJson })) as { id: string };
+      const draft = await sessionFetch.json<{ id: string }>(api, { body: bodyJson, method: 'POST' });
       return draft.id;
     },
     toggleUnread: async (payload: { ids: string[]; unread: boolean }) => {
       const api = '/conversation/toggleUnread';
       const body = JSON.stringify({ id: payload.ids, unread: payload.unread });
-      await http.fetchJsonForSession('POST', api, { body });
+      await sessionFetch(api, { body, method: 'POST' });
     },
-    updateDraft: async (
-      params: { draftId: string },
-      payload: { body: string; to: string[]; cc: string[]; cci: string[]; subject: string },
-    ) => {
+    updateDraft: async (params: { draftId: string }, payload: MailsConversationPayload) => {
       const api = `/conversation/draft/${params.draftId}`;
       const { body, cc, cci, subject, to } = payload;
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
-      await http.fetchJsonForSession('PUT', api, { body: bodyJson });
+      await sessionFetch(api, { body: bodyJson, method: 'PUT' });
     },
   },
   mails: {
     get: async (params: { folderId: string; pageNb: number; pageSize: number; search?: string }) => {
       const api = `/conversation/api/folders/${params.folderId}/messages?${params.search?.length ? `search="${params.search}&"` : ''}page=${params.pageNb}&page_size=${params.pageSize}`;
-      const backendMails = (await http.fetchJsonForSession('GET', api)) as MailsMailPreviewBackend[];
+      const backendMails = await sessionFetch.json<MailsMailPreviewBackend[]>(api, { method: 'GET' });
 
       const mails = backendMails.map(mail => mailsAdapter(mail));
-      return mails as IMailsMailPreview[];
+      return mails;
     },
   },
   signature: {
     get: async () => {
       const api = '/userbook/preference/conversation';
-      const preferences = (await http.fetchJsonForSession('GET', api)) as { preference: IMailsSignaturePreferences };
+      const preferences = await sessionFetch.json<{ preference: IMailsSignaturePreferences }>(api, { method: 'GET' });
 
-      return preferences.preference as IMailsSignaturePreferences;
+      return preferences.preference;
     },
     update: async (payload: { signature: string; useSignature: boolean }) => {
       const api = '/userbook/preference/conversation';
       const body = JSON.stringify(payload);
-      await http.fetchJsonForSession('PUT', api, { body });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
   },
   visibles: {
     get: async () => {
       const api = `/communication/visible/search`;
 
-      const backendVisibles = (await http.fetchJsonForSession('GET', api)) as MailsVisibleBackend[];
+      const backendVisibles = await sessionFetch.json<MailsVisibleBackend[]>(api, { method: 'GET' });
 
       const visibles = backendVisibles.map(visible => mailVisibleAdapter(visible));
-      return visibles as MailsVisible[];
+      return visibles;
     },
   },
 };
