@@ -45,29 +45,26 @@ export interface FolderItem {
   id: number;
 }
 
-export type PaginatedDocumentListItemType<DocumentType extends DocumentItem> =
-  | DocumentType
-  | FolderItem
-  | typeof FOLDER_SPACER_ITEM_DATA;
+export type PaginatedDocumentListItem = DocumentItem | FolderItem | typeof FOLDER_SPACER_ITEM_DATA;
 
-interface CommonPaginatedDocumentListProps<DocumentType extends DocumentItem> {
-  documents: PaginatedFlashListProps<DocumentType>['data'];
+export interface CommonPaginatedDocumentListProps {
+  documents: PaginatedFlashListProps<DocumentItem>['data'];
   folders: PaginatedFlashListProps<FolderItem>['data'];
-  overrideItemLayout?: PaginatedFlashListProps<PaginatedDocumentListItemType<DocumentType>>['overrideItemLayout'];
+  overrideItemLayout?: PaginatedFlashListProps<PaginatedDocumentListItem>['overrideItemLayout'];
   onPressFolder?: (folder: FolderItem, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
-  onPressDocument?: (document: DocumentType, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
+  onPressDocument?: (document: DocumentItem, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
 }
 
-export interface PaginatedDocumentFlashListProps<DocumentType extends DocumentItem>
+export interface PaginatedDocumentFlashListProps
   extends Omit<
-      PaginatedFlashListProps<DocumentType | FolderItem>,
+      PaginatedFlashListProps<DocumentItem | FolderItem>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,
-    CommonPaginatedDocumentListProps<DocumentType> {}
+    CommonPaginatedDocumentListProps {}
 
-export interface PaginatedDocumentFlatListProps<DocumentType extends DocumentItem>
+export interface PaginatedDocumentFlatListProps
   extends Omit<
-      PaginatedFlatListProps<DocumentType | FolderItem>,
+      PaginatedFlatListProps<PaginatedDocumentListItem>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,
-    CommonPaginatedDocumentListProps<DocumentType> {}
+    CommonPaginatedDocumentListProps {}

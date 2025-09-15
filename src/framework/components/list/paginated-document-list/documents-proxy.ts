@@ -1,5 +1,5 @@
 import { PaginatedFlashListProps } from '../paginated-list';
-import { DocumentItem, FolderItem, PaginatedDocumentListItemType } from './types';
+import { DocumentItem, FolderItem, PaginatedDocumentListItem } from './types';
 
 /**
  * Symbol used to represent a spacer ensuring that folders are not on the same line as documents.
@@ -10,7 +10,7 @@ export const createDocumentArrayProxy = (
   folders: NonNullable<PaginatedFlashListProps<FolderItem>['data']>,
   documents: NonNullable<PaginatedFlashListProps<DocumentItem>['data']>,
   numColumns: number = 1,
-): { data: NonNullable<PaginatedFlashListProps<PaginatedDocumentListItemType<DocumentItem>>['data']>; totalFolders: number } => {
+): { data: NonNullable<PaginatedFlashListProps<PaginatedDocumentListItem>['data']>; totalFolders: number } => {
   if (!Number.isInteger(numColumns) || numColumns <= 0) {
     throw new TypeError('createDocumentArrayProxy: numColumns must be a positive non-null integer.');
   }

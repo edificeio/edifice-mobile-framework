@@ -44,14 +44,26 @@ export const reducer = createSessionReducer<
       const action = _action as CommunitiesAction<typeof communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE>;
       return {
         ...state,
-        allCommunities: staleOrSplice(state.allCommunities, action.payload.newData, action.payload.reloadAll),
+        allCommunities: staleOrSplice({
+          newData: action.payload.newData.items,
+          previousData: state.allCommunities,
+          reloadAll: action.payload.reloadAll,
+          start: action.payload.newData.from,
+          total: action.payload.newData.total,
+        }),
       };
     },
     [communitiesActionTypes.LOAD_PENDING_COMMUNITIES_PAGE]: (state, _action) => {
       const action = _action as CommunitiesAction<typeof communitiesActionTypes.LOAD_PENDING_COMMUNITIES_PAGE>;
       return {
         ...state,
-        pendingCommunities: staleOrSplice(state.pendingCommunities, action.payload.newData, action.payload.reloadAll),
+        pendingCommunities: staleOrSplice({
+          newData: action.payload.newData.items,
+          previousData: state.pendingCommunities,
+          reloadAll: action.payload.reloadAll,
+          start: action.payload.newData.from,
+          total: action.payload.newData.total,
+        }),
       };
     },
     [communitiesActionTypes.LOAD_COMMUNITY_DETAILS]: (state, _action) => {

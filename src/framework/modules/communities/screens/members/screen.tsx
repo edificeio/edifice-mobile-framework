@@ -68,7 +68,13 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
         const members = await sessionApi(moduleConfig, MembershipClient).getMembers(Number(communityId), baseQueryParams);
 
         setAllMembers(prevData => {
-          return staleOrSplice(prevData, page * PAGE_SIZE, members.items, members.meta.totalItems, reloadAll);
+          return staleOrSplice({
+            newData: members.items,
+            previousData: prevData,
+            reloadAll,
+            start: page * PAGE_SIZE,
+            total: members.meta.totalItems,
+          });
         });
       } catch (e) {
         console.error('Error while loading community members list', e);

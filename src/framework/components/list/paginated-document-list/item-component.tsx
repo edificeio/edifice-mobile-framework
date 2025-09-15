@@ -1,5 +1,5 @@
 import React from 'react';
-import { PixelRatio, TouchableOpacity, TouchableOpacityProps, View, ViewProps } from 'react-native';
+import { ListRenderItemInfo, PixelRatio, TouchableOpacity, TouchableOpacityProps, View, ViewProps } from 'react-native';
 
 import { PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
@@ -11,7 +11,7 @@ import ImageWithFallback from '../../picture/image-with-fallback';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
+import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { Picture, Svg } from '~/framework/components/picture';
 import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import http from '~/framework/util/http';
@@ -23,7 +23,9 @@ const isItemWorkspaceDocumentMedia = (item: DocumentItemWorkspace): item is Docu
 export function DocumentListItemIcon({
   item,
   size,
-}: Readonly<Pick<Parameters<PaginatedFlashListProps<DocumentItem>['renderItem']>[0], 'item'>> & { size: 'large' | 'small' }) {
+}: Readonly<
+  Pick<Parameters<(PaginatedFlashListProps<DocumentItem> & PaginatedFlatListProps<DocumentItem>)['renderItem']>[0], 'item'>
+> & { size: 'large' | 'small' }) {
   const iconSize = size === 'large' ? UI_SIZES.elements.icon.xxlarge : UI_SIZES.elements.icon.default;
   if (isItemWorkspaceResource(item)) {
     const resourceIconPictureProps = {
@@ -56,7 +58,12 @@ export function DocumentListItem({
   item,
   onPress,
   style,
-}: Readonly<Pick<Parameters<PaginatedFlashListProps<DocumentItem>['renderItem']>[0], 'index' | 'item'>> &
+}: Readonly<
+  Pick<
+    Parameters<(PaginatedFlashListProps<DocumentItem> & PaginatedFlatListProps<DocumentItem>)['renderItem']>[0],
+    'index' | 'item'
+  >
+> &
   Pick<TouchableOpacityProps, 'onPress' | 'style'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
 
@@ -95,7 +102,9 @@ export function FolderListItem({
   item,
   onPress,
   style,
-}: Readonly<Pick<Parameters<PaginatedFlashListProps<FolderItem>['renderItem']>[0], 'item' | 'index'>> &
+}: Readonly<
+  Pick<Parameters<(PaginatedFlashListProps<FolderItem> & PaginatedFlatListProps<FolderItem>)['renderItem']>[0], 'item' | 'index'>
+> &
   Pick<TouchableOpacityProps, 'onPress'> &
   Pick<ViewProps, 'style'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
@@ -116,7 +125,7 @@ FolderListItem.wrapperComponentStyle = [styles.item, styles.itemFolder];
 export function FolderSpacerListItem({
   index,
   style,
-}: Readonly<Parameters<PaginatedFlashListProps<typeof FOLDER_SPACER_ITEM_DATA>['renderItem']>[0] & Pick<ViewProps, 'style'>>) {
+}: Readonly<Pick<ListRenderItemInfo<typeof FOLDER_SPACER_ITEM_DATA>, 'index'> & Pick<ViewProps, 'style'>>) {
   return (
     <FolderListItem
       index={index}

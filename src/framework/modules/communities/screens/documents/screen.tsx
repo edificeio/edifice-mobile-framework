@@ -22,9 +22,10 @@ import { communitiesActions, communitiesSelectors } from '../../store';
 import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
 import { UI_SIZES } from '~/framework/components/constants';
-import FlatList from '~/framework/components/list/flat-list';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import { PaginatedDocumentFlatList } from '~/framework/components/list/paginated-document-list/component';
 import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
-import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
+import { LOADING_ITEM_DATA, PaginatedFlatList, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
 import moduleConfig from '~/framework/modules/communities/module-config';
@@ -123,15 +124,13 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
         // If `total` changes, there's a risk that the prevData is outdated, and should be flushed before inserting the new elements.
         // The resulting array will have a number of elements equals to `total`, that can be either loaded elements (ResourceDto) or non-loaded elements (LOADING_ITEM_DATA).
         // Old data is considered immutable, so `mergedData` is a brand-new array.
-        const mergedData = staleOrSplice(
-          prevData.documents,
-          {
-            from: page * PAGE_SIZE,
-            items: formatDocuments(newData.items),
-            total: newData.meta.totalItems,
-          },
+        const mergedData = staleOrSplice({
+          newData: formatDocuments(newData.items),
+          previousData: prevData.documents,
           reloadAll,
-        );
+          start: page * PAGE_SIZE,
+          total: newData.meta.totalItems,
+        });
         return { documents: mergedData, folders: __debug__folders__ };
       });
     },
@@ -157,7 +156,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   );
 
   const openDocument = React.useCallback(async (doc: CommunitiesDocumentItem) => {
-    const url = utils.getResourceUrl(doc as Parameters<typeof utils.getResourceUrl>[0]);
+    const url = utils.getResourceUrl(doc); // ToDo : patch package to narrow type required
     if (!url) return;
     const openInBrowser = () => openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
     if (doc.appName === 'workspace') {
@@ -171,34 +170,34 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     }
   }, []);
 
-  const [scrollElements, statusBar, { ...scrollViewProps }] = useCommunityScrollableThumbnail({
-    // contentContainerStyle: styles.list,
-    image: communityData.image,
-    title: I18n.get('communities-documents-title'),
-  });
+  // const [scrollElements, statusBar, { ...scrollViewProps }] = useCommunityScrollableThumbnail({
+  //   // contentContainerStyle: styles.list,
+  //   image: communityData.image,
+  //   title: I18n.get('communities-documents-title'),
+  // });
 
   return (
     <>
-      {statusBar}
-      <CommunityPaginatedDocumentList
+      {/*{statusBar}*/}
+      <PaginatedDocumentFlatList
         // contentContainerStyle={styles.list}
         estimatedListSize={estimatedListSize}
         estimatedItemSize={estimatedItemSize}
         numColumns={2}
         pageSize={PAGE_SIZE}
-        stickyElements={[
-          ...scrollElements,
-          <HeadingXSText key="title" style={styles.title}>
-            {I18n.get('communities-documents-title')}
-          </HeadingXSText>,
-        ]}
+        // stickyElements={[
+        //   ...scrollElements,
+        //   <HeadingXSText key="title" style={styles.title}>
+        //     {I18n.get('communities-documents-title')}
+        //   </HeadingXSText>,
+        // ]}
         folders={data.folders}
         documents={data.documents}
-        ListComponent={FlatList}
         showsVerticalScrollIndicator={false}
         onPageReached={loadData}
         onPressDocument={openDocument}
-        {...scrollViewProps}
+        ListEmptyComponent={EmptyContentScreen}
+        // {...scrollViewProps}
       />
     </>
   );
