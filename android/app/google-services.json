@@ -1,296 +1,39 @@
 {
   "project_info": {
-    "project_number": "850458695644",
-    "firebase_url": "https://ode-app-e-dev.firebaseio.com",
-    "project_id": "ode-app-e-dev",
-    "storage_bucket": "ode-app-e-dev.appspot.com"
+    "project_number": "42",
+    "firebase_url": "https://abc-xyz-123.firebaseio.com",
+    "project_id": "abc-xyz-123",
+    "storage_bucket": "project-id-123.storage.firebase.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:850458695644:android:a4e39e4076cf4c304da119",
+        "mobilesdk_app_id": "1:1:android:1",
         "android_client_info": {
-          "package_name": "com.ode.leducdenormandie"
+          "package_name": "com.ode.appe"
         }
       },
       "oauth_client": [
         {
-          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
+          "client_id": "1234-somefakeid.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
+          "current_key": "A--------------------------------------"
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "850458695644-5s77onh3qhtgrqatfe3e7dbngff1sous.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ode.neo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:850458695644:android:48677c642b75254a4da119",
-        "android_client_info": {
-          "package_name": "com.ode.mobile"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "850458695644-5s77onh3qhtgrqatfe3e7dbngff1sous.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ode.neo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:850458695644:android:d94ad34001493be24da119",
-        "android_client_info": {
-          "package_name": "com.ode.monlyceenet"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "850458695644-5s77onh3qhtgrqatfe3e7dbngff1sous.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ode.neo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:850458695644:android:04a7cccdb76611aa",
-        "android_client_info": {
-          "package_name": "com.ode.neo"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "850458695644-5s77onh3qhtgrqatfe3e7dbngff1sous.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ode.neo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:850458695644:android:620b8931e2edcd3f",
-        "android_client_info": {
-          "package_name": "com.ode.one"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "850458695644-5s77onh3qhtgrqatfe3e7dbngff1sous.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ode.neo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:850458695644:android:d5e0cd49f5d2a27c4da119",
-        "android_client_info": {
-          "package_name": "fr.ent77.mobile"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "850458695644-5s77onh3qhtgrqatfe3e7dbngff1sous.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ode.neo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:850458695644:android:11f1eb00338294384da119",
-        "android_client_info": {
-          "package_name": "fr.lyceeconnecte.mobile"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "850458695644-5s77onh3qhtgrqatfe3e7dbngff1sous.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ode.neo"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:850458695644:android:e45c192707e1d9dc4da119",
-        "android_client_info": {
-          "package_name": "fr.openent.mobile"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "850458695644-5s77onh3qhtgrqatfe3e7dbngff1sous.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ode.neo"
-              }
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     }
