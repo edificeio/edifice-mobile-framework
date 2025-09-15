@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-15 16:09:58",
-  "notes": "Revert \"release: 1.15.2(1150200)\"\nrelease: 1.15.3-comm.2(1150303)",
-  "version": "1.15.3-comm.3(1150304)"
+  "last": "2025-09-15 16:16:33",
+  "notes": "chore: yarn cache update\nrelease: 1.15.3-comm.3(1150304)",
+  "version": "1.15.3-comm.4(1150305)"
 }
