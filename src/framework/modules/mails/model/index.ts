@@ -130,3 +130,11 @@ export interface MailsVisible {
   children?: { id: string; displayName: string }[];
   relatives?: { id: string; displayName: string }[];
 }
+
+export interface MailsConversationPayload {
+  body: string;
+  to: string[];
+  cc: string[];
+  cci: string[];
+  subject: string;
+}
