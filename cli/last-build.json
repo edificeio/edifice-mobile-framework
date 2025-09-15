@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-15 14:53:47",
-  "notes": "update cache\nfix(mails):change http service for transport service & fix refresh token issue.\nfix(mails): fix draft auto save on body empty & signature available.\ncore: change badges colors after refactor\nchore: handle global application colors & icons in theme\nfix(mails): fix avatar icons display by type & subtype\nfix(mails): remove default isLoading test initialisation\nfix(mails): add proper type for View inline Style.\nfix(mails): disable headerRight items on loading\nevol(mails): Add disable prop on PopupMenu component & handle on Disable logic\nchore(timeline): add border props to single avatar\nSquashed commit of the following:\nchore(timeline): change newavatar to singleavatar\nfeat(chore): coco-4587, change  app-badges  color\nfeat(chore): coco-4587, change  modules display picture fill color\nfix(mails): fix  COCO-4538, Flatlist fast scroll issue\nfeat(user): move my account to the timeline navbar\nfeat(mails): add FR keys for inactive user modal\nfeat(mails):some refacto on conditions\nfeat(mails): import controller into screen & adapt\nfeat(mail): create useController and migrate business logic\nfeat(mail): create Inactive User modal wrapper & modal content container\nfix(mails): fix coco-4549, overlaped skeleton & mails list item\nSquashed commit of the following:\nrelease: 1.15.3(1150300)\nfix: COCO-4402 migrate oAuth2 to new transport layer\nchore: transport layer\nrelease: 1.15.2-rc.1(1150202)",
-  "version": "1.15.3-comm.1(1150302)"
+  "last": "2025-09-15 15:26:35",
+  "notes": "release: 1.15.3-comm.1(1150302)",
+  "version": "1.15.3-comm.2(1150303)"
 }
