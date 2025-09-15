@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-15 15:26:35",
-  "notes": "release: 1.15.3-comm.1(1150302)",
-  "version": "1.15.3-comm.2(1150303)"
+  "last": "2025-09-15 16:09:58",
+  "notes": "Revert \"release: 1.15.2(1150200)\"\nrelease: 1.15.3-comm.2(1150303)",
+  "version": "1.15.3-comm.3(1150304)"
 }
