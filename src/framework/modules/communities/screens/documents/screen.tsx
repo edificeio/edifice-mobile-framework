@@ -23,9 +23,8 @@ import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import { PaginatedDocumentFlatList } from '~/framework/components/list/paginated-document-list/component';
 import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
-import { LOADING_ITEM_DATA, PaginatedFlatList, staleOrSplice } from '~/framework/components/list/paginated-list';
+import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
 import moduleConfig from '~/framework/modules/communities/module-config';
@@ -170,34 +169,34 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     }
   }, []);
 
-  // const [scrollElements, statusBar, { ...scrollViewProps }] = useCommunityScrollableThumbnail({
-  //   // contentContainerStyle: styles.list,
-  //   image: communityData.image,
-  //   title: I18n.get('communities-documents-title'),
-  // });
+  const [scrollElements, statusBar, { ...scrollViewProps }] = useCommunityScrollableThumbnail({
+    contentContainerStyle: styles.list,
+    image: communityData.image,
+    title: I18n.get('communities-documents-title'),
+  });
 
   return (
     <>
-      {/*{statusBar}*/}
-      <PaginatedDocumentFlatList
+      {statusBar}
+      <CommunityPaginatedDocumentList
         // contentContainerStyle={styles.list}
         estimatedListSize={estimatedListSize}
         estimatedItemSize={estimatedItemSize}
         numColumns={2}
         pageSize={PAGE_SIZE}
-        // stickyElements={[
-        //   ...scrollElements,
-        //   <HeadingXSText key="title" style={styles.title}>
-        //     {I18n.get('communities-documents-title')}
-        //   </HeadingXSText>,
-        // ]}
+        stickyElements={[
+          ...scrollElements,
+          <HeadingXSText key="title" style={styles.title}>
+            {I18n.get('communities-documents-title')}
+          </HeadingXSText>,
+        ]}
         folders={data.folders}
         documents={data.documents}
         showsVerticalScrollIndicator={false}
         onPageReached={loadData}
         onPressDocument={openDocument}
         ListEmptyComponent={EmptyContentScreen}
-        // {...scrollViewProps}
+        {...scrollViewProps}
       />
     </>
   );
