@@ -3,7 +3,7 @@ import { TouchableOpacityProps } from 'react-native';
 import { Temporal } from '@js-temporal/polyfill';
 
 import type { PaginatedFlashListProps, PaginatedFlatListProps } from '../paginated-list';
-import type { FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
+import type { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 
 import { EntAppNameOrSynonym } from '~/app/intents';
 import { IMedia } from '~/framework/util/media';
@@ -45,7 +45,11 @@ export interface FolderItem {
   id: number;
 }
 
-export type PaginatedDocumentListItem = DocumentItem | FolderItem | typeof FOLDER_SPACER_ITEM_DATA;
+export type PaginatedDocumentListItem =
+  | DocumentItem
+  | FolderItem
+  | typeof FOLDER_SPACER_ITEM_DATA
+  | typeof DOCUMENT_SPACER_ITEM_DATA;
 
 export interface CommonPaginatedDocumentListProps {
   documents: PaginatedFlashListProps<DocumentItem>['data'];

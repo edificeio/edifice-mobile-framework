@@ -3,7 +3,7 @@ import { ListRenderItemInfo, PixelRatio, TouchableOpacity, TouchableOpacityProps
 
 import { PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
+import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 import styles from './styles';
 import { DocumentItem, DocumentItemWorkspace, DocumentItemWorkspaceDocumentMedia, FolderItem } from './types';
 import ImageWithFallback from '../../picture/image-with-fallback';
@@ -135,6 +135,12 @@ export function FolderSpacerListItem({
   );
 }
 FolderSpacerListItem.dummyData = { id: 0, title: ' ' };
+
+export function DocumentSpacerListItem({
+  style,
+}: Readonly<Pick<ListRenderItemInfo<typeof DOCUMENT_SPACER_ITEM_DATA>, 'index'> & Pick<ViewProps, 'style'>>) {
+  return <View style={[styles.item, styles.itemSpacer, style]} />;
+}
 
 export const renderPlacerholderItem = () => {
   return (

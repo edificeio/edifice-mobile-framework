@@ -170,7 +170,7 @@ export const defaultTheme: ThemeInitializer = {
   init() {
     (this as Partial<ITheme>).media = {
       audio: { name: 'ui-mic', type: 'Svg' },
-      document: { name: 'ui-textPage', type: 'Svg' },
+      document: { name: 'ui-text-page', type: 'Svg' },
       image: { name: 'ui-image', type: 'Svg' },
       link: { name: 'ui-external-link', type: 'Svg' },
       video: { name: 'ui-recordVideo', type: 'Svg' },
