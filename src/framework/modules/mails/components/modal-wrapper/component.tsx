@@ -30,7 +30,6 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View style={styles.touchableOverlay} />
         </TouchableWithoutFeedback>
-
         <View style={styles.content}>{children}</View>
       </View>
     </Modal>
