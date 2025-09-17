@@ -5,8 +5,9 @@ import styles from './styles';
 import { MailsRecipientAvatarProps } from './types';
 
 import theme from '~/app/theme';
+import { SingleAvatar } from '~/framework/components/avatar';
+import { AvatarSizes } from '~/framework/components/avatar/styles';
 import { UI_SIZES } from '~/framework/components/constants';
-import { AvatarSize, NewAvatar, NewAvatarSizes } from '~/framework/components/newavatar';
 import { Svg } from '~/framework/components/picture';
 
 const iconType = {
@@ -19,11 +20,11 @@ const iconType = {
 const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
   const { id, type } = props;
 
-  if (type === 'User' && id) return <NewAvatar size={props.size ?? AvatarSize.md} userId={id} />;
+  if (type === 'User' && id) return <SingleAvatar size={props.size ?? 'md'} userId={id} />;
 
   const suppViewStyles: ViewStyle = {
     aspectRatio: 1,
-    width: NewAvatarSizes[props.size ?? AvatarSize.md],
+    width: AvatarSizes[props.size ?? 'md'],
   };
 
   return (

@@ -1,3 +1,5 @@
+import type { MediacentreReduxState } from './reducer';
+
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 const MEDIACENTRE = 'mediacentre';

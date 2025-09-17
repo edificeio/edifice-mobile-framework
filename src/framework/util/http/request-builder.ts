@@ -225,7 +225,6 @@ export const _parseJson = async <ResponseType>(r: Response) => {
     return (await r.json()) as Promise<ResponseType>;
   } catch (e) {
     const error = new FetchError(FetchErrorCode.PARSE_ERROR, 'Failed to parse response JSON', { cause: e });
-    console.error(error, '\n', await r.clone().text());
     throw error;
   }
 };
