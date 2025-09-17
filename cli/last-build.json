@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-16 06:20:09",
-  "notes": "Revert \"chore: remove unwanted stuff\"\nUpdated translations from Phrase (#217)\nupdate(stack): update yarn cache\nfix: set new mediacentre back\nchore: remove unwanted stuff\nchore: remove unwanted stuff\nrelease: 1.15.2-rc.1(1150202)",
-  "version": "1.15.2-rc.2(1150203)"
+  "last": "2025-09-17 10:03:11",
+  "notes": "update(stack): yarn cache update\nfix: crash at login when mails not included\nupdate(stack): yarn cache update\nrelease: 1.15.2-rc.2(1150203)",
+  "version": "1.15.2-rc.3(1150204)"
 }
