@@ -26,22 +26,22 @@ const useAvatarStyle = ({ border = true, size, style }: Pick<SingleAvatarProps, 
     () => [
       style,
       {
-        aspectRatio: 1,
+        alignItems: 'stretch' as const,
         backgroundColor: theme.ui.background.card,
-        borderRadius: AvatarSizes[size] / 2,
-        margin: -UI_SIZES.border.small,
         overflow: 'hidden' as const,
-        padding: UI_SIZES.border.small,
-        width: AvatarSizes[size],
       },
       border
         ? {
             borderRadius: (AvatarSizes[size] + UI_SIZES.border.small) / 2,
+            height: AvatarSizes[size] + UI_SIZES.border.small,
             margin: -UI_SIZES.border.small,
             padding: UI_SIZES.border.small,
+            width: AvatarSizes[size] + UI_SIZES.border.small,
           }
         : {
             borderRadius: AvatarSizes[size] / 2,
+            height: AvatarSizes[size],
+            width: AvatarSizes[size],
           },
     ],
     [size, style, border],
@@ -127,22 +127,47 @@ const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatar
 };
 
 export function SingleAvatar(props: SingleAvatarProps) {
-  const { overlay, ...otherProps } = removeAvatarSpecificProps(props);
+  const { border = true, overlay, size, style, ...otherProps } = removeAvatarSpecificProps(props);
 
   const [error, setError] = React.useState(false);
   const onError = React.useCallback(() => {
     setError(true);
   }, []);
 
-  const computedStyle = useAvatarStyle(props);
+  const wrapperStyle = useAvatarStyle({ border, size, style });
+  const imageStyle = React.useMemo(
+    () => [
+      styles.innerImage,
+      {
+        borderRadius: AvatarSizes[size] / 2,
+      },
+    ],
+    [size],
+  );
+  const overlayStyle = React.useMemo(
+    () => [
+      styles.overlay,
+      border
+        ? {
+            borderRadius: AvatarSizes[size] / 2,
+            bottom: UI_SIZES.border.small,
+            left: UI_SIZES.border.small,
+            right: UI_SIZES.border.small,
+            top: UI_SIZES.border.small,
+          }
+        : {
+            borderRadius: AvatarSizes[size] / 2,
+            ...StyleSheet.absoluteFillObject,
+          },
+    ],
+    [border, size],
+  );
   const imageSource = useAvatarImage(props as SingleAvatarOnlySpecificProps, error);
 
-  return overlay ? (
-    <View style={computedStyle}>
-      <Image style={StyleSheet.absoluteFill} source={imageSource} onError={onError} {...otherProps} />
-      <View style={styles.overlay}>{overlay}</View>
+  return (
+    <View style={wrapperStyle}>
+      <Image style={imageStyle} source={imageSource} onError={onError} {...otherProps} />
+      {overlay && <View style={overlayStyle}>{overlay}</View>}
     </View>
-  ) : (
-    <Image style={computedStyle} source={imageSource} onError={onError} {...otherProps} />
   );
 }

@@ -44,13 +44,13 @@ export function AvatarStack({
       displayableItems.map((item, index) => {
         const key = typeof item === 'string' ? item : ((item as Partial<SingleUserAvatarSpecificProps>).userId ?? index.toString());
         const itemProps: Partial<SingleAvatarProps> = typeof item === 'string' ? { userId: item } : item;
-        if (index === displayableItems.length - 1 && total !== items.length) {
+        if (index === displayableItems.length - 1 && total !== displayableItems.length) {
           const displayedTotal = total > MAX_TOTAL ? I18n.get(`avatar-count-out-of-reach`, { count: MAX_TOTAL }) : total;
           itemProps.overlay = <SmallBoldText style={styles.overlayText}>{displayedTotal}</SmallBoldText>;
         }
         return { ...itemProps, style: avatarItemStyle, ..._avatarItemProps, key };
       }),
-    [_avatarItemProps, avatarItemStyle, displayableItems, items.length, total],
+    [_avatarItemProps, avatarItemStyle, displayableItems, total],
   );
 
   const onLayout = React.useCallback<NonNullable<ViewProps['onLayout']>>(({ nativeEvent }) => {
