@@ -2,6 +2,7 @@ import DeviceInfo from 'react-native-device-info';
 import { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
+import { callRegisteredActionsAtLogin } from './calls-at-login';
 import {
   accountIsActive,
   IActivationPayload as ActivationPayload,
@@ -64,7 +65,6 @@ import {
   getSession,
   IAuthState,
 } from '~/framework/modules/auth/reducer';
-import { reloadVisibles } from '~/framework/modules/mails/storage';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import { updateShakeListenerAction } from '~/framework/modules/user/actions';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -497,8 +497,8 @@ const performLogin = async (
   // SplashAds
   checkAndShowSplashAds(platform, user.infos.type!);
 
-  // Reload visibles
-  reloadVisibles();
+  // Call registered callbacks at login
+  callRegisteredActionsAtLogin();
 
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
