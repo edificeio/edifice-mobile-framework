@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-17 10:27:33",
-  "notes": "refactor(mails): edit, inactive user modal & content container components\nrelease: 1.15.3-comm.5(1150306)",
-  "version": "1.15.3-comm.6(1150307)"
+  "last": "2025-09-17 10:34:18",
+  "notes": "release: 1.15.3-comm.6(1150307)",
+  "version": "1.15.3-comm.7(1150308)"
 }

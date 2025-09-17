@@ -5,7 +5,7 @@
 		<key>BundleVersionOverride</key>
 		<string>empty</string>
 		<key>BundleVersionType</key>
-		<string>comm.6</string>
+		<string>comm.7</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>fr_FR</string>
 		<key>CFBundleDisplayName</key>
@@ -25,7 +25,7 @@
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleVersion</key>
-		<string>1150307</string>
+		<string>1150308</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>http</string>
