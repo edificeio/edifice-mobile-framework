@@ -51,7 +51,7 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
 
   return (
     <TouchableOpacity style={[styles.container, containerBackgroundColor]} onPress={onSelectAccount}>
-      <SingleAvatar size="lg" {...avatarProps} />
+      <SingleAvatar size="lg" {...avatarProps} border />
       <View style={styles.textContainer}>
         <SmallText numberOfLines={numberOfLines}>{displayName}</SmallText>
         <SmallBoldText numberOfLines={numberOfLines} style={typeColor}>

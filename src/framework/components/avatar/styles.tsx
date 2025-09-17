@@ -17,6 +17,19 @@ export default StyleSheet.create({
   avatarStack: {
     flexDirection: 'row',
   },
+  border: {
+    backgroundColor: theme.palette.grey.white,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     alignContent: 'center',
@@ -27,5 +40,5 @@ export default StyleSheet.create({
   overlayText: {
     color: theme.ui.text.inverse,
   },
-  singleAvatar: {} as ImageStyle,
+  singleAvatar: {},
 });

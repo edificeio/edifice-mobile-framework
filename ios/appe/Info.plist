@@ -3,17 +3,17 @@
 <plist version="1.0">
 	<dict>
 		<key>BundleVersionOverride</key>
-		<string>empty</string>
+		<string>dev/default</string>
 		<key>BundleVersionType</key>
 		<string>peda.1</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>fr_FR</string>
 		<key>CFBundleDisplayName</key>
-		<string>Édifice mobile</string>
+		<string>Dev Pocket</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
-		<string>com.ode.appe</string>
+		<string>com.ode.mobile</string>
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>

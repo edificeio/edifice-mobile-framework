@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+import { platformFetch } from './transport';
+
 import { getStore } from '~/app/store';
 import {
   accountIsActive,
@@ -16,7 +18,7 @@ import { actions as authActions } from '~/framework/modules/auth/reducer';
 import { writeUpdateAccount } from '~/framework/modules/auth/storage';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
-import http, { HTTPError } from '~/framework/util/http';
+import { HTTPError } from '~/framework/util/http';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
 import { IOAuthCustomToken, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
@@ -116,9 +118,10 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
       'Authorization': createDeviceAuthenticationHeader(platform.oauth.client_id, platform.oauth.client_secret),
       'Content-Type': 'application/x-www-form-urlencoded',
     };
-    const response = await http.fetchJsonForPlatform<API.OAuth2ResponseOK>(platform, 'POST', '/auth/oauth2/token', {
+    const response = await platformFetch.json<API.OAuth2ResponseOK>(platform, '/auth/oauth2/token', {
       body: new URLSearchParams(body).toString(),
       headers,
+      method: 'post',
     });
     return tokenFactory(response);
   } catch (e) {

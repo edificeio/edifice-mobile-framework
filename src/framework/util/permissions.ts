@@ -6,6 +6,7 @@ import { check, checkMultiple, Permission, PERMISSIONS, PermissionStatus, reques
 
 export const ANDROID_10_SDK = 29;
 export const ANDROID_13_SDK = 33;
+export const ANDROID_15_SDK = 35;
 
 const permissionsScenarios = {
   'camera': Platform.select<true | Permission>({
@@ -84,7 +85,7 @@ export const assertPermissions = async (scenario: keyof typeof permissionsScenar
     throw new PermissionError(
       `Assert permission scenario "${scenario} not granted. Permissions not granted : \n - ${missingPermissions.map(pair => `${pair[0]} -> ${pair[1]}`).join('\n - ')}"`,
       missingPermissions[0][0],
-      missingPermissions[0][1]
+      missingPermissions[0][1],
     );
   }
 

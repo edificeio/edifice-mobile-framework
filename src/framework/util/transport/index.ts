@@ -52,4 +52,3 @@
 
 export { accountApi, sessionApi } from './api';
 export { accountFetch, deviceFetch, platformFetch, sessionFetch } from './fetch';
-

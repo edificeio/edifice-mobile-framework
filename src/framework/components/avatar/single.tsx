@@ -21,22 +21,30 @@ import { AuthActiveAccount, AuthSavedAccount } from '~/framework/modules/auth/mo
 import appConf, { Platform } from '~/framework/util/appConf';
 import { urlSigner } from '~/infra/oauth';
 
-const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
+const useAvatarStyle = ({ border = true, size, style }: Pick<SingleAvatarProps, 'size' | 'style' | 'border'>) => {
   return React.useMemo(
     () => [
-      props.style,
+      style,
       {
+        aspectRatio: 1,
         backgroundColor: theme.ui.background.card,
-        borderColor: theme.palette.grey.white,
-        borderRadius: AvatarSizes[props.size] / 2 + UI_SIZES.border.small * 2,
-        borderWidth: UI_SIZES.border.small,
-        height: AvatarSizes[props.size] + UI_SIZES.border.small * 2,
+        borderRadius: AvatarSizes[size] / 2,
         margin: -UI_SIZES.border.small,
         overflow: 'hidden' as const,
-        width: AvatarSizes[props.size] + UI_SIZES.border.small * 2,
+        padding: UI_SIZES.border.small,
+        width: AvatarSizes[size],
       },
+      border
+        ? {
+            borderRadius: (AvatarSizes[size] + UI_SIZES.border.small) / 2,
+            margin: -UI_SIZES.border.small,
+            padding: UI_SIZES.border.small,
+          }
+        : {
+            borderRadius: AvatarSizes[size] / 2,
+          },
     ],
-    [props.size, props.style],
+    [size, style, border],
   );
 };
 
@@ -108,6 +116,8 @@ const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
   );
 
 const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatarProps => {
+  // Remove props that are for specific avatar types
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { group, id, source, svg, ...commonProps } = props as SingleAvatarProps &
     SingleSourceAvatarProps &
     SingleSvgAvatarProps &
@@ -117,15 +127,16 @@ const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatar
 };
 
 export function SingleAvatar(props: SingleAvatarProps) {
-  const { overlay, size, style, ...otherProps } = removeAvatarSpecificProps(props);
+  const { overlay, ...otherProps } = removeAvatarSpecificProps(props);
 
   const [error, setError] = React.useState(false);
   const onError = React.useCallback(() => {
     setError(true);
   }, []);
 
-  const computedStyle = useAvatarStyle({ size, style });
+  const computedStyle = useAvatarStyle(props);
   const imageSource = useAvatarImage(props as SingleAvatarOnlySpecificProps, error);
+
   return overlay ? (
     <View style={computedStyle}>
       <Image style={StyleSheet.absoluteFill} source={imageSource} onError={onError} {...otherProps} />

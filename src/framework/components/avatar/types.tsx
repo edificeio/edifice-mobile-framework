@@ -16,6 +16,7 @@ export interface CommonSingleAvatarProps extends Omit<ImageProps, 'source' | 'st
   style?: AvatarStyleProp;
   size: Size | keyof typeof Size; // Override width & height given in style property.
   overlay?: React.ReactNode;
+  border?: boolean;
 }
 
 // User avatar

@@ -7,7 +7,6 @@ import { MailsContactItemProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { AvatarSize } from '~/framework/components/newavatar';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
@@ -47,7 +46,7 @@ export const MailsContactItem = (props: MailsContactItemProps) => {
 
   return (
     <View style={styles.container}>
-      <MailsRecipientAvatar size={AvatarSize.sm} id={id} type={props.user.type} />
+      <MailsRecipientAvatar size="sm" id={id} type={props.user.type} />
       <SmallText style={styles.text} numberOfLines={1}>
         <SmallBoldText>{displayName}</SmallBoldText>
         {renderAccountType()}

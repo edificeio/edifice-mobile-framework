@@ -140,7 +140,7 @@ export function WikiReaderScreenLoaded({
         <PageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
           <HeadingMText testID="page-title">{page.title}</HeadingMText>
           <View style={styles.headerAuthorInfo}>
-            <SingleAvatar userId={page.updaterId ?? page.creatorId} size="md" testID="page-author-avatar" />
+            <SingleAvatar userId={page.updaterId ?? page.creatorId} size="md" testID="page-author-avatar" border />
             <View style={styles.headerAuthorInfoText}>
               <BodyBoldText numberOfLines={1} testID="page-author-name">
                 {page.updaterName ?? page.creatorName}
