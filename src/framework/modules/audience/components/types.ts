@@ -22,4 +22,10 @@ export interface AudienceProps {
   showComments?: boolean;
 }
 
+export interface UpdatedReactionsInfos {
+  userReaction: string;
+  totalReactionsCounter: number;
+  reactionTypes: string[];
+}
+
 export interface AudienceAllProps extends AudienceProps, AudienceReduxProps {}
