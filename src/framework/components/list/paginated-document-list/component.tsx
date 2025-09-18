@@ -13,10 +13,10 @@ import { PaginatedFlashList, PaginatedFlatList } from '../paginated-list';
 import { createDocumentArrayProxy, DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 import {
   DocumentListItem,
+  DocumentPlaceholderItem,
   DocumentSpacerListItem,
   FolderListItem,
   FolderSpacerListItem,
-  renderPlacerholderItem,
 } from './item-component';
 import styles from './styles';
 import {
@@ -68,7 +68,7 @@ export const useDocumentPagination = <
   );
 
   const getItemStyle = React.useCallback(
-    ({ index }: InfoType) => {
+    ({ index }: Pick<InfoType, 'index'>) => {
       const outputStyle: ViewStyle = {};
       if (index % numColumns === 0) {
         outputStyle.marginLeft = styles.item.margin * 2;
@@ -103,6 +103,14 @@ export const useDocumentPagination = <
     [getItemStyle, isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder],
   );
 
+  const renderPlaceholderItem = React.useCallback<(info: Pick<InfoType, 'index'>) => React.ReactElement>(
+    ({ index }) => {
+      const itemStyle = getItemStyle({ index });
+      return <DocumentPlaceholderItem style={itemStyle} />;
+    },
+    [getItemStyle],
+  );
+
   const getVisibleItemIndex = React.useCallback((n: number) => n - documentsIndexStart, [documentsIndexStart]);
 
   return {
@@ -111,6 +119,7 @@ export const useDocumentPagination = <
     getVisibleItemIndex,
     keyExtractor,
     renderItem,
+    renderPlaceholderItem,
   };
 };
 
@@ -121,7 +130,7 @@ export function PaginatedDocumentFlashList({
   onPressFolder,
   ...paginatedListProps
 }: Readonly<PaginatedDocumentFlashListProps>) {
-  const { data, getItemType, getVisibleItemIndex, keyExtractor, renderItem } = useDocumentPagination({
+  const { data, getItemType, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } = useDocumentPagination({
     documents,
     folders,
     numColumns: paginatedListProps.numColumns,
@@ -135,7 +144,7 @@ export function PaginatedDocumentFlashList({
       getItemType={getItemType}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
-      renderPlaceholderItem={renderPlacerholderItem}
+      renderPlaceholderItem={renderPlaceholderItem}
       getVisibleItemIndex={getVisibleItemIndex}
       {...paginatedListProps}
     />
@@ -149,7 +158,7 @@ export function PaginatedDocumentFlatList({
   onPressFolder,
   ...paginatedListProps
 }: Readonly<PaginatedDocumentFlatListProps>) {
-  const { data, getVisibleItemIndex, keyExtractor, renderItem } = useDocumentPagination({
+  const { data, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } = useDocumentPagination({
     documents,
     folders,
     numColumns: paginatedListProps.numColumns,
@@ -162,7 +171,7 @@ export function PaginatedDocumentFlatList({
       data={data}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
-      renderPlaceholderItem={renderPlacerholderItem}
+      renderPlaceholderItem={renderPlaceholderItem}
       getVisibleItemIndex={getVisibleItemIndex}
       {...paginatedListProps}
     />

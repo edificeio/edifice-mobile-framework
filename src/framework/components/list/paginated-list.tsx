@@ -14,7 +14,7 @@ export const LOADING_ITEM_DATA = Symbol('LOADING_ITEM_DATA');
 
 const DEFAULT_WINDOW_SIZE = 3;
 
-const DEFAULT_FLATLIST_PLACEHOLDER_COUNT = 5;
+const DEFAULT_FLATLIST_PLACEHOLDER_COUNT = 4;
 
 const DEFAULT_VIEWABILIBY_CONFIG = {
   itemVisiblePercentThreshold: 0,
@@ -85,6 +85,9 @@ interface CommonPaginatedListProps<TItem> {
    * @returns the index to take into account
    */
   getVisibleItemIndex?: (index: number) => number;
+
+  ListHeaderComponent?: React.ComponentType<{ isLoading: boolean }> | React.ReactElement | null | undefined;
+  ListFooterComponent?: React.ComponentType<{ isLoading: boolean }> | React.ReactElement | null | undefined;
 }
 
 /**
@@ -240,7 +243,16 @@ export interface PaginatedFlashListProps<TItem>
   extends CommonPaginatedListProps<TItem>,
     Omit<
       FlashListProps<PaginatedListItem<TItem>>,
-      'onRefresh' | 'refreshing' | 'refreshControl' | 'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem'
+      | 'onRefresh'
+      | 'refreshing'
+      | 'refreshControl'
+      | 'data'
+      | 'keyExtractor'
+      | 'getItemType'
+      | 'overrideItemLayout'
+      | 'renderItem'
+      | 'ListFooterComponent'
+      | 'ListHeaderComponent'
     > {
   getItemType?: FlashListProps<TItem>['getItemType'];
   overrideItemLayout?: FlashListProps<PaginatedListItem<TItem>>['overrideItemLayout'];
@@ -373,7 +385,15 @@ export interface PaginatedFlatListProps<TItem>
   extends CommonPaginatedListProps<TItem>,
     Omit<
       FlatListProps<PaginatedListItem<TItem>>,
-      'onRefresh' | 'refreshing' | 'refreshControl' | 'data' | 'keyExtractor' | 'overrideItemLayout' | 'renderItem'
+      | 'onRefresh'
+      | 'refreshing'
+      | 'refreshControl'
+      | 'data'
+      | 'keyExtractor'
+      | 'overrideItemLayout'
+      | 'renderItem'
+      | 'ListHeaderComponent'
+      | 'ListFooterComponent'
     > {
   /**
    * render function for loaded items like every List component works
@@ -388,7 +408,7 @@ export interface PaginatedFlatListProps<TItem>
   /**
    * How many items to render when initial data loading
    */
-  placeholderNumberOfItems?: number;
+  placeholderNumberOfRows?: number;
 }
 
 export const PaginatedFlatList = React.forwardRef(function <TItem>(
@@ -396,14 +416,17 @@ export const PaginatedFlatList = React.forwardRef(function <TItem>(
     data,
     getVisibleItemIndex,
     keyExtractor: _keyExtractor,
+    ListFooterComponent: ListFooterComponentCustom,
+    ListHeaderComponent: ListHeaderComponentCustom,
     onItemsError,
     onItemsReached,
     onPageError,
     onPageReached,
     pageSize,
-    placeholderNumberOfItems: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
+    placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
     renderItem: _renderItem,
     renderPlaceholderItem,
+    stickyHeaderIndices,
     viewabilityConfig,
     windowSize = DEFAULT_WINDOW_SIZE,
     ...flatListProps
@@ -415,6 +438,8 @@ export const PaginatedFlatList = React.forwardRef(function <TItem>(
   // dataRef.current = data;
 
   const getItem = React.useCallback((index: number) => data?.[index], [data]);
+
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const { keyExtractor, loadData, onViewableItemsChanged } = usePagination({
     getItem,
@@ -437,6 +462,20 @@ export const PaginatedFlatList = React.forwardRef(function <TItem>(
     [_renderItem, renderPlaceholderItem],
   );
 
+  const ListHeaderComponent = React.useMemo(() => {
+    if (ListHeaderComponentCustom === undefined || ListHeaderComponentCustom === null) return null;
+    if (React.isValidElement<any>(ListHeaderComponentCustom)) {
+      return ListHeaderComponentCustom;
+    } else return <ListHeaderComponentCustom isLoading={isLoading} />;
+  }, [ListHeaderComponentCustom, isLoading]);
+
+  const ListFooterComponent = React.useMemo(() => {
+    if (ListFooterComponentCustom === undefined || ListFooterComponentCustom === null) return null;
+    if (React.isValidElement<any>(ListFooterComponentCustom)) {
+      return ListFooterComponentCustom;
+    } else return <ListFooterComponentCustom isLoading={isLoading} />;
+  }, [ListFooterComponentCustom, isLoading]);
+
   const renderContent: ContentLoaderProps['renderContent'] = React.useCallback(
     refreshControl => {
       return (
@@ -449,18 +488,34 @@ export const PaginatedFlatList = React.forwardRef(function <TItem>(
           onViewableItemsChanged={onViewableItemsChanged}
           refreshControl={refreshControl}
           renderItem={renderItem}
+          stickyHeaderIndices={stickyHeaderIndices}
+          ListHeaderComponent={ListHeaderComponent}
+          ListFooterComponent={ListFooterComponent}
           {...flatListProps}
         />
       );
     },
-    [data, flatListProps, keyExtractor, onViewableItemsChanged, ref, renderItem, viewabilityConfig],
+    [
+      ListFooterComponent,
+      ListHeaderComponent,
+      data,
+      flatListProps,
+      keyExtractor,
+      onViewableItemsChanged,
+      ref,
+      renderItem,
+      stickyHeaderIndices,
+      viewabilityConfig,
+    ],
   );
 
   // useState is used instead of useRef with a readonly manner to be able to use a init function (refs cannot take function as initialiser)
   const [placeholderData] = React.useState(
     React.useCallback(() => {
-      return new Array(totalPlaceholderItem).fill(LOADING_ITEM_DATA) as (typeof LOADING_ITEM_DATA)[];
-    }, [totalPlaceholderItem]),
+      return new Array(totalPlaceholderItem * (flatListProps.numColumns ?? 1)).fill(
+        LOADING_ITEM_DATA,
+      ) as (typeof LOADING_ITEM_DATA)[];
+    }, [flatListProps.numColumns, totalPlaceholderItem]),
   );
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
@@ -469,14 +524,19 @@ export const PaginatedFlatList = React.forwardRef(function <TItem>(
         renderItem={renderPlaceholderItem}
         key="placeholder"
         data={placeholderData}
-        scrollEnabled={false}
+        ListHeaderComponent={ListHeaderComponent}
+        ListFooterComponent={ListFooterComponent}
+        // scrollEnabled={false}
         {...(flatListProps as Pick<PaginatedFlatListProps<typeof LOADING_ITEM_DATA>, keyof typeof flatListProps>)}
       />
     ),
-    [flatListProps, placeholderData, renderPlaceholderItem],
+    [ListFooterComponent, ListHeaderComponent, flatListProps, placeholderData, renderPlaceholderItem],
   );
 
-  const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(() => loadData(0, true), [loadData]);
+  const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {
+    await loadData(0, true);
+    setIsLoading(false);
+  }, [loadData]);
 
   return <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={renderLoading} />;
 });

@@ -142,9 +142,9 @@ export function DocumentSpacerListItem({
   return <View style={[styles.item, styles.itemSpacer, style]} />;
 }
 
-export const renderPlacerholderItem = () => {
+export function DocumentPlaceholderItem({ style }: Pick<ViewProps, 'style'>) {
   return (
-    <View style={[styles.item, styles.itemDocument]}>
+    <View style={React.useMemo(() => [styles.item, styles.itemDocument, style], [style])}>
       <PlaceholderMedia style={styles.documentThumbnailPlaceholder} isRound={false} />
       <View style={styles.documentMetadata}>
         <PlaceholderLine
@@ -167,4 +167,4 @@ export const renderPlacerholderItem = () => {
       </View>
     </View>
   );
-};
+}
