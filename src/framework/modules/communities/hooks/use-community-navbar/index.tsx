@@ -39,14 +39,17 @@ export default function useCommunityScrollableThumbnail({
     ],
     [statusBarHeight],
   );
-  const fixedTitleHeader = (
-    <View style={fixedTitleHeaderStyle} key="fixedTitleHeader">
-      <View style={styles.titleHeaderInner}>
-        <HeadingXSText numberOfLines={1}>{title}</HeadingXSText>
+  const fixedTitleHeader = React.useMemo(
+    () => (
+      <View style={fixedTitleHeaderStyle} key="fixedTitleHeader">
+        <View style={styles.titleHeaderInner}>
+          <HeadingXSText numberOfLines={1}>{title}</HeadingXSText>
+        </View>
       </View>
-    </View>
+    ),
+    [title, fixedTitleHeaderStyle],
   );
-  const banner = <CommunityNavbar image={image} key="banner" />;
+  const banner = React.useMemo(() => <CommunityNavbar image={image} key="banner" />, [image]);
   const bannerTotalHeight = BANNER_BASE_HEIGHT + statusBarHeight;
 
   const [shouldStatusBarDark, setShouldStatusBarDark] = React.useState(false);
