@@ -20,7 +20,7 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
   },
   list: {
-    padding: UI_SIZES.spacing.big / 2,
+    paddingBottom: UI_SIZES.spacing.big / 2,
   },
   title: {
     marginHorizontal: UI_SIZES.spacing.big,

@@ -5,7 +5,7 @@ export const createDecoratedArrayProxy = <ItemT,>(
   _data: ItemT[],
   numColumns: number = 1,
 ): {
-  data: typeof data;
+  data: (ItemT | ReactElement)[];
   stickyItemsPadding: number;
 } => {
   const stickyItemsPadding = stickyItems.length * numColumns;

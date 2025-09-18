@@ -2,6 +2,9 @@
 // import { View } from 'react-native';
 
 import * as React from 'react';
+import { ListRenderItemInfo } from 'react-native';
+
+import { createDecoratedArrayProxy } from './proxy';
 
 import { useDocumentPagination } from '~/framework/components/list/paginated-document-list/component';
 import { renderPlacerholderItem } from '~/framework/components/list/paginated-document-list/item-component';
@@ -41,16 +44,38 @@ export function CommunityPaginatedDocumentFlatList({
   folders,
   onPressDocument,
   onPressFolder,
-  // stickyElements = [],
+  stickyElements = [],
   ...paginatedListProps
 }: Readonly<CommunityPaginatedDocumentFlatListProps>) {
-  const { data, getVisibleItemIndex, keyExtractor, renderItem } = useDocumentPagination({
+  const {
+    data: _data,
+    getVisibleItemIndex,
+    keyExtractor: _keyExtractor,
+    renderItem: _renderItem,
+  } = useDocumentPagination({
     documents,
     folders,
     numColumns: paginatedListProps.numColumns,
     onPressDocument,
     onPressFolder,
   });
+
+  const { data } = React.useMemo(
+    () => createDecoratedArrayProxy(stickyElements, _data, paginatedListProps.numColumns),
+    [stickyElements, _data, paginatedListProps.numColumns],
+  );
+
+  const renderItem = React.useCallback(
+    (info: ListRenderItemInfo<PaginatedDocumentListItem> | ListRenderItemInfo<React.ReactElement>) =>
+      React.isValidElement(info.item) ? info.item : _renderItem(info as ListRenderItemInfo<PaginatedDocumentListItem>),
+    [_renderItem],
+  );
+
+  const keyExtractor = React.useCallback(
+    (item: PaginatedDocumentListItem | React.ReactElement, index: number) =>
+      React.isValidElement(item) ? item.key || 'sticky-' + index : _keyExtractor(item as PaginatedDocumentListItem, index),
+    [_keyExtractor],
+  );
 
   return (
     <PaginatedFlatList

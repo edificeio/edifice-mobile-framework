@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { ListRenderItemInfo as FlatListRenderItemInfo } from 'react-native';
+import { ListRenderItemInfo as FlatListRenderItemInfo, ViewStyle } from 'react-native';
 
 import { ListRenderItemInfo as FlashListRenderItemInfo } from '@shopify/flash-list';
 
@@ -18,6 +18,7 @@ import {
   FolderSpacerListItem,
   renderPlacerholderItem,
 } from './item-component';
+import styles from './styles';
 import {
   CommonPaginatedDocumentListProps,
   DocumentItem,
@@ -32,7 +33,7 @@ export const useDocumentPagination = <
 >({
   documents,
   folders,
-  numColumns,
+  numColumns = 1,
   onPressDocument,
   onPressFolder,
 }: {
@@ -66,23 +67,40 @@ export const useDocumentPagination = <
     [getItemType],
   );
 
+  const getItemStyle = React.useCallback(
+    ({ index }: InfoType) => {
+      const outputStyle: ViewStyle = {};
+      if (index % numColumns === 0) {
+        outputStyle.marginLeft = styles.item.margin * 2;
+      }
+      if (index % numColumns === numColumns - 1) {
+        outputStyle.marginRight = styles.item.margin * 2;
+      }
+      return outputStyle;
+    },
+    [numColumns],
+  );
+
   const renderItem = React.useCallback<(info: InfoType) => React.ReactElement>(
     (info: InfoType) => {
-      if (info.item === FOLDER_SPACER_ITEM_DATA) return <FolderSpacerListItem {...info} />;
-      if (info.item === DOCUMENT_SPACER_ITEM_DATA) return <DocumentSpacerListItem {...info} />;
+      const itemStyle = getItemStyle(info);
+      if (info.item === FOLDER_SPACER_ITEM_DATA) return <FolderSpacerListItem {...info} style={itemStyle} />;
+      if (info.item === DOCUMENT_SPACER_ITEM_DATA) return <DocumentSpacerListItem {...info} style={itemStyle} />;
       return isIndexForFolderOrSpacerItem(info.index) ? (
         <FolderListItem
           {...(info as FlatListRenderItemInfo<FolderItem>)}
           onPress={e => onPressFolder?.((info as FlatListRenderItemInfo<FolderItem>).item, e)}
+          style={itemStyle}
         />
       ) : (
         <DocumentListItem
           {...(info as FlatListRenderItemInfo<DocumentItem>)}
           onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem>).item, e)}
+          style={itemStyle}
         />
       );
     },
-    [isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder],
+    [getItemStyle, isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder],
   );
 
   const getVisibleItemIndex = React.useCallback((n: number) => n - documentsIndexStart, [documentsIndexStart]);
