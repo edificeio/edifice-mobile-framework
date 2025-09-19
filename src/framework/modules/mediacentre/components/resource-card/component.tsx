@@ -29,12 +29,19 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
 }) => {
   const handlePress = () => {
     if (resource.source === Source.SIGNET) {
+      return openUrl(resource.link);
+    }
+    const session = getSession();
+    if (!session) {
+      console.debug('[Mediacentre] openResource : No session found');
+      return;
+    }
+
+    // PEDAGO-3168 — Sometimes the given url already includes the mediacentre open api. Other times it doesn't so we must to manually format it.
+    if (resource.link.includes(`${session.platform.url}/mediacentre/resource/open?url=`)) {
       openUrl(resource.link);
     } else {
-      const link = encodeURIComponent(resource.link);
-      const session = getSession();
-      if (!session) return;
-      openUrl(`${session.platform.url}/mediacentre/resource/open?url=${link}`);
+      openUrl(`/mediacentre/resource/open?url=${encodeURIComponent(resource.link)}`);
     }
   };
 

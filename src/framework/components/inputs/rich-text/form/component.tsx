@@ -4,6 +4,7 @@ import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'rea
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -23,6 +24,7 @@ import usePreventBack from '~/framework/hooks/prevent-back';
 import { useSyncRef } from '~/framework/hooks/ref';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { ANDROID_15_SDK } from '~/framework/util/permissions';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
@@ -284,13 +286,15 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
     [topForm],
   );
 
+  const isAndroid15OrNewer = Platform.OS === 'android' && DeviceInfo.getApiLevelSync() >= ANDROID_15_SDK;
+
   return (
     <BottomSheetModalProvider>
       <PageView style={styles.page}>
         <KeyboardAvoidingView
           keyboardVerticalOffset={headerHeight}
           style={styles.container}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          behavior={Platform.OS === 'ios' ? 'padding' : isAndroid15OrNewer ? 'height' : undefined}>
           <ScrollView
             keyboardDismissMode="none"
             keyboardShouldPersistTaps="always"

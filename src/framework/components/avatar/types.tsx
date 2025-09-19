@@ -12,6 +12,7 @@ export enum Size {
 
 export interface CommonSingleAvatarProps extends Omit<ImageProps, 'source'> {
   size: Size | keyof typeof Size; // Override width & height given in style property.
+  border?: boolean;
 }
 
 // User avatar

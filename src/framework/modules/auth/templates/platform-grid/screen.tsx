@@ -5,11 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import styles from './styles';
 import type { AuthPlatformGridScreenPrivateProps } from './types';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-
-import styles from './styles';
-import type { AuthPlatformGridScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
