@@ -11,7 +11,7 @@ import {
   CommonPaginatedDocumentListProps,
   PaginatedDocumentListItem,
 } from '~/framework/components/list/paginated-document-list/types';
-import { PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
+import { LOADING_ITEM_DATA, PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 
 export type CommunityPaginatedDocumentListItem = PaginatedDocumentListItem | React.ReactElement;
 
@@ -22,6 +22,7 @@ export interface CommunityPaginatedDocumentFlatListProps
     >,
     CommonPaginatedDocumentListProps {
   stickyElements?: React.ReactElement[];
+  stickyPlaceholderElements?: React.ReactElement[];
 }
 
 export function CommunityPaginatedDocumentFlatList({
@@ -30,6 +31,7 @@ export function CommunityPaginatedDocumentFlatList({
   onPressDocument,
   onPressFolder,
   stickyElements = [],
+  stickyPlaceholderElements = [],
   ...paginatedListProps
 }: Readonly<CommunityPaginatedDocumentFlatListProps>) {
   const {
@@ -37,7 +39,7 @@ export function CommunityPaginatedDocumentFlatList({
     getVisibleItemIndex,
     keyExtractor: _keyExtractor,
     renderItem: _renderItem,
-    renderPlaceholderItem,
+    renderPlaceholderItem: _renderPlaceholderItem,
   } = useDocumentPagination({
     documents,
     folders,
@@ -57,10 +59,26 @@ export function CommunityPaginatedDocumentFlatList({
     [_renderItem],
   );
 
+  const renderPlaceholderItem = React.useCallback(
+    (info: ListRenderItemInfo<typeof LOADING_ITEM_DATA | React.ReactElement>) =>
+      React.isValidElement(info.item) ? info.item : _renderPlaceholderItem(info as ListRenderItemInfo<typeof LOADING_ITEM_DATA>),
+    [_renderPlaceholderItem],
+  );
+
   const keyExtractor = React.useCallback(
     (item: PaginatedDocumentListItem | React.ReactElement, index: number) =>
       React.isValidElement(item) ? item.key || 'sticky-' + index : _keyExtractor(item as PaginatedDocumentListItem, index),
     [_keyExtractor],
+  );
+
+  const { data: placeholderData } = React.useMemo(
+    () =>
+      createDecoratedArrayProxy(
+        stickyPlaceholderElements,
+        new Array(8).fill(typeof LOADING_ITEM_DATA),
+        paginatedListProps.numColumns,
+      ),
+    [stickyPlaceholderElements, paginatedListProps.numColumns],
   );
 
   return (
@@ -68,6 +86,7 @@ export function CommunityPaginatedDocumentFlatList({
       data={data}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
+      placeholderData={placeholderData}
       renderPlaceholderItem={renderPlaceholderItem}
       getVisibleItemIndex={getVisibleItemIndex}
       {...paginatedListProps}

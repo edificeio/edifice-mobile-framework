@@ -23,7 +23,7 @@ export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavb
     () => [
       styles.banner,
       {
-        backgroundColor: image ? theme.palette.grey.white : theme.palette.primary.regular,
+        backgroundColor: image ? theme.palette.grey.white : theme.palette.grey.cloudy,
         height,
       },
       _style,

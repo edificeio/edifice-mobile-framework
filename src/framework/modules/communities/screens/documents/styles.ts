@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
   endSpacer: {
@@ -23,6 +24,11 @@ export default StyleSheet.create({
     paddingBottom: UI_SIZES.spacing.big / 2,
   },
   title: {
+    marginHorizontal: UI_SIZES.spacing.big,
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  titlePlaceholder: {
+    height: TextSizeStyle.Medium.lineHeight,
     marginHorizontal: UI_SIZES.spacing.big,
     marginTop: UI_SIZES.spacing.medium,
   },

@@ -12,6 +12,7 @@ import {
 import { Temporal } from '@js-temporal/polyfill';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
+import { PlaceholderLine } from 'rn-placeholder';
 
 import CommunityPaginatedDocumentList from './community-paginated-document-list';
 import styles from './styles';
@@ -169,27 +170,37 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     }
   }, []);
 
-  const [scrollElements, statusBar, { ...scrollViewProps }] = useCommunityScrollableThumbnail({
+  const [scrollElements, statusBar, { ...scrollViewProps }, placeholderBanner] = useCommunityScrollableThumbnail({
     contentContainerStyle: styles.list,
     image: communityData.image,
     title: I18n.get('communities-documents-title'),
   });
 
+  const stickyElements = React.useMemo(
+    () => [
+      ...scrollElements,
+      <HeadingXSText key="title" style={styles.title}>
+        {I18n.get('communities-documents-title')}
+      </HeadingXSText>,
+    ],
+    [scrollElements],
+  );
+
+  const stickyPlaceholderElements = React.useMemo(
+    () => [placeholderBanner, <PlaceholderLine width={60} noMargin style={styles.titlePlaceholder} />],
+    [placeholderBanner],
+  );
+
   return (
     <>
       {statusBar}
       <CommunityPaginatedDocumentList
-        // contentContainerStyle={styles.list}
         estimatedListSize={estimatedListSize}
         estimatedItemSize={estimatedItemSize}
         numColumns={2}
         pageSize={PAGE_SIZE}
-        stickyElements={[
-          ...scrollElements,
-          <HeadingXSText key="title" style={styles.title}>
-            {I18n.get('communities-documents-title')}
-          </HeadingXSText>,
-        ]}
+        stickyElements={stickyElements}
+        stickyPlaceholderElements={stickyPlaceholderElements}
         folders={data.folders}
         documents={data.documents}
         showsVerticalScrollIndicator={false}

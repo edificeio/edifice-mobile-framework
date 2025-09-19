@@ -50,6 +50,7 @@ export default function useCommunityScrollableThumbnail({
     [title, fixedTitleHeaderStyle],
   );
   const banner = React.useMemo(() => <CommunityNavbar image={image} key="banner" />, [image]);
+  const placeholderBanner = React.useMemo(() => <CommunityNavbar key="banner" />, []);
   const bannerTotalHeight = BANNER_BASE_HEIGHT + statusBarHeight;
 
   const [shouldStatusBarDark, setShouldStatusBarDark] = React.useState(false);
@@ -113,6 +114,7 @@ export default function useCommunityScrollableThumbnail({
       StickyHeaderComponent: CommunityScrollViewStickyHeader,
       stickyHeaderIndices: useCommunityScrollableThumbnail.stickyHeaderIndices,
     } as const,
+    placeholderBanner,
   ] as const;
 }
 useCommunityScrollableThumbnail.stickyHeaderIndices = [0, 1];
