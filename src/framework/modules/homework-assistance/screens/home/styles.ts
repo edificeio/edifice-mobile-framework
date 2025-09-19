@@ -16,15 +16,15 @@ export default StyleSheet.create({
     position: 'absolute',
     right: -UI_SIZES.spacing.major,
   },
-  configContainer: {
-    padding: UI_SIZES.spacing.big,
-    rowGap: UI_SIZES.spacing.medium,
-  },
   container: {
     rowGap: UI_SIZES.spacing.medium,
   },
   containerPadding: {
     paddingBottom: BUTTON_WIDTH + UI_SIZES.spacing.minor,
+  },
+  parametersContainer: {
+    padding: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.medium,
   },
   primaryText: {
     textAlign: 'center',
