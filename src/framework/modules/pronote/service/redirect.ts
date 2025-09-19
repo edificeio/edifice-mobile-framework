@@ -17,7 +17,10 @@ const getRedirectUrl = (session: AuthLoggedAccount, connectorAddress: string, pa
   };
   let link = `${session.platform.url}/cas/oauth/login?service=${encodeURIComponent(connectorAddress)}`;
   const role = profileMap[session.user.type.toUpperCase()];
-  link += `${getSlash(link)}mobile.${role}.html`;
+  // INTEG-1023: Not every PERSONNEL is a direction, so we don't add anything for them
+  if (role !== profileMap.PERSONNEL) {
+    link += `${getSlash(link)}mobile.${role}.html`;
+  }
   if (pageId) {
     link += encodeURIComponent(`?page=${pageId}`);
   }

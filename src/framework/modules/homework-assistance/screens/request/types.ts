@@ -2,11 +2,11 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthActiveAccount, UserChild } from '~/framework/modules/auth/model';
 import {
-  fetchHomeworkAssistanceConfigAction,
+  fetchHomeworkAssistanceParametersAction,
   fetchHomeworkAssistanceServicesAction,
   postHomeworkAssistanceRequestAction,
 } from '~/framework/modules/homework-assistance/actions';
-import { Config, Service } from '~/framework/modules/homework-assistance/model';
+import { ModuleParameters, Service } from '~/framework/modules/homework-assistance/model';
 import {
   HomeworkAssistanceNavigationParams,
   homeworkAssistanceRouteNames,
@@ -28,13 +28,13 @@ export interface HomeworkAssistanceRequestScreenStoreProps {
   services: Service[];
   structureName: string;
   children?: IChild[];
-  config?: Config;
+  parameters?: ModuleParameters;
   session?: AuthActiveAccount;
 }
 
 export interface HomeworkAssistanceRequestScreenDispatchProps {
   tryAddRequest: (...args: Parameters<typeof postHomeworkAssistanceRequestAction>) => Promise<unknown>;
-  tryFetchConfig: (...args: Parameters<typeof fetchHomeworkAssistanceConfigAction>) => Promise<Config>;
+  tryFetchParameters: (...args: Parameters<typeof fetchHomeworkAssistanceParametersAction>) => Promise<ModuleParameters>;
   tryFetchServices: (...args: Parameters<typeof fetchHomeworkAssistanceServicesAction>) => Promise<Service[]>;
 }
 
