@@ -337,6 +337,7 @@ export const Svg = ({ cached, name, ...rest }: SvgProps): React.JSX.Element | nu
       setLoading(true);
       const importSVG = async (): Promise<void> => {
         try {
+          if (__DEV__ && !imports[name]) console.error(`[Svg] Icon not found : ${name}`);
           ImportedSVGRef.current = (await imports[name]()).default;
           if (cached) {
             importsCache[name] = ImportedSVGRef.current;
