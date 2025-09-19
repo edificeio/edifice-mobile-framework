@@ -843,7 +843,7 @@
   "mails-edit-missingsubjecttext": "Ce message n'a aucun objet. Voulez-vous l'envoyer quand même ?",
   "mails-edit-noresulttext": "Essayez de rechercher avec d’autres mots clés, orthographe ou ensemble de caractères.",
   "mails-edit-noresulttitle": "Aucun résultat pour \"{{text}}\"",
-  "mails-edit-placeholderadml": "Saisissez 3 caractères minimum",
+  "mails-edit-placeholderadml": "Saisissez 2 caractères minimum",
   "mails-edit-result": "{{nb}} résultat",
   "mails-edit-results": "{{nb}} résultats",
   "mails-edit-savedraft": "Enregistrer le brouillon",

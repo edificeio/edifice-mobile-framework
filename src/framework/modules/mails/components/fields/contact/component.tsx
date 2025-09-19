@@ -195,7 +195,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   );
 
   const onChangeText = (text: string) => {
-    const minTextLength = props.isAdml ? 3 : 1;
+    const minTextLength = props.isAdml ? 2 : 1;
     setSearch(text);
     if (text.length >= minTextLength) {
       const normalizedSearchText = removeAccents(text).toLowerCase();
