@@ -4,18 +4,18 @@
 import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
-import { Config, Resource, Service } from '~/framework/modules/homework-assistance/model';
+import { ModuleParameters, Resource, Service } from '~/framework/modules/homework-assistance/model';
 import moduleConfig from '~/framework/modules/homework-assistance/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 export interface IHomeworkAssistanceReduxState {
-  config: AsyncState<Config | undefined>;
+  parameters: AsyncState<ModuleParameters | undefined>;
   resources: AsyncState<Resource[]>;
   services: AsyncState<Service[]>;
 }
 
 interface IHomeworkAssistanceReduxStateData {
-  config?: Config;
+  parameters?: ModuleParameters;
   resources: Resource[];
   services: Service[];
 }
@@ -26,13 +26,13 @@ const initialState: IHomeworkAssistanceReduxStateData = {
 };
 
 export const actionTypes = {
-  config: createAsyncActionTypes(moduleConfig.namespaceActionType('CONFIG')),
+  parameters: createAsyncActionTypes(moduleConfig.namespaceActionType('PARAMETERS')),
   resources: createAsyncActionTypes(moduleConfig.namespaceActionType('RESOURCES')),
   services: createAsyncActionTypes(moduleConfig.namespaceActionType('SERVICES')),
 };
 
 const reducer = combineReducers({
-  config: createSessionAsyncReducer(initialState.config, actionTypes.config),
+  parameters: createSessionAsyncReducer(initialState.parameters, actionTypes.parameters),
   resources: createSessionAsyncReducer(initialState.resources, actionTypes.resources),
   services: createSessionAsyncReducer(initialState.services, actionTypes.services),
 });

@@ -115,7 +115,7 @@ export const newsItemDetailsAdapter = (n: BackendNewsItemDetails) => {
 export const newsThreadItemAdapter = (n: BackendNewsThreadItem) => {
   const ret = {
     created: moment(n.created),
-    icon: n.icon,
+    icon: n.icon ? { uri: n.icon } : null,
     id: n.id,
     modified: moment(n.created),
     owner: {

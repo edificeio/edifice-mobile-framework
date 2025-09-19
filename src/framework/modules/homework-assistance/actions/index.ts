@@ -6,22 +6,22 @@ import { ThunkAction } from 'redux-thunk';
 
 import { UserChild } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { Config, Resource, Service } from '~/framework/modules/homework-assistance/model';
+import { ModuleParameters, Resource, Service } from '~/framework/modules/homework-assistance/model';
 import { actionTypes } from '~/framework/modules/homework-assistance/reducer';
 import { homeworkAssistanceService } from '~/framework/modules/homework-assistance/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
-export const homeworkAssistanceConfigActionsCreators = createAsyncActionCreators(actionTypes.config);
-export const fetchHomeworkAssistanceConfigAction =
-  (): ThunkAction<Promise<Config>, any, any, any> => async (dispatch, getState) => {
+export const homeworkAssistanceParametersActionsCreators = createAsyncActionCreators(actionTypes.parameters);
+export const fetchHomeworkAssistanceParametersAction =
+  (): ThunkAction<Promise<ModuleParameters>, any, any, any> => async (dispatch, getState) => {
     try {
       const session = assertSession();
-      dispatch(homeworkAssistanceConfigActionsCreators.request());
-      const config = await homeworkAssistanceService.config.get(session);
-      dispatch(homeworkAssistanceConfigActionsCreators.receipt(config));
-      return config;
+      dispatch(homeworkAssistanceParametersActionsCreators.request());
+      const parameters = await homeworkAssistanceService.parameters.get(session);
+      dispatch(homeworkAssistanceParametersActionsCreators.receipt(parameters));
+      return parameters;
     } catch (e) {
-      dispatch(homeworkAssistanceConfigActionsCreators.error(e as Error));
+      dispatch(homeworkAssistanceParametersActionsCreators.error(e as Error));
       throw e;
     }
   };
