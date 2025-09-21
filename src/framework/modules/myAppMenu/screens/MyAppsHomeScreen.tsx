@@ -3,6 +3,9 @@ import { StyleSheet, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import ModuleLineButton from '../components/module-line-button';
+import moduleConfig from '../module-config';
+
 import { I18n } from '~/app/i18n';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
@@ -21,6 +24,7 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
   modules: NavigableModuleArray;
   secondaryModules: NavigableModuleArray;
   connectors: NavigableModuleArray;
+  widgets: NavigableModuleArray;
 }
 
 const styles = StyleSheet.create({
@@ -112,9 +116,23 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     );
   };
 
+  const renderWidgets = () => {
+    console.error('widgets: ' + props.widgets.filter(widget => widget.config.name));
+
+    return (
+      <ModuleLineButton
+        displayI18n="myapp-widgets-title"
+        displayPicture={{ fill: '#000', name: 'ui-widget', type: 'Svg' }}
+        onPress={() => props.navigation.navigate(`${moduleConfig.routeName}/widgets`)}
+      />
+    );
+    // return <OtherModuleElement item={data as AnyNavigableModule} type="widgets" />;
+  };
+
   return (
     <PageView>
       <ScrollView bottomInset={false}>
+        {renderWidgets()}
         {renderGrid()}
         {renderOtherModules()}
         <View style={styles.webButton}>

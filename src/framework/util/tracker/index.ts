@@ -239,6 +239,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       scrapbook: 'Scrapbook',
       support: 'Support',
       user: 'MyAccount',
+      widgets: 'Widgets',
       // viesco: 'Presences', // not used anymore
       wiki: 'Wiki',
       workspace: 'Workspace',

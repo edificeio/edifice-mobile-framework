@@ -287,6 +287,7 @@ const imports = {
   'ui-walk': async () => import('ASSETS/icons/uiIcons/walk.svg'),
   'ui-warning': async () => import('ASSETS/icons/uiIcons/warning.svg'),
   'ui-wavering': async () => import('ASSETS/icons/uiIcons/wavering.svg'),
+  'ui-widget': async () => import('ASSETS/icons/uiIcons/widget.svg'),
   'ui-wiki-list-header': async () => import('ASSETS/images/wiki/wiki-list-header.svg'),
   'ui-write': async () => import('ASSETS/icons/uiIcons/write.svg'),
   'user': async () => import('ASSETS/icons/moduleIcons/user.svg'),
