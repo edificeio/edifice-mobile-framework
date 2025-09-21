@@ -21,6 +21,7 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
   modules: NavigableModuleArray;
   secondaryModules: NavigableModuleArray;
   connectors: NavigableModuleArray;
+  widgets: NavigableModuleArray;
 }
 
 const styles = StyleSheet.create({
@@ -85,7 +86,10 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   };
 
   const renderOtherModules = () => {
-    if (isEmpty(props.secondaryModules) && isEmpty(props.connectors)) return null;
+    if (isEmpty(props.secondaryModules) && isEmpty(props.connectors) && isEmpty(props.widgets)) return null;
+    const widgets = (props.widgets ?? [])?.sort((a, b) =>
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
+    ) as NavigableModuleArray;
     const secondaryModules = (props.secondaryModules ?? [])?.sort((a, b) =>
       I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
     ) as NavigableModuleArray;
@@ -95,7 +99,12 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     return (
       <View style={styles.otherModules}>
         <HeadingSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingSText>
-
+        <FlatList
+          bottomInset={false}
+          renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}
+          data={widgets}
+          style={styles.flatlist}
+        />
         <FlatList
           bottomInset={false}
           renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}

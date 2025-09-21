@@ -4,7 +4,7 @@ import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
 
 import { I18n } from '~/app/i18n';
 import moduleConfig from '~/framework/modules/myAppMenu/module-config';
-import { myAppsConnector, myAppsModules, myAppsSecondaryModules } from '~/framework/modules/myAppMenu/myAppsModules';
+import { myAppsConnector, myAppsModules, myAppsSecondaryModules, myAppsWidgets } from '~/framework/modules/myAppMenu/myAppsModules';
 import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { navBarTitle } from '~/framework/navigation/navBar';
@@ -14,8 +14,9 @@ export default (({ session }) => {
   const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(session));
   const secondaryModules = new NavigableModuleArray(...myAppsSecondaryModules.get().filterAvailables(session));
   const connectors = new NavigableModuleArray(...myAppsConnector.get().filterAvailables(session));
+  const widgets = new NavigableModuleArray(...myAppsWidgets.get().filterAvailables(session));
   const MyAppsContainer = props => (
-    <MyAppsHomeScreen {...props} modules={modules} secondaryModules={secondaryModules} connectors={connectors} />
+    <MyAppsHomeScreen {...props} modules={modules} secondaryModules={secondaryModules} connectors={connectors} widgets={widgets} />
   );
   return createModuleNavigator<IMyAppsNavigationParams>(moduleConfig.name, Stack => (
     <>
