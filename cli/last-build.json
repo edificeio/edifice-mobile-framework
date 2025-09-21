@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-19 09:12:03",
-  "notes": "chore: yarn cache update\nrelease: 1.15.2-rc.7(1150208)",
-  "version": "1.15.2-rc.8(1150209)"
+  "last": "2025-09-21 20:36:39",
+  "notes": "update(stack): yarn cache update\nMerge branch 'dev/1.15.3' into update/rn-76\nfix(pronote): INTEG-1023, update Pronote connection to use auth/redirect like other connectors and remove profile exception for improved redirection\nfix: SUPPORT-340, news threadItemAdapter was mistyped\nupdate(stack): minor updates\nrefactor(homework-assistance): ENABLING-403 replace config with parameters endpoint\nfix(mediacentre): ENABLING-402 convert signet resource id to number when adding favorite\nchore(i18n): change phrase sync branch\nchore(i18n): change phrase sync branch\nSquashed commit of the following:\nupdate(stack): minor updates",
+  "version": "1.15.3-alpha.1(1150301)"
 }
