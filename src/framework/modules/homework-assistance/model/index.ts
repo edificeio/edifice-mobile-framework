@@ -10,7 +10,7 @@ export interface Exclusion {
   end: Moment;
 }
 
-export interface Config {
+export interface ModuleParameters {
   messages: {
     body: string;
     days: string;
@@ -52,8 +52,8 @@ export interface Service {
   value: number;
 }
 
-export const getIsDateValid = (config: Config, date: Moment, time: Moment): boolean => {
-  const { exclusions, openingDays, openingTime } = config.settings;
+export const getIsDateValid = (parameters: ModuleParameters, date: Moment, time: Moment): boolean => {
+  const { exclusions, openingDays, openingTime } = parameters.settings;
   const allowedWeekDays = Object.keys(openingDays).filter(day => openingDays[day]);
   const weekday = getDayOfTheWeek(date.clone());
 

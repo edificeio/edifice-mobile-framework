@@ -1,7 +1,7 @@
 import moment, { Moment } from 'moment';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { Config, Exclusion, Resource, Service } from '~/framework/modules/homework-assistance/model';
+import { Exclusion, ModuleParameters, Resource, Service } from '~/framework/modules/homework-assistance/model';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 
 interface BackendExclusion {
@@ -9,7 +9,7 @@ interface BackendExclusion {
   end: string;
 }
 
-type BackendConfig = {
+type BackendParameters = {
   messages: {
     header: string;
     body: string;
@@ -63,7 +63,7 @@ const exclusionAdapter = (data: BackendExclusion): Exclusion => {
   };
 };
 
-const configAdapter = (data: BackendConfig): Config => {
+const parametersAdapter = (data: BackendParameters): ModuleParameters => {
   return {
     messages: {
       body: data.messages.body,
@@ -112,11 +112,11 @@ const servicesAdapter = (data: BackendServices): Service[] => {
 };
 
 export const homeworkAssistanceService = {
-  config: {
+  parameters: {
     get: async (session: AuthActiveAccount) => {
-      const api = '/homework-assistance/config';
-      const config = (await fetchJSONWithCache(api)) as BackendConfig;
-      return configAdapter(config);
+      const api = '/homework-assistance/parameters';
+      const parameters = (await fetchJSONWithCache(api)) as BackendParameters;
+      return parametersAdapter(parameters);
     },
   },
   resources: {
