@@ -8,7 +8,9 @@ import { ModuleRegister, setGlobalRegister, UnknownNavigableModule } from '~/fra
 export const myAppsModules = new ModuleRegister<UnknownNavigableModule>();
 export const myAppsSecondaryModules = new ModuleRegister<UnknownNavigableModule>();
 export const myAppsConnector = new ModuleRegister<UnknownNavigableModule>();
+export const myAppsWidgets = new ModuleRegister<UnknownNavigableModule>();
 
 setGlobalRegister('myAppsModule', myAppsModules);
 setGlobalRegister('myAppsSecondaryModule', myAppsSecondaryModules);
 setGlobalRegister('myAppsConnector', myAppsConnector);
+setGlobalRegister('myAppsWidgets', myAppsWidgets);
