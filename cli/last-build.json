@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-21 20:36:39",
-  "notes": "update(stack): yarn cache update\nMerge branch 'dev/1.15.3' into update/rn-76\nfix(pronote): INTEG-1023, update Pronote connection to use auth/redirect like other connectors and remove profile exception for improved redirection\nfix: SUPPORT-340, news threadItemAdapter was mistyped\nupdate(stack): minor updates\nrefactor(homework-assistance): ENABLING-403 replace config with parameters endpoint\nfix(mediacentre): ENABLING-402 convert signet resource id to number when adding favorite\nchore(i18n): change phrase sync branch\nchore(i18n): change phrase sync branch\nSquashed commit of the following:\nupdate(stack): minor updates",
-  "version": "1.15.3-alpha.1(1150301)"
+  "last": "2025-09-22 19:43:16",
+  "notes": "update(stack): yarn cache update\nMerge branch 'dev/1.15.3' into update/rn-76\nupdate(stack): update yarn cache\nfix(video/audio): downgrade react-native-video\nfix: ENABLING-405, downgrade react-native-webview\nfix: COCO-4688, downgrade @gorhom/bottom-sheet\nfix(mails):change http service for transport service & fix refresh token issue.\nupdate(stack): yarn cache update\nrelease: 1.15.3-alpha.1(1150301)",
+  "version": "1.15.3-alpha.2(1150302)"
 }
