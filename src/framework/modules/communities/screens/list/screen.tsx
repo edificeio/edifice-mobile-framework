@@ -19,13 +19,13 @@ import type { CommunitiesListScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { SegmentedControlLoader } from '~/framework/components/buttons/segmented-control';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { sessionScreen } from '~/framework/components/screen';
+import { SegmentedControlLoader } from '~/framework/components/segmented-control';
 import { TextSizeStyle } from '~/framework/components/text';
 import CommunityCardSmall, { styles as cardStyle } from '~/framework/modules/communities/components/community-card-small';
 import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small/community-card-small-loader';

@@ -6,7 +6,7 @@ import { styles } from './styles';
 import { CommunityListFilterProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import SegmentedControl from '~/framework/components/buttons/segmented-control';
+import SegmentedControl from '~/framework/components/segmented-control';
 
 const CommunityListFilters = ({
   activeFiltersCount,
