@@ -74,7 +74,7 @@
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.14.0",
     "@flyerhq/react-native-android-uri-path": "2.3.0",
-    "@gorhom/bottom-sheet": "5.2.6",
+    "@gorhom/bottom-sheet": "5.0.6",
     "@js-temporal/polyfill": "0.5.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-camera-roll/camera-roll": "7.10.2",
