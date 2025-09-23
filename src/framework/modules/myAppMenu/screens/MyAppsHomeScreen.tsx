@@ -117,7 +117,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   };
 
   const renderWidgets = () => {
-    console.error('widgets: ' + props.widgets.filter(widget => widget.config.name));
+    if (props.widgets.length === 0) return null;
 
     return (
       <ModuleLineButton
