@@ -19,6 +19,7 @@ export default (({ session }) => {
   const MyAppsContainer = props => (
     <MyAppsHomeScreen {...props} modules={modules} secondaryModules={secondaryModules} connectors={connectors} widgets={widgets} />
   );
+  const MyAppsWidgetsContainer = props => <MyAppMenuWidgetsScreen {...props} widgetsList={widgets} />;
   return createModuleNavigator<IMyAppsNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen
@@ -31,7 +32,7 @@ export default (({ session }) => {
       />
       <Stack.Screen
         name={myAppsRouteNames.widgets}
-        component={MyAppMenuWidgetsScreen}
+        component={MyAppsWidgetsContainer}
         options={widgetsNavBar}
         initialParams={{}} // @scaffolder replace `{}` by `undefined` if no navParams are defined for this screen.
       />
