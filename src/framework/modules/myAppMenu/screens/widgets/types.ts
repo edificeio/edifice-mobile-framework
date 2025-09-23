@@ -1,6 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { MyAppMenuNavigationParams } from '~/framework/modules/myAppMenu/navigation';
+import type { IMyAppsNavigationParams } from '~/framework/modules/myAppMenu/navigation';
+import { NavigableModuleArray } from '~/framework/util/moduleTool';
 
 export interface MyAppMenuWidgetsScreenProps {
   // @scaffolder add props here
@@ -11,7 +12,7 @@ export interface MyAppMenuWidgetsScreenNavParams {
 }
 
 export interface MyAppMenuWidgetsScreenPrivateProps
-  extends NativeStackScreenProps<MyAppMenuNavigationParams, 'widgets'>,
+  extends NativeStackScreenProps<IMyAppsNavigationParams, 'widgets'>,
     MyAppMenuWidgetsScreenProps {
-  // @scaffolder add HOC props here
+  widgetsList: NavigableModuleArray;
 }

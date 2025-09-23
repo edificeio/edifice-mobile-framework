@@ -7,18 +7,18 @@ import type { MyAppMenuWidgetsScreenPrivateProps } from './types';
 import { I18n } from '~/app/i18n';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { BodyBoldText } from '~/framework/components/text';
-import { MyAppMenuNavigationParams, myAppMenuRouteNames } from '~/framework/modules/myAppMenu/navigation';
+import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
+import CantineHomeScreen from '~/framework/modules/widgets/cantine/screens/home';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<MyAppMenuNavigationParams, typeof myAppMenuRouteNames.widgets>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.widgets>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('myAppMenu-widgets-title'),
+    title: I18n.get('myapp-widgets-title'),
   }),
 });
 
@@ -26,7 +26,7 @@ export default function MyAppMenuWidgetsScreen(props: MyAppMenuWidgetsScreenPriv
   return (
     <PageView>
       <ScrollView bottomInset={false}>
-        <BodyBoldText>myAppMenu widgets screen</BodyBoldText>
+        {props.widgetsList.find(widget => widget.config.name === 'cantine') && <CantineHomeScreen />}
       </ScrollView>
     </PageView>
   );
