@@ -234,7 +234,7 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'magneto', type: 'Svg' },
       },
       'mediacentre': {
-        accentColors: this.palette.primary,
+        accentColors: this.palette.complementary.blue,
         icon: { name: 'mediacentre', type: 'Svg' },
       },
       'mindmap': {
