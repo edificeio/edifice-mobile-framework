@@ -279,9 +279,14 @@ function MediaPlayer(props: MediaPlayerProps) {
     }, [route.params.referer]),
   );
 
+  const statusBarElement = React.useMemo(
+    () => (Platform.OS === 'ios' ? <StatusBar animated hidden={hideStatusBar ?? false} /> : null),
+    [hideStatusBar],
+  );
+
   return (
     <PageView style={wrapperStyle} showNetworkBar={false}>
-      <StatusBar animated hidden={hideStatusBar ?? false} />
+      {statusBarElement}
       {!error ? player : renderError()}
     </PageView>
   );
