@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-22 19:43:16",
-  "notes": "update(stack): yarn cache update\nMerge branch 'dev/1.15.3' into update/rn-76\nupdate(stack): update yarn cache\nfix(video/audio): downgrade react-native-video\nfix: ENABLING-405, downgrade react-native-webview\nfix: COCO-4688, downgrade @gorhom/bottom-sheet\nfix(mails):change http service for transport service & fix refresh token issue.\nupdate(stack): yarn cache update\nrelease: 1.15.3-alpha.1(1150301)",
-  "version": "1.15.3-alpha.2(1150302)"
+  "last": "2025-09-24 07:47:08",
+  "notes": "stack(update): yarn cache update\nfix(media): ENABLING-405, display status bar for android devices as hiding it causes this behavior\nfix(webview): ENABLING-406, display status bar for android devices as hiding it causes this behavior\nMerge branch 'dev/1.15.3' into update/rn-76\nUpdated translations from Phrase (#219)\nrelease: 1.15.3-alpha.2(1150302)",
+  "version": "1.15.3-rc.1(1150303)"
 }
