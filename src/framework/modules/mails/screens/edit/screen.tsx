@@ -85,7 +85,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         <NavBarActionsGroup
           elements={[
             <NavBarAction icon="ui-send" disabled={to.length === 0 && cc.length === 0 && cci.length === 0} onPress={onCheckSend} />,
-            <PopupMenu actions={draftIdSaved ? popupActionsMenu : popupActionsMenu.slice(0, -1)}>
+            <PopupMenu disabled={!shouldSaveDraft} actions={draftIdSaved ? popupActionsMenu : popupActionsMenu.slice(0, -1)}>
               <NavBarAction icon="ui-options" />
             </PopupMenu>,
           ]}

@@ -32,7 +32,8 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   // States
   const [initialContentHTML, setInitialContentHTML] = React.useState('');
-  const [body, setBody] = React.useState('');
+  const [bodyContent, setBodyContent] = React.useState('');
+  const [signatureContent, setSignatureContent] = React.useState('');
   const [subject, setSubject] = React.useState(initialMailInfo?.subject ?? '');
   const [to, setTo] = React.useState<MailsVisible[]>(type === MailsEditType.FORWARD ? [] : (initialMailInfo?.to ?? []));
   const [cc, setCc] = React.useState<MailsVisible[]>(initialMailInfo?.cc ?? []);
@@ -51,35 +52,52 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   const [inactiveUsersList, setInactiveUsersList] = React.useState<Array<string>>([]);
   const [hasBeenSent, setHasBeenSent] = React.useState<boolean>(false);
 
-  // Refs
   const scrollViewRef = React.useRef<ScrollView>(null);
   const editorRef = React.useRef<RichEditor>(null);
 
-  // computed Vals
   const haveInitialCcCci = React.useMemo(
     () => (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0),
     [initialMailInfo],
   );
 
-  const isMeaningfulBody = React.useMemo(() => {
-    const stripHtml = (html: string): string => {
-      return html // create an util function that handles that in the future
-        .replace(/<[^>]+>/g, '')
-        .replace(/\s+/g, '')
-        .trim();
-    };
-    return stripHtml(body) !== stripHtml(initialContentHTML);
-  }, [body, initialContentHTML]);
-
   const showPreventBack = React.useMemo(() => !isSending && !hasBeenSent, [isSending, hasBeenSent]);
 
-  const shouldSaveDraft = React.useMemo(() => {
-    const hasMainRecipient = to.length > 0;
-    const hasContent = Boolean(isMeaningfulBody || subject.trim() || attachments.length > 0);
-    const hasOptionalRecipients = cc.length > 0 || cci.length > 0;
+  const getFullContentForEditor = React.useCallback(() => {
+    return signatureContent ? `${bodyContent}${signatureContent}` : bodyContent;
+  }, [signatureContent, bodyContent]);
 
-    return (hasMainRecipient || hasContent || hasOptionalRecipients) && showPreventBack;
-  }, [to, cc, cci, isMeaningfulBody, subject, attachments, showPreventBack]);
+  const getContentForDraft = React.useCallback(() => {
+    return isHistoryOpen ? bodyContent : `${bodyContent}${history}`;
+  }, [isHistoryOpen, bodyContent, history]);
+
+  const extractText = (html: string) => {
+    // put this one in an utiile file in future
+    return html
+      .replace(/<(div|p)>(\s|&nbsp;|<br\s*\/?>)*<\/\1>/gi, ' ')
+      .replace(/<br\s*\/?>/gi, ' ')
+      .replace(/<p>(.*?)<\/p>/gi, ' $1 ')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/<[^>]+>/g, '')
+      .trim();
+  };
+
+  const hasAnyContent = React.useMemo(() => {
+    const bodyText = extractText(bodyContent).trim();
+    const signatureText = extractText(signatureContent).trim();
+
+    const effectiveBody = bodyText && bodyText !== signatureText ? bodyText : '';
+
+    return (
+      to.length > 0 ||
+      cc.length > 0 ||
+      cci.length > 0 ||
+      subject.trim().length > 0 ||
+      attachments.length > 0 ||
+      effectiveBody.length > 0
+    );
+  }, [to, cc, cci, subject, attachments, bodyContent, signatureContent]);
+
+  const shouldSaveDraft = React.useMemo(() => hasAnyContent && showPreventBack, [hasAnyContent, showPreventBack]);
 
   // Callbacks
   const handleCloseInactiveUserModal = React.useCallback(() => {
@@ -162,24 +180,34 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   }, [draftIdSaved, fromFolder, handleNavigateToDrafts, navigation]);
 
   const onSendDraft = React.useCallback(async () => {
+    if (!hasAnyContent) return;
+
     try {
       setIsSending(true);
-      const toIds = to.map(recipient => recipient.id);
-      const ccIds = cc.map(recipient => recipient.id);
-      const cciIds = cci.map(recipient => recipient.id);
-      const bodyToSave = isHistoryOpen ? body : `${body}${history}`;
+      const toIds = to.map(r => r.id);
+      const ccIds = cc.map(r => r.id);
+      const cciIds = cci.map(r => r.id);
 
+      const bodyToSave = isHistoryOpen ? bodyContent : `${bodyContent}${history}`;
+
+      // Créer ou mettre à jour le draft
       if (draftIdSaved) {
         await mailsService.mail.updateDraft(
           { draftId: draftIdSaved },
           { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
         );
       } else {
-        await mailsService.mail.sendToDraft(
+        // Créer le draft seulement maintenant, au moment de quitter
+        const fullContent = getContentForDraft();
+        const bodyForCreation = isHistoryOpen ? fullContent : `${fullContent}${history}`;
+
+        const newDraftId = await mailsService.mail.sendToDraft(
           { inReplyTo: initialMailInfo?.id ?? undefined },
-          { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
+          { body: bodyForCreation, cc: ccIds, cci: cciIds, subject, to: toIds },
         );
+        setDraftIdSaved(newDraftId);
       }
+
       handleNavigateToDrafts();
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
       setIsSending(false);
@@ -188,7 +216,20 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       toast.showError();
       setIsSending(false);
     }
-  }, [to, cc, cci, isHistoryOpen, body, history, draftIdSaved, handleNavigateToDrafts, subject, initialMailInfo?.id]);
+  }, [
+    hasAnyContent,
+    draftIdSaved,
+    to,
+    cc,
+    cci,
+    bodyContent,
+    history,
+    subject,
+    isHistoryOpen,
+    handleNavigateToDrafts,
+    getContentForDraft,
+    initialMailInfo?.id,
+  ]);
 
   const onSend = React.useCallback(async () => {
     try {
@@ -196,7 +237,8 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       const toIds = to.map(recipient => recipient.id);
       const ccIds = cc.map(recipient => recipient.id);
       const cciIds = cci.map(recipient => recipient.id);
-      const bodyToSave = isHistoryOpen ? body : `${body}${history}`;
+
+      const bodyToSave = getContentForDraft();
 
       const response = (await mailsService.mail.send(
         { draftId: draftIdSaved, inReplyTo: initialMailInfo?.id ?? undefined },
@@ -232,14 +274,15 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       toast.showError();
       setIsSending(false);
     }
-  }, [to, cc, cci, isHistoryOpen, body, history, draftIdSaved, initialMailInfo?.id, subject, handleCloseInactiveUserModal]);
+  }, [to, cc, cci, draftIdSaved, initialMailInfo?.id, subject, getContentForDraft, handleCloseInactiveUserModal]);
 
   const onCheckSend = React.useCallback(() => {
-    if (!body || !subject) {
+    const fullContent = bodyContent;
+    if (!fullContent || !subject) {
       Keyboard.dismiss();
       Alert.alert(
         I18n.get('mails-edit-missingcontenttitle'),
-        I18n.get(!body ? 'mails-edit-missingbodytext' : 'mails-edit-missingsubjecttext'),
+        I18n.get(!fullContent ? 'mails-edit-missingbodytext' : 'mails-edit-missingsubjecttext'),
         [
           {
             onPress: onSend,
@@ -254,7 +297,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     } else {
       onSend();
     }
-  }, [body, subject, onSend]);
+  }, [subject, bodyContent, onSend]);
 
   const loadData = React.useCallback(async () => {
     try {
@@ -266,8 +309,36 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         const cciDraft = convertDraftRecipients(draft.cci);
         const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftId));
 
-        setInitialContentHTML(draft.body);
-        setBody(draft.body);
+        // load signature!
+        const signatureData = await mailsService.signature.get();
+        let signature = '';
+        let useSignature = false;
+        if (signatureData) {
+          try {
+            if (typeof signatureData === 'string') {
+              const parsed = JSON.parse(signatureData);
+              signature = parsed.signature || '';
+              useSignature = parsed.useSignature || false;
+            } else {
+              signature = signatureData.signature || '';
+              useSignature = signatureData.useSignature || false;
+            }
+          } catch (e) {
+            console.error('Error parsing signature:', e);
+          }
+        }
+
+        // removing signature if in body aloready!
+        let bodyWithoutSignature = draft.body;
+        if (signature && draft.body?.includes(signature)) {
+          bodyWithoutSignature = draft.body.replace(signature, '').trim();
+        }
+
+        const signatureHtml = useSignature && signature ? `<br>${signature}` : '';
+
+        setBodyContent(bodyWithoutSignature);
+        setSignatureContent(signatureHtml);
+        setInitialContentHTML(`${bodyWithoutSignature}${signatureHtml}`);
         setSubject(draft.subject);
         setTo(toDraft);
         setCc(ccDraft);
@@ -278,18 +349,11 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
           const draft = await mailsService.mail.get({ id: draftId });
           const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftId));
           setAttachments(convertedAttachments);
-        } else {
-          const newDraftId = await mailsService.mail.sendToDraft(
-            { inReplyTo: initialMailInfo?.id ?? undefined },
-            { body: '', cc: [], cci: [], subject: '', to: [] },
-          );
-          setDraftIdSaved(newDraftId);
         }
 
         const signatureData = await mailsService.signature.get();
         let signature = '';
         let useSignature = false;
-
         if (signatureData) {
           try {
             if (typeof signatureData === 'string') {
@@ -306,31 +370,31 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         }
 
         const initialDate = moment(initialMailInfo?.date);
-        const initialFrom = initialMailInfo?.from ?? { displayName: '', id: '', profile: AccountType.Guest };
+        const initialFrom = initialMailInfo?.from ?? {
+          displayName: '',
+          id: '',
+          profile: AccountType.Guest,
+        };
         const initialTo = initialMailInfo?.to ?? [];
         const initialCc = initialMailInfo?.cc ?? [];
         const initialSubject = initialMailInfo?.subject ?? '';
         const initialBody = initialMailInfo?.body ?? '';
 
-        const applyContent = (htmlContent: string) => {
-          const content = useSignature ? `<br>${signature}<br>${htmlContent}` : `<br>${htmlContent}`;
-          setInitialContentHTML(content);
-          setBody(content);
-        };
+        const signatureHtml = useSignature && signature ? `<br>${signature}` : '';
+        setSignatureContent(signatureHtml);
 
         if (type === MailsEditType.REPLY) {
           const replyHtml = addHtmlReply(initialFrom, initialDate, initialTo, initialCc, initialBody);
-          const signatureHtml = `<br>${signature}`;
           setHistory(replyHtml);
+          setBodyContent('');
           setInitialContentHTML(signatureHtml);
-          setBody(signatureHtml);
         } else if (type === MailsEditType.FORWARD) {
           const forwardHtml = addHtmlForward(initialFrom, initialDate, initialTo, initialCc, initialSubject, initialBody);
-          applyContent(forwardHtml);
-        } else if (useSignature) {
-          const signatureHtml = `<br>${signature}`;
+          setBodyContent(forwardHtml);
+          setInitialContentHTML(`${signatureHtml}<br>${forwardHtml}`);
+        } else {
+          setBodyContent('');
           setInitialContentHTML(signatureHtml);
-          setBody(signatureHtml);
         }
       }
     } catch (e) {
@@ -340,9 +404,9 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   const onOpenHistory = React.useCallback(() => {
     setIsHistoryOpen(true);
-    setInitialContentHTML(`${body}${history}`);
-    setBody(prevBody => `${prevBody}${history}`);
-  }, [body, history]);
+    const fullContent = getFullContentForEditor();
+    setInitialContentHTML(`${fullContent}${history}`);
+  }, [getFullContentForEditor, history]);
 
   const onScrollBeginDrag = React.useCallback(() => {
     setIsStartScroll(true);
@@ -357,9 +421,25 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     setInputFocused(recipianType);
   }, []);
 
-  const onChangeText = React.useCallback((value: string) => {
-    setBody(value);
-  }, []);
+  const onChangeText = React.useCallback(
+    (value: string) => {
+      let newBody = signatureContent ? value.replace(signatureContent, '') : value;
+
+      const cleaned = newBody
+        .replace(/<br\s*\/?>/gi, '')
+        .replace(/<p>(\s|&nbsp;)*<\/p>/gi, '')
+        .replace(/&nbsp;/gi, '')
+        .replace(/<[^>]+>/g, '')
+        .trim();
+
+      if (cleaned === '') {
+        newBody = '';
+      }
+
+      setBodyContent(newBody);
+    },
+    [signatureContent],
+  );
 
   const onChangeSubject = React.useCallback((text: string) => {
     setSubject(text);
