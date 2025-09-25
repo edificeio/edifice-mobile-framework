@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StatusBar, View } from 'react-native';
+import { Platform, StatusBar, View } from 'react-native';
 
 import CookieManager from '@react-native-cookies/cookies';
 import { ParamListBase, useFocusEffect } from '@react-navigation/native';
@@ -79,6 +79,8 @@ const useScreenUnlockOrientation = () => {
   }, [orientation]);
   return [orientationElement, orientation, toggleOrientation] as const;
 };
+
+const statusBarElement = Platform.OS === 'ios' ? <StatusBar animated hidden /> : null;
 
 const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<WebResourceViewerStoreProps>) => {
   const { fetchResource, injectSearchParams = {}, navigation, platform, queryParamToken, source } = props;
@@ -169,7 +171,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
     () => (
       <PageView style={styles.page}>
         {orientationElement}
-        <StatusBar animated hidden />
+        {statusBarElement}
         {webviewElement}
         <IconButton
           style={styles.button}

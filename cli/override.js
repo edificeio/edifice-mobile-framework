@@ -55,14 +55,14 @@ let _overrides_localRepoPath; // Will be computed after;
 // Copied files / Merged json files
 const _override_copyMergePaths = {
   [_override_entryPoint]: 'override.json', // Applied override information
-  i18n: 'assets/i18n/override', // I18n overrides
+  'i18n': 'assets/i18n/override', // I18n overrides
   '.phrase.yml': './.phrase.yml', // Phrase configuration file
   'phrase.json': './phrase.json', // Phrase secrets
   'appconf.ts': 'src/app/override/appconf.ts', // App configuration + included platforms
-  platforms: 'src/platforms', // All possible platforms. Only used ones will be included into the bundle
+  'platforms': 'src/platforms', // All possible platforms. Only used ones will be included into the bundle
   'modules.ts': 'src/app/override/modules.ts', // Included modules in the override
   'theme.ts': 'src/app/override/theme.ts', // Theme override
-  assets: 'assets', // All specific assets
+  'assets': 'assets', // All specific assets
   'android/google-services.json': 'android/app/google-services.json', // Firebase Android config
   'android/res': 'android/app/src/main/res', // Android specific native assets
   'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
@@ -77,7 +77,7 @@ const _override_copyMergePaths = {
 const _override_specialUpdates = {
   'ios.plist': 'ios/appe/Info.plist',
   'ios.pbxproj': 'ios/appe.xcodeproj/project.pbxproj',
-  android: 'android/gradle.properties',
+  'android': 'android/gradle.properties',
 };
 
 const _override_forceCopy = ['assets/animations/audio/disque.json', 'android/app/google-services.json'];
@@ -644,6 +644,13 @@ async function _override_performRestoreCurrent() {
       opts.verbose && console.info('Restoring', file);
       await exec('git restore -W -S ' + file);
     }
+  }
+
+  // 3. Remove platforms
+
+  if (fs.existsSync(path.join(_projectPathAbsolute, 'src/platforms'))) {
+    opts.verbose && console.info('Removing src/platforms');
+    fs.rmSync(path.join(_projectPathAbsolute, 'src/platforms'), { force: true, recursive: true });
   }
 }
 
