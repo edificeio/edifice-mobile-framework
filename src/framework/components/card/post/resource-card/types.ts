@@ -2,15 +2,13 @@ import { Moment } from 'moment';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 
-export interface BlogPostResourceCardProps {
+export interface PostResourceCardProps {
   action: () => void;
   authorId: string;
   authorName: string;
   comments: number;
-  contentHtml: string;
   date: Moment;
   title: string;
-  state: 'PUBLISHED' | 'SUBMITTED';
   resourceId: string;
   audience?: {
     views?: number;
@@ -21,6 +19,13 @@ export interface BlogPostResourceCardProps {
     };
   };
   session: AuthActiveAccount;
-  blogVisibility: string;
-  isManager: boolean;
 }
+
+export interface BlogPostResourceCardProps extends PostResourceCardProps {
+  blogVisibility: string;
+  contentHtml: string;
+  isManager: boolean;
+  state: 'PUBLISHED' | 'SUBMITTED';
+}
+
+export interface AnnouncementPostResourceCardProps extends PostResourceCardProps {}

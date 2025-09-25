@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PixelRatio, View, ViewStyle } from 'react-native';
+import { PixelRatio, View } from 'react-native';
 
 import {
   CommunityType,
@@ -19,7 +19,6 @@ import type { CommunitiesListScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
@@ -41,6 +40,7 @@ import {
   communitiesActionTypes,
   communitiesSelectors,
 } from '~/framework/modules/communities/store';
+import { ESTIMATED_LIST_SIZE, getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { accountApi } from '~/framework/util/transport';
 
@@ -52,16 +52,6 @@ const ESTIMATED_ITEM_SIZE =
   TextSizeStyle.Medium.lineHeight * PixelRatio.getFontScale() +
   cardStyle.imgContainer.height +
   2 * (cardStyle.cardPending.borderWidth + cardStyle.titleContainer.padding);
-
-const ESTIMATED_LIST_SIZE = {
-  height: UI_SIZES.getViewHeight(),
-  width: UI_SIZES.screen.width,
-};
-
-const getItemSeparatorStyle = (index: number, totalLength: number, separatorStyle: ViewStyle) => {
-  const isLastItem = index === totalLength - 1;
-  return isLastItem ? undefined : separatorStyle;
-};
 
 export const computeNavBar = ({
   navigation,

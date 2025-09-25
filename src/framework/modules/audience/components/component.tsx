@@ -135,16 +135,18 @@ const Audience = (props: AudienceAllProps) => {
             />
           </Component>
         ) : null}
-        <View style={styles.statsItem}>
-          <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
-          <Svg
-            name="ui-messageInfo"
-            fill={theme.palette.grey.graphite}
-            height={UI_SIZES.elements.icon.small}
-            width={UI_SIZES.elements.icon.small}
-            cached
-          />
-        </View>
+        {props.showComments !== false && (
+          <View style={styles.statsItem}>
+            <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
+            <Svg
+              name="ui-messageInfo"
+              fill={theme.palette.grey.graphite}
+              height={UI_SIZES.elements.icon.small}
+              width={UI_SIZES.elements.icon.small}
+              cached
+            />
+          </View>
+        )}
       </View>
       <AudienceReactButton
         postReaction={postReaction}

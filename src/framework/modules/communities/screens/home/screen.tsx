@@ -3,6 +3,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { CommunityClient, InvitationResponseDto, MembershipClient } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
@@ -14,7 +15,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import { EmptyContent } from '~/framework/components/empty-screens/base/component';
+// import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
@@ -22,6 +23,7 @@ import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import AnnouncementsList from '~/framework/modules/communities/components/announcements/list';
 import CommunityInfoBottomSheet from '~/framework/modules/communities/components/community-info-bottom-sheet';
 import CommunityWelcomeBottomSheetModal from '~/framework/modules/communities/components/community-welcome-bottomsheet';
 import ConversationTile, {
@@ -40,6 +42,89 @@ import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { accountApi } from '~/framework/util/transport';
+
+export const mockAnnouncements = [
+  {
+    _id: 'announcement-1',
+    audience: {
+      reactions: {
+        total: 5,
+        types: [] as string[],
+        userReaction: '',
+      },
+      // views: 25,
+    },
+    author: {
+      userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
+      username: 'Auteur Test',
+    },
+    content:
+      "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
+    created: moment('2023-10-05T10:00:00Z'),
+    modified: moment('2023-10-05T15:30:00Z'),
+    title: "Titre de l'annonce test",
+  },
+  {
+    _id: 'announcement-2',
+    audience: {
+      reactions: {
+        total: 12,
+        types: [] as string[],
+        userReaction: '',
+      },
+      // views: 40,
+    },
+    author: {
+      userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
+      username: 'Auteur Test2',
+    },
+    content:
+      "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
+    created: moment('2023-09-22T10:00:00Z'),
+    modified: moment('2023-09-22T15:30:00Z'),
+    title: "Titre de l'annonce test",
+  },
+  {
+    _id: 'announcement-3',
+    audience: {
+      reactions: {
+        total: 5,
+        types: [] as string[],
+        userReaction: '',
+      },
+      // views: 25,
+    },
+    author: {
+      userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
+      username: 'Auteur Test',
+    },
+    content:
+      "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
+    created: moment('2023-10-05T10:00:00Z'),
+    modified: moment('2023-10-05T15:30:00Z'),
+    title: "Titre de l'annonce test",
+  },
+  {
+    _id: 'announcement-4',
+    audience: {
+      reactions: {
+        total: 12,
+        types: [] as string[],
+        userReaction: '',
+      },
+      // views: 40,
+    },
+    author: {
+      userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
+      username: 'Auteur Test2',
+    },
+    content:
+      "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
+    created: moment('2023-09-22T10:00:00Z'),
+    modified: moment('2023-09-22T15:30:00Z'),
+    title: "Titre de l'annonce test",
+  },
+];
 
 const NavbarRightButton = ({ onPress }: { onPress: () => void }) => {
   return (
@@ -93,35 +178,37 @@ export const CommunitiesHomeScreenLoaded = function ({
   route: {
     params: { communityId, invitationId, showWelcome = false },
   },
+  session,
   title,
   totalMembers,
   welcomeNote,
 }: Readonly<CommunitiesHomeScreen.AllPropsLoaded>) {
   const pageContent = (
-    <View style={styles.page}>
-      <HeadingXSText>{title}</HeadingXSText>
+    <>
+      <View style={styles.page}>
+        <HeadingXSText>{title}</HeadingXSText>
 
-      <View style={styles.tilesCol}>
-        <MembersTile communityId={communityId} navigation={navigation} membersId={membersId} totalMembers={totalMembers} />
-        <View style={styles.tilesRow}>
-          <View style={styles.tilesCol}>
-            <DocumentsTile communityId={communityId} navigation={navigation} />
-          </View>
-          <View style={styles.tilesCol}>
-            <CoursesTile />
-            <ConversationTile />
+        <View style={styles.tilesCol}>
+          <MembersTile communityId={communityId} navigation={navigation} membersId={membersId} totalMembers={totalMembers} />
+          <View style={styles.tilesRow}>
+            <View style={styles.tilesCol}>
+              <DocumentsTile communityId={communityId} navigation={navigation} />
+            </View>
+            <View style={styles.tilesCol}>
+              <CoursesTile />
+              <ConversationTile />
+            </View>
           </View>
         </View>
-      </View>
-
-      <HeadingXSText>{I18n.get('communities-announcements-title')}</HeadingXSText>
-
-      <EmptyContent
+        <HeadingXSText>{I18n.get('communities-announcements-title')}</HeadingXSText>
+        {/* <EmptyContent
         title={I18n.get('communities-announcements-soon-title')}
         text={I18n.get('communities-announcements-soon-text')}
         svg="empty-communities-announcements-soon"
-      />
-    </View>
+      /> */}
+      </View>
+      <AnnouncementsList announcements={mockAnnouncements} session={session} />
+    </>
   );
 
   const [scrollElements, statusBar, scrollViewProps] = useCommunityScrollableThumbnail({
@@ -230,11 +317,17 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
   const renderContent: NonNullable<ContentLoaderProps['renderContent']> = React.useCallback(
     refreshControl =>
       data ? (
-        <CommunitiesHomeScreenLoaded navigation={navigation} route={route} refreshControl={refreshControl} {...data} />
+        <CommunitiesHomeScreenLoaded
+          navigation={navigation}
+          route={route}
+          refreshControl={refreshControl}
+          {...data}
+          session={session}
+        />
       ) : (
         <EmptyContentScreen />
       ),
-    [navigation, route, data],
+    [data, navigation, route, session],
   );
 
   return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;

@@ -23,6 +23,7 @@ import { IGlobalState } from '~/app/store';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
+import { BlogPostDetailsCard } from '~/framework/components/card/post/details';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
@@ -45,7 +46,6 @@ import {
   publishBlogPostCommentAction,
   updateBlogPostCommentAction,
 } from '~/framework/modules/blog/actions';
-import BlogPostDetails from '~/framework/modules/blog/components/blog-post-details';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogPostComment, BlogPostComments, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
@@ -77,12 +77,12 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   usePreventBack({
     showAlert: infoComment.changed,
     text: I18n.get(
-      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`
+      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
     ),
     title: I18n.get(
       infoComment.isPublication
         ? 'blog-postdetails-confirmation-unsaved-publication'
-        : 'blog-postdetails-confirmation-unsaved-modification'
+        : 'blog-postdetails-confirmation-unsaved-modification',
     ),
   });
   return null;
@@ -125,7 +125,12 @@ function BlogPostDetailsFlatList(props: {
           keyExtractor={BlogPostDetailsScreen.contentKeyExtractor}
           ListHeaderComponent={
             props.blogInfos && props.blogPostData ? (
-              <BlogPostDetails blog={props.blogInfos} post={props.blogPostData} onReady={props.onReady} session={props.session} />
+              <BlogPostDetailsCard
+                blog={props.blogInfos}
+                post={props.blogPostData}
+                onReady={props.onReady}
+                session={props.session}
+              />
             ) : null
           }
           removeClippedSubviews={false}
@@ -505,7 +510,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               }
             }
           }, 50);
-        }
+        },
       );
 
       this.hideSubscription = Keyboard.addListener(
@@ -513,7 +518,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         () => {
           if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
             this.setState({ isCommentFieldFocused: false });
-        }
+        },
       );
     }
   }
@@ -747,7 +752,7 @@ const mapStateToProps: (s: IGlobalState) => BlogPostDetailsScreenDataProps = s =
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
+  getState: () => IGlobalState,
 ) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
   dispatch,
 
@@ -778,7 +783,7 @@ const mapDispatchToProps: (
   // TS BUG: dispatch mishandled
   handleUpdateBlogPostComment: async (
     blogPostCommentId: { blogId: string; postId: string; commentId: string },
-    comment: string
+    comment: string,
   ) => {
     return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
   },

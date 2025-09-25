@@ -15,6 +15,7 @@ import { BlogPostListScreenDataProps, BlogPostListScreenEventProps, BlogPostList
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import { BlogPostResourceCard } from '~/framework/components/card/post/resource-card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen, EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
@@ -25,7 +26,6 @@ import { audienceService } from '~/framework/modules/audience/service';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder/list';
-import BlogPostResourceCard from '~/framework/modules/blog/components/post-resource-card';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogPost, BlogPostList, BlogPostWithAudience, countComments } from '~/framework/modules/blog/reducer';
