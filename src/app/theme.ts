@@ -202,7 +202,7 @@ export const defaultTheme: ThemeInitializer = {
       },
       'communities': {
         accentColors: this.palette.complementary.purple,
-        icon: { name: 'community', type: 'Svg' },
+        icon: { name: 'communities', type: 'Svg' },
       },
       'community': {
         accentColors: this.palette.complementary.purple,

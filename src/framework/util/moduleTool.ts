@@ -330,19 +330,15 @@ export interface IAppBadgeInfo {
   icon: string | PictureProps;
   color: ColorValue;
 }
-export type IAppBadgesInfoDeclaration = {
-  [key: string]: {
-    icon?: string | Partial<PictureProps>;
-    color?: ColorValue;
-  };
-};
+export type IAppBadgesInfoDeclaration = { [key: string]: { icon?: string | Partial<PictureProps>; color?: ColorValue } };
 
 interface INavigableModuleConfigDisplay {
   displayI18n: string; // I18n key of the module title displayed.
   displayAs?: string; // In which global register to put this module
   displayOrder: number; // In which order
   displayPicture?: PictureProps; // Picture used to show the module acces link/button
-  displayPictureFocus?: PictureProps; // Picture used to show the modulle acces link/button when its active
+  displayPictureBlur?: PictureProps; // Picture used to show the module acces link/button when its inactive
+  displayPictureFocus?: PictureProps; // Picture used to show the module acces link/button when its active
   displayBadges?: IAppBadgesInfoDeclaration; // Updates to app badges
   displayColor?: IShades; // Main color palette of the module used to tint components
   routeName: string; // Technical route name of the module. Must be unique (by default, same as the module name).
@@ -360,6 +356,9 @@ interface IModuleConfigDeclarationDisplay {
   displayPicture?:
     | INavigableModuleConfigDisplay['displayPicture']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPicture']);
+  displayPictureBlur?:
+    | INavigableModuleConfigDisplay['displayPictureBlur']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureBlur']);
   displayPictureFocus?:
     | INavigableModuleConfigDisplay['displayPictureFocus']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureFocus']);
@@ -375,9 +374,7 @@ interface IModuleConfigDeclarationDisplay {
 
 // All information config available about a navigable module
 export type INavigableModuleConfig<Name extends string, State> = IModuleConfig<Name, State> &
-  INavigableModuleConfigDisplay & {
-    assignValues: (values: INavigableModuleConfigDeclaration<Name>) => void;
-  };
+  INavigableModuleConfigDisplay & { assignValues: (values: INavigableModuleConfigDeclaration<Name>) => void };
 // All information config as needed to be declared.
 export type INavigableModuleConfigDeclaration<Name extends string> = IModuleConfigDeclaration<Name> &
   IModuleConfigDeclarationDisplay;
@@ -402,6 +399,8 @@ export class NavigableModuleConfig<Name extends string, State>
 
   #_displayPicture: INavigableModuleConfigDeclaration<Name>['displayPicture'];
 
+  #_displayPictureBlur: INavigableModuleConfigDeclaration<Name>['displayPictureBlur'];
+
   #_displayPictureFocus: INavigableModuleConfigDeclaration<Name>['displayPictureFocus'];
 
   #_displayBadges?: INavigableModuleConfigDeclaration<Name>['displayBadges'];
@@ -418,6 +417,8 @@ export class NavigableModuleConfig<Name extends string, State>
 
   #displayPicture?: INavigableModuleConfig<Name, State>['displayPicture'];
 
+  #displayPictureBlur?: INavigableModuleConfig<Name, State>['displayPictureBlur'];
+
   #displayPictureFocus?: INavigableModuleConfig<Name, State>['displayPictureFocus'];
 
   #displayBadges?: INavigableModuleConfig<Name, State>['displayBadges'];
@@ -432,6 +433,7 @@ export class NavigableModuleConfig<Name extends string, State>
       displayI18n,
       displayOrder,
       displayPicture,
+      displayPictureBlur,
       displayPictureFocus,
       routeName,
       ...rest
@@ -441,6 +443,7 @@ export class NavigableModuleConfig<Name extends string, State>
     this.#_displayAs = displayAs;
     this.#_displayOrder = displayOrder ?? 0;
     this.#_displayPicture = displayPicture;
+    this.#_displayPictureBlur = displayPictureBlur ?? displayPicture;
     this.#_displayPictureFocus = displayPictureFocus ?? displayPicture;
     this.#_displayBadges = displayBadges;
     this.#_displayColor = displayColor;
@@ -455,6 +458,10 @@ export class NavigableModuleConfig<Name extends string, State>
       typeof this.#_displayOrder === 'function' ? this.#_displayOrder(matchingApps, matchingWidgets) : this.#_displayOrder;
     this.#displayPicture =
       typeof this.#_displayPicture === 'function' ? this.#_displayPicture(matchingApps, matchingWidgets) : this.#_displayPicture;
+    this.#displayPictureBlur =
+      typeof this.#_displayPictureBlur === 'function'
+        ? this.#_displayPictureBlur(matchingApps, matchingWidgets)
+        : this.#_displayPictureBlur;
     this.#displayPictureFocus =
       typeof this.#_displayPictureFocus === 'function'
         ? this.#_displayPictureFocus(matchingApps, matchingWidgets)
@@ -490,6 +497,14 @@ export class NavigableModuleConfig<Name extends string, State>
     return this.#displayPicture;
   }
 
+  get displayPictureBlur() {
+    if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    if (this.#displayPictureBlur?.type === 'Svg' && this.#displayPictureBlur.fill === undefined) {
+      return { ...this.#displayPictureBlur, fill: this.displayColor.regular };
+    }
+    return this.#displayPictureBlur;
+  }
+
   get displayPictureFocus() {
     if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
     if (this.#displayPictureFocus?.type === 'Svg' && this.#displayPictureFocus.fill === undefined) {
@@ -516,6 +531,7 @@ export class NavigableModuleConfig<Name extends string, State>
       displayI18n,
       displayOrder,
       displayPicture,
+      displayPictureBlur,
       displayPictureFocus,
       routeName,
       ...rest
@@ -524,8 +540,10 @@ export class NavigableModuleConfig<Name extends string, State>
     if (displayAs) this.#_displayAs = displayAs;
     if (displayBadges) this.#_displayBadges = displayBadges;
     if (displayColor) this.#_displayColor = displayColor;
+    if (displayOrder) this.#_displayOrder = displayOrder;
     if (displayI18n) this.#_displayI18n = displayI18n;
     if (displayPicture) this.#_displayPicture = displayPicture;
+    if (displayPictureBlur) this.#_displayPictureBlur = displayPictureBlur;
     if (displayPictureFocus) this.#_displayPictureFocus = displayPictureFocus;
     if (routeName) this.routeName = routeName;
   }

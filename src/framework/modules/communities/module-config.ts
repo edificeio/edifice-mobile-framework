@@ -9,7 +9,8 @@ export default new NavigableModuleConfig<'communities', CommunitiesStore>({
   displayI18n: 'communities.tabName',
   displayOrder: 3,
   displayPicture: theme.apps.communities.icon,
-  displayPictureFocus: theme.apps.communities.icon, // ToDo change active icon
+  displayPictureBlur: { name: 'communities-outline', type: 'Svg' },
+  displayPictureFocus: { name: 'communities-fill', type: 'Svg' },
 
   entcoreScope: ['communities'],
   matchEntcoreApp: '/communities',
