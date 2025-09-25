@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-19 09:12:03",
-  "notes": "chore: yarn cache update\nrelease: 1.15.2-rc.7(1150208)",
-  "version": "1.15.2-rc.8(1150209)"
+  "last": "2025-09-25 09:45:54",
+  "notes": "update(stack): yarn cache update\nMerge branch 'update/rn-76' into dev/1.15.3\nchore(override): remove src/platforms when restoring override\nrelease: 1.15.3-rc.1(1150303)",
+  "version": "1.15.3-rc.2(1150304)"
 }

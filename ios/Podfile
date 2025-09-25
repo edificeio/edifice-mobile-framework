@@ -19,6 +19,8 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
 target 'appe' do
 
   config = use_native_modules!
