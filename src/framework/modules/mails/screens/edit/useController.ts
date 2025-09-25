@@ -137,6 +137,33 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     [draftIdSaved],
   );
 
+  const fetchSignature = React.useCallback(async () => {
+    try {
+      const signatureData = await mailsService.signature.get();
+      if (!signatureData) return { signature: '', useSignature: false };
+
+      if (typeof signatureData === 'string') {
+        const parsed = JSON.parse(signatureData);
+        return {
+          signature: parsed.signature || '',
+          useSignature: parsed.useSignature || false,
+        };
+      }
+      return {
+        signature: signatureData.signature || '',
+        useSignature: signatureData.useSignature || false,
+      };
+    } catch (e) {
+      console.error('Error parsing signature:', e);
+      return { signature: '', useSignature: false };
+    }
+  }, []);
+
+  const fetchAttachments = React.useCallback(
+    draft => draft.attachments.map(att => convertAttachmentToDistantFile(att, draft.id)),
+    [],
+  );
+
   const onChangeRecipient = React.useCallback((selectedRecipients: MailsVisible[], recipianType: MailsRecipientsType) => {
     const stateSetters: Record<MailsRecipientsType, React.Dispatch<React.SetStateAction<MailsVisible[]>>> = {
       cc: setCc,
@@ -145,6 +172,18 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     };
 
     stateSetters[recipianType](selectedRecipients);
+  }, []);
+
+  const stripSignatureFromBody = React.useCallback((body: string, signature: string) => {
+    if (signature && body?.includes(signature)) {
+      return body.replace(signature, '').trim();
+    }
+    return body;
+  }, []);
+
+  const initEmptyBody = React.useCallback((signatureHtml: string) => {
+    setBodyContent('');
+    setInitialContentHTML(signatureHtml);
   }, []);
 
   const onDeleteDraft = React.useCallback(async () => {
@@ -301,40 +340,18 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   const loadData = React.useCallback(async () => {
     try {
+      const { signature, useSignature } = await fetchSignature();
+      const signatureHtml = useSignature && signature ? `<br>${signature}` : '';
+
       if (draftId && type !== MailsEditType.FORWARD) {
         const draft = await mailsService.mail.get({ id: draftId });
 
         const toDraft = convertDraftRecipients(draft.to);
         const ccDraft = convertDraftRecipients(draft.cc);
         const cciDraft = convertDraftRecipients(draft.cci);
-        const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftId));
+        const convertedAttachments = fetchAttachments(draft);
 
-        // load signature!
-        const signatureData = await mailsService.signature.get();
-        let signature = '';
-        let useSignature = false;
-        if (signatureData) {
-          try {
-            if (typeof signatureData === 'string') {
-              const parsed = JSON.parse(signatureData);
-              signature = parsed.signature || '';
-              useSignature = parsed.useSignature || false;
-            } else {
-              signature = signatureData.signature || '';
-              useSignature = signatureData.useSignature || false;
-            }
-          } catch (e) {
-            console.error('Error parsing signature:', e);
-          }
-        }
-
-        // removing signature if in body aloready!
-        let bodyWithoutSignature = draft.body;
-        if (signature && draft.body?.includes(signature)) {
-          bodyWithoutSignature = draft.body.replace(signature, '').trim();
-        }
-
-        const signatureHtml = useSignature && signature ? `<br>${signature}` : '';
+        const bodyWithoutSignature = stripSignatureFromBody(draft.body, signature);
 
         setBodyContent(bodyWithoutSignature);
         setSignatureContent(signatureHtml);
@@ -347,60 +364,47 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       } else {
         if (draftId) {
           const draft = await mailsService.mail.get({ id: draftId });
-          const convertedAttachments = draft.attachments.map(attachment => convertAttachmentToDistantFile(attachment, draftId));
-          setAttachments(convertedAttachments);
-        }
-
-        const signatureData = await mailsService.signature.get();
-        let signature = '';
-        let useSignature = false;
-        if (signatureData) {
-          try {
-            if (typeof signatureData === 'string') {
-              const parsed = JSON.parse(signatureData);
-              signature = parsed.signature || '';
-              useSignature = parsed.useSignature || false;
-            } else {
-              signature = signatureData.signature || '';
-              useSignature = signatureData.useSignature || false;
-            }
-          } catch (e) {
-            console.error('Error parsing signature:', e);
-          }
+          setAttachments(fetchAttachments(draft));
         }
 
         const initialDate = moment(initialMailInfo?.date);
-        const initialFrom = initialMailInfo?.from ?? {
-          displayName: '',
-          id: '',
-          profile: AccountType.Guest,
-        };
+        const initialFrom = initialMailInfo?.from ?? { displayName: '', id: '', profile: AccountType.Guest };
         const initialTo = initialMailInfo?.to ?? [];
         const initialCc = initialMailInfo?.cc ?? [];
         const initialSubject = initialMailInfo?.subject ?? '';
         const initialBody = initialMailInfo?.body ?? '';
 
-        const signatureHtml = useSignature && signature ? `<br>${signature}` : '';
         setSignatureContent(signatureHtml);
 
         if (type === MailsEditType.REPLY) {
           const replyHtml = addHtmlReply(initialFrom, initialDate, initialTo, initialCc, initialBody);
           setHistory(replyHtml);
-          setBodyContent('');
-          setInitialContentHTML(signatureHtml);
+          initEmptyBody(signatureHtml);
         } else if (type === MailsEditType.FORWARD) {
           const forwardHtml = addHtmlForward(initialFrom, initialDate, initialTo, initialCc, initialSubject, initialBody);
           setBodyContent(forwardHtml);
           setInitialContentHTML(`${signatureHtml}<br>${forwardHtml}`);
         } else {
-          setBodyContent('');
-          setInitialContentHTML(signatureHtml);
+          initEmptyBody(signatureHtml);
         }
       }
     } catch (e) {
       console.error(e);
     }
-  }, [draftId, initialMailInfo, type]);
+  }, [
+    draftId,
+    fetchAttachments,
+    fetchSignature,
+    initEmptyBody,
+    initialMailInfo?.body,
+    initialMailInfo?.cc,
+    initialMailInfo?.date,
+    initialMailInfo?.from,
+    initialMailInfo?.subject,
+    initialMailInfo?.to,
+    stripSignatureFromBody,
+    type,
+  ]);
 
   const onOpenHistory = React.useCallback(() => {
     setIsHistoryOpen(true);
