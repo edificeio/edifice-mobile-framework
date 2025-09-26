@@ -5,7 +5,7 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 export default new NavigableModuleConfig<'myapps', null>({
   displayAs: 'tabModule',
   displayI18n: 'myapp-appname',
-  displayOrder: 4,
+  displayOrder: 3,
   displayPicture: { name: 'icon-apps-off', type: 'Icon' },
   displayPictureFocus: { name: 'icon-apps-on', type: 'Icon' },
 
