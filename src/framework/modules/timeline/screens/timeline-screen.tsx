@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -10,11 +10,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import { SingleAvatar } from '~/framework/components/avatar';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
+import { NavBarActionsGroup } from '~/framework/components/navigation';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { pageGutterSize, PageView } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
@@ -125,15 +127,6 @@ export const computeNavBar = ({
     title: I18n.get('timeline-appname'),
     titleTestID: 'timeline-title',
   }),
-  headerLeft: () => (
-    <NavBarAction
-      icon="ui-filter"
-      onPress={() => {
-        navigate(timelineRouteNames.Filters);
-      }}
-      testID="timeline-filter-button"
-    />
-  ),
 });
 
 // COMPONENT ======================================================================================
@@ -332,12 +325,20 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   componentDidUpdate(prevProps) {
-    const { navigation, route } = this.props;
+    const { navigation, route, session } = this.props;
     const reloadWithNewSettings = route.params.reloadWithNewSettings;
     if (navigation.isFocused !== prevProps.isFocused && reloadWithNewSettings) {
       this.doInit();
       navigation.setParams({ reloadWithNewSettings: undefined });
     }
+
+    this.props.navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.navigate(userRouteNames.home)}>
+          <SingleAvatar size="md" userId={session?.user.id || ''} />
+        </TouchableOpacity>
+      ),
+    });
 
     let workflows;
     if (getTimelineWorkflows(this.props.session)) {
@@ -346,9 +347,20 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     if (workflows.length) {
       this.props.navigation.setOptions({
         headerRight: () => (
-          <PopupMenu actions={workflows}>
-            <NavBarAction icon="ui-plus" testID="timeline-add-button" />
-          </PopupMenu>
+          <NavBarActionsGroup
+            elements={[
+              <NavBarAction
+                icon="ui-filter"
+                onPress={() => {
+                  navigate(timelineRouteNames.Filters);
+                }}
+                testID="timeline-filter-button"
+              />,
+              <PopupMenu actions={workflows}>
+                <NavBarAction icon="ui-plus" testID="timeline-add-button" />
+              </PopupMenu>,
+            ]}
+          />
         ),
       });
     }

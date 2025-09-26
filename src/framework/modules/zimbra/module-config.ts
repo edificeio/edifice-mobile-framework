@@ -7,7 +7,7 @@ export default new NavigableModuleConfig<'zimbra', IZimbraReduxState>({
   displayAs: 'tabModule',
   displayColor: theme.apps.zimbra.accentColors,
   displayI18n: 'zimbra-moduleconfig-tabname',
-  displayOrder: 1,
+  displayOrder: 3,
   displayPicture: { name: 'messagerie-off', type: 'Icon' },
   displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },
   entcoreScope: ['zimbra'],
