@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1D20446B2B6BD1810020EABA /* font_bold.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D20445D2B6BD1500020EABA /* font_bold.woff */; };
 		1D20446C2B6BD1810020EABA /* font_bolditalic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044622B6BD1500020EABA /* font_bolditalic.woff */; };
 		1D20446D2B6BD1810020EABA /* font_italic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044682B6BD1510020EABA /* font_italic.woff */; };
@@ -32,7 +30,6 @@
 		1DCD7ADC2B7E01460010EB27 /* play.svg in Resources */ = {isa = PBXBuildFile; fileRef = 1DCD7ADB2B7E01460010EB27 /* play.svg */; };
 		7404C07422E8B012008546A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7404C07322E8B012008546A8 /* Assets.xcassets */; };
 		745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 745D891422DE014D0038F1FA /* GoogleService-Info.plist */; };
-		74660EAE247BE64C00F74D20 /* DummySwiftFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */; };
 		74EC2C4926E63F04008EB301 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74EC2C4026E63F04008EB301 /* icomoon.ttf */; };
 		7E6F88D42B17570A000B4E95 /* jingle_bells.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7E6F88D32B17570A000B4E95 /* jingle_bells.mp3 */; };
 		91D2CEFA28D0D33A00A1A1C2 /* Font-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF628D0D33A00A1A1C2 /* Font-Italic.ttf */; };
@@ -45,7 +42,9 @@
 		AF33229B2DB137020021465B /* NabookPoppinsItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */; };
 		AF33229C2DB137020021465B /* NabookPoppinsRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */; };
 		F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */; };
+		F0551DBE2E86E8E7002F1F4E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F0551DBD2E86E8E7002F1F4E /* main.m */; };
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
+		F069BA6F2E86F29D00B3BA52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */; };
 		F06C18682B61837F00FBA3A2 /* splash-screen.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18652B61837F00FBA3A2 /* splash-screen.png */; };
 		F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */; };
 		F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */; };
@@ -64,10 +63,7 @@
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* appe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = appe.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = appe/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = appe/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = appe/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 1; lastKnownFileType = sourcecode.c.objc; name = main.m; path = appe/main.m; sourceTree = "<group>"; };
 		1B95597B3CEBB7E33AE92F2C /* libPods-appe-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appe-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D2044572B6BD14F0020EABA /* ibmplexmono_regular.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = ibmplexmono_regular.woff; sourceTree = "<group>"; };
 		1D2044582B6BD1500020EABA /* lora_regular.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = lora_regular.woff; sourceTree = "<group>"; };
@@ -99,8 +95,6 @@
 		745D891422DE014D0038F1FA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "appe/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		745D891922DE0F770038F1FA /* appe.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = appe.entitlements; path = appe/appe.entitlements; sourceTree = "<group>"; };
 		74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "appe-Bridging-Header.h"; sourceTree = "<group>"; };
-		74660EAC247BE64B00F74D20 /* appeTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "appeTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummySwiftFile.swift; sourceTree = "<group>"; };
 		74EC2C4026E63F04008EB301 /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		7DFD5F26543B345536ED6D5D /* Pods-appeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appeTests.debug.xcconfig"; path = "Target Support Files/Pods-appeTests/Pods-appeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7E6F88D32B17570A000B4E95 /* jingle_bells.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = jingle_bells.mp3; sourceTree = "<group>"; };
@@ -120,6 +114,8 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Comfortaa-Bold.ttf"; sourceTree = "<group>"; };
+		F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = appe/AppDelegate.swift; sourceTree = "<group>"; };
+		F0551DBD2E86E8E7002F1F4E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = appe/main.m; sourceTree = "<group>"; };
 		F062593D26454B14001AE555 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062593F26454B17001AE555 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062594026454B18001AE555 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -152,22 +148,19 @@
 		13B07FAE1A68108700A75B9A /* appe */ = {
 			isa = PBXGroup;
 			children = (
-				F0AC1B412BDAA6A900563199 /* help_center_article_style.css */,
-				F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */,
-				F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */,
-				F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
-				74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */,
+				F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */,
 				745D891922DE0F770038F1FA /* appe.entitlements */,
-				74660EAC247BE64B00F74D20 /* appeTests-Bridging-Header.h */,
+				74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */,
 				7404C07322E8B012008546A8 /* Assets.xcassets */,
-				74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */,
 				745D891422DE014D0038F1FA /* GoogleService-Info.plist */,
+				F0AC1B412BDAA6A900563199 /* help_center_article_style.css */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				F062593E26454B14001AE555 /* InfoPlist.strings */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
-				13B07FB71A68108700A75B9A /* main.m */,
+				F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */,
+				F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */,
+				F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */,
+				F0551DBD2E86E8E7002F1F4E /* main.m */,
 			);
 			name = appe;
 			sourceTree = "<group>";
@@ -641,10 +634,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				F069BA6F2E86F29D00B3BA52 /* AppDelegate.swift in Sources */,
 				F0CB47612BC6BF83006A73F3 /* ZendeskUnified.mm in Sources */,
-				74660EAE247BE64C00F74D20 /* DummySwiftFile.swift in Sources */,
+				F0551DBE2E86E8E7002F1F4E /* main.m in Sources */,
 				F0CB47602BC6BF83006A73F3 /* ZendeskUnified.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
