@@ -1,8 +1,24 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  // [SCAFFOLDER] create your styles here
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: UI_SIZES.spacing.medium,
+  },
+  emptyTitle: {
+    textAlign: 'center',
+  },
+  selectButtonWrapper: {
+    borderColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.card,
+    borderWidth: UI_SIZES.border.thin,
+    paddingHorizontal: UI_SIZES.spacing.tiny,
+    paddingVertical: UI_SIZES.spacing.tiny,
+    width: '100%',
+  },
 });
