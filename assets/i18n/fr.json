@@ -1956,7 +1956,7 @@
   "widget-cantine-menu-legend-vegetarien": "Végétarien",
   "widget-cantine-menu-legend-fait-maison": "Fait maison",
   "widget-cantine-menu-legend-produit-local": "Produit local",
-  "widget-cantine-menu-allergenes-label": "Allergènes:",
+  "widget-cantine-menu-allergenes-label": "Allergènes",
   "widget-cantine-menu-allergene-gluten": "Gluten",
   "widget-cantine-menu-allergene-crustace": "Crustacés",
   "widget-cantine-menu-allergene-oeuf": "Oeufs",
@@ -1970,5 +1970,8 @@
   "widget-cantine-menu-allergene-anhydride": "Anhydride",
   "widget-cantine-menu-allergene-lupin": "Lupin",
   "widget-cantine-menu-allergene-mollusque": "Mollusque",
-  "widget-cantine-menu-allergene-arachide": "Arachide"
+  "widget-cantine-menu-allergene-arachide": "Arachide",
+  "widget-cantine-menu-subtitle": "Cuisine fraîche et équilibrée",
+  "widget-cantine-menu-footer": "Bon appétit !",
+  "widget-cantine-title": "Menu du jour"
 }

@@ -1954,7 +1954,7 @@
   "widget-cantine-menu-legend-vegetarien": "Vegetarianu",
   "widget-cantine-menu-legend-fait-maison": "Fattu in casa",
   "widget-cantine-menu-legend-produit-local": "Prughjettu lucale",
-  "widget-cantine-menu-allergenes-label": "Allergeni:",
+  "widget-cantine-menu-allergenes-label": "Allergeni",
   "widget-cantine-menu-allergene-gluten": "Glutine",
   "widget-cantine-menu-allergene-crustace": "Crustacei",
   "widget-cantine-menu-allergene-oeuf": "Ovi",
@@ -1968,5 +1968,8 @@
   "widget-cantine-menu-allergene-anhydride": "Solfiti",
   "widget-cantine-menu-allergene-lupin": "Lupinu",
   "widget-cantine-menu-allergene-mollusque": "Molluschi",
-  "widget-cantine-menu-allergene-arachide": "Arachidi"
+  "widget-cantine-menu-allergene-arachide": "Arachidi",
+  "widget-cantine-menu-subtitle": "Cucina fresca è equilibrata",
+  "widget-cantine-menu-footer": "Bon appetitu!",
+  "widget-cantine-title": "Menu di u ghjornu"
 }

@@ -1954,7 +1954,7 @@
   "widget-cantine-menu-legend-vegetarien": "Vegetariano",
   "widget-cantine-menu-legend-fait-maison": "Casero",
   "widget-cantine-menu-legend-produit-local": "Producto local",
-  "widget-cantine-menu-allergenes-label": "Alérgenos:",
+  "widget-cantine-menu-allergenes-label": "Alérgenos",
   "widget-cantine-menu-allergene-gluten": "Gluten",
   "widget-cantine-menu-allergene-crustace": "Crustáceos",
   "widget-cantine-menu-allergene-oeuf": "Huevos",
@@ -1968,5 +1968,8 @@
   "widget-cantine-menu-allergene-anhydride": "Sulfitos",
   "widget-cantine-menu-allergene-lupin": "Altramuz",
   "widget-cantine-menu-allergene-mollusque": "Moluscos",
-  "widget-cantine-menu-allergene-arachide": "Cacahuetes"
+  "widget-cantine-menu-allergene-arachide": "Cacahuetes",
+  "widget-cantine-menu-subtitle": "Cocina fresca y equilibrada",
+  "widget-cantine-menu-footer": "¡Buen provecho!",
+  "widget-cantine-title": "Menú del día"
 }
