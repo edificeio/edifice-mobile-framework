@@ -1,29 +1,17 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import styles from './styles';
 import { MenuCardProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import AdaptiveTimeline from '~/framework/components/AdaptiveTimeline';
 import { ContentCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, SmallText } from '~/framework/components/text';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
 import { Image } from '~/framework/util/media';
-
-const getTypeLabel = (type: MenuItem['type']): string => {
-  const typeLabels = {
-    accompagnement: I18n.get('widget-cantine-menu-type-accompagnement'),
-    dessert: I18n.get('widget-cantine-menu-type-dessert'),
-    entree: I18n.get('widget-cantine-menu-type-entree'),
-    laitage: I18n.get('widget-cantine-menu-type-laitage'),
-    plat: I18n.get('widget-cantine-menu-type-plat'),
-  };
-  return typeLabels[type] || type;
-};
 
 // Allergy configuration
 const ALLERGY_CONFIG = [
@@ -53,24 +41,10 @@ const getAllergyText = (item: MenuItem): string => {
 const hasAllergy = (item: MenuItem): boolean => {
   return ALLERGY_CONFIG.some(allergy => item[allergy.key as keyof MenuItem] !== 0);
 };
-// Constants for better maintainability
-const MENU_ITEM_HEIGHT = {
-  BASE: UI_SIZES.spacing.minor + UI_SIZES.elements.icon.xsmall + UI_SIZES.spacing.tiny * 2,
-  WITH_ALLERGY: UI_SIZES.elements.icon.xsmall + UI_SIZES.spacing.tiny * 2 + 4,
-} as const;
 
 // Helper function to capitalize first letter
 const capitalizeFirstLetter = (text: string): string => {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-};
-
-// Simplified height calculation
-const calculateTimelineHeight = (items: MenuItem[]): number => {
-  return items.reduce((totalHeight, item) => {
-    const baseHeight = MENU_ITEM_HEIGHT.BASE;
-    const allergyHeight = hasAllergy(item) ? MENU_ITEM_HEIGHT.WITH_ALLERGY : 0;
-    return totalHeight + baseHeight + allergyHeight;
-  }, 0);
 };
 
 // Icon configuration for menu items
@@ -81,52 +55,68 @@ const MENU_ICONS = {
   vegetarien: require('ASSETS/images/cantine/vegetarien-logo.png'),
 } as const;
 
-// Simplified menu item component that combines all functionality
-const MenuItemComponent: React.FC<{ item: MenuItem }> = React.memo(({ item }) => {
-  // Get active icons for this item
-  const activeIcons = [
-    { condition: item.bio, key: 'bio', source: MENU_ICONS.bio },
-    { condition: item.vegetarien, key: 'vegetarien', source: MENU_ICONS.vegetarien },
-    { condition: item.faitmaison, key: 'faitmaison', source: MENU_ICONS.faitmaison },
-    { condition: item.local, key: 'local', source: MENU_ICONS.local },
-  ].filter(icon => icon.condition);
-
+// Menu section component with elegant restaurant styling
+const MenuSection: React.FC<{
+  items: MenuItem[];
+  title: string;
+  type: MenuItem['type'];
+}> = React.memo(({ items, title }) => {
   return (
-    <View style={styles.menuItem}>
-      <View style={styles.menuItemContent}>
-        <View style={styles.menuItemName}>
-          <View style={styles.menuItemText}>
-            <BodyText style={styles.menuItemNameText}>{capitalizeFirstLetter(item.nom)}</BodyText>
-          </View>
-          {activeIcons.length > 0 && (
-            <View style={styles.menuItemIcons}>
-              {activeIcons.map(({ key, source }) => (
-                <Image key={key} source={source} style={styles.iconElement} />
-              ))}
-            </View>
-          )}
+    <View style={styles.menuSection}>
+      <View style={styles.sectionHeader}>
+        <View style={styles.sectionTitleContainer}>
+          <BodyBoldText style={styles.sectionTitle}>{title}</BodyBoldText>
+          <View style={styles.sectionDivider} />
         </View>
-        {hasAllergy(item) && (
-          <View style={styles.menuItemType}>
-            <Svg
-              name="ui-alert-triangle"
-              fill={theme.palette.complementary.orange.regular}
-              height={UI_SIZES.elements.icon.xsmall}
-              width={UI_SIZES.elements.icon.xsmall}
-            />
-            <SmallText style={styles.allergyText}>
-              {I18n.get('widget-cantine-menu-allergenes-label')} {getAllergyText(item)}
-            </SmallText>
-          </View>
-        )}
+      </View>
+
+      <View style={styles.menuItemsContainer}>
+        {items.map((item, index) => {
+          // Get active icons for this item
+          const activeIcons = [
+            { condition: item.bio, key: 'bio', source: MENU_ICONS.bio },
+            { condition: item.vegetarien, key: 'vegetarien', source: MENU_ICONS.vegetarien },
+            { condition: item.faitmaison, key: 'faitmaison', source: MENU_ICONS.faitmaison },
+            { condition: item.local, key: 'local', source: MENU_ICONS.local },
+          ].filter(icon => icon.condition);
+
+          return (
+            <View key={`${item.id}-${index}`} style={styles.menuItem}>
+              <View style={styles.menuItemHeader}>
+                <View style={styles.menuItemNameContainer}>
+                  <BodyBoldText style={styles.menuItemName}>{capitalizeFirstLetter(item.nom)}</BodyBoldText>
+                  {activeIcons.length > 0 && (
+                    <View style={styles.menuItemIcons}>
+                      {activeIcons.map(({ key, source }) => (
+                        <Image key={key} source={source} style={styles.menuItemIcon} />
+                      ))}
+                    </View>
+                  )}
+                </View>
+                {hasAllergy(item) && (
+                  <View style={styles.allergyBadge}>
+                    <Svg
+                      name="ui-alert-triangle"
+                      fill={theme.palette.complementary.orange.regular}
+                      height={UI_SIZES.elements.icon.xsmall}
+                      width={UI_SIZES.elements.icon.xsmall}
+                    />
+                  </View>
+                )}
+              </View>
+
+              {hasAllergy(item) && <SmallText style={styles.allergyText}>⚠️ {getAllergyText(item)}</SmallText>}
+            </View>
+          );
+        })}
       </View>
     </View>
   );
 });
 
-// Legend component for better organization
+// Legend component for menu icons
 const MenuLegend: React.FC = React.memo(() => (
-  <View>
+  <View style={styles.legendContainer}>
     <BodyBoldText style={styles.legendTitle}>{I18n.get('widget-cantine-menu-legend-title')}</BodyBoldText>
     <View style={styles.legendItems}>
       {[
@@ -140,25 +130,20 @@ const MenuLegend: React.FC = React.memo(() => (
           <SmallText style={styles.legendText}>{I18n.get(label)}</SmallText>
         </View>
       ))}
-    </View>
-  </View>
-));
 
-// Menu section component
-const MenuSection: React.FC<{ items: MenuItem[]; type: MenuItem['type'] }> = React.memo(({ items, type }) => (
-  <View style={styles.typeSection}>
-    <View style={styles.typeTitleContainer}>
-      <BodyBoldText style={styles.typeSectionTitle}>{getTypeLabel(type)}</BodyBoldText>
+      {/* Allergen legend item */}
+      <View style={styles.legendItem}>
+        <View style={styles.legendAllergenIcon}>
+          <Svg
+            name="ui-alert-triangle"
+            fill={theme.palette.complementary.orange.regular}
+            height={UI_SIZES.elements.icon.xsmall}
+            width={UI_SIZES.elements.icon.xsmall}
+          />
+        </View>
+        <SmallText style={styles.legendText}>{I18n.get('widget-cantine-menu-allergenes-label')}</SmallText>
+      </View>
     </View>
-    {items.map((item, index) => (
-      <MenuItemComponent key={`${item.id}-${index}`} item={item} />
-    ))}
-    <AdaptiveTimeline
-      topPosition={UI_SIZES.spacing.big}
-      color={theme.palette.primary.regular}
-      leftPosition={UI_SIZES.spacing.tiny}
-      height={calculateTimelineHeight(items)}
-    />
   </View>
 ));
 
@@ -177,17 +162,60 @@ export default function MenuCard(props: MenuCardProps) {
     {} as Record<MenuItem['type'], MenuItem[]>,
   );
 
-  const typeOrder: MenuItem['type'][] = ['entree', 'plat', 'accompagnement', 'laitage', 'dessert'];
+  // Check if any items have allergies
 
   return (
-    <ContentCard footer={<MenuLegend />}>
-      <View style={styles.menuItemContainer}>
-        {typeOrder.map(type => {
-          const items = groupedItems[type];
-          if (!items || items.length === 0) return null;
-          return <MenuSection key={type} items={items} type={type} />;
-        })}
-      </View>
+    <ContentCard>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        {/* Restaurant Header */}
+        <View style={styles.restaurantHeader}>
+          <View style={styles.restaurantTitleContainer}>
+            <Svg
+              name="ui-widget-cantine"
+              fill={theme.palette.grey.white}
+              height={UI_SIZES.elements.icon.medium}
+              width={UI_SIZES.elements.icon.medium}
+            />
+            <BodyBoldText style={styles.restaurantTitle}>{I18n.get('widget-cantine-home-title')}</BodyBoldText>
+          </View>
+          <BodyText style={styles.restaurantSubtitle}>{I18n.get('widget-cantine-menu-subtitle')}</BodyText>
+        </View>
+
+        {/* Menu sections */}
+        <View style={styles.menuContainer}>
+          {groupedItems.entree && groupedItems.entree.length > 0 && (
+            <MenuSection items={groupedItems.entree} title={`🥗 ${I18n.get('widget-cantine-menu-type-entree')}`} type="entree" />
+          )}
+
+          {groupedItems.plat && groupedItems.plat.length > 0 && (
+            <MenuSection items={groupedItems.plat} title={`🍖 ${I18n.get('widget-cantine-menu-type-plat')}`} type="plat" />
+          )}
+
+          {groupedItems.accompagnement && groupedItems.accompagnement.length > 0 && (
+            <MenuSection
+              items={groupedItems.accompagnement}
+              title={`🥕 ${I18n.get('widget-cantine-menu-type-accompagnement')}`}
+              type="accompagnement"
+            />
+          )}
+
+          {groupedItems.laitage && groupedItems.laitage.length > 0 && (
+            <MenuSection items={groupedItems.laitage} title={`🥛 ${I18n.get('widget-cantine-menu-type-laitage')}`} type="laitage" />
+          )}
+
+          {groupedItems.dessert && groupedItems.dessert.length > 0 && (
+            <MenuSection items={groupedItems.dessert} title={`🍰 ${I18n.get('widget-cantine-menu-type-dessert')}`} type="dessert" />
+          )}
+        </View>
+
+        {/* Footer */}
+        <View style={styles.menuFooter}>
+          <BodyText style={styles.footerText}>{I18n.get('widget-cantine-menu-footer')} 👨‍🍳</BodyText>
+        </View>
+
+        {/* Legend */}
+        <MenuLegend />
+      </ScrollView>
     </ContentCard>
   );
 }

@@ -1954,7 +1954,7 @@
   "widget-cantine-menu-legend-vegetarien": "Vegetarian",
   "widget-cantine-menu-legend-fait-maison": "Homemade",
   "widget-cantine-menu-legend-produit-local": "Local product",
-  "widget-cantine-menu-allergenes-label": "Allergens:",
+  "widget-cantine-menu-allergenes-label": "Allergens",
   "widget-cantine-menu-allergene-gluten": "Gluten",
   "widget-cantine-menu-allergene-crustace": "Crustaceans",
   "widget-cantine-menu-allergene-oeuf": "Eggs",
@@ -1968,5 +1968,8 @@
   "widget-cantine-menu-allergene-anhydride": "Sulfites",
   "widget-cantine-menu-allergene-lupin": "Lupin",
   "widget-cantine-menu-allergene-mollusque": "Mollusks",
-  "widget-cantine-menu-allergene-arachide": "Peanuts"
+  "widget-cantine-menu-allergene-arachide": "Peanuts",
+  "widget-cantine-menu-subtitle": "Fresh and balanced cuisine",
+  "widget-cantine-menu-footer": "Bon appétit!",
+  "widget-cantine-title": "Menu of the day"
 }

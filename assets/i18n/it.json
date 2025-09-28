@@ -1954,7 +1954,7 @@
   "widget-cantine-menu-legend-vegetarien": "Vegetariano",
   "widget-cantine-menu-legend-fait-maison": "Fatto in casa",
   "widget-cantine-menu-legend-produit-local": "Prodotto locale",
-  "widget-cantine-menu-allergenes-label": "Allergeni:",
+  "widget-cantine-menu-allergenes-label": "Allergeni",
   "widget-cantine-menu-allergene-gluten": "Glutine",
   "widget-cantine-menu-allergene-crustace": "Crostacei",
   "widget-cantine-menu-allergene-oeuf": "Uova",
@@ -1968,5 +1968,8 @@
   "widget-cantine-menu-allergene-anhydride": "Solfiti",
   "widget-cantine-menu-allergene-lupin": "Lupino",
   "widget-cantine-menu-allergene-mollusque": "Molluschi",
-  "widget-cantine-menu-allergene-arachide": "Arachidi"
+  "widget-cantine-menu-allergene-arachide": "Arachidi",
+  "widget-cantine-menu-subtitle": "Cucina fresca ed equilibrata",
+  "widget-cantine-menu-footer": "Buon appetito!",
+  "widget-cantine-title": "Menu del giorno"
 }
