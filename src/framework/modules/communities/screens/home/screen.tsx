@@ -83,7 +83,7 @@ const TitleLoader = ({ isShort }: { isShort?: boolean }) => {
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>,
-): NativeStackNavigationOptions => communityNavBar(props);
+): NativeStackNavigationOptions => communityNavBar(props, true);
 
 export const CommunitiesHomeScreenLoaded = function ({
   image,

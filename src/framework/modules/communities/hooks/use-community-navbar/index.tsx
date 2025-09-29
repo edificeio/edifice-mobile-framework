@@ -119,10 +119,10 @@ export default function useCommunityScrollableThumbnail({
 }
 useCommunityScrollableThumbnail.stickyHeaderIndices = [0, 1];
 
-export const communityNavBar = <NavigationParams extends ParamListBase, RouteName extends string & keyof NavigationParams>({
-  navigation,
-  route,
-}: NativeStackScreenProps<NavigationParams, RouteName>): NativeStackNavigationOptions => ({
+export const communityNavBar = <NavigationParams extends ParamListBase, RouteName extends string & keyof NavigationParams>(
+  { navigation, route }: NativeStackScreenProps<NavigationParams, RouteName>,
+  withInfoButton: boolean = false,
+): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -147,16 +147,18 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
       tintColor={theme.ui.text.regular.toString()}
     />
   ),
-  headerRight: () => (
-    <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE}>
-      <Svg
-        name="ui-infoCircle"
-        width={UI_SIZES.elements.icon.small}
-        height={UI_SIZES.elements.icon.small}
-        fill={theme.palette.grey.black}
-      />
-    </TouchableOpacity>
-  ),
+  headerRight: withInfoButton
+    ? () => (
+        <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE}>
+          <Svg
+            name="ui-infoCircle"
+            width={UI_SIZES.elements.icon.small}
+            height={UI_SIZES.elements.icon.small}
+            fill={theme.palette.grey.black}
+          />
+        </TouchableOpacity>
+      )
+    : undefined,
   headerShadowVisible: false,
   headerStyle: {
     backgroundColor: 'transparent',
