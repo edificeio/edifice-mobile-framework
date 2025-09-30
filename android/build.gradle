@@ -1,7 +1,7 @@
 buildscript {
     ext {
         compileSdkVersion = 35
-        targetSdkVersion = 34
+        targetSdkVersion = 35
         minSdkVersion = 24
         buildToolsVersion = "35.0.0"
         kotlinVersion = "2.0.21"
@@ -16,7 +16,7 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.7.3")
-        classpath("com.facebook.react:react-native-gradle-plugin:0.77.3")
+        classpath("com.facebook.react:react-native-gradle-plugin:0.78.3")
         classpath("com.google.firebase:firebase-appdistribution-gradle:5.1.1")
         classpath("com.google.firebase:firebase-crashlytics-gradle:3.0.3")
         classpath("com.google.gms:google-services:4.4.2")

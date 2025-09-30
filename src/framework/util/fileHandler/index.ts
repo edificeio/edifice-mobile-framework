@@ -5,9 +5,9 @@ import { Alert, Platform } from 'react-native';
 
 import ImageResizer, { Response } from '@bam.tech/react-native-image-resizer';
 import getPath from '@flyerhq/react-native-android-uri-path';
+import DocumentPicker, { DocumentPickerResponse } from '@react-native-documents/picker';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
-import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
 import ImagePicker, { Image } from 'react-native-image-crop-picker';
 
