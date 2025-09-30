@@ -19,7 +19,7 @@ import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
-  fetchHomeworkAssistanceConfigAction,
+  fetchHomeworkAssistanceParametersAction,
   fetchHomeworkAssistanceResourcesAction,
 } from '~/framework/modules/homework-assistance/actions';
 import FeedbackMenu from '~/framework/modules/homework-assistance/components/feedback-menu';
@@ -55,7 +55,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
 
   const fetchInfo = async () => {
     try {
-      await props.tryFetchConfig();
+      await props.tryFetchParameters();
       await props.tryFetchResources();
     } catch {
       throw new Error();
@@ -95,13 +95,13 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
   };
 
   const renderInformation = () => {
-    if (!props.config) return renderError();
-    const { body, days, descriptionLink, header, info, link, time } = props.config.messages;
+    if (!props.parameters) return renderError();
+    const { body, days, descriptionLink, header, info, link, time } = props.parameters.messages;
 
     return (
       <>
         <ScrollView contentContainerStyle={[styles.container, props.resources.length ? styles.containerPadding : {}]}>
-          <View style={styles.configContainer}>
+          <View style={styles.parametersContainer}>
             <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
             <SmallText style={styles.primaryText}>{body}</SmallText>
             <Svg name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
@@ -151,10 +151,10 @@ export default connect(
     const session = getSession();
 
     return {
-      config: homeworkAssistanceState.config.data,
-      initialLoadingState: homeworkAssistanceState.config.isPristine
+      initialLoadingState: homeworkAssistanceState.parameters.isPristine
         ? AsyncPagedLoadingState.PRISTINE
         : AsyncPagedLoadingState.DONE,
+      parameters: homeworkAssistanceState.parameters.data,
       resources: homeworkAssistanceState.resources.data,
       session,
     };
@@ -162,9 +162,9 @@ export default connect(
   dispatch =>
     bindActionCreators<HomeworkAssistanceHomeScreenDispatchProps>(
       {
-        tryFetchConfig: tryAction(fetchHomeworkAssistanceConfigAction),
+        tryFetchParameters: tryAction(fetchHomeworkAssistanceParametersAction),
         tryFetchResources: tryAction(fetchHomeworkAssistanceResourcesAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(HomeworkAssistanceHomeScreen);

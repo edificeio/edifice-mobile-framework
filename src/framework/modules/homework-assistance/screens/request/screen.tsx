@@ -1,7 +1,7 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, ScrollView, View } from 'react-native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -21,7 +21,7 @@ import Toast from '~/framework/components/toast';
 import { AccountType, getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
-  fetchHomeworkAssistanceConfigAction,
+  fetchHomeworkAssistanceParametersAction,
   fetchHomeworkAssistanceServicesAction,
   postHomeworkAssistanceRequestAction,
 } from '~/framework/modules/homework-assistance/actions';
@@ -59,7 +59,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
   const [service, setService] = React.useState(null);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [date, setDate] = React.useState(moment().startOf('day'));
-  const [time, setTime] = React.useState(props.config!.settings.openingTime.start);
+  const [time, setTime] = React.useState(props.parameters!.settings.openingTime.start);
   const [information, setInformation] = React.useState('');
   const [isSendingRequest, setSendingRequest] = React.useState(false);
 
@@ -70,7 +70,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
 
   const fetchData = async () => {
     try {
-      await props.tryFetchConfig();
+      await props.tryFetchParameters();
       await props.tryFetchServices();
     } catch {
       throw new Error();
@@ -126,9 +126,9 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
   };
 
   const renderRequest = () => {
-    if (!props.config) return renderError();
-    const { openingTime } = props.config.settings;
-    const isDateValid = getIsDateValid(props.config, date, time);
+    if (!props.parameters) return renderError();
+    const { openingTime } = props.parameters.settings;
+    const isDateValid = getIsDateValid(props.parameters, date, time);
     const isActionDisabled = !service || !phoneNumber || !isDateValid;
 
     return (
@@ -243,11 +243,11 @@ export default connect(
             }))
           : undefined,
       className: session?.user.classes?.[0] ?? '',
-      config: homeworkAssistanceState.config.data,
       initialLoadingState:
-        homeworkAssistanceState.config.isPristine || homeworkAssistanceState.services.isPristine
+        homeworkAssistanceState.parameters.isPristine || homeworkAssistanceState.services.isPristine
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
+      parameters: homeworkAssistanceState.parameters.data,
       services: homeworkAssistanceState.services.data,
       session,
       structureName: session?.user.structures?.[0].name ?? '',
@@ -257,7 +257,7 @@ export default connect(
     bindActionCreators<HomeworkAssistanceRequestScreenDispatchProps>(
       {
         tryAddRequest: tryAction(postHomeworkAssistanceRequestAction),
-        tryFetchConfig: tryAction(fetchHomeworkAssistanceConfigAction),
+        tryFetchParameters: tryAction(fetchHomeworkAssistanceParametersAction),
         tryFetchServices: tryAction(fetchHomeworkAssistanceServicesAction),
       },
       dispatch,

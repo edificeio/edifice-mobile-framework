@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-09-19 14:59:40",
-  "notes": "release: 1.15.3-comm.12(1150313)",
-  "version": "1.15.3-comm.13(1150314)"
+  "last": "2025-09-24 07:47:08",
+  "notes": "stack(update): yarn cache update\nfix(media): ENABLING-405, display status bar for android devices as hiding it causes this behavior\nfix(webview): ENABLING-406, display status bar for android devices as hiding it causes this behavior\nMerge branch 'dev/1.15.3' into update/rn-76\nUpdated translations from Phrase (#219)\nrelease: 1.15.3-alpha.2(1150302)",
+  "version": "1.15.3-rc.1(1150303)"
 }
