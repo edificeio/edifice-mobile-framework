@@ -11,8 +11,8 @@ import { TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 
 const base64Type = {
-    FONT: 'fonts',
-    IMAGE: 'images',
+  FONT: 'fonts',
+  IMAGE: 'images',
 };
 
 const isIOS = Platform.OS === 'ios';
@@ -27,17 +27,17 @@ let fontFaces = '';
 let imagePlaceholder = '';
 
 async function loadBase64File(fileName, type) {
-    let base64String = '';
-    if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`${type}/${fileName}`, 'base64');
-    else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${fileName}`, 'base64');
-    return base64String;
+  let base64String = '';
+  if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`${type}/${fileName}`, 'base64');
+  else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${fileName}`, 'base64');
+  return base64String;
 }
 
 async function loadFont(fontInfo) {
-    const { bold, cursive, fontFamily, fontFile, italic } = fontInfo;
-    try {
-        const base64Font = await loadBase64File(fontFile, base64Type.FONT);
-        fontFaces += `
+  const { bold, cursive, fontFamily, fontFile, italic } = fontInfo;
+  try {
+    const base64Font = await loadBase64File(fontFile, base64Type.FONT);
+    fontFaces += `
         @font-face {
           font-family: '${fontFamily}';
           src: url(data:font/woff;base64,${base64Font}) format('woff');
@@ -46,77 +46,77 @@ async function loadFont(fontInfo) {
           ${cursive ? 'size-adjust: 187.5%;' : ''}
         }
     `;
-    } catch (error) {
-        console.error(`Error loading ${fontFamily} font from ${fontFile}`, error);
-    }
+  } catch (error) {
+    console.error(`Error loading ${fontFamily} font from ${fontFile}`, error);
+  }
 }
 
 async function loadIcon(iconFile) {
-    try {
-        const base64Icon = await loadBase64File(iconFile, base64Type.IMAGE);
-        return `data:image/svg+xml;base64,${base64Icon}`;
-    } catch (error) {
-        console.error(`Error loading pic`, error);
-        return null;
-    }
+  try {
+    const base64Icon = await loadBase64File(iconFile, base64Type.IMAGE);
+    return `data:image/svg+xml;base64,${base64Icon}`;
+  } catch (error) {
+    console.error(`Error loading pic`, error);
+    return null;
+  }
 }
 
 async function initEditor() {
-    const fontItems = [
-        // OpenDyslexic
-        { fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_regular.woff' },
-        { bold: true, fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_bold.woff' },
-        { bold: true, fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_bolditalic.woff', italic: true },
-        { fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_italic.woff', italic: true },
-        //Lora
-        { fontFamily: 'Lora', fontFile: 'lora_regular.woff' },
-        { bold: true, fontFamily: 'Lora', fontFile: 'lora_bold.woff' },
-        { bold: true, fontFamily: 'Lora', fontFile: 'lora_bolditalic.woff', italic: true },
-        { fontFamily: 'Lora', fontFile: 'lora_italic.woff', italic: true },
-        //IBM Plex Mono
-        { fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_regular.woff' },
-        { bold: true, fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_bold.woff' },
-        { bold: true, fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_bolditalic.woff', italic: true },
-        { fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_italic.woff', italic: true },
-        //Font
-        { fontFamily: 'Font', fontFile: 'font_regular.woff' },
-        { bold: true, fontFamily: 'Font', fontFile: 'font_bold.woff' },
-        { bold: true, fontFamily: 'Font', fontFile: 'font_bolditalic.woff', italic: true },
-        { fontFamily: 'Font', fontFile: 'font_italic.woff', italic: true },
-        //Ecriture A
-        { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_regular.woff' },
-        { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_italic.woff', italic: true },
-    ];
-    await Promise.all(fontItems.map(loadFont));
-    attachmentIcon = await loadIcon('attachment.svg');
-    audioIcon = await loadIcon('audio.svg');
-    playIcon = await loadIcon('play.svg');
-    imagePlaceholder = await loadIcon('image-not-found.svg');
+  const fontItems = [
+    // OpenDyslexic
+    { fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_regular.woff' },
+    { bold: true, fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_bold.woff' },
+    { bold: true, fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_bolditalic.woff', italic: true },
+    { fontFamily: 'OpenDyslexic', fontFile: 'opendyslexic_italic.woff', italic: true },
+    //Lora
+    { fontFamily: 'Lora', fontFile: 'lora_regular.woff' },
+    { bold: true, fontFamily: 'Lora', fontFile: 'lora_bold.woff' },
+    { bold: true, fontFamily: 'Lora', fontFile: 'lora_bolditalic.woff', italic: true },
+    { fontFamily: 'Lora', fontFile: 'lora_italic.woff', italic: true },
+    //IBM Plex Mono
+    { fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_regular.woff' },
+    { bold: true, fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_bold.woff' },
+    { bold: true, fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_bolditalic.woff', italic: true },
+    { fontFamily: 'IBM Plex Mono', fontFile: 'ibmplexmono_italic.woff', italic: true },
+    //Font
+    { fontFamily: 'Font', fontFile: 'font_regular.woff' },
+    { bold: true, fontFamily: 'Font', fontFile: 'font_bold.woff' },
+    { bold: true, fontFamily: 'Font', fontFile: 'font_bolditalic.woff', italic: true },
+    { fontFamily: 'Font', fontFile: 'font_italic.woff', italic: true },
+    //Ecriture A
+    { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_regular.woff' },
+    { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_italic.woff', italic: true },
+  ];
+  await Promise.all(fontItems.map(loadFont));
+  attachmentIcon = await loadIcon('attachment.svg');
+  audioIcon = await loadIcon('audio.svg');
+  playIcon = await loadIcon('play.svg');
+  imagePlaceholder = await loadIcon('image-not-found.svg');
 }
 
 function createHTML(options = {}) {
-    const {
-        autoCapitalize = 'off',
-        autoCorrect = false,
-        defaultParagraphSeparator = 'div',
-        enterKeyHint = '',
-        firstFocusEnd = true,
-        initialFocus = false,
-        inputListener = false,
-        keyDownListener = false,
-        keyUpListener = false,
-        pasteAsPlainText = false,
-        // When first gaining focus, the cursor moves to the end of the text
-        pasteListener = false,
-        styleWithCSS = false,
-        useComposition = true,
-        // Enable/Disable composition
-        useContainer = true,
-    } = options;
+  const {
+    autoCapitalize = 'off',
+    autoCorrect = false,
+    defaultParagraphSeparator = 'div',
+    enterKeyHint = '',
+    firstFocusEnd = true,
+    initialFocus = false,
+    inputListener = false,
+    keyDownListener = false,
+    keyUpListener = false,
+    pasteAsPlainText = false,
+    // When first gaining focus, the cursor moves to the end of the text
+    pasteListener = false,
+    styleWithCSS = false,
+    useComposition = true,
+    // Enable/Disable composition
+    useContainer = true,
+  } = options;
 
-    const placeholderColor = theme.palette.grey.graphite;
+  const placeholderColor = theme.palette.grey.graphite;
 
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -127,7 +127,8 @@ function createHTML(options = {}) {
         * {outline: 0px solid transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-touch-callout: none;box-sizing: border-box;}
         html, body { margin: 0; padding: 0;font-family: Font; font-size:1em; height: 100%;}
         body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${theme.palette.grey.white};}
-        .content {font-family: Font;color: ${theme.palette.grey.black}; width: 100%;${!useContainer ? 'height:100%;' : ''
+        .content {font-family: Font;color: ${theme.palette.grey.black}; width: 100%;${
+          !useContainer ? 'height:100%;' : ''
         }-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
  .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%; font-size: 16px; line-height: 24px; overflow-x: hidden; max-width: 100%; margin-top: 16px;}
         [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor}; font-style: italic}
@@ -162,6 +163,7 @@ function createHTML(options = {}) {
         th, td {padding: ${UI_SIZES.spacing._LEGACY_tiny}px ${UI_SIZES.spacing.tiny}px;}
         th {text-align: left; background-color: ${theme.palette.grey.pearl};}
         iframe {border: none; max-width: 100%;}
+        .iframe-wrapper {position: relative; overflow: hidden; width: 100%; padding-top: 56.25%;}
         .video-wrapper {position: relative}
         .video-wrapper::before {content: ""; background-image: url(${playIcon}); background-size: ${playIconSize}px ${playIconSize}px; height: ${playIconSize}px; width: ${playIconSize}px; position: absolute; top: 0; left: 0; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;}
         video {border-radius: ${UI_SIZES.radius.small}px;}
