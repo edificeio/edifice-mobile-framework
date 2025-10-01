@@ -130,7 +130,7 @@ function createHTML(options = {}) {
         .content {font-family: Font;color: ${theme.palette.grey.black}; width: 100%;${
           !useContainer ? 'height:100%;' : ''
         }-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
- .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%; font-size: 16px; line-height: 24px; overflow-x: hidden; max-width: 100%; margin-top: 16px;}
+ .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%; font-size: 16px; line-height: 24px; overflow-x: hidden; max-width: 100%;}
         [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor}; font-style: italic}
         [placeholder]:empty:focus:before { content: attr(placeholder);color: ${placeholderColor};display:block;}
         .x-todo li {list-style:none;}
@@ -171,6 +171,8 @@ function createHTML(options = {}) {
         ul, ol {list-style-position: outside; }
         li p {margin: 0; padding: 0;}
         .conversation-history > div {margin-left: 10px; padding-left: 10px; border-left: 1px ridge #C7C7C7;}
+        #content>p:first-child { margin-block-start: 0;}
+        #content>p:last-child { margin-block-end: 0;}
     </style>
 </head>
 <body>
@@ -616,7 +618,7 @@ function createHTML(options = {}) {
             UPDATE_HEIGHT: function() {
                 if (!${useContainer}) return;
                 // var height = Math.max(docEle.scrollHeight, body.scrollHeight);
-                var height = editor.content.scrollHeight + ${TextSizeStyle.Huge.lineHeight};
+                var height = editor.content.scrollHeight;
                 if (o_height !== height){
                     setTimeout(() => {
                         _postMessage({type: 'OFFSET_HEIGHT', data: o_height = height});

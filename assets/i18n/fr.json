@@ -338,6 +338,8 @@
   "common-search": "Rechercher",
   "common-send": "Envoyer",
   "common-space": " ",
+  "communities-announcements-empty-text": "Ici s'afficheront les annonces postées par le gestionnaire de la communauté pour communiquer les informations importantes.",
+  "communities-announcements-empty-title": "Restez à l'écoute !",
   "communities-announcements-soon-text": "Dans quelque temps, vous aurez la possibilité de créer des discussions pour partager avec les membres de votre communauté.",
   "communities-announcements-soon-title": "Un peu de patience, cette fonctionnalité arrive bientôt !",
   "communities-announcements-title": "Annonces",

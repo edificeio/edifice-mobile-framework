@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
   },
   richEditor: {
     minHeight: '90%',
+    paddingVertical: UI_SIZES.spacing.medium,
   },
   scrollView: {
     flexGrow: 1,
