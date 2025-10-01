@@ -1,14 +1,16 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { Svg } from '../../picture';
-import { HeadingSText, SmallText } from '../../text';
-import styles from '../styles';
-import { EmptyContentProps } from '../types';
+import styles from '~/framework/components/empty-screens/styles';
+import { EmptyContentProps } from '~/framework/components/empty-screens/types';
+import { Svg } from '~/framework/components/picture';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 
-export function EmptyContent({ svg, text, title }: Readonly<EmptyContentProps>) {
+export function EmptyContent({ extraStyle, svg, text, title }: Readonly<EmptyContentProps>) {
+  const containerStyle = React.useMemo(() => [styles.container, extraStyle], [extraStyle]);
+
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <Svg name={svg} style={styles.illustration} />
       <View style={styles.textContainer}>
         {title !== undefined && <HeadingSText style={styles.title}>{title}</HeadingSText>}

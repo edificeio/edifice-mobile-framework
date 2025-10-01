@@ -19,6 +19,7 @@ import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigatio
 import { isEmpty } from '~/framework/util/object';
 
 const Audience = (props: AudienceAllProps) => {
+  const { showComments = true } = props;
   const [totalReactions, setTotalReactions] = React.useState<number>(0);
   const [typesReactions, setTypesReactions] = React.useState<string[]>([]);
   const [userReaction, setUserReaction] = React.useState<string | null>(null);
@@ -135,16 +136,18 @@ const Audience = (props: AudienceAllProps) => {
             />
           </Component>
         ) : null}
-        <View style={styles.statsItem}>
-          <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
-          <Svg
-            name="ui-messageInfo"
-            fill={theme.palette.grey.graphite}
-            height={UI_SIZES.elements.icon.small}
-            width={UI_SIZES.elements.icon.small}
-            cached
-          />
-        </View>
+        {showComments && (
+          <View style={styles.statsItem}>
+            <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
+            <Svg
+              name="ui-messageInfo"
+              fill={theme.palette.grey.graphite}
+              height={UI_SIZES.elements.icon.small}
+              width={UI_SIZES.elements.icon.small}
+              cached
+            />
+          </View>
+        )}
       </View>
       <AudienceReactButton
         postReaction={postReaction}

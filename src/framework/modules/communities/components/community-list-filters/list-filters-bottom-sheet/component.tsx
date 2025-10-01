@@ -3,7 +3,6 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { CommunityType } from '@edifice.io/community-client-rest-rn';
 
-import { styles } from './styles';
 import { ListFiltersBottomSheetProps } from './types';
 
 import { I18n } from '~/app/i18n';
@@ -76,7 +75,7 @@ const ListFiltersBottomSheet = React.forwardRef<BottomSheetModalMethods, ListFil
         ref={ref}
         header={
           <View style={bottomSheetModalStyles.header}>
-            <TouchableOpacity onPress={closeBottomSheet}>
+            <TouchableOpacity onPress={closeBottomSheet} testID="close-btn">
               <Svg
                 name="ui-close"
                 height={UI_SIZES.elements.icon.small}
@@ -84,13 +83,19 @@ const ListFiltersBottomSheet = React.forwardRef<BottomSheetModalMethods, ListFil
                 fill={theme.palette.grey.black}
               />
             </TouchableOpacity>
-            <TertiaryButton action={onReset} disabled={selectedFiltersCount === 0} text={I18n.get('filter-list-reset')} />
+            <TertiaryButton
+              action={onReset}
+              disabled={selectedFiltersCount === 0}
+              testID="reset-btn"
+              text={I18n.get('filter-list-reset')}
+            />
           </View>
         }>
         <FiltersList options={filtersData} onChange={setFiltersData} title={filtersListTitle} />
         <PrimaryButton
           action={onValidate}
           disabled={selectedFiltersCount === 0}
+          testID="validate-btn"
           text={validateButtonText}
           TextComponent={SmallBoldText}
         />

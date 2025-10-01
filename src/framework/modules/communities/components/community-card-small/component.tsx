@@ -29,7 +29,7 @@ export const CommunityCardSmall = ({
   );
 
   return (
-    <TouchableOpacity style={cardStyle} onPress={onPress}>
+    <TouchableOpacity style={cardStyle} onPress={onPress} testID="community-card-small">
       <ModuleImage moduleConfig={moduleConfig} {...imageProps} style={styles.imgContainer} />
       {membersCount && <CommunityMembersPill membersCount={membersCount} />}
       {invitationStatus === InvitationStatus.PENDING && <CommunityInvitationBadge />}

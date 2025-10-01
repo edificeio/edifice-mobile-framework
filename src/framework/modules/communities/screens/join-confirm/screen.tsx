@@ -48,7 +48,13 @@ export const computeNavBar = ({
       <Header
         headerStyle={styles.header}
         headerLeft={props => (
-          <NavBarAction {...props} color={theme.palette.grey.darkness} onPress={navigation.goBack} icon="ui-close" />
+          <NavBarAction
+            {...props}
+            color={theme.palette.grey.darkness}
+            onPress={navigation.goBack}
+            icon="ui-close"
+            testID="close-btn"
+          />
         )}
         headerRight={() => <NavBarAction />}
         headerLeftContainerStyle={{
@@ -140,8 +146,8 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
           </View>
           <BodyText>{data.community?.welcomeNote}</BodyText>
         </View>
-        <PrimaryButton text={I18n.get('community-invitation-validate')} action={onValidate} />
-        <TertiaryButton text={I18n.get('community-invitation-skip')} action={navigation.goBack} />
+        <PrimaryButton text={I18n.get('community-invitation-validate')} action={onValidate} testID="validate-btn" />
+        <TertiaryButton text={I18n.get('community-invitation-skip')} action={navigation.goBack} testID="skip-btn" />
       </SafeAreaView>
     </ScrollView>
   );

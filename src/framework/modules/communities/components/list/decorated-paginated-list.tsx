@@ -1,62 +1,41 @@
-// import React, { ReactElement } from 'react';
-// import { View } from 'react-native';
-
 import * as React from 'react';
 import { ListRenderItemInfo, RefreshControl } from 'react-native';
 
-import { createDecoratedArrayProxy } from './proxy';
-
-import { useDocumentPagination } from '~/framework/components/list/paginated-document-list/component';
 import {
-  CommonPaginatedDocumentListProps,
-  PaginatedDocumentListItem,
-} from '~/framework/components/list/paginated-document-list/types';
-import { LOADING_ITEM_DATA, PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
+  LOADING_ITEM_DATA,
+  PaginatedFlatList,
+  PaginatedFlatListProps,
+  PaginatedListItem,
+} from '~/framework/components/list/paginated-list';
 import ScrollView from '~/framework/components/scrollView';
 import { LoadingState } from '~/framework/hooks/loader';
+import { createDecoratedArrayProxy } from '~/framework/modules/communities/screens/documents/proxy';
 
-export type CommunityPaginatedDocumentListItem = PaginatedDocumentListItem | React.ReactElement;
-
-export interface CommunityPaginatedDocumentFlatListProps
-  extends Omit<
-      PaginatedFlatListProps<CommunityPaginatedDocumentListItem>,
-      'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
-    >,
-    CommonPaginatedDocumentListProps {
+export interface DecoratedPaginatedFlatListProps<ItemType>
+  extends Omit<PaginatedFlatListProps<ItemType | React.ReactElement>, 'keyExtractor' | 'renderItem' | 'renderPlaceholderItem'> {
+  keyExtractor: NonNullable<PaginatedFlatListProps<ItemType>['keyExtractor']>;
+  renderItem: NonNullable<PaginatedFlatListProps<ItemType>['renderItem']>;
+  renderPlaceholderItem: NonNullable<PaginatedFlatListProps<ItemType>['renderPlaceholderItem']>;
   stickyElements?: React.ReactElement[];
   stickyPlaceholderElements?: React.ReactElement[];
 }
 
-export function CommunityPaginatedDocumentFlatList({
-  documents,
-  folders,
+export function DecoratedPaginatedFlatList<ItemType>({
+  data: _data,
+  keyExtractor: _keyExtractor,
   ListEmptyComponent,
   onPageReached: _onPageReached,
-  onPressDocument,
-  onPressFolder,
+  renderItem: _renderItem,
+  renderPlaceholderItem: _renderPlaceholderItem,
   stickyElements = [],
   stickyPlaceholderElements = [],
   ...paginatedListProps
-}: Readonly<CommunityPaginatedDocumentFlatListProps>) {
-  const {
-    data: _data,
-    getVisibleItemIndex,
-    keyExtractor: _keyExtractor,
-    renderItem: _renderItem,
-    renderPlaceholderItem: _renderPlaceholderItem,
-  } = useDocumentPagination({
-    documents,
-    folders,
-    numColumns: paginatedListProps.numColumns,
-    onPressDocument,
-    onPressFolder,
-  });
-
+}: Readonly<DecoratedPaginatedFlatListProps<ItemType>>) {
   const [loadingState, setLoadingState] = React.useState<LoadingState>(LoadingState.PRISTINE);
 
   // Override onPageReached to have a first loaded boolean value.
   // No need to do the same with onItemsReached because it'll be called twice.
-  const onPageReached = React.useCallback<NonNullable<CommunityPaginatedDocumentFlatListProps['onPageReached']>>(
+  const onPageReached = React.useCallback<NonNullable<DecoratedPaginatedFlatListProps<ItemType>['onPageReached']>>(
     async (page, reloadAll) => {
       await _onPageReached?.(page, reloadAll);
       setLoadingState(LoadingState.DONE);
@@ -64,14 +43,20 @@ export function CommunityPaginatedDocumentFlatList({
     [_onPageReached],
   );
 
-  const { data } = React.useMemo(
-    () => createDecoratedArrayProxy(stickyElements, _data, paginatedListProps.numColumns),
-    [stickyElements, _data, paginatedListProps.numColumns],
+  const inputData = React.useMemo(() => _data ?? [], [_data]);
+
+  const { data, stickyItemsPadding } = React.useMemo(
+    () => createDecoratedArrayProxy(stickyElements, inputData, paginatedListProps.numColumns),
+    [stickyElements, inputData, paginatedListProps.numColumns],
   );
 
+  const getVisibleItemIndex = React.useCallback<
+    NonNullable<PaginatedFlatListProps<PaginatedListItem<ItemType>>['getVisibleItemIndex']>
+  >(index => index - stickyItemsPadding, [stickyItemsPadding]);
+
   const renderItem = React.useCallback(
-    (info: ListRenderItemInfo<CommunityPaginatedDocumentListItem>) =>
-      React.isValidElement(info.item) ? info.item : _renderItem(info as ListRenderItemInfo<PaginatedDocumentListItem>),
+    (info: ListRenderItemInfo<ItemType | React.ReactElement>) =>
+      React.isValidElement(info.item) ? info.item : _renderItem(info as ListRenderItemInfo<ItemType>),
     [_renderItem],
   );
 
@@ -82,8 +67,8 @@ export function CommunityPaginatedDocumentFlatList({
   );
 
   const keyExtractor = React.useCallback(
-    (item: PaginatedDocumentListItem | React.ReactElement, index: number) =>
-      React.isValidElement(item) ? item.key || 'sticky-' + index : _keyExtractor(item as PaginatedDocumentListItem, index),
+    (item: ItemType | React.ReactElement, index: number) =>
+      React.isValidElement(item) ? item.key || 'sticky-' + index : _keyExtractor?.(item as ItemType, index),
     [_keyExtractor],
   );
 
@@ -91,14 +76,17 @@ export function CommunityPaginatedDocumentFlatList({
     () =>
       createDecoratedArrayProxy(
         stickyPlaceholderElements,
-        new Array(8).fill(typeof LOADING_ITEM_DATA),
+        new Array(4).fill(typeof LOADING_ITEM_DATA),
         paginatedListProps.numColumns,
       ),
     [stickyPlaceholderElements, paginatedListProps.numColumns],
   );
 
   // Because of sticky elements, we need to check if the data is empty and print the empty state manually
-  if (ListEmptyComponent && ((loadingState === LoadingState.DONE && _data.length === 0) || loadingState === LoadingState.REFRESH)) {
+  if (
+    ListEmptyComponent &&
+    ((loadingState === LoadingState.DONE && inputData.length === 0) || loadingState === LoadingState.REFRESH)
+  ) {
     return (
       <ScrollView
         {...paginatedListProps}
@@ -131,4 +119,4 @@ export function CommunityPaginatedDocumentFlatList({
   );
 }
 
-export default CommunityPaginatedDocumentFlatList;
+export default DecoratedPaginatedFlatList;

@@ -97,6 +97,7 @@ export const useDocumentPagination = <
           {...(info as FlatListRenderItemInfo<DocumentItem>)}
           onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem>).item, e)}
           style={itemStyle}
+          testID={'document-item'}
         />
       );
     },

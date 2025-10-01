@@ -288,7 +288,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   return (
     <View>
       <Modal transparent animationType="fade" visible={isOpen} onRequestClose={hideReactions}>
-        <TouchableOpacity style={styles.flex1} activeOpacity={1} onPress={hideReactions}>
+        <TouchableOpacity style={styles.flex1} activeOpacity={1} onPress={hideReactions} testID={'cancel-reaction-btn'}>
           <Animated.View
             style={[
               styles.reactions,
@@ -325,7 +325,10 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
                         { rotate },
                       ],
                     }}>
-                    <TouchableOpacity style={styles.reactionsIcon} onPress={() => postReaction(reaction)}>
+                    <TouchableOpacity
+                      style={styles.reactionsIcon}
+                      onPress={() => postReaction(reaction)}
+                      testID={'post-reaction-btn'}>
                       <Svg name={reaction.toLowerCase()} width={REACTION_ICON_SIZE} height={REACTION_ICON_SIZE} />
                     </TouchableOpacity>
                   </Animated.View>

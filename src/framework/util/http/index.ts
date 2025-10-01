@@ -2,7 +2,7 @@ import { HTTPError } from './error';
 import { fetch, fetchJson } from './fetch';
 import { fetchForAccount, fetchForSession, fetchJsonForAccount, fetchJsonForSession } from './fetch-for-account';
 import { fetchForPlatform, fetchJsonForPlatform } from './fetch-for-platform';
-import { imagePropsForAccount, imagePropsForSession } from './source';
+import { imagePropsForAccount, imagePropsForSession, sourceForAccount } from './source';
 
 /**
  * Utility functions for making HTTP requests.
@@ -31,6 +31,7 @@ export default {
   fetchJsonForSession,
   imagePropsForAccount,
   imagePropsForSession,
+  sourceForAccount,
   // sessionApi,
 };
 

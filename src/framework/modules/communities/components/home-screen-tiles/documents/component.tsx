@@ -17,7 +17,8 @@ const DocumentsTile = ({ communityId, navigation }: Readonly<DocumentsTileProps>
     onPress={React.useCallback(
       () => navigation.navigate(communitiesRouteNames.documents, { communityId }),
       [communityId, navigation],
-    )}>
+    )}
+    testID="tile-docs">
     <View style={styles.largeTileIcon}>
       <Svg
         name="ui-folder"

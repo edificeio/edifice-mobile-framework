@@ -34,6 +34,7 @@ const FiltersList = <T extends BaseFilter>({ onChange, options, title }: Filters
           checked={item.isActive}
           customListItemStyle={item.isActive ? MERGED_STYLES.active : MERGED_STYLES.inactive}
           onPress={onItemPress[index]}
+          testID={`checkbox-${index}`}
           TextComponent={BodyText}
           title={item.name}
         />

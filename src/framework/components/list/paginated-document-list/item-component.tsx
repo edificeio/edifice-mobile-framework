@@ -6,13 +6,13 @@ import { PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 import styles from './styles';
 import { DocumentItem, DocumentItemWorkspace, DocumentItemWorkspaceDocumentMedia, FolderItem } from './types';
-import ImageWithFallback from '../../picture/image-with-fallback';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { Picture, Svg } from '~/framework/components/picture';
+import ImageWithFallback from '~/framework/components/picture/image-with-fallback';
 import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import http from '~/framework/util/http';
 
@@ -58,13 +58,14 @@ export function DocumentListItem({
   item,
   onPress,
   style,
+  testID,
 }: Readonly<
   Pick<
     Parameters<(PaginatedFlashListProps<DocumentItem> & PaginatedFlatListProps<DocumentItem>)['renderItem']>[0],
     'index' | 'item'
   >
 > &
-  Pick<TouchableOpacityProps, 'onPress' | 'style'>) {
+  Pick<TouchableOpacityProps, 'onPress' | 'style' | 'testID'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
 
   const thumbnail = React.useMemo(
@@ -84,7 +85,7 @@ export function DocumentListItem({
     [item],
   );
   return (
-    <WrapperComponent style={[styles.item, styles.itemDocument, style]} onPress={onPress}>
+    <WrapperComponent style={[styles.item, styles.itemDocument, style]} onPress={onPress} testID={testID}>
       {thumbnail}
       <View style={styles.documentMetadata}>
         <SmallBoldText style={styles.documentMetadataTitle} numberOfLines={1}>

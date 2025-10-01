@@ -1,6 +1,7 @@
 import { PixelRatio, StyleSheet } from 'react-native';
 
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 
 const LOADER_HEIGHT = PixelRatio.getFontScale() * TextSizeStyle.Medium.lineHeight;
@@ -11,39 +12,31 @@ const LOADER_TITLE = {
 };
 
 export default StyleSheet.create({
+  announcementTitle: {
+    paddingBottom: UI_SIZES.spacing.minor,
+  },
+  emptyContent: {
+    paddingHorizontal: UI_SIZES.spacing.big,
+  },
+  itemContainer: {
+    backgroundColor: theme.ui.background.card,
+    gap: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.big,
+  },
+  itemSeparator: {
+    borderBottomColor: theme.palette.grey.cloudy,
+    borderBottomWidth: UI_SIZES.border.normal,
+  },
   loaderBanner: {
     borderBottomLeftRadius: UI_SIZES.radius.extraLarge,
     borderBottomRightRadius: UI_SIZES.radius.extraLarge,
     overflow: 'hidden',
     width: UI_SIZES.screen.width,
   },
-  loaderEmptyBigLine: {
-    borderRadius: UI_SIZES.radius.medium,
-    height: getScaleWidth(24),
-    width: getScaleWidth(279),
-  },
-  loaderEmptyImage: {
-    borderRadius: UI_SIZES.radius.newCard,
-    height: getScaleWidth(143),
-    width: getScaleWidth(250),
-  },
-  loaderEmptyScreen: {
-    alignItems: 'center',
-    gap: UI_SIZES.spacing.medium,
-  },
-  loaderEmptyScreenLines: {
-    alignItems: 'center',
-    gap: UI_SIZES.spacing.tiny,
-  },
-  loaderEmptySmallLine: {
-    borderRadius: UI_SIZES.radius.small,
-    height: getScaleWidth(20),
-    width: getScaleWidth(237),
-  },
   loaderPage: {
     gap: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
-    paddingVertical: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
   },
   loaderSectionTitle: {
     ...LOADER_TITLE,
@@ -51,12 +44,12 @@ export default StyleSheet.create({
   },
   loaderSectionTitleShort: {
     ...LOADER_TITLE,
-    width: '30%',
+    width: '40%',
   },
   page: {
     gap: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
-    paddingVertical: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
   },
   tilesCol: {
     flex: 1,

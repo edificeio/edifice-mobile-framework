@@ -20,6 +20,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 export { NAVBAR_RIGHT_BUTTON_STYLE } from './styles';
 export type { CommunityThumbnailNavbarScrollableProps } from './types';
+
 export default function useCommunityScrollableThumbnail({
   contentContainerStyle: _contentContainerStyle,
   contentInset: _contentInset,
@@ -141,6 +142,7 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
             style={styles.backButtonImage}
             source={require('@react-navigation/elements/src/assets/back-icon.png')}
             fadeDuration={0}
+            testID="back-btn"
           />
         ),
       })}

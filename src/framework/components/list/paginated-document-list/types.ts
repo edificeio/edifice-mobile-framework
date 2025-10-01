@@ -15,6 +15,7 @@ interface DocumentItemBase {
   date: Temporal.Instant;
   url: string;
   resourceEntId: string;
+  testID?: string;
 }
 
 export interface DocumentItemEntApp<AppTypes extends EntAppNameOrSynonym> extends DocumentItemBase {

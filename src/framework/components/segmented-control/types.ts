@@ -1,14 +1,15 @@
 export interface SegmentedItemProps {
-  id: string;
   count: number;
-  text: string;
+  id: string;
   isActive: boolean;
   onPress: () => void;
+  testID?: string;
+  text: string;
 }
 
 export interface SegmentedControlProps {
-  initialSelectedIndex?: number;
-  segments: Pick<SegmentedItemProps, 'id' | 'count' | 'text'>[];
-  onChange?: (index?: number) => void;
   canUnselect?: boolean;
+  initialSelectedIndex?: number;
+  onChange?: (index?: number) => void;
+  segments: Pick<SegmentedItemProps, 'id' | 'count' | 'text'>[];
 }

@@ -20,6 +20,7 @@ const CommunityListFilterButton = ({ activeFiltersCount, onPress }: Readonly<Com
         contentColor={theme.palette.grey.black}
         iconLeft="ui-filter"
         iconRight={activeFiltersCount === 0 ? 'ui-rafterDown' : undefined}
+        testID={'filter-btn'}
       />
       {activeFiltersCount > 0 && (
         <View style={styles.badge}>
