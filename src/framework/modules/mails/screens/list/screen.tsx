@@ -92,6 +92,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [search, setSearch] = React.useState<string>('');
   const [isDeletingFolder, setIsDeletingFolder] = React.useState<boolean>(false);
 
+  const isContentLoading = React.useMemo(() => isDeletingFolder || isLoading, [isDeletingFolder, isLoading]);
+
   const loadMails = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo, searchValue?: string) => {
       try {
@@ -234,9 +236,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           });
         }
 
-        loadFolders();
-        onDismissBottomSheet();
-        toast.showSuccess(successMessage);
+        setTimeout(
+          () => {
+            loadFolders();
+            onDismissBottomSheet();
+            toast.showSuccess(successMessage);
+          },
+          Platform.OS === 'android' ? 300 : 0,
+        );
       } catch (e) {
         const error = e instanceof HTTPError ? await e.json() : e;
         if (error instanceof Error) {
@@ -523,6 +530,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     props.navigation.setOptions({
       headerLeft: () => (
         <NavBarAction
+          disabled={isContentLoading}
           icon="ui-burgerMenu"
           onPress={() => {
             bottomSheetModalRef.current?.present();
@@ -533,18 +541,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         <NavBarActionsGroup
           elements={[
             <NavBarAction
-              disabled={isDeletingFolder}
+              disabled={isContentLoading}
               icon="ui-edit"
               onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })}
             />,
             <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
-              <NavBarAction disabled={isDeletingFolder} icon="ui-options" />
+              <NavBarAction disabled={isContentLoading} icon="ui-options" />
             </PopupMenu>,
           ]}
         />
       ),
     });
-  }, [selectedFolder, navigation, props.navigation, isDeletingFolder, allPopupActionsMenu]);
+  }, [selectedFolder, navigation, props.navigation, isContentLoading, allPopupActionsMenu]);
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -840,10 +848,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
         onError={onErrorCreateFolder}
         onSend={onRenameFolderAction}
+        disabledAction={isLoadingCreateNewFolder}
         initialInputValue={(selectedFolder as MailsFolderInfo).name ?? ''}
       />
     );
-  }, [selectedFolder, onRenameFolderAction, onErrorCreateFolder]);
+  }, [selectedFolder, onRenameFolderAction, isLoadingCreateNewFolder, onErrorCreateFolder]);
 
   const renderMove = React.useCallback(() => {
     return (
