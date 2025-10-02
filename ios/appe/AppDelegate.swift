@@ -2,6 +2,7 @@ import UIKit
 import Firebase
 import UserNotifications
 
+@main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     var window: UIWindow?

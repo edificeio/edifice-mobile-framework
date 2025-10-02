@@ -42,7 +42,6 @@
 		AF33229B2DB137020021465B /* NabookPoppinsItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */; };
 		AF33229C2DB137020021465B /* NabookPoppinsRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */; };
 		F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */; };
-		F0551DBE2E86E8E7002F1F4E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F0551DBD2E86E8E7002F1F4E /* main.m */; };
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
 		F069BA6F2E86F29D00B3BA52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */; };
 		F06C18682B61837F00FBA3A2 /* splash-screen.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18652B61837F00FBA3A2 /* splash-screen.png */; };
@@ -115,7 +114,6 @@
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Comfortaa-Bold.ttf"; sourceTree = "<group>"; };
 		F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = appe/AppDelegate.swift; sourceTree = "<group>"; };
-		F0551DBD2E86E8E7002F1F4E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = appe/main.m; sourceTree = "<group>"; };
 		F062593D26454B14001AE555 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062593F26454B17001AE555 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062594026454B18001AE555 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */,
 				F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */,
 				F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */,
-				F0551DBD2E86E8E7002F1F4E /* main.m */,
 			);
 			name = appe;
 			sourceTree = "<group>";
@@ -636,7 +633,6 @@
 			files = (
 				F069BA6F2E86F29D00B3BA52 /* AppDelegate.swift in Sources */,
 				F0CB47612BC6BF83006A73F3 /* ZendeskUnified.mm in Sources */,
-				F0551DBE2E86E8E7002F1F4E /* main.m in Sources */,
 				F0CB47602BC6BF83006A73F3 /* ZendeskUnified.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
