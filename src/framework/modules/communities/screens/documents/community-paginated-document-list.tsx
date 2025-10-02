@@ -64,7 +64,7 @@ export function CommunityPaginatedDocumentFlatList({
     [_onPageReached],
   );
 
-  const { data, stickyItemsPadding } = React.useMemo(
+  const { data } = React.useMemo(
     () => createDecoratedArrayProxy(stickyElements, _data, paginatedListProps.numColumns),
     [stickyElements, _data, paginatedListProps.numColumns],
   );

@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   listHeader: {
     alignItems: 'center',
     flexDirection: 'row',
-    paddingHorizontal: UI_SIZES.spacing.minor,
+    position: 'absolute',
   },
   page: {
     flexShrink: 1,

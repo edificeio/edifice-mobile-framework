@@ -44,8 +44,7 @@ const FiltersList = <T extends BaseFilter>({ onChange, options, title }: Filters
 
   return (
     <FlatList
-      bottomInset={false}
-      contentContainerStyle={styles.content}
+      alwaysBounceVertical={false}
       data={options}
       keyExtractor={handleKeyExtraction}
       ListHeaderComponent={FiltersListTitle}

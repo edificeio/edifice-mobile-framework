@@ -13,6 +13,7 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import FiltersList from '~/framework/components/form/filters';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import bottomSheetModalStyles from '~/framework/components/modals/bottom-sheet/styles';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import { AVAILABLE_FILTERS } from '~/framework/modules/communities/screens/list/screen';
@@ -71,23 +72,21 @@ const ListFiltersBottomSheet = React.forwardRef<BottomSheetModalMethods, ListFil
     }, [_onValidate, closeBottomSheet, filtersData]);
 
     return (
-      <BottomSheetModal ref={ref} style={styles.bottomSheetPaddingBottom}>
-        <View style={styles.listHeader}>
-          <TouchableOpacity onPress={closeBottomSheet} style={styles.closeButton}>
-            <Svg
-              name="ui-close"
-              height={UI_SIZES.elements.icon.small}
-              width={UI_SIZES.elements.icon.small}
-              fill={theme.palette.grey.black}
-            />
-          </TouchableOpacity>
-          <TertiaryButton
-            action={onReset}
-            disabled={selectedFiltersCount === 0}
-            style={styles.resetButton}
-            text={I18n.get('filter-list-reset')}
-          />
-        </View>
+      <BottomSheetModal
+        ref={ref}
+        header={
+          <View style={bottomSheetModalStyles.header}>
+            <TouchableOpacity onPress={closeBottomSheet}>
+              <Svg
+                name="ui-close"
+                height={UI_SIZES.elements.icon.small}
+                width={UI_SIZES.elements.icon.small}
+                fill={theme.palette.grey.black}
+              />
+            </TouchableOpacity>
+            <TertiaryButton action={onReset} disabled={selectedFiltersCount === 0} text={I18n.get('filter-list-reset')} />
+          </View>
+        }>
         <FiltersList options={filtersData} onChange={setFiltersData} title={filtersListTitle} />
         <PrimaryButton
           action={onValidate}
