@@ -90,6 +90,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isSearchMode, setIsSearchMode] = React.useState<boolean>(false);
   const [selectedMails, setSelectedMails] = React.useState<string[]>([]);
   const [search, setSearch] = React.useState<string>('');
+  const [isDeletingFolder, setIsDeletingFolder] = React.useState<boolean>(false);
 
   const loadMails = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo, searchValue?: string) => {
@@ -170,10 +171,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onDismissBottomSheet = React.useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
-    if (typeModal) setTypeModal(undefined);
-    if (isSubfolder) setIsSubfolder(false);
-    if (idParentFolder) setIdParentFolder(undefined);
-    if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+    setTimeout(
+      () => {
+        if (typeModal) setTypeModal(undefined);
+        if (isSubfolder) setIsSubfolder(false);
+        if (idParentFolder) setIdParentFolder(undefined);
+        if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+      },
+      Platform.OS === 'android' ? 300 : 0,
+    );
   }, [typeModal, isSubfolder, idParentFolder, onErrorCreateFolder]);
 
   const switchFolder = React.useCallback(
@@ -315,6 +321,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       {
         onPress: async () => {
           try {
+            setIsDeletingFolder(true);
             await mailsService.folder.delete({ id: (selectedFolder as MailsFolderInfo).id });
             switchFolder(MailsDefaultFolders.INBOX);
             loadFolders();
@@ -322,6 +329,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           } catch (e) {
             console.error(e);
             toast.showError();
+          } finally {
+            setIsDeletingFolder(false);
           }
         },
         style: 'destructive',
@@ -524,17 +533,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         <NavBarActionsGroup
           elements={[
             <NavBarAction
+              disabled={isDeletingFolder}
               icon="ui-edit"
               onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })}
             />,
             <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
-              <NavBarAction icon="ui-options" />
+              <NavBarAction disabled={isDeletingFolder} icon="ui-options" />
             </PopupMenu>,
           ]}
         />
       ),
     });
-  }, [selectedFolder, navigation, props.navigation, allPopupActionsMenu]);
+  }, [selectedFolder, navigation, props.navigation, isDeletingFolder, allPopupActionsMenu]);
 
   React.useEffect(() => {
     props.navigation.setOptions({
