@@ -5,7 +5,7 @@ import { Temporal } from '@js-temporal/polyfill';
 import { AudienceProps } from '~/framework/modules/audience/components/types';
 import { INotificationMedia } from '~/framework/util/notifications';
 
-export interface PostProps {
+export interface PostDetailsProps {
   audience?: AudienceProps;
   author: {
     userId: string;

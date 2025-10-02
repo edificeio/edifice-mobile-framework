@@ -110,6 +110,30 @@ export const CommunitiesHomeScreenLoaded = function ({
       src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
       type: 'image',
     },
+    {
+      src: '/workspace/document/58f637a3-ff3d-454b-8f38-76dcd2e7c83b',
+      type: 'image',
+    },
+    {
+      src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
+      type: 'image',
+    },
+    {
+      src: '/workspace/document/58f637a3-ff3d-454b-8f38-76dcd2e7c83b',
+      type: 'image',
+    },
+    {
+      src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
+      type: 'image',
+    },
+    {
+      src: '/workspace/document/58f637a3-ff3d-454b-8f38-76dcd2e7c83b',
+      type: 'image',
+    },
+    {
+      src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
+      type: 'image',
+    },
   ];
 
   const mockVideos: INotificationMedia[] = [
@@ -121,6 +145,47 @@ export const CommunitiesHomeScreenLoaded = function ({
     //   src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
     //   type: 'image',
     // },
+  ];
+
+  const mockAudio: INotificationMedia[] = [
+    {
+      src: '/workspace/document/28b71f0c-ca67-450c-9c4c-1d8ab645a6ec',
+      type: 'audio',
+    },
+    {
+      src: '/workspace/document/c3d044e9-8070-455a-9829-434a02d7d51e',
+      type: 'audio',
+    },
+    {
+      src: '/workspace/document/7bb45220-7eb8-467c-894c-9272ab37180a',
+      type: 'audio',
+    },
+  ];
+
+  const mockPdfs: INotificationMedia[] = [
+    {
+      name: 'MonFichier1.pdf',
+      src: '/workspace/document/6e759db9-f2fc-4573-a507-0aba43015165',
+      type: 'attachment',
+    },
+    {
+      name: 'MonFichier2Avecuntitrevraimenttreslonglonglonglonglong.pdf',
+      src: '/workspace/document/7355784a-d409-4bd7-b35f-b03cc684fd60',
+      type: 'attachment',
+    },
+    {
+      name: 'MonFichier3.pdf',
+      src: '/workspace/document/6d357098-9a3f-4fd1-80d9-455ea6ac68be',
+      type: 'attachment',
+    },
+  ];
+
+  const mockSinglePdf: INotificationMedia[] = [
+    {
+      name: 'MonFichier1.pdf',
+      src: '/workspace/document/6e759db9-f2fc-4573-a507-0aba43015165',
+      type: 'attachment',
+    },
   ];
 
   const mockAnnouncements = [
@@ -173,6 +238,79 @@ export const CommunitiesHomeScreenLoaded = function ({
       media: mockVideos,
       resourceId: 'announcement-2',
       title: "Titre de l'annonce test2",
+    },
+    {
+      audience: {
+        infosReactions: {
+          total: 12,
+          types: [] as string[],
+          userReaction: '',
+        },
+        referer: {
+          module: 'communities',
+          resourceId: 'announcement-3',
+          resourceType: 'announcement',
+        },
+        session: session,
+      },
+      author: {
+        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
+        username: 'Auteur Test3',
+      },
+      content:
+        "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
+      date: Temporal.Instant.from('2025-03-01T14:30:00Z'),
+      media: mockAudio,
+      resourceId: 'announcement-3',
+      title: "Titre de l'annonce test3",
+    },
+    {
+      audience: {
+        infosReactions: {
+          total: 12,
+          types: [] as string[],
+          userReaction: '',
+        },
+        referer: {
+          module: 'communities',
+          resourceId: 'announcement-4',
+          resourceType: 'announcement',
+        },
+        session: session,
+      },
+      author: {
+        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
+        username: 'Auteur Test4',
+      },
+      content: '<p>Plusieurs pdfs</p>',
+      date: Temporal.Instant.from('2025-03-01T14:30:00Z'),
+      media: mockPdfs,
+      resourceId: 'announcement-4',
+      title: "Titre de l'annonce test4",
+    },
+    {
+      audience: {
+        infosReactions: {
+          total: 12,
+          types: [] as string[],
+          userReaction: '',
+        },
+        referer: {
+          module: 'communities',
+          resourceId: 'announcement-5',
+          resourceType: 'announcement',
+        },
+        session: session,
+      },
+      author: {
+        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
+        username: 'Auteur Test5',
+      },
+      content: '<p>Un seul pdf</p>',
+      date: Temporal.Instant.from('2025-03-01T14:30:00Z'),
+      media: mockSinglePdf,
+      resourceId: 'announcement-5',
+      title: "Titre de l'annonce test5",
     },
   ];
 

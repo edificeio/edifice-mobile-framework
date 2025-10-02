@@ -6,19 +6,19 @@ import styles from './styles';
 import { I18n } from '~/app/i18n';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import PostDetails from '~/framework/components/card/post/details';
-import type { PostProps } from '~/framework/components/card/post/details/types';
+import type { PostDetailsProps } from '~/framework/components/card/post/details/types';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { PaginatedFlashList } from '~/framework/components/list/paginated-list';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { ESTIMATED_LIST_SIZE, getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 
 interface AnnouncementListProps {
-  announcements: PostProps[];
+  announcements: PostDetailsProps[];
 }
 
 const PAGE_SIZE = 20;
 
-const PostHeader = ({ author, date }: Pick<PostProps, 'author' | 'date'>) => {
+const PostHeader = ({ author, date }: Pick<PostDetailsProps, 'author' | 'date'>) => {
   const displayedDate = React.useMemo(() => (date ? I18n.date(date) : ''), [date]);
 
   return (
@@ -34,7 +34,7 @@ const PostHeader = ({ author, date }: Pick<PostProps, 'author' | 'date'>) => {
   );
 };
 
-const AnnouncementListItem = ({ announcement, style }: { announcement: PostProps; style?: ViewProps['style'] }) => {
+const AnnouncementListItem = ({ announcement, style }: { announcement: PostDetailsProps; style?: ViewProps['style'] }) => {
   return (
     <PostDetails
       {...announcement}
@@ -47,7 +47,7 @@ const AnnouncementListItem = ({ announcement, style }: { announcement: PostProps
 
 const AnnouncementsList = ({ announcements }: Readonly<AnnouncementListProps>) => {
   const renderItem = React.useCallback(
-    ({ index, item }: { index: number; item: PostProps }) => {
+    ({ index, item }: { index: number; item: PostDetailsProps }) => {
       const itemSeparator = getItemSeparatorStyle(index, announcements.length, styles.itemSeparator);
       const itemStyle = [styles.itemContainer, itemSeparator];
 
