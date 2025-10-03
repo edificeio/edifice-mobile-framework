@@ -1,8 +1,8 @@
 diff --git a/node_modules/react-native-toast-message/lib/src/Toast.d.ts b/node_modules/react-native-toast-message/lib/src/Toast.d.ts
-index 3efe69b..370db3e 100644
+index 57ff2f5..1479758 100644
 --- a/node_modules/react-native-toast-message/lib/src/Toast.d.ts
 +++ b/node_modules/react-native-toast-message/lib/src/Toast.d.ts
-@@ -4,4 +4,6 @@ export declare function Toast(props: ToastProps): JSX.Element;
+@@ -4,4 +4,6 @@ export declare function Toast(props: ToastProps): React.ReactElement;
  export declare namespace Toast {
      var show: (params: ToastShowParams) => void;
      var hide: (params?: void | undefined) => void;
@@ -10,10 +10,14 @@ index 3efe69b..370db3e 100644
 +    var resume: () => void;
  }
 diff --git a/node_modules/react-native-toast-message/lib/src/Toast.js b/node_modules/react-native-toast-message/lib/src/Toast.js
-index 0559ce5..24edbf8 100644
+index 8dcaf94..38ccb37 100644
 --- a/node_modules/react-native-toast-message/lib/src/Toast.js
 +++ b/node_modules/react-native-toast-message/lib/src/Toast.js
-@@ -4,15 +4,17 @@ import { ToastUI } from './ToastUI';
+@@ -1,18 +1,20 @@
+ import React from 'react';
+-import { LoggerProvider, GestureProvider } from './contexts';
++import { GestureProvider, LoggerProvider } from './contexts';
+ import { ToastUI } from './ToastUI';
  import { useToast } from './useToast';
  const ToastRoot = React.forwardRef((props, ref) => {
      const { config, ...defaultOptions } = props;
@@ -35,7 +39,7 @@ index 0559ce5..24edbf8 100644
  });
  let refs = [];
  /**
-@@ -87,3 +89,9 @@ Toast.show = (params) => {
+@@ -89,3 +91,9 @@ Toast.show = (params) => {
  Toast.hide = (params) => {
      getRef()?.hide(params);
  };
@@ -46,9 +50,16 @@ index 0559ce5..24edbf8 100644
 +    getRef()?.resume();
 +};
 diff --git a/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js b/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
-index 1694188..2e62250 100644
+index a780f88..265f3ae 100644
 --- a/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
 +++ b/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
+@@ -1,5 +1,5 @@
+ import React from 'react';
+-import { Animated, Platform } from 'react-native';
++import { Animated } from 'react-native';
+ import { additiveInverseArray } from '../utils/array';
+ import { useKeyboard } from './useKeyboard';
+ export function translateYOutputRangeFor({ position, height, topOffset, bottomOffset, keyboardHeight, keyboardOffset, avoidKeyboard }) {
 @@ -9,10 +9,8 @@ export function translateYOutputRangeFor({ position, height, topOffset, bottomOf
      const outputRange = position === 'bottom' ? additiveInverseArray(range) : range;
      return outputRange;
@@ -59,7 +70,7 @@ index 1694188..2e62250 100644
 -});
 +const useNativeDriver = false;
 +
- export function useSlideAnimation({ position, height, topOffset, bottomOffset, keyboardOffset }) {
+ export function useSlideAnimation({ position, height, topOffset, bottomOffset, keyboardOffset, avoidKeyboard }) {
      const animatedValue = React.useRef(new Animated.Value(0));
      const { keyboardHeight } = useKeyboard();
 diff --git a/node_modules/react-native-toast-message/lib/src/hooks/useTimeout.d.ts b/node_modules/react-native-toast-message/lib/src/hooks/useTimeout.d.ts
@@ -105,19 +116,26 @@ index 12bff36..e81f28f 100644
 +    resume: () => void;
  };
 diff --git a/node_modules/react-native-toast-message/lib/src/useToast.js b/node_modules/react-native-toast-message/lib/src/useToast.js
-index 12a44a0..56234b2 100644
+index e00f16c..5625835 100644
 --- a/node_modules/react-native-toast-message/lib/src/useToast.js
 +++ b/node_modules/react-native-toast-message/lib/src/useToast.js
-@@ -29,6 +29,8 @@ export function useToast({ defaultOptions }) {
-     const [data, setData] = React.useState(DEFAULT_DATA);
-     const initialOptions = mergeIfDefined(DEFAULT_OPTIONS, defaultOptions);
-     const [options, setOptions] = React.useState(initialOptions);
+@@ -1,5 +1,5 @@
+ import React from 'react';
+-import { useLogger, useGesture } from './contexts';
++import { useGesture, useLogger } from './contexts';
+ import { useTimeout } from './hooks';
+ import { noop } from './utils/func';
+ import { mergeIfDefined } from './utils/obj';
+@@ -25,6 +25,8 @@ export const DEFAULT_OPTIONS = {
+     props: {}
+ };
+ export function useToast({ defaultOptions }) {
 +    const showTime = React.useRef(0);
 +    const remainingTime = React.useRef(0);
-     const onAutoHide = React.useCallback(() => {
-         log('Auto hiding');
-         setIsVisible(false);
-@@ -68,7 +70,17 @@ export function useToast({ defaultOptions }) {
+     const { log } = useLogger();
+     const { panning } = useGesture();
+     const [isVisible, setIsVisible] = React.useState(false);
+@@ -76,7 +78,17 @@ export function useToast({ defaultOptions }) {
          // TODO: use a queue when Toast is already visible
          setIsVisible(true);
          onShow();
@@ -125,7 +143,7 @@ index 12a44a0..56234b2 100644
 +        remainingTime.current = visibilityTime ?? initialOptions.visibilityTime;
      }, [initialOptions, log]);
 +    const pause = React.useCallback(() => {
-+        remainingTime.current = remainingTime.current - (Date.now() - showTime.current);
++    remainingTime.current = remainingTime.current - (Date.now() - showTime.current);
 +        clearTimer();
 +    }, []);
 +    const resume = React.useCallback(() => {
@@ -135,7 +153,7 @@ index 12a44a0..56234b2 100644
      React.useEffect(() => {
          const { autoHide } = options;
          if (isVisible) {
-@@ -85,6 +97,8 @@ export function useToast({ defaultOptions }) {
+@@ -93,6 +105,8 @@ export function useToast({ defaultOptions }) {
          data,
          options,
          show,
