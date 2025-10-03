@@ -62,7 +62,7 @@ apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 def enableProguardInReleaseBuilds = true
 def enableSeparateBuildPerCPUArchitecture = false
-def jscFlavor = 'org.webkit:android-jsc:+'
+def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 def reactNativeArchitectures() {
     def value = project.getProperties().get("reactNativeArchitectures")
@@ -87,11 +87,11 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1150400
+        versionCode 1150401
         versionName "1.15.4"
         manifestPlaceholders.applicationName = APPNAME
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"\""
+        buildConfigField "String", "BundleVersionType", "\"alpha.1\""
         resValue "string", "app_name", "${APPNAME}"
         ndk {
             debugSymbolLevel 'FULL'
@@ -142,7 +142,7 @@ android {
 
 dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("com.facebook.react:react-android")
+    implementation("com.facebook.react:react-android:0.78.3")
     implementation("com.fasterxml.jackson.core:jackson-core:2.11.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.11.1")
     implementation("com.google.android.gms:play-services-base:18.6.0")
