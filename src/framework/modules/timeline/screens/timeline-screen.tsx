@@ -334,7 +334,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
     this.props.navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.navigate(userRouteNames.home)}>
+        <TouchableOpacity onPress={() => navigation.navigate(userRouteNames.home)} testID="timeline-profile-button">
           <SingleAvatar size="md" userId={session?.user.id || ''} />
         </TouchableOpacity>
       ),
