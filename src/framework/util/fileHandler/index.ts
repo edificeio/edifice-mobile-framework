@@ -127,8 +127,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     try {
       await assertPermissions('galery.read');
       const pics = await ImagePicker.openPicker({
-        maxFiles: 0,
-        multiple, // Default value is 5 somewhere in the third-party package, so we must set it to 0 here to allow unlimited selection.
+        maxFiles: 999, // Default value is 5 somewhere in the third-party package, so we must set it to some high value here to allow """unlimited""" selection.
+        multiple,
       });
 
       pickedFiles = await processImages(pics);
