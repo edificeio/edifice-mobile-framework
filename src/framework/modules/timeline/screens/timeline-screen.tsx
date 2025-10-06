@@ -12,7 +12,7 @@ import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { cardPaddingMerging } from '~/framework/components/card/base';
-import { UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -334,7 +334,11 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
     this.props.navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.navigate(userRouteNames.home)} testID="timeline-profile-button">
+        <TouchableOpacity
+          onPress={() => navigation.navigate(userRouteNames.home)}
+          testID="timeline-profile-button"
+          // Style here is needed to prevent Android autocropping border of avatar
+          style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
           <SingleAvatar size="md" userId={session?.user.id || ''} />
         </TouchableOpacity>
       ),
