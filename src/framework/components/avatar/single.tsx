@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Image, ImageProps, View } from 'react-native';
+import { Image, ImageProps, StyleSheet, View } from 'react-native';
 
-import styles from './styles';
 import {
   CommonSingleAvatarProps,
   SingleAvatarOnlySpecificProps,
@@ -9,43 +8,53 @@ import {
   SingleAvatarUnknownSpecificProps,
   SingleDefaultAvatarProps,
   SingleGroupAvatarProps,
-  SingleGroupAvatarSpecificProps,
   SingleSourceAvatarProps,
   SingleSourceAvatarSpecificProps,
   SingleSvgAvatarProps,
-  SingleSvgAvatarSpecificProps,
   SingleUserAvatarSpecificProps,
 } from './types';
 
 import theme from '~/app/theme';
-import { AvatarSizes } from '~/framework/components/avatar/styles';
+import styles, { AvatarSizes } from '~/framework/components/avatar/styles';
 import { UI_SIZES } from '~/framework/components/constants';
-import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { urlSigner } from '~/infra/oauth';
 
-const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
+const useAvatarStyle = ({ border = true, size, style }: Pick<SingleAvatarProps, 'size' | 'style' | 'border'>) => {
   return React.useMemo(
     () => [
-      props.style,
+      style,
       {
-        aspectRatio: 1,
+        alignItems: 'stretch' as const,
         backgroundColor: theme.ui.background.card,
-        borderRadius: AvatarSizes[props.size] / 2,
-        width: AvatarSizes[props.size],
+        overflow: 'hidden' as const,
       },
+      border
+        ? {
+            borderRadius: (AvatarSizes[size] + UI_SIZES.border.small) / 2,
+            height: AvatarSizes[size] + UI_SIZES.border.small * 2,
+            margin: -UI_SIZES.border.small,
+            padding: UI_SIZES.border.small,
+            width: AvatarSizes[size] + UI_SIZES.border.small * 2,
+          }
+        : {
+            borderRadius: AvatarSizes[size] / 2,
+            height: AvatarSizes[size],
+            width: AvatarSizes[size],
+          },
     ],
-    [props.size, props.style],
+    [size, style, border],
   );
 };
 
 const fallbackSource: ImageProps['source'] = require('ASSETS/images/no-avatar.png');
 
-export const buildRelativeUserAvatarUrl = (id: string) => `/userbook/avatar/${id}`;
+export const buildRelativeUserAvatarUrl = (id: string) => `/userbook/avatar/${id}?thumbnail=100x100`;
 export const buildAbsoluteUserAvatarUrl = (id: string) => urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id));
 export const buildAbsoluteUserAvatarUrlWithPlatform = (id: string, platform?: Platform) =>
   platform ? urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id), platform) : undefined;
-export const buildAvatarSourceForAccount = (account: AuthSavedAccount | AuthLoggedAccount) => {
+export const buildAvatarSourceForAccount = (account: AuthSavedAccount | AuthActiveAccount) => {
   const uri = buildAbsoluteUserAvatarUrlWithPlatform(account.user.id, appConf.getExpandedPlatform(account.platform));
   return uri
     ? {
@@ -58,10 +67,10 @@ const isUserAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleUser
   (props as Partial<SingleUserAvatarSpecificProps>).userId !== undefined;
 const isSourceAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleSourceAvatarSpecificProps =>
   (props as Partial<SingleSourceAvatarSpecificProps>).source !== undefined;
-const isSvgAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleSvgAvatarSpecificProps =>
-  (props as Partial<SingleSvgAvatarSpecificProps>).svg !== undefined;
-const isGroupAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleGroupAvatarSpecificProps =>
-  (props as Partial<SingleGroupAvatarSpecificProps>).group === true;
+// const isSvgAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleSvgAvatarSpecificProps =>
+//   (props as Partial<SingleSvgAvatarSpecificProps>).svg !== undefined;
+// const isGroupAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleGroupAvatarSpecificProps =>
+//   (props as Partial<SingleGroupAvatarSpecificProps>).group === true;
 
 const commonSourceAttributes: ImageProps['source'] = {};
 
@@ -90,7 +99,7 @@ const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
   error: boolean,
 ): ImageProps['source'] =>
   React.useMemo(
-    () => getAvatarImage(props as SingleAvatarOnlySpecificProps, error),
+    () => getAvatarImage(props, error),
     // Here we memo on only specific props that can issue to image changes, without rebuild the object.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
@@ -107,6 +116,8 @@ const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
   );
 
 const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatarProps => {
+  // Remove props that are for specific avatar types
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { group, id, source, svg, ...commonProps } = props as SingleAvatarProps &
     SingleSourceAvatarProps &
     SingleSvgAvatarProps &
@@ -116,46 +127,47 @@ const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatar
 };
 
 export function SingleAvatar(props: SingleAvatarProps) {
-  const { size, style, ...otherProps } = removeAvatarSpecificProps(props);
+  const { border = true, overlay, size, style, ...otherProps } = removeAvatarSpecificProps(props);
 
   const [error, setError] = React.useState(false);
   const onError = React.useCallback(() => {
     setError(true);
   }, []);
 
-  const sizeValue = AvatarSizes[props.size];
-  const sizeContainer = React.useMemo(
-    () => (props.border ? sizeValue + UI_SIZES.border.small * 2 : sizeValue),
-    [props.border, sizeValue],
+  const wrapperStyle = useAvatarStyle({ border, size, style });
+  const imageStyle = React.useMemo(
+    () => [
+      styles.innerImage,
+      {
+        borderRadius: AvatarSizes[size] / 2,
+      },
+    ],
+    [size],
   );
-  const computedStyle = useAvatarStyle(props);
+  const overlayStyle = React.useMemo(
+    () => [
+      styles.overlay,
+      border
+        ? {
+            borderRadius: AvatarSizes[size] / 2,
+            bottom: UI_SIZES.border.small,
+            left: UI_SIZES.border.small,
+            right: UI_SIZES.border.small,
+            top: UI_SIZES.border.small,
+          }
+        : {
+            borderRadius: AvatarSizes[size] / 2,
+            ...StyleSheet.absoluteFillObject,
+          },
+    ],
+    [border, size],
+  );
   const imageSource = useAvatarImage(props as SingleAvatarOnlySpecificProps, error);
 
-  const sizeBorderStyles: any = React.useMemo(
-    () => ({
-      borderRadius: sizeContainer / 2,
-      width: sizeContainer,
-    }),
-    [sizeContainer],
-  );
-
-  const sizeContainerStyles: any = React.useMemo(
-    () => ({
-      height: sizeContainer,
-      width: sizeContainer,
-    }),
-    [sizeContainer],
-  );
-
-  const renderBorder = React.useCallback(() => {
-    if (!props.border) return null;
-    return <View style={[styles.border, sizeBorderStyles]} />;
-  }, [props.border, sizeBorderStyles]);
-
   return (
-    <View style={[styles.container, sizeContainerStyles]}>
-      {renderBorder()}
-      <Image style={computedStyle} source={imageSource} onError={onError} {...otherProps} />
+    <View style={wrapperStyle}>
+      <Image style={imageStyle} source={imageSource} onError={onError} {...otherProps} />
+      {overlay && <View style={overlayStyle}>{overlay}</View>}
     </View>
   );
 }

@@ -57,9 +57,9 @@ import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/m
 
 const Tab = createBottomTabNavigator();
 
-const PictureWithXmas = connect((state: IGlobalState) => ({
-  isXmas: getIsXmasActive(state),
-}))((props: PictureProps & IconProps & { isXmas?: boolean; focused: boolean }) => {
+const PictureWithXmas = connect((state: IGlobalState) => ({ isXmas: getIsXmasActive(state) }))((
+  props: PictureProps & IconProps & { isXmas?: boolean; focused: boolean },
+) => {
   const { isXmas, name, ...other } = props;
   return <Picture {...other} name={`${isXmas ? 'xmas-' : ''}${name}`} />;
 });
@@ -68,7 +68,7 @@ const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
   props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
-  let dp: Partial<PictureProps> = { ...moduleConfig.displayPicture };
+  let dp: Partial<PictureProps> = { ...moduleConfig.displayPictureBlur };
   props.size = UI_SIZES.elements.tabbarIconSize;
 
   if (dp.type === 'Image') {
@@ -85,7 +85,7 @@ const createTabIcon = (
   }
 
   if (props.focused) {
-    dp = { ...dp, ...moduleConfig.displayPictureFocus } as Partial<PictureProps>;
+    dp = { ...dp, ...moduleConfig.displayPictureFocus, fill: props.color } as Partial<PictureProps>;
   }
 
   return <PictureWithXmas {...(dp as PictureProps)} />;
@@ -222,11 +222,7 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
           // 😡 F U React Nav 6, using plain string instead of ColorValue
           tabBarInactiveTintColor: theme.ui.text.light.toString(),
 
-          tabBarLabelStyle: {
-            fontSize: 12,
-            lineHeight: undefined,
-            marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom,
-          },
+          tabBarLabelStyle: { fontSize: 12, lineHeight: undefined, marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom },
 
           tabBarStyle: {
             backgroundColor: theme.ui.background.card,
