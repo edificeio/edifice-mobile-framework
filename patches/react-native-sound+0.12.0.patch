@@ -1,0 +1,84 @@
+diff --git a/node_modules/react-native-sound/ios/RNSound.mm b/node_modules/react-native-sound/ios/RNSound.mm
+index 94b2335..bf3e8c2 100644
+--- a/node_modules/react-native-sound/ios/RNSound.mm
++++ b/node_modules/react-native-sound/ios/RNSound.mm
+@@ -142,12 +142,12 @@ - (NSString *)modeForName:(NSString *)modeName {
+     return modes[modeName];
+ }
+ 
+-RCT_EXPORT_METHOD(setCategory:(NSString *)categoryName mixWithOthers:(NSNumber *)mixWithOthers) {
++RCT_EXPORT_METHOD(setCategory:(NSString *)categoryName mixWithOthers:(BOOL)mixWithOthers) {
+     AVAudioSession *session = [AVAudioSession sharedInstance];
+     NSString *category = [self categoryForName:categoryName];
+     
+     if (category) {
+-        if (mixWithOthers.boolValue) {
++        if (mixWithOthers) {
+             [session setCategory:category
+                      withOptions:AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionAllowBluetooth
+                            error:nil];
+@@ -177,7 +177,11 @@ - (NSString *)categoryForName:(NSString *)categoryName {
+ 
+ #pragma mark - Audio Control Methods
+ 
++#ifdef RCT_NEW_ARCH_ENABLED
+ RCT_EXPORT_METHOD(prepare:(NSString *)fileName key:(double)key options:(JS::NativeSoundIOS::SoundOptionTypes &)options callback:(RCTResponseSenderBlock)callback ) {
++#else
++RCT_EXPORT_METHOD(prepare:(NSString *)fileName key:(double)key options:(NSDictionary *)options callback:(RCTResponseSenderBlock)callback ) {
++#endif
+     NSError *error;
+     NSURL *fileNameUrl;
+     AVAudioPlayer *player;
+@@ -342,10 +346,6 @@ - (void)setSpeed:(double)key speed:(double)speed {
+ 
+ #pragma mark - Event Handling
+ 
+-- (NSDictionary *)getDirectories {
+-    return [self constantsToExport];
+-}
+-
+ - (void)setOnPlay:(BOOL)isPlaying forPlayerKey:(double)playerKey {
+     [self sendEventWithName:@"onPlayChange"
+                        body:@{
+diff --git a/node_modules/react-native-sound/src/index.ts b/node_modules/react-native-sound/src/index.ts
+index 3b50e00..65e7ab6 100644
+--- a/node_modules/react-native-sound/src/index.ts
++++ b/node_modules/react-native-sound/src/index.ts
+@@ -15,7 +15,7 @@ const LINKING_ERROR =
+   "- You rebuilt the app after installing the package\n" +
+   "- You are not using Expo Go\n";
+ 
+-// @ts-expect-error
++// @ts-expect-error __turboModuleProxy is not defined in the type definitions
+ const SoundModule = global.__turboModuleProxy
+   ? IsAndroid
+     ? require("./NativeSoundAndroid").default
+@@ -51,6 +51,8 @@ let nextKey = 0;
+ 
+ const eventEmitter = new NativeEventEmitter(RNSound);
+ 
++const RNSoundConstants = RNSound.getConstants();
++
+ class Sound {
+   private _filename: string;
+   private _key: number;
+@@ -378,15 +380,15 @@ class Sound {
+ 
+   public static MAIN_BUNDLE = IsAndroid
+     ? ""
+-    : RNSound.getDirectories().MainBundlePath;
++    : RNSoundConstants.MainBundlePath;
+   public static DOCUMENT = IsAndroid
+     ? ""
+-    : RNSound.getDirectories().NSDocumentDirectory;
++    : RNSoundConstants.NSDocumentDirectory;
+   public static LIBRARY = IsAndroid
+     ? ""
+-    : RNSound.getDirectories().NSLibraryDirectory;
++    : RNSoundConstants.NSLibraryDirectory;
+   public static CACHES = IsAndroid
+     ? ""
+-    : RNSound.getDirectories().NSCachesDirectory;
++    : RNSoundConstants.NSCachesDirectory;
+ }
+ export default Sound;

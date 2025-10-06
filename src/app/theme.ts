@@ -93,6 +93,11 @@ export interface ITheme {
       listItem: ColorValue;
       input: ColorValue;
     };
+    overlay: {
+      medium: ColorValue;
+      light: ColorValue;
+      bar: ColorValue;
+    };
     text: {
       regular: ColorValue;
       light: ColorValue;
