@@ -94,7 +94,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       headerTitle: navBarTitle('', undefined, undefined, 1, 2),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [to, cc, cci, subject, draftIdSaved, onCheckSend]);
+  }, [to, cc, cci, subject, shouldSaveDraft, draftIdSaved, onCheckSend]);
 
   const renderTopForm = React.useCallback(() => {
     const commonProps = {

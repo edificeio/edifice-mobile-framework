@@ -41,3 +41,8 @@ export interface UseMailsEditControllerParams {
 export interface MailsEditScreenPrivateProps extends NativeStackScreenProps<MailsNavigationParams, 'edit'>, MailsEditScreenProps {
   // @scaffolder add HOC props here
 }
+export interface NavPayload {
+  name?: string;
+  screen?: string;
+  params?: { screen?: string };
+}

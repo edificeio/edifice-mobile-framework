@@ -3,7 +3,7 @@ import { Alert, Keyboard, ScrollView } from 'react-native';
 
 import moment from 'moment';
 
-import { MailsEditType, UseMailsEditControllerParams } from './types';
+import { MailsEditType, NavPayload, UseMailsEditControllerParams } from './types';
 
 import { I18n } from '~/app/i18n';
 import { RichEditor } from '~/framework/components/inputs/rich-text';
@@ -20,6 +20,7 @@ import {
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
 } from '~/framework/modules/mails/util';
+import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
 const convertDraftRecipients = (recipients: MailsRecipients): MailsVisible[] => {
@@ -86,6 +87,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     const signatureText = extractText(signatureContent).trim();
 
     const effectiveBody = bodyText && bodyText !== signatureText ? bodyText : '';
+    const hasImage = /<img\b[^>]*src=["']?([^>"']+)["']?[^>]*>/i.test(bodyContent);
 
     return (
       to.length > 0 ||
@@ -93,7 +95,8 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       cci.length > 0 ||
       subject.trim().length > 0 ||
       attachments.length > 0 ||
-      effectiveBody.length > 0
+      effectiveBody.length > 0 ||
+      hasImage
     );
   }, [to, cc, cci, subject, attachments, bodyContent, signatureContent]);
 
@@ -476,6 +479,53 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       navigation.setParams({ importAttachmentsResult: undefined });
     }
   }, [route.params?.importAttachmentsResult, navigation]);
+
+  React.useEffect(() => {
+    let createdDraftId: string | undefined;
+
+    const createInitialDraft = async () => {
+      try {
+        if (!draftIdSaved) {
+          const newDraftId = await mailsService.mail.sendToDraft({}, { body: '', cc: [], cci: [], subject: '', to: [] });
+          createdDraftId = newDraftId;
+          setDraftIdSaved(newDraftId);
+        }
+      } catch (err) {
+        console.error('[MAILS_EDIT] Failed to create initial draft', err);
+        toast.showError(I18n.get('mails-edit-error-createdraft'));
+      }
+    };
+
+    createInitialDraft();
+
+    const unsubscribe = navigation.addListener('beforeRemove', async e => {
+      const action = e.data?.action;
+
+      const payload = action?.payload as NavPayload | undefined;
+      const destName = action?.type === 'NAVIGATE' ? (payload?.name ?? payload?.screen ?? payload?.params?.screen) : undefined;
+
+      if (destName === ModalsRouteNames.AttachmentsImport) {
+        console.debug('[MAILS_EDIT] Skipping cleanup');
+        return;
+      }
+
+      const currentDraftId = draftIdSaved || createdDraftId;
+      if (currentDraftId && !hasAnyContent) {
+        try {
+          await mailsService.mail.moveToTrash({ ids: [currentDraftId] });
+          navigation.navigate(mailsRouteNames.home, {
+            from: fromFolder,
+            reload: true,
+          });
+        } catch (err) {
+          console.error('[MAILS_EDIT] Failed to delete empty draft', err);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation, hasAnyContent]);
 
   return {
     actions: {
