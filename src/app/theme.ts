@@ -91,6 +91,11 @@ export interface ITheme {
       listItem: ColorValue;
       input: ColorValue;
     };
+    overlay: {
+      medium: ColorValue;
+      light: ColorValue;
+      bar: ColorValue;
+    };
     text: {
       regular: ColorValue;
       light: ColorValue;
@@ -321,6 +326,11 @@ export const defaultTheme: ThemeInitializer = {
         listItem: this.palette.grey.cloudy,
       },
       notificationBadge: this.palette.complementary.red.regular,
+      overlay: {
+        bar: '#ffffffaf',
+        light: '#0000008c',
+        medium: '#000000af',
+      },
       shadowColor: '#000',
       shadowColorTransparent: '#000000af',
       text: {

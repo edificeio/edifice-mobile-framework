@@ -8,6 +8,8 @@ export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>
   displayColor: theme.apps.homeworks.accentColors,
   displayI18n: 'homework',
   displayPicture: theme.apps.homeworks.icon,
+  displayPictureBlur: { name: 'diary-outline', type: 'Svg' },
+  displayPictureFocus: { name: 'diary-fill', type: 'Svg' },
   entcoreScope: ['homeworks'],
 
   matchEntcoreApp: '/homeworks',
