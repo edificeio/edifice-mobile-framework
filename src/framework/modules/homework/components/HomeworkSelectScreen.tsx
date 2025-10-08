@@ -7,7 +7,7 @@ import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { moduleColor } from '~/framework/modules/homework/module-config';
+import moduleConfig from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
@@ -83,7 +83,11 @@ export class HomeworkSelectScreen extends React.PureComponent<HomeworkSelectScre
         emptyComponent={this.renderEmptyDiaryList}
         onRefresh={onRefresh}
         onPressItem={this.onPressDiary}
-        defaultThumbnail={{ background: moduleColor.pale, fill: moduleColor.regular, name: 'homework1D' }}
+        defaultThumbnail={{
+          background: moduleConfig.displayColor.pale,
+          fill: moduleConfig.displayColor.regular,
+          name: 'homework1D',
+        }}
       />
     );
   }

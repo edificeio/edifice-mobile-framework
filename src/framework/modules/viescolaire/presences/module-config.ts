@@ -16,8 +16,9 @@ function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
 
 export default new NavigableModuleConfig<'presences', PresencesReduxState>({
   displayAs: 'myAppsModule',
+  displayColor: theme.apps.presences.accentColors,
   displayI18n: 'presences-moduleconfig-appname',
-  displayPicture: { fill: theme.palette.complementary.yellow.regular, name: 'presences', type: 'Svg' },
+  displayPicture: theme.apps.presences.icon,
   entcoreScope: ['presences'],
 
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),

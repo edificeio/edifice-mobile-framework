@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, View, ViewStyle } from 'react-native';
 
 import { MenuView } from '@react-native-menu/menu';
 
@@ -19,11 +19,21 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
     };
   });
 
+  if (props.disabled) {
+    return (
+      <View style={{ opacity: 0.5 } as ViewStyle} pointerEvents="none">
+        {props.children}
+      </View>
+    );
+  }
+
   return (
     <View>
       <MenuView
         isAnchoredToRight
         onPressAction={({ nativeEvent }) => {
+          if (props.disabled) return;
+
           props.actions[+nativeEvent.event].action();
         }}
         actions={actionsPopup}>
