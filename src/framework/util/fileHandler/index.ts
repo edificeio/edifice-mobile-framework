@@ -9,7 +9,7 @@ import DocumentPicker, { DocumentPickerResponse } from '@react-native-documents/
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
-import ImagePicker, { Image } from 'react-native-image-crop-picker';
+import ImagePicker, { Image, ImageOrVideo } from 'react-native-image-crop-picker';
 
 import { openDocument } from './actions';
 import { Asset } from './types';
@@ -130,6 +130,13 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         maxFiles: 999, // Default value is 5 somewhere in the third-party package, so we must set it to some high value here to allow """unlimited""" selection.
         multiple,
       });
+
+      // Sort picked files by ascending modification date
+      if (Array.isArray(pics)) {
+        (pics as ImageOrVideo[]).sort((a, b) =>
+          !a.modificationDate ? -1 : !b.modificationDate ? 1 : a.modificationDate.localeCompare(b.modificationDate),
+        );
+      }
 
       pickedFiles = await processImages(pics);
 

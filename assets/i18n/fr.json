@@ -835,6 +835,7 @@
   "import-confirm-button": "OK ({{count}})",
   "import-error-filetoolarge": "Espace de stockage insuffisant",
   "import-title": "Importer",
+  "import-order-by-info": "Vos fichiers sont ordonnés selon leur date de création.",
   "import-title-multipleimages": "Importer {{count}} images",
   "import-title-singleimage": "Importer {{count}} image",
   "import-title_other": "Importer ({{count}})",
