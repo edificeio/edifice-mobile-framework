@@ -113,7 +113,7 @@ export const mailsService = {
       const data = await sessionFetch.json<{ id: string }>(api, { body: bodyJson, method: 'POST' });
 
       const api2 = `/conversation/message/${data.id}/forward/${params.id}`;
-      await sessionFetch.json(api2, { method: 'PUT' });
+      await sessionFetch(api2, { method: 'PUT' });
       return data.id;
     },
     get: async (params: { id: string; originalFormat?: boolean }) => {
