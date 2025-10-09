@@ -256,7 +256,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     ) : (
       <View />
     );
-  }, [doPublishComment, hasPermissionComment, indexEditingComment, infoComment, news]);
+  }, [doPublishComment, hasPermissionComment, indexEditingComment, news]);
 
   const renderNewsDetails = useCallback(() => {
     if (news && thread) {
@@ -292,7 +292,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         </ResourceView>
       );
     }
-  }, [comments?.length, news, thread]);
+  }, [news, thread, comments]);
 
   const renderComment = useCallback(
     (comment: NewsCommentItem) => {
@@ -331,7 +331,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         />
       );
     },
-    [commentFieldRefs, comments, doDeleteComment, doEditComment, infoComment.value, isThreadManager, news],
+    [commentFieldRefs, comments, doDeleteComment, doEditComment, isThreadManager, news],
   );
 
   const renderPage = useCallback(() => {
@@ -361,7 +361,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         {Platform.select({ android: null, ios: renderFooter() })}
       </>
     );
-  }, [ListComponent, comments, loadingState, news?.id, onRefresh, renderComment, renderError, renderFooter, renderNewsDetails]);
+  }, [ListComponent, comments, loadingState, news, onRefresh, renderComment, renderError, renderFooter, renderNewsDetails]);
 
   useEffect(() => {
     if (hasPermissionDelete) {

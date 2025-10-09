@@ -5,11 +5,11 @@ import { Alert, Platform } from 'react-native';
 
 import ImageResizer, { Response } from '@bam.tech/react-native-image-resizer';
 import getPath from '@flyerhq/react-native-android-uri-path';
-import DocumentPicker, { DocumentPickerResponse } from '@react-native-documents/picker';
+import DocumentPicker, { DocumentPickerResponse, pick, types } from '@react-native-documents/picker';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
-import ImagePicker, { Image, ImageOrVideo } from 'react-native-image-crop-picker';
+import ImagePicker, { Image, ImageOrVideo, PossibleArray } from 'react-native-image-crop-picker';
 
 import { openDocument } from './actions';
 import { Asset } from './types';
@@ -63,9 +63,9 @@ const processImage = async (pic: Image) => {
   }
 };
 
-const processImages = (pics: Image[]) => {
-  const picsToConvert = pics.length ? pics : [pics];
-  return Promise.all(picsToConvert.map(pic => processImage(pic)));
+const processImages = (pics: Image | Image[]): Promise<(Asset | undefined)[]> => {
+  const picsArray = Array.isArray(pics) ? pics : [pics];
+  return Promise.all(picsArray.map(pic => processImage(pic)));
 };
 
 /**
@@ -89,44 +89,74 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     }
   }
 
-  static async documentCallback(files: DocumentPickerResponse[], callback, synchrone) {
+  static async documentCallback(files: DocumentPickerResponse[], callback, synchrone, callbackOnce: boolean = false) {
     try {
-      for (const file of files) {
-        file.uri = Platform.select({
+      const processedFiles = files.map(file => {
+        const uri = Platform.select({
           android: getPath(file.uri),
           default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
         });
-        const fileData = { fileName: file.name!, fileSize: file.size!, type: file.type, uri: file.uri };
-        if (synchrone) await callback!(fileData);
-        else callback!(fileData);
+
+        return {
+          fileName: file.name!,
+          fileSize: file.size!,
+          type: file.type,
+          uri,
+        };
+      });
+
+      if (callbackOnce) {
+        if (synchrone) await callback!(processedFiles);
+        else callback!(processedFiles);
+      } else {
+        // handle documents/files one by one
+        for (const file of processedFiles) {
+          if (synchrone) await callback(file);
+          else callback(file);
+        }
       }
     } catch (error) {
       console.error('Error in documentCallback:', error);
     }
   }
 
-  static async pickFromDocuments(callback, synchrone) {
+  static async pickFromDocuments(callback, synchrone, callbackOnce: boolean = false) {
     try {
-      await assertPermissions('documents.read');
-      DocumentPicker.pick({
+      const result = await pick({
+        allowMultiSelection: true,
+        copyTo: 'cachesDirectory',
         presentationStyle: 'fullScreen',
-        type: DocumentPicker.types.allFiles,
-      }).then(files => {
-        this.documentCallback(files, callback, synchrone);
+        type: [types.allFiles],
       });
-    } catch {
+
+      const files = result;
+
+      if (!files || files.length === 0) {
+        return;
+      }
+
+      console.debug('[DOC_PICKER] Nombre de fichiers sélectionnés:', files.length);
+      await this.documentCallback(files, callback, synchrone, callbackOnce);
+    } catch (e: any) {
+      console.error('[DOC_PICKER] Error picking documents:', e);
+
+      if (e?.code === 'CANCELLED' || e?.message?.includes('cancel')) {
+        await this.documentCallback([], callback, synchrone, callbackOnce);
+        return;
+      }
+
       Alert.alert(
         I18n.get('document-permissionblocked-title'),
         I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
       );
     }
   }
-
-  static async pickFromGallery(callback, multiple: boolean, synchrone, callbackOnce) {
-    let pickedFiles: Asset[] = [];
+  static async pickFromGallery(callback, multiple: boolean, synchrone?: boolean, callbackOnce?: boolean) {
     try {
       await assertPermissions('galery.read');
-      const pics = await ImagePicker.openPicker({
+      console.debug('[Gallery] Opening picker...');
+
+      const pics: ImageOrVideo | ImageOrVideo[] = await ImagePicker.openPicker({
         maxFiles: 999, // Default value is 5 somewhere in the third-party package, so we must set it to some high value here to allow """unlimited""" selection.
         multiple,
       });
@@ -137,29 +167,32 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           !a.modificationDate ? -1 : !b.modificationDate ? 1 : a.modificationDate.localeCompare(b.modificationDate),
         );
       }
-
-      pickedFiles = await processImages(pics);
+      const orderedPics = Array.isArray(pics) ? pics : [pics];
+      const pickedFiles = (await processImages(orderedPics)).filter((f): f is Asset => f !== undefined);
 
       const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
 
       if (Platform.OS === 'android') {
         res.forEach(item => {
-          if (item.filetype.startsWith('video/')) {
+          if (item.filetype?.startsWith('video/')) {
             toast.showError(I18n.get('pickfile-error-filetype'));
           }
         });
       }
-      const images = res.filter(item => !item.filetype.startsWith('video/'));
 
+      const images = res.filter(item => !item.filetype?.startsWith('video/'));
       await this.imageCallback(images, callback, synchrone, callbackOnce);
-    } catch (e) {
-      if (e instanceof Error && (e as { code?: unknown }).code === 'E_PICKER_CANCELLED') {
+    } catch (e: any) {
+      if (e?.code === 'E_PICKER_CANCELLED') {
         await this.imageCallback([], callback, synchrone, callbackOnce);
         return;
-      } else {
-        console.error(e);
-        toast.showError(I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
       }
+      console.error('[GalleryPicker] Error:', e);
+      toast.showError(
+        I18n.get('gallery-readpermissionblocked-text', {
+          appName: DeviceInfo.getApplicationName(),
+        }),
+      );
     }
   }
 
@@ -295,7 +328,7 @@ export interface IAnyDistantFile extends IDistantFile {
 /**
  * A SyncedFile is both a LocalFile and a DistantFile. This class wraps up functionality of these two entities.
  */
-export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements LocalFile, IDistantFile {
+export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements IDistantFile {
   df: DFType;
 
   lf: LocalFile;

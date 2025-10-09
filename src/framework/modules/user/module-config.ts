@@ -3,6 +3,7 @@ import type { UserState } from './reducer';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'user', UserState>({
+  displayAs: '',
   displayI18n: 'user-moduleconfig-myaccount',
 
   entcoreScope: [],
