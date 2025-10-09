@@ -395,8 +395,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           <NavBarAction icon="ui-plus" testID="timeline-add-button" />
         </PopupMenu>,
       );
-    } else {
-      headerRightItems.push(<NavBarAction />);
     }
     this.props.navigation.setOptions({
       headerRight: () => <NavBarActionsGroup elements={headerRightItems} />,
