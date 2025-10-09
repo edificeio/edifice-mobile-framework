@@ -12,7 +12,7 @@ import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { cardPaddingMerging } from '~/framework/components/card/base';
-import { UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -22,7 +22,7 @@ import { pageGutterSize, PageView } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   dismissFlashMessageAction,
@@ -60,7 +60,7 @@ import {
 export interface ITimelineScreenDataProps {
   flashMessages: FlashMessagesStateData;
   notifications: NotificationsState;
-  session: AuthLoggedAccount;
+  session: AuthActiveAccount;
 }
 export interface ITimelineScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
@@ -334,36 +334,37 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
     this.props.navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.navigate(userRouteNames.home)} testID="timeline-profile-button">
+        <TouchableOpacity
+          onPress={() => navigation.navigate(userRouteNames.home)}
+          testID="timeline-profile-button"
+          // Style here is needed to prevent Android autocropping border of avatar
+          style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
           <SingleAvatar size="md" userId={session?.user.id || ''} />
         </TouchableOpacity>
       ),
     });
 
-    let workflows;
-    if (getTimelineWorkflows(this.props.session)) {
-      workflows = getTimelineWorkflows(this.props.session);
-    }
+    const headerRightItems = [
+      <NavBarAction
+        icon="ui-filter"
+        onPress={() => {
+          navigate(timelineRouteNames.Filters);
+        }}
+        testID="timeline-filter-button"
+      />,
+    ];
+
+    const workflows = getTimelineWorkflows(this.props.session);
     if (workflows.length) {
-      this.props.navigation.setOptions({
-        headerRight: () => (
-          <NavBarActionsGroup
-            elements={[
-              <NavBarAction
-                icon="ui-filter"
-                onPress={() => {
-                  navigate(timelineRouteNames.Filters);
-                }}
-                testID="timeline-filter-button"
-              />,
-              <PopupMenu actions={workflows}>
-                <NavBarAction icon="ui-plus" testID="timeline-add-button" />
-              </PopupMenu>,
-            ]}
-          />
-        ),
-      });
+      headerRightItems.push(
+        <PopupMenu actions={workflows}>
+          <NavBarAction icon="ui-plus" testID="timeline-add-button" />
+        </PopupMenu>,
+      );
     }
+    this.props.navigation.setOptions({
+      headerRight: () => <NavBarActionsGroup elements={headerRightItems} />,
+    });
   }
 
   // METHODS ======================================================================================
@@ -404,7 +405,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   async doOpenNotification(n: IResourceUriNotification) {
-    const fallbackHandleNotificationAction: NotifHandlerThunkAction = nn => async (dispatch, getState) => {
+    const fallbackHandleNotificationAction: NotifHandlerThunkAction = nn => async () => {
       if (isResourceUriNotification(nn)) openUrl((nn as IResourceUriNotification).resource.uri);
       return { managed: 1 };
     };
@@ -469,10 +470,10 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
   };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps = (
-  dispatch,
-  getState,
-) => ({
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState,
+) => ITimelineScreenEventProps = dispatch => ({
   dispatch,
   // TS BUG: await is needed here and type is correct
   handleDismissFlashMessage: async (flashMessageId: number) => {

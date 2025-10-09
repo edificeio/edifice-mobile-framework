@@ -190,9 +190,15 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
-  const uploadFile = async file => {
+  const uploadFile = async (fileOrFiles: any) => {
     setUploading(true);
-    await props.uploadFile(parentId, new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
+
+    const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
+
+    for (const file of files) {
+      await props.uploadFile(parentId, new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
+    }
+
     setUploading(false);
     fetchList();
   };

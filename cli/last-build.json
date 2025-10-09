@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-10-02 18:08:35",
-  "notes": "update(stack): ENABLING-437, react native 0.76.9 && packages minor updates\nupdate(stack): packages minor updates\nupdate(stack): packages minor updates\nupdate(stack): quick jump to rn 0.79.6\nfix(android): disable edge-to-edge for Android 15+\nSquashed commit of the following:\nupdate(stack): quick jump to rn 0.78.3\nfix(editor): PEDAGO-2759 fix absolute iframes in editor\nupdate(stack): quick jump to rn 0.77.3\nchore(i18n): change phrase sync branch\nrelease: 1.15.4(1150400)\nupdate(stack): yarn cache update\nMerge branch 'update/rn-76' into dev/1.15.3\nchore(override): remove src/platforms when restoring override\nrelease: 1.15.3-rc.1(1150303)",
-  "version": "1.15.4-alpha.1(1150401)"
+  "last": "2025-10-03 11:47:26",
+  "notes": "chore: update yarn caches\nMerge remote-tracking branch 'origin/dev/1.15.4' into dev/comm\nrelease: 1.15.4-alpha.1(1150401)",
+  "version": "1.15.4-comm.1(1150402)"
 }
