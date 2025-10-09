@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Image, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -389,8 +389,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           <NavBarAction icon="ui-plus" testID="timeline-add-button" />
         </PopupMenu>,
       );
-    } else {
-      headerRightItems.push(<NavBarAction />);
     }
     this.props.navigation.setOptions({
       headerRight: () => <NavBarActionsGroup elements={headerRightItems} />,
