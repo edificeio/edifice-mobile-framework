@@ -89,7 +89,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     }
   }
 
-  static async documentCallback(files: DocumentPickerResponse[], callback, synchrone) {
+  static async documentCallback(files: DocumentPickerResponse[], callback, synchrone, callbackOnce: boolean = false) {
     try {
       const processedFiles = files.map(file => {
         const uri = Platform.select({
@@ -105,18 +105,22 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         };
       });
 
-      // Call callback once with all files includes
-      if (synchrone) {
-        await callback!(processedFiles);
+      if (callbackOnce) {
+        if (synchrone) await callback!(processedFiles);
+        else callback!(processedFiles);
       } else {
-        callback!(processedFiles);
+        // handle documents/files one by one
+        for (const file of processedFiles) {
+          if (synchrone) await callback(file);
+          else callback(file);
+        }
       }
     } catch (error) {
       console.error('Error in documentCallback:', error);
     }
   }
 
-  static async pickFromDocuments(callback, synchrone) {
+  static async pickFromDocuments(callback, synchrone, callbackOnce: boolean = false) {
     try {
       const result = await pick({
         allowMultiSelection: true,
@@ -125,7 +129,6 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         type: [types.allFiles],
       });
 
-      // Avec allowMultiSelection: true, result est TOUJOURS un tableau
       const files = result;
 
       if (!files || files.length === 0) {
@@ -133,12 +136,12 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       }
 
       console.debug('[DOC_PICKER] Nombre de fichiers sélectionnés:', files.length);
-      await this.documentCallback(files, callback, synchrone);
+      await this.documentCallback(files, callback, synchrone, callbackOnce);
     } catch (e: any) {
       console.error('[DOC_PICKER] Error picking documents:', e);
 
       if (e?.code === 'CANCELLED' || e?.message?.includes('cancel')) {
-        await this.documentCallback([], callback, synchrone);
+        await this.documentCallback([], callback, synchrone, callbackOnce);
         return;
       }
 
