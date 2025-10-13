@@ -163,6 +163,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
       const pics = await ImagePicker.openPicker({
         maxFiles: 999, // Default value is 5 somewhere in the third-party package, so we must set it to some high value here to allow """unlimited""" selection.
+        mediaType: 'photo',
         multiple,
       });
 
