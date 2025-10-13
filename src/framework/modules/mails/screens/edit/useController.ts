@@ -19,6 +19,7 @@ import {
   convertAttachmentToDistantFile,
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
+  hasContent,
 } from '~/framework/modules/mails/util';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
@@ -71,34 +72,17 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     return isHistoryOpen ? bodyContent : `${bodyContent}${history}`;
   }, [isHistoryOpen, bodyContent, history]);
 
-  const extractText = (html: string) => {
-    // put this one in an utiile file in future
-    return html
-      .replace(/<(div|p)>(\s|&nbsp;|<br\s*\/?>)*<\/\1>/gi, ' ')
-      .replace(/<br\s*\/?>/gi, ' ')
-      .replace(/<p>(.*?)<\/p>/gi, ' $1 ')
-      .replace(/&nbsp;/gi, ' ')
-      .replace(/<[^>]+>/g, '')
-      .trim();
-  };
-
-  const hasAnyContent = React.useMemo(() => {
-    const bodyText = extractText(bodyContent).trim();
-    const signatureText = extractText(signatureContent).trim();
-
-    const effectiveBody = bodyText && bodyText !== signatureText ? bodyText : '';
-    const hasImage = /<img\b[^>]*src=["']?([^>"']+)["']?[^>]*>/i.test(bodyContent);
-
-    return (
-      to.length > 0 ||
-      cc.length > 0 ||
-      cci.length > 0 ||
-      subject.trim().length > 0 ||
-      attachments.length > 0 ||
-      effectiveBody.length > 0 ||
-      hasImage
-    );
-  }, [to, cc, cci, subject, attachments, bodyContent, signatureContent]);
+  const hasAnyContent = React.useMemo(
+    () =>
+      hasContent(bodyContent, signatureContent, {
+        attachments: attachments.length,
+        cc: cc.length,
+        cci: cci.length,
+        subject,
+        to: to.length,
+      }),
+    [to, cc, cci, subject, attachments, bodyContent, signatureContent],
+  );
 
   const shouldSaveDraft = React.useMemo(() => hasAnyContent && showPreventBack, [hasAnyContent, showPreventBack]);
 
@@ -232,14 +216,14 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
       const bodyToSave = isHistoryOpen ? bodyContent : `${bodyContent}${history}`;
 
-      // Créer ou mettre à jour le draft
+      // create or update draft
       if (draftIdSaved) {
         await mailsService.mail.updateDraft(
           { draftId: draftIdSaved },
           { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
         );
       } else {
-        // Créer le draft seulement maintenant, au moment de quitter
+        // Create draft only when we bout to quit the page
         const fullContent = getContentForDraft();
         const bodyForCreation = isHistoryOpen ? fullContent : `${fullContent}${history}`;
 
@@ -430,19 +414,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   const onChangeText = React.useCallback(
     (value: string) => {
-      let newBody = signatureContent ? value.replace(signatureContent, '') : value;
-
-      const cleaned = newBody
-        .replace(/<br\s*\/?>/gi, '')
-        .replace(/<p>(\s|&nbsp;)*<\/p>/gi, '')
-        .replace(/&nbsp;/gi, '')
-        .replace(/<[^>]+>/g, '')
-        .trim();
-
-      if (cleaned === '') {
-        newBody = '';
-      }
-
+      const newBody = signatureContent ? value.replace(signatureContent, '') : value;
       setBodyContent(newBody);
     },
     [signatureContent],
