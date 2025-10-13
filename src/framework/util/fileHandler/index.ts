@@ -122,11 +122,16 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
   static async pickFromDocuments(callback, synchrone, callbackOnce: boolean = false) {
     try {
+      // Dynamically get all document types excluding allFiles, videos, and images
+      /*const excludedTypes = ['allFiles', 'videos', 'images'];
+      const allowedTypes = Object.keys(types)
+        .filter(key => !excludedTypes.includes(key))
+        .map(key => types[key]);*/
       const result = await pick({
         allowMultiSelection: true,
         copyTo: 'cachesDirectory',
         presentationStyle: 'fullScreen',
-        type: [types.allFiles],
+        type: [types.allFiles], //allowedTypes,
       });
 
       const files = result;
