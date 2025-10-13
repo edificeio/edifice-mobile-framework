@@ -5,7 +5,7 @@ import { MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/mod
 export interface MailsContactFieldProps {
   type: MailsRecipientsType;
   recipients: MailsVisible[];
-  scrollViewRef: React.RefObject<ScrollView>;
+  scrollViewRef: React.RefObject<ScrollView | null>;
   inputFocused: MailsRecipientsType | null;
   isStartScroll: boolean;
   isAdml: boolean;

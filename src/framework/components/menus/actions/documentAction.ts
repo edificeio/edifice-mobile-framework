@@ -4,7 +4,7 @@ import { I18n } from '~/app/i18n';
 import { LocalFile } from '~/framework/util/fileHandler';
 
 export default function documentAction(props: MenuPickerActionProps & { synchrone?: boolean }) {
-  const action = () => LocalFile.pickFromDocuments(props.callback, props.synchrone);
+  const action = () => LocalFile.pickFromDocuments(props.callback, props.synchrone, true);
 
   return {
     action,

@@ -334,7 +334,7 @@ export default class RichEditor extends Component {
       <>
         <WebView
           injectedJavaScriptBeforeContentLoaded={js}
-          useWebKit={false}
+          // useWebKit={false} // cause deprecated
           scrollEnabled={false}
           hideKeyboardAccessoryView
           sharedCookiesEnabled

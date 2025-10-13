@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, BackHandler, Dimensions, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, BackHandler, Dimensions, Platform, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -64,7 +64,7 @@ export const computeNavBar = ({
 
 const PAGE_SIZE = 25;
 const TIMEOUT_DURATION = 300;
-
+const ITEM_HEIGHT = 100;
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const flatListRef = React.useRef<GHFlatList<IMailsMailPreview>>(null);
@@ -90,6 +90,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isSearchMode, setIsSearchMode] = React.useState<boolean>(false);
   const [selectedMails, setSelectedMails] = React.useState<string[]>([]);
   const [search, setSearch] = React.useState<string>('');
+  const [isDeletingFolder, setIsDeletingFolder] = React.useState<boolean>(false);
+
+  const isContentLoading = React.useMemo(() => isDeletingFolder || isLoading, [isDeletingFolder, isLoading]);
 
   const loadMails = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo, searchValue?: string) => {
@@ -105,6 +108,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           search: searchValue ?? '',
         });
         setMails(mailsData);
+        setIsLoading(false);
       } catch (e) {
         console.error(e);
       } finally {
@@ -169,10 +173,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onDismissBottomSheet = React.useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
-    if (typeModal) setTypeModal(undefined);
-    if (isSubfolder) setIsSubfolder(false);
-    if (idParentFolder) setIdParentFolder(undefined);
-    if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+    setTimeout(
+      () => {
+        if (typeModal) setTypeModal(undefined);
+        if (isSubfolder) setIsSubfolder(false);
+        if (idParentFolder) setIdParentFolder(undefined);
+        if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+      },
+      Platform.OS === 'android' ? 300 : 0,
+    );
   }, [typeModal, isSubfolder, idParentFolder, onErrorCreateFolder]);
 
   const switchFolder = React.useCallback(
@@ -227,9 +236,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           });
         }
 
-        loadFolders();
-        onDismissBottomSheet();
-        toast.showSuccess(successMessage);
+        setTimeout(
+          () => {
+            loadFolders();
+            onDismissBottomSheet();
+            toast.showSuccess(successMessage);
+          },
+          Platform.OS === 'android' ? 300 : 0,
+        );
       } catch (e) {
         const error = e instanceof HTTPError ? await e.json() : e;
         if (error instanceof Error) {
@@ -314,6 +328,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       {
         onPress: async () => {
           try {
+            setIsDeletingFolder(true);
             await mailsService.folder.delete({ id: (selectedFolder as MailsFolderInfo).id });
             switchFolder(MailsDefaultFolders.INBOX);
             loadFolders();
@@ -321,6 +336,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           } catch (e) {
             console.error(e);
             toast.showError();
+          } finally {
+            setIsDeletingFolder(false);
           }
         },
         style: 'destructive',
@@ -513,6 +530,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     props.navigation.setOptions({
       headerLeft: () => (
         <NavBarAction
+          disabled={isContentLoading}
           icon="ui-burgerMenu"
           onPress={() => {
             bottomSheetModalRef.current?.present();
@@ -523,17 +541,18 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         <NavBarActionsGroup
           elements={[
             <NavBarAction
+              disabled={isContentLoading}
               icon="ui-edit"
               onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })}
             />,
             <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
-              <NavBarAction icon="ui-options" />
+              <NavBarAction disabled={isContentLoading} icon="ui-options" />
             </PopupMenu>,
           ]}
         />
       ),
     });
-  }, [selectedFolder, navigation, props.navigation, allPopupActionsMenu]);
+  }, [selectedFolder, navigation, props.navigation, isContentLoading, allPopupActionsMenu]);
 
   React.useEffect(() => {
     props.navigation.setOptions({
@@ -829,10 +848,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
         onError={onErrorCreateFolder}
         onSend={onRenameFolderAction}
+        disabledAction={isLoadingCreateNewFolder}
         initialInputValue={(selectedFolder as MailsFolderInfo).name ?? ''}
       />
     );
-  }, [selectedFolder, onRenameFolderAction, onErrorCreateFolder]);
+  }, [selectedFolder, onRenameFolderAction, isLoadingCreateNewFolder, onErrorCreateFolder]);
 
   const renderMove = React.useCallback(() => {
     return (
@@ -936,7 +956,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       selectedMails,
     ],
   );
-
+  const getItemLayout = React.useCallback((index: number) => ({ index, length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index }), []);
   const renderPlaceholder = React.useCallback(() => <MailsPlaceholderList />, []);
 
   const renderContent = React.useCallback(
@@ -954,7 +974,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             ListEmptyComponent={renderEmpty()}
             refreshControl={refreshControl}
             onEndReached={loadNextMails}
+            keyExtractor={item => `item#${item.id}`}
             onEndReachedThreshold={0.5}
+            getItemLayout={(_, index) => getItemLayout(index)}
+            disableVirtualization={Platform.OS === 'android'}
           />
         )}
         {renderBottomMode()}
@@ -967,6 +990,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       renderTopMode,
       mails,
       renderFooter,
+      getItemLayout,
       renderEmpty,
       loadNextMails,
       renderBottomMode,

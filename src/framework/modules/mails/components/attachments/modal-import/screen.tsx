@@ -42,7 +42,7 @@ export const computeNavBar: AttachmentsImportScreenProps.NavBarConfig = ({ navig
     title: I18n.get('import-title'),
   }),
   headerStyle: {
-    backgroundColor: theme.ui.background.page,
+    backgroundColor: theme.ui.background.page as string,
     borderBottomWidth: 0,
     elevation: 0,
     left: 0,
@@ -52,7 +52,7 @@ export const computeNavBar: AttachmentsImportScreenProps.NavBarConfig = ({ navig
     top: 0,
     zIndex: 100,
   },
-  headerTitleStyle,
+  ...headerTitleStyle,
 });
 
 const formatFile = (pic: ImagePicked | DocumentPicked) =>
@@ -140,7 +140,7 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
   );
 
   const uploadAttachment = React.useCallback(
-    (file: UploadAttachment, index: number) => {
+    (file: UploadAttachment, _: number) => {
       if (file.status === UploadAttachmentStatus.PENDING || file.status === UploadAttachmentStatus.OK) return;
       if (!session) {
         updateFileStatusAndID({ file, status: UploadAttachmentStatus.KO });
@@ -275,8 +275,9 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
 
   React.useEffect(() => {
     setTimeout(() => {
-      const commonCallback = (files: ImagePicked[] | DocumentPicked) => {
-        const formatted = Array.isArray(files) ? files.map(formatFile) : [formatFile(files)];
+      const commonCallback = (files: ImagePicked | ImagePicked[] | DocumentPicked | DocumentPicked[]) => {
+        const arr = Array.isArray(files) ? files : [files];
+        const formatted = arr.map(formatFile);
         setFiles(formatted);
       };
 

@@ -1,4 +1,4 @@
-import { ImageStyle, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import * as Avatar from './types';
 
@@ -14,18 +14,27 @@ export const AvatarSizes = {
 };
 
 export default StyleSheet.create({
-  border: {
-    backgroundColor: theme.palette.grey.white,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 0,
+  avatarStack: {
+    flexDirection: 'row',
   },
   container: {
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: 'center',
     position: 'relative',
   },
-  singleAvatar: {} as ImageStyle,
+  innerImage: {
+    height: '100%',
+    width: '100%',
+  },
+  overlay: {
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.ui.overlay.light,
+    justifyContent: 'center',
+    ...StyleSheet.absoluteFillObject,
+  },
+  overlayText: {
+    color: theme.ui.text.inverse,
+  },
+  singleAvatar: {},
 });

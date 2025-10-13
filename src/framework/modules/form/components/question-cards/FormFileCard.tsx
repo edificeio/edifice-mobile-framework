@@ -69,30 +69,35 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
-  const addFile = (lf: LocalFile) => {
-    const file = {
-      filename: lf.filename,
-      id: null,
-      lf,
-      type: lf.filetype,
-    } as IResponseFile;
+  const filePickedToLocalFile = (img: Asset | DocumentPicked): LocalFile =>
+    new LocalFile(
+      {
+        filename: img.fileName ?? 'unknown',
+        filepath: img.uri!,
+        filetype: img.type ?? 'application/octet-stream',
+      },
+      { _needIOSReleaseSecureAccess: false },
+    );
 
-    setFiles(previousFiles => [...previousFiles, file]);
+  const addFile = (fileOrFiles: Asset | DocumentPicked | (Asset | DocumentPicked)[]) => {
+    const fls = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
+    const newFiles: IResponseFile[] = fls.map(f => {
+      const lf = filePickedToLocalFile(f);
+      return {
+        filename: lf.filename,
+        id: null,
+        lf,
+        responseId: 0,
+        type: lf.filetype,
+      };
+    });
+
+    setFiles(prev => [...prev, ...newFiles]);
   };
 
   const removeFile = (file: IResponseFile) => {
     setFiles(files.filter(a => a !== file));
   };
-
-  const filePickedToLocalFile = (img: Asset | DocumentPicked) =>
-    new LocalFile(
-      {
-        filename: img.fileName as string,
-        filepath: img.uri as string,
-        filetype: img.type as string,
-      },
-      { _needIOSReleaseSecureAccess: false },
-    );
 
   return (
     <FormQuestionCard title={title} isMandatory={mandatory} onEditQuestion={onEditQuestion}>
@@ -103,9 +108,9 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
           <BottomMenu
             title={I18n.get('form-distribution-filecard-addfiles')}
             actions={[
-              cameraAction({ callback: file => addFile(filePickedToLocalFile(file)) }),
-              galleryAction({ callback: file => addFile(filePickedToLocalFile(file)), multiple: true }),
-              documentAction({ callback: file => addFile(filePickedToLocalFile(file)) }),
+              cameraAction({ callback: file => addFile(file) }),
+              galleryAction({ callback: file => addFile(file), multiple: true }),
+              documentAction({ callback: file => addFile(file) }),
             ]}>
             <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
               <SmallActionText style={styles.actionText}>{I18n.get('form-distribution-filecard-addfiles')}</SmallActionText>

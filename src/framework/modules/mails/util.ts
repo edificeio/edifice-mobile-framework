@@ -180,3 +180,44 @@ export const renderSubject = (subject: string | undefined, isRecall: boolean) =>
   if (!subject || subject.length === 0) return I18n.get('mails-list-nosubject');
   return subject;
 };
+
+export const extractTextInHtml = (html: string): string => {
+  return html
+    .replace(/<(div|p)>(\s|&nbsp;|<br\s*\/?>)*<\/\1>/gi, ' ')
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<p>(.*?)<\/p>/gi, ' $1 ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+};
+
+export const hasMediaInHtml = (html: string): boolean => {
+  return /<(img|video|audio)\b[^>]*>/i.test(html);
+};
+
+export const hasContent = (
+  body: string,
+  signature: string,
+  {
+    attachments = 0,
+    cc = 0,
+    cci = 0,
+    subject = '',
+    to = 0,
+  }: { to?: number; cc?: number; cci?: number; subject?: string; attachments?: number } = {},
+): boolean => {
+  const bodyText = extractTextInHtml(body).trim();
+  const signatureText = extractTextInHtml(signature).trim();
+
+  const effectiveBody = bodyText && bodyText !== signatureText ? bodyText : '';
+
+  return (
+    to > 0 ||
+    cc > 0 ||
+    cci > 0 ||
+    (subject?.trim().length ?? 0) > 0 ||
+    attachments > 0 ||
+    effectiveBody.length > 0 ||
+    hasMediaInHtml(body)
+  );
+};

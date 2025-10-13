@@ -54,8 +54,10 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
   const [attachments, setAttachments] = React.useState<LocalFile[]>([]);
   const [isSending, setSending] = React.useState(false);
 
-  const addAttachment = file => {
-    setAttachments(previousAttachments => [...previousAttachments, new LocalFile(file, { _needIOSReleaseSecureAccess: false })]);
+  const addAttachment = fileOrFiles => {
+    const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
+    const newAttachments = files.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
+    setAttachments(prev => [...prev, ...newAttachments]);
   };
 
   const removeAttachment = (filepath: string) => {
@@ -154,9 +156,9 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
                   <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
                 </View>
               </BottomMenu>
-              {attachments.map(attachment => (
+              {attachments.map((attachment, index) => (
                 <Attachment
-                  key={attachment.filename}
+                  key={`${attachment.filename}-#${index}`}
                   name={attachment.filename}
                   type={attachment.filetype}
                   onRemove={() => removeAttachment(attachment.filepath)}

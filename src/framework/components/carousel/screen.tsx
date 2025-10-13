@@ -12,6 +12,7 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import moment, { Moment } from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import RNFastImage from 'react-native-fast-image';
+import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
 import { IImageSize } from './image-viewer/image-viewer.type';
@@ -47,7 +48,7 @@ export interface ICarouselNavParams {
   referer: AudienceParameter; // used for audience tracking
 }
 
-export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
+export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> { }
 
 const styles = StyleSheet.create({
   // eslint-disable-next-line react-native/no-color-literals
@@ -232,14 +233,19 @@ export function Carousel(props: ICarouselProps) {
 
   const onShare = React.useCallback(
     async (url: string | ImageURISource) => {
+      let destinationPath: string | null = null;
       try {
         const sf = await getSyncedFile(url);
         if (!sf) return;
+
+        destinationPath = `${RNFS.CachesDirectoryPath}/share-${Date.now()}.jpg`;
+        await RNFS.copyFile(sf.filepath, destinationPath);
+
         await Share.open({
           failOnCancel: false,
           showAppsToView: true,
-          type: sf.filetype || 'text/html',
-          url: Platform.OS === 'android' ? 'file://' + sf.filepath : sf.filepath,
+          type: sf.filetype || 'image/jpeg',
+          url: `file://${destinationPath}`,
         });
       } catch (e) {
         if (e instanceof PermissionError) {
@@ -247,9 +253,17 @@ export function Carousel(props: ICarouselProps) {
             I18n.get('carousel-share-permissionblocked-title'),
             I18n.get('carousel-share-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
           );
-          return undefined;
         } else {
+          console.error('Share error', e);
           Toast.showError(I18n.get('carousel-share-error'));
+        }
+      } finally {
+        if (destinationPath) {
+          try {
+            await RNFS.unlink(destinationPath); // to avoid huge amount of cached files
+          } catch (cleanupErr) {
+            console.warn('Could not clean up temp share file', cleanupErr);
+          }
         }
       }
     },

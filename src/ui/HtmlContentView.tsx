@@ -85,6 +85,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
     const attachmentGroupRegex = /<div class="download-attachments">.*?<\/a><\/div><\/div>/g;
     const attachmentGroupsHtml = html.match(attachmentGroupRegex);
     const attachmentsHtml = attachmentGroupsHtml && attachmentGroupsHtml.join().match(/<a.*?>.*?<\/a>/g);
+
     const attachments =
       attachmentsHtml &&
       attachmentsHtml.map(attHtml => {
@@ -95,9 +96,11 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
           url: attUrl && `${session?.platform?.url}${attUrl[0].replace('href="', '').replace('"', '')}`,
         } as IRemoteAttachment;
       });
-    html = html.replace(attachmentGroupRegex, '');
-    this.setState({ html });
-    if (attachments) this.setState({ attachments });
+
+    this.setState({
+      attachments: attachments ?? [],
+      html: html.replace(attachmentGroupRegex, ''),
+    });
   }
 
   public async compute() {

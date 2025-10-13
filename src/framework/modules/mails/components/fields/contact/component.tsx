@@ -49,11 +49,24 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   const viewContainerRef = React.useRef<View>(null);
   const inputRef = React.useRef<TextInputType>(null);
+  const lastManualQuery = React.useRef<string>('');
 
   const resultsHeight = React.useMemo(
     () => UI_SIZES.getViewHeight({ withoutTabbar: false }) - keyboardHeight - heightToRemoveList,
     [heightToRemoveList, keyboardHeight],
   );
+  const onSubmitManualSearch = () => {
+    const normalized = removeAccents(search).toLowerCase();
+
+    if (normalized.length >= 2) {
+      lastManualQuery.current = normalized;
+      const filterFunction = onSearch(normalized);
+      const result = users.filter(user => filterFunction(user));
+      setFilteredUsers(result);
+      setLoading(false);
+      if (!showList) toggleShowList();
+    }
+  };
 
   const toggleShowList = React.useCallback(() => {
     setShowList(!showList);
@@ -76,11 +89,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   }, []);
 
   React.useEffect(() => {
-    if (props.isStartScroll && showList) {
+    if (props.isStartScroll && showList && search === '') {
       inputRef.current?.blur();
       toggleShowList();
     }
-  }, [props.isStartScroll, showList, toggleShowList]);
+  }, [props.isStartScroll, showList, search, toggleShowList]);
 
   React.useEffect(() => {
     if (props.inputFocused !== props.type && isOpen && !focused) setIsOpen(false);
@@ -145,6 +158,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   const onRemoveContentAndExitInput = () => {
     setSearch('');
+    lastManualQuery.current = '';
     if (filteredUsers.length) setFilteredUsers([]);
     if (showList) toggleShowList();
   };
@@ -302,6 +316,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
                 autoCorrect={false}
                 autoCapitalize="none"
                 spellCheck={false}
+                returnKeyType="done"
+                onSubmitEditing={onSubmitManualSearch}
               />
             ) : null}
           </TouchableOpacity>
@@ -330,7 +346,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
             </View>
           ) : (
             <FlatList
-              keyboardShouldPersistTaps="always"
+              keyboardShouldPersistTaps="handled"
+              // keyboardDismissMode="on-drag" // if active dismisses keyboard on auto search when scrolling list
               showsVerticalScrollIndicator={false}
               bounces={false}
               data={filteredUsers}

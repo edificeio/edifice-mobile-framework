@@ -40,6 +40,7 @@ import {
   MailsDefaultFolders,
   MailsListTypeModal,
   MailsMailStatePreview,
+  MailsRecipientGroupInfo,
   MailsRecipients,
   MailsVisible,
 } from '~/framework/modules/mails/model';
@@ -85,6 +86,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [infosRecipients, setInfosRecipients] = React.useState<{ text: string; ids: string[] }>();
   const [error, setError] = React.useState<boolean>(false);
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const canRecall =
     props.session?.user.id === mail?.from.id &&
@@ -101,6 +103,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const loadData = async () => {
     try {
+      setIsLoading(true);
+      setError(false);
       const mailData = await mailsService.mail.get({ id });
       const _infosRecipients = mailsFormatRecipients(mailData.to, mailData.cc, mailData.cci);
       const { content, history } = separateContentAndHistory(mailData.body);
@@ -111,6 +115,8 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     } catch (e) {
       console.error('Failed to fetch mail content', e);
       setError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -396,15 +402,15 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         ) : (
           <NavBarActionsGroup
             elements={[
-              <NavBarAction icon="ui-undo" onPress={onReply} />,
-              <PopupMenu actions={popupActionsMenu}>
+              <NavBarAction disabled={isLoading} icon="ui-undo" onPress={onReply} />,
+              <PopupMenu disabled={isLoading} actions={popupActionsMenu}>
                 <NavBarAction icon="ui-options" />
               </PopupMenu>,
             ]}
           />
         ),
     });
-  }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder, fromTimeline]);
+  }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder, fromTimeline, isLoading]);
 
   const renderContentViewer = React.useCallback(() => {
     if (isContentEmpty) return;
@@ -495,20 +501,31 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   }, [infosRecipients, isRecall, isRecallAndNotSender, mail?.trashed, onForward, onReply, onReplyAll]);
 
-  const hasRecipients = (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0;
+  const hasRecipients = React.useCallback(
+    (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0,
+    [],
+  );
 
-  const renderListRecipients = React.useCallback((recipients: MailsRecipients, prefix: string) => {
-    if (!hasRecipients(recipients)) return;
-    return (
-      <View>
-        <SmallBoldText style={styles.bottomSheetPrefix}>{I18n.get(prefix)}</SmallBoldText>
-        {recipients.users.length > 0 ? recipients.users.map(user => <MailsRecipientUserItem key={user.id} item={user} />) : null}
-        {recipients.groups.length > 0
-          ? recipients.groups.map(group => <MailsRecipientGroupItem key={group.id} item={group} />)
-          : null}
-      </View>
-    );
-  }, []);
+  const renderListRecipients = React.useCallback(
+    (recipients: MailsRecipients, prefix: string) => {
+      if (!hasRecipients(recipients)) return;
+
+      const groupArray = Object.entries<MailsRecipientGroupInfo>(recipients.groups)
+        .filter(([key]) => key !== 'length')
+        .map(([_, value]) => value);
+
+      return (
+        <View>
+          <SmallBoldText style={styles.bottomSheetPrefix}>{I18n.get(prefix)}</SmallBoldText>
+
+          {recipients.users.length > 0 && recipients.users.map(user => <MailsRecipientUserItem key={user.id} item={user} />)}
+
+          {groupArray.length > 0 && groupArray.map(group => <MailsRecipientGroupItem key={group.id} item={group} />)}
+        </View>
+      );
+    },
+    [hasRecipients],
+  );
 
   const renderDetailsRecipients = React.useCallback(
     () => (
@@ -522,7 +539,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         </View>
       </GHScrollView>
     ),
-    [mail, renderListRecipients],
+    [mail, renderListRecipients, hasRecipients],
   );
 
   const renderCreateFolder = React.useCallback(
