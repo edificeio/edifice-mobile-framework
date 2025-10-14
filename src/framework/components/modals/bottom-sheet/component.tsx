@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Platform, StatusBar, TouchableOpacity, View } from 'react-native';
 
 import {
   BottomSheetBackdrop,
@@ -90,7 +90,11 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         ref={syncRef}
         index={0}
         enableDynamicSizing
-        maxDynamicContentSize={UI_SIZES.getViewHeight({ withoutTabbar: false })}
+        maxDynamicContentSize={
+          UI_SIZES.screen.height -
+          (Platform.select({ android: (StatusBar.currentHeight ?? 0) + UI_SIZES.elements.navbarHeight, ios: useHeaderHeight() }) ??
+            0)
+        }
         backdropComponent={BackdropComponent}
         topInset={useHeaderHeight() + additionalTopInset}
         {...props}>

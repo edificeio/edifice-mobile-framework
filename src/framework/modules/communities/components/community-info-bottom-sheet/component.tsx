@@ -1,34 +1,38 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Platform, StatusBar, View } from 'react-native';
 
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { styles } from './styles';
 import { CommunityInfoBottomSheetProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import { UI_SIZES } from '~/framework/components/constants';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
-import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import CommunityCardLarge from '~/framework/modules/communities/components/community-card-large';
 
 const CommunityInfoBottomSheet = React.forwardRef<BottomSheetModalMethods, CommunityInfoBottomSheetProps>(({ data }, ref) => {
   const { bottom } = useSafeAreaInsets();
 
-  const containerStyle = React.useMemo(
-    () => [
-      styles.container,
-      {
-        paddingBottom: bottom,
-      },
-    ],
-    [bottom],
-  );
-
   return (
-    <BottomSheetModal ref={ref} gutters={false} includeSafeArea={false} closeButton>
-      <ScrollView contentContainerStyle={containerStyle} alwaysBounceVertical={false}>
+    <BottomSheetModal ref={ref} gutters={false} includeSafeArea={false} closeButton enableOverDrag={false}>
+      <BottomSheetScrollView
+        contentContainerStyle={styles.container}
+        alwaysBounceVertical={false}
+        style={React.useMemo(
+          () => ({
+            maxHeight:
+              UI_SIZES.screen.height -
+              (StatusBar.currentHeight ?? 0) -
+              UI_SIZES.elements.navbarHeight -
+              UI_SIZES.elements.icon.small -
+              UI_SIZES.spacing.medium,
+          }),
+          [],
+        )}>
         <CommunityCardLarge
           title={data?.title}
           image={data?.image}
@@ -44,7 +48,15 @@ const CommunityInfoBottomSheet = React.forwardRef<BottomSheetModalMethods, Commu
           </View>
           <BodyText>{data?.welcomeNote}</BodyText>
         </View>
-      </ScrollView>
+        <View
+          style={React.useMemo(
+            () => ({
+              height: Platform.select({ android: bottom + UI_SIZES.spacing.large, ios: bottom * 2 + UI_SIZES.spacing.minor }),
+            }),
+            [bottom],
+          )}
+        />
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 });

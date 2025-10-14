@@ -1,4 +1,4 @@
-import { I18nManager, StyleSheet, ViewStyle } from 'react-native';
+import { I18nManager, Platform, StyleSheet, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
@@ -9,13 +9,15 @@ const NAVBAR_BUTTON_STYLE: ViewStyle = {
   borderRadius: UI_SIZES.radius.medium,
   height: UI_SIZES.elements.icon.xlarge,
   justifyContent: 'center',
+  marginHorizontal: Platform.select({
+    android: UI_SIZES.spacing.minor + UI_SIZES.spacing.tinyExtra,
+    ios: UI_SIZES.spacing.small,
+  }),
   width: UI_SIZES.elements.icon.xlarge,
 };
-const NAVBAR_ICON_OFFSET = -4; // compensate native placement of back icon. This value is not scaled by the UI.
 
 export const NAVBAR_RIGHT_BUTTON_STYLE: ViewStyle = {
   ...NAVBAR_BUTTON_STYLE,
-  marginRight: NAVBAR_ICON_OFFSET,
 };
 
 export default StyleSheet.create({
@@ -28,9 +30,13 @@ export default StyleSheet.create({
     transform: [{ scaleX: I18nManager.getConstants().isRTL ? -1 : 1 }],
     width: 13, // value provided by react navigation
   },
+  // Color litteral is needed for transparent
+  // eslint-disable-next-line react-native/no-color-literals
+  header: {
+    backgroundColor: 'transparent',
+  },
   navBarLeftButton: {
     ...NAVBAR_BUTTON_STYLE,
-    left: NAVBAR_ICON_OFFSET,
   },
   titleHeaderInner: {
     alignItems: 'center',

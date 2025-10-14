@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Platform, ScrollViewProps, StatusBar, TouchableOpacity, View } from 'react-native';
 
-import { HeaderBackButton } from '@react-navigation/elements';
+import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -122,48 +122,56 @@ useCommunityScrollableThumbnail.stickyHeaderIndices = [0, 1];
 
 export const communityNavBar = <NavigationParams extends ParamListBase, RouteName extends string & keyof NavigationParams>(
   { navigation, route }: NativeStackScreenProps<NavigationParams, RouteName>,
-  withInfoButton: boolean = false,
+  onInfoButton?: () => void,
 ): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
     title: '',
   }),
-  headerLeft: props => (
-    <HeaderBackButton
-      {...props}
-      labelVisible={false}
-      style={styles.navBarLeftButton}
-      onPress={navigation.goBack}
-      backImage={Platform.select({
-        default: undefined,
-        ios: () => (
-          <Image
-            style={styles.backButtonImage}
-            source={require('@react-navigation/elements/src/assets/back-icon.png')}
-            fadeDuration={0}
-            testID="back-btn"
+
+  header: () => (
+    <View style={{ marginTop: Platform.select({ android: StatusBar.currentHeight, ios: UI_SIZES.screen.topInset }) }}>
+      <Header
+        title=""
+        headerRight={
+          onInfoButton
+            ? () => (
+                <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE} onPress={onInfoButton}>
+                  <Svg
+                    name="ui-infoCircle"
+                    width={UI_SIZES.elements.icon.small}
+                    height={UI_SIZES.elements.icon.small}
+                    fill={theme.palette.grey.black}
+                  />
+                </TouchableOpacity>
+              )
+            : undefined
+        }
+        headerShadowVisible={false}
+        headerStyle={styles.header}
+        headerLeft={headerLeftProps => (
+          <HeaderBackButton
+            {...headerLeftProps}
+            labelVisible={false}
+            style={styles.navBarLeftButton}
+            onPress={navigation.goBack}
+            backImage={Platform.select({
+              default: undefined,
+              ios: () => (
+                <Image
+                  style={styles.backButtonImage}
+                  source={require('@react-navigation/elements/src/assets/back-icon.png')}
+                  fadeDuration={0}
+                  testID="back-btn"
+                />
+              ),
+            })}
+            tintColor={theme.ui.text.regular.toString()}
           />
-        ),
-      })}
-      tintColor={theme.ui.text.regular.toString()}
-    />
+        )}
+      />
+    </View>
   ),
-  headerRight: withInfoButton
-    ? () => (
-        <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE}>
-          <Svg
-            name="ui-infoCircle"
-            width={UI_SIZES.elements.icon.small}
-            height={UI_SIZES.elements.icon.small}
-            fill={theme.palette.grey.black}
-          />
-        </TouchableOpacity>
-      )
-    : undefined,
-  headerShadowVisible: false,
-  headerStyle: {
-    backgroundColor: 'transparent',
-  },
   headerTransparent: true,
 });

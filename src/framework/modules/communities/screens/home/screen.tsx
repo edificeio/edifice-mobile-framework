@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
 import { CommunityClient, InvitationResponseDto, MembershipClient } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
@@ -12,13 +12,11 @@ import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import { Svg } from '~/framework/components/picture';
 import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
@@ -37,7 +35,6 @@ import MembersTile, { MembersTileLoader } from '~/framework/modules/communities/
 import DecoratedPaginatedFlatList from '~/framework/modules/communities/components/list/decorated-paginated-list';
 import {
   communityNavBar,
-  NAVBAR_RIGHT_BUTTON_STYLE,
   default as useCommunityScrollableThumbnail,
 } from '~/framework/modules/communities/hooks/use-community-navbar';
 import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-community-navbar/community-navbar/styles';
@@ -56,19 +53,6 @@ const SCROLL_INDICATOR_INSETS = {
   top: BANNER_BASE_HEIGHT - UI_SIZES.spacing.medium * 2,
 };
 
-const NavbarRightButton = ({ onPress }: { onPress: () => void }) => {
-  return (
-    <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE} onPress={onPress}>
-      <Svg
-        name="ui-infoCircle"
-        width={UI_SIZES.elements.icon.small}
-        height={UI_SIZES.elements.icon.small}
-        fill={theme.palette.grey.black}
-      />
-    </TouchableOpacity>
-  );
-};
-
 const BannerLoader = () => {
   const { top: statusBarHeight } = useSafeAreaInsets();
   const bannerStyle = React.useMemo(
@@ -85,12 +69,13 @@ const TitleLoader = ({ isShort }: { isShort?: boolean }) => {
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.home>,
-): NativeStackNavigationOptions => communityNavBar(props, true);
+): NativeStackNavigationOptions => communityNavBar(props, () => {});
 
 export const CommunitiesHomeScreenLoaded = function ({
   image,
   membersId,
   navigation,
+  route,
   route: {
     params: { communityId, invitationId, showWelcome = false },
   },
@@ -431,10 +416,8 @@ export const CommunitiesHomeScreenLoaded = function ({
   }, []);
 
   React.useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <NavbarRightButton onPress={openInfoModal} />,
-    });
-  }, [navigation, openInfoModal]);
+    navigation.setOptions(communityNavBar({ navigation, route }, openInfoModal));
+  }, [navigation, openInfoModal, route]);
 
   const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<PostDetailsProps>['keyExtractor']>>(
     item => item.resourceId,
