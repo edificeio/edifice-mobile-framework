@@ -9,14 +9,13 @@ const NAVBAR_BUTTON_STYLE: ViewStyle = {
   borderRadius: UI_SIZES.radius.medium,
   height: UI_SIZES.elements.icon.xlarge,
   justifyContent: 'center',
-  position: 'absolute',
   width: UI_SIZES.elements.icon.xlarge,
 };
 const NAVBAR_ICON_OFFSET = -4; // compensate native placement of back icon. This value is not scaled by the UI.
 
 export const NAVBAR_RIGHT_BUTTON_STYLE: ViewStyle = {
   ...NAVBAR_BUTTON_STYLE,
-  right: NAVBAR_ICON_OFFSET,
+  marginRight: NAVBAR_ICON_OFFSET,
 };
 
 export default StyleSheet.create({
