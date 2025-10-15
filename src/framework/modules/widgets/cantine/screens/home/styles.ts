@@ -10,9 +10,6 @@ export default StyleSheet.create({
   contentContainer: {
     padding: UI_SIZES.spacing.medium,
   },
-  emptyTitle: {
-    textAlign: 'center',
-  },
   selectButtonWrapper: {
     borderColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.card,

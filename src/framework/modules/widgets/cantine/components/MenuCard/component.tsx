@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import styles from './styles';
 import { MenuCardProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ContentCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, SmallText } from '~/framework/components/text';
@@ -55,22 +54,46 @@ const MENU_ICONS = {
   vegetarien: require('ASSETS/images/cantine/vegetarien-logo.png'),
 } as const;
 
-// Menu section component with elegant restaurant styling
+// Color configuration for different menu types
+const MENU_TYPE_COLORS = {
+  accompagnement: theme.palette.complementary.blue.regular,
+  dessert: theme.palette.complementary.yellow.regular,
+  entree: theme.palette.complementary.red.regular,
+  laitage: theme.palette.complementary.pink.regular,
+  plat: theme.palette.complementary.green.regular,
+} as const;
+
+// Menu section component with elegant restaurant styling and colored left bar
 const MenuSection: React.FC<{
   items: MenuItem[];
   title: string;
   type: MenuItem['type'];
-}> = React.memo(({ items, title }) => {
+}> = React.memo(({ items, title, type }) => {
+  const sectionColor = MENU_TYPE_COLORS[type] || theme.palette.primary.regular;
+  const [expandedItems, setExpandedItems] = React.useState<Set<string>>(new Set());
+
+  const toggleExpanded = (itemId: string) => {
+    setExpandedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemId)) {
+        newSet.delete(itemId);
+      } else {
+        newSet.add(itemId);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <View style={styles.menuSection}>
-      <View style={styles.sectionHeader}>
+      <View>
         <View style={styles.sectionTitleContainer}>
+          <View style={[styles.titleDot, { backgroundColor: sectionColor }]} />
           <BodyBoldText style={styles.sectionTitle}>{title}</BodyBoldText>
-          <View style={styles.sectionDivider} />
         </View>
       </View>
 
-      <View style={styles.menuItemsContainer}>
+      <View style={[styles.menuItemsContainer, { borderLeftColor: sectionColor }]}>
         {items.map((item, index) => {
           // Get active icons for this item
           const activeIcons = [
@@ -80,11 +103,21 @@ const MenuSection: React.FC<{
             { condition: item.local, key: 'local', source: MENU_ICONS.local },
           ].filter(icon => icon.condition);
 
+          const isExpanded = expandedItems.has(String(item.id));
+          const hasAllergies = hasAllergy(item);
+          const isLastItem = index === items.length - 1;
+
           return (
-            <View key={`${item.id}-${index}`} style={styles.menuItem}>
+            <Pressable
+              key={`${item.id}-${index}`}
+              style={isLastItem ? styles.menuItemLast : styles.menuItem}
+              disabled={!hasAllergies}
+              onPress={() => hasAllergies && toggleExpanded(String(item.id))}>
               <View style={styles.menuItemHeader}>
                 <View style={styles.menuItemNameContainer}>
-                  <BodyBoldText style={styles.menuItemName}>{capitalizeFirstLetter(item.nom)}</BodyBoldText>
+                  <BodyText style={styles.menuItemName}>{capitalizeFirstLetter(item.nom)}</BodyText>
+                </View>
+                <View style={styles.menuItemRightContainer}>
                   {activeIcons.length > 0 && (
                     <View style={styles.menuItemIcons}>
                       {activeIcons.map(({ key, source }) => (
@@ -93,20 +126,32 @@ const MenuSection: React.FC<{
                     </View>
                   )}
                 </View>
-                {hasAllergy(item) && (
-                  <View style={styles.allergyBadge}>
-                    <Svg
-                      name="ui-alert-triangle"
-                      fill={theme.palette.complementary.orange.regular}
-                      height={UI_SIZES.elements.icon.xsmall}
-                      width={UI_SIZES.elements.icon.xsmall}
-                    />
-                  </View>
-                )}
               </View>
-
-              {hasAllergy(item) && <SmallText style={styles.allergyText}>⚠️ {getAllergyText(item)}</SmallText>}
-            </View>
+              {hasAllergies && (
+                <View>
+                  <View style={styles.allergyHeader}>
+                    <View style={styles.allergyHeaderLeft}>
+                      <Svg
+                        name="ui-alert-triangle"
+                        fill={theme.palette.grey.graphite}
+                        height={UI_SIZES.elements.icon.xsmall}
+                        width={UI_SIZES.elements.icon.xsmall}
+                      />
+                      <SmallText style={styles.allergyText}>Allérgenes</SmallText>
+                    </View>
+                    <View style={styles.allergyHeaderRight}>
+                      <Svg
+                        name={isExpanded ? 'ui-rafterUp' : 'ui-rafterDown'}
+                        fill={theme.palette.grey.graphite}
+                        height={UI_SIZES.elements.icon.xsmall}
+                        width={UI_SIZES.elements.icon.xsmall}
+                      />
+                    </View>
+                  </View>
+                  <View>{isExpanded && <SmallText style={styles.allergyExpandedText}>{getAllergyText(item)}</SmallText>}</View>
+                </View>
+              )}
+            </Pressable>
           );
         })}
       </View>
@@ -136,7 +181,7 @@ const MenuLegend: React.FC = React.memo(() => (
         <View style={styles.legendAllergenIcon}>
           <Svg
             name="ui-alert-triangle"
-            fill={theme.palette.complementary.orange.regular}
+            fill={theme.palette.grey.graphite}
             height={UI_SIZES.elements.icon.xsmall}
             width={UI_SIZES.elements.icon.xsmall}
           />
@@ -165,57 +210,36 @@ export default function MenuCard(props: MenuCardProps) {
   // Check if any items have allergies
 
   return (
-    <ContentCard>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Restaurant Header */}
-        <View style={styles.restaurantHeader}>
-          <View style={styles.restaurantTitleContainer}>
-            <Svg
-              name="ui-widget-cantine"
-              fill={theme.palette.grey.white}
-              height={UI_SIZES.elements.icon.medium}
-              width={UI_SIZES.elements.icon.medium}
-            />
-            <BodyBoldText style={styles.restaurantTitle}>{I18n.get('widget-cantine-home-title')}</BodyBoldText>
-          </View>
-          <BodyText style={styles.restaurantSubtitle}>{I18n.get('widget-cantine-menu-subtitle')}</BodyText>
-        </View>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Menu sections */}
+      <View style={styles.menuContainer}>
+        {groupedItems.entree && groupedItems.entree.length > 0 && (
+          <MenuSection items={groupedItems.entree} title={`${I18n.get('widget-cantine-menu-type-entree')}`} type="entree" />
+        )}
 
-        {/* Menu sections */}
-        <View style={styles.menuContainer}>
-          {groupedItems.entree && groupedItems.entree.length > 0 && (
-            <MenuSection items={groupedItems.entree} title={`🥗 ${I18n.get('widget-cantine-menu-type-entree')}`} type="entree" />
-          )}
+        {groupedItems.plat && groupedItems.plat.length > 0 && (
+          <MenuSection items={groupedItems.plat} title={`${I18n.get('widget-cantine-menu-type-plat')}`} type="plat" />
+        )}
 
-          {groupedItems.plat && groupedItems.plat.length > 0 && (
-            <MenuSection items={groupedItems.plat} title={`🍖 ${I18n.get('widget-cantine-menu-type-plat')}`} type="plat" />
-          )}
+        {groupedItems.accompagnement && groupedItems.accompagnement.length > 0 && (
+          <MenuSection
+            items={groupedItems.accompagnement}
+            title={`${I18n.get('widget-cantine-menu-type-accompagnement')}`}
+            type="accompagnement"
+          />
+        )}
 
-          {groupedItems.accompagnement && groupedItems.accompagnement.length > 0 && (
-            <MenuSection
-              items={groupedItems.accompagnement}
-              title={`🥕 ${I18n.get('widget-cantine-menu-type-accompagnement')}`}
-              type="accompagnement"
-            />
-          )}
+        {groupedItems.laitage && groupedItems.laitage.length > 0 && (
+          <MenuSection items={groupedItems.laitage} title={`${I18n.get('widget-cantine-menu-type-laitage')}`} type="laitage" />
+        )}
 
-          {groupedItems.laitage && groupedItems.laitage.length > 0 && (
-            <MenuSection items={groupedItems.laitage} title={`🥛 ${I18n.get('widget-cantine-menu-type-laitage')}`} type="laitage" />
-          )}
+        {groupedItems.dessert && groupedItems.dessert.length > 0 && (
+          <MenuSection items={groupedItems.dessert} title={`${I18n.get('widget-cantine-menu-type-dessert')}`} type="dessert" />
+        )}
+      </View>
 
-          {groupedItems.dessert && groupedItems.dessert.length > 0 && (
-            <MenuSection items={groupedItems.dessert} title={`🍰 ${I18n.get('widget-cantine-menu-type-dessert')}`} type="dessert" />
-          )}
-        </View>
-
-        {/* Footer */}
-        <View style={styles.menuFooter}>
-          <BodyText style={styles.footerText}>{I18n.get('widget-cantine-menu-footer')} 👨‍🍳</BodyText>
-        </View>
-
-        {/* Legend */}
-        <MenuLegend />
-      </ScrollView>
-    </ContentCard>
+      {/* Legend */}
+      <MenuLegend />
+    </ScrollView>
   );
 }

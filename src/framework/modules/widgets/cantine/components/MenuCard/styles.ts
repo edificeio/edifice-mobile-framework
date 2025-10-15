@@ -4,39 +4,34 @@ import theme from '~/app/theme';
 import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  // Allergen warning
-  allergenWarning: {
-    alignItems: 'center',
-    backgroundColor: theme.palette.complementary.orange.pale,
-    borderRadius: UI_SIZES.radius.medium,
-    flexDirection: 'row',
-    marginBottom: UI_SIZES.spacing.large,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.minor,
-  },
-
-  allergenWarningText: {
+  allergyExpandedText: {
     color: theme.palette.complementary.orange.regular,
-    fontSize: getScaleFontSize(14),
-    fontWeight: '600',
-    marginLeft: UI_SIZES.spacing.tiny,
+    fontSize: getScaleFontSize(10),
+    fontStyle: 'italic',
+    marginTop: UI_SIZES.spacing.tiny,
   },
 
-  // Allergy badge
-  allergyBadge: {
+  allergyHeader: {
     alignItems: 'center',
-    backgroundColor: theme.palette.complementary.orange.pale,
-    borderRadius: UI_SIZES.radius.small,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  allergyHeaderLeft: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+
+  allergyHeaderRight: {
+    alignItems: 'center',
     justifyContent: 'center',
-    padding: 4,
   },
 
   allergyText: {
-    color: theme.palette.complementary.orange.regular,
-    fontSize: getScaleFontSize(12),
+    color: theme.palette.grey.graphite,
+    fontSize: getScaleFontSize(10),
     fontStyle: 'italic',
     marginLeft: UI_SIZES.spacing.tiny,
-    marginTop: UI_SIZES.spacing.tiny,
   },
 
   // Main container
@@ -44,17 +39,8 @@ export default StyleSheet.create({
     flex: 1,
   },
 
-  footerText: {
-    color: theme.palette.primary.regular,
-    fontSize: getScaleFontSize(16),
-    fontStyle: 'italic',
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-
   legendAllergenIcon: {
     alignItems: 'center',
-    backgroundColor: theme.palette.complementary.orange.pale,
     borderRadius: UI_SIZES.radius.small,
     height: UI_SIZES.elements.icon.xsmall,
     justifyContent: 'center',
@@ -64,9 +50,10 @@ export default StyleSheet.create({
 
   // Legend styles
   legendContainer: {
-    backgroundColor: theme.palette.grey.cloudy,
+    backgroundColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.medium,
     marginBottom: UI_SIZES.spacing.large,
+    marginTop: UI_SIZES.spacing.large,
     padding: UI_SIZES.spacing.medium,
   },
 
@@ -92,10 +79,12 @@ export default StyleSheet.create({
   legendText: {
     color: theme.palette.grey.black,
     flex: 1,
+    fontSize: getScaleFontSize(12),
   },
 
   legendTitle: {
     color: theme.palette.grey.black,
+    fontSize: getScaleFontSize(14),
     marginBottom: UI_SIZES.spacing.tiny,
   },
 
@@ -104,26 +93,12 @@ export default StyleSheet.create({
     flex: 1,
   },
 
-  // Menu footer
-  menuFooter: {
-    alignItems: 'center',
-    borderRadius: UI_SIZES.radius.medium,
-    padding: UI_SIZES.spacing.small,
-  },
-
   // Menu item
   menuItem: {
     borderBottomColor: theme.palette.grey.cloudy,
-    borderBottomWidth: 1,
-    marginBottom: UI_SIZES.spacing.medium,
-    paddingBottom: UI_SIZES.spacing.medium,
-  },
-
-  menuItemDescription: {
-    color: theme.palette.grey.darkness,
-    fontSize: getScaleFontSize(14),
-    fontStyle: 'italic',
-    lineHeight: 20,
+    borderBottomWidth: 0.5,
+    marginBottom: UI_SIZES.spacing.tiny,
+    paddingBottom: UI_SIZES.spacing.tiny,
   },
 
   menuItemHeader: {
@@ -145,88 +120,53 @@ export default StyleSheet.create({
     marginTop: UI_SIZES.spacing.tiny,
   },
 
+  menuItemLast: {
+    borderBottomWidth: 0,
+  },
+
   menuItemName: {
     color: theme.palette.grey.black,
-    fontSize: getScaleFontSize(18),
-    fontWeight: '600',
+    fontSize: getScaleFontSize(13),
   },
 
   menuItemNameContainer: {
     flex: 1,
   },
 
+  menuItemRightContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+
   // Menu items container
   menuItemsContainer: {
     backgroundColor: theme.palette.grey.white,
+    borderLeftWidth: 4,
     borderRadius: UI_SIZES.radius.medium,
-    elevation: 3,
-    padding: UI_SIZES.spacing.medium,
-    shadowColor: theme.palette.grey.black,
-    shadowOffset: {
-      height: 2,
-      width: 0,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    padding: UI_SIZES.spacing.minor,
   },
 
   // Menu section
   menuSection: {
-    marginBottom: UI_SIZES.spacing.large,
-  },
-
-  // Restaurant header
-  restaurantHeader: {
-    alignItems: 'center',
-    backgroundColor: theme.palette.primary.regular,
-    borderRadius: UI_SIZES.radius.large,
-    marginBottom: UI_SIZES.spacing.large,
-    paddingHorizontal: UI_SIZES.spacing.large,
-    paddingVertical: UI_SIZES.spacing.medium,
-  },
-
-  restaurantSubtitle: {
-    color: theme.palette.grey.white,
-    fontSize: getScaleFontSize(14),
-    fontStyle: 'italic',
-    marginTop: UI_SIZES.spacing.tiny,
-    textAlign: 'center',
-  },
-
-  restaurantTitle: {
-    color: theme.palette.grey.white,
-    fontSize: getScaleFontSize(24),
-    fontWeight: '700',
-    marginLeft: UI_SIZES.spacing.tiny,
-  },
-
-  restaurantTitleContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-
-  sectionDivider: {
-    backgroundColor: theme.palette.primary.regular,
-    borderRadius: 2,
-    height: 3,
-    width: 60,
-  },
-
-  // Section header
-  sectionHeader: {
-    marginBottom: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.minor,
   },
 
   sectionTitle: {
-    color: theme.palette.primary.regular,
-    fontSize: getScaleFontSize(20),
-    fontWeight: '700',
+    color: theme.palette.grey.black,
+    fontSize: getScaleFontSize(14),
     marginBottom: UI_SIZES.spacing.tiny,
-    textAlign: 'center',
+    textAlign: 'left',
   },
 
   sectionTitleContainer: {
     alignItems: 'center',
+    flexDirection: 'row',
+  },
+
+  titleDot: {
+    borderRadius: 4,
+    height: 8,
+    marginRight: UI_SIZES.spacing.tiny,
+    width: 8,
   },
 });

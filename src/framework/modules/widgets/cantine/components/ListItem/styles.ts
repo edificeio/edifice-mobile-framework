@@ -20,7 +20,4 @@ export default StyleSheet.create({
   name: {
     flex: 1,
   },
-  uai: {
-    color: theme.palette.grey.stone,
-  },
 });
