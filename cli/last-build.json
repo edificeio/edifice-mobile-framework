@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-10-14 18:04:02",
-  "notes": "update(stack): yarn cache update\nfix(viescolaire): COCO-4807, rewrite custom TabView/TabBar to restore visibility and preserve styles.\nrelease: 1.15.4-rc.2(1150404)",
-  "version": "1.15.4-rc.3(1150405)"
+  "last": "2025-10-15 13:46:43",
+  "notes": "fix(wayf): COCO-4806, always redirect to wayf home after disconexion\nfix(blog): COCO-4812, rewrite custom TabBar in reactions screen and align BadgeAvatar props with Badge\nfix(sound): avoid cutting playback at launch\nrelease: 1.15.4-rc.3(1150405)",
+  "version": "1.15.4-rc.4(1150406)"
 }
