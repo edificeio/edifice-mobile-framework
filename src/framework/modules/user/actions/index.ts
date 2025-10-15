@@ -63,14 +63,16 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
 const snowFallDuration = 35000;
 let snowfallTimer: NodeJS.Timeout;
 
-Sound.setCategory('Playback');
+export const jingleBells: Sound = undefined as unknown as Sound;
+/*Sound.setCategory('Playback');
 export const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, error => {
   if (error) {
     console.error('failed to load the sound', error);
   } else
-    console.debug('duration in seconds: ' + jingleBells.getDuration() + 'number of channels: ' + jingleBells.getNumberOfChannels());
+    console.debug('duration in seconds: ' + jingleBells?.getDuration() + 'number of channels: ' + jingleBells.getNumberOfChannels());
 });
-jingleBells.setVolume(0.5);
+
+jingleBells?.setVolume(0.5);*/
 
 const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: number, endMonth: number) => {
   const getDateForYear = (startOfYear: Moment, day: number, month: number) => {
@@ -113,7 +115,7 @@ export const letItSnowAction = () => async (dispatch: ThunkDispatch<any, any, an
 export const stopItSnowAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
     if (!getIsXmasActive(getState())) return;
-    jingleBells.stop();
+    jingleBells?.stop();
     dispatch({ type: actionTypes.setFlakes, value: false });
     if (snowfallTimer) {
       clearTimeout(snowfallTimer);
@@ -131,14 +133,14 @@ export const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<an
       setTimeout(() => {
         dispatch(letItSnowAction());
         if (getIsXmasMusicActive(getState())) {
-          jingleBells.setVolume(0.5);
-          jingleBells.play();
+          jingleBells?.setVolume(0.5);
+          jingleBells?.play();
         }
       }, 100);
       shakeListener = RNShake.addListener(() => {
         Vibration.vibrate();
         dispatch(letItSnowAction());
-        if (getIsXmasMusicActive(getState())) jingleBells.play();
+        if (getIsXmasMusicActive(getState())) jingleBells?.play();
       });
     } else if (shakeListener && !getIsXmasActive(getState())) {
       shakeListener.remove();
@@ -154,7 +156,7 @@ export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: Thunk
     writeXmasMusic(xmasMusic);
     dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusic });
     if (xmasMusic) {
-      jingleBells.play();
+      jingleBells?.play();
       dispatch(letItSnowAction());
     } else {
       dispatch(stopItSnowAction());
@@ -169,7 +171,7 @@ export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: Thunk
   try {
     writeXmasTheme(xmasTheme);
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
-    if (!xmasTheme) jingleBells.stop();
+    if (!xmasTheme) jingleBells?.stop();
     dispatch(updateShakeListenerAction());
   } catch {
     // If error, we disable theme for now
