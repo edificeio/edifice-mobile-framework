@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
@@ -7,15 +7,14 @@ import moment from 'moment';
 import styles from './styles';
 
 import { I18n } from '~/app/i18n';
+import SelectButton from '~/framework/components/buttons/select';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import type { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import ScrollView from '~/framework/components/scrollView';
+import { BodyText } from '~/framework/components/text';
 import { getPlatform, getSession } from '~/framework/modules/auth/reducer';
-import ListBottomSheet from '~/framework/modules/widgets/cantine/components/ListBottomSheet';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
-import SelectButton from '~/framework/modules/widgets/cantine/components/SelectButton';
 import { CantineData, Structure } from '~/framework/modules/widgets/cantine/model';
 import { CantineNavigationParams, cantineRouteNames } from '~/framework/modules/widgets/cantine/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -54,7 +53,6 @@ export default function CantineHomeScreen() {
     return today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
   });
   const [selectedStructure, setSelectedStructure] = React.useState<Structure | null>(defaultStructure);
-  const listBottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
 
   const getCantineInfo = async () => {
     if (!selectedStructure) {
@@ -86,27 +84,40 @@ export default function CantineHomeScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, selectedStructure]);
 
-  const openListBottomSheet = React.useCallback(() => {
-    listBottomSheetRef.current?.present();
-  }, []);
-
   const onStructurePress = React.useCallback((item: Structure) => {
     setSelectedStructure(item);
     setCantineInfo(null); // Clear previous data when structure changes
-    listBottomSheetRef.current?.dismiss();
     // Handle structure selection if needed
   }, []);
+
+  const renderStructureItem = React.useCallback(
+    ({ item, onPress }: { item: Structure; onPress: () => void }) => (
+      <TouchableOpacity onPress={onPress} style={styles.structureListItem}>
+        <View style={styles.structureListItemContent}>
+          <View style={styles.structureListItemHeader}>
+            <BodyText numberOfLines={1} style={styles.structureListItemName}>
+              {item.name}
+            </BodyText>
+          </View>
+        </View>
+      </TouchableOpacity>
+    ),
+    [],
+  );
 
   const renderContent = () => (
     <View>
       {structures.length > 1 && (
         <SelectButton
           text={selectedStructure ? selectedStructure.name : I18n.get('widget-cantine-home-select-structure')}
-          action={openListBottomSheet}
           iconLeft="ui-school"
           iconRight="ui-unfold"
           wrapperStyle={styles.selectButtonWrapper}
-          testID="structure-select-button"
+          testID="widget-cantine-structure-select-button"
+          data={structures}
+          onItemPress={onStructurePress}
+          renderItem={renderStructureItem}
+          keyExtractor={item => `${item.name}-${item.uai}`}
         />
       )}
       <DayPicker
@@ -144,12 +155,6 @@ export default function CantineHomeScreen() {
             {renderMenuContent()}
           </View>
         </View>
-        <ListBottomSheet
-          ListComponent={FlatList as any}
-          onPress={onStructurePress}
-          ref={listBottomSheetRef}
-          structuresData={structures}
-        />
       </ScrollView>
     </PageView>
   );
