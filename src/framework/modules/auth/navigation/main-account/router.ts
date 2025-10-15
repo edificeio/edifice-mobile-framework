@@ -10,7 +10,7 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   InitialAuthenticationMethod,
 } from '~/framework/modules/auth/model';
-import { AuthPendingRestore, getAccountsNumber, getPlatform, getSession, IAuthState } from '~/framework/modules/auth/reducer';
+import { AuthPendingRestore, getPlatform, getSession, IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -37,7 +37,7 @@ const getNavRoutesForLoginRedirection = (
       },
     ];
   if (platform.wayf) {
-    if (account?.method === InitialAuthenticationMethod.LOGIN_PASSWORD) {
+    /*if (account?.method === InitialAuthenticationMethod.LOGIN_PASSWORD) {
       if (getAccountsNumber() > 1) {
         // If we have multiple accounts, just put the login crentials screen. The user can go back to account-select screen and manage accounts.
         return [
@@ -57,9 +57,9 @@ const getNavRoutesForLoginRedirection = (
           },
         ];
       }
-    } else {
-      return [{ name: authRouteNames.loginWayf, params: { platform } }];
-    }
+    } else {*/
+    return [{ name: authRouteNames.loginWayf, params: { platform } }];
+    //}
   } else {
     if (account) {
       return [
