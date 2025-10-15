@@ -69,7 +69,7 @@ export const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, erro
   if (error) {
     console.error('failed to load the sound', error);
   } else
-    console.debug('duration in seconds: ' + jingleBells?.getDuration() + 'number of channels: ' + jingleBells.getNumberOfChannels());
+    console.debug('duration in seconds: ' + jingleBells?.getDuration() + 'number of channels: ' + jingleBells?.getNumberOfChannels());
 });
 
 jingleBells?.setVolume(0.5);*/
