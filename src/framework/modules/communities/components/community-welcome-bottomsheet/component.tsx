@@ -49,16 +49,8 @@ export const CommunityWelcomeBottomSheetModal = React.forwardRef<
     ref.current?.dismiss();
   }, []);
   return (
-    <CustomBottomSheetModal ref={syncRef} style={styles.modal}>
+    <CustomBottomSheetModal ref={syncRef} style={styles.modal} closeButton>
       <SafeAreaView style={styles.page} edges={{ bottom: 'maximum', left: 'maximum', right: 'maximum', top: 'off' }}>
-        <TouchableOpacity onPress={onClose} style={styles.close}>
-          <Svg
-            name="ui-close"
-            height={UI_SIZES.elements.icon.small}
-            width={UI_SIZES.elements.icon.small}
-            fill={theme.palette.grey.black}
-          />
-        </TouchableOpacity>
         <HeadingMText style={styles.text}>{I18n.get('community-join-onboarding-title')}</HeadingMText>
 
         <LottieView autoPlay loop={false} resizeMode="contain" source={animationSource} style={styles.animation} />

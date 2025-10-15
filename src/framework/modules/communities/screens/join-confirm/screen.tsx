@@ -99,7 +99,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
       await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {
         status: InvitationStatus.ACCEPTED,
       });
-      navigation.replace(communitiesRouteNames.home, { communityId, showWelcome: true });
+      navigation.replace(communitiesRouteNames.home, { communityId, invitationId, showWelcome: true });
     } catch (e) {
       console.info(communityId, invitationId);
       console.error(e);

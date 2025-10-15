@@ -44,8 +44,6 @@ export default StyleSheet.create({
   modal: {},
   page: {
     gap: UI_SIZES.spacing.medium,
-    paddingHorizontal: UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.spacing.small,
   },
   text: {
     textAlign: 'center',
