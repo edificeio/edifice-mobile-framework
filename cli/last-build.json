@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-10-15 13:46:43",
-  "notes": "fix(wayf): COCO-4806, always redirect to wayf home after disconexion\nfix(blog): COCO-4812, rewrite custom TabBar in reactions screen and align BadgeAvatar props with Badge\nfix(sound): avoid cutting playback at launch\nrelease: 1.15.4-rc.3(1150405)",
-  "version": "1.15.4-rc.4(1150406)"
+  "last": "2025-10-15 18:01:38",
+  "notes": "fix(wayf): SUPPORT-3638, add extranet.ac-normandie.fr network configuration\nrelease: 1.15.4-rc.4(1150406)",
+  "version": "1.15.4-rc.5(1150407)"
 }
