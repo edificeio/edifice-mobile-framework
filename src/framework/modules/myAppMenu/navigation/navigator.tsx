@@ -6,7 +6,6 @@ import { I18n } from '~/app/i18n';
 import moduleConfig from '~/framework/modules/myAppMenu/module-config';
 import { myAppsConnector, myAppsModules, myAppsSecondaryModules, myAppsWidgets } from '~/framework/modules/myAppMenu/myAppsModules';
 import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
-import MyAppMenuWidgetsScreen, { computeNavBar as widgetsNavBar } from '~/framework/modules/myAppMenu/screens/widgets';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
@@ -19,7 +18,6 @@ export default (({ session }) => {
   const MyAppsContainer = props => (
     <MyAppsHomeScreen {...props} modules={modules} secondaryModules={secondaryModules} connectors={connectors} widgets={widgets} />
   );
-  const MyAppsWidgetsContainer = props => <MyAppMenuWidgetsScreen {...props} widgetsList={widgets} />;
   return createModuleNavigator<IMyAppsNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen
@@ -29,12 +27,6 @@ export default (({ session }) => {
           headerTitle: navBarTitle(I18n.get('myapp-appname')),
         }}
         initialParams={undefined}
-      />
-      <Stack.Screen
-        name={myAppsRouteNames.widgets}
-        component={MyAppsWidgetsContainer}
-        options={widgetsNavBar}
-        initialParams={{}} // @scaffolder replace `{}` by `undefined` if no navParams are defined for this screen.
       />
     </>
   ));

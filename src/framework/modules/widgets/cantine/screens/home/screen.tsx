@@ -9,7 +9,9 @@ import styles from './styles';
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import type { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
+import ScrollView from '~/framework/components/scrollView';
 import { getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import ListBottomSheet from '~/framework/modules/widgets/cantine/components/ListBottomSheet';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
@@ -134,19 +136,21 @@ export default function CantineHomeScreen() {
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          {renderContent()}
-          {renderMenuContent()}
+    <PageView>
+      <ScrollView bottomInset={false}>
+        <View style={styles.container}>
+          <View style={styles.contentContainer}>
+            {renderContent()}
+            {renderMenuContent()}
+          </View>
         </View>
-      </View>
-      <ListBottomSheet
-        ListComponent={FlatList as any}
-        onPress={onStructurePress}
-        ref={listBottomSheetRef}
-        structuresData={structures}
-      />
-    </>
+        <ListBottomSheet
+          ListComponent={FlatList as any}
+          onPress={onStructurePress}
+          ref={listBottomSheetRef}
+          structuresData={structures}
+        />
+      </ScrollView>
+    </PageView>
   );
 }

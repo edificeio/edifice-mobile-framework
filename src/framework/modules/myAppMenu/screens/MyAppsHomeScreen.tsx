@@ -3,9 +3,6 @@ import { StyleSheet, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import ModuleLineButton from '../components/module-line-button';
-import moduleConfig from '../module-config';
-
 import { I18n } from '~/app/i18n';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
@@ -89,7 +86,10 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   };
 
   const renderOtherModules = () => {
-    if (isEmpty(props.secondaryModules) && isEmpty(props.connectors)) return null;
+    if (isEmpty(props.secondaryModules) && isEmpty(props.connectors) && isEmpty(props.widgets)) return null;
+    const widgets = (props.widgets ?? [])?.sort((a, b) =>
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
+    ) as NavigableModuleArray;
     const secondaryModules = (props.secondaryModules ?? [])?.sort((a, b) =>
       I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
     ) as NavigableModuleArray;
@@ -99,7 +99,12 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     return (
       <View style={styles.otherModules}>
         <HeadingSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingSText>
-
+        <FlatList
+          bottomInset={false}
+          renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}
+          data={widgets}
+          style={styles.flatlist}
+        />
         <FlatList
           bottomInset={false}
           renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}
@@ -116,23 +121,9 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     );
   };
 
-  const renderWidgets = () => {
-    if (props.widgets.length === 0) return null;
-
-    return (
-      <ModuleLineButton
-        displayI18n="myapp-widgets-title"
-        displayPicture={{ fill: '#000', name: 'ui-widget', type: 'Svg' }}
-        onPress={() => props.navigation.navigate(`${moduleConfig.routeName}/widgets`)}
-      />
-    );
-    // return <OtherModuleElement item={data as AnyNavigableModule} type="widgets" />;
-  };
-
   return (
     <PageView>
       <ScrollView bottomInset={false}>
-        {renderWidgets()}
         {renderGrid()}
         {renderOtherModules()}
         <View style={styles.webButton}>
