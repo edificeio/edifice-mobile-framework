@@ -1,9 +1,9 @@
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 const CREATIVESCHOOL = 'creativeschool';
 
 export default new NavigableModuleConfig<'creativeschool', null>({
-  displayAs: 'myAppsConnector',
+  displayAs: ModuleType.MYAPPS_CONNECTOR,
   displayI18n: 'creativeschool-moduleconfig-appname',
   displayPicture: { source: require('ASSETS/icons/moduleIcons/creativeschool.png'), type: 'Image' },
   entcoreScope: ['cas'],

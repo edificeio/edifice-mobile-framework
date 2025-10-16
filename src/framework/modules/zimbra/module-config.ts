@@ -1,10 +1,10 @@
 import type { IZimbraReduxState } from './reducer';
 
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'zimbra', IZimbraReduxState>({
-  displayAs: 'tabModule',
+  displayAs: ModuleType.TAB_MODULE,
   displayColor: theme.apps.zimbra.accentColors,
   displayI18n: 'zimbra-moduleconfig-tabname',
   displayOrder: 1,

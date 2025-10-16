@@ -1,10 +1,10 @@
 import type { IWorkspaceState } from './reducer';
 
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'workspace', IWorkspaceState>({
-  displayAs: 'myAppsModule',
+  displayAs: ModuleType.MYAPPS_MODULE,
   displayColor: theme.apps.workspace.accentColors,
   displayI18n: 'workspace-moduleconfig-modulename',
   displayPicture: theme.apps.workspace.icon,

@@ -1,8 +1,8 @@
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<string, null>({
-  displayAs: 'myAppsModule',
+  displayAs: ModuleType.MYAPPS_MODULE,
   displayColor: theme.apps.nabook.accentColors,
   displayI18n: 'nabook-tabname',
   displayPicture: theme.apps.nabook.icon,

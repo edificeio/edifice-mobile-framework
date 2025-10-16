@@ -1,8 +1,8 @@
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'scrapbook', null>({
-  displayAs: 'myAppsModule',
+  displayAs: ModuleType.MYAPPS_MODULE,
   displayColor: theme.apps.scrapbook.accentColors,
   displayI18n: 'scrapbook-appname',
   displayOrder: 0,

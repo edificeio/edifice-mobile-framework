@@ -1,6 +1,6 @@
 import theme from '~/app/theme';
 import { {{moduleName | toCamelCase | capitalize}}State } from '~/framework/modules/{{moduleName}}/reducer';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', {{moduleName | toCamelCase | capitalize}}State>({
   name: '{{moduleName | toCamelCase}}',
@@ -11,7 +11,7 @@ export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', {{modul
   storageName: '{{moduleName | toCamelCase}}',
 
   displayI18n: '{{moduleName | toCamelCase}}.tabName',
-  displayAs: 'tabModule',
+  displayAs: ModuleType.TAB_MODULE,
   displayOrder: 0,
   displayPicture: { type: 'Svg', name: 'ui-tool' },
 });
