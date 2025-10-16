@@ -1,11 +1,9 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-
-const WIDTH_TEXT_TAB = getScaleWidth(20);
 
 export default StyleSheet.create({
   activeCourseBorder: {
@@ -28,6 +26,12 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     padding: UI_SIZES.spacing.minor,
   },
+  firstTextLine: {
+    flexShrink: 0,
+    marginTop: TextSizeStyle.Normal.fontSize - TextSizeStyle.Normal.lineHeight,
+    position: 'relative',
+    top: (TextSizeStyle.Normal.lineHeight - TextSizeStyle.Normal.fontSize) / 2,
+  },
   halfCourseView: {
     backgroundColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.medium,
@@ -43,14 +47,8 @@ export default StyleSheet.create({
   },
   halfSplitLineView: {
     flexDirection: 'row',
+    flexGrow: 1,
     flexShrink: 1,
-    flexGrow: 1
-  },
-  firstTextLine: {
-    flexShrink: 0,
-    marginTop: TextSizeStyle.Normal.fontSize - TextSizeStyle.Normal.lineHeight,
-    position: 'relative',
-    top: (TextSizeStyle.Normal.lineHeight - TextSizeStyle.Normal.fontSize) / 2
   },
   halfTextStyle: {
     flex: 1,
@@ -71,19 +69,25 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
     borderBottomColor: theme.palette.grey.grey,
     borderBottomWidth: 1,
-  },
-  tabBarIndicator: {
-    backgroundColor: theme.palette.grey.white,
+    flexDirection: 'row',
+    paddingHorizontal: UI_SIZES.spacing.small,
   },
   tabBarItem: {
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: 2,
+    gap: 2,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
   },
+
+  tabBarItemContainer: {
+    alignItems: 'center',
+    flex: 1,
+    paddingVertical: UI_SIZES.spacing.small,
+  },
   tabBarItemText: {
+    paddingHorizontal: UI_SIZES.spacing.tinyExtra,
     textAlign: 'center',
-    width: WIDTH_TEXT_TAB,
   },
   taggedCourseBackground: {
     backgroundColor: theme.palette.grey.cloudy,
@@ -94,7 +98,6 @@ export default StyleSheet.create({
     flexDirection: 'row',
     padding: UI_SIZES.spacing.medium,
     paddingBottom: 0,
-    zIndex: -1,
   },
   weekText: {
     marginLeft: UI_SIZES.spacing.tiny,

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.minor,
     flexDirection: 'row',
+    position: 'relative',
   },
   headerItemTextFocused: {
     color: theme.palette.primary.regular,
@@ -37,10 +38,21 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: UI_SIZES.border.thin,
   },
-
-  tabBarIndicatorContainer: {
+  tabBarContentContainer: {
+    flexDirection: 'row',
+  },
+  tabBarIndicator: {
     backgroundColor: theme.palette.primary.regular,
-    height: 2,
+    bottom: 0,
+    height: getScaleHeight(2),
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+  tabbarItem: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: UI_SIZES.spacing.small,
   },
 });
 

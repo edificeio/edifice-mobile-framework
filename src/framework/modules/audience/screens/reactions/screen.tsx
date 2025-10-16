@@ -1,13 +1,13 @@
 import React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { NavigationState, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
+import { Route as TabRoute, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
-import { AudienceReactionsScreenProps } from './types';
+import { AudienceReactionsScreenProps, ReactionsTabViewProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -43,7 +43,7 @@ export const computeNavBar = ({
 const renderTabReaction = (key, nb, focused) => {
   const TextComponent = focused ? SmallBoldText : SmallText;
   if (key === 'all')
-    return <TextComponent style={focused ? styles.headerItemTextFocused : {}}>{I18n.get('audience-reactions-all')} </TextComponent>;
+    return <TextComponent style={focused ? styles.headerItemTextFocused : {}}>{I18n.get('audience-reactions-all')}</TextComponent>;
   return (
     <View style={styles.headerItem}>
       <Svg name={key.toLowerCase()} />
@@ -142,18 +142,30 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
       />
     );
   };
-  const renderTabBar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
-  ) => {
+
+  const renderTabBar = (tabBarProps: ReactionsTabViewProps) => {
     return (
-      <TabBar
-        renderLabel={({ focused, route }) => renderTabReaction(route.key, countByType![route.key] ?? 0, focused)}
-        indicatorStyle={styles.tabBarIndicatorContainer}
-        style={styles.tabBarContainer}
-        {...tabBarProps}
-      />
+      <View style={styles.tabBarContainer}>
+        <View style={styles.tabBarContentContainer}>
+          {tabBarProps.navigationState.routes.map((route: TabRoute, i: number) => {
+            const focused = i === tabBarProps.navigationState.index;
+
+            return (
+              <TouchableOpacity
+                key={route.key}
+                style={[styles.headerItem, styles.tabbarItem]}
+                activeOpacity={0.7}
+                onPress={() => tabBarProps.jumpTo(route.key)}>
+                {renderTabReaction(route.key, countByType![route.key] ?? 0, focused)}
+                {focused ? <View style={styles.tabBarIndicator} /> : null}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
     );
   };
+
   const renderContent = () => {
     return (
       <PageView style={styles.container} showNetworkBar={false}>
@@ -170,12 +182,12 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
 };
 
 export default connect(
-  state => {
+  _ => {
     return {
       validReactionTypes: getValidReactionTypes(),
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => () => ({
+  (dispatch: ThunkDispatch<any, any, any>, _: () => IGlobalState) => () => ({
     dispatch,
   }),
 )(AudienceReactionsScreen);
