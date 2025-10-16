@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { PixelRatio } from 'react-native';
 
-import { MembershipClient, MembershipResponseDto, PaginationQueryDto } from '@edifice.io/community-client-rest-rn';
+import {
+  InvitationClient,
+  InvitationOrMemberDto,
+  MembershipClient,
+  PaginationQueryDto,
+} from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
@@ -53,7 +58,7 @@ export const computeNavBar = ({
 });
 
 export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(function CommunitiesMembersScreen({ route }) {
-  const [allMembers, setAllMembers] = React.useState<(MembershipResponseDto | typeof LOADING_ITEM_DATA)[]>([]);
+  const [allMembers, setAllMembers] = React.useState<(InvitationOrMemberDto | typeof LOADING_ITEM_DATA)[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const communityId = route.params.communityId;
 
@@ -65,15 +70,18 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
           size: PAGE_SIZE,
         };
 
-        const members = await sessionApi(moduleConfig, MembershipClient).getMembers(Number(communityId), baseQueryParams);
+        const invitations = await sessionApi(moduleConfig, InvitationClient).getInvitationsAndMembers(
+          Number(communityId),
+          baseQueryParams,
+        );
 
         setAllMembers(prevData => {
           return staleOrSplice({
-            newData: members.items,
+            newData: invitations.items,
             previousData: prevData,
             reloadAll,
             start: page * PAGE_SIZE,
-            total: members.meta.totalItems,
+            total: invitations.meta.totalItems,
           });
         });
       } catch (e) {
@@ -89,7 +97,7 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
     loadData(0, true);
   }, [loadData]);
 
-  const renderItem = React.useCallback(({ index, item }: { item: MembershipResponseDto; index: number }) => {
+  const renderItem = React.useCallback(({ index, item }: { item: InvitationOrMemberDto; index: number }) => {
     if (!item.user) return null;
     const backgroundColor = getItemBackgroundColor(index);
 
@@ -114,7 +122,7 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
     );
   }, []);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<MembershipResponseDto>['keyExtractor']>>(
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<InvitationOrMemberDto>['keyExtractor']>>(
     item => item.user.entId.toString(),
     [],
   );

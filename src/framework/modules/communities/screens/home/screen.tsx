@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { CommunityClient, InvitationResponseDto, MembershipClient } from '@edifice.io/community-client-rest-rn';
+import { CommunityClient, InvitationClient, InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -541,14 +541,14 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
   );
 
   const loadContent = React.useCallback(async () => {
-    const [community, members] = await Promise.all([
+    const [community, invitations] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
-      accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
+      accountApi(session, moduleConfig, InvitationClient).getInvitationsAndMembers(communityId, { page: 1, size: 20 }),
     ]);
     setData({
       ...community,
-      membersId: members.items.map(item => item.user.entId),
-      totalMembers: members.meta.totalItems,
+      membersId: invitations.items.map(item => item.user.entId),
+      totalMembers: invitations.meta.totalItems,
     });
   }, [communityId, session, setData]);
 
