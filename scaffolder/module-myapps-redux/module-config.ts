@@ -1,7 +1,8 @@
 import theme from '~/app/theme';
+import { {{moduleName | toCamelCase | capitalize}}State } from '~/framework/modules/{{moduleName}}/reducer';
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', null>({
+export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', {{moduleName | toCamelCase | capitalize}}State>({
   name: '{{moduleName | toCamelCase}}',
   entcoreScope: [
     /* @scaffolder add there entcore scope list that be required for your module */
