@@ -40,8 +40,3 @@ export interface MenuItem {
 export interface CantineData {
   menu: MenuItem[];
 }
-
-export interface Structure {
-  name: string;
-  uai: string;
-}

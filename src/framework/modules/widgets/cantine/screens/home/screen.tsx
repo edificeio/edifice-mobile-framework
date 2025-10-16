@@ -1,21 +1,20 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 import styles from './styles';
 
 import { I18n } from '~/app/i18n';
-import SelectButton from '~/framework/components/buttons/select';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import ScrollView from '~/framework/components/scrollView';
-import { BodyText } from '~/framework/components/text';
 import { getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
-import { CantineData, Structure } from '~/framework/modules/widgets/cantine/model';
+import { CantineData } from '~/framework/modules/widgets/cantine/model';
 import { CantineNavigationParams, cantineRouteNames } from '~/framework/modules/widgets/cantine/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { signedFetchJson } from '~/infra/fetchWithCache';
@@ -36,14 +35,15 @@ export default function CantineHomeScreen() {
   const session = getSession();
   const userStructures = session?.user?.structures || [];
 
-  // Convert user structures to our Structure format
-  const structures: Structure[] = userStructures.map(structure => ({
-    name: structure.name,
-    uai: structure.UAI,
+  // Convert structures to DropDownPicker format
+  const dropdownItemsStructures = userStructures.map(structure => ({
+    label: structure.name,
+    value: structure.UAI,
   }));
 
   // Set default structure to the first one if available
-  const defaultStructure = structures.length > 0 ? structures[0] : null;
+  const defaultStructure = dropdownItemsStructures.length > 0 ? dropdownItemsStructures[0] : null;
+  const defaultStructureValue = defaultStructure?.value || null;
 
   const [cantineInfo, setCantineInfo] = React.useState<CantineData | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -52,10 +52,11 @@ export default function CantineHomeScreen() {
     const today = new Date();
     return today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
   });
-  const [selectedStructure, setSelectedStructure] = React.useState<Structure | null>(defaultStructure);
+  const [selectedStructureValue, setSelectedStructureValue] = React.useState<string | null>(defaultStructureValue);
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const getCantineInfo = async () => {
-    if (!selectedStructure) {
+    if (!selectedStructureValue) {
       console.warn('No structure selected');
       return;
     }
@@ -63,7 +64,7 @@ export default function CantineHomeScreen() {
     setIsLoading(true);
     try {
       const cantineInfoResponse = (await signedFetchJson(
-        `${getPlatform()?.url}/appregistry/${selectedStructure.uai}/cantine/menu?date=${selectedDate}`,
+        `${getPlatform()?.url}/appregistry/${selectedStructureValue}/cantine/menu?date=${selectedDate}`,
       )) as CantineData;
 
       setCantineInfo(cantineInfoResponse);
@@ -76,48 +77,36 @@ export default function CantineHomeScreen() {
   };
 
   React.useEffect(() => {
-    if (selectedDate.length === 0 || !selectedStructure) {
+    if (selectedDate.length === 0 || !selectedStructureValue) {
       return;
     }
 
     getCantineInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDate, selectedStructure]);
+  }, [selectedDate, selectedStructureValue]);
 
-  const onStructurePress = React.useCallback((item: Structure) => {
-    setSelectedStructure(item);
-    setCantineInfo(null); // Clear previous data when structure changes
-    // Handle structure selection if needed
-  }, []);
-
-  const renderStructureItem = React.useCallback(
-    ({ item, onPress }: { item: Structure; onPress: () => void }) => (
-      <TouchableOpacity onPress={onPress} style={styles.structureListItem}>
-        <View style={styles.structureListItemContent}>
-          <View style={styles.structureListItemHeader}>
-            <BodyText numberOfLines={1} style={styles.structureListItemName}>
-              {item.name}
-            </BodyText>
-          </View>
-        </View>
-      </TouchableOpacity>
-    ),
-    [],
+  const onStructureChange = React.useCallback(
+    (callback: (value: string | null) => string | null) => {
+      const newValue = callback(selectedStructureValue);
+      setSelectedStructureValue(newValue);
+      setCantineInfo(null); // Clear previous data when structure changes
+    },
+    [selectedStructureValue],
   );
 
   const renderContent = () => (
     <View>
-      {structures.length > 1 && (
-        <SelectButton
-          text={selectedStructure ? selectedStructure.name : I18n.get('widget-cantine-home-select-structure')}
-          iconLeft="ui-school"
-          iconRight="ui-unfold"
-          wrapperStyle={styles.selectButtonWrapper}
-          testID="widget-cantine-structure-select-button"
-          data={structures}
-          onItemPress={onStructurePress}
-          renderItem={renderStructureItem}
-          keyExtractor={item => `${item.name}-${item.uai}`}
+      {dropdownItemsStructures.length > 1 && (
+        <DropDownPicker
+          open={isOpen}
+          value={selectedStructureValue}
+          items={dropdownItemsStructures}
+          setOpen={setIsOpen}
+          setValue={onStructureChange}
+          placeholder={I18n.get('widget-cantine-home-select-structure')}
+          style={styles.dropdownContainer}
+          dropDownContainerStyle={styles.dropdownContainer}
+          textStyle={styles.dropdownText}
         />
       )}
       <DayPicker

@@ -10,29 +10,14 @@ export default StyleSheet.create({
   contentContainer: {
     padding: UI_SIZES.spacing.medium,
   },
-  selectButtonWrapper: {
+  // DropDownPicker styles
+  dropdownContainer: {
     borderColor: theme.palette.grey.cloudy,
-    borderRadius: UI_SIZES.radius.card,
+    borderRadius: UI_SIZES.radius.selector,
     borderWidth: UI_SIZES.border.thin,
-    paddingHorizontal: UI_SIZES.spacing.tiny,
-    paddingVertical: UI_SIZES.spacing.tiny,
-    width: '100%',
   },
-  // Styles for structure list items
-  structureListItem: {
-    backgroundColor: theme.palette.grey.white,
-    borderRadius: UI_SIZES.radius.small,
-    padding: UI_SIZES.spacing.medium,
-  },
-  structureListItemContent: {
-    flex: 1,
-  },
-  structureListItemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: UI_SIZES.spacing.tiny,
-  },
-  structureListItemName: {
-    flex: 1,
+  dropdownText: {
+    color: theme.palette.grey.black,
+    fontSize: 16,
   },
 });
