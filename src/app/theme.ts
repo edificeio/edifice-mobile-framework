@@ -104,6 +104,9 @@ export interface ITheme {
   };
   // Semantic usage of the color palette
   color: {
+    mails: {
+      unread: ColorValue;
+    };
     homework: {
       days: {
         monday: { accent: ColorValue; light: ColorValue; background: ColorValue };
@@ -374,6 +377,9 @@ export const defaultTheme: ThemeInitializer = {
             light: this.palette.complementary.blue.light,
           },
         },
+      },
+      mails: {
+        unread: this.palette.secondary.pale,
       },
       profileTypes: {
         Guest: this.palette.complementary.pink.regular,
