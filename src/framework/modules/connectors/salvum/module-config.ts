@@ -1,9 +1,9 @@
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 const SALVUM = 'salvum';
 
 export default new NavigableModuleConfig<string, null>({
-  displayAs: 'myAppsConnector',
+  displayAs: ModuleType.MYAPPS_CONNECTOR,
   displayI18n: 'salvum-moduleconfig-appname',
   displayPicture: { source: require('ASSETS/icons/moduleIcons/salvum.png'), type: 'Image' },
   entcoreScope: ['cas'],

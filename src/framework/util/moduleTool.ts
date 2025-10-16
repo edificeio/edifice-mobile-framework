@@ -330,11 +330,21 @@ export interface IAppBadgeInfo {
   icon: string | PictureProps;
   color: ColorValue;
 }
+
+export enum ModuleType {
+  HIDDEN_MODULE = 'hiddenModule',
+  MYAPPS_CONNECTOR = 'myAppsConnectors',
+  MYAPPS_MODULE = 'myAppsModule',
+  MYAPPS_SECONDARY_MODULE = 'myAppsSecondaryModule',
+  MYAPPS_WIDGET = 'myAppsWidget',
+  TAB_MODULE = 'tabModule',
+}
+
 export type IAppBadgesInfoDeclaration = { [key: string]: { icon?: string | Partial<PictureProps>; color?: ColorValue } };
 
 interface INavigableModuleConfigDisplay {
   displayI18n: string; // I18n key of the module title displayed.
-  displayAs?: string; // In which global register to put this module
+  displayAs?: ModuleType; // In which global register to put this module
   displayOrder: number; // In which order
   displayPicture?: PictureProps; // Picture used to show the module acces link/button
   displayPictureBlur?: PictureProps; // Picture used to show the module acces link/button when its inactive

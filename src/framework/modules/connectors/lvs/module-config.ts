@@ -1,4 +1,4 @@
-import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { IEntcoreApp, ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 const LVSRegex = /la[- ]+vie[- ]+scolaire/i;
 const LVSTestString = 'LVS';
@@ -9,7 +9,7 @@ function hasConnectorApp(entcoreApp: IEntcoreApp): boolean {
 const LVS = 'lvs';
 
 export default new NavigableModuleConfig<string, null>({
-  displayAs: 'myAppsConnector',
+  displayAs: ModuleType.MYAPPS_CONNECTOR,
   displayI18n: 'lvs-moduleconfig-appname',
   displayPicture: { name: LVS, type: 'Svg' },
   entcoreScope: [LVS],

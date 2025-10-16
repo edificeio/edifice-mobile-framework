@@ -1,4 +1,3 @@
-import theme from '~/app/theme';
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', null>({
@@ -10,7 +9,7 @@ export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', null>({
   storageName: '{{moduleName | toCamelCase}}',
 
   displayI18n: '{{moduleName | toCamelCase}}.tabName',
-  displayAs: ModuleType.MYAPPS_MODULE,
+  displayAs: ModuleType.TAB_MODULE,
   displayOrder: 0,
-  displayPicture: { type: 'Svg', name: 'ui-tool', fill: theme.palette.complementary.orange.regular },
+  displayPicture: { type: 'Svg', name: 'ui-tool' },
 });

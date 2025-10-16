@@ -1,9 +1,9 @@
 import { CantineState } from './reducer';
 
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'cantine', CantineState>({
-  displayAs: 'myAppsWidgets',
+  displayAs: ModuleType.MYAPPS_WIDGET,
   displayI18n: 'widget-cantine-title',
   displayPicture: { name: 'ui-widget-cantine', type: 'Svg' },
   entcoreScope: ['appregistry'],
