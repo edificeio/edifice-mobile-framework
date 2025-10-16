@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-10-15 18:01:38",
-  "notes": "fix(wayf): SUPPORT-3638, add extranet.ac-normandie.fr network configuration\nrelease: 1.15.4-rc.4(1150406)",
-  "version": "1.15.4-rc.5(1150407)"
+  "last": "2025-10-16 07:53:48",
+  "notes": "release: 1.15.4-rc.5(1150407)",
+  "version": "1.15.4-rc.6(1150408)"
 }
