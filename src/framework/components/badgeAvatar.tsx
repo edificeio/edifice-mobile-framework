@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ColorValue, View, ViewStyle } from 'react-native';
 
-import { Badge } from './badge';
+import { Badge, IBadgeProps } from './badge';
 
 import { Status } from '~/ui/avatars/Avatar';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
@@ -13,12 +13,12 @@ export enum BadgePosition {
 
 export interface BadgeAvatarProps {
   userId:
-    | string
-    | {
-        id: string;
-        isGroup: boolean;
-      };
-  badgeContent?: number | string;
+  | string
+  | {
+    id: string;
+    isGroup: boolean;
+  };
+  badgeContent?: IBadgeProps['content'];
   badgeColor?: string | ColorValue;
   badgePosition?: BadgePosition;
   customStyle?: ViewStyle;
@@ -30,18 +30,18 @@ export const BadgeAvatar = ({ badgeColor, badgeContent, badgePosition, customSty
   const position =
     badgePosition === BadgePosition.top
       ? {
-          right: 0,
-          top: 0,
-        }
+        right: 0,
+        top: 0,
+      }
       : badgePosition === BadgePosition.bottom
         ? {
-            bottom: 0,
-            right: 0,
-          }
+          bottom: 0,
+          right: 0,
+        }
         : {
-            right: 0,
-            top: 0,
-          };
+          right: 0,
+          top: 0,
+        };
 
   return (
     <View style={{ alignSelf: 'flex-start' }}>

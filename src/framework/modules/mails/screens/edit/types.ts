@@ -1,9 +1,9 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { UploadedAttachment } from '~/framework/modules/mails/components/attachments/modal-import/types';
 import { MailsDefaultFolders, MailsFolderInfo, MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
-import type { MailsNavigationParams } from '~/framework/modules/mails/navigation';
+import type { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
 export enum MailsEditType {
@@ -33,6 +33,16 @@ export interface MailsEditScreenNavParams {
   importAttachmentsResult?: UploadedAttachment[];
 }
 
+export interface UseMailsEditControllerParams {
+  navigation: NativeStackNavigationProp<MailsNavigationParams, 'edit', undefined>;
+  route: NativeStackScreenProps<MailsNavigationParams, typeof mailsRouteNames.edit>['route'];
+}
+
 export interface MailsEditScreenPrivateProps extends NativeStackScreenProps<MailsNavigationParams, 'edit'>, MailsEditScreenProps {
   // @scaffolder add HOC props here
+}
+export interface NavPayload {
+  name?: string;
+  screen?: string;
+  params?: { screen?: string };
 }

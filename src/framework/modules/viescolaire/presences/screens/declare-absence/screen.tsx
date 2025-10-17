@@ -54,8 +54,11 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
   const [attachment, setAttachment] = React.useState<LocalFile | undefined>();
   const [isCreating, setCreating] = React.useState<boolean>(false);
 
-  const onPickAttachment = (att: ImagePicked | DocumentPicked) => {
-    setAttachment(new LocalFile(att as Asset | DocumentPicked, { _needIOSReleaseSecureAccess: false }));
+  const onPickAttachment = (att: ImagePicked | DocumentPicked | (ImagePicked | DocumentPicked)[]) => {
+    const files = Array.isArray(att) ? att : [att];
+    // we uploading only one, but when needed we gonna iterate throught the liste
+    const file = files[0];
+    setAttachment(new LocalFile(file as Asset | DocumentPicked, { _needIOSReleaseSecureAccess: false }));
   };
 
   const createAbsence = async () => {

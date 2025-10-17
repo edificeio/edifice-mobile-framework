@@ -2,12 +2,12 @@
  * A specific moduleMap that exists inside timeline
  */
 import { MenuAction } from '~/framework/components/menus/actions';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 
 // Timeline workflow ==============================================================================
 
 export interface ITimelineWorkflowDefinition {
-  (session: AuthLoggedAccount): undefined | false | MenuAction;
+  (session: AuthActiveAccount): undefined | false | MenuAction;
 }
 const registeredTimelineWorkflows: ITimelineWorkflowDefinition[] = [];
 export const registerTimelineWorkflow = (def: ITimelineWorkflowDefinition) => {
@@ -19,5 +19,11 @@ export const registerTimelineWorkflows = (def: ITimelineWorkflowDefinition[]) =>
 };
 export const getRegisteredTimelineWorkflow = () => registeredTimelineWorkflows;
 
-export const getTimelineWorkflows = (session: AuthLoggedAccount) =>
-  registeredTimelineWorkflows.map(d => d(session)).filter(dr => dr);
+export const getTimelineWorkflows = (session: AuthActiveAccount) =>
+  registeredTimelineWorkflows.reduce((acc, current) => {
+    const action = current(session);
+    if (action) {
+      acc.push(action);
+    }
+    return acc;
+  }, [] as MenuAction[]);

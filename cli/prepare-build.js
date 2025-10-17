@@ -141,7 +141,8 @@ try {
     // eslint-disable-next-line no-useless-escape
     lastContent.notes = execSync(`git --no-pager log --pretty=format:\"%s\" --since=\"${lastContent.last}\"`)
       .toString()
-      .slice(0, 4000);
+      .slice(0, 4000)
+      .replaceAll("#", "");
     lastContent.last = moment().format('YYYY-MM-DD HH:mm:ss');
     lastContent.version = fullVersion;
     console.info('=> Release Notes :');

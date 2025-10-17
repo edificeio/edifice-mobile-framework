@@ -113,7 +113,7 @@ export const mailsService = {
       const data = await sessionFetch.json<{ id: string }>(api, { body: bodyJson, method: 'POST' });
 
       const api2 = `/conversation/message/${data.id}/forward/${params.id}`;
-      await sessionFetch.json(api2, { method: 'PUT' });
+      await sessionFetch(api2, { method: 'PUT' });
       return data.id;
     },
     get: async (params: { id: string; originalFormat?: boolean }) => {
@@ -162,10 +162,10 @@ export const mailsService = {
       const api = queryString ? `${baseUrl}?${queryString}` : baseUrl;
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
-      // await http.fetchJsonForSession('POST', api, { body: bodyJson });
       const response = await sessionFetch(api, { body: bodyJson, method: 'POST' });
+      const jsonRsponse = await response.json();
 
-      return response;
+      return jsonRsponse;
     },
     sendToDraft: async (params: { inReplyTo?: string }, payload: MailsConversationPayload) => {
       const api = `/conversation/draft${params.inReplyTo ? `?In-Reply-To=${params.inReplyTo}` : ''}`;

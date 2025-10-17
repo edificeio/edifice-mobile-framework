@@ -105,7 +105,7 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
         setIsFiltering(false);
       }
     },
-    [handleGetNewsItems, isFiltering],
+    [handleGetNewsItems],
   );
 
   const init = useCallback(async () => {
