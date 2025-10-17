@@ -3,7 +3,7 @@ name: Sync phrase-translations
 on:
   push:
     branches:
-      - dev/1.15.4
+      - dev/1.16.0
 
 jobs:
   sync-branch:
@@ -32,6 +32,6 @@ jobs:
         env:
           SLACK_CHANNEL: general
           SLACK_COLOR: ${{ job.status }}
-          SLACK_MESSAGE: 'Sync phrase-translations completed : ${{ job.status }}'
-          SLACK_TITLE: 'Sync phrase-translations'
+          SLACK_MESSAGE: "Sync phrase-translations completed : ${{ job.status }}"
+          SLACK_TITLE: "Sync phrase-translations"
           SLACK_WEBHOOK: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
