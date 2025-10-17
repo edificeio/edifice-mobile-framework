@@ -106,6 +106,7 @@ export interface ITheme {
   color: {
     mails: {
       unread: ColorValue;
+      selected: ColorValue;
     };
     homework: {
       days: {
@@ -379,6 +380,7 @@ export const defaultTheme: ThemeInitializer = {
         },
       },
       mails: {
+        selected: this.palette.primary.pale,
         unread: this.palette.secondary.pale,
       },
       profileTypes: {
@@ -539,11 +541,24 @@ export const defaultTheme: ThemeInitializer = {
 
 // Compute once (Singleton)
 
-const { init, ...customThemeRest } = customTheme as Partial<ThemeInitializer>;
+type CustomThemeOverride = {
+  palette?: Partial<ITheme['palette']>;
+  legacy?: Partial<ITheme['legacy']>;
+  color?: Partial<ITheme['color']>;
+  init?: () => ITheme;
+};
+
+const { init, ...customThemeRest } = customTheme as CustomThemeOverride;
+
 const totalTheme: ITheme = {
   ...defaultTheme,
   palette: deepmerge(defaultTheme.palette, customThemeRest.palette || {}),
 }.init();
+
+// applying override color after init
+if (customThemeRest.color) {
+  totalTheme.color = deepmerge(totalTheme.color, customThemeRest.color);
+}
 
 if (init) init.call(totalTheme);
 
