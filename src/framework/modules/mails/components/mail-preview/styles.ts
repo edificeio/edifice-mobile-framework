@@ -17,7 +17,7 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.primary.pale,
   },
   containerUnread: {
-    backgroundColor: theme.palette.secondary.pale,
+    backgroundColor: theme.color.mails.unread,
   },
   date: {
     color: theme.palette.grey.graphite,
