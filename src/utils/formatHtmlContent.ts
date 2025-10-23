@@ -1,11 +1,9 @@
 /**
  * Normalize and clean legacy HTML content before rendering in the RichEditor.
- *
- * This formatter:
- * - fixes malformed or deprecated HTML tags,
- * - removes redundant or empty elements,
- * - normalizes common entities and spacing,
- * - ensures compatibility with modern HTML rendering.
+ * - Fixes deprecated or malformed tags
+ * - Removes redundant/empty elements
+ * - Normalizes entities and spacing
+ * - Ensures valid structure for modern HTML rendering
  */
 export const formatLegacyHtmlContent = (html?: string): string => {
   if (!html) return '';
@@ -17,8 +15,7 @@ export const formatLegacyHtmlContent = (html?: string): string => {
   let formatted = html;
   log('🧾 Original HTML (excerpt):', formatted.slice(0, 120), '...');
 
-  // --- Basic cleanup ---
-  // Replace common HTML entities with their character equivalents
+  // === Basic cleanup ===
   formatted = formatted
     .replace(/&nbsp;/g, ' ')
     .replace(/&apos;/g, "'")
@@ -26,11 +23,10 @@ export const formatLegacyHtmlContent = (html?: string): string => {
     .replace(/&amp;/g, '&');
   log('✅ Entities normalized');
 
-  // Remove empty <p> or <div> tags (including invisible characters and <br>)
   formatted = formatted.replace(/<p>(\s|<br\s*\/?>|​)*<\/p>/gi, '').replace(/<div>(\s|<br\s*\/?>|​)*<\/div>/gi, '');
   log('🧹 Empty elements removed');
 
-  // Replace old HTML tags with modern, semantic equivalents
+  // === Deprecated tag conversion ===
   formatted = formatted
     .replace(/<b\b[^>]*>(.*?)<\/b>/gi, '<strong>$1</strong>')
     .replace(/<i\b[^>]*>(.*?)<\/i>/gi, '<em>$1</em>')
@@ -39,21 +35,16 @@ export const formatLegacyHtmlContent = (html?: string): string => {
     .replace(/<center\b[^>]*>(.*?)<\/center>/gi, '<p style="text-align:center;">$1</p>');
   log('🔄 Deprecated tags converted');
 
-  // --- Remove redundant elements and attributes ---
-  // Strip <font> and unnecessary <span> wrappers
+  // === Cleanup of redundant elements ===
   formatted = formatted.replace(/<\/?(font)[^>]*>/gi, '');
-  // Remove obsolete inline attributes (legacy editor output)
   formatted = formatted.replace(/\s?(align|bgcolor|valign|width|height)="[^"]*"/gi, '');
   log('🚫 Redundant tags & attributes removed');
 
-  // Avoid consecutive <br> tags (collapse multiple line breaks)
-  formatted = formatted.replace(/(<br\s*\/?>\s*){2,}/gi, '<br/>');
-  // Trim leading/trailing whitespace or line breaks
-  formatted = formatted.trim();
+  // === Visual normalization ===
+  formatted = formatted.replace(/(<br\s*\/?>\s*){2,}/gi, '<br/>').trim();
   log('✨ Visual cleanup done');
 
-  // --- Final wrapping ---
-  // Ensure the content is wrapped in a valid container element
+  // === Final wrapping ===
   if (!/^<\s*(html|body|div|p|section)/i.test(formatted)) {
     formatted = `<div>${formatted}</div>`;
     log('📦 Wrapped inside <div>');
