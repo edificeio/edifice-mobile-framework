@@ -17,7 +17,6 @@ import ThumbnailThread from '~/framework/modules/news/components/thumbnail-threa
 import styles from '~/framework/modules/news/screens/details/styles';
 import { displayDate } from '~/framework/util/date';
 import { commentsString } from '~/framework/util/string';
-import { formatLegacyHtmlContent } from '~/utils/formatHtmlContent';
 
 const NewsHeader = React.memo<NewsHeaderProps>(({ commentsCount = 0, news, thread }) => {
   if (!news || !thread) return null;
@@ -50,8 +49,7 @@ const NewsHeader = React.memo<NewsHeaderProps>(({ commentsCount = 0, news, threa
         size={UI_SIZES.elements.icon.default}
         viewStyle={styles.detailsOwner}
       />
-
-      <RichEditorViewer content={formatLegacyHtmlContent(news.content)} />
+      <RichEditorViewer content={news.content} />
     </ResourceView>
   );
 });
