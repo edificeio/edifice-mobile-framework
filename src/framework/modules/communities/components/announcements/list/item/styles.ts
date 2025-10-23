@@ -6,6 +6,7 @@ import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 export default StyleSheet.create({
   authorAndDate: {
     alignItems: 'center',
+    flex: 1,
     flexDirection: 'row',
     gap: UI_SIZES.spacing.minor,
   },

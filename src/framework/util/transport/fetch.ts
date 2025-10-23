@@ -1,23 +1,13 @@
 import CookieManager from '@react-native-cookies/cookies';
-import DeviceInfo, { getDeviceId } from 'react-native-device-info';
 
 import { FetchError, FetchErrorCode, HTTPError } from '../http/error';
 import { isTokenExpired, refreshTokenForAccount } from '../oauth2';
+import { getAuthenticationHeader, getDeviceHeaders, getPlatformUrl, MAX_FETCH_TIMEOUT_MS } from './common';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
-
-const MAX_FETCH_TIMEOUT_MS = 30000; // 30 seconds
-
-const DEFAULT_HEADERS = {
-  'X-APP': 'mobile',
-  'X-APP-NAME': DeviceInfo.getApplicationName(),
-  'X-APP-VERSION': DeviceInfo.getReadableVersion(),
-};
-
-const deviceIdHeaderName = 'X-Device-Id';
 
 // # UTILITY FUNCTIONS
 
@@ -124,10 +114,7 @@ export const baseFetch = timeoutFetch(_baseFetch);
 // # DEVICE FETCH
 
 export function deviceFetch(input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]) {
-  const headers = {
-    ...DEFAULT_HEADERS,
-    [deviceIdHeaderName]: getDeviceId(),
-  };
+  const headers = getDeviceHeaders();
   if (input instanceof Request) {
     input.headers.forEach((value: string, key: string) => {
       headers[key] = value;
@@ -144,12 +131,10 @@ deviceFetch.json = async <ReturnType>(...fetchArgs: Parameters<typeof fetch>) =>
   (await deviceFetch(...fetchArgs)).json() as ReturnType;
 
 // # PLATFORM FETCH
-
+//
 const getPlatformRequest = (input: Parameters<typeof fetch>[0], platform: Platform) => {
-  if (typeof input === 'string') {
-    return new URL(input, platform.url).toString();
-  } else if (input instanceof URL) {
-    return new URL(input, platform.url);
+  if (typeof input === 'string' || input instanceof URL) {
+    return getPlatformUrl(input, platform);
   } else {
     return new Request(new URL(input.url, platform.url), input);
   }
@@ -182,7 +167,7 @@ export function getAccountFetch(account: AuthSavedLoggedInAccount | AuthActiveAc
     return await _platformFetch(input, {
       ...init,
       headers: {
-        Authorization: `${account.tokens.access.type} ${account.tokens.access.value}`,
+        ...getAuthenticationHeader(account),
         ...init?.headers,
       },
     });

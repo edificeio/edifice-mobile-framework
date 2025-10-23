@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { CommunityClient, InvitationClient, InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
+import {
+  AnnouncementClient,
+  CommunityClient,
+  InvitationClient,
+  InvitationResponseDto,
+  SearchAnnouncementDto,
+} from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,12 +16,13 @@ import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeho
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
+import { toMedia } from '../../adapter';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
-import { LOADING_ITEM_DATA, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
+import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
@@ -43,7 +50,7 @@ import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { INotificationMedia } from '~/framework/util/notifications';
-import { accountApi } from '~/framework/util/transport';
+import { accountApi, sessionApi } from '~/framework/util/transport';
 
 const ANNOUNCEMENTS_PAGE_SIZE = 20;
 
@@ -419,13 +426,13 @@ export const CommunitiesHomeScreenLoaded = function ({
     navigation.setOptions(communityNavBar({ navigation, route }, openInfoModal));
   }, [navigation, openInfoModal, route]);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<PostDetailsProps>['keyExtractor']>>(
-    item => item.resourceId,
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<PostDetailsProps<number>>['keyExtractor']>>(
+    item => item.resourceId.toString(),
     [],
   );
 
   const renderItem = React.useCallback(
-    ({ index, item }: { index: number; item: PostDetailsProps }) => {
+    ({ index, item }: { index: number; item: PostDetailsProps<number> }) => {
       const itemSeparator = getItemSeparatorStyle(index, mockAnnouncements.length, styles.itemSeparator);
       const itemStyle = [styles.itemContainer, itemSeparator];
 
@@ -462,12 +469,54 @@ export const CommunitiesHomeScreenLoaded = function ({
     [communityId, membersId, navigation, scrollElements, title, totalMembers],
   );
 
+  const [announcements, setAnnouncements] = React.useState<(PostDetailsProps<number> | typeof LOADING_ITEM_DATA)[]>([]);
+
+  const loadData = React.useCallback(
+    async (page: number, reloadAll?: boolean) => {
+      try {
+        const baseQueryParams: SearchAnnouncementDto = {
+          page: page + 1,
+          size: ANNOUNCEMENTS_PAGE_SIZE,
+        };
+
+        const items = await sessionApi(moduleConfig, AnnouncementClient).getAnnouncements(communityId, baseQueryParams);
+        console.info('Loaded announcements:', items);
+        console.info('TYPEOF DATE', typeof items.items[0].modificationDate);
+
+        const newAnnouncements: PostDetailsProps<number>[] = items.items.map(e => ({
+          author: {
+            userId: e.author.entId,
+            username: e.author.displayName,
+          },
+          content: e.content,
+          date: Temporal.Instant.from((e.modificationDate ?? e.publicationDate) as unknown as string),
+          media: e.media && e.media.map(toMedia),
+          resourceId: e.id,
+        }));
+
+        setAnnouncements(prevData => {
+          return staleOrSplice({
+            newData: newAnnouncements,
+            previousData: prevData,
+            reloadAll,
+            start: page * ANNOUNCEMENTS_PAGE_SIZE,
+            total: items.meta.totalItems,
+          });
+        });
+      } catch (e) {
+        console.error('Error while loading community members list', e);
+      }
+    },
+    [communityId],
+  );
+
   return (
     <>
       {statusBar}
       <DecoratedPaginatedFlatList
         alwaysBounceVertical={false}
-        data={mockAnnouncements}
+        data={announcements}
+        onPageReached={loadData}
         keyExtractor={keyExtractor}
         ListEmptyComponent={
           <EmptyContent

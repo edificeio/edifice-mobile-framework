@@ -1,3 +1,10 @@
+/**
+ * Media
+ * Abstraction over external media sources of different types.
+ *
+ * @deprecated. Use `./media/index` instead.
+ */
+
 import * as React from 'react';
 import { ImageURISource, Image as RNImage, ImageProps as RNImageProps, StyleSheet, View } from 'react-native';
 

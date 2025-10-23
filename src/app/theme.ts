@@ -9,8 +9,8 @@ import { EntAppName } from './intents';
 
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
-import appConf from '~/framework/util/appConf';
-import type { ImageProps, IMedia } from '~/framework/util/media';
+import type { ImageProps } from '~/framework/util/media';
+import { MediaType } from '~/framework/util/media/types';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -93,11 +93,6 @@ export interface ITheme {
       listItem: ColorValue;
       input: ColorValue;
     };
-    overlay: {
-      medium: ColorValue;
-      light: ColorValue;
-      bar: ColorValue;
-    };
     text: {
       regular: ColorValue;
       light: ColorValue;
@@ -145,7 +140,7 @@ export interface ITheme {
     };
   };
   apps: { [key in EntAppName]: EntAppTheme };
-  media: { [key in IMedia['type']]: IntentIcon };
+  media: { [key in MediaType | 'default']: IntentIcon };
   // Legacy values
   legacy: {
     neutral: {
@@ -177,10 +172,14 @@ export const defaultTheme: ThemeInitializer = {
   //                                 "Y88P"
   init() {
     (this as Partial<ITheme>).media = {
+      attachment: { name: 'ui-attachment', type: 'Svg' },
       audio: { name: 'ui-mic', type: 'Svg' },
+      default: { name: 'ui-attachment', type: 'Svg' },
       document: { name: 'ui-text-page', type: 'Svg' },
+      embedded: { name: 'ui-external-link', type: 'Svg' },
       image: { name: 'ui-image', type: 'Svg' },
       link: { name: 'ui-external-link', type: 'Svg' },
+      resource: { name: 'ui-external-link', type: 'Svg' },
       video: { name: 'ui-recordVideo', type: 'Svg' },
     };
     (this as Partial<ITheme>).apps = {
@@ -235,6 +234,10 @@ export const defaultTheme: ThemeInitializer = {
       'exercizer': {
         accentColors: this.palette.complementary.purple,
         icon: { name: 'exercices', type: 'Svg' },
+      },
+      'external_link': {
+        accentColors: this.palette.primary,
+        icon: { name: 'ui-external-link', type: 'Svg' },
       },
       'formulaire': {
         accentColors: this.palette.complementary.green,

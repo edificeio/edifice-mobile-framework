@@ -2,6 +2,7 @@ import * as React from 'react';
 import { AppState, BackHandler, Platform, StatusBar, View } from 'react-native';
 
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LottieView from 'lottie-react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
@@ -9,7 +10,7 @@ import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 
 import styles from './styles';
-import { MediaPlayerProps, MediaType } from './types';
+import { MediaPlayerEmbeddedParams, MediaPlayerPlayableParams, MediaPlayerProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -19,6 +20,8 @@ import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
 import { markViewAudience } from '~/framework/modules/audience';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { MediaType } from '~/framework/util/media/index';
+import { sessionURISource } from '~/framework/util/transport';
 
 const ERRORS_I18N = {
   AVFoundationErrorDomain: ['mediaplayer-error-notsupported-title', 'mediaplayer-error-notsupported-text'],
@@ -28,16 +31,17 @@ const ERRORS_I18N = {
 
 const DELAY_STATUS_HIDE = Platform.select({ default: 0, ios: 250 });
 
-export const ANIMATION_AUDIO = require('ASSETS/animations/audio/disque.json');
-
 function MediaPlayer(props: MediaPlayerProps) {
-  const { connected, navigation, route, session } = props;
+  const { connected, navigation, route } = props;
 
-  const { filetype, source, type } = route.params;
+  const { filetype, source: _source, type } = route.params;
+
+  const source = React.useMemo(() => sessionURISource(_source), [_source]);
+  console.debug('[Media Player] = ', source);
 
   const animationRef = React.useRef<LottieView>(null);
 
-  const isAudio = type === MediaType.AUDIO;
+  const isAudio = type === 'audio';
 
   const [isPlaying, setIsPlaying] = React.useState(false);
 
@@ -89,6 +93,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, [navigation]);
 
   const setErrorMediaType = React.useCallback(() => {
+    console.info('TYYYYYYPE', filetype);
     if (filetype === 'video/avi' || filetype === 'video/x-msvideo') {
       setError('AVFoundationErrorDomain');
       return false;
@@ -131,29 +136,13 @@ function MediaPlayer(props: MediaPlayerProps) {
     );
   };
 
-  const realSource = React.useMemo(() => {
-    // Add "file://" if absolute url is provided
-    let src = Object.assign({}, source);
-    if (typeof source === 'string') {
-      if (!source.includes('://')) {
-        src = `file://${source}`;
-      }
-      src = { uri: new URL(src).href };
-    } else if (typeof source === 'object') {
-      if (!source.uri.includes('://')) {
-        src.uri = `file://${source}`;
-      }
-      src.uri = new URL(source.uri).href;
-    }
-    console.debug('SRC = ', src);
-    return src;
-  }, [source]);
-
   const onError = React.useCallback((e: any) => {
+    console.error('[Media Player] Error |', JSON.stringify(e));
     setError(e.error.domain);
   }, []);
 
-  const onLoad = React.useCallback(() => {
+  const onLoad = React.useCallback(data => {
+    console.error('[Media Player] Loaded |', JSON.stringify(data));
     isLoadingRef.current = false;
   }, []);
 
@@ -168,7 +157,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const player = React.useMemo(() => {
-    if (type === MediaType.WEB)
+    if (type === 'embedded')
       return (
         <>
           <FakeHeaderMedia />
@@ -176,7 +165,7 @@ function MediaPlayer(props: MediaPlayerProps) {
             allowsInlineMediaPlayback
             mediaPlaybackRequiresUserAction={false}
             scrollEnabled={false}
-            source={realSource}
+            source={source as MediaPlayerEmbeddedParams['source']}
             startInLoadingState
             style={isPortrait ? [styles.playerPortrait, styles.externalPlayerPortrait] : [styles.playerLandscape]}
             webviewDebuggingEnabled={__DEV__}
@@ -199,11 +188,14 @@ function MediaPlayer(props: MediaPlayerProps) {
           onLoad={onLoad}
           onPause={onPause}
           onPlay={onPlay}
+          onLoadStart={e => {
+            console.info(JSON.stringify(e));
+          }}
           rewindTime={10}
           showDuration
           showOnStart
           showOnEnd
-          source={realSource}
+          source={source as MediaPlayerPlayableParams['source']}
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
           {...(isAudio
             ? {
@@ -215,7 +207,7 @@ function MediaPlayer(props: MediaPlayerProps) {
     }
   }, [
     type,
-    realSource,
+    source,
     isPortrait,
     navigation,
     videoPlayerControlTimeoutDelay,
