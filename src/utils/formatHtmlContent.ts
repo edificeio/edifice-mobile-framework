@@ -16,13 +16,10 @@ export const formatLegacyHtmlContent = (html?: string): string => {
   log('🧾 Original HTML (excerpt):', formatted.slice(0, 120), '...');
 
   // === Basic cleanup ===
-  formatted = formatted
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&apos;/g, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, '&');
+  formatted = formatted.replaceAll('&nbsp;', ' ').replaceAll('&apos;', "'").replaceAll('&quot;', '"').replaceAll('&amp;', '&');
   log('✅ Entities normalized');
 
+  // Remove empty <p> or <div> elements
   formatted = formatted.replace(/<p>(\s|<br\s*\/?>|​)*<\/p>/gi, '').replace(/<div>(\s|<br\s*\/?>|​)*<\/div>/gi, '');
   log('🧹 Empty elements removed');
 
@@ -36,8 +33,7 @@ export const formatLegacyHtmlContent = (html?: string): string => {
   log('🔄 Deprecated tags converted');
 
   // === Cleanup of redundant elements ===
-  formatted = formatted.replace(/<\/?(font)[^>]*>/gi, '');
-  formatted = formatted.replace(/\s?(align|bgcolor|valign|width|height)="[^"]*"/gi, '');
+  formatted = formatted.replace(/<\/?(font)[^>]*>/gi, '').replace(/\s?(align|bgcolor|valign|width|height)="[^"]*"/gi, '');
   log('🚫 Redundant tags & attributes removed');
 
   // === Visual normalization ===
@@ -45,11 +41,11 @@ export const formatLegacyHtmlContent = (html?: string): string => {
   log('✨ Visual cleanup done');
 
   // === Final wrapping ===
-  if (!/^<\s*(html|body|div|p|section)/i.test(formatted)) {
+  if (/^<\s*(html|body|div|p|section)/i.test(formatted)) {
+    log('✅ Already wrapped correctly');
+  } else {
     formatted = `<div>${formatted}</div>`;
     log('📦 Wrapped inside <div>');
-  } else {
-    log('✅ Already wrapped correctly');
   }
 
   log('✅ Final formatted HTML (excerpt):', formatted.slice(0, 120), '...');

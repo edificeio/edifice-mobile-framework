@@ -265,7 +265,12 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         onChangeText={data => setInfoComment(() => ({ ...data }))}
         editCommentCallback={() => {
           const otherComments = comments?.filter(c => c.id !== item.id);
-          otherComments?.forEach(c => commentFieldRefs.current[c.id]?.setIsEditingFalse());
+          if (otherComments) {
+            for (const comment of otherComments) {
+              commentFieldRefs.current[comment.id]?.setIsEditingFalse();
+            }
+          }
+
           const commentIndex = comments?.findIndex(c => c.id === item.id);
           if (Platform.OS !== 'ios') {
             setTimeout(() => flatListRef.current?.scrollToIndex({ index: commentIndex, viewPosition: 1 }), 100);
