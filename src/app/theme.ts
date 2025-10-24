@@ -173,7 +173,7 @@ export const defaultTheme: ThemeInitializer = {
   init() {
     (this as Partial<ITheme>).media = {
       attachment: { name: 'ui-attachment', type: 'Svg' },
-      audio: { name: 'ui-mic', type: 'Svg' },
+      audio: { name: 'ui-audio', type: 'Svg' },
       default: { name: 'ui-attachment', type: 'Svg' },
       document: { name: 'ui-text-page', type: 'Svg' },
       embedded: { name: 'ui-external-link', type: 'Svg' },

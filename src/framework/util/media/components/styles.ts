@@ -4,10 +4,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  // attachmentsContainer: {
-  //   flexDirection: 'column',
-  //   gap: UI_SIZES.spacing.tiny,
-  // },
   grid: {
     alignItems: 'flex-start',
     flexDirection: 'row',
@@ -36,6 +32,14 @@ export default StyleSheet.create({
     borderRadius: UI_SIZES.radius.medium,
     height: '100%',
     width: '100%',
+  },
+  mediaVideoOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    backgroundColor: theme.ui.overlay.light,
+    borderRadius: UI_SIZES.radius.medium,
+    justifyContent: 'center',
+    margin: UI_SIZES.spacing.minor / 2,
   },
   titleCard: {
     alignItems: 'center',
