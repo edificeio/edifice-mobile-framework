@@ -17,8 +17,6 @@ import { PlaceholderLine } from 'rn-placeholder';
 import CommunityPaginatedDocumentList from './community-paginated-document-list';
 import styles from './styles';
 import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
-import useCommunityScrollableThumbnail, { communityNavBar } from '../../hooks/use-community-navbar';
-import { communitiesActions, communitiesSelectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
@@ -28,8 +26,10 @@ import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framewo
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
+import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
 import { IMedia } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';

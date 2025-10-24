@@ -9,7 +9,6 @@ import { ListRenderItemInfo as FlatListRenderItemInfo, ViewStyle } from 'react-n
 
 import { ListRenderItemInfo as FlashListRenderItemInfo } from '@shopify/flash-list';
 
-import { PaginatedFlashList, PaginatedFlatList } from '../paginated-list';
 import { createDocumentArrayProxy, DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 import {
   DocumentListItem,
@@ -27,6 +26,8 @@ import {
   PaginatedDocumentFlatListProps,
   PaginatedDocumentListItem,
 } from './types';
+
+import { PaginatedFlashList, PaginatedFlatList } from '~/framework/components/list/paginated-list';
 
 export const useDocumentPagination = <
   InfoType extends FlatListRenderItemInfo<PaginatedDocumentListItem> | FlashListRenderItemInfo<PaginatedDocumentListItem>,

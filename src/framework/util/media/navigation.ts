@@ -18,13 +18,13 @@ import {
   toURISource,
   VideoMedia,
 } from './types';
-import { openUrl } from '../linking';
 
 import theme, { IntentIcon } from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { openMediaPlayer } from '~/framework/components/media/player/navigation';
 import toast from '~/framework/components/toast';
 import { AudienceParameter } from '~/framework/modules/audience/types';
+import { openUrl } from '~/framework/util/linking';
 
 interface MediaIntent<MediaType extends Media> {
   condition: (media: Media) => media is MediaType;

@@ -1,13 +1,13 @@
 import CookieManager from '@react-native-cookies/cookies';
 
-import { FetchError, FetchErrorCode, HTTPError } from '../http/error';
-import { isTokenExpired, refreshTokenForAccount } from '../oauth2';
 import { getAuthenticationHeader, getDeviceHeaders, getPlatformUrl, MAX_FETCH_TIMEOUT_MS } from './common';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
+import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/http/error';
+import { isTokenExpired, refreshTokenForAccount } from '~/framework/util/oauth2';
 
 // # UTILITY FUNCTIONS
 

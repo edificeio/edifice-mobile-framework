@@ -9,7 +9,7 @@ import {
   Media,
   MediaType,
   VideoMedia,
-} from '../../util/media/index';
+} from '~/framework/util/media/index';
 
 export const toMedia = (media: MediaDto): Media => {
   switch (media.type) {

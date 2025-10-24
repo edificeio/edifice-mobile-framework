@@ -11,7 +11,7 @@ import React, {
 
 import ErrorBoundary, { ErrorBoundaryProps, FallbackComponentProps } from 'react-native-error-boundary';
 
-import { EmptyConnectionScreen } from '../empty-screens';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 
 export default function ErrorScreenView({ error, resetError }: FallbackComponentProps) {
   return <EmptyConnectionScreen />;

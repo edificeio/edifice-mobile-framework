@@ -4,11 +4,11 @@ import { ReactVideoSourceProperties } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { getAuthenticationHeader, getDeviceHeaders, getPlatformUrl } from './common';
-import appConf, { Platform } from '../appConf';
-import { FetchError, FetchErrorCode } from '../http/error';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import appConf, { Platform } from '~/framework/util/appConf';
+import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 
 function isRequireSource(input: ImageSourcePropType): input is ImageRequireSource {
   return typeof input === 'number';

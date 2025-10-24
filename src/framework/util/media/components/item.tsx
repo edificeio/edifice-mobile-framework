@@ -1,16 +1,25 @@
 import React from 'react';
 import { TouchableOpacity, TouchableOpacityProps, View, ViewProps } from 'react-native';
 
-import { FileMedia, ImageMedia, isFileMedia, isImageMedia, isLinkMedia, LinkMedia, Media, toURISource } from '../types';
 import styles from './styles';
-import { sessionImageSource } from '../../transport';
-import { getMediaIcon } from '../navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media';
+import { getMediaIcon } from '~/framework/util/media/navigation';
+import {
+  FileMedia,
+  ImageMedia,
+  isFileMedia,
+  isImageMedia,
+  isLinkMedia,
+  LinkMedia,
+  Media,
+  toURISource,
+} from '~/framework/util/media/types';
+import { sessionImageSource } from '~/framework/util/transport';
 
 export interface MediaDefaultItemProps {
   media: Media;

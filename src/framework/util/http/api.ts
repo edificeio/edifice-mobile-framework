@@ -4,14 +4,14 @@
 
 import type { ApiClientOptions, BaseApiClient } from '@edifice.io/community-client-rest-rn/clients/base-api.client';
 
-import appConf from '../appConf';
-import { IUnkownModuleConfig } from '../moduleTool';
 import { FetchError, FetchErrorCode } from './error';
 
 import http from '.';
 
+import appConf from '~/app/appConf';
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { IUnkownModuleConfig } from '~/framework/util/moduleTool';
 
 export function api<Client extends BaseApiClient>(
   moduleConfig: Pick<IUnkownModuleConfig, 'apiName'>,

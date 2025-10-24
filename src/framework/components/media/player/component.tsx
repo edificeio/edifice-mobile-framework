@@ -20,7 +20,6 @@ import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
 import { markViewAudience } from '~/framework/modules/audience';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { MediaType } from '~/framework/util/media/index';
 import { sessionURISource } from '~/framework/util/transport';
 
 const ERRORS_I18N = {

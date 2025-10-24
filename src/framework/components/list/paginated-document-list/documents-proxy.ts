@@ -1,5 +1,6 @@
-import { PaginatedFlashListProps } from '../paginated-list';
 import { DocumentItem, FolderItem, PaginatedDocumentListItem } from './types';
+
+import { PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 
 /**
  * Symbol used to represent a spacer ensuring that folders are not on the same line as documents.

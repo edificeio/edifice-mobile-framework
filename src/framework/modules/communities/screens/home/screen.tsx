@@ -16,7 +16,6 @@ import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeho
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
-import { toMedia } from '../../adapter';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -28,6 +27,7 @@ import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
 import PostDetailsLoader from '~/framework/modules/communities/components/announcements/post/details/loader';
 import { PostDetailsProps } from '~/framework/modules/communities/components/announcements/post/details/types';

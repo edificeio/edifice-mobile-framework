@@ -48,7 +48,7 @@ export interface ICarouselNavParams {
   referer: AudienceParameter; // used for audience tracking
 }
 
-export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> { }
+export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
 
 const styles = StyleSheet.create({
   // eslint-disable-next-line react-native/no-color-literals

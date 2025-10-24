@@ -1,6 +1,5 @@
 import { StackActions } from '@react-navigation/native';
 
-import { assertSession } from '../auth/reducer';
 import config from './module-config';
 import { blogRouteNames } from './navigation';
 import getRoot from './navigation/navigator';
@@ -10,6 +9,7 @@ import registerTimelineWorkflow from './rights';
 import { blogService } from './service';
 
 import { INTENT_TYPE, registerIntent } from '~/app/intents';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { NavigableModule } from '~/framework/util/moduleTool';
 
 module.exports = new NavigableModule({ config, getRoot, reducer });

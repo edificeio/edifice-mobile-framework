@@ -13,10 +13,10 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
-import { Svg } from '../../picture';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
 import { useSyncRef } from '~/framework/hooks/ref';
 
 function BackdropComponent(props: BottomSheetBackdropProps) {

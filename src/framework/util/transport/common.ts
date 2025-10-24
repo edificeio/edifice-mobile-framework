@@ -1,8 +1,7 @@
 import DeviceInfo, { getDeviceId } from 'react-native-device-info';
 
-import { Platform } from '../appConf';
-
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
+import { Platform } from '~/framework/util/appConf';
 
 export const MAX_FETCH_TIMEOUT_MS = 30000; // 30 seconds
 

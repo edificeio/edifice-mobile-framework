@@ -3,13 +3,13 @@ import { View } from 'react-native';
 
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
-import { Media, toURISource } from '../types';
 import { MediaItem } from './item';
 import styles from './styles';
-import { openMedia } from '../navigation';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { AudienceParameter } from '~/framework/modules/audience/types';
+import { openMedia } from '~/framework/util/media/navigation';
+import { Media, toURISource } from '~/framework/util/media/types';
 
 export interface MediaGridProps {
   media?: Media[];

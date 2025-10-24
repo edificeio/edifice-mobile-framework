@@ -2,10 +2,10 @@ import { TouchableOpacityProps } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
 
-import type { PaginatedFlashListProps, PaginatedFlatListProps } from '../paginated-list';
 import type { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 
 import { EntAppNameOrSynonym } from '~/app/intents';
+import type { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { IMedia } from '~/framework/util/media';
 
 interface DocumentItemBase {

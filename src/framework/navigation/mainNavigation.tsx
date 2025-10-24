@@ -29,7 +29,6 @@ import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
-import useChange from '../hooks/change';
 
 import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';

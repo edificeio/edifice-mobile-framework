@@ -1,11 +1,11 @@
 import React from 'react';
 import { PixelRatio, StyleSheet, TextProps, View, ViewStyle } from 'react-native';
 
-import { UI_SIZES } from '../constants';
 import { BodyBoldText, CaptionBoldText, SmallBoldText, TextSizeStyle } from '../text';
 import { PillProps } from './types';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
   text: {

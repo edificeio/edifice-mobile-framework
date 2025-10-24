@@ -3,13 +3,13 @@ import { View } from 'react-native';
 
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
-import { UI_SIZES } from '../constants';
-import { SmallBoldText } from '../text';
 import { SingleAvatar } from './single';
 import styles from './styles';
 import { AvatarStackProps, SingleAvatarProps, SingleUserAvatarSpecificProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import { UI_SIZES } from '~/framework/components/constants';
+import { SmallBoldText } from '~/framework/components/text';
 
 const MAX_TOTAL = 99;
 
