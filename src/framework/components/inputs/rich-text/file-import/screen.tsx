@@ -24,7 +24,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness,

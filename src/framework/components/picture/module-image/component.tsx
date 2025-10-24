@@ -8,7 +8,7 @@ import { ImageFallbackProps, ImageLoaderProps, ModuleConfigForFallbackImage, Mod
 
 import theme from '~/app/theme';
 import { Icon, Svg } from '~/framework/components/picture';
-import { Image, ImageLoadingState, ImageProps } from '~/framework/util/media';
+import { Image, ImageLoadingState, ImageProps } from '~/framework/util/media-deprecated';
 
 const DEFAULT_MODULE_CONFIG: Required<ModuleConfigForFallbackImage> = {
   displayColor: {

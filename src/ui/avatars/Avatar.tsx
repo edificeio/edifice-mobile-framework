@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { FastImage } from '~/framework/util/media';
+import { FastImage } from '~/framework/util/media-deprecated';
 import { Connection } from '~/infra/Connection';
 
 const getSelfAvatarUniqueKey = () => Date.now();

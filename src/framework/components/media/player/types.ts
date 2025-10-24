@@ -5,7 +5,7 @@ import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { MediaType } from '~/framework/util/media/types';
+import { MediaType } from '~/framework/util/media';
 
 export interface MediaPlayerPlayableParams {
   type: MediaType.AUDIO | MediaType.VIDEO;

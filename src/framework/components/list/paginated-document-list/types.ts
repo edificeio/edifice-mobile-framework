@@ -6,7 +6,7 @@ import type { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './docum
 
 import { EntAppNameOrSynonym } from '~/app/intents';
 import type { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
-import { IMedia } from '~/framework/util/media';
+import { IMedia } from '~/framework/util/media-deprecated';
 
 interface DocumentItemBase {
   title: string;

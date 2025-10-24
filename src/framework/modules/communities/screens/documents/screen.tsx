@@ -31,7 +31,7 @@ import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
-import { IMedia } from '~/framework/util/media';
+import { IMedia } from '~/framework/util/media-deprecated';
 import { accountApi } from '~/framework/util/transport';
 
 export const computeNavBar = (

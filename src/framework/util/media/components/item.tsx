@@ -7,10 +7,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { Image } from '~/framework/util/media';
-import { getMediaIcon } from '~/framework/util/media/navigation';
 import {
   FileMedia,
+  getMediaIcon,
   ImageMedia,
   isFileMedia,
   isImageMedia,
@@ -18,7 +17,8 @@ import {
   LinkMedia,
   Media,
   toURISource,
-} from '~/framework/util/media/types';
+} from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 import { sessionImageSource } from '~/framework/util/transport';
 
 export interface MediaDefaultItemProps {

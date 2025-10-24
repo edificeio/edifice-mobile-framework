@@ -15,7 +15,7 @@ import fileTransferService, {
   IUploadCallbaks,
   IUploadParams,
 } from '~/framework/util/fileHandler/service';
-import type { IMedia } from '~/framework/util/media';
+import type { IMedia } from '~/framework/util/media-deprecated';
 import { urlSigner } from '~/infra/oauth';
 
 export const startUploadFileAction =

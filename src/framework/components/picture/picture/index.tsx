@@ -8,7 +8,7 @@ import { ImageProps } from 'react-native';
 
 import { Icon, IconProps } from '~/framework/components/picture/icon';
 import { Svg, SvgProps } from '~/framework/components/picture/svg';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 export interface IAnyPictureSource {
   source: any;

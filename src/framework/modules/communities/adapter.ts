@@ -9,9 +9,10 @@ import {
   Media,
   MediaType,
   VideoMedia,
-} from '~/framework/util/media/index';
+} from '~/framework/util/media';
 
 export const toMedia = (media: MediaDto): Media => {
+  console.info('MediaType', MediaType);
   switch (media.type) {
     case MediaTypeDto.IMAGE:
       return {

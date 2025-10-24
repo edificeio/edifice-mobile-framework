@@ -9,7 +9,7 @@ import { CommunityNavbarProps } from './types';
 
 import theme from '~/app/theme';
 import http from '~/framework/util/http';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 export const useCommunityBannerHeight = () => {
   const { top: statusBarHeight } = useSafeAreaInsets();

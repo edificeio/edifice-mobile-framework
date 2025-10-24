@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const styles = StyleSheet.create({
   container: {

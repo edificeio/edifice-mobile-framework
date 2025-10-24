@@ -15,7 +15,7 @@ import { Svg } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
 import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { IMAGE_MAX_DIMENSION } from '~/framework/util/fileHandler';
-import { FastImage } from '~/framework/util/media';
+import { FastImage } from '~/framework/util/media-deprecated';
 import { urlSigner } from '~/infra/oauth';
 
 const ContainerImage = styled.View({});

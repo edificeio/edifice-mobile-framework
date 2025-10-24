@@ -13,7 +13,7 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, onRefresh }: ResourcePickerProps) => {
   const listAdditionalStyle = { paddingBottom: data?.length === 0 ? undefined : UI_SIZES.screen.bottomInset };

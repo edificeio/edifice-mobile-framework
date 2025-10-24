@@ -8,8 +8,7 @@ import styles from './styles';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { AudienceParameter } from '~/framework/modules/audience/types';
-import { openMedia } from '~/framework/util/media/navigation';
-import { Media, toURISource } from '~/framework/util/media/types';
+import { Media, openMedia, toURISource } from '~/framework/util/media';
 
 export interface MediaGridProps {
   media?: Media[];

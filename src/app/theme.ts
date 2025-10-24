@@ -9,8 +9,8 @@ import { EntAppName } from './intents';
 
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
-import type { ImageProps } from '~/framework/util/media';
-import { MediaType } from '~/framework/util/media/types';
+import { MediaType } from '~/framework/util/media';
+import type { ImageProps } from '~/framework/util/media-deprecated';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"

@@ -9,7 +9,7 @@ import { ImageWithFallbackProps } from './types';
 
 import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
-import { Image, ImageLoadingState, ImageProps } from '~/framework/util/media';
+import { Image, ImageLoadingState, ImageProps } from '~/framework/util/media-deprecated';
 
 const DEFAULT_ICON_SIZE = '58%';
 
