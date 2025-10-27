@@ -6,6 +6,7 @@ import {
   NewsItemDetails,
   NewsItemRights,
   NewsItemStatus,
+  NewsOwner,
   NewsThreadItem,
   NewsThreadItemRights,
 } from '~/framework/modules/news/model';
@@ -17,7 +18,7 @@ import {
 } from '~/framework/modules/news/service/types';
 
 /** Allows us to map owner properties */
-const mapOwnerProperties = (owner: { deleted: boolean; displayName: string; id: string }) => ({
+const mapOwnerProperties = (owner: NewsOwner) => ({
   deleted: owner.deleted,
   displayName: owner.displayName,
   id: owner.id,
