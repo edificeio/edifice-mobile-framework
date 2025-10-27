@@ -16,49 +16,41 @@ import {
   BackendNewsThreadItem,
 } from '~/framework/modules/news/service/types';
 
+/** Allows us to map owner properties */
+const mapOwnerProperties = (owner: { deleted: boolean; displayName: string; id: string }) => ({
+  deleted: owner.deleted,
+  displayName: owner.displayName,
+  id: owner.id,
+});
+
+/** Mapping common news item properties */
+const mapCommonNewsItemProperties = (n: BackendNewsItem | BackendNewsItemDetails) => ({
+  content: n.content,
+  created: moment(n.created),
+  expirationDate: n.expirationDate ? moment(n.expirationDate) : null,
+  headline: n.headline,
+  id: n.id,
+  modified: moment(n.modified),
+  numberOfComments: n.numberOfComments,
+  owner: mapOwnerProperties(n.owner),
+  publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
+  sharedRights: n.sharedRights as NewsItemRights[],
+  status: n.status as NewsItemStatus,
+  title: n.title,
+});
+
 export const newsItemAdapter = (n: BackendNewsItem) => {
-  const ret = {
-    content: n.content,
-    created: moment(n.created),
-    expirationDate: n.expirationDate ? moment(n.expirationDate) : null,
-    headline: n.headline,
-    id: n.id,
-    modified: moment(n.modified),
-    numberOfComments: n.numberOfComments,
-    owner: {
-      deleted: n.owner.deleted,
-      displayName: n.owner.displayName,
-      id: n.owner.id,
-    },
-    publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
-    sharedRights: n.sharedRights as NewsItemRights[],
-    status: n.status as NewsItemStatus,
+  return {
+    ...mapCommonNewsItemProperties(n),
     threadId: n.threadId,
-    title: n.title,
-  };
-  return ret as NewsItem;
+  } as NewsItem;
 };
 
 export const newsItemDetailsAdapter = (n: BackendNewsItemDetails) => {
-  const ret = {
+  return {
     news: {
-      content: n.content,
-      created: moment(n.created),
-      expirationDate: n.expirationDate ? moment(n.expirationDate) : null,
-      headline: n.headline,
-      id: n.id,
-      modified: moment(n.modified),
-      numberOfComments: n.numberOfComments,
-      owner: {
-        deleted: n.owner.deleted,
-        displayName: n.owner.displayName,
-        id: n.owner.id,
-      },
-      publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
-      sharedRights: n.sharedRights as NewsItemRights[],
-      status: n.status as NewsItemStatus,
+      ...mapCommonNewsItemProperties(n),
       threadId: n.thread.id,
-      title: n.title,
     },
     thread: {
       icon: n.thread.icon,
@@ -66,29 +58,23 @@ export const newsItemDetailsAdapter = (n: BackendNewsItemDetails) => {
       sharedRights: n.thread.sharedRights as NewsThreadItemRights[],
       title: n.thread.title,
     },
-  };
-  return ret as NewsItemDetails;
+  } as NewsItemDetails;
 };
 
 export const newsThreadItemAdapter = (n: BackendNewsThreadItem) => {
-  const ret = {
+  return {
     created: moment(n.created),
     icon: n.icon ? { uri: n.icon } : null,
     id: n.id,
     modified: moment(n.created),
-    owner: {
-      deleted: n.owner.deleted,
-      displayName: n.owner.displayName,
-      id: n.owner.id,
-    },
+    owner: mapOwnerProperties(n.owner),
     sharedRights: n.sharedRights as NewsThreadItemRights[],
     title: n.title,
-  };
-  return ret as NewsThreadItem;
+  } as NewsThreadItem;
 };
 
 export const newsCommentItemAdapter = (n: BackendNewsCommentItem) => {
-  const ret = {
+  return {
     comment: n.comment,
     created: moment(n.created),
     id: n._id,
@@ -96,6 +82,5 @@ export const newsCommentItemAdapter = (n: BackendNewsCommentItem) => {
     modified: moment(n.modified),
     owner: n.owner,
     username: n.username,
-  };
-  return ret as NewsCommentItem;
+  } as NewsCommentItem;
 };
