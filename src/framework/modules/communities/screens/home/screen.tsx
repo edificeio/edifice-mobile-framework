@@ -480,8 +480,6 @@ export const CommunitiesHomeScreenLoaded = function ({
         };
 
         const items = await sessionApi(moduleConfig, AnnouncementClient).getAnnouncements(communityId, baseQueryParams);
-        console.info('Loaded announcements:', items);
-        console.info('TYPEOF DATE', typeof items.items[0].modificationDate);
 
         const newAnnouncements: PostDetailsProps<number>[] = items.items.map(e => ({
           author: {

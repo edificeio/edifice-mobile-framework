@@ -4,10 +4,9 @@ import { TouchableOpacity, TouchableOpacityProps, View, ViewProps } from 'react-
 import styles from './styles';
 
 import theme from '~/app/theme';
-import IconButton from '~/framework/components/buttons/icon';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture, Svg } from '~/framework/components/picture';
+import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import {
   FileMedia,
@@ -38,12 +37,16 @@ export function MediaDefaultItem({
   return (
     <>
       <View style={styles.iconCard}>
-        <Picture
-          {...icon}
-          width={UI_SIZES.elements.icon.xlarge}
-          height={UI_SIZES.elements.icon.xlarge}
-          {...(icon.type === 'Svg' ? { fill: theme.palette.grey.stone } : undefined)}
-        />
+        {React.isValidElement(icon) ? (
+          icon
+        ) : (
+          <Picture
+            {...icon}
+            width={UI_SIZES.elements.icon.xlarge}
+            height={UI_SIZES.elements.icon.xlarge}
+            {...(icon.type === 'Svg' ? { fill: theme.palette.grey.stone } : undefined)}
+          />
+        )}
       </View>
     </>
   );
@@ -58,12 +61,16 @@ export function MediaNamedItem({
   return (
     <>
       <View style={styles.iconCard}>
-        <Picture
-          {...icon}
-          width={UI_SIZES.elements.icon.xlarge}
-          height={UI_SIZES.elements.icon.xlarge}
-          {...(icon.type === 'Svg' ? { fill: theme.palette.grey.stone } : undefined)}
-        />
+        {React.isValidElement(icon) ? (
+          icon
+        ) : (
+          <Picture
+            {...icon}
+            width={UI_SIZES.elements.icon.xlarge}
+            height={UI_SIZES.elements.icon.xlarge}
+            {...(icon.type === 'Svg' ? { fill: theme.palette.grey.stone } : undefined)}
+          />
+        )}
       </View>
 
       <View style={styles.titleCard}>
@@ -127,12 +134,16 @@ export function MediaItem({ media, onPress, style }: Readonly<MediaItemProps>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
   let itemElement: React.ReactElement;
   if (isImageMedia(media)) {
+    console.info('MEDIA IMAGE', media);
     itemElement = <MediaImageItem media={media} />;
   } else if (isVideoMedia(media)) {
+    console.info('MEDIA VIDEO', media);
     itemElement = <MediaVideoItem media={media} />;
   } else if (isFileMedia(media) || isLinkMedia(media)) {
+    console.info('MEDIA FILE/LINK', media);
     itemElement = <MediaNamedItem media={media} />;
   } else {
+    console.info('MEDIA UNKNOWN', media);
     itemElement = <MediaDefaultItem media={media} />;
   }
   return (
