@@ -1,3 +1,4 @@
+import Mime from 'mime';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { mimeCompare } from './mime';
@@ -6,11 +7,13 @@ import {
   AudioMedia,
   DocumentMedia,
   EmbeddedMedia,
+  FileMedia,
   ImageMedia,
   isAttachmentMedia,
   isAudioMedia,
   isDocumentMedia,
   isEmbeddedMedia,
+  isFileMedia,
   isImageMedia,
   isLinkMedia,
   isVideoMedia,
@@ -32,7 +35,7 @@ import { openUrl } from '~/framework/util/linking';
 interface MediaIntent<MediaType extends Media> {
   condition: (media: Media) => media is MediaType;
   exec?: (media: MediaType, audience?: AudienceParameter) => void;
-  icon?: (media: MediaType) => IntentIcon | React.ReactElement;
+  icon?: (media: MediaType) => IntentIcon | string;
 }
 
 const mediaIntents = [
@@ -86,7 +89,7 @@ const mediaIntents = [
   // PDF
   {
     condition: media => (isDocumentMedia(media) || isAttachmentMedia(media)) && mimeCompare(media.mime, 'application/pdf') === 0,
-    exec(media, audience) {
+    exec(media, _) {
       const source = toURISource(media.src);
       if (!source.uri) {
         toast.showError();
@@ -98,7 +101,7 @@ const mediaIntents = [
       });
     },
     icon(_) {
-      return theme.media.document;
+      return 'PDF';
     },
   } as MediaIntent<DocumentMedia | AttachmentMedia>,
 
@@ -112,7 +115,7 @@ const mediaIntents = [
         type: MediaType.EMBEDDED,
       });
     },
-    icon(media) {
+    icon(_) {
       return theme.media.embedded;
     },
   } as MediaIntent<EmbeddedMedia>,
@@ -120,10 +123,10 @@ const mediaIntents = [
   // External Link
   {
     condition: media => isLinkMedia(media),
-    exec(media, audience) {
+    exec(media, _) {
       openUrl(toURISource(media.src).uri);
     },
-    icon(media) {
+    icon(_) {
       // const absoluteSrc = sessionURISource(toURISource(media.src));
       // const domainURL = absoluteSrc.uri ? new URL(absoluteSrc.uri) : undefined;
       // if (domainURL && domainURL.protocol.includes('http')) {
@@ -133,17 +136,19 @@ const mediaIntents = [
     },
   } as MediaIntent<LinkMedia>,
 
-  // Fallback
+  // Unkncown file media
   {
-    condition: _ => true,
+    condition: media => isFileMedia(media),
     exec(media, _) {
       openUrl(toURISource(media.src).uri);
     },
-    icon(_) {
-      return theme.media.default;
+    icon(media) {
+      const extension = Mime.getExtension(media.mime);
+      console.info('EXTENSIONS', media.type, extension);
+      return extension?.toLocaleUpperCase() ?? theme.media.default;
     },
-  } as MediaIntent<LinkMedia>,
-] as MediaIntent<Media>[];
+  } as MediaIntent<FileMedia>,
+] as MediaIntent<FileMedia>[];
 
 export const openMedia = (media: Media, audience?: AudienceParameter) => {
   for (const intent of mediaIntents) {

@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
-import { SmallText } from '~/framework/components/text';
+import { HeadingXSText, SmallText } from '~/framework/components/text';
 import {
   FileMedia,
   getMediaIcon,
@@ -28,25 +28,30 @@ export interface MediaDefaultItemProps {
   media: Media;
 }
 
+function MediaIcon({ icon }: { icon: ReturnType<typeof getMediaIcon> }) {
+  if (typeof icon === 'string') {
+    return <HeadingXSText style={styles.mediaIconText}>{icon}</HeadingXSText>;
+  } else {
+    return (
+      <Picture
+        {...icon}
+        width={UI_SIZES.elements.icon.mediumlarge}
+        height={UI_SIZES.elements.icon.mediumlarge}
+        {...(icon.type === 'Svg' ? { fill: theme.palette.grey.stone } : undefined)}
+      />
+    );
+  }
+}
+
 export function MediaDefaultItem({
   media,
 }: Readonly<{
   media: Media;
 }>) {
-  const icon = getMediaIcon(media);
   return (
     <>
       <View style={styles.iconCard}>
-        {React.isValidElement(icon) ? (
-          icon
-        ) : (
-          <Picture
-            {...icon}
-            width={UI_SIZES.elements.icon.xlarge}
-            height={UI_SIZES.elements.icon.xlarge}
-            {...(icon.type === 'Svg' ? { fill: theme.palette.grey.stone } : undefined)}
-          />
-        )}
+        <MediaIcon icon={getMediaIcon(media)} />
       </View>
     </>
   );
@@ -57,20 +62,10 @@ export function MediaNamedItem({
 }: Readonly<{
   media: FileMedia | LinkMedia;
 }>) {
-  const icon = getMediaIcon(media);
   return (
     <>
       <View style={styles.iconCard}>
-        {React.isValidElement(icon) ? (
-          icon
-        ) : (
-          <Picture
-            {...icon}
-            width={UI_SIZES.elements.icon.xlarge}
-            height={UI_SIZES.elements.icon.xlarge}
-            {...(icon.type === 'Svg' ? { fill: theme.palette.grey.stone } : undefined)}
-          />
-        )}
+        <MediaIcon icon={getMediaIcon(media)} />
       </View>
 
       <View style={styles.titleCard}>

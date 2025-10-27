@@ -27,6 +27,9 @@ export default StyleSheet.create({
   mediaCard: {
     gap: UI_SIZES.spacing.tiny,
   },
+  mediaIconText: {
+    color: theme.palette.grey.graphite,
+  },
   mediaImageCard: {
     backgroundColor: theme.palette.grey.pearl,
     borderRadius: UI_SIZES.radius.medium,
