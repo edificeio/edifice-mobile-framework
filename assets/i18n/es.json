@@ -1970,5 +1970,21 @@
   "widget-cantine-menu-allergene-arachide": "Cacahuetes",
   "widget-cantine-menu-subtitle": "Cocina fresca y equilibrada",
   "widget-cantine-menu-footer": "¡Buen provecho!",
-  "widget-cantine-title": "Menú del día"
+  "widget-cantine-title": "Menú del día",
+  "widget-screen-time-title": "Tiempo de pantalla",
+  "widget-screen-time-home-title": "Tiempo de pantalla",
+  "widget-screen-time-school-use": "Uso escolar",
+  "widget-screen-time-non-school-use": "Uso no escolar",
+  "widget-screen-time-yesterday": "Ayer",
+  "widget-screen-time-today": "Hoy",
+  "widget-screen-time-select-child": "Seleccionar un niño",
+  "widget-screen-time-week": "Semana",
+  "widget-screen-time-day": "Día",
+  "widget-screen-time-no-data": "No hay datos de tiempo de pantalla disponibles",
+  "widget-screen-time-view-details": "Ver detalles",
+  "widget-screen-time-info-modal-text": "'Tiempo de pantalla' es una funcionalidad implementada por el Departamento de Bocas del Ródano. El tiempo de pantalla mide el tiempo de actividad del estudiante en el portátil proporcionado por el Departamento. El tiempo de pantalla solo observa la apertura y cierre de la sesión por parte del estudiante en su ordenador. La funcionalidad no registra ningún dato personal de uso o navegación por internet.",
+  "widget-screen-time-no-data-week": "No hay datos disponibles para esta semana",
+  "widget-screen-time-no-data-day": "No hay datos disponibles para este día",
+  "widget-screen-time-total": "Total",
+  "widget-screen-time-zero-minutes": "0 m"
 }

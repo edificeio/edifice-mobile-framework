@@ -1970,5 +1970,21 @@
   "widget-cantine-menu-allergene-arachide": "Peanuts",
   "widget-cantine-menu-subtitle": "Fresh and balanced cuisine",
   "widget-cantine-menu-footer": "Bon appétit!",
-  "widget-cantine-title": "Menu of the day"
+  "widget-cantine-title": "Menu of the day",
+  "widget-screen-time-title": "Screen Time",
+  "widget-screen-time-home-title": "Screen Time",
+  "widget-screen-time-selected-child": "Selected child: {{childName}}",
+  "widget-screen-time-select-child": "Select a child",
+  "widget-screen-time-school-use": "School use",
+  "widget-screen-time-non-school-use": "Non-school use",
+  "widget-screen-time-yesterday": "Yesterday",
+  "widget-screen-time-week": "Week",
+  "widget-screen-time-day": "Day",
+  "widget-screen-time-no-data": "No screen time data available",
+  "widget-screen-time-view-details": "View details",
+  "widget-screen-time-info-modal-text": "'Screen time' is a feature implemented by the Bouches-du-Rhône Department. Screen time measures the student's activity time on the laptop provided by the Department. Screen time only observes the opening and closing of the session by the student on their computer. The feature does not record any personal usage or internet browsing data.",
+  "widget-screen-time-no-data-week": "No data available for this week",
+  "widget-screen-time-no-data-day": "No data available for this day",
+  "widget-screen-time-total": "Total",
+  "widget-screen-time-zero-minutes": "0 m"
 }

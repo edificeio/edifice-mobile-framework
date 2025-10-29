@@ -299,6 +299,7 @@ const imports = {
   'ui-wavering': async () => import('ASSETS/icons/uiIcons/wavering.svg'),
   'ui-widget': async () => import('ASSETS/icons/uiIcons/widget.svg'),
   'ui-widget-cantine': async () => import('ASSETS/icons/uiIcons/widget-cantine.svg'),
+  'ui-widget-screen-time': async () => import('ASSETS/icons/uiIcons/widget-screen-time.svg'),
   'ui-wiki-list-header': async () => import('ASSETS/images/wiki/wiki-list-header.svg'),
   'ui-write': async () => import('ASSETS/icons/uiIcons/write.svg'),
   'user': async () => import('ASSETS/icons/moduleIcons/user.svg'),
