@@ -8,7 +8,7 @@ import { FlatList, FlatListProps, ListRenderItemInfo as RNListRenderItemInfo, Vi
 
 import { FlashList, FlashListProps, ListRenderItemInfo as SHListRenderItemInfo } from '@shopify/flash-list';
 
-import { ContentLoader, ContentLoaderProps, LoadingState } from '~/framework/hooks/loader';
+import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 
 export const LOADING_ITEM_DATA = Symbol('LOADING_ITEM_DATA');
 

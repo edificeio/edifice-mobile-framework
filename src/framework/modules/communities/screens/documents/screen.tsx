@@ -38,7 +38,7 @@ export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>,
 ): NativeStackNavigationOptions => communityNavBar(props);
 
-const __debug__folders__: FolderItem[] = [
+const __debug__folders__: FolderItem<number>[] = [
   // {
   //   id: 1,
   //   title: 'F1',
@@ -57,7 +57,7 @@ const __debug__folders__: FolderItem[] = [
   // },
 ];
 
-const documentTypeMap: Record<ResourceType, DocumentItemWorkspace['type'] | undefined> = {
+const documentTypeMap: Record<ResourceType, DocumentItemWorkspace<number>['type'] | undefined> = {
   [ResourceType.IMAGE]: 'image',
   [ResourceType.SOUND]: 'audio',
   [ResourceType.VIDEO]: 'video',
@@ -74,11 +74,11 @@ const formatDocuments = (data: ResourceDto[]): CommunitiesDocumentItem[] =>
           date: Temporal.Instant.from(item.updatedAt as unknown as string),
           extension: item.title.includes('.') ? item.title.split('.').at(-1) : undefined,
           type: documentTypeMap[type],
-        } as DocumentItemWorkspace)
+        } as DocumentItemWorkspace<number>)
       : ({
           ...item,
           date: Temporal.Instant.from(item.updatedAt as unknown as string),
-        } as Exclude<DocumentItemEntApp<ResourceDto['appName']>, 'workspace'>),
+        } as Exclude<DocumentItemEntApp<ResourceDto['appName'], number>, 'workspace'>),
   );
 
 export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({
@@ -98,7 +98,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   // Store the data of the list here. It will contain both loaded and non-loaded elements.
   // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
   const [data, setData] = React.useState<{
-    folders: (FolderItem | typeof LOADING_ITEM_DATA)[];
+    folders: (FolderItem<number> | typeof LOADING_ITEM_DATA)[];
     documents: (CommunitiesDocumentItem | typeof LOADING_ITEM_DATA)[];
   }>({ documents: [], folders: [] });
 

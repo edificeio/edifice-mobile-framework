@@ -45,6 +45,7 @@ export function CommunityPaginatedDocumentFlatList({
     renderItem: _renderItem,
     renderPlaceholderItem: _renderPlaceholderItem,
   } = useDocumentPagination({
+    alwaysShowAppIcon,
     documents,
     folders,
     numColumns: paginatedListProps.numColumns,

@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { Temporal } from '@js-temporal/polyfill';
-
-import type { ExplorerFolderContent, ExplorerPageData, Folder, FolderId } from './model/types';
+import type { ExplorerFolderContent, ExplorerPageData, FolderId } from './model/types';
 import explorerModuleConfig from './module-config';
 
 import { IGlobalState } from '~/app/store';
+import { FolderItem } from '~/framework/components/list/paginated-document-list/types';
+import { staleOrSplice } from '~/framework/components/list/paginated-list';
 import { IUnkownModuleConfig } from '~/framework/util/moduleTool';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 
@@ -14,78 +14,41 @@ export type ExplorerAction = { type: `${string}_LOAD_PAGE`; flushPreviousData: b
 export interface ExplorerState {
   [folderId: FolderId]: {
     content?: ExplorerFolderContent;
-    metadata?: Folder;
+    metadata?: FolderItem<FolderId>;
   };
 }
 
-export const EMPTY_FOLDER_ITEM_NAME: string = 'SpacerFolder';
-//EMPTY_FOLDER_ITEM is used when the folder count is odd, to fill the last row of the grid.
-const EMPTY_FOLDER_ITEM = {
-  application: '',
-  assetId: '',
-  createdAt: Temporal.Now.instant(),
-  creatorName: '',
-  id: '',
-  location: [],
-  name: EMPTY_FOLDER_ITEM_NAME,
-  resourceType: 'folder',
-  sharedRights: [],
-  userRights: [],
-};
-
-export const emptyFolderData: ExplorerFolderContent = { items: [], nbFolders: 0, nbResources: 0 };
+export const emptyFolderData: ExplorerFolderContent = { folders: [], resources: [] };
 
 export const createExplorerReducer = (moduleConfig: Pick<IUnkownModuleConfig, 'namespaceActionType'>) => {
   return createSessionReducer<ExplorerState, ExplorerAction>(
     {},
     {
       [moduleConfig.namespaceActionType(explorerModuleConfig.namespaceActionType('LOAD_PAGE'))]: (state, action) => {
-        // This complicated algorithm merges old data with new data :
-        // - Folders are always all replaced
-        // - Totals are always replaced
-        // - Resources are replaced if flushPreviousData === true OR total number of resources has changed
-        // - Resources are merged else
-
-        const nbFolders = action.folders.length;
-        const isFolderCountEven = nbFolders % 2 === 0;
-
-        // 1. Replace all folders + initiate resource array with the good length
-        const oldFolderContent = state[action.folderId]?.content ?? emptyFolderData;
-
-        const foldersWithExtraEmpty = isFolderCountEven
-          ? [...action.folders]
-          : [...action.folders, { ...EMPTY_FOLDER_ITEM, id: `emptyFolder-${nbFolders}` }];
-        const newItems: ExplorerFolderContent['items'] = [
-          ...foldersWithExtraEmpty,
-          ...new Array(action.pagination.total).fill(null),
-        ];
-        const keepOldResources = !action.flushPreviousData && oldFolderContent.nbResources === action.pagination.total;
-        // 2. Iterate over all resource and merge data if applicable
-        for (let iResource = 0; iResource < action.pagination.total; ++iResource) {
-          if (iResource >= action.pagination.pageStart && iResource < action.pagination.pageStart + action.pagination.pageSize) {
-            // These are resources from the new page data
-            newItems[foldersWithExtraEmpty.length + iResource] = action.resources[iResource - action.pagination.pageStart];
-          } else if (keepOldResources) {
-            // These are resources from the previously loaded data
-            newItems[foldersWithExtraEmpty.length + iResource] = oldFolderContent.items[oldFolderContent.nbFolders + iResource];
-          }
-        }
-        // 3. Return with replacing totals
-        return {
+        console.info('ACTION', action);
+        const newState = {
           // Previous data
           ...state,
-          // Current folder (content)
           [action.folderId]: {
             ...state[action.folderId],
+            // Current folder (content)
             content: {
-              items: newItems,
-              nbFolders: foldersWithExtraEmpty.length,
-              nbResources: action.pagination.total,
+              folders: action.folders,
+              resources: staleOrSplice({
+                newData: action.resources,
+                previousData: state[action.folderId]?.content?.resources ?? [],
+                reloadAll: action.flushPreviousData,
+                start: action.pagination.pageStart,
+                total: action.pagination.total,
+              }),
             },
+            // Current folder (metadata)
           },
           // children of current folder (metadata)
           ...action.folders.reduce<ExplorerState>((acc, f) => ({ ...acc, [f.id]: { ...acc[f.id], metadata: f } }), {}),
         };
+        console.debug(newState);
+        return newState;
       },
     },
   );

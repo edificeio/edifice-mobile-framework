@@ -5,9 +5,17 @@ import { PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 import styles from './styles';
-import { DocumentItem, DocumentItemWorkspace, DocumentItemWorkspaceDocumentMedia, FolderItem } from './types';
+import {
+  DocumentItem,
+  DocumentItemWorkspace,
+  DocumentItemWorkspaceDocumentMedia,
+  FolderItem,
+  PaginatedDocumentFlashListProps,
+  PaginatedDocumentFlatListProps,
+} from './types';
 
 import { I18n } from '~/app/i18n';
+import { EntAppNameOrSynonym, getEntAppName } from '~/app/intents';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
@@ -16,15 +24,24 @@ import ImageWithFallback from '~/framework/components/picture/image-with-fallbac
 import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import http from '~/framework/util/http';
 
-const isItemWorkspaceResource = (item: DocumentItem): item is DocumentItemWorkspace => item.appName === 'workspace';
-const isItemWorkspaceDocumentMedia = (item: DocumentItemWorkspace): item is DocumentItemWorkspaceDocumentMedia =>
-  item.type === 'document';
+const isItemWorkspaceResource = <AppTypes extends EntAppNameOrSynonym, IdType>(
+  item: DocumentItem<AppTypes, IdType>,
+): item is DocumentItemWorkspace<IdType> => item.appName === 'workspace';
+const isItemWorkspaceDocumentMedia = <IdType,>(
+  item: DocumentItemWorkspace<IdType>,
+): item is DocumentItemWorkspaceDocumentMedia<IdType> => item.type === 'document';
 
-export function DocumentListItemIcon({
+export function DocumentListItemIcon<AppTypes extends EntAppNameOrSynonym, IdType>({
   item,
   size,
 }: Readonly<
-  Pick<Parameters<(PaginatedFlashListProps<DocumentItem> & PaginatedFlatListProps<DocumentItem>)['renderItem']>[0], 'item'>
+  Pick<
+    Parameters<
+      (PaginatedFlashListProps<DocumentItem<AppTypes, IdType>> &
+        PaginatedFlatListProps<DocumentItem<AppTypes, IdType>>)['renderItem']
+    >[0],
+    'item'
+  >
 > & { size: 'large' | 'small' }) {
   const iconSize = size === 'large' ? UI_SIZES.elements.icon.xxlarge : UI_SIZES.elements.icon.default;
   if (isItemWorkspaceResource(item)) {
@@ -47,25 +64,32 @@ export function DocumentListItemIcon({
     }
   } else {
     const resourceIconPictureProps = {
-      ...theme.apps[item.appName]?.icon,
-      ...(theme.apps[item.appName]?.icon.type === 'Svg' ? { fill: theme.apps[item.appName]?.accentColors.regular } : undefined),
+      ...theme.apps[getEntAppName(item.appName)]?.icon,
+      ...(theme.apps[getEntAppName(item.appName)]?.icon.type === 'Svg'
+        ? { fill: theme.apps[getEntAppName(item.appName)]?.accentColors.regular }
+        : undefined),
     };
     return <Picture {...resourceIconPictureProps} width={iconSize} height={iconSize} />;
   }
 }
 
-export function DocumentListItem({
+export function DocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType>({
+  alwaysShowAppIcon,
   item,
   onPress,
   style,
   testID,
 }: Readonly<
   Pick<
-    Parameters<(PaginatedFlashListProps<DocumentItem> & PaginatedFlatListProps<DocumentItem>)['renderItem']>[0],
+    Parameters<
+      (PaginatedFlashListProps<DocumentItem<AppTypes, IdType>> &
+        PaginatedFlatListProps<DocumentItem<AppTypes, IdType>>)['renderItem']
+    >[0],
     'index' | 'item'
   >
 > &
-  Pick<TouchableOpacityProps, 'onPress' | 'style' | 'testID'>) {
+  Pick<TouchableOpacityProps, 'onPress' | 'style' | 'testID'> &
+  Pick<PaginatedDocumentFlashListProps<AppTypes, IdType> & PaginatedDocumentFlatListProps<AppTypes, IdType>, 'alwaysShowAppIcon'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
 
   const thumbnail = React.useMemo(
@@ -73,16 +97,18 @@ export function DocumentListItem({
       item.thumbnail ? (
         <View style={styles.documentThumbnail}>
           <ImageWithFallback {...http.imagePropsForSession({ source: { uri: item.thumbnail } })} style={styles.documentImage} />
-          <View style={styles.documentThumbnailFloatingIconWrapper}>
-            <DocumentListItemIcon size="small" item={item} />
-          </View>
+          {alwaysShowAppIcon && (
+            <View style={styles.documentThumbnailFloatingIconWrapper}>
+              <DocumentListItemIcon size="small" item={item} />
+            </View>
+          )}
         </View>
       ) : (
-        <View style={[styles.documentThumbnail, { backgroundColor: theme.apps[item.appName]?.accentColors.pale }]}>
+        <View style={[styles.documentThumbnail, { backgroundColor: theme.apps[getEntAppName(item.appName)]?.accentColors.pale }]}>
           <DocumentListItemIcon size="large" item={item} />
         </View>
       ),
-    [item],
+    [alwaysShowAppIcon, item],
   );
   return (
     <WrapperComponent style={[styles.item, styles.itemDocument, style]} onPress={onPress} testID={testID}>
@@ -99,12 +125,15 @@ export function DocumentListItem({
   );
 }
 
-export function FolderListItem({
+export function FolderListItem<IdType>({
   item,
   onPress,
   style,
 }: Readonly<
-  Pick<Parameters<(PaginatedFlashListProps<FolderItem> & PaginatedFlatListProps<FolderItem>)['renderItem']>[0], 'item' | 'index'>
+  Pick<
+    Parameters<(PaginatedFlashListProps<FolderItem<IdType>> & PaginatedFlatListProps<FolderItem<IdType>>)['renderItem']>[0],
+    'item' | 'index'
+  >
 > &
   Pick<TouchableOpacityProps, 'onPress'> &
   Pick<ViewProps, 'style'>) {
