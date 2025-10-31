@@ -1,4 +1,4 @@
-import { AppName } from '@edifice.io/community-client-rest-rn';
+import { AppName, CommunityResponseDto } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { DocumentItem } from '~/framework/components/list/paginated-document-list/types';
@@ -12,4 +12,7 @@ export namespace CommunitiesDocumentsScreen {
   export type AllProps = CommunitiesDocumentsScreen.NavigationProps;
 }
 
-export type CommunitiesDocumentItem = DocumentItem<AppName>;
+export type CommunitiesDocumentId = CommunityResponseDto['id'];
+export type CommunitiesDocumentAppName = AppName;
+
+export type CommunitiesDocumentItem = DocumentItem<CommunitiesDocumentAppName, CommunitiesDocumentId>;

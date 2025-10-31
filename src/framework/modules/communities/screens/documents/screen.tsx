@@ -137,24 +137,6 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     [communityId, session, setCommunityData],
   );
 
-  // For perforance purpose, estimatedListSize must be the dimensions of the container (here the screen sithout, navBar and tabBar)
-  const estimatedListSize = React.useMemo(
-    () => ({
-      height:
-        UI_SIZES.screen.height - UI_SIZES.elements.navbarHeight - UI_SIZES.elements.tabbarHeight - UI_SIZES.screen.bottomInset,
-      width: UI_SIZES.screen.width,
-    }),
-    [],
-  );
-
-  // For perforance purpose, estimatedItemSize must be the height of each element.
-  // Don't forget to use style values and text sizes (including Pixel Ratio !) to compute that.
-  // It **not** need to be pixel-perfect, but find a value that is close to reality.
-  const estimatedItemSize = React.useMemo(
-    () => TextSizeStyle.Medium.lineHeight * 2 * PixelRatio.getFontScale() + 2 * (styles.item.borderWidth + styles.item.padding),
-    [],
-  );
-
   const openDocument = React.useCallback(async (doc: CommunitiesDocumentItem) => {
     const url = utils.getResourceUrl(doc); // ToDo : patch package to narrow type required
     if (!url) return;
@@ -195,8 +177,6 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     <>
       {statusBar}
       <CommunityPaginatedDocumentList
-        estimatedListSize={estimatedListSize}
-        estimatedItemSize={estimatedItemSize}
         numColumns={2}
         pageSize={PAGE_SIZE}
         stickyElements={stickyElements}

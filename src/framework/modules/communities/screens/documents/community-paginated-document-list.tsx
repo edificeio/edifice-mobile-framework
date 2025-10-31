@@ -5,6 +5,7 @@ import * as React from 'react';
 import { ListRenderItemInfo, RefreshControl } from 'react-native';
 
 import { createDecoratedArrayProxy } from './proxy';
+import { CommunitiesDocumentAppName, CommunitiesDocumentId } from './types';
 
 import { useDocumentPagination } from '~/framework/components/list/paginated-document-list/component';
 import {
@@ -15,19 +16,22 @@ import { LOADING_ITEM_DATA, PaginatedFlatList, PaginatedFlatListProps } from '~/
 import ScrollView from '~/framework/components/scrollView';
 import { LoadingState } from '~/framework/hooks/loader';
 
-export type CommunityPaginatedDocumentListItem = PaginatedDocumentListItem | React.ReactElement;
+export type CommunityPaginatedDocumentListItem =
+  | PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>
+  | React.ReactElement;
 
 export interface CommunityPaginatedDocumentFlatListProps
   extends Omit<
       PaginatedFlatListProps<CommunityPaginatedDocumentListItem>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,
-    CommonPaginatedDocumentListProps {
+    CommonPaginatedDocumentListProps<CommunitiesDocumentAppName, CommunitiesDocumentId> {
   stickyElements?: React.ReactElement[];
   stickyPlaceholderElements?: React.ReactElement[];
 }
 
 export function CommunityPaginatedDocumentFlatList({
+  alwaysShowAppIcon = true,
   documents,
   folders,
   ListEmptyComponent,
@@ -72,7 +76,9 @@ export function CommunityPaginatedDocumentFlatList({
 
   const renderItem = React.useCallback(
     (info: ListRenderItemInfo<CommunityPaginatedDocumentListItem>) =>
-      React.isValidElement(info.item) ? info.item : _renderItem(info as ListRenderItemInfo<PaginatedDocumentListItem>),
+      React.isValidElement(info.item)
+        ? info.item
+        : _renderItem(info as ListRenderItemInfo<PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>>),
     [_renderItem],
   );
 
@@ -83,8 +89,10 @@ export function CommunityPaginatedDocumentFlatList({
   );
 
   const keyExtractor = React.useCallback(
-    (item: PaginatedDocumentListItem | React.ReactElement, index: number) =>
-      React.isValidElement(item) ? item.key || 'sticky-' + index : _keyExtractor(item as PaginatedDocumentListItem, index),
+    (item: PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId> | React.ReactElement, index: number) =>
+      React.isValidElement(item)
+        ? item.key || 'sticky-' + index
+        : _keyExtractor(item as PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>, index),
     [_keyExtractor],
   );
 
