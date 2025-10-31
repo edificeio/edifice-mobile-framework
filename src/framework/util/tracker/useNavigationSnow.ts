@@ -3,7 +3,6 @@ import * as React from 'react';
 import type { Route } from '@react-navigation/native';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { stopItSnowAction } from '~/framework/modules/user/actions';
 import { navigationRef } from '~/framework/navigation/helper';
 
 const customRouteNameLogicMap: { [key: string]: (route: Route<string, any>) => string } = {};
@@ -24,9 +23,6 @@ const stopSnowIfNeeded = async (
   if (currentRouteName && previousRouteName !== currentRouteName) {
     // Save the current route name for later comparison
     routeNameRef.current = currentRouteName;
-
-    // Stop snowflakes when navigating
-    (dispatch as ThunkDispatch<any, any, any>)(stopItSnowAction());
   }
 };
 

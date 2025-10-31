@@ -20,7 +20,6 @@ import {
   StackActions,
 } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { connect } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
 import { getTabBarStyleForNavState } from './hideTabBarAndroid';
@@ -32,13 +31,11 @@ import { computeTabRouteName, tabModules } from './tabModules';
 
 import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
+import { Picture, PictureProps } from '~/framework/components/picture';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
-import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
@@ -57,20 +54,12 @@ import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/m
 
 const Tab = createBottomTabNavigator();
 
-const PictureWithXmas = connect((state: IGlobalState) => ({ isXmas: getIsXmasActive(state) }))((
-  props: PictureProps & IconProps & { isXmas?: boolean; focused: boolean },
-) => {
-  const { isXmas, name, ...other } = props;
-  return <Picture {...other} name={`${isXmas ? 'xmas-' : ''}${name}`} />;
-});
-
 const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
   props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPictureBlur };
   props.size = UI_SIZES.elements.tabbarIconSize;
-
   if (dp.type === 'Image') {
     dp.style = [dp.style, { height: props.size, width: props.size }];
   } else if (dp.type === 'Icon') {
@@ -83,12 +72,12 @@ const createTabIcon = (
     dp.width = props.size;
     dp.fill = props.color;
   }
-
   if (props.focused) {
     dp = { ...dp, ...moduleConfig.displayPictureFocus, fill: props.color } as Partial<PictureProps>;
   }
+  return <Picture {...dp} />;
 
-  return <PictureWithXmas {...(dp as PictureProps)} />;
+  //<TabPicture {...(dp as PictureProps)} />;
 };
 
 const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
