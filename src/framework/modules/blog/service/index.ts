@@ -182,12 +182,12 @@ export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: strin
   const blogPostIdMatch = url.match(blogPostIdRegex);
   return !blogPostIdMatch
     ? {
-      blogId: url.match(blogIdRegex)?.[1],
-    }
+        blogId: url.match(blogIdRegex)?.[1],
+      }
     : {
-      blogId: blogPostIdMatch?.[1],
-      postId: blogPostIdMatch?.[2],
-    };
+        blogId: blogPostIdMatch?.[1],
+        postId: blogPostIdMatch?.[2],
+      };
 };
 export const blogPostGenerateResourceUriFunction = ({ blogId, postId }: { blogId: string; postId: string }) => {
   return `/blog#/detail/${blogId}/${postId}`;
@@ -235,7 +235,7 @@ export const blogService = {
 
   // This service automatically filters only non-trashed content.
   folders: {
-    list: async (session: AuthActiveAccount) => {
+    list: async (_: AuthActiveAccount) => {
       const api = `/blog/folder/list/all`;
       const entcoreBlogFolderList = (await fetchJSONWithCache(api)) as IEntcoreBlogFolder[];
       return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as BlogFolder[]).filter(f => !f.trashed);
@@ -248,7 +248,7 @@ export const blogService = {
     return blogAdapter(entcoreBlog);
   },
   // This service automatically filters only non-trashed content.
-  list: async (session: AuthActiveAccount) => {
+  list: async (_: AuthActiveAccount) => {
     const api = `/blog/list/all`;
     const entcoreBlogList = (await fetchJSONWithCache(api)) as IEntcoreBlogList;
     const blogList = [] as BlogList;
