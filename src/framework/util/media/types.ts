@@ -18,7 +18,7 @@ export enum MediaType {
 
 export interface Media {
   type: MediaType;
-  src: URL | ImageURISource | string;
+  src: URL | Pick<ImageURISource, 'uri'> | string;
 }
 
 export interface FileMedia extends Media {
