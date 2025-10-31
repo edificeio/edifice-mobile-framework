@@ -2,7 +2,7 @@
  * The MainNavigation is nav hierarchy used when the user is logged in.
  * It includes all modules screens and TabBar screens.
  *
- * navBar shows up with the RootSTack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
+ * navBar shows up with the RootStack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
  */
 import * as React from 'react';
 import { Platform } from 'react-native';
