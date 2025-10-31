@@ -21,7 +21,6 @@ import { getState as getAppStartupState, StartupState } from './redux';
 import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import SnowFlakes from '~/framework/components/SnowFlakes';
 import { RootToastHandler } from '~/framework/components/toast';
 import type { AuthLoggedAccountMap } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
@@ -136,7 +135,6 @@ function RootNavigator(props: RootNavigatorProps) {
               </AppPushNotificationHandlerComponent>
             </BottomSheetModalProvider>
             <RootToastHandler />
-            <SnowFlakes />
           </NavigationContainer>
         ) : null}
       </>
