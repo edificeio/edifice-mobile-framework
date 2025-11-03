@@ -79,3 +79,10 @@ export interface IEntcoreBlogFolder {
   parentId?: string;
   trashed?: boolean;
 }
+export interface BlogPostIdType {
+  blogId: string;
+  postId: string;
+}
+export interface BlogPostCommentIdType extends BlogPostIdType {
+  commentId: string;
+}
