@@ -4,6 +4,8 @@
 
 import { blogAdapter, blogFolderAdapter, blogPostAdapter, blogPostCommentsAdapter } from './adapters';
 import {
+  BlogPostCommentIdType,
+  BlogPostIdType,
   IEntcoreBlog,
   IEntcoreBlogFolder,
   IEntcoreBlogList,
@@ -19,29 +21,25 @@ import { sessionFetch } from '~/framework/util/transport';
 
 export const blogService = {
   comments: {
-    delete: async (session: AuthActiveAccount, blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
+    delete: async (session: AuthActiveAccount, blogPostCommentId: BlogPostCommentIdType) => {
       const { blogId, commentId, postId } = blogPostCommentId;
       const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
       return sessionFetch.json<{ number: number }>(api, { method: 'DELETE' });
     },
-    get: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }) => {
+    get: async (session: AuthActiveAccount, blogPostId: BlogPostIdType) => {
       const { blogId, postId } = blogPostId;
       const api = `/blog/comments/${blogId}/${postId}`;
       const entcoreBlogPostComments = await sessionFetch.json<IEntcoreBlogPostComments>(api);
       // Run the adapter for the received blog post comments
       return blogPostCommentsAdapter(entcoreBlogPostComments);
     },
-    publish: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }, comment: string) => {
+    publish: async (session: AuthActiveAccount, blogPostId: BlogPostIdType, comment: string) => {
       const { blogId, postId } = blogPostId;
       const api = `/blog/comment/${blogId}/${postId}`;
       const body = JSON.stringify({ comment });
       return sessionFetch.json<{ number: number }>(api, { body, method: 'POST' });
     },
-    update: async (
-      session: AuthActiveAccount,
-      blogPostCommentId: { blogId: string; postId: string; commentId: string },
-      comment: string,
-    ) => {
+    update: async (session: AuthActiveAccount, blogPostCommentId: BlogPostCommentIdType, comment: string) => {
       const { blogId, commentId, postId } = blogPostCommentId;
       const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
       const body = JSON.stringify({ comment });
@@ -51,7 +49,7 @@ export const blogService = {
 
   // This service automatically filters only non-trashed content.
   folders: {
-    list: async (_: AuthActiveAccount) => {
+    list: async (session: AuthActiveAccount) => {
       const api = `/blog/folder/list/all`;
       const entcoreBlogFolderList = await sessionFetch.json<IEntcoreBlogFolder[]>(api);
       return entcoreBlogFolderList.map(b => blogFolderAdapter(b)).filter(f => !f.trashed);
@@ -64,7 +62,7 @@ export const blogService = {
     return blogAdapter(entcoreBlog);
   },
   // This service automatically filters only non-trashed content.
-  list: async (_: AuthActiveAccount) => {
+  list: async (session: AuthActiveAccount) => {
     const api = `/blog/list/all`;
     const entcoreBlogList = await sessionFetch.json<IEntcoreBlogList>(api);
     const blogList = [] as BlogList;
@@ -74,7 +72,7 @@ export const blogService = {
     return blogList;
   },
   post: {
-    create: async (_: AuthActiveAccount, blogId: string, postTitle: string, postContentHtml: string) => {
+    create: async (session: AuthActiveAccount, blogId: string, postTitle: string, postContentHtml: string) => {
       const api = `/blog/post/${blogId}`;
       const body = JSON.stringify({ content: postContentHtml, title: postTitle });
       return sessionFetch.json<IEntcoreCreatedBlogPost>(api, { body, method: 'POST' });
