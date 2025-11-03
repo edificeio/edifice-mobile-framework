@@ -8,7 +8,6 @@ import ErrorScreenView, { withErrorBoundary } from './error';
 import styles from './styles';
 import { ScreenViewProps } from './types';
 
-import SnowFlakes from '~/framework/components/SnowFlakes';
 import StatusBar from '~/framework/components/status-bar';
 import { ToastHandler } from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
@@ -33,7 +32,6 @@ export const ScreenView = withErrorBoundary(
       <BottomSheetModalProvider>
         {content}
         <ToastHandler />
-        <SnowFlakes />
       </BottomSheetModalProvider>
     ) : (
       content
