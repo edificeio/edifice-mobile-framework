@@ -24,8 +24,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
+import { sessionScreen } from '~/framework/components/screen';
 import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
@@ -81,12 +81,12 @@ const formatDocuments = (data: ResourceDto[]): CommunitiesDocumentItem[] =>
         } as Exclude<DocumentItemEntApp<ResourceDto['appName'], number>, 'workspace'>),
   );
 
-export default (function CommunitiesDocumentsScreen({
+export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({
   route: {
     params: { communityId },
   },
-}: Readonly<CommunitiesDocumentsScreen.AllProps>) {
-  const session = getSession();
+  session,
+}) {
   const communityData = useSelector(communitiesSelectors.getCommunityDetails(communityId));
   const dispatch = useDispatch();
   const setCommunityData = React.useCallback(
@@ -109,7 +109,6 @@ export default (function CommunitiesDocumentsScreen({
   // This function fetch the data page the given page number and insert the resulting elements in the `data` array.
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
-      if (!session) return;
       const [community, members, newData] = await Promise.all([
         accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
         accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),

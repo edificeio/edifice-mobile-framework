@@ -23,10 +23,10 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
 import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
 import PostDetailsLoader from '~/framework/modules/communities/components/announcements/post/details/loader';
@@ -571,14 +571,14 @@ export const CommunitiesHomeScreenPlaceholder = () => (
   </ScrollView>
 );
 
-export default (function CommunitiesHomeScreen({
+export default sessionScreen<CommunitiesHomeScreen.AllProps>(function CommunitiesHomeScreen({
   navigation,
   route,
   route: {
     params: { communityId },
   },
-}: Readonly<CommunitiesHomeScreen.AllProps>) {
-  const session = getSession();
+  session,
+}) {
   const data = useSelector(communitiesSelectors.getCommunityDetails(communityId));
   const dispatch = useDispatch();
   const setData = React.useCallback(
@@ -588,7 +588,6 @@ export default (function CommunitiesHomeScreen({
   );
 
   const loadContent = React.useCallback(async () => {
-    if (!session) return;
     const [community, invitations] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
       accountApi(session, moduleConfig, InvitationClient).getInvitationsAndMembers(communityId, { page: 1, size: 20 }),
@@ -602,7 +601,7 @@ export default (function CommunitiesHomeScreen({
 
   const renderContent: NonNullable<ContentLoaderProps['renderContent']> = React.useCallback(
     refreshControl =>
-      data && session ? (
+      data ? (
         <CommunitiesHomeScreenLoaded
           navigation={navigation}
           route={route}

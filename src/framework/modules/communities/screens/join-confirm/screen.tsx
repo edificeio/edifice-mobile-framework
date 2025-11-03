@@ -20,9 +20,9 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA } from '~/framework/components/list/paginated-list';
 import { NavBarAction } from '~/framework/components/navigation';
 import { Svg } from '~/framework/components/picture';
+import { sessionScreen } from '~/framework/components/screen';
 import { BodyText, HeadingSText, HeadingXSText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
 import CommunityCardLarge from '~/framework/modules/communities/components/community-card-large';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
@@ -87,15 +87,14 @@ const safeEdges: Edges = {
   top: 'off',
 };
 
-export default (function CommunitiesJoinConfirmScreen({
+export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(function CommunitiesJoinConfirmScreen({
   navigation,
   route: {
     params: { communityId, invitationId },
   },
-}: Readonly<CommunitiesJoinConfirmScreen.AllProps>) {
-  const session = getSession();
+  session,
+}) {
   const onValidate = React.useCallback(async () => {
-    if (!session) return;
     try {
       await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {
         status: InvitationStatus.ACCEPTED,
