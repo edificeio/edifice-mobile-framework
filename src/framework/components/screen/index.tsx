@@ -13,6 +13,7 @@ import { ToastHandler } from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
+import { Trackers } from '~/framework/util/tracker';
 
 // ToDo manage keyboard
 
@@ -40,6 +41,9 @@ export const ScreenView = withErrorBoundary(
   {
     FallbackComponent: function (props) {
       return <ErrorScreenView {...props} />;
+    },
+    onError: (error, stackTrace) => {
+      Trackers.recordCrashError(error, 'ScreenView');
     },
   },
 );
