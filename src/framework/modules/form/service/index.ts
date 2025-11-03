@@ -23,7 +23,7 @@ import {
   IBackendSectionList,
 } from './types';
 
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IDistribution, IQuestionResponse } from '~/framework/modules/form/model';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
@@ -31,83 +31,83 @@ import { sessionFetch } from '~/framework/util/transport';
 
 export const formService = {
   distribution: {
-    add: async (session: AuthLoggedAccount, distributionId: number) => {
+    add: async (session: AuthActiveAccount, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/add`;
       const distribution = await sessionFetch.json<IBackendDistribution>(api, { method: 'POST' });
       return distributionAdapter(distribution);
     },
-    deleteQuestionResponses: async (session: AuthLoggedAccount, distributionId: number, questionId: number) => {
+    deleteQuestionResponses: async (session: AuthActiveAccount, distributionId: number, questionId: number) => {
       const api = `/formulaire/responses/${distributionId}/questions/${questionId}`;
       return sessionFetch.json<[]>(api, { method: 'DELETE' });
     },
-    duplicate: async (session: AuthLoggedAccount, distributionId: number) => {
+    duplicate: async (session: AuthActiveAccount, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/duplicate`;
       const distribution = await sessionFetch.json<IBackendDistribution>(api, { method: 'POST' });
       return distributionAdapter(distribution);
     },
-    get: async (session: AuthLoggedAccount, distributionId: number) => {
+    get: async (session: AuthActiveAccount, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}`;
       const distribution = await sessionFetch.json<IBackendDistribution>(api);
       return distributionAdapter(distribution);
     },
-    getResponses: async (session: AuthLoggedAccount, distributionId: number) => {
+    getResponses: async (session: AuthActiveAccount, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/responses`;
       const responses = await sessionFetch.json<IBackendQuestionResponseList>(api);
       return responses.map(questionResponseAdapter);
     },
-    put: async (session: AuthLoggedAccount, distribution: IDistribution) => {
+    put: async (session: AuthActiveAccount, distribution: IDistribution) => {
       const api = `/formulaire/distributions/${distribution.id}`;
       const body = JSON.stringify(distribution);
       const distrib = await sessionFetch.json<IBackendDistribution>(api, { body, method: 'PUT' });
       return distributionAdapter(distrib);
     },
-    replace: async (session: AuthLoggedAccount, distributionId: number, originalDistributionId: number) => {
+    replace: async (session: AuthActiveAccount, distributionId: number, originalDistributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/replace/${originalDistributionId}`;
       const distribution = await sessionFetch.json<IBackendDistribution>(api, { method: 'DELETE' });
       return distributionAdapter(distribution);
     },
   },
   distributions: {
-    list: async (session: AuthLoggedAccount) => {
+    list: async (session: AuthActiveAccount) => {
       const api = '/formulaire/distributions/listMine';
       const distributions = await sessionFetch.json<IBackendDistributionList>(api);
       return distributions.map(distributionAdapter);
     },
-    listFromForm: async (session: AuthLoggedAccount, formId: number) => {
+    listFromForm: async (session: AuthActiveAccount, formId: number) => {
       const api = `/formulaire/distributions/forms/${formId}/listMine`;
       const distributions = await sessionFetch.json<IBackendDistributionList>(api);
       return distributions.map(distributionAdapter);
     },
   },
   form: {
-    get: async (session: AuthLoggedAccount, id: number) => {
+    get: async (session: AuthActiveAccount, id: number) => {
       const api = `/formulaire/forms/${id}`;
       const form = await sessionFetch.json<IBackendForm>(api);
       return formAdapter(form);
     },
-    getElementsCount: async (session: AuthLoggedAccount, formId: number) => {
+    getElementsCount: async (session: AuthActiveAccount, formId: number) => {
       const api = `/formulaire/forms/${formId}/elements/count`;
       const data = await sessionFetch.json<{ count: number }>(api);
       return data.count;
     },
-    getQuestions: async (session: AuthLoggedAccount, formId: number) => {
+    getQuestions: async (session: AuthActiveAccount, formId: number) => {
       const api = `/formulaire/forms/${formId}/questions`;
       const questions = await sessionFetch.json<IBackendQuestionList>(api);
       return questions.map(questionAdapter);
     },
-    getSections: async (session: AuthLoggedAccount, formId: number) => {
+    getSections: async (session: AuthActiveAccount, formId: number) => {
       const api = `/formulaire/forms/${formId}/sections`;
       const sections = await sessionFetch.json<IBackendSectionList>(api);
       return sections.map(sectionAdapter);
     },
-    hasResponderRight: async (session: AuthLoggedAccount, formId: number) => {
+    hasResponderRight: async (session: AuthActiveAccount, formId: number) => {
       const api = `/formulaire/forms/${formId}/rights`;
       const rights = await sessionFetch.json<Array<{ action: string }>>(api);
       return rights.some(r => r.action === 'fr-openent-formulaire-controllers-FormController|initResponderResourceRight');
     },
   },
   forms: {
-    getReceived: async (session: AuthLoggedAccount) => {
+    getReceived: async (session: AuthActiveAccount) => {
       const api = '/formulaire/forms/sent';
       const forms = await sessionFetch.json<IBackendFormList>(api);
       return forms.map(formAdapter);
@@ -115,7 +115,7 @@ export const formService = {
   },
   question: {
     createResponse: async (
-      session: AuthLoggedAccount,
+      session: AuthActiveAccount,
       questionId: number,
       distributionId: number,
       choiceId: number | null,
@@ -136,7 +136,7 @@ export const formService = {
       const response = await sessionFetch.json<IBackendQuestionResponse>(api, { body, method: 'POST' });
       return questionResponseAdapter(response);
     },
-    getChoices: async (session: AuthLoggedAccount, questionId: number) => {
+    getChoices: async (session: AuthActiveAccount, questionId: number) => {
       const api = `/formulaire/questions/${questionId}/choices`;
       const headers = {
         Accept: 'application/json;version=1.9',
@@ -145,14 +145,14 @@ export const formService = {
       choices.sort(compareChoices);
       return choices.map(choice => questionChoiceAdapter(choice, session.platform.url));
     },
-    getDistributionResponses: async (session: AuthLoggedAccount, questionId: number, distributionId: number) => {
+    getDistributionResponses: async (session: AuthActiveAccount, questionId: number, distributionId: number) => {
       const api = `/formulaire/questions/${questionId}/distributions/${distributionId}/responses`;
       const responses = await sessionFetch.json<IBackendQuestionResponseList>(api);
       return responses.map(questionResponseAdapter);
     },
   },
   questions: {
-    getAllChoices: async (session: AuthLoggedAccount, questionIds: number[]) => {
+    getAllChoices: async (session: AuthActiveAccount, questionIds: number[]) => {
       let api = `/formulaire/questions/choices/all?`;
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const headers = {
@@ -162,7 +162,7 @@ export const formService = {
       choices.sort(compareChoices);
       return choices.map(choice => questionChoiceAdapter(choice, session.platform.url));
     },
-    getChildren: async (session: AuthLoggedAccount, questionIds: number[]) => {
+    getChildren: async (session: AuthActiveAccount, questionIds: number[]) => {
       let api = `/formulaire/questions/children?`;
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const children = await sessionFetch.json<IBackendQuestionList>(api);
@@ -171,7 +171,7 @@ export const formService = {
     },
   },
   response: {
-    addFile: async (session: AuthLoggedAccount, responseId: number, file: LocalFile) => {
+    addFile: async (session: AuthActiveAccount, responseId: number, file: LocalFile) => {
       const api = `/formulaire/responses/${responseId}/files`;
       const { firstName, lastName } = session.user;
       if (!file.filename.startsWith(firstName)) {
@@ -197,17 +197,17 @@ export const formService = {
         SyncedFileWithId,
       );
     },
-    deleteFiles: async (session: AuthLoggedAccount, responseId: number) => {
+    deleteFiles: async (session: AuthActiveAccount, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files`;
       return sessionFetch(api, { method: 'DELETE' });
     },
-    getFiles: async (session: AuthLoggedAccount, responseId: number) => {
+    getFiles: async (session: AuthActiveAccount, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files/all`;
       const files = await sessionFetch.json<IBackendResponseFileList>(api);
       return files.map(responseFileAdapter);
     },
     put: async (
-      session: AuthLoggedAccount,
+      session: AuthActiveAccount,
       responseId: number,
       distributionId: number,
       questionId: number,
@@ -229,7 +229,7 @@ export const formService = {
     },
   },
   responses: {
-    delete: async (session: AuthLoggedAccount, formId: number, responses: IQuestionResponse[]) => {
+    delete: async (session: AuthActiveAccount, formId: number, responses: IQuestionResponse[]) => {
       const api = `/formulaire/responses/${formId}`;
       const body = JSON.stringify(
         responses.map(r => {
@@ -246,7 +246,7 @@ export const formService = {
     },
   },
   section: {
-    getQuestions: async (session: AuthLoggedAccount, sectionId: number) => {
+    getQuestions: async (session: AuthActiveAccount, sectionId: number) => {
       const api = `/formulaire/sections/${sectionId}/questions`;
       const questions = await sessionFetch.json<IBackendQuestionList>(api);
       questions.sort(compareSectionQuestions);
