@@ -795,7 +795,6 @@
   "linking-redirectbrowser-error": "Redirect error.",
   "linking-redirectbrowser-message": "You will be redirected to an external website in your browser.",
   "linking-redirectbrowser-title": "Browser redirection",
-  "LoginWeb": "Log in from the web",
   "lvs-home-title": "LVS",
   "lvs-moduleconfig-appname": "LVS",
   "lvs-redirect-error-text": "Cannot redirect to LVS.",

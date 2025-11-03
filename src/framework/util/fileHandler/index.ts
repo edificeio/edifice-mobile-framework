@@ -9,7 +9,7 @@ import DocumentPicker, { DocumentPickerResponse, pick, types } from '@react-nati
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
-import ImagePicker, { Image } from 'react-native-image-crop-picker';
+import ImagePicker, { Image, ImageOrVideo, PossibleArray } from 'react-native-image-crop-picker';
 
 import { openDocument } from './actions';
 import { Asset } from './types';
@@ -161,16 +161,20 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       await assertPermissions('galery.read');
       console.debug('[Gallery] Opening picker...');
 
-      const pics = await ImagePicker.openPicker({
+      const pics: ImageOrVideo | ImageOrVideo[] = await ImagePicker.openPicker({
         maxFiles: 999, // Default value is 5 somewhere in the third-party package, so we must set it to some high value here to allow """unlimited""" selection.
         mediaType: 'photo',
         multiple,
       });
 
-      console.debug('[Gallery] Picker result:', pics);
-
-      const picsArray = Array.isArray(pics) ? pics : [pics];
-      const pickedFiles = (await processImages(picsArray)).filter((f): f is Asset => f !== undefined);
+      // Sort picked files by ascending modification date
+      if (Array.isArray(pics)) {
+        (pics as ImageOrVideo[]).sort((a, b) =>
+          !a.modificationDate ? -1 : !b.modificationDate ? 1 : a.modificationDate.localeCompare(b.modificationDate),
+        );
+      }
+      const orderedPics = Array.isArray(pics) ? pics : [pics];
+      const pickedFiles = (await processImages(orderedPics)).filter((f): f is Asset => f !== undefined);
 
       const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
 

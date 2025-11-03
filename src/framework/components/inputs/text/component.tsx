@@ -176,7 +176,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       maxLength ? { ...styles.inputWithMaxLength } : null,
       style,
     ],
-    [colorStatus, paddingRight, disabled, maxLength, style],
+    [colorStatus, disabled, paddingRight, style, maxLength],
   );
 
   const handleFocus = useCallback<NonNullable<RNTextInputProps['onFocus']>>(

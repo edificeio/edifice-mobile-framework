@@ -18,7 +18,7 @@ import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { Source } from '~/framework/modules/mediacentre/model';
 import { openUrl } from '~/framework/util/linking';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
   isFavorite,

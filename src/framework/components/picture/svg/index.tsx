@@ -19,6 +19,9 @@ const imports = {
   'blog': async () => import('ASSETS/icons/moduleIcons/blog.svg'),
   'calendar': async () => import('ASSETS/icons/moduleIcons/calendar.svg'),
   'collaborativeWall': async () => import('ASSETS/icons/moduleIcons/collaborativeWall.svg'),
+  'communities': async () => import('ASSETS/icons/moduleIcons/communities.svg'),
+  'communities-fill': async () => import('ASSETS/icons/moduleIcons/communities-fill.svg'),
+  'communities-outline': async () => import('ASSETS/icons/moduleIcons/communities-outline.svg'),
   'community': async () => import('ASSETS/icons/moduleIcons/community.svg'),
   'competences': async () => import('ASSETS/icons/moduleIcons/competences.svg'),
   'days-friday': async () => import('ASSETS/images/days/friday.svg'),
@@ -33,6 +36,9 @@ const imports = {
   'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
   'element': async () => import('ASSETS/icons/moduleIcons/element.svg'),
   'empty-blog': async () => import('ASSETS/images/empty-screen/empty-blog.svg'),
+  'empty-communities-announcements': async () => import('ASSETS/images/empty-screen/empty-communities-announcements.svg'),
+  'empty-communities-announcements-soon': async () => import('ASSETS/images/empty-screen/empty-communities-announcements-soon.svg'),
+  'empty-communities-list': async () => import('ASSETS/images/empty-screen/empty-communities-list.svg'),
   'empty-content': async () => import('ASSETS/images/empty-screen/empty-content.svg'),
   'empty-conversation': async () => import('ASSETS/images/empty-screen/empty-conversation.svg'),
   'empty-eula': async () => import('ASSETS/images/empty-screen/empty-eula.svg'),
@@ -212,14 +218,17 @@ const imports = {
   'ui-mailRead': async () => import('ASSETS/icons/uiIcons/mailRead.svg'),
   'ui-mailUnread': async () => import('ASSETS/icons/uiIcons/unreadMail.svg'),
   'ui-megaphone': async () => import('ASSETS/icons/uiIcons/megaphone.svg'),
+  'ui-members': async () => import('ASSETS/icons/uiIcons/members.svg'),
   'ui-messageInfo': async () => import('ASSETS/icons/uiIcons/messageInfo.svg'),
   'ui-mic': async () => import('ASSETS/icons/uiIcons/mic.svg'),
   'ui-mic-preview': async () => import('ASSETS/icons/uiIcons/mic-preview.svg'),
   'ui-minus': async () => import('ASSETS/icons/uiIcons/minus.svg'),
   'ui-move': async () => import('ASSETS/icons/uiIcons/move.svg'),
   'ui-multimedia': async () => import('ASSETS/icons/uiIcons/multimedia.svg'),
+  'ui-notes': async () => import('ASSETS/icons/uiIcons/notes.svg'),
   'ui-notif': async () => import('ASSETS/icons/uiIcons/notif.svg'),
   'ui-options': async () => import('ASSETS/icons/uiIcons/options.svg'),
+  'ui-options-horizontal': async () => import('ASSETS/icons/uiIcons/options-horizontal.svg'),
   'ui-orderedList': async () => import('ASSETS/icons/uiIcons/orderedList.svg'),
   'ui-pause': async () => import('ASSETS/icons/uiIcons/pause.svg'),
   'ui-personBook': async () => import('ASSETS/icons/uiIcons/person_book.svg'),
@@ -280,6 +289,7 @@ const imports = {
   'ui-upcoming': async () => import('ASSETS/icons/uiIcons/upcoming.svg'),
   'ui-upload': async () => import('ASSETS/icons/uiIcons/upload.svg'),
   'ui-user': async () => import('ASSETS/icons/uiIcons/user.svg'),
+  'ui-user-join': async () => import('ASSETS/icons/uiIcons/user-join.svg'),
   'ui-users': async () => import('ASSETS/icons/uiIcons/users.svg'),
   'ui-userSearch': async () => import('ASSETS/icons/uiIcons/userSearch.svg'),
   'ui-userSearchColor': async () => import('ASSETS/icons/uiIcons/userSearchColorized.svg'),
@@ -332,6 +342,7 @@ export const Svg = ({ cached, name, ...rest }: SvgProps): React.JSX.Element | nu
       setLoading(true);
       const importSVG = async (): Promise<void> => {
         try {
+          if (__DEV__ && !imports[name]) console.error(`[Svg] Icon not found : ${name}`);
           ImportedSVGRef.current = (await imports[name]()).default;
           if (cached) {
             importsCache[name] = ImportedSVGRef.current;

@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 
 import moduleConfig from './module-config';
 import { createBlogPostResourceRight } from './rights';
+import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '../explorer/store';
 
 import { Reducers } from '~/app/store';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -263,6 +264,7 @@ export const countComments = (post: BlogPost) => post.comments?.reduce((acc, c) 
 
 const reducer = combineReducers({
   blogs: createSessionAsyncReducer(initialState.blogs, actionTypes.blogs),
+  explorer: createExplorerReducer(moduleConfig),
   folders: createSessionAsyncReducer(initialState.folders, actionTypes.folders),
   tree: createSessionReducer(initialState.tree, {
     [actionTypes.tree.compute]: (state = initialState.tree, action) => {
@@ -271,5 +273,15 @@ const reducer = combineReducers({
     },
   }),
 });
+
 Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;
+
+export const actions = {
+  explorer: createExplorerActions(moduleConfig),
+};
+
+export const selectors = {
+  explorer: createExplorerSelectors(moduleConfig, state => moduleConfig.getState(state).explorer),
+};

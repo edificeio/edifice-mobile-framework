@@ -9,7 +9,7 @@ import MediaButton from '~/framework/components/media/button';
 import { SmallItalicText } from '~/framework/components/text';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
-import { formatSource } from '~/framework/util/media';
+import { formatSource } from '~/framework/util/media-deprecated';
 import { INotificationMedia } from '~/framework/util/notifications';
 import AttachmentCount from '~/ui/AttachmentCount';
 import Images from '~/ui/Images';
@@ -137,9 +137,9 @@ export const extractMediaFromHtml = (html: string) => {
 const renderAttachementsPreview = (medias: INotificationMedia[], referer: AudienceParameter) => {
   const mediaAttachments: INotificationMedia[] = medias.filter(m => m.type === 'attachment');
   const attachments: (INotificationMedia & { type: 'attachment' })[] = mediaAttachments.map(mediaAtt => ({
-    type: 'attachment',
     name: mediaAtt.name,
     src: mediaAtt.src as string,
+    type: 'attachment',
   }));
   return <AttachmentCount attachments={attachments} />;
 };

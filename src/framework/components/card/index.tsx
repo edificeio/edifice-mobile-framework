@@ -30,7 +30,7 @@ import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Icon, Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { BodyText, CaptionItalicText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import HtmlContentView from '~/ui/HtmlContentView';
 

@@ -2,7 +2,7 @@
  * The MainNavigation is nav hierarchy used when the user is logged in.
  * It includes all modules screens and TabBar screens.
  *
- * navBar shows up with the RootSTack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
+ * navBar shows up with the RootStack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
  */
 import * as React from 'react';
 import { Platform } from 'react-native';
@@ -19,7 +19,7 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { initialWindowMetrics, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { handleCloseModalActions } from './helper';
 import { getTabBarStyleForNavState } from './hideTabBarAndroid';
@@ -188,7 +188,13 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   }, [appsJson]);
 
   // Avoid bug when launching app after first push
-  const insets = useSafeAreaInsets();
+  const initialBottomInset = initialWindowMetrics?.insets.bottom ?? 0;
+  const bottomInsetRef = React.useRef(initialBottomInset);
+  const { bottom: currentBottomInset } = useSafeAreaInsets();
+  if (currentBottomInset !== bottomInsetRef.current && (currentBottomInset === 0 || currentBottomInset === initialBottomInset)) {
+    bottomInsetRef.current = currentBottomInset;
+  }
+
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(
       ({ navigation, route }) => {
@@ -217,13 +223,17 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
             borderTopColor: theme.palette.grey.cloudy,
             borderTopWidth: 1,
             elevation: 1,
-            height: UI_SIZES.elements.tabbarHeight + insets.bottom,
+            height: UI_SIZES.elements.tabbarHeight + bottomInsetRef.current,
             ...getTabBarStyleForNavState(navigation.getState()),
           },
         };
       },
-      [insets.bottom],
+      // Note: here we use a specific hack to ensure the tab bar height is not updated when the bottom inset changes accidentally.
+      // This would cause tab navigation to be reinstanciated and tab state to be lost.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [bottomInsetRef.current],
     );
+
   return React.useMemo(() => {
     return (
       <BottomSheetModalProvider>

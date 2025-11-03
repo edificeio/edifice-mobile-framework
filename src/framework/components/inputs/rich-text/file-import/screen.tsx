@@ -8,6 +8,7 @@ import { FileImportScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import AlertCard from '~/framework/components/alert';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
@@ -23,7 +24,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness,
@@ -344,6 +345,8 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         <FlatList
           data={filesRef.current}
           contentContainerStyle={styles.addFilesResults}
+          ListHeaderComponent={<AlertCard type="info" text={I18n.get('import-order-by-info')} />}
+          ListHeaderComponentStyle={styles.infoBubble}
           alwaysBounceVertical={false}
           renderItem={({ index, item }) => (
             <View key={index} style={styles.addFilesResultsItem}>

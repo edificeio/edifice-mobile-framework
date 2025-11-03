@@ -16,7 +16,7 @@ import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/module
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { formatSource } from '~/framework/util/media';
+import { formatSource } from '~/framework/util/media-deprecated';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
 

@@ -38,7 +38,7 @@ import {
 import GridList from '~/framework/components/GridList';
 import { Icon, Picture, PictureProps } from '~/framework/components/picture';
 import { displayPastDate } from '~/framework/util/date';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 export const resourceItemTouchableStyle = { ...styles.commonItemTouchableStyle, ...styles.itemTouchableStyle };
 export const empyItemTouchableStyle = { ...styles.commonItemTouchableStyle, ...styles.empyItemTouchableStyle };
