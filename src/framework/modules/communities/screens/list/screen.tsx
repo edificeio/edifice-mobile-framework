@@ -23,9 +23,9 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { sessionScreen } from '~/framework/components/screen';
 import { SegmentedControlLoader } from '~/framework/components/segmented-control';
 import { TextSizeStyle } from '~/framework/components/text';
+import { getSession } from '~/framework/modules/auth/reducer';
 import CommunityCardSmall, { styles as cardStyle } from '~/framework/modules/communities/components/community-card-small';
 import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small/community-card-small-loader';
 import CommunityListFilters from '~/framework/modules/communities/components/community-list-filters';
@@ -67,13 +67,13 @@ export const computeNavBar = ({
 
 const emptyData = [];
 
-export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function CommunitiesListScreen({
+export default (function CommunitiesListScreen({
   navigation,
   route: {
     params: { filters = emptyData, pending = false },
   },
-  session,
-}) {
+}: Readonly<CommunitiesListScreen.AllProps>) {
+  const session = getSession();
   const allCommunities = useSelector(communitiesSelectors.getAllCommunities);
   const pendingCommunities = useSelector(communitiesSelectors.getPendingCommunities);
   const dispatch =
@@ -112,6 +112,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
 
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
+      if (!session) return;
       const baseQueryParams: SearchInvitationDto = {
         fields: INVITATION_FIELDS,
         page: page + 1,

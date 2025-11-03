@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { PixelRatio } from 'react-native';
 
-import {
-  InvitationClient,
-  InvitationOrMemberDto,
-  MembershipClient,
-  PaginationQueryDto,
-} from '@edifice.io/community-client-rest-rn';
+import { InvitationClient, InvitationOrMemberDto, PaginationQueryDto } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
@@ -24,7 +19,6 @@ import {
   PaginatedFlashListProps,
   staleOrSplice,
 } from '~/framework/components/list/paginated-list';
-import { sessionScreen } from '~/framework/components/screen';
 import { TextSizeStyle } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import MemberListItem, { MemberListItemLoader } from '~/framework/modules/communities/components/member-list-item';
@@ -57,7 +51,7 @@ export const computeNavBar = ({
   }),
 });
 
-export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(function CommunitiesMembersScreen({ route }) {
+export default (function CommunitiesMembersScreen({ route }: Readonly<CommunitiesMembersScreen.AllProps>) {
   const [allMembers, setAllMembers] = React.useState<(InvitationOrMemberDto | typeof LOADING_ITEM_DATA)[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const communityId = route.params.communityId;
