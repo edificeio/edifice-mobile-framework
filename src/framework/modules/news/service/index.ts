@@ -32,7 +32,7 @@ export const newsService = {
       const api = `/actualites/info/${infoId}/comment`;
 
       const body = JSON.stringify({ comment, info_id: infoId });
-      return sessionFetch(api, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });
@@ -41,7 +41,7 @@ export const newsService = {
       const api = `/actualites/info/${infoId}/comment/${commentId}`;
 
       const body = JSON.stringify({ comment, info_id: infoId });
-      return sessionFetch(api, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });
@@ -51,7 +51,7 @@ export const newsService = {
     delete: async (threadId: number, infoId: number) => {
       const api = `/actualites/thread/${threadId}/info/${infoId}`;
 
-      return sessionFetch(api, {
+      return sessionFetch.json(api, {
         method: 'DELETE',
       });
     },
@@ -80,8 +80,7 @@ export const newsService = {
       const api = `/actualites/threads/list`;
       const backendThreads = await sessionFetch.json<BackendNewsThreadItem[]>(api);
 
-      const threads = backendThreads.map(thread => newsThreadItemAdapter(thread));
-      return threads;
+      return backendThreads.map(thread => newsThreadItemAdapter(thread));
     },
   },
 };
