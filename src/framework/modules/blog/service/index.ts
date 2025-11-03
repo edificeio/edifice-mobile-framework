@@ -85,10 +85,7 @@ export const blogService = {
     edit: async (session: AuthActiveAccount, blogId: string, postId: string, postTitle: string, postContentHtml: string) => {
       const api = `/blog/post/${blogId}/${postId}`;
       const body = JSON.stringify({ content: postContentHtml, title: postTitle });
-      return sessionFetch.json(api, {
-        body,
-        method: 'PUT',
-      });
+      return sessionFetch.json(api, { body, method: 'PUT' });
     },
     get: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }, state?: string) => {
       const { blogId, postId } = blogPostId;
