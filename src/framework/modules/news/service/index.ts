@@ -17,7 +17,7 @@ export const newsService = {
     delete: async (infoId: number, commentId: number) => {
       const api = `/actualites/info/${infoId}/comment/${commentId}`;
 
-      return sessionFetch(api, {
+      return sessionFetch.json(api, {
         method: 'DELETE',
       });
     },
@@ -25,8 +25,7 @@ export const newsService = {
       const api = `/actualites/infos/${newsId}/comments`;
       const backendComments = await sessionFetch.json<BackendNewsCommentItem[]>(api);
 
-      const comments = backendComments.map(comment => newsCommentItemAdapter(comment));
-      return comments;
+      return backendComments.map(comment => newsCommentItemAdapter(comment));
     },
     post: async (infoId: number, comment: string) => {
       const api = `/actualites/info/${infoId}/comment`;
@@ -59,8 +58,7 @@ export const newsService = {
       const api = `/actualites/info/${infoId}`;
       const backendInfo = await sessionFetch.json<BackendNewsItemDetails>(api);
 
-      const news = newsItemDetailsAdapter(backendInfo);
-      return news;
+      return newsItemDetailsAdapter(backendInfo);
     },
   },
   infos: {
@@ -71,8 +69,7 @@ export const newsService = {
         : `/actualites/list?page=${page}&pageSize=${PAGE_SIZE}${threadId ? '&threadId=' + threadId : ''}`;
       const backendNews = await sessionFetch.json<BackendNewsItem[]>(api);
 
-      const news = backendNews.map(newsItem => newsItemAdapter(newsItem));
-      return news;
+      return backendNews.map(newsItem => newsItemAdapter(newsItem));
     },
   },
   threads: {
