@@ -6,7 +6,7 @@ import moment from 'moment';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { Blog, BlogFolder, BlogList, BlogPost, BlogPostComment, BlogPostComments } from '~/framework/modules/blog/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
-import { fetchJSONWithCache, signedFetch, signedFetchJson } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 export interface IEntcoreBlog {
   '_id': string;
@@ -198,14 +198,14 @@ export const blogService = {
     delete: async (session: AuthActiveAccount, blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
       const { blogId, commentId, postId } = blogPostCommentId;
       const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
-      return signedFetchJson(`${session.platform.url}${api}`, {
+      return sessionFetch.json<{ number: number }>(api, {
         method: 'DELETE',
-      }) as Promise<{ number: number }>;
+      });
     },
     get: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }) => {
       const { blogId, postId } = blogPostId;
       const api = `/blog/comments/${blogId}/${postId}`;
-      const entcoreBlogPostComments = (await fetchJSONWithCache(api)) as IEntcoreBlogPostComments;
+      const entcoreBlogPostComments = await sessionFetch.json<IEntcoreBlogPostComments>(api);
       // Run the adapter for the received blog post comments
       return blogPostCommentsAdapter(entcoreBlogPostComments) as BlogPostComments;
     },
@@ -213,10 +213,10 @@ export const blogService = {
       const { blogId, postId } = blogPostId;
       const api = `/blog/comment/${blogId}/${postId}`;
       const body = JSON.stringify({ comment });
-      return signedFetchJson(`${session.platform.url}${api}`, {
+      return sessionFetch.json<{ number: number }>(api, {
         body,
         method: 'POST',
-      }) as Promise<{ number: number }>;
+      });
     },
     update: async (
       session: AuthActiveAccount,
@@ -226,10 +226,10 @@ export const blogService = {
       const { blogId, commentId, postId } = blogPostCommentId;
       const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
       const body = JSON.stringify({ comment });
-      return signedFetchJson(`${session.platform.url}${api}`, {
+      return sessionFetch.json<{ number: number }>(api, {
         body,
         method: 'PUT',
-      }) as Promise<{ number: number }>;
+      });
     },
   },
 
@@ -237,20 +237,20 @@ export const blogService = {
   folders: {
     list: async (_: AuthActiveAccount) => {
       const api = `/blog/folder/list/all`;
-      const entcoreBlogFolderList = (await fetchJSONWithCache(api)) as IEntcoreBlogFolder[];
+      const entcoreBlogFolderList = await sessionFetch.json<IEntcoreBlogFolder[]>(api);
       return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as BlogFolder[]).filter(f => !f.trashed);
     },
   },
 
   get: async (session: AuthActiveAccount, blogId: string) => {
     const api = `/blog/${blogId}`;
-    const entcoreBlog = (await fetchJSONWithCache(api)) as IEntcoreBlog;
+    const entcoreBlog = await sessionFetch.json<IEntcoreBlog>(api);
     return blogAdapter(entcoreBlog);
   },
   // This service automatically filters only non-trashed content.
   list: async (_: AuthActiveAccount) => {
     const api = `/blog/list/all`;
-    const entcoreBlogList = (await fetchJSONWithCache(api)) as IEntcoreBlogList;
+    const entcoreBlogList = await sessionFetch.json<IEntcoreBlogList>(api);
     const blogList = [] as BlogList;
     for (const entcoreBlog of entcoreBlogList) {
       if (!entcoreBlog.trashed) blogList.push(blogAdapter(entcoreBlog));
@@ -261,22 +261,22 @@ export const blogService = {
     create: async (session: AuthActiveAccount, blogId: string, postTitle: string, postContentHtml: string) => {
       const api = `/blog/post/${blogId}`;
       const body = JSON.stringify({ content: postContentHtml, title: postTitle });
-      return signedFetchJson(`${session.platform.url}${api}`, {
+      return sessionFetch.json<IEntcoreCreatedBlogPost>(api, {
         body,
         method: 'POST',
-      }) as Promise<IEntcoreCreatedBlogPost>;
+      });
     },
     delete: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }) => {
       const { blogId, postId } = blogPostId;
       const api = `/blog/post/${blogId}/${postId}`;
-      return signedFetch(`${session.platform.url}${api}`, {
+      return sessionFetch(api, {
         method: 'DELETE',
-      }) as Promise<Response>;
+      });
     },
     edit: async (session: AuthActiveAccount, blogId: string, postId: string, postTitle: string, postContentHtml: string) => {
       const api = `/blog/post/${blogId}/${postId}`;
       const body = JSON.stringify({ content: postContentHtml, title: postTitle });
-      return signedFetchJson(`${session.platform.url}${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });
@@ -285,24 +285,24 @@ export const blogService = {
       const { blogId, postId } = blogPostId;
       if (!state) {
         const apiMetadata = `/blog/post/list/all/${blogId}?postId=${postId}`;
-        const entcoreBlogPostMetadata = (await fetchJSONWithCache(apiMetadata)) as IEntcoreBlogPost;
+        const entcoreBlogPostMetadata = await sessionFetch.json<IEntcoreBlogPost>(apiMetadata);
         state = entcoreBlogPostMetadata[0].state;
       }
       let api = `/blog/post/${blogId}/${postId}`;
       if (state) {
         api += `?state=${state}`;
       }
-      const entcoreBlogPost = (await fetchJSONWithCache(api)) as IEntcoreBlogPost;
+      const entcoreBlogPost = await sessionFetch.json<IEntcoreBlogPost>(api);
       // Run the adapter for the received blog post
       return blogPostAdapter(entcoreBlogPost) as BlogPost;
     },
     publish: async (session: AuthActiveAccount, blogId: string, postId: string) => {
       const api = `/blog/post/publish/${blogId}/${postId}`;
-      return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
+      return sessionFetch.json<{ number: number }>(api, { method: 'PUT' });
     },
     submit: async (session: AuthActiveAccount, blogId: string, postId: string) => {
       const api = `/blog/post/submit/${blogId}/${postId}`;
-      return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
+      return sessionFetch.json<{ number: number }>(api, { method: 'PUT' });
     },
   },
   posts: {
@@ -312,21 +312,26 @@ export const blogService = {
       else stateAsArray = state;
       let api = `/blog/post/list/all/${blogId}?content=true`;
       if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
-      const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
+      const entcoreBlogPostList = await sessionFetch.json<IEntcoreBlogPostList>(api);
       const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPost[];
       return blogPosts;
     },
-    page: async (session: AuthActiveAccount, blogId: string, page: number, state?: string | string[]) => {
+    page: async (session: AuthActiveAccount, blogId: string, page: number, size: number, state?: string | string[]) => {
       // Compute state parameter
       let stateAsArray: string[] | undefined;
       if (typeof state === 'string') stateAsArray = [state];
       else stateAsArray = state;
       // Call API
-      let api = `/blog/post/list/all/${blogId}?content=true&page=${page}`;
+      let api = `/blog/post/list/all/${blogId}?content=true&page=${page}&pageSize=${size}`;
       if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
-      const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
+      const entcoreBlogPostList = await sessionFetch.json<IEntcoreBlogPostList>(api);
       const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPost[];
       return blogPosts;
+    },
+    total: async (session: AuthActiveAccount, blogId: string) => {
+      return sessionFetch.json<{ countPublished: number; countDraft: number; countSubmitted: number; countAll: number }>(
+        `/blog/counter/${blogId}`,
+      );
     },
   },
 };

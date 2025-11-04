@@ -56,16 +56,13 @@ const handleBlogNotificationAction: NotifHandlerThunkAction =
       if (!blogNotif) return { managed: 0 };
       const blogId = blogUriCaptureFunction(blogNotif.resource.uri).blogId;
       if (!blogId) return { managed: 0 };
-      const session = assertSession();
-      const blogInfo = await blogService.get(session, blogId);
-      if (!blogInfo) return { managed: 0 };
 
       const navAction = CommonActions.navigate({
         name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
           initial: false,
           params: {
-            selectedBlog: blogInfo,
+            blogId,
           },
           screen: blogRouteNames.blogPostList,
         },

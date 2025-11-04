@@ -8,7 +8,8 @@ import moduleConfig from './module-config';
 import { createBlogPostResourceRight } from './rights';
 import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '../explorer/store';
 
-import { Reducers } from '~/app/store';
+import { IGlobalState, Reducers } from '~/app/store';
+import { PaginatedListItem, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
@@ -64,7 +65,7 @@ export interface BlogPost {
     userId: string;
     username: string;
   };
-  comments?: BlogPostComments;
+  // comments?: BlogPostComments;
   content: string;
   created: Moment;
   firstPublishDate?: Moment;
@@ -132,9 +133,15 @@ const initialState: BlogStateData = {
 };
 
 export const actionTypes = {
+  blog: {
+    load: moduleConfig.namespaceActionType('LOAD'),
+  },
   blogPosts: createAsyncActionTypes(moduleConfig.namespaceActionType('BLOG_POSTS')),
   blogs: createAsyncActionTypes(moduleConfig.namespaceActionType('BLOGS')),
   folders: createAsyncActionTypes(moduleConfig.namespaceActionType('FOLDERS')),
+  posts: {
+    page: moduleConfig.namespaceActionType('POSTS_LOAD_PAGE'),
+  },
   tree: {
     compute: moduleConfig.namespaceActionType('TREE_COMPUTED'),
   },
@@ -262,10 +269,46 @@ export interface BlogFolderWithChildren extends BlogFolder {
 
 export const countComments = (post: BlogPost) => post.comments?.reduce((acc, c) => (c.deleted ? acc : acc + 1), 0) ?? 0;
 
-const reducer = combineReducers({
+export const actions = {
+  blog: {
+    load: (data: Blog) => ({ data, type: actionTypes.blog.load }),
+  },
+  explorer: createExplorerActions(moduleConfig),
+  posts: {
+    page: (id: Blog['id'], start: number, data: BlogPostWithAudience[], total: number, reloadAll: boolean) => ({
+      blogId: id,
+      data,
+      reloadAll,
+      start,
+      total,
+      type: actionTypes.posts.page,
+    }),
+  },
+};
+
+export const reducer = combineReducers({
+  blog: createSessionReducer<Record<Blog['id'], Blog>, ReturnType<typeof actions.blog.load>>(
+    {},
+    {
+      [actionTypes.blog.load]: (state, { data }: ReturnType<typeof actions.blog.load>) => {
+        return { ...state, [data.id]: data };
+      },
+    },
+  ),
   blogs: createSessionAsyncReducer(initialState.blogs, actionTypes.blogs),
   explorer: createExplorerReducer(moduleConfig),
   folders: createSessionAsyncReducer(initialState.folders, actionTypes.folders),
+  posts: createSessionReducer<Record<Blog['id'], PaginatedListItem<BlogPostWithAudience>[]>>(
+    {},
+    {
+      [actionTypes.posts.page]: (state, { blogId, data, reloadAll, start, total }: ReturnType<typeof actions.posts.page>) => {
+        return {
+          ...state,
+          [blogId]: staleOrSplice<BlogPostWithAudience>({ newData: data, previousData: state[blogId], reloadAll, start, total }),
+        };
+      },
+    },
+  ),
   tree: createSessionReducer(initialState.tree, {
     [actionTypes.tree.compute]: (state = initialState.tree, action) => {
       const a = action as unknown as { blogs: Blog[]; folders: BlogFolder[] };
@@ -274,14 +317,17 @@ const reducer = combineReducers({
   }),
 });
 
-Reducers.register(moduleConfig.reducerName, reducer);
-
-export default reducer;
-
-export const actions = {
-  explorer: createExplorerActions(moduleConfig),
-};
+export default Reducers.register(moduleConfig.reducerName, reducer);
 
 export const selectors = {
+  blog: (id: Blog['id']) => (state: IGlobalState) => {
+    const localState = moduleConfig.getState(state);
+    if (!localState.blog[id]) throw new Error(`Blog: no blog found at id = ${id}`);
+    return localState.blog[id] as Blog;
+  },
   explorer: createExplorerSelectors(moduleConfig, state => moduleConfig.getState(state).explorer),
+  posts: (id: Blog['id']) => (state: IGlobalState) => {
+    const localState = moduleConfig.getState(state);
+    return localState.posts[id] as PaginatedListItem<BlogPostWithAudience>[] | undefined;
+  },
 };

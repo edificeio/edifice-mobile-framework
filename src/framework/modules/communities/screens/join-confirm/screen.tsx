@@ -101,7 +101,6 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
       });
       navigation.replace(communitiesRouteNames.home, { communityId, invitationId, showWelcome: true });
     } catch (e) {
-      console.info(communityId, invitationId);
       console.error(e);
       if (e instanceof HTTPError) {
         console.error(await e.read(e.text));

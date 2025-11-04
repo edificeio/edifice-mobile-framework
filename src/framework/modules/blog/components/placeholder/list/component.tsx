@@ -5,7 +5,7 @@ import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeho
 
 import styles from './styles';
 
-const cardBlog = (
+export const BlogPostPlaceholder = () => (
   <View style={styles.cardBlog}>
     <PlaceholderLine width={85} style={[styles.h18, styles.pearl]} />
     <PlaceholderLine width={40} style={[styles.h18, styles.pearl]} />
@@ -20,9 +20,9 @@ const cardBlog = (
 export default function BlogPlaceholderList() {
   return (
     <Placeholder style={styles.page} Animation={Fade}>
-      {cardBlog}
-      {cardBlog}
-      {cardBlog}
+      <BlogPostPlaceholder />
+      <BlogPostPlaceholder />
+      <BlogPostPlaceholder />
     </Placeholder>
   );
 }

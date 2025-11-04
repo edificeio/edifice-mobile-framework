@@ -12,7 +12,6 @@ import {
 } from '~/framework/util/media';
 
 export const toMedia = (media: MediaDto): Media => {
-  console.info('MediaType', MediaType);
   switch (media.type) {
     case MediaTypeDto.IMAGE:
       return {

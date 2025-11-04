@@ -25,7 +25,6 @@ export const createExplorerReducer = (moduleConfig: Pick<IUnkownModuleConfig, 'n
     {},
     {
       [moduleConfig.namespaceActionType(explorerModuleConfig.namespaceActionType('LOAD_PAGE'))]: (state, action) => {
-        console.info('ACTION', action);
         const newState = {
           // Previous data
           ...state,
@@ -47,7 +46,6 @@ export const createExplorerReducer = (moduleConfig: Pick<IUnkownModuleConfig, 'n
           // children of current folder (metadata)
           ...action.folders.reduce<ExplorerState>((acc, f) => ({ ...acc, [f.id]: { ...acc[f.id], metadata: f } }), {}),
         };
-        console.debug(newState);
         return newState;
       },
     },

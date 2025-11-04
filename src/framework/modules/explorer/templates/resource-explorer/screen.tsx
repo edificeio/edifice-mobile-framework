@@ -51,7 +51,6 @@ export function ResourceExplorerTemplate({
 
   const folder = useSelector(selectors.folder(folderId));
   const content = folder?.content ?? emptyFolderData;
-  console.info(folder);
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();
   const actions = useExplorerActions(moduleConfig);
 
