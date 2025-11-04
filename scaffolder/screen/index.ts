@@ -1,7 +1,7 @@
 import {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen from './screen';
 
 export default {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen;
-export type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenNavParams, {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenProps } from './types';
+export type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen } from './types';
 export { computeNavBar } from './screen';
 
 // @scaffolder add other exports here
@@ -12,13 +12,13 @@ export { computeNavBar } from './screen';
 //
 // 1. Add these lines to src/framework/modules/{{moduleName}}/navigation/index.ts :
 //
-// import type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenNavParams } from '~/framework/modules/{{moduleName}}/screens/{{screenName}}';
+// import type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen } from '~/framework/modules/{{moduleName}}/screens/{{screenName}}';
 //
 // // in {{moduleName | toCamelCase}}RouteNames :
 // {{screenName | toCamelCase}}: `${moduleConfig.routeName}/{{screenName}}` as '{{screenName | toCamelCase}}',
 //
 // // in interface {{moduleName | toCamelCase | capitalize}}NavigationParams :
-// {{screenName | toCamelCase}}: {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenNavParams;
+// {{screenName | toCamelCase}}: {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen.NavParams;
 //
 //
 // 2. Add these lines to src/framework/modules/{{moduleName}}/navigation/navigator.tsx :

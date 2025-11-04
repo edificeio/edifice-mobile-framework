@@ -4,7 +4,7 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 export default new NavigableModuleConfig<'mails', null>({
   displayAs: 'tabModule',
   displayColor: theme.apps.conversation.accentColors,
-  displayI18n: 'conversation-moduleconfig-tabname',
+  displayI18n: 'mails-tabname',
   displayOrder: 1,
   displayPicture: { name: 'messagerie-off', type: 'Icon' },
   displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },

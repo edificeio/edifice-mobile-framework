@@ -9,7 +9,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { BodyText } from '~/framework/components/text';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const LoginRedirectPage = (props: LoginRedirectScreenPrivateProps) => {
   const { route } = props;

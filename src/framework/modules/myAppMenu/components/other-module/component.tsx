@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 export const OtherModuleElement = (props: OtherModuleElementProps) => {
   const { item, type } = props;

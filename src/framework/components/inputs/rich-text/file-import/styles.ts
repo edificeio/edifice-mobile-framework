@@ -28,10 +28,13 @@ export default StyleSheet.create({
     marginRight: UI_SIZES.spacing.minor,
     width: getScaleWidth(36),
   },
-
   h22: {
     height: 22,
     marginBottom: 0,
+  },
+
+  infoBubble: {
+    marginBottom: UI_SIZES.spacing.minor,
   },
   //PLACEHOLDER
   placeholder: { padding: UI_SIZES.spacing.minor },

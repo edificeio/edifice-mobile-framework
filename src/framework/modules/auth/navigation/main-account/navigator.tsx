@@ -44,84 +44,87 @@ const Stack = getTypedRootStack<AuthNavigationParams>();
 // Auth Stack used when user is logged out, or managing the current logged account.
 
 export default function () {
-  return (
-    <Stack.Group screenOptions={navBarOptions}>
-      <Stack.Screen name={authRouteNames.onboarding} component={AuthOnboardingScreen} options={onboardingNavBar} />
-      <Stack.Screen name={authRouteNames.platforms} component={AuthPlatformsScreen} options={platformsNavBar} />
-      <Stack.Screen
-        name={authRouteNames.loginCredentials}
-        component={AuthLoginCredentialsScreen}
-        options={loginCredentialsNavBar}
-      />
-
-      <Stack.Screen name={authRouteNames.accounts} component={AuthAccountSelectionScreen} options={authAccountSelectionNavBar} />
-
-      <Stack.Screen name={authRouteNames.loginWayf} component={AuthLoginWayfScreen} options={loginWayfNavBar} />
-      <Stack.Screen name={authRouteNames.loginRedirect} component={AuthLoginRedirectScreen} options={loginRedirectNavBar} />
-      <Stack.Screen name={authRouteNames.wayf} component={AuthWayfScreen} options={wayfNavBar} />
-      <Stack.Screen name={authRouteNames.activation} component={AuthActivationScreen} options={authActivationNavBar} />
-
-      <Stack.Screen
-        name={authRouteNames.revalidateTerms}
-        component={RevalidateTermsScreen}
-        options={{
-          headerTitle: navBarTitle(I18n.get('user-revalidateterms-title')),
-        }}
-      />
-      <Stack.Screen
-        name={authRouteNames.changePassword}
-        component={AuthChangePasswordScreen}
-        options={{
-          headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
-        }}
-      />
-      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+  return React.useMemo(
+    () => (
+      <Stack.Group screenOptions={navBarOptions}>
+        <Stack.Screen name={authRouteNames.onboarding} component={AuthOnboardingScreen} options={onboardingNavBar} />
+        <Stack.Screen name={authRouteNames.platforms} component={AuthPlatformsScreen} options={platformsNavBar} />
         <Stack.Screen
-          name={authRouteNames.changePasswordModal}
+          name={authRouteNames.loginCredentials}
+          component={AuthLoginCredentialsScreen}
+          options={loginCredentialsNavBar}
+        />
+
+        <Stack.Screen name={authRouteNames.accounts} component={AuthAccountSelectionScreen} options={authAccountSelectionNavBar} />
+
+        <Stack.Screen name={authRouteNames.loginWayf} component={AuthLoginWayfScreen} options={loginWayfNavBar} />
+        <Stack.Screen name={authRouteNames.loginRedirect} component={AuthLoginRedirectScreen} options={loginRedirectNavBar} />
+        <Stack.Screen name={authRouteNames.wayf} component={AuthWayfScreen} options={wayfNavBar} />
+        <Stack.Screen name={authRouteNames.activation} component={AuthActivationScreen} options={authActivationNavBar} />
+
+        <Stack.Screen
+          name={authRouteNames.revalidateTerms}
+          component={RevalidateTermsScreen}
+          options={{
+            headerTitle: navBarTitle(I18n.get('user-revalidateterms-title')),
+          }}
+        />
+        <Stack.Screen
+          name={authRouteNames.changePassword}
           component={AuthChangePasswordScreen}
-          options={changePasswordNavBar}
+          options={{
+            headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
+          }}
         />
+        <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+          <Stack.Screen
+            name={authRouteNames.changePasswordModal}
+            component={AuthChangePasswordScreen}
+            options={changePasswordNavBar}
+          />
+        </Stack.Group>
+        <Stack.Screen
+          name={authRouteNames.changeEmail}
+          component={AuthChangeEmailScreen}
+          options={authChangeEmailNavBar}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name={authRouteNames.changeMobile}
+          component={AuthChangeMobileScreen}
+          options={authChangeMobileNavBar}
+          initialParams={{}}
+        />
+        <Stack.Screen name={authRouteNames.mfa} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
+        <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+          <Stack.Screen name={authRouteNames.mfaModal} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
+          <Stack.Screen
+            name={authRouteNames.addAccountModal}
+            component={AuthAddAccountModalScreen}
+            options={addAccountModalNavBar}
+            initialParams={undefined}
+          />
+          <Stack.Screen
+            name={authRouteNames.forgot}
+            component={AuthForgotScreen}
+            options={({ route }) => ({
+              headerTitle: navBarTitle(
+                route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+              ),
+            })}
+          />
+        </Stack.Group>
+        {appConf.onboarding.showDiscoveryClass ? (
+          <Stack.Screen
+            name={authRouteNames.discoveryClass}
+            component={AuthDiscoveryClassScreen}
+            options={discoveryClassNavBar}
+            initialParams={undefined}
+          />
+        ) : null}
       </Stack.Group>
-      <Stack.Screen
-        name={authRouteNames.changeEmail}
-        component={AuthChangeEmailScreen}
-        options={authChangeEmailNavBar}
-        initialParams={{}}
-      />
-      <Stack.Screen
-        name={authRouteNames.changeMobile}
-        component={AuthChangeMobileScreen}
-        options={authChangeMobileNavBar}
-        initialParams={{}}
-      />
-      <Stack.Screen name={authRouteNames.mfa} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
-      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
-        <Stack.Screen name={authRouteNames.mfaModal} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
-        <Stack.Screen
-          name={authRouteNames.addAccountModal}
-          component={AuthAddAccountModalScreen}
-          options={addAccountModalNavBar}
-          initialParams={undefined}
-        />
-        <Stack.Screen
-          name={authRouteNames.forgot}
-          component={AuthForgotScreen}
-          options={({ route }) => ({
-            headerTitle: navBarTitle(
-              route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
-            ),
-          })}
-        />
-      </Stack.Group>
-      {appConf.onboarding.showDiscoveryClass ? (
-        <Stack.Screen
-          name={authRouteNames.discoveryClass}
-          component={AuthDiscoveryClassScreen}
-          options={discoveryClassNavBar}
-          initialParams={undefined}
-        />
-      ) : null}
-    </Stack.Group>
+    ),
+    [],
   );
 }
 

@@ -49,7 +49,6 @@ import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking'
 import { DebugOptions } from '~/framework/modules/debug';
 import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
 import { readSplashadsData } from '~/framework/modules/splashads/storage';
-import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
 import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
@@ -58,7 +57,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { formatSource } from '~/framework/util/media';
+import { formatSource } from '~/framework/util/media-deprecated';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
@@ -355,15 +354,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               icon="ui-globe"
               testID="account-change-language"
             />
-            {isWithinXmasPeriod ? (
-              <LineButton
-                title={I18n.get('user-xmas-title')}
-                onPress={() => {
-                  navigation.navigate(userRouteNames.xmas, {});
-                }}
-                icon="ui-christmas"
-              />
-            ) : null}
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>

@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 import { UploadAttachmentStatus } from '~/framework/modules/mails/components/attachments/modal-import/types';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 function getFileExtension(filename) {
   const parts = filename.split('.');

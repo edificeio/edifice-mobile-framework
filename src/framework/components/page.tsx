@@ -25,10 +25,10 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 
 import { UI_SIZES } from './constants';
-import SnowFlakes from './SnowFlakes';
 import { StatusBar } from './status-bar';
 import { ToastHandler } from './toast/component';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import theme from '~/app/theme';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
@@ -85,12 +85,11 @@ export const PageView = (props: PageViewProps) => {
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
         {isModal && showToast ? <ToastHandler /> : null}
-        {isModal && <SnowFlakes />}
       </>
     </PageViewStyle>
   );
 
-  return page;
+  return isModal ? <BottomSheetModalProvider>{page}</BottomSheetModalProvider> : page;
 };
 
 export const KeyboardPageView = (

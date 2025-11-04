@@ -92,7 +92,7 @@ export function ResourceExplorerTemplate({
         throw e;
       }
     },
-    [actions, dispatch, folderId, context],
+    [context, folderId, dispatch, actions],
   );
 
   /**

@@ -21,14 +21,12 @@ import { getState as getAppStartupState, StartupState } from './redux';
 import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import SnowFlakes from '~/framework/components/SnowFlakes';
 import { RootToastHandler } from '~/framework/components/toast';
 import type { AuthLoggedAccountMap } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getAuthNavigationState, getFirstTabRoute } from '~/framework/modules/auth/navigation/main-account/router';
 import { getState as getAuthState, IAuthState } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
-import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
 function SplashScreenComponent() {
@@ -93,7 +91,6 @@ function RootNavigator(props: RootNavigatorProps) {
   // === Render navigation container with initialState ===
 
   const trackNavState = useNavigationTracker();
-  const manageNavSnow = useNavigationSnowHandler(dispatch);
 
   // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
   React.useLayoutEffect(() => {
@@ -110,9 +107,8 @@ function RootNavigator(props: RootNavigatorProps) {
   const onStateChange = React.useCallback(
     (state: NavigationState | undefined) => {
       trackNavState(state);
-      manageNavSnow();
     },
-    [manageNavSnow, trackNavState],
+    [trackNavState],
   );
 
   const screenOptions = React.useMemo(() => ({ headerShown: true }), []);
@@ -136,7 +132,6 @@ function RootNavigator(props: RootNavigatorProps) {
               </AppPushNotificationHandlerComponent>
             </BottomSheetModalProvider>
             <RootToastHandler />
-            <SnowFlakes />
           </NavigationContainer>
         ) : null}
       </>

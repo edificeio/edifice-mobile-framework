@@ -72,6 +72,7 @@ export interface IEntcoreWidget {
 interface IModuleConfigBase<Name extends string> {
   name: Name; // Unique identifier of this module. Use the same as its folder name.
   entcoreScope: string[];
+  apiName?: string; // prefix for api calls
 }
 interface IModuleConfigRights {
   matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[]) => boolean;
@@ -126,6 +127,8 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
 
   entcoreScope: IModuleConfig<Name, State>['entcoreScope'];
 
+  apiName: NonNullable<IModuleConfig<Name, State>['apiName']>;
+
   matchEntcoreApp: IModuleConfig<Name, State>['matchEntcoreApp'];
 
   matchEntcoreWidget: IModuleConfig<Name, State>['matchEntcoreWidget'];
@@ -151,6 +154,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
   constructor(decl: IModuleConfigDeclaration<Name>) {
     const {
       actionTypesPrefix,
+      apiName,
       entcoreScope,
       hasRight,
       matchEntcoreApp,
@@ -164,6 +168,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     // Base
     this.name = name;
     this.entcoreScope = entcoreScope;
+    this.apiName = apiName ?? name;
     // Rights
     this.matchEntcoreApp =
       (typeof matchEntcoreApp === 'string'

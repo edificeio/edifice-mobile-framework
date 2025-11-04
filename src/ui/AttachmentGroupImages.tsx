@@ -12,7 +12,7 @@ import { cameraAction, galleryAction, ImagePicked } from '~/framework/components
 import BottomMenu from '~/framework/components/menus/bottom';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, TextSizeStyle } from '~/framework/components/text';
-import { formatSource, Image } from '~/framework/util/media';
+import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 
