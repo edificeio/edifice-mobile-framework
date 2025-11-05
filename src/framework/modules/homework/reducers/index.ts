@@ -8,13 +8,22 @@ import selectedDiary from './selectedDiary';
 import tasks from './tasks';
 
 import { Reducers } from '~/app/store';
+import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '~/framework/modules/explorer/store';
 import moduleConfig from '~/framework/modules/homework/module-config';
 
-const reducer = combineReducers({
+export const reducer = combineReducers({
   diaryList,
+  explorer: createExplorerReducer(moduleConfig),
   selectedDiary,
   tasks,
 });
 
-Reducers.register(moduleConfig.reducerName, reducer);
-export default reducer;
+export default Reducers.register(moduleConfig.reducerName, reducer);
+
+export const selectors = {
+  explorer: createExplorerSelectors(moduleConfig, state => moduleConfig.getState(state).explorer),
+};
+
+export const actions = {
+  explorer: createExplorerActions(moduleConfig),
+};
