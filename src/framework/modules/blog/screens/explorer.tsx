@@ -9,12 +9,14 @@ import { selectors } from '../reducer';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { sessionScreen } from '~/framework/components/screen';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+// # Props
 
 export namespace BlogExplorerScreen {
   export interface NavParams extends ResourceExplorerTemplate.NavParams {}
@@ -23,6 +25,8 @@ export namespace BlogExplorerScreen {
     extends Omit<ResourceExplorerTemplate.ScreenProps, keyof ResourceExplorerTemplate.NavigationProps>,
       NavigationProps {}
 }
+
+// # NavBar
 
 export const computeNavBar = ({
   navigation,
@@ -40,9 +44,10 @@ const blogExplorerContext = {
   resource_type: 'blog',
 };
 
-export default ({ navigation, route, ...props }: BlogExplorerScreen.AllProps) => {
-  const session = getSession();
-  const hasBlogCreationRights = session && getBlogWorkflowInformation(session) && getBlogWorkflowInformation(session).blog.create;
+// # Screen
+
+export default sessionScreen<BlogExplorerScreen.AllProps>(({ navigation, route, session, ...props }) => {
+  const hasBlogCreationRights = getBlogWorkflowInformation(session) && getBlogWorkflowInformation(session).blog.create;
 
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
@@ -77,4 +82,4 @@ export default ({ navigation, route, ...props }: BlogExplorerScreen.AllProps) =>
       context={blogExplorerContext}
     />
   );
-};
+});
