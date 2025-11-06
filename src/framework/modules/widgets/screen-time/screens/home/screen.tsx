@@ -36,7 +36,7 @@ export const computeNavBar = ({
   }),
 });
 
-function ScreenTimeHomeScreen() {
+function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded?: boolean; noScroll?: boolean }) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [todayData, setTodayData] = React.useState<ScreenTimeDayResponse | null>(null);
@@ -212,13 +212,13 @@ function ScreenTimeHomeScreen() {
     infoModalRef.current?.doShowModal();
   }, []);
 
-  const renderContent = () => {
+  const renderContentInner = () => {
     if (isLoading) {
       return <Loading />;
     }
 
     return (
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.container}>
         {isRelativeProfile && (
           <View style={styles.childPickerContainer}>
             <DropdownPicker
@@ -276,7 +276,7 @@ function ScreenTimeHomeScreen() {
 
         {/* Conditionally render week chart or day details */}
         {!isDayMode ? <BarChart type="week" data={weekData} /> : <BarChart type="day" data={selectedDayData} />}
-      </ScrollView>
+      </View>
     );
   };
 
@@ -286,12 +286,16 @@ function ScreenTimeHomeScreen() {
     </View>
   );
 
-  return (
-    <PageView>
-      {renderContent()}
+  const inner = (
+    <>
+      {renderContentInner()}
       <ModalBox ref={infoModalRef} content={infoModalContent} />
-    </PageView>
+    </>
   );
+
+  if (embedded) return noScroll ? inner : <ScrollView showsVerticalScrollIndicator={false}>{inner}</ScrollView>;
+
+  return <PageView>{<ScrollView showsVerticalScrollIndicator={false}>{inner}</ScrollView>}</PageView>;
 }
 
 export default ScreenTimeHomeScreen;

@@ -35,7 +35,7 @@ export const computeNavBar = ({
   }),
 });
 
-export default function CantineHomeScreen() {
+export default function CantineHomeScreen({ embedded = false, noScroll = false }: { embedded?: boolean; noScroll?: boolean }) {
   const dispatch = useDispatch();
   const session = getSession();
   const userStructures = session?.user?.structures || [];
@@ -183,18 +183,22 @@ export default function CantineHomeScreen() {
     );
   };
 
+  const inner = (
+    <View style={styles.container}>
+      <View style={styles.contentContainer}>
+        {renderContent()}
+        <GestureDetector gesture={panGesture}>
+          <View style={styles.menuWrapper}>{renderMenuContent()}</View>
+        </GestureDetector>
+      </View>
+    </View>
+  );
+
+  if (embedded) return noScroll ? inner : <ScrollView bottomInset={false}>{inner}</ScrollView>;
+
   return (
     <PageView>
-      <ScrollView bottomInset={false}>
-        <View style={styles.container}>
-          <View style={styles.contentContainer}>
-            {renderContent()}
-            <GestureDetector gesture={panGesture}>
-              <View style={styles.menuWrapper}>{renderMenuContent()}</View>
-            </GestureDetector>
-          </View>
-        </View>
-      </ScrollView>
+      <ScrollView bottomInset={false}>{inner}</ScrollView>
     </PageView>
   );
 }

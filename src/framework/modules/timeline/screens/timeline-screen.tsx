@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Image, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -32,17 +32,19 @@ import {
 import TimelineNotification from '~/framework/modules/timeline/components/notification';
 import TimelineSpace from '~/framework/modules/timeline/components/space';
 import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
+import { WidgetChip } from '~/framework/modules/timeline/components/widget-chip';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { NotificationsState } from '~/framework/modules/timeline/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';
-import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modules';
+import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navigate } from '~/framework/navigation/helper';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
+import { NavigableModuleArray } from '~/framework/util/moduleTool';
 import {
   IAbstractNotification,
   IResourceUriNotification,
@@ -129,6 +131,7 @@ export const computeNavBar = ({
   }),
 });
 
+console.error('TimelineScreen');
 // COMPONENT ======================================================================================
 
 function NotificationItem({
@@ -172,6 +175,11 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   rights = getTimelineWorkflowInformation(this.props.session);
 
+  // Get available widgets for the current session
+  getAvailableWidgets(): NavigableModuleArray {
+    return new NavigableModuleArray(...timelineWidgets.get().filterAvailables(this.props.session));
+  }
+
   // RENDER =======================================================================================
 
   render() {
@@ -206,11 +214,21 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
             this.renderError()
           ) : (
-            this.renderList()
+            this.renderSelectedContent()
           )}
         </PageView>
       </>
     );
+  }
+
+  renderChipsNavigation() {
+    const widgets = this.getAvailableWidgets();
+    return <WidgetChip widgets={widgets} navigation={this.props.navigation} />;
+  }
+
+  renderSelectedContent() {
+    // Always render timeline list - widgets are shown in modals
+    return this.renderList();
   }
 
   renderError() {
@@ -284,6 +302,15 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     </>
   );
 
+  renderListHeader() {
+    return (
+      <>
+        {this.renderChipsNavigation()}
+        {this.listSeparator}
+      </>
+    );
+  }
+
   listRef = React.createRef<SwipeListView<ITimelineItem & { key: string }>>();
 
   renderList() {
@@ -312,7 +339,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               <LoadingIndicator withVerticalMargins />
             ) : null
           }
-          ListHeaderComponent={this.listSeparator}
+          ListHeaderComponent={this.renderListHeader()}
           onEndReached={this.doNextPage.bind(this)}
           onEndReachedThreshold={1}
           // Swipeable props
@@ -345,12 +372,16 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   componentDidMount() {
     this.doInit();
+    // Ensure title matches current selection on first mount
+    const t = this.getSelectedTitle();
+    this.props.navigation.setOptions({ headerTitle: navBarTitle(t), title: t });
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: ITimelineScreenProps, _prevState: ITimelineScreenState) {
     const { navigation, route, session } = this.props;
+    const prevReload = prevProps.route.params?.reloadWithNewSettings;
     const reloadWithNewSettings = route.params.reloadWithNewSettings;
-    if (navigation.isFocused !== prevProps.isFocused && reloadWithNewSettings) {
+    if (reloadWithNewSettings && reloadWithNewSettings !== prevReload) {
       this.doInit();
       navigation.setParams({ reloadWithNewSettings: undefined });
     }
@@ -391,6 +422,11 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   // METHODS ======================================================================================
+
+  getSelectedTitle() {
+    // Always return timeline title - widgets are shown in modals
+    return I18n.get('timeline-appname');
+  }
 
   async doInit() {
     try {
