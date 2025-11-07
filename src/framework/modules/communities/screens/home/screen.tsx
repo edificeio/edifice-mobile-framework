@@ -449,7 +449,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   const stickyElements = React.useMemo(
     () => [
       ...scrollElements,
-      <View style={styles.page}>
+      <View style={styles.tiles}>
         <HeadingXSText>{title}</HeadingXSText>
         <View style={styles.tilesCol}>
           <MembersTile communityId={communityId} navigation={navigation} membersId={membersId} totalMembers={totalMembers} />

@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { PixelRatio } from 'react-native';
 
-import {
-  InvitationClient,
-  InvitationOrMemberDto,
-  MembershipClient,
-  PaginationQueryDto,
-} from '@edifice.io/community-client-rest-rn';
+import { InvitationClient, InvitationOrMemberDto, PaginationQueryDto } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
@@ -25,6 +20,7 @@ import {
   staleOrSplice,
 } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
+import StatusBar from '~/framework/components/status-bar';
 import { TextSizeStyle } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import MemberListItem, { MemberListItemLoader } from '~/framework/modules/communities/components/member-list-item';
@@ -135,6 +131,7 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
 
   return (
     <>
+      <StatusBar type="primary" />
       {renderMembersCount()}
       <PaginatedFlashList
         data={allMembers.length <= 1 ? [] : allMembers} // render empty screen if no members have been added yet by admin
