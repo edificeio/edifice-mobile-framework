@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-10-27 18:13:35",
-  "notes": "fix(media): show extension for attachments & pdfs\nchore: fix open media\nfeat: media video preview in grid\nchore: rename media to media-deprecated\nchore: remove ../\nchore: yarn cache update\nfeat: media grid + new media typing\nchore: yarn cache update\nMerge remote-tracking branch 'origin/dev/1.16.0' into dev/peda\nchore(i18n): change phrase sync branch\nrelease: 1.15.4-rc.7(1150409)\nupdate(stack): yarn cache update\nfix(pcn,ent77): COCO-4708, adjust secondary pale color\nrelease: 1.16.0-peda.2(1160002)",
-  "version": "1.16.0-peda.3(1160003)"
+  "last": "2025-11-07 17:57:28",
+  "notes": "fix(timeline): center navbar title\nfix(communities): page background without ScreenView\nupdate(stack): yarn cache update\nupdate(stack): yarn cache update\nchore: remove sessionScreen temporarily\nchore: remove snow things\nfeat(xmas): remove xmas related stuff\nchore: yarn cache update\nchore: fix media src type\nchore: yarn cache update\nfeat(xmas): remove xmas related stuff\nupdate(stack): yarn cache update\nrelease: 1.16.0-peda.3(1160003)",
+  "version": "1.16.0-peda.4(1160004)"
 }
