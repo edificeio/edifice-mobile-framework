@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-07 18:34:01",
-  "notes": "chore: remove jinglebells reference\nrelease: 1.16.0-peda.4(1160004)",
-  "version": "1.16.0-peda.5(1160005)"
+  "last": "2025-11-07 20:04:04",
+  "notes": "release: 1.16.1(1160100)\nchore: yarn clean\nfix(communities): statusbar on members screen\nMerge branch 'dev/1.16.0' into dev/1.16.1\nrelease: 1.16.0-peda.5(1160005)",
+  "version": "1.16.1-peda.1(1160101)"
 }
