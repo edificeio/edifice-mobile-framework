@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-10-27 18:13:35",
-  "notes": "fix(media): show extension for attachments & pdfs\nchore: fix open media\nfeat: media video preview in grid\nchore: rename media to media-deprecated\nchore: remove ../\nchore: yarn cache update\nfeat: media grid + new media typing\nchore: yarn cache update\nMerge remote-tracking branch 'origin/dev/1.16.0' into dev/peda\nchore(i18n): change phrase sync branch\nrelease: 1.15.4-rc.7(1150409)\nupdate(stack): yarn cache update\nfix(pcn,ent77): COCO-4708, adjust secondary pale color\nrelease: 1.16.0-peda.2(1160002)",
-  "version": "1.16.0-peda.3(1160003)"
+  "last": "2025-11-07 18:34:01",
+  "notes": "chore: remove jinglebells reference\nrelease: 1.16.0-peda.4(1160004)",
+  "version": "1.16.0-peda.5(1160005)"
 }
