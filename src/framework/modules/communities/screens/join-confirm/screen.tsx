@@ -19,6 +19,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA } from '~/framework/components/list/paginated-list';
 import { NavBarAction } from '~/framework/components/navigation';
+import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingSText, HeadingXSText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
@@ -27,6 +28,7 @@ import CommunityCardLarge from '~/framework/modules/communities/components/commu
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesSelectors } from '~/framework/modules/communities/store';
+import communitiesStyles from '~/framework/modules/communities/styles';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/http';
 import { accountApi } from '~/framework/util/transport';
@@ -130,26 +132,28 @@ export default (function CommunitiesJoinConfirmScreen({
   if (!data) return <EmptyContentScreen />;
 
   return (
-    <ScrollView style={styles.page}>
-      <SafeAreaView style={containerStyle} edges={safeEdges}>
-        <CommunityCardLarge
-          title={data.community?.title}
-          image={data.community?.image}
-          membersCount={data.communityStats?.totalMembers}
-          senderId={data.sentBy.entId}
-          senderName={data.sentBy.displayName}
-          role={data.role}
-        />
-        <View style={styles.welcomeNote}>
-          <View style={styles.welcomeNoteTitleContainer}>
-            <Svg name="ui-notes" fill={styles.welcomeNoteTitle.color} />
-            <HeadingXSText style={styles.welcomeNoteTitle}>{I18n.get('community-welcome-note')}</HeadingXSText>
+    <PageView style={communitiesStyles.screen}>
+      <ScrollView style={styles.page}>
+        <SafeAreaView style={containerStyle} edges={safeEdges}>
+          <CommunityCardLarge
+            title={data.community?.title}
+            image={data.community?.image}
+            membersCount={data.communityStats?.totalMembers}
+            senderId={data.sentBy.entId}
+            senderName={data.sentBy.displayName}
+            role={data.role}
+          />
+          <View style={styles.welcomeNote}>
+            <View style={styles.welcomeNoteTitleContainer}>
+              <Svg name="ui-notes" fill={styles.welcomeNoteTitle.color} />
+              <HeadingXSText style={styles.welcomeNoteTitle}>{I18n.get('community-welcome-note')}</HeadingXSText>
+            </View>
+            <BodyText>{data.community?.welcomeNote}</BodyText>
           </View>
-          <BodyText>{data.community?.welcomeNote}</BodyText>
-        </View>
-        <PrimaryButton text={I18n.get('community-invitation-validate')} action={onValidate} testID="validate-btn" />
-        <TertiaryButton text={I18n.get('community-invitation-skip')} action={navigation.goBack} testID="skip-btn" />
-      </SafeAreaView>
-    </ScrollView>
+          <PrimaryButton text={I18n.get('community-invitation-validate')} action={onValidate} testID="validate-btn" />
+          <TertiaryButton text={I18n.get('community-invitation-skip')} action={navigation.goBack} testID="skip-btn" />
+        </SafeAreaView>
+      </ScrollView>
+    </PageView>
   );
 });

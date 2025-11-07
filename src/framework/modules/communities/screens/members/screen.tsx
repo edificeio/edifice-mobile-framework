@@ -19,12 +19,15 @@ import {
   PaginatedFlashListProps,
   staleOrSplice,
 } from '~/framework/components/list/paginated-list';
+import { PageView } from '~/framework/components/page';
+import StatusBar from '~/framework/components/status-bar';
 import { TextSizeStyle } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import MemberListItem, { MemberListItemLoader } from '~/framework/modules/communities/components/member-list-item';
 import MembersListCount, { MembersListCountLoader } from '~/framework/modules/communities/components/members-list-count';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import communitiesStyles from '~/framework/modules/communities/styles';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { sessionApi } from '~/framework/util/transport';
 
@@ -128,7 +131,8 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
   }, [allMembers.length, isLoading]);
 
   return (
-    <>
+    <PageView style={communitiesStyles.screen}>
+      <StatusBar type="primary" />
       {renderMembersCount()}
       <PaginatedFlashList
         data={allMembers.length <= 1 ? [] : allMembers} // render empty screen if no members have been added yet by admin
@@ -149,6 +153,6 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
           />
         }
       />
-    </>
+    </PageView>
   );
 });

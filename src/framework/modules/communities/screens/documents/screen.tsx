@@ -24,12 +24,14 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
+import { PageView } from '~/framework/components/page';
 import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
+import communitiesStyles from '~/framework/modules/communities/styles';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
 import { IMedia } from '~/framework/util/media-deprecated';
 import { accountApi } from '~/framework/util/transport';
@@ -193,7 +195,7 @@ export default (function CommunitiesDocumentsScreen({
   );
 
   return (
-    <>
+    <PageView style={communitiesStyles.screen}>
       {statusBar}
       <CommunityPaginatedDocumentList
         estimatedListSize={estimatedListSize}
@@ -217,6 +219,6 @@ export default (function CommunitiesDocumentsScreen({
         }
         {...scrollViewProps}
       />
-    </>
+    </PageView>
   );
 });

@@ -46,7 +46,7 @@ export default StyleSheet.create({
     ...LOADER_TITLE,
     width: '40%',
   },
-  page: {
+  tiles: {
     gap: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingTop: UI_SIZES.spacing.medium,
