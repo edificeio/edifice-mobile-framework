@@ -357,13 +357,18 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
     this.props.navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity
-          onPress={() => navigation.navigate(userRouteNames.home)}
-          testID="timeline-profile-button"
-          // Style here is needed to prevent Android autocropping border of avatar
-          style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
-          <SingleAvatar size="md" userId={session?.user.id || ''} />
-        </TouchableOpacity>
+        <NavBarActionsGroup
+          elements={[
+            <TouchableOpacity
+              onPress={() => navigation.navigate(userRouteNames.home)}
+              testID="timeline-profile-button"
+              // Style here is needed to prevent Android autocropping border of avatar
+              style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
+              <SingleAvatar size="md" userId={session?.user.id || ''} />
+            </TouchableOpacity>,
+            <NavBarAction />,
+          ]}
+        />
       ),
     });
 
@@ -384,6 +389,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           <NavBarAction icon="ui-plus" testID="timeline-add-button" />
         </PopupMenu>,
       );
+    } else {
+      headerRightItems.push(<NavBarAction />);
     }
     this.props.navigation.setOptions({
       headerRight: () => <NavBarActionsGroup elements={headerRightItems} />,
