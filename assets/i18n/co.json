@@ -1985,6 +1985,8 @@
   "widget-screen-time-info-modal-text": "'Tempu di schermu' hè una funzionalità implementata da u Dipartimentu di Bocche di Rone. U tempu di schermu misura u tempu d'attività di l'alunni nantu à u portatile furnitu da u Dipartimentu. U tempu di schermu osserva solu l'apertura è a chjusura di a sessione da l'alunni nantu à u so computer. A funzionalità ùn registra nisun datu persunale d'usu o di navigazione internet.",
   "widget-screen-time-no-data-week": "Nisun datu dispunibile per sta settimana",
   "widget-screen-time-no-data-day": "Nisun datu dispunibile per stu ghjornu",
+  "widget-screen-time-show-all-hours": "Mostrà tutte e ore",
+  "widget-screen-time-show-only-with-values": "Mostrà solu e ore cù valori",
   "widget-screen-time-total": "Totale",
   "widget-screen-time-zero-minutes": "0 m"
 }

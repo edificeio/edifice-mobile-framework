@@ -1985,6 +1985,8 @@
   "widget-screen-time-info-modal-text": "'Screen time' is a feature implemented by the Bouches-du-Rhône Department. Screen time measures the student's activity time on the laptop provided by the Department. Screen time only observes the opening and closing of the session by the student on their computer. The feature does not record any personal usage or internet browsing data.",
   "widget-screen-time-no-data-week": "No data available for this week",
   "widget-screen-time-no-data-day": "No data available for this day",
+  "widget-screen-time-show-all-hours": "Show all hours",
+  "widget-screen-time-show-only-with-values": "Show only hours with values",
   "widget-screen-time-total": "Total",
   "widget-screen-time-zero-minutes": "0 m"
 }

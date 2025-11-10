@@ -2056,6 +2056,8 @@
   "widget-screen-time-info-modal-text": "'Temps d'écran' est une fonctionnalité mise en place par le Département des Bouches-du-Rhône.\n'Temps d'écran' mesure le temps d'activité de l'élève sur l'ordinateur portable mis à disposition par le Département.\n'Temps d'écran' observe uniquement l'ouverture et la fermeture de la session par l'élève sur son ordinateur.\nLa fonctionnalité n'enregistre aucune donnée personnelle d'utilisation ou de navigation internet.",
   "widget-screen-time-no-data-week": "Aucune donnée disponible pour cette semaine",
   "widget-screen-time-no-data-day": "Aucune donnée disponible pour ce jour",
+  "widget-screen-time-show-all-hours": "Afficher toutes les heures",
+  "widget-screen-time-show-only-with-values": "Afficher uniquement les heures avec valeurs",
   "widget-screen-time-total": "Total",
   "widget-screen-time-zero-minutes": "0 m"
 }

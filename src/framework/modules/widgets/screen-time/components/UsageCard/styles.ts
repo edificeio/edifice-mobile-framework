@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   cardTitle: {
@@ -10,8 +10,7 @@ export default StyleSheet.create({
   },
   durationText: {
     color: theme.palette.primary.regular,
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: getScaleFontSize(20),
   },
   titleRow: {
     flexDirection: 'column',
@@ -21,17 +20,17 @@ export default StyleSheet.create({
   usageCard: {
     backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.grey.cloudy,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: UI_SIZES.border.thin,
     elevation: 3,
     flexBasis: '48%',
     padding: UI_SIZES.spacing.medium,
     shadowColor: theme.palette.grey.black,
     shadowOffset: {
-      height: 2,
+      height: UI_SIZES.border.thin,
       width: 0,
     },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: UI_SIZES.radius.medium,
   },
 });

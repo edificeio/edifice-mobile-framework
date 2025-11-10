@@ -1985,6 +1985,8 @@
   "widget-screen-time-info-modal-text": "'Tempo schermo' è una funzionalità implementata dal Dipartimento delle Bocche del Rodano. Il tempo schermo misura il tempo di attività dello studente sul laptop fornito dal Dipartimento. Il tempo schermo osserva solo l'apertura e la chiusura della sessione da parte dello studente sul suo computer. La funzionalità non registra alcun dato personale di utilizzo o navigazione internet.",
   "widget-screen-time-no-data-week": "Nessun dato disponibile per questa settimana",
   "widget-screen-time-no-data-day": "Nessun dato disponibile per questo giorno",
+  "widget-screen-time-show-all-hours": "Mostra tutte le ore",
+  "widget-screen-time-show-only-with-values": "Mostra solo le ore con valori",
   "widget-screen-time-total": "Totale",
   "widget-screen-time-zero-minutes": "0 m"
 }

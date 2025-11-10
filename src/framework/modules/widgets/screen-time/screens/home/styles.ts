@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   cardsContainer: {
@@ -16,7 +16,7 @@ export default StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   datePicker: {
     alignSelf: 'center',
@@ -37,8 +37,7 @@ export default StyleSheet.create({
   },
   modalText: {
     color: theme.palette.grey.black,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: getScaleFontSize(16),
   },
   modeToggleContainer: {
     alignItems: 'center',
@@ -58,7 +57,7 @@ export default StyleSheet.create({
   },
   separator: {
     backgroundColor: theme.palette.grey.cloudy,
-    height: 1,
+    height: UI_SIZES.border.thin,
     marginVertical: UI_SIZES.spacing.tiny,
   },
   tabToggleBackground: {
@@ -70,11 +69,11 @@ export default StyleSheet.create({
   },
   tabToggleIndicator: {
     backgroundColor: theme.palette.grey.white,
-    borderRadius: 6,
-    bottom: 4,
-    left: 4,
+    borderRadius: UI_SIZES.radius.medium,
+    bottom: UI_SIZES.spacing.tiny,
+    left: UI_SIZES.spacing.tiny,
     position: 'absolute',
-    top: 4,
+    top: UI_SIZES.spacing.tiny,
     width: '50%',
     zIndex: 1,
   },
@@ -85,17 +84,15 @@ export default StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.tiny,
     zIndex: 2,
   },
   tabToggleText: {
     color: theme.palette.grey.graphite,
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: getScaleFontSize(14),
   },
   tabToggleTextActive: {
     color: theme.palette.primary.regular,
-    fontWeight: '600',
   },
 });

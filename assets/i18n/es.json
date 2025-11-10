@@ -1985,6 +1985,8 @@
   "widget-screen-time-info-modal-text": "'Tiempo de pantalla' es una funcionalidad implementada por el Departamento de Bocas del Ródano. El tiempo de pantalla mide el tiempo de actividad del estudiante en el portátil proporcionado por el Departamento. El tiempo de pantalla solo observa la apertura y cierre de la sesión por parte del estudiante en su ordenador. La funcionalidad no registra ningún dato personal de uso o navegación por internet.",
   "widget-screen-time-no-data-week": "No hay datos disponibles para esta semana",
   "widget-screen-time-no-data-day": "No hay datos disponibles para este día",
+  "widget-screen-time-show-all-hours": "Mostrar todas las horas",
+  "widget-screen-time-show-only-with-values": "Mostrar solo las horas con valores",
   "widget-screen-time-total": "Total",
   "widget-screen-time-zero-minutes": "0 m"
 }

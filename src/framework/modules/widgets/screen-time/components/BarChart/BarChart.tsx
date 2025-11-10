@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import moment from 'moment';
 
@@ -32,6 +32,8 @@ const formatDuration = (minutes: number): string => {
 };
 
 export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
+  const [showAllHours, setShowAllHours] = React.useState(false);
+
   // Check for empty data
   if (!data) {
     return (
@@ -111,11 +113,9 @@ export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
 
   const renderDayChart = () => {
     const dayData = data as ScreenTimeDayResponse;
-    const durations = dayData.durations.map(item => item.durationMinutes);
-    const maxDurationMinutes = durations.length > 0 ? Math.max(...durations) : 0;
+    const maxDurationMinutes = 60;
 
     const getBarWidth = (durationMinutes: number): number => {
-      if (maxDurationMinutes === 0) return 0;
       return (durationMinutes / maxDurationMinutes) * CHART_HEIGHT;
     };
 
@@ -123,17 +123,25 @@ export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
       return moment(hour, 'HH').format('HH:mm');
     };
 
+    // Filter hours: by default show only hours with values, or all if toggle is on
+    const filteredDurations = showAllHours ? dayData.durations : dayData.durations.filter(hourData => hourData.durationMinutes > 0);
+
     return (
       <>
         <View style={styles.titleContainer}>
           <BodyText style={styles.totalTime}>
             {I18n.get('widget-screen-time-total')}: {dayData.totalDurationString}
           </BodyText>
+          <Pressable onPress={() => setShowAllHours(!showAllHours)} style={styles.toggleButton}>
+            <BodyText style={styles.toggleButtonText}>
+              {showAllHours ? I18n.get('widget-screen-time-show-only-with-values') : I18n.get('widget-screen-time-show-all-hours')}
+            </BodyText>
+          </Pressable>
         </View>
 
         <View style={styles.chartContainer}>
           <View style={styles.barsContainer}>
-            {dayData.durations.map(hourData => {
+            {filteredDurations.map(hourData => {
               const barWidth = getBarWidth(hourData.durationMinutes);
 
               return (
