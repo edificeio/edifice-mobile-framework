@@ -6,7 +6,7 @@ import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
 export default StyleSheet.create({
   allergyExpandedText: {
     color: theme.palette.complementary.orange.regular,
-    fontSize: getScaleFontSize(10),
+    fontSize: getScaleFontSize(12),
     fontStyle: 'italic',
     marginTop: UI_SIZES.spacing.tiny,
   },
@@ -29,7 +29,7 @@ export default StyleSheet.create({
 
   allergyText: {
     color: theme.palette.grey.graphite,
-    fontSize: getScaleFontSize(10),
+    fontSize: getScaleFontSize(12),
     fontStyle: 'italic',
     marginLeft: UI_SIZES.spacing.tiny,
   },
@@ -96,7 +96,7 @@ export default StyleSheet.create({
   // Menu item
   menuItem: {
     borderBottomColor: theme.palette.grey.cloudy,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: UI_SIZES.border.thin,
     marginBottom: UI_SIZES.spacing.tiny,
     paddingBottom: UI_SIZES.spacing.tiny,
   },
@@ -164,7 +164,7 @@ export default StyleSheet.create({
   },
 
   titleDot: {
-    borderRadius: 4,
+    borderRadius: UI_SIZES.radius.medium,
     height: 8,
     marginRight: UI_SIZES.spacing.tiny,
     width: 8,
