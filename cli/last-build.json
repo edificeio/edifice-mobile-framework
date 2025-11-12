@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-12 13:15:31",
-  "notes": "release: 1.16.0-peda.6(1160006)",
-  "version": "1.16.0-peda.7(1160007)"
+  "last": "2025-11-12 15:55:03",
+  "notes": "chore: yarn clean\nMerge remote-tracking branch 'origin/dev/1.15.5' into dev/1.16.0\nfix(datas): ENABLING-478, replace conversation by mails\nfix(datas): ENABLING-478, replace conversation by mails\nrelease: 1.15.5(1150500)\nupdate(stack): yarn cache update.\nrelease: 1.16.0-peda.7(1160007)",
+  "version": "1.16.0-peda.8(1160008)"
 }
