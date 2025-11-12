@@ -2,21 +2,34 @@ import * as React from 'react';
 import { FlatList, Pressable, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
 import styles from '~/framework/modules/timeline/components/widget-chip/styles';
 import { IWidgetChipProps, IWidgetChipsContainerProps } from '~/framework/modules/timeline/components/widget-chip/types';
+import { Image } from '~/framework/util/media-deprecated';
 import { AnyNavigableModule } from '~/framework/util/moduleTool';
 
 function WidgetChipItem(props: IWidgetChipProps) {
   const { onPress, testID, widget } = props;
-  const icon = widget.config.displayPicture?.type === 'Svg' ? widget.config.displayPicture.name : undefined;
   const label = I18n.get(widget.config.displayI18n);
+
+  const renderPicture = () => {
+    switch (widget.config.displayPicture?.type) {
+      case 'Svg':
+        return (
+          <Svg {...widget.config.displayPicture} height={UI_SIZES.elements.icon.xlarge} width={UI_SIZES.elements.icon.xlarge} />
+        );
+      case 'Image':
+        return <Image source={widget.config.displayPicture.source} style={styles.imagePicture} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <Pressable onPress={onPress} style={styles.chipButton} testID={testID}>
-      {icon && <Svg name={icon} width={16} height={16} fill={theme.palette.grey.graphite} />}
+      {renderPicture()}
       <BodyBoldText style={styles.chipsText}>{label}</BodyBoldText>
     </Pressable>
   );

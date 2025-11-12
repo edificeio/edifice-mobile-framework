@@ -26,7 +26,12 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
   },
   chipsText: {
-    fontSize: getScaleFontSize(12),
+    fontSize: getScaleFontSize(14),
     marginLeft: UI_SIZES.spacing._LEGACY_tiny,
+  },
+  imagePicture: {
+    height: UI_SIZES.elements.icon.xlarge,
+    objectFit: 'contain',
+    width: UI_SIZES.elements.icon.xlarge,
   },
 });
