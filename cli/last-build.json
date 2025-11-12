@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-07 18:34:01",
-  "notes": "chore: remove jinglebells reference\nrelease: 1.16.0-peda.4(1160004)",
-  "version": "1.16.0-peda.5(1160005)"
+  "last": "2025-11-12 12:25:11",
+  "notes": "Merge remote-tracking branch 'origin/dev/1.15.5' into dev/1.16.0\nchore: yarn cache update\nfix(blog): SUPPORT-3749\nrelease: 1.16.0-peda.5(1160005)",
+  "version": "1.16.0-peda.6(1160006)"
 }
