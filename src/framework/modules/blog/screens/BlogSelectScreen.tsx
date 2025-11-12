@@ -6,12 +6,12 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
-import { moduleColor } from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
@@ -85,7 +85,11 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
         emptyComponent={this.renderEmptyBlogList}
         onRefresh={this.doGetPublishableBlogList}
         onPressItem={this.onPressBlog}
-        defaultThumbnail={{ background: moduleColor.pale, fill: moduleColor.regular, name: 'blog' }}
+        defaultThumbnail={{
+          background: theme.apps.blog.accentColors.pale,
+          fill: theme.apps.blog.accentColors.regular,
+          name: 'blog',
+        }}
       />
     );
   }
