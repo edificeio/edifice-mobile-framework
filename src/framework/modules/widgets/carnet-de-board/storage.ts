@@ -12,7 +12,7 @@ export interface PronotePreferencesData {
 
 const oldStorageKey = `pronote.CarnetDeBord.selectedUserId`;
 
-export const preferences = Storage.preferences<PronotePreferencesData>(moduleConfig, async function (session) {
+export const preferences = Storage.preferences<PronotePreferencesData>(moduleConfig, async function () {
   const oldDataStr = Storage.global.getString(oldStorageKey);
   const oldData = oldDataStr ? (JSON.parse(oldDataStr) as string) : undefined;
   if (oldData) {

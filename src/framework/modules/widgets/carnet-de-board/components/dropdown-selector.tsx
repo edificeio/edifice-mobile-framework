@@ -65,17 +65,8 @@ const styles = StyleSheet.create({
 export default function DropdownSelectorTemplate(props: DropdownSelectorTemplateProps) {
   const [dropdownOpen, setDropdownOpened] = React.useState<boolean>(false);
   const [selected, setSelected] = React.useState<DropDownPickerProps<any>['value']>(props.dropDownPickerProps.value);
-  const {
-    dropDownContainerStyle,
-    open,
-    placeholderStyle,
-    setOpen,
-    setValue,
-    style,
-    textStyle,
-    value,
-    ...otherDropdownPickerProps
-  } = props.dropDownPickerProps;
+  const { dropDownContainerStyle, open, placeholderStyle, setOpen, style, textStyle, ...otherDropdownPickerProps } =
+    props.dropDownPickerProps;
 
   return (
     <TouchableWithoutFeedback
@@ -97,7 +88,7 @@ export default function DropdownSelectorTemplate(props: DropdownSelectorTemplate
             textStyle={[styles.selectText, textStyle]}
             value={selected}
             setValue={setSelected as DropDownPickerProps<any>['setValue']}
-            {...otherDropdownPickerProps}
+            {...(otherDropdownPickerProps as any)}
           />
           {props.button ? DropdownSelectorTemplate.renderButton(props.button, selected) : null}
         </View>
@@ -110,7 +101,7 @@ DropdownSelectorTemplate.renderButton = (
   buttonProps: Required<DropdownSelectorTemplateProps>['button'],
   selected: DropDownPickerProps<any>['value'],
 ) => {
-  const { action, disabled, url, ...otherButtonProps } = buttonProps;
+  const { action, url, ...otherButtonProps } = buttonProps;
   return (
     <PrimaryButton
       action={typeof action === 'function' ? () => action(selected) : action}

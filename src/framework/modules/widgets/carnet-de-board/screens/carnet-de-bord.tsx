@@ -13,6 +13,7 @@ import SecondaryButton from '~/framework/components/buttons/secondary';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import type { PictureProps } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -20,7 +21,7 @@ import UserList, { IUserListItem } from '~/framework/components/UserList';
 import { ContentLoader } from '~/framework/hooks/loader';
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { loadCarnetDeBordAction } from '~/framework/modules/pronote/actions/carnet-de-bord';
+import { loadCarnetDeBordAction } from '~/framework/modules/widgets/carnet-de-board/actions/carnet-de-bord';
 import {
   CarnetDeBordSection,
   formatCarnetDeBordCompetencesValue,
@@ -29,12 +30,12 @@ import {
   getSummaryItem,
   ICarnetDeBord,
   PronoteCdbInitError,
-} from '~/framework/modules/pronote/model/carnet-de-bord';
-import moduleConfig from '~/framework/modules/pronote/module-config';
-import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
-import { ICarnetDeBordStateData } from '~/framework/modules/pronote/reducer/carnet-de-bord';
-import redirect from '~/framework/modules/pronote/service/redirect';
-import { preferences } from '~/framework/modules/pronote/storage';
+} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import moduleConfig from '~/framework/modules/widgets/carnet-de-board/module-config';
+import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
+import { ICarnetDeBordStateData } from '~/framework/modules/widgets/carnet-de-board/reducer/carnet-de-bord';
+import redirect from '~/framework/modules/widgets/carnet-de-board/service/redirect';
+import { preferences } from '~/framework/modules/widgets/carnet-de-board/storage';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
@@ -62,6 +63,7 @@ export const computeNavBar = ({
     route,
     title: I18n.get('carnetdebord'),
   }),
+  headerLeft: () => <NavBarAction icon="ui-close" onPress={() => navigation.goBack()} testID="carnet-de-bord-close-button" />,
 });
 
 const styles = StyleSheet.create({

@@ -26,7 +26,7 @@ import {
   IPronoteConnectorInfo,
   PronoteCdbInitError,
   sortCarnetDeBordItems,
-} from '~/framework/modules/pronote/model/carnet-de-bord';
+} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 import { fetchWithCache } from '~/infra/fetchWithCache';
 

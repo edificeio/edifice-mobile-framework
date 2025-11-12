@@ -1,6 +1,6 @@
 import { IGlobalState } from '~/app/store';
-import { ICarnetDeBord } from '~/framework/modules/pronote/model/carnet-de-bord';
-import moduleConfig from '~/framework/modules/pronote/module-config';
+import { ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import moduleConfig from '~/framework/modules/widgets/carnet-de-board/module-config';
 import {
   AsyncState,
   createAsyncActionCreators,

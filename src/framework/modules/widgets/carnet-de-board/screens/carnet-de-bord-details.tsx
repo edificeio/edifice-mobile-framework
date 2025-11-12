@@ -2,12 +2,8 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { cardPadding, CardWithoutPadding } from '~/framework/components/card/base';
@@ -23,9 +19,9 @@ import {
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   ICarnetDeBord,
-} from '~/framework/modules/pronote/model/carnet-de-bord';
-import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
-import redirect from '~/framework/modules/pronote/service/redirect';
+} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
+import redirect from '~/framework/modules/widgets/carnet-de-board/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
@@ -109,6 +105,7 @@ const styles = StyleSheet.create({
 });
 
 function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
+  const session = getSession();
   const type = props.route.params.type;
   const data = props.route.params.data;
   const items = React.useMemo(() => {
@@ -159,7 +156,7 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
         <SecondaryButton
           style={styles.button}
           action={() => {
-            if (data.address && props.session) redirect(props.session, data.address, pageId);
+            if (data.address && session) redirect(session, data.address, pageId);
           }}
           iconRight="pictos-external-link"
           text={I18n.get('pronote-openinpronote')}
@@ -235,9 +232,4 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
   }
 };
 
-export default connect(
-  (state: IGlobalState) => ({
-    session: getSession(),
-  }),
-  (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
-)(CarnetDeBordDetailsScreen);
+export default CarnetDeBordDetailsScreen;
