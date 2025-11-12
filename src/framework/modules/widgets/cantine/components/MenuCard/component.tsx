@@ -10,7 +10,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, SmallText } from '~/framework/components/text';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 // Allergy configuration
 const ALLERGY_CONFIG = [
