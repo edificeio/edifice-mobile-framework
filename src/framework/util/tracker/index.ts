@@ -224,12 +224,12 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     const moduleAccessMap = {
       blog: 'Blog',
       competences: 'Competences',
-      conversation: 'Conversation',
       diary: 'Diary',
       edt: 'Edt',
       form: 'Formulaire',
       homework: 'Homeworks',
       homeworkAssistance: 'HomeworkAssistance',
+      mails: 'Conversation',
       mediacentre: 'Mediacentre',
       messagerie: 'Conversation', // duplicates conversation because of a tracking keyword issue
       nabook: 'Nabook',
