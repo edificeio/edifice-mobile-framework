@@ -6,7 +6,6 @@ import moduleConfig from '~/framework/modules/user/module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
 import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '~/framework/modules/user/screens/legal-notice';
-import UserProfileScreen, { computeNavBar as profileNavBar } from '~/framework/modules/user/screens/profile';
 import UserEditDescriptionScreen, {
   computeNavBar as editDescriptionNavBar,
 } from '~/framework/modules/user/screens/profile/edit-description';
@@ -29,7 +28,6 @@ export default () =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={userRouteNames.home} component={UserHomeScreen} options={homeNavBar} initialParams={{}} />
-      <Stack.Screen name={userRouteNames.profile} component={UserProfileScreen} options={profileNavBar} initialParams={{}} />
       <Stack.Screen
         name={userRouteNames.notifPrefs}
         component={PushNotifsTopicsListScreen}

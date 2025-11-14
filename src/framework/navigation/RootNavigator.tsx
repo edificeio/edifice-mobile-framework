@@ -118,11 +118,7 @@ function RootNavigator(props: RootNavigatorProps) {
       <>
         <SplashScreenComponent key={appReady} />
         {appReady ? (
-          <NavigationContainer
-            // key={lastAddAccount}
-            ref={navigationRef}
-            initialState={navigationState}
-            onStateChange={onStateChange}>
+          <NavigationContainer ref={navigationRef} initialState={navigationState} onStateChange={onStateChange}>
             <BottomSheetModalProvider>
               <AppPushNotificationHandlerComponent>
                 <RootStack.Navigator screenOptions={screenOptions}>
@@ -136,7 +132,7 @@ function RootNavigator(props: RootNavigatorProps) {
         ) : null}
       </>
     );
-  }, [appReady, lastAddAccount, navigationState, onStateChange, routes, screenOptions]);
+  }, [appReady, navigationState, onStateChange, routes, screenOptions]);
 
   return ret;
 }
