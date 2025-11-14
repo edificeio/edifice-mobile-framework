@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-14 20:52:24",
-  "notes": "chore: yarn cache update\nUpdated translations from Phrase (238)\nMerge remote-tracking branch 'origin/dev/1.15.5' into dev/1.16.0\nfix(communities): PEDAGO-3478 always show pending filter\nfix(user): ENABLING-481, missing route addition\nUpdated translations from Phrase (237)\nfix(user): ENABLING-481, missing route addition\nfix(xmas): ENABLING-480, remove remaining xmas stuff\nfix: PEDAGO-3477 open audio & video not handled in rich content\nchore: add entcore tracker for communities\nSquashed commit of the following:\nfix(build): remove unwanted characters making firebase cli tool fail\nrelease: 1.15.5-rc.1(1150501)\nfeat(xmas): ENABLING-466, remove xmas theme stuff\nRevert release: 1.15.5-rc.1(1150501)\nMerge remote-tracking branch 'origin/dev/1.15.5' into dev/1.16.0\nfix(blog): SUPPORT-3749\nupdate(stack): yarn cache update\nrelease: 1.15.5-rc.1(1150501)\nchore: yarn cache update\nrelease: 1.16.0-peda.8(1160008)",
-  "version": "1.16.0-rc.1(1160009)"
+  "last": "2025-11-14 21:27:01",
+  "notes": "release: 1.16.0-rc.1(1160009)",
+  "version": "1.16.0-rc.2(1160010)"
 }
