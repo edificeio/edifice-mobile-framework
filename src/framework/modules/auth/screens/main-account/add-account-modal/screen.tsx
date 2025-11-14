@@ -16,7 +16,6 @@ import { actions, getState } from '~/framework/modules/auth/reducer';
 import { INavigationParams } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
-import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
 export const computeNavBar = ({
@@ -40,7 +39,6 @@ export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScre
   const navigationState = React.useMemo(() => getAddAccountNavigationState(pending), [pending]);
   const trackNavState = useNavigationTracker();
   const dispatch = useDispatch();
-  const manageNavSnow = useNavigationSnowHandler(dispatch);
   useConstructor(() => {
     dispatch(actions.addAccountInit());
   });

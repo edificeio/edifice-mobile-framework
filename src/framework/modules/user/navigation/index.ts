@@ -12,7 +12,6 @@ import type { UserStructuresScreenNavParams } from '~/framework/modules/user/scr
 import type { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
-import type { UserXmasScreenNavParams } from '~/framework/modules/user/screens/xmas';
 
 export const userRouteNames = {
   editDescription: `${moduleConfig.routeName}/profile/editDescription` as 'editDescription',
@@ -26,7 +25,6 @@ export const userRouteNames = {
   profile: `${moduleConfig.routeName}/profile` as 'profile',
   structures: `${moduleConfig.routeName}/profile/structures` as 'structures',
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
-  xmas: `${moduleConfig.routeName}/xmas` as 'xmas',
 };
 export interface UserNavigationParams extends ParamListBase {
   home: UserHomeScreenNavParams;
@@ -38,7 +36,6 @@ export interface UserNavigationParams extends ParamListBase {
   editDescription: UserEditDescriptionScreenNavParams;
   editMoodMotto: UserEditMoodMottoScreenNavParams;
   whoAreWe: UserWhoAreWeScreenNavParams;
-  xmas: UserXmasScreenNavParams;
   legalNotice: UserLegalNoticeScreenNavParams;
   lang: UserLangScreenNavParams;
 }

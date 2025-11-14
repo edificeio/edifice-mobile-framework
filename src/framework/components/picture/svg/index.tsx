@@ -295,7 +295,6 @@ const imports = {
   'userpage-header': async () => import('ASSETS/images/userpage-header.svg'),
   'wekan': async () => import('ASSETS/icons/moduleIcons/wekan.svg'),
   'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
-  'xmas': async () => import('ASSETS/images/xmas.svg'),
 };
 
 let importsCache = {};

@@ -6,7 +6,6 @@ import moduleConfig from '~/framework/modules/user/module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
 import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '~/framework/modules/user/screens/legal-notice';
-import UserProfileScreen, { computeNavBar as profileNavBar } from '~/framework/modules/user/screens/profile';
 import UserEditDescriptionScreen, {
   computeNavBar as editDescriptionNavBar,
 } from '~/framework/modules/user/screens/profile/edit-description';
@@ -22,7 +21,6 @@ import PushNotifsTopicsListScreen, {
   computeNavBar as pushNotifsTopicsListNavBar,
 } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
-import UserXmasScreen, { computeNavBar as xmasNavBar } from '~/framework/modules/user/screens/xmas';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 
@@ -30,7 +28,6 @@ export default () =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={userRouteNames.home} component={UserHomeScreen} options={homeNavBar} initialParams={{}} />
-      <Stack.Screen name={userRouteNames.profile} component={UserProfileScreen} options={profileNavBar} initialParams={{}} />
       <Stack.Screen
         name={userRouteNames.notifPrefs}
         component={PushNotifsTopicsListScreen}
@@ -44,7 +41,6 @@ export default () =>
         initialParams={{}}
       />
       <Stack.Screen name={userRouteNames.lang} component={UserLangScreen} options={langNavBar} initialParams={{}} />
-      <Stack.Screen name={userRouteNames.xmas} component={UserXmasScreen} options={xmasNavBar} initialParams={{}} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen
           name={userRouteNames.notifPrefsDetails}
