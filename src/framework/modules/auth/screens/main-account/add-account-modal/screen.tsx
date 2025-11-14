@@ -53,9 +53,8 @@ export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScre
   const onStateChange = React.useCallback(
     (state: NavigationState | undefined) => {
       trackNavState(state);
-      manageNavSnow();
     },
-    [manageNavSnow, trackNavState],
+    [trackNavState],
   );
   const navigator = React.useMemo(
     () => (
