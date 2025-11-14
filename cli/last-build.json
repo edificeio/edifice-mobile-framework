@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-10-17 08:20:58",
-  "notes": "update(stack): yarn cache update\nfix(pcn,ent77): COCO-4708, adjust secondary pale color\nrelease: 1.15.4-rc.6(1150408)",
-  "version": "1.15.4-rc.7(1150409)"
+  "last": "2025-11-14 10:43:27",
+  "notes": "feat(xmas): ENABLING-466, remove xmas theme stuff\nRevert \"release: 1.15.5-rc.1(1150501)\"\nfix(blog): SUPPORT-3749\nrelease: 1.15.5-rc.1(1150501)\nfix(datas): ENABLING-478, replace conversation by mails\nrelease: 1.15.5(1150500)\nupdate(stack): yarn cache update.\nrelease: 1.15.4-rc.7(1150409)",
+  "version": "1.15.5-rc.1(1150501)"
 }
