@@ -7,6 +7,7 @@ export interface Asset {
   fileSize?: number;
   type?: string;
   fileName?: string;
+  name?: string;
   duration?: number;
   bitrate?: number;
   timestamp?: string;
@@ -36,7 +37,7 @@ export interface FileManagerModule {
 
 /**
  * Global configuration for all modules.
- * Each key = module name → contains a set of usecases.
+ * Each key = module name -> contains a set of usecases.
  */
 export interface FileManagerGlobalConfig {
   [module: string]: FileManagerModule;

@@ -28,7 +28,7 @@ export const FileManagerConfig: FileManagerGlobalConfig = {
   },
   mails: {
     attachments: {
-      allow: ['image', 'video', 'document'],
+      allow: ['image', 'document'],
       multiple: true,
       sources: ['camera', 'gallery', 'documents'],
     },
@@ -56,14 +56,14 @@ export const FileManagerConfig: FileManagerGlobalConfig = {
   },
   support: {
     attachments: {
-      allow: ['image', 'video', 'pdf', 'document'],
+      allow: ['image', 'pdf', 'document'],
       multiple: true,
       sources: ['camera', 'gallery', 'documents'],
     },
   },
   workspace: {
     upload: {
-      allow: ['image', 'video', 'audio', 'pdf', 'document'],
+      allow: ['image', 'pdf', 'document'],
       multiple: true,
       sources: ['camera', 'gallery', 'documents'],
     },
@@ -75,4 +75,4 @@ export const FileManagerConfig: FileManagerGlobalConfig = {
  */
 export type FileManagerModuleName = keyof typeof FileManagerConfig;
 
-export type FileManagerUsecaseName<M extends FileManagerModuleName> = keyof (typeof FileManagerConfig)[M];
+export type FileManagerUsecaseName<M extends FileManagerModuleName> = Extract<keyof FileManagerGlobalConfig[M], string>;
