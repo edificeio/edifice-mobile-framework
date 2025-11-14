@@ -17,7 +17,9 @@ const SegmentedControlItem = ({ count, isActive, onPress, testID, text }: Readon
   return (
     <TouchableOpacity onPress={onPress} style={isActive ? ACTIVE_CONTAINER_STYLE : INACTIVE_CONTAINER_STYLE} testID={testID}>
       <TextComponent>{text}</TextComponent>
-      <Badge content={count} color={theme.palette.primary.regular} />
+      {count !== undefined && (
+        <Badge content={count} color={count > 0 ? theme.palette.primary.regular : theme.palette.grey.stone} />
+      )}
     </TouchableOpacity>
   );
 };

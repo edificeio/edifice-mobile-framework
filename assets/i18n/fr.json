@@ -353,6 +353,8 @@
   "communities-join-confirm-title": "Bienvenue",
   "communities-list-empty-text": "Vous ne faites encore partie d'aucune communauté.",
   "communities-list-empty-title": "C'est calme... pour l'instant !",
+  "communities-list-empty-text-pending": "Vous n'avez aucune communauté en attente.",
+  "communities-list-empty-title-pending": "C'est calme... pour l'instant !",
   "communities-list-title": "Communautés",
   "communities-member": "{{count}} membre",
   "communities-members": "{{count}} membres",
