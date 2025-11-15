@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-14 10:43:27",
-  "notes": "feat(xmas): ENABLING-466, remove xmas theme stuff\nfix(blog): SUPPORT-3749\nfix(datas): ENABLING-478, replace conversation by mails\nupdate(stack): yarn cache update.",
-  "version": "1.15.5-rc.1(1150501)"
+  "last": "2025-11-15 12:32:38",
+  "notes": "fix(user): ENABLING-481, missing route addition\nfix(xmas): ENABLING-480, remove remaining xmas stuff\nfix(build): remove unwanted characters making firebase cli tool fail\nrelease: 1.15.5-rc.1(1150501)",
+  "version": "1.15.5-rc.2(1150502)"
 }
