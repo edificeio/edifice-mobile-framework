@@ -223,6 +223,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     ).toLowerCase();
     const moduleAccessMap = {
       blog: 'Blog',
+      communities: 'Communities',
       competences: 'Competences',
       diary: 'Diary',
       edt: 'Edt',

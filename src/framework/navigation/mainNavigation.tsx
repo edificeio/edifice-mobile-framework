@@ -76,8 +76,6 @@ const createTabIcon = (
     dp = { ...dp, ...moduleConfig.displayPictureFocus, fill: props.color } as Partial<PictureProps>;
   }
   return <Picture {...dp} />;
-
-  //<TabPicture {...(dp as PictureProps)} />;
 };
 
 const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {

@@ -8,9 +8,10 @@ import { createHTML } from './editor';
 
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
+import { openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
+import { MediaType } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
 const PlatformIOS = Platform.OS === 'ios';

@@ -15,25 +15,19 @@ const CommunityListFilters = ({
   onPendingPress,
   pendingInvitationsCount,
 }: Readonly<CommunityListFilterProps>) => {
-  const canShowPendingFilter = pendingInvitationsCount && pendingInvitationsCount > 0;
-  const segment = React.useMemo(() => {
-    return pendingInvitationsCount
-      ? [{ count: pendingInvitationsCount, id: '0', text: I18n.get('communities-pending-invitations') }]
-      : [];
-  }, [pendingInvitationsCount]);
+  const segment = React.useMemo(
+    () => [{ count: pendingInvitationsCount, id: '0', text: I18n.get('communities-pending-invitations') }],
+    [pendingInvitationsCount],
+  );
 
   return (
     <View style={styles.filterBar}>
-      {canShowPendingFilter ? (
-        <SegmentedControl
-          canUnselect={true}
-          initialSelectedIndex={isShowingPending ? 0 : undefined}
-          segments={segment}
-          onChange={onPendingPress}
-        />
-      ) : (
-        <View />
-      )}
+      <SegmentedControl
+        canUnselect={true}
+        initialSelectedIndex={isShowingPending ? 0 : undefined}
+        segments={segment}
+        onChange={onPendingPress}
+      />
       <CommunityListFilterButton activeFiltersCount={activeFiltersCount} onPress={onFiltersButtonPress} />
     </View>
   );

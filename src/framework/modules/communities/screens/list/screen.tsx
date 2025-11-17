@@ -240,8 +240,8 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
         ListEmptyComponent={
           <EmptyScreen
             svgImage="empty-communities-list"
-            title={I18n.get('communities-list-empty-title')}
-            text={I18n.get('communities-list-empty-text')}
+            title={I18n.get(pending ? 'communities-list-empty-title-pending' : 'communities-list-empty-title')}
+            text={I18n.get(pending ? 'communities-list-empty-text-pending' : 'communities-list-empty-text')}
             customStyle={styles.emptyScreen}
           />
         }

@@ -6,8 +6,8 @@ import { Storage } from '~/framework/util/storage';
 import type { IOAuthToken } from '~/infra/oauth';
 
 export interface AuthStorageData {
-  accounts: Record<string, AuthSavedAccount>;
-  startup: {
+  'accounts': Record<string, AuthSavedAccount>;
+  'startup': {
     account?: string;
     platform?: string;
     /** used to migrate pre-1.12 automatic connections */
