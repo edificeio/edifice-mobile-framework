@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
+import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service/types';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { LocalFile } from '~/framework/util/fileHandler';
 
