@@ -199,7 +199,7 @@ export const formService = {
     },
     deleteFiles: async (session: AuthActiveAccount, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files`;
-      return sessionFetch(api, { method: 'DELETE' });
+      return sessionFetch.json(api, { method: 'DELETE' });
     },
     getFiles: async (session: AuthActiveAccount, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files/all`;
@@ -242,7 +242,7 @@ export const formService = {
           } as IBackendQuestionResponse;
         }),
       );
-      return sessionFetch(api, { body, method: 'DELETE' });
+      return sessionFetch.json(api, { body, method: 'DELETE' });
     },
   },
   section: {
