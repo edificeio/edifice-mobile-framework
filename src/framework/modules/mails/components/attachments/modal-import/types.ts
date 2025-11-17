@@ -2,7 +2,7 @@ import { ParamListBase, Route } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ImagePicked } from '~/framework/components/menus/actions';
-import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
+import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service/types';
 import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { IPickOptions, LocalFile } from '~/framework/util/fileHandler';
 
