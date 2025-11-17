@@ -29,7 +29,7 @@ import {
 } from '~/framework/modules/viescolaire/presences/service/types';
 import { LocalFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { fetchJSONWithCache, fetchWithCache, signedFetch } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 export const presencesService = {
   absence: {
@@ -48,10 +48,7 @@ export const presencesService = {
       formData.append('start_at', startDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('end_at', endDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('description', description);
-      await signedFetch(`${session.platform.url}${api}`, {
-        body: formData,
-        method: 'POST',
-      });
+      await sessionFetch.json(api, { body: formData, method: 'POST' });
     },
     createWithFile: async (
       session: AuthActiveAccount,
@@ -86,7 +83,7 @@ export const presencesService = {
   absences: {
     get: async (session: AuthActiveAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/presences/statements/absences?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&student_id=${studentId}`;
-      const absences = (await fetchJSONWithCache(api)) as BackendAbsences;
+      const absences = await sessionFetch.json<BackendAbsences>(api);
       return absencesAdapter(absences);
     },
   },
@@ -104,15 +101,12 @@ export const presencesService = {
         subject_id: course.subjectId,
         teacherIds: [teacherId],
       });
-      const call = (await fetchJSONWithCache(api, {
-        body,
-        method: 'POST',
-      })) as { id: number };
+      const call = await sessionFetch.json<{ id: number }>(api, { body, method: 'POST' });
       return call.id;
     },
     get: async (session: AuthActiveAccount, id: number) => {
       const api = `/presences/registers/${id}`;
-      const call = (await fetchJSONWithCache(api)) as BackendCall;
+      const call = await sessionFetch.json<BackendCall>(api);
       return callAdapter(call);
     },
     updateState: async (session: AuthActiveAccount, id: number, state: CallState) => {
@@ -120,10 +114,7 @@ export const presencesService = {
       const body = JSON.stringify({
         state_id: state,
       });
-      await fetchWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
   },
   courses: {
@@ -143,7 +134,7 @@ export const presencesService = {
         structure: structureId,
         teacher: teacherId,
       })}`;
-      const courses = (await fetchJSONWithCache(api)) as BackendCourseList;
+      const courses = await sessionFetch.json<BackendCourseList>(api);
       return courses
         .filter(course => course.allowRegister)
         .map(courseAdapter)
@@ -171,17 +162,12 @@ export const presencesService = {
         student_id: studentId,
         type_id: type as number,
       });
-      const event = (await fetchJSONWithCache(api, {
-        body,
-        method: 'POST',
-      })) as BackendEvent;
+      const event = await sessionFetch.json<BackendEvent>(api, { body, method: 'POST' });
       return eventAdapter(event);
     },
     delete: async (session: AuthActiveAccount, id: number) => {
       const api = `/presences/events/${id}`;
-      await fetchJSONWithCache(api, {
-        method: 'DELETE',
-      });
+      await sessionFetch.json(api, { method: 'DELETE' });
     },
     update: async (
       session: AuthActiveAccount,
@@ -204,10 +190,7 @@ export const presencesService = {
         student_id: studentId,
         type_id: type as number,
       });
-      await fetchWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
   },
   eventReason: {
@@ -240,23 +223,20 @@ export const presencesService = {
         structure_id: structureId,
         student_id: studentId,
       });
-      await fetchWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
   },
   eventReasons: {
     get: async (session: AuthActiveAccount, structureId: string) => {
       const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
-      const eventReasons = (await fetchJSONWithCache(api)) as BackendEventReasonList;
+      const eventReasons = await sessionFetch.json<BackendEventReasonList>(api);
       return eventReasons.filter(reason => !reason.hidden && reason.id >= 0).map(eventReasonAdapter);
     },
   },
   events: {
     get: async (session: AuthActiveAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
-      const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
+      const events = await sessionFetch.json<BackendHistoryEvents>(api);
       return historyEventsAdapter(events);
     },
     getForgottenNotebooks: async (
@@ -267,7 +247,7 @@ export const presencesService = {
       endDate: string,
     ) => {
       const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
-      const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
+      const forgottenNotebooks = await sessionFetch.json<BackendForgottenNotebooks>(api);
       return forgottenNotebooksAdapter(forgottenNotebooks);
     },
     getIncidents: async (
@@ -278,28 +258,28 @@ export const presencesService = {
       endDate: string,
     ) => {
       const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
-      const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
+      const incidents = await sessionFetch.json<BackendIncidents>(api);
       return incidentsAdapter(incidents);
     },
   },
   initialization: {
     getStructureStatus: async (structureId: string) => {
       const api = `/presences/initialization/structures/${structureId}`;
-      const data = (await fetchJSONWithCache(api)) as { initialized: boolean };
+      const data = await sessionFetch.json<{ initialized: boolean }>(api);
       return data.initialized;
     },
   },
   preferences: {
     getRegister: async (session: AuthActiveAccount) => {
       const api = '/userbook/preference/presences.register';
-      const data = (await fetchJSONWithCache(api)) as { preference: string };
+      const data = await sessionFetch.json<{ preference: string }>(api);
       return data.preference;
     },
   },
   settings: {
     getAllowMultipleSlots: async (session: AuthActiveAccount, structureId: string) => {
       const api = `/presences/structures/${structureId}/settings/multiple-slots`;
-      const data = (await fetchJSONWithCache(api)) as { allow_multiple_slots: boolean };
+      const data = await sessionFetch.json<{ allow_multiple_slots: boolean }>(api);
       return data.allow_multiple_slots;
     },
   },
@@ -312,17 +292,14 @@ export const presencesService = {
         student_ids: studentIds,
         types: ['NO_REASON', 'UNREGULARIZED', 'REGULARIZED', 'LATENESS', 'DEPARTURE'],
       });
-      const events = (await fetchJSONWithCache(api, {
-        body,
-        method: 'POST',
-      })) as BackendStudentsEvents;
+      const events = await sessionFetch.json<BackendStudentsEvents>(api, { body, method: 'POST' });
       return studentsEventsAdapter(events);
     },
   },
   userChildren: {
     get: async (session: AuthActiveAccount, relativeId: string) => {
       const api = `/presences/children?relativeId=${relativeId}`;
-      const userChildren = (await fetchJSONWithCache(api)) as BackendUserChildren;
+      const userChildren = await sessionFetch.json<BackendUserChildren>(api);
       return userChildren.map(userChildAdapter);
     },
   },
