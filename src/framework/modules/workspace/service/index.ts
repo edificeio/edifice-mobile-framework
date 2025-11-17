@@ -17,14 +17,14 @@ import {
 } from '~/framework/modules/workspace/service/types';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileTransferService, { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 const workspaceService = {
   file: {
     rename: async (session: AuthActiveAccount, id: string, name: string) => {
       const api = `/workspace/rename/${id}`;
       const body = JSON.stringify({ name });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });
@@ -68,7 +68,7 @@ const workspaceService = {
       destinationId = destinationId === 'owner' ? 'root' : destinationId;
       const api = `/workspace/documents/copy/${destinationId}`;
       const body = JSON.stringify({ ids, parentId });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'POST',
       });
@@ -76,7 +76,7 @@ const workspaceService = {
     delete: async (session: AuthActiveAccount, parentId: string, ids: string[]) => {
       const api = '/workspace/documents';
       const body = JSON.stringify({ ids, parentId });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'DELETE',
       });
@@ -92,14 +92,14 @@ const workspaceService = {
       }
       params += '&includeall=true';
       const api = `/workspace/documents${params}`;
-      const files = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFileList;
+      const files = await sessionFetch.json<IEntcoreWorkspaceFileList>(api);
       return files.map(file => workspaceFileAdapter(file)).sort(compareFiles) as IFile[];
     },
     move: async (session: AuthActiveAccount, parentId: string, ids: string[], destinationId: string) => {
       destinationId = destinationId === 'owner' ? 'root' : destinationId;
       const api = `/workspace/documents/move/${destinationId}`;
       const body = JSON.stringify({ ids, parentId });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });
@@ -107,7 +107,7 @@ const workspaceService = {
     restore: async (session: AuthActiveAccount, parentId: string, ids: string[]) => {
       const api = '/workspace/documents/restore';
       const body = JSON.stringify({ ids, parentId });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });
@@ -123,7 +123,7 @@ const workspaceService = {
     trash: async (session: AuthActiveAccount, ids: string[], parentId?: string) => {
       const api = '/workspace/documents/trash';
       const body = JSON.stringify({ ids, parentId });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });
@@ -143,17 +143,17 @@ const workspaceService = {
       const headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       };
-      const folder = (await signedFetchJson(`${session?.platform.url}${api}`, {
+      const folder = await sessionFetch.json<IEntcoreWorkspaceFolder>(api, {
         body,
         headers,
         method: 'POST',
-      })) as Promise<IEntcoreWorkspaceFolder>;
+      });
       return workspaceFileAdapter(folder);
     },
     rename: async (session: AuthActiveAccount, id: string, name: string) => {
       const api = `/workspace/folder/rename/${id}`;
       const body = JSON.stringify({ name });
-      return signedFetchJson(`${session?.platform.url}${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });
@@ -162,7 +162,7 @@ const workspaceService = {
   folders: {
     list: async (session: AuthActiveAccount) => {
       const api = '/workspace/folders/list?filter=owner&hierarchical=true';
-      const folders = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFolder[];
+      const folders = await sessionFetch.json<IEntcoreWorkspaceFolder[]>(api);
       return workspaceFolderListAdapter(folders);
     },
   },
