@@ -283,7 +283,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const openHelpCenter = async () => {
+  const openHelpCenter = React.useCallback(async () => {
     if (showHelpCenter)
       try {
         await zendesk?.openHelpCenter({
@@ -295,7 +295,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       } catch (error) {
         Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
       }
-  };
+  }, [showHelpCenter, zendesk]);
 
   //
   // Show User Home Screen
