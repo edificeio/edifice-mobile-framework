@@ -221,8 +221,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     );
   }
 
-  renderChipsNavigation() {
-    const widgets = this.getAvailableWidgets();
+  renderChipsNavigation(widgets: NavigableModuleArray) {
     return <WidgetChip widgets={widgets} navigation={this.props.navigation} />;
   }
 
@@ -306,9 +305,10 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   );
 
   renderListHeader() {
+    const widgets = this.getAvailableWidgets();
     return (
       <>
-        {this.renderChipsNavigation()}
+        {widgets.length > 0 && this.renderChipsNavigation(widgets)}
         {this.listSeparator}
       </>
     );
