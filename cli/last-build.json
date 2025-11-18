@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-18 10:11:09",
-  "notes": "chore: yarn cache update\nrelease: 1.16.0-peda.9(1160011)",
-  "version": "1.16.0-rc.3(1160012)"
+  "last": "2025-11-18 18:59:06",
+  "notes": "chore: use one stack navigator for each tab\nfix: PEDAGO-3479 fix status bar on pdf viewer\nchore: yarn cache update\nfix: PEDAGO-3483, PEDAGO-3484, SUPPORT-2945 fix android status bar interfering with navigation\nrelease: 1.16.0-rc.3(1160012)",
+  "version": "1.16.0-rc.4(1160013)"
 }
