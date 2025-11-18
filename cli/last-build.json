@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-17 12:28:29",
-  "notes": "Merge remote-tracking branch 'origin/dev/1.15.5' into dev/1.16.0\nupdate(stack): yarn cache update\nrelease: 1.15.5-rc.4(1150504)\nrelease: 1.15.5-rc.3(1150503)\nrelease: 1.15.5-rc.2(1150502)\nrelease: 1.16.0-rc.2(1160010)",
-  "version": "1.16.0-peda.9(1160011)"
+  "last": "2025-11-18 10:11:09",
+  "notes": "chore: yarn cache update\nrelease: 1.16.0-peda.9(1160011)",
+  "version": "1.16.0-rc.3(1160012)"
 }
