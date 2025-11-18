@@ -1,45 +1,35 @@
-/**
- * Public API for the FileManager.
- * Exposes:
- *  - FileManager.pick()  (main entry point)
- *  - LocalFile / SyncedFile models
- *  - Types & Config
- */
-
-import { FileManagerConfig, FileManagerModuleName, FileManagerUsecaseName } from '../fileManagerConfig';
-import { LocalFile } from '../models/localFile';
-import { FileSource } from '../types';
-import { pickFromCamera, pickFromDocuments, pickFromGallery } from './filePickerService';
+import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
+import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { getModuleFileManagerConfig } from '~/framework/util/fileHandler/services/fileManagerRegistry';
+import { pickFromCamera, pickFromDocuments, pickFromGallery } from '~/framework/util/fileHandler/services/filePickerService';
+import { FileSource } from '~/framework/util/fileHandler/types';
 
 export class FileManager {
-  /**
-   * Generic & strongly typed file picker.
-   */
   static async pick<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
     moduleName: M,
     usecaseName: U,
-    callback: (files: LocalFile[]) => void,
-    options?: { source?: FileSource },
+    callback: (files: LocalFile[] | LocalFile) => void,
+    options?: { source?: FileSource; callbackOnce?: boolean },
   ): Promise<void> {
-    const moduleConfig = FileManagerConfig[moduleName];
-    const config = moduleConfig[usecaseName] ?? moduleConfig.default;
+    const moduleConfig = getModuleFileManagerConfig(moduleName);
+    if (!moduleConfig) throw new Error(`No FileManager config for module ${moduleName}`);
 
-    if (!config) throw new Error(`Unknown FileManager config for ${moduleName}.${usecaseName}`);
+    const config = moduleConfig[usecaseName];
+    if (!config) throw new Error(`Unknown usecase ${usecaseName} for module ${moduleName}`);
 
     const { multiple, sources } = config;
-
-    // auto select first allowed source if not provided
     const source: FileSource = options?.source ?? sources[0];
+    const callbackOnce = options?.callbackOnce ?? false;
 
     switch (source) {
       case 'gallery':
-        return pickFromGallery(callback, multiple);
+        return pickFromGallery({ callbackOnce, multiple }).then(callback);
 
       case 'camera':
-        return pickFromCamera(callback);
+        return pickFromCamera({ callbackOnce }).then(callback);
 
       case 'documents':
-        return pickFromDocuments(callback);
+        return pickFromDocuments({ callbackOnce }).then(callback);
 
       default:
         throw new Error(`Unsupported source: ${source}`);
