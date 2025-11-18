@@ -1,10 +1,10 @@
 import { CommunitiesStore } from './store';
 
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'communities', CommunitiesStore>({
-  displayAs: 'tabModule',
+  displayAs: ModuleType.TAB_MODULE,
   displayColor: theme.apps.communities.accentColors,
   displayI18n: 'communities-tabname',
   displayOrder: 2,
