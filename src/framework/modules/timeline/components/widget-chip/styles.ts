@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   chipButton: {
@@ -11,13 +11,13 @@ export default StyleSheet.create({
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.border.thin,
     flexDirection: 'row',
-    height: UI_SIZES.dimensions.height.largerPlus,
+    height: UI_SIZES.dimensions.height.huge,
     justifyContent: 'center',
-    marginRight: UI_SIZES.spacing.small,
+    marginRight: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
   },
   chipsContainer: {
-    paddingBottom: UI_SIZES.spacing.small,
+    paddingBottom: UI_SIZES.spacing.minor,
     paddingTop: UI_SIZES.spacing.small,
   },
   chipsRow: {
@@ -26,12 +26,11 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
   },
   chipsText: {
-    fontSize: getScaleFontSize(14),
     marginLeft: UI_SIZES.spacing._LEGACY_tiny,
   },
-  imagePicture: {
-    height: UI_SIZES.elements.icon.xlarge,
-    objectFit: 'contain',
-    width: UI_SIZES.elements.icon.xlarge,
+  chipsTitle: {
+    color: theme.palette.grey.black,
+    marginBottom: UI_SIZES.spacing.tiny,
+    marginLeft: UI_SIZES.spacing.medium,
   },
 });

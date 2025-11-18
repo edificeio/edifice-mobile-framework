@@ -20,7 +20,7 @@ import { NavBarActionsGroup } from '~/framework/components/navigation';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { pageGutterSize, PageView } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
-import { SmallText } from '~/framework/components/text';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -298,6 +298,9 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   listSeparator = (
     <>
       <View style={{ height: pageGutterSize }} />
+      <HeadingSText style={{ marginBottom: UI_SIZES.spacing.minor, marginLeft: UI_SIZES.spacing.medium }}>
+        {I18n.get('timeline-greeting', { firstName: this.props.session.user.firstName })}
+      </HeadingSText>
       <TimelineSpace session={this.props.session} />
     </>
   );

@@ -178,7 +178,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     // This handles both truly empty results, errors, and cases where we haven't fetched yet
     return (
       <View>
-        <EmptyScreen svgImage="empty-content" title={I18n.get('widget-cantine-home-empty-title')} />
+        <EmptyScreen svgImage="empty-search" title={I18n.get('widget-cantine-home-empty-title')} />
       </View>
     );
   };

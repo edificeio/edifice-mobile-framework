@@ -8,7 +8,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { BodyBoldText, BodyText, SmallText } from '~/framework/components/text';
+import { BodyBoldText, BodyText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
 import { Image } from '~/framework/util/media-deprecated';
 
@@ -189,6 +189,7 @@ const MenuLegend: React.FC = React.memo(() => (
         <SmallText style={styles.legendText}>{I18n.get('widget-cantine-menu-allergenes-label')}</SmallText>
       </View>
     </View>
+    <SmallBoldText style={styles.legendText}>{'* ' + I18n.get('widget-cantine-menu-footer')}</SmallBoldText>
   </View>
 ));
 
