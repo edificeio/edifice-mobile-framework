@@ -15,6 +15,8 @@ import theme, { IShades } from '~/app/theme';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
+import { registerModuleFileManager } from '~/framework/util/fileHandler/services/fileManagerRegistry';
+import { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
 
 //  8888888888          888                                              d8888
@@ -100,6 +102,7 @@ interface IModuleConfigTracking {
 interface IModuleConfigStorage {
   storageName: string; // Name used for storage namespace. Needs to be manually specified to prevent erros if module name changes across time
 }
+
 // All information config available about a module
 export type IModuleConfig<Name extends string, State> = IModuleConfigBase<Name> &
   IModuleConfigRights &
@@ -109,13 +112,16 @@ export type IModuleConfig<Name extends string, State> = IModuleConfigBase<Name> 
     init: (params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) => void;
     isReady: boolean;
     assignValues: (values: IModuleConfigDeclaration<Name>) => void;
+    fileManager?: IModuleFileManagerConfig;
   };
 // All information config as needed to be declared.
 export type IModuleConfigDeclaration<Name extends string> = IModuleConfigBase<Name> &
   IModuleConfigDeclarationRights &
   Partial<IModuleConfigDeclarationRedux> &
   Partial<IModuleConfigTracking> &
-  IModuleConfigStorage;
+  IModuleConfigStorage & {
+    fileManager?: IModuleFileManagerConfig;
+  };
 export type IUnkownModuleConfig = IModuleConfig<string, unknown>;
 export type IAnyModuleConfig = IModuleConfig<string, any>;
 
@@ -150,12 +156,14 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
   trackingName: IModuleConfig<Name, State>['trackingName'];
 
   storageName: IModuleConfig<Name, State>['storageName'];
+  fileManager?: IModuleFileManagerConfig;
 
   constructor(decl: IModuleConfigDeclaration<Name>) {
     const {
       actionTypesPrefix,
       apiName,
       entcoreScope,
+      fileManager,
       hasRight,
       matchEntcoreApp,
       matchEntcoreWidget,
@@ -188,6 +196,8 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.trackingName = trackingName ?? toCamelCase(this.name, true);
     // Storage
     this.storageName = storageName;
+    // file manager
+    this.fileManager = fileManager;
     // Rest
     Object.assign(this, rest);
   }
@@ -203,6 +213,9 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
 
   assignValues(values: Partial<IModuleConfigDeclaration<any>>) {
     Object.assign(this, values);
+    if (values.fileManager !== undefined) {
+      this.fileManager = values.fileManager;
+    }
   }
 }
 
@@ -784,6 +797,7 @@ export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(mo
     const module = Array.isArray(moduleInc) ? moduleInc[0] : moduleInc;
     if (typeof module === 'object') {
       moduleMap[module.config.name] = module;
+      registerModuleFileManager(module.config.name, module.config.fileManager);
     } else if (typeof module === 'string') {
       // Do nothing
     } else {
@@ -793,10 +807,12 @@ export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(mo
     if (Array.isArray(moduleInc) && moduleInc[1]) {
       if (typeof module === 'object') {
         module.config.assignValues(moduleInc[1]); // Also MUTATES the config imported from moduleConfig.ts
+        registerModuleFileManager(module.config.name, module.config.fileManager);
       } else if (typeof module === 'string') {
         const modToUpdate = moduleMap[module]; // Module must have already loaded.
         if (modToUpdate) {
           modToUpdate.config.assignValues(moduleInc[1]); // Also MUTATES the config imported from moduleConfig.ts
+          registerModuleFileManager(modToUpdate.config.name, modToUpdate.config.fileManager);
         } else {
           // console.debug(`[ModuleTool] Cannot Update config of module "${module}".`);
         }
