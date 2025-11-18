@@ -19,6 +19,7 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initialWindowMetrics, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
@@ -29,15 +30,13 @@ import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
-import { getSession, IAuthState, selectors } from '../modules/auth/reducer';
+import { selectors } from '../modules/auth/reducer';
 
 import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
@@ -130,20 +129,20 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
   }) as ScreenListeners<NavigationState, EventMapBase>;
 
 const stackListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) => ({
-  transitionEnd: event => {
+  transitionEnd: () => {
     handleCloseModalActions(navigation);
   },
 });
 
 export function TabStack({ module }: { module: AnyNavigableModule }) {
-  const RootStack = getTypedRootStack();
   const authNavigation = useAuthNavigation();
+  const Stack = createNativeStackNavigator();
   return (
-    <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName} screenListeners={stackListeners}>
+    <Stack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName} screenListeners={stackListeners}>
       {ModuleScreens.all}
       {authNavigation}
       {modals}
-    </RootStack.Navigator>
+    </Stack.Navigator>
   );
 }
 
