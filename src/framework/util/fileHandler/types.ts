@@ -31,14 +31,6 @@ export interface FileManagerUsecase {
   multiple: boolean;
 }
 
-export interface FileManagerModule {
+export interface IModuleFileManagerConfig {
   [usecase: string]: FileManagerUsecase;
-}
-
-/**
- * Global configuration for all modules.
- * Each key = module name -> contains a set of usecases.
- */
-export interface FileManagerGlobalConfig {
-  [module: string]: FileManagerModule;
 }
