@@ -1,8 +1,14 @@
 diff --git a/node_modules/react-native-keyboard-avoiding-scroll-view/dist/KeyboardAvoidingContainer.js b/node_modules/react-native-keyboard-avoiding-scroll-view/dist/KeyboardAvoidingContainer.js
-index fadc258..fbb598b 100644
+index fadc258..20df0e6 100644
 --- a/node_modules/react-native-keyboard-avoiding-scroll-view/dist/KeyboardAvoidingContainer.js
 +++ b/node_modules/react-native-keyboard-avoiding-scroll-view/dist/KeyboardAvoidingContainer.js
-@@ -5,14 +5,22 @@ import { measureInWindow } from './utils/measureInWindow';
+@@ -1,18 +1,27 @@
+ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+-import { Dimensions, findNodeHandle, Keyboard, LayoutAnimation, Platform, SafeAreaView, StyleSheet, TextInput as NativeTextInput, View, } from 'react-native';
++import { Dimensions, findNodeHandle, Keyboard, LayoutAnimation, Platform, StyleSheet, TextInput as NativeTextInput, View, } from 'react-native';
++import { SafeAreaView } from 'react-native-safe-area-context';
+ import { genericMemo } from './utils/react';
+ import { measureInWindow } from './utils/measureInWindow';
  import { hijackTextInputEvents } from './utils/hijackTextInputEvents';
  const { height: SCREEN_HEIGHT } = Dimensions.get('window');
  const KEYBOARD_PADDING = 48;
@@ -28,7 +34,7 @@ index fadc258..fbb598b 100644
  export function useKeyboardAvoidingContainerProps({ stickyFooter, containerStyle, onScroll, contentContainerStyle: contentContainerStyleProp, style: styleProp, ...passthroughScrollViewProps }) {
      const scrollViewRef = useRef(null);
      const stickyFooterRef = useRef(null);
-@@ -111,7 +119,7 @@ export function useKeyboardAvoidingContainerProps({ stickyFooter, containerStyle
+@@ -111,7 +120,7 @@ export function useKeyboardAvoidingContainerProps({ stickyFooter, containerStyle
              if (keyboardLayoutRef.current)
                  return;
              const { endCoordinates: newKeyboardLayout } = event;

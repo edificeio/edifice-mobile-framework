@@ -27,7 +27,7 @@ index a3f8cba..e85d698 100644
      "react": "*",
      "react-native": "*"
 diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
-index 08c6a68..7eac59c 100644
+index 08c6a68..ea42810 100644
 --- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
 +++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
 @@ -1,52 +1,53 @@
@@ -60,7 +60,6 @@ index 08c6a68..7eac59c 100644
 +    Image,
 +    Modal,
      Platform,
-+    SafeAreaView,
      StyleSheet,
 +    Text,
 +    TextInput,
@@ -69,6 +68,7 @@ index 08c6a68..7eac59c 100644
  } from 'react-native';
  
  import { FlatList, ScrollView } from 'react-native-gesture-handler';
++import { SafeAreaView } from 'react-native-safe-area-context';
  
  const { height: WINDOW_HEIGHT } = Dimensions.get('window');
  

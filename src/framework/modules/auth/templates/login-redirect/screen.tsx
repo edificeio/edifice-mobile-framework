@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Platform, SafeAreaView, View } from 'react-native';
+import { Platform, View } from 'react-native';
+
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
 import { LoginRedirectScreenPrivateProps } from './types';

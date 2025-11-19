@@ -12,7 +12,6 @@ import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
-  SafeAreaView,
   ScrollView,
   ScrollViewProps,
   StyleSheet,
@@ -21,14 +20,15 @@ import {
 } from 'react-native';
 
 import styled from '@emotion/native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { UI_SIZES } from './constants';
 import { StatusBar } from './status-bar';
 import { ToastHandler } from './toast/component';
 
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import theme from '~/app/theme';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
