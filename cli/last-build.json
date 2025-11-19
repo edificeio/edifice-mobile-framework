@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-17 12:28:29",
-  "notes": "Merge remote-tracking branch 'origin/dev/1.15.5' into dev/1.16.0\nupdate(stack): yarn cache update\nrelease: 1.15.5-rc.4(1150504)\nrelease: 1.15.5-rc.3(1150503)\nrelease: 1.15.5-rc.2(1150502)\nrelease: 1.16.0-rc.2(1160010)",
-  "version": "1.16.0-peda.9(1160011)"
+  "last": "2025-11-18 18:59:06",
+  "notes": "chore: use one stack navigator for each tab\nfix: PEDAGO-3479 fix status bar on pdf viewer\nchore: yarn cache update\nfix: PEDAGO-3483, PEDAGO-3484, SUPPORT-2945 fix android status bar interfering with navigation\nrelease: 1.16.0-rc.3(1160012)",
+  "version": "1.16.0-rc.4(1160013)"
 }
