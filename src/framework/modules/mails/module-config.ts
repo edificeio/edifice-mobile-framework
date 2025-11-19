@@ -12,14 +12,14 @@ export default new NavigableModuleConfig<'mails', null>({
   entcoreScope: ['conversation', 'userbook', 'communication'],
   fileManager: {
     attachments: {
-      allow: ['image', 'document'],
+      allow: ['image', 'video', 'document'],
       multiple: true,
       sources: ['camera', 'gallery', 'documents'],
     },
 
     editor: {
       allow: ['image'],
-      multiple: true,
+      multiple: false,
       sources: ['camera', 'gallery'],
     },
   } as const,
