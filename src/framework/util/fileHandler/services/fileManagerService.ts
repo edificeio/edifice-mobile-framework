@@ -21,18 +21,41 @@ export class FileManager {
     const source: FileSource = options?.source ?? sources[0];
     const callbackOnce = options?.callbackOnce ?? false;
 
+    let files: LocalFile[] = [];
+
     switch (source) {
       case 'gallery':
-        return pickFromGallery({ callbackOnce, multiple }).then(callback);
-
+        files = await pickFromGallery({ callbackOnce, multiple });
+        break;
       case 'camera':
-        return pickFromCamera({ callbackOnce }).then(callback);
-
+        files = await pickFromCamera({ callbackOnce });
+        break;
       case 'documents':
-        return pickFromDocuments({ callbackOnce }).then(callback);
-
+        files = await pickFromDocuments({ callbackOnce });
+        break;
       default:
         throw new Error(`Unsupported source: ${source}`);
     }
+
+    const allowedPrefixes = config.allow.flatMap(t => {
+      switch (t) {
+        case 'image':
+          return ['image/'];
+        case 'video':
+          return ['video/'];
+        case 'audio':
+          return ['audio/'];
+        case 'pdf':
+          return ['application/pdf'];
+        case 'document':
+          return ['application/', 'text/'];
+        default:
+          return [];
+      }
+    });
+
+    files = files.filter(f => allowedPrefixes.some(prefix => f.filetype.startsWith(prefix)));
+
+    callback(files);
   }
 }
