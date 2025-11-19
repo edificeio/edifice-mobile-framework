@@ -14,7 +14,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { UploadFile, UploadStatus } from '~/framework/components/inputs/rich-text/form/types';
 import FlatList from '~/framework/components/list/flat-list';
-import { cameraAction, galleryAction, ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -23,7 +22,8 @@ import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
 import { Image } from '~/framework/util/media-deprecated';
 
 const headerTitleStyle = {
@@ -50,11 +50,10 @@ export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, 
   },
   headerTitleStyle,
 });
-
-const formatFile = (pic: ImagePicked) =>
+const formatFileForUpload = (lf: LocalFile) =>
   ({
-    error: undefined as string | undefined,
-    localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
+    error: undefined,
+    localFile: lf,
     status: UploadStatus.IDLE,
     workspaceID: undefined as string | undefined,
   }) as UploadFile;
@@ -107,7 +106,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   const [listReady, setListReady] = React.useState(0);
 
   // The list of files to import and their import status
-  const filesRef = React.useRef<UploadFile[]>(route.params.files ? route.params.files.map(formatFile) : []);
+  const filesRef = React.useRef<UploadFile[]>(route.params.files ? route.params.files.map(formatFileForUpload) : []);
 
   // The bucket of allowed simultaneous uploading processes.
   const uploadingTasksRef = React.useRef<Set<UploadFile>>(new Set());
@@ -124,7 +123,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   );
 
   const uploadFile = React.useCallback(
-    (file: UploadFile, index: number) => {
+    (file: UploadFile, _: number) => {
       if (file.status === UploadStatus.PENDING || file.status === UploadStatus.OK) return;
       if (!session) {
         updateFileStatusAndID({ file, status: UploadStatus.KO });
@@ -158,7 +157,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   }, [uploadFile]);
 
   const setFiles = React.useCallback(
-    (f: ReturnType<typeof formatFile>[]) => {
+    (f: ReturnType<typeof formatFileForUpload>[]) => {
       if (f.length === 0) {
         navigation.goBack();
         return;
@@ -243,22 +242,18 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
 
   React.useEffect(() => {
     setTimeout(() => {
-      if (route.params.source === 'galery') {
-        galleryAction({
-          callback: (pics: ImagePicked[]) => {
-            setFiles(pics.map(formatFile));
-          },
-          multiple: true,
-        }).action({ callbackOnce: true });
-      } else if (route.params.source === 'camera') {
-        cameraAction({
-          callback: (pics: ImagePicked[]) => {
-            setFiles(pics.map(formatFile));
-          },
-        }).action({ callbackOnce: true });
-      }
+      FileManager.pick(
+        route.params.module,
+        route.params.usecase,
+        files => {
+          const arr = Array.isArray(files) ? files : [files];
+
+          const formatted = arr.map(formatFileForUpload);
+          setFiles(formatted);
+        },
+        { callbackOnce: true, source: route?.params.source },
+      );
     }, 350);
-    // On purpose : only when component is mounted.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

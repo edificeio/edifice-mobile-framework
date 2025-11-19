@@ -29,7 +29,7 @@ const OPEN_FILE_IMPORT_TIMEOUT = 500;
 const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
   const headerHeight = useHeaderHeight();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const route = useRoute();
 
   //
@@ -173,9 +173,11 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
+          module: props.fileManagerModule,
           redirectTo: route,
-          source: 'galery',
+          source: 'gallery',
           uploadParams: props.uploadParams,
+          usecase: props.fileManagerUsecase,
         },
       });
     }, OPEN_FILE_IMPORT_TIMEOUT);
@@ -188,9 +190,11 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
+          module: props.fileManagerModule,
           redirectTo: route,
           source: 'camera',
           uploadParams: props.uploadParams,
+          usecase: props.fileManagerUsecase,
         },
       });
     }, OPEN_FILE_IMPORT_TIMEOUT);
