@@ -6,8 +6,8 @@ import moment from 'moment';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
 
 import { openDocument } from '../actions';
-import { Asset } from '../types';
 
+import { Asset } from '~/framework/util/fileHandler/types';
 import { assertPermissions } from '~/framework/util/permissions';
 
 namespace LocalFileNS {
