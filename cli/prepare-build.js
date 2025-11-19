@@ -146,7 +146,7 @@ try {
       .replaceAll("\\\"", "")
       .replaceAll("\"", "");
     lastContent.last = moment().format('YYYY-MM-DD HH:mm:ss');``
-    lastContent.track = versionNumber.replaceAll(".", "-");
+    lastContent.track = versionNumber;
     lastContent.version = fullVersion;
     console.info('=> Release Notes :');
     console.info(lastContent.notes);
