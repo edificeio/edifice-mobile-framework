@@ -3,8 +3,6 @@ import { Platform, View, ViewStyle } from 'react-native';
 
 import { MenuView } from '@react-native-menu/menu';
 
-import { MenuView } from '@react-native-menu/menu';
-
 import { MenuProps } from '~/framework/components/menus/types/types';
 
 const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {

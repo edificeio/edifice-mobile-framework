@@ -142,7 +142,9 @@ try {
     lastContent.notes = execSync(`git --no-pager log --pretty=format:\"%s\" --since=\"${lastContent.last}\"`)
       .toString()
       .slice(0, 4000)
-      .replaceAll("#", "");
+      .replaceAll("#", "")
+      .replaceAll("\"", "")
+      .replaceAll("\\\"", "");
     lastContent.last = moment().format('YYYY-MM-DD HH:mm:ss');
     lastContent.version = fullVersion;
     console.info('=> Release Notes :');
