@@ -5,6 +5,7 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 import { DocumentPickerResponse, pick, types } from '@react-native-documents/picker';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
+import RNFS from 'react-native-fs';
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker';
 
 import { I18n } from '~/app/i18n';
@@ -12,7 +13,6 @@ import toast from '~/framework/components/toast';
 import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
 import { Asset } from '~/framework/util/fileHandler/types';
 import { assertPermissions } from '~/framework/util/permissions';
-
 /* -------------------------------------------------------
  * Utilities
  * ------------------------------------------------------- */
@@ -65,17 +65,30 @@ export function pickFromGallery(
   options: {
     multiple?: boolean;
     callbackOnce?: boolean;
+    allowedTypes?: Array<'image' | 'video'>;
   } = {},
 ): Promise<LocalFile[]> {
-  const { callbackOnce = true, multiple = true } = options;
+  const { allowedTypes = ['image'], callbackOnce = true, multiple = true } = options;
 
   return wrapPicker(async callback => {
     try {
       await assertPermissions('galery.read');
 
+      console.debug('[Gallery] allowedTypes =', allowedTypes);
+
+      // MEDIA TYPE DECISION
+      const hasImage = allowedTypes.includes('image');
+      const hasVideo = allowedTypes.includes('video');
+
+      let mediaType: 'photo' | 'video' | 'any' = 'photo';
+      if (hasImage && hasVideo) mediaType = 'any';
+      else if (!hasImage && hasVideo) mediaType = 'video';
+
+      console.debug('[Gallery] Using mediaType =', mediaType);
+
       const pics = await ImagePicker.openPicker({
         maxFiles: 999,
-        mediaType: 'photo',
+        mediaType,
         multiple,
       });
 
@@ -85,25 +98,54 @@ export function pickFromGallery(
           )
         : [pics];
 
-      const assets = (await Promise.all(ordered.map(processImage))).filter(Boolean) as Asset[];
+      console.debug('[Gallery] Ordered items:', ordered);
 
-      const localFiles = assets.map(a => new LocalFile(a, { _needIOSReleaseSecureAccess: false }));
+      const assets = await Promise.all(
+        ordered.map(async item => {
+          // VIDEO
+          if (item.mime?.startsWith('video/')) {
+            console.debug('[Gallery] Video detected → copying locally:', item.path);
 
-      // Remove videos on Android / warning
-      if (Platform.OS === 'android') {
-        localFiles.forEach(file => {
-          if (file.filetype.startsWith('video/')) {
-            toast.showError(I18n.get('pickfile-error-filetype'));
+            const ext = item.mime.split('/')[1] || 'mp4';
+            const filename = `${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
+            const dest = `${RNFS.CachesDirectoryPath}/${filename}`;
+
+            try {
+              await RNFS.copyFile(item.path, dest);
+            } catch (err) {
+              console.error('[Gallery] Failed to copy video locally:', err);
+              return null;
+            }
+
+            return {
+              duration: item.duration,
+              fileName: filename,
+              fileSize: item.size,
+              height: item.height,
+              name: filename,
+              originalPath: item.path,
+              type: item.mime,
+              uri: 'file://' + dest,
+              width: item.width,
+            } as Asset;
           }
-        });
-      }
 
-      const images = localFiles.filter(f => !f.filetype.startsWith('video/'));
+          // IMAGE
+          return await processImage(item);
+        }),
+      );
 
-      if (callbackOnce) callback(images);
-      else for (const img of images) callback(img);
+      const validAssets = assets.filter(Boolean) as Asset[];
+      console.debug('[Gallery] Assets after processing:', validAssets);
+
+      const localFiles = validAssets.map(a => new LocalFile(a, { _needIOSReleaseSecureAccess: false }));
+      console.debug('[Gallery] LocalFile list:', localFiles);
+
+      if (callbackOnce) callback(localFiles);
+      else for (const file of localFiles) callback(file);
     } catch (e: any) {
       if (e?.code === 'E_PICKER_CANCELLED') {
+        console.debug('[Gallery] Picker cancelled');
         callback([]);
         return;
       }
