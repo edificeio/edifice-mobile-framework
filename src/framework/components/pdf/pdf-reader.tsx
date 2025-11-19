@@ -4,6 +4,8 @@ import { StyleSheet } from 'react-native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Pdf, { PdfProps } from 'react-native-pdf';
 
+import { PageView } from '../page';
+
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -68,14 +70,16 @@ export class PDFReader extends React.PureComponent<
     const { error } = this.state;
     if (error) return this.renderError();
     return (
-      <Pdf
-        source={{ cache: false, ...source }}
-        style={styles.pdf}
-        trustAllCerts={false}
-        onError={() => this.setState({ error: true })}
-        onPressLink={this.handlePressLink}
-        renderActivityIndicator={this.renderLoading}
-      />
+      <PageView>
+        <Pdf
+          source={{ cache: false, ...source }}
+          style={styles.pdf}
+          trustAllCerts={false}
+          onError={() => this.setState({ error: true })}
+          onPressLink={this.handlePressLink}
+          renderActivityIndicator={this.renderLoading}
+        />
+      </PageView>
     );
   }
 }
