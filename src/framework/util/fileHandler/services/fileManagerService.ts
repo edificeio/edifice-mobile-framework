@@ -21,22 +21,42 @@ export class FileManager {
     const source: FileSource = options?.source ?? sources[0];
     const callbackOnce = options?.callbackOnce ?? false;
 
+    console.debug(`[FileManager] Module=${moduleName} Usecase=${usecaseName}`);
+    console.debug(`[FileManager] allow=`, config.allow);
+    console.debug(`[FileManager] sources=`, config.sources);
+    console.debug(`[FileManager] chosen source=`, source);
+
     let files: LocalFile[] = [];
+
+    // allowedTypes for gallery only
+    const allowedTypesForGallery = config.allow.filter(t => ['image', 'video'].includes(t)) as Array<'image' | 'video'>;
+
+    console.debug('[FileManager] allowedTypesForGallery =', allowedTypesForGallery);
 
     switch (source) {
       case 'gallery':
-        files = await pickFromGallery({ callbackOnce, multiple });
+        files = await pickFromGallery({
+          allowedTypes: allowedTypesForGallery,
+          callbackOnce,
+          multiple,
+        });
         break;
+
       case 'camera':
         files = await pickFromCamera({ callbackOnce });
         break;
+
       case 'documents':
         files = await pickFromDocuments({ callbackOnce });
         break;
+
       default:
         throw new Error(`Unsupported source: ${source}`);
     }
 
+    /* ------------------------------------------------------
+     * MIME FILTERING
+     * ------------------------------------------------------ */
     const allowedPrefixes = config.allow.flatMap(t => {
       switch (t) {
         case 'image':
@@ -54,7 +74,17 @@ export class FileManager {
       }
     });
 
-    files = files.filter(f => allowedPrefixes.some(prefix => f.filetype.startsWith(prefix)));
+    console.debug('[FileManager] allowedPrefixes =', allowedPrefixes);
+
+    const before = files.length;
+    files = files.filter(f => allowedPrefixes.some(prefix => f.filetype?.startsWith(prefix)));
+    const removed = before - files.length;
+    // these logic(below/under) are here for info purpose only
+    if (removed > 0) {
+      console.warn(`[FileManager] Filtered out ${removed} files not allowed by config`);
+    }
+
+    console.debug('[FileManager] Final files returned:', files);
 
     callback(files);
   }
