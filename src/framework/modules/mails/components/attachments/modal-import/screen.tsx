@@ -12,14 +12,11 @@ import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
-import {
-  cameraAction,
-  documentAction,
-  DocumentPicked,
-  galleryAction,
-  ImagePicked,
-  imagePickedToLocalFile,
-} from '~/framework/components/menus/actions';
+import { DocumentPicked, ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
+// todo: import all these 3 below from one file in future commits
+import { cameraActionFm } from '~/framework/components/menus/actions/cameraAction';
+import { documentActionFm } from '~/framework/components/menus/actions/documentAction';
+import { galleryActionFm } from '~/framework/components/menus/actions/galleryAction';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { CaptionBoldText, SmallText } from '~/framework/components/text';
@@ -275,27 +272,35 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
 
   React.useEffect(() => {
     setTimeout(() => {
-      const commonCallback = (files: ImagePicked | ImagePicked[] | DocumentPicked | DocumentPicked[]) => {
+      const commonCallback = (files: LocalFile | LocalFile[]) => {
         const arr = Array.isArray(files) ? files : [files];
-        const formatted = arr.map(formatFile);
+
+        const formatted = arr.map(f => ({
+          error: undefined,
+          localFile: f,
+          status: UploadAttachmentStatus.IDLE,
+        })) as UploadAttachment[];
+
         setFiles(formatted);
       };
 
-      if (route.params.source === 'galery')
-        return galleryAction({
-          callback: commonCallback,
-          multiple: true,
-        }).action({ callbackOnce: true });
-      if (route.params.source === 'camera')
-        return cameraAction({
+      if (route.params.source === 'gallery') {
+        return galleryActionFm('mails', 'attachments', {
           callback: commonCallback,
         }).action({ callbackOnce: true });
-      // Last source is 'documents'
-      return documentAction({
+      }
+
+      if (route.params.source === 'camera') {
+        return cameraActionFm('mails', 'attachments', {
+          callback: commonCallback,
+        }).action({ callbackOnce: true });
+      }
+
+      // documents
+      return documentActionFm('mails', 'attachments', {
         callback: commonCallback,
       }).action();
     }, 350);
-    // On purpose : only when component is mounted.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

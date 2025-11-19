@@ -18,6 +18,7 @@ import Separator from '~/framework/components/separator';
 import toast from '~/framework/components/toast';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
+import { FileSource } from '~/framework/util/fileHandler/types';
 
 const MODAL_DISMISS_DELAY = 500;
 
@@ -25,14 +26,14 @@ export default function Attachments(props: AttachmentsProps) {
   const [attachments, setAttachments] = useState<IDistantFileWithId[]>([]);
 
   const bottomSheetModalRef = React.useRef<RNBottomSheetModal>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const route = useRoute();
 
   const removeAttachment = async attachment => {
     try {
       if (!props.removeAttachmentAction) return;
       await props.removeAttachmentAction(attachment);
-      setAttachments(attachments => attachments.filter(a => a.id !== attachment.id));
+      setAttachments(atts => atts.filter(a => a.id !== attachment.id));
     } catch (e) {
       console.error(e);
       toast.showError(I18n.get('attachment-removeerror'));
@@ -45,7 +46,7 @@ export default function Attachments(props: AttachmentsProps) {
     bottomSheetModalRef.current?.present();
   };
 
-  const navigateToAttachmentImport = (source: 'galery' | 'camera' | 'documents') => {
+  const navigateToAttachmentImport = (source: FileSource) => {
     bottomSheetModalRef.current?.dismiss();
     setTimeout(() => {
       // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
@@ -60,7 +61,7 @@ export default function Attachments(props: AttachmentsProps) {
     }, MODAL_DISMISS_DELAY);
   };
 
-  const handleChoosePics = () => navigateToAttachmentImport('galery');
+  const handleChoosePics = () => navigateToAttachmentImport('gallery');
   const handleTakePic = () => navigateToAttachmentImport('camera');
   const handleChooseDocs = () => navigateToAttachmentImport('documents');
 

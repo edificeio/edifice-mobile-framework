@@ -155,6 +155,8 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const renderPostInfos = () => {
     return (
       <RichEditorForm
+        fileManagerModule="blog"
+        fileManagerUsecase="editor"
         topForm={topForm}
         initialContentHtml=""
         uploadParams={
