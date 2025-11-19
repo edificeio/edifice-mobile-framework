@@ -23,6 +23,7 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
@@ -48,6 +49,7 @@ import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-co
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
+import communitiesStyles from '~/framework/modules/communities/styles';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { INotificationMedia } from '~/framework/util/notifications';
 import { accountApi, sessionApi } from '~/framework/util/transport';
@@ -415,6 +417,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   const { role, sentBy } = invitation || {};
   const { displayName: senderName, entId: senderId } = sentBy || {};
   const canShowInfoModal = role && senderId && senderName;
+  console.info({ canShowInfoModal, role, senderId, senderName });
 
   const infoModalRef = React.useRef<BottomSheetModalMethods>(null);
 
@@ -449,7 +452,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   const stickyElements = React.useMemo(
     () => [
       ...scrollElements,
-      <View style={styles.page}>
+      <View style={styles.tiles}>
         <HeadingXSText>{title}</HeadingXSText>
         <View style={styles.tilesCol}>
           <MembersTile communityId={communityId} navigation={navigation} membersId={membersId} totalMembers={totalMembers} />
@@ -616,5 +619,9 @@ export default (function CommunitiesHomeScreen({
     [data, navigation, route, session],
   );
 
-  return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;
+  return (
+    <PageView style={communitiesStyles.screen}>
+      <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />
+    </PageView>
+  );
 });

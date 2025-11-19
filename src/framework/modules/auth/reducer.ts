@@ -483,12 +483,12 @@ const reducer = createReducer(initialState, {
       : undefined;
     return tokens
       ? {
-        ...state,
-        accounts: {
-          ...state.accounts,
-          [id]: { ...state.accounts[id], tokens },
-        },
-      }
+          ...state,
+          accounts: {
+            ...state.accounts,
+            [id]: { ...state.accounts[id], tokens },
+          },
+        }
       : state;
   },
 
@@ -499,12 +499,12 @@ const reducer = createReducer(initialState, {
       : undefined;
     return tokens
       ? {
-        ...state,
-        accounts: {
-          ...state.accounts,
-          [id]: { ...state.accounts[id], tokens },
-        },
-      }
+          ...state,
+          accounts: {
+            ...state.accounts,
+            [id]: { ...state.accounts[id], tokens },
+          },
+        }
       : state;
   },
 
@@ -670,6 +670,13 @@ Reducers.register(moduleConfig.reducerName, reducer);
 
 export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as IAuthState;
 
+export const selectors = {
+  session: (state: IGlobalState) => {
+    const authState = getState(state);
+    return authState.connected ? (authState.accounts as AuthLoggedAccountMap)[authState.connected] : undefined;
+  },
+};
+
 /**
  * Get the current active session from Redux state.
  * This is the recommended way to get the session in a component.
@@ -678,8 +685,7 @@ export const getState = (state: IGlobalState) => state[moduleConfig.reducerName]
  * @returns the active session present in redux state. Can be undefined.
  */
 export function getSession() {
-  const state = getState(getStore().getState());
-  return state.connected ? (state.accounts as AuthLoggedAccountMap)[state.connected] : undefined;
+  return selectors.session(getStore().getState());
 }
 
 export function getPlatform() {
@@ -734,7 +740,9 @@ export function getAccountById(id?: keyof IAuthState['accounts']) {
   return id ? state.accounts[id] : undefined;
 }
 
-export function getDeviceId() { return getState(getStore().getState()).deviceInfo.uniqueId; }
+export function getDeviceId() {
+  return getState(getStore().getState()).deviceInfo.uniqueId;
+}
 
 /**
  * Gets the currently stored query param token. Do NOT refresh it if expired.

@@ -23,6 +23,7 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
+import { PageView } from '~/framework/components/page';
 import { SegmentedControlLoader } from '~/framework/components/segmented-control';
 import { TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -40,6 +41,7 @@ import {
   communitiesActionTypes,
   communitiesSelectors,
 } from '~/framework/modules/communities/store';
+import communitiesStyles from '~/framework/modules/communities/styles';
 import { ESTIMATED_LIST_SIZE, getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { accountApi } from '~/framework/util/transport';
@@ -216,7 +218,7 @@ export default (function CommunitiesListScreen({
   }, [loadData]);
 
   return (
-    <>
+    <PageView style={communitiesStyles.screen}>
       {isLoading ? (
         <View style={filtersStyles.filterBar}>
           <SegmentedControlLoader />
@@ -241,8 +243,8 @@ export default (function CommunitiesListScreen({
         ListEmptyComponent={
           <EmptyScreen
             svgImage="empty-communities-list"
-            title={I18n.get('communities-list-empty-title')}
-            text={I18n.get('communities-list-empty-text')}
+            title={I18n.get(pending ? 'communities-list-empty-title-pending' : 'communities-list-empty-title')}
+            text={I18n.get(pending ? 'communities-list-empty-text-pending' : 'communities-list-empty-text')}
             customStyle={styles.emptyScreen}
           />
         }
@@ -253,6 +255,6 @@ export default (function CommunitiesListScreen({
         scrollsToTop
       />
       <ListFiltersBottomSheet onValidate={applyFilters} ref={filtersListBottomSheetRef} selectedFilters={filters} />
-    </>
+    </PageView>
   );
 });

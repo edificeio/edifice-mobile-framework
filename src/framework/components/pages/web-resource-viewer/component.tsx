@@ -80,8 +80,6 @@ const useScreenUnlockOrientation = () => {
   return [orientationElement, orientation, toggleOrientation] as const;
 };
 
-const statusBarElement = Platform.OS === 'ios' ? <StatusBar animated hidden /> : null;
-
 const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<WebResourceViewerStoreProps>) => {
   const { fetchResource, injectSearchParams = {}, navigation, platform, queryParamToken, source } = props;
   const sourceObject: WebViewSourceUri = React.useMemo(() => {
@@ -171,7 +169,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
     () => (
       <PageView style={styles.page}>
         {orientationElement}
-        {statusBarElement}
+        <StatusBar animated hidden />
         {webviewElement}
         <IconButton
           style={styles.button}

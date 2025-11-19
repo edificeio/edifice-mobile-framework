@@ -223,13 +223,14 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     ).toLowerCase();
     const moduleAccessMap = {
       blog: 'Blog',
+      communities: 'Communities',
       competences: 'Competences',
-      conversation: 'Conversation',
       diary: 'Diary',
       edt: 'Edt',
       form: 'Formulaire',
       homework: 'Homeworks',
       homeworkAssistance: 'HomeworkAssistance',
+      mails: 'Conversation',
       mediacentre: 'Mediacentre',
       messagerie: 'Conversation', // duplicates conversation because of a tracking keyword issue
       nabook: 'Nabook',

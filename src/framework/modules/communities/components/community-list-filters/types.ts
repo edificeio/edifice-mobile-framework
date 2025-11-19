@@ -3,5 +3,5 @@ export interface CommunityListFilterProps {
   isShowingPending: boolean;
   onFiltersButtonPress?: () => void;
   onPendingPress?: (index: number | undefined) => void;
-  pendingInvitationsCount?: number;
+  pendingInvitationsCount: number;
 }

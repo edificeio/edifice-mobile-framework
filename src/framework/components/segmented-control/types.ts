@@ -1,5 +1,5 @@
 export interface SegmentedItemProps {
-  count: number;
+  count?: number;
   id: string;
   isActive: boolean;
   onPress: () => void;
