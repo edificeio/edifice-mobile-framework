@@ -64,7 +64,7 @@ export const computeNavBar = ({
     route,
     title: I18n.get('communities-list-title'),
   }),
-  headerRight: () => <NavBarAction icon="ui-user-join" />,
+  // headerRight: () => <NavBarAction icon="ui-user-join" />,
 });
 
 const emptyData = [];
