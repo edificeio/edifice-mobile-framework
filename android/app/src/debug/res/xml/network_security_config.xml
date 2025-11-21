@@ -36,6 +36,18 @@
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">extranet.ac-normandie.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">arena.ac-normandie.fr</domain>
+        <trust-anchors>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">ent.e-primo.fr</domain>
         <trust-anchors>
             <certificates src="@raw/harica_ca" />
@@ -60,13 +72,7 @@
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">extranet.ac-normandie.fr</domain>
-        <trust-anchors>
-            <certificates src="@raw/harica_ca"/>
-        </trust-anchors>
-    </domain-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">arena.ac-normandie.fr</domain>
+        <domain includeSubdomains="false">portail.ac-lyon.fr</domain>
         <trust-anchors>
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
