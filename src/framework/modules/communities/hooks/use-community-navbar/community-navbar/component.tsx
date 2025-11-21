@@ -8,8 +8,9 @@ import styles, { BANNER_BASE_HEIGHT } from './styles';
 import { CommunityNavbarProps } from './types';
 
 import theme from '~/app/theme';
-import http from '~/framework/util/http';
+import { toURISource } from '~/framework/util/media';
 import { Image } from '~/framework/util/media-deprecated';
+import { sessionImageSource } from '~/framework/util/transport';
 
 export const useCommunityBannerHeight = () => {
   const { top: statusBarHeight } = useSafeAreaInsets();
@@ -17,7 +18,8 @@ export const useCommunityBannerHeight = () => {
 };
 
 export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavbarProps>) {
-  const imageProps = React.useMemo(() => http.imagePropsForSession({ source: { uri: image } }), [image]);
+  const source = React.useMemo(() => (image !== undefined ? sessionImageSource(toURISource(image)) : undefined), [image]);
+  console.info('image', source);
   const height = useCommunityBannerHeight();
   const style = React.useMemo(
     () => [
@@ -32,7 +34,7 @@ export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavb
   );
   return (
     <View style={style}>
-      <Image style={StyleSheet.absoluteFill} {...imageProps} />
+      <Image style={StyleSheet.absoluteFill} source={source} />
     </View>
   );
 }
