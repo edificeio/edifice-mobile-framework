@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-18 18:59:06",
-  "notes": "chore: use one stack navigator for each tab\nfix: PEDAGO-3479 fix status bar on pdf viewer\nchore: yarn cache update\nfix: PEDAGO-3483, PEDAGO-3484, SUPPORT-2945 fix android status bar interfering with navigation\nrelease: 1.16.0-rc.3(1160012)",
-  "version": "1.16.0-rc.4(1160013)"
+  "last": "2025-11-21 18:09:26",
+  "notes": "chore: yarn cache update\nfix(wayf): COCO-4989, add portail.ac-lyon.fr to network_security_config.\nfix(android): PEDAGO-3513 mails was hacking hardware back event\nfix(communities): PEDAGO-3499 broken image source\nfix(communities): PEDAGO-3504 handle notifications correctly\nfix(wayf): COCO-4982, add arena.ac-normandie.fr to network_security_config.\nfix(communities): PEDAGO-3503 both filters was not handled correctly\nfix(communities): PEDAGO-3502 remove join action\nfix(chore):COCO-4708, theme adjstment\nMerge remote-tracking branch 'origin/dev/1.15.5' into dev/1.16.0\nrelease: 1.15.5-rc.5(1150505)\nrelease: 1.16.0-rc.4(1160013)",
+  "version": "1.16.0-rc.5(1160014)"
 }
