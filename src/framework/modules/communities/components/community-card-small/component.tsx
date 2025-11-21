@@ -11,7 +11,8 @@ import { BodyBoldText } from '~/framework/components/text';
 import CommunityInvitationBadge from '~/framework/modules/communities/components/community-invitation-badge';
 import CommunityMembersPill from '~/framework/modules/communities/components/community-members-pill/';
 import moduleConfig from '~/framework/modules/communities/module-config';
-import http from '~/framework/util/http';
+import { toURISource } from '~/framework/util/media';
+import { sessionImageSource } from '~/framework/util/transport';
 
 export const CommunityCardSmall = ({
   image,
@@ -21,7 +22,7 @@ export const CommunityCardSmall = ({
   onPress,
   title,
 }: Readonly<CommunityCardSmallProps>) => {
-  const imageProps = React.useMemo(() => (image ? http.imagePropsForSession({ source: { uri: image } }) : undefined), [image]);
+  const imageSource = React.useMemo(() => (image ? sessionImageSource(toURISource(image)) : undefined), [image]);
 
   const cardStyle = React.useMemo(
     () => [getCardStyle(invitationStatus), itemSeparatorStyle],
@@ -30,7 +31,7 @@ export const CommunityCardSmall = ({
 
   return (
     <TouchableOpacity style={cardStyle} onPress={onPress} testID="community-card-small">
-      <ModuleImage moduleConfig={moduleConfig} {...imageProps} style={styles.imgContainer} />
+      <ModuleImage moduleConfig={moduleConfig} source={imageSource} style={styles.imgContainer} />
       {membersCount && <CommunityMembersPill membersCount={membersCount} />}
       {invitationStatus === InvitationStatus.PENDING && <CommunityInvitationBadge />}
       <View style={styles.titleContainer}>
