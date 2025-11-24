@@ -47,10 +47,10 @@ export type BackendCourse = {
   groups: string[];
   roomLabels: string[];
   events: any[];
-  splitCourses: any | null;
+  splitCourses: any;
   exempted: boolean | null;
-  exemption: any | null;
-  incident: any | null;
+  exemption: any;
+  incident: any;
   punishments: any[];
   dayOfWeek: number;
   manual: boolean;
