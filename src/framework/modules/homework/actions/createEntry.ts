@@ -5,12 +5,11 @@
 import { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
 import homeworkConfig from '~/framework/modules/homework/module-config';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
 import { IDistantFile, IMAGE_MAX_DIMENSION, LocalFile } from '~/framework/util/fileHandler';
 import { createUUID } from '~/framework/util/string';
-import { signedFetch } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 import { asyncActionTypes } from '~/infra/redux/async';
 
 // ACTION LIST ------------------------------------------------------------------------------------
@@ -61,8 +60,6 @@ export function createHomeworkDiaryEntry(
   uploadedImages?: IDistantFile[],
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = assertSession();
-
     dispatch(homeworkCreateEntryRequested());
     try {
       const entryId = createUUID();
@@ -80,7 +77,7 @@ export function createHomeworkDiaryEntry(
         contentHtml = contentHtml + imagesHtml;
       }
 
-      await signedFetch(`${session?.platform.url}/homeworks/${diaryId}/entry`, {
+      await sessionFetch(`/homeworks/${diaryId}/entry`, {
         body: JSON.stringify({
           date: date?.format('YYYY-MM-DD'),
           entryid: entryId,
