@@ -15,7 +15,8 @@ import { BodyBoldText, BodyText, NestedBoldText, SmallText } from '~/framework/c
 import CommunityMembersPill from '~/framework/modules/communities/components/community-members-pill/';
 import { rolesI18n } from '~/framework/modules/communities/model';
 import moduleConfig from '~/framework/modules/communities/module-config';
-import http from '~/framework/util/http';
+import { toURISource } from '~/framework/util/media';
+import { sessionImageSource } from '~/framework/util/transport';
 
 export const CommunityCardLarge = ({
   image,
@@ -25,12 +26,12 @@ export const CommunityCardLarge = ({
   senderName,
   title,
 }: Readonly<CommunityCardLargeProps>) => {
-  const imageProps = React.useMemo(() => (image ? http.imagePropsForSession({ source: { uri: image } }) : undefined), [image]);
+  const imageSource = React.useMemo(() => (image ? sessionImageSource(toURISource(image)) : undefined), [image]);
 
   return (
     <View style={styles.card}>
       {membersCount && <CommunityMembersPill membersCount={membersCount} />}
-      <ModuleImage moduleConfig={moduleConfig} {...imageProps} style={styles.imgContainer} />
+      <ModuleImage moduleConfig={moduleConfig} source={imageSource} style={styles.imgContainer} />
       <View>
         <RNSvg style={styles.infoBackground}>
           <Defs>

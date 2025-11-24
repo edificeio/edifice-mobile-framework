@@ -1,12 +1,11 @@
-import { CommunityClient } from '@edifice.io/community-client-rest-rn';
+import { InvitationClient, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { CommonActions } from '@react-navigation/native';
 
 import moduleConfig from './module-config';
 import { communitiesRouteNames } from './navigation';
 
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
-import { getAsNamedResourceNotification, getAsResourceUriNotification } from '~/framework/util/notifications';
+import { getAsResourceIdNotification, getAsResourceUriNotification, IAbstractNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
   NotifHandlerThunkAction,
@@ -14,137 +13,144 @@ import {
 } from '~/framework/util/notifications/routing';
 import { sessionApi } from '~/framework/util/transport';
 
-const COMMUNITY_ID_REGEX = /\/community\/id\/([a-f0-9-]+)/i;
+const COMMUNITY_ID_REGEX = /\/communities\/id\/([a-f0-9-]+)/i;
 
-const handleCommunitiesInvitationNotificationAction: NotifHandlerThunkAction =
-  (notification, allowSwitchTab) => async (dispatch, getState) => {
-    try {
-      const communityNotif = getAsNamedResourceNotification(notification);
-      if (!communityNotif) return { managed: 0 };
+const extractCommunityInfoFromUrl = (notification: IAbstractNotification) => {
+  const communityNotif = getAsResourceUriNotification(notification);
+  if (!communityNotif) return {};
+  const communityIdStr = communityNotif.resource.uri.match(COMMUNITY_ID_REGEX)?.[1];
+  let communityIdInt = communityIdStr !== undefined ? parseInt(communityIdStr, 10) : undefined;
+  if (communityIdInt !== undefined && isNaN(communityIdInt)) communityIdInt = undefined;
+  return { communityId: communityIdInt };
+};
 
-      // If community invitation has already been accepted, we must navigate to the home screen of it.
-      const resource = await sessionApi(moduleConfig, CommunityClient)
-        .getCommunity(parseInt(communityNotif.resource.id, 10))
-        .catch(() => null);
+const extractCommunityInfoFromId = (notification: IAbstractNotification) => {
+  const communityNotif = getAsResourceIdNotification(notification);
+  if (!communityNotif) return {};
+  let communityIdInt = parseInt(communityNotif.resource.id, 10);
+  return { communityId: isNaN(communityIdInt) ? undefined : communityIdInt };
+};
 
-      if (resource !== null) {
-        handleNotificationNavigationAction(
-          CommonActions.navigate(
-            allowSwitchTab
-              ? {
-                  name: computeTabRouteName(moduleConfig.routeName),
-                  params: {
-                    initial: false,
-                    params: {
-                      communityId: resource.id,
-                    },
-                    screen: communitiesRouteNames.home,
-                  },
-                }
-              : {
-                  name: communitiesRouteNames.home,
-                  params: {
-                    communityId: resource.id,
-                  },
-                },
-          ),
-        );
-      } else {
-        handleNotificationNavigationAction(
-          CommonActions.navigate(
-            allowSwitchTab
-              ? {
-                  name: computeTabRouteName(moduleConfig.routeName),
-                  params: {
-                    initial: false,
-                    params: {
-                      pending: true,
-                    },
-                    screen: communitiesRouteNames.list,
-                  },
-                }
-              : {
-                  name: communitiesRouteNames.list,
-                  params: {
-                    pending: true,
-                  },
-                },
-          ),
-        );
-      }
-      return {
-        managed: 1,
-        trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
-      };
-    } catch {
-      return { managed: 0 };
-    }
-  };
+const communityTabNavigate = (allowSwitchTab: string | false, { name, params }: { name: string; params?: object }) => {
+  handleNotificationNavigationAction(
+    CommonActions.navigate(
+      allowSwitchTab
+        ? {
+            name: computeTabRouteName(moduleConfig.routeName),
+            params: {
+              initial: false,
+              params,
+              screen: name,
+            },
+          }
+        : {
+            name,
+            params,
+          },
+    ),
+  );
+};
 
-const handleCommunitiesNotificationAction: NotifHandlerThunkAction =
-  (notification, allowSwitchTab) => async (dispatch, getState) => {
-    try {
-      const communityNotif = getAsResourceUriNotification(notification);
-      if (!communityNotif) return { managed: 0 };
+const handleCommunityUrlNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab) => async () => {
+  try {
+    const { communityId } = extractCommunityInfoFromUrl(notification);
 
-      const communityUri = communityNotif?.resource.uri;
-      const communityId = communityUri?.match(COMMUNITY_ID_REGEX)?.[1];
-      if (!communityId) return { managed: 0 };
+    if (communityId === undefined) throw new Error('No communityId in notification data');
+    communityTabNavigate(allowSwitchTab, {
+      name: communitiesRouteNames.home,
+      params: {
+        communityId,
+      },
+    });
+    return {
+      managed: 1,
+      trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
+    };
+  } catch (e) {
+    console.error(e);
+    return { managed: 0 };
+  }
+};
 
-      const navAction = CommonActions.navigate(
-        allowSwitchTab
+const handleCommunityInvitationNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab) => async () => {
+  try {
+    const { communityId } = extractCommunityInfoFromId(notification);
+    let invitationId =
+      notification.backupData['sub-resource'] !== undefined ? parseInt(notification.backupData['sub-resource'], 10) : undefined;
+    if (invitationId !== undefined && isNaN(invitationId)) invitationId = undefined;
+
+    if (communityId === undefined || invitationId === undefined)
+      throw new Error('No communityId or invitationId in notification data');
+
+    // If community invitation has already been accepted, we must navigate to the home screen of it.
+    const isAccepted = await sessionApi(moduleConfig, InvitationClient)
+      .getInvitationById(invitationId)
+      .then(data => data.status === InvitationStatus.ACCEPTED || data.status === InvitationStatus.REQUEST_ACCEPTED)
+      .catch(() => undefined);
+
+    communityTabNavigate(
+      allowSwitchTab,
+      isAccepted === undefined
+        ? {
+            name: communitiesRouteNames.list,
+          }
+        : isAccepted
           ? {
-              name: computeTabRouteName(timelineModuleConfig.routeName),
-              params: {
-                initial: false,
-                params: {
-                  fromTimeline: false,
-                  notification: communityNotif,
-                  resourceId: communityId,
-                },
-                screen: communitiesRouteNames.home,
-              },
+              name: communitiesRouteNames.home,
+              params: { communityId, invitationId },
             }
           : {
-              name: communitiesRouteNames.home,
-              params: {
-                fromTimeline: true,
-                id: communityId,
-                notification: communityNotif,
-              },
+              name: communitiesRouteNames.list,
+              params: { pending: true },
             },
-      );
+    );
 
-      handleNotificationNavigationAction(navAction);
+    return {
+      managed: 1,
+      trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
+    };
+  } catch (e) {
+    console.error(e);
+    return { managed: 0 };
+  }
+};
 
-      return {
-        managed: 1,
-        trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
-      };
-    } catch {
-      return { managed: 0 };
-    }
-  };
+const handleCommunityIdNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab) => async () => {
+  try {
+    const { communityId } = extractCommunityInfoFromId(notification);
+    if (communityId === undefined) throw new Error('No communityId in notification data');
+
+    communityTabNavigate(allowSwitchTab, {
+      name: communitiesRouteNames.home,
+      params: {
+        communityId,
+      },
+    });
+
+    return {
+      managed: 1,
+      trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
+    };
+  } catch {
+    return { managed: 0 };
+  }
+};
 
 export default () =>
   registerNotifHandlers([
     {
-      'event-type': [
-        'ANNOUNCEMENT_NEW',
-        'COURSE_PAGE_NEW',
-        'DISCUSSION_MESSAGE_NEW',
-        'JOIN_REQUEST_NEW',
-        'JOIN_REQUEST_PENDING',
-        'JOIN_REQUEST_ACCEPTED',
-        'JOIN_REQUEST_REJECTED',
-        'RESOURCE_NEW',
-      ],
-      'notifHandlerAction': handleCommunitiesNotificationAction,
+      'event-type': ['JOIN_REQUEST_NEW', 'JOIN_REQUEST_PENDING', 'JOIN_REQUEST_ACCEPTED', 'JOIN_REQUEST_REJECTED'],
+      'notifHandlerAction': handleCommunityIdNotificationAction,
       'type': 'COMMUNITIES',
     },
     {
       'event-type': ['ADD_MEMBER'],
-      'notifHandlerAction': handleCommunitiesInvitationNotificationAction,
+      'notifHandlerAction': handleCommunityInvitationNotificationAction,
+      'type': 'COMMUNITIES',
+    },
+    {
+      'event-type': ['ANNOUNCEMENT_NEW', 'RESOURCE_NEW', 'COURSE_PAGE_NEW', 'DISCUSSION_MESSAGE_NEW'],
+      'notifHandlerAction': handleCommunityUrlNotificationAction,
       'type': 'COMMUNITIES',
     },
   ]);

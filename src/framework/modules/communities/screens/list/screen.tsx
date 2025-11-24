@@ -64,7 +64,7 @@ export const computeNavBar = ({
     route,
     title: I18n.get('communities-list-title'),
   }),
-  headerRight: () => <NavBarAction icon="ui-user-join" />,
+  // headerRight: () => <NavBarAction icon="ui-user-join" />,
 });
 
 const emptyData = [];
@@ -122,10 +122,13 @@ export default (function CommunitiesListScreen({
       };
 
       const [allRes, pendingRes, totalPending] = await Promise.all([
-        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({ ...baseQueryParams, communityType: filters[0] }),
         accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
           ...baseQueryParams,
-          communityType: filters[0],
+          communityType: filters.length === 1 ? filters[0] : undefined,
+        }),
+        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
+          ...baseQueryParams,
+          communityType: filters.length === 1 ? filters[0] : undefined,
           status: InvitationStatus.PENDING,
         }),
         accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
