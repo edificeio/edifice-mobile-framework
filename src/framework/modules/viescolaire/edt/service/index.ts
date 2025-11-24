@@ -8,13 +8,13 @@ import {
   IBackendSlotList,
   IBackendUserChildren,
 } from '~/framework/modules/viescolaire/edt/service/types';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 export const edtService = {
   classes: {
     get: async (session: AuthActiveAccount, structureId: string) => {
       const api = `/viescolaire/classes?idEtablissement=${structureId}&isEdt=true`;
-      const classes = (await fetchJSONWithCache(api)) as IBackendClassList;
+      const classes = await sessionFetch.json<IBackendClassList>(api);
       return classes.map(classAdapter);
     },
   },
@@ -37,10 +37,7 @@ export const edtService = {
         teacherIds: [],
         union: true,
       });
-      const courses = (await fetchJSONWithCache(api, {
-        body,
-        method: 'POST',
-      })) as IBackendCourseList;
+      const courses = await sessionFetch.json<IBackendCourseList>(api, { body, method: 'POST' });
       return courses.map(courseAdapter);
     },
     getFromTeacher: async (
@@ -60,24 +57,21 @@ export const edtService = {
         teacherIds: [teacherId],
         union: true,
       });
-      const courses = (await fetchJSONWithCache(api, {
-        body,
-        method: 'POST',
-      })) as IBackendCourseList;
+      const courses = await sessionFetch.json<IBackendCourseList>(api, { body, method: 'POST' });
       return courses.map(courseAdapter);
     },
   },
   slots: {
     get: async (session: AuthActiveAccount, structureId: string) => {
       const api = `/edt/time-slots?structureId=${structureId}`;
-      const slots = (await fetchJSONWithCache(api)) as IBackendSlotList;
+      const slots = await sessionFetch.json<IBackendSlotList>(api);
       return slots.map(slotAdapter);
     },
   },
   userChildren: {
     get: async (session: AuthActiveAccount) => {
       const api = '/edt/user/children';
-      const userChildren = (await fetchJSONWithCache(api)) as IBackendUserChildren;
+      const userChildren = await sessionFetch.json<IBackendUserChildren>(api);
       return userChildren.map(userChildAdapter);
     },
   },
