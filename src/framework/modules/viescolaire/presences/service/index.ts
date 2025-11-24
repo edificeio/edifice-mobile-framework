@@ -48,7 +48,7 @@ export const presencesService = {
       formData.append('start_at', startDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('end_at', endDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('description', description);
-      await sessionFetch.json(api, { body: formData, method: 'POST' });
+      await sessionFetch(api, { body: formData, method: 'POST' });
     },
     createWithFile: async (
       session: AuthActiveAccount,
@@ -190,7 +190,7 @@ export const presencesService = {
         student_id: studentId,
         type_id: type as number,
       });
-      await sessionFetch.json(api, { body, method: 'PUT' });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
   },
   eventReason: {
@@ -223,7 +223,7 @@ export const presencesService = {
         structure_id: structureId,
         student_id: studentId,
       });
-      await sessionFetch.json(api, { body, method: 'PUT' });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
   },
   eventReasons: {
