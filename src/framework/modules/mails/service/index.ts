@@ -105,7 +105,7 @@ export const mailsService = {
     delete: async (payload: { ids: string[] }) => {
       const api = '/conversation/delete';
       const body = JSON.stringify({ id: payload.ids });
-      await sessionFetch.json(api, { body, method: 'PUT' });
+      await sessionFetch(api, { body, method: 'PUT' });
     },
     forward: async (params: { id: string }) => {
       const api = `/conversation/draft?In-Reply-To=${params.id}`;
@@ -113,7 +113,7 @@ export const mailsService = {
       const data = await sessionFetch.json<{ id: string }>(api, { body: bodyJson, method: 'POST' });
 
       const api2 = `/conversation/message/${data.id}/forward/${params.id}`;
-      await sessionFetch.json(api2, { method: 'PUT' });
+      await sessionFetch(api2, { method: 'PUT' });
       return data.id;
     },
     get: async (params: { id: string; originalFormat?: boolean }) => {
@@ -135,7 +135,7 @@ export const mailsService = {
     },
     recall: async (params: { id: string }) => {
       const api = `/conversation/api/messages/${params.id}/recall`;
-      await sessionFetch.json(api, { method: 'POST' });
+      await sessionFetch(api, { method: 'POST' });
     },
     removeFromFolder: async (params: { ids: string[] }) => {
       params.ids.forEach(async id => {
@@ -163,9 +163,8 @@ export const mailsService = {
 
       const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
       const response = await sessionFetch.json(api, { body: bodyJson, method: 'POST' });
-      const jsonRsponse = await response;
 
-      return jsonRsponse;
+      return response;
     },
     sendToDraft: async (params: { inReplyTo?: string }, payload: MailsConversationPayload) => {
       const api = `/conversation/draft${params.inReplyTo ? `?In-Reply-To=${params.inReplyTo}` : ''}`;
