@@ -21,7 +21,7 @@ import {
 } from '~/framework/modules/zimbra/service/types';
 import { LocalFile } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 const BLANK_SUBJECT = '(Aucun objet)';
 
@@ -53,50 +53,34 @@ export const zimbraService = {
       if (inReplyTo) api += `?In-Reply-To=${inReplyTo}`;
       if (isForward) api += '&reply=F';
       const body = JSON.stringify(mail);
-      const response = (await fetchJSONWithCache(api, {
-        body,
-        method: 'POST',
-      })) as { id: string };
+      const response = await sessionFetch.json<{ id: string }>(api, { body, method: 'POST' });
       return response.id;
     },
     deleteAttachment: async (session: AuthActiveAccount, draftId: string, attachmentId: string) => {
       const api = `/zimbra/message/${draftId}/attachment/${attachmentId}`;
-      await fetchJSONWithCache(api, {
-        method: 'DELETE',
-      });
+      await sessionFetch.json(api, { method: 'DELETE' });
     },
     forward: async (session: AuthActiveAccount, draftId: string, forwardFrom: string) => {
       const api = `/zimbra/message/${draftId}/forward/${forwardFrom}`;
-      await fetchJSONWithCache(api, {
-        method: 'PUT',
-      });
+      await sessionFetch.json(api, { method: 'PUT' });
     },
     update: async (session: AuthActiveAccount, draftId: string, mail: Partial<IMail>) => {
       const api = `/zimbra/draft/${draftId}`;
       const body = JSON.stringify(mail);
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
   },
   folder: {
     create: async (session: AuthActiveAccount, name: string, parentId?: string) => {
       const api = '/zimbra/folder';
-      const body = JSON.stringify({
-        name,
-        parentId,
-      });
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'POST',
-      });
+      const body = JSON.stringify({ name, parentId });
+      await sessionFetch.json(api, { body, method: 'POST' });
     },
   },
   mail: {
     get: async (session: AuthActiveAccount, id: string, toggleRead: boolean = true) => {
       const api = `/zimbra/message/${id}?read=${toggleRead}`;
-      const mail = (await fetchJSONWithCache(api)) as IBackendMail;
+      const mail = await sessionFetch.json<IBackendMail>(api);
       if (!('id' in mail)) throw new Error();
       return mailAdapter(mail, session.platform.url);
     },
@@ -106,121 +90,85 @@ export const zimbraService = {
       if (inReplyTo) api += `&In-Reply-To=${inReplyTo}`;
       if (!mail.subject) mail.subject = BLANK_SUBJECT;
       const body = JSON.stringify(mail);
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'POST',
-      });
+      await sessionFetch.json(api, { body, method: 'POST' });
     },
   },
   mails: {
     delete: async (session: AuthActiveAccount, ids: string[]) => {
       const api = '/zimbra/delete';
-      const body = JSON.stringify({
-        id: ids,
-      });
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'DELETE',
-      });
+      const body = JSON.stringify({ id: ids });
+      await sessionFetch.json(api, { body, method: 'DELETE' });
     },
     listFromFolder: async (session: AuthActiveAccount, folder: string, page: number, search?: string) => {
       let api = `/zimbra/list?folder=${folder}&page=${page}&unread=false`;
       if (search) api += `&search=${search}`;
-      const mails = (await fetchJSONWithCache(api)) as IBackendMailList;
+      const mails = await sessionFetch.json<IBackendMailList>(api);
       return mails.map(mail => mailFromListAdapter(mail, session.platform.url));
     },
     moveToFolder: async (session: AuthActiveAccount, ids: string[], folderId: string) => {
       const api = `/zimbra/move/userfolder/${folderId}`;
-      const body = JSON.stringify({
-        id: ids,
-      });
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      const body = JSON.stringify({ id: ids });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
     moveToInbox: async (session: AuthActiveAccount, ids: string[]) => {
       const api = '/zimbra/move/root';
-      const body = JSON.stringify({
-        id: ids,
-      });
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      const body = JSON.stringify({ id: ids });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
     restore: async (session: AuthActiveAccount, ids: string[]) => {
       const api = '/zimbra/restore';
-      const body = JSON.stringify({
-        id: ids,
-      });
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      const body = JSON.stringify({ id: ids });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
     toggleUnread: async (session: AuthActiveAccount, ids: string[], unread: boolean) => {
       let api = '/zimbra/toggleUnread?';
       api += ids.reduce((s, id) => s + 'id=' + id + '&', '');
       api += `unread=${unread}`;
-      await fetchJSONWithCache(api, {
-        method: 'POST',
-      });
+      await sessionFetch.json(api, { method: 'POST' });
     },
     trash: async (session: AuthActiveAccount, ids: string[]) => {
       const api = '/zimbra/trash';
-      const body = JSON.stringify({
-        id: ids,
-      });
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      const body = JSON.stringify({ id: ids });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
   },
   quota: {
     get: async (session: AuthActiveAccount) => {
       const api = '/zimbra/quota';
-      const quota = (await fetchJSONWithCache(api)) as IBackendQuota;
+      const quota = await sessionFetch.json<IBackendQuota>(api);
       return quotaAdapter(quota);
     },
   },
   recipients: {
     search: async (session: AuthActiveAccount, query: string) => {
       const api = `/zimbra/visible?search=${query}`;
-      const recipientDirectory = (await fetchJSONWithCache(api)) as IBackendRecipientDirectory;
+      const recipientDirectory = await sessionFetch.json<IBackendRecipientDirectory>(api);
       return recipientDirectoryAdapter(recipientDirectory, query);
     },
   },
   rootFolders: {
     get: async (session: AuthActiveAccount) => {
       const api = '/zimbra/root-folder';
-      const folders = (await fetchJSONWithCache(api)) as IBackendFolderList;
+      const folders = await sessionFetch.json<IBackendFolderList>(api);
       return folders.map(folderAdapter);
     },
   },
   signature: {
     get: async (session: AuthActiveAccount) => {
       const api = '/zimbra/signature';
-      const signature = (await fetchJSONWithCache(api)) as IBackendSignature;
+      const signature = await sessionFetch.json<IBackendSignature>(api);
       return signatureAdapter(signature);
     },
     update: async (session: AuthActiveAccount, signature: string, useSignature: boolean) => {
       const api = '/zimbra/signature';
-      const body = JSON.stringify({
-        signature,
-        useSignature,
-      });
-      await fetchJSONWithCache(api, {
-        body,
-        method: 'PUT',
-      });
+      const body = JSON.stringify({ signature, useSignature });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
   },
   user: {
     get: async (session: AuthActiveAccount, id: string) => {
       const api = `/userbook/api/person?id=${id}&type=undefined`;
-      const data = (await fetchJSONWithCache(api)) as { result: IBackendUserList };
+      const data = await sessionFetch.json<{ result: IBackendUserList }>(api);
       return data.result[0];
     },
   },
