@@ -3,7 +3,7 @@ import { Moment } from 'moment';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { courseAdapter, homeworksAdapter, sessionAdapter } from '~/framework/modules/viescolaire/diary/service/adapters';
 import { IBackendCourseList, IBackendHomeworkList, IBackendSessionList } from '~/framework/modules/viescolaire/diary/service/types';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 export const diaryService = {
   courses: {
@@ -11,7 +11,7 @@ export const diaryService = {
       const start = startDate.format('YYYY-MM-DD');
       const end = endDate.format('YYYY-MM-DD');
       const api = `/viescolaire/common/courses/${structureId}/${start}/${end}?teacherId=${teacherId}&union=true`;
-      const courses = (await fetchJSONWithCache(api)) as IBackendCourseList;
+      const courses = await sessionFetch.json<IBackendCourseList>(api);
       return courses.map(courseAdapter);
     },
   },
@@ -19,7 +19,7 @@ export const diaryService = {
     updateProgress: async (session: AuthActiveAccount, homeworkId: number, isDone: boolean) => {
       const status = isDone ? 'done' : 'todo';
       const api = `/diary/homework/progress/${homeworkId}/${status}`;
-      await fetchJSONWithCache(api, {
+      await sessionFetch.json(api, {
         method: 'POST',
       });
       return { homeworkId, status };
@@ -28,24 +28,24 @@ export const diaryService = {
   homeworks: {
     get: async (session: AuthActiveAccount, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/homeworks/own/${startDate}/${endDate}/${structureId}`;
-      const homeworks = (await fetchJSONWithCache(api)) as IBackendHomeworkList;
+      const homeworks = await sessionFetch.json<IBackendHomeworkList>(api);
       return homeworksAdapter(homeworks);
     },
     getFromChild: async (session: AuthActiveAccount, childId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/homeworks/child/${startDate}/${endDate}/${childId}/${structureId}`;
-      const homeworks = (await fetchJSONWithCache(api)) as IBackendHomeworkList;
+      const homeworks = await sessionFetch.json<IBackendHomeworkList>(api);
       return homeworksAdapter(homeworks);
     },
   },
   sessions: {
     get: async (session: AuthActiveAccount, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/sessions/own/${startDate}/${endDate}/${structureId}`;
-      const sessions = (await fetchJSONWithCache(api)) as IBackendSessionList;
+      const sessions = await sessionFetch.json<IBackendSessionList>(api);
       return sessions.map(sessionAdapter);
     },
     getFromChild: async (session: AuthActiveAccount, childId: string, startDate: string, endDate: string) => {
       const api = `/diary/sessions/child/${startDate}/${endDate}/${childId}`;
-      const sessions = (await fetchJSONWithCache(api)) as IBackendSessionList;
+      const sessions = await sessionFetch.json<IBackendSessionList>(api);
       return sessions.map(sessionAdapter);
     },
   },
