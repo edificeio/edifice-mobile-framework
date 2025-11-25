@@ -60,7 +60,7 @@ export class FileManager {
         break;
 
       case 'documents':
-        files = await pickFromDocuments({ callbackOnce, selectMultiple: multiple });
+        files = await pickFromDocuments({ selectMultiple: multiple });
         break;
 
       default:
