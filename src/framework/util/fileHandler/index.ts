@@ -9,7 +9,7 @@ import DocumentPicker, { DocumentPickerResponse, pick, types } from '@react-nati
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
-import ImagePicker, { Image, ImageOrVideo, PossibleArray } from 'react-native-image-crop-picker';
+import ImagePicker, { Image, ImageOrVideo } from 'react-native-image-crop-picker';
 
 import { openDocument } from './actions';
 import { Asset } from './types';
@@ -151,8 +151,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       }
 
       Alert.alert(
-        I18n.get('document-permissionblocked-title'),
-        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('documents-read-permissionblocked-title'),
+        I18n.get('documents-read-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
       );
     }
   }
@@ -195,7 +195,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       }
       console.error('[GalleryPicker] Error:', e);
       toast.showError(
-        I18n.get('gallery-readpermissionblocked-text', {
+        I18n.get('gallery-read-permissionblocked-text', {
           appName: DeviceInfo.getApplicationName(),
         }),
       );
@@ -218,7 +218,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         await this.imageCallback([], callback, synchrone, callbackOnce);
         return;
       } else {
-        toast.showError(I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
+        toast.showError(I18n.get('gallery-read-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
       }
     }
   }
