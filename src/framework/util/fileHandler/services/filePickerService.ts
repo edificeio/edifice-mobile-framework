@@ -9,18 +9,12 @@ import RNFS from 'react-native-fs';
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker';
 
 import { I18n } from '~/app/i18n';
-import toast from '~/framework/components/toast';
 import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
 import { Asset } from '~/framework/util/fileHandler/types';
-import { assertPermissions } from '~/framework/util/permissions';
-/* -------------------------------------------------------
- * Utilities
- * ------------------------------------------------------- */
 
 const IMAGE_MAX_DIMENSION = 1440;
 const IMAGE_MAX_QUALITY = 80;
 
-/** Compress / resize selected image */
 async function processImage(pic: ImageOrVideo): Promise<Asset | undefined> {
   try {
     const response: Response = await ImageResizer.createResizedImage(
@@ -68,15 +62,13 @@ export function pickFromGallery(
     allowedTypes?: Array<'image' | 'video'>;
   } = {},
 ): Promise<LocalFile[]> {
-  const { allowedTypes = ['image'], callbackOnce = true, multiple = true } = options;
+  // remove callbackOnce from api signature becuause useless
+  const { allowedTypes = ['image'], multiple } = options;
 
   return wrapPicker(async callback => {
     try {
-      await assertPermissions('galery.read');
-
       console.debug('[Gallery] allowedTypes =', allowedTypes);
 
-      // MEDIA TYPE DECISION
       const hasImage = allowedTypes.includes('image');
       const hasVideo = allowedTypes.includes('video');
 
@@ -87,6 +79,7 @@ export function pickFromGallery(
       console.debug('[Gallery] Using mediaType =', mediaType);
 
       const pics = await ImagePicker.openPicker({
+        includeExif: false,
         maxFiles: 999,
         mediaType,
         multiple,
@@ -98,22 +91,18 @@ export function pickFromGallery(
           )
         : [pics];
 
-      console.debug('[Gallery] Ordered items:', ordered);
-
       const assets = await Promise.all(
         ordered.map(async item => {
-          // VIDEO
+          // -------- VIDEO --------
           if (item.mime?.startsWith('video/')) {
-            console.debug('[Gallery] Video detected → copying locally:', item.path);
-
             const ext = item.mime.split('/')[1] || 'mp4';
             const filename = `${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
             const dest = `${RNFS.CachesDirectoryPath}/${filename}`;
 
             try {
               await RNFS.copyFile(item.path, dest);
-            } catch (err) {
-              console.error('[Gallery] Failed to copy video locally:', err);
+            } catch (e) {
+              console.error('[Gallery] Failed to copy video', e);
               return null;
             }
 
@@ -130,32 +119,23 @@ export function pickFromGallery(
             } as Asset;
           }
 
-          // IMAGE
+          // -------- IMAGE --------
           return await processImage(item);
         }),
       );
 
       const validAssets = assets.filter(Boolean) as Asset[];
-      console.debug('[Gallery] Assets after processing:', validAssets);
-
       const localFiles = validAssets.map(a => new LocalFile(a, { _needIOSReleaseSecureAccess: false }));
-      console.debug('[Gallery] LocalFile list:', localFiles);
 
-      if (callbackOnce) callback(localFiles);
-      else for (const file of localFiles) callback(file);
+      callback(localFiles);
     } catch (e: any) {
       if (e?.code === 'E_PICKER_CANCELLED') {
-        console.debug('[Gallery] Picker cancelled');
         callback([]);
         return;
       }
 
       console.error('[GalleryPicker] Error:', e);
-      toast.showError(
-        I18n.get('gallery-readpermissionblocked-text', {
-          appName: DeviceInfo.getApplicationName(),
-        }),
-      );
+      callback([]);
     }
   });
 }
@@ -173,11 +153,9 @@ export function pickFromCamera(
 
   return wrapPicker(async callback => {
     try {
-      await assertPermissions('camera');
-
       const pic = await ImagePicker.openCamera({ useFrontCamera });
-      const asset = await processImage(pic);
 
+      const asset = await processImage(pic);
       if (!asset) {
         callback([]);
         return;
@@ -193,11 +171,8 @@ export function pickFromCamera(
         return;
       }
 
-      toast.showError(
-        I18n.get('gallery-readpermissionblocked-text', {
-          appName: DeviceInfo.getApplicationName(),
-        }),
-      );
+      console.error('[CameraPicker] Error:', e);
+      callback([]);
     }
   });
 }
@@ -205,17 +180,13 @@ export function pickFromCamera(
 /* -------------------------------------------------------
  * Documents Picker
  * ------------------------------------------------------- */
-export function pickFromDocuments(
-  options: {
-    callbackOnce?: boolean;
-  } = {},
-): Promise<LocalFile[]> {
-  const { callbackOnce = true } = options;
+export function pickFromDocuments(options: { callbackOnce?: boolean; selectMultiple?: boolean } = {}): Promise<LocalFile[]> {
+  const { callbackOnce = true, selectMultiple = true } = options;
 
   return wrapPicker(async callback => {
     try {
       const docs = await pick({
-        allowMultiSelection: true,
+        allowMultiSelection: selectMultiple,
         copyTo: 'cachesDirectory',
         presentationStyle: 'fullScreen',
         type: [types.allFiles],
@@ -229,7 +200,8 @@ export function pickFromDocuments(
       const files = docs.map((file: DocumentPickerResponse) => {
         const uri = Platform.select({
           android: getPath(file.uri),
-          default: decodeURI(file.uri.startsWith('file://') ? file.uri.replace('file://', '') : file.uri),
+          default: file.uri,
+          ios: decodeURI(file.uri.startsWith('file://') ? file.uri.replace('file://', '') : file.uri),
         })!;
 
         return new LocalFile(
@@ -248,17 +220,20 @@ export function pickFromDocuments(
     } catch (e: any) {
       console.error('[DOC_PICKER] Error:', e);
 
+      // User cancelled
       if (e?.code === 'CANCELLED' || e?.message?.includes('cancel')) {
         callback([]);
         return;
       }
 
       Alert.alert(
-        I18n.get('document-permissionblocked-title'),
-        I18n.get('document-permissionblocked-text', {
+        I18n.get('documents-read-permissionblocked-title'),
+        I18n.get('documents-read-permissionblocked-text', {
           appName: DeviceInfo.getApplicationName(),
         }),
       );
+
+      callback([]);
     }
   });
 }

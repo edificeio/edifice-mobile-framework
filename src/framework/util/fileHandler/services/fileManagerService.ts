@@ -3,6 +3,7 @@ import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
 import { getModuleFileManagerConfig } from '~/framework/util/fileHandler/services/fileManagerRegistry';
 import { pickFromCamera, pickFromDocuments, pickFromGallery } from '~/framework/util/fileHandler/services/filePickerService';
 import { FileSource } from '~/framework/util/fileHandler/types';
+import { assertPermissions } from '~/framework/util/permissions';
 
 export class FileManager {
   static async pick<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
@@ -28,10 +29,22 @@ export class FileManager {
 
     let files: LocalFile[] = [];
 
-    // allowedTypes for gallery only
-    const allowedTypesForGallery = config.allow.filter(t => ['image', 'video'].includes(t)) as Array<'image' | 'video'>;
+    try {
+      if (source === 'gallery') {
+        await assertPermissions('gallery.read');
+      } else if (source === 'camera') {
+        await assertPermissions('camera');
+      } else if (source === 'documents') {
+        await assertPermissions('documents.read');
+      }
+    } catch (err) {
+      console.warn('[FileManager] Permission denied:', err);
+      callback([]);
+      return;
+    }
 
-    console.debug('[FileManager] allowedTypesForGallery =', allowedTypesForGallery);
+    // allowedTypes for gallery
+    const allowedTypesForGallery = config.allow.filter(t => ['image', 'video'].includes(t)) as Array<'image' | 'video'>;
 
     switch (source) {
       case 'gallery':
@@ -47,16 +60,14 @@ export class FileManager {
         break;
 
       case 'documents':
-        files = await pickFromDocuments({ callbackOnce });
+        files = await pickFromDocuments({ callbackOnce, selectMultiple: multiple });
         break;
 
       default:
         throw new Error(`Unsupported source: ${source}`);
     }
 
-    /* ------------------------------------------------------
-     * MIME FILTERING
-     * ------------------------------------------------------ */
+    // MIME filtering
     const allowedPrefixes = config.allow.flatMap(t => {
       switch (t) {
         case 'image':
@@ -74,15 +85,7 @@ export class FileManager {
       }
     });
 
-    console.debug('[FileManager] allowedPrefixes =', allowedPrefixes);
-
-    const before = files.length;
     files = files.filter(f => allowedPrefixes.some(prefix => f.filetype?.startsWith(prefix)));
-    const removed = before - files.length;
-    // these logic(below/under) are here for info purpose only
-    if (removed > 0) {
-      console.warn(`[FileManager] Filtered out ${removed} files not allowed by config`);
-    }
 
     console.debug('[FileManager] Final files returned:', files);
 
