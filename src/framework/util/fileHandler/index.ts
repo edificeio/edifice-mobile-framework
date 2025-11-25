@@ -158,7 +158,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   }
   static async pickFromGallery(callback, multiple: boolean, synchrone?: boolean, callbackOnce?: boolean) {
     try {
-      await assertPermissions('galery.read');
+      await assertPermissions('gallery.read');
       console.debug('[Gallery] Opening picker...');
 
       const response = await launchImageLibrary({
