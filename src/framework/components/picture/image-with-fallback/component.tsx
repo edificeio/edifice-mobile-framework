@@ -39,31 +39,18 @@ const ImageLoader: React.FC<ImageProps> = imageProps => {
   );
 };
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ Fallback = DefaultImageFallback, onError, onLoad, ...props }) => {
-  // Restore loading state when source changes
+const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
+  Fallback = DefaultImageFallback,
+  onError,
+  onLoad,
+  onLoadStart,
+  onPartialLoad,
+  ...props
+}) => {
   const isSourceEmpty = !props.source && !props.src && !props.srcSet;
-
   const [imageLoadingState, setImageLoadingState] = React.useState<ImageLoadingState>(
     isSourceEmpty ? ImageLoadingState.Error : ImageLoadingState.Loading,
   );
-  const prevSrcSet = React.useRef(props.srcSet);
-  const prevSrc = React.useRef(props.src);
-  const prevSource = React.useRef(props.source);
-
-  React.useEffect(() => {
-    if (isSourceEmpty) {
-      setImageLoadingState(ImageLoadingState.Error);
-    } else if (prevSrcSet.current !== props.srcSet) {
-      setImageLoadingState(ImageLoadingState.Loading);
-      prevSrcSet.current = props.srcSet;
-    } else if (prevSrc.current !== props.src) {
-      setImageLoadingState(ImageLoadingState.Loading);
-      prevSrc.current = props.src;
-    } else if (prevSource.current !== props.source) {
-      setImageLoadingState(ImageLoadingState.Loading);
-      prevSource.current = props.source;
-    }
-  }, [isSourceEmpty, props.source, props.src, props.srcSet]);
 
   const onImageLoadSuccess = React.useCallback<NonNullable<ImageProps['onLoad']>>(
     e => {
@@ -79,6 +66,14 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ Fallback = Defaul
     },
     [onError],
   );
+  const onImageLoadStart = React.useCallback<NonNullable<ImageProps['onLoadStart']>>(() => {
+    setImageLoadingState(ImageLoadingState.Loading);
+    onLoadStart?.();
+  }, [onLoadStart]);
+  const onImagePartialLoad = React.useCallback<NonNullable<ImageProps['onPartialLoad']>>(() => {
+    setImageLoadingState(ImageLoadingState.Success);
+    onPartialLoad?.();
+  }, [onPartialLoad]);
 
   const FallbackComponent = React.useCallback(() => {
     return React.isValidElement<any>(Fallback) ? Fallback : <Fallback {...props} />;
@@ -87,10 +82,15 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ Fallback = Defaul
   return imageLoadingState === ImageLoadingState.Error ? (
     <FallbackComponent />
   ) : (
-    // @ts-expect-error // This is an issue with React about handling of bigint as children node
     <ErrorBoundary FallbackComponent={FallbackComponent}>
       <>
-        <Image {...props} onLoad={onImageLoadSuccess} onError={onImageLoadError} />
+        <Image
+          {...props}
+          onPartialLoad={onImagePartialLoad}
+          onLoadStart={onImageLoadStart}
+          onLoad={onImageLoadSuccess}
+          onError={onImageLoadError}
+        />
         {imageLoadingState === ImageLoadingState.Loading && <ImageLoader {...props} />}
       </>
     </ErrorBoundary>
