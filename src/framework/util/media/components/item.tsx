@@ -129,16 +129,12 @@ export function MediaItem({ media, onPress, style }: Readonly<MediaItemProps>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
   let itemElement: React.ReactElement;
   if (isImageMedia(media)) {
-    console.info('MEDIA IMAGE', media);
     itemElement = <MediaImageItem media={media} />;
   } else if (isVideoMedia(media)) {
-    console.info('MEDIA VIDEO', media);
     itemElement = <MediaVideoItem media={media} />;
   } else if (isFileMedia(media) || isLinkMedia(media)) {
-    console.info('MEDIA FILE/LINK', media);
     itemElement = <MediaNamedItem media={media} />;
   } else {
-    console.info('MEDIA UNKNOWN', media);
     itemElement = <MediaDefaultItem media={media} />;
   }
   return (

@@ -14,7 +14,8 @@ import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/com
 import { Picture, Svg } from '~/framework/components/picture';
 import ImageWithFallback from '~/framework/components/picture/image-with-fallback';
 import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
-import http from '~/framework/util/http';
+import { toURISource } from '~/framework/util/media';
+import { sessionImageSource } from '~/framework/util/transport';
 
 const isItemWorkspaceResource = (item: DocumentItem): item is DocumentItemWorkspace => item.appName === 'workspace';
 const isItemWorkspaceDocumentMedia = (item: DocumentItemWorkspace): item is DocumentItemWorkspaceDocumentMedia =>
@@ -72,7 +73,7 @@ export function DocumentListItem({
     () =>
       item.thumbnail ? (
         <View style={styles.documentThumbnail}>
-          <ImageWithFallback {...http.imagePropsForSession({ source: { uri: item.thumbnail } })} style={styles.documentImage} />
+          <ImageWithFallback source={sessionImageSource(toURISource(item.thumbnail))} style={styles.documentImage} />
           <View style={styles.documentThumbnailFloatingIconWrapper}>
             <DocumentListItemIcon size="small" item={item} />
           </View>
