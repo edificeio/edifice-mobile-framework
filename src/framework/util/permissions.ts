@@ -34,16 +34,21 @@ const ALL_PERMISSIONS = {
   },
 } as Record<string, PermissionDeclaration>;
 
+export type PermissionScenario = keyof typeof permissionScenarios;
+
+// ============================
+// ERROR WRAPPER
+// ============================
 export class PermissionError extends Error {
-  value: PermissionStatus;
+  scenario: PermissionScenario;
+  permission: Permission | 'unknown';
+  status: PermissionStatus;
 
-  permission: Permission;
-
-  constructor(message: string, permission: Permission, value: PermissionStatus) {
-    super(message);
-    this.name = 'PermissionError';
+  constructor(scenario: PermissionScenario, permission: Permission | 'unknown', status: PermissionStatus) {
+    super(`Permission "${scenario}" failed with status "${status}"`);
+    this.scenario = scenario;
     this.permission = permission;
-    this.value = value;
+    this.status = status;
   }
 }
 
@@ -72,15 +77,73 @@ export const assertPermissions = async (scenario: keyof typeof ALL_PERMISSIONS, 
     }
   }
 
-  const missingPermissions = res.filter(([_k, v]) => invalidPermissionResults.includes(v));
+  const status = await check(sce);
+  return [[sce, status]];
+};
 
-  if (!doNotThrow && missingPermissions.length > 0) {
-    throw new PermissionError(
-      `Assert permission scenario "${scenario} not granted. Permissions not granted : \n - ${missingPermissions.map(pair => `${pair[0]} -> ${pair[1]}`).join('\n - ')}"`,
-      missingPermissions[0][0],
-      missingPermissions[0][1],
-    );
+const BLOCKING_STATUSES: PermissionStatus[] = [RESULTS.BLOCKED, RESULTS.UNAVAILABLE];
+
+// ============================
+// UI MESSAGE
+// ============================
+const showDeniedUI = (scenario: PermissionScenario) => {
+  const appName = DeviceInfo.getApplicationName();
+  const key = `${scenario.replace('.', '-')}-permissionblocked-text`;
+  const text = I18n.get(key, { appName });
+  toast.showError(text);
+};
+
+// ============================
+// MAIN ASSERT PERMISSIONS
+// ============================
+export const assertPermissions = async (scenario: PermissionScenario, options: { silent?: boolean } = {}) => {
+  const needed = permissionScenarios[scenario];
+  if (needed === true) return [];
+
+  let res = await checkPerm(needed);
+
+  // Request all DENIED permissions
+  res = await Promise.all(
+    res.map(async ([perm, status]): Promise<[Permission, PermissionStatus]> => {
+      if (status !== RESULTS.DENIED) return [perm, status];
+
+      try {
+        const newStatus = await Promise.race([
+          request(perm),
+          new Promise<PermissionStatus>((_, reject) => setTimeout(() => reject(new Error('timeout')), 500)),
+        ]);
+
+        return isAndroid && newStatus === RESULTS.DENIED ? [perm, RESULTS.BLOCKED] : [perm, newStatus];
+      } catch {
+        return [perm, RESULTS.BLOCKED];
+      }
+    }),
+  );
+
+  // Android 14 PhotoPicker: always allowed
+  if (scenario === 'gallery.read' && isAndroid && api! >= ANDROID_14) {
+    return res;
+  }
+
+  const blocking = res.find(([, s]) => BLOCKING_STATUSES.includes(s));
+  const iosDenied = Platform.OS === 'ios' && res.some(([, s]) => s === RESULTS.DENIED);
+
+  if (blocking || iosDenied) {
+    if (!options.silent) showDeniedUI(scenario);
+    throw new PermissionError(scenario, blocking?.[0] ?? 'unknown', blocking?.[1] ?? 'denied');
   }
 
   return res;
+};
+
+// ============================
+// hasPermission
+// ============================
+export const hasPermission = async (scenario: PermissionScenario): Promise<boolean> => {
+  const needed = permissionScenarios[scenario];
+  if (needed === true) return true;
+
+  const res = await checkPerm(needed);
+
+  return res.every(([, status]) => status === RESULTS.GRANTED || status === RESULTS.LIMITED || status === RESULTS.DENIED);
 };
