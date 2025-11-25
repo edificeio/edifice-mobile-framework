@@ -15,13 +15,20 @@ namespace LocalFileNS {
   export type CustomUploadFileItem = Omit<UploadFileItem, 'name'>;
 }
 
+const isCustomItem = (file: any): file is LocalFileNS.CustomUploadFileItem =>
+  typeof file?.filepath === 'string' && typeof file?.filename === 'string';
+
+const isDocPicker = (file: any): file is DocumentPickerResponse => typeof file?.uri === 'string' && typeof file?.name === 'string';
+
+const isAsset = (file: any): file is Asset => typeof file?.uri === 'string' && typeof file?.fileName === 'string';
+
 export class LocalFile implements LocalFileNS.CustomUploadFileItem {
   filename: string;
   filepath: string;
   _filepathNative: string;
   filesize?: number;
   filetype: string;
-  nativeInfo: DocumentPickerResponse | Asset;
+  nativeInfo: DocumentPickerResponse | Asset | LocalFileNS.CustomUploadFileItem;
   _needIOSReleaseSecureAccess?: boolean;
 
   constructor(
@@ -30,17 +37,32 @@ export class LocalFile implements LocalFileNS.CustomUploadFileItem {
   ) {
     this._needIOSReleaseSecureAccess = opts._needIOSReleaseSecureAccess;
 
-    this.filename =
-      (file as LocalFileNS.CustomUploadFileItem).filename || (file as DocumentPickerResponse).name || (file as Asset).fileName!;
+    if (isCustomItem(file)) {
+      this.filename = file.filename;
+      this._filepathNative = file.filepath;
+      this.filetype = file.filetype;
+      this.filesize = undefined; // upload item has NO file size
+      this.nativeInfo = file;
+    } else if (isDocPicker(file)) {
+      this.filename = file.name!;
+      this._filepathNative = file.uri!;
+      this.filetype = file.type ?? 'application/octet-stream';
+      this.filesize = file.size ?? undefined;
+      this.nativeInfo = file;
+    } else if (isAsset(file)) {
+      if (!file.uri) throw new Error('Invalid Asset: missing uri');
+      if (!file.fileName) throw new Error('Invalid Asset: missing fileName');
 
-    this._filepathNative = (file as LocalFileNS.CustomUploadFileItem).filepath || (file as DocumentPickerResponse | Asset).uri!;
+      this.filename = file.fileName;
+      this._filepathNative = file.uri;
+      this.filetype = file.type ?? 'application/octet-stream';
+      this.filesize = file.fileSize ?? undefined;
+      this.nativeInfo = file;
+    } else {
+      throw new Error('LocalFile: Invalid file input');
+    }
 
     this.filepath = LocalFile.formatUrlForUpload(this._filepathNative);
-    this.filetype = (file as LocalFileNS.CustomUploadFileItem).filetype || (file as DocumentPickerResponse | Asset).type!;
-
-    this.filesize = (file as any).fileSize || (file as any).size || undefined;
-
-    this.nativeInfo = file as DocumentPickerResponse | Asset;
   }
 
   setExtension(ext: string) {
@@ -55,26 +77,33 @@ export class LocalFile implements LocalFileNS.CustomUploadFileItem {
   }
 
   releaseIfNeeded = () => {
-    this._needIOSReleaseSecureAccess && DocumentPicker.releaseSecureAccess([this._filepathNative]);
-    this._needIOSReleaseSecureAccess = false;
+    if (this._needIOSReleaseSecureAccess) {
+      DocumentPicker.releaseSecureAccess([this._filepathNative]);
+      this._needIOSReleaseSecureAccess = false;
+    }
   };
 
   static releaseLocalFiles(files: LocalFile[]) {
     files.forEach(f => f.releaseIfNeeded());
   }
 
-  static removeProtocol = (url: string) => url.replace(/^\w*?:\/\/(.+)/, '$1');
+  static removeProtocol(url: string): string {
+    return url.replace(/^\w*?:\/\/(.+)/, '$1');
+  }
 
-  static formatUrlForUpload = (url: string) =>
-    Platform.select({
+  static formatUrlForUpload(url: string): string {
+    const cleaned = Platform.select({
       default: decodeURI(LocalFile.removeProtocol(getPath(url))),
       ios: decodeURI(LocalFile.removeProtocol(url)),
-    }) || url;
+    });
+
+    return cleaned || url;
+  }
 
   async open() {
     if (!this.filepath.includes('://')) {
-      this.filepath = 'file://' + this.filepath;
-      this._filepathNative = 'file://' + this._filepathNative;
+      this.filepath = `file://${this.filepath}`;
+      this._filepathNative = `file://${this._filepathNative}`;
     }
     await openDocument(this as any);
   }
@@ -82,10 +111,9 @@ export class LocalFile implements LocalFileNS.CustomUploadFileItem {
   async moveToDownloadFolder() {
     await assertPermissions('documents.write');
     const destFolder = DownloadDirectoryPath;
-
-    const splitFilename = this.filename.split('.');
-    const ext = splitFilename.pop();
-    const destPath = `${destFolder}/` + `${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
+    const split = this.filename.split('.');
+    const ext = split.pop();
+    const destPath = `${destFolder}/${split.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
 
     await moveFile(this.filepath, destPath);
     this.setPath(destPath);
