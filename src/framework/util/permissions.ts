@@ -88,8 +88,14 @@ const BLOCKING_STATUSES: PermissionStatus[] = [RESULTS.BLOCKED, RESULTS.UNAVAILA
 // ============================
 const showDeniedUI = (scenario: PermissionScenario) => {
   const appName = DeviceInfo.getApplicationName();
-  const key = `${scenario.replace('.', '-')}-permissionblocked-text`;
-  const text = I18n.get(key, { appName });
+  const i18n = permissionI18nMap[scenario];
+
+  if (!i18n) {
+    console.warn(`[Permissions] Missing i18n entry for scenario "${scenario}"`);
+    return;
+  }
+
+  const text = I18n.get(i18n.text, { appName });
   toast.showError(text);
 };
 
