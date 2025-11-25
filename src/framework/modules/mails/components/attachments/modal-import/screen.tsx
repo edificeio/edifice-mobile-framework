@@ -295,8 +295,8 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
 
         gallery: () => galleryActionFm('mails', 'attachments', actionParams).action({ callbackOnce: true }),
       };
-      const action = actionsMap[source as keyof typeof actionsMap];
-      if (action) action();
+
+      actionsMap[source as keyof typeof actionsMap]?.();
     };
 
     const timer = setTimeout(() => {
