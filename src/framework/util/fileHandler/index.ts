@@ -151,8 +151,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       }
 
       Alert.alert(
-        I18n.get('document-permissionblocked-title'),
-        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('documents-read-permissionblocked-title'),
+        I18n.get('documents-read-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
       );
     }
   }
@@ -190,7 +190,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       }
       console.error('[GalleryPicker] Error:', e);
       toast.showError(
-        I18n.get('gallery-readpermissionblocked-text', {
+        I18n.get('gallery-read-permissionblocked-text', {
           appName: DeviceInfo.getApplicationName(),
         }),
       );
@@ -217,7 +217,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         await this.imageCallback([], callback, synchrone, callbackOnce);
         return;
       } else {
-        toast.showError(I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
+        toast.showError(I18n.get('gallery-read-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
       }
     }
   }
