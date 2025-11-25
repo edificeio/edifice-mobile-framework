@@ -16,7 +16,10 @@ import { UI_STYLES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
-import { cameraAction, documentAction, DocumentPicked, galleryAction, ImagePicked } from '~/framework/components/menus/actions';
+// todo aggregate those 3 in one import later
+import { cameraActionFm } from '~/framework/components/menus/actions/cameraAction';
+import { documentActionFm } from '~/framework/components/menus/actions/documentAction';
+import { galleryActionFm } from '~/framework/components/menus/actions/galleryAction';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -32,7 +35,6 @@ import { presencesService } from '~/framework/modules/viescolaire/presences/serv
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { Asset } from '~/framework/util/fileHandler/types';
 import { Trackers } from '~/framework/util/tracker';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
@@ -54,11 +56,11 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
   const [attachment, setAttachment] = React.useState<LocalFile | undefined>();
   const [isCreating, setCreating] = React.useState<boolean>(false);
 
-  const onPickAttachment = (att: ImagePicked | DocumentPicked | (ImagePicked | DocumentPicked)[]) => {
+  const onPickAttachment = (att: LocalFile | LocalFile[]) => {
     const files = Array.isArray(att) ? att : [att];
     // we uploading only one, but when needed we gonna iterate throught the liste
     const file = files[0];
-    setAttachment(new LocalFile(file as Asset | DocumentPicked, { _needIOSReleaseSecureAccess: false }));
+    setAttachment(file);
   };
 
   const createAbsence = async () => {
@@ -121,9 +123,9 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
           <BottomMenu
             title={I18n.get('presences-declareabsence-attachment')}
             actions={[
-              cameraAction({ callback: onPickAttachment }),
-              galleryAction({ callback: onPickAttachment }),
-              documentAction({ callback: onPickAttachment }),
+              cameraActionFm('presences', 'attachment', { callback: onPickAttachment }),
+              galleryActionFm('presences', 'attachment', { callback: onPickAttachment }),
+              documentActionFm('presences', 'attachment', { callback: onPickAttachment }),
             ]}>
             <View style={styles.filePickerContainer}>
               <Svg

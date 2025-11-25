@@ -13,7 +13,7 @@ export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   fileManager: {
     editor: {
       allow: ['image'],
-      multiple: false,
+      multiple: true,
       sources: ['camera', 'gallery'],
     },
   } as const,
