@@ -14,6 +14,16 @@ export const ANDROID_10 = 29;
 export const ANDROID_13 = 33;
 export const ANDROID_14 = 34;
 
+const resolveGalleryWritePermission = (apiLevel: number): SinglePermissionRequirement => {
+  if (apiLevel >= ANDROID_13) {
+    return PERMISSIONS.ANDROID.READ_MEDIA_IMAGES;
+  }
+  if (apiLevel < ANDROID_10) {
+    return PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE;
+  }
+  return true;
+};
+
 const permissionI18nMap: Record<PermissionScenario, { title: string; text: string }> = {
   'camera': {
     text: 'camera-permissionblocked-text',
@@ -69,12 +79,7 @@ const permissionScenarios: Record<string, PermissionRequirement> = {
   })!,
 
   'gallery.write': Platform.select<SinglePermissionRequirement>({
-    android:
-      DeviceInfo.getApiLevelSync() >= ANDROID_13
-        ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
-        : DeviceInfo.getApiLevelSync() < ANDROID_10
-          ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE
-          : true,
+    android: resolveGalleryWritePermission(api!),
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
   })!,
 };
