@@ -186,8 +186,8 @@ export function pickFromCamera(
 /* -------------------------------------------------------
  * Documents Picker
  * ------------------------------------------------------- */
-export function pickFromDocuments(options: { callbackOnce?: boolean; selectMultiple?: boolean } = {}): Promise<LocalFile[]> {
-  const { callbackOnce = true, selectMultiple = true } = options;
+export function pickFromDocuments(options: { selectMultiple?: boolean } = {}): Promise<LocalFile[]> {
+  const { selectMultiple = true } = options;
 
   return wrapPicker(async callback => {
     try {
@@ -221,8 +221,7 @@ export function pickFromDocuments(options: { callbackOnce?: boolean; selectMulti
         );
       });
 
-      if (callbackOnce) callback(files);
-      else for (const f of files) callback(f);
+      callback(files);
     } catch (e: any) {
       console.error('[DOC_PICKER] Error:', e);
 
