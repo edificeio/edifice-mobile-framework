@@ -2,7 +2,7 @@ import moment, { Moment } from 'moment';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { Exclusion, ModuleParameters, Resource, Service } from '~/framework/modules/homework-assistance/model';
-import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 interface BackendExclusion {
   start: string;
@@ -115,14 +115,16 @@ export const homeworkAssistanceService = {
   parameters: {
     get: async (session: AuthActiveAccount) => {
       const api = '/homework-assistance/parameters';
-      const parameters = (await fetchJSONWithCache(api)) as BackendParameters;
+      const parameters = await sessionFetch.json<BackendParameters>(api);
+
       return parametersAdapter(parameters);
     },
   },
   resources: {
     get: async (session: AuthActiveAccount) => {
       const api = '/homework-assistance/resources';
-      const resources = (await fetchJSONWithCache(api)) as BackendResource[];
+      const resources = await sessionFetch.json<BackendResource[]>(api);
+
       return resources.map(resourceAdapter);
     },
   },
@@ -157,17 +159,19 @@ export const homeworkAssistanceService = {
           service: service.value,
         },
       });
-      const response = (await signedFetchJson(`${session.platform.url}${api}`, {
+      const response = await sessionFetch.json<{ status: string }>(api, {
         body,
         method: 'POST',
-      })) as { status: string };
+      });
+
       return response;
     },
   },
   services: {
     get: async (session: AuthActiveAccount) => {
       const api = '/homework-assistance/services/all';
-      const services = (await fetchJSONWithCache(api)) as BackendServices;
+      const services = await sessionFetch.json<BackendServices>(api);
+
       return servicesAdapter(services);
     },
   },
