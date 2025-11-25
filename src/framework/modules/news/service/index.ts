@@ -17,42 +17,32 @@ export const newsService = {
     delete: async (infoId: number, commentId: number) => {
       const api = `/actualites/info/${infoId}/comment/${commentId}`;
 
-      return sessionFetch.json(api, {
-        method: 'DELETE',
-      });
+      return sessionFetch.json(api, { method: 'DELETE' });
     },
     get: async newsId => {
       const api = `/actualites/infos/${newsId}/comments`;
       const backendComments = await sessionFetch.json<BackendNewsCommentItem[]>(api);
 
-      return backendComments.map(comment => newsCommentItemAdapter(comment));
+      return backendComments.map(newsCommentItemAdapter);
     },
     post: async (infoId: number, comment: string) => {
       const api = `/actualites/info/${infoId}/comment`;
 
       const body = JSON.stringify({ comment, info_id: infoId });
-      return sessionFetch.json(api, {
-        body,
-        method: 'PUT',
-      });
+      return sessionFetch.json(api, { body, method: 'PUT' });
     },
     update: async (infoId: number, comment: string, commentId: number) => {
       const api = `/actualites/info/${infoId}/comment/${commentId}`;
 
       const body = JSON.stringify({ comment, info_id: infoId });
-      return sessionFetch.json(api, {
-        body,
-        method: 'PUT',
-      });
+      return sessionFetch.json(api, { body, method: 'PUT' });
     },
   },
   info: {
     delete: async (threadId: number, infoId: number) => {
       const api = `/actualites/thread/${threadId}/info/${infoId}`;
 
-      return sessionFetch.json(api, {
-        method: 'DELETE',
-      });
+      return sessionFetch.json(api, { method: 'DELETE' });
     },
     get: async infoId => {
       const api = `/actualites/info/${infoId}`;
@@ -69,7 +59,7 @@ export const newsService = {
         : `/actualites/list?page=${page}&pageSize=${PAGE_SIZE}${threadId ? '&threadId=' + threadId : ''}`;
       const backendNews = await sessionFetch.json<BackendNewsItem[]>(api);
 
-      return backendNews.map(newsItem => newsItemAdapter(newsItem));
+      return backendNews.map(newsItemAdapter);
     },
   },
   threads: {
@@ -77,7 +67,7 @@ export const newsService = {
       const api = `/actualites/threads/list`;
       const backendThreads = await sessionFetch.json<BackendNewsThreadItem[]>(api);
 
-      return backendThreads.map(thread => newsThreadItemAdapter(thread));
+      return backendThreads.map(newsThreadItemAdapter);
     },
   },
 };
