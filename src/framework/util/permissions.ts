@@ -6,9 +6,36 @@ import { check, checkMultiple, Permission, PERMISSIONS, PermissionStatus, reques
 import { I18n } from '~/app/i18n';
 import toast from '~/framework/components/toast';
 
+export type SinglePermissionRequirement = true | Permission;
+
+export type PermissionRequirement = SinglePermissionRequirement | Permission[];
+
 export const ANDROID_10 = 29;
 export const ANDROID_13 = 33;
 export const ANDROID_14 = 34;
+
+const permissionI18nMap: Record<PermissionScenario, { title: string; text: string }> = {
+  'camera': {
+    text: 'camera-permissionblocked-text',
+    title: 'camera-permissionblocked-title',
+  },
+  'documents.read': {
+    text: 'documents-read-permissionblocked-text',
+    title: 'documents-read-permissionblocked-title',
+  },
+  'documents.write': {
+    text: 'documents-write-permissionblocked-text',
+    title: 'documents-write-permissionblocked-title',
+  },
+  'gallery.read': {
+    text: 'gallery-read-permissionblocked-text',
+    title: 'gallery-read-permissionblocked-title',
+  },
+  'gallery.write': {
+    text: 'gallery-write-permissionblocked-text',
+    title: 'gallery-write-permissionblocked-title',
+  },
+} as const;
 
 // ============================
 // PERMISSION SCENARIOS
@@ -16,20 +43,20 @@ export const ANDROID_14 = 34;
 const isAndroid = Platform.OS === 'android';
 const api = isAndroid ? DeviceInfo.getApiLevelSync() : null;
 
-const permissionScenarios: Record<string, true | Permission | Permission[]> = {
-  'camera': Platform.select<true | Permission>({
+const permissionScenarios: Record<string, PermissionRequirement> = {
+  'camera': Platform.select<SinglePermissionRequirement>({
     android: PERMISSIONS.ANDROID.CAMERA,
     ios: PERMISSIONS.IOS.CAMERA,
   })!,
-  'documents.read': Platform.select<true | Permission>({
+  'documents.read': Platform.select<SinglePermissionRequirement>({
     android: api! >= ANDROID_10 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
     ios: true,
   })!,
-  'documents.write': Platform.select<true | Permission>({
+  'documents.write': Platform.select<SinglePermissionRequirement>({
     android: api! >= ANDROID_10 ? true : PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
     ios: true,
   })!,
-  'gallery.read': Platform.select<true | Permission | Permission[]>({
+  'gallery.read': Platform.select<PermissionRequirement>({
     android: (() => {
       if (api! >= ANDROID_14) return true;
       if (api! >= ANDROID_13) {
@@ -41,7 +68,7 @@ const permissionScenarios: Record<string, true | Permission | Permission[]> = {
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
 
-  'gallery.write': Platform.select<true | Permission>({
+  'gallery.write': Platform.select<SinglePermissionRequirement>({
     android:
       DeviceInfo.getApiLevelSync() >= ANDROID_13
         ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
@@ -73,7 +100,7 @@ export class PermissionError extends Error {
 // ============================
 // HELPERS
 // ============================
-const checkPerm = async (sce: true | Permission | Permission[]): Promise<[Permission, PermissionStatus][]> => {
+const checkPerm = async (sce: PermissionRequirement): Promise<[Permission, PermissionStatus][]> => {
   if (sce === true) return [];
 
   if (Array.isArray(sce)) {
@@ -92,8 +119,14 @@ const BLOCKING_STATUSES: PermissionStatus[] = [RESULTS.BLOCKED, RESULTS.UNAVAILA
 // ============================
 const showDeniedUI = (scenario: PermissionScenario) => {
   const appName = DeviceInfo.getApplicationName();
-  const key = `${scenario.replace('.', '-')}-permissionblocked-text`;
-  const text = I18n.get(key, { appName });
+  const i18n = permissionI18nMap[scenario];
+
+  if (!i18n) {
+    console.warn(`[Permissions] Missing i18n entry for scenario "${scenario}"`);
+    return;
+  }
+
+  const text = I18n.get(i18n.text, { appName });
   toast.showError(text);
 };
 

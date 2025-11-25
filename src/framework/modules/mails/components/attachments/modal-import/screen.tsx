@@ -271,11 +271,11 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
   }, [listReady, uploadAttachments]);
 
   React.useEffect(() => {
-    setTimeout(() => {
+    const triggerPicker = () => {
       const commonCallback = (files: LocalFile | LocalFile[]) => {
-        const arr = Array.isArray(files) ? files : [files];
+        const list = Array.isArray(files) ? files : [files];
 
-        const formatted = arr.map(f => ({
+        const formatted = list.map(f => ({
           error: undefined,
           localFile: f,
           status: UploadAttachmentStatus.IDLE,
@@ -284,23 +284,25 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
         setFiles(formatted);
       };
 
-      if (route.params.source === 'gallery') {
-        return galleryActionFm('mails', 'attachments', {
-          callback: commonCallback,
-        }).action({ callbackOnce: true });
-      }
+      const actionParams = { callback: commonCallback };
 
-      if (route.params.source === 'camera') {
-        return cameraActionFm('mails', 'attachments', {
-          callback: commonCallback,
-        }).action({ callbackOnce: true });
-      }
+      const actionsMap = {
+        camera: () => cameraActionFm('mails', 'attachments', actionParams).action({ callbackOnce: true }),
 
-      // documents
-      return documentActionFm('mails', 'attachments', {
-        callback: commonCallback,
-      }).action();
-    }, 350);
+        documents: () => documentActionFm('mails', 'attachments', actionParams).action(),
+
+        gallery: () => galleryActionFm('mails', 'attachments', actionParams).action({ callbackOnce: true }),
+      };
+
+      const source = route.params.source;
+      const action = actionsMap[source as keyof typeof actionsMap];
+
+      if (action) action();
+    };
+
+    const timer = setTimeout(triggerPicker, 350);
+    return () => clearTimeout(timer);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

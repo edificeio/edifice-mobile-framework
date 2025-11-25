@@ -84,11 +84,17 @@ export function pickFromGallery(
         mediaType,
         multiple,
       });
-
+      const compareByDate = (a: any, b: any) => {
+        if (!a.modificationDate) return -1;
+        if (!b.modificationDate) return 1;
+        return a.modificationDate.localeCompare(b.modificationDate);
+      };
       const ordered = Array.isArray(pics)
-        ? pics.sort((a, b) =>
-            !a.modificationDate ? -1 : !b.modificationDate ? 1 : a.modificationDate.localeCompare(b.modificationDate),
-          )
+        ? (() => {
+            const sorted = [...pics];
+            sorted.sort(compareByDate);
+            return sorted;
+          })()
         : [pics];
 
       const assets = await Promise.all(
