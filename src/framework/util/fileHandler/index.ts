@@ -170,10 +170,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       if (!response.assets || response.didCancel) {
         return;
       }
-      // Sort picked files by ascending modification date
-      response.assets.sort((a, b) => (!a.timestamp ? -1 : !b.timestamp ? 1 : a.timestamp.localeCompare(b.timestamp)));
       const pickedFiles = (await processImages(response.assets)).filter((f): f is Asset => f !== undefined);
-
       const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
 
       if (Platform.OS === 'android') {
