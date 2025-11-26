@@ -2,7 +2,7 @@ import config from './module-config';
 import { audienceService } from './service';
 import { AudienceParameter, AudienceReferer } from './types';
 
-import { blogUriCaptureFunction } from '~/framework/modules/blog/service/adapters';
+import { blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { Module } from '~/framework/util/moduleTool';
 
 export default new Module({ config, reducer: () => null });
