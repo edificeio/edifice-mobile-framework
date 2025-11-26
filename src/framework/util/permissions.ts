@@ -81,8 +81,7 @@ export const assertPermissions = async (scenario: keyof typeof ALL_PERMISSIONS, 
   return [[sce, status]];
 };
 
-const BLOCKING_STATUSES: PermissionStatus[] = [RESULTS.BLOCKED, RESULTS.UNAVAILABLE];
-
+const BLOCKING_STATUSES = new Set<PermissionStatus>([RESULTS.BLOCKED, RESULTS.UNAVAILABLE]);
 // ============================
 // UI MESSAGE
 // ============================
@@ -127,11 +126,11 @@ export const assertPermissions = async (scenario: PermissionScenario, options: {
   );
 
   // Android 14 PhotoPicker: always allowed
-  if (scenario === 'gallery.read' && isAndroid && api! >= ANDROID_14) {
+  if (scenario === 'gallery.read' && isAndroid && api >= ANDROID_14) {
     return res;
   }
 
-  const blocking = res.find(([, s]) => BLOCKING_STATUSES.includes(s));
+  const blocking = res.find(([, s]) => BLOCKING_STATUSES.has(s));
   const iosDenied = Platform.OS === 'ios' && res.some(([, s]) => s === RESULTS.DENIED);
 
   if (blocking || iosDenied) {
