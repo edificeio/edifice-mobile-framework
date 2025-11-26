@@ -51,7 +51,7 @@ const permissionI18nMap: Record<PermissionScenario, { title: string; text: strin
 // PERMISSION SCENARIOS
 // ============================
 const isAndroid = Platform.OS === 'android';
-const api = isAndroid ? DeviceInfo.getApiLevelSync() : null;
+const api = isAndroid ? DeviceInfo.getApiLevelSync() : 0;
 
 const permissionScenarios: Record<string, PermissionRequirement> = {
   'camera': Platform.select<SinglePermissionRequirement>({
@@ -59,27 +59,27 @@ const permissionScenarios: Record<string, PermissionRequirement> = {
     ios: PERMISSIONS.IOS.CAMERA,
   })!,
   'documents.read': Platform.select<SinglePermissionRequirement>({
-    android: api! >= ANDROID_10 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    android: api >= ANDROID_10 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
     ios: true,
   })!,
   'documents.write': Platform.select<SinglePermissionRequirement>({
-    android: api! >= ANDROID_10 ? true : PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+    android: api >= ANDROID_10 ? true : PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
     ios: true,
   })!,
   'gallery.read': Platform.select<PermissionRequirement>({
     android: (() => {
-      if (api! >= ANDROID_14) return true;
-      if (api! >= ANDROID_13) {
+      if (api >= ANDROID_14) return true;
+      if (api >= ANDROID_13) {
         return [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO];
       }
-      if (api! >= ANDROID_10) return true;
+      if (api >= ANDROID_10) return true;
       return PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
     })(),
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
 
   'gallery.write': Platform.select<SinglePermissionRequirement>({
-    android: resolveGalleryWritePermission(api!),
+    android: resolveGalleryWritePermission(api),
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
   })!,
 };
@@ -117,8 +117,7 @@ const checkPerm = async (sce: PermissionRequirement): Promise<[Permission, Permi
   return [[sce, status]];
 };
 
-const BLOCKING_STATUSES: PermissionStatus[] = [RESULTS.BLOCKED, RESULTS.UNAVAILABLE];
-
+const BLOCKING_STATUSES = new Set<PermissionStatus>([RESULTS.BLOCKED, RESULTS.UNAVAILABLE]);
 // ============================
 // UI MESSAGE
 // ============================
@@ -163,11 +162,11 @@ export const assertPermissions = async (scenario: PermissionScenario, options: {
   );
 
   // Android 14 PhotoPicker: always allowed
-  if (scenario === 'gallery.read' && isAndroid && api! >= ANDROID_14) {
+  if (scenario === 'gallery.read' && isAndroid && api >= ANDROID_14) {
     return res;
   }
 
-  const blocking = res.find(([, s]) => BLOCKING_STATUSES.includes(s));
+  const blocking = res.find(([, s]) => BLOCKING_STATUSES.has(s));
   const iosDenied = Platform.OS === 'ios' && res.some(([, s]) => s === RESULTS.DENIED);
 
   if (blocking || iosDenied) {
