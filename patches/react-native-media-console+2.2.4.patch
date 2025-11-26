@@ -25,13 +25,13 @@ index baa4193..15e6cb9 100644
 +    posterElement?: ReactElement;
  }
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index ada0347..b983069 100644
+index ada0347..a73fdba 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 @@ -1,5 +1,5 @@
 -import React, {useCallback, useState, useEffect, useRef} from 'react';
 -import {View} from 'react-native';
-+import React, { useCallback, useEffect, useRef, useState } from 'react';
++import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 +import { View } from 'react-native';
  import Video, {
    OnLoadData,
@@ -72,15 +72,47 @@ index ada0347..b983069 100644
    } = props;
  
    const mounted = useRef(false);
-@@ -107,6 +108,7 @@ const AnimatedVideoPlayer = (
+@@ -107,8 +108,9 @@ const AnimatedVideoPlayer = (
    const [currentTime, setCurrentTime] = useState(0);
    const [error, setError] = useState(false);
    const [duration, setDuration] = useState(0);
 +  const [_isEnd, setIsEnd] = useState<boolean>(false);
  
-   const videoRef = props.videoRef || _videoRef;
+-  const videoRef = props.videoRef || _videoRef;
++const internalVideoRef = _videoRef;
  
-@@ -124,10 +126,12 @@ const AnimatedVideoPlayer = (
+   const toggleFullscreen = () => setIsFullscreen((prevState) => !prevState);
+   const toggleControls = () =>
+@@ -118,16 +120,41 @@ const AnimatedVideoPlayer = (
+     setPaused((prevState) => !prevState);
+   };
+ 
++  useImperativeHandle(
++  props.videoRef,
++  () => ({
++    seek: (time: number, tolerance?: number) => internalVideoRef.current?.seek(time, tolerance),
++    resume: () => internalVideoRef.current?.resume(),
++    pause: () => internalVideoRef.current?.pause(),
++    presentFullscreenPlayer: () => internalVideoRef.current?.presentFullscreenPlayer(),
++    dismissFullscreenPlayer: () => internalVideoRef.current?.dismissFullscreenPlayer(),
++    restoreUserInterfaceForPictureInPictureStopCompleted: (restore: boolean) => internalVideoRef.current?.restoreUserInterfaceForPictureInPictureStopCompleted(restore),
++    save: (options: object) => internalVideoRef.current?.save(options),
++    setVolume: (volume: number) => internalVideoRef.current?.setVolume(volume),
++    getCurrentPosition: () => internalVideoRef.current?.getCurrentPosition() || Promise.resolve(0),
++    setFullScreen: (fullScreen: boolean) => internalVideoRef.current?.setFullScreen(fullScreen),
++    setSource: (source?: any) => internalVideoRef.current?.setSource(source),
++    enterPictureInPicture: () => internalVideoRef.current?.enterPictureInPicture(),
++    exitPictureInPicture: () => internalVideoRef.current?.exitPictureInPicture(),
++    toggleControls,
++  }),
++  [toggleControls],
++);
++
++const videoRef = props.videoRef || internalVideoRef;
++
+   const styles = {
+     videoStyle,
+     containerStyle: containerStyle,
    };
  
    const _onSeek = (obj: OnSeekData) => {
@@ -96,7 +128,7 @@ index ada0347..b983069 100644
  
      if (typeof onSeek === 'function') {
        onSeek(obj);
-@@ -138,6 +142,7 @@ const AnimatedVideoPlayer = (
+@@ -138,6 +165,7 @@ const AnimatedVideoPlayer = (
      if (currentTime < duration) {
        setCurrentTime(duration);
        setPaused(!props.repeat);
@@ -104,7 +136,14 @@ index ada0347..b983069 100644
  
        if (showOnEnd) {
          setShowControls(!props.repeat);
-@@ -410,9 +415,10 @@ const AnimatedVideoPlayer = (
+@@ -404,15 +432,16 @@ const AnimatedVideoPlayer = (
+         <Video
+           {...props}
+           {...events}
+-          ref={videoRef || _videoRef}
++          ref={internalVideoRef}          
+           resizeMode={_resizeMode}
+           volume={_volume}
            paused={_paused}
            muted={_muted}
            rate={rate}
@@ -116,7 +155,7 @@ index ada0347..b983069 100644
          {loading ? (
            <Loader />
          ) : (
-@@ -432,19 +438,32 @@ const AnimatedVideoPlayer = (
+@@ -432,19 +461,32 @@ const AnimatedVideoPlayer = (
                showControls={showControls}
              />
              <PlayPause

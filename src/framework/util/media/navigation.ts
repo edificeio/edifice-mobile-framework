@@ -45,7 +45,11 @@ const mediaIntents = [
       return isImageMedia(media) || (isAttachmentMedia(media) && mimeCompare(media.mime, 'image/*') === 0);
     },
     exec(media, audience) {
-      openCarousel({ data: [{ ...media, src: toURISource(media.src), type: 'image' }], referer: audience, startIndex: 0 });
+      openCarousel({
+        data: [{ ...media, src: toURISource(media.src), type: 'image' }],
+        referer: audience,
+        startIndex: 0,
+      });
     },
     icon(_) {
       return theme.media.image;

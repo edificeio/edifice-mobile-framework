@@ -1,5 +1,9 @@
 import type { ImageURISource } from 'react-native';
 
+import { ReactVideoSource } from 'react-native-video';
+
+import { mimeCompare } from './mime';
+
 import type { EntAppNameOrSynonym } from '~/app/intents';
 
 export enum MediaType {
@@ -18,7 +22,7 @@ export enum MediaType {
 
 export interface Media {
   type: MediaType;
-  src: URL | Pick<ImageURISource, 'uri'> | string;
+  src: URL | Pick<ImageURISource, 'uri'> | string | ReactVideoSource;
 }
 
 export interface FileMedia extends Media {
@@ -57,6 +61,9 @@ export const isAudioMedia = (media: Media): media is AudioMedia => media.type ==
 // }
 
 // export const isDocumentMedia = (media: Media): media is DocumentMedia => media.type === MediaType.DOCUMENT;
+export const isAudioContent = (item: FileMedia) => {
+  return isAudioMedia(item) || (isAttachmentMedia(item) && mimeCompare(item.mime, 'audio/*') === 0);
+};
 
 export interface ImageMedia extends FileMedia {
   type: MediaType.IMAGE;
@@ -68,6 +75,14 @@ export interface VideoMedia extends PlayableMedia {
   type: MediaType.VIDEO;
   ratio?: number;
 }
+
+export const isImageContent = (item: FileMedia) => {
+  return isImageMedia(item) || (isAttachmentMedia(item) && mimeCompare(item.mime, 'image/*') === 0);
+};
+
+export const isVideoContent = (item: FileMedia) => {
+  return isVideoMedia(item) || (isAttachmentMedia(item) && mimeCompare(item.mime, 'video/*') === 0);
+};
 
 export const isVideoMedia = (media: Media): media is VideoMedia => media.type === MediaType.VIDEO;
 
@@ -90,5 +105,9 @@ export interface ResourceMedia extends Media {
   title: string;
   thumbnail?: Media['src'];
 }
+
+export const isPdfContent = (item: FileMedia) => {
+  return isAttachmentMedia(item) && mimeCompare(item.mime, 'application/pdf') === 0;
+};
 
 export const isResourceMedia = (media: Media): media is ResourceMedia => media.type === MediaType.RESOURCE;
