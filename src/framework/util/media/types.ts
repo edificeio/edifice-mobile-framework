@@ -1,5 +1,7 @@
 import type { ImageURISource } from 'react-native';
 
+import { ReactVideoSource } from 'react-native-video';
+
 import type { EntAppNameOrSynonym } from '~/app/intents';
 
 export enum MediaType {
@@ -18,7 +20,7 @@ export enum MediaType {
 
 export interface Media {
   type: MediaType;
-  src: URL | Pick<ImageURISource, 'uri'> | string;
+  src: URL | Pick<ImageURISource, 'uri'> | string | ReactVideoSource;
 }
 
 export interface FileMedia extends Media {
