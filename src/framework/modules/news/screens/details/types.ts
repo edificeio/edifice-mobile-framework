@@ -10,6 +10,13 @@ export interface NewsDetailsScreenDataProps {
   session?: AuthLoggedAccount;
 }
 
+export interface CommentFieldRef {
+  clearCommentField: () => void;
+  isCommentFieldFocused: () => boolean | undefined;
+  isCommentUnchanged: () => boolean;
+  setIsEditingFalse: () => void;
+}
+
 export interface NewsDetailsScreenEventProps {
   handleGetNewsItem(infoId: number): Promise<NewsItemDetails>;
   handleGetNewsItemComments(newsItemId: number): Promise<NewsCommentItem[]>;
