@@ -4,8 +4,8 @@ import { UI_SIZES } from '../constants';
 
 const styles = StyleSheet.create({
   carouselContainer: { flex: 1 },
-  container: { backgroundColor: 'pink', flex: 1, flexDirection: 'column' },
-  item: { backgroundColor: 'lightgreen', flex: 1 },
+  container: { backgroundColor: 'black', flex: 1, flexDirection: 'column' },
+  item: { flex: 1 },
   loadingContainer: {
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
