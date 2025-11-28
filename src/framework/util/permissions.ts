@@ -25,6 +25,14 @@ const resolveGalleryWritePermission = (apiLevel: number): SinglePermissionRequir
 };
 
 const permissionI18nMap: Record<PermissionScenario, { title: string; text: string }> = {
+  'audio.read': {
+    text: 'audio-read-permissionblocked-text',
+    title: 'audio-read-permissionblocked-title',
+  },
+  // 'audio.record': {
+  //   text: 'audio-record-permissionblocked-text',
+  //   title: 'audio-record-permissionblocked-title',
+  // },
   'camera': {
     text: 'camera-permissionblocked-text',
     title: 'camera-permissionblocked-title',
@@ -53,7 +61,19 @@ const permissionI18nMap: Record<PermissionScenario, { title: string; text: strin
 const isAndroid = Platform.OS === 'android';
 const api = isAndroid ? DeviceInfo.getApiLevelSync() : 0;
 
-const permissionScenarios: Record<string, PermissionRequirement> = {
+const permissionScenarios = {
+  'audio.read': Platform.select<PermissionRequirement>({
+    android: (() => {
+      if (api >= ANDROID_13) return PERMISSIONS.ANDROID.READ_MEDIA_AUDIO;
+      if (api >= ANDROID_10) return true;
+      return PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
+    })(),
+    ios: true,
+  })!,
+  // 'audio.record': Platform.select<SinglePermissionRequirement>({
+  //   android: PERMISSIONS.ANDROID.RECORD_AUDIO,
+  //   ios: PERMISSIONS.IOS.MICROPHONE,
+  // })!,
   'camera': Platform.select<SinglePermissionRequirement>({
     android: PERMISSIONS.ANDROID.CAMERA,
     ios: PERMISSIONS.IOS.CAMERA,

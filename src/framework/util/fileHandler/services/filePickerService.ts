@@ -153,6 +153,9 @@ export function pickFromCamera(
   options: {
     useFrontCamera?: boolean;
     callbackOnce?: boolean;
+    mode?: 'photo' | 'video';
+    quality?: number;
+    maxDuration?: number;
   } = {},
 ): Promise<LocalFile[]> {
   const { callbackOnce = true, useFrontCamera = false } = options;
@@ -186,16 +189,16 @@ export function pickFromCamera(
 /* -------------------------------------------------------
  * Documents Picker
  * ------------------------------------------------------- */
-export function pickFromDocuments(options: { selectMultiple?: boolean } = {}): Promise<LocalFile[]> {
-  const { selectMultiple = true } = options;
+export function pickFromDocuments(options: { multiple?: boolean; types?: string[] } = {}): Promise<LocalFile[]> {
+  const { multiple = true } = options;
 
   return wrapPicker(async callback => {
     try {
       const docs = await pick({
-        allowMultiSelection: selectMultiple,
+        allowMultiSelection: multiple,
         copyTo: 'cachesDirectory',
         presentationStyle: 'fullScreen',
-        type: [types.allFiles],
+        type: options.types ?? [types.allFiles],
       });
 
       if (!docs || docs.length === 0) {
@@ -238,6 +241,57 @@ export function pickFromDocuments(options: { selectMultiple?: boolean } = {}): P
         }),
       );
 
+      callback([]);
+    }
+  });
+}
+
+/* -------------------------------------------------------
+ * Audio Picker
+ * ------------------------------------------------------- */
+export function pickAudio(options: { multiple?: boolean; types?: string[] } = {}): Promise<LocalFile[]> {
+  const { multiple = true, types: customTypes = ['audio/*'] } = options;
+
+  return wrapPicker(async callback => {
+    try {
+      const docs = await pick({
+        allowMultiSelection: multiple,
+        copyTo: 'cachesDirectory',
+        presentationStyle: 'fullScreen',
+        type: customTypes,
+      });
+
+      if (!docs || docs.length === 0) {
+        callback([]);
+        return;
+      }
+
+      const files = docs.map(file => {
+        const uri = Platform.select({
+          android: getPath(file.uri),
+          default: file.uri,
+          ios: decodeURI(file.uri.startsWith('file://') ? file.uri.replace('file://', '') : file.uri),
+        })!;
+
+        return new LocalFile(
+          {
+            fileName: file.name!,
+            fileSize: file.size!,
+            type: file.type!,
+            uri,
+          },
+          { _needIOSReleaseSecureAccess: false },
+        );
+      });
+
+      callback(files);
+    } catch (e: any) {
+      if (e?.code === 'CANCELLED') {
+        callback([]);
+        return;
+      }
+
+      console.error('[AudioPicker] Error:', e);
       callback([]);
     }
   });

@@ -638,6 +638,8 @@
   "form-notifhandler-errormessage": "Vous n'avez plus les droits d'accès à ce formulaire",
   "gallery-read-permissionblocked-text": "{{appName}} ne peut pas accéder à la galerie. Vous pouvez autoriser l'accès via les réglages de l'application dans les paramètres du téléphone.",
   "gallery-read-permissionblocked-title": "Accès à la galerie refusé",
+  "audio-read-permissionblocked-title": "Accès aux fichiers audio refusé",
+  "audio-read-permissionblocked-text": "{{appName}} ne peut pas accéder aux fichiers audio. Vous pouvez autoriser l'accès via les réglages de l'application dans les paramètres du téléphone.",
   "galleryaction-pick": "Choisir dans la galerie",
   "homework": "Cahier de textes",
   "homework-create-addhomework": "Ajouter le devoir",
