@@ -77,4 +77,11 @@
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
     </domain-config>
+    <domain-config>
+        <domain includeSubdomains="true">gar.education.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
 </network-security-config>
