@@ -1,16 +1,21 @@
 import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
 import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
 import { getModuleFileManagerConfig } from '~/framework/util/fileHandler/services/fileManagerRegistry';
-import { pickFromCamera, pickFromDocuments, pickFromGallery } from '~/framework/util/fileHandler/services/filePickerService';
-import { FileSource } from '~/framework/util/fileHandler/types';
-import { assertPermissions } from '~/framework/util/permissions';
+import {
+  pickAudio,
+  pickFromCamera,
+  pickFromDocuments,
+  pickFromGallery,
+} from '~/framework/util/fileHandler/services/filePickerService';
+import { FileManagerPickerOptionsType, FileSource } from '~/framework/util/fileHandler/types';
+import { assertPermissions, PermissionScenario } from '~/framework/util/permissions';
 
 export class FileManager {
   static async pick<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
     moduleName: M,
     usecaseName: U,
     callback: (files: LocalFile[] | LocalFile) => void,
-    options?: { source?: FileSource; callbackOnce?: boolean },
+    options?: FileManagerPickerOptionsType,
   ): Promise<void> {
     const moduleConfig = getModuleFileManagerConfig(moduleName);
     if (!moduleConfig) throw new Error(`No FileManager config for module ${moduleName}`);
@@ -21,6 +26,7 @@ export class FileManager {
     const { multiple, sources } = config;
     const source: FileSource = options?.source ?? sources[0];
     const callbackOnce = options?.callbackOnce ?? false;
+    const override = options?.configOverride ?? {};
 
     console.debug(`[FileManager] Module=${moduleName} Usecase=${usecaseName}`);
     console.debug(`[FileManager] allow=`, config.allow);
@@ -28,15 +34,17 @@ export class FileManager {
     console.debug(`[FileManager] chosen source=`, source);
 
     let files: LocalFile[] = [];
+    const sourceToPermission: Partial<Record<FileSource, PermissionScenario>> = {
+      audio: 'audio.read',
+      camera: 'camera',
+      documents: 'documents.read',
+      gallery: 'gallery.read',
+    };
+
+    const permissionToAsk = sourceToPermission[source];
 
     try {
-      if (source === 'gallery') {
-        await assertPermissions('gallery.read');
-      } else if (source === 'camera') {
-        await assertPermissions('camera');
-      } else if (source === 'documents') {
-        await assertPermissions('documents.read');
-      }
+      if (permissionToAsk) await assertPermissions(permissionToAsk);
     } catch (err) {
       console.warn('[FileManager] Permission denied:', err);
       callback([]);
@@ -44,23 +52,40 @@ export class FileManager {
     }
 
     // allowedTypes for gallery
-    const allowedTypesForGallery = config.allow.filter(t => ['image', 'video'].includes(t)) as Array<'image' | 'video'>;
+    const allowedTypesForGallery =
+      override.gallery?.allowedTypes ?? (config.allow.filter(t => ['image', 'video'].includes(t)) as Array<'image' | 'video'>);
 
     switch (source) {
       case 'gallery':
         files = await pickFromGallery({
           allowedTypes: allowedTypesForGallery,
           callbackOnce,
-          multiple,
+          multiple: override.gallery?.multiple ?? multiple,
         });
         break;
 
       case 'camera':
-        files = await pickFromCamera({ callbackOnce });
+        files = await pickFromCamera({
+          maxDuration: override.camera?.maxDuration,
+
+          // FUTUR
+          mode: override.camera?.mode,
+          quality: override.camera?.quality,
+          useFrontCamera: override.camera?.useFrontCamera ?? false,
+        });
         break;
 
       case 'documents':
-        files = await pickFromDocuments({ selectMultiple: multiple });
+        files = await pickFromDocuments({
+          multiple: override.documents?.multiple ?? multiple,
+          types: override.documents?.types ?? undefined,
+        });
+        break;
+      case 'audio':
+        files = await pickAudio({
+          multiple: override.audio?.multiple ?? multiple,
+          types: override.audio?.types ?? ['audio/*'],
+        });
         break;
 
       default:

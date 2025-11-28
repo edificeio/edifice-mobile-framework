@@ -251,7 +251,11 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
           const formatted = arr.map(formatFileForUpload);
           setFiles(formatted);
         },
-        { callbackOnce: true, source: route?.params.source },
+        {
+          callbackOnce: true,
+          configOverride: route.params.configOverride,
+          source: route?.params.source,
+        },
       );
     }, 350);
     // eslint-disable-next-line react-hooks/exhaustive-deps

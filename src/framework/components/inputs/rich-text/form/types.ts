@@ -9,6 +9,7 @@ import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
 import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { FileManagerPickerOptionsType } from '~/framework/util/fileHandler/types';
 
 export interface RichEditorFormProps extends ScrollViewProps {
   initialContentHtml: string;
@@ -25,6 +26,7 @@ export interface RichEditorFormProps extends ScrollViewProps {
 
   fileManagerModule: FileManagerModuleName;
   fileManagerUsecase: FileManagerUsecaseName<FileManagerModuleName>;
+  configOverride?: FileManagerPickerOptionsType['configOverride'];
 }
 
 export interface RichEditorFormReduxProps {

@@ -173,6 +173,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
+          configOverride: props.configOverride,
           module: props.fileManagerModule,
           redirectTo: route,
           source: 'gallery',
@@ -190,6 +191,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
+          configOverride: props.configOverride,
           module: props.fileManagerModule,
           redirectTo: route,
           source: 'camera',

@@ -14,9 +14,11 @@ export interface Asset {
   id?: string;
 }
 
+/** Allowed types that a module usecase can accept */
 export type AllowedFileType = 'image' | 'video' | 'audio' | 'pdf' | 'document';
 
-export type FileSource = 'camera' | 'gallery' | 'documents';
+/** Possible pick sources */
+export type FileSource = 'camera' | 'gallery' | 'documents' | 'audio';
 
 /**
  * A configuration entry describing a single import usecase inside a module.
@@ -31,6 +33,47 @@ export interface FileManagerUsecase {
   multiple: boolean;
 }
 
+/**
+ * A module-level FileManager configuration.
+ * Each key corresponds to a usecase (ex: "attachment", "editor").
+ */
 export interface IModuleFileManagerConfig {
   [usecase: string]: FileManagerUsecase;
+}
+
+/**
+ * Optional overrides applied when calling FileManager.pick().
+ * These settings affect only the current pick operation.
+ *
+ * @property source          Forces a specific source (camera, gallery, documents, audio).
+ * @property callbackOnce    If true, callback is called once with all results.
+ * @property configOverride  Optional per-source overrides.
+ */
+export interface FileManagerPickerOptionsType {
+  source?: FileSource;
+  callbackOnce?: boolean;
+
+  configOverride?: {
+    gallery?: {
+      allowedTypes?: Array<'image' | 'video'>;
+      multiple?: boolean;
+    };
+
+    camera?: {
+      useFrontCamera?: boolean;
+      mode?: 'photo' | 'video'; // FUTURE
+      quality?: number; // FUTURE
+      maxDuration?: number; // FUTURE
+    };
+
+    documents?: {
+      multiple?: boolean;
+      types?: string[];
+    };
+
+    audio?: {
+      types?: string[];
+      multiple?: boolean;
+    };
+  };
 }
