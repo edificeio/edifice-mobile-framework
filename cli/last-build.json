@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-11-27 17:58:33",
-  "notes": "fix(mediacentre): SUPPORT-3845 fix wrong merging reducer\nrelease: 1.16.1(1160100)\nrelease: 1.16.0-rc.6(1160015)",
-  "version": "1.16.1-rc.1(1160101)"
+  "last": "2025-11-28 10:16:49",
+  "notes": "fix(mediacentre): ENABLING-496, add android gar.education.fr domain exception\nrelease: 1.16.1-rc.1(1160101)",
+  "version": "1.16.1-rc.2(1160102)"
 }
