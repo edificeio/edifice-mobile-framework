@@ -167,7 +167,7 @@ export function Carousel(props: ICarouselProps) {
     async (url: string | ImageURISource) => {
       const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
       if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
-      await assertPermissions('galery.write');
+      await assertPermissions('gallery.write');
       const foundData = data.find(d => (d.src = url));
       const sf = await fileTransferService.downloadFile(assertSession(), { filetype: foundData?.mime, url: realUrl }, {});
       return sf;
@@ -201,7 +201,7 @@ export function Carousel(props: ICarouselProps) {
         const sf = await getSyncedFile(url);
         try {
           if (!sf) return;
-          await assertPermissions('galery.write');
+          await assertPermissions('gallery.write');
         } catch (e) {
           if (e instanceof PermissionError) {
             Alert.alert(

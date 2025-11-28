@@ -20,7 +20,13 @@ export default new NavigableModuleConfig<'presences', PresencesReduxState>({
   displayI18n: 'presences-moduleconfig-appname',
   displayPicture: theme.apps.presences.icon,
   entcoreScope: ['presences'],
-
+  fileManager: {
+    attachment: {
+      allow: ['image', 'document'],
+      multiple: false,
+      sources: ['camera', 'gallery', 'documents'],
+    },
+  } as const,
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
   name: 'presences',
   storageName: 'presences',

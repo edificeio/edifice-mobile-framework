@@ -7,7 +7,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
 
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
+import { openMediaPlayer } from '~/framework/components/media/player';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import fileTransferService, {
   IDownloadCallbaks,
@@ -15,6 +15,7 @@ import fileTransferService, {
   IUploadCallbaks,
   IUploadParams,
 } from '~/framework/util/fileHandler/service';
+import { MediaType } from '~/framework/util/media';
 import type { IMedia } from '~/framework/util/media-deprecated';
 import { urlSigner } from '~/infra/oauth';
 
