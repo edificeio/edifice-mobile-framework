@@ -503,15 +503,17 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     return true;
   }, [isSearchMode, isSelectionMode, navigation, onDisableSelectMode, onDisabledSearchMode]);
 
-  React.useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleHardwareBack);
-    return () => {
-      backHandler.remove();
-    };
-  }, [handleHardwareBack]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', handleHardwareBack);
+      return () => {
+        backHandler.remove();
+      };
+    }, [handleHardwareBack]),
+  );
 
   React.useEffect(() => {
-    const unsubscribe = props.navigation.getParent('tabs').addListener('tabPress', () => {
+    const unsubscribe = props.navigation.getParent('tabs')?.addListener('tabPress', () => {
       setSelectedFolder(MailsDefaultFolders.INBOX);
       loadMails(MailsDefaultFolders.INBOX);
     });

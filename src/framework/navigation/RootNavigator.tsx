@@ -82,7 +82,7 @@ function RootNavigator(props: RootNavigatorProps) {
   const navStateJSON = JSON.stringify(navigationState);
 
   // Auth/Main switch
-  const mainNavigation = useMainNavigation(session);
+  const mainNavigation = useMainNavigation();
   const authNavigation = useAuthNavigation();
   const routes = React.useMemo(() => {
     return isMainNavigationAccessible ? mainNavigation : authNavigation;

@@ -24,7 +24,7 @@ import moduleConfig from '~/framework/modules/scrapbook/module-config';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
 import { scrapbookService } from '~/framework/modules/scrapbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { formatSource } from '~/framework/util/media';
+import { formatSource } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 
 export const computeNavBar = ({

@@ -67,6 +67,7 @@ export const UI_ANIMATIONS = {
 
 export const UI_SIZES = {
   aspectRatios: {
+    banner: 3,
     square: 1,
     thumbnail: 7 / 5,
   },
@@ -125,6 +126,7 @@ export const UI_SIZES = {
     icon: {
       default: getScaleWidth(24),
       medium: getScaleWidth(22),
+      mediumlarge: getScaleWidth(32),
       small: getScaleWidth(20),
       xlarge: getScaleWidth(36),
       xsmall: getScaleWidth(16),
@@ -133,13 +135,14 @@ export const UI_SIZES = {
       xxxlarge: getScaleWidth(96),
     },
     image: {
+      large: getScaleImageSize(250),
       medium: getScaleImageSize(160),
       small: getScaleImageSize(64),
     },
 
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
 
-    navbarButtonSize: 32,
+    navbarButtonSize: 36,
     /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
     navbarHeight: Platform.select({ default: 56, ios: 44 }),
     navbarIconSize: 24,

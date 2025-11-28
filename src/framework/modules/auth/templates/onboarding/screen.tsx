@@ -16,7 +16,7 @@ import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
 import appConf from '~/framework/util/appConf';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivateProps, AuthOnboardingScreenState> {
   state = {

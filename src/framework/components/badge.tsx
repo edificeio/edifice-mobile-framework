@@ -2,11 +2,10 @@ import * as React from 'react';
 import { ColorValue, StyleSheet, View } from 'react-native';
 
 import { UI_SIZES } from './constants';
-import { Picture, Svg } from './picture';
+import { Picture, PictureProps, Svg } from './picture';
 import { CaptionBoldText } from './text';
 
 import theme from '~/app/theme';
-import { PictureProps } from './picture';
 
 export interface IBadgeProps {
   content: number | string | PictureProps;
@@ -27,7 +26,7 @@ const styles = StyleSheet.create({
 
 export const Badge = ({ color, content }: IBadgeProps) => {
   const picture = React.useMemo(() => {
-    if (!content) {
+    if (typeof content !== 'number' && !content) {
       return null;
     } else if (typeof content === 'number') {
       return <CaptionBoldText style={{ color: theme.ui.text.inverse }}>{content > 99 ? '99+' : content}</CaptionBoldText>;
@@ -43,7 +42,7 @@ export const Badge = ({ color, content }: IBadgeProps) => {
       }
     }
   }, [content]);
-  if (!content) {
+  if (typeof content !== 'number' && !content) {
     return null;
   }
   return <View style={[styles.badge, { backgroundColor: color || theme.ui.text.light }]}>{picture}</View>;

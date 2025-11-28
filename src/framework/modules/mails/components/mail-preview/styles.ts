@@ -14,7 +14,7 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
   },
   containerChecked: {
-    backgroundColor: theme.palette.primary.pale,
+    backgroundColor: theme.color.mails.selected,
   },
   containerUnread: {
     backgroundColor: theme.color.mails.unread,

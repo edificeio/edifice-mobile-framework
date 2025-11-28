@@ -1,0 +1,150 @@
+diff --git a/Libraries/Components/ScrollView/ScrollView.d.ts b/Libraries/Components/ScrollView/ScrollView.d.ts
+index b4c347f1998410621a97d987f9645089bb9218cc..0c34c5b16106d95d8efbcddb4d30e25723779408 100644
+--- a/Libraries/Components/ScrollView/ScrollView.d.ts
++++ b/Libraries/Components/ScrollView/ScrollView.d.ts
+@@ -7,18 +7,19 @@
+  * @format
+  */
+ 
+-import type * as React from 'react';
+-import {Constructor} from '../../../types/private/Utilities';
+-import {Insets} from '../../../types/public/Insets';
+-import {ColorValue, StyleProp} from '../../StyleSheet/StyleSheet';
+-import {ViewStyle} from '../../StyleSheet/StyleSheetTypes';
++import type * as React from "react";
++import { Constructor } from "../../../types/private/Utilities";
++import { Insets } from "../../../types/public/Insets";
++import { ColorValue, StyleProp } from "../../StyleSheet/StyleSheet";
++import { ViewStyle } from "../../StyleSheet/StyleSheetTypes";
+ import {
+   NativeSyntheticEvent,
+   NativeTouchEvent,
+-} from '../../Types/CoreEventTypes';
+-import {RefreshControlProps} from '../RefreshControl/RefreshControl';
+-import {Touchable} from '../Touchable/Touchable';
+-import {ViewProps} from '../View/ViewPropTypes';
++} from "../../Types/CoreEventTypes";
++import { RefreshControlProps } from "../RefreshControl/RefreshControl";
++import { Touchable } from "../Touchable/Touchable";
++import { ViewProps } from "../View/ViewPropTypes";
++import type { Props as ScrollViewStickyHeaderProps } from "./ScrollViewStickyHeader";
+ 
+ // See https://reactnative.dev/docs/scrollview#contentoffset
+ export interface PointProp {
+@@ -408,10 +409,10 @@ export interface ScrollViewPropsIOS {
+    * The default value of this property is "never".
+    */
+   contentInsetAdjustmentBehavior?:
+-    | 'automatic'
+-    | 'scrollableAxes'
+-    | 'never'
+-    | 'always'
++    | "automatic"
++    | "scrollableAxes"
++    | "never"
++    | "always"
+     | undefined;
+ 
+   /**
+@@ -428,7 +429,7 @@ export interface ScrollViewPropsIOS {
+    * - white, scroll indicator is white. This style is good against
+    *   a black content background.
+    */
+-  indicatorStyle?: 'default' | 'black' | 'white' | undefined;
++  indicatorStyle?: "default" | "black" | "white" | undefined;
+ 
+   /**
+    * When set, the scroll view will adjust the scroll position so that the first child
+@@ -514,7 +515,7 @@ export interface ScrollViewPropsIOS {
+    *      - `center` will align the snap in the center
+    *      - `end` will align the snap at the right (horizontal) or bottom (vertical)
+    */
+-  snapToAlignment?: 'start' | 'center' | 'end' | undefined;
++  snapToAlignment?: "start" | "center" | "end" | undefined;
+ 
+   /**
+    * Fires when the scroll view scrolls to top after the status bar has been tapped
+@@ -557,7 +558,7 @@ export interface ScrollViewPropsAndroid {
+         *   - 'always' - Always allow a user to over-scroll this view.
+         *   - 'never' - Never allow a user to over-scroll this view.
+         */
+-  overScrollMode?: 'auto' | 'always' | 'never' | undefined;
++  overScrollMode?: "auto" | "always" | "never" | undefined;
+ 
+   /**
+    * Enables nested scrolling for Android API level 21+. Nested scrolling is supported by default on iOS.
+@@ -614,7 +615,7 @@ export interface ScrollViewProps
+    *  - `'normal'`: 0.998 on iOS, 0.985 on Android (the default)
+    *  - `'fast'`: 0.99 on iOS, 0.9 on Android
+    */
+-  decelerationRate?: 'fast' | 'normal' | number | undefined;
++  decelerationRate?: "fast" | "normal" | number | undefined;
+ 
+   /**
+    * When true the scroll view's children are arranged horizontally in a row
+@@ -636,7 +637,7 @@ export interface ScrollViewProps
+    *     and moves in synchrony with the touch; dragging upwards cancels the
+    *     dismissal.
+    */
+-  keyboardDismissMode?: 'none' | 'interactive' | 'on-drag' | undefined;
++  keyboardDismissMode?: "none" | "interactive" | "on-drag" | undefined;
+ 
+   /**
+    * Determines when the keyboard should stay visible after a tap.
+@@ -648,9 +649,9 @@ export interface ScrollViewProps
+    */
+   keyboardShouldPersistTaps?:
+     | boolean
+-    | 'always'
+-    | 'never'
+-    | 'handled'
++    | "always"
++    | "never"
++    | "handled"
+     | undefined;
+ 
+   /**
+@@ -803,7 +804,9 @@ export interface ScrollViewProps
+    * transforms, for example, when you want your list to have an animated and hidable header.
+    * If component have not been provided, the default ScrollViewStickyHeader component will be used.
+    */
+-  StickyHeaderComponent?: React.ComponentType<any> | undefined;
++  StickyHeaderComponent?:
++    | React.ComponentType<ScrollViewStickyHeaderProps>
++    | undefined;
+ }
+ 
+ declare class ScrollViewComponent extends React.Component<ScrollViewProps> {}
+@@ -840,7 +843,7 @@ export class ScrollView extends ScrollViewBase {
+    * The options object has an animated prop, that enables the scrolling animation or not.
+    * The animated prop defaults to true
+    */
+-  scrollToEnd(options?: {animated?: boolean | undefined}): void;
++  scrollToEnd(options?: { animated?: boolean | undefined }): void;
+ 
+   /**
+    * Displays the scroll indicators momentarily.
+diff --git a/Libraries/Components/ScrollView/ScrollView.js b/Libraries/Components/ScrollView/ScrollView.js
+index efd663245ed53140fb7ef273f6af7a90f90ad210..a7850e9e93ceb974c8ab645e20bc92122bfa5ad5 100644
+--- a/Libraries/Components/ScrollView/ScrollView.js
++++ b/Libraries/Components/ScrollView/ScrollView.js
+@@ -1680,6 +1680,7 @@ class ScrollView extends React.Component<ScrollViewProps, ScrollViewState> {
+           return (
+             <StickyHeaderComponent
+               key={key}
++              index={index}
+               ref={ref => this._setStickyHeaderRef(key, ref)}
+               nextHeaderLayoutY={this._headerLayoutYs.get(
+                 this._getKeyForIndex(nextIndex, children),
+diff --git a/Libraries/Components/ScrollView/ScrollViewStickyHeader.js b/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+index 89d62dae3c04ca47175093021c10d54b4f56e16f..b6098565cdba8e86d0432c92c0114aa8b54c1301 100644
+--- a/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
++++ b/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+@@ -30,6 +30,7 @@ export type ScrollViewStickyHeaderProps = $ReadOnly<{
+   scrollViewHeight: ?number,
+   nativeID?: ?string,
+   hiddenOnScroll?: ?boolean,
++  index: number,
+ }>;
+ 
+ interface Instance extends React.ElementRef<typeof Animated.View> {

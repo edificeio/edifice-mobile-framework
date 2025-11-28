@@ -1,14 +1,14 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import styles from './styles';
+import { ResourceListItemProps } from './types';
+
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
 import { UI_STYLES } from '~/framework/components/constants';
 import { CaptionText, SmallActionText } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
-import { Image } from '~/framework/util/media';
-
-import styles from './styles';
-import { ResourceListItemProps } from './types';
+import { Image } from '~/framework/util/media-deprecated';
 
 const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({ resource }) => {
   const handlePress = () => openUrl(resource.url);

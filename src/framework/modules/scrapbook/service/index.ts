@@ -33,9 +33,11 @@ export const scrapbookItemAdapter = (n: BackendScrapbookItem) => {
   return ret as ScrapbookItem;
 };
 
+export const getResourceUri = (id: string) => `/scrapbook/get/${id}`;
+
 export const scrapbookService = {
   get: async (id: string) => {
-    const api = `/scrapbook/get/${id}`;
+    const api = getResourceUri(id);
     const entcoreScrapbook = (await fetchJSONWithCache(api)) as any;
 
     return entcoreScrapbook;

@@ -1,7 +1,7 @@
 import { SvgProps } from 'react-native-svg';
 
 import { PictureProps } from '~/framework/components/picture';
-import { ImageProps } from '~/framework/util/media';
+import { ImageProps } from '~/framework/util/media-deprecated';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export type ImageFallbackProps = Partial<PictureProps> &
@@ -11,12 +11,6 @@ export type ImageFallbackProps = Partial<PictureProps> &
   };
 
 export type ImageLoaderProps = Pick<ImageFallbackProps, 'imageProps'>;
-
-export const enum ImageLoadingState {
-  Loading,
-  Success,
-  Error,
-}
 
 export type ModuleConfigForFallbackImage = {
   displayPicture?: AnyNavigableModuleConfig['displayPicture'];

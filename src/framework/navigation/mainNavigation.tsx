@@ -5,7 +5,7 @@
  * navBar shows up with the RootStack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
  */
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -19,7 +19,9 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { initialWindowMetrics, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
 import { getTabBarStyleForNavState } from './hideTabBarAndroid';
@@ -28,13 +30,13 @@ import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
+import { selectors } from '../modules/auth/reducer';
 
 import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
@@ -127,27 +129,28 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
   }) as ScreenListeners<NavigationState, EventMapBase>;
 
 const stackListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) => ({
-  transitionEnd: event => {
+  transitionEnd: () => {
     handleCloseModalActions(navigation);
   },
 });
 
 export function TabStack({ module }: { module: AnyNavigableModule }) {
-  const RootStack = getTypedRootStack();
   const authNavigation = useAuthNavigation();
+  const Stack = createNativeStackNavigator();
   return (
-    <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName} screenListeners={stackListeners}>
+    <Stack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName} screenListeners={stackListeners}>
       {ModuleScreens.all}
       {authNavigation}
       {modals}
-    </RootStack.Navigator>
+    </Stack.Navigator>
   );
 }
 
-export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
+export function MainTabNavigator() {
   // Simple Hack : session can be recreated with same values.
   // By using JSON-stringified version for useMemo() deps, we ensure that the navigation will be re-rendered only if necessary.
-  const appsJson = JSON.stringify(sessionIfExists?.rights.apps);
+  const session = useSelector(selectors.session);
+  const appsJson = JSON.stringify(session?.rights.apps);
 
   const tabModulesCache = tabModules.get();
   const moduleTabStackCache = React.useMemo(
@@ -157,15 +160,16 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
     () =>
-      sessionIfExists
+      session
         ? tabModules
             .get()
-            .filterAvailables(sessionIfExists)
+            .filterAvailables(session)
             .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [appsJson],
+    [tabModulesCache.length, appsJson],
   );
+
   const tabRoutes = React.useMemo(() => {
     return availableTabModules.map(module => {
       const index = tabModulesCache.findIndex(tm => tm.config.name === module.config.name);
@@ -183,10 +187,16 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
     });
     // We effectively want to have this deps to minimise re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appsJson]);
+  }, [tabModulesCache.length, appsJson]);
 
   // Avoid bug when launching app after first push
-  const insets = useSafeAreaInsets();
+  const initialBottomInset = initialWindowMetrics?.insets.bottom ?? 0;
+  const bottomInsetRef = React.useRef(initialBottomInset);
+  const { bottom: currentBottomInset } = useSafeAreaInsets();
+  if (currentBottomInset !== bottomInsetRef.current && (currentBottomInset === 0 || currentBottomInset === initialBottomInset)) {
+    bottomInsetRef.current = currentBottomInset;
+  }
+
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(
       ({ navigation, route }) => {
@@ -215,22 +225,28 @@ export function useTabNavigator(sessionIfExists?: AuthActiveAccount) {
             borderTopColor: theme.palette.grey.cloudy,
             borderTopWidth: 1,
             elevation: 1,
-            height: UI_SIZES.elements.tabbarHeight + insets.bottom,
+            height: UI_SIZES.elements.tabbarHeight + bottomInsetRef.current,
             ...getTabBarStyleForNavState(navigation.getState()),
           },
         };
       },
-      [insets.bottom],
+      // Note: here we use a specific hack to ensure the tab bar height is not updated when the bottom inset changes accidentally.
+      // This would cause tab navigation to be reinstanciated and tab state to be lost.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [bottomInsetRef.current],
     );
-  return React.useMemo(() => {
-    return (
-      <BottomSheetModalProvider>
+
+  return (
+    <BottomSheetModalProvider>
+      {tabRoutes.length ? (
         <Tab.Navigator id="tabs" screenOptions={screenOptions}>
           {tabRoutes}
         </Tab.Navigator>
-      </BottomSheetModalProvider>
-    );
-  }, [screenOptions, tabRoutes]);
+      ) : (
+        <View />
+      )}
+    </BottomSheetModalProvider>
+  );
 }
 
 //   .d8888b.  888                      888      888b    888                   d8b                   888
@@ -256,19 +272,14 @@ export enum MainRouteNames {
  * @param widgets available widgets for the user
  * @returns
  */
-export function useMainNavigation(sessionIfExists?: AuthActiveAccount) {
+export function useMainNavigation() {
   const RootStack = getTypedRootStack();
-  setUpModulesAccess(sessionIfExists);
-  const MainTabNavigator = useTabNavigator(sessionIfExists);
-  const renderMainTabNavigator = React.useCallback(() => {
-    return MainTabNavigator;
-  }, [MainTabNavigator]);
+  const session = useSelector(selectors.session);
+  setUpModulesAccess(session);
 
-  return React.useMemo(() => {
-    return (
-      <RootStack.Group screenOptions={navBarOptions}>
-        <RootStack.Screen name={MainRouteNames.Tabs} component={renderMainTabNavigator} options={{ headerShown: false }} />
-      </RootStack.Group>
-    );
-  }, [RootStack, renderMainTabNavigator]);
+  return (
+    <RootStack.Group screenOptions={navBarOptions}>
+      <RootStack.Screen name={MainRouteNames.Tabs} component={MainTabNavigator} options={{ headerShown: false }} />
+    </RootStack.Group>
+  );
 }

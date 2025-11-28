@@ -21,7 +21,7 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
-import { formatMediaSourceArray, formatSource, Image } from '~/framework/util/media';
+import { formatMediaSourceArray, formatSource, Image } from '~/framework/util/media-deprecated';
 import Images from '~/ui/Images';
 
 export enum HtmlParserJsxTextVariant {

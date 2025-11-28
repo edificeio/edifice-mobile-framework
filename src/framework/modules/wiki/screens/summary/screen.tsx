@@ -101,7 +101,7 @@ export default function WikiSummaryScreen({
   route: {
     params: { resourceId },
   },
-}: WikiSummaryScreen.AllProps) {
+}: Readonly<WikiSummaryScreen.AllProps>) {
   const wikiData = useSelector(selectors.wiki(resourceId));
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction>>();
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {

@@ -31,7 +31,7 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { Blog, BlogFlatTree, BlogFolder, BlogFolderWithChildren, BlogFolderWithResources } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { formatSource } from '~/framework/util/media';
+import { formatSource } from '~/framework/util/media-deprecated';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 

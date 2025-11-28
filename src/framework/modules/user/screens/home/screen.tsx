@@ -57,7 +57,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { formatSource } from '~/framework/util/media';
+import { formatSource } from '~/framework/util/media-deprecated';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';

@@ -1,7 +1,6 @@
 /**
  * Thunk actions for user module
  */
-
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 

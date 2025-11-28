@@ -42,7 +42,7 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { formatSource, Image } from '~/framework/util/media';
+import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 
 export const computeNavBar = ({

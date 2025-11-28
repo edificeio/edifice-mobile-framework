@@ -19,7 +19,7 @@ import { getPlatform } from '~/framework/modules/auth/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 export const computeNavBar = ({
   navigation,

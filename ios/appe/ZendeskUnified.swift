@@ -47,7 +47,7 @@ class ZendeskUnified: NSObject {
     do {
       let email = options["email"] as? String
       let name = options["name"] as? String
-      try setAnonymousIdentity(email: email, name: name)
+      setAnonymousIdentity(email: email, name: name)
     } catch {
       reject("set_anonymous_identity_error", "Error setting anonymous identity", error)
     }
@@ -60,7 +60,7 @@ class ZendeskUnified: NSObject {
     reject: RCTPromiseRejectBlock
   ) -> Void {
     do {
-      try setIdentity(jwt: jwt)
+      setIdentity(jwt: jwt)
       resolve(true)
     } catch {
       reject("set_identity_error", "Error setting identity", error)
@@ -102,7 +102,6 @@ class ZendeskUnified: NSObject {
   ) -> Void {
     let subject = options["subject"] as? String
     let tags = options["tags"] as? [String]
-    let customFields = options["customFields"] as? NSDictionary
     print("openNewTicket called with options: \(options)")
     openNewTicket(subject: subject, tags: tags)
   }

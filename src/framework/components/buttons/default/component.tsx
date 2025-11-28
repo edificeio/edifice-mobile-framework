@@ -83,9 +83,11 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     return (
       <>
         {renderIcon(iconLeft, 'left')}
-        <TextComponent numberOfLines={1} style={[styles.text, contentColorStyle]}>
-          {text}
-        </TextComponent>
+        {text && (
+          <TextComponent numberOfLines={1} style={[styles.text, contentColorStyle]}>
+            {text}
+          </TextComponent>
+        )}
         {renderIcon(iconRight, 'right')}
       </>
     );

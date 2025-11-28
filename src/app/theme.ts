@@ -5,10 +5,12 @@ import { ColorValue } from 'react-native';
 
 import deepmerge from 'deepmerge';
 
+import { EntAppName } from './intents';
+
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
-import appConf from '~/framework/util/appConf';
-import type { ImageProps } from '~/framework/util/media';
+import { MediaType } from '~/framework/util/media';
+import type { ImageProps } from '~/framework/util/media-deprecated';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -91,21 +93,22 @@ export interface ITheme {
       listItem: ColorValue;
       input: ColorValue;
     };
-    overlay: {
-      medium: ColorValue;
-      light: ColorValue;
-      bar: ColorValue;
-    };
     text: {
       regular: ColorValue;
       light: ColorValue;
       inverse: ColorValue;
+    };
+    overlay: {
+      medium: ColorValue;
+      light: ColorValue;
+      bar: ColorValue;
     };
   };
   // Semantic usage of the color palette
   color: {
     mails: {
       unread: ColorValue;
+      selected: ColorValue;
     };
     homework: {
       days: {
@@ -137,7 +140,8 @@ export interface ITheme {
       Guest: ColorValue;
     };
   };
-  apps: { [key: string]: EntAppTheme };
+  apps: { [key in EntAppName]: EntAppTheme };
+  media: { [key in MediaType | 'default']: IntentIcon };
   // Legacy values
   legacy: {
     neutral: {
@@ -168,6 +172,17 @@ export const defaultTheme: ThemeInitializer = {
   //                                Y8b d88P
   //                                 "Y88P"
   init() {
+    (this as Partial<ITheme>).media = {
+      attachment: { name: 'ui-attachment', type: 'Svg' },
+      audio: { name: 'ui-audio', type: 'Svg' },
+      default: { name: 'ui-attachment', type: 'Svg' },
+      document: { name: 'ui-text-page', type: 'Svg' },
+      embedded: { name: 'ui-external-link', type: 'Svg' },
+      image: { name: 'ui-image', type: 'Svg' },
+      link: { name: 'ui-external-link', type: 'Svg' },
+      resource: { name: 'ui-external-link', type: 'Svg' },
+      video: { name: 'ui-recordVideo', type: 'Svg' },
+    };
     (this as Partial<ITheme>).apps = {
       'appointments': {
         accentColors: this.palette.complementary.green,
@@ -195,7 +210,7 @@ export const defaultTheme: ThemeInitializer = {
       },
       'communities': {
         accentColors: this.palette.complementary.purple,
-        icon: { name: 'community', type: 'Svg' },
+        icon: { name: 'communities', type: 'Svg' },
       },
       'community': {
         accentColors: this.palette.complementary.purple,
@@ -220,6 +235,10 @@ export const defaultTheme: ThemeInitializer = {
       'exercizer': {
         accentColors: this.palette.complementary.purple,
         icon: { name: 'exercices', type: 'Svg' },
+      },
+      'external_link': {
+        accentColors: this.palette.primary,
+        icon: { name: 'ui-external-link', type: 'Svg' },
       },
       'formulaire': {
         accentColors: this.palette.complementary.green,
@@ -302,7 +321,7 @@ export const defaultTheme: ThemeInitializer = {
         icon: { name: 'timeLineGenerator', type: 'Svg' },
       },
       'userbook': {
-        accentColors: appConf.is1d ? this.palette.complementary.orange : this.palette.complementary.green,
+        accentColors: this.palette.complementary.green,
         icon: { name: 'adressBook', type: 'Svg' },
       },
       'wiki': {
@@ -379,6 +398,7 @@ export const defaultTheme: ThemeInitializer = {
         },
       },
       mails: {
+        selected: this.palette.primary.pale,
         unread: this.palette.secondary.pale,
       },
       profileTypes: {
@@ -539,11 +559,24 @@ export const defaultTheme: ThemeInitializer = {
 
 // Compute once (Singleton)
 
-const { init, ...customThemeRest } = customTheme as Partial<ThemeInitializer>;
+type CustomThemeOverride = {
+  palette?: Partial<ITheme['palette']>;
+  legacy?: Partial<ITheme['legacy']>;
+  color?: Partial<ITheme['color']>;
+  init?: () => ITheme;
+};
+
+const { init, ...customThemeRest } = customTheme as CustomThemeOverride;
+
 const totalTheme: ITheme = {
   ...defaultTheme,
   palette: deepmerge(defaultTheme.palette, customThemeRest.palette || {}),
 }.init();
+
+// applying override color after init
+if (customThemeRest.color) {
+  totalTheme.color = deepmerge(totalTheme.color, customThemeRest.color);
+}
 
 if (init) init.call(totalTheme);
 

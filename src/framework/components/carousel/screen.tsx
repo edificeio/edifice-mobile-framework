@@ -35,7 +35,7 @@ import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigatio
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { FastImage, IMedia } from '~/framework/util/media';
+import { FastImage, IMedia } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
 import { OldStorageFunctions } from '~/framework/util/storage';
@@ -48,7 +48,7 @@ export interface ICarouselNavParams {
   referer: AudienceParameter; // used for audience tracking
 }
 
-export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> { }
+export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
 
 const styles = StyleSheet.create({
   // eslint-disable-next-line react-native/no-color-literals
