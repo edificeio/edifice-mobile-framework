@@ -6,6 +6,16 @@ export const transformArray = (array: string[] | [number, string][]): string[] =
 
 export const resourceAdapter = (data: BackendResource): Resource => {
   const id = (data._id ?? typeof data.id === 'number') ? data.id.toString() : data.id;
+
+  let themes: string[] | undefined;
+  if (data.source === Source.SIGNET) {
+    if (data.orientation || data.document_types?.includes('Orientation')) {
+      themes = ['Orientation et découverte des métiers'];
+    } else {
+      themes = ['Sans thématique'];
+    }
+  }
+
   return {
     authors: data.owner_name ?? data.authors,
     disciplines: data.disciplines ? transformArray(data.disciplines) : [],
@@ -18,12 +28,7 @@ export const resourceAdapter = (data: BackendResource): Resource => {
     link: (data.link ?? data.url) as string,
     pinnedDescription: data.pinned_description,
     source: data.source ?? Source.SIGNET,
-    themes:
-      data.source === Source.SIGNET
-        ? data.orientation || data.document_types?.includes('Orientation')
-          ? ['Orientation et découverte des métiers']
-          : ['Sans thématique']
-        : undefined,
+    themes,
     title: data.pinned_title ?? data.title,
     types: data.document_types?.filter(value => value !== 'Orientation') ?? ['livre numérique'],
     uid: data.structure_uai ? data.id + data.structure_uai : id,
