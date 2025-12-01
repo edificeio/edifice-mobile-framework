@@ -10,11 +10,14 @@ import { ScreenTimeDayResponse } from '~/framework/modules/widgets/screen-time/m
 interface UsageCardProps {
   data: ScreenTimeDayResponse | null;
   title: string;
+  variant?: 'today' | 'yesterday';
 }
 
-export const UsageCard: React.FC<UsageCardProps> = ({ data, title }) => {
+export const UsageCard: React.FC<UsageCardProps> = ({ data, title, variant }) => {
+  const cardStyle = variant === 'today' ? styles.usageCardToday : variant === 'yesterday' ? styles.usageCardYesterday : null;
+
   return (
-    <View style={styles.usageCard}>
+    <View style={[styles.usageCard, cardStyle]}>
       <View style={styles.titleRow}>
         <BodyBoldText style={styles.cardTitle}>{title}</BodyBoldText>
         <BodyText style={styles.durationText}>

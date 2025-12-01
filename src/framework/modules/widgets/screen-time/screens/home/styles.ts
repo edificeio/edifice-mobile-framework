@@ -9,14 +9,11 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: UI_SIZES.spacing.medium,
   },
-  childPickerContainer: {
-    marginBottom: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing.small,
-    zIndex: 1000,
-  },
   container: {
     flex: 1,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+  },
+  contentContainer: {
+    padding: UI_SIZES.spacing.medium,
   },
   datePicker: {
     alignSelf: 'center',
@@ -27,7 +24,6 @@ export default StyleSheet.create({
   },
   dropdownPicker: {
     marginBottom: UI_SIZES.spacing.small,
-    zIndex: 1001,
   },
   infoIcon: {
     marginLeft: UI_SIZES.spacing.tiny,
@@ -37,7 +33,7 @@ export default StyleSheet.create({
   },
   modalText: {
     color: theme.palette.grey.black,
-    fontSize: getScaleFontSize(16),
+    fontSize: 16,
   },
   modeToggleContainer: {
     alignItems: 'center',
@@ -55,27 +51,33 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  sectionTitleDot: {
+    backgroundColor: theme.palette.complementary.blue.regular,
+    borderRadius: UI_SIZES.radius.medium,
+    height: 8,
+    marginRight: UI_SIZES.spacing.tiny,
+    width: 8,
+  },
   separator: {
     backgroundColor: theme.palette.grey.cloudy,
-    height: UI_SIZES.border.thin,
+    height: 2,
     marginVertical: UI_SIZES.spacing.tiny,
   },
   tabToggleBackground: {
-    backgroundColor: theme.palette.grey.pearl,
+    backgroundColor: theme.palette.grey.white,
     borderRadius: 8,
     flexDirection: 'row',
     padding: 4,
     position: 'relative',
   },
   tabToggleIndicator: {
-    backgroundColor: theme.palette.grey.white,
+    backgroundColor: theme.palette.complementary.blue.pale,
     borderRadius: UI_SIZES.radius.medium,
     bottom: UI_SIZES.spacing.tiny,
     left: UI_SIZES.spacing.tiny,
     position: 'absolute',
     top: UI_SIZES.spacing.tiny,
     width: '50%',
-    zIndex: 1,
   },
   tabToggleIndicatorRight: {
     left: '50%',
@@ -86,13 +88,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.tiny,
-    zIndex: 2,
   },
   tabToggleText: {
-    color: theme.palette.grey.graphite,
     fontSize: getScaleFontSize(14),
-  },
-  tabToggleTextActive: {
-    color: theme.palette.primary.regular,
   },
 });

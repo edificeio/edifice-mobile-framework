@@ -69,7 +69,7 @@ export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
   const renderWeekChart = () => {
     const weekData = data as ScreenTimeWeekResponse;
     const durations = weekData.dailySummaries.map(day => day.durationMinutes / 60);
-    const maxDurationHours = durations.length > 0 ? Math.max(...durations) : 0;
+    const maxDurationHours = durations.length > 0 ? Math.ceil(Math.max(...durations)) : 0;
 
     const getBarHeight = (durationMinutes: number): number => {
       const durationHours = durationMinutes / 60;
@@ -81,31 +81,67 @@ export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
       return moment(dateString).format('ddd');
     };
 
+    // Generate scale values from 0 to maxDurationHours (every hour)
+    const generateScaleValues = (): number[] => {
+      if (maxDurationHours === 0) return [0];
+      const values: number[] = [];
+      for (let i = 0; i <= maxDurationHours; i++) {
+        values.push(i);
+      }
+      return values;
+    };
+
+    const scaleValues = generateScaleValues();
+
     return (
       <View style={styles.chartContainerVertical}>
-        <View style={styles.barsContainerVertical}>
-          {weekData.dailySummaries.map(day => {
-            const barHeight = getBarHeight(day.durationMinutes);
-
+        {/* Scale on the left */}
+        <View style={styles.scaleContainer}>
+          {scaleValues.map(value => {
+            const position = maxDurationHours > 0 ? (value / maxDurationHours) * CHART_HEIGHT : 0;
+            // Position from bottom: 0h at bottom, maxh at top
+            const bottomPosition = position;
             return (
-              <View key={day.date} style={styles.barColumn}>
-                <View style={styles.barContainerVertical}>
-                  <View style={styles.barBackgroundVertical}>
-                    <View
-                      style={[
-                        styles.bar,
-                        {
-                          height: barHeight,
-                        },
-                      ]}
-                    />
-                  </View>
-                </View>
-                <CaptionText style={styles.dayLabel}>{getDayName(day.date)}</CaptionText>
-                <CaptionText style={styles.durationLabel}>{formatDuration(day.durationMinutes)}</CaptionText>
+              <View key={value} style={[styles.scaleLabel, { bottom: bottomPosition - 10 }]}>
+                <CaptionText style={styles.scaleText}>{value}h</CaptionText>
               </View>
             );
           })}
+        </View>
+        {/* Chart bars with grid lines */}
+        <View style={styles.chartWithGrid}>
+          {/* Grid lines */}
+          <View style={styles.gridContainer}>
+            {scaleValues.map(value => {
+              const position = maxDurationHours > 0 ? (value / maxDurationHours) * CHART_HEIGHT : 0;
+              return <View key={`grid-${value}`} style={[styles.gridLine, { bottom: position }]} />;
+            })}
+          </View>
+          {/* Bars */}
+          <View style={styles.barsContainerVertical}>
+            {weekData.dailySummaries.map(day => {
+              const barHeight = getBarHeight(day.durationMinutes);
+
+              return (
+                <View key={day.date} style={styles.barColumn}>
+                  <View style={styles.barContainerVertical}>
+                    <View style={styles.barBackgroundVertical}>
+                      <View
+                        style={[
+                          styles.bar,
+                          {
+                            height: barHeight,
+                          },
+                        ]}
+                      />
+                    </View>
+                  </View>
+                  <CaptionText style={styles.dayLabel}>{getDayName(day.date)}</CaptionText>
+                  <CaptionText style={styles.durationLabel}>{formatDuration(day.durationMinutes)}</CaptionText>
+                </View>
+              );
+            })}
+          </View>
         </View>
       </View>
     );

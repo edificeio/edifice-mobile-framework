@@ -69,7 +69,8 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    position: 'relative',
+    zIndex: 1,
   },
 
   chartContainer: {
@@ -81,11 +82,16 @@ export default StyleSheet.create({
     height: 250,
     marginVertical: UI_SIZES.spacing.medium,
   },
-
+  chartWithGrid: {
+    flex: 1,
+    position: 'relative',
+  },
   // Styles communs
   container: {
     backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.grey.cloudy,
+    borderLeftColor: theme.palette.complementary.blue.regular,
+    borderLeftWidth: 4,
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.border.thin,
     elevation: 3,
@@ -119,6 +125,22 @@ export default StyleSheet.create({
     marginLeft: UI_SIZES.spacing.tiny,
     textAlign: 'right',
   },
+  gridContainer: {
+    bottom: 0,
+    height: 183,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  gridLine: {
+    backgroundColor: theme.palette.grey.cloudy,
+    height: 1,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    width: '100%',
+  },
 
   hourLabel: {
     color: theme.palette.grey.black,
@@ -131,20 +153,39 @@ export default StyleSheet.create({
     fontSize: getScaleFontSize(16),
     textAlign: 'center',
   },
+  scaleContainer: {
+    alignItems: 'flex-end',
+    height: 183,
+    justifyContent: 'flex-end',
+    marginBottom: UI_SIZES.spacing.medium,
+    marginLeft: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.tinyExtra,
+    position: 'relative',
+  },
+  scaleLabel: {
+    position: 'absolute',
+    right: 0,
+  },
+
+  scaleText: {
+    color: theme.palette.grey.graphite,
+    fontSize: getScaleFontSize(12),
+    textAlign: 'right',
+  },
   // Styles spécifiques au graphique du jour
   titleContainer: {
     alignItems: 'center',
     marginBottom: UI_SIZES.spacing.medium,
   },
   toggleButton: {
-    backgroundColor: theme.palette.grey.pearl,
+    backgroundColor: theme.palette.complementary.blue.pale,
     borderRadius: UI_SIZES.radius.medium,
     marginTop: UI_SIZES.spacing.small,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.tiny,
   },
   toggleButtonText: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.complementary.blue.regular,
     fontSize: getScaleFontSize(12),
   },
   totalTime: {

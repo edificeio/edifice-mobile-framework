@@ -15,22 +15,20 @@ export default StyleSheet.create({
   titleRow: {
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    marginBottom: UI_SIZES.spacing.small,
   },
   usageCard: {
     backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.grey.cloudy,
+    borderLeftWidth: 4,
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.border.thin,
-    elevation: 3,
     flexBasis: '48%',
     padding: UI_SIZES.spacing.medium,
-    shadowColor: theme.palette.grey.black,
-    shadowOffset: {
-      height: UI_SIZES.border.thin,
-      width: 0,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: UI_SIZES.radius.medium,
+  },
+  usageCardToday: {
+    borderLeftColor: theme.palette.complementary.green.regular,
+  },
+  usageCardYesterday: {
+    borderLeftColor: theme.palette.complementary.orange.regular,
   },
 });
