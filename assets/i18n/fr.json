@@ -309,7 +309,7 @@
   "camera-permissionblocked-text": "{{appName}} ne peut pas accéder à l'appareil photo. Vous pouvez autoriser l'accès via les réglages de l'application dans les paramètres du téléphone.",
   "camera-permissionblocked-title": "Accès à l'appareil photo refusé",
   "cameraaction-take": "Prendre une photo",
-  "carnetdebord": "Carnet de bord Pronote",
+  "carnetdebord": "Pronote",
   "carousel-counter": "{{current}} / {{total}}",
   "carousel-imagenotfound": "Image inaccessible ou introuvable.",
   "carousel-privacy-button": "J'ai compris",
