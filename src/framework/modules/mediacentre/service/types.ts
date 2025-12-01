@@ -45,3 +45,17 @@ export type BackendGlobalResources = {
     global: BackendResource[];
   };
 };
+
+export type BackendSignetsResourcesType = {
+  data: {
+    signets: {
+      resources: BackendResource[];
+    };
+  };
+};
+
+export type BackendTextBooksType = {
+  data: {
+    textbooks: BackendResource[];
+  };
+};
