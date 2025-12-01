@@ -1,81 +1,8 @@
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { Resource, Source } from '~/framework/modules/mediacentre/model';
+import { resourceAdapter } from '~/framework/modules/mediacentre/service/adapters';
+import { BackendGlobalResources, BackendResource, BackendSearch } from '~/framework/modules/mediacentre/service/types';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-
-type BackendResource = {
-  id: string | number;
-  _id?: string;
-  title: string;
-  plain_text: string;
-  image: string;
-  document_types?: string[];
-  source?: Source;
-  link?: string;
-  url?: string;
-  authors: string[];
-  editors: string[];
-  disciplines?: string[] | [number, string][];
-  levels: string[] | [number, string][];
-  user: string;
-  archived?: boolean;
-  favorite?: boolean;
-  is_textbook?: boolean;
-  is_parent?: boolean;
-  structure_uai?: string;
-  orientation?: boolean;
-  owner_id?: string;
-  owner_name?: string;
-  pinned_title?: string;
-  pinned_description?: string;
-};
-
-type BackendSearch = {
-  event: string;
-  state: string;
-  status: string;
-  data: {
-    source: Source;
-    resources: BackendResource[];
-  };
-}[];
-
-type BackendGlobalResources = {
-  event: string;
-  state: string;
-  status: string;
-  data: {
-    global: BackendResource[];
-  };
-};
-
-const transformArray = (array: string[] | [number, string][]): string[] =>
-  array.map((value: string | [number, string]) => (Array.isArray(value) ? value[1] : value));
-
-const resourceAdapter = (data: BackendResource): Resource => {
-  const id = (data._id ?? typeof data.id === 'number') ? data.id.toString() : data.id;
-  return {
-    authors: data.owner_name ?? data.authors,
-    disciplines: data.disciplines ? transformArray(data.disciplines) : [],
-    editors: data.editors,
-    id,
-    image: data.image,
-    isParent: data.is_parent,
-    isTextbook: data.is_textbook,
-    levels: transformArray(data.levels),
-    link: (data.link ?? data.url) as string,
-    pinnedDescription: data.pinned_description,
-    source: data.source ?? Source.SIGNET,
-    themes:
-      data.source === Source.SIGNET
-        ? data.orientation || data.document_types?.includes('Orientation')
-          ? ['Orientation et découverte des métiers']
-          : ['Sans thématique']
-        : undefined,
-    title: data.pinned_title ?? data.title,
-    types: data.document_types?.filter(value => value !== 'Orientation') ?? ['livre numérique'],
-    uid: data.structure_uai ? data.id + data.structure_uai : id,
-  };
-};
 
 export const mediacentreService = {
   favorites: {
