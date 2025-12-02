@@ -1,5 +1,5 @@
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 
 export interface AttachmentsProps {
   session: AuthActiveAccount;

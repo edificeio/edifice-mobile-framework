@@ -25,7 +25,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import Thumbnail from '~/framework/modules/mails/components/attachments/thumbnail';
 import { mailsService } from '~/framework/modules/mails/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness,
@@ -289,11 +289,11 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
       const actionParams = { callback: handleFilesCallback };
 
       const actionsMap = {
-        camera: () => cameraActionFm('mails', 'attachments', actionParams).action({ callbackOnce: true }),
+        camera: () => cameraActionFm('mails', 'attachments', actionParams).action(),
 
         documents: () => documentActionFm('mails', 'attachments', actionParams).action(),
 
-        gallery: () => galleryActionFm('mails', 'attachments', actionParams).action({ callbackOnce: true }),
+        gallery: () => galleryActionFm('mails', 'attachments', actionParams).action(),
       };
 
       actionsMap[source as keyof typeof actionsMap]?.();

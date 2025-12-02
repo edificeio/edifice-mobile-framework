@@ -1,6 +1,6 @@
 import { DocumentPickerResponse } from '@react-native-documents/picker';
 
-import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { Asset } from '~/framework/util/fileHandler/types';
 
 export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;

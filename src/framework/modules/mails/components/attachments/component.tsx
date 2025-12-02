@@ -17,7 +17,7 @@ import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/h
 import Separator from '~/framework/components/separator';
 import toast from '~/framework/components/toast';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-import { IDistantFileWithId } from '~/framework/util/fileHandler';
+import { IDistantFileWithId } from '~/framework/util/fileHandler/models';
 import { FileSource } from '~/framework/util/fileHandler/types';
 
 const MODAL_DISMISS_DELAY = 500;

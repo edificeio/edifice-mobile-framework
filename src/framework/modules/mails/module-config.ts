@@ -19,7 +19,7 @@ export default new NavigableModuleConfig<'mails', null>({
 
     editor: {
       allow: ['image'],
-      multiple: false,
+      multiple: true,
       sources: ['camera', 'gallery'],
     },
   } as const,
