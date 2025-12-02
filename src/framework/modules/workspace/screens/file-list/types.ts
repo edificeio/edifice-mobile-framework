@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { Filter, IFile, IFolder } from '~/framework/modules/workspace/reducer';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface IWorkspaceFileListScreenDataProps {

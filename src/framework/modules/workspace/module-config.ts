@@ -9,7 +9,13 @@ export default new NavigableModuleConfig<'workspace', IWorkspaceState>({
   displayI18n: 'workspace-moduleconfig-modulename',
   displayPicture: theme.apps.workspace.icon,
   entcoreScope: ['workspace'],
-
+  fileManager: {
+    upload: {
+      allow: ['image', 'video', 'document'],
+      multiple: true,
+      sources: ['camera', 'gallery', 'documents'],
+    },
+  } as const,
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('ESPACE DOCUMENTAIRE'),
   name: 'workspace',
   storageName: 'workspace',
