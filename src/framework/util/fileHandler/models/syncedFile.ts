@@ -42,3 +42,7 @@ export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {
     return this.df.id;
   }
 }
+
+export interface IAnyDistantFile extends IDistantFile {
+  [key: string]: any;
+}
