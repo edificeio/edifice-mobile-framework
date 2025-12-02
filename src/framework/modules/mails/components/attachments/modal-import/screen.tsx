@@ -23,6 +23,7 @@ import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import Thumbnail from '~/framework/modules/mails/components/attachments/thumbnail';
+import moduleConfig from '~/framework/modules/mails/module-config';
 import { mailsService } from '~/framework/modules/mails/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
@@ -289,11 +290,11 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
       const actionParams = { callback: handleFilesCallback };
 
       const actionsMap = {
-        camera: () => cameraActionFm('mails', 'attachments', actionParams).action(),
+        camera: () => cameraActionFm(moduleConfig.name, 'attachments', actionParams).action(),
 
-        documents: () => documentActionFm('mails', 'attachments', actionParams).action(),
+        documents: () => documentActionFm(moduleConfig.name, 'attachments', actionParams).action(),
 
-        gallery: () => galleryActionFm('mails', 'attachments', actionParams).action(),
+        gallery: () => galleryActionFm(moduleConfig.name, 'attachments', actionParams).action(),
       };
 
       actionsMap[source as keyof typeof actionsMap]?.();
