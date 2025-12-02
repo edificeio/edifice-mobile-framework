@@ -6,43 +6,46 @@ import { ILocalAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 import { AttachmentGroupImages } from './AttachmentGroupImages';
 
-import { ImagePicked } from '~/framework/components/menus/actions';
 import { Trackers } from '~/framework/util/tracker';
-import { ContentUri } from '~/types/contentUri';
 
 class AttachmentPicker_Unconnected extends React.PureComponent<{
-  attachments: ContentUri[] | ILocalAttachment[];
+  attachments: ILocalAttachment[];
   attachmentsHeightHalfScreen?: number;
-  imageCallback?: (image: ImagePicked) => void;
   isContainerHalfScreen?: boolean;
   notifierId: string;
-  onAttachmentRemoved: (attachments: ContentUri[] | ILocalAttachment[]) => void;
+
+  onAttachmentAdded?: (attachments: ILocalAttachment[]) => void;
+  onAttachmentRemoved: (attachments: ILocalAttachment[]) => void;
+
   onlyImages?: boolean;
 }> {
-  public onRemoveAttachment(index: number) {
-    const { attachments, onAttachmentRemoved } = this.props;
-    const attachmentsToSend = [...attachments];
-    attachmentsToSend.splice(index, 1);
-    onAttachmentRemoved(attachmentsToSend);
+  onRemoveAttachment(index: number) {
+    const attachments = [...this.props.attachments];
+    attachments.splice(index, 1);
+    this.props.onAttachmentRemoved(attachments);
   }
 
-  public render() {
-    const { attachments, attachmentsHeightHalfScreen, imageCallback, isContainerHalfScreen, notifierId, onlyImages } = this.props;
+  render() {
+    const { attachments, attachmentsHeightHalfScreen, isContainerHalfScreen, notifierId, onlyImages } = this.props;
+
     return onlyImages ? (
       <AttachmentGroupImages
-        imageCallback={imageCallback}
-        onRemove={index => this.onRemoveAttachment(index)}
-        images={attachments as ILocalAttachment[]}
         moduleName={notifierId}
+        images={attachments}
+        onRemove={index => this.onRemoveAttachment(index)}
+        onAdd={files => {
+          this.props.onAttachmentAdded?.(files);
+        }}
       />
     ) : (
       <AttachmentGroup
         editMode
-        attachments={attachments as ILocalAttachment[]}
+        attachments={attachments}
         onRemove={index => this.onRemoveAttachment(index)}
         onOpen={() => Trackers.trackEvent('Conversation', 'OPEN ATTACHMENT', 'Edit mode')}
         isContainerHalfScreen={isContainerHalfScreen}
         attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
+        referer={undefined}
       />
     );
   }
