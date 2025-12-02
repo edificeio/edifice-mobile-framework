@@ -27,6 +27,7 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { audienceService } from '~/framework/modules/audience/service';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
@@ -472,6 +473,14 @@ export const CommunitiesHomeScreenLoaded = function ({
     [communityId, membersId, navigation, scrollElements, title, totalMembers],
   );
 
+  const audienceReferer = React.useMemo(
+    () => ({
+      module: moduleConfig.name,
+      resourceType: 'announcement',
+    }),
+    [],
+  );
+
   const [announcements, setAnnouncements] = React.useState<(PostDetailsProps<number> | typeof LOADING_ITEM_DATA)[]>([]);
 
   const loadData = React.useCallback(
@@ -483,8 +492,22 @@ export const CommunitiesHomeScreenLoaded = function ({
         };
 
         const items = await sessionApi(moduleConfig, AnnouncementClient).getAnnouncements(communityId, baseQueryParams);
+        const itemsIds = items.items.map(i => i.id.toString());
+        const reactions = await audienceService.reaction.getSummary(audienceReferer.module, audienceReferer.resourceType, itemsIds);
 
         const newAnnouncements: PostDetailsProps<number>[] = items.items.map(e => ({
+          audience: {
+            infosReactions: {
+              total: reactions.reactionsByResource[e.id].totalReactionsCounter,
+              types: reactions.reactionsByResource[e.id].reactionTypes,
+              userReaction: reactions.reactionsByResource[e.id].userReaction,
+            },
+            referer: {
+              ...audienceReferer,
+              resourceId: e.id.toString(),
+            },
+            session,
+          },
           author: {
             userId: e.author.entId,
             username: e.author.displayName,
@@ -508,7 +531,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         console.error('Error while loading community members list', e);
       }
     },
-    [communityId],
+    [audienceReferer, communityId, session],
   );
 
   return (

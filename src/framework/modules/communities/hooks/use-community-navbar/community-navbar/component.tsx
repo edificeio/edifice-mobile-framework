@@ -19,7 +19,6 @@ export const useCommunityBannerHeight = () => {
 
 export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavbarProps>) {
   const source = React.useMemo(() => (image !== undefined ? sessionImageSource(toURISource(image)) : undefined), [image]);
-  console.info('image', source);
   const height = useCommunityBannerHeight();
   const style = React.useMemo(
     () => [
