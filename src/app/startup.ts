@@ -17,9 +17,8 @@ const initFeatures = async () => {
   await Storage.init();
   await I18n.init();
   if (__DEV__) {
-    require('./reactotron.ts').then(() => {
-      console.info('Reactotron initialized');
-    });
+    require('./reactotron.ts');
+    console.info('Reactotron initialized');
   }
 };
 
