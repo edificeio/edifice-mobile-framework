@@ -25,7 +25,6 @@ export class FileManager {
 
     const { multiple, sources } = config;
     const source: FileSource = options?.source ?? sources[0];
-    const callbackOnce = options?.callbackOnce ?? false;
     const override = options?.configOverride ?? {};
 
     console.debug(`[FileManager] Module=${moduleName} Usecase=${usecaseName}`);
@@ -59,18 +58,13 @@ export class FileManager {
       case 'gallery':
         files = await pickFromGallery({
           allowedTypes: allowedTypesForGallery,
-          callbackOnce,
           multiple: override.gallery?.multiple ?? multiple,
         });
         break;
 
       case 'camera':
         files = await pickFromCamera({
-          maxDuration: override.camera?.maxDuration,
-
-          // FUTUR
           mode: override.camera?.mode,
-          quality: override.camera?.quality,
           useFrontCamera: override.camera?.useFrontCamera ?? false,
         });
         break;
@@ -78,7 +72,7 @@ export class FileManager {
       case 'documents':
         files = await pickFromDocuments({
           multiple: override.documents?.multiple ?? multiple,
-          types: override.documents?.types ?? undefined,
+          types: override.documents?.types,
         });
         break;
       case 'audio':

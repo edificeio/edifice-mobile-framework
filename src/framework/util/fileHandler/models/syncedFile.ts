@@ -35,6 +35,18 @@ export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements I
 
   releaseIfNeeded = () => this.lf.releaseIfNeeded();
   open = () => this.lf.open();
+
+  moveToDownloadFolder() {
+    return this.lf.moveToDownloadFolder();
+  }
+
+  setExtension(ext: string) {
+    return this.lf.setExtension(ext);
+  }
+
+  setPath(path: string) {
+    return this.lf.setPath(path);
+  }
 }
 
 export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {
