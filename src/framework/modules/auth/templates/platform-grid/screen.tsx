@@ -1,13 +1,14 @@
 import * as React from 'react';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
 import type { AuthPlatformGridScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import GridList from '~/framework/components/GridList';
 import { PageView } from '~/framework/components/page';
 import { HeadingSText, SmallText } from '~/framework/components/text';
@@ -35,7 +36,7 @@ export function AuthPlatformGridScreen(props: AuthPlatformGridScreenPrivateProps
     [getNextRoute, navigation],
   );
   return (
-    <PageView statusBar="none">
+    <PageView statusBar="translucent-light">
       <GridList
         data={appConf.platforms}
         renderItem={({ item }) => (
@@ -49,14 +50,14 @@ export function AuthPlatformGridScreen(props: AuthPlatformGridScreenPrivateProps
         )}
         keyExtractor={item => item.url}
         ListHeaderComponent={
-          <>
+          <SafeAreaView edges={React.useMemo(() => ['top'], [])}>
             <HeadingSText style={styles.heading} testID="network-welcome-title">
               {I18n.get('auth-platformselect-welcome')}
             </HeadingSText>
             <SmallText style={styles.lightP} testID="network-welcome-subtitle">
               {I18n.get('auth-platformselect-select')}
             </SmallText>
-          </>
+          </SafeAreaView>
         }
         alwaysBounceVertical={false}
         overScrollMode="never"

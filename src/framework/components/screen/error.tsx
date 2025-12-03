@@ -14,8 +14,16 @@ import ErrorBoundary, { ErrorBoundaryProps, FallbackComponentProps } from 'react
 
 import EmptyErrorScreen from '../empty-screens/error/component';
 
-export default function ErrorScreenView({}: FallbackComponentProps) {
-  return <EmptyErrorScreen onBack={useNavigation().goBack} />;
+export default function ErrorScreenView({ resetError }: FallbackComponentProps) {
+  const navigation = useNavigation();
+  const onRetry = React.useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      resetError();
+    }
+  }, [navigation, resetError]);
+  return <EmptyErrorScreen onRetry={onRetry} />;
 }
 
 export function withErrorBoundary<T extends ComponentType<any>>(

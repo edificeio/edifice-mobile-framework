@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
 export default function WelcomeScreen(props: WelcomeScreenProps) {
   const { next } = props;
   return (
-    <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
+    <PageView gutters="both" showNetworkBar={false} statusBar="translucent-dark" style={{ backgroundColor: NBK_COLORS.darkColor }}>
       <View style={styles.main}>
         <View style={styles.containerLogo}>
           <FastImage style={styles.logo} source={NBK_LOGO} />

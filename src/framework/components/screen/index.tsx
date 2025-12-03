@@ -18,14 +18,14 @@ import { Trackers } from '~/framework/util/tracker';
 // ToDo manage keyboard
 
 export const ScreenView = withErrorBoundary(
-  function (props: PropsWithChildren<ScreenViewProps>) {
+  function ({ children, statusBar = 'primary' }: PropsWithChildren<ScreenViewProps>) {
     const route = useRoute();
     const isModal = isModalModeOnThisRoute(route.name);
 
     const content = (
       <>
-        {<StatusBar type={props.statusBar ?? 'primary'} />}
-        <View style={styles.defaultScreenStyle}>{props.children}</View>
+        <StatusBar type={statusBar} />
+        <View style={styles.defaultScreenStyle}>{children}</View>
       </>
     );
 

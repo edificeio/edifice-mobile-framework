@@ -138,7 +138,7 @@ const HomeScreen = (props: HomeScreenProps) => {
   };
 
   return (
-    <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
+    <PageView gutters="both" showNetworkBar={false} statusBar="translucent-dark" style={{ backgroundColor: NBK_COLORS.darkColor }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={[textStyle.title, styles.title]}>{I18n.get('nabook-homescreen-title')}</Text>
         <Text style={[textStyle.bodyRoboto, styles.content]}>{I18n.get('nabook-homescreen-content')}</Text>
