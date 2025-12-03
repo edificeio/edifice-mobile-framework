@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IFolder, IMail, IQuota, IRecipient, ISignature } from '~/framework/modules/zimbra/model';
-import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
+import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler/models';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';

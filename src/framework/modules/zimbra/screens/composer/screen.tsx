@@ -35,7 +35,7 @@ import { zimbraService } from '~/framework/modules/zimbra/service';
 import { initDraftFromMail, isSignatureRich } from '~/framework/modules/zimbra/utils/drafts';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -363,14 +363,16 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       deleteAction({ action: isTrashed ? this.alertPermanentDeletion : this.trashDraft }),
     ];
 
+    const attachOpts = (file: LocalFile | LocalFile[]) => this.addAttachment(file as LocalFile[]);
+
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.navBarActionsContainer}>
           <PopupMenu
             actions={[
-              cameraActionFm(moduleConfig.name, 'upload', { callback: files => this.addAttachment(files as LocalFile[]) }),
-              galleryActionFm(moduleConfig.name, 'upload', { callback: files => this.addAttachment(files as LocalFile[]) }),
-              documentActionFm(moduleConfig.name, 'upload', { callback: files => this.addAttachment(files as LocalFile[]) }),
+              cameraActionFm(moduleConfig.name, 'upload', { callback: attachOpts }),
+              galleryActionFm(moduleConfig.name, 'upload', { callback: attachOpts }),
+              documentActionFm(moduleConfig.name, 'upload', { callback: attachOpts }),
             ]}>
             <NavBarAction icon="ui-attachment" />
           </PopupMenu>
