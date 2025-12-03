@@ -27,9 +27,9 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import moduleConfig from '~/framework/modules/homework/module-config';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import AbsenceDatesSelector from '~/framework/modules/viescolaire/presences/components/absence-dates-selector';
+import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
@@ -57,8 +57,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
   const [isCreating, setCreating] = React.useState<boolean>(false);
 
   const onPickAttachment = (att: LocalFile | LocalFile[]) => {
-    const files = Array.isArray(att) ? att : [att];
-    // we uploading only one, but when needed we gonna iterate throught the liste
+    const files = att as LocalFile[];
     const file = files[0];
     setAttachment(file);
   };
