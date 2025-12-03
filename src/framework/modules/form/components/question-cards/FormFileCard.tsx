@@ -14,8 +14,9 @@ import { Svg } from '~/framework/components/picture';
 import { SmallActionText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse, IResponseFile } from '~/framework/modules/form/model';
+import moduleConfig from '~/framework/modules/form/module-config';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 
 const styles = StyleSheet.create({
   actionText: {
@@ -73,13 +74,13 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
   const addFile = (fileOrFiles: LocalFile | LocalFile[]) => {
     const arr = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
 
-    const newFiles: IResponseFile[] = arr.map(f => ({
+    const newFiles = arr.map(f => ({
       filename: f.filename,
       id: null,
       lf: f,
       responseId: 0,
       type: f.filetype,
-    }));
+    })) as IResponseFile[];
 
     setFiles(prev => [...prev, ...newFiles]);
   };
@@ -97,9 +98,9 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
           <BottomMenu
             title={I18n.get('form-distribution-filecard-addfiles')}
             actions={[
-              cameraActionFm('form', 'file', { callback: addFile }),
-              galleryActionFm('form', 'file', { callback: addFile }),
-              documentActionFm('form', 'file', { callback: addFile }),
+              cameraActionFm(moduleConfig.name, 'file', { callback: addFile }),
+              galleryActionFm(moduleConfig.name, 'file', { callback: addFile }),
+              documentActionFm(moduleConfig.name, 'file', { callback: addFile }),
             ]}>
             <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
               <SmallActionText style={styles.actionText}>{I18n.get('form-distribution-filecard-addfiles')}</SmallActionText>
