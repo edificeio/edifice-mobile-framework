@@ -16,7 +16,6 @@ import { UI_STYLES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
-// todo aggregate those 3 in one import later
 import { cameraActionFm } from '~/framework/components/menus/actions/cameraAction';
 import { documentActionFm } from '~/framework/components/menus/actions/documentAction';
 import { galleryActionFm } from '~/framework/components/menus/actions/galleryAction';
@@ -28,13 +27,14 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import moduleConfig from '~/framework/modules/homework/module-config';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import AbsenceDatesSelector from '~/framework/modules/viescolaire/presences/components/absence-dates-selector';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { Trackers } from '~/framework/util/tracker';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
@@ -123,9 +123,9 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
           <BottomMenu
             title={I18n.get('presences-declareabsence-attachment')}
             actions={[
-              cameraActionFm('presences', 'attachment', { callback: onPickAttachment }),
-              galleryActionFm('presences', 'attachment', { callback: onPickAttachment }),
-              documentActionFm('presences', 'attachment', { callback: onPickAttachment }),
+              cameraActionFm(moduleConfig.name, 'attachment', { callback: onPickAttachment }),
+              galleryActionFm(moduleConfig.name, 'attachment', { callback: onPickAttachment }),
+              documentActionFm(moduleConfig.name, 'attachment', { callback: onPickAttachment }),
             ]}>
             <View style={styles.filePickerContainer}>
               <Svg
