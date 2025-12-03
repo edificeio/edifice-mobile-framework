@@ -101,11 +101,19 @@ export class LocalFile implements LocalFileNS.CustomUploadFileItem {
   }
 
   async open() {
-    if (!this.filepath.includes('://')) {
-      this.filepath = `file://${this.filepath}`;
-      this._filepathNative = `file://${this._filepathNative}`;
+    let uri = this._filepathNative || this.filepath;
+
+    if (!uri.startsWith('file://') && !uri.startsWith('content://')) {
+      uri = 'file://' + uri;
     }
-    await openDocument(this as any);
+
+    await openDocument({
+      ...this,
+      filename: this.filename,
+      filetype: this.filetype,
+      uri,
+      url: uri,
+    } as any);
   }
 
   async moveToDownloadFolder() {

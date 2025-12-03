@@ -4,11 +4,10 @@
 import FileViewer from 'react-native-file-viewer';
 import type { ThunkDispatch } from 'redux-thunk';
 
-import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
-
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { openMediaPlayer } from '~/framework/components/media/player';
 import { assertSession } from '~/framework/modules/auth/reducer';
+import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
 import fileTransferService, {
   IDownloadCallbaks,
   IDownloadParams,
