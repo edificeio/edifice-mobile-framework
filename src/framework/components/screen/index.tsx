@@ -42,7 +42,7 @@ export const ScreenView = withErrorBoundary(
     FallbackComponent: function (props) {
       return <ErrorScreenView {...props} />;
     },
-    onError: (error, stackTrace) => {
+    onError: (error, _stackTrace) => {
       Trackers.recordCrashError(error, 'ScreenView');
     },
   },

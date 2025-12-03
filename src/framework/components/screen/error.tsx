@@ -9,12 +9,13 @@ import React, {
   RefAttributes,
 } from 'react';
 
+import { useNavigation } from '@react-navigation/native';
 import ErrorBoundary, { ErrorBoundaryProps, FallbackComponentProps } from 'react-native-error-boundary';
 
-import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
+import EmptyErrorScreen from '../empty-screens/error/component';
 
-export default function ErrorScreenView({ error, resetError }: FallbackComponentProps) {
-  return <EmptyConnectionScreen />;
+export default function ErrorScreenView({}: FallbackComponentProps) {
+  return <EmptyErrorScreen onBack={useNavigation().goBack} />;
 }
 
 export function withErrorBoundary<T extends ComponentType<any>>(
