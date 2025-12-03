@@ -837,7 +837,6 @@
   "import-back-confirm-title": "Elimina file",
   "import-confirm-button": "OK ({{count}})",
   "import-error-filetoolarge": "Spazio di archiviazione insufficiente",
-  "import-order-by-info": "I file vengono ordinati in base alla data di creazione.",
   "import-title": "Importazione",
   "import-title_other": "Importatore ({{count}})",
   "import-title_zero": "Importatore",

@@ -837,7 +837,7 @@
   "import-back-confirm-title": "Delete Files",
   "import-confirm-button": "OK ({{count}})",
   "import-error-filetoolarge": "Insufficient storage space",
-  "import-order-by-info": "Your files are ordered by date of creation.",
+  "import-order-by-info": "The files will be imported in the order in which they were selected.",
   "import-title": "Import",
   "import-title_other": "Import ({{count}})",
   "import-title_zero": "Import",
