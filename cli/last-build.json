@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-12-02 08:15:37",
-  "notes": "chore: yarn cache update\nrelease: 1.16.1-rc.2(1160102)",
-  "version": "1.16.1-rc.3(1160103)"
+  "last": "2025-12-02 12:53:04",
+  "notes": "update(stack): yarn cache update\nfix: ENABLING-497 remove image-crop-picker + replace by image-picker\nrelease: 1.16.1-rc.3(1160103)",
+  "version": "1.16.1-rc.4(1160104)"
 }
