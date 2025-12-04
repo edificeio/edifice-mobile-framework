@@ -7,7 +7,13 @@ export default new NavigableModuleConfig<'user', UserState>({
   displayI18n: 'user-moduleconfig-myaccount',
 
   entcoreScope: [],
-
+  fileManager: {
+    avatar: {
+      allow: ['image'],
+      multiple: false,
+      sources: ['camera', 'gallery'],
+    },
+  } as const,
   // There is no corresponding backend app
   hasRight: () => true,
   matchEntcoreApp: () => false,
