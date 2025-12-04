@@ -246,13 +246,12 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         route.params.module,
         route.params.usecase,
         files => {
-          const arr = Array.isArray(files) ? files : [files];
+          const arr = files as LocalFile[];
 
           const formatted = arr.map(formatFileForUpload);
           setFiles(formatted);
         },
         {
-          callbackOnce: true,
           configOverride: route.params.configOverride,
           source: route?.params.source,
         },

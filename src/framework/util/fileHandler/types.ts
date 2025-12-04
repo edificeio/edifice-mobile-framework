@@ -51,8 +51,6 @@ export interface IModuleFileManagerConfig {
  */
 export interface FileManagerPickerOptionsType {
   source?: FileSource;
-  callbackOnce?: boolean;
-
   configOverride?: FileManagerConfigOverrideType;
 }
 

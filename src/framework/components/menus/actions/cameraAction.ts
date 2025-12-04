@@ -26,6 +26,7 @@ export function cameraActionFm<M extends FileManagerModuleName, U extends FileMa
 ) {
   const action = async () => {
     await FileManager.pick(module, usecase, files => props.callback(files, 'camera'), {
+      configOverride: props.configOverride,
       source: 'camera',
     });
   };

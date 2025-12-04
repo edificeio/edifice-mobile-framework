@@ -25,6 +25,7 @@ export function documentActionFm<M extends FileManagerModuleName, U extends File
 ) {
   const action = async () => {
     await FileManager.pick(module, usecase, files => props.callback(files, 'documents'), {
+      configOverride: props.configOverride,
       source: 'documents',
     });
   };

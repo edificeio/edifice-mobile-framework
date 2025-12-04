@@ -26,6 +26,7 @@ export function galleryActionFm<M extends FileManagerModuleName, U extends FileM
 ) {
   const action = async () => {
     await FileManager.pick(module, usecase, files => props.callback(files, 'gallery'), {
+      configOverride: props.configOverride,
       source: 'gallery',
     });
   };
