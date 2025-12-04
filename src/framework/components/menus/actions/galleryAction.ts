@@ -24,9 +24,8 @@ export function galleryActionFm<M extends FileManagerModuleName, U extends FileM
   usecase: U,
   props: MenuPickerActionFmProps,
 ) {
-  const action = async (opts?: { callbackOnce?: boolean }) => {
+  const action = async () => {
     await FileManager.pick(module, usecase, files => props.callback(files, 'gallery'), {
-      callbackOnce: opts?.callbackOnce ?? false,
       source: 'gallery',
     });
   };
