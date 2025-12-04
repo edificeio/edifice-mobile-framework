@@ -70,22 +70,25 @@ export class AttachmentGroup extends React.PureComponent<
         ) : null}
 
         <View style={{ paddingVertical: UI_SIZES.spacing.tiny / 2 }}>
-          {attachments.map((item, index) => (
-            <Attachment
-              key={`attachment#${index}`}
-              attachment={item}
-              starDownload={downloadAll}
-              onDownload={() => {
-                onDownload?.();
-                if (this.props.referer) markViewAudience(this.props.referer);
-              }}
-              onError={onError}
-              onOpen={onOpen}
-              style={getAttachmentStyle(index)}
-              editMode={editMode && !item.hasOwnProperty('id')}
-              onRemove={() => onRemove?.(index)}
-            />
-          ))}
+          {attachments.map((item, index) => {
+            const key = 'uri' in item ? item.uri : item.url;
+            return (
+              <Attachment
+                key={`attachment#${key}`}
+                attachment={item}
+                starDownload={downloadAll}
+                onDownload={() => {
+                  onDownload?.();
+                  if (this.props.referer) markViewAudience(this.props.referer);
+                }}
+                onError={onError}
+                onOpen={onOpen}
+                style={getAttachmentStyle(index)}
+                editMode={editMode && !item.hasOwnProperty('id')}
+                onRemove={() => onRemove?.(index)}
+              />
+            );
+          })}
         </View>
       </TouchableOpacity>
     );
