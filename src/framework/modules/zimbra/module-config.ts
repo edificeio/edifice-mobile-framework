@@ -11,6 +11,13 @@ export default new NavigableModuleConfig<'zimbra', IZimbraReduxState>({
   displayPicture: { name: 'messagerie-off', type: 'Icon' },
   displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },
   entcoreScope: ['zimbra'],
+  fileManager: {
+    upload: {
+      allow: ['image', 'video', 'document'],
+      multiple: false,
+      sources: ['camera', 'gallery', 'documents'],
+    },
+  } as const,
   matchEntcoreApp: '/zimbra/zimbra',
   name: 'zimbra',
   storageName: 'zimbra',

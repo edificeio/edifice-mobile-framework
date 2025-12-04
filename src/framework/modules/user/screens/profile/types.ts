@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { HobbieItem } from '~/framework/modules/user/model';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
-import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
 
 export interface ProfilePageDataProps {
   session?: AuthLoggedAccount;

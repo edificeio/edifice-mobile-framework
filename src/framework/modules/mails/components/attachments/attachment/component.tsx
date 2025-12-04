@@ -13,7 +13,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import { SyncedFile } from '~/framework/util/fileHandler';
+import { SyncedFile } from '~/framework/util/fileHandler/models';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { PermissionError } from '~/framework/util/permissions';
 

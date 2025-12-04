@@ -7,7 +7,9 @@ import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEdito
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
+import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { FileManagerPickerOptionsType } from '~/framework/util/fileHandler/types';
 
 export interface RichEditorFormProps extends ScrollViewProps {
   initialContentHtml: string;
@@ -21,6 +23,10 @@ export interface RichEditorFormProps extends ScrollViewProps {
   editorStyle?: ViewStyle;
   placeholder?: string;
   editorRef?: React.Ref<RichEditor>;
+
+  fileManagerModule: FileManagerModuleName;
+  fileManagerUsecase: FileManagerUsecaseName<FileManagerModuleName>;
+  configOverride?: FileManagerPickerOptionsType['configOverride'];
 }
 
 export interface RichEditorFormReduxProps {

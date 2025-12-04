@@ -18,6 +18,7 @@ import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigat
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction } from '~/framework/modules/blog/actions';
+import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -155,6 +156,8 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const renderPostInfos = () => {
     return (
       <RichEditorForm
+        fileManagerModule={moduleConfig.name}
+        fileManagerUsecase="editor"
         topForm={topForm}
         initialContentHtml=""
         uploadParams={

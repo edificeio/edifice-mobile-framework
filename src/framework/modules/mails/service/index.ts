@@ -17,7 +17,7 @@ import {
   MailsConversationPayload,
   MailsFolderCount,
 } from '~/framework/modules/mails/model';
-import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import { sessionFetch } from '~/framework/util/transport';
 

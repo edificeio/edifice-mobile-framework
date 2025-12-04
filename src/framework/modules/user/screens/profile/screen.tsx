@@ -19,7 +19,7 @@ import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import { ImagePicked, MenuAction } from '~/framework/components/menus/actions';
+import { MenuAction } from '~/framework/components/menus/actions';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/components/text';
@@ -41,7 +41,7 @@ import { userService } from '~/framework/modules/user/service';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 
@@ -127,18 +127,10 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const motto = route.params.newMotto ?? userInfo?.motto;
   const hobbies = route.params.newHobbies ?? userInfo?.hobbies;
 
-  const onChangeAvatar = async (image: ImagePicked) => {
+  const onChangeAvatar = async (image: LocalFile) => {
     try {
-      const lc = new LocalFile(
-        {
-          filename: image.fileName as string,
-          filepath: image.uri as string,
-          filetype: image.type as string,
-        },
-        { _needIOSReleaseSecureAccess: false },
-      );
       setUpdatingAvatar(true);
-      const sc = await onUploadAvatar(lc);
+      const sc = await onUploadAvatar(image);
       await onUpdateAvatar(sc.url);
     } catch (err: any) {
       if (err.message === 'Error picking image') {

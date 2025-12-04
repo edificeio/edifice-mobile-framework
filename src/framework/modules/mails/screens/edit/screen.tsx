@@ -22,6 +22,7 @@ import MailsHistoryButton from '~/framework/modules/mails/components/history-but
 import { InactiveUserModalContentContainer } from '~/framework/modules/mails/components/modal-content-container';
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsRecipientsType } from '~/framework/modules/mails/model';
+import moduleConfig from '~/framework/modules/mails/module-config';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 
@@ -149,6 +150,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       <View style={styles.bottomForm}>
         {history !== '' && !isHistoryOpen ? <MailsHistoryButton content={history} onPress={onOpenHistory} /> : null}
         <Attachments
+          session={session!}
           isEditing
           attachments={attachments}
           removeAttachmentAction={onRemoveAttachment}
@@ -158,13 +160,15 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
         <View style={{ minHeight: 600 }} />
       </View>
     ),
-    [history, isHistoryOpen, onOpenHistory, attachments, onRemoveAttachment, draftIdSaved, onPressAddAttachments],
+    [history, isHistoryOpen, session, onOpenHistory, attachments, onRemoveAttachment, draftIdSaved, onPressAddAttachments],
   );
 
   const renderContent = React.useCallback(() => {
     return (
       <>
         <RichEditorForm
+          fileManagerModule={moduleConfig.name}
+          fileManagerUsecase="editor"
           ref={scrollViewRef}
           editorRef={editorRef}
           topForm={renderTopForm()}

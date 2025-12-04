@@ -10,6 +10,19 @@ export default new NavigableModuleConfig<'mails', null>({
   displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },
 
   entcoreScope: ['conversation', 'userbook', 'communication'],
+  fileManager: {
+    attachments: {
+      allow: ['image', 'video', 'document'],
+      multiple: true,
+      sources: ['camera', 'gallery', 'documents'],
+    },
+
+    editor: {
+      allow: ['image'],
+      multiple: true,
+      sources: ['camera', 'gallery'],
+    },
+  } as const,
   matchEntcoreApp: '/conversation/conversation',
   name: 'mails',
   storageName: 'mails',

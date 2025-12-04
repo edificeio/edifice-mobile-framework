@@ -1,7 +1,7 @@
-import cameraAction from './cameraAction';
+import cameraActionFm from './cameraAction';
 import deleteAction from './deleteAction';
-import documentAction from './documentAction';
-import galleryAction from './galleryAction';
+import documentActionFm from './documentAction';
+import galleryActionFm from './galleryAction';
 import linkAction from './linkAction';
 import { DocumentPicked, ImagePicked, MenuAction } from './types';
 
@@ -17,4 +17,4 @@ export const imagePickedToLocalFile = (img: ImagePicked | DocumentPicked) =>
     { _needIOSReleaseSecureAccess: false },
   );
 
-export { cameraAction, deleteAction, documentAction, DocumentPicked, galleryAction, ImagePicked, linkAction, MenuAction };
+export { cameraActionFm, deleteAction, documentActionFm, DocumentPicked, galleryActionFm, ImagePicked, linkAction, MenuAction };
