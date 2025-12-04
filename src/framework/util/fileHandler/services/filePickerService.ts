@@ -27,7 +27,15 @@ export function pickFromGallery(
   const hasImage = allowedTypes.includes('image');
   const hasVideo = allowedTypes.includes('video');
 
-  const mediaType: 'photo' | 'video' | 'mixed' = hasImage && hasVideo ? 'mixed' : hasVideo ? 'video' : 'photo';
+  let mediaType: 'photo' | 'video' | 'mixed';
+
+  if (hasImage && hasVideo) {
+    mediaType = 'mixed';
+  } else if (hasVideo) {
+    mediaType = 'video';
+  } else {
+    mediaType = 'photo';
+  }
 
   return wrapPicker(async callback => {
     try {
@@ -48,7 +56,12 @@ export function pickFromGallery(
             const dest = `${RNFS.CachesDirectoryPath}/${filename}`;
 
             try {
-              await RNFS.copyFile(item.uri!, dest);
+              if (!item.uri) {
+                console.error('[Gallery] item missing URI', item);
+                return null;
+              }
+
+              await RNFS.copyFile(item.uri, dest);
             } catch (err) {
               console.error('[Gallery] Copy video error:', err);
               return null;
@@ -71,7 +84,9 @@ export function pickFromGallery(
         }),
       );
 
-      callback(processed.filter(Boolean).map(a => new LocalFile(a!, { _needIOSReleaseSecureAccess: false })));
+      const validAssets = processed.filter((x): x is Asset => x != null);
+
+      callback(validAssets.map(a => new LocalFile(a, { _needIOSReleaseSecureAccess: false })));
     } catch (err) {
       console.error('[pickFromGallery] ERROR:', err);
       callback([]);
@@ -107,7 +122,11 @@ export function pickFromCamera(
       if (mode === 'video') {
         const filename = `${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
         const dest = `${RNFS.CachesDirectoryPath}/${filename}`;
-        await RNFS.copyFile(asset.uri!, dest);
+        if (!asset.uri) {
+          console.error('[Camera] asset missing URI', asset);
+          return null;
+        }
+        await RNFS.copyFile(asset.uri, dest);
 
         return callback([
           new LocalFile(
