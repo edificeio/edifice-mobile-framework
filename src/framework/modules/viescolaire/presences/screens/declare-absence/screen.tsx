@@ -87,6 +87,8 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
   const renderPage = () => {
     const areDatesValid = startDate.isBefore(endDate) && startDate.isSameOrAfter(moment(), 'day');
     const { childId } = props.route.params;
+    const fns = [cameraActionFm, galleryActionFm, documentActionFm];
+    const attachOpts = { callback: onPickAttachment };
 
     return (
       <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.container}>
@@ -121,11 +123,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         ) : (
           <BottomMenu
             title={I18n.get('presences-declareabsence-attachment')}
-            actions={[
-              cameraActionFm(moduleConfig.name, 'attachment', { callback: onPickAttachment }),
-              galleryActionFm(moduleConfig.name, 'attachment', { callback: onPickAttachment }),
-              documentActionFm(moduleConfig.name, 'attachment', { callback: onPickAttachment }),
-            ]}>
+            actions={fns.map(fn => fn(moduleConfig.name, 'attachment', attachOpts))}>
             <View style={styles.filePickerContainer}>
               <Svg
                 name="ui-attachment"

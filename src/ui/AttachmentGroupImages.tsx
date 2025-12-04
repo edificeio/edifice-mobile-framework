@@ -79,6 +79,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
   onRemove: (index: number) => void;
   images: ILocalAttachment[];
   moduleName: string;
+  pickerInfo: { modulename: string; useCase: string };
 }> {
   imagesAdded() {
     return this.props.images.length > 0;
@@ -98,18 +99,15 @@ export class AttachmentGroupImages extends React.PureComponent<{
   renderItemSeparator = () => <View style={styles.itemSeperator} />;
 
   AddPhotosButton = () => {
-    const { onAdd } = this.props;
+    const { onAdd, pickerInfo } = this.props;
+    const { modulename, useCase } = pickerInfo;
+
+    const fns = [cameraActionFm, galleryActionFm];
+
+    const attachOpts = { callback: (file: LocalFile | LocalFile[]) => onAdd((file as LocalFile[]).map(mapLocalFileToLegacy)) };
 
     return (
-      <BottomMenu
-        actions={[
-          cameraActionFm('homework', 'attachments', {
-            callback: files => onAdd((files as LocalFile[]).map(mapLocalFileToLegacy)),
-          }),
-          galleryActionFm('homework', 'attachments', {
-            callback: files => onAdd((files as LocalFile[]).map(mapLocalFileToLegacy)),
-          }),
-        ]}>
+      <BottomMenu actions={fns.map(fn => fn(modulename, useCase, attachOpts))}>
         <View style={[styles.attachPhotosContainer, this.imagesAdded() && styles.attachPhotosContainerAdded]}>
           <Picture
             type="Svg"

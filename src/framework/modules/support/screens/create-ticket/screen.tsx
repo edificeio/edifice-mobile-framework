@@ -94,8 +94,10 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
     const mandatoryText = ' *';
     const filesAdded = attachments.length > 0;
     const isActionDisabled = subject === '' || subject.length > 255 || description === '';
-    const attachOpts = (file: LocalFile | LocalFile[]) => addAttachment(file as LocalFile[]);
 
+    const fns = [cameraActionFm, galleryActionFm, documentActionFm];
+
+    const attachOpts = { callback: (file: LocalFile | LocalFile[]) => addAttachment(file as LocalFile[]) };
     return hasTicketCreationRights ? (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
@@ -148,11 +150,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             <View style={styles.attachmentsContainer}>
               <BottomMenu
                 title={I18n.get('support-createticket-addfiles')}
-                actions={[
-                  cameraActionFm(moduleConfig.name, 'attachments', { callback: attachOpts }),
-                  galleryActionFm(moduleConfig.name, 'attachments', { callback: attachOpts }),
-                  documentActionFm(moduleConfig.name, 'attachments', { callback: attachOpts }),
-                ]}>
+                actions={fns.map(fn => fn(moduleConfig.name, 'attachments', attachOpts))}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
                   <SmallActionText style={styles.actionText}>{I18n.get('support-createticket-addfiles')}</SmallActionText>
                   <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />

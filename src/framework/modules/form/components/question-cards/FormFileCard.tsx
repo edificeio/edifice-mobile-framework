@@ -85,6 +85,10 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
     setFiles(prev => [...prev, ...newFiles]);
   };
 
+  const fns = [cameraActionFm, galleryActionFm, documentActionFm];
+
+  const attachOpts = { callback: (file: LocalFile | LocalFile[]) => addFile(file) };
+
   const removeFile = (file: IResponseFile) => {
     setFiles(files.filter(a => a !== file));
   };
@@ -97,11 +101,7 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
         <View style={styles.container}>
           <BottomMenu
             title={I18n.get('form-distribution-filecard-addfiles')}
-            actions={[
-              cameraActionFm(moduleConfig.name, 'file', { callback: addFile }),
-              galleryActionFm(moduleConfig.name, 'file', { callback: addFile }),
-              documentActionFm(moduleConfig.name, 'file', { callback: addFile }),
-            ]}>
+            actions={fns.map(fn => fn(moduleConfig.name, 'file', attachOpts))}>
             <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
               <SmallActionText style={styles.actionText}>{I18n.get('form-distribution-filecard-addfiles')}</SmallActionText>
               <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />

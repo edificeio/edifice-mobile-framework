@@ -53,27 +53,27 @@ export interface FileManagerPickerOptionsType {
   source?: FileSource;
   callbackOnce?: boolean;
 
-  configOverride?: {
-    gallery?: {
-      allowedTypes?: Array<'image' | 'video'>;
-      multiple?: boolean;
-    };
-
-    camera?: {
-      useFrontCamera?: boolean;
-      mode?: 'photo' | 'video'; // FUTURE
-      quality?: number; // FUTURE
-      maxDuration?: number; // FUTURE
-    };
-
-    documents?: {
-      multiple?: boolean;
-      types?: string[];
-    };
-
-    audio?: {
-      types?: string[];
-      multiple?: boolean;
-    };
-  };
+  configOverride?: FileManagerConfigOverrideType;
 }
+
+export type FileManagerConfigOverrideType = {
+  gallery?: {
+    allowedTypes?: Array<'image' | 'video'>;
+    multiple?: boolean;
+  };
+
+  camera?: {
+    useFrontCamera?: boolean;
+    mode?: 'photo' | 'video';
+  };
+
+  documents?: {
+    multiple?: boolean;
+    types?: string[];
+  };
+
+  audio?: {
+    types?: string[];
+    multiple?: boolean;
+  };
+};

@@ -233,6 +233,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
             <View style={styles.inputContainer}>
               <AttachmentPicker
                 onlyImages
+                pickerInfo={{ modulename: moduleConfig.name, useCase: 'attachments' }}
                 notifierId={uppercaseFirstLetter(moduleConfig.name)}
                 onAttachmentAdded={img => this.setState(prevState => ({ images: [...prevState.images, ...img] }))}
                 onAttachmentRemoved={selectedImages => this.setState({ images: selectedImages })}

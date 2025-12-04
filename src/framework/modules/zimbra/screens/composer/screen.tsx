@@ -362,18 +362,14 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       },
       deleteAction({ action: isTrashed ? this.alertPermanentDeletion : this.trashDraft }),
     ];
+    const fns = [cameraActionFm, galleryActionFm, documentActionFm];
 
-    const attachOpts = (file: LocalFile | LocalFile[]) => this.addAttachment(file as LocalFile[]);
+    const attachOpts = { callback: (file: LocalFile | LocalFile[]) => this.addAttachment(file as LocalFile[]) };
 
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.navBarActionsContainer}>
-          <PopupMenu
-            actions={[
-              cameraActionFm(moduleConfig.name, 'upload', { callback: attachOpts }),
-              galleryActionFm(moduleConfig.name, 'upload', { callback: attachOpts }),
-              documentActionFm(moduleConfig.name, 'upload', { callback: attachOpts }),
-            ]}>
+          <PopupMenu actions={fns.map(fn => fn(moduleConfig.name, 'upload', attachOpts))}>
             <NavBarAction icon="ui-attachment" />
           </PopupMenu>
           <View style={styles.navBarSendAction}>

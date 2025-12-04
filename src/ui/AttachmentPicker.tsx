@@ -16,7 +16,7 @@ class AttachmentPicker_Unconnected extends React.PureComponent<{
 
   onAttachmentAdded?: (attachments: ILocalAttachment[]) => void;
   onAttachmentRemoved: (attachments: ILocalAttachment[]) => void;
-
+  pickerInfo: { modulename: string; useCase: string };
   onlyImages?: boolean;
 }> {
   onRemoveAttachment(index: number) {
@@ -26,11 +26,12 @@ class AttachmentPicker_Unconnected extends React.PureComponent<{
   }
 
   render() {
-    const { attachments, attachmentsHeightHalfScreen, isContainerHalfScreen, notifierId, onlyImages } = this.props;
-
+    const { attachments, attachmentsHeightHalfScreen, isContainerHalfScreen, notifierId, onlyImages, pickerInfo } = this.props;
+    const { modulename, useCase } = pickerInfo;
     return onlyImages ? (
       <AttachmentGroupImages
         moduleName={notifierId}
+        pickerInfo={{ modulename, useCase }}
         images={attachments}
         onRemove={index => this.onRemoveAttachment(index)}
         onAdd={files => {

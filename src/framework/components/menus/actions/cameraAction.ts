@@ -24,9 +24,8 @@ export function cameraActionFm<M extends FileManagerModuleName, U extends FileMa
   usecase: U,
   props: MenuPickerActionFmProps,
 ) {
-  const action = async (opts?: { callbackOnce?: boolean }) => {
+  const action = async () => {
     await FileManager.pick(module, usecase, files => props.callback(files, 'camera'), {
-      callbackOnce: opts?.callbackOnce ?? false,
       source: 'camera',
     });
   };

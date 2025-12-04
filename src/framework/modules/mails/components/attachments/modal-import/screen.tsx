@@ -288,13 +288,15 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
 
     const executeAction = (source: string) => {
       const actionParams = { callback: handleFilesCallback };
+      const modulename = moduleConfig.name;
+      const useCase = 'attachments';
 
       const actionsMap = {
-        camera: () => cameraActionFm(moduleConfig.name, 'attachments', actionParams).action(),
+        camera: () => cameraActionFm(modulename, useCase, actionParams).action(),
 
-        documents: () => documentActionFm(moduleConfig.name, 'attachments', actionParams).action(),
+        documents: () => documentActionFm(modulename, useCase, actionParams).action(),
 
-        gallery: () => galleryActionFm(moduleConfig.name, 'attachments', actionParams).action(),
+        gallery: () => galleryActionFm(modulename, useCase, actionParams).action(),
       };
 
       actionsMap[source as keyof typeof actionsMap]?.();
