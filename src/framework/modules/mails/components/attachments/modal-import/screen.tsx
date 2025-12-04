@@ -12,11 +12,14 @@ import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
-import { DocumentPicked, ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
-// todo: import all these 3 below from one file in future commits
-import { cameraActionFm } from '~/framework/components/menus/actions/cameraAction';
-import { documentActionFm } from '~/framework/components/menus/actions/documentAction';
-import { galleryActionFm } from '~/framework/components/menus/actions/galleryAction';
+import {
+  cameraActionFm,
+  documentActionFm,
+  DocumentPicked,
+  galleryActionFm,
+  ImagePicked,
+  imagePickedToLocalFile,
+} from '~/framework/components/menus/actions';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { CaptionBoldText, SmallText } from '~/framework/components/text';

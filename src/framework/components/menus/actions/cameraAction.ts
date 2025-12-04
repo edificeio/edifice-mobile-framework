@@ -5,7 +5,7 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
 import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
 
-export default function cameraAction(props: MenuPickerActionProps & { useFrontCamera?: boolean; synchrone?: boolean }) {
+export function cameraAction(props: MenuPickerActionProps & { useFrontCamera?: boolean; synchrone?: boolean }) {
   const action = async ({ callbackOnce }: { callbackOnce: boolean } = { callbackOnce: false }) =>
     LocalFile.pickFromCamera(props.callback, props.useFrontCamera, props.synchrone, callbackOnce);
 
@@ -19,7 +19,7 @@ export default function cameraAction(props: MenuPickerActionProps & { useFrontCa
   };
 }
 
-export function cameraActionFm<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
+export default function cameraActionFm<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
   module: M,
   usecase: U,
   props: MenuPickerActionFmProps,

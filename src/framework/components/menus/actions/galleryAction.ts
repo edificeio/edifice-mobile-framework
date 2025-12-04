@@ -5,7 +5,7 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
 import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
 
-export default function galleryAction(props: MenuPickerActionProps & { multiple?: boolean; synchrone?: boolean }) {
+export function galleryAction(props: MenuPickerActionProps & { multiple?: boolean; synchrone?: boolean }) {
   const action = async ({ callbackOnce }: { callbackOnce: boolean } = { callbackOnce: false }) =>
     LocalFile.pickFromGallery(props.callback, props.multiple ?? false, props.synchrone, callbackOnce);
 
@@ -19,7 +19,7 @@ export default function galleryAction(props: MenuPickerActionProps & { multiple?
   };
 }
 
-export function galleryActionFm<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
+export default function galleryActionFm<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
   module: M,
   usecase: U,
   props: MenuPickerActionFmProps,

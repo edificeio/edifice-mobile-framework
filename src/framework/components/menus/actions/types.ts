@@ -35,5 +35,5 @@ export interface MenuPickerActionProps {
 
 export interface MenuPickerActionFmProps {
   callback: (files: LocalFile[] | LocalFile, sourceType?: string) => void | Promise<void>;
-  configOverride: FileManagerConfigOverrideType;
+  configOverride?: FileManagerConfigOverrideType;
 }

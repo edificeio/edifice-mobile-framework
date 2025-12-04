@@ -5,7 +5,7 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
 import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
 
-export default function documentAction(props: MenuPickerActionProps & { synchrone?: boolean }) {
+export function documentAction(props: MenuPickerActionProps & { synchrone?: boolean }) {
   const action = () => LocalFile.pickFromDocuments(props.callback, props.synchrone, true);
 
   return {
@@ -18,7 +18,7 @@ export default function documentAction(props: MenuPickerActionProps & { synchron
   };
 }
 
-export function documentActionFm<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
+export default function documentActionFm<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
   module: M,
   usecase: U,
   props: MenuPickerActionFmProps,
