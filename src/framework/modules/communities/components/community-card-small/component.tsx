@@ -6,12 +6,13 @@ import { InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { getCardStyle, styles } from './styles';
 import { CommunityCardSmallProps } from './types';
 
-import ModuleImage from '~/framework/components/picture/module-image';
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText } from '~/framework/components/text';
 import CommunityInvitationBadge from '~/framework/modules/communities/components/community-invitation-badge';
 import CommunityMembersPill from '~/framework/modules/communities/components/community-members-pill/';
-import moduleConfig from '~/framework/modules/communities/module-config';
-import { toURISource } from '~/framework/util/media';
+import { injectImageSource } from '~/framework/util/media';
+import { Image } from '~/framework/util/media/components/image';
 import { sessionImageSource } from '~/framework/util/transport';
 
 export const CommunityCardSmall = ({
@@ -22,7 +23,18 @@ export const CommunityCardSmall = ({
   onPress,
   title,
 }: Readonly<CommunityCardSmallProps>) => {
-  const imageSource = React.useMemo(() => (image ? sessionImageSource(toURISource(image)) : undefined), [image]);
+  const imageApproximateDimensions = React.useMemo(
+    () => ({
+      height: 130,
+      width: 440,
+    }),
+    [],
+  );
+
+  const imageSource = React.useMemo(
+    () => (image ? sessionImageSource(injectImageSource(image, imageApproximateDimensions)) : undefined),
+    [image, imageApproximateDimensions],
+  );
 
   const cardStyle = React.useMemo(
     () => [getCardStyle(invitationStatus), itemSeparatorStyle],
@@ -31,7 +43,7 @@ export const CommunityCardSmall = ({
 
   return (
     <TouchableOpacity style={cardStyle} onPress={onPress} testID="community-card-small">
-      <ModuleImage moduleConfig={moduleConfig} source={imageSource} style={styles.imgContainer} />
+      <Image fallback={theme.apps.communities} source={imageSource} style={styles.imgContainer} />
       {membersCount && <CommunityMembersPill membersCount={membersCount} />}
       {invitationStatus === InvitationStatus.PENDING && <CommunityInvitationBadge />}
       <View style={styles.titleContainer}>

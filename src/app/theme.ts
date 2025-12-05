@@ -36,7 +36,6 @@ export type IntentIcon =
 export interface EntAppTheme {
   accentColors: IShades;
   icon: IntentIcon;
-  iconActive?: IntentIcon;
 }
 
 export interface ITheme {

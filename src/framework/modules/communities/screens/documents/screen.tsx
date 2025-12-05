@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { PixelRatio } from 'react-native';
 
 import {
   CommunityClient,
@@ -17,6 +16,7 @@ import { PlaceholderLine } from 'rn-placeholder';
 import CommunityPaginatedDocumentList from './community-paginated-document-list';
 import styles from './styles';
 import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
+import { useCommunityBannerHeight } from '../../hooks/use-community-navbar/community-navbar/component';
 
 import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
@@ -25,12 +25,13 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
-import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
+import { HeadingXSText } from '~/framework/components/text';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
+import { toURISource } from '~/framework/util/media';
 import { IMedia } from '~/framework/util/media-deprecated';
 import { accountApi } from '~/framework/util/transport';
 
@@ -152,11 +153,24 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     }
   }, []);
 
+  const image = React.useMemo(
+    () =>
+      communityData.mobileThumbnails?.length
+        ? communityData.mobileThumbnails.map(src => ({ ...src, height: 130, width: 440 }))
+        : [toURISource(communityData.image!)],
+    [communityData],
+  );
+
   const [scrollElements, statusBar, { ...scrollViewProps }, placeholderBanner] = useCommunityScrollableThumbnail({
     contentContainerStyle: styles.list,
-    image: communityData.image,
+    image,
     title: I18n.get('communities-documents-title'),
   });
+
+  const stickyPlaceholderElements = React.useMemo(
+    () => [placeholderBanner, <PlaceholderLine width={60} noMargin style={styles.titlePlaceholder} />],
+    [placeholderBanner],
+  );
 
   const stickyElements = React.useMemo(
     () => [
@@ -166,11 +180,6 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
       </HeadingXSText>,
     ],
     [scrollElements],
-  );
-
-  const stickyPlaceholderElements = React.useMemo(
-    () => [placeholderBanner, <PlaceholderLine width={60} noMargin style={styles.titlePlaceholder} />],
-    [placeholderBanner],
   );
 
   return (

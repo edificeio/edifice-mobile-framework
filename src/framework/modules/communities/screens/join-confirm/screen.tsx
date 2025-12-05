@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Platform, ScrollView, View } from 'react-native';
 
 import { InvitationClient, InvitationResponseDto, InvitationStatus } from '@edifice.io/community-client-rest-rn';
+import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
 import { BlurView } from '@react-native-community/blur';
 import { Header } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -29,6 +30,7 @@ import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/
 import { communitiesSelectors } from '~/framework/modules/communities/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/http';
+import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
 
 export const computeNavBar = ({
@@ -111,7 +113,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
 
   const data = useSelector(communitiesSelectors.getPendingCommunities).find(
     invitation => invitation !== LOADING_ITEM_DATA && invitation.id === invitationId,
-  ) as InvitationResponseDto | undefined;
+  ) as InvitationResponseDtoWithThumbnails | undefined;
 
   const containerStyle = React.useMemo(
     () => [
@@ -125,14 +127,16 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
     [],
   );
 
-  if (!data) return <EmptyContentScreen />;
+  if (!data || !data.community) return <EmptyContentScreen />;
+
+  const image = data.community?.mobileThumbnails?.length ? data.community.mobileThumbnails : toURISource(data.community.image!);
 
   return (
     <ScrollView style={styles.page}>
       <SafeAreaView style={containerStyle} edges={safeEdges}>
         <CommunityCardLarge
           title={data.community?.title}
-          image={data.community?.image}
+          image={image}
           membersCount={data.communityStats?.totalMembers}
           senderId={data.sentBy.entId}
           senderName={data.sentBy.displayName}

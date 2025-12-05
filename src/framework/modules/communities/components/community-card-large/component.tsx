@@ -10,12 +10,10 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { Svg } from '~/framework/components/picture';
-import ModuleImage from '~/framework/components/picture/module-image';
 import { BodyBoldText, BodyText, NestedBoldText, SmallText } from '~/framework/components/text';
 import CommunityMembersPill from '~/framework/modules/communities/components/community-members-pill/';
 import { rolesI18n } from '~/framework/modules/communities/model';
-import moduleConfig from '~/framework/modules/communities/module-config';
-import { toURISource } from '~/framework/util/media';
+import { Image } from '~/framework/util/media/components/image';
 import { sessionImageSource } from '~/framework/util/transport';
 
 export const CommunityCardLarge = ({
@@ -26,12 +24,11 @@ export const CommunityCardLarge = ({
   senderName,
   title,
 }: Readonly<CommunityCardLargeProps>) => {
-  const imageSource = React.useMemo(() => (image ? sessionImageSource(toURISource(image)) : undefined), [image]);
-
+  const imageSource = React.useMemo(() => (image ? sessionImageSource(image) : undefined), [image]);
   return (
     <View style={styles.card}>
       {membersCount && <CommunityMembersPill membersCount={membersCount} />}
-      <ModuleImage moduleConfig={moduleConfig} source={imageSource} style={styles.imgContainer} />
+      <Image fallback={theme.apps.communities} source={imageSource} style={styles.imgContainer} />
       <View>
         <RNSvg style={styles.infoBackground}>
           <Defs>

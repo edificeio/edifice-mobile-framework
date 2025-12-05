@@ -1,4 +1,8 @@
-import { CommunityResponseDto, InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
+import { InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
+import {
+  CommunityResponseDtoWithThumbnails,
+  InvitationResponseDtoWithThumbnails,
+} from '@edifice.io/community-client-rest-rn/utils';
 
 import moduleConfig from './module-config';
 
@@ -7,9 +11,12 @@ import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/pa
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 
 export interface CommunitiesStore {
-  allCommunities: (InvitationResponseDto | typeof LOADING_ITEM_DATA)[];
-  pendingCommunities: (InvitationResponseDto | typeof LOADING_ITEM_DATA)[];
-  communitiesDetails: Record<number, Pick<CommunityResponseDto, 'title' | 'image'> & { totalMembers: number; membersId: string[] }>;
+  allCommunities: (InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA)[];
+  pendingCommunities: (InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA)[];
+  communitiesDetails: Record<
+    number,
+    Pick<CommunityResponseDtoWithThumbnails, 'title' | 'image' | 'mobileThumbnails'> & { totalMembers: number; membersId: string[] }
+  >;
 }
 
 export const communitiesActionTypes = {
