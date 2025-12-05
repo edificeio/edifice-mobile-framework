@@ -33,6 +33,7 @@ import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import communitiesStyles from '~/framework/modules/communities/styles';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
+import { toURISource } from '~/framework/util/media';
 import { IMedia } from '~/framework/util/media-deprecated';
 import { accountApi } from '~/framework/util/transport';
 
@@ -173,11 +174,24 @@ export default (function CommunitiesDocumentsScreen({
     }
   }, []);
 
+  const image = React.useMemo(
+    () =>
+      communityData.mobileThumbnails?.length
+        ? communityData.mobileThumbnails.map(src => ({ ...src, height: 130, width: 440 }))
+        : [toURISource(communityData.image!)],
+    [communityData],
+  );
+
   const [scrollElements, statusBar, { ...scrollViewProps }, placeholderBanner] = useCommunityScrollableThumbnail({
     contentContainerStyle: styles.list,
-    image: communityData.image,
+    image,
     title: I18n.get('communities-documents-title'),
   });
+
+  const stickyPlaceholderElements = React.useMemo(
+    () => [placeholderBanner, <PlaceholderLine width={60} noMargin style={styles.titlePlaceholder} />],
+    [placeholderBanner],
+  );
 
   const stickyElements = React.useMemo(
     () => [
@@ -187,11 +201,6 @@ export default (function CommunitiesDocumentsScreen({
       </HeadingXSText>,
     ],
     [scrollElements],
-  );
-
-  const stickyPlaceholderElements = React.useMemo(
-    () => [placeholderBanner, <PlaceholderLine width={60} noMargin style={styles.titlePlaceholder} />],
-    [placeholderBanner],
   );
 
   return (
