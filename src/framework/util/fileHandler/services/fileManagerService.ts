@@ -104,7 +104,11 @@ export class FileManager {
       }
     });
 
-    files = files.filter(f => allowedPrefixes.some(prefix => f.filetype?.startsWith(prefix)));
+    const skipMimeFilter = source === 'documents';
+
+    if (!skipMimeFilter) {
+      files = files.filter(f => allowedPrefixes.some(prefix => f.filetype?.startsWith(prefix)));
+    }
 
     console.debug('[FileManager] Final files returned:', files);
 

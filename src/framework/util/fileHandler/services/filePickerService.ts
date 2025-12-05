@@ -10,7 +10,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { I18n } from '~/app/i18n';
 import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
 import { Asset } from '~/framework/util/fileHandler/types';
-import { fallbackMime, getExtSafe, processImage, safe, wrapPicker } from '~/framework/util/fileHandler/utils';
+import { fallbackMime, getExtSafe, guessMimeFromExt, processImage, safe, wrapPicker } from '~/framework/util/fileHandler/utils';
 
 /* ---------------------------------------------
  * GALLERY
@@ -181,11 +181,13 @@ export function pickFromDocuments(
       const files = docs.map(file => {
         const uri = Platform.OS === 'android' ? getPath(file.uri) : decodeURI(file.uri.replace(/^file:\/\//, ''));
 
+        const mime = file.type && file.type !== 'null' ? file.type : guessMimeFromExt(getExtSafe(file.name));
+
         return new LocalFile(
           {
             fileName: safe(file.name) ?? 'file',
             fileSize: file.size ?? 0,
-            type: fallbackMime(file.type, file.name),
+            type: mime,
             uri,
           },
           { _needIOSReleaseSecureAccess: false },

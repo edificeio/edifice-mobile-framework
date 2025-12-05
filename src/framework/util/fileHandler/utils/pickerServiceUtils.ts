@@ -17,36 +17,16 @@ export function getExtSafe(name: string | null | undefined): string | undefined 
 }
 
 export function guessMimeFromExt(ext?: string): string {
-  if (!ext) return 'application/octet-stream';
-
-  const map: Record<string, string> = {
-    jpeg: 'image/jpeg',
-    jpg: 'image/jpeg',
-    mp3: 'audio/mpeg',
-    mp4: 'video/mp4',
-    pdf: 'application/pdf',
-    png: 'image/png',
-    wav: 'audio/wav',
-  };
-
-  return map[ext.toLowerCase()] ?? 'application/octet-stream';
+  return ext ? `${ext}/*` : 'application/octet-stream';
 }
 
-export function fallbackMime(type: string | null | undefined, name: string | null | undefined): string {
+export function fallbackMime(type?: string | null, name?: string | null): string {
+  if (type && type !== 'null') return type;
+
   const ext = getExtSafe(name);
+  if (!ext) return 'application/octet-stream';
 
-  // Correction des types null ou incorrects
-  if (!type || type === 'null') return guessMimeFromExt(ext);
-
-  // Correction types non standard
-  switch (type) {
-    case 'image/jpg':
-      return 'image/jpeg';
-    case 'image/tif':
-      return 'image/tiff';
-    default:
-      return type;
-  }
+  return guessMimeFromExt(ext);
 }
 
 export function wrapPicker(fn: (cb: (files: LocalFile[] | LocalFile) => void) => void): Promise<LocalFile[]> {
