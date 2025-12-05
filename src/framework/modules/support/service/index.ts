@@ -1,5 +1,5 @@
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { SyncedFileWithId } from '~/framework/util/fileHandler';
+import { SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 interface IBackendTicket {
@@ -30,7 +30,7 @@ export const supportService = {
         attachments: attachments?.map(a => ({
           id: a.df.id,
           name: a.filename,
-          size: a.filesize,
+          size: a.df.filesize,
         })),
         category,
         description,
