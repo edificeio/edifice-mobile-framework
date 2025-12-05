@@ -8,11 +8,12 @@ import { SplashadsScreenProps } from './types';
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import WebView from '~/framework/components/webview';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { urlSigner } from '~/infra/oauth';
+import { platformURISource } from '~/framework/util/transport';
 
 export const computeNavBar = ({
   navigation,
@@ -35,6 +36,7 @@ export const computeNavBar = ({
 const SplashadsScreen = (props: SplashadsScreenProps) => {
   const { route } = props;
   const source = route.params.resourceUri;
+  const session = getSession();
 
   const [isTimeout, setIsTimeout] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
@@ -65,7 +67,7 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
     setIsLoaded(true);
   };
 
-  return isTimeout ? (
+  return isTimeout || !session ? (
     <EmptyContentScreen />
   ) : (
     <WebView
@@ -73,7 +75,7 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
       scalesPageToFit
       setSupportMultipleWindows={false}
       showsHorizontalScrollIndicator={false}
-      source={{ uri: urlSigner.getAbsoluteUrl(source)! }}
+      source={platformURISource(session.platform, { uri: source })}
       startInLoadingState
       style={styles.splashads}
       webviewDebuggingEnabled={__DEV__}
