@@ -201,11 +201,13 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       try {
         const req = this.reportQueue[0].clone();
         const res = await fetch(urlSigner.signRequest(this.reportQueue[0]));
+        const module = JSON.parse(await req.text())?.module;
         if (res.ok) {
           this.reportQueue.shift();
           this.errorCount = 0;
+          console.debug(`[EntcoreTracker] Report sent: ${module}`);
         } else {
-          throw new Error('    [EntcoreTracker] Report failed. ' + (await req?.text()));
+          throw new Error(`[EntcoreTracker] Report failed: ${module} with status ${res.status}`);
         }
       } catch {
         if (++this.errorCount >= 3) this.sending = false;
@@ -232,7 +234,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       homeworkAssistance: 'HomeworkAssistance',
       mails: 'Conversation',
       mediacentre: 'Mediacentre',
-      messagerie: 'Conversation', // duplicates conversation because of a tracking keyword issue
+      messagerie: 'Conversation',
       nabook: 'Nabook',
       news: 'Actualites',
       presences: 'Presences',
@@ -240,19 +242,20 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       scrapbook: 'Scrapbook',
       support: 'Support',
       user: 'MyAccount',
-      // viesco: 'Presences', // not used anymore
       wiki: 'Wiki',
       workspace: 'Workspace',
       zimbra: 'Zimbra',
     };
     let willLog = false;
     if (platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
+      const module = moduleAccessMap[moduleName];
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
-          body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
+          body: JSON.stringify({ module: module }),
           method: 'POST',
         }),
       );
+      console.debug(`[EntcoreTracker] Report queued: ${module}`);
       this.lastModulename = moduleName;
       willLog = moduleAccessMap[moduleName];
     }
