@@ -7,12 +7,8 @@ import { actions, messages } from './const';
 import { createHTML } from './editor';
 
 import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
-import { MediaType } from '~/framework/util/media';
-import { urlSigner } from '~/infra/oauth';
 
 const PlatformIOS = Platform.OS === 'ios';
 
@@ -67,12 +63,10 @@ export default class RichEditor extends Component {
     that.selectionChangeListeners = [];
     that.pfUrl = getSession()?.platform?.url || '';
     that.htmlLoaded = false;
-    that.imagesUrls = [];
     that.linksUrls = [];
-    that._onAudioTouched = that._onAudioTouched.bind(that);
-    that._onImageTouched = that._onImageTouched.bind(that);
+    that.mediasUrls = [];
     that._onLinkTouched = that._onLinkTouched.bind(that);
-    that._onVideoTouched = that._onVideoTouched.bind(that);
+    that._onMediaTouched = that._onMediaTouched.bind(that);
     const {
       autoCapitalize,
       autoCorrect,
@@ -179,26 +173,6 @@ export default class RichEditor extends Component {
     this._keyOpen = false;
   }
 
-  _onAudioTouched(url) {
-    const { disabled } = this.props;
-    if (disabled)
-      openMediaPlayer({
-        source: urlSigner.signURISource(url),
-        type: MediaType.AUDIO,
-      });
-  }
-
-  _onImageTouched(url, imagesUrls) {
-    const { disabled } = this.props;
-    if (disabled) {
-      const images = imagesUrls.map(imgSrc => ({
-        src: { uri: imgSrc },
-        type: 'image',
-      }));
-      openCarousel({ data: images, startIndex: imagesUrls.indexOf(url) });
-    }
-  }
-
   _onLinkTouched(url, linksUrls) {
     const { disabled } = this.props;
     if (disabled) {
@@ -206,13 +180,14 @@ export default class RichEditor extends Component {
     }
   }
 
-  _onVideoTouched(url) {
+  _onMediaTouched(url, mediasUrls) {
     const { disabled } = this.props;
-    if (disabled)
-      openMediaPlayer({
-        source: urlSigner.signURISource(url),
-        type: MediaType.VIDEO,
-      });
+    if (disabled) {
+      // TODO: Transform mediaUrls to right format for carousel
+      // TODO: Set selected index based on url
+      // TODO: openCarousel({ data: medias, startIndex: selected });
+      alert(`Media touched: ${url}`);
+    }
   }
 
   onMessage(event) {
@@ -232,9 +207,6 @@ export default class RichEditor extends Component {
               that.pendingContentHtml = undefined;
             }
           }
-          break;
-        case messages.LINK_TOUCHED:
-          that._onLinkTouched(that._getAbsoluteUrl(data), that.linksUrls);
           break;
         case messages.LOG:
           console.debug('FROM EDIT:', ...data);
@@ -276,21 +248,18 @@ export default class RichEditor extends Component {
           const offsetY = Number.parseInt(Number.parseInt(data, 10) + that.layout.y || 0, 10);
           if (offsetY > 0) onCursorPosition(offsetY);
           break;
-        case messages.AUDIO_TOUCHED:
-          that._onAudioTouched(that._getAbsoluteUrl(data));
-          break;
-        case messages.IMAGE_TOUCHED:
-          that._onImageTouched(that._getAbsoluteUrl(data), that.imagesUrls);
-          break;
-        case messages.IMAGES_URLS:
-          that.imagesUrls = data.map(url => that._getAbsoluteUrl(url));
-          console.debug(`IMAGES URLS:\r\n${that.imagesUrls}`);
+        case messages.LINK_TOUCHED:
+          that._onLinkTouched(that._getAbsoluteUrl(data), that.linksUrls);
           break;
         case messages.LINKS_URLS:
           that.linksUrls = data.map(url => that._getAbsoluteUrl(url));
           break;
-        case messages.VIDEO_TOUCHED:
-          that._onVideoTouched(that._getAbsoluteUrl(data));
+        case messages.MEDIA_TOUCHED:
+          that._onMediaTouched(that._getAbsoluteUrl(data), that.mediasUrls);
+          break;
+        case messages.MEDIAS_URLS:
+          that.mediasUrls = data;
+          console.debug(`MEDIA URLS:\r\n${that.mediasUrls}`);
           break;
         default:
           onMessage?.(message);
