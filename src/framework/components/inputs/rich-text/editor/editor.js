@@ -701,16 +701,14 @@ function createHTML(options = {}) {
                         if (src) {
                             medias.push({
                                 type: 'audio',
-                                url: src,
-                                order: index
+                                url: src
                             });
                         }
                         el.querySelectorAll('source').forEach(source => {
                             if (source.src) {
                                 medias.push({
                                     type: 'audio',
-                                    url: source.src,
-                                    order: index
+                                    url: source.src
                                 });
                             }
                         });
@@ -720,8 +718,7 @@ function createHTML(options = {}) {
                         if (src) {
                             medias.push({
                                 type: 'embed',
-                                url: src,
-                                order: index
+                                url: src
                             });
                         }
                     }
@@ -730,8 +727,7 @@ function createHTML(options = {}) {
                         if (src) {
                             medias.push({
                                 type: 'iframe',
-                                url: src,
-                                order: index
+                                url: src
                             });
                         }
                     }
@@ -740,8 +736,7 @@ function createHTML(options = {}) {
                         if (src && !src.startsWith('data:')) {
                             medias.push({
                                 type: 'image',
-                                url: src,
-                                order: index
+                                url: src
                             });
                         }
 
@@ -751,22 +746,19 @@ function createHTML(options = {}) {
                         if (src) {
                             medias.push({
                                 type: 'video',
-                                url: src,
-                                order: index
+                                url: src
                             });
                         }
                         el.querySelectorAll('source').forEach(source => {
                             if (source.src) {
                                 medias.push({
                                     type: 'video',
-                                    url: source.src,
-                                    order: index
+                                    url: source.src
                                 });
                             }
                         });
                     }
                 });
-                console.log('GET_MEDIAS_URLS done:', medias);
                 postAction({type: 'MEDIAS_URLS', data: medias}, true);
             },
 

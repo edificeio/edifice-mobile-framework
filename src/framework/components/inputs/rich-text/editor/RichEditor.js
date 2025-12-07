@@ -259,7 +259,7 @@ export default class RichEditor extends Component {
           break;
         case messages.MEDIAS_URLS:
           that.mediasUrls = data;
-          console.debug(`MEDIA URLS:\r\n${that.mediasUrls}`);
+          console.debug('MEDIA URLS:', that.mediasUrls);
           break;
         default:
           onMessage?.(message);
