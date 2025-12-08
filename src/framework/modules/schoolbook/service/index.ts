@@ -3,10 +3,10 @@
  */
 import moment from 'moment';
 
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IStudentAndParentWordList, ITeacherWordList, IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
-import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 export type IEntcoreTeacherWordList = IEntcoreReportedWord[];
 
@@ -173,65 +173,72 @@ export const schoolbookUriCaptureFunction: IResourceUriCaptureFunction<{ schoolb
 
 export const schoolbookService = {
   list: {
-    parentUnacknowledgedWordsCount: async (session: AuthLoggedAccount, studentId: string) => {
+    parentUnacknowledgedWordsCount: async (session: AuthActiveAccount, studentId: string) => {
       const api = `/schoolbook/count/${studentId}`;
-      const entcoreParentUnacknowledgedWordsCount = (await fetchJSONWithCache(api)) as IEntcoreParentUnacknowledgedWordsCount;
+      const entcoreParentUnacknowledgedWordsCount = await sessionFetch.json<IEntcoreParentUnacknowledgedWordsCount>(api);
       return parentUnacknowledgedWordsCountAdapter(entcoreParentUnacknowledgedWordsCount) as number;
     },
-    studentAndParent: async (session: AuthLoggedAccount, page: number, studentId: string) => {
+    studentAndParent: async (session: AuthActiveAccount, page: number, studentId: string) => {
       const api = `/schoolbook/list/${page}/${studentId}`;
-      const entcoreStudentAndParentWordList = (await fetchJSONWithCache(api)) as IEntcoreStudentAndParentWordList;
+      const entcoreStudentAndParentWordList = await sessionFetch.json<IEntcoreStudentAndParentWordList>(api);
+
       return studentAndParentWordListAdapter(entcoreStudentAndParentWordList) as IStudentAndParentWordList;
     },
-    teacher: async (session: AuthLoggedAccount, page: number) => {
+    teacher: async (session: AuthActiveAccount, page: number) => {
       const api = `/schoolbook/list`;
       const body = JSON.stringify({ filter: 'Any', page });
-      const entcoreTeacherWordList = (await signedFetchJson(`${session?.platform!.url}${api}`, {
+      const entcoreTeacherWordList = await sessionFetch.json<IEntcoreTeacherWordList>(`${session?.platform!.url}${api}`, {
         body,
         method: 'POST',
-      })) as unknown as IEntcoreTeacherWordList;
+      });
       return teacherWordListAdapter(entcoreTeacherWordList) as ITeacherWordList;
     },
   },
   word: {
-    acknowledge: async (session: AuthLoggedAccount, wordId: string, studentId: string) => {
+    acknowledge: async (session: AuthActiveAccount, wordId: string, studentId: string) => {
       const api = `/schoolbook/relation/acknowledge/${wordId}/${studentId}`;
-      return signedFetchJson(`${session?.platform!.url}${api}`, {
+
+      return sessionFetch.json<{ id: number }>(api, {
         method: 'POST',
-      }) as Promise<{ id: number }>;
+      });
     },
-    delete: async (session: AuthLoggedAccount, wordId: string) => {
+    delete: async (session: AuthActiveAccount, wordId: string) => {
       const api = `/schoolbook/delete/${wordId}`;
-      return signedFetchJson(`${session?.platform!.url}${api}`, {
+
+      return sessionFetch.json<{ rows: number }>(api, {
         method: 'DELETE',
-      }) as Promise<{ rows: number }>;
+      });
     },
-    get: async (session: AuthLoggedAccount, wordId: string) => {
+    get: async (session: AuthActiveAccount, wordId: string) => {
       const api = `/schoolbook/report/${wordId}`;
-      const entcoreWordReport = (await fetchJSONWithCache(api)) as IEntcoreWordReport;
+      const entcoreWordReport = await sessionFetch.json<IEntcoreWordReport>(api);
+
       return wordReportAdapter(entcoreWordReport) as IWordReport;
     },
-    reply: async (session: AuthLoggedAccount, wordId: string, studentId: string, text: string) => {
+    reply: async (session: AuthActiveAccount, wordId: string, studentId: string, text: string) => {
       const api = `/schoolbook/relation/reply/${wordId}`;
       const body = JSON.stringify({ studentId, text });
-      return signedFetchJson(`${session?.platform!.url}${api}`, {
+
+      return sessionFetch.json<{ response_id: number }>(api, {
         body,
         method: 'POST',
-      }) as Promise<{ response_id: number }>;
+      });
     },
-    resend: async (session: AuthLoggedAccount, wordId: string) => {
+    resend: async (session: AuthActiveAccount, wordId: string) => {
       const api = `/schoolbook/word/resend/${wordId}`;
-      return signedFetchJson(`${session?.platform!.url}${api}`, {
+
+      return sessionFetch.json<{ count: number; word_id: string }>(api, {
         method: 'POST',
-      }) as Promise<{ count: number; word_id: string }>;
+      });
     },
-    updateReply: async (session: AuthLoggedAccount, wordId: string, replyId: string, text: string) => {
+    updateReply: async (session: AuthActiveAccount, wordId: string, replyId: string, text: string) => {
       const api = `/schoolbook/relation/reply/${wordId}/${replyId}`;
       const body = JSON.stringify({ text });
-      return signedFetchJson(`${session?.platform!.url}${api}`, {
+
+      return sessionFetch.json<{ rows: number }>(api, {
         body,
         method: 'PUT',
-      }) as Promise<{ rows: number }>;
+      });
     },
   },
 };
