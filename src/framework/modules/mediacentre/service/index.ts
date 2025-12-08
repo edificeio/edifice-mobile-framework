@@ -30,7 +30,7 @@ export const mediacentreService = {
     },
     remove: async (session: AuthActiveAccount, id: string, source: Source) => {
       const api = `/mediacentre/favorites?id=${id}&source=${source}`;
-      return sessionFetch.json<any>(api, { method: 'DELETE' });
+      return sessionFetch(api, { method: 'DELETE' });
     },
   },
   globalResources: {
@@ -75,7 +75,7 @@ export const mediacentreService = {
     },
     update: async (session: AuthActiveAccount, id: string) => {
       const api = `/userbook/preference/selectedStructure`;
-      return sessionFetch.json<any>(api, { body: JSON.stringify(id), method: 'PUT' });
+      return sessionFetch(api, { body: JSON.stringify(id), method: 'PUT' });
     },
   },
   signets: {
