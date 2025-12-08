@@ -39,6 +39,7 @@ import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 import { Storage } from '~/framework/util/storage';
+import { sessionFetch } from '~/framework/util/transport';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 import { initOAuth2, OAuth2RessourceOwnerPasswordClient, uniqueId, urlSigner } from '~/infra/oauth';
 
@@ -456,15 +457,14 @@ export async function getAuthTranslationKeys(platform: Platform, language: I18n.
 }
 
 export async function revalidateTerms(session: AuthLoggedAccount) {
-  await signedFetch(session.platform.url + '/auth/cgu/revalidate', {
+  await sessionFetch('/auth/cgu/revalidate', {
     method: 'PUT',
   });
 }
 
 export async function getMFAValidationInfos() {
   try {
-    const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
-    return MFAValidationInfos;
+    return await sessionFetch.json<IEntcoreMFAValidationInfos>('/auth/user/mfa/code');
   } catch (e) {
     console.error('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
   }
@@ -472,11 +472,10 @@ export async function getMFAValidationInfos() {
 
 export async function verifyMFACode(key: string) {
   try {
-    const mfaValidationState = (await fetchJSONWithCache('/auth/user/mfa/code', {
+    return await sessionFetch.json<IEntcoreMFAValidationState>('/auth/user/mfa/code', {
       body: JSON.stringify({ key }),
       method: 'POST',
-    })) as IEntcoreMFAValidationState;
-    return mfaValidationState;
+    });
   } catch (e) {
     console.error('[UserService] verifyMFACode: could not verify mfa code', e);
   }
@@ -493,7 +492,7 @@ export async function getMobileValidationInfos(platformUrl: string) {
 }
 
 export async function requestMobileVerificationCode(platform: Platform, mobile: string) {
-  await signedFetch(platform.url + '/directory/user/mobilestate', {
+  await sessionFetch('/directory/user/mobilestate', {
     body: JSON.stringify({ mobile }),
     method: 'PUT',
   });
@@ -501,11 +500,10 @@ export async function requestMobileVerificationCode(platform: Platform, mobile: 
 
 export async function verifyMobileCode(key: string) {
   try {
-    const mobileValidationState = (await fetchJSONWithCache('/directory/user/mobilestate', {
+    return await sessionFetch.json<IEntcoreMobileValidationState>('/directory/user/mobilestate', {
       body: JSON.stringify({ key }),
       method: 'POST',
-    })) as IEntcoreMobileValidationState;
-    return mobileValidationState;
+    });
   } catch (e) {
     console.error('[UserService] verifyMobileCode: could not verify mobile code', e);
     if (e instanceof Error.ErrorWithType) throw e;
@@ -529,7 +527,7 @@ export async function getEmailValidationInfos(platformUrl: string) {
 }
 
 export async function requestEmailVerificationCode(platform: Platform, email: string) {
-  await signedFetch(platform.url + '/directory/user/mailstate', {
+  await sessionFetch('/directory/user/mailstate', {
     body: JSON.stringify({ email }),
     method: 'PUT',
   });
@@ -537,11 +535,10 @@ export async function requestEmailVerificationCode(platform: Platform, email: st
 
 export async function verifyEmailCode(key: string) {
   try {
-    const emailValidationState = (await fetchJSONWithCache('/directory/user/mailstate', {
+    return await sessionFetch.json<IEntcoreEmailValidationState>('/directory/user/mailstate', {
       body: JSON.stringify({ key }),
       method: 'POST',
-    })) as IEntcoreEmailValidationState;
-    return emailValidationState;
+    });
   } catch (e) {
     console.error('[UserService] verifyEmailCode: could not verify email code', e);
   }
