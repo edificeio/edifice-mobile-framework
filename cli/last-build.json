@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-12-05 13:21:23",
-  "notes": "update(stack): yarn cache update\nchore(stack): update yarn caches\nrelease: 1.16.2-alpha.1(1160202)",
+  "last": "2025-12-08 12:11:09",
+  "notes": "chore(stack): update yarn caches\nchore(stack): update yarn caches\nchore(stack): upadate caches\nchore(stack): yarn cache update\nchore(stack): update cache\nchore: udpate yarn caches\nrelease: 1.15.4-rc.7(1150409)\nupdate(stack): yarn cache update\nrelease: 1.15.4-rc.4(1150406)\nfix(sound): avoid cutting playback at launch\nrelease: 1.15.4-rc.3(1150405)\nupdate(stack): yarn cache update\nrelease: 1.15.4-rc.2(1150404)\nupdate(stack): yarn cache update\nupdate(stack): yarn cache update\nchore: yarn cache update\nrelease: 1.16.0-rc.5(1160014)\nfix(wayf): COCO-4982, add arena.ac-normandie.fr to network_security_config.\nchore(stack): update cache\nchore: udpate yarn caches\nrelease: 1.15.4-rc.7(1150409)\nupdate(stack): yarn cache update\nrelease: 1.15.4-rc.4(1150406)\nfix(sound): avoid cutting playback at launch\nrelease: 1.15.4-rc.3(1150405)\nupdate(stack): yarn cache update\nrelease: 1.15.4-rc.2(1150404)\nfix(share): COCO-4770 ensure temp image file unique + cleanup\nupdate(stack): yarn cache update\nchore: update yarn caches\nupdate(stack): yarn cache update\nrelease: 1.15.4-rc.1(1150403)\nchore: yarn cache update\nchore: update yarn caches\nfix(support): send tick for support issue\nfix(wayf): ENABLING-495, add system to all domains exceptions\nfix(fileHandler): handle audio not uploaded\nfix(cve): ENABLING-535, change react version to 1.19.2 due to CVE on react 1.19.0\nrelease: 1.16.2-alpha.2(1160203)",
   "track": "1.16.2",
-  "version": "1.16.2-alpha.2(1160203)"
+  "version": "1.16.2-comm.1(1160204)"
 }
