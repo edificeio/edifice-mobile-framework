@@ -700,15 +700,17 @@ function createHTML(options = {}) {
                         const src = el.src || el.currentSrc;
                         if (src) {
                             medias.push({
-                                type: 'audio',
-                                url: src
+                                mime: 'audio/*',
+                                src: src,
+                                type: 'audio'
                             });
                         }
                         el.querySelectorAll('source').forEach(source => {
                             if (source.src) {
                                 medias.push({
-                                    type: 'audio',
-                                    url: source.src
+                                    mime: 'audio/*',
+                                    src: source.src,
+                                    type: 'audio'
                                 });
                             }
                         });
@@ -717,26 +719,27 @@ function createHTML(options = {}) {
                         const src = el.src;
                         if (src) {
                             medias.push({
-                                type: 'embed',
-                                url: src
+                                src: src,
+                                type: 'embed'
                             });
                         }
-                    }
+                    } /*
                     if (tagName === 'iframe') {
                         const src = el.src;
                         if (src) {
                             medias.push({
-                                type: 'iframe',
-                                url: src
+                                src: src,
+                                type: 'iframe'
                             });
                         }
-                    }
+                    } */
                     if (tagName === 'img') {
                         const src = el.src || el.currentSrc;
                         if (src && !src.startsWith('data:')) {
                             medias.push({
-                                type: 'image',
-                                url: src
+                                mime: 'image/*',
+                                src: src,
+                                type: 'image'
                             });
                         }
 
@@ -745,15 +748,17 @@ function createHTML(options = {}) {
                         const src = el.src || el.currentSrc;
                         if (src) {
                             medias.push({
-                                type: 'video',
-                                url: src
+                                mime: 'video/*',
+                                src: src,
+                                type: 'video'
                             });
                         }
                         el.querySelectorAll('source').forEach(source => {
                             if (source.src) {
                                 medias.push({
-                                    type: 'video',
-                                    url: source.src
+                                    mime: 'video/*',
+                                    src: source.src,
+                                    type: 'video'
                                 });
                             }
                         });
