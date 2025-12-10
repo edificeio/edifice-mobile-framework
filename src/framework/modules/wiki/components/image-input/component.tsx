@@ -14,7 +14,6 @@ import ModuleImage from '~/framework/components/picture/module-image';
 import { ModuleImageProps } from '~/framework/components/picture/module-image/types';
 import Separator from '~/framework/components/separator';
 import ImageInputButton from '~/framework/modules/wiki/components/image-input-button';
-import { LocalFile } from '~/framework/util/fileHandler';
 import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
 import { FileSource } from '~/framework/util/fileHandler/types';
 
@@ -47,14 +46,13 @@ const ImageInput: React.FC<ImageInputProps> = ({ moduleConfig, moduleImageStyle,
       hideChoosePicsMenu();
       try {
         await FileManager.pick(
-          moduleConfig.name,
-          'ressource',
           files => {
-            const arr = files as LocalFile[];
-            onChange(arr[0]?.filepath ? { uri: arr[0].filepath } : undefined);
+            onChange(files[0]?.filepath ? { uri: files[0].filepath } : undefined);
           },
           {
+            module: moduleConfig.name,
             source,
+            usecase: 'ressource',
           },
         );
       } catch (error) {

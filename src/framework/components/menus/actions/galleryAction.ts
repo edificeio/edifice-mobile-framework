@@ -25,9 +25,11 @@ export default function galleryActionFm<M extends FileManagerModuleName, U exten
   props: MenuPickerActionFmProps,
 ) {
   const action = async () => {
-    await FileManager.pick(module, usecase, files => props.callback(files, 'gallery'), {
+    await FileManager.pick(files => props.callback(files, 'gallery'), {
       configOverride: props.configOverride,
+      module,
       source: 'gallery',
+      usecase,
     });
   };
 

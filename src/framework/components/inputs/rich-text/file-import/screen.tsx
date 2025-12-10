@@ -24,7 +24,14 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
+import { FileManagerUsecase } from '~/framework/util/fileHandler/types';
 import { Image } from '~/framework/util/media-deprecated';
+
+const FILE_IMPORT_DEFAULT_CONFIG: FileManagerUsecase = {
+  allow: ['image'],
+  multiple: true,
+  sources: ['camera', 'gallery'],
+};
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness,
@@ -243,17 +250,14 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   React.useEffect(() => {
     setTimeout(() => {
       FileManager.pick(
-        route.params.module,
-        route.params.usecase,
         files => {
           const arr = files as LocalFile[];
-
           const formatted = arr.map(formatFileForUpload);
           setFiles(formatted);
         },
         {
-          configOverride: route.params.configOverride,
           source: route?.params.source,
+          standaloneConfig: FILE_IMPORT_DEFAULT_CONFIG,
         },
       );
     }, 350);

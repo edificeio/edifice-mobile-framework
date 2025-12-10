@@ -3,9 +3,8 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
 import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
-import { FileManagerPickerOptionsType, FileSource } from '~/framework/util/fileHandler/types';
+import { FileSource } from '~/framework/util/fileHandler/types';
 
 export namespace FileImportScreenProps {
   export interface Public {}
@@ -15,9 +14,6 @@ export namespace FileImportScreenProps {
     uploadParams: IWorkspaceUploadParams;
     redirectTo: Route<string, ParamListBase>;
     source: FileSource;
-    module: FileManagerModuleName;
-    usecase: FileManagerUsecaseName<FileManagerModuleName>;
-    configOverride?: FileManagerPickerOptionsType['configOverride'];
   }
 
   export type Navigation = NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.FileImport>;

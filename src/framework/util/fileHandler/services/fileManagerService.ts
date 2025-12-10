@@ -1,4 +1,3 @@
-import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
 import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
 import { getModuleFileManagerConfig } from '~/framework/util/fileHandler/services/fileManagerRegistry';
 import {
@@ -7,32 +6,45 @@ import {
   pickFromDocuments,
   pickFromGallery,
 } from '~/framework/util/fileHandler/services/filePickerService';
-import { FileManagerPickerOptionsType, FileSource } from '~/framework/util/fileHandler/types';
+import { FileManagerStandalonePickOptions, FileManagerUsecase, FileSource } from '~/framework/util/fileHandler/types';
 import { assertPermissions, PermissionScenario } from '~/framework/util/permissions';
 
 export class FileManager {
-  static async pick<M extends FileManagerModuleName, U extends FileManagerUsecaseName<M>>(
-    moduleName: M,
-    usecaseName: U,
-    callback: (files: LocalFile[] | LocalFile) => void,
-    options?: FileManagerPickerOptionsType,
-  ): Promise<void> {
-    const moduleConfig = getModuleFileManagerConfig(moduleName);
-    if (!moduleConfig) throw new Error(`No FileManager config for module ${moduleName}`);
+  static async pick(callback: (files: LocalFile[]) => void, opts: FileManagerStandalonePickOptions): Promise<void> {
+    let config: FileManagerUsecase | undefined;
+    let source: FileSource | undefined;
+    const override = opts.configOverride ?? {};
 
-    const config = moduleConfig[usecaseName];
-    if (!config) throw new Error(`Unknown usecase ${usecaseName} for module ${moduleName}`);
+    //standalone config block
+    if (opts.standaloneConfig) {
+      config = opts.standaloneConfig;
+      source = opts.source ?? config.sources[0];
 
-    const { multiple, sources } = config;
-    const source: FileSource = options?.source ?? sources[0];
-    const override = options?.configOverride ?? {};
+      console.debug('[FileManager] Running in STANDALONE mode');
+      console.debug('[FileManager] allow=', config.allow);
+      console.debug('[FileManager] sources=', config.sources);
+      console.debug('[FileManager] chosen source=', source);
 
-    console.debug(`[FileManager] Module=${moduleName} Usecase=${usecaseName}`);
-    console.debug(`[FileManager] allow=`, config.allow);
-    console.debug(`[FileManager] sources=`, config.sources);
-    console.debug(`[FileManager] chosen source=`, source);
+      //module compatibility here
+    } else {
+      if (!opts.module || !opts.usecase) {
+        throw new Error('FileManager.pick: module and usecase are required when not in standalone mode');
+      }
 
-    let files: LocalFile[] = [];
+      const moduleConfig = getModuleFileManagerConfig(opts.module);
+      if (!moduleConfig) throw new Error(`No FileManager config for module ${opts.module}`);
+
+      config = moduleConfig[opts.usecase];
+      if (!config) throw new Error(`Unknown usecase ${opts.usecase} for module ${opts.module}`);
+
+      source = opts.source ?? config.sources[0];
+
+      console.debug(`[FileManager] Module=${opts.module} Usecase=${opts.usecase}`);
+      console.debug('[FileManager] allow=', config.allow);
+      console.debug('[FileManager] sources=', config.sources);
+      console.debug('[FileManager] chosen source=', source);
+    }
+
     const sourceToPermission: Partial<Record<FileSource, PermissionScenario>> = {
       audio: 'audio.read',
       camera: 'camera',
@@ -40,17 +52,19 @@ export class FileManager {
       gallery: 'gallery.read',
     };
 
-    const permissionToAsk = sourceToPermission[source];
+    const permission = sourceToPermission[source];
 
     try {
-      if (permissionToAsk) await assertPermissions(permissionToAsk);
+      if (permission) await assertPermissions(permission);
     } catch (err) {
       console.warn('[FileManager] Permission denied:', err);
       callback([]);
       return;
     }
 
-    // allowedTypes for gallery
+    let files: LocalFile[] = [];
+
+    // gallery allowed types
     const allowedTypesForGallery =
       override.gallery?.allowedTypes ?? (config.allow.filter(t => ['image', 'video'].includes(t)) as Array<'image' | 'video'>);
 
@@ -58,7 +72,7 @@ export class FileManager {
       case 'gallery':
         files = await pickFromGallery({
           allowedTypes: allowedTypesForGallery,
-          multiple: override.gallery?.multiple ?? multiple,
+          multiple: override.gallery?.multiple ?? config.multiple,
         });
         break;
 
@@ -71,19 +85,20 @@ export class FileManager {
 
       case 'documents':
         files = await pickFromDocuments({
-          multiple: override.documents?.multiple ?? multiple,
+          multiple: override.documents?.multiple ?? config.multiple,
           types: override.documents?.types,
         });
         break;
+
       case 'audio':
         files = await pickAudio({
-          multiple: override.audio?.multiple ?? multiple,
+          multiple: override.audio?.multiple ?? config.multiple,
           types: override.audio?.types ?? ['audio/*'],
         });
         break;
 
       default:
-        throw new Error(`Unsupported source: ${source}`);
+        throw new Error(`Unsupported FileSource: ${source}`);
     }
 
     // MIME filtering

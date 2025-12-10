@@ -1,13 +1,11 @@
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { pick, types } from '@react-native-documents/picker';
 import moment from 'moment';
-import DeviceInfo from 'react-native-device-info';
 import RNFS from 'react-native-fs';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-import { I18n } from '~/app/i18n';
 import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
 import { Asset } from '~/framework/util/fileHandler/types';
 import { fallbackMime, getExtSafe, guessMimeFromExt, processImage, safe, wrapPicker } from '~/framework/util/fileHandler/utils';
@@ -196,17 +194,7 @@ export function pickFromDocuments(
 
       callback(files);
     } catch (err) {
-      const e = err as any;
-
-      if (e?.code !== 'CANCELLED') {
-        Alert.alert(
-          I18n.get('documents-read-permissionblocked-title'),
-          I18n.get('documents-read-permissionblocked-text', {
-            appName: DeviceInfo.getApplicationName(),
-          }),
-        );
-      }
-
+      console.error('[pickDocuments] ERROR:', err);
       callback([]);
     }
   });
