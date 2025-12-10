@@ -15,10 +15,36 @@ import ZoomablePdf from './zoomablePdf/component';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
+import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { Media, MediaType } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
+
+const NavbarButtons = ({ disabled }: { disabled: boolean }) => {
+  return (
+    <NavBarActionsGroup
+      elements={[
+        <NavBarAction onPress={() => console.debug('download pressed')} icon="ui-download" disabled={disabled} />,
+        <PopupMenu
+          actions={[
+            {
+              action: () => console.debug('share pressed'),
+              icon: {
+                android: 'ic_share',
+                ios: 'square.and.arrow.up',
+              },
+              title: I18n.get('carousel-share'),
+            },
+          ]}>
+          <NavBarAction disabled={disabled} icon="ui-options" />
+        </PopupMenu>,
+      ]}
+    />
+  );
+};
 
 export function computeNavBar({
   navigation,
@@ -37,6 +63,7 @@ export function computeNavBar({
     headerBlurEffect: 'dark',
     headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
     headerTransparent: true,
+    statusBarColor: theme.palette.grey.darkness.toString(),
   };
 }
 
@@ -66,6 +93,7 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
   const [paginationHeight, setPaginationHeight] = React.useState(0);
   const carouselHeight = SCREEN_HEIGHT - TOP_INSET - paginationHeight;
   const [isCarouselSwipeEnabled, setIsCarouselSwipeEnabled] = React.useState(true);
+  const getButtons = React.useCallback((disabled: boolean) => <NavbarButtons disabled={disabled} />, []);
 
   const configurePanGesture = React.useCallback((panGesture: PanGesture) => {
     if (isAndroid) {
@@ -77,14 +105,18 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
     setCurrentIndex(index);
   }, []);
 
-  // Update navbar title when current index changes
   React.useEffect(() => {
+    navigation.setOptions({
+      ...computeNavBar({ navigation, route }),
+      headerRight: () => getButtons(false),
+    });
+    // Update navbar title when current index changes
     if (media.length > 1) {
       navigation.setOptions({
         headerTitle: navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title),
       });
     }
-  }, [currentIndex, media.length, navigation]);
+  }, [currentIndex, getButtons, media.length, navigation, route]);
 
   const onPressPagination = (index: number) => {
     ref.current?.scrollTo({
