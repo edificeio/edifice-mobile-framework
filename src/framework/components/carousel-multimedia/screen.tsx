@@ -9,13 +9,14 @@ import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated
 
 import { UI_SIZES } from '../constants';
 import styles from './styles';
-import { CarouselItem } from './types';
+import { MultimediaCarouselProps } from './types';
 import ZoomableImage from './zoomableImage/component';
 import ZoomablePdf from './zoomablePdf/component';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { Media, MediaType } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
@@ -27,12 +28,11 @@ export function computeNavBar({
     ...navBarOptions({
       navigation,
       route,
-      title: 'check',
-      // title: route.params.data.length !== 1
-      //     route.params.data.length !== 1
-      //       ? I18n.get('carousel-counter', { current: route.params.startIndex ?? 1, total: route.params.data.length })
-      //       : '',
-      //   titleStyle: styles.title,
+      title:
+        route.params.media.length !== 1
+          ? I18n.get('carousel-counter', { current: route.params.startIndex ?? 1, total: route.params.media.length })
+          : '',
+      titleStyle: styles.title,
     }),
     headerBlurEffect: 'dark',
     headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
@@ -56,7 +56,10 @@ const getSignedSource = (src: Media['src']) => {
   }
 };
 
-const MultimediaCarouselComponent = ({ media, referer, startIndex }: CarouselItem) => {
+const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
+  const { navigation, route } = props;
+  const startIndex = route.params.startIndex ?? 0;
+  const media = React.useMemo(() => route.params.media ?? [], [route]);
   const ref = React.useRef<ICarouselInstance>(null);
   const progress = useSharedValue<number>(0);
   const [currentIndex, setCurrentIndex] = React.useState(startIndex ?? 0);
@@ -73,6 +76,15 @@ const MultimediaCarouselComponent = ({ media, referer, startIndex }: CarouselIte
   const onSnapToItem = React.useCallback((index: number) => {
     setCurrentIndex(index);
   }, []);
+
+  // Update navbar title when current index changes
+  React.useEffect(() => {
+    if (media.length > 1) {
+      navigation.setOptions({
+        headerTitle: navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title),
+      });
+    }
+  }, [currentIndex, media.length, navigation]);
 
   const onPressPagination = (index: number) => {
     ref.current?.scrollTo({
@@ -174,9 +186,8 @@ const MultimediaCarouselComponent = ({ media, referer, startIndex }: CarouselIte
   );
 };
 
-const MultimediaCarousel = ({ route }: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel>) => {
-  const { media, referer, startIndex } = route.params;
-  return <MultimediaCarouselComponent media={media} referer={referer} startIndex={startIndex} />;
+const MultimediaCarousel = ({ navigation, route }: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel>) => {
+  return <MultimediaCarouselComponent navigation={navigation} route={route} />;
 };
 
 export default MultimediaCarousel;

@@ -29,7 +29,6 @@ export enum ModalsRouteNames {
 
 export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.Pdf]: { title: string; src?: string };
-  // [ModalsRouteNames.Carousel]: ICarouselNavParams;
   [ModalsRouteNames.Carousel]: CarouselItem;
   [ModalsRouteNames.MediaPlayer]: MediaPlayerParams;
   [ModalsRouteNames.AudienceReactions]: AudienceReactionsScreenNavParams;

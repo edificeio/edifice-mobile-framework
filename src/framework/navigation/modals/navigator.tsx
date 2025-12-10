@@ -3,7 +3,7 @@ import * as React from 'react';
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
 
 import MultimediaCarousel from '~/framework/components/carousel-multimedia/';
-import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel-multimedia/component';
+import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel-multimedia/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';

@@ -7,7 +7,7 @@ import { actions, messages } from './const';
 import { createHTML } from './editor';
 
 import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel/openCarousel';
+import { openCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
 

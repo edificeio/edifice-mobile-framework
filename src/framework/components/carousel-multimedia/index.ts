@@ -1,3 +1,3 @@
-import MultimediaCarousel from './component';
+import MultimediaCarousel from './screen';
 
 export default MultimediaCarousel;
