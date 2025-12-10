@@ -16,7 +16,6 @@ import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeho
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
-import { useCommunityBannerHeight } from '../../hooks/use-community-navbar/community-navbar/component';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -107,7 +106,6 @@ export const CommunitiesHomeScreenLoaded = function ({
   const { role, sentBy } = invitation || {};
   const { displayName: senderName, entId: senderId } = sentBy || {};
   const canShowInfoModal = role && senderId && senderName;
-  console.info({ canShowInfoModal, role, senderId, senderName });
 
   const infoModalRef = React.useRef<BottomSheetModalMethods>(null);
 

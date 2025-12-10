@@ -7,6 +7,7 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CommunityNavbar from './community-navbar';
+import { CommunityNavbarPlaceholder } from './community-navbar/component';
 import { BANNER_BASE_HEIGHT } from './community-navbar/styles';
 import CommunityScrollViewStickyHeader, { BANNER_ACCELERATION } from './sticky-component';
 import styles, { NAVBAR_RIGHT_BUTTON_STYLE } from './styles';
@@ -51,7 +52,7 @@ export default function useCommunityScrollableThumbnail({
     [title, fixedTitleHeaderStyle],
   );
   const banner = React.useMemo(() => <CommunityNavbar image={image} key="banner" />, [image]);
-  const placeholderBanner = React.useMemo(() => <CommunityNavbar key="banner" />, []);
+  const placeholderBanner = React.useMemo(() => <CommunityNavbarPlaceholder key="banner" />, []);
   const bannerTotalHeight = BANNER_BASE_HEIGHT + statusBarHeight;
 
   const [shouldStatusBarDark, setShouldStatusBarDark] = React.useState(false);
