@@ -27,11 +27,11 @@ const NavbarButtons = ({ disabled }: { disabled: boolean }) => {
   return (
     <NavBarActionsGroup
       elements={[
-        <NavBarAction onPress={() => console.debug('download pressed')} icon="ui-download" disabled={disabled} />,
+        <NavBarAction onPress={() => console.info('download pressed')} icon="ui-download" disabled={disabled} />,
         <PopupMenu
           actions={[
             {
-              action: () => console.debug('share pressed'),
+              action: () => console.info('share pressed'),
               icon: {
                 android: 'ic_share',
                 ios: 'square.and.arrow.up',
@@ -93,6 +93,7 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
   const [paginationHeight, setPaginationHeight] = React.useState(0);
   const carouselHeight = SCREEN_HEIGHT - TOP_INSET - paginationHeight;
   const [isCarouselSwipeEnabled, setIsCarouselSwipeEnabled] = React.useState(true);
+  const [isNavBarVisible, setNavBarVisible] = React.useState(true);
   const getButtons = React.useCallback((disabled: boolean) => <NavbarButtons disabled={disabled} />, []);
 
   const configurePanGesture = React.useCallback((panGesture: PanGesture) => {
@@ -106,17 +107,23 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
   }, []);
 
   React.useEffect(() => {
-    navigation.setOptions({
-      ...computeNavBar({ navigation, route }),
-      headerRight: () => getButtons(false),
-    });
-    // Update navbar title when current index changes
-    if (media.length > 1) {
+    if (isNavBarVisible) {
       navigation.setOptions({
-        headerTitle: navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title),
+        ...computeNavBar({ navigation, route }),
+        headerRight: () => getButtons(false),
+        headerShown: true,
+        headerTitle: navBarTitle(
+          route.params.media.length !== 1 ? I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }) : '',
+          styles.title,
+        ),
+      });
+    } else {
+      navigation.setOptions({
+        headerShown: false,
       });
     }
-  }, [currentIndex, getButtons, media.length, navigation, route]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, isNavBarVisible]);
 
   const onPressPagination = (index: number) => {
     ref.current?.scrollTo({
@@ -144,6 +151,10 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
     [currentIndex, media],
   );
 
+  const toggleNavBarVisibility = React.useCallback(() => {
+    setNavBarVisible(prev => !prev);
+  }, []);
+
   const renderItem = React.useCallback(
     ({ index, item }: { item: Media; index: number }) => {
       const isCurrentItem = index === currentIndex;
@@ -158,6 +169,7 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
               isShown={isCurrentItem}
               onEdgeReached={onItemEdgeReached}
               source={getSignedSource(item.src)}
+              toggleNavBarVisibility={toggleNavBarVisibility}
             />
           ) : item.type === MediaType.VIDEO || item.type === MediaType.AUDIO ? (
             <VideoPlayer
@@ -181,7 +193,7 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
         </View>
       );
     },
-    [carouselHeight, currentIndex, onItemEdgeReached],
+    [carouselHeight, currentIndex, onItemEdgeReached, toggleNavBarVisibility],
   );
 
   if (!media || media.length === 0) {

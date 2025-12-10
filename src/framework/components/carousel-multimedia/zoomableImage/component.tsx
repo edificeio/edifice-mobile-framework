@@ -12,6 +12,7 @@ interface ZoomableImageProps {
   containerHeight: number;
   isShown: boolean;
   onEdgeReached: (direction: 'left' | 'right') => void;
+  toggleNavBarVisibility: () => void;
 }
 
 const MIN_IMAGE_SCALE = 1;
@@ -19,7 +20,14 @@ const MAX_IMAGE_SCALE = 5;
 const MIN_SPEED_TO_SWIPE = 1000;
 const EDGE_DETECTION_THRESHOLD = 5;
 
-const ZoomableImage = ({ containerHeight, containerWidth, isShown, onEdgeReached, source }: ZoomableImageProps) => {
+const ZoomableImage = ({
+  containerHeight,
+  containerWidth,
+  isShown,
+  onEdgeReached,
+  source,
+  toggleNavBarVisibility,
+}: ZoomableImageProps) => {
   const [isPanEnabled, setIsPanEnabled] = React.useState(false);
   const [realImageDimensions, setRealImageDimensions] = React.useState({
     height: containerHeight,
@@ -164,6 +172,16 @@ const ZoomableImage = ({ containerHeight, containerWidth, isShown, onEdgeReached
     [calculateLimits, isPanEnabled, onEdgeReached, savedTranslateX, savedTranslateY, scale.value, translateX, translateY],
   );
 
+  const singleTapGesture = React.useMemo(() => {
+    return Gesture.Tap()
+      .maxDuration(250)
+      .numberOfTaps(1)
+      .onStart(() => {
+        'worklet';
+        runOnJS(toggleNavBarVisibility)();
+      });
+  }, [toggleNavBarVisibility]);
+
   const doubleTapGesture = React.useMemo(() => {
     return Gesture.Tap()
       .maxDuration(250)
@@ -206,7 +224,9 @@ const ZoomableImage = ({ containerHeight, containerWidth, isShown, onEdgeReached
       });
   }, [calculateLimits, savedScale, savedTranslateX, savedTranslateY, scale, translateX, translateY]);
 
-  const combinedGesture = Gesture.Simultaneous(pinchGesture, panGesture, doubleTapGesture);
+  // Gesture.Exclusive gives priority to double tap gesture
+  const tapGestures = Gesture.Exclusive(doubleTapGesture, singleTapGesture);
+  const combinedGesture = Gesture.Simultaneous(pinchGesture, panGesture, tapGestures);
 
   const animatedStyle = useAnimatedStyle(() => {
     // Calculer les translations en tenant compte du scale actuel
