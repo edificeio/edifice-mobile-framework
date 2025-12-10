@@ -177,6 +177,8 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
               disableBack
               disableFullscreen
               disableVolume
+              onHideControls={toggleNavBarVisibility}
+              onShowControls={toggleNavBarVisibility}
               paused={!isCurrentItem}
               repeat={true}
               resizeMode="contain"
