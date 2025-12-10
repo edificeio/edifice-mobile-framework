@@ -1,4 +1,4 @@
-import { CarouselItem } from '../carousel-multimedia/types';
+import { CarouselItem } from './types';
 
 import { navigate } from '~/framework/navigation/helper';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
