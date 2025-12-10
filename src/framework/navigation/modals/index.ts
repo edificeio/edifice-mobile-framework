@@ -3,7 +3,7 @@
  */
 import { ParamListBase } from '@react-navigation/native';
 
-import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
+import { CarouselItem } from '~/framework/components/carousel-multimedia/types';
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
 import type { MediaPlayerParams } from '~/framework/components/media/player/types';
@@ -29,7 +29,8 @@ export enum ModalsRouteNames {
 
 export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.Pdf]: { title: string; src?: string };
-  [ModalsRouteNames.Carousel]: ICarouselNavParams;
+  // [ModalsRouteNames.Carousel]: ICarouselNavParams;
+  [ModalsRouteNames.Carousel]: CarouselItem;
   [ModalsRouteNames.MediaPlayer]: MediaPlayerParams;
   [ModalsRouteNames.AudienceReactions]: AudienceReactionsScreenNavParams;
   [ModalsRouteNames.AudienceViews]: AudienceViewsScreenNavParams;

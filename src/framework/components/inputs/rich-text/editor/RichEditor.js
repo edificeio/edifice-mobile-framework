@@ -7,6 +7,7 @@ import { actions, messages } from './const';
 import { createHTML } from './editor';
 
 import theme from '~/app/theme';
+import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
 
@@ -175,18 +176,20 @@ export default class RichEditor extends Component {
 
   _onLinkTouched(url, linksUrls) {
     const { disabled } = this.props;
+    console.log('calling onLinkTouched from rich editor');
     if (disabled) {
       openUrl(url);
     }
   }
 
-  _onMediaTouched(url, mediasUrls) {
+  _onMediaTouched(url, medias) {
     const { disabled } = this.props;
     if (disabled) {
-      // TODO: Transform mediaUrls to right format for carousel
-      // TODO: Set selected index based on url
-      // TODO: openCarousel({ data: medias, startIndex: selected });
-      alert(`Media touched: ${url}`);
+      const startIndex = medias.findIndex(item => item.src === url);
+      openCarousel({
+        media: medias,
+        startIndex: startIndex !== -1 ? startIndex : 0,
+      });
     }
   }
 

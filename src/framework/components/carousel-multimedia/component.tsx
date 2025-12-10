@@ -157,6 +157,7 @@ const MultimediaCarouselComponent = ({ media, referer, startIndex }: CarouselIte
           ref={ref}
           renderItem={renderItem}
           width={SCREEN_WIDTH}
+          defaultIndex={startIndex}
         />
       </View>
 
