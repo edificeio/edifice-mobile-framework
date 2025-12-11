@@ -13,6 +13,7 @@ export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri'>> & {
 };
 
 export interface MenuAction {
+  disabled?: boolean;
   title: string;
   action: () => void;
   icon?: {
@@ -23,6 +24,7 @@ export interface MenuAction {
 }
 
 export interface MenuActionProps {
+  disabled?: boolean;
   title?: string;
   action: () => void;
 }
