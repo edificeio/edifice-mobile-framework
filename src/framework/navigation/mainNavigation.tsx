@@ -190,7 +190,7 @@ export function MainTabNavigator() {
   }, [tabModulesCache.length, appsJson]);
 
   // Avoid bug when launching app after first push
-  const initialBottomInset = initialWindowMetrics?.insets.bottom ?? 0;
+  const initialBottomInset = initialWindowMetrics?.insets.bottom ?? UI_SIZES.screen.bottomInset;
   const bottomInsetRef = React.useRef(initialBottomInset);
   const { bottom: currentBottomInset } = useSafeAreaInsets();
   if (currentBottomInset !== bottomInsetRef.current && (currentBottomInset === 0 || currentBottomInset === initialBottomInset)) {
