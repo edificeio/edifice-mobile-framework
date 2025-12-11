@@ -25,9 +25,12 @@ export default function cameraActionFm<M extends FileManagerModuleName, U extend
   props: MenuPickerActionFmProps,
 ) {
   const action = async () => {
-    await FileManager.pick(module, usecase, files => props.callback(files, 'camera'), {
+    await FileManager.pick(files => props.callback(files, 'camera'), {
       configOverride: props.configOverride,
+      module,
+      onError: props.onError,
       source: 'camera',
+      usecase,
     });
   };
 

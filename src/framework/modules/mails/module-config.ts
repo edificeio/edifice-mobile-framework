@@ -16,12 +16,6 @@ export default new NavigableModuleConfig<'mails', null>({
       multiple: true,
       sources: ['camera', 'gallery', 'documents'],
     },
-
-    editor: {
-      allow: ['image'],
-      multiple: true,
-      sources: ['camera', 'gallery'],
-    },
   } as const,
   matchEntcoreApp: '/conversation/conversation',
   name: 'mails',

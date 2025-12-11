@@ -22,7 +22,6 @@ import MailsHistoryButton from '~/framework/modules/mails/components/history-but
 import { InactiveUserModalContentContainer } from '~/framework/modules/mails/components/modal-content-container';
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsRecipientsType } from '~/framework/modules/mails/model';
-import moduleConfig from '~/framework/modules/mails/module-config';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 
@@ -167,8 +166,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     return (
       <>
         <RichEditorForm
-          fileManagerModule={moduleConfig.name}
-          fileManagerUsecase="editor"
           ref={scrollViewRef}
           editorRef={editorRef}
           topForm={renderTopForm()}

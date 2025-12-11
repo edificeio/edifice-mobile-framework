@@ -9,14 +9,6 @@ export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   displayI18n: 'blog-tabname',
   displayPicture: theme.apps.blog.icon,
   entcoreScope: ['blog'],
-
-  fileManager: {
-    editor: {
-      allow: ['image'],
-      multiple: true,
-      sources: ['camera', 'gallery'],
-    },
-  } as const,
   matchEntcoreApp: '/blog',
   name: 'blog',
   storageName: 'blog',

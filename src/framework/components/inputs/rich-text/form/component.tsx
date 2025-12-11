@@ -173,12 +173,9 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
-          configOverride: props.configOverride,
-          module: props.fileManagerModule,
           redirectTo: route,
           source: 'gallery',
           uploadParams: props.uploadParams,
-          usecase: props.fileManagerUsecase,
         },
       });
     }, OPEN_FILE_IMPORT_TIMEOUT);
@@ -191,12 +188,9 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
-          configOverride: props.configOverride,
-          module: props.fileManagerModule,
           redirectTo: route,
           source: 'camera',
           uploadParams: props.uploadParams,
-          usecase: props.fileManagerUsecase,
         },
       });
     }, OPEN_FILE_IMPORT_TIMEOUT);

@@ -24,9 +24,12 @@ export default function documentActionFm<M extends FileManagerModuleName, U exte
   props: MenuPickerActionFmProps,
 ) {
   const action = async () => {
-    await FileManager.pick(module, usecase, files => props.callback(files, 'documents'), {
+    await FileManager.pick(files => props.callback(files, 'documents'), {
       configOverride: props.configOverride,
+      module,
+      onError: props.onError,
       source: 'documents',
+      usecase,
     });
   };
 
