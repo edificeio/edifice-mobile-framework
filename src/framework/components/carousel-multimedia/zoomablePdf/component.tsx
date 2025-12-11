@@ -6,7 +6,7 @@ import Pdf from 'react-native-pdf';
 import styles from './styles';
 
 interface ZoomablePdfProps {
-  source: { uri: string };
+  source: { uri?: string };
   setIsCarouselSwipeEnabled: (isEnabled: boolean) => void;
 }
 

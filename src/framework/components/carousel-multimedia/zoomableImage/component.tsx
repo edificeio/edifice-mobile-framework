@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, View } from 'react-native';
+import { Image, ImageURISource, View } from 'react-native';
 
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
@@ -7,7 +7,7 @@ import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTi
 import styles from './styles';
 
 interface ZoomableImageProps {
-  source: any; // to change later
+  source: ImageURISource;
   containerWidth: number;
   containerHeight: number;
   isShown: boolean;

@@ -21,7 +21,7 @@ import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { Media, MediaType } from '~/framework/util/media';
-import { urlSigner } from '~/infra/oauth';
+import { sessionURISource } from '~/framework/util/transport';
 
 const NavbarButtons = ({ disabled }: { disabled: boolean }) => {
   return (
@@ -71,16 +71,20 @@ const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 const TOP_INSET = UI_SIZES.screen.topInset;
 const isAndroid = Platform.OS === 'android';
 
-const getSignedSource = (src: Media['src']) => {
+const getSignedSource = (src: Media['src']): ImageURISource => {
+  let uriSource: ImageURISource;
+
   if (typeof src === 'string') {
-    return urlSigner.signURISource(src);
+    // For sources parsed from html
+    uriSource = { uri: src };
   } else if (src instanceof URL) {
-    return urlSigner.signURISource(src.toString());
-  } else if ('uri' in src) {
-    return urlSigner.signURISource(src as ImageURISource);
+    uriSource = { uri: src.toString() };
   } else {
-    return src;
+    // Type compatibility for images, audio, video and pdfs that share this structure
+    uriSource = src as ImageURISource;
   }
+
+  return sessionURISource(uriSource);
 };
 
 const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
