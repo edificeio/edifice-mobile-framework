@@ -106,28 +106,43 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
     }
   }, []);
 
-  const onSnapToItem = React.useCallback((index: number) => {
-    setCurrentIndex(index);
+  const hideNavBar = React.useCallback(() => {
+    setNavBarVisible(false);
   }, []);
 
+  const showNavBar = React.useCallback(() => {
+    setNavBarVisible(true);
+  }, []);
+
+  const toggleNavBarVisibility = React.useCallback(() => {
+    setNavBarVisible(prev => !prev);
+  }, []);
+
+  const onSnapToItem = React.useCallback(
+    (index: number) => {
+      setCurrentIndex(index);
+      showNavBar();
+    },
+    [showNavBar],
+  );
+
+  // handles title update with current index along with navbar visibility
   React.useEffect(() => {
     if (isNavBarVisible) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
         headerRight: () => getButtons(false),
         headerShown: true,
-        headerTitle: navBarTitle(
-          route.params.media.length !== 1 ? I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }) : '',
-          styles.title,
-        ),
+        headerTitle: navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title),
       });
     } else {
       navigation.setOptions({
         headerShown: false,
+        headerTitle: navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, isNavBarVisible]);
+  }, [isNavBarVisible, media.length, currentIndex]);
 
   const onPressPagination = (index: number) => {
     ref.current?.scrollTo({
@@ -155,17 +170,12 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
     [currentIndex, media],
   );
 
-  const toggleNavBarVisibility = React.useCallback(() => {
-    setNavBarVisible(prev => !prev);
-  }, []);
-
   const renderItem = React.useCallback(
     ({ index, item }: { item: Media; index: number }) => {
       const isCurrentItem = index === currentIndex;
-      const itemStyle = [styles.item, item.type !== MediaType.IMAGE && { backgroundColor: 'red' }];
 
       return (
-        <View style={itemStyle}>
+        <View style={styles.item}>
           {item.type === MediaType.IMAGE ? (
             <ZoomableImage
               containerHeight={carouselHeight}
@@ -181,9 +191,9 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
               disableBack
               disableFullscreen
               disableVolume
-              onHideControls={toggleNavBarVisibility}
-              onShowControls={toggleNavBarVisibility}
-              paused={true}
+              onHideControls={isCurrentItem ? hideNavBar : undefined}
+              onShowControls={isCurrentItem ? showNavBar : undefined}
+              paused={!isCurrentItem}
               repeat={true}
               resizeMode="contain"
               rewindTime={5}
@@ -200,7 +210,7 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
         </View>
       );
     },
-    [carouselHeight, currentIndex, onItemEdgeReached, toggleNavBarVisibility],
+    [carouselHeight, currentIndex, hideNavBar, onItemEdgeReached, showNavBar, toggleNavBarVisibility],
   );
 
   if (!media || media.length === 0) {
