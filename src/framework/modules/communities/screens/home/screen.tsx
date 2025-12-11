@@ -241,7 +241,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         renderItem={renderItem}
         renderPlaceholderItem={PostDetailsLoader}
         scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
-        stickyElements={stickyElements}
+        decorations={stickyElements}
         {...scrollViewProps}
       />
       {invitation?.role && <CommunityWelcomeBottomSheetModal role={invitation?.role} title={title} ref={welcomeModalRef} />}
