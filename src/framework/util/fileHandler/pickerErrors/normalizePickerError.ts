@@ -35,13 +35,10 @@ export function normalizePickerError(err: any, source: FileSource): FileManagerE
 
   // react-native-image-picker
   if (err.errorCode) {
-    switch (err.errorCode) {
-      case 'camera_unavailable':
-        return makeError(FileManagerErrorCode.CAMERA_UNAVAILABLE, source, err);
-
-      default:
-        return makeError(FileManagerErrorCode.IMAGE_PICKER_ERROR, source, err);
+    if (err.errorCode === 'camera_unavailable') {
+      return makeError(FileManagerErrorCode.CAMERA_UNAVAILABLE, source, err);
     }
+    return makeError(FileManagerErrorCode.IMAGE_PICKER_ERROR, source, err);
   }
 
   // DocumentPicker
