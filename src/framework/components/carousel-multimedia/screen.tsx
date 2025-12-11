@@ -179,13 +179,14 @@ const MultimediaCarouselComponent = (props: MultimediaCarouselProps) => {
               disableVolume
               onHideControls={toggleNavBarVisibility}
               onShowControls={toggleNavBarVisibility}
-              paused={!isCurrentItem}
+              paused={true}
               repeat={true}
               resizeMode="contain"
               rewindTime={5}
               showOnStart={true}
               source={getSignedSource(item.src)}
               style={styles.mediaContainer}
+              tapAnywhereToPause
             />
           ) : item.type === MediaType.ATTACHMENT ? (
             <ZoomablePdf source={getSignedSource(item.src)} setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled} />
