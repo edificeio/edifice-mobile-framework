@@ -4,6 +4,7 @@
 import { EmitterSubscription, Vibration } from 'react-native';
 
 import { Moment } from 'moment';
+import FastImage from 'react-native-fast-image';
 import RNShake from 'react-native-shake';
 import Sound from 'react-native-sound';
 import { AnyAction, Dispatch } from 'redux';
@@ -39,13 +40,15 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
     try {
       const userId = session.user.id;
       const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.avatar } : newValues;
-      const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
+      const url = `${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`;
+      const reponse = await signedFetchJson(url, {
         body: JSON.stringify(updatedValues),
         method: 'PUT',
       });
       if ((reponse as any).error) {
         throw new Error((reponse as any).error);
       }
+      FastImage.clearImageCache(url);
       dispatch(authActions.profileUpdate(userId, newValues));
       if (isUpdatingPhoto) {
         refreshSelfAvatarUniqueKey();
