@@ -3,7 +3,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { FileSource } from '~/framework/util/fileHandler/types';
 
 export namespace FileImportScreenProps {

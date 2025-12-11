@@ -28,6 +28,7 @@ export default function cameraActionFm<M extends FileManagerModuleName, U extend
     await FileManager.pick(files => props.callback(files, 'camera'), {
       configOverride: props.configOverride,
       module,
+      onError: props.onError,
       source: 'camera',
       usecase,
     });

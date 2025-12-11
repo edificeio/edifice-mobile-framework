@@ -1,4 +1,5 @@
 import { FileManagerModuleName, FileManagerUsecaseName } from '~/framework/util/fileHandler/fileManagerConfig';
+import { FileManagerError } from '~/framework/util/fileHandler/pickerErrors';
 
 export interface Asset {
   base64?: string;
@@ -84,4 +85,5 @@ export type FileManagerStandalonePickOptions = {
   usecase?: FileManagerUsecaseName<FileManagerModuleName>;
   source?: FileSource;
   configOverride?: FileManagerPickerOptionsType['configOverride'];
+  onError?: (error: FileManagerError) => void;
 };

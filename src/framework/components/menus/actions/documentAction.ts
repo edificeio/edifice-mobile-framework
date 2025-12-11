@@ -27,6 +27,7 @@ export default function documentActionFm<M extends FileManagerModuleName, U exte
     await FileManager.pick(files => props.callback(files, 'documents'), {
       configOverride: props.configOverride,
       module,
+      onError: props.onError,
       source: 'documents',
       usecase,
     });

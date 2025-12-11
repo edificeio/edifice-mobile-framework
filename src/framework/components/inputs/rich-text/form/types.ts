@@ -7,7 +7,7 @@ import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEdito
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 
 export interface RichEditorFormProps extends ScrollViewProps {
   initialContentHtml: string;

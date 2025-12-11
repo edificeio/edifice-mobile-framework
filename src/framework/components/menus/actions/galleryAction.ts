@@ -28,6 +28,7 @@ export default function galleryActionFm<M extends FileManagerModuleName, U exten
     await FileManager.pick(files => props.callback(files, 'gallery'), {
       configOverride: props.configOverride,
       module,
+      onError: props.onError,
       source: 'gallery',
       usecase,
     });

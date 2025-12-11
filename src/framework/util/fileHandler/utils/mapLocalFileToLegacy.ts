@@ -1,4 +1,4 @@
-import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { ILocalAttachment } from '~/ui/Attachment';
 
 export function mapLocalFileToLegacy(lf: LocalFile): ILocalAttachment {

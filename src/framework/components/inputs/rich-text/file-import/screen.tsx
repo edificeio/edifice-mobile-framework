@@ -256,6 +256,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
           setFiles(formatted);
         },
         {
+          // onError: err => console.debug('[FILE_PICKER_STANDARDIZED_ERROR] ==', err),
           source: route?.params.source,
           standaloneConfig: FILE_IMPORT_DEFAULT_CONFIG,
         },
