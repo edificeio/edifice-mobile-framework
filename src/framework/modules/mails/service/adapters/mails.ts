@@ -66,6 +66,7 @@ export interface MailsMailPreviewBackend {
     }[];
   };
   unread: boolean;
+  noReply: boolean;
 }
 
 export const mailsAdapter = (n: MailsMailPreviewBackend) => {
@@ -77,6 +78,7 @@ export const mailsAdapter = (n: MailsMailPreviewBackend) => {
     from: n.from as MailsRecipientInfo,
     hasAttachment: n.hasAttachment,
     id: n.id,
+    noReply: n.noReply ?? false,
     response: n.response,
     state: n.state as MailsMailStatePreview,
     subject: n.subject,
@@ -155,6 +157,7 @@ export interface MailsMailContentBackend {
   };
   trashed: boolean;
   unread: boolean;
+  noReply: boolean;
 }
 
 export const mailContentAdapter = (n: MailsMailContentBackend) => {
@@ -168,6 +171,7 @@ export const mailContentAdapter = (n: MailsMailContentBackend) => {
     from: n.from as MailsRecipientInfo,
     id: n.id,
     language: n.language,
+    noReply: n.noReply ?? false,
     original_format_exists: n.original_format_exists,
     parent_id: n.parent_id,
     state: n.state as MailsMailStatePreview,

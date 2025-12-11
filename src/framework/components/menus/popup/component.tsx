@@ -12,6 +12,7 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
     return {
       attributes: {
         destructive: action.destructive ?? false,
+        disabled: action.disabled ?? false,
       },
       id: id.toString(),
       image: action.icon ? action.icon[Platform.OS] : '',
@@ -34,7 +35,10 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
         onPressAction={({ nativeEvent }) => {
           if (props.disabled) return;
 
-          props.actions[+nativeEvent.event].action();
+          const action = props.actions[+nativeEvent.event];
+          if (action.disabled) return;
+
+          action.action();
         }}
         actions={actionsPopup}>
         <View>{props.children}</View>

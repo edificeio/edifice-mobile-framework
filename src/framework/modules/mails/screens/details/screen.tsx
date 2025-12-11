@@ -12,6 +12,7 @@ import type { MailsDetailsScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import AlertCard from '~/framework/components/alert';
 import { SingleAvatar } from '~/framework/components/avatar';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -273,25 +274,30 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const onDelete = () => handleMailAction(() => mailsService.mail.delete({ ids: [id] }), 'mails-toastsuccessdelete');
 
+  const replayAction = mail?.noReply
+    ? []
+    : [
+        {
+          action: onReply,
+          icon: {
+            android: 'ic_reply',
+            ios: 'arrowshape.turn.up.left',
+          },
+          id: 'reply',
+          title: I18n.get('mails-details-reply'),
+        },
+        {
+          action: onReplyAll,
+          icon: {
+            android: 'ic_reply',
+            ios: 'arrowshape.turn.up.left.2',
+          },
+          id: 'replyAll',
+          title: I18n.get('mails-details-replyall'),
+        },
+      ];
   const allPopupActionsMenu = [
-    {
-      action: onReply,
-      icon: {
-        android: 'ic_reply',
-        ios: 'arrowshape.turn.up.left',
-      },
-      id: 'reply',
-      title: I18n.get('mails-details-reply'),
-    },
-    {
-      action: onReplyAll,
-      icon: {
-        android: 'ic_reply',
-        ios: 'arrowshape.turn.up.left.2',
-      },
-      id: 'replyAll',
-      title: I18n.get('mails-details-replyall'),
-    },
+    ...replayAction,
     {
       action: onForward,
       icon: {
@@ -402,7 +408,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         ) : (
           <NavBarActionsGroup
             elements={[
-              <NavBarAction disabled={isLoading} icon="ui-undo" onPress={onReply} />,
+              ...(mail?.noReply ? [] : [<NavBarAction disabled={isLoading} icon="ui-undo" onPress={onReply} />]),
               <PopupMenu disabled={isLoading} actions={popupActionsMenu}>
                 <NavBarAction icon="ui-options" />
               </PopupMenu>,
@@ -493,13 +499,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           renderForwardButton()
         ) : (
           <>
-            {renderReplyButton()}
+            {!mail?.noReply && renderReplyButton()}
             {isMultipleRecipients ? renderReplyAllButton() : renderForwardButton()}
           </>
         )}
       </View>
     );
-  }, [infosRecipients, isRecall, isRecallAndNotSender, mail?.trashed, onForward, onReply, onReplyAll]);
+  }, [infosRecipients, isRecall, isRecallAndNotSender, mail?.trashed, mail?.noReply, onForward, onReply, onReplyAll]);
 
   const hasRecipients = React.useCallback(
     (recipients: MailsRecipients) => recipients.users.length > 0 || recipients.groups.length > 0,
@@ -621,6 +627,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
               {renderOriginalContent()}
               {renderHistory()}
               {renderButtons()}
+              {mail?.noReply && <AlertCard type="warning" text={I18n.get('mails-details-noReplyInfoText')} />}
             </>
           )}
         </ScrollView>

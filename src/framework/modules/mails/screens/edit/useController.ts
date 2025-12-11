@@ -49,6 +49,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   const [inputFocused, setInputFocused] = React.useState<MailsRecipientsType | null>(null);
   const [isStartScroll, setIsStartScroll] = React.useState<boolean>(false);
   const [scrollEnabled, setScrollEnabled] = React.useState<boolean>(true);
+  const [noReply, setNoReply] = React.useState<boolean>(initialMailInfo?.noReply ?? false);
 
   const [inactiveUserModalVisible, setInactiveUsersModalVisible] = React.useState<boolean>(false);
   const [inactiveUsersList, setInactiveUsersList] = React.useState<Array<string>>([]);
@@ -220,7 +221,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       if (draftIdSaved) {
         await mailsService.mail.updateDraft(
           { draftId: draftIdSaved },
-          { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
+          { body: bodyToSave, cc: ccIds, cci: cciIds, noReply, subject, to: toIds },
         );
       } else {
         // Create draft only when we bout to quit the page
@@ -229,7 +230,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
         const newDraftId = await mailsService.mail.sendToDraft(
           { inReplyTo: initialMailInfo?.id ?? undefined },
-          { body: bodyForCreation, cc: ccIds, cci: cciIds, subject, to: toIds },
+          { body: bodyForCreation, cc: ccIds, cci: cciIds, noReply, subject, to: toIds },
         );
         setDraftIdSaved(newDraftId);
       }
@@ -255,6 +256,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     handleNavigateToDrafts,
     getContentForDraft,
     initialMailInfo?.id,
+    noReply,
   ]);
 
   const onSend = React.useCallback(async () => {
@@ -268,7 +270,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
       const response = (await mailsService.mail.send(
         { draftId: draftIdSaved, inReplyTo: initialMailInfo?.id ?? undefined },
-        { body: bodyToSave, cc: ccIds, cci: cciIds, subject, to: toIds },
+        { body: bodyToSave, cc: ccIds, cci: cciIds, noReply, subject, to: toIds },
       )) as any;
 
       let shouldNavigate = true;
@@ -300,7 +302,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       toast.showError();
       setIsSending(false);
     }
-  }, [to, cc, cci, draftIdSaved, initialMailInfo?.id, subject, getContentForDraft, handleCloseInactiveUserModal]);
+  }, [to, cc, cci, draftIdSaved, initialMailInfo?.id, subject, getContentForDraft, handleCloseInactiveUserModal, noReply]);
 
   const onCheckSend = React.useCallback(() => {
     const fullContent = bodyContent;
@@ -348,6 +350,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         setCc(ccDraft);
         setCci(cciDraft);
         setAttachments(convertedAttachments);
+        setNoReply(draft.noReply ?? false);
       } else {
         if (draftId) {
           const draft = await mailsService.mail.get({ id: draftId });
@@ -424,24 +427,42 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     setSubject(text);
   }, []);
 
+  const onNoReplyAction = React.useCallback(() => {
+    setNoReply(prev => !prev);
+  }, []);
+
   const onCloseInactiveUserModal = React.useCallback(() => {
     setInactiveUsersModalVisible(false);
     handleCloseInactiveUserModal();
   }, [handleCloseInactiveUserModal]);
 
+  const noReplyMenu = React.useMemo(
+    () => [
+      {
+        action: () => onNoReplyAction(),
+        icon: {
+          android: noReply ? 'ic_undo' : 'ic_cancel',
+          ios: noReply ? 'arrowshape.turn.up.left' : 'xmark.bin',
+        },
+        title: I18n.get(noReply ? 'mails-details-reply' : 'mails-details-no-reply'),
+      },
+    ],
+    [noReply, onNoReplyAction],
+  );
   const popupActionsMenu = React.useMemo(
     () => [
       {
         action: onSendDraft,
+        disabled: !shouldSaveDraft,
         icon: {
           android: 'ic_pencil',
           ios: 'pencil.and.list.clipboard',
         },
         title: I18n.get('mails-edit-savedraft'),
       },
-      deleteAction({ action: onDeleteDraft, title: I18n.get('mails-edit-deletedraft') }),
+      deleteAction({ action: onDeleteDraft, disabled: !shouldSaveDraft, title: I18n.get('mails-edit-deletedraft') }),
     ],
-    [onDeleteDraft, onSendDraft],
+    [onDeleteDraft, onSendDraft, shouldSaveDraft],
   );
 
   React.useEffect(() => {
@@ -516,7 +537,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       onToggleShowList,
       openMoreRecipientsFields,
     },
-    computed: { haveInitialCcCci, popupActionsMenu, shouldSaveDraft },
+    computed: { haveInitialCcCci, noReplyMenu, popupActionsMenu, shouldSaveDraft },
     refs: { editorRef, scrollViewRef },
     state: {
       attachments,
@@ -532,6 +553,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       isStartScroll,
       mailSubjectType: type,
       moreRecipientsFields,
+      noReply,
       scrollEnabled,
       subject,
       to,
