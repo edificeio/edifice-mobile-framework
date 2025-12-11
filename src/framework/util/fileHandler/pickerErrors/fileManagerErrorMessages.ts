@@ -11,13 +11,13 @@ export enum FileManagerErrorCode {
 }
 
 export enum FileManagerErrorMessageKey {
-  CAMERA_UNAVAILABLE = 'filemanager-error-camera-unavailable',
-  DOC_PICKER_ERROR = 'filemanager-error-doc-picker-error',
-  FILE_COPY_FAILED = 'filemanager-error-file-copy-failed',
-  IMAGE_PICKER_ERROR = 'filemanager-error-image-picker-error',
-  IMAGE_PROCESSING_FAILED = 'filemanager-error-image-processing-failed',
-  PICKER_CANCELLED = 'filemanager-error-picker-cancelled',
-  UNKNOWN_ERROR = 'filemanager-error-unknown',
+  CAMERA_UNAVAILABLE = 'error-filemanager-camera-unavailable',
+  DOC_PICKER_ERROR = 'error-filemanager-doc-picker-error',
+  FILE_COPY_FAILED = 'error-filemanager-file-copy-failed',
+  IMAGE_PICKER_ERROR = 'error-filemanager-image-picker-error',
+  IMAGE_PROCESSING_FAILED = 'error-filemanager-image-processing-failed',
+  PICKER_CANCELLED = 'error-filemanager-picker-cancelled',
+  UNKNOWN_ERROR = 'error-filemanager-unknown',
 }
 
 export const fileManagerErrorMessages: Record<FileManagerErrorCode, FileManagerErrorMessageKey> = {
