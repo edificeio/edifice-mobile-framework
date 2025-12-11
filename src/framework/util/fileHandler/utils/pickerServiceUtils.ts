@@ -2,7 +2,7 @@ import ImageResizer from '@bam.tech/react-native-image-resizer';
 import moment from 'moment';
 import { Asset as RNImageAsset } from 'react-native-image-picker';
 
-import { LocalFile } from '~/framework/util/fileHandler/models/localFile';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { Asset } from '~/framework/util/fileHandler/types';
 
 export const IMAGE_MAX_DIMENSION = 1440;
@@ -29,9 +29,19 @@ export function fallbackMime(type?: string | null, name?: string | null): string
   return guessMimeFromExt(ext);
 }
 
-export function wrapPicker(fn: (cb: (files: LocalFile[] | LocalFile) => void) => void): Promise<LocalFile[]> {
-  return new Promise(resolve => {
-    fn(files => resolve(Array.isArray(files) ? files : [files]));
+export function wrapPicker(fn: (cb: (files: LocalFile[] | LocalFile) => void) => void | Promise<void>): Promise<LocalFile[]> {
+  return new Promise((resolve, reject) => {
+    try {
+      const result = fn(files => {
+        resolve(Array.isArray(files) ? files : [files]);
+      });
+
+      if (result instanceof Promise) {
+        result.catch(reject);
+      }
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
