@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-12-05 13:21:23",
-  "notes": "update(stack): yarn cache update\nchore(stack): update yarn caches\nrelease: 1.16.2-alpha.1(1160202)",
+  "last": "2025-12-11 16:51:47",
+  "notes": "chore: yarn cache update\nfix(communities): better loading animation on home screen\nfix(player): PEDAGO-3561 handle android compatibility errors\nfeat(communities): PEDAGO-3549 show folders (max 256 until service is not paginated)\nfeat(communities): PEDAGO-3081 default images for communities\nfix: ui tweak on folders in PaginatedDocumentListItem\nfix(import): PEDAGO-2833 change i18n for import order\nfix: PEDAGO-2452 remove false-error on save-to-gallery when write-only permission is granted\nfeat(communities): PEDAGO-2881 reactions on announcements\n local(fileHandler):COCO-5048, update error keys\nfix(navbar): add insets fallback\nfeat(fileHandler):COCO-5048, evolve to support standalone config (259)\nUpdated translations from Phrase (258)\nfix(support): send tick for support issue\nfix(wayf): ENABLING-495, add system to all domains exceptions\nfix(fileHandler): handle audio not uploaded\nfix(cve): ENABLING-535, change react version to 1.19.2 due to CVE on react 1.19.0\nrelease: 1.16.2-alpha.2(1160203)",
   "track": "1.16.2",
-  "version": "1.16.2-alpha.2(1160203)"
+  "version": "1.16.2-peda.2(1160204)"
 }
