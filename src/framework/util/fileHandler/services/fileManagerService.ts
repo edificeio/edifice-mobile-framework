@@ -135,7 +135,7 @@ export class FileManager {
       callback(files);
     } catch (err) {
       const normalized = normalizePickerError(err, source!);
-
+      console.error('[FM_NORMALIZED_ERROR] ==', normalized);
       onError(normalized);
       callback([]);
     }

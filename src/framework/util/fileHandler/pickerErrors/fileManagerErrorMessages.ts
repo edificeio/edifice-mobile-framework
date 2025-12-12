@@ -42,9 +42,11 @@ export interface FileManagerError {
 }
 
 export function makeError(code: FileManagerErrorCode, source: FileSource, raw?: any): FileManagerError {
+  const message = getFileManagerErrorMessageKey(code);
+  console.debug('[FM_ERROR_MESSAGE] ==', { code, message });
   return {
     code,
-    message: getFileManagerErrorMessageKey(code),
+    message,
     raw,
     source,
   };
