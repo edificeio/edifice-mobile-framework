@@ -135,7 +135,7 @@
     "react": "19.1.2",
     "react-i18next": "16.4.1",
     "react-is": "19.2.0",
-    "react-native": "0.81.5",
+    "react-native": "patch:react-native@npm%3A0.81.5#~/.yarn/patches/react-native-npm-0.81.5-d8232ef145.patch",
     "react-native-action-sheet": "2.2.0",
     "react-native-app-link": "1.0.1",
     "react-native-blob-util": "0.24.5",
@@ -278,8 +278,8 @@
     "@react-native-community/cli": "20.0.0",
     "@react-native-community/cli-platform-android": "20.0.0",
     "@react-native-community/cli-platform-ios": "20.0.0",
-    "react-native": "0.81.5",
     "react-native-gesture-handler": "2.29.1",
+    "react-native@npm:*": "patch:react-native@npm%3A0.81.5#~/.yarn/patches/react-native-npm-0.81.5-d8232ef145.patch",
     "set-value": "4.1.0",
     "tsconfig-paths": "4.0.0"
   },
