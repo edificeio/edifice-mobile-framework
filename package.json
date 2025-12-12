@@ -278,8 +278,8 @@
     "@react-native-community/cli": "20.0.0",
     "@react-native-community/cli-platform-android": "20.0.0",
     "@react-native-community/cli-platform-ios": "20.0.0",
-    "react-native": "0.81.5",
     "react-native-gesture-handler": "2.29.1",
+    "react-native": "0.81.5",
     "set-value": "4.1.0",
     "tsconfig-paths": "4.0.0"
   },
