@@ -1,86 +1,180 @@
-/**
- * Permissions
- *
- *
- */
 import { Platform } from 'react-native';
 
 import DeviceInfo from 'react-native-device-info';
 import { check, checkMultiple, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
 
-export type PermissionScenario = undefined | false | Permission | Permission[];
-export type PermissionDeclaration = Parameters<typeof Platform.select<PermissionScenario>>[0];
+import { I18n } from '~/app/i18n';
+import toast from '~/framework/components/toast';
 
-export const ANDROID_10_SDK = 29;
+export type SinglePermissionRequirement = true | Permission;
+export type PermissionRequirement = SinglePermissionRequirement | Permission[];
 
-const ALL_PERMISSIONS = {
+export const ANDROID_10 = 29;
+export const ANDROID_13 = 33;
+export const ANDROID_14 = 34;
+
+const isAndroid = Platform.OS === 'android';
+const api = isAndroid ? DeviceInfo.getApiLevelSync() : 0;
+
+const permissionI18nMap: Record<PermissionScenario, { title: string; text: string }> = {
+  'audio.read': {
+    text: 'audio-read-permissionblocked-text',
+    title: 'audio-read-permissionblocked-title',
+  },
   'camera': {
-    android: PERMISSIONS.ANDROID.CAMERA,
-    ios: PERMISSIONS.IOS.CAMERA,
+    text: 'camera-permissionblocked-text',
+    title: 'camera-permissionblocked-title',
   },
   'documents.read': {
-    android: DeviceInfo.getApiLevelSync() < ANDROID_10_SDK && PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    text: 'documents-read-permissionblocked-text',
+    title: 'documents-read-permissionblocked-title',
   },
   'documents.write': {
-    android: DeviceInfo.getApiLevelSync() < ANDROID_10_SDK && PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+    text: 'documents-write-permissionblocked-text',
+    title: 'documents-write-permissionblocked-title',
   },
-  'galery.read': {
-    android: DeviceInfo.getApiLevelSync() < ANDROID_10_SDK && PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+  'gallery.read': {
+    text: 'gallery-read-permissionblocked-text',
+    title: 'gallery-read-permissionblocked-title',
+  },
+  'gallery.write': {
+    text: 'gallery-write-permissionblocked-text',
+    title: 'gallery-write-permissionblocked-title',
+  },
+};
+
+/**
+ * --------------------
+ * PERMISSION SCENARIOS
+ * --------------------
+ */
+
+export type PermissionScenario = 'camera' | 'gallery.read' | 'gallery.write' | 'documents.read' | 'documents.write' | 'audio.read';
+
+const permissionScenarios = {
+  'audio.read': Platform.select<PermissionRequirement>({
+    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE : true,
+    ios: true,
+  })!,
+  'camera': Platform.select<PermissionRequirement>({
+    android: PERMISSIONS.ANDROID.CAMERA,
+    ios: PERMISSIONS.IOS.CAMERA,
+  })!,
+  'documents.read': Platform.select<PermissionRequirement>({
+    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE : true,
+    ios: true,
+  })!,
+  'documents.write': Platform.select<PermissionRequirement>({
+    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE : true,
+    ios: true,
+  })!,
+  'gallery.read': Platform.select<PermissionRequirement>({
+    android: api >= ANDROID_13 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
-  },
-  'galery.write': {
-    android: DeviceInfo.getApiLevelSync() < ANDROID_10_SDK && PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+  })!,
+  'gallery.write': Platform.select<PermissionRequirement>({
+    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
-  },
-} as Record<string, PermissionDeclaration>;
+  })!,
+};
 
+/**
+ * --------------------
+ * PERMISSION ERROR
+ * --------------------
+ */
 export class PermissionError extends Error {
-  value: PermissionStatus;
+  scenario: PermissionScenario;
+  permission: Permission | 'unknown';
+  status: PermissionStatus;
 
-  permission: Permission;
-
-  constructor(message: string, permission: Permission, value: PermissionStatus) {
-    super(message);
-    this.name = 'PermissionError';
+  constructor(scenario: PermissionScenario, permission: Permission | 'unknown', status: PermissionStatus) {
+    super(`Permission "${scenario}" failed with status "${status}"`);
+    this.scenario = scenario;
     this.permission = permission;
-    this.value = value;
+    this.status = status;
   }
 }
 
-const checkPermission = async (sce: PermissionScenario): Promise<[Permission, PermissionStatus][]> => {
-  if (!sce) return [];
-  else if (Array.isArray(sce)) return checkMultiple(sce).then(r => Object.entries(r) as [Permission, PermissionStatus][]);
-  else return check(sce).then(v => [[sce, v]] as [Permission, PermissionStatus][]);
-};
-
-const invalidPermissionResults: PermissionStatus[] = [RESULTS.BLOCKED, RESULTS.DENIED, RESULTS.UNAVAILABLE];
-
 /**
- * Asserts the permissions needed for a scenario are granted.
- * Asks the user the permission if needed.
- * Throws an error if permission is not granted or limited.
- * Pass doNotThrow parameter to return the result even if not granted nor limited.
- * @param scenario
- * @returns Result pairs of [Permission, PermissionStatus]. every PermissionStatus is 'granted' or 'limited' when everything is fine.
+ * Check multiple perms
  */
-export const assertPermissions = async (scenario: keyof typeof ALL_PERMISSIONS, doNotThrow?: boolean) => {
-  const res = await checkPermission(Platform.select(ALL_PERMISSIONS[scenario]));
+const checkPerm = async (sce: PermissionRequirement): Promise<[Permission, PermissionStatus][]> => {
+  if (sce === true) return [];
 
-  for (const k in res) {
-    if (res[k][1] === RESULTS.DENIED) {
-      res[k][1] = await request(res[k][0]);
-    }
+  if (Array.isArray(sce)) {
+    const result = await checkMultiple(sce);
+    return Object.entries(result) as [Permission, PermissionStatus][];
   }
 
-  const missingPermissions = res.filter(([_k, v]) => invalidPermissionResults.includes(v));
+  const status = await check(sce);
+  return [[sce, status]];
+};
 
-  if (!doNotThrow && missingPermissions.length > 0) {
-    throw new PermissionError(
-      `Assert permission scenario "${scenario} not granted. Permissions not granted : \n - ${missingPermissions.map(pair => `${pair[0]} -> ${pair[1]}`).join('\n - ')}"`,
-      missingPermissions[0][0],
-      missingPermissions[0][1],
-    );
+const BLOCKING = new Set<PermissionStatus>([RESULTS.BLOCKED, RESULTS.UNAVAILABLE]);
+
+/**
+ * DENIED UI
+ */
+const showDeniedUI = (scenario: PermissionScenario) => {
+  const appName = DeviceInfo.getApplicationName();
+  const entry = permissionI18nMap[scenario];
+  if (!entry) return;
+
+  toast.showError(I18n.get(entry.text, { appName }));
+};
+
+/**
+ * --------------------
+ * MAIN PERMISSION ASSERT
+ * --------------------
+ */
+export const assertPermissions = async (scenario: PermissionScenario, options: { silent?: boolean } = {}) => {
+  const needed = permissionScenarios[scenario];
+  if (needed === true) return [];
+
+  // Initial check
+  let res = await checkPerm(needed);
+
+  // Request denied permissions
+  res = await Promise.all(
+    res.map(async ([perm, status]): Promise<[Permission, PermissionStatus]> => {
+      if (status !== RESULTS.DENIED) return [perm, status];
+
+      try {
+        const newStatus = await request(perm);
+        return [perm, newStatus];
+      } catch {
+        return [perm, RESULTS.BLOCKED];
+      }
+    }),
+  );
+
+  if (scenario === 'gallery.read' && isAndroid && api >= ANDROID_13) {
+    return res;
+  }
+
+  const blocking = res.find(([, s]) => BLOCKING.has(s));
+  const iosDenied = Platform.OS === 'ios' && res.some(([, s]) => s === RESULTS.DENIED);
+
+  if (blocking || iosDenied) {
+    if (!options.silent) showDeniedUI(scenario);
+    throw new PermissionError(scenario, blocking?.[0] ?? 'unknown', blocking?.[1] ?? 'denied');
   }
 
   return res;
+};
+
+/**
+ * --------------------
+ * hasPermission
+ * --------------------
+ */
+export const hasPermission = async (scenario: PermissionScenario): Promise<boolean> => {
+  const needed = permissionScenarios[scenario];
+  if (needed === true) return true;
+
+  const res = await checkPerm(needed);
+
+  return res.every(([, status]) => status === RESULTS.GRANTED || status === RESULTS.LIMITED || status === RESULTS.DENIED);
 };

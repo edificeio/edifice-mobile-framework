@@ -10,6 +10,13 @@ export default new NavigableModuleConfig<'wiki', WikiStore>({
   displayOrder: 0,
   displayPicture: theme.apps.wiki.icon,
   entcoreScope: ['wiki', 'explorer'],
+  fileManager: {
+    ressource: {
+      allow: ['image'],
+      multiple: false,
+      sources: ['camera', 'gallery'],
+    },
+  } as const,
   matchEntcoreApp: '/wiki',
   name: 'wiki',
   storageName: 'wiki',

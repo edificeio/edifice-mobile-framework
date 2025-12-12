@@ -160,7 +160,7 @@ const workspaceService = {
     },
   },
   folders: {
-    list: async (session: AuthActiveAccount) => {
+    list: async () => {
       const api = '/workspace/folders/list?filter=owner&hierarchical=true';
       const folders = await sessionFetch.json<IEntcoreWorkspaceFolder[]>(api);
       return workspaceFolderListAdapter(folders);

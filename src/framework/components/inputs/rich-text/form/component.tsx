@@ -29,7 +29,7 @@ const OPEN_FILE_IMPORT_TIMEOUT = 500;
 const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
   const headerHeight = useHeaderHeight();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
   const route = useRoute();
 
   //
@@ -174,7 +174,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
         name: ModalsRouteNames.FileImport,
         params: {
           redirectTo: route,
-          source: 'galery',
+          source: 'gallery',
           uploadParams: props.uploadParams,
         },
       });

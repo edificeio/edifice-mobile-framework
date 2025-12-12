@@ -12,7 +12,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
 import TextInput from '~/framework/components/inputs/text';
-import { ImagePicked } from '~/framework/components/menus/actions';
 import { KeyboardPageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import { defaultSelectedDate } from '~/framework/components/pickers/day/component';
@@ -34,7 +33,7 @@ export interface HomeworkCreateScreenDataProps {
 }
 
 export interface HomeworkCreateScreenEventProps {
-  handleUploadEntryImages(images: ImagePicked[]): Promise<SyncedFile[]>;
+  handleUploadEntryImages(images: ILocalAttachment[]): Promise<SyncedFile[]>;
   handleCreateDiaryEntry(
     diaryId: string,
     date: Moment,
@@ -50,7 +49,7 @@ interface HomeworkCreateScreenState {
   date: Moment | undefined;
   subject: string;
   description: string;
-  images: ImagePicked[] | ILocalAttachment[];
+  images: ILocalAttachment[];
   isCreatingEntry: boolean;
 }
 
@@ -191,12 +190,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     const isEditing = !isDefaultDateSelected || !!subject || !!description || !!images.length;
     const isRequiredFieldEmpty = !date || !subject || !description;
     const descriptionFieldRef: { current: any } = React.createRef();
-    const attachments = images.map(image => ({
-      mime: image.type,
-      name: image.fileName,
-      uri: image.uri,
-    }));
-
+    const attachments = images;
     return (
       <>
         <PreventBack showAlert={isEditing && !isCreatingEntry} />
@@ -239,8 +233,9 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
             <View style={styles.inputContainer}>
               <AttachmentPicker
                 onlyImages
+                pickerInfo={{ modulename: moduleConfig.name, useCase: 'attachments' }}
                 notifierId={uppercaseFirstLetter(moduleConfig.name)}
-                imageCallback={image => this.setState(prevState => ({ images: [...prevState.images, image] }))}
+                onAttachmentAdded={img => this.setState(prevState => ({ images: [...prevState.images, ...img] }))}
                 onAttachmentRemoved={selectedImages => this.setState({ images: selectedImages })}
                 attachments={attachments}
               />

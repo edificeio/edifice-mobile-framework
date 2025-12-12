@@ -10,8 +10,14 @@ export default new NavigableModuleConfig<'form', IFormReduxState>({
   displayI18n: 'form-moduleconfig-appname',
   displayPicture: theme.apps.formulaire.icon,
   entcoreScope: ['formulaire'],
+  fileManager: {
+    file: {
+      allow: ['image', 'video'],
+      multiple: true,
+      sources: ['camera', 'gallery', 'documents'],
+    },
+  } as const,
   hasRight: ({ session }) => !!getFormWorkflowInformation(session).initResponse,
-
   matchEntcoreApp: '/formulaire',
   name: 'form',
   storageName: 'form',

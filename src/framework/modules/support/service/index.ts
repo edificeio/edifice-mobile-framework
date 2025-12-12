@@ -1,4 +1,4 @@
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { SyncedFileWithId } from '~/framework/util/fileHandler';
 import { sessionFetch } from '~/framework/util/transport';
 
@@ -18,7 +18,7 @@ interface IBackendTicket {
 export const supportService = {
   ticket: {
     post: async (
-      session: AuthLoggedAccount,
+      session: AuthActiveAccount,
       category: string,
       structure: string,
       subject: string,
@@ -30,7 +30,7 @@ export const supportService = {
         attachments: attachments?.map(a => ({
           id: a.df.id,
           name: a.filename,
-          size: a.filesize,
+          size: a.df.filesize,
         })),
         category,
         description,

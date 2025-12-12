@@ -2,18 +2,20 @@ import * as React from 'react';
 
 import {
   CommunityClient,
+  FolderClient,
+  FolderDto,
+  getResourceUrl,
   MembershipClient,
   ResourceClient,
   ResourceDto,
   ResourceType,
-  utils,
 } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
-import CommunityPaginatedDocumentList from './community-paginated-document-list';
+import { DecoratedDocumentFlatList } from './community-paginated-document-list';
 import styles from './styles';
 import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
 import { useCommunityBannerHeight } from '../../hooks/use-community-navbar/community-navbar/component';
@@ -38,25 +40,6 @@ import { accountApi } from '~/framework/util/transport';
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>,
 ): NativeStackNavigationOptions => communityNavBar(props);
-
-const __debug__folders__: FolderItem<number>[] = [
-  // {
-  //   id: 1,
-  //   title: 'F1',
-  // },
-  // {
-  //   id: 2,
-  //   title: 'F2',
-  // },
-  // {
-  //   id: 3,
-  //   title: 'F3',
-  // },
-  // {
-  //   id: 4,
-  //   title: 'F4',
-  // },
-];
 
 const documentTypeMap: Record<ResourceType, DocumentItemWorkspace<number>['type'] | undefined> = {
   [ResourceType.IMAGE]: 'image',
@@ -83,11 +66,14 @@ const formatDocuments = (data: ResourceDto[]): CommunitiesDocumentItem[] =>
   );
 
 export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({
+  navigation,
   route: {
-    params: { communityId },
+    params: { communityId, folderId },
   },
+  route,
   session,
 }) {
+  const formatFolders = (data: FolderDto[]): FolderItem<number>[] => data.map(({ id, name }) => ({ id, title: name }));
   const communityData = useSelector(communitiesSelectors.getCommunityDetails(communityId));
   const dispatch = useDispatch();
   const setCommunityData = React.useCallback(
@@ -110,10 +96,13 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   // This function fetch the data page the given page number and insert the resulting elements in the `data` array.
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
-      const [community, members, newData] = await Promise.all([
+      const [community, members, newData, folders] = await Promise.all([
         accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
         accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
-        accountApi(session, moduleConfig, ResourceClient).getResources(communityId, { page: page + 1, size: PAGE_SIZE }),
+        accountApi(session, moduleConfig, ResourceClient).getResources(communityId, { folderId, page: page + 1, size: PAGE_SIZE }),
+        accountApi(session, moduleConfig, FolderClient)
+          .getFolders(communityId, { page: 1, parentId: folderId, rootOnly: folderId === undefined, size: 256 })
+          .then(dto => formatFolders(dto.items)),
       ]);
       setCommunityData({
         ...community,
@@ -132,14 +121,14 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
           start: page * PAGE_SIZE,
           total: newData.meta.totalItems,
         });
-        return { documents: mergedData, folders: __debug__folders__ };
+        return { documents: mergedData, folders };
       });
     },
-    [communityId, session, setCommunityData],
+    [communityId, folderId, session, setCommunityData],
   );
 
   const openDocument = React.useCallback(async (doc: CommunitiesDocumentItem) => {
-    const url = utils.getResourceUrl(doc); // ToDo : patch package to narrow type required
+    const url = getResourceUrl(doc); // ToDo : patch package to narrow type required
     if (!url) return;
     const openInBrowser = () => openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
     if (doc.appName === 'workspace') {
@@ -152,6 +141,13 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
       openInBrowser();
     }
   }, []);
+
+  const openFolder = React.useCallback(
+    async (folder: FolderItem<number>) => {
+      navigation.push(route.name, { communityId, folderId: folder.id });
+    },
+    [communityId, navigation, route.name],
+  );
 
   const image = React.useMemo(
     () =>
@@ -185,16 +181,18 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
   return (
     <>
       {statusBar}
-      <CommunityPaginatedDocumentList
+      <DecoratedDocumentFlatList
         numColumns={2}
         pageSize={PAGE_SIZE}
-        stickyElements={stickyElements}
-        stickyPlaceholderElements={stickyPlaceholderElements}
+        decorations={stickyElements}
+        placeholderDecorations={stickyPlaceholderElements}
         folders={data.folders}
         documents={data.documents}
+        placeholderNumberOfRows={3}
         showsVerticalScrollIndicator={false}
         onPageReached={loadData}
         onPressDocument={openDocument}
+        onPressFolder={openFolder}
         ListEmptyComponent={
           <EmptyScreen
             svgImage="empty-workspace"

@@ -14,7 +14,7 @@ export const LOADING_ITEM_DATA = Symbol('LOADING_ITEM_DATA');
 
 const DEFAULT_WINDOW_SIZE = 3;
 
-const DEFAULT_FLATLIST_PLACEHOLDER_COUNT = 4;
+export const DEFAULT_FLATLIST_PLACEHOLDER_COUNT = 4;
 
 const DEFAULT_VIEWABILIBY_CONFIG = {
   itemVisiblePercentThreshold: 0,
@@ -91,6 +91,7 @@ interface CommonPaginatedListProps<TItem, TCustomPlaceholderItem = never> {
 
   placeholderData?: (typeof LOADING_ITEM_DATA | TCustomPlaceholderItem)[];
   initialLoadingState?: ContentLoaderProps['initialLoadingState'];
+  onViewableItemsChanged?: (callback: { changed: ViewToken[]; viewableItems: ViewToken[] }) => void;
 }
 
 /**
@@ -154,6 +155,7 @@ const usePagination = <TItem,>({
   onItemsReached,
   onPageError,
   onPageReached,
+  onViewableItemsChanged: _onViewableItemsChanged,
   pageSize,
   windowSize = DEFAULT_WINDOW_SIZE,
 }: Omit<CommonPaginatedListProps<TItem>, 'data'> & { getItem: (index: number) => PaginatedListItem<TItem> | undefined }) => {
@@ -179,6 +181,7 @@ const usePagination = <TItem,>({
    */
   const onViewableItemsChanged = React.useCallback(
     ({
+      changed,
       viewableItems,
     }: {
       viewableItems: ViewToken<PaginatedListItem<TItem>>[];
@@ -225,8 +228,10 @@ const usePagination = <TItem,>({
           });
         }
       }
+
+      _onViewableItemsChanged?.({ changed, viewableItems });
     },
-    [getItem, getVisibleItemIndex, loadData, pageSize, windowSize],
+    [_onViewableItemsChanged, getItem, getVisibleItemIndex, loadData, pageSize, windowSize],
   );
 
   const keyExtractor = React.useMemo<VirtualizedListProps<PaginatedListItem<TItem>>['keyExtractor']>(
@@ -243,7 +248,8 @@ const usePagination = <TItem,>({
 // # Paginated FlashList Component
 
 export interface PaginatedFlashListProps<TItem, TCustomPlaceholderItem = never>
-  extends CommonPaginatedListProps<TItem>,
+  extends
+    CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
       FlashListProps<PaginatedListItem<TItem>>,
       | 'onRefresh'
@@ -256,6 +262,7 @@ export interface PaginatedFlashListProps<TItem, TCustomPlaceholderItem = never>
       | 'renderItem'
       | 'ListFooterComponent'
       | 'ListHeaderComponent'
+      | 'onViewableItemsChanged'
     > {
   getItemType?: FlashListProps<TItem>['getItemType'];
   overrideItemLayout?: FlashListProps<PaginatedListItem<TItem>>['overrideItemLayout'];
@@ -396,7 +403,8 @@ export const PaginatedFlashList = React.forwardRef(function <TItem, TCustomPlace
 // # Paginated FlatList Component
 
 export interface PaginatedFlatListProps<TItem, TCustomPlaceholderItem = never>
-  extends CommonPaginatedListProps<TItem>,
+  extends
+    CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
       FlatListProps<PaginatedListItem<TItem>>,
       | 'onRefresh'
@@ -408,6 +416,7 @@ export interface PaginatedFlatListProps<TItem, TCustomPlaceholderItem = never>
       | 'renderItem'
       | 'ListHeaderComponent'
       | 'ListFooterComponent'
+      | 'onViewableItemsChanged'
     > {
   /**
    * render function for loaded items like every List component works
@@ -437,6 +446,7 @@ export const PaginatedFlatList = React.forwardRef(function <TItem, TCustomPlaceh
     onItemsReached,
     onPageError,
     onPageReached,
+    onViewableItemsChanged: _onViewableItemsChanged,
     pageSize,
     placeholderData: _placeholderData,
     placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
@@ -465,6 +475,7 @@ export const PaginatedFlatList = React.forwardRef(function <TItem, TCustomPlaceh
     onItemsReached,
     onPageError,
     onPageReached,
+    onViewableItemsChanged: _onViewableItemsChanged,
     pageSize,
     windowSize,
   });

@@ -13,7 +13,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { cameraAction, deleteAction, documentAction, DocumentPicked, galleryAction } from '~/framework/components/menus/actions';
+import { cameraActionFm, deleteAction, documentActionFm, galleryActionFm } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -32,8 +32,7 @@ import { zimbraService } from '~/framework/modules/zimbra/service';
 import { initDraftFromMail, isSignatureRich } from '~/framework/modules/zimbra/utils/drafts';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { LocalFile } from '~/framework/util/fileHandler';
-import { Asset } from '~/framework/util/fileHandler/types';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -133,16 +132,17 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     if (this.state.isSending) this.setNavbar();
   };
 
-  addAttachment = async (file: Asset | DocumentPicked) => {
+  addAttachment = async (file: LocalFile[]) => {
     try {
       const { session } = this.props;
       let { id } = this.state;
-      const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
+      // iterate if we want more than one
+      const lf = file;
 
       if (!id) id = await this.saveDraft(true);
       if (!session || !id) throw new Error();
-      this.setState({ tempAttachment: lf });
-      const attachments = await zimbraService.draft.addAttachment(session, id, lf);
+      this.setState({ tempAttachment: lf[0] });
+      const attachments = await zimbraService.draft.addAttachment(session, id, lf[0]);
       this.setState(prevState => ({
         draft: { ...prevState.draft, attachments },
         tempAttachment: undefined,
@@ -359,16 +359,14 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       },
       deleteAction({ action: isTrashed ? this.alertPermanentDeletion : this.trashDraft }),
     ];
+    const fns = [cameraActionFm, galleryActionFm, documentActionFm];
+
+    const attachOpts = { callback: (file: LocalFile | LocalFile[]) => this.addAttachment(file as LocalFile[]) };
 
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.navBarActionsContainer}>
-          <PopupMenu
-            actions={[
-              cameraAction({ callback: this.addAttachment }),
-              galleryAction({ callback: this.addAttachment, multiple: true, synchrone: true }),
-              documentAction({ callback: this.addAttachment }),
-            ]}>
+          <PopupMenu actions={fns.map(fn => fn(moduleConfig.name, 'upload', attachOpts))}>
             <NavBarAction icon="ui-attachment" />
           </PopupMenu>
           <View style={styles.navBarSendAction}>

@@ -1,47 +1,54 @@
-// import React, { ReactElement } from 'react';
-// import { View } from 'react-native';
-
-import * as React from 'react';
-import { ListRenderItemInfo, RefreshControl } from 'react-native';
+import React from 'react';
+import { RefreshControl } from 'react-native';
 
 import { createDecoratedArrayProxy } from './proxy';
 import { CommunitiesDocumentAppName, CommunitiesDocumentId } from './types';
 
 import { useDocumentPagination } from '~/framework/components/list/paginated-document-list/component';
 import {
-  CommonPaginatedDocumentListProps,
+  PaginatedDocumentFlatListProps,
   PaginatedDocumentListItem,
 } from '~/framework/components/list/paginated-document-list/types';
-import { LOADING_ITEM_DATA, PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
+import {
+  DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
+  LOADING_ITEM_DATA,
+  PaginatedFlatList,
+  PaginatedFlatListProps,
+  PaginatedListItem,
+} from '~/framework/components/list/paginated-list';
 import ScrollView from '~/framework/components/scrollView';
 import { LoadingState } from '~/framework/hooks/loader';
 
-export type CommunityPaginatedDocumentListItem =
+export type DecoratedDocumentListItem =
   | PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>
   | React.ReactElement;
 
-export interface CommunityPaginatedDocumentFlatListProps
-  extends Omit<
-      PaginatedFlatListProps<CommunityPaginatedDocumentListItem>,
-      'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
-    >,
-    CommonPaginatedDocumentListProps<CommunitiesDocumentAppName, CommunitiesDocumentId> {
-  stickyElements?: React.ReactElement[];
-  stickyPlaceholderElements?: React.ReactElement[];
+export interface DecoratedDocumentFlatListProps extends Omit<
+  PaginatedDocumentFlatListProps<CommunitiesDocumentAppName, CommunitiesDocumentId>,
+  'CellRendererComponent'
+> {
+  decorations?: React.ReactElement[];
+  placeholderDecorations?: React.ReactElement[];
+  CellRendererComponent?: PaginatedFlatListProps<DecoratedDocumentListItem>['CellRendererComponent'];
 }
 
-export function CommunityPaginatedDocumentFlatList({
-  alwaysShowAppIcon = true,
+export const DecoratedDocumentFlatList = ({
+  decorations = [],
   documents,
   folders,
+  getItemLayout: _getItemLayout,
+  numColumns,
+  onPressDocument,
+  placeholderDecorations = decorations,
+  placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
+  onPressFolder,
+  placeholderData: _placeholderData,
+  onViewableItemsChanged: _onViewableItemsChanged,
   ListEmptyComponent,
   onPageReached: _onPageReached,
-  onPressDocument,
-  onPressFolder,
-  stickyElements = [],
-  stickyPlaceholderElements = [],
-  ...paginatedListProps
-}: Readonly<CommunityPaginatedDocumentFlatListProps>) {
+  alwaysShowAppIcon = true,
+  ...props
+}: Readonly<DecoratedDocumentFlatListProps>) => {
   const {
     data: _data,
     getVisibleItemIndex,
@@ -52,16 +59,16 @@ export function CommunityPaginatedDocumentFlatList({
     alwaysShowAppIcon,
     documents,
     folders,
-    numColumns: paginatedListProps.numColumns,
+    numColumns,
     onPressDocument,
     onPressFolder,
   });
 
+  // Note: empty state must be handled manually instead of relying on ListEmptyComponent because of the presence of decorations.
   const [loadingState, setLoadingState] = React.useState<LoadingState>(LoadingState.PRISTINE);
-
   // Override onPageReached to have a first loaded boolean value.
   // No need to do the same with onItemsReached because it'll be called twice.
-  const onPageReached = React.useCallback<NonNullable<CommunityPaginatedDocumentFlatListProps['onPageReached']>>(
+  const onPageReached = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem>['onPageReached']>>(
     async (page, reloadAll) => {
       await _onPageReached?.(page, reloadAll);
       setLoadingState(LoadingState.DONE);
@@ -69,48 +76,80 @@ export function CommunityPaginatedDocumentFlatList({
     [_onPageReached],
   );
 
-  const { data } = React.useMemo(
-    () => createDecoratedArrayProxy(stickyElements, _data, paginatedListProps.numColumns),
-    [stickyElements, _data, paginatedListProps.numColumns],
+  const { data, stickyItemsPadding } = React.useMemo(
+    () => (_data.length ? createDecoratedArrayProxy(decorations, _data, numColumns) : { data: _data, stickyItemsPadding: 0 }),
+    [_data, decorations, numColumns],
   );
 
-  const renderItem = React.useCallback(
-    (info: ListRenderItemInfo<CommunityPaginatedDocumentListItem>) =>
-      React.isValidElement(info.item)
-        ? info.item
-        : _renderItem(info as ListRenderItemInfo<PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>>),
-    [_renderItem],
+  // useState is used instead of useRef with a readonly manner to be able to use a init function (refs cannot take function as initialiser)
+  const [{ data: placeholderData, stickyItemsPadding: placeholderItemsPadding }] = React.useState(
+    React.useCallback(() => {
+      const itemsPlaceholderData =
+        _placeholderData ??
+        (new Array(totalPlaceholderItem * (numColumns ?? 1)).fill(LOADING_ITEM_DATA) as (typeof LOADING_ITEM_DATA)[]);
+      return createDecoratedArrayProxy(placeholderDecorations, itemsPlaceholderData, numColumns);
+    }, [_placeholderData, numColumns, placeholderDecorations, totalPlaceholderItem]),
   );
 
-  const renderPlaceholderItem = React.useCallback(
-    (info: ListRenderItemInfo<typeof LOADING_ITEM_DATA | React.ReactElement>) =>
-      React.isValidElement(info.item) ? info.item : _renderPlaceholderItem(info as ListRenderItemInfo<typeof LOADING_ITEM_DATA>),
-    [_renderPlaceholderItem],
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem>['keyExtractor']>>(
+    (item, index) => {
+      return index < stickyItemsPadding
+        ? `decoration-${index}`
+        : _keyExtractor(item as Exclude<typeof item, React.ReactElement>, index - stickyItemsPadding);
+    },
+    [_keyExtractor, stickyItemsPadding],
   );
 
-  const keyExtractor = React.useCallback(
-    (item: PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId> | React.ReactElement, index: number) =>
-      React.isValidElement(item)
-        ? item.key || 'sticky-' + index
-        : _keyExtractor(item as PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>, index),
-    [_keyExtractor],
+  const renderItem = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem>['renderItem']>>(
+    ({ index, item, ...rest }) => {
+      return index < stickyItemsPadding
+        ? (item as Extract<typeof item, React.ReactElement>)
+        : _renderItem({
+            index: index - stickyItemsPadding,
+            item: item as Exclude<typeof item, React.ReactElement>,
+            ...rest,
+          });
+    },
+    [_renderItem, stickyItemsPadding],
   );
 
-  const { data: placeholderData } = React.useMemo(
+  const renderPlaceholderItem = React.useCallback<
+    NonNullable<PaginatedFlatListProps<typeof LOADING_ITEM_DATA | React.ReactElement>['renderItem']>
+  >(
+    ({ index, item, ...rest }) => {
+      return index < placeholderItemsPadding
+        ? (item as Extract<typeof item, React.ReactElement>)
+        : _renderPlaceholderItem({
+            index: index,
+            ...rest,
+          });
+    },
+    [_renderPlaceholderItem, placeholderItemsPadding],
+  );
+
+  const getItemLayout = React.useMemo<PaginatedFlatListProps<DecoratedDocumentListItem>['getItemLayout']>(
     () =>
-      createDecoratedArrayProxy(
-        stickyPlaceholderElements,
-        new Array(8).fill(typeof LOADING_ITEM_DATA),
-        paginatedListProps.numColumns,
-      ),
-    [stickyPlaceholderElements, paginatedListProps.numColumns],
+      _getItemLayout
+        ? (d, index) => {
+            return index < stickyItemsPadding
+              ? { index: index - stickyItemsPadding, length: 0, offset: 0 }
+              : _getItemLayout(
+                  d as
+                    | ArrayLike<PaginatedListItem<PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>>>
+                    | null
+                    | undefined,
+                  index - stickyItemsPadding,
+                );
+          }
+        : undefined,
+    [_getItemLayout, stickyItemsPadding],
   );
 
   // Because of sticky elements, we need to check if the data is empty and print the empty state manually
-  if (ListEmptyComponent && ((loadingState === LoadingState.DONE && _data.length === 0) || loadingState === LoadingState.REFRESH)) {
+  if (ListEmptyComponent && ((loadingState === LoadingState.DONE && _data.length === 0) || loadingState === LoadingState.REFRESH))
     return (
       <ScrollView
-        {...paginatedListProps}
+        {...props}
         refreshControl={
           <RefreshControl
             refreshing={loadingState === LoadingState.REFRESH}
@@ -120,24 +159,25 @@ export function CommunityPaginatedDocumentFlatList({
             }}
           />
         }>
-        {stickyElements}
+        {decorations}
         {React.isValidElement<any>(ListEmptyComponent) ? ListEmptyComponent : <ListEmptyComponent />}
       </ScrollView>
     );
-  }
 
   return (
     <PaginatedFlatList
+      onViewableItemsChanged={_onViewableItemsChanged}
       data={data}
+      placeholderData={placeholderData}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
-      placeholderData={placeholderData}
       renderPlaceholderItem={renderPlaceholderItem}
       getVisibleItemIndex={getVisibleItemIndex}
+      numColumns={numColumns}
       onPageReached={onPageReached}
-      {...paginatedListProps}
+      ListEmptyComponent={ListEmptyComponent}
+      getItemLayout={getItemLayout}
+      {...props}
     />
   );
-}
-
-export default CommunityPaginatedDocumentFlatList;
+};

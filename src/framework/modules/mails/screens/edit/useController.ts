@@ -22,7 +22,7 @@ import {
   hasContent,
 } from '~/framework/modules/mails/util';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-import { IDistantFileWithId } from '~/framework/util/fileHandler';
+import { IDistantFileWithId } from '~/framework/util/fileHandler/models';
 
 const convertDraftRecipients = (recipients: MailsRecipients): MailsVisible[] => {
   const { groups, users } = recipients;

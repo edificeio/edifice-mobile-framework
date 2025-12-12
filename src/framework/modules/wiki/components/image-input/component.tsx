@@ -14,8 +14,8 @@ import ModuleImage from '~/framework/components/picture/module-image';
 import { ModuleImageProps } from '~/framework/components/picture/module-image/types';
 import Separator from '~/framework/components/separator';
 import ImageInputButton from '~/framework/modules/wiki/components/image-input-button';
-import { LocalFile } from '~/framework/util/fileHandler';
-import { Asset } from '~/framework/util/fileHandler/types';
+import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
+import { FileSource } from '~/framework/util/fileHandler/types';
 
 const MODULE_IMAGE_FALLBACK_ICON: ModuleImageProps['fallbackIcon'] = {
   fill: theme.palette.grey.graphite,
@@ -41,38 +41,33 @@ const ImageInput: React.FC<ImageInputProps> = ({ moduleConfig, moduleImageStyle,
     onChange?.(undefined);
   }, [hideChoosePicsMenu, onChange]);
 
+  const handlePick = React.useCallback(
+    async (source?: FileSource) => {
+      hideChoosePicsMenu();
+      try {
+        await FileManager.pick(
+          files => {
+            onChange(files[0]?.filepath ? { uri: files[0].filepath } : undefined);
+          },
+          {
+            module: moduleConfig.name,
+            source,
+            usecase: 'ressource',
+          },
+        );
+      } catch (error) {
+        console.error('Error getting picture:', error as Error);
+      }
+    },
+    [hideChoosePicsMenu, onChange, moduleConfig.name],
+  );
   const selectPicFromGallery = React.useCallback(async () => {
-    hideChoosePicsMenu();
-
-    try {
-      await LocalFile.pickFromGallery(
-        (selectedImage: Asset) => {
-          onChange?.(selectedImage[0]?.uri ? { uri: selectedImage[0].uri } : undefined);
-        },
-        false,
-        true,
-        true,
-      );
-    } catch (error) {
-      console.error('Error picking images from gallery:', error as Error);
-    }
-  }, [hideChoosePicsMenu, onChange]);
+    await handlePick('gallery');
+  }, [handlePick]);
 
   const takePicWithCamera = React.useCallback(async () => {
-    hideChoosePicsMenu();
-    try {
-      await LocalFile.pickFromCamera(
-        (capturedImage: Asset) => {
-          onChange?.(capturedImage[0]?.uri ? { uri: capturedImage[0].uri } : undefined);
-        },
-        false,
-        true,
-        true,
-      );
-    } catch (error) {
-      console.error('Error taking picture:', error as Error);
-    }
-  }, [hideChoosePicsMenu, onChange]);
+    await handlePick('camera');
+  }, [handlePick]);
 
   const ChoosePicsMenu: React.FC = () => {
     return (

@@ -4,7 +4,8 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import type { ImagePicked } from '~/framework/components/menus/actions';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service/types';
 import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { IPickOptions, LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
+import { FileSource } from '~/framework/util/fileHandler/types';
 
 export namespace AttachmentsImportScreenProps {
   export interface Public {}
@@ -13,7 +14,7 @@ export namespace AttachmentsImportScreenProps {
     files: ImagePicked[];
     uploadParams: IWorkspaceUploadParams;
     redirectTo: Route<string, ParamListBase>;
-    source: IPickOptions['source'];
+    source: FileSource;
     draftId: string;
   }
 

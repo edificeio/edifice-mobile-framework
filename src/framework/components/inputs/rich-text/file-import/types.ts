@@ -1,19 +1,19 @@
 import { ParamListBase, Route } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ImagePicked } from '~/framework/components/menus/actions';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service/types';
 import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { IPickOptions } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
+import { FileSource } from '~/framework/util/fileHandler/types';
 
 export namespace FileImportScreenProps {
   export interface Public {}
 
   export interface NavParams {
-    files: ImagePicked[];
+    files: LocalFile[];
     uploadParams: IWorkspaceUploadParams;
     redirectTo: Route<string, ParamListBase>;
-    source: IPickOptions['source'];
+    source: FileSource;
   }
 
   export type Navigation = NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.FileImport>;

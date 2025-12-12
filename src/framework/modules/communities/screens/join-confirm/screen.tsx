@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Platform, ScrollView, View } from 'react-native';
 
-import { InvitationClient, InvitationResponseDto, InvitationStatus } from '@edifice.io/community-client-rest-rn';
+import { InvitationClient, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
 import { BlurView } from '@react-native-community/blur';
 import { Header } from '@react-navigation/elements';

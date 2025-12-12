@@ -6,7 +6,9 @@ import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LottieView from 'lottie-react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
+import { OnVideoErrorData } from 'react-native-video';
 import WebView from 'react-native-webview';
+import { WebViewErrorEvent, WebViewHttpErrorEvent } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -23,9 +25,13 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { sessionURISource } from '~/framework/util/transport';
 
 const ERRORS_I18N = {
-  AVFoundationErrorDomain: ['mediaplayer-error-notsupported-title', 'mediaplayer-error-notsupported-text'],
-  connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
-  default: ['mediaplayer-error-content-title', 'mediaplayer-error-content-text'],
+  'AVFoundationErrorDomain': ['mediaplayer-error-notsupported-title', 'mediaplayer-error-notsupported-text'],
+  'connection': ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
+  'default': ['mediaplayer-error-content-title', 'mediaplayer-error-content-text'],
+  'ExoPlaybackException: ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED': [
+    'mediaplayer-error-notsupported-title',
+    'mediaplayer-error-notsupported-text',
+  ],
 };
 
 const DELAY_STATUS_HIDE = Platform.select({ default: 0, ios: 250 });
@@ -36,7 +42,6 @@ function MediaPlayer(props: MediaPlayerProps) {
   const { filetype, source: _source, type } = route.params;
 
   const source = React.useMemo(() => sessionURISource(_source), [_source]);
-  console.debug('[Media Player] = ', source);
 
   const animationRef = React.useRef<LottieView>(null);
 
@@ -92,7 +97,6 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, [navigation]);
 
   const setErrorMediaType = React.useCallback(() => {
-    console.info('TYYYYYYPE', filetype);
     if (filetype === 'video/avi' || filetype === 'video/x-msvideo') {
       setError('AVFoundationErrorDomain');
       return false;
@@ -135,13 +139,16 @@ function MediaPlayer(props: MediaPlayerProps) {
     );
   };
 
-  const onError = React.useCallback((e: any) => {
+  const onError = React.useCallback((e: OnVideoErrorData | WebViewErrorEvent | WebViewHttpErrorEvent) => {
     console.error('[Media Player] Error |', JSON.stringify(e));
-    setError(e.error.domain);
+    if ((e as OnVideoErrorData).error) {
+      setError((e as OnVideoErrorData).error.domain ?? (e as OnVideoErrorData).error.errorString ?? 'default');
+    } else {
+      setError((e as WebViewErrorEvent | WebViewHttpErrorEvent).nativeEvent.title ?? 'default');
+    }
   }, []);
 
-  const onLoad = React.useCallback(data => {
-    console.error('[Media Player] Loaded |', JSON.stringify(data));
+  const onLoad = React.useCallback(() => {
     isLoadingRef.current = false;
   }, []);
 
@@ -168,8 +175,8 @@ function MediaPlayer(props: MediaPlayerProps) {
             startInLoadingState
             style={isPortrait ? [styles.playerPortrait, styles.externalPlayerPortrait] : [styles.playerLandscape]}
             webviewDebuggingEnabled={__DEV__}
-            onHttpError={() => setError('http error')}
-            onError={() => setError('error')}
+            onHttpError={onError}
+            onError={onError}
           />
         </>
       );
@@ -187,9 +194,6 @@ function MediaPlayer(props: MediaPlayerProps) {
           onLoad={onLoad}
           onPause={onPause}
           onPlay={onPlay}
-          onLoadStart={e => {
-            console.info(JSON.stringify(e));
-          }}
           rewindTime={10}
           showDuration
           showOnStart
@@ -208,11 +212,11 @@ function MediaPlayer(props: MediaPlayerProps) {
     type,
     source,
     isPortrait,
+    onError,
     navigation,
     videoPlayerControlTimeoutDelay,
     handleBack,
     handleVideoPlayerEnd,
-    onError,
     onLoad,
     onPause,
     onPlay,

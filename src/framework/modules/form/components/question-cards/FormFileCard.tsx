@@ -6,15 +6,15 @@ import { FormAnswerText } from './FormAnswerText';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { cameraAction, documentAction, DocumentPicked, galleryAction } from '~/framework/components/menus/actions';
+import { cameraActionFm, documentActionFm, galleryActionFm } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { Svg } from '~/framework/components/picture';
 import { SmallActionText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse, IResponseFile } from '~/framework/modules/form/model';
+import moduleConfig from '~/framework/modules/form/module-config';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
-import { LocalFile } from '~/framework/util/fileHandler';
-import { Asset } from '~/framework/util/fileHandler/types';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 
 const styles = StyleSheet.create({
   actionText: {
@@ -69,31 +69,23 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
-  const filePickedToLocalFile = (img: Asset | DocumentPicked): LocalFile =>
-    new LocalFile(
-      {
-        filename: img.fileName ?? 'unknown',
-        filepath: img.uri!,
-        filetype: img.type ?? 'application/octet-stream',
-      },
-      { _needIOSReleaseSecureAccess: false },
-    );
+  const addFile = (fileOrFiles: LocalFile | LocalFile[]) => {
+    const arr = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
 
-  const addFile = (fileOrFiles: Asset | DocumentPicked | (Asset | DocumentPicked)[]) => {
-    const fls = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
-    const newFiles: IResponseFile[] = fls.map(f => {
-      const lf = filePickedToLocalFile(f);
-      return {
-        filename: lf.filename,
-        id: null,
-        lf,
-        responseId: 0,
-        type: lf.filetype,
-      };
-    });
+    const newFiles = arr.map(f => ({
+      filename: f.filename,
+      id: null,
+      lf: f,
+      responseId: 0,
+      type: f.filetype,
+    })) as IResponseFile[];
 
     setFiles(prev => [...prev, ...newFiles]);
   };
+
+  const fns = [cameraActionFm, galleryActionFm, documentActionFm];
+
+  const attachOpts = { callback: (file: LocalFile | LocalFile[]) => addFile(file) };
 
   const removeFile = (file: IResponseFile) => {
     setFiles(files.filter(a => a !== file));
@@ -107,11 +99,7 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
         <View style={styles.container}>
           <BottomMenu
             title={I18n.get('form-distribution-filecard-addfiles')}
-            actions={[
-              cameraAction({ callback: file => addFile(file) }),
-              galleryAction({ callback: file => addFile(file), multiple: true }),
-              documentAction({ callback: file => addFile(file) }),
-            ]}>
+            actions={fns.map(fn => fn(moduleConfig.name, 'file', attachOpts))}>
             <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
               <SmallActionText style={styles.actionText}>{I18n.get('form-distribution-filecard-addfiles')}</SmallActionText>
               <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />

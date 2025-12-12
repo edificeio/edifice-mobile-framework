@@ -16,7 +16,7 @@ import { UI_STYLES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
-import { cameraAction, documentAction, DocumentPicked, galleryAction, ImagePicked } from '~/framework/components/menus/actions';
+import { cameraActionFm, documentActionFm, galleryActionFm } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -27,12 +27,12 @@ import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import AbsenceDatesSelector from '~/framework/modules/viescolaire/presences/components/absence-dates-selector';
+import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { LocalFile } from '~/framework/util/fileHandler';
-import { Asset } from '~/framework/util/fileHandler/types';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { Trackers } from '~/framework/util/tracker';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
@@ -54,11 +54,10 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
   const [attachment, setAttachment] = React.useState<LocalFile | undefined>();
   const [isCreating, setCreating] = React.useState<boolean>(false);
 
-  const onPickAttachment = (att: ImagePicked | DocumentPicked | (ImagePicked | DocumentPicked)[]) => {
-    const files = Array.isArray(att) ? att : [att];
-    // we uploading only one, but when needed we gonna iterate throught the liste
+  const onPickAttachment = (att: LocalFile | LocalFile[]) => {
+    const files = att as LocalFile[];
     const file = files[0];
-    setAttachment(new LocalFile(file as Asset | DocumentPicked, { _needIOSReleaseSecureAccess: false }));
+    setAttachment(file);
   };
 
   const createAbsence = async () => {
@@ -86,6 +85,8 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
   const renderPage = () => {
     const areDatesValid = startDate.isBefore(endDate) && startDate.isSameOrAfter(moment(), 'day');
     const { childId } = props.route.params;
+    const fns = [cameraActionFm, galleryActionFm, documentActionFm];
+    const attachOpts = { callback: onPickAttachment };
 
     return (
       <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.container}>
@@ -120,11 +121,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         ) : (
           <BottomMenu
             title={I18n.get('presences-declareabsence-attachment')}
-            actions={[
-              cameraAction({ callback: onPickAttachment }),
-              galleryAction({ callback: onPickAttachment }),
-              documentAction({ callback: onPickAttachment }),
-            ]}>
+            actions={fns.map(fn => fn(moduleConfig.name, 'attachment', attachOpts))}>
             <View style={styles.filePickerContainer}>
               <Svg
                 name="ui-attachment"

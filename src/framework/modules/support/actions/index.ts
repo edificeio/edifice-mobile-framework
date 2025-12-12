@@ -4,7 +4,7 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { actionTypes } from '~/framework/modules/support/reducer';
 import { supportService } from '~/framework/modules/support/service';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
-import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 export const uploadSupportTicketAttachmentsAction =
