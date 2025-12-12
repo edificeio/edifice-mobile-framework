@@ -1,10 +1,9 @@
 /**
  * Thunk actions for user module
  */
+import FastImage from 'react-native-fast-image';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import FastImage from 'react-native-fast-image';
 
 import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
@@ -15,6 +14,11 @@ import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => IGlobalState) => {
     const isUpdatingPhoto = newValues.avatar !== undefined;
+
+    if (isUpdatingPhoto) {
+      await FastImage.clearDiskCache();
+      await FastImage.clearMemoryCache();
+    }
 
     const session = assertSession();
 
@@ -33,7 +37,6 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
     try {
       const userId = session.user.id;
       const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.avatar } : newValues;
-      const url = `${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`;
       const reponse = await sessionFetch.json(`/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
         body: JSON.stringify(updatedValues),
         method: 'PUT',
@@ -42,7 +45,6 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
       if ((reponse as any).error) {
         throw new Error((reponse as any).error);
       }
-      FastImage.clearImageCache(url);
       dispatch(authActions.profileUpdate(userId, newValues));
       if (isUpdatingPhoto) {
         refreshSelfAvatarUniqueKey();

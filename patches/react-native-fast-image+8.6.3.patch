@@ -1,12 +1,15 @@
 diff --git a/node_modules/react-native-fast-image/.DS_Store b/node_modules/react-native-fast-image/.DS_Store
 new file mode 100644
-index 0000000..e69de29
+index 0000000..b93bbbf
+Binary files /dev/null and b/node_modules/react-native-fast-image/.DS_Store differ
 diff --git a/node_modules/react-native-fast-image/android/.DS_Store b/node_modules/react-native-fast-image/android/.DS_Store
 new file mode 100644
-index 0000000..e69de29
+index 0000000..5538448
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/.DS_Store differ
 diff --git a/node_modules/react-native-fast-image/android/src/.DS_Store b/node_modules/react-native-fast-image/android/src/.DS_Store
 new file mode 100644
-index 0000000..e69de29
+index 0000000..5073a43
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/src/.DS_Store differ
 diff --git a/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageSource.java b/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageSource.java
 index d9dbd99..0402052 100644
 --- a/node_modules/react-native-fast-image/android/src/main/java/com/dylanvann/fastimage/FastImageSource.java
@@ -84,46 +87,6 @@ index 86ca00d..2ddf3f9 100644
              // Every local resource (drawable) in Android has its own unique numeric id, which are
              // generated at build time. Although these ids are unique, they are not guaranteed unique
              // across builds. The underlying glide implementation caches these resources. To make
-diff --git a/node_modules/react-native-fast-image/dist/index.d.ts b/node_modules/react-native-fast-image/dist/index.d.ts
-index 5abb7c9..2a5445c 100644
---- a/node_modules/react-native-fast-image/dist/index.d.ts
-+++ b/node_modules/react-native-fast-image/dist/index.d.ts
-@@ -1,5 +1,5 @@
- import React from 'react';
--import { FlexStyle, LayoutChangeEvent, ShadowStyleIOS, StyleProp, TransformsStyle, ImageRequireSource, AccessibilityProps, ViewProps, ColorValue } from 'react-native';
-+import { AccessibilityProps, ColorValue, FlexStyle, ImageRequireSource, LayoutChangeEvent, ShadowStyleIOS, StyleProp, TransformsStyle, ViewProps } from 'react-native';
- export declare type ResizeMode = 'contain' | 'cover' | 'stretch' | 'center';
- declare const resizeMode: {
-     readonly contain: "contain";
-@@ -97,6 +97,7 @@ export interface FastImageStaticProperties {
-     preload: (sources: Source[]) => void;
-     clearMemoryCache: () => Promise<void>;
-     clearDiskCache: () => Promise<void>;
-+    clearImageCache: (url: string) => Promise<void>;
- }
- declare const FastImage: React.ComponentType<FastImageProps> & FastImageStaticProperties;
- export default FastImage;
-diff --git a/node_modules/react-native-fast-image/dist/index.js b/node_modules/react-native-fast-image/dist/index.js
-index 58e0308..d9f8fad 100644
---- a/node_modules/react-native-fast-image/dist/index.js
-+++ b/node_modules/react-native-fast-image/dist/index.js
-@@ -1,6 +1,6 @@
- import _extends from '@babel/runtime/helpers/extends';
- import React, { forwardRef, memo } from 'react';
--import { NativeModules, StyleSheet, requireNativeComponent, Image, View, Platform } from 'react-native';
-+import { Image, NativeModules, Platform, StyleSheet, View, requireNativeComponent } from 'react-native';
- 
- const resizeMode = {
-   contain: 'contain',
-@@ -118,6 +118,8 @@ FastImage.clearMemoryCache = () => NativeModules.FastImageView.clearMemoryCache(
- 
- FastImage.clearDiskCache = () => NativeModules.FastImageView.clearDiskCache();
- 
-+FastImage.clearImageCache = (url) => NativeModules.FastImageView.clearImageCache(url);
-+
- const styles = StyleSheet.create({
-   imageContainer: {
-     overflow: 'hidden'
 diff --git a/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m b/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m
 index f710081..83476eb 100644
 --- a/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m
