@@ -15,13 +15,14 @@ export const CheckboxButton = ({
   customListItemStyle,
   onPress,
   partialyChecked,
+  TextComponent = SmallText,
   title,
-}: CheckboxButtonProps) => {
+}: Readonly<CheckboxButtonProps>) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <ListItem
         style={customListItemStyle}
-        leftElement={<SmallText style={UI_STYLES.flexShrink1}>{I18n.get(title)}</SmallText>}
+        leftElement={<TextComponent style={UI_STYLES.flexShrink1}>{I18n.get(title)}</TextComponent>}
         rightElement={
           <Checkbox
             checked={checked}
@@ -30,7 +31,6 @@ export const CheckboxButton = ({
             customContainerStyle={customContainerStyle}
           />
         }
-        style={customListItemStyle}
       />
     </TouchableOpacity>
   );

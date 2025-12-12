@@ -20,6 +20,7 @@
     "strict": true ,
     "target": "ES2022",
   },
-  "exclude": ["__tests__/**/*-test.ts","__overrides__/**/*","__stashSpec__/**/*","scaffolder/**/*"],
+  "exclude": ["__tests__/**/*-test.ts","__overrides__/**/*","__stashSpec__/**/*","scaffolder/**/*","**/node_modules","**/Pods"],
   "extends": ["@react-native/typescript-config"],
+  "include": ["**/*.ts", "**/*.tsx"],
 }

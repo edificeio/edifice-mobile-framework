@@ -11,7 +11,7 @@ import { getScaleHeight } from '~/framework/components/constants';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
 import moduleConfig from '~/framework/modules/news/module-config';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const Selected = () => (
   <View style={[styles.thumbnailSelectedItem, { borderColor: (moduleConfig.displayPicture as SvgProps).fill }]} />

@@ -66,7 +66,6 @@ import {
   IAuthState,
 } from '~/framework/modules/auth/reducer';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
-import { updateShakeListenerAction } from '~/framework/modules/user/actions';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import firebaseService from '~/framework/util/notifications/service';
@@ -502,9 +501,6 @@ const performLogin = async (
 
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
-
-  // check and show xmasTheme if enable
-  dispatch(updateShakeListenerAction());
 
   return accountInfo;
 };

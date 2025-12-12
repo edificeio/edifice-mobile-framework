@@ -12,7 +12,7 @@ import NotificationTopInfo from '~/framework/modules/timeline/components/notific
 import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import appConf from '~/framework/util/appConf';
 import { renderMediaPreview } from '~/framework/util/htmlParser/content';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 import { getAsEnrichedNotification, getAsResourceUriNotification } from '~/framework/util/notifications';
 import { ArticleContainer } from '~/ui/ContainerContent';
 

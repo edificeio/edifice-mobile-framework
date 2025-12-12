@@ -19,6 +19,7 @@ export interface AudienceProps {
   containerStyle?: ViewStyle;
   preview?: boolean;
   isManager?: boolean;
+  showComments?: boolean;
 }
 
 export interface AudienceAllProps extends AudienceProps, AudienceReduxProps {}

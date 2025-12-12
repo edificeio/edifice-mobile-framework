@@ -16,6 +16,10 @@ const initFeatures = async () => {
   await Log.init();
   await Storage.init();
   await I18n.init();
+  if (__DEV__) {
+    require('./reactotron.ts');
+    console.info('Reactotron initialized');
+  }
 };
 
 // const MAX_STARTUP_TIME_MS = 15000;

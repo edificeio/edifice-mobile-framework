@@ -7,9 +7,9 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { blogUriCaptureFunction } from './service/adapters';
+
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
-import { blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
@@ -19,69 +19,64 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
-const handleBlogPostNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
-    try {
-      const blogNotif = getAsResourceUriNotification(notification);
-      if (!blogNotif) return { managed: 0 };
+const handleBlogPostNotificationAction: NotifHandlerThunkAction = notification => async () => {
+  try {
+    const blogNotif = getAsResourceUriNotification(notification);
+    if (!blogNotif) return { managed: 0 };
 
-      const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+    const navAction = CommonActions.navigate({
+      name: computeTabRouteName(timelineModuleConfig.routeName),
+      params: {
+        initial: false,
         params: {
-          initial: false,
-          params: {
-            notification: blogNotif,
-            useNotification: true,
-          },
-          screen: blogRouteNames.blogPostDetails,
+          notification: blogNotif,
+          useNotification: true,
         },
-      });
+        screen: blogRouteNames.blogPostDetails,
+      },
+    });
 
-      handleNotificationNavigationAction(navAction);
+    handleNotificationNavigationAction(navAction);
 
-      return {
-        managed: 1,
-        trackInfo: { action: 'Blog', name: `${notification.type}.${notification['event-type']}` },
-      };
-    } catch {
-      return { managed: 0 };
-    }
-  };
+    return {
+      managed: 1,
+      trackInfo: { action: 'Blog', name: `${notification.type}.${notification['event-type']}` },
+    };
+  } catch {
+    return { managed: 0 };
+  }
+};
 
-const handleBlogNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
-    try {
-      // 0. Get notification data
-      const blogNotif = getAsResourceUriNotification(notification);
-      if (!blogNotif) return { managed: 0 };
-      const blogId = blogUriCaptureFunction(blogNotif.resource.uri).blogId;
-      if (!blogId) return { managed: 0 };
-      const session = assertSession();
-      const blogInfo = await blogService.get(session, blogId);
-      if (!blogInfo) return { managed: 0 };
+const handleBlogNotificationAction: NotifHandlerThunkAction = notification => async () => {
+  try {
+    // 0. Get notification data
+    const blogNotif = getAsResourceUriNotification(notification);
+    if (!blogNotif) return { managed: 0 };
+    const blogId = blogUriCaptureFunction(blogNotif.resource.uri).blogId;
+    if (!blogId) return { managed: 0 };
 
-      const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+    const navAction = CommonActions.navigate({
+      name: computeTabRouteName(timelineModuleConfig.routeName),
+      params: {
+        initial: false,
         params: {
-          initial: false,
-          params: {
-            selectedBlog: blogInfo,
-          },
-          screen: blogRouteNames.blogPostList,
+          blogId,
         },
-      });
+        screen: blogRouteNames.blogPostList,
+      },
+    });
 
-      handleNotificationNavigationAction(navAction);
+    handleNotificationNavigationAction(navAction);
 
-      // 4. Return notif handling result
-      return {
-        managed: 1,
-        trackInfo: { action: 'Blog', name: `${notification.type}.${notification['event-type']}` },
-      };
-    } catch {
-      return { managed: 0 };
-    }
-  };
+    // 4. Return notif handling result
+    return {
+      managed: 1,
+      trackInfo: { action: 'Blog', name: `${notification.type}.${notification['event-type']}` },
+    };
+  } catch {
+    return { managed: 0 };
+  }
+};
 
 export default () =>
   registerNotifHandlers([

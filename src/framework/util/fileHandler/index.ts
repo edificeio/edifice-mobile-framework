@@ -9,10 +9,9 @@ import DocumentPicker, { DocumentPickerResponse, pick, types } from '@react-nati
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
-import ImagePicker, { Image } from 'react-native-image-crop-picker';
+import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 import { openDocument } from './actions';
-import { Asset } from './types';
 
 import { I18n } from '~/app/i18n';
 import { ImagePicked } from '~/framework/components/menus/actions';
@@ -34,10 +33,11 @@ namespace LocalFile {
 export const IMAGE_MAX_DIMENSION = 1440;
 export const IMAGE_MAX_QUALITY = 80;
 
-const processImage = async (pic: Image) => {
+const processImage = async (pic: Asset) => {
   try {
+    if (!pic.uri) throw new Error('image missing uri');
     const response: Response = await ImageResizer.createResizedImage(
-      pic.path,
+      pic.uri,
       IMAGE_MAX_DIMENSION,
       IMAGE_MAX_DIMENSION,
       'JPEG',
@@ -63,7 +63,7 @@ const processImage = async (pic: Image) => {
   }
 };
 
-const processImages = (pics: Image | Image[]): Promise<(Asset | undefined)[]> => {
+const processImages = (pics: Asset[]): Promise<(Asset | undefined)[]> => {
   const picsArray = Array.isArray(pics) ? pics : [pics];
   return Promise.all(picsArray.map(pic => processImage(pic)));
 };
@@ -161,17 +161,16 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       await assertPermissions('galery.read');
       console.debug('[Gallery] Opening picker...');
 
-      const pics = await ImagePicker.openPicker({
-        maxFiles: 999, // Default value is 5 somewhere in the third-party package, so we must set it to some high value here to allow """unlimited""" selection.
+      const response = await launchImageLibrary({
         mediaType: 'photo',
-        multiple,
+        // ToDo: use MediaStore.getPickImagesMaxLimit() from Android SDK instead of pure 99 here.
+        selectionLimit: multiple ? 99 : 1,
       });
 
-      console.debug('[Gallery] Picker result:', pics);
-
-      const picsArray = Array.isArray(pics) ? pics : [pics];
-      const pickedFiles = (await processImages(picsArray)).filter((f): f is Asset => f !== undefined);
-
+      if (!response.assets || response.didCancel) {
+        return;
+      }
+      const pickedFiles = (await processImages(response.assets)).filter((f): f is Asset => f !== undefined);
       const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
 
       if (Platform.OS === 'android') {
@@ -200,14 +199,18 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
   static async pickFromCamera(callback, useFrontCamera?: boolean, synchrone?: boolean, callbackOnce?: boolean) {
     try {
-      let pickedFile: Asset[] = [];
       await assertPermissions('camera');
-      const pic = await ImagePicker.openCamera({
-        useFrontCamera,
+      const response = await launchCamera({
+        cameraType: useFrontCamera ? 'front' : 'back',
+        mediaType: 'photo',
       });
-      const compressPic = (await processImage(pic)) as Asset;
-      pickedFile = [compressPic];
-      const image: LocalFile[] = pickedFile.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
+      if (!response.assets || response.didCancel) {
+        return;
+      }
+      const compressedPics = response.assets && (await Promise.all(response.assets.map(asset => processImage(asset))));
+      const image: LocalFile[] = compressedPics
+        .filter((f): f is Asset => f !== undefined)
+        .map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
       await this.imageCallback(image, callback, synchrone, callbackOnce);
     } catch (e) {
       if (e instanceof Error && (e as { code?: unknown }).code === 'E_PICKER_CANCELLED') {

@@ -1,6 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-10-13 19:11:52",
-  "notes": "chore(build): remove  characters from changelog to avoid build errors\nUpdated translations from Phrase (221)\nfeat(picker): COCO-4773 , make gallery photo-only\npoc(import): save as a comment for further implementation\nfix(share): COCO-4770 ensure temp image file unique + cleanup\nfix(mails): COCO-4569 unify draft content detection via util\nupdate(stack): yarn cache update\nfix(form, viescolaire):  COCO-4758, upload issue on forms & presence\nupdate(stack): update yarn caches\nfix(viescolaire): COCO-4766, prevent crash on EDT & Presences by upgrading react-native-tab-view to 4.1.2\nupdate(stack): yarn cache update\nchore(build): remove special characters making export to testflight failing\nrelease: 1.15.4-rc.1(1150403)",
-  "version": "1.15.4-rc.2(1150404)"
+  "last": "2025-11-07 20:04:04",
+  "notes": "release: 1.16.1(1160100)\nchore: yarn clean\nfix(communities): statusbar on members screen\nMerge branch 'dev/1.16.0' into dev/1.16.1\nrelease: 1.16.0-peda.5(1160005)",
+  "track": "1.16.2",
+  "version": "1.16.1-peda.1(1160101)"
 }

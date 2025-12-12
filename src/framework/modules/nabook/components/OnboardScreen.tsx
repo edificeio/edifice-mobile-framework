@@ -104,7 +104,7 @@ export default function OnboardScreen(props: OnboardScreenProps) {
   ];
 
   return (
-    <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
+    <PageView gutters="both" showNetworkBar={false} statusBar="translucent-dark" style={{ backgroundColor: NBK_COLORS.darkColor }}>
       <Swiper
         ref={swiperRef}
         dotStyle={styles.dot}

@@ -14,7 +14,7 @@ import { HeadingMText, NestedBoldText, SmallText } from '~/framework/components/
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 import { Trackers } from '~/framework/util/tracker';
 
 export const computeNavBar = ({

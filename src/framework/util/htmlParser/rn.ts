@@ -45,7 +45,7 @@ import {
 import { getSession } from '~/framework/modules/auth/reducer';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { Platform } from '~/framework/util/appConf';
-import { formatSource } from '~/framework/util/media';
+import { formatSource } from '~/framework/util/media-deprecated';
 
 export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   textFormatting?: boolean;

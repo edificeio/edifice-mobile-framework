@@ -5,7 +5,7 @@
 import * as React from 'react';
 import { ImageProps, TouchableOpacityProps } from 'react-native';
 
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 export type ImageOptionalProps = ImageProps & {

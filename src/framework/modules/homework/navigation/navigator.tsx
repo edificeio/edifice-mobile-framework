@@ -4,12 +4,11 @@ import { HomeworkNavigationParams, homeworkRouteNames } from '.';
 
 import { I18n } from '~/app/i18n';
 import { computeNavBar as homeworkCreateNavBar } from '~/framework/modules/homework/components/HomeworkCreateScreen';
-import { computeNavBar as homeworkExplorerNavBar } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
 import { computeNavBar as homeworkSelectNavBar } from '~/framework/modules/homework/components/HomeworkSelectScreen';
 import { computeNavBar as homeworkTaskListNavBar } from '~/framework/modules/homework/components/HomeworkTaskListScreen';
 import moduleConfig from '~/framework/modules/homework/module-config';
+import HomeworkExplorerScreen, { computeNavBar as homeworkExplorerNavBar } from '~/framework/modules/homework/screens/explorer';
 import HomeworkCreateScreen from '~/framework/modules/homework/screens/HomeworkCreateScreen';
-import HomeworkExplorerScreen from '~/framework/modules/homework/screens/HomeworkExplorerScreen';
 import HomeworkInitialScreen from '~/framework/modules/homework/screens/HomeworkInitialScreen';
 import HomeworkSelectScreen from '~/framework/modules/homework/screens/HomeworkSelectScreen';
 import HomeworkTaskDetailsScreen from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';

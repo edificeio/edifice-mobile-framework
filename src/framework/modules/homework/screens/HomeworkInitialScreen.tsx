@@ -6,8 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { fetchHomeworkDiaryList } from '~/framework/modules/homework/actions/diaryList';
-import { IHomeworkExplorerScreenDataProps } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
-import HomeworkExplorerScreen from '~/framework/modules/homework/screens/HomeworkExplorerScreen';
+import HomeworkExplorerScreen from '~/framework/modules/homework/screens/explorer';
 import HomeworkTaskListScreen from '~/framework/modules/homework/screens/HomeworkTaskListScreen';
 import { Loading } from '~/ui/Loading';
 
@@ -43,9 +42,14 @@ const mapDispatchToProps = (dispatch: any) => {
 export type HomeworkInitialScreenNavigationParams = undefined;
 
 export interface HomeworkInitialScreenDataProps {
-  diaryList?: IHomeworkExplorerScreenDataProps['diaryList'];
-  isFetching?: IHomeworkExplorerScreenDataProps['isFetching'];
-  didInvalidate?: IHomeworkExplorerScreenDataProps['didInvalidate'];
+  diaryList?: {
+    id: string;
+    title: string;
+    name: string;
+    thumbnail: string;
+  }[];
+  isFetching?: boolean;
+  didInvalidate?: boolean;
 }
 
 export interface HomeworkInitialScreenEventProps {
@@ -77,7 +81,7 @@ class HomeworkInitialScreenContainer extends React.PureComponent<HomeworkInitial
     ) : hasOneDiary ? (
       <HomeworkTaskListScreen {...this.props} />
     ) : (
-      <HomeworkExplorerScreen {...this.props} />
+      <HomeworkExplorerScreen navigation={this.props.navigation} route={{ ...this.props.route, params: {} }} />
     );
   }
 

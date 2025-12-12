@@ -9,7 +9,7 @@ import styled from '@emotion/native';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { Platform } from '~/framework/util/appConf';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const ImageLogo = styled(Image)({
   ...UI_SIZES.elements.logoSize,

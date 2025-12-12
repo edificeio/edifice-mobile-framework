@@ -4,9 +4,8 @@
 
 import { ThunkDispatch } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
 import homeworkConfig from '~/framework/modules/homework/module-config';
-import { signedFetch } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 import { asyncActionTypes } from '~/infra/redux/async';
 
 // ACTION LIST ------------------------------------------------------------------------------------
@@ -37,11 +36,9 @@ export function homeworkToggleEntryStatusError(entryId: string, errmsg: string) 
  */
 export function toggleHomeworkDiaryEntryStatus(diaryId: string, entryId: string, finished: boolean) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = assertSession();
-
     dispatch(homeworkToggleEntryStatusRequested(entryId));
     try {
-      await signedFetch(`${session?.platform.url}/homeworks/${diaryId}/entry/status`, {
+      await sessionFetch(`/homeworks/${diaryId}/entry/status`, {
         body: JSON.stringify({
           entryid: entryId,
           finished,

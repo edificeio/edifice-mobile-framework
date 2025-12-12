@@ -14,10 +14,10 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
   },
   containerChecked: {
-    backgroundColor: theme.palette.primary.pale,
+    backgroundColor: theme.color.mails.selected,
   },
   containerUnread: {
-    backgroundColor: theme.palette.secondary.pale,
+    backgroundColor: theme.color.mails.unread,
   },
   date: {
     color: theme.palette.grey.graphite,

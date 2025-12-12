@@ -14,7 +14,7 @@ import MediaIcon from '~/framework/components/media/icon';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { Svg } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 import { urlSigner } from '~/infra/oauth';
 
 const iconSizeAudio = getScaleImageSize(20);

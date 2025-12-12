@@ -14,7 +14,7 @@ import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 import { Trackers } from '~/framework/util/tracker';
 
 export const computeNavBar = ({

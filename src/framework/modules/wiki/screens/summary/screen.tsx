@@ -26,7 +26,8 @@ import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/n
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import http from '~/framework/util/http';
+import { toURISource } from '~/framework/util/media/types';
+import { sessionImageSource } from '~/framework/util/transport';
 
 const TITLE_PLACEHOLDER_HEIGHT = getScaleWidth(30);
 const LINE_PLACEHOLDER_HEIGHT = getScaleWidth(48);
@@ -57,7 +58,7 @@ export function WikiSummaryScreenLoaded({
   refreshControl: Parameters<ContentLoaderProps['renderContent']>[0];
 }) {
   const imageSourceProps = React.useMemo(() => {
-    return wiki.thumbnail ? http.imagePropsForSession({ source: { uri: wiki.thumbnail } }) : undefined;
+    return wiki.thumbnail ? sessionImageSource(toURISource(wiki.thumbnail)) : undefined;
   }, [wiki.thumbnail]);
 
   return (
@@ -101,7 +102,7 @@ export default function WikiSummaryScreen({
   route: {
     params: { resourceId },
   },
-}: WikiSummaryScreen.AllProps) {
+}: Readonly<WikiSummaryScreen.AllProps>) {
   const wikiData = useSelector(selectors.wiki(resourceId));
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction>>();
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {

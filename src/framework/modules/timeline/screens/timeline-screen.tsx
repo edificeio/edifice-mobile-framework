@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -177,6 +177,29 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   render() {
     return (
       <>
+        {/*<Image
+          style={{ aspectRatio: 1, flex: 0.2 }}
+          source={[
+            {
+              height: 200,
+              scale: 1,
+              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/26d50510-ccc0-42c3-a392-dada4760913b',
+              width: 200,
+            },
+            {
+              height: 200,
+              scale: 2,
+              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/ac0ca85a-5fde-4049-939b-0e9e2c70026f',
+              width: 200,
+            },
+            {
+              height: 200,
+              scale: 3,
+              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/48966b77-d506-4a4a-a3c4-a5ec6dbb36b7',
+              width: 200,
+            },
+          ]}
+        />*/}
         <PageView>
           {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
             <LoadingIndicator />
@@ -334,13 +357,18 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
     this.props.navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity
-          onPress={() => navigation.navigate(userRouteNames.home)}
-          testID="timeline-profile-button"
-          // Style here is needed to prevent Android autocropping border of avatar
-          style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
-          <SingleAvatar size="md" userId={session?.user.id || ''} />
-        </TouchableOpacity>
+        <NavBarActionsGroup
+          elements={[
+            <TouchableOpacity
+              onPress={() => navigation.navigate(userRouteNames.home)}
+              testID="timeline-profile-button"
+              // Style here is needed to prevent Android autocropping border of avatar
+              style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
+              <SingleAvatar size="md" userId={session?.user.id || ''} />
+            </TouchableOpacity>,
+            <NavBarAction />,
+          ]}
+        />
       ),
     });
 
@@ -361,6 +389,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           <NavBarAction icon="ui-plus" testID="timeline-add-button" />
         </PopupMenu>,
       );
+    } else {
+      headerRightItems.push(<NavBarAction />);
     }
     this.props.navigation.setOptions({
       headerRight: () => <NavBarActionsGroup elements={headerRightItems} />,

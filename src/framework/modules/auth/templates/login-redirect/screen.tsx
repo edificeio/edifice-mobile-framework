@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Platform, SafeAreaView, View } from 'react-native';
+import { Platform, View } from 'react-native';
+
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
 import { LoginRedirectScreenPrivateProps } from './types';
@@ -9,7 +11,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { BodyText } from '~/framework/components/text';
-import { Image } from '~/framework/util/media';
+import { Image } from '~/framework/util/media-deprecated';
 
 const LoginRedirectPage = (props: LoginRedirectScreenPrivateProps) => {
   const { route } = props;

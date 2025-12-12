@@ -2,7 +2,7 @@ import { HTTPError } from './error';
 import { fetch, fetchJson } from './fetch';
 import { fetchForAccount, fetchForSession, fetchJsonForAccount, fetchJsonForSession } from './fetch-for-account';
 import { fetchForPlatform, fetchJsonForPlatform } from './fetch-for-platform';
-import { imagePropsForAccount, imagePropsForSession } from './source';
+import { imagePropsForAccount, imagePropsForSession, sourceForAccount } from './source';
 
 /**
  * Utility functions for making HTTP requests.
@@ -20,6 +20,7 @@ import { imagePropsForAccount, imagePropsForSession } from './source';
  * @exports imagePropsForSession - Function to call with image prop to format source for the active account
  */
 export default {
+  // api,
   fetch,
   fetchForAccount,
   fetchForPlatform,
@@ -30,6 +31,8 @@ export default {
   fetchJsonForSession,
   imagePropsForAccount,
   imagePropsForSession,
+  sourceForAccount,
+  // sessionApi,
 };
 
 export { HTTPError };

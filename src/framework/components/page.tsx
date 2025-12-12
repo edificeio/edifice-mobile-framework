@@ -12,7 +12,6 @@ import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
-  SafeAreaView,
   ScrollView,
   ScrollViewProps,
   StyleSheet,
@@ -23,21 +22,20 @@ import {
 import styled from '@emotion/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { UI_SIZES } from './constants';
-import SnowFlakes from './SnowFlakes';
-import { StatusBar } from './status-bar';
-import { ToastHandler } from './toast/component';
+import { ScreenView } from './screen';
+import { ScreenViewProps } from './screen/types';
 
 import theme from '~/app/theme';
-import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
-  statusBar?: 'primary' | 'light' | 'dark' | 'none';
+  statusBar?: ScreenViewProps['statusBar'];
   showToast?: boolean;
 }
 
@@ -60,7 +58,7 @@ export const PageViewStyle = styled.View({
   flex: 1,
 });
 export const PageView = (props: PageViewProps) => {
-  const { children, gutters, showNetworkBar = true, showToast = true, statusBar, ...viewProps } = props;
+  const { children, gutters, showNetworkBar = true, statusBar, ...viewProps } = props;
   const route = useRoute();
 
   const gutterStyle = React.useMemo(
@@ -71,26 +69,17 @@ export const PageView = (props: PageViewProps) => {
     [gutters],
   );
 
-  const statusBarComponent = React.useMemo(
-    () => (statusBar !== 'none' ? <StatusBar type={statusBar ?? 'primary'} /> : null),
-    [statusBar],
-  );
-
-  const isModal = isModalModeOnThisRoute(route.name);
   const page = (
     <PageViewStyle {...viewProps}>
       <>
-        {statusBarComponent}
         {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
-        {isModal && showToast ? <ToastHandler /> : null}
-        {isModal && <SnowFlakes />}
       </>
     </PageViewStyle>
   );
 
-  return page;
+  return <ScreenView statusBar={statusBar}>{page}</ScreenView>;
 };
 
 export const KeyboardPageView = (

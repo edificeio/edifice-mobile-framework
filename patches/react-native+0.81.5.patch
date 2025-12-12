@@ -1,0 +1,161 @@
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
+index b6e538d..0b33557 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
+@@ -8,19 +8,20 @@
+  */
+ 
+ import type * as React from 'react';
+-import {Constructor} from '../../../types/private/Utilities';
+-import {Insets} from '../../../types/public/Insets';
+-import {HostInstance} from '../../../types/public/ReactNativeTypes';
+-import {ColorValue, StyleProp} from '../../StyleSheet/StyleSheet';
+-import {ViewStyle} from '../../StyleSheet/StyleSheetTypes';
++import { Constructor } from '../../../types/private/Utilities';
++import { Insets } from '../../../types/public/Insets';
++import { HostInstance } from '../../../types/public/ReactNativeTypes';
++import { ColorValue, StyleProp } from '../../StyleSheet/StyleSheet';
++import { ViewStyle } from '../../StyleSheet/StyleSheetTypes';
+ import {
+   NativeSyntheticEvent,
+   NativeTouchEvent,
+ } from '../../Types/CoreEventTypes';
+-import {RefreshControlProps} from '../RefreshControl/RefreshControl';
+-import {Touchable} from '../Touchable/Touchable';
+-import {ViewProps} from '../View/ViewPropTypes';
+-import {View} from '../View/View';
++import { RefreshControlProps } from '../RefreshControl/RefreshControl';
++import { Touchable } from '../Touchable/Touchable';
++import { View } from '../View/View';
++import { ViewProps } from '../View/ViewPropTypes';
++import type { Props as ScrollViewStickyHeaderProps } from './ScrollViewStickyHeader';
+ 
+ // See https://reactnative.dev/docs/scrollview#contentoffset
+ export interface PointProp {
+@@ -824,7 +825,7 @@ export interface ScrollViewProps
+    * transforms, for example, when you want your list to have an animated and hidable header.
+    * If component have not been provided, the default ScrollViewStickyHeader component will be used.
+    */
+-  StickyHeaderComponent?: React.ComponentType<any> | undefined;
++  StickyHeaderComponent?: React.ComponentType<ScrollViewStickyHeaderProps> | undefined;
+ }
+ 
+ declare class ScrollViewComponent extends React.Component<ScrollViewProps> {}
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
+index 8f4f297..09c5675 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
+@@ -1697,6 +1697,7 @@ class ScrollView extends React.Component<ScrollViewProps, ScrollViewState> {
+               inverted={this.props.invertStickyHeaders}
+               hiddenOnScroll={this.props.stickyHeaderHiddenOnScroll}
+               scrollViewHeight={this.state.layoutHeight}>
++              index={index}
+               {child}
+             </StickyHeaderComponent>
+           );
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+index d1e5d65..c96e151 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+@@ -37,6 +37,7 @@ export type ScrollViewStickyHeaderProps = $ReadOnly<{
+   scrollViewHeight: ?number,
+   nativeID?: ?string,
+   hiddenOnScroll?: ?boolean,
++  index: number,
+ }>;
+ 
+ interface Instance extends React.ElementRef<typeof Animated.View> {
+diff --git a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-dev.js b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-dev.js
+index 9d66361..2d0dafa 100644
+--- a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-dev.js
++++ b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-dev.js
+@@ -679,9 +679,6 @@ __DEV__ &&
+       } finally {
+         setCurrentFiber(previousFiber);
+       }
+-      throw Error(
+-        "runWithFiberInDEV should never be called in production. This is a bug in React."
+-      );
+     }
+     function setCurrentFiber(fiber) {
+       ReactSharedInternals.getCurrentStack =
+@@ -9259,9 +9256,6 @@ __DEV__ &&
+                 throw Error(
+                   "A dehydrated suspense component was completed without a hydrated node. This is probably a bug in React."
+                 );
+-                throw Error(
+-                  "Expected prepareToHydrateHostSuspenseInstance() to never be called. This error is likely caused by a bug in React. Please file an issue."
+-                );
+               }
+               emitPendingHydrationWarnings();
+               0 === (workInProgress.flags & 128) &&
+@@ -16868,11 +16862,11 @@ __DEV__ &&
+       shouldSuspendImpl = newShouldSuspendImpl;
+     };
+     var isomorphicReactPackageVersion = React.version;
+-    if ("19.1.0" !== isomorphicReactPackageVersion)
++    if ("19.1.2" !== isomorphicReactPackageVersion)
+       throw Error(
+         'Incompatible React versions: The "react" and "react-native-renderer" packages must have the exact same version. Instead got:\n  - react:                  ' +
+           (isomorphicReactPackageVersion +
+-            "\n  - react-native-renderer:  19.1.0\nLearn more: https://react.dev/warnings/version-mismatch")
++            "\n  - react-native-renderer:  19.1.2\nLearn more: https://react.dev/warnings/version-mismatch")
+       );
+     if (
+       "function" !==
+diff --git a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js
+index b3d1cfa..81174e1 100644
+--- a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js
++++ b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js
+@@ -7284,9 +7284,6 @@ function completeWork(current, workInProgress, renderLanes) {
+             throw Error(
+               "A dehydrated suspense component was completed without a hydrated node. This is probably a bug in React."
+             );
+-            throw Error(
+-              "Expected prepareToHydrateHostSuspenseInstance() to never be called. This error is likely caused by a bug in React. Please file an issue."
+-            );
+           }
+           0 === (workInProgress.flags & 128) &&
+             (workInProgress.memoizedState = null);
+@@ -10603,11 +10600,11 @@ function updateContainer(element, container, parentComponent, callback) {
+   return lane;
+ }
+ var isomorphicReactPackageVersion = React.version;
+-if ("19.1.0" !== isomorphicReactPackageVersion)
++if ("19.1.2" !== isomorphicReactPackageVersion)
+   throw Error(
+     'Incompatible React versions: The "react" and "react-native-renderer" packages must have the exact same version. Instead got:\n  - react:                  ' +
+       (isomorphicReactPackageVersion +
+-        "\n  - react-native-renderer:  19.1.0\nLearn more: https://react.dev/warnings/version-mismatch")
++        "\n  - react-native-renderer:  19.1.2\nLearn more: https://react.dev/warnings/version-mismatch")
+   );
+ if (
+   "function" !==
+diff --git a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-profiling.js b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-profiling.js
+index b317ca1..24ab001 100644
+--- a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-profiling.js
++++ b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-profiling.js
+@@ -7501,9 +7501,6 @@ function completeWork(current, workInProgress, renderLanes) {
+             throw Error(
+               "A dehydrated suspense component was completed without a hydrated node. This is probably a bug in React."
+             );
+-            throw Error(
+-              "Expected prepareToHydrateHostSuspenseInstance() to never be called. This error is likely caused by a bug in React. Please file an issue."
+-            );
+           }
+           0 === (workInProgress.flags & 128) &&
+             (workInProgress.memoizedState = null);
+@@ -11245,11 +11242,11 @@ function updateContainer(element, container, parentComponent, callback) {
+   return lane;
+ }
+ var isomorphicReactPackageVersion = React.version;
+-if ("19.1.0" !== isomorphicReactPackageVersion)
++if ("19.1.2" !== isomorphicReactPackageVersion)
+   throw Error(
+     'Incompatible React versions: The "react" and "react-native-renderer" packages must have the exact same version. Instead got:\n  - react:                  ' +
+       (isomorphicReactPackageVersion +
+-        "\n  - react-native-renderer:  19.1.0\nLearn more: https://react.dev/warnings/version-mismatch")
++        "\n  - react-native-renderer:  19.1.2\nLearn more: https://react.dev/warnings/version-mismatch")
+   );
+ if (
+   "function" !==

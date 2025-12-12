@@ -40,6 +40,7 @@ export function parseFetchArguments(
       // Case 3
       _url = methodOrUrl;
       _init = urlOrInit;
+      _method = _init?.method ?? _method;
     }
   } else {
     // Case 4

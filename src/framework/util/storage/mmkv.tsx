@@ -42,7 +42,7 @@ const migrateFromAsyncStorage = async (storage: IStorageBackend) => {
   }
 };
 
-const mmkvInstance = new MMKV({
+export const mmkvInstance = new MMKV({
   encryptionKey: RNConfigReader.CFBundleIdentifier,
   id: getOverrideName(),
 }) satisfies IStorageBackend;

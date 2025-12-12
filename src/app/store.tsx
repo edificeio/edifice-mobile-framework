@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { Action, applyMiddleware, combineReducers, compose, createStore, Reducer, Store } from 'redux';
 import { thunk } from 'redux-thunk';
 
-declare var window: any;
+import reactotron from './reactotron';
 
 /** === Store reducers map === */
 
@@ -56,8 +56,8 @@ export function createMainStore() {
 
   const enhancer = applyMiddleware(...middlewares);
 
-  const store = window.__REDUX_DEVTOOLS_EXTENSION__
-    ? createStore(rootReducer, compose(enhancer, window.__REDUX_DEVTOOLS_EXTENSION__()))
+  const store = __DEV__
+    ? createStore(rootReducer, compose(enhancer, reactotron.createEnhancer()))
     : createStore(rootReducer, enhancer);
 
   return store;

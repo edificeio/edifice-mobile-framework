@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NavigationState, SceneRendererProps } from 'react-native-tab-view';
 
 import type { AccountType, IUser } from '~/framework/modules/auth/model';
 import type { IClassGroups } from '~/framework/modules/viescolaire/common/model';
@@ -44,3 +45,7 @@ export type EdtHomeScreenPrivateProps = EdtHomeScreenProps &
   EdtHomeScreenStoreProps &
   EdtHomeScreenDispatchProps &
   NativeStackScreenProps<EdtNavigationParams, typeof edtRouteNames.home>;
+
+export type EdtTabViewProps = SceneRendererProps & {
+  navigationState: NavigationState<{ key: string; title: string; icon?: string }>;
+};

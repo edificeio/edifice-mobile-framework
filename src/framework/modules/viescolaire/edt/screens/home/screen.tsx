@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
-import { NavigationState, SceneMap, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
+import { TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import styles from './styles';
-import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps } from './types';
+import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps, EdtTabViewProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -57,9 +57,11 @@ export const computeNavBar = ({
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
+  const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
   const [weekdays, setWeekdays] = React.useState<Moment[]>([]);
   const [routes, setRoutes] = React.useState([
+    // scenemap's order depends on this list's order too
     { key: 'monday', title: I18n.get('date-monday') },
     { key: 'tuesday', title: I18n.get('date-tuesday') },
     { key: 'wednesday', title: I18n.get('date-wednesday') },
@@ -67,14 +69,15 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     { key: 'friday', title: I18n.get('date-friday') },
     { key: 'saturday', title: I18n.get('date-saturday') },
   ]);
+
   const [startDate, setStartDate] = React.useState<Moment>(
-    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day')
+    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day'),
   );
   const [selectedDate, setSelectedDate] = React.useState<Moment>(
-    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day')
+    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day'),
   );
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
-  const loadingRef = React.useRef<AsyncPagedLoadingState>();
+  const loadingRef = React.useRef<AsyncPagedLoadingState | null>(null);
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
@@ -251,32 +254,34 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
 
-  const renderTabbar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> }
-  ) => {
+  const renderTabbar = (tabBarProps: EdtTabViewProps) => {
     return (
-      <TabBar
-        renderLabel={({ focused, route }) => (
-          <View
-            style={[
-              styles.tabBarItem,
-              {
-                backgroundColor: focused ? theme.color.homework.days[route.key]?.background : theme.palette.grey.white,
-                borderColor: focused
-                  ? theme.color.homework.days[route.key]?.accent
-                  : route.icon
-                    ? theme.palette.grey.grey
-                    : theme.palette.grey.white,
-              },
-            ]}>
-            <CaptionBoldText style={styles.tabBarItemText}>{route.title}</CaptionBoldText>
-          </View>
-        )}
-        indicatorStyle={styles.tabBarIndicator}
-        style={styles.tabBar}
-        pressColor={theme.palette.grey.pearl.toString()}
-        {...tabBarProps}
-      />
+      <View style={styles.tabBar}>
+        {tabBarProps.navigationState.routes.map((route, i) => {
+          const focused = i === tabBarProps.navigationState.index;
+
+          return (
+            <TouchableOpacity key={route.key} style={styles.tabBarItemContainer} onPress={() => setIndex(i)} activeOpacity={0.7}>
+              <View
+                style={[
+                  styles.tabBarItem,
+                  {
+                    backgroundColor: focused ? theme.color.homework.days[route.key]?.background : theme.palette.grey.white,
+                    borderColor: focused
+                      ? theme.color.homework.days[route.key]?.accent
+                      : route.icon
+                        ? theme.palette.grey.grey
+                        : theme.palette.grey.white,
+                  },
+                ]}>
+                <CaptionBoldText ellipsizeMode="tail" style={styles.tabBarItemText}>
+                  {route.title}
+                </CaptionBoldText>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     );
   };
 
@@ -290,6 +295,12 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
         renderCourseHalf={renderHalfCourse}
       />
     );
+  };
+
+  const renderScene = ({ route }) => {
+    const dayIndex = days.indexOf(route.key);
+    if (dayIndex === -1) return null;
+    return renderScrollView(weekdays[dayIndex]);
   };
 
   const renderTimetable = () => {
@@ -309,15 +320,9 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
           navigationState={{ index, routes }}
           onIndexChange={setIndex}
           animationEnabled={false}
-          renderScene={SceneMap({
-            friday: () => renderScrollView(weekdays[4]),
-            monday: () => renderScrollView(weekdays[0]),
-            saturday: () => renderScrollView(weekdays[5]),
-            thursday: () => renderScrollView(weekdays[3]),
-            tuesday: () => renderScrollView(weekdays[1]),
-            wednesday: () => renderScrollView(weekdays[2]),
-          })}
+          renderScene={renderScene}
           renderTabBar={renderTabbar}
+          initialLayout={{ width: layout.width }}
         />
       </>
     );
@@ -387,6 +392,6 @@ export default connect(
         tryFetchTeachers: tryAction(fetchEdtTeachersAction),
         tryFetchUserChildren: tryAction(fetchEdtUserChildrenAction),
       },
-      dispatch
-    )
+      dispatch,
+    ),
 )(EdtHomeScreen);
