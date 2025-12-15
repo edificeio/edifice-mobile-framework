@@ -6,49 +6,67 @@ import { ICarnetDeBordBackend } from './types';
 import { UserChildrenFlattened } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import {
-    ICarnetDeBord,
-    ICarnetDeBordCahierDeTextesTravailAFaire,
-    ICarnetDeBordCompetencesDomaine,
-    ICarnetDeBordCompetencesEvaluation,
-    ICarnetDeBordCompetencesItem,
-    ICarnetDeBordReleveDeNotesDevoir,
-    ICarnetDeBordVieScolaireAbsence,
-    ICarnetDeBordVieScolaireObservation,
-    ICarnetDeBordVieScolairePassageInfirmerie,
-    ICarnetDeBordVieScolairePunition,
-    ICarnetDeBordVieScolaireRetard,
-    ICarnetDeBordVieScolaireSanction,
-    IPronoteConnectorInfo,
-    sortCarnetDeBordItems,
+  ICarnetDeBord,
+  ICarnetDeBordCahierDeTextesTravailAFaire,
+  ICarnetDeBordCompetencesDomaine,
+  ICarnetDeBordCompetencesEvaluation,
+  ICarnetDeBordCompetencesItem,
+  ICarnetDeBordReleveDeNotesDevoir,
+  ICarnetDeBordVieScolaireAbsence,
+  ICarnetDeBordVieScolaireObservation,
+  ICarnetDeBordVieScolairePassageInfirmerie,
+  ICarnetDeBordVieScolairePunition,
+  ICarnetDeBordVieScolaireRetard,
+  ICarnetDeBordVieScolaireSanction,
+  IPronoteConnectorInfo,
+  sortCarnetDeBordItems,
 } from '~/framework/modules/pronote/model/carnet-de-bord';
 
+const handleSimpleField = (itemTag, item) => {
+  const simpleFieldMap = {
+    Competence: tag => (item.Competence = tag[0]?.['#text']),
+    Date: tag => {
+      const str = tag[0]?.['#text']?.toString();
+      item.DateString = str;
+      item.Date = str ? moment(str) : undefined;
+    },
+    Intitule: tag => (item.Intitule = tag[0]?.['#text']),
+    Matiere: tag => (item.Matiere = tag[0]?.['#text']),
+  };
+
+  for (const key in simpleFieldMap) {
+    if (Object.hasOwn(itemTag, key)) {
+      simpleFieldMap[key](itemTag[key]);
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const handleNiveauDAcquisition = (ndaTags, item) => {
+  const nda: Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']> = {};
+
+  for (const tag of ndaTags) {
+    if (Object.hasOwn(tag, 'Genre')) {
+      nda.Genre = tag.Genre[0]?.['#text'];
+    } else if (Object.hasOwn(tag, 'Libelle')) {
+      nda.Libelle = tag.Libelle[0]?.['#text'];
+    }
+  }
+
+  if (nda.Genre !== undefined && nda.Libelle !== undefined) {
+    item.NiveauDAcquisition = nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'];
+  }
+};
+
 const parseCompetencesItem = (itemTag, item) => {
-  if (Object.prototype.hasOwnProperty.call(itemTag, 'Date')) {
-    (item as ICarnetDeBordCompetencesItem).DateString = itemTag.Date[0]?.['#text'].toString();
-    (item as ICarnetDeBordCompetencesItem).Date = (item as ICarnetDeBordCompetencesItem).DateString
-      ? moment(itemTag.Date[0]?.['#text'].toString())
-      : undefined;
-  } else if (Object.prototype.hasOwnProperty.call(itemTag, 'Competence')) {
-    (item as ICarnetDeBordCompetencesItem).Competence = itemTag.Competence[0]?.['#text'];
-  } else if (Object.prototype.hasOwnProperty.call(itemTag, 'Intitule')) {
-    (item as ICarnetDeBordCompetencesItem).Intitule = itemTag.Intitule[0]?.['#text'];
-  } else if (Object.prototype.hasOwnProperty.call(itemTag, 'Matiere')) {
-    (item as ICarnetDeBordCompetencesItem).Matiere = itemTag.Matiere[0]?.['#text'];
-  } else if (Object.prototype.hasOwnProperty.call(itemTag, 'NiveauDAcquisition')) {
-    const nda = {};
-    for (const ndaTag of itemTag.NiveauDAcquisition) {
-      if (Object.prototype.hasOwnProperty.call(ndaTag, 'Genre')) {
-        (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'])!.Genre = ndaTag.Genre[0]?.['#text'];
-      } else if (Object.prototype.hasOwnProperty.call(ndaTag, 'Libelle')) {
-        (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'])!.Libelle = ndaTag.Libelle[0]?.['#text'];
-      }
-    }
-    if (
-      (nda as Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']>)!.Genre !== undefined &&
-      (nda as Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']>)!.Libelle !== undefined
-    ) {
-      (item as ICarnetDeBordCompetencesItem).NiveauDAcquisition = nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'];
-    }
+  // handling simple keys first
+  if (handleSimpleField(itemTag, item)) return;
+
+  // Handle special case NiveauDAcquisition
+  if (Object.hasOwn(itemTag, 'NiveauDAcquisition')) {
+    handleNiveauDAcquisition(itemTag.NiveauDAcquisition, item);
   }
 };
 
@@ -61,33 +79,32 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
 
   for (const tag of data) {
     // CahierDeTextes
-
-    if (Object.prototype.hasOwnProperty.call(tag, 'PageCahierDeTextes')) {
+    if (Object.hasOwn(tag, 'PageCahierDeTextes')) {
       const PageCahierDeTextes: Partial<ICarnetDeBord['PageCahierDeTextes']> = {};
       if (!PageCahierDeTextes?.TravailAFairePast) PageCahierDeTextes.TravailAFairePast = [];
       if (!PageCahierDeTextes?.TravailAFaireFuture) PageCahierDeTextes.TravailAFaireFuture = [];
       for (const cdtTag of tag.PageCahierDeTextes) {
-        if (Object.prototype.hasOwnProperty.call(cdtTag, 'Titre')) {
+        if (Object.hasOwn(cdtTag, 'Titre')) {
           PageCahierDeTextes.Titre = cdtTag.Titre[0]?.['#text'];
-        } else if (Object.prototype.hasOwnProperty.call(cdtTag, 'CahierDeTextes')) {
+        } else if (Object.hasOwn(cdtTag, 'CahierDeTextes')) {
           let matiere: ICarnetDeBordCahierDeTextesTravailAFaire['Matiere'];
           for (const cdtItemTag of cdtTag.CahierDeTextes) {
-            if (Object.prototype.hasOwnProperty.call(cdtItemTag, 'Matiere')) {
+            if (Object.hasOwn(cdtItemTag, 'Matiere')) {
               matiere = cdtItemTag.Matiere[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(cdtItemTag, 'TravailAFaire')) {
+            } else if (Object.hasOwn(cdtItemTag, 'TravailAFaire')) {
               const taf: Partial<ICarnetDeBordCahierDeTextesTravailAFaire> = {};
               for (const taftag of cdtItemTag.TravailAFaire) {
-                if (Object.prototype.hasOwnProperty.call(taftag, 'PourLe')) {
+                if (Object.hasOwn(taftag, 'PourLe')) {
                   taf.PourLeString = taftag.PourLe[0]?.['#text'].toString();
                   taf.PourLe = taf.PourLeString ? moment(taftag.PourLe[0]?.['#text'].toString()) : undefined;
-                } else if (Object.prototype.hasOwnProperty.call(taftag, 'Descriptif')) {
+                } else if (Object.hasOwn(taftag, 'Descriptif')) {
                   taf.Descriptif = taftag.Descriptif[0]?.['#text'];
-                } else if (Object.prototype.hasOwnProperty.call(taftag, 'PieceJointe')) {
+                } else if (Object.hasOwn(taftag, 'PieceJointe')) {
                   if (!taf.PieceJointe) {
                     taf.PieceJointe = [];
                   }
                   taf.PieceJointe?.push(taftag.PieceJointe[0]?.['#text']);
-                } else if (Object.prototype.hasOwnProperty.call(taftag, 'SiteInternet')) {
+                } else if (Object.hasOwn(taftag, 'SiteInternet')) {
                   if (!taf.SiteInternet) {
                     taf.SiteInternet = [];
                   }
@@ -112,14 +129,14 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
     }
 
     // Competences
-    else if (Object.prototype.hasOwnProperty.call(tag, 'PageCompetences')) {
+    else if (Object.hasOwn(tag, 'PageCompetences')) {
       const PageCompetences: Partial<ICarnetDeBord['PageCompetences']> = {};
       if (!PageCompetences.CompetencesPast) PageCompetences.CompetencesPast = [];
       if (!PageCompetences.CompetencesFuture) PageCompetences.CompetencesFuture = [];
       for (const pageTag of tag.PageCompetences) {
-        if (Object.prototype.hasOwnProperty.call(pageTag, 'Titre')) {
+        if (Object.hasOwn(pageTag, 'Titre')) {
           PageCompetences.Titre = pageTag.Titre[0]?.['#text'];
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Item')) {
+        } else if (Object.hasOwn(pageTag, 'Item')) {
           const item: Partial<ICarnetDeBordCompetencesItem> = { type: 'Item' };
           for (const itemTag of pageTag.Item) {
             parseCompetencesItem(itemTag, item);
@@ -129,7 +146,7 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           } else {
             PageCompetences.CompetencesFuture?.push(item as ICarnetDeBordCompetencesItem);
           }
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Domaine')) {
+        } else if (Object.hasOwn(pageTag, 'Domaine')) {
           const item: Partial<ICarnetDeBordCompetencesDomaine> = { type: 'Domaine' };
           for (const itemTag of pageTag.Domaine) {
             parseCompetencesItem(itemTag, item);
@@ -139,11 +156,11 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           } else {
             PageCompetences.CompetencesFuture?.push(item as ICarnetDeBordCompetencesDomaine);
           }
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Evaluation')) {
+        } else if (Object.hasOwn(pageTag, 'Evaluation')) {
           const item: Partial<ICarnetDeBordCompetencesEvaluation> = { type: 'Evaluation' };
           for (const itemTag of pageTag.Evaluation) {
             parseCompetencesItem(itemTag, item);
-            if (Object.prototype.hasOwnProperty.call(itemTag, 'Item')) {
+            if (Object.hasOwn(itemTag, 'Item')) {
               item.Item = itemTag.Item[0]?.['#text'];
             }
           }
@@ -161,25 +178,25 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
     }
 
     // ReleveDeNotes
-    else if (Object.prototype.hasOwnProperty.call(tag, 'PageReleveDeNotes')) {
+    else if (Object.hasOwn(tag, 'PageReleveDeNotes')) {
       const PageReleveDeNotes: Partial<ICarnetDeBord['PageReleveDeNotes']> = {};
       if (!PageReleveDeNotes.DevoirsPast) PageReleveDeNotes.DevoirsPast = [];
       if (!PageReleveDeNotes.DevoirsFuture) PageReleveDeNotes.DevoirsFuture = [];
       for (const pageTag of tag.PageReleveDeNotes) {
-        if (Object.prototype.hasOwnProperty.call(pageTag, 'Titre')) {
+        if (Object.hasOwn(pageTag, 'Titre')) {
           PageReleveDeNotes.Titre = pageTag.Titre[0]?.['#text'];
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Message')) {
+        } else if (Object.hasOwn(pageTag, 'Message')) {
           PageReleveDeNotes.Message = pageTag.Message[0]?.['#text'];
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Devoir')) {
+        } else if (Object.hasOwn(pageTag, 'Devoir')) {
           const devoir: Partial<ICarnetDeBordReleveDeNotesDevoir> = {};
           for (const dTag of pageTag.Devoir) {
-            if (Object.prototype.hasOwnProperty.call(dTag, 'Note')) {
+            if (Object.hasOwn(dTag, 'Note')) {
               devoir.Note = dTag.Note[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(dTag, 'Bareme')) {
+            } else if (Object.hasOwn(dTag, 'Bareme')) {
               devoir.Bareme = dTag.Bareme[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(dTag, 'Matiere')) {
+            } else if (Object.hasOwn(dTag, 'Matiere')) {
               devoir.Matiere = dTag.Matiere[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(dTag, 'Date')) {
+            } else if (Object.hasOwn(dTag, 'Date')) {
               devoir.DateString = dTag.Date[0]?.['#text'].toString();
               devoir.Date = devoir.DateString ? moment(dTag.Date[0]?.['#text'].toString()) : undefined;
             }
@@ -197,27 +214,27 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
     }
 
     // VieScolaire
-    else if (Object.prototype.hasOwnProperty.call(tag, 'PageVieScolaire')) {
+    else if (Object.hasOwn(tag, 'PageVieScolaire')) {
       const PageVieScolaire: Partial<ICarnetDeBord['PageVieScolaire']> = {};
       if (!PageVieScolaire.VieScolairePast) PageVieScolaire.VieScolairePast = [];
       if (!PageVieScolaire.VieScolaireFuture) PageVieScolaire.VieScolaireFuture = [];
       for (const pageTag of tag.PageVieScolaire) {
-        if (Object.prototype.hasOwnProperty.call(pageTag, 'Titre')) {
+        if (Object.hasOwn(pageTag, 'Titre')) {
           PageVieScolaire.Titre = pageTag.Titre[0]?.['#text'];
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Absence')) {
+        } else if (Object.hasOwn(pageTag, 'Absence')) {
           const item: Partial<ICarnetDeBordVieScolaireAbsence> = { type: 'Absence' };
           for (const iTag of pageTag.Absence) {
-            if (Object.prototype.hasOwnProperty.call(iTag, 'DateDebut')) {
+            if (Object.hasOwn(iTag, 'DateDebut')) {
               item.DateDebutString = iTag.DateDebut[0]?.['#text'].toString();
               item.DateDebut = item.DateDebutString ? moment(iTag.DateDebut[0]?.['#text'].toString()) : undefined;
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'DateFin')) {
+            } else if (Object.hasOwn(iTag, 'DateFin')) {
               item.DateFinString = iTag.DateFin[0]?.['#text'].toString();
               item.DateFin = item.DateFinString ? moment(iTag.DateFin[0]?.['#text'].toString()) : undefined;
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'EstOuverte')) {
+            } else if (Object.hasOwn(iTag, 'EstOuverte')) {
               item.EstOuverte = iTag.EstOuverte[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Justifie')) {
+            } else if (Object.hasOwn(iTag, 'Justifie')) {
               item.Justifie = iTag.Justifie[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Motif')) {
+            } else if (Object.hasOwn(iTag, 'Motif')) {
               item.Motif = iTag.Motif[0]?.['#text'];
             }
           }
@@ -226,15 +243,15 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           } else {
             PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolaireAbsence);
           }
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Retard')) {
+        } else if (Object.hasOwn(pageTag, 'Retard')) {
           const item: Partial<ICarnetDeBordVieScolaireRetard> = { type: 'Retard' };
           for (const iTag of pageTag.Retard) {
-            if (Object.prototype.hasOwnProperty.call(iTag, 'Date')) {
+            if (Object.hasOwn(iTag, 'Date')) {
               item.DateString = iTag.Date[0]?.['#text'].toString();
               item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Justifie')) {
+            } else if (Object.hasOwn(iTag, 'Justifie')) {
               item.Justifie = iTag.Justifie[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Motif')) {
+            } else if (Object.hasOwn(iTag, 'Motif')) {
               item.Motif = iTag.Motif[0]?.['#text'];
             }
           }
@@ -243,10 +260,10 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           } else {
             PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolaireRetard);
           }
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'PassageInfirmerie')) {
+        } else if (Object.hasOwn(pageTag, 'PassageInfirmerie')) {
           const item: Partial<ICarnetDeBordVieScolairePassageInfirmerie> = { type: 'PassageInfirmerie' };
           for (const iTag of pageTag.PassageInfirmerie) {
-            if (Object.prototype.hasOwnProperty.call(iTag, 'Date')) {
+            if (Object.hasOwn(iTag, 'Date')) {
               item.DateString = iTag.Date[0]?.['#text'].toString();
               item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
             }
@@ -256,19 +273,19 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           } else {
             PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolairePassageInfirmerie);
           }
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Punition')) {
+        } else if (Object.hasOwn(pageTag, 'Punition')) {
           const item: Partial<ICarnetDeBordVieScolairePunition> = { type: 'Punition' };
           for (const iTag of pageTag.Punition) {
-            if (Object.prototype.hasOwnProperty.call(iTag, 'Date')) {
+            if (Object.hasOwn(iTag, 'Date')) {
               item.DateString = iTag.Date[0]?.['#text'].toString();
               item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Nature')) {
+            } else if (Object.hasOwn(iTag, 'Nature')) {
               item.Nature = iTag.Nature[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Matiere')) {
+            } else if (Object.hasOwn(iTag, 'Matiere')) {
               item.Matiere = iTag.Matiere[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Motif')) {
+            } else if (Object.hasOwn(iTag, 'Motif')) {
               item.Motif = iTag.Motif[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Circonstances')) {
+            } else if (Object.hasOwn(iTag, 'Circonstances')) {
               item.Circonstances = iTag.Circonstances[0]?.['#text'];
             }
           }
@@ -277,19 +294,19 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           } else {
             PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolairePunition);
           }
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Sanction')) {
+        } else if (Object.hasOwn(pageTag, 'Sanction')) {
           const item: Partial<ICarnetDeBordVieScolaireSanction> = { type: 'Sanction' };
           for (const iTag of pageTag.Sanction) {
-            if (Object.prototype.hasOwnProperty.call(iTag, 'Date')) {
+            if (Object.hasOwn(iTag, 'Date')) {
               item.DateString = iTag.Date[0]?.['#text'].toString();
               item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Nature')) {
+            } else if (Object.hasOwn(iTag, 'Nature')) {
               item.Nature = iTag.Nature[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Motif')) {
+            } else if (Object.hasOwn(iTag, 'Motif')) {
               item.Motif = iTag.Motif[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Circonstances')) {
+            } else if (Object.hasOwn(iTag, 'Circonstances')) {
               item.Circonstances = iTag.Circonstances[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Duree')) {
+            } else if (Object.hasOwn(iTag, 'Duree')) {
               item.Duree = iTag.Duree[0]?.['#text'];
             }
           }
@@ -298,17 +315,17 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           } else {
             PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolaireSanction);
           }
-        } else if (Object.prototype.hasOwnProperty.call(pageTag, 'Observation')) {
+        } else if (Object.hasOwn(pageTag, 'Observation')) {
           const item: Partial<ICarnetDeBordVieScolaireObservation> = { type: 'Observation' };
           for (const iTag of pageTag.Observation) {
-            if (Object.prototype.hasOwnProperty.call(iTag, 'Date')) {
+            if (Object.hasOwn(iTag, 'Date')) {
               item.DateString = iTag.Date[0]?.['#text'].toString();
               item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Demandeur')) {
+            } else if (Object.hasOwn(iTag, 'Demandeur')) {
               item.Demandeur = iTag.Demandeur[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Matiere')) {
+            } else if (Object.hasOwn(iTag, 'Matiere')) {
               item.Matiere = iTag.Matiere[0]?.['#text'];
-            } else if (Object.prototype.hasOwnProperty.call(iTag, 'Observation')) {
+            } else if (Object.hasOwn(iTag, 'Observation')) {
               item.Observation = iTag.Observation[0]?.['#text'];
             }
           }
@@ -319,10 +336,14 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           }
         }
       }
+
       PageVieScolaire!.VieScolairePast = sortCarnetDeBordItems(PageVieScolaire!.VieScolairePast!);
       PageVieScolaire!.VieScolaireFuture = sortCarnetDeBordItems(PageVieScolaire!.VieScolaireFuture!);
       (ret as ICarnetDeBord).PageVieScolaire = PageVieScolaire as ICarnetDeBord['PageVieScolaire'];
-    } else if (Object.prototype.hasOwnProperty.call(tag, 'PagePronote')) {
+    }
+
+    // PagePronote
+    else if (Object.hasOwn(tag, 'PagePronote')) {
       if (!(ret as ICarnetDeBord).PagePronote) (ret as ICarnetDeBord).PagePronote = {};
       if (tag[':@']['@_nom'] && tag[':@']['@_page']) {
         (ret as ICarnetDeBord).PagePronote![tag[':@']['@_nom']] = tag[':@']['@_page'];
@@ -340,11 +361,11 @@ function carnetDeBordAdapterParent(
 ): ICarnetDeBord | undefined {
   const found = {} as { firstName?: string; lastName?: string; idPronote?: string };
   for (const tag of eleve) {
-    if (Object.prototype.hasOwnProperty.call(tag, 'Prenom')) {
+    if (Object.hasOwn(tag, 'Prenom')) {
       (found as Required<typeof found>).firstName = tag.Prenom[0]?.['#text'];
-    } else if (Object.prototype.hasOwnProperty.call(tag, 'Nom')) {
+    } else if (Object.hasOwn(tag, 'Nom')) {
       (found as Required<typeof found>).lastName = tag.Nom[0]?.['#text'];
-    } else if (Object.prototype.hasOwnProperty.call(tag, 'IdentifiantPronote')) {
+    } else if (Object.hasOwn(tag, 'IdentifiantPronote')) {
       (found as Required<typeof found>).idPronote = tag.IdentifiantPronote[0]?.['#text'];
     }
   }
@@ -380,14 +401,14 @@ export function carnetDeBordAdapter(data: ICarnetDeBordBackend, children: UserCh
     cdb.xmlResponse = parser.parse(cdb.xmlResponse);
 
     const root = cdb.xmlResponse[0] as any; // `any` is used to represent the server raw xml in json.
-    if (Object.prototype.hasOwnProperty.call(root, 'Parent')) {
+    if (Object.hasOwn(root, 'Parent')) {
       for (const tag of root.Parent) {
-        if (Object.prototype.hasOwnProperty.call(tag, 'Eleve')) {
+        if (Object.hasOwn(tag, 'Eleve')) {
           const parsedEleve = carnetDeBordAdapterParent(tag.Eleve, cdb, children);
           if (parsedEleve) retAsObject[parsedEleve.id] = parsedEleve;
         }
       }
-    } else if (Object.prototype.hasOwnProperty.call(root, 'Eleve')) {
+    } else if (Object.hasOwn(root, 'Eleve')) {
       const parsedEleve = carnetDeBordAdapterEleve(root.Eleve, cdb);
       const session = assertSession();
       if (parsedEleve)
