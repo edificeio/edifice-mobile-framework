@@ -19,7 +19,7 @@ export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
 export default {
   get: async (session: AuthActiveAccount, children: UserChildrenFlattened, matchingApps: IEntcoreApp[]) => {
     const api = `/sso/pronote`;
-    let data = await sessionFetch.json<any>(api);
+    let data = await sessionFetch(api);
     if (!data || typeof data === 'string') throw new Error('[carnetDeBord] received data is not Response.');
     if (data.status >= 500 && data.status < 600) {
       // If 50x, call every connector manually
@@ -31,7 +31,7 @@ export default {
         }),
       );
       // Then, retry
-      data = await sessionFetch.json<any>(api);
+      data = await sessionFetch(api);
       if (!data || typeof data === 'string') throw new Error('[carnetDeBord] received data is not Response.');
       if (data.status >= 500 && data.status < 600) {
         throw new PronoteCdbInitError('[carnetDeBord] 50x encourntered after trying to init connectors');
