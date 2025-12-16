@@ -21,6 +21,7 @@ export default new NavigableModuleConfig<'edt', IEdtReduxState>({
   displayPicture: theme.apps.edt.icon,
   entcoreScope: ['edt'],
 
+  entcoreTrackingName: 'Edt',
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
   name: 'edt',
   storageName: 'edt',

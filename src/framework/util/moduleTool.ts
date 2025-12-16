@@ -98,6 +98,7 @@ interface IModuleConfigRedux<State> extends IModuleConfigDeclarationRedux {
 }
 interface IModuleConfigTracking {
   trackingName: string; // Name used for tracking category. Computed from `name` if not specified.
+  entcoreTrackingName?: string;
 }
 interface IModuleConfigStorage {
   storageName: string; // Name used for storage namespace. Needs to be manually specified to prevent erros if module name changes across time
@@ -154,6 +155,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
   getState: IModuleConfig<Name, State>['getState'];
 
   trackingName: IModuleConfig<Name, State>['trackingName'];
+  entcoreTrackingName?: IModuleConfig<Name, State>['entcoreTrackingName'];
 
   storageName: IModuleConfig<Name, State>['storageName'];
   fileManager?: IModuleFileManagerConfig;
@@ -163,6 +165,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
       actionTypesPrefix,
       apiName,
       entcoreScope,
+      entcoreTrackingName,
       fileManager,
       hasRight,
       matchEntcoreApp,
@@ -194,6 +197,8 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.getState = (globalState: IGlobalState) => globalState[this.reducerName];
     // Tracking
     this.trackingName = trackingName ?? toCamelCase(this.name, true);
+    this.entcoreTrackingName = entcoreTrackingName;
+
     // Storage
     this.storageName = storageName;
     // file manager
@@ -248,7 +253,9 @@ export interface IModule<
   ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
-> extends IModuleBase<Name, ConfigType, State>,
+>
+  extends
+    IModuleBase<Name, ConfigType, State>,
     IModuleRedux<State, ActionType>,
     IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {
   // ToDo add Module methods here
@@ -261,7 +268,9 @@ export interface IModuleDeclaration<
   ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
-> extends IModuleBase<Name, ConfigType, State>,
+>
+  extends
+    IModuleBase<Name, ConfigType, State>,
     IModuleRedux<State, ActionType>,
     IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {}
 
@@ -277,8 +286,7 @@ export class Module<
   ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-> implements IModule<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
-{
+> implements IModule<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
   // Gathered from declaration
   config: ConfigType;
 
@@ -594,14 +602,14 @@ export interface INavigableModule<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
 > extends INavigableModuleBase<
-    Name,
-    ConfigType,
-    State,
-    ActionType,
-    Root,
-    ModuleStorageSliceTypeMap,
-    ModulePreferencesSliceTypeMap
-  > {
+  Name,
+  ConfigType,
+  State,
+  ActionType,
+  Root,
+  ModuleStorageSliceTypeMap,
+  ModulePreferencesSliceTypeMap
+> {
   // ToDo add Module methods here
 }
 
@@ -613,18 +621,20 @@ export interface INavigableModuleDeclaration<
   Root extends React.ReactElement,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-> extends INavigableModuleBase<Name, ConfigType, State, ActionType, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
+>
+  extends
+    INavigableModuleBase<Name, ConfigType, State, ActionType, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
     IModuleRedux<State, ActionType> {}
 
 export class NavigableModule<
-    Name extends string,
-    ConfigType extends INavigableModuleConfig<Name, State>,
-    State,
-    ActionType extends Action,
-    Root extends React.ReactElement,
-    ModuleStorageSliceTypeMap extends StorageTypeMap = object,
-    ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
-  >
+  Name extends string,
+  ConfigType extends INavigableModuleConfig<Name, State>,
+  State,
+  ActionType extends Action,
+  Root extends React.ReactElement,
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
+>
   extends Module<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
   implements IModule<Name, ConfigType, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
 {
@@ -752,7 +762,7 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     return this;
   }
 
-  initModuleConfigs(session: AuthActiveAccount) {
+  initModuleConfigs(session: AuthActiveAccount, afterInit?: (modules: ModuleArray<ModuleType>) => void) {
     this.forEach(m => {
       m.config.init({
         matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
@@ -760,6 +770,7 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
         session,
       });
     });
+    afterInit?.(this);
     return this;
   }
 }

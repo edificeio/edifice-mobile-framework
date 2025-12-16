@@ -17,6 +17,7 @@ export default new NavigableModuleConfig<'competences', ICompetencesReduxState>(
   displayPicture: theme.apps.competences.icon,
   entcoreScope: ['competences'],
 
+  entcoreTrackingName: 'Competences',
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
   name: 'competences',
   storageName: 'competences',

@@ -11,6 +11,7 @@ export default new NavigableModuleConfig<'scrapbook', ScrapbookStore>({
   displayPicture: theme.apps.scrapbook.icon,
 
   entcoreScope: ['scrapbook'],
+  entcoreTrackingName: 'Scrapbook',
   matchEntcoreApp: '/scrapbook',
   name: 'scrapbook',
   storageName: 'scrapbook',

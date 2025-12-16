@@ -20,6 +20,7 @@ export default new NavigableModuleConfig<'presences', PresencesReduxState>({
   displayI18n: 'presences-moduleconfig-appname',
   displayPicture: theme.apps.presences.icon,
   entcoreScope: ['presences'],
+  entcoreTrackingName: 'Presences',
   fileManager: {
     attachment: {
       allow: ['image', 'document'],
