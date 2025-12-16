@@ -22,51 +22,33 @@ import {
   sortCarnetDeBordItems,
 } from '~/framework/modules/pronote/model/carnet-de-bord';
 
-const handleSimpleField = (itemTag, item) => {
-  const simpleFieldMap = {
-    Competence: tag => (item.Competence = tag[0]?.['#text']),
-    Date: tag => {
-      const str = tag[0]?.['#text']?.toString();
-      item.DateString = str;
-      item.Date = str ? moment(str) : undefined;
-    },
-    Intitule: tag => (item.Intitule = tag[0]?.['#text']),
-    Matiere: tag => (item.Matiere = tag[0]?.['#text']),
-  };
-
-  for (const key in simpleFieldMap) {
-    if (Object.hasOwn(itemTag, key)) {
-      simpleFieldMap[key](itemTag[key]);
-      return true;
-    }
-  }
-
-  return false;
-};
-
-const handleNiveauDAcquisition = (ndaTags, item) => {
-  const nda: Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']> = {};
-
-  for (const tag of ndaTags) {
-    if (Object.hasOwn(tag, 'Genre')) {
-      nda.Genre = tag.Genre[0]?.['#text'];
-    } else if (Object.hasOwn(tag, 'Libelle')) {
-      nda.Libelle = tag.Libelle[0]?.['#text'];
-    }
-  }
-
-  if (nda.Genre !== undefined && nda.Libelle !== undefined) {
-    item.NiveauDAcquisition = nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'];
-  }
-};
-
 const parseCompetencesItem = (itemTag, item) => {
-  // handling simple keys first
-  if (handleSimpleField(itemTag, item)) return;
-
-  // Handle special case NiveauDAcquisition
-  if (Object.hasOwn(itemTag, 'NiveauDAcquisition')) {
-    handleNiveauDAcquisition(itemTag.NiveauDAcquisition, item);
+  if (Object.hasOwn(itemTag, 'Date')) {
+    (item as ICarnetDeBordCompetencesItem).DateString = itemTag.Date[0]?.['#text'].toString();
+    (item as ICarnetDeBordCompetencesItem).Date = (item as ICarnetDeBordCompetencesItem).DateString
+      ? moment(itemTag.Date[0]?.['#text'].toString())
+      : undefined;
+  } else if (Object.hasOwn(itemTag, 'Competence')) {
+    (item as ICarnetDeBordCompetencesItem).Competence = itemTag.Competence[0]?.['#text'];
+  } else if (Object.hasOwn(itemTag, 'Intitule')) {
+    (item as ICarnetDeBordCompetencesItem).Intitule = itemTag.Intitule[0]?.['#text'];
+  } else if (Object.hasOwn(itemTag, 'Matiere')) {
+    (item as ICarnetDeBordCompetencesItem).Matiere = itemTag.Matiere[0]?.['#text'];
+  } else if (Object.hasOwn(itemTag, 'NiveauDAcquisition')) {
+    const nda = {};
+    for (const ndaTag of itemTag.NiveauDAcquisition) {
+      if (Object.hasOwn(ndaTag, 'Genre')) {
+        (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'])!.Genre = ndaTag.Genre[0]?.['#text'];
+      } else if (Object.hasOwn(ndaTag, 'Libelle')) {
+        (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'])!.Libelle = ndaTag.Libelle[0]?.['#text'];
+      }
+    }
+    if (
+      (nda as Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']>)!.Genre !== undefined &&
+      (nda as Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']>)!.Libelle !== undefined
+    ) {
+      (item as ICarnetDeBordCompetencesItem).NiveauDAcquisition = nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'];
+    }
   }
 };
 
@@ -79,6 +61,7 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
 
   for (const tag of data) {
     // CahierDeTextes
+
     if (Object.hasOwn(tag, 'PageCahierDeTextes')) {
       const PageCahierDeTextes: Partial<ICarnetDeBord['PageCahierDeTextes']> = {};
       if (!PageCahierDeTextes?.TravailAFairePast) PageCahierDeTextes.TravailAFairePast = [];
@@ -336,14 +319,10 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
           }
         }
       }
-
       PageVieScolaire!.VieScolairePast = sortCarnetDeBordItems(PageVieScolaire!.VieScolairePast!);
       PageVieScolaire!.VieScolaireFuture = sortCarnetDeBordItems(PageVieScolaire!.VieScolaireFuture!);
       (ret as ICarnetDeBord).PageVieScolaire = PageVieScolaire as ICarnetDeBord['PageVieScolaire'];
-    }
-
-    // PagePronote
-    else if (Object.hasOwn(tag, 'PagePronote')) {
+    } else if (Object.hasOwn(tag, 'PagePronote')) {
       if (!(ret as ICarnetDeBord).PagePronote) (ret as ICarnetDeBord).PagePronote = {};
       if (tag[':@']['@_nom'] && tag[':@']['@_page']) {
         (ret as ICarnetDeBord).PagePronote![tag[':@']['@_nom']] = tag[':@']['@_page'];
