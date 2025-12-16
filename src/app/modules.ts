@@ -9,8 +9,10 @@ import {
   loadModules,
   ModuleArray,
   NavigableModule,
-  NavigableModuleArray
+  NavigableModuleArray,
 } from '~/framework/util/moduleTool';
+import { ConcreteEntcoreTracker } from '~/framework/util/tracker';
+import { buildEntcoreModuleAccessMap } from '~/framework/util/tracker/entcoreModuleAccessMap';
 
 // We first imports all modules and their code hierarchy. Registrations are executed,
 // and then, we call initModules to instanciate RootComponents for each module.
@@ -45,7 +47,9 @@ export default () => {
 export const setUpModulesAccess = (sessionIfExists?: AuthActiveAccount) => {
   if (AllModules) {
     if (!sessionIfExists) return [];
-    AllModules.initModuleConfigs(sessionIfExists);
+    AllModules.initModuleConfigs(sessionIfExists, mods => {
+      ConcreteEntcoreTracker.setModuleAccessMap(buildEntcoreModuleAccessMap(mods));
+    });
     const ret = dynamiclyRegisterModules(AllModules.filter(m => m instanceof NavigableModule) as NavigableModuleArray);
     // We only init module with rights, some without arn't expected to work right (it's a pun 🤭).
     AllModules.filterAvailables(sessionIfExists).initModules(sessionIfExists);

@@ -189,6 +189,11 @@ export abstract class AbstractTracker<OptionsType> {
 }
 
 export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
+  static moduleAccessMap: Record<string, string> = {};
+
+  static setModuleAccessMap(map: Record<string, string>) {
+    ConcreteEntcoreTracker.moduleAccessMap = map;
+  }
   errorCount: number = 0;
   lastModulename: string | undefined = undefined;
   reportQueue: Request[] = [];
@@ -220,45 +225,29 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
 
   async _trackView(path: string[]) {
     const platform = getSession()?.platform;
+
     const moduleName = (
       path[0] === 'timeline' ? (['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase()) ? path[2] : 'timeline') : path[0]
     ).toLowerCase();
-    const moduleAccessMap = {
-      blog: 'Blog',
-      communities: 'Communities',
-      competences: 'Competences',
-      diary: 'Diary',
-      edt: 'Edt',
-      form: 'Formulaire',
-      homework: 'Homeworks',
-      homeworkAssistance: 'HomeworkAssistance',
-      mails: 'Conversation',
-      mediacentre: 'Mediacentre',
-      messagerie: 'Conversation',
-      nabook: 'Nabook',
-      news: 'Actualites',
-      presences: 'Presences',
-      schoolbook: 'SchoolBook',
-      scrapbook: 'Scrapbook',
-      support: 'Support',
-      user: 'MyAccount',
-      wiki: 'Wiki',
-      workspace: 'Workspace',
-      zimbra: 'Zimbra',
-    };
-    let willLog = false;
-    if (platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
+
+    const moduleAccessMap = ConcreteEntcoreTracker.moduleAccessMap;
+
+    const willLog = !!platform && this.lastModulename !== moduleName && Object.hasOwn(moduleAccessMap, moduleName);
+
+    if (willLog) {
       const module = moduleAccessMap[moduleName];
+
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
-          body: JSON.stringify({ module: module }),
+          body: JSON.stringify({ module }),
           method: 'POST',
         }),
       );
+
       console.debug(`[EntcoreTracker] Report queued: ${module}`);
       this.lastModulename = moduleName;
-      willLog = moduleAccessMap[moduleName];
     }
+
     this.sendReportQueue();
     return willLog;
   }
