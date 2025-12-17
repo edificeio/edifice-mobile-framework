@@ -23,7 +23,7 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
   if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
     try {
       const session = assertSession();
-      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(session.user.id, true);
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(session.user.id, session.platform, true);
     } catch (err) {
       if (isFailing) throw err;
       isFailing = true;

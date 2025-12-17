@@ -15,6 +15,7 @@
       "~/*": ["./src/*"],
       "ASSETS/*": ["./assets/*"]
     },
+    "types": ["node"],
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true ,

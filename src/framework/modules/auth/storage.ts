@@ -1,7 +1,14 @@
-import { AuthActiveAccount, AuthSavedAccount, AuthSavedLoggedInAccount, getSerializedLoggedInAccountInfo } from './model';
+import {
+  accountIsLoggable,
+  AuthActiveAccount,
+  AuthSavedAccount,
+  AuthSavedLoggedInAccount,
+  getSerializedLoggedInAccountInfo,
+} from './model';
 import moduleConfig from './module-config';
 import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
 
+import appConf from '~/framework/util/appConf';
 import { Storage } from '~/framework/util/storage';
 import type { IOAuthToken } from '~/infra/oauth';
 
@@ -19,7 +26,26 @@ export interface AuthStorageData {
 export const storage = Storage.slice<AuthStorageData>().withModule(moduleConfig);
 // No storage init for auth, the functions below manage the item migration by custom logic.
 
-export const readSavedAccounts = () => storage.getJSON('accounts') ?? {};
+export const readSavedAccounts = () => {
+  const raw = storage.getJSON('accounts');
+  if (!raw) return {};
+
+  // Need to populate origin for tokens generated before v1.16.3
+  return Object.fromEntries(
+    Object.entries(raw).map(([key, value]) => {
+      if (accountIsLoggable(value)) {
+        return [
+          key,
+          {
+            ...value,
+            tokens: { ...value.tokens, origin: value.tokens.origin ?? appConf.getExpandedPlatform(value.platform)?.url },
+          },
+        ];
+      }
+      return [key, value];
+    }),
+  );
+};
 export const readSavedStartup = () => {
   let startup = storage.getJSON('startup');
   const oldCurrentPlatform = Storage.global.getString('currentPlatform');

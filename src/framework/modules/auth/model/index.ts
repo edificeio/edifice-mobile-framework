@@ -97,8 +97,7 @@ interface AuthSavedAccountWithFederation {
 // Mixup between logged status and auth method
 
 export interface AuthSavedLoggedOutAccountWithCredentials
-  extends AuthSavedAccountWithCredentials,
-    AuthSavedLoggedOutAccountCommon {}
+  extends AuthSavedAccountWithCredentials, AuthSavedLoggedOutAccountCommon {}
 export interface AuthSavedLoggedInAccountWithCredentials extends AuthSavedAccountWithCredentials, AuthSavedLoggedInAccountCommon {}
 
 export interface AuthSavedLoggedOutAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedOutAccountCommon {}
@@ -235,6 +234,7 @@ export interface AuthTokenSet {
   queryParam?: AuthQueryParamToken;
   oneSessionId?: AuthToken;
   scope: string[];
+  origin: string;
 }
 
 export interface AuthActiveAccountRights {

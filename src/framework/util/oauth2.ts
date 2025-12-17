@@ -118,7 +118,7 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
       'Authorization': createDeviceAuthenticationHeader(platform.oauth.client_id, platform.oauth.client_secret),
       'Content-Type': 'application/x-www-form-urlencoded',
     };
-    const response = await platformFetch.json<API.OAuth2ResponseOK>(platform, '/auth/oauth2/token', {
+    const response = await platformFetch(platform, '/auth/oauth2/token', {
       body: new URLSearchParams(body).toString(),
       headers,
       method: 'post',
@@ -142,7 +142,9 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
  * @returns An AuthTokenSet containing access and refresh tokens, along with their metadata.
  * @throws Will throw an error if the token type is not 'Bearer'.
  */
-const tokenFactory = (data: Partial<API.OAuth2ResponseOK>): AuthTokenSet => {
+const tokenFactory = async (response: Response): Promise<AuthTokenSet> => {
+  const data = (await response.json()) as Partial<API.OAuth2ResponseOK>;
+  const origin = new URL(response.url).origin;
   if (data.token_type !== 'Bearer')
     throw new FetchError(FetchErrorCode.BAD_RESPONSE, `[OAuth2] Unsupported token type: ${data.token_type}`);
   if (!data.access_token || !data.refresh_token || !data.scope)
@@ -153,6 +155,7 @@ const tokenFactory = (data: Partial<API.OAuth2ResponseOK>): AuthTokenSet => {
       type: data.token_type,
       value: data.access_token,
     },
+    origin,
     refresh: {
       value: data.refresh_token,
     },

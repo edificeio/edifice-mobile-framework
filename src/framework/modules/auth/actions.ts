@@ -352,7 +352,7 @@ export const loginSteps = {
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
 export function deactivateLoggedAccountActionIfApplicable(action?: AnyAction | ThunkAction<void, IGlobalState, any, AnyAction>) {
-  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  return async (dispatch: ThunkDispatch<any, any, any>) => {
     const account = getSession();
     if (account) {
       // Unregister the device token from the backend
@@ -390,12 +390,12 @@ const getLoginFunctions = {
       redirectCancel: actions.addAccountRedirectCancel,
       requirement:
         (...args: Parameters<typeof actions.addAccountRequirement>) =>
-        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+        async (dispatch: AuthDispatch) => {
           await dispatch(deactivateLoggedAccountActionIfApplicable(actions.addAccountRequirement(...args)));
         },
       success:
         (...args: Parameters<typeof actions.addAccount>) =>
-        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+        async (dispatch: AuthDispatch) => {
           await dispatch(deactivateLoggedAccountActionIfApplicable(actions.addAccount(...args)));
         },
       writeStorage: writeCreateAccount,
@@ -440,12 +440,12 @@ const getLoginFunctions = {
       redirectCancel: actions.redirectCancel,
       requirement:
         (...args: Parameters<typeof actions.addAccountRequirement>) =>
-        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+        async (dispatch: AuthDispatch) => {
           await dispatch(deactivateLoggedAccountActionIfApplicable(actions.replaceAccountRequirement(id, ...args)));
         },
       success:
         (...args: Parameters<typeof actions.addAccount>) =>
-        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+        async (dispatch: AuthDispatch) => {
           await dispatch(deactivateLoggedAccountActionIfApplicable(actions.replaceAccount(id, ...args)));
         },
       writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
@@ -653,7 +653,12 @@ const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedLogg
       if (!OAuth2RessourceOwnerPasswordClient.connection) {
         throw new OAuth2Error(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
       }
-      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(accountToRestore.user.id, false);
+      appConf.assertPlatformOfName(accountToRestore.platform);
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(
+        accountToRestore.user.id,
+        appConf.getExpandedPlatform(accountToRestore.platform)!,
+        false,
+      );
       const session = await performLogin(
         functions,
         appConf.assertPlatformOfName(accountToRestore.platform),
@@ -732,7 +737,7 @@ export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
 
 const activateAccountAction =
   (reduxActions: AuthLoginFunctions, platform: Platform, model: ActivationPayload) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState) => {
+  async (dispatch: ThunkDispatch<any, any, any>) => {
     let activationWasDone = false;
     try {
       await authService.activateAccount(platform, model);
@@ -797,7 +802,7 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
 
 /** Action that erases the session without Tracking anything. */
 export function quietLogoutAction() {
-  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  return async (dispatch: ThunkDispatch<any, any, any>) => {
     // Unregister the device token from the backend
     const account = assertSession();
     await firebaseService.disablePushNotificationsForAccount(account);
@@ -814,7 +819,7 @@ export function quietLogoutAction() {
 }
 
 export function invalidateSessionAction() {
-  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  return async (dispatch: ThunkDispatch<any, any, any>) => {
     const account = assertSession();
     await firebaseService.disablePushNotificationsForAccount(account);
     await clearRequestsCacheLegacy();
@@ -829,13 +834,13 @@ export function invalidateSessionAction() {
  * Session must exist and this action will throw if no session is active.
  */
 export function manualLogoutAction() {
-  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  return async (dispatch: ThunkDispatch<any, any, any>) => {
     await dispatch(quietLogoutAction());
   };
 }
 
 export function removeAccountAction(account: AuthLoggedAccount | AuthSavedLoggedInAccount | AuthSavedAccount) {
-  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  return async (dispatch: ThunkDispatch<any, any, any>) => {
     if (accountIsActive(account)) {
       await dispatch(quietLogoutAction());
     }
@@ -868,7 +873,7 @@ function changePasswordAction(
   platform: Platform,
   p: IChangePasswordPayload,
   forceChange?: boolean,
-  rememberMe?: boolean,
+  _rememberMe?: boolean,
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {

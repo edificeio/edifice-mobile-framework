@@ -20,7 +20,7 @@ import {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
-import { Platform } from '~/framework/util/appConf';
+import appConf, { Platform } from '~/framework/util/appConf';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
 export interface AuthPendingRestore {
@@ -346,7 +346,8 @@ const reducer = createReducer(initialState, {
     if (pending && startup.account) {
       (pending as AuthPendingRestore).account = startup.account;
     }
-    if (pending && startup.anonymousToken) {
+    const pendingPlatform = startup.platform ? appConf.getExpandedPlatform(startup.platform) : undefined;
+    if (pending && startup.anonymousToken && pendingPlatform) {
       (pending as AuthPendingRestore).account = ANONYMOUS_ACCOUNT_ID;
       realAccounts = {
         ...realAccounts,
@@ -360,6 +361,7 @@ const reducer = createReducer(initialState, {
               type: startup.anonymousToken.token_type as 'Bearer',
               value: startup.anonymousToken.access_token,
             },
+            origin: pendingPlatform.url,
             refresh: {
               value: startup.anonymousToken.refresh_token,
             },
@@ -434,6 +436,7 @@ const reducer = createReducer(initialState, {
     const { account, id } = action as unknown as ActionPayloads['replaceAccount'];
     const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
     if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
+    console.info('REPLACE_ACCOUNT', account);
     return {
       ...state,
       accounts: { ...newAccounts, [account.user.id]: account },
@@ -517,7 +520,7 @@ const reducer = createReducer(initialState, {
     };
   },
 
-  [actionTypes.logout]: (state, action) => {
+  [actionTypes.logout]: state => {
     const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthLoggedAccount | undefined;
     if (!currentAccount) return state;
     return {
@@ -531,7 +534,7 @@ const reducer = createReducer(initialState, {
     };
   },
 
-  [actionTypes.deactivate]: (state, action) => {
+  [actionTypes.deactivate]: state => {
     const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthLoggedAccount | undefined;
     if (!currentAccount) return state;
     return {
@@ -603,7 +606,7 @@ const reducer = createReducer(initialState, {
     return { ...state, accounts: { ...state.accounts, [id]: newAccount } };
   },
 
-  [actionTypes.addAccountInit]: (state, action) => {
+  [actionTypes.addAccountInit]: state => {
     return { ...state, error: undefined, pendingAddAccount: undefined };
   },
 
@@ -652,7 +655,7 @@ const reducer = createReducer(initialState, {
     };
   },
 
-  [actionTypes.invalidate]: (state, action) => {
+  [actionTypes.invalidate]: state => {
     const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthLoggedAccount | undefined;
     if (!currentAccount) return state;
     return {

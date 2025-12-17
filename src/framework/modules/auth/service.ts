@@ -316,7 +316,7 @@ export function formatSession(
       authorizedActions: userinfo.authorizedActions,
       widgets: userinfo.widgets,
     },
-    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
+    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(platform),
     user: user as AuthActiveUserInfo,
   } as AuthActiveAccountWithCredentials | AuthActiveAccountWithSaml;
 }

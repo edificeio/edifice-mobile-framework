@@ -403,10 +403,11 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Return a serialisable object representing the current tokens
    * @returns the boect representing the token to be stored somewhere.
    */
-  public exportToken(): AuthTokenSet {
+  public exportToken(platform: Platform): AuthTokenSet {
     if (!this.token) throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth] exportToken : no token');
     return {
       access: { expiresAt: this.token.expires_at.toISOString(), type: 'Bearer', value: this.token.access_token },
+      origin: platform.url,
       refresh: { value: this.token.refresh_token },
       scope: this.token.scope.split(' '),
     };
@@ -443,7 +444,11 @@ export class OAuth2RessourceOwnerPasswordClient {
   /**
    * Refresh the user access token.
    */
-  public async refreshToken(userId: AuthSavedAccount['user']['id'], updateRedux?: boolean): Promise<IOAuthToken> {
+  public async refreshToken(
+    userId: AuthSavedAccount['user']['id'],
+    platform: Platform,
+    updateRedux?: boolean,
+  ): Promise<IOAuthToken> {
     if (!this.clientInfo) {
       throw new Error.OAuth2Error(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
     }
@@ -482,7 +487,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
       // Update stored token
-      this.updateToken(userId, this.exportToken(), updateRedux);
+      this.updateToken(userId, this.exportToken(platform), updateRedux);
       return this.token!;
     } catch (err) {
       console.error('[oAuth2] failed refresh token', err);
