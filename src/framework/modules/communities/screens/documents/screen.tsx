@@ -104,9 +104,7 @@ export default (function CommunitiesDocumentsScreen({
         accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
         accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
         accountApi(session, moduleConfig, ResourceClient).getResources(communityId, { folderId, page: page + 1, size: PAGE_SIZE }),
-        accountApi(session, moduleConfig, FolderClient)
-          .getFolders(communityId, { page: 1, parentId: folderId, rootOnly: folderId === undefined, size: 256 })
-          .then(dto => formatFolders(dto.items)),
+        accountApi(session, moduleConfig, FolderClient).getFolders(communityId, { parentId: folderId }).then(formatFolders),
       ]);
       setCommunityData({
         ...community,
