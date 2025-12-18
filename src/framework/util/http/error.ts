@@ -114,6 +114,8 @@ export enum FetchErrorCode {
   NOT_LOGGED = 'FetchErrorCode|NOT_LOGGED',
   /** HTTP status != 2xx */
   NOT_OK = 'FetchErrorCode|NOT_OK',
+  /** Blocking signed request to another origin */
+  TOKEN_ORIGIN_MISMATCH = 'FetchErrorCode|TOKEN_ORIGIN_MISMATCH',
 }
 
 /**

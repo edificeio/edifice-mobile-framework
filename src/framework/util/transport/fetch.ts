@@ -204,29 +204,33 @@ tokenFetch.json = async <ReturnType>(tokens: Parameters<typeof getTokenFetch>[0]
 // # ACCOUNT (signed) FETCH
 
 export function getAccountFetch(account: AuthSavedLoggedInAccount | AuthActiveAccount) {
+  // 1. Get platform
   const platform = typeof account.platform === 'string' ? appConf.getExpandedPlatform(account.platform) : account.platform;
   if (!platform) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[getAccountFetch] No platform provided');
-  const _platformFetch = getPlatformFetch(platform);
-  if (account.tokens.origin !== platform.url) {
-    console.warn(
+  // 2. Check token origin match platform url
+  if (platform.url !== account.tokens.origin) {
+    console.error(
       `⚠️ Warning: you're trying to sign a request to ${platform.url} with a token obtained from ${account.tokens.origin}.\n
       For security reasons, the auth token won't be included to this request.`,
     );
-    return _platformFetch;
-  } else
-    return async (input: Parameters<typeof _platformFetch>[0], init: Parameters<typeof _platformFetch>[1]) => {
-      if (isTokenExpired(account.tokens.access)) {
-        await refreshTokenForAccount(account);
-        // ToDo: What to do if the refresh token fails?
-      }
-      return await _platformFetch(input, {
-        ...init,
-        headers: {
-          ...getAuthenticationHeaderForAccount(account),
-          ...init?.headers,
-        },
-      });
-    };
+    throw new FetchError(FetchErrorCode.TOKEN_ORIGIN_MISMATCH);
+  }
+  const _platformFetch = getPlatformFetch(platform);
+  return async (input: Parameters<typeof _platformFetch>[0], init: Parameters<typeof _platformFetch>[1]) => {
+    // 3. Refresh token if needed
+    if (isTokenExpired(account.tokens.access)) {
+      await refreshTokenForAccount(account);
+      // ToDo: What to do if the refresh token fails?
+    }
+    // 4. Send request
+    return await _platformFetch(input, {
+      ...init,
+      headers: {
+        ...getAuthenticationHeaderForAccount(account),
+        ...init?.headers,
+      },
+    });
+  };
 }
 
 export function accountFetch(account: Parameters<typeof getAccountFetch>[0], ...fetchArgs: Parameters<typeof fetch>) {
