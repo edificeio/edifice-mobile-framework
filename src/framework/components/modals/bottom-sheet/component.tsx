@@ -10,6 +10,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useHeaderHeight } from '@react-navigation/elements';
+import DeviceInfo from 'react-native-device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -33,12 +34,23 @@ export interface CustomBottomSheetModalProps extends BottomSheetModalProps {
 
 const EDGES = ['left', 'right', 'bottom'] as const;
 
+const ANDROID_9_API = 28;
+
 export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
   (
     { additionalTopInset = 0, children: Content, closeButton, gutters = true, header: _header, includeSafeArea = true, ...props },
     ref,
   ) => {
-    const viewStyle = React.useMemo(() => [gutters ? { paddingHorizontal: UI_SIZES.spacing.big } : undefined], [gutters]);
+    const viewStyle = React.useMemo(
+      () => [
+        gutters ? { paddingHorizontal: UI_SIZES.spacing.big } : undefined,
+        // Android 9 and below have issue where tabBar overlays bottomsheet
+        Platform.OS === 'android' && DeviceInfo.getApiLevelSync() <= ANDROID_9_API
+          ? { paddingBottom: UI_SIZES.elements.tabbarHeight }
+          : undefined,
+      ],
+      [gutters],
+    );
 
     const AreaWrapper = includeSafeArea ? SafeAreaView : React.Fragment;
 
