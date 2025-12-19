@@ -4,9 +4,7 @@
         <domain includeSubdomains="true">10.0.1.1</domain>
         <domain includeSubdomains="true">127.0.0.1</domain>
         <domain includeSubdomains="true">localhost</domain>
-        <domain includeSubdomains="true">authentification.ac-martinique.fr</domain>
         <domain includeSubdomains="true">id.ac-nice.fr</domain>
-        <domain includeSubdomains="true">extranet.ac-guyane.fr</domain>
         <domain includeSubdomains="true">extranet.ac-reims.fr</domain>
         <domain includeSubdomains="true">moncompte.ac-nantes.fr</domain>
         <domain includeSubdomains="true">extranet.ac-versailles.fr</domain>
@@ -93,6 +91,27 @@
         <trust-anchors>
             <certificates src="system"/>
             <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">authentification.ac-martinique.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca" />
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">extranet.ac-guyane.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca" />
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">extranet.ac-mayotte.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
 </network-security-config>
