@@ -36,7 +36,7 @@ export function applyAppsToModules(modules: NavigableModuleArray<AnyNavigableMod
       assignValues: (values: Partial<INavigableModuleConfigDeclaration<string>>) => void;
     };
 
-    if (!app || !app.display) {
+    if (!app?.display) {
       navConfig.assignValues({
         displayAs: undefined,
       });

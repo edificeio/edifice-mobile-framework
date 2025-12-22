@@ -4,17 +4,12 @@ export interface AppsInfo {
   name: string;
   displayName: string;
   display: boolean;
-
   address: string;
   target?: string;
   prefix?: string;
-
   icon?: string;
   color?: string;
-
   type: AppType;
-  isExternal: boolean;
-
   isFavorite: boolean;
   //see if we gonna use this one
   isPinned: boolean;
@@ -27,6 +22,7 @@ export interface ApplicationsConfig {
   libraries: string;
   name: string;
 }
+
 export interface AppBookmarks {
   applications: string[];
   bookmarks: string[];

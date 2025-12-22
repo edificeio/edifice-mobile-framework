@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Image, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -106,11 +106,12 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
   const msgs = flashMessages ?? [];
   const notifs = notifications && notifications.data ? notifications.data : [];
   const ret = [] as (ITimelineItem & { key: string })[];
-  for (const fm of msgs) {
-    if (!fm.dismiss) {
-      ret.push({ data: fm, key: fm.id.toString(), type: ITimelineItemType.FLASHMSG });
+  if (msgs.length)
+    for (const fm of msgs) {
+      if (!fm.dismiss) {
+        ret.push({ data: fm, key: fm.id.toString(), type: ITimelineItemType.FLASHMSG });
+      }
     }
-  }
   for (const n of notifs) {
     ret.push({ data: n, key: n.id, type: ITimelineItemType.NOTIFICATION });
   }
