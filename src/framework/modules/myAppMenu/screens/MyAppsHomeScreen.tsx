@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
+import { getStore } from '~/app/store';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -14,6 +15,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
 import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
+import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 import { isEmpty } from '~/framework/util/object';
 
@@ -38,6 +40,23 @@ const styles = StyleSheet.create({
 });
 
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
+  const [apps, setApps] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    const store = getStore();
+
+    const updateApps = () => {
+      const state = store.getState();
+      const aggregatedApps = selectAggregatedApps(state);
+      setApps(aggregatedApps);
+    };
+
+    updateApps();
+    const unsubscribe = store.subscribe(updateApps);
+    return unsubscribe;
+  }, []);
+
+  console.debug('[MyApps_IN_MyAppsHomeScreen]', apps);
+
   const renderGrid = () => {
     const allModules = (props.modules ?? [])?.sort((a, b) =>
       I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
