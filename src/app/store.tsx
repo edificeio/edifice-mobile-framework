@@ -13,8 +13,8 @@
 import * as React from 'react';
 
 import { connect } from 'react-redux';
-import { Action, applyMiddleware, combineReducers, compose, createStore, Reducer, Store } from 'redux';
-import { thunk } from 'redux-thunk';
+import { Action, applyMiddleware, combineReducers, compose, createStore, Reducer, Store, UnknownAction } from 'redux';
+import { thunk, ThunkDispatch } from 'redux-thunk';
 
 declare var window: any;
 
@@ -64,6 +64,7 @@ export function createMainStore() {
 }
 
 export type IGlobalState = any; // Todo: Make any TS logic that can get composed state from module definitions IF POSSIBLE
+export type AppDispatch = ThunkDispatch<IGlobalState, unknown, UnknownAction>;
 
 /** === Store getter === */
 
