@@ -3,7 +3,10 @@ import { StyleSheet, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { selectAggregatedApps } from '../../mesappli/reducer/selectors';
+
 import { I18n } from '~/app/i18n';
+import { getStore } from '~/app/store';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -37,6 +40,42 @@ const styles = StyleSheet.create({
 });
 
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
+  const [apps, setApps] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const store = getStore();
+
+    const updateApps = () => {
+      const state = store.getState();
+      const aggregatedApps = selectAggregatedApps(state);
+
+      console.debug('[MyApps][legacy]', aggregatedApps);
+      setApps(aggregatedApps);
+    };
+
+    updateApps();
+
+    const unsubscribe = store.subscribe(updateApps);
+
+    return unsubscribe;
+  }, []);
+
+  React.useEffect(() => {
+    if (!apps.length) return;
+
+    apps.forEach(app => {
+      console.debug('[MyApps_IN_MyAppsHomeScreen]', {
+        category: app.config?.category,
+        color: app.config?.color,
+        display: app.display,
+        isFavorite: app.isFavorite,
+        isPinned: app.isPinned,
+        name: app.name,
+        type: app.type,
+      });
+    });
+  }, [apps]);
+
   const renderGrid = () => {
     const allModules = (props.modules ?? [])?.sort((a, b) =>
       I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
