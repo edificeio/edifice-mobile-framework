@@ -7,9 +7,9 @@ import { selectAggregatedApps } from './selectors';
 import { setUpModulesAccess } from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import { buildAppsInfo } from '~/framework/modules/mesappli/buildAppsInfo';
-import moduleConfig from '~/framework/modules/mesappli/module-config';
-import { ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/mesappli/types';
+import { buildAppsInfo } from '~/framework/modules/myapps/buildAppsInfo';
+import moduleConfig from '~/framework/modules/myapps/module-config';
+import { ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
 import { loadModules, NavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 import { signedFetch } from '~/infra/fetchWithCache';
 
@@ -53,10 +53,6 @@ export const fetchAppsAction = (): ThunkAction<Promise<void>, IGlobalState, unkn
 
   try {
     const session = assertSession();
-    console.debug('[fetchAppsAction] session ok', {
-      platform: session.platform?.url,
-      userId: session.user?.id,
-    });
     const [appsRes, configRes, bookmarksRes] = await Promise.all([
       signedFetch(session.platform.url + '/applications-list'),
       signedFetch(session.platform.url + '/myApps/config'),
@@ -94,33 +90,15 @@ export const fetchAppsAction = (): ThunkAction<Promise<void>, IGlobalState, unkn
 
     const entcoreApps = Array.isArray(entcoreAppsRaw) ? entcoreAppsRaw : (entcoreAppsRaw.applications ?? entcoreAppsRaw.apps ?? []);
 
-    console.debug('[fetchAppsAction] entcoreApps normalized', {
-      count: entcoreApps.length,
-      sample: entcoreApps,
-    });
-
     const appsConfig: ApplicationsConfig[] = await configRes.json();
-    console.debug('[fetchAppsAction] appsConfig', {
-      count: appsConfig?.length,
-      sample: appsConfig?.slice?.(0, 3),
-    });
 
     const bookmarksRaw = await bookmarksRes.json();
-    console.debug('[fetchAppsAction] bookmarksRaw', bookmarksRaw);
 
     const bookmarks = JSON.parse(bookmarksRaw.preference);
-    console.debug('[fetchAppsAction] bookmarks parsed', bookmarks);
 
     const modules = loadModules([]);
     const appsInfo = buildAppsInfo(entcoreApps, bookmarks, modules);
-    console.debug('[fetchAppsAction] appsInfo built', {
-      count: appsInfo.length,
-      sample: appsInfo.slice(0, 3),
-    });
-    //.slice(0, 3)
-    console.debug('[fetchAppsAction] dispatching', {
-      type: appsInfoActionTypes.fetchSuccess,
-    });
+
     dispatch(
       appInfoActions.fetchSuccess({
         appsConfig,

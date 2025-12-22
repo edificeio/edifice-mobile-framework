@@ -9,15 +9,6 @@ import { IEntcoreApp, ModuleArray } from '~/framework/util/moduleTool';
  */
 export function buildAppsInfo(entcoreApps: IEntcoreApp[], favorites: AppBookmarks, modules: ModuleArray): AppsInfo[] {
   return entcoreApps.map(app => {
-    console.debug(
-      '[buildAppsInfo] modules loaded:',
-      modules.map(m => ({
-        displayAs: (m.config as any).displayAs,
-        matchEntcoreApp: m.config.matchEntcoreApp,
-        name: m.config.name,
-      })),
-    );
-
     const matchingModule = modules.find(m => {
       const matcher = m.config.matchEntcoreApp;
 
@@ -25,26 +16,12 @@ export function buildAppsInfo(entcoreApps: IEntcoreApp[], favorites: AppBookmark
 
       if (typeof matcher === 'string') {
         const match = app.address === matcher;
-        if (match) {
-          console.debug('[buildAppsInfo][MATCH:string]', {
-            address: app.address,
-            app: app.name,
-            matcher,
-            module: m.config.name,
-          });
-        }
         return match;
       }
 
       if (typeof matcher === 'function') {
         const match = matcher(app, entcoreApps);
-        if (match) {
-          console.debug('[buildAppsInfo][MATCH:function]', {
-            address: app.address,
-            app: app.name,
-            module: m.config.name,
-          });
-        }
+
         return match;
       }
 
@@ -69,16 +46,12 @@ export function buildAppsInfo(entcoreApps: IEntcoreApp[], favorites: AppBookmark
       address: app.address,
       display: app.display,
       displayName: app.displayName,
-
       icon: app.icon,
-      isExternal: !!app.isExternal,
       isFavorite: favorites.bookmarks.includes(app.name),
       isPinned: favorites.applications.includes(app.name),
-
       name: app.name,
       prefix: app.prefix,
       target: app.target ?? undefined,
-
       type,
     };
   });

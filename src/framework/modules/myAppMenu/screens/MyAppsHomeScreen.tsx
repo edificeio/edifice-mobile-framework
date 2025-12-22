@@ -3,8 +3,6 @@ import { StyleSheet, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { selectAggregatedApps } from '../../mesappli/reducer/selectors';
-
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import SecondaryButton from '~/framework/components/buttons/secondary';
@@ -17,6 +15,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
 import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
+import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 import { isEmpty } from '~/framework/util/object';
 
