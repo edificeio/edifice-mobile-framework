@@ -346,7 +346,7 @@ export interface IAppBadgeInfo {
 
 export enum ModuleType {
   HIDDEN_MODULE = 'hiddenModule',
-  MYAPPS_CONNECTOR = 'myAppsConnectors',
+  MYAPPS_CONNECTOR = 'myAppsConnector',
   MYAPPS_MODULE = 'myAppsModule',
   MYAPPS_SECONDARY_MODULE = 'myAppsSecondaryModule',
   MYAPPS_WIDGET = 'myAppsWidget',
