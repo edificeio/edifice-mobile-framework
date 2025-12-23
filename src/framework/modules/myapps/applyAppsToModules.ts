@@ -13,16 +13,10 @@ function buildDisplayPicture(app: AppsInfo): PictureProps | undefined {
   if (!app.icon) return undefined;
 
   if (app.icon.startsWith('http') || app.icon.startsWith('/')) {
-    return {
-      source: { uri: app.icon },
-      type: 'Image',
-    } as const;
+    return { source: { uri: app.icon }, type: 'Image' } as const;
   }
 
-  return {
-    name: app.icon,
-    type: 'Icon',
-  } as const;
+  return { name: app.icon, type: 'Icon' } as const;
 }
 
 export function applyAppsToModules(modules: NavigableModuleArray<AnyNavigableModule>, apps: AppsInfo[]) {
@@ -37,15 +31,14 @@ export function applyAppsToModules(modules: NavigableModuleArray<AnyNavigableMod
     };
 
     if (!app?.display) {
-      navConfig.assignValues({
-        displayAs: undefined,
-      });
+      navConfig.assignValues({ displayAs: undefined });
       return;
     }
-    const displayAs = app.type === 'connector' ? 'myAppsConnector' : 'myAppsModule';
+
+    const displayAs = app.type === 'connector' ? 'myAppsConnector' : app.isMobile ? 'myAppsMobileModule' : 'myAppsWebModule';
+
     navConfig.assignValues({
       displayAs,
-
       displayI18n: app.displayName,
       displayPicture: buildDisplayPicture(app),
     });

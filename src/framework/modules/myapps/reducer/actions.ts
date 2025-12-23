@@ -2,7 +2,6 @@ import { Action, UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { applyAppsToModules } from '../applyAppsToModules';
-import { selectAppsRaw } from './selectors';
 
 import { setUpModulesAccess } from '~/app/modules';
 import { IGlobalState } from '~/app/store';
@@ -16,12 +15,10 @@ import { AnyNavigableModule, IEntcoreApp, NavigableModule, NavigableModuleArray 
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
 }
-
 export interface FetchSuccessAction extends Action {
   type: typeof appsInfoActionTypes.fetchSuccess;
   payload: AppsInfoActionPayloads['fetchSuccess'];
 }
-
 export interface FetchErrorAction extends Action {
   type: typeof appsInfoActionTypes.fetchError;
   error: string;
@@ -34,62 +31,52 @@ export const appsInfoActionTypes = {
 };
 
 export const appInfoActions = {
-  fetchError: (error: string) => ({
-    error,
-    type: appsInfoActionTypes.fetchError,
-  }),
-  fetchStart: () => ({
-    type: appsInfoActionTypes.fetchStart,
-  }),
+  fetchError: (error: string) => ({ error, type: appsInfoActionTypes.fetchError }),
+  fetchStart: () => ({ type: appsInfoActionTypes.fetchStart }),
   fetchSuccess: (payload: { appsInfo: AppsInfo[]; appsConfig: ApplicationsConfig[]; entcoreApps: IEntcoreApp[] }) => ({
     payload,
     type: appsInfoActionTypes.fetchSuccess,
   }),
 };
 
-export const fetchAppsAction = (): ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction> => async dispatch => {
-  dispatch(appInfoActions.fetchStart());
-
-  try {
-    const session = assertSession();
-
-    const [entcoreApps, appsConfig, bookmarks] = await Promise.all([
-      myAppsService.list(session),
-      myAppsService.config(session),
-      myAppsService.bookmarks(session),
-    ]);
-
-    const appsInfo = buildAppsInfo(entcoreApps, bookmarks);
-
-    dispatch(
-      appInfoActions.fetchSuccess({
-        appsConfig,
-        appsInfo,
-        entcoreApps,
-      }),
-    );
-  } catch (e) {
-    console.error('[fetchAppsAction] ERROR', e);
-    dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
-  }
-};
-
 export const afterLoginSetup =
-  (session): ThunkAction<void, IGlobalState, unknown, UnknownAction> =>
-  (_, getState) => {
-    const modules = setUpModulesAccess(session) as AnyNavigableModule[];
+  (session): ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction> =>
+  async dispatch => {
+    dispatch(appInfoActions.fetchStart());
 
-    const navigableModules = new NavigableModuleArray<AnyNavigableModule>(...modules.filter(m => m instanceof NavigableModule));
+    try {
+      const modules = setUpModulesAccess(session) as AnyNavigableModule[];
+      const navigableModules = new NavigableModuleArray<AnyNavigableModule>(...modules.filter(m => m instanceof NavigableModule));
 
-    const { appsInfo } = selectAppsRaw(getState());
+      const [entcoreApps, appsConfig, bookmarks] = await Promise.all([
+        myAppsService.list(session),
+        myAppsService.config(session),
+        myAppsService.bookmarks(session),
+      ]);
 
-    applyAppsToModules(navigableModules, appsInfo);
+      const baseAppsInfo = buildAppsInfo(entcoreApps, bookmarks);
+
+      const appsInfo: AppsInfo[] = baseAppsInfo.map(app => {
+        const entcoreApp = entcoreApps.find(e => e.name === app.name);
+        const isMobile =
+          app.type === 'application' &&
+          !!entcoreApp &&
+          navigableModules.some(m => m.config.matchEntcoreApp?.(entcoreApp, entcoreApps));
+
+        return { ...app, isMobile };
+      });
+
+      dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, entcoreApps }));
+
+      applyAppsToModules(navigableModules, appsInfo);
+    } catch (e) {
+      console.error('[afterLoginSetup] ERROR', e);
+      dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
+    }
   };
 
 export const initMesAppliAtLogin = (): ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction> => async dispatch => {
   const session = getSession();
   if (!session) return;
-
-  await dispatch(fetchAppsAction());
-  dispatch(afterLoginSetup(session));
+  await dispatch(afterLoginSetup(assertSession()));
 };

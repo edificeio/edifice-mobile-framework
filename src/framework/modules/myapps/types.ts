@@ -1,6 +1,6 @@
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
-export type AppType = 'web' | 'connector';
+export type AppType = 'application' | 'connector';
 
 export interface AppsInfo {
   name: string;
@@ -10,11 +10,14 @@ export interface AppsInfo {
   target?: string;
   prefix?: string;
   icon?: string;
-  color?: string;
   type: AppType;
+  isMobile: boolean;
   isFavorite: boolean;
-  //see if we gonna use this one
   isPinned: boolean;
+  category?: string;
+  color?: string;
+  help?: Record<string, string | null>;
+  libraries?: string;
 }
 
 export interface ApplicationsConfig {
@@ -29,6 +32,7 @@ export interface AppBookmarks {
   applications: string[];
   bookmarks: string[];
 }
+
 export interface ApplicationsList {
   address: string;
   casType: string | null;
