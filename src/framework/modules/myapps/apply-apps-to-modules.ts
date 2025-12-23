@@ -35,7 +35,15 @@ export function applyAppsToModules(modules: NavigableModuleArray<AnyNavigableMod
       return;
     }
 
-    const displayAs = app.type === 'connector' ? 'myAppsConnector' : app.isMobile ? 'myAppsMobileModule' : 'myAppsWebModule';
+    let displayAs;
+
+    if (app.type === 'connector') {
+      displayAs = 'myAppsConnector';
+    } else if (app.isMobile) {
+      displayAs = 'myAppsMobileModule';
+    } else {
+      displayAs = 'myAppsWebModule';
+    }
 
     navConfig.assignValues({
       displayAs,
