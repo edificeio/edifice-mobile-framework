@@ -46,7 +46,6 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     const updateApps = () => {
       const state = store.getState();
       const aggregatedApps = selectAggregatedApps(state);
-      console.debug('[MyApps][aggregatedApps]', aggregatedApps);
       setApps(aggregatedApps);
     };
 
@@ -54,8 +53,6 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     const unsubscribe = store.subscribe(updateApps);
     return unsubscribe;
   }, []);
-
-  console.debug('[MyApps][apps state]', apps);
 
   console.debug('[MyApps_IN_MyAppsHomeScreen]', apps);
 
