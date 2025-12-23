@@ -15,7 +15,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
 import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
-import { getAppsInfoForUI } from '~/framework/modules/myapps/reducer';
+import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 import { isEmpty } from '~/framework/util/object';
 
@@ -40,17 +40,22 @@ const styles = StyleSheet.create({
 
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   const [apps, setApps] = React.useState<any[]>([]);
-
-  // here for test purpose only
   React.useEffect(() => {
     const store = getStore();
-    const state = store.getState();
-    const appsForUI = getAppsInfoForUI(state, props.modules);
 
-    console.debug('[MyApps][final appsForUI]', appsForUI);
-    setApps(appsForUI);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apps]);
+    const updateApps = () => {
+      const state = store.getState();
+      const aggregatedApps = selectAggregatedApps(state);
+      console.debug('[MyApps][aggregatedApps]', aggregatedApps);
+      setApps(aggregatedApps);
+    };
+
+    updateApps();
+    const unsubscribe = store.subscribe(updateApps);
+    return unsubscribe;
+  }, []);
+
+  console.debug('[MyApps][apps state]', apps);
 
   console.debug('[MyApps_IN_MyAppsHomeScreen]', apps);
 

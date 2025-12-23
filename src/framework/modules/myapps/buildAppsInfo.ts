@@ -1,19 +1,25 @@
 import { AppBookmarks, AppsInfo, AppType } from './types';
 
 import { IEntcoreApp } from '~/framework/util/moduleTool';
+
 /**
- * AppType resolution:
- * mobile: matched by module-config (matchEntcoreApp)
- * connector: external or non-integrated apps (blank, http, no prefix)
- * web: default
+ * type:
+ * - connector: external or non-integrated apps (blank, http, no prefix, hash routing, external flag, _blank)
+ * - application: default
+ * isMobile is resolved later (needs loaded modules)
  */
-export function buildAppsInfo(entcoreApps: IEntcoreApp[], favorites: AppBookmarks): AppsInfo[] {
+export function buildAppsInfo(entcoreApps: IEntcoreApp[], favorites: AppBookmarks): Omit<AppsInfo, 'isMobile'>[] {
   return entcoreApps.map(app => {
     const beginsWithHttp = /^https?:\/\//i;
 
-    const isConnector = app.target === '_blank' || beginsWithHttp.test(app.address) || app.address.includes('#/') || !app.prefix;
+    const isConnector =
+      app.target === '_blank' ||
+      beginsWithHttp.test(app.address) ||
+      app.address.includes('#/') ||
+      !app.prefix ||
+      app.isExternal === true;
 
-    const type: AppType = isConnector ? 'connector' : 'web';
+    const type: AppType = isConnector ? 'connector' : 'application';
 
     return {
       address: app.address,
