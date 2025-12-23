@@ -9,9 +9,9 @@ import { IGlobalState } from '~/app/store';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { buildAppsInfo } from '~/framework/modules/myapps/buildAppsInfo';
 import moduleConfig from '~/framework/modules/myapps/module-config';
+import { myAppsService } from '~/framework/modules/myapps/service';
 import { ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
 import { AnyNavigableModule, IEntcoreApp, NavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
-import { signedFetch } from '~/infra/fetchWithCache';
 
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
@@ -53,17 +53,11 @@ export const fetchAppsAction = (): ThunkAction<Promise<void>, IGlobalState, unkn
   try {
     const session = assertSession();
 
-    const [appsRes, configRes, bookmarksRes] = await Promise.all([
-      signedFetch(session.platform.url + '/applications-list'),
-      signedFetch(session.platform.url + '/myApps/config'),
-      signedFetch(session.platform.url + '/userbook/preference/apps'),
+    const [entcoreApps, appsConfig, bookmarks] = await Promise.all([
+      myAppsService.list(session),
+      myAppsService.config(session),
+      myAppsService.bookmarks(session),
     ]);
-
-    const entcoreAppsRaw = await appsRes.json();
-    const entcoreApps = Array.isArray(entcoreAppsRaw) ? entcoreAppsRaw : (entcoreAppsRaw.applications ?? entcoreAppsRaw.apps ?? []);
-
-    const appsConfig: ApplicationsConfig[] = await configRes.json();
-    const bookmarks = JSON.parse((await bookmarksRes.json()).preference);
 
     const appsInfo = buildAppsInfo(entcoreApps, bookmarks);
 
