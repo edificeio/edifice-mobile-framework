@@ -11,7 +11,7 @@ export function buildAppsInfo(entcoreApps: IEntcoreApp[], favorites: AppBookmark
   return entcoreApps.map(app => {
     const beginsWithHttp = /^https?:\/\//i;
 
-    const isConnector = app.target === '_blank' || beginsWithHttp.test(app.address);
+    const isConnector = app.target === '_blank' || beginsWithHttp.test(app.address) || app.address.includes('#/') || !app.prefix;
 
     const type: AppType = isConnector ? 'connector' : 'web';
 
