@@ -7,6 +7,8 @@ export default new NavigableModuleConfig<'user', UserState>({
   displayI18n: 'user-moduleconfig-myaccount',
 
   entcoreScope: [],
+  entcoreTrackingName: 'MyAccount',
+
   fileManager: {
     avatar: {
       allow: ['image'],
@@ -16,8 +18,8 @@ export default new NavigableModuleConfig<'user', UserState>({
   } as const,
   // There is no corresponding backend app
   hasRight: () => true,
-  matchEntcoreApp: () => false,
 
+  matchEntcoreApp: () => false,
   name: 'user',
   storageName: 'user',
   testID: 'tabbar-account',

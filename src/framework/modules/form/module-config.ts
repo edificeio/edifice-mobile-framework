@@ -10,6 +10,7 @@ export default new NavigableModuleConfig<'form', IFormReduxState>({
   displayI18n: 'form-moduleconfig-appname',
   displayPicture: theme.apps.formulaire.icon,
   entcoreScope: ['formulaire'],
+  entcoreTrackingName: 'Formulaire',
   fileManager: {
     file: {
       allow: ['image', 'video'],

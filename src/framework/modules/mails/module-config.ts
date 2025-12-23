@@ -10,6 +10,7 @@ export default new NavigableModuleConfig<'mails', null>({
   displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },
 
   entcoreScope: ['conversation', 'userbook', 'communication'],
+  entcoreTrackingName: 'Conversation',
   fileManager: {
     attachments: {
       allow: ['image', 'video', 'document'],

@@ -9,6 +9,7 @@ export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   displayI18n: 'blog-tabname',
   displayPicture: theme.apps.blog.icon,
   entcoreScope: ['blog'],
+  entcoreTrackingName: 'Blog',
   matchEntcoreApp: '/blog',
   name: 'blog',
   storageName: 'blog',
