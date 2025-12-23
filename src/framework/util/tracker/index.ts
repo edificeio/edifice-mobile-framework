@@ -190,7 +190,7 @@ export abstract class AbstractTracker<OptionsType> {
 }
 
 export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
-  static moduleAccessMap: Record<string, string> = {};
+  private static moduleAccessMap: Record<string, string> = {};
 
   errorCount: number = 0;
   lastModulename: string | undefined = undefined;
