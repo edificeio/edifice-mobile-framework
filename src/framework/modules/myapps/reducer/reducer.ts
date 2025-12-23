@@ -8,6 +8,7 @@ import createReducer from '~/framework/util/redux/reducerFactory';
 export const appsInfoInitialState: AppsInfoState = {
   appsConfig: [],
   appsInfo: [],
+  entcoreApps: [],
   loading: false,
 };
 
@@ -21,12 +22,13 @@ const reducer = createReducer(appsInfoInitialState, {
   },
 
   [appsInfoActionTypes.fetchSuccess]: (state, action) => {
-    const { appsConfig, appsInfo } = (action as unknown as FetchSuccessAction).payload;
+    const { appsConfig, appsInfo, entcoreApps } = (action as unknown as FetchSuccessAction).payload;
 
     return {
       ...state,
       appsConfig,
       appsInfo,
+      entcoreApps,
       loading: false,
     };
   },

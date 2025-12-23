@@ -1,4 +1,6 @@
-export type AppType = 'mobile' | 'web' | 'connector';
+import { IEntcoreApp } from '~/framework/util/moduleTool';
+
+export type AppType = 'web' | 'connector';
 
 export interface AppsInfo {
   name: string;
@@ -43,6 +45,7 @@ export interface ApplicationsList {
 export interface AppsInfoState {
   appsInfo: AppsInfo[];
   appsConfig: ApplicationsConfig[];
+  entcoreApps: IEntcoreApp[];
   loading: boolean;
   error?: string;
 }
@@ -52,6 +55,7 @@ export interface AppsInfoActionPayloads {
   fetchSuccess: {
     appsInfo: AppsInfo[];
     appsConfig: ApplicationsConfig[];
+    entcoreApps: IEntcoreApp[];
   };
   fetchError: {
     error: string;

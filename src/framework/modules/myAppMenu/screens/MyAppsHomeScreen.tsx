@@ -15,7 +15,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
 import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
-import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
+import { getAppsInfoForUI } from '~/framework/modules/myapps/reducer';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 import { isEmpty } from '~/framework/util/object';
 
@@ -43,37 +43,15 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
 
   React.useEffect(() => {
     const store = getStore();
+    const state = store.getState();
+    const appsForUI = getAppsInfoForUI(state, props.modules);
 
-    const updateApps = () => {
-      const state = store.getState();
-      const aggregatedApps = selectAggregatedApps(state);
-
-      console.debug('[MyApps][legacy]', aggregatedApps);
-      setApps(aggregatedApps);
-    };
-
-    updateApps();
-
-    const unsubscribe = store.subscribe(updateApps);
-
-    return unsubscribe;
+    console.debug('[MyApps][final appsForUI]', appsForUI);
+    setApps(appsForUI);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  React.useEffect(() => {
-    if (!apps.length) return;
-
-    apps.forEach(app => {
-      console.debug('[MyApps_IN_MyAppsHomeScreen]', {
-        category: app.config?.category,
-        color: app.config?.color,
-        display: app.display,
-        isFavorite: app.isFavorite,
-        isPinned: app.isPinned,
-        name: app.name,
-        type: app.type,
-      });
-    });
-  }, [apps]);
+  console.debug('[MyApps_IN_MyAppsHomeScreen]', apps);
 
   const renderGrid = () => {
     const allModules = (props.modules ?? [])?.sort((a, b) =>
