@@ -2,7 +2,7 @@ import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 export type AppType = 'application' | 'connector';
 
-export interface AppsInfo {
+export interface AppsInfo extends Partial<Omit<ApplicationsList, 'name'>> {
   name: string;
   displayName: string;
   display: boolean;
@@ -14,10 +14,6 @@ export interface AppsInfo {
   isMobile: boolean;
   isFavorite: boolean;
   isPinned: boolean;
-  category?: string;
-  color?: string;
-  help?: Record<string, string | null>;
-  libraries?: string;
 }
 
 export interface ApplicationsConfig {

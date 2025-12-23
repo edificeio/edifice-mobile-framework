@@ -1,11 +1,10 @@
 import { Action, UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { applyAppsToModules } from '../applyAppsToModules';
-
 import { setUpModulesAccess } from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { applyAppsToModules } from '~/framework/modules/myapps/applyAppsToModules';
 import { buildAppsInfo } from '~/framework/modules/myapps/buildAppsInfo';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { myAppsService } from '~/framework/modules/myapps/service';
