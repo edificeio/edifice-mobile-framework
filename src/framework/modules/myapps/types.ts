@@ -2,7 +2,7 @@ import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 export type AppType = 'application' | 'connector';
 
-export interface AppsInfo extends Partial<Omit<ApplicationsList, 'name'>> {
+export interface AppsInfo extends Partial<Omit<ApplicationsConfig, 'name'>> {
   name: string;
   displayName: string;
   display: boolean;
