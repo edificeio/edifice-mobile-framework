@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   const [apps, setApps] = React.useState<any[]>([]);
 
+  // here for test purpose only
   React.useEffect(() => {
     const store = getStore();
     const state = store.getState();
