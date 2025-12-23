@@ -50,7 +50,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     console.debug('[MyApps][final appsForUI]', appsForUI);
     setApps(appsForUI);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [apps]);
 
   console.debug('[MyApps_IN_MyAppsHomeScreen]', apps);
 
