@@ -10,11 +10,16 @@ import appConf from '~/framework/util/appConf';
 export namespace Log {
   const crashlyticsModule = crashlytics();
   const crashlyticsTransport = props => {
-    if (props.level.severity >= 2) {
-      crashlytics().setAttribute('log_level', props.level.text);
-      crashlytics().setAttribute('log_message', props.msg);
-      if (props.rawMsg instanceof Error) {
-        crashlyticsModule.recordError(props.rawMsg);
+    // Only log errors and above
+    if (props.level.severity >= 3) {
+      try {
+        crashlyticsModule.log(`[${props.level.text}] ${props.msg}`);
+        crashlyticsModule.setAttribute('log_level', props.level.text);
+        if (props.rawMsg instanceof Error) {
+          crashlyticsModule.recordError(props.rawMsg);
+        }
+      } catch (error) {
+        console.warn('Failed to log to Crashlytics:', error);
       }
     }
   };
@@ -38,7 +43,7 @@ export namespace Log {
           warn: 2,
         },
         //severity: isDebuggable ? 'debug' : 'warn',
-        transport: isDebuggable ? [consoleTransport, crashlyticsTransport, fileAsyncTransport] : [crashlyticsTransport],
+        transport: isDebuggable ? [consoleTransport, fileAsyncTransport] : [crashlyticsTransport],
         transportOptions: {
           colors: {
             debug: 'white',
