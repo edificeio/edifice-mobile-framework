@@ -139,7 +139,6 @@ export class RequestBuilder {
    * @returns {Request} A new `Request` object configured with the URL and initialization options.
    */
   public build(): Request {
-    // console.info('BUILD', this._init);
     return new Request(typeof this._url === 'string' ? this._url : this._url.href, this._init);
   }
 }

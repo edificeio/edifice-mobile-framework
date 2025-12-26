@@ -14,7 +14,6 @@ export namespace Log {
     if (props.level.severity >= 3) {
       try {
         crashlyticsModule.log(`[${props.level.text}] ${props.msg}`);
-        crashlyticsModule.setAttribute('log_level', props.level.text);
         if (props.rawMsg instanceof Error) {
           crashlyticsModule.recordError(props.rawMsg);
         }
@@ -31,6 +30,11 @@ export namespace Log {
   export async function init() {
     const isDebuggable = appConf.isDebugEnabled;
     try {
+      // Start network logging if debug is enabled
+      if (!__DEV__ && isDebuggable) {
+        const { startNetworkLogging } = await import('react-native-network-logger');
+        startNetworkLogging();
+      }
       // initialize logger
       log = logger.createLogger({
         async: true,
@@ -42,8 +46,7 @@ export namespace Log {
           info: 1,
           warn: 2,
         },
-        //severity: isDebuggable ? 'debug' : 'warn',
-        transport: isDebuggable ? [consoleTransport, fileAsyncTransport] : [crashlyticsTransport],
+        transport: __DEV__ ? [consoleTransport] : isDebuggable ? [fileAsyncTransport] : [crashlyticsTransport],
         transportOptions: {
           colors: {
             debug: 'white',
@@ -72,7 +75,7 @@ export namespace Log {
     } catch (e) {
       console.error('Unable to initialize logger: ', (e as Error).message);
     } finally {
-      console.info(`Log created at ${logFilePath}.`);
+      console.debug(`Log created at ${logFilePath}.`);
     }
   }
 

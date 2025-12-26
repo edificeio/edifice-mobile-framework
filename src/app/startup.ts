@@ -1,7 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from './i18n';
-import { Log } from './log';
 
 import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
@@ -13,13 +12,8 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { Storage } from '~/framework/util/storage';
 
 const initFeatures = async () => {
-  await Log.init();
   await Storage.init();
   await I18n.init();
-  if (__DEV__) {
-    require('./reactotron.ts');
-    console.info('Reactotron initialized');
-  }
 };
 
 // const MAX_STARTUP_TIME_MS = 15000;
@@ -30,11 +24,11 @@ const initFeatures = async () => {
  */
 export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
   useConstructor(async () => {
+    await initFeatures();
     try {
       const tryRestore = tryAction(restoreAccountAction, {
         track: track.loginRestore,
       });
-      await initFeatures();
       const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch async
       if (startupAccount && accountIsLoggable(startupAccount)) {
         await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAccountAction>>); // TS-issue with dispatch async

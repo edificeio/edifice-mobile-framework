@@ -436,7 +436,7 @@ const reducer = createReducer(initialState, {
     const { account, id } = action as unknown as ActionPayloads['replaceAccount'];
     const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
     if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
-    console.info('REPLACE_ACCOUNT', account);
+    console.debug('REPLACE_ACCOUNT', account);
     return {
       ...state,
       accounts: { ...newAccounts, [account.user.id]: account },

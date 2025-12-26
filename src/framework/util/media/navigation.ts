@@ -144,7 +144,7 @@ const mediaIntents = [
     },
     icon(media) {
       const extension = Mime.getExtension(media.mime);
-      console.info('EXTENSIONS', media.type, extension);
+      console.debug('EXTENSIONS', media.type, extension);
       return extension?.toLocaleUpperCase() ?? theme.media.default;
     },
   } as MediaIntent<FileMedia>,

@@ -171,7 +171,7 @@ const withMeasure = <Fn extends (...args: any[]) => any>(fn: Fn, tag?: string) =
       if (ret instanceof Promise) return await ret;
       else return ret;
     } finally {
-      console.info(`[perf] ${tag ?? fn.toString()} in ${Date.now() - start}ms`);
+      console.debug(`[perf] ${tag ?? fn.toString()} in ${Date.now() - start}ms`);
     }
   }) as Fn;
 };

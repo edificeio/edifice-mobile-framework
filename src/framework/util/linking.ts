@@ -72,7 +72,7 @@ export async function openUrl(
       }
     }
 
-    console.info('Try to redirect to:', finalUrl);
+    console.debug('Try to redirect to:', finalUrl);
 
     if (showConfirmation) {
       Alert.alert(
