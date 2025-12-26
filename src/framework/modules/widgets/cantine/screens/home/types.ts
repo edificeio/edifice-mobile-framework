@@ -17,3 +17,8 @@ export interface CantineHomeScreenPrivateProps
     CantineHomeScreenProps {
   // @scaffolder add HOC props here
 }
+
+export enum SwipeDirection {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}

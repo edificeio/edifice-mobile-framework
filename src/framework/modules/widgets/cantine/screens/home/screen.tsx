@@ -9,6 +9,7 @@ import { runOnJS } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './styles';
+import { SwipeDirection } from './types';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -145,12 +146,15 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     </View>
   );
 
-  const handleSwipe = (direction: 'left' | 'right') => {
+  const handleSwipe = (direction: SwipeDirection) => {
     const current = selectedDate;
+    const dayOfWeek = moment(current).day();
+    const step =
+      (direction === SwipeDirection.LEFT && dayOfWeek === 6) || (direction === SwipeDirection.RIGHT && dayOfWeek === 0) ? 2 : 1;
     const newDate =
-      direction === 'left'
-        ? moment(current).add(1, 'day').format('YYYY-MM-DD')
-        : moment(current).subtract(1, 'day').format('YYYY-MM-DD');
+      direction === SwipeDirection.LEFT
+        ? moment(current).add(step, 'day').format('YYYY-MM-DD')
+        : moment(current).subtract(step, 'day').format('YYYY-MM-DD');
     setSelectedDate(newDate);
   };
 
@@ -159,9 +163,9 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     .activeOffsetX([-10, 10])
     .onEnd(event => {
       if (event.translationX < -50) {
-        runOnJS(handleSwipe)('left');
+        runOnJS(handleSwipe)(SwipeDirection.LEFT);
       } else if (event.translationX > 50) {
-        runOnJS(handleSwipe)('right');
+        runOnJS(handleSwipe)(SwipeDirection.RIGHT);
       }
     });
 
