@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2025-12-22 16:07:53",
-  "notes": "update(stack): yarn cache update\nchore(widgets): INTEG-1070, INTEG-1071 add i18n for widgets\nfix: module type connector typo\nrelease: 1.16.0-inte.1(1160004)\nfeat(email): INTEG-1139 add no-reply email functionality to mobile app\nfeat(widgets): INTEG-1070, INTEG-1071, INTEG-1138 add cantine and time screen widgets and refacto pronote connector and widgets and change the home page to accueil\nrefacto(modules): define modules types\nENABLING-57 , add authentification.ac-martinique.fr, extranet.ac-guyane.fr && extranet.ac-mayotte.fr to network_security_config",
-  "version": "1.16.0-inte.2(1160005)",
-  "track": "1.16.0"
+  "last": "2025-12-26 16:00:13",
+  "notes": "release: 1.16.2(1160200)\nrelease: 1.16.1(1160100)\nrelease: 1.16.0-inte.2(1160005)",
+  "version": "1.16.2-inte.1(1160201)",
+  "track": "1.16.2"
 }
