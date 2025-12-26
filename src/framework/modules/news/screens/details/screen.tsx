@@ -8,7 +8,6 @@ import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import NewsHeader from './news-header';
 import { CommentFieldRef, NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
@@ -32,6 +31,7 @@ import {
   getNewsItemCommentsAction,
   publishCommentNewsItemAction,
 } from '~/framework/modules/news/actions';
+import NewsHeader from '~/framework/modules/news/components/news-header';
 import NewsPlaceholderDetails from '~/framework/modules/news/components/placeholder/details';
 import { NewsCommentItem, NewsItem, NewsItemDetails, NewsItemRights, NewsThreadItemRights } from '~/framework/modules/news/model';
 import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';

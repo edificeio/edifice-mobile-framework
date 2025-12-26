@@ -20,7 +20,6 @@ import { commentsString } from '~/framework/util/string';
 
 const NewsHeader = React.memo<NewsHeaderProps>(({ commentsCount = 0, news, thread }) => {
   if (!news || !thread) return null;
-
   return (
     <ResourceView
       header={
@@ -39,9 +38,7 @@ const NewsHeader = React.memo<NewsHeaderProps>(({ commentsCount = 0, news, threa
           ? `${displayDate(news.modified)} ${I18n.get('news-details-modified')}`
           : displayDate(news.modified)}
       </CaptionItalicText>
-
       <HeadingSText>{news.title}</HeadingSText>
-
       <TextAvatar
         text={news.owner.displayName}
         userId={news.owner.id}
@@ -49,7 +46,6 @@ const NewsHeader = React.memo<NewsHeaderProps>(({ commentsCount = 0, news, threa
         size={UI_SIZES.elements.icon.default}
         viewStyle={styles.detailsOwner}
       />
-
       <RichEditorViewer content={news.content} />
     </ResourceView>
   );
