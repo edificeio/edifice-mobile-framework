@@ -188,6 +188,7 @@ const imports = {
   'ui-externalLink': async () => import('ASSETS/icons/uiIcons/externalLink.svg'),
   'ui-eye': async () => import('ASSETS/icons/uiIcons/eye.svg'),
   'ui-eyeSlash': async () => import('ASSETS/icons/uiIcons/eyeSlash.svg'),
+  'ui-favorite': async () => import('ASSETS/icons/uiIcons/favorite.svg'),
   'ui-filter': async () => import('ASSETS/icons/uiIcons/filter.svg'),
   'ui-flag': async () => import('ASSETS/icons/uiIcons/flag.svg'),
   'ui-folder': async () => import('ASSETS/icons/uiIcons/folder.svg'),
