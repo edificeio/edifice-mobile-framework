@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, TouchableOpacity, View } from 'react-native';
 
 import { MyAppsCardProps } from './types';
 import { useStyles } from './useStyles';
@@ -18,14 +18,19 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   const normalizeSvgIconName = (icon: string) => icon.replace(/-large$/, '');
 
   const isSvgIcon = app.icon && !isUrlIcon;
+  const isWebApp =
+    app.type === 'connector' ||
+    app.target === '_blank' ||
+    /^https?:\/\//.test(app.address) ||
+    app.address?.includes('#') ||
+    app.address?.startsWith('/pages#');
 
   console.debug('APP_INFOS', {
     DN: app.displayName,
-    icon: app.icon,
     iconNormalized: app.icon ? normalizeSvgIconName(app.icon) : undefined,
     isSvgIcon,
     isUrlIcon,
-    name: app.name,
+    ...app,
   });
 
   const renderIcon = () => {
@@ -53,9 +58,17 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
         {renderFavoriteBadge()}
         {renderIcon()}
       </View>
-      <BodyText numberOfLines={2} style={styles.title}>
-        {app.displayName}
-      </BodyText>
+      <View style={styles.titleRow}>
+        <BodyText numberOfLines={2} style={styles.title}>
+          {app.displayName}
+        </BodyText>
+
+        {isWebApp && (
+          <TouchableOpacity>
+            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill={'black'} />
+          </TouchableOpacity>
+        )}
+      </View>
     </Pressable>
   );
 };
