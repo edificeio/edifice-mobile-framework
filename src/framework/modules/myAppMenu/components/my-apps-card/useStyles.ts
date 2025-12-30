@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export const useStyles = (appColor?: string) => {
   const themeMainColor = theme.palette.complementary;
@@ -15,10 +15,18 @@ export const useStyles = (appColor?: string) => {
           alignItems: 'center',
           backgroundColor,
           borderRadius: UI_SIZES.radius.newCard,
-          height: 120,
+          height: getScaleWidth(120),
           justifyContent: 'center',
-          overflow: 'hidden',
-          width: 120,
+          //   overflow: 'visible',
+          position: 'relative',
+          width: getScaleWidth(120),
+        },
+        favoriteIcon: {
+          left: -getScaleWidth(20),
+          padding: UI_SIZES.spacing.tiny,
+          position: 'absolute',
+          top: -UI_SIZES.spacing.medium,
+          zIndex: UI_SIZES.spacing.tinyExtra,
         },
         image: {
           borderRadius: UI_SIZES.radius.newCard,

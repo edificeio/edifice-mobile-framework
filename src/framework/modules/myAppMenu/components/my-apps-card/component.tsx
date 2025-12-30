@@ -4,6 +4,7 @@ import { Pressable, View } from 'react-native';
 import { MyAppsCardProps } from './types';
 import { useStyles } from './useStyles';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media-deprecated';
@@ -36,10 +37,22 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
 
     return <Image source={{ uri: app.icon }} style={styles.image} />;
   };
+  const renderFavoriteBadge = () => {
+    if (!app.isFavorite) return null;
+
+    return (
+      <View style={styles.favoriteIcon}>
+        <Svg name="ui-favorite" width={UI_SIZES.spacing.large} height={UI_SIZES.spacing.large} />
+      </View>
+    );
+  };
 
   return (
     <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.wrapper}>
-      <View style={styles.card}>{renderIcon()}</View>
+      <View style={styles.card}>
+        {renderFavoriteBadge()}
+        {renderIcon()}
+      </View>
       <BodyText numberOfLines={2} style={styles.title}>
         {app.displayName}
       </BodyText>
