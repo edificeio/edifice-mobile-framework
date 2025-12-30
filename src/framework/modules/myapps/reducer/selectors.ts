@@ -14,17 +14,20 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
 
   const configByName = new Map(appsConfig.map(c => [c.name, c]));
 
-  return appsInfo.map(app => {
-    const config = configByName.get(app.name);
+  return appsInfo
+    .map(app => {
+      const config = configByName.get(app.name);
 
-    return {
-      ...app,
-      category: config?.category,
-      color: config?.color,
-      help: config?.help,
-      libraries: config?.libraries,
-    };
-  });
+      return {
+        ...app,
+        category: config?.category,
+        color: config?.color,
+        help: config?.help,
+        libraries: config?.libraries,
+      };
+    })
+    .sort((a, b) => (a.displayName ?? a.name).localeCompare(b.displayName ?? b.name))
+    .filter(app => app.display);
 };
 
 export const selectAppsRaw = (state: IGlobalState) => {

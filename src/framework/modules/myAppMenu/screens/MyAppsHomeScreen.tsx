@@ -57,7 +57,6 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     return unsubscribe;
   }, []);
 
-  console.debug('[MyApps_IN_MyAppsHomeScreen]', apps);
   const renderNewMyAppsGrid = () => {
     return (
       <GridList

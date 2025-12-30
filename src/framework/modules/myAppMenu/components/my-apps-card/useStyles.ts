@@ -35,8 +35,15 @@ export const useStyles = (appColor?: string) => {
           width: '100%',
         },
         title: {
-          marginTop: UI_SIZES.spacing.small,
           textAlign: 'center',
+        },
+        titleRow: {
+          alignContent: 'space-between',
+          alignItems: 'center',
+          flexDirection: 'row',
+          gap: UI_SIZES.spacing.tiny,
+          marginTop: UI_SIZES.spacing.small,
+          padding: 0,
         },
         wrapper: {
           alignItems: 'center',
