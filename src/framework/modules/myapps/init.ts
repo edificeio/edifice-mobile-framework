@@ -4,8 +4,6 @@ import { AppDispatch, getStore } from '~/app/store';
 import { callAtLogin } from '~/framework/modules/auth/calls-at-login';
 
 callAtLogin(() => {
-  console.debug('[mesappli] callAtLogin triggered');
-
   const store = getStore();
   const dispatch = store.dispatch as AppDispatch;
 

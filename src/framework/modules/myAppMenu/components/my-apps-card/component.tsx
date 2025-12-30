@@ -1,0 +1,48 @@
+import React from 'react';
+import { Pressable, View } from 'react-native';
+
+import { MyAppsCardProps } from './types';
+import { useStyles } from './useStyles';
+
+import { Svg } from '~/framework/components/picture';
+import { BodyText } from '~/framework/components/text';
+import { Image } from '~/framework/util/media-deprecated';
+
+export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
+  const styles = useStyles(app.color);
+  const isUrlIcon = app.icon?.startsWith('http') || app.icon?.startsWith('/workspace');
+  const isHttp = (icon?: string) => !!icon && /^https?:\/\//.test(icon);
+  const isWorkspaceImage = (icon?: string) => !!icon && icon.startsWith('/workspace/');
+  const isSvgIconName = (icon?: string) => !!icon && !isHttp(icon) && !isWorkspaceImage(icon);
+  const normalizeSvgIconName = (icon: string) => icon.replace(/-large$/, '');
+
+  const isSvgIcon = app.icon && !isUrlIcon;
+
+  console.debug('APP_INFOS', {
+    DN: app.displayName,
+    icon: app.icon,
+    iconNormalized: app.icon ? normalizeSvgIconName(app.icon) : undefined,
+    isSvgIcon,
+    isUrlIcon,
+    name: app.name,
+  });
+
+  const renderIcon = () => {
+    if (!app.icon) return null;
+
+    if (isSvgIconName(app.icon)) {
+      return <Svg name={normalizeSvgIconName(app.icon)} fill="white" width={60} height={60} />;
+    }
+
+    return <Image source={{ uri: app.icon }} style={styles.image} />;
+  };
+
+  return (
+    <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.wrapper}>
+      <View style={styles.card}>{renderIcon()}</View>
+      <BodyText numberOfLines={2} style={styles.title}>
+        {app.displayName}
+      </BodyText>
+    </Pressable>
+  );
+};

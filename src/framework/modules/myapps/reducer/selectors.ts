@@ -1,12 +1,13 @@
 import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { appsInfoInitialState } from '~/framework/modules/myapps/reducer/reducer';
+import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
 export const selectAppsState = (state: IGlobalState) => {
   return moduleConfig.getState(state) ?? appsInfoInitialState;
 };
 
-export const selectAggregatedApps = (state: IGlobalState) => {
+export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] => {
   const slice = selectAppsState(state);
   const appsConfig = slice?.appsConfig ?? [];
   const appsInfo = slice?.appsInfo ?? [];

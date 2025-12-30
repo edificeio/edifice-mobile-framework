@@ -9,7 +9,7 @@ import {
   loadModules,
   ModuleArray,
   NavigableModule,
-  NavigableModuleArray
+  NavigableModuleArray,
 } from '~/framework/util/moduleTool';
 
 // We first imports all modules and their code hierarchy. Registrations are executed,
@@ -26,7 +26,7 @@ export default () => {
       require('~/framework/modules/timeline'),
       require('~/framework/modules/audience').default,
       require('~/framework/modules/explorer').default,
-
+      require('~/framework/modules/myapps'),
       // Included modules from override
       ...(IncludedModules || []),
 
