@@ -61,3 +61,10 @@ export interface AppsInfoActionPayloads {
     error: string;
   };
 }
+
+export interface AppsInfoAggregated extends AppsInfo {
+  category?: string;
+  color?: string;
+  help?: Record<string, string | null>;
+  libraries?: string;
+}
