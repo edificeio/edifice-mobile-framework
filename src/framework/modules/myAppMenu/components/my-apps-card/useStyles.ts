@@ -3,10 +3,12 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
-export const useStyles = (appColor?: string) => {
+export const useStyles = (app: AppsInfoAggregated) => {
+  const appColor = app.color;
   const themeMainColor = theme.palette.complementary;
-  const backgroundColor = appColor && themeMainColor[appColor] ? themeMainColor[appColor].regular : theme.palette.grey.cloudy;
+  const backgroundColor = appColor && themeMainColor[appColor] ? themeMainColor[appColor].regular : undefined;
 
   const styles = React.useMemo(
     () =>
@@ -14,7 +16,9 @@ export const useStyles = (appColor?: string) => {
         card: {
           alignItems: 'center',
           backgroundColor,
+          borderColor: theme.palette.grey.cloudy,
           borderRadius: UI_SIZES.radius.newCard,
+          borderWidth: getScaleWidth(0.85),
           height: getScaleWidth(120),
           justifyContent: 'center',
           //   overflow: 'visible',

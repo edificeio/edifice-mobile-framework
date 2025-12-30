@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
 
 import { MyAppsCardProps } from './types';
@@ -9,40 +9,49 @@ import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media-deprecated';
 
-export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
-  const styles = useStyles(app.color);
-  const isUrlIcon = app.icon?.startsWith('http') || app.icon?.startsWith('/workspace');
-  const isHttp = (icon?: string) => !!icon && /^https?:\/\//.test(icon);
-  const isWorkspaceImage = (icon?: string) => !!icon && icon.startsWith('/workspace/');
-  const isSvgIconName = (icon?: string) => !!icon && !isHttp(icon) && !isWorkspaceImage(icon);
-  const normalizeSvgIconName = (icon: string) => icon.replace(/-large$/, '');
+const HTTP_REGEX: RegExp = /^https?:\/\//;
 
-  const isSvgIcon = app.icon && !isUrlIcon;
-  const isWebApp =
-    app.type === 'connector' ||
-    app.target === '_blank' ||
-    /^https?:\/\//.test(app.address) ||
-    app.address?.includes('#') ||
-    app.address?.startsWith('/pages#');
+export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
+  const styles = useStyles(app);
+  const isImageDistant = (icon: string): boolean => HTTP_REGEX.test(icon) || icon.startsWith('/workspace/');
+  const icon = app.icon;
+
+  const svgIconName = useMemo(() => {
+    if (!icon) return null;
+    if (isImageDistant(icon)) return null;
+
+    return icon.replace(/-large$/, ''); //might be replaced in the future
+  }, [icon]);
+
+  const isImageIcon = !!icon && !svgIconName;
+
+  const isWebApp = useMemo(() => {
+    if (app.type === 'connector') return true;
+    if (app.target === '_blank') return true;
+    if (!app.address) return false;
+
+    return HTTP_REGEX.test(app.address) || app.address.includes('#') || app.address.startsWith('/pages#');
+  }, [app]);
 
   console.debug('APP_INFOS', {
     DN: app.displayName,
-    iconNormalized: app.icon ? normalizeSvgIconName(app.icon) : undefined,
-    isSvgIcon,
-    isUrlIcon,
+    iconNormalized: svgIconName,
+    isImageIcon,
+    isWebApp,
     ...app,
   });
 
-  const renderIcon = () => {
-    if (!app.icon) return null;
+  const renderIcon = useCallback(() => {
+    if (!icon) return null;
 
-    if (isSvgIconName(app.icon)) {
-      return <Svg name={normalizeSvgIconName(app.icon)} fill="white" width={60} height={60} />;
+    if (svgIconName) {
+      return <Svg name={svgIconName} fill="white" width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} />;
     }
 
-    return <Image source={{ uri: app.icon }} style={styles.image} />;
-  };
-  const renderFavoriteBadge = () => {
+    return <Image source={{ uri: icon }} style={styles.image} />;
+  }, [icon, svgIconName, styles.image]);
+
+  const renderFavoriteBadge = useCallback(() => {
     if (!app.isFavorite) return null;
 
     return (
@@ -50,14 +59,15 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
         <Svg name="ui-favorite" width={UI_SIZES.spacing.large} height={UI_SIZES.spacing.large} />
       </View>
     );
-  };
+  }, [app.isFavorite, styles.favoriteIcon]);
 
   return (
-    <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.wrapper}>
-      <View style={styles.card}>
+    <View style={styles.wrapper}>
+      <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.card}>
         {renderFavoriteBadge()}
         {renderIcon()}
-      </View>
+      </Pressable>
+
       <View style={styles.titleRow}>
         <BodyText numberOfLines={2} style={styles.title}>
           {app.displayName}
@@ -65,10 +75,10 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
 
         {isWebApp && (
           <TouchableOpacity>
-            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill={'black'} />
+            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="black" />
           </TouchableOpacity>
         )}
       </View>
-    </Pressable>
+    </View>
   );
 };
