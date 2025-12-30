@@ -3,6 +3,8 @@ import { StyleSheet, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import MyAppsCard from '../components/my-apps-card';
+
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import SecondaryButton from '~/framework/components/buttons/secondary';
@@ -16,6 +18,7 @@ import { HeadingSText } from '~/framework/components/text';
 import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
 import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
+import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 import { isEmpty } from '~/framework/util/object';
 
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
 });
 
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
-  const [apps, setApps] = React.useState<any[]>([]);
+  const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
   React.useEffect(() => {
     const store = getStore();
 
@@ -55,6 +58,23 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   }, []);
 
   console.debug('[MyApps_IN_MyAppsHomeScreen]', apps);
+  const renderNewMyAppsGrid = () => {
+    return (
+      <GridList
+        data={apps}
+        keyExtractor={item => item.name}
+        gap={UI_SIZES.spacing.big}
+        gapOutside={UI_SIZES.spacing.big}
+        renderItem={({ item }) => (
+          <MyAppsCard
+            app={item}
+            onPress={() => console.debug('PRESS', item.name)}
+            onLongPress={() => console.debug('LONG PRESS', item.name)}
+          />
+        )}
+      />
+    );
+  };
 
   const renderGrid = () => {
     const allModules = (props.modules ?? [])?.sort((a, b) =>
@@ -134,6 +154,8 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   return (
     <PageView>
       <ScrollView bottomInset={false}>
+        {renderNewMyAppsGrid()}
+
         {renderGrid()}
         {renderOtherModules()}
         <View style={styles.webButton}>
