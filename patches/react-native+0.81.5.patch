@@ -1,34 +1,12 @@
 diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
-index b6e538d..0b33557 100644
+index b6e538d..8a76d61 100644
 --- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
 +++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
-@@ -8,19 +8,20 @@
-  */
- 
- import type * as React from 'react';
--import {Constructor} from '../../../types/private/Utilities';
--import {Insets} from '../../../types/public/Insets';
--import {HostInstance} from '../../../types/public/ReactNativeTypes';
--import {ColorValue, StyleProp} from '../../StyleSheet/StyleSheet';
--import {ViewStyle} from '../../StyleSheet/StyleSheetTypes';
-+import { Constructor } from '../../../types/private/Utilities';
-+import { Insets } from '../../../types/public/Insets';
-+import { HostInstance } from '../../../types/public/ReactNativeTypes';
-+import { ColorValue, StyleProp } from '../../StyleSheet/StyleSheet';
-+import { ViewStyle } from '../../StyleSheet/StyleSheetTypes';
- import {
-   NativeSyntheticEvent,
-   NativeTouchEvent,
- } from '../../Types/CoreEventTypes';
--import {RefreshControlProps} from '../RefreshControl/RefreshControl';
--import {Touchable} from '../Touchable/Touchable';
--import {ViewProps} from '../View/ViewPropTypes';
--import {View} from '../View/View';
-+import { RefreshControlProps } from '../RefreshControl/RefreshControl';
-+import { Touchable } from '../Touchable/Touchable';
-+import { View } from '../View/View';
-+import { ViewProps } from '../View/ViewPropTypes';
-+import type { Props as ScrollViewStickyHeaderProps } from './ScrollViewStickyHeader';
+@@ -21,6 +21,7 @@ import {RefreshControlProps} from '../RefreshControl/RefreshControl';
+ import {Touchable} from '../Touchable/Touchable';
+ import {ViewProps} from '../View/ViewPropTypes';
+ import {View} from '../View/View';
++import type {Props as ScrollViewStickyHeaderProps} from './ScrollViewStickyHeader';
  
  // See https://reactnative.dev/docs/scrollview#contentoffset
  export interface PointProp {
@@ -42,25 +20,26 @@ index b6e538d..0b33557 100644
  
  declare class ScrollViewComponent extends React.Component<ScrollViewProps> {}
 diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
-index 8f4f297..09c5675 100644
+index 8f4f297..18912e3 100644
 --- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
 +++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
-@@ -1697,6 +1697,7 @@ class ScrollView extends React.Component<ScrollViewProps, ScrollViewState> {
-               inverted={this.props.invertStickyHeaders}
-               hiddenOnScroll={this.props.stickyHeaderHiddenOnScroll}
-               scrollViewHeight={this.state.layoutHeight}>
+@@ -1688,6 +1688,7 @@ class ScrollView extends React.Component<ScrollViewProps, ScrollViewState> {
+           return (
+             <StickyHeaderComponent
+               key={key}
 +              index={index}
-               {child}
-             </StickyHeaderComponent>
-           );
+               ref={ref => this._setStickyHeaderRef(key, ref)}
+               nextHeaderLayoutY={this._headerLayoutYs.get(
+                 this._getKeyForIndex(nextIndex, children),
 diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
-index d1e5d65..c96e151 100644
+index d1e5d65..2734cb4 100644
 --- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
 +++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
-@@ -37,6 +37,7 @@ export type ScrollViewStickyHeaderProps = $ReadOnly<{
+@@ -37,6 +37,8 @@ export type ScrollViewStickyHeaderProps = $ReadOnly<{
    scrollViewHeight: ?number,
    nativeID?: ?string,
    hiddenOnScroll?: ?boolean,
++  // index of the child element within the ScrollView
 +  index: number,
  }>;
  
