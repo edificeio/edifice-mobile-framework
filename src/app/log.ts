@@ -61,25 +61,12 @@ export namespace Log {
       });
       // Patch standard console.* statements
       log?.patchConsole();
-      // Clear log if needed
-      try {
-        const logFileStats = await RNFS.stat(logFilePath);
-        if (logFileStats) {
-          const today = new Date();
-          const creationDate = new Date(logFileStats.ctime);
-          if (today.toDateString() !== creationDate.toDateString()) clear();
-        }
-      } catch (e) {
-        console.error('Unable to retrieve log file stats: ', (e as Error).message);
-      }
     } catch (e) {
       console.error('Unable to initialize logger: ', (e as Error).message);
-    } finally {
-      console.debug(`Log created at ${logFilePath}.`);
     }
   }
 
-  export function clear() {
+  export async function clear() {
     RNFS.unlink(logFilePath);
   }
 
