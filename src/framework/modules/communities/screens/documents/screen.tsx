@@ -12,6 +12,7 @@ import {
   ResourceType,
 } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
+import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
@@ -169,11 +170,12 @@ export default (function CommunitiesDocumentsScreen({
     }
   }, []);
 
+  const isFocused = useIsFocused();
   const openFolder = React.useCallback(
     async (folder: FolderItem) => {
-      navigation.push(route.name, { communityId, folderId: folder.id });
+      isFocused && navigation.push(route.name, { communityId, folderId: folder.id });
     },
-    [communityId, navigation, route.name],
+    [communityId, navigation, route.name, isFocused],
   );
 
   const image = React.useMemo(
