@@ -84,6 +84,12 @@ export default (function CommunitiesDocumentsScreen({
       dispatch(communitiesActions.loadCommunityDetails(communityId, newData)),
     [dispatch, communityId],
   );
+  const setCommunityFolderMeta = React.useCallback(
+    (newData: Parameters<typeof communitiesActions.loadCommunityFoldersMeta>[1]) =>
+      dispatch(communitiesActions.loadCommunityFoldersMeta(communityId, newData)),
+    [dispatch, communityId],
+  );
+  const currentFolderMeta = useSelector(communitiesSelectors.getCommunityFolderMeta(communityId, folderId));
 
   // Store the data of the list here. It will contain both loaded and non-loaded elements.
   // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
@@ -111,6 +117,7 @@ export default (function CommunitiesDocumentsScreen({
         membersId: members.items.map(item => item.user.entId),
         totalMembers: members.meta.totalItems,
       });
+      setCommunityFolderMeta(folders.reduce((acc, item) => ({ ...acc, [item.id]: { title: item.title } }), {}));
       setData(prevData => {
         // The merge logic is contained in `staleOrSplice`. It inserts the new elements at the right place in `prevData`.
         // If `total` changes, there's a risk that the prevData is outdated, and should be flushed before inserting the new elements.
@@ -126,7 +133,7 @@ export default (function CommunitiesDocumentsScreen({
         return { documents: mergedData, folders };
       });
     },
-    [communityId, folderId, session, setCommunityData],
+    [communityId, folderId, session, setCommunityData, setCommunityFolderMeta],
   );
 
   // For perforance purpose, estimatedListSize must be the dimensions of the container (here the screen sithout, navBar and tabBar)
@@ -180,7 +187,7 @@ export default (function CommunitiesDocumentsScreen({
   const [scrollElements, statusBar, { ...scrollViewProps }, placeholderBanner] = useCommunityScrollableThumbnail({
     contentContainerStyle: styles.list,
     image,
-    title: I18n.get('communities-documents-title'),
+    title: currentFolderMeta?.title ?? I18n.get('communities-documents-title'),
   });
 
   const stickyPlaceholderElements = React.useMemo(
@@ -192,10 +199,10 @@ export default (function CommunitiesDocumentsScreen({
     () => [
       ...scrollElements,
       <HeadingXSText key="title" style={styles.title}>
-        {I18n.get('communities-documents-title')}
+        {currentFolderMeta?.title ?? I18n.get('communities-documents-title')}
       </HeadingXSText>,
     ],
-    [scrollElements],
+    [currentFolderMeta?.title, scrollElements],
   );
 
   return (
