@@ -5,6 +5,7 @@ import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export const styles = StyleSheet.create({
   content: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
     paddingTop: UI_SIZES.spacing.big,
   },
   emptyContainer: {

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { MyAppsCardProps } from './types';
 import { useStyles } from './useStyles';
@@ -23,8 +23,6 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
     return icon.replace(/-large$/, ''); //might be replaced in the future
   }, [icon]);
 
-  const isImageIcon = !!icon && !svgIconName;
-
   const canShowWebIcon = useMemo(() => {
     if (app.type === 'connector') return true;
     if (app.target === '_blank') return true;
@@ -32,14 +30,6 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
 
     return HTTP_REGEX.test(app.address) || app.address.includes('#') || app.address.startsWith('/pages#');
   }, [app]);
-
-  console.debug('APP_INFOS', {
-    canShowWebIcon,
-    DN: app.displayName,
-    iconNormalized: svgIconName,
-    isImageIcon,
-    ...app,
-  });
 
   const renderIcon = useCallback(() => {
     if (!icon) return null;
@@ -62,22 +52,27 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   }, [app.isFavorite, styles.favoriteIcon]);
 
   return (
-    <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={styles.wrapper}>
-      <View style={styles.card}>
-        {renderFavoriteBadge()}
-        {renderIcon()}
-      </View>
+    <Pressable
+      onPress={onPress}
+      onLongPress={onLongPress}
+      style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}>
+      <View style={styles.contentContainer}>
+        <View style={styles.card}>
+          {renderFavoriteBadge()}
+          {renderIcon()}
+        </View>
 
-      <View style={styles.titleRow}>
-        <BodyText numberOfLines={2} style={styles.title}>
-          {app.displayName}
-        </BodyText>
+        <View style={styles.titleRow}>
+          <BodyText numberOfLines={2} style={styles.title}>
+            {app.displayName}
+          </BodyText>
 
-        {canShowWebIcon && (
-          <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="black" />
-        )}
+          {canShowWebIcon && (
+            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="black" />
+          )}
+        </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 export default MyAppsCard;
