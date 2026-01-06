@@ -99,16 +99,17 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
         </View>
       </View>
 
-      <View style={styles.titleRow}>
-        <BodyText numberOfLines={2} style={styles.title}>
-          {app.displayName}
-        </BodyText>
+        <View style={styles.titleRow}>
+          <BodyText numberOfLines={2} style={styles.title}>
+            {app.displayName}
+          </BodyText>
 
-        {canShowWebIcon && (
-          <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="black" />
-        )}
+          {canShowWebIcon && (
+            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="black" />
+          )}
+        </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 export default MyAppsCard;

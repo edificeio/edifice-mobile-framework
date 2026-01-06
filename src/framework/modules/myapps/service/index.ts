@@ -1,19 +1,8 @@
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { AppBookmarks, ApplicationsConfig, ApplicationsList } from '~/framework/modules/myapps/types';
-import { IEntcoreApp } from '~/framework/util/moduleTool';
+import { AppBookmarks, ApplicationsConfig, ApplicationsList, AppsInfo } from '~/framework/modules/myapps/types';
 import { signedFetch } from '~/infra/fetchWithCache';
 
-const adaptApplication = (app: ApplicationsList): IEntcoreApp => ({
-  address: app.address,
-  casType: app.casType ?? undefined,
-  display: app.display,
-  displayName: app.displayName,
-  icon: app.icon,
-  isExternal: app.isExternal,
-  name: app.name,
-  prefix: app.prefix ?? undefined,
-  target: app.target ?? undefined,
-});
+const adaptApplicationList = (app: ApplicationsList): AppsInfo => ({ ...app, isFavorite: false, isMobile: false });
 
 export const myAppsService = {
   bookmarks: async (session: AuthActiveAccount): Promise<AppBookmarks> => {
@@ -42,11 +31,11 @@ export const myAppsService = {
     return resp;
   },
 
-  list: async (session: AuthActiveAccount): Promise<IEntcoreApp[]> => {
+  list: async (session: AuthActiveAccount): Promise<AppsInfo[]> => {
     const res = await signedFetch(`${session.platform.url}/applications-list`);
     const json = await res.json();
     const apps: ApplicationsList[] = Array.isArray(json) ? json : (json.applications ?? json.apps ?? []);
-    return apps.map(adaptApplication);
+    return apps.map(adaptApplicationList);
   },
 
   updateBookmarks: async (session: AuthActiveAccount, favorites: AppBookmarks): Promise<void> => {

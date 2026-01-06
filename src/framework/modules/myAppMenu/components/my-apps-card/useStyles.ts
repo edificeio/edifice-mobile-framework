@@ -25,6 +25,11 @@ export const useStyles = (app: AppsInfoAggregated) => {
           position: 'relative',
           width: getScaleWidth(88),
         },
+        contentContainer: {
+          alignItems: 'center',
+          width: '100%',
+        },
+
         favoriteIcon: {
           left: -getScaleWidth(15),
           padding: UI_SIZES.spacing.tiny,
@@ -44,15 +49,20 @@ export const useStyles = (app: AppsInfoAggregated) => {
         titleRow: {
           alignContent: 'space-between',
           alignItems: 'center',
+          columnGap: UI_SIZES.spacing.tiny,
           flexDirection: 'row',
-          gap: UI_SIZES.spacing.tiny,
           marginTop: UI_SIZES.spacing.small,
-          padding: 0,
         },
         wrapper: {
           alignItems: 'center',
-          marginVertical: getScaleWidth(10),
-          width: '100%',
+          borderRadius: UI_SIZES.radius.newCard,
+          minHeight: getScaleWidth(134),
+          paddingHorizontal: UI_SIZES.spacing.minor,
+          paddingVertical: UI_SIZES.spacing.small,
+          width: getScaleWidth(168),
+        },
+        wrapperPressed: {
+          backgroundColor: theme.palette.grey.cloudy,
         },
       }),
     [backgroundColor],
