@@ -6,6 +6,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.palette.grey.fog,
+    borderBottomWidth: 1,
+    borderColor: theme.palette.grey.cloudy,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
   },
