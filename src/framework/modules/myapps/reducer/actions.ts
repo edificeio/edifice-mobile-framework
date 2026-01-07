@@ -1,15 +1,15 @@
 import { Action, UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { setUpModulesAccess } from '~/app/modules';
+import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import { applyAppsToModules } from '~/framework/modules/myapps/apply-apps-to-modules';
+import { myAppsModules, myAppsSecondaryModules } from '~/framework/modules/myAppMenu/myAppsModules';
 import { buildAppsInfo } from '~/framework/modules/myapps/build-apps-info';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { myAppsService } from '~/framework/modules/myapps/service';
 import { ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
-import { AnyNavigableModule, IEntcoreApp, NavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { IEntcoreApp, NavigableModuleArray } from '~/framework/util/moduleTool';
 
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
@@ -44,8 +44,9 @@ export const afterLoginSetup =
     dispatch(appInfoActions.fetchStart());
 
     try {
-      const modules = setUpModulesAccess(session) as AnyNavigableModule[];
-      const navigableModules = new NavigableModuleArray<AnyNavigableModule>(...modules.filter(m => m instanceof NavigableModule));
+      const allmodules = AllModules();
+      const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(session));
+      const secondaryModules = new NavigableModuleArray(...myAppsSecondaryModules.get().filterAvailables(session));
 
       const [entcoreApps, appsConfig, bookmarks] = await Promise.all([
         myAppsService.list(session),
@@ -54,20 +55,24 @@ export const afterLoginSetup =
       ]);
 
       const baseAppsInfo = buildAppsInfo(entcoreApps, bookmarks);
+      // const allmdules = AllModules().map(m => m.config);
 
+      /**
+       *  we must check if one of the entcoreApps is present in modules
+       * or secondaryModules to make it mobile if not its a connector
+       */
       const appsInfo: AppsInfo[] = baseAppsInfo.map(app => {
         const entcoreApp = entcoreApps.find(e => e.name === app.name);
-        const isMobile =
-          app.type === 'application' &&
-          !!entcoreApp &&
-          navigableModules.some(m => m.config.matchEntcoreApp?.(entcoreApp, entcoreApps));
+        const isMobile = !!entcoreApp && allmodules.some(m => m.config.matchEntcoreApp?.(entcoreApp, entcoreApps));
+        // const isMM = allmodules.map(m => m.config).forEach(config => config.name === app.name);
 
         return { ...app, isMobile };
       });
 
+      console.debug({ appsConfig, appsInfo, bookmarks, entcoreApps, modules, secondaryModules });
       dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, entcoreApps }));
 
-      applyAppsToModules(navigableModules, appsInfo);
+      // applyAppsToModules(modules, appsInfo);
     } catch (e) {
       console.error('[afterLoginSetup] ERROR', e);
       dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
