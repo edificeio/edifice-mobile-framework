@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-01-07 17:59:01",
-  "notes": "chore: yarn cache update\nMerge remote-tracking branch 'origin/dev/1.16.2' into dev/peda\nfix: PEDAGO-3636 remove double-navigations when tap quickly. Note: done on multiple modules.\nfix(communities): PEDAGO-3635 show folder title when navigating into documents\nchore: remove mock\nfix(wayf): SUPPORT-3976 , add login.ac-normandie.fr to network_security_config.\nchore: yarn cache update\nrelease: 1.16.2-peda.3(1160205)\nchore: yarn cache update\nfix: PEDAGO-3599 TabBar overlays Bottomsheets on oldest Android devices\nfix: PEDAGO-3604 tweak for space printing in old htmlparser\nchore(player): use MediaType enum instead of raw strings\nchore: use new folders non-pagined api\nchore: yarn cache update\nchore(i18n): add corse language to i18n cli\nUpdated translations from Phrase (267)",
+  "last": "2026-01-07 20:26:36",
+  "notes": "update(stack): yarn cache update\nchore: yarn cache update\nrelease: 1.16.2-peda.4(1160206)",
   "track": "1.16.2",
-  "version": "1.16.2-peda.4(1160206)"
+  "version": "1.16.2-peda.5(1160207)"
 }
