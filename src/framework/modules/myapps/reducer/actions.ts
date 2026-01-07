@@ -1,23 +1,56 @@
 import { Action, UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { setUpModulesAccess } from '~/app/modules';
+import { applyAppsToModules } from '../apply-apps-to-modules';
+
+import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import { applyAppsToModules } from '~/framework/modules/myapps/apply-apps-to-modules';
 import { buildAppsInfo } from '~/framework/modules/myapps/build-apps-info';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { myAppsService } from '~/framework/modules/myapps/service';
 import { ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
-import { AnyNavigableModule, IEntcoreApp, NavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { AnyModule, AnyNavigableModule, IEntcoreApp } from '~/framework/util/moduleTool';
+
+function isNavigableModule(module: AnyModule): module is AnyNavigableModule {
+  return typeof (module as AnyNavigableModule).getRoot === 'function';
+}
+
+function isConnectorApp(app: IEntcoreApp): boolean {
+  return (
+    app.isExternal === true || app.target === '_blank' || (typeof app.address === 'string' && /^https?:\/\//i.test(app.address))
+  );
+}
+
+type ModuleWithEntcoreScope = {
+  entcoreScope?: string[];
+};
+
+function isMobileApp(app: IEntcoreApp, modules: AnyNavigableModule[]): boolean {
+  return modules.some(module => {
+    const config = module.config as ModuleWithEntcoreScope;
+
+    if (!config.entcoreScope || config.entcoreScope.length === 0) {
+      return false;
+    }
+
+    return config.entcoreScope.some(scope => {
+      if (app.prefix && app.prefix.includes(scope)) return true;
+      if (app.address && app.address.includes(scope)) return true;
+      return false;
+    });
+  });
+}
 
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
 }
+
 export interface FetchSuccessAction extends Action {
   type: typeof appsInfoActionTypes.fetchSuccess;
   payload: AppsInfoActionPayloads['fetchSuccess'];
 }
+
 export interface FetchErrorAction extends Action {
   type: typeof appsInfoActionTypes.fetchError;
   error: string;
@@ -44,9 +77,6 @@ export const afterLoginSetup =
     dispatch(appInfoActions.fetchStart());
 
     try {
-      const modules = setUpModulesAccess(session) as AnyNavigableModule[];
-      const navigableModules = new NavigableModuleArray<AnyNavigableModule>(...modules.filter(m => m instanceof NavigableModule));
-
       const [entcoreApps, appsConfig, bookmarks] = await Promise.all([
         myAppsService.list(session),
         myAppsService.config(session),
@@ -54,19 +84,27 @@ export const afterLoginSetup =
       ]);
 
       const baseAppsInfo = buildAppsInfo(entcoreApps, bookmarks);
+      const navigableModules = AllModules().filter(isNavigableModule);
 
       const appsInfo: AppsInfo[] = baseAppsInfo.map(app => {
         const entcoreApp = entcoreApps.find(e => e.name === app.name);
-        const isMobile =
-          app.type === 'application' &&
-          !!entcoreApp &&
-          navigableModules.some(m => m.config.matchEntcoreApp?.(entcoreApp, entcoreApps));
 
-        return { ...app, isMobile };
+        if (!entcoreApp) {
+          return { ...app, isMobile: false, type: 'web' };
+        }
+
+        if (isConnectorApp(entcoreApp)) {
+          return { ...app, isMobile: false, type: 'connector' };
+        }
+
+        if (isMobileApp(entcoreApp, navigableModules)) {
+          return { ...app, isMobile: true, type: 'mobile' };
+        }
+
+        return { ...app, isMobile: false, type: 'web' };
       });
 
       dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, entcoreApps }));
-
       applyAppsToModules(navigableModules, appsInfo);
     } catch (e) {
       console.error('[afterLoginSetup] ERROR', e);

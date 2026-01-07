@@ -21,7 +21,7 @@ const HTTP_REGEX: RegExp = /^https?:\/\//;
   const isImageIcon = !!icon && !svgIconName;
 
   const canShowWebIcon = useMemo(() => {
-    if (app.type === 'connector') return true;
+    if (app.type === 'connector' || app.type === 'web') return true;
     if (app.target === '_blank') return true;
     if (!app.address) return false;
 

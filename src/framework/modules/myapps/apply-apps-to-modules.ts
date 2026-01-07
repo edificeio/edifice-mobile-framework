@@ -4,7 +4,6 @@ import { PictureProps } from '~/framework/components/picture';
 import {
   AnyNavigableModule,
   AnyNavigableModuleConfig,
-  dynamiclyRegisterModules,
   INavigableModuleConfigDeclaration,
   NavigableModuleArray,
 } from '~/framework/util/moduleTool';
@@ -19,10 +18,12 @@ function buildDisplayPicture(app: AppsInfo): PictureProps | undefined {
   return { name: app.icon, type: 'Icon' } as const;
 }
 
-export function applyAppsToModules(modules: NavigableModuleArray<AnyNavigableModule>, apps: AppsInfo[]) {
+export function applyAppsToModules(modules: NavigableModuleArray<AnyNavigableModule> | AnyNavigableModule[], apps: AppsInfo[]) {
   const appsByName = new Map(apps.map(a => [a.name, a]));
 
-  modules.forEach(module => {
+  const modulesArray: AnyNavigableModule[] = Array.isArray(modules) ? modules : [...modules];
+
+  modulesArray.forEach(module => {
     const app = appsByName.get(module.config.name);
     const config = module.config as AnyNavigableModuleConfig;
 
@@ -51,6 +52,4 @@ export function applyAppsToModules(modules: NavigableModuleArray<AnyNavigableMod
       displayPicture: buildDisplayPicture(app),
     });
   });
-
-  dynamiclyRegisterModules(modules);
 }

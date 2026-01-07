@@ -1,6 +1,14 @@
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
-export type AppType = 'application' | 'connector';
+export type MyAppsCategories = 'communication' | 'pedagogie' | 'organisation' | 'servicesExternes' | 'toutes';
+
+export type MyAppsFilter = { type: 'category'; value: MyAppsCategories } | { type: 'favorites' };
+
+export interface AppsInfoWithCategory extends AppsInfoAggregated {
+  resolvedCategory: MyAppsCategories;
+}
+
+export type AppType = 'mobile' | 'web' | 'connector';
 
 export interface AppsInfo extends Partial<Omit<ApplicationsConfig, 'name'>> {
   name: string;

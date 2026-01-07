@@ -1,7 +1,9 @@
+import { resolveAppCategory } from './adapter';
+
 import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { appsInfoInitialState } from '~/framework/modules/myapps/reducer/reducer';
-import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
+import { AppsInfoAggregated, AppsInfoWithCategory, MyAppsFilter } from '~/framework/modules/myapps/types';
 
 export const selectAppsState = (state: IGlobalState) => {
   return moduleConfig.getState(state) ?? appsInfoInitialState;
@@ -37,4 +39,26 @@ export const selectAppsRaw = (state: IGlobalState) => {
     appsInfo: slice.appsInfo,
     entcoreApps: slice.entcoreApps,
   };
+};
+
+const getAppsWithResolvedCategory = (state: IGlobalState): AppsInfoWithCategory[] => {
+  const apps = selectAggregatedApps(state);
+
+  return apps.map(app => ({
+    ...app,
+    resolvedCategory: resolveAppCategory(app),
+  }));
+};
+
+export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) => {
+  const apps = getAppsWithResolvedCategory(state);
+
+  switch (filter.type) {
+    case 'favorites':
+      return apps.filter(app => app.isFavorite);
+
+    case 'category':
+      if (filter.value === 'toutes') return apps;
+      return apps.filter(app => app.resolvedCategory === filter.value);
+  }
 };

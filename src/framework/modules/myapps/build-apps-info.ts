@@ -3,10 +3,15 @@ import { AppBookmarks, AppsInfo, AppType } from './types';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 /**
+ * Initial apps mapping from Entcore data.
+ *
  * type:
- * - connector: external or non-integrated apps (blank, http, no prefix, hash routing, external flag, _blank)
- * - application: default
- * isMobile is resolved later (needs loaded modules)
+ * - connector: external or non-integrated apps (http(s), _blank, external flag, hash routing, missing prefix)
+ * - web: internal apps by default
+ *
+ * The final app type ('web' or 'mobile') and the isMobile flag
+ * are resolved after login, once all navigable modules are loaded
+ * and matched against Entcore scopes.
  */
 export function buildAppsInfo(entcoreApps: IEntcoreApp[], favorites: AppBookmarks): Omit<AppsInfo, 'isMobile'>[] {
   return entcoreApps.map(app => {
@@ -19,7 +24,7 @@ export function buildAppsInfo(entcoreApps: IEntcoreApp[], favorites: AppBookmark
       !app.prefix ||
       app.isExternal === true;
 
-    const type: AppType = isConnector ? 'connector' : 'application';
+    const type: AppType = isConnector ? 'connector' : 'web';
 
     return {
       address: app.address,
