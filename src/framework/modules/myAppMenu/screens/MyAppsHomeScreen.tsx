@@ -47,13 +47,16 @@ const MyAppsHomeScreen = (_: MyAppsHomeScreenProps) => {
     return unsubscribe;
   }, [filter]);
 
+  /**
+   * Navigation is passed by props:
+   *  props.navigation.navigate(app.address);
+   */
   const renderNewMyAppsGrid = () => {
     return (
       <MyAppsList
         apps={apps}
         onPressApp={app => {
           console.debug('PRESS-' + app.name);
-          // props.navigation.navigate(app.address);
         }}
         onLongPressApp={app => console.debug('LONG PRESS-' + app.name)}
       />
