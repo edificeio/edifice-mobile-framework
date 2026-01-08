@@ -19,7 +19,22 @@ export const myAppsService = {
   bookmarks: async (session: AuthActiveAccount): Promise<AppBookmarks> => {
     const res = await signedFetch(`${session.platform.url}/userbook/preference/apps`);
     const json = await res.json();
-    return JSON.parse(json.preference);
+
+    if (!json?.preference) {
+      return {
+        applications: [],
+        bookmarks: [],
+      };
+    }
+
+    try {
+      return JSON.parse(json.preference);
+    } catch {
+      return {
+        applications: [],
+        bookmarks: [],
+      };
+    }
   },
 
   config: async (session: AuthActiveAccount): Promise<ApplicationsConfig[]> => {

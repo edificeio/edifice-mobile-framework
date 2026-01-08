@@ -34,11 +34,7 @@ function isMobileApp(app: IEntcoreApp, modules: AnyNavigableModule[]): boolean {
       return false;
     }
 
-    return config.entcoreScope.some(scope => {
-      if (app.prefix && app.prefix.includes(scope)) return true;
-      if (app.address && app.address.includes(scope)) return true;
-      return false;
-    });
+    return config.entcoreScope.some(scope => app?.prefix?.includes(scope) || app?.address?.includes(scope));
   });
 }
 
