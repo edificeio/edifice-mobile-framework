@@ -38,8 +38,13 @@ export const MyAppsList = ({ apps, onLongPressApp, onPressApp }: MyAppsListProps
       numColumns={NUM_COLUMNS}
       keyExtractor={keyExtractor}
       contentContainerStyle={styles.content}
-      renderItem={({ item }) => (
-        <MyAppsCard app={item} onPress={() => onPressApp(item)} onLongPress={() => onLongPressApp?.(item)} />
+      renderItem={({ index, item }) => (
+        <MyAppsCard
+          key={`${item.name}-#${index}`}
+          app={item}
+          onPress={() => onPressApp(item)}
+          onLongPress={() => onLongPressApp?.(item)}
+        />
       )}
       renderPlaceholderItem={() => <View style={[styles.item, styles.placeholder]} />}
     />

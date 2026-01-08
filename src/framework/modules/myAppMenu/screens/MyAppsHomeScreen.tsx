@@ -1,26 +1,17 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
 
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import MyAppsCard from '../components/my-apps-card';
+import { MyAppsFilters } from '../components/my-apps-filters';
+import { MyAppsList } from '../components/my-apps-list';
 
-import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
-import SecondaryButton from '~/framework/components/buttons/secondary';
-import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
-import { UI_SIZES } from '~/framework/components/constants';
-import GridList from '~/framework/components/GridList';
-import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
-import { HeadingSText } from '~/framework/components/text';
-import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
-import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
-import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
-import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
-import { isEmpty } from '~/framework/util/object';
+import { selectFilteredApps } from '~/framework/modules/myapps/reducer';
+import { AppsInfoAggregated, MyAppsFilter } from '~/framework/modules/myapps/types';
+import { NavigableModuleArray } from '~/framework/util/moduleTool';
 
 export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
   modules: NavigableModuleArray;
@@ -28,139 +19,51 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
   connectors: NavigableModuleArray;
 }
 
-const styles = StyleSheet.create({
-  container: { flexGrow: 1 },
-  flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
-  image: { height: 64, width: '100%' },
-  otherModules: { paddingBottom: UI_SIZES.spacing.major },
-  otherModulesTitle: {
-    marginBottom: UI_SIZES.spacing.small,
-    marginTop: UI_SIZES.spacing.small,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
-  webButton: { marginBottom: UI_SIZES.spacing.major },
-});
-
-const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
+const MyAppsHomeScreen = (_: MyAppsHomeScreenProps) => {
   const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
+  const filterInitialState: React.SetStateAction<MyAppsFilter> = { type: 'category', value: 'toutes' };
+  const [filter, setFilter] = React.useState<MyAppsFilter>(filterInitialState);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        setFilter(filterInitialState);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
+  );
+
   React.useEffect(() => {
     const store = getStore();
 
     const updateApps = () => {
       const state = store.getState();
-      const aggregatedApps = selectAggregatedApps(state);
+      const aggregatedApps = selectFilteredApps(state, filter);
       setApps(aggregatedApps);
     };
 
     updateApps();
     const unsubscribe = store.subscribe(updateApps);
     return unsubscribe;
-  }, []);
+  }, [filter]);
 
   const renderNewMyAppsGrid = () => {
     return (
-      <GridList
-        data={apps}
-        keyExtractor={item => item.name}
-        gap={UI_SIZES.spacing.big}
-        gapOutside={UI_SIZES.spacing.big}
-        renderItem={({ item }) => (
-          <MyAppsCard
-            app={item}
-            onPress={() => console.debug('PRESS', item.name)}
-            onLongPress={() => console.debug('LONG PRESS', item.name)}
-          />
-        )}
+      <MyAppsList
+        apps={apps}
+        onPressApp={app => {
+          console.debug('PRESS-' + app.name);
+          // props.navigation.navigate(app.address);
+        }}
+        onLongPressApp={app => console.debug('LONG PRESS-' + app.name)}
       />
-    );
-  };
-
-  const renderGrid = () => {
-    const allModules = (props.modules ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
-    ) as NavigableModuleArray;
-
-    const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
-      return (
-        <TouchableSelectorPictureCard
-          onPress={() => props.navigation.navigate(item.config.routeName)}
-          text={I18n.get(item.config.displayI18n)}
-          picture={
-            item.config.displayPicture
-              ? item.config.displayPicture.type === 'Svg'
-                ? { ...item.config.displayPicture, height: 64, width: '100%' }
-                : item.config.displayPicture.type === 'Image'
-                  ? { ...item.config.displayPicture }
-                  : /* item.config.displayPicture.type === 'Icon' */ { ...item.config.displayPicture, size: 64 }
-              : {
-                  color: item.config.iconColor,
-
-                  name: item.config.iconName,
-
-                  size: 64,
-                  // Fallback on legacy moduleConfig properties
-                  type: 'Icon',
-                }
-          }
-          pictureStyle={item.config.displayPicture?.type === 'Image' ? styles.image : {}}
-        />
-      );
-    };
-
-    return (
-      <GridList
-        data={allModules}
-        renderItem={renderGridItem}
-        keyExtractor={item => item.config.name}
-        gap={UI_SIZES.spacing.big}
-        gapOutside={UI_SIZES.spacing.big}
-        alwaysBounceVertical={false}
-        overScrollMode="never"
-        contentContainerStyle={styles.container}
-        bottomInset={false}
-      />
-    );
-  };
-
-  const renderOtherModules = () => {
-    if (isEmpty(props.secondaryModules) && isEmpty(props.connectors)) return null;
-    const secondaryModules = (props.secondaryModules ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
-    ) as NavigableModuleArray;
-    const connectors = (props.connectors ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
-    ) as NavigableModuleArray;
-    return (
-      <View style={styles.otherModules}>
-        <HeadingSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingSText>
-
-        <FlatList
-          bottomInset={false}
-          renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}
-          data={secondaryModules}
-          style={styles.flatlist}
-        />
-        <FlatList
-          bottomInset={false}
-          renderItem={({ item }) => <OtherModuleElement item={item} type="connector" />}
-          data={connectors}
-          style={styles.flatlist}
-        />
-      </View>
     );
   };
 
   return (
     <PageView>
-      <ScrollView bottomInset={false}>
-        {renderNewMyAppsGrid()}
-
-        {renderGrid()}
-        {renderOtherModules()}
-        <View style={styles.webButton}>
-          <SecondaryButton text={I18n.get('myapp-accessweb')} url="/welcome" />
-        </View>
-      </ScrollView>
+      <MyAppsFilters selectedFilter={filter} onFilterChange={setFilter} />
+      {renderNewMyAppsGrid()}
     </PageView>
   );
 };
