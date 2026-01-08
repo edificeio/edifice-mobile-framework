@@ -8,7 +8,7 @@ export interface AppsInfoWithCategory extends AppsInfoAggregated {
   resolvedCategory: MyAppsCategories;
 }
 
-export type AppType = 'application' | 'connector';
+export type AppType = 'mobile' | 'web' | 'connector';
 
 export interface AppsInfo extends Partial<Omit<ApplicationsConfig, 'name'>> {
   name: string;
