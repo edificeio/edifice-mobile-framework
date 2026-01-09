@@ -2,7 +2,10 @@ import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 export type MyAppsCategories = 'communication' | 'pedagogie' | 'organisation' | 'servicesExternes' | 'toutes';
 
-export type MyAppsFilter = { type: 'category'; value: MyAppsCategories } | { type: 'favorites' };
+export type MyAppsFilter =
+  | { type: 'category'; value: MyAppsCategories }
+  | { type: 'favorites' }
+  | { type: 'search'; value: string };
 
 export interface AppsInfoWithCategory extends AppsInfoAggregated {
   resolvedCategory: MyAppsCategories;

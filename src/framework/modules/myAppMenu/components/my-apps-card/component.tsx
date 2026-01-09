@@ -10,7 +10,9 @@ import { useStyles } from './useStyles';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import { Image } from '~/framework/util/media-deprecated';
+import { injectImageSource } from '~/framework/util/media';
+import { Image } from '~/framework/util/media/components/image';
+import { sessionImageSource } from '~/framework/util/transport';
 
 const HTTP_REGEX: RegExp = /^https?:\/\//;
 
@@ -21,11 +23,22 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   const isFavorite = React.useMemo(() => app.isFavorite, [app.isFavorite]);
   const { animatedFavoriteStyle, imageDimensions } = useController(isFavorite);
 
-  const svgIconName = React.useMemo(() => {
-    if (!icon || isImageDistant(icon)) return null;
-    if (!icon.includes('/') && !icon.includes('.')) return icon;
-    return null;
-  }, [icon, isImageDistant]);
+  const imageDimensions = React.useMemo(
+    () => ({
+      height: UI_SIZES.spacing.huge,
+      width: UI_SIZES.spacing.huge,
+    }),
+    [],
+  );
+
+  const imageSource = React.useMemo(
+    () => (icon ? sessionImageSource(injectImageSource({ uri: icon }, imageDimensions)) : undefined),
+    [icon, imageDimensions],
+  );
+
+  const svgIconName = useMemo(() => {
+    if (!icon) return null;
+    if (isImageDistant(icon)) return null;
 
   const imageSource = React.useMemo(() => {
     if (!icon || svgIconName) return undefined;
@@ -55,7 +68,10 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
     }
 
     return <Image source={imageSource} style={styles.image} />;
-  }, [icon, svgIconName, imageSource, styles.image]);
+  }, [imageSource, icon, svgIconName, styles.image]);
+
+  const renderFavoriteBadge = useCallback(() => {
+    if (!app.isFavorite) return null;
 
   const renderFavoriteBadge = React.useCallback(() => {
     return (

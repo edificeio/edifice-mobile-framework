@@ -3,85 +3,51 @@ import { View } from 'react-native';
 
 import { FlashList } from '@shopify/flash-list';
 
+import { MyAppsCard } from '../my-apps-card';
 import { styles } from './styles';
-import { MyAppsListItem, MyAppsListProps } from './types';
-import { buildAppItem, buildFavoritesList, isSeparator } from './utils';
+import { MyAppsListProps } from './types';
 
-import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { SmallBoldText } from '~/framework/components/text';
-import { MyAppsCard } from '~/framework/modules/myAppMenu/components/my-apps-card';
+import { PaginatedFlashList, PaginatedFlashListProps, PaginatedListItem } from '~/framework/components/list/paginated-list';
+import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
 const NUM_COLUMNS = 2;
+const PAGE_SIZE = 20;
 
-export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongPressApp, onPressApp }: MyAppsListProps) => {
-  const appsListRef = React.useRef<FlashList<MyAppsListItem>>(null);
+export const MyAppsList = ({ apps, onLongPressApp, onPressApp }: MyAppsListProps) => {
+  const appsListRef = React.useRef<FlashList<PaginatedListItem<AppsInfoAggregated>>>(null);
 
-  const data: MyAppsListItem[] = React.useMemo(() => {
-    return isFavoritesFilter ? buildFavoritesList(apps) : apps.map(buildAppItem);
-  }, [apps, isFavoritesFilter]);
-
-  const keyExtractor = React.useCallback(
-    (item: MyAppsListItem, index: number) => (isSeparator(item) ? `separator-${index}` : item.app.name),
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<AppsInfoAggregated>['keyExtractor']>>(
+    item => item.name,
     [],
   );
 
-  const getItemType = React.useCallback((item: MyAppsListItem) => item.type, []);
-
-  const overrideItemLayout = React.useCallback((layout, item: MyAppsListItem) => {
-    if (item.type === 'separator') {
-      layout.span = NUM_COLUMNS;
-      layout.size = 40;
-    } else {
-      layout.span = 1;
-    }
-  }, []);
-
-  const renderItem = React.useCallback(
-    ({ item }: { item: MyAppsListItem }) => {
-      if (isSeparator(item)) {
-        return (
-          <View style={styles.separatorContainer}>
-            <View style={styles.separatorLine} />
-            <SmallBoldText style={styles.separatorText}>{I18n.get('myapp-home-filter-favorites-other-services')}</SmallBoldText>
-          </View>
-        );
-      }
-
-      return (
-        <MyAppsCard
-          isFavoritesFilter={isFavoritesFilter}
-          app={item.app}
-          onPress={() => onPressApp(item.app)}
-          onLongPress={() => onLongPressApp?.(item.app)}
-        />
-      );
-    },
-    [isFavoritesFilter, onPressApp, onLongPressApp],
-  );
-
-  if (!data.length) {
-    const { text, title } = emptyScreenConfig;
+  if (!apps.length) {
     return (
       <View style={styles.emptyContainer}>
-        <EmptyScreen svgImage="empty-search" title={I18n.get(title)} text={I18n.get(text)} />
+        <EmptyScreen svgImage="empty-search" title="Aucune application" />
       </View>
     );
   }
 
   return (
-    <FlashList
+    <PaginatedFlashList
       ref={appsListRef}
-      data={data}
+      data={apps}
+      pageSize={PAGE_SIZE}
       numColumns={NUM_COLUMNS}
-      estimatedItemSize={120}
       keyExtractor={keyExtractor}
-      renderItem={renderItem}
-      getItemType={getItemType}
-      overrideItemLayout={overrideItemLayout}
       contentContainerStyle={styles.content}
+      renderItem={({ index, item }) => (
+        <MyAppsCard
+          key={`${item.name}-#${index}`}
+          app={item}
+          onPress={() => onPressApp(item)}
+          onLongPress={() => onLongPressApp?.(item)}
+        />
+      )}
+      renderPlaceholderItem={() => <View style={[styles.item, styles.placeholder]} />}
     />
   );
 };
-
 export default MyAppsList;

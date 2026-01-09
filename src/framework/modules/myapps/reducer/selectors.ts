@@ -4,7 +4,7 @@ import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { appsInfoInitialState } from '~/framework/modules/myapps/reducer/reducer';
 import { AppsInfoAggregated, AppsInfoWithCategory, MyAppsFilter } from '~/framework/modules/myapps/types';
-import { getAppName } from '~/framework/modules/myapps/utils/app-i18n';
+import getAppI18nLabel from '~/framework/modules/myapps/utils/app-i18n';
 
 export const selectAppsState = (state: IGlobalState) => {
   return moduleConfig.getState(state) ?? appsInfoInitialState;
@@ -14,34 +14,19 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
   const slice = selectAppsState(state);
   const appsConfig = slice?.appsConfig ?? [];
   const appsInfo = slice?.appsInfo ?? [];
-  const favorites = slice.favorites;
+
   const configByName = new Map(appsConfig.map(c => [c.name, c]));
 
   return appsInfo
     .map(app => {
-      let config = configByName.get(app.name);
-
-      const isLibrary = app.address?.includes('library.edifice.io') && !config?.category;
-      const isFavorite = favorites.bookmarks?.includes(app.name);
-
-      if (isLibrary) {
-        const libraryConfig = configByName.get('library-info');
-        if (libraryConfig) {
-          config = {
-            ...libraryConfig,
-            name: app.name,
-          };
-        }
-      }
+      const config = configByName.get(app.name);
 
       return {
         ...app,
         category: config?.category,
         color: config?.color,
-        displayName: getAppName(app),
+        displayName: getAppI18nLabel(app),
         help: config?.help,
-        isFavorite,
-        isLibrary,
         libraries: config?.libraries,
       };
     })
@@ -54,8 +39,10 @@ export const selectAppsRaw = (state: IGlobalState) => {
   return {
     appsConfig: slice.appsConfig,
     appsInfo: slice.appsInfo,
+    entcoreApps: slice.entcoreApps,
   };
 };
+
 const getAppsWithResolvedCategory = (state: IGlobalState): AppsInfoWithCategory[] => {
   const apps = selectAggregatedApps(state);
 
@@ -80,7 +67,5 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
       const str = filter.value.toLowerCase();
       return apps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(str));
     }
-    case 'libraries':
-      return apps.filter(app => app.isLibrary);
   }
 };
