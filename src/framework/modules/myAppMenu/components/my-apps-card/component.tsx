@@ -7,7 +7,9 @@ import { useStyles } from './useStyles';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import { Image } from '~/framework/util/media-deprecated';
+import { injectImageSource } from '~/framework/util/media';
+import { Image } from '~/framework/util/media/components/image';
+import { sessionImageSource } from '~/framework/util/transport';
 
 const HTTP_REGEX: RegExp = /^https?:\/\//;
 
@@ -15,6 +17,19 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   const styles = useStyles(app);
   const isImageDistant = (icon: string): boolean => HTTP_REGEX.test(icon) || icon.startsWith('/workspace/');
   const icon = app.icon;
+
+  const imageDimensions = React.useMemo(
+    () => ({
+      height: UI_SIZES.spacing.huge,
+      width: UI_SIZES.spacing.huge,
+    }),
+    [],
+  );
+
+  const imageSource = React.useMemo(
+    () => (icon ? sessionImageSource(injectImageSource({ uri: icon }, imageDimensions)) : undefined),
+    [icon, imageDimensions],
+  );
 
   const svgIconName = useMemo(() => {
     if (!icon) return null;
@@ -38,8 +53,8 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
       return <Svg name={svgIconName} fill="white" width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} />;
     }
 
-    return <Image source={{ uri: icon }} style={styles.image} />;
-  }, [icon, svgIconName, styles.image]);
+    return <Image source={imageSource} style={styles.image} />;
+  }, [imageSource, icon, svgIconName, styles.image]);
 
   const renderFavoriteBadge = useCallback(() => {
     if (!app.isFavorite) return null;

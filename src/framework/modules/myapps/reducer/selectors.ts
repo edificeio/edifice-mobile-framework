@@ -62,9 +62,10 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
     case 'category':
       if (filter.value === 'toutes') return apps;
       return apps.filter(app => app.resolvedCategory === filter.value);
-    case 'search':
+    case 'search': {
       if (!filter.value.trim()) return apps;
-      const queryString = filter.value.toLowerCase();
-      return apps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(queryString));
+      const str = filter.value.toLowerCase();
+      return apps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(str));
+    }
   }
 };
