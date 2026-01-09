@@ -25,7 +25,7 @@ export const MyAppsList = ({ apps, onLongPressApp, onPressApp }: MyAppsListProps
   if (!apps.length) {
     return (
       <View style={styles.emptyContainer}>
-        <EmptyScreen svgImage="empty-communities-list" title="Aucune application" />
+        <EmptyScreen svgImage="empty-search" title="Aucune application" />
       </View>
     );
   }

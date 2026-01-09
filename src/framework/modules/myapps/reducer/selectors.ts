@@ -4,6 +4,7 @@ import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { appsInfoInitialState } from '~/framework/modules/myapps/reducer/reducer';
 import { AppsInfoAggregated, AppsInfoWithCategory, MyAppsFilter } from '~/framework/modules/myapps/types';
+import getAppI18nLabel from '~/framework/modules/myapps/utils/app-i18n';
 
 export const selectAppsState = (state: IGlobalState) => {
   return moduleConfig.getState(state) ?? appsInfoInitialState;
@@ -24,6 +25,7 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
         ...app,
         category: config?.category,
         color: config?.color,
+        displayName: getAppI18nLabel(app),
         help: config?.help,
         libraries: config?.libraries,
       };
@@ -60,5 +62,9 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
     case 'category':
       if (filter.value === 'toutes') return apps;
       return apps.filter(app => app.resolvedCategory === filter.value);
+    case 'search':
+      if (!filter.value.trim()) return apps;
+      const queryString = filter.value.toLowerCase();
+      return apps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(queryString));
   }
 };
