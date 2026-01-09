@@ -214,8 +214,8 @@ export function Carousel(props: ICarouselProps) {
           }
         }
         const realFilePath = Platform.select({
-          android: getPath(sf._filepathNative!),
-          default: decodeURI(sf._filepathNative!),
+          android: getPath(sf.lf._filepathNative!),
+          default: decodeURI(sf.lf._filepathNative!),
         });
         if (Platform.OS === 'android') {
           await CameraRoll.saveAsset(realFilePath, { album: 'Download' }); // Will put in the actual folder "Download", but still displayed in "Camera" album :/
