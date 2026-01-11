@@ -92,6 +92,7 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
 
   const handleWeekChange = React.useCallback((weekStart: moment.Moment) => {
     setSelectedWeek(weekStart);
+    setSelectedDay(weekStart.clone().startOf('week').format('YYYY-MM-DD'));
   }, []);
 
   const getScreenTime = React.useCallback(
@@ -215,6 +216,7 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
 
   const handleDateChange = React.useCallback((date: moment.Moment) => {
     setSelectedDay(date.format('YYYY-MM-DD'));
+    setSelectedWeek(date.clone().startOf('week'));
   }, []);
 
   const handleInfoPress = React.useCallback(() => {
