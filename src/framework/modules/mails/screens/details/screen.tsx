@@ -295,18 +295,18 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           id: 'replyAll',
           title: I18n.get('mails-details-replyall'),
         },
+        {
+          action: onForward,
+          icon: {
+            android: 'ic_forward',
+            ios: 'arrowshape.turn.up.forward',
+          },
+          id: 'forward',
+          title: I18n.get('mails-details-forward'),
+        },
       ];
   const allPopupActionsMenu = [
     ...replayAction,
-    {
-      action: onForward,
-      icon: {
-        android: 'ic_forward',
-        ios: 'arrowshape.turn.up.forward',
-      },
-      id: 'forward',
-      title: I18n.get('mails-details-forward'),
-    },
     {
       action: onRecall,
       icon: {
@@ -500,7 +500,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         ) : (
           <>
             {!mail?.noReply && renderReplyButton()}
-            {isMultipleRecipients ? renderReplyAllButton() : renderForwardButton()}
+            {!mail?.noReply && (isMultipleRecipients ? renderReplyAllButton() : renderForwardButton())}
           </>
         )}
       </View>
