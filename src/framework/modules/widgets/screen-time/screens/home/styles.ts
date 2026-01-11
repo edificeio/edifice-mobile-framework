@@ -51,13 +51,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  sectionTitleDot: {
-    backgroundColor: theme.palette.complementary.blue.regular,
-    borderRadius: UI_SIZES.radius.medium,
-    height: 8,
-    marginRight: UI_SIZES.spacing.tiny,
-    width: 8,
-  },
+
   separator: {
     backgroundColor: theme.palette.grey.cloudy,
     height: 2,

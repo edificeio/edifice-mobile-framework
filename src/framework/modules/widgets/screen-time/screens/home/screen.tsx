@@ -243,7 +243,6 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
 
           {/* Affichage section */}
           <View style={styles.sectionTitleContainer}>
-            <View style={styles.sectionTitleDot} />
             <BodyBoldText style={styles.sectionTitle}>{I18n.get('widget-screen-time-view-details')}</BodyBoldText>
             <IconButton icon="ui-infoCircle" action={handleInfoPress} style={styles.infoIcon} size={20} />
           </View>
