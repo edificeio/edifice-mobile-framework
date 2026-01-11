@@ -66,12 +66,22 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
     }
   });
 
-  // Update selected child when userChildren data changes (only for Relative profiles)
+  // Reset all data when child selection changes
+  const prevChildIdRef = React.useRef<string | null>(selectedChildId);
   React.useEffect(() => {
-    if (isRelativeProfile && userChildren.length > 0 && !selectedChildId) {
-      setSelectedChildId(userChildren[0].id);
+    if (prevChildIdRef.current !== null && prevChildIdRef.current !== selectedChildId) {
+      // Reset all data states
+      setTodayData(null);
+      setYesterdayData(null);
+      setWeekData(null);
+      setSelectedDayData(null);
+      // Reset view states
+      setSelectedDay(null);
+      setSelectedWeek(moment().startOf('week'));
+      setIsDayMode(false);
     }
-  }, [userChildren, selectedChildId, isRelativeProfile]);
+    prevChildIdRef.current = selectedChildId;
+  }, [selectedChildId]);
 
   const dropdownItems = React.useMemo(() => {
     return userChildren.map(child => ({
@@ -219,7 +229,7 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
     return (
       <View style={styles.container}>
         <View style={styles.contentContainer}>
-          {isRelativeProfile && (
+          {isRelativeProfile && userChildren.length > 1 && (
             <DropdownPicker
               items={dropdownItems}
               value={selectedChildId}
