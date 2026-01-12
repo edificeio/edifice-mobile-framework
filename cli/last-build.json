@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-01-07 20:26:36",
-  "notes": "update(stack): yarn cache update\nchore: yarn cache update\nrelease: 1.16.2-peda.4(1160206)",
+  "last": "2026-01-12 21:38:12",
+  "notes": "chore: yarn cache update\nMerge remote-tracking branch 'origin/dev/1.16.2' into dev/peda\nfix(i18n): missing co translations addition\nUpdated translations from Phrase (270)\nfix: PEDAGO-2139 trying to fix edt without testing :/\nfix: PEDAGO-2139 save to camera roll was not working\nchore: yarn cache update\nfix: rack icon misnamed\nrelease: 1.16.2-peda.5(1160207)",
   "track": "1.16.2",
-  "version": "1.16.2-peda.5(1160207)"
+  "version": "1.16.2-peda.6(1160208)"
 }
