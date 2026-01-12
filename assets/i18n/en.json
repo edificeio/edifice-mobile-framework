@@ -409,7 +409,7 @@
   "conversation-createfolder-createdirectory-confirm": "Directory created",
   "conversation-createfolder-createdirectoryerror-folderexists": "This folder already exists",
   "conversation-createfolder-directoryname": "Directory name",
-  "conversation-createfolder-error-text": "An error occurred. Please try again later.",
+  "conversation-createfolder-error-text": "An error as occurred. Please try again later.",
   "conversation-drawer-selectdirectory": "Select folder",
   "conversation-mailcontent-download-error": "Error opening file",
   "conversation-mailcontent-downloadsuccess-name": "{{name}} saved in Downloads",
