@@ -10,6 +10,7 @@ export const MY_APPS_FILTER_LABEL_KEYS = {
   all: 'myapp-home-filter-all',
   communication: 'myapp-home-filter-communication',
   favorites: 'myapp-home-filter-favorites',
+  libraries: 'myapp-home-filter-libraries',
   organisation: 'myapp-home-filter-organisation',
   pedagogie: 'myapp-home-filter-pedagogie',
   servicesExternes: 'myapp-home-filter-servicesExternes',
@@ -39,6 +40,10 @@ export const MY_APPS_FILTER_CONFIG = {
     filter: { type: 'favorites' } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.favorites,
   },
+  libraries: {
+    filter: { type: 'libraries' } as const,
+    labelKey: MY_APPS_FILTER_LABEL_KEYS.libraries,
+  },
   organisation: {
     filter: { type: 'category', value: 'organisation' } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.organisation,
@@ -59,5 +64,6 @@ export const MY_APPS_FILTERS: Readonly<MyAppsFilterItem[]> = [
   MY_APPS_FILTER_CONFIG.communication,
   MY_APPS_FILTER_CONFIG.pedagogie,
   MY_APPS_FILTER_CONFIG.organisation,
+  // MY_APPS_FILTER_CONFIG.libraries,
   MY_APPS_FILTER_CONFIG.servicesExternes,
 ];

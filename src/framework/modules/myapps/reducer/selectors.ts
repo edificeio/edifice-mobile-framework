@@ -19,14 +19,26 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
 
   return appsInfo
     .map(app => {
-      const config = configByName.get(app.name);
+      let config = configByName.get(app.name);
 
+      const isLibrary = app.address?.includes('library.edifice.io') && !config?.category;
+
+      if (isLibrary) {
+        const libraryConfig = configByName.get('library-info');
+        if (libraryConfig) {
+          config = {
+            ...libraryConfig,
+            name: app.name,
+          };
+        }
+      }
       return {
         ...app,
         category: config?.category,
         color: config?.color,
-        displayName: getAppI18nLabel(app),
+        displayName: getAppI18nLabel(app), // remove when translated names given
         help: config?.help,
+        isLibrary,
         libraries: config?.libraries,
       };
     })
@@ -42,7 +54,6 @@ export const selectAppsRaw = (state: IGlobalState) => {
     entcoreApps: slice.entcoreApps,
   };
 };
-
 const getAppsWithResolvedCategory = (state: IGlobalState): AppsInfoWithCategory[] => {
   const apps = selectAggregatedApps(state);
 
@@ -67,5 +78,7 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
       const str = filter.value.toLowerCase();
       return apps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(str));
     }
+    case 'libraries':
+      return apps.filter(app => app.isLibrary);
   }
 };

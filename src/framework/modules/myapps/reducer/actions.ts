@@ -1,8 +1,6 @@
 import { Action, UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { applyAppsToModules } from '../apply-apps-to-modules';
-
 import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
@@ -101,7 +99,7 @@ export const afterLoginSetup =
       });
 
       dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, entcoreApps }));
-      applyAppsToModules(navigableModules, appsInfo);
+      // applyAppsToModules(navigableModules, appsInfo);
     } catch (e) {
       console.error('[afterLoginSetup] ERROR', e);
       dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));

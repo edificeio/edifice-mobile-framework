@@ -39,7 +39,8 @@ export const myAppsService = {
 
   config: async (session: AuthActiveAccount): Promise<ApplicationsConfig[]> => {
     const res = await signedFetch(`${session.platform.url}/myApps/config`);
-    return res.json();
+    const resp = await res.json();
+    return resp;
   },
 
   list: async (session: AuthActiveAccount): Promise<IEntcoreApp[]> => {
