@@ -441,7 +441,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       {
         action: () => onNoReplyAction(),
         icon: {
-          android: noReply ? 'ic_reply' : 'ic_reply',
+          android: noReply ? 'ic_filled_do_not_disturb_on' : 'ic_outline_do_not_disturb_on',
           ios: noReply ? 'envelope.and.hand.raised.fill' : 'envelope.and.hand.raised',
         },
         title: I18n.get(noReply ? 'mails-no-reply-action-active' : 'mails-no-reply-action-inactive'),
