@@ -5,6 +5,7 @@ export type MyAppsCategories = 'communication' | 'pedagogie' | 'organisation' | 
 export type MyAppsFilter =
   | { type: 'category'; value: MyAppsCategories }
   | { type: 'favorites' }
+  | { type: 'libraries' }
   | { type: 'search'; value: string };
 
 export interface AppsInfoWithCategory extends AppsInfoAggregated {
@@ -24,7 +25,7 @@ export interface AppsInfo extends Partial<Omit<ApplicationsConfig, 'name'>> {
   type: AppType;
   isMobile: boolean;
   isFavorite: boolean;
-  isPinned: boolean;
+  isLibrary?: boolean;
 }
 
 export interface ApplicationsConfig {
