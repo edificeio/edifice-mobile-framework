@@ -12,7 +12,7 @@ import DateTimePicker from '~/framework/components/dateTimePicker';
 import { ModalBox, ModalBoxHandle } from '~/framework/components/ModalBox';
 import { PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
-import { BodyBoldText, BodyText } from '~/framework/components/text';
+import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { AccountType, getFlattenedChildren, ILoggedUser } from '~/framework/modules/auth/model';
 import { getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import { BarChart } from '~/framework/modules/widgets/screen-time/components/BarChart';
@@ -22,6 +22,7 @@ import { ScreenTimeDayResponse, ScreenTimeWeekResponse } from '~/framework/modul
 import { ScreenTimeNavigationParams, screenTimeRouteNames } from '~/framework/modules/widgets/screen-time/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { signedFetch } from '~/infra/fetchWithCache';
+import HtmlContentView from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
 
 export const computeNavBar = ({
@@ -289,7 +290,20 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
 
   const infoModalContent = (
     <View style={styles.modalContent}>
-      <BodyText style={styles.modalText}>{I18n.get('widget-screen-time-info-modal-text')}</BodyText>
+      <HtmlContentView
+        html={I18n.get('widget-screen-time-info-modal-text')}
+        opts={{
+          audio: false,
+          iframes: false,
+          images: false,
+          linkTextStyle: {
+            ...TextFontStyle.Bold,
+            textDecorationLine: 'underline',
+          },
+          textColor: false,
+          video: false,
+        }}
+      />
     </View>
   );
 
