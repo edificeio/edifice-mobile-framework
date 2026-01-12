@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { presencesRouteNames } from '../../viescolaire/presences/navigation';
 import { MyAppsFilters } from '../components/my-apps-filters';
 import { MyAppsList } from '../components/my-apps-list';
 
@@ -56,6 +57,7 @@ const MyAppsHomeScreen = (_: MyAppsHomeScreenProps) => {
       <MyAppsList
         apps={apps}
         onPressApp={app => {
+          _.navigation.navigate(presencesRouteNames.callList);
           console.debug('PRESS-' + app.name);
         }}
         onLongPressApp={app => console.debug('LONG PRESS-' + app.name)}
