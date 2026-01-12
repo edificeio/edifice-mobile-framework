@@ -3,7 +3,6 @@ import { View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +14,7 @@ import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
+import DropdownPicker from '~/framework/components/pickers/dropdown';
 import ScrollView from '~/framework/components/scrollView';
 import { getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
@@ -124,7 +124,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
   const renderContent = () => (
     <View>
       {dropdownItemsStructures.length > 1 && (
-        <DropDownPicker
+        <DropdownPicker
           open={isOpen}
           value={selectedStructureValue}
           items={dropdownItemsStructures}
@@ -132,8 +132,6 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
           setValue={onStructureChange}
           placeholder={I18n.get('widget-cantine-home-select-structure')}
           style={styles.dropdownContainer}
-          dropDownContainerStyle={styles.dropdownContainer}
-          textStyle={styles.dropdownText}
         />
       )}
       <DayPicker

@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
@@ -12,13 +11,7 @@ export default StyleSheet.create({
   },
   // DropDownPicker styles
   dropdownContainer: {
-    borderColor: theme.palette.grey.cloudy,
-    borderRadius: UI_SIZES.radius.selector,
-    borderWidth: UI_SIZES.border.thin,
-  },
-  dropdownText: {
-    color: theme.palette.grey.black,
-    fontSize: 16,
+    marginBottom: UI_SIZES.spacing.small,
   },
   menuWrapper: {
     flex: 1,
