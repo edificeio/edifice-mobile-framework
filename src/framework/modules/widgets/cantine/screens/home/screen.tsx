@@ -148,7 +148,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     const current = selectedDate;
     const dayOfWeek = moment(current).day();
     const step =
-      (direction === SwipeDirection.LEFT && dayOfWeek === 6) || (direction === SwipeDirection.RIGHT && dayOfWeek === 0) ? 2 : 1;
+      (direction === SwipeDirection.LEFT && dayOfWeek === 6) || (direction === SwipeDirection.RIGHT && dayOfWeek === 1) ? 2 : 1;
     const newDate =
       direction === SwipeDirection.LEFT
         ? moment(current).add(step, 'day').format('YYYY-MM-DD')
