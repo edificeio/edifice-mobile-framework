@@ -49,13 +49,27 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
   const selectedDate = React.useMemo(() => (selectedDay ? moment(selectedDay) : moment()), [selectedDay]);
 
   const infoModalRef = React.useRef<ModalBoxHandle>(null);
+  // Refs to track current request context and prevent stale updates
+  const currentRequestRef = React.useRef<{
+    childId: string | null;
+    todayDate: string;
+    yesterdayDate: string;
+  } | null>(null);
+  const currentWeekRequestRef = React.useRef<{
+    childId: string | null;
+    weekKey: string;
+  } | null>(null);
+  const currentDayRequestRef = React.useRef<{
+    childId: string | null;
+    day: string;
+  } | null>(null);
 
   const session = getSession();
   const isRelativeProfile = session?.user?.type === AccountType.Relative;
 
   const userChildren = React.useMemo(() => {
     const user = session?.user as ILoggedUser | undefined;
-    return getFlattenedChildren(user?.children)?.filter(c => c.classesNames.length > 0) ?? [];
+    return getFlattenedChildren(user?.children) ?? [];
   }, [session?.user]);
 
   const [selectedChildId, setSelectedChildId] = React.useState<string | null>(() => {
@@ -68,20 +82,20 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
   });
 
   // Reset all data when child selection changes
-  const prevChildIdRef = React.useRef<string | null>(selectedChildId);
   React.useEffect(() => {
-    if (prevChildIdRef.current !== null && prevChildIdRef.current !== selectedChildId) {
-      // Reset all data states
-      setTodayData(null);
-      setYesterdayData(null);
-      setWeekData(null);
-      setSelectedDayData(null);
-      // Reset view states
-      setSelectedDay(null);
-      setSelectedWeek(moment().startOf('week'));
-      setIsDayMode(false);
-    }
-    prevChildIdRef.current = selectedChildId;
+    // Reset all data states immediately when child changes
+    setTodayData(null);
+    setYesterdayData(null);
+    setWeekData(null);
+    setSelectedDayData(null);
+    // Reset view states
+    setSelectedDay(moment().format('YYYY-MM-DD'));
+    setSelectedWeek(moment().startOf('week'));
+    setIsDayMode(false);
+    // Clear request refs to invalidate any in-flight requests
+    currentRequestRef.current = null;
+    currentWeekRequestRef.current = null;
+    currentDayRequestRef.current = null;
   }, [selectedChildId]);
 
   const dropdownItems = React.useMemo(() => {
@@ -150,43 +164,86 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
     const fetchData = async () => {
       if (!selectedChildId) return;
 
+      // Capture current context at the start of the request
+      const todayDate = moment().format('YYYY-MM-DD');
+      const yesterdayDate = moment().subtract(1, 'day').format('YYYY-MM-DD');
+      const requestContext = {
+        childId: selectedChildId,
+        todayDate,
+        yesterdayDate,
+      };
+      currentRequestRef.current = requestContext;
+
       setIsLoading(true);
       try {
-        const [todayResponse, yesterdayResponse, weekResponse] = await Promise.all([
+        const [todayResponse, yesterdayResponse] = await Promise.all([
           getScreenTime('today', false),
           getScreenTime('yesterday', false),
-          getScreenTime(selectedWeek, true),
         ]);
 
-        if (todayResponse) {
-          setTodayData(todayResponse as ScreenTimeDayResponse);
-        }
-        if (yesterdayResponse) {
-          setYesterdayData(yesterdayResponse as ScreenTimeDayResponse);
-        }
-        if (weekResponse) {
-          setWeekData(weekResponse as ScreenTimeWeekResponse);
+        // Only update state if the request context still matches (child and dates haven't changed)
+        if (
+          currentRequestRef.current &&
+          currentRequestRef.current.childId === selectedChildId &&
+          currentRequestRef.current.todayDate === moment().format('YYYY-MM-DD') &&
+          currentRequestRef.current === requestContext
+        ) {
+          if (todayResponse) {
+            setTodayData(todayResponse as ScreenTimeDayResponse);
+          }
+          if (yesterdayResponse) {
+            setYesterdayData(yesterdayResponse as ScreenTimeDayResponse);
+          }
         }
       } catch (error) {
         console.error('Error getting screen time:', error);
       } finally {
-        setIsLoading(false);
+        // Only update loading state if this is still the current request
+        if (currentRequestRef.current === requestContext) {
+          setIsLoading(false);
+        }
       }
     };
     fetchData();
 
+    // Cleanup: invalidate this request when effect re-runs or unmounts
+    return () => {
+      if (currentRequestRef.current?.childId === selectedChildId) {
+        currentRequestRef.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChildId]);
 
   // Fetch week data when selected week changes (without loading state)
   React.useEffect(() => {
+    // Capture values at the start of the effect for cleanup
+    const currentChildId = selectedChildId;
+    const currentWeekKey = selectedWeek ? selectedWeek.clone().startOf('week').format('YYYY-MM-DD') : null;
+
     const fetchWeekData = async () => {
       if (!selectedChildId || !selectedWeek) return;
 
+      // Capture current context at the start of the request
+      const weekKey = selectedWeek.clone().startOf('week').format('YYYY-MM-DD');
+      const requestContext = {
+        childId: selectedChildId,
+        weekKey,
+      };
+      currentWeekRequestRef.current = requestContext;
+
       try {
         const weekResponse = await getScreenTime(selectedWeek, true);
-        if (weekResponse) {
-          setWeekData(weekResponse as ScreenTimeWeekResponse);
+        // Only update state if the request context still matches (child and week haven't changed)
+        if (
+          currentWeekRequestRef.current &&
+          currentWeekRequestRef.current.childId === selectedChildId &&
+          currentWeekRequestRef.current.weekKey === selectedWeek.clone().startOf('week').format('YYYY-MM-DD') &&
+          currentWeekRequestRef.current === requestContext
+        ) {
+          if (weekResponse) {
+            setWeekData(weekResponse as ScreenTimeWeekResponse);
+          }
         }
       } catch (error) {
         console.error('Error getting week screen time:', error);
@@ -194,17 +251,43 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
     };
     fetchWeekData();
 
+    // Cleanup: invalidate this request when effect re-runs or unmounts
+    return () => {
+      if (currentWeekRequestRef.current?.childId === currentChildId && currentWeekRequestRef.current?.weekKey === currentWeekKey) {
+        currentWeekRequestRef.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWeek, selectedChildId]);
+  }, [selectedChildId, selectedWeek]);
 
   // When switching to day mode or changing selected day, fetch that day's data
   React.useEffect(() => {
+    // Capture values at the start of the effect for cleanup
+    const currentChildId = selectedChildId;
+    const currentDay = selectedDay;
+
     const fetchDayData = async () => {
       if (!selectedChildId || !selectedDay) return;
+
+      // Capture current context at the start of the request
+      const requestContext = {
+        childId: selectedChildId,
+        day: selectedDay,
+      };
+      currentDayRequestRef.current = requestContext;
+
       try {
         const dayResponse = await getScreenTime(selectedDay, false);
-        if (dayResponse) {
-          setSelectedDayData(dayResponse as ScreenTimeDayResponse);
+        // Only update state if the request context still matches (child and day haven't changed)
+        if (
+          currentDayRequestRef.current &&
+          currentDayRequestRef.current.childId === selectedChildId &&
+          currentDayRequestRef.current.day === selectedDay &&
+          currentDayRequestRef.current === requestContext
+        ) {
+          if (dayResponse) {
+            setSelectedDayData(dayResponse as ScreenTimeDayResponse);
+          }
         }
       } catch (error) {
         console.error('Error getting selected day screen time:', error);
@@ -212,8 +295,14 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
     };
     fetchDayData();
 
+    // Cleanup: invalidate this request when effect re-runs or unmounts
+    return () => {
+      if (currentDayRequestRef.current?.childId === currentChildId && currentDayRequestRef.current?.day === currentDay) {
+        currentDayRequestRef.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDay, selectedChildId]);
+  }, [selectedChildId, selectedDay]);
 
   const handleDateChange = React.useCallback((date: moment.Moment) => {
     setSelectedDay(date.format('YYYY-MM-DD'));
