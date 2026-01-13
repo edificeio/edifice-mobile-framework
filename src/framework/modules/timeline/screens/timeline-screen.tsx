@@ -42,7 +42,7 @@ import { notificationsService } from '~/framework/modules/timeline/service';
 import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navigate } from '~/framework/navigation/helper';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { NavigableModuleArray } from '~/framework/util/moduleTool';
 import {
@@ -349,9 +349,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   componentDidMount() {
     this.doInit();
-    // Ensure title matches current selection on first mount
-    const t = this.getSelectedTitle();
-    this.props.navigation.setOptions({ headerTitle: navBarTitle(t), title: t });
   }
 
   componentDidUpdate(prevProps: ITimelineScreenProps, _prevState: ITimelineScreenState) {
@@ -406,11 +403,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   // METHODS ======================================================================================
-
-  getSelectedTitle() {
-    // Always return timeline title - widgets are shown in modals
-    return I18n.get('timeline-appname');
-  }
 
   async doInit() {
     try {
