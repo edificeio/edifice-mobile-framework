@@ -2073,5 +2073,6 @@
   "widget-screen-time-total": "Total",
   "widget-screen-time-zero-minutes": "0 m",
   "widget-screen-time-show-all-hours": "Afficher toutes les heures",
-  "widget-screen-time-show-only-with-values": "Afficher uniquement les heures avec des valeurs"
+  "widget-screen-time-show-only-with-values": "Afficher uniquement les heures avec des valeurs",
+  "widget-screen-time-empty-title": "Aucune donnée disponible"
 }

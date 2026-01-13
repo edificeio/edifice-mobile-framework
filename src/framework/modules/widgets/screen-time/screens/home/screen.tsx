@@ -9,6 +9,7 @@ import styles from './styles';
 import { I18n } from '~/app/i18n';
 import IconButton from '~/framework/components/buttons/icon';
 import DateTimePicker from '~/framework/components/dateTimePicker';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { ModalBox, ModalBoxHandle } from '~/framework/components/ModalBox';
 import { PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
@@ -320,59 +321,62 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
 
     return (
       <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          {isRelativeProfile && userChildren.length > 1 && (
-            <DropdownPicker
-              items={dropdownItems}
-              value={selectedChildId}
-              setValue={setSelectedChildId}
-              open={isDropdownOpen}
-              setOpen={setIsDropdownOpen}
-              placeholder={I18n.get('widget-screen-time-select-child')}
-              searchable={false}
-              style={styles.dropdownPicker}
-            />
-          )}
+        {userChildren.length === 0 && <EmptyScreen svgImage="empty-search" title={I18n.get('widget-screen-time-empty-title')} />}
+        {userChildren.length > 0 && (
+          <View style={styles.contentContainer}>
+            {isRelativeProfile && (
+              <DropdownPicker
+                items={dropdownItems}
+                value={selectedChildId}
+                setValue={setSelectedChildId}
+                open={isDropdownOpen}
+                setOpen={setIsDropdownOpen}
+                placeholder={I18n.get('widget-screen-time-select-child')}
+                searchable={false}
+                style={styles.dropdownPicker}
+              />
+            )}
 
-          {/* Usage Cards */}
-          <View style={styles.cardsContainer}>
-            <UsageCard title={I18n.get('widget-screen-time-today')} data={todayData} variant="today" />
-            <UsageCard title={I18n.get('widget-screen-time-yesterday')} data={yesterdayData} variant="yesterday" />
-          </View>
-
-          {/* Separator */}
-          <View style={styles.separator} />
-
-          {/* Affichage section */}
-          <View style={styles.sectionTitleContainer}>
-            <BodyBoldText style={styles.sectionTitle}>{I18n.get('widget-screen-time-view-details')}</BodyBoldText>
-            <IconButton icon="ui-infoCircle" action={handleInfoPress} style={styles.infoIcon} size={20} />
-          </View>
-          {/* View mode toggle */}
-          <View style={styles.modeToggleContainer}>
-            <View style={styles.tabToggleBackground}>
-              <View style={[styles.tabToggleIndicator, isDayMode && styles.tabToggleIndicatorRight]} />
-              <Pressable onPress={() => setIsDayMode(false)} style={styles.tabToggleItem}>
-                <BodyBoldText style={styles.tabToggleText}>{I18n.get('widget-screen-time-week')}</BodyBoldText>
-              </Pressable>
-              <Pressable onPress={() => setIsDayMode(true)} style={styles.tabToggleItem}>
-                <BodyBoldText style={styles.tabToggleText}>{I18n.get('widget-screen-time-day')}</BodyBoldText>
-              </Pressable>
+            {/* Usage Cards */}
+            <View style={styles.cardsContainer}>
+              <UsageCard title={I18n.get('widget-screen-time-today')} data={todayData} variant="today" />
+              <UsageCard title={I18n.get('widget-screen-time-yesterday')} data={yesterdayData} variant="yesterday" />
             </View>
-          </View>
 
-          {/* Week/Day selector */}
-          {!isDayMode ? (
-            <WeekPicker selectedWeekStart={selectedWeek} onWeekChange={handleWeekChange} />
-          ) : (
-            <View style={styles.datePickerContainer}>
-              <DateTimePicker mode="date" value={selectedDate} onChangeValue={handleDateChange} style={styles.datePicker} />
+            {/* Separator */}
+            <View style={styles.separator} />
+
+            {/* Affichage section */}
+            <View style={styles.sectionTitleContainer}>
+              <BodyBoldText style={styles.sectionTitle}>{I18n.get('widget-screen-time-view-details')}</BodyBoldText>
+              <IconButton icon="ui-infoCircle" action={handleInfoPress} style={styles.infoIcon} size={20} />
             </View>
-          )}
+            {/* View mode toggle */}
+            <View style={styles.modeToggleContainer}>
+              <View style={styles.tabToggleBackground}>
+                <View style={[styles.tabToggleIndicator, isDayMode && styles.tabToggleIndicatorRight]} />
+                <Pressable onPress={() => setIsDayMode(false)} style={styles.tabToggleItem}>
+                  <BodyBoldText style={styles.tabToggleText}>{I18n.get('widget-screen-time-week')}</BodyBoldText>
+                </Pressable>
+                <Pressable onPress={() => setIsDayMode(true)} style={styles.tabToggleItem}>
+                  <BodyBoldText style={styles.tabToggleText}>{I18n.get('widget-screen-time-day')}</BodyBoldText>
+                </Pressable>
+              </View>
+            </View>
 
-          {/* Conditionally render week chart or day details */}
-          {!isDayMode ? <BarChart type="week" data={weekData} /> : <BarChart type="day" data={selectedDayData} />}
-        </View>
+            {/* Week/Day selector */}
+            {!isDayMode ? (
+              <WeekPicker selectedWeekStart={selectedWeek} onWeekChange={handleWeekChange} />
+            ) : (
+              <View style={styles.datePickerContainer}>
+                <DateTimePicker mode="date" value={selectedDate} onChangeValue={handleDateChange} style={styles.datePicker} />
+              </View>
+            )}
+
+            {/* Conditionally render week chart or day details */}
+            {!isDayMode ? <BarChart type="week" data={weekData} /> : <BarChart type="day" data={selectedDayData} />}
+          </View>
+        )}
       </View>
     );
   };
