@@ -1,24 +1,17 @@
 import * as React from 'react';
 
 import { useFocusEffect } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { presencesRouteNames } from '../../viescolaire/presences/navigation';
-import { MyAppsFilters } from '../components/my-apps-filters';
-import { MyAppsList } from '../components/my-apps-list';
+import { MyAppsHomeScreenProps } from './types';
+import { EMPTY_SCREEN_CONFIG, resolveEmptyScreenKey } from './utils';
 
 import { getStore } from '~/app/store';
 import { PageView } from '~/framework/components/page';
-import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
+import { MyAppsFilters } from '~/framework/modules/myAppMenu/components/my-apps-filters';
+import { MyAppsList } from '~/framework/modules/myAppMenu/components/my-apps-list';
 import { selectFilteredApps } from '~/framework/modules/myapps/reducer';
 import { AppsInfoAggregated, MyAppsFilter } from '~/framework/modules/myapps/types';
-import { NavigableModuleArray } from '~/framework/util/moduleTool';
-
-export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
-  modules: NavigableModuleArray;
-  secondaryModules: NavigableModuleArray;
-  connectors: NavigableModuleArray;
-}
+import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 
 const MyAppsHomeScreen = (_: MyAppsHomeScreenProps) => {
   const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
@@ -56,6 +49,8 @@ const MyAppsHomeScreen = (_: MyAppsHomeScreenProps) => {
     return (
       <MyAppsList
         apps={apps}
+        emptyScreenConfig={EMPTY_SCREEN_CONFIG[resolveEmptyScreenKey(filter)]}
+        isFavoritesFilter={filter.type === 'favorites'}
         onPressApp={app => {
           _.navigation.navigate(presencesRouteNames.callList);
           console.debug('PRESS-' + app.name);

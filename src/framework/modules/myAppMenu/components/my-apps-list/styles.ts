@@ -22,4 +22,22 @@ export const styles = StyleSheet.create({
     borderRadius: UI_SIZES.radius.newCard,
     height: getScaleWidth(160),
   },
+  separatorContainer: {
+    alignItems: 'center',
+    marginVertical: UI_SIZES.spacing.medium,
+    width: '100%',
+  },
+
+  separatorLine: {
+    backgroundColor: theme.palette.grey.cloudy,
+    height: 1,
+    marginBottom: UI_SIZES.spacing.small,
+    width: '100%',
+  },
+
+  separatorText: {
+    color: theme.palette.grey.black,
+    fontWeight: '600',
+    marginHorizontal: UI_SIZES.spacing.medium,
+  },
 });
