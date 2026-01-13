@@ -18,28 +18,58 @@ import { MyAppsFilterCell } from '~/framework/modules/myAppMenu/components/my-ap
 
 export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersProps) => {
   const searchQuery = selectedFilter.type === 'search' ? selectedFilter.value : '';
-
   const [searchActive, setSearchActive] = React.useState(false);
 
   const { animatedContainerStyle, close, open } = useAnimatedSearchStyles();
+  const listRef = React.useRef<any>(null);
 
   const resetCategory = React.useCallback(() => {
     onFilterChange({ type: 'category', value: 'toutes' });
   }, [onFilterChange]);
 
+  const scrollToStart = React.useCallback(() => {
+    listRef.current?.scrollToOffset({
+      animated: true,
+      offset: 0,
+    });
+  }, []);
+
+  const scrollToItem = React.useCallback((index: number) => {
+    listRef.current?.scrollToIndex({
+      animated: true,
+      index,
+      viewPosition: 0.5,
+    });
+  }, []);
+
+  const clearSearch = React.useCallback(() => {
+    onFilterChange({ type: 'search', value: '' });
+  }, [onFilterChange]);
+
   const openSearch = React.useCallback(() => {
-    setSearchActive(true);
-    resetCategory();
-    open();
-  }, [open, resetCategory]);
+    scrollToStart();
+
+    requestAnimationFrame(() => {
+      setSearchActive(true);
+      resetCategory();
+      open();
+    });
+  }, [open, resetCategory, scrollToStart]);
 
   const closeSearch = React.useCallback(() => {
     close();
-    setSearchActive(false);
-  }, [close]);
+
+    requestAnimationFrame(() => {
+      setSearchActive(false);
+      clearSearch();
+      resetCategory();
+      scrollToStart();
+    });
+  }, [clearSearch, close, resetCategory, scrollToStart]);
 
   return (
     <FlatList
+      ref={listRef}
       horizontal
       data={MY_APPS_FILTERS}
       keyExtractor={item => item.labelKey}
@@ -55,7 +85,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
                 query={searchQuery}
                 placeholder={I18n.get('common-search')}
                 onChangeQuery={value => onFilterChange({ type: 'search', value })}
-                onClear={closeSearch}
+                onClear={clearSearch}
                 containerStyle={styles.search}
               />
             ) : (
@@ -72,12 +102,19 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
           )}
         </View>
       }
-      renderItem={({ item }) => {
+      renderItem={({ index, item }) => {
         const isSelected =
           selectedFilter.type === item.filter.type && JSON.stringify(item.filter) === JSON.stringify(selectedFilter);
 
         return (
-          <MyAppsFilterCell label={I18n.get(item.labelKey)} selected={isSelected} onPress={() => onFilterChange(item.filter)} />
+          <MyAppsFilterCell
+            label={I18n.get(item.labelKey)}
+            selected={isSelected}
+            onPress={() => {
+              scrollToItem(index);
+              onFilterChange(item.filter);
+            }}
+          />
         );
       }}
     />

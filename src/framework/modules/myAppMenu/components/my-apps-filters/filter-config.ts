@@ -16,7 +16,7 @@ export const MY_APPS_FILTER_LABEL_KEYS = {
   servicesExternes: 'myapp-home-filter-servicesExternes',
 } as const;
 
-type MyAppsFilterLabelKeyMap = typeof MY_APPS_FILTER_LABEL_KEYS;
+export type MyAppsFilterLabelKeyMap = typeof MY_APPS_FILTER_LABEL_KEYS;
 
 export type MyAppsFilterLabelKey = MyAppsFilterLabelKeyMap[keyof MyAppsFilterLabelKeyMap];
 

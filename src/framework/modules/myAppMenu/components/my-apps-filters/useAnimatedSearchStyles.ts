@@ -3,7 +3,7 @@ import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-nati
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 const COLLAPSED_WIDTH = getScaleWidth(40);
-const CANCEL_WIDTH = 58;
+const CANCEL_WIDTH = getScaleWidth(58);
 const EXPANDED_WIDTH = UI_SIZES.screen.width - UI_SIZES.spacing.small * 2 - CANCEL_WIDTH;
 
 export const useAnimatedSearchStyles = () => {
