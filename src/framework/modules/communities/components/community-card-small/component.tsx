@@ -7,8 +7,8 @@ import { getCardStyle, styles } from './styles';
 import { CommunityCardSmallProps } from './types';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText } from '~/framework/components/text';
+import { COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE } from '~/framework/modules/communities/adapter';
 import CommunityInvitationBadge from '~/framework/modules/communities/components/community-invitation-badge';
 import CommunityMembersPill from '~/framework/modules/communities/components/community-members-pill/';
 import { injectImageSource } from '~/framework/util/media';
@@ -23,17 +23,9 @@ export const CommunityCardSmall = ({
   onPress,
   title,
 }: Readonly<CommunityCardSmallProps>) => {
-  const imageApproximateDimensions = React.useMemo(
-    () => ({
-      height: 130,
-      width: 440,
-    }),
-    [],
-  );
-
   const imageSource = React.useMemo(
-    () => (image ? sessionImageSource(injectImageSource(image, imageApproximateDimensions)) : undefined),
-    [image, imageApproximateDimensions],
+    () => (image ? sessionImageSource(injectImageSource(image, COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE)) : undefined),
+    [image],
   );
 
   const cardStyle = React.useMemo(
