@@ -11,8 +11,10 @@ import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, NestedBoldText, SmallText } from '~/framework/components/text';
+import { COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE } from '~/framework/modules/communities/adapter';
 import CommunityMembersPill from '~/framework/modules/communities/components/community-members-pill/';
 import { rolesI18n } from '~/framework/modules/communities/model';
+import { injectImageSource } from '~/framework/util/media';
 import { Image } from '~/framework/util/media/components/image';
 import { sessionImageSource } from '~/framework/util/transport';
 
@@ -24,7 +26,10 @@ export const CommunityCardLarge = ({
   senderName,
   title,
 }: Readonly<CommunityCardLargeProps>) => {
-  const imageSource = React.useMemo(() => (image ? sessionImageSource(image) : undefined), [image]);
+  const imageSource = React.useMemo(
+    () => (image ? sessionImageSource(injectImageSource(image, COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE)) : undefined),
+    [image],
+  );
   return (
     <View style={styles.card}>
       {membersCount && <CommunityMembersPill membersCount={membersCount} />}

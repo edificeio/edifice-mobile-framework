@@ -3,8 +3,11 @@
  */
 import { MenuAction } from '~/framework/components/menus/actions';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { ModuleRegister, ModuleType, setGlobalRegister, UnknownNavigableModule } from '~/framework/util/moduleTool';
 
 // Timeline workflow ==============================================================================
+
+export const timelineWidgets = new ModuleRegister<UnknownNavigableModule>();
 
 export interface ITimelineWorkflowDefinition {
   (session: AuthActiveAccount): undefined | false | MenuAction;
@@ -27,3 +30,5 @@ export const getTimelineWorkflows = (session: AuthActiveAccount) =>
     }
     return acc;
   }, [] as MenuAction[]);
+
+setGlobalRegister(ModuleType.MYAPPS_WIDGET, timelineWidgets);

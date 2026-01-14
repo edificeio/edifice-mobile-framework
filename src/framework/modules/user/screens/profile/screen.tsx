@@ -241,7 +241,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         <TouchableOpacity
           key={user.relatedId}
           style={styles.userFamily}
-          onPress={() => navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
+          onPress={() => navigation.isFocused() && navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
           <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
           <Svg
             style={styles.userFamilyIcon}

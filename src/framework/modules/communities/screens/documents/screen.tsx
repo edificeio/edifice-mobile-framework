@@ -12,6 +12,7 @@ import {
   ResourceType,
 } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
+import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
@@ -84,6 +85,12 @@ export default (function CommunitiesDocumentsScreen({
       dispatch(communitiesActions.loadCommunityDetails(communityId, newData)),
     [dispatch, communityId],
   );
+  const setCommunityFolderMeta = React.useCallback(
+    (newData: Parameters<typeof communitiesActions.loadCommunityFoldersMeta>[1]) =>
+      dispatch(communitiesActions.loadCommunityFoldersMeta(communityId, newData)),
+    [dispatch, communityId],
+  );
+  const currentFolderMeta = useSelector(communitiesSelectors.getCommunityFolderMeta(communityId, folderId));
 
   // Store the data of the list here. It will contain both loaded and non-loaded elements.
   // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
@@ -104,15 +111,14 @@ export default (function CommunitiesDocumentsScreen({
         accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
         accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
         accountApi(session, moduleConfig, ResourceClient).getResources(communityId, { folderId, page: page + 1, size: PAGE_SIZE }),
-        accountApi(session, moduleConfig, FolderClient)
-          .getFolders(communityId, { page: 1, parentId: folderId, rootOnly: folderId === undefined, size: 256 })
-          .then(dto => formatFolders(dto.items)),
+        accountApi(session, moduleConfig, FolderClient).getFolders(communityId, { parentId: folderId }).then(formatFolders),
       ]);
       setCommunityData({
         ...community,
         membersId: members.items.map(item => item.user.entId),
         totalMembers: members.meta.totalItems,
       });
+      setCommunityFolderMeta(folders.reduce((acc, item) => ({ ...acc, [item.id]: { title: item.title } }), {}));
       setData(prevData => {
         // The merge logic is contained in `staleOrSplice`. It inserts the new elements at the right place in `prevData`.
         // If `total` changes, there's a risk that the prevData is outdated, and should be flushed before inserting the new elements.
@@ -128,7 +134,7 @@ export default (function CommunitiesDocumentsScreen({
         return { documents: mergedData, folders };
       });
     },
-    [communityId, folderId, session, setCommunityData],
+    [communityId, folderId, session, setCommunityData, setCommunityFolderMeta],
   );
 
   // For perforance purpose, estimatedListSize must be the dimensions of the container (here the screen sithout, navBar and tabBar)
@@ -164,11 +170,12 @@ export default (function CommunitiesDocumentsScreen({
     }
   }, []);
 
+  const isFocused = useIsFocused();
   const openFolder = React.useCallback(
     async (folder: FolderItem) => {
-      navigation.push(route.name, { communityId, folderId: folder.id });
+      isFocused && navigation.push(route.name, { communityId, folderId: folder.id });
     },
-    [communityId, navigation, route.name],
+    [communityId, navigation, route.name, isFocused],
   );
 
   const image = React.useMemo(
@@ -182,7 +189,7 @@ export default (function CommunitiesDocumentsScreen({
   const [scrollElements, statusBar, { ...scrollViewProps }, placeholderBanner] = useCommunityScrollableThumbnail({
     contentContainerStyle: styles.list,
     image,
-    title: I18n.get('communities-documents-title'),
+    title: currentFolderMeta?.title ?? I18n.get('communities-documents-title'),
   });
 
   const stickyPlaceholderElements = React.useMemo(
@@ -194,10 +201,10 @@ export default (function CommunitiesDocumentsScreen({
     () => [
       ...scrollElements,
       <HeadingXSText key="title" style={styles.title}>
-        {I18n.get('communities-documents-title')}
+        {currentFolderMeta?.title ?? I18n.get('communities-documents-title')}
       </HeadingXSText>,
     ],
-    [scrollElements],
+    [currentFolderMeta?.title, scrollElements],
   );
 
   return (
