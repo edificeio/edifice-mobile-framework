@@ -14,15 +14,7 @@ export interface AppsInfoWithCategory extends AppsInfoAggregated {
 
 export type AppType = 'mobile' | 'web' | 'connector';
 
-export interface AppsInfo extends Partial<Omit<ApplicationsConfig, 'name'>> {
-  name: string;
-  displayName: string;
-  display: boolean;
-  address: string;
-  target?: string;
-  prefix?: string;
-  icon?: string;
-  type: AppType;
+export interface AppsInfo extends Omit<ApplicationsList, 'casType' | 'scope'>, Partial<Omit<ApplicationsConfig, 'name'>> {
   isMobile: boolean;
   isFavorite: boolean;
   isLibrary?: boolean;
@@ -57,7 +49,7 @@ export interface ApplicationsList {
 export interface AppsInfoState {
   appsInfo: AppsInfo[];
   appsConfig: ApplicationsConfig[];
-  entcoreApps: IEntcoreApp[];
+  favorites: AppBookmarks;
   loading: boolean;
   error?: string;
 }
@@ -68,6 +60,7 @@ export interface AppsInfoActionPayloads {
     appsInfo: AppsInfo[];
     appsConfig: ApplicationsConfig[];
     entcoreApps: IEntcoreApp[];
+    favorites: AppBookmarks;
   };
   fetchError: {
     error: string;
