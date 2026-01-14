@@ -1,9 +1,9 @@
 import type { UserState } from './reducer';
 
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'user', UserState>({
-  displayAs: '',
+  displayAs: ModuleType.HIDDEN_MODULE,
   displayI18n: 'user-moduleconfig-myaccount',
 
   entcoreScope: [],

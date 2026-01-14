@@ -22,6 +22,7 @@ import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
 import { markViewAudience } from '~/framework/modules/audience';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { MediaType } from '~/framework/util/media';
 import { sessionURISource } from '~/framework/util/transport';
 
 const ERRORS_I18N = {
@@ -44,8 +45,6 @@ function MediaPlayer(props: MediaPlayerProps) {
   const source = React.useMemo(() => sessionURISource(_source), [_source]);
 
   const animationRef = React.useRef<LottieView>(null);
-
-  const isAudio = type === 'audio';
 
   const [isPlaying, setIsPlaying] = React.useState(false);
 
@@ -71,7 +70,7 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   React.useEffect(() => {
     // Unlock and handle orientation if needed
-    if (isFocused && !isAudio) {
+    if (isFocused && type !== MediaType.AUDIO) {
       Orientation.unlockAllOrientations();
       setTimeout(() => {
         Orientation.getDeviceOrientation(handleOrientationChange);
@@ -81,7 +80,7 @@ function MediaPlayer(props: MediaPlayerProps) {
     return () => {
       Orientation.lockToPortrait();
     };
-  }, [isAudio, isFocused, handleOrientationChange]);
+  }, [type, isFocused, handleOrientationChange]);
 
   const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(3000);
 
@@ -163,7 +162,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const player = React.useMemo(() => {
-    if (type === 'embedded')
+    if (type === MediaType.EMBEDDED)
       return (
         <>
           <FakeHeaderMedia />
@@ -200,7 +199,7 @@ function MediaPlayer(props: MediaPlayerProps) {
           showOnEnd
           source={source as MediaPlayerPlayableParams['source']}
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
-          {...(isAudio
+          {...(type === MediaType.AUDIO
             ? {
                 posterElement: <LottieView ref={animationRef} source={ANIMATION_AUDIO} style={styles.poster} speed={0.5} />,
               }
@@ -220,12 +219,11 @@ function MediaPlayer(props: MediaPlayerProps) {
     onLoad,
     onPause,
     onPlay,
-    isAudio,
   ]);
 
   // Manage Lottie after passed app in background
   React.useEffect(() => {
-    if (type === 'audio') {
+    if (type === MediaType.AUDIO) {
       const subscription = AppState.addEventListener('change', event => {
         if (event === 'active' && isPlaying) animationRef.current?.resume();
       });

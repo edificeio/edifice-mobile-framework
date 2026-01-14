@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 
+import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -96,11 +97,13 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     props.navigation.navigate(blogRouteNames.blogPostList, { selectedBlog: item });
   };
 
+  const isFocused = useIsFocused();
   const onOpenFolder = (item: BlogFolder | 'root') => {
     if (props.navigation.push) {
-      props.navigation.push(`${moduleConfig.routeName}`, {
-        folderId: item === 'root' ? undefined : item.id,
-      });
+      isFocused &&
+        props.navigation.push(`${moduleConfig.routeName}`, {
+          folderId: item === 'root' ? undefined : item.id,
+        });
     }
   };
 

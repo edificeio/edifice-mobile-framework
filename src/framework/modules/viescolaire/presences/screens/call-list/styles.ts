@@ -4,6 +4,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  bottomSheet: {
+    paddingBottom: UI_SIZES.spacing.big,
+  },
   bottomSheetContainer: {
     rowGap: UI_SIZES.spacing.big,
   },

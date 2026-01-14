@@ -21,6 +21,7 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
   modules: NavigableModuleArray;
   secondaryModules: NavigableModuleArray;
   connectors: NavigableModuleArray;
+  widgets: NavigableModuleArray;
 }
 
 const styles = StyleSheet.create({
@@ -95,7 +96,6 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     return (
       <View style={styles.otherModules}>
         <HeadingSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingSText>
-
         <FlatList
           bottomInset={false}
           renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}
