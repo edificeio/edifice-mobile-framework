@@ -16,8 +16,7 @@ export default new NavigableModuleConfig<'workspace', IWorkspaceState>({
       sources: ['camera', 'gallery', 'documents'],
     },
   } as const,
-  hasRight: ({ matchingApps }) =>
-    matchingApps.length > 0 && matchingApps.some(entcoreApp => entcoreApp.name.toUpperCase().includes('ESPACE DOCUMENTAIRE')),
+  hasRight: ({ matchingApps }) => matchingApps.some(entcoreApp => entcoreApp.name.toUpperCase().includes('ESPACE DOCUMENTAIRE')),
   matchEntcoreApp: 'Espace documentaire',
   name: 'workspace',
   storageName: 'workspace',

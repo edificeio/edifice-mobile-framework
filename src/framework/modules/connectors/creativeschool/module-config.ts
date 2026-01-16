@@ -7,8 +7,7 @@ export default new NavigableModuleConfig<'creativeschool', null>({
   displayI18n: 'creativeschool-moduleconfig-appname',
   displayPicture: { source: require('ASSETS/icons/moduleIcons/creativeschool.png'), type: 'Image' },
   entcoreScope: ['cas'],
-  hasRight: ({ matchingApps }) =>
-    matchingApps.length > 0 && matchingApps.some(entcoreApp => entcoreApp.name.toLocaleLowerCase().includes('edifice')),
+  hasRight: ({ matchingApps }) => matchingApps.some(entcoreApp => entcoreApp.name.toLocaleLowerCase().includes('edifice')),
   matchEntcoreApp: 'Creativeschool',
   name: CREATIVESCHOOL,
   storageName: CREATIVESCHOOL,
