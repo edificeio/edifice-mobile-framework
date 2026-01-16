@@ -4,4 +4,5 @@ export type MyAppsCardProps = {
   app: AppsInfoAggregated;
   onPress?: () => void;
   onLongPress?: () => void;
+  isFavoritesFilter?: boolean;
 };

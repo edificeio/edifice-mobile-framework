@@ -1,7 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Pressable, View } from 'react-native';
+
+import Animated from 'react-native-reanimated';
 
 import { MyAppsCardProps } from './types';
+import { useController } from './useController';
 import { useStyles } from './useStyles';
 
 import { UI_SIZES } from '~/framework/components/constants';
@@ -11,50 +14,56 @@ import { Image } from '~/framework/util/media-deprecated';
 
 const HTTP_REGEX: RegExp = /^https?:\/\//;
 
-  const svgIconName = useMemo(() => {
-    if (!icon) return null;
-    if (isImageDistant(icon)) return null;
+export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
+  const styles = useStyles(app);
+  const isImageDistant = React.useCallback((icon: string): boolean => HTTP_REGEX.test(icon) || icon.startsWith('/workspace/'), []);
+  const icon = React.useMemo(() => app.icon, [app.icon]);
+  const isFavorite = React.useMemo(() => app.isFavorite, [app.isFavorite]);
+  const { animatedFavoriteStyle, imageDimensions } = useController(isFavorite);
 
-    return icon.replace(/-large$/, ''); //might be replaced in the future
-  }, [icon]);
+  const svgIconName = React.useMemo(() => {
+    if (!icon || isImageDistant(icon)) return null;
+    if (!icon.includes('/') && !icon.includes('.')) return icon;
+    return null;
+  }, [icon, isImageDistant]);
 
-  const isImageIcon = !!icon && !svgIconName;
+  const imageSource = React.useMemo(() => {
+    if (!icon || svgIconName) return undefined;
 
-  const canShowWebIcon = useMemo(() => {
-    if (app.type === 'connector' || app.type === 'web') return true;
-    if (app.target === '_blank') return true;
-    if (!app.address) return false;
+    if (HTTP_REGEX.test(icon)) {
+      return { uri: icon };
+    }
 
-    return HTTP_REGEX.test(app.address) || app.address.includes('#') || app.address.startsWith('/pages#');
-  }, [app]);
+    if (icon.startsWith('/workspace/')) {
+      const fullSource = sessionImageSource(injectImageSource({ uri: icon }, imageDimensions));
+      return fullSource;
+    }
 
-  console.debug('APP_INFOS', {
-    canShowWebIcon,
-    DN: app.displayName,
-    iconNormalized: svgIconName,
-    isImageIcon,
-    ...app,
-  });
+    const source = sessionImageSource(injectImageSource({ uri: icon }, imageDimensions));
+    return source;
+  }, [icon, svgIconName, imageDimensions]);
 
-  const renderIcon = useCallback(() => {
-    if (!icon) return null;
+  const canShowWebIcon = React.useMemo(() => !app.isMobile, [app]);
+
+  const renderIcon = React.useCallback(() => {
+    if (!icon) {
+      return null;
+    }
 
     if (svgIconName) {
       return <Svg name={svgIconName} fill="white" width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} />;
     }
 
-    return <Image source={{ uri: icon }} style={styles.image} />;
-  }, [icon, svgIconName, styles.image]);
+    return <Image source={imageSource} style={styles.image} />;
+  }, [icon, svgIconName, imageSource, styles.image]);
 
-  const renderFavoriteBadge = useCallback(() => {
-    if (!app.isFavorite) return null;
-
+  const renderFavoriteBadge = React.useCallback(() => {
     return (
-      <View style={styles.favoriteIcon}>
+      <Animated.View style={[styles.favoriteIcon, animatedFavoriteStyle]}>
         <Svg name="ui-favorite" width={UI_SIZES.spacing.big} height={UI_SIZES.spacing.big} />
-      </View>
+      </Animated.View>
     );
-  }, [app.isFavorite, styles.favoriteIcon]);
+  }, [animatedFavoriteStyle, styles.favoriteIcon]);
 
   return (
     <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={styles.wrapper}>

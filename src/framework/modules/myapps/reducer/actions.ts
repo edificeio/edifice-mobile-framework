@@ -1,42 +1,15 @@
 import { Action, UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { applyAppsToModules } from '../apply-apps-to-modules';
+import { isMobileApp, isNavigableModule } from './adapter';
 
 import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import { buildAppsInfo } from '~/framework/modules/myapps/build-apps-info';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { myAppsService } from '~/framework/modules/myapps/service';
-import { ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
-import { AnyModule, AnyNavigableModule, IEntcoreApp } from '~/framework/util/moduleTool';
-
-function isNavigableModule(module: AnyModule): module is AnyNavigableModule {
-  return typeof (module as AnyNavigableModule).getRoot === 'function';
-}
-
-function isConnectorApp(app: IEntcoreApp): boolean {
-  return (
-    app.isExternal === true || app.target === '_blank' || (typeof app.address === 'string' && /^https?:\/\//i.test(app.address))
-  );
-}
-
-type ModuleWithEntcoreScope = {
-  entcoreScope?: string[];
-};
-
-function isMobileApp(app: IEntcoreApp, modules: AnyNavigableModule[]): boolean {
-  return modules.some(module => {
-    const config = module.config as ModuleWithEntcoreScope;
-
-    if (!config.entcoreScope || config.entcoreScope.length === 0) {
-      return false;
-    }
-
-    return config.entcoreScope.some(scope => app?.prefix?.includes(scope) || app?.address?.includes(scope));
-  });
-}
+import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
+import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
@@ -61,7 +34,7 @@ export const appsInfoActionTypes = {
 export const appInfoActions = {
   fetchError: (error: string) => ({ error, type: appsInfoActionTypes.fetchError }),
   fetchStart: () => ({ type: appsInfoActionTypes.fetchStart }),
-  fetchSuccess: (payload: { appsInfo: AppsInfo[]; appsConfig: ApplicationsConfig[]; entcoreApps: IEntcoreApp[] }) => ({
+  fetchSuccess: (payload: { appsInfo: AppsInfo[]; appsConfig: ApplicationsConfig[]; favorites: AppBookmarks }) => ({
     payload,
     type: appsInfoActionTypes.fetchSuccess,
   }),
@@ -71,37 +44,19 @@ export const afterLoginSetup =
   (session): ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction> =>
   async dispatch => {
     dispatch(appInfoActions.fetchStart());
+    const navigableModules = AllModules().filter(isNavigableModule);
 
     try {
-      const [entcoreApps, appsConfig, bookmarks] = await Promise.all([
+      let [appsInfo, appsConfig, favorites] = await Promise.all([
         myAppsService.list(session),
         myAppsService.config(session),
         myAppsService.bookmarks(session),
       ]);
-
-      const baseAppsInfo = buildAppsInfo(entcoreApps, bookmarks);
-      const navigableModules = AllModules().filter(isNavigableModule);
-
-      const appsInfo: AppsInfo[] = baseAppsInfo.map(app => {
-        const entcoreApp = entcoreApps.find(e => e.name === app.name);
-
-        if (!entcoreApp) {
-          return { ...app, isMobile: false, type: 'web' };
-        }
-
-        if (isConnectorApp(entcoreApp)) {
-          return { ...app, isMobile: false, type: 'connector' };
-        }
-
-        if (isMobileApp(entcoreApp, navigableModules)) {
-          return { ...app, isMobile: true, type: 'mobile' };
-        }
-
-        return { ...app, isMobile: false, type: 'web' };
+      appsInfo = appsInfo.map(app => {
+        const isMobile = isMobileApp(app as IEntcoreApp, navigableModules);
+        return { ...app, isMobile };
       });
-
-      dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, entcoreApps }));
-      applyAppsToModules(navigableModules, appsInfo);
+      dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
     } catch (e) {
       console.error('[afterLoginSetup] ERROR', e);
       dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));

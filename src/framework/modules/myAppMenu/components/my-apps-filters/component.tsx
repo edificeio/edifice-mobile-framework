@@ -10,21 +10,11 @@ import { MyAppsFilterCell } from '~/framework/modules/myAppMenu/components/my-ap
 
 export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersProps) => {
   const searchQuery = selectedFilter.type === 'search' ? selectedFilter.value : '';
-  const [searchActive, setSearchActive] = React.useState(false);
 
-  const { animatedContainerStyle, close, open } = useAnimatedSearchStyles();
+  const [searchActive, setSearchActive] = React.useState(false);
   const listRef = React.useRef<any>(null);
 
-  const resetCategory = React.useCallback(() => {
-    onFilterChange({ type: 'category', value: 'toutes' });
-  }, [onFilterChange]);
-
-  const scrollToStart = React.useCallback(() => {
-    listRef.current?.scrollToOffset({
-      animated: true,
-      offset: 0,
-    });
-  }, []);
+  const { animatedContainerStyle, animatedIconStyle, animatedSearchStyle, close, open } = useAnimatedSearchStyles();
 
   const scrollToItem = React.useCallback((index: number) => {
     listRef.current?.scrollToIndex({
@@ -34,29 +24,31 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
     });
   }, []);
 
+  const resetCategory = React.useCallback(() => {
+    onFilterChange({ type: 'category', value: 'toutes' });
+  }, [onFilterChange]);
+
+  const scrollToStart = React.useCallback(() => {
+    listRef.current?.scrollToOffset({ animated: true, offset: 0 });
+  }, []);
+
   const clearSearch = React.useCallback(() => {
     onFilterChange({ type: 'search', value: '' });
   }, [onFilterChange]);
 
   const openSearch = React.useCallback(() => {
     scrollToStart();
-
-    requestAnimationFrame(() => {
-      setSearchActive(true);
-      resetCategory();
-      open();
-    });
+    setSearchActive(true);
+    resetCategory();
+    open();
   }, [open, resetCategory, scrollToStart]);
 
   const closeSearch = React.useCallback(() => {
     close();
-
-    requestAnimationFrame(() => {
-      setSearchActive(false);
-      clearSearch();
-      resetCategory();
-      scrollToStart();
-    });
+    setSearchActive(false);
+    clearSearch();
+    resetCategory();
+    scrollToStart();
   }, [clearSearch, close, resetCategory, scrollToStart]);
 
   return (
@@ -72,7 +64,13 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
       ListHeaderComponent={
         <View style={styles.searchContainerWrapper}>
           <Animated.View style={[styles.animatedSearchContainer, animatedContainerStyle]}>
-            {searchActive ? (
+            <Animated.View style={[styles.searchIcon, animatedIconStyle]}>
+              <Pressable onPress={openSearch}>
+                <Svg name="ui-search" width={20} height={20} fill={theme.ui.text.regular} />
+              </Pressable>
+            </Animated.View>
+
+            <Animated.View style={[styles.searchOverlay, animatedSearchStyle]}>
               <SearchBar
                 query={searchQuery}
                 placeholder={I18n.get('common-search')}
@@ -80,11 +78,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
                 onClear={clearSearch}
                 containerStyle={styles.search}
               />
-            ) : (
-              <Pressable onPress={openSearch} style={styles.searchIcon}>
-                <Svg name="ui-search" width={20} height={20} fill={theme.ui.text.regular} />
-              </Pressable>
-            )}
+            </Animated.View>
           </Animated.View>
 
           {searchActive && (
