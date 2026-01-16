@@ -7,7 +7,8 @@ export default new NavigableModuleConfig<string, null>({
   displayI18n: 'wekan-moduleconfig-appname',
   displayPicture: { name: WEKAN, type: 'Svg' },
   entcoreScope: ['cas'],
-  matchEntcoreApp: entcoreApp => entcoreApp.name.toLowerCase().includes(WEKAN),
+  hasRight: ({ matchingApps }) => matchingApps.some(entcoreApp => entcoreApp.name.toLowerCase().includes(WEKAN)),
+  matchEntcoreApp: 'Wekan',
   name: WEKAN,
   storageName: WEKAN,
 });

@@ -19,7 +19,7 @@ export default new NavigableModuleConfig<'form', IFormReduxState>({
     },
   } as const,
   hasRight: ({ session }) => !!getFormWorkflowInformation(session).initResponse,
-  matchEntcoreApp: '/formulaire',
+  matchEntcoreApp: 'Formulaire',
   name: 'form',
   storageName: 'form',
 });

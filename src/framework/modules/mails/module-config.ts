@@ -18,7 +18,7 @@ export default new NavigableModuleConfig<'mails', null>({
       sources: ['camera', 'gallery', 'documents'],
     },
   } as const,
-  matchEntcoreApp: '/conversation/conversation',
+  matchEntcoreApp: 'Messagerie',
   name: 'mails',
   storageName: 'mails',
   testID: 'tabbar-messages',

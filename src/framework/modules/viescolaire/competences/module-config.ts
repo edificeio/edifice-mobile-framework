@@ -18,7 +18,8 @@ export default new NavigableModuleConfig<'competences', ICompetencesReduxState>(
   entcoreScope: ['competences'],
 
   entcoreTrackingName: 'Competences',
-  matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
+  hasRight: ({ matchingApps }) => matchingApps.some(hasNecessaryRight),
+  matchEntcoreApp: 'Competences',
   name: 'competences',
   storageName: 'competences',
 });

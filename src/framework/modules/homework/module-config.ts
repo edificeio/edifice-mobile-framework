@@ -19,7 +19,7 @@ export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>
       sources: ['camera', 'gallery'],
     },
   } as const,
-  matchEntcoreApp: '/homeworks',
+  matchEntcoreApp: 'Cahier de texte',
   name: 'homework',
   storageName: 'homework',
 });

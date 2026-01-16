@@ -7,7 +7,7 @@ export default new NavigableModuleConfig<'cantine', CantineState>({
   displayI18n: 'widget-cantine-title',
   entcoreScope: ['appregistry'],
   hasRight: param => param.matchingWidgets.length > 0,
-  matchEntcoreApp: () => true,
+  matchEntcoreApp: 'Cantine',
   matchEntcoreWidget: entcoreWidget => entcoreWidget.name === 'cantine-widget',
   name: 'cantine',
   storageName: 'cantine',

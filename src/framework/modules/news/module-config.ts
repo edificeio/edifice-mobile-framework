@@ -11,7 +11,7 @@ export default new NavigableModuleConfig<'news', NewsState>({
   entcoreScope: ['actualites'],
 
   entcoreTrackingName: 'Actualites',
-  matchEntcoreApp: '/actualites',
+  matchEntcoreApp: 'Actualites',
   name: 'news',
   storageName: 'news',
 });

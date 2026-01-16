@@ -10,7 +10,7 @@ export default new NavigableModuleConfig<string, MediacentreReduxState>({
   displayPicture: theme.apps.mediacentre.icon,
   entcoreScope: ['mediacentre'],
   entcoreTrackingName: 'Mediacentre',
-  matchEntcoreApp: '/mediacentre',
+  matchEntcoreApp: 'Mediacentre',
   name: 'mediacentre',
   storageName: 'mediacentre',
 });

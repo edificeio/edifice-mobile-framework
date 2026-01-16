@@ -13,9 +13,7 @@ export default new NavigableModuleConfig<'timeline', TimelineState>({
 
   entcoreScope: ['timeline', 'userbook'],
 
-  hasRight: () => true,
-
-  matchEntcoreApp: app => app.prefix === '/timeline',
+  matchEntcoreApp: 'Timeline',
 
   name: 'timeline',
   // The timeline is always displayed
