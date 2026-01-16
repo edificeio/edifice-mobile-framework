@@ -196,7 +196,7 @@ export function TabNavigation() {
           lazy: false,
           tabBarActiveTintColor: theme.palette.primary.regular.toString(),
           // 😡 F U React Nav 6, using plain string instead of ColorValue
-          tabBarHideOnKeyboard: Platform.select({ android: true, ios: false }),
+          tabBarHideOnKeyboard: false,
 
           tabBarIconStyle: {
             height: UI_SIZES.elements.tabbarIconSize,

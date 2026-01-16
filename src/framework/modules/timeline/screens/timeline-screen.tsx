@@ -12,6 +12,7 @@ import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { cardPaddingMerging } from '~/framework/components/card/base';
+import { CommentForm } from '~/framework/components/comments/comment-form';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -184,6 +185,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   render() {
     return (
       <PageView>
+        <CommentForm userId={getSession()?.user.id!} />
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
           <LoadingIndicator />
         ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
