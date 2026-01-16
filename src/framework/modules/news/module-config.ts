@@ -10,7 +10,7 @@ export default new NavigableModuleConfig<'news', NewsState>({
   displayPicture: theme.apps.news.icon,
   entcoreScope: ['actualites'],
 
-  matchEntcoreApp: '/actualites',
+  matchEntcoreApp: 'Actualites',
   name: 'news',
   storageName: 'news',
 });

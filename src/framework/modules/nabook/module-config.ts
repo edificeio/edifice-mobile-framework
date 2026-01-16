@@ -7,7 +7,7 @@ export default new NavigableModuleConfig<string, null>({
   displayI18n: 'nabook-tabname',
   displayPicture: theme.apps.nabook.icon,
   entcoreScope: ['nabook'],
-  matchEntcoreApp: '/nabook',
+  matchEntcoreApp: 'nabook',
   name: 'nabook',
   storageName: 'nabook',
 });

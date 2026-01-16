@@ -9,7 +9,7 @@ export default new NavigableModuleConfig<'scrapbook', null>({
   displayPicture: theme.apps.scrapbook.icon,
 
   entcoreScope: ['scrapbook'],
-  matchEntcoreApp: '/scrapbook',
+  matchEntcoreApp: 'Scrapbook',
   name: 'scrapbook',
   storageName: 'scrapbook',
 });

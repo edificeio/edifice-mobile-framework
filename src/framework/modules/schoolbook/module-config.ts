@@ -10,7 +10,7 @@ export default new NavigableModuleConfig<'schoolbook', ISchoolbookState>({
   displayPicture: theme.apps.schoolbook.icon,
   entcoreScope: ['schoolbook'],
 
-  matchEntcoreApp: '/schoolbook',
+  matchEntcoreApp: 'Schoolbook',
   name: 'schoolbook',
   storageName: 'schoolbook',
 });

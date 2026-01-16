@@ -8,7 +8,9 @@ export default new NavigableModuleConfig<string, null>({
   displayI18n: 'peertube-moduleconfig-appname',
   displayPicture: { fill: theme.palette.complementary.red.regular, name: PEERTUBE, type: 'Svg' },
   entcoreScope: ['cas'],
-  matchEntcoreApp: entcoreApp => entcoreApp.name.toLowerCase().includes(PEERTUBE),
+  hasRight: ({ matchingApps }) =>
+    matchingApps.length > 0 && matchingApps.some(entcoreApp => entcoreApp.name.toLowerCase().includes(PEERTUBE)),
+  matchEntcoreApp: 'Peertube',
   name: PEERTUBE,
   storageName: PEERTUBE,
 });

@@ -13,7 +13,7 @@ export default new NavigableModuleConfig<'communities', CommunitiesStore>({
   displayPictureFocus: { name: 'communities-fill', type: 'Svg' },
 
   entcoreScope: ['communities'],
-  matchEntcoreApp: '/communities',
+  matchEntcoreApp: 'Community',
 
   name: 'communities',
   storageName: 'communities',

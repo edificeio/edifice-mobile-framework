@@ -14,7 +14,7 @@ export default new NavigableModuleConfig<'myapps', null>({
     const modules = myAppsModules.get().filterAvailables(session);
     return modules.length > 0;
   },
-  matchEntcoreApp: () => true,
+  matchEntcoreApp: 'myapps',
   name: 'myapps',
   storageName: 'myapps',
   testID: 'tabbar-apps',

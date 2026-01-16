@@ -6,8 +6,11 @@ export default new NavigableModuleConfig<'carnet-de-bord', ReturnType<typeof red
   displayAs: ModuleType.MYAPPS_WIDGET,
   displayI18n: 'pronote',
   entcoreScope: ['pronote'],
-  hasRight: param => param.matchingWidgets.length > 0,
-  matchEntcoreApp: entcoreApp => entcoreApp.casType === 'PronoteRegisteredService',
+  hasRight: param =>
+    param.matchingWidgets.length > 0 &&
+    param.matchingApps.length > 0 &&
+    param.matchingApps.some(entcoreApp => entcoreApp.casType === 'PronoteRegisteredService'),
+  matchEntcoreApp: 'Pronote',
   matchEntcoreWidget: entcoreWidget => entcoreWidget.name === 'carnet-de-bord',
   name: 'carnet-de-bord',
   storageName: 'pronote',
