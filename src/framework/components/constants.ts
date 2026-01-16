@@ -110,9 +110,10 @@ export const UI_SIZES = {
   elements: {
     avatar: {
       lg: getScaleWidth(48),
-      md: getScaleWidth(32),
-      sm: getScaleWidth(24),
+      md: getScaleWidth(36),
+      sm: getScaleWidth(32),
       xl: getScaleWidth(64),
+      xsm: getScaleWidth(24),
       xxl: getScaleWidth(88),
     },
     border: {

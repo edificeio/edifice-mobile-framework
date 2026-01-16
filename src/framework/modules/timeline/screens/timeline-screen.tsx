@@ -12,6 +12,7 @@ import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { cardPaddingMerging } from '~/framework/components/card/base';
+import { CommentForm } from '~/framework/components/comments/comment-form';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -176,40 +177,15 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   render() {
     return (
-      <>
-        {/*<Image
-          style={{ aspectRatio: 1, flex: 0.2 }}
-          source={[
-            {
-              height: 200,
-              scale: 1,
-              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/26d50510-ccc0-42c3-a392-dada4760913b',
-              width: 200,
-            },
-            {
-              height: 200,
-              scale: 2,
-              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/ac0ca85a-5fde-4049-939b-0e9e2c70026f',
-              width: 200,
-            },
-            {
-              height: 200,
-              scale: 3,
-              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/48966b77-d506-4a4a-a3c4-a5ec6dbb36b7',
-              width: 200,
-            },
-          ]}
-        />*/}
-        <PageView>
-          {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
-            <LoadingIndicator />
-          ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
-            this.renderError()
-          ) : (
-            this.renderList()
-          )}
-        </PageView>
-      </>
+      <PageView>
+        {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
+          <LoadingIndicator />
+        ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
+          this.renderError()
+        ) : (
+          this.renderList()
+        )}
+      </PageView>
     );
   }
 
@@ -364,7 +340,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               testID="timeline-profile-button"
               // Style here is needed to prevent Android autocropping border of avatar
               style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
-              <SingleAvatar size="md" userId={session?.user.id || ''} />
+              <SingleAvatar size="sm" userId={session?.user.id || ''} />
             </TouchableOpacity>,
             <NavBarAction />,
           ]}

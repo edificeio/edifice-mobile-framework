@@ -100,7 +100,7 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
     return (
       <VisibleItem
         backgroundColor={backgroundColor}
-        avatarSize="md"
+        avatarSize="sm"
         key={item.user.entId}
         // rightElement={<ItemOptions />} // for next version
         userId={item.user.entId}>

@@ -18,7 +18,7 @@ const MembersTile = ({ communityId, membersId, navigation, totalMembers }: Reado
       [communityId, navigation],
     )}
     testID="tile-members">
-    <AvatarStack style={UI_STYLES.flex1} size="md" items={membersId} total={totalMembers} />
+    <AvatarStack style={UI_STYLES.flex1} size="sm" items={membersId} total={totalMembers} />
     <SmallBoldText style={styles.tileCaptionTextAvailable}>{I18n.get('communities-tile-members-title')}</SmallBoldText>
   </TouchableOpacity>
 );

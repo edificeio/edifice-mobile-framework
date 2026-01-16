@@ -8,7 +8,7 @@ import styles from '~/framework/components/card/visible-item/styles';
 import { VisibleItemLoaderProps } from '~/framework/components/card/visible-item/types';
 import { UI_SIZES } from '~/framework/components/constants';
 
-const VisibleItemLoader = ({ avatarSize = 'md', backgroundColor, children }: Readonly<VisibleItemLoaderProps>) => {
+const VisibleItemLoader = ({ avatarSize = 'sm', backgroundColor, children }: Readonly<VisibleItemLoaderProps>) => {
   const avatarWidth = React.useMemo(() => {
     return AvatarSizes[avatarSize] + UI_SIZES.border.small * 2;
   }, [avatarSize]);
