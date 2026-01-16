@@ -11,7 +11,6 @@ import { MyAppsFilters } from '~/framework/modules/myAppMenu/components/my-apps-
 import { MyAppsList } from '~/framework/modules/myAppMenu/components/my-apps-list';
 import { selectFilteredApps } from '~/framework/modules/myapps/reducer';
 import { AppsInfoAggregated, MyAppsFilter } from '~/framework/modules/myapps/types';
-import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 
 const MyAppsHomeScreen = (_: MyAppsHomeScreenProps) => {
   const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
@@ -52,7 +51,7 @@ const MyAppsHomeScreen = (_: MyAppsHomeScreenProps) => {
         emptyScreenConfig={EMPTY_SCREEN_CONFIG[resolveEmptyScreenKey(filter)]}
         isFavoritesFilter={filter.type === 'favorites'}
         onPressApp={app => {
-          _.navigation.navigate(presencesRouteNames.callList);
+          // _.navigation.navigate(app.moduleConfig?.routeName || app.address);
           console.debug('PRESS-' + app.name);
         }}
         onLongPressApp={app => console.debug('LONG PRESS-' + app.name)}

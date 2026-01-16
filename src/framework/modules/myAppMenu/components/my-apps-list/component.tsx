@@ -64,9 +64,16 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongP
         );
       }
 
-      return <MyAppsCard app={item.app} onPress={() => onPressApp(item.app)} onLongPress={() => onLongPressApp?.(item.app)} />;
+      return (
+        <MyAppsCard
+          isFavoritesFilter={isFavoritesFilter}
+          app={item.app}
+          onPress={() => onPressApp(item.app)}
+          onLongPress={() => onLongPressApp?.(item.app)}
+        />
+      );
     },
-    [onLongPressApp, onPressApp],
+    [onLongPressApp, onPressApp, isFavoritesFilter],
   );
 
   if (!data.length) {

@@ -4,7 +4,7 @@ import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { appsInfoInitialState } from '~/framework/modules/myapps/reducer/reducer';
 import { AppsInfoAggregated, AppsInfoWithCategory, MyAppsFilter } from '~/framework/modules/myapps/types';
-import getAppI18nLabel from '~/framework/modules/myapps/utils/app-i18n';
+import { getAppName } from '~/framework/modules/myapps/utils/app-i18n';
 
 export const selectAppsState = (state: IGlobalState) => {
   return moduleConfig.getState(state) ?? appsInfoInitialState;
@@ -38,7 +38,7 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
         ...app,
         category: config?.category,
         color: config?.color,
-        displayName: getAppI18nLabel(app), // remove when translated names given
+        displayName: getAppName(app),
         help: config?.help,
         isFavorite,
         isLibrary,

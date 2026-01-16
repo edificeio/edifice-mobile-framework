@@ -9,6 +9,7 @@ import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { myAppsService } from '~/framework/modules/myapps/service';
 import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
+import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
@@ -51,12 +52,10 @@ export const afterLoginSetup =
         myAppsService.config(session),
         myAppsService.bookmarks(session),
       ]);
-
       appsInfo = appsInfo.map(app => {
-        const isMobile = isMobileApp(app, navigableModules);
+        const isMobile = isMobileApp(app as IEntcoreApp, navigableModules);
         return { ...app, isMobile };
       });
-
       dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
     } catch (e) {
       console.error('[afterLoginSetup] ERROR', e);

@@ -1,7 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import { Pressable, View } from 'react-native';
 
+import Animated from 'react-native-reanimated';
+
 import { MyAppsCardProps } from './types';
+import { useController } from './useController';
 import { useStyles } from './useStyles';
 
 import { UI_SIZES } from '~/framework/components/constants';
@@ -13,62 +16,65 @@ import { sessionImageSource } from '~/framework/util/transport';
 
 const HTTP_REGEX: RegExp = /^https?:\/\//;
 
-export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
+export const MyAppsCard = ({ app, isFavoritesFilter, onLongPress, onPress }: MyAppsCardProps) => {
   const styles = useStyles(app);
-  const isImageDistant = (icon: string): boolean => HTTP_REGEX.test(icon) || icon.startsWith('/workspace/');
-  const icon = app.icon;
+  const isImageDistant = React.useCallback((icon: string): boolean => HTTP_REGEX.test(icon) || icon.startsWith('/workspace/'), []);
+  const icon = React.useMemo(() => app.icon, [app.icon]);
+  const [isFavorite, setIsFavorite] = React.useState(app.isFavorite);
+  // const isFavorite = React.useMemo(() => app.isFavorite, [app.isFavorite]);
+  const { animatedFavoriteStyle, imageDimensions } = useController(isFavorite);
 
-  const imageDimensions = React.useMemo(
-    () => ({
-      height: UI_SIZES.spacing.huge,
-      width: UI_SIZES.spacing.huge,
-    }),
-    [],
-  );
+  const svgIconName = React.useMemo(() => {
+    if (!icon || isImageDistant(icon)) return null;
+    if (!icon.includes('/') && !icon.includes('.')) return icon;
+    return null;
+  }, [icon, isImageDistant]);
 
-  const imageSource = React.useMemo(
-    () => (icon ? sessionImageSource(injectImageSource({ uri: icon }, imageDimensions)) : undefined),
-    [icon, imageDimensions],
-  );
+  const imageSource = React.useMemo(() => {
+    if (!icon || svgIconName) return undefined;
 
-  const svgIconName = useMemo(() => {
-    if (!icon) return null;
-    if (isImageDistant(icon)) return null;
+    if (HTTP_REGEX.test(icon)) {
+      return { uri: icon };
+    }
 
-    return icon.replace(/-large$/, ''); //might be replaced in the future
-  }, [icon]);
+    if (icon.startsWith('/workspace/')) {
+      const fullSource = sessionImageSource(injectImageSource({ uri: icon }, imageDimensions));
+      return fullSource;
+    }
 
-  const canShowWebIcon = useMemo(() => {
-    if (app.type === 'connector' || app.type === 'web') return true;
-    if (app.target === '_blank') return true;
-    if (!app.address) return false;
+    const source = sessionImageSource(injectImageSource({ uri: icon }, imageDimensions));
+    return source;
+  }, [icon, svgIconName, imageDimensions]);
 
-    return HTTP_REGEX.test(app.address) || app.address.includes('#') || app.address.startsWith('/pages#');
-  }, [app]);
+  const canShowWebIcon = React.useMemo(() => !app.isMobile, [app]);
 
-  const renderIcon = useCallback(() => {
-    if (!icon) return null;
+  const renderIcon = React.useCallback(() => {
+    if (!icon) {
+      return null;
+    }
 
     if (svgIconName) {
       return <Svg name={svgIconName} fill="white" width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} />;
     }
 
     return <Image source={imageSource} style={styles.image} />;
-  }, [imageSource, icon, svgIconName, styles.image]);
+  }, [icon, svgIconName, imageSource, styles.image]);
 
-  const renderFavoriteBadge = useCallback(() => {
-    if (!app.isFavorite) return null;
-
+  const renderFavoriteBadge = React.useCallback(() => {
     return (
-      <View style={styles.favoriteIcon}>
+      <Animated.View style={[styles.favoriteIcon, animatedFavoriteStyle]}>
         <Svg name="ui-favorite" width={UI_SIZES.spacing.big} height={UI_SIZES.spacing.big} />
-      </View>
+      </Animated.View>
     );
-  }, [app.isFavorite, styles.favoriteIcon]);
+  }, [animatedFavoriteStyle, styles.favoriteIcon]);
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        if (isFavoritesFilter) {
+          setIsFavorite(prev => !prev);
+        } else onPress?.();
+      }}
       onLongPress={onLongPress}
       style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}>
       <View style={styles.contentContainer}>
