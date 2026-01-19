@@ -319,7 +319,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       if (!this.opts.ignoreLineBreaks && !this.firstWord) {
         // Insert the new line only if we have some text nuggets before the current text nugget.
         text = '\n'.repeat(this.lineBreaksToInsert) + text;
-        this.hasToInsertSpace = false;
+        if (this.firstWord) this.hasToInsertSpace = false;
       }
       this.lineBreaksToInsert = 0;
     }

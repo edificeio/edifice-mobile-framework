@@ -73,6 +73,7 @@ export interface IMailsMailContent {
   to: MailsRecipients;
   trashed: boolean;
   unread: boolean;
+  noReply: boolean;
 }
 
 export interface MailsFolderCount {
@@ -137,4 +138,5 @@ export interface MailsConversationPayload {
   cc: string[];
   cci: string[];
   subject: string;
+  noReply?: boolean;
 }

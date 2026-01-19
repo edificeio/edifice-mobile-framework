@@ -188,7 +188,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     const { id, isFolder, name: title } = file;
     if (isFolder) {
       const newFilter = filter === Filter.ROOT ? id : filter;
-      navigation.push(moduleConfig.routeName, { filter: newFilter, parentId: id, title });
+      navigation.isFocused() && navigation.push(moduleConfig.routeName, { filter: newFilter, parentId: id, title });
     } else {
       navigation.navigate(workspaceRouteNames.filePreview, { file, title });
     }

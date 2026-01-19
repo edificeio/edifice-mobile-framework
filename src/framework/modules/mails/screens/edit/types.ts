@@ -26,6 +26,7 @@ export interface MailsEditScreenNavParams {
     cc?: MailsVisible[];
     cci?: MailsVisible[];
     attachments?: IDistantFileWithId[];
+    noReply?: boolean;
   };
   draftId?: string;
   type?: MailsEditType;

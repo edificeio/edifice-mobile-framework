@@ -172,7 +172,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
   const renderCourse = (course: IEdtCourse): React.ReactElement => {
     const isTeacher = props.userType === AccountType.Teacher;
-    const className = course.classes.length ? course.classes[0] : course.groups[0];
+    const className = course.classes?.length ? course.classes[0] : course.groups[0];
     const firstText = isTeacher ? className : course.subject.name;
     const secondText = isTeacher ? course.subject.name : getTeacherName(course.teacherIds);
     const hasTag = course.tags.length > 0 && course.tags[0].label.toLocaleUpperCase() !== 'ULIS';
@@ -202,7 +202,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
   const renderHalfCourse = (course: IEdtCourse) => {
     const isTeacher = props.userType === AccountType.Teacher;
-    const className = course.classes.length ? course.classes[0] : course.groups[0];
+    const className = course.classes?.length ? course.classes[0] : course.groups[0];
     const firstText = isTeacher ? className : course.subject.name;
     const secondText = isTeacher ? course.subject.name : getTeacherName(course.teacherIds);
     const hasTag = course.tags.length > 0 && course.tags[0].label.toLocaleUpperCase() !== 'ULIS';

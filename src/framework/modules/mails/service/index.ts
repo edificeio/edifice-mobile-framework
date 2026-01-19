@@ -150,7 +150,7 @@ export const mailsService = {
     },
     send: async (params: { draftId?: string; inReplyTo?: string }, payload: MailsConversationPayload) => {
       const { draftId, inReplyTo } = params;
-      const { body, cc, cci, subject, to } = payload;
+      const { body, cc, cci, noReply, subject, to } = payload;
 
       const baseUrl = '/conversation/send';
       const paramsUrl = new URLSearchParams();
@@ -161,16 +161,14 @@ export const mailsService = {
       const queryString = paramsUrl.toString();
       const api = queryString ? `${baseUrl}?${queryString}` : baseUrl;
 
-      const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
-      const response = await sessionFetch.json(api, { body: bodyJson, method: 'POST' });
-
-      return response;
+      const bodyJson = JSON.stringify({ body, cc, cci, noReply, subject, to });
+      return sessionFetch.json(api, { body: bodyJson, method: 'POST' });
     },
     sendToDraft: async (params: { inReplyTo?: string }, payload: MailsConversationPayload) => {
       const api = `/conversation/draft${params.inReplyTo ? `?In-Reply-To=${params.inReplyTo}` : ''}`;
-      const { body, cc, cci, subject, to } = payload;
+      const { body, cc, cci, noReply, subject, to } = payload;
 
-      const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
+      const bodyJson = JSON.stringify({ body, cc, cci, noReply, subject, to });
 
       const draft = await sessionFetch.json<{ id: string }>(api, { body: bodyJson, method: 'POST' });
       return draft.id;
@@ -182,10 +180,10 @@ export const mailsService = {
     },
     updateDraft: async (params: { draftId: string }, payload: MailsConversationPayload) => {
       const api = `/conversation/draft/${params.draftId}`;
-      const { body, cc, cci, subject, to } = payload;
+      const { body, cc, cci, noReply, subject, to } = payload;
 
-      const bodyJson = JSON.stringify({ body, cc, cci, subject, to });
-      await sessionFetch.json(api, { body: bodyJson, method: 'PUT' });
+      const bodyJson = JSON.stringify({ body, cc, cci, noReply, subject, to });
+      await sessionFetch(api, { body: bodyJson, method: 'PUT' });
     },
   },
   mails: {

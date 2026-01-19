@@ -15,6 +15,7 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { useIsFocused } from '@react-navigation/native';
 
 // # Props
 
@@ -49,9 +50,10 @@ const blogExplorerContext = {
 export default sessionScreen<BlogExplorerScreen.AllProps>(({ navigation, route, session, ...props }) => {
   const hasBlogCreationRights = getBlogWorkflowInformation(session) && getBlogWorkflowInformation(session).blog.create;
 
+  const isFocused = useIsFocused();
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
-      navigation.navigate(blogRouteNames.blogPostList, { blogId: r.resourceEntId });
+      isFocused && navigation.navigate(blogRouteNames.blogPostList, { blogId: r.resourceEntId });
     },
     [navigation],
   );
