@@ -9,6 +9,7 @@ import { MyAppsListItem, MyAppsListProps } from './types';
 import { buildAppItem, buildFavoritesList, isSeparator } from './utils';
 
 import { I18n } from '~/app/i18n';
+import { AppDispatch, getStore } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import {
   LOADING_ITEM_DATA,
@@ -17,12 +18,15 @@ import {
   PaginatedListItem,
 } from '~/framework/components/list/paginated-list';
 import { SmallBoldText } from '~/framework/components/text';
+import { toggleFavorite } from '~/framework/modules/myapps/reducer';
 
 const NUM_COLUMNS = 2;
 const PAGE_SIZE = 20;
 
 export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongPressApp, onPressApp }: MyAppsListProps) => {
   const appsListRef = React.useRef<FlashList<PaginatedListItem<MyAppsListItem>>>(null);
+  const store = getStore();
+  const dispatch = store.dispatch as AppDispatch;
 
   const data: MyAppsListItem[] = React.useMemo(() => {
     if (!isFavoritesFilter) {
@@ -68,12 +72,12 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongP
         <MyAppsCard
           isFavoritesFilter={isFavoritesFilter}
           app={item.app}
-          onPress={() => onPressApp(item.app)}
+          onPress={() => (!isFavoritesFilter ? dispatch(toggleFavorite(item.app.name)) : onPressApp(item.app))} // this logic will change , and alos depending on how we manage favorites
           onLongPress={() => onLongPressApp?.(item.app)}
         />
       );
     },
-    [onLongPressApp, onPressApp, isFavoritesFilter],
+    [isFavoritesFilter, dispatch, onPressApp, onLongPressApp],
   );
 
   if (!data.length) {

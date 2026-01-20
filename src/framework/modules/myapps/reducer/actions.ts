@@ -1,35 +1,19 @@
-import { Action, UnknownAction } from 'redux';
+import { UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
+import { appsInfoActionTypes } from './action-types';
 import { isMobileApp, isNavigableModule } from './adapter';
+import { selectAppsState } from './selectors';
 
 import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
+import Toast from '~/framework/components/toast';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import moduleConfig from '~/framework/modules/myapps/module-config';
 import { myAppsService } from '~/framework/modules/myapps/service';
-import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
+import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoState } from '~/framework/modules/myapps/types';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
-export interface FetchStartAction extends Action {
-  type: typeof appsInfoActionTypes.fetchStart;
-}
-
-export interface FetchSuccessAction extends Action {
-  type: typeof appsInfoActionTypes.fetchSuccess;
-  payload: AppsInfoActionPayloads['fetchSuccess'];
-}
-
-export interface FetchErrorAction extends Action {
-  type: typeof appsInfoActionTypes.fetchError;
-  error: string;
-}
-
-export const appsInfoActionTypes = {
-  fetchError: moduleConfig.namespaceActionType('FETCH_ERROR'),
-  fetchStart: moduleConfig.namespaceActionType('FETCH_START'),
-  fetchSuccess: moduleConfig.namespaceActionType('FETCH_SUCCESS'),
-};
+type ThunkResult = ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction>;
 
 export const appInfoActions = {
   fetchError: (error: string) => ({ error, type: appsInfoActionTypes.fetchError }),
@@ -38,10 +22,11 @@ export const appInfoActions = {
     payload,
     type: appsInfoActionTypes.fetchSuccess,
   }),
+  toggleFavorite: (appName: string) => ({ appName, type: appsInfoActionTypes.toggleFavorite }),
 };
 
 export const afterLoginSetup =
-  (session): ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction> =>
+  (session): ThunkResult =>
   async dispatch => {
     dispatch(appInfoActions.fetchStart());
     const navigableModules = AllModules().filter(isNavigableModule);
@@ -63,8 +48,31 @@ export const afterLoginSetup =
     }
   };
 
-export const initMesAppliAtLogin = (): ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction> => async dispatch => {
+export const initMesAppliAtLogin = (): ThunkResult => async dispatch => {
   const session = getSession();
   if (!session) return;
   await dispatch(afterLoginSetup(assertSession()));
 };
+
+export const toggleFavorite =
+  (appName: string): ThunkResult =>
+  async (dispatch, getState: () => AppsInfoState) => {
+    const state = getState();
+    const session = getSession();
+    if (!session) return;
+
+    const { favorites } = selectAppsState(state);
+
+    dispatch(appInfoActions.toggleFavorite(appName));
+
+    try {
+      await myAppsService.updateBookmarks(session, favorites);
+
+      Toast.showSuccess('Vos modifications ont bien été enregistrées');
+    } catch (e) {
+      console.error('[toggleFavorite] ERROR', e);
+      dispatch(appInfoActions.toggleFavorite(appName));
+
+      Toast.showError('Une erreur est survenue lors de la mise à jour des favoris');
+    }
+  };
