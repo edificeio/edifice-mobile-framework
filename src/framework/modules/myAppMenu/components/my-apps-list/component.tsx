@@ -72,7 +72,7 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongP
         <MyAppsCard
           isFavoritesFilter={isFavoritesFilter}
           app={item.app}
-          onPress={() => (!isFavoritesFilter ? dispatch(toggleFavorite(item.app.name)) : onPressApp(item.app))} // this logic will change , and alos depending on how we manage favorites
+          onPress={() => (isFavoritesFilter ? onPressApp(item.app) : dispatch(toggleFavorite(item.app.name)))} // this logic will change , and alos depending on how we manage favorites
           onLongPress={() => onLongPressApp?.(item.app)}
         />
       );
