@@ -11,14 +11,14 @@ export const useAnimatedSearchStyles = () => {
 
   const open = () => {
     progress.value = withTiming(1, {
-      duration: 300,
+      duration: 500,
       easing: Easing.out(Easing.cubic),
     });
   };
 
   const close = () => {
     progress.value = withTiming(0, {
-      duration: 250,
+      duration: 350,
       easing: Easing.in(Easing.cubic),
     });
   };
@@ -28,8 +28,21 @@ export const useAnimatedSearchStyles = () => {
     width: COLLAPSED_WIDTH + (EXPANDED_WIDTH - COLLAPSED_WIDTH) * progress.value,
   }));
 
+  const iconStyle = useAnimatedStyle(() => ({
+    opacity: 1 - progress.value,
+    pointerEvents: progress.value === 0 ? 'auto' : 'none',
+    transform: [{ scale: 1 - 0.1 * progress.value }],
+  }));
+
+  const searchStyle = useAnimatedStyle(() => ({
+    opacity: progress.value,
+    pointerEvents: progress.value === 1 ? 'auto' : 'none',
+  }));
+
   return {
     animatedContainerStyle: containerStyle,
+    animatedIconStyle: iconStyle,
+    animatedSearchStyle: searchStyle,
     close,
     open,
   };

@@ -16,12 +16,11 @@ import { sessionImageSource } from '~/framework/util/transport';
 
 const HTTP_REGEX: RegExp = /^https?:\/\//;
 
-export const MyAppsCard = ({ app, isFavoritesFilter, onLongPress, onPress }: MyAppsCardProps) => {
+export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   const styles = useStyles(app);
   const isImageDistant = React.useCallback((icon: string): boolean => HTTP_REGEX.test(icon) || icon.startsWith('/workspace/'), []);
   const icon = React.useMemo(() => app.icon, [app.icon]);
-  const [isFavorite, setIsFavorite] = React.useState(app.isFavorite);
-  // const isFavorite = React.useMemo(() => app.isFavorite, [app.isFavorite]);
+  const isFavorite = React.useMemo(() => app.isFavorite, [app.isFavorite]);
   const { animatedFavoriteStyle, imageDimensions } = useController(isFavorite);
 
   const svgIconName = React.useMemo(() => {
@@ -70,11 +69,7 @@ export const MyAppsCard = ({ app, isFavoritesFilter, onLongPress, onPress }: MyA
 
   return (
     <Pressable
-      onPress={() => {
-        if (isFavoritesFilter) {
-          setIsFavorite(prev => !prev);
-        } else onPress?.();
-      }}
+      onPress={onPress}
       onLongPress={onLongPress}
       style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}>
       <View style={styles.contentContainer}>
