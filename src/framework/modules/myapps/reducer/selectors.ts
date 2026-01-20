@@ -22,7 +22,7 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
       let config = configByName.get(app.name);
 
       const isLibrary = app.address?.includes('library.edifice.io') && !config?.category;
-      const isFavorite = favorites.bookmarks.includes(app.name);
+      const isFavorite = favorites.bookmarks?.includes(app.name);
 
       if (isLibrary) {
         const libraryConfig = configByName.get('library-info');

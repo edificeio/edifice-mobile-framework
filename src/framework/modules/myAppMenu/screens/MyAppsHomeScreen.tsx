@@ -16,7 +16,6 @@ const MyAppsHomeScreen = (_: MyAppsHomeScreenProps) => {
   const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
   const filterInitialState: React.SetStateAction<MyAppsFilter> = { type: 'category', value: 'toutes' };
   const [filter, setFilter] = React.useState<MyAppsFilter>(filterInitialState);
-
   useFocusEffect(
     React.useCallback(() => {
       return () => {

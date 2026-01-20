@@ -36,7 +36,6 @@ export const myAppsService = {
       };
     }
   },
-
   config: async (session: AuthActiveAccount): Promise<ApplicationsConfig[]> => {
     const res = await signedFetch(`${session.platform.url}/myApps/config`);
     return res.json();
@@ -47,5 +46,19 @@ export const myAppsService = {
     const json = await res.json();
     const apps: ApplicationsList[] = Array.isArray(json) ? json : (json.applications ?? json.apps ?? []);
     return apps.map(adaptApplication);
+  },
+
+  updateBookmarks: async (session: AuthActiveAccount, favorites: AppBookmarks): Promise<void> => {
+    const body = {
+      preference: JSON.stringify({
+        applications: favorites.applications,
+        bookmarks: favorites.bookmarks,
+      }),
+    };
+
+    await signedFetch(`${session.platform.url}/userbook/preference/apps`, {
+      body: JSON.stringify(body),
+      method: 'PUT',
+    });
   },
 };
