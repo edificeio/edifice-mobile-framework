@@ -19,6 +19,7 @@ export default new NavigableModuleConfig<'zimbra', IZimbraReduxState>({
       sources: ['camera', 'gallery', 'documents'],
     },
   } as const,
+  hasRight: () => true,
   matchEntcoreApp: '/zimbra/zimbra',
   name: 'zimbra',
   storageName: 'zimbra',
