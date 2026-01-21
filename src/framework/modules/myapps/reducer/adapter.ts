@@ -28,3 +28,8 @@ export const isNavigableModule = (module: AnyModule): module is AnyNavigableModu
 export const isMobileApp = (app: IEntcoreApp, modules: AnyNavigableModule[]): boolean => {
   return modules.some(module => module.config.matchEntcoreApp(app));
 };
+export const computeNextBookmarks = (bookmarks: string[], appName: string): string[] => {
+  const isFavorite = bookmarks.includes(appName);
+
+  return isFavorite ? bookmarks.filter(name => name !== appName) : [...bookmarks, appName];
+};

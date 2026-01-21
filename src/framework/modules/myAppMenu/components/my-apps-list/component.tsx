@@ -3,7 +3,6 @@ import { View } from 'react-native';
 
 import { FlashList } from '@shopify/flash-list';
 
-import { MyAppsCard } from '../my-apps-card';
 import { styles } from './styles';
 import { MyAppsListItem, MyAppsListProps } from './types';
 import { buildAppItem, buildFavoritesList, isSeparator } from './utils';
@@ -18,7 +17,9 @@ import {
   PaginatedListItem,
 } from '~/framework/components/list/paginated-list';
 import { SmallBoldText } from '~/framework/components/text';
+import { MyAppsCard } from '~/framework/modules/myAppMenu/components/my-apps-card';
 import { toggleFavorite } from '~/framework/modules/myapps/reducer';
+import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
 const NUM_COLUMNS = 2;
 const PAGE_SIZE = 20;
@@ -57,6 +58,17 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongP
     [],
   );
 
+  const handlePress = React.useCallback(
+    (app: AppsInfoAggregated) => {
+      if (isFavoritesFilter) {
+        onPressApp(app);
+      } else {
+        dispatch(toggleFavorite(app.name));
+      }
+    },
+    [isFavoritesFilter, onPressApp, dispatch],
+  );
+
   const renderItem = React.useCallback<PaginatedFlashListProps<MyAppsListItem>['renderItem']>(
     ({ item }) => {
       if (isSeparator(item)) {
@@ -72,12 +84,12 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongP
         <MyAppsCard
           isFavoritesFilter={isFavoritesFilter}
           app={item.app}
-          onPress={() => (isFavoritesFilter ? onPressApp(item.app) : dispatch(toggleFavorite(item.app.name)))} // this logic will change , and alos depending on how we manage favorites
+          onPress={() => handlePress(item.app)}
           onLongPress={() => onLongPressApp?.(item.app)}
         />
       );
     },
-    [isFavoritesFilter, dispatch, onPressApp, onLongPressApp],
+    [isFavoritesFilter, handlePress, onLongPressApp],
   );
 
   if (!data.length) {

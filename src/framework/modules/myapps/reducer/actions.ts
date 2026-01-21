@@ -2,7 +2,7 @@ import { UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { appsInfoActionTypes } from './action-types';
-import { isMobileApp, isNavigableModule } from './adapter';
+import { computeNextBookmarks, isMobileApp, isNavigableModule } from './adapter';
 import { selectAppsState } from './selectors';
 
 import AllModules from '~/app/modules';
@@ -57,22 +57,39 @@ export const initMesAppliAtLogin = (): ThunkResult => async dispatch => {
 export const toggleFavorite =
   (appName: string): ThunkResult =>
   async (dispatch, getState: () => AppsInfoState) => {
-    const state = getState();
     const session = getSession();
     if (!session) return;
 
-    const { favorites } = selectAppsState(state);
+    const state = getState();
+    const appsInfostate = selectAppsState(state);
+    const { appsConfig, appsInfo, favorites } = appsInfostate;
+
+    const nextBookmarks = computeNextBookmarks(favorites.bookmarks, appName).filter(name => favorites.applications.includes(name));
+
+    const optimisticFavorites: AppBookmarks = {
+      applications: favorites.applications,
+      bookmarks: nextBookmarks,
+    };
 
     dispatch(appInfoActions.toggleFavorite(appName));
 
     try {
-      await myAppsService.updateBookmarks(session, favorites);
+      await myAppsService.updateBookmarks(session, optimisticFavorites);
+
+      const refreshedFavorites = await myAppsService.bookmarks(session);
+
+      dispatch(
+        appInfoActions.fetchSuccess({
+          appsConfig,
+          appsInfo,
+          favorites: refreshedFavorites,
+        }),
+      );
 
       Toast.showSuccess('Vos modifications ont bien été enregistrées');
     } catch (e) {
-      console.error('[toggleFavorite] ERROR', e);
+      console.error('Error updating favorites:', e);
       dispatch(appInfoActions.toggleFavorite(appName));
-
       Toast.showError('Une erreur est survenue lors de la mise à jour des favoris');
     }
   };
