@@ -1,6 +1,8 @@
 import CookieManager from '@react-native-cookies/cookies';
 //import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
+import RNConfigReader from 'react-native-config-reader';
+import DeviceInfo from 'react-native-device-info';
 
 import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -192,6 +194,14 @@ export abstract class AbstractTracker<OptionsType> {
 export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   private static moduleAccessMap: Record<string, string> = {};
 
+  private static defaultPayload = {
+    app_name: DeviceInfo.getBundleId(),
+    app_version: `${DeviceInfo.getVersion()}-${RNConfigReader.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
+    device_name: DeviceInfo.getModel(),
+    os_name: DeviceInfo.getSystemName(),
+    os_version: DeviceInfo.getSystemVersion(),
+  };
+
   errorCount: number = 0;
   lastModulename: string | undefined = undefined;
   reportQueue: Request[] = [];
@@ -232,7 +242,8 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 
   async _trackView(path: string[]) {
-    const platform = getSession()?.platform;
+    const session = getSession();
+    const platform = session?.platform;
     const moduleAccessMap = ConcreteEntcoreTracker.moduleAccessMap;
     const moduleName = (
       path[0] === 'timeline' ? (['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase()) ? path[2] : 'timeline') : path[0]
@@ -242,7 +253,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       const module = moduleAccessMap[moduleName];
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
-          body: JSON.stringify({ module }),
+          body: JSON.stringify({ ...ConcreteEntcoreTracker.defaultPayload, module, platform_name: session?.platform?.displayName }),
           method: 'POST',
         }),
       );

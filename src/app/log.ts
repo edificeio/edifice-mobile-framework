@@ -31,7 +31,7 @@ export namespace Log {
     const isDebuggable = appConf.isDebugEnabled;
     try {
       // Start network logging if debug is enabled
-      if (!__DEV__ && isDebuggable) {
+      if (isDebuggable) {
         const { startNetworkLogging } = await import('react-native-network-logger');
         startNetworkLogging();
       }
