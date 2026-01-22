@@ -8,10 +8,12 @@ import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES } from '~/framework/components/constants';
-import { cameraAction, galleryAction, ImagePicked } from '~/framework/components/menus/actions';
+import { cameraActionFm, galleryActionFm } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, TextSizeStyle } from '~/framework/components/text';
+import { LocalFile } from '~/framework/util/fileHandler/models';
+import { mapLocalFileToLegacy } from '~/framework/util/fileHandler/utils/mapLocalFileToLegacy';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
@@ -28,6 +30,7 @@ const itemWidth =
     // vertical border width of "attach photos" button
     2 * UI_SIZES.border.thin) /
   3;
+
 const styles = StyleSheet.create({
   attachPhotos: { color: theme.palette.primary.regular, marginTop: UI_SIZES.spacing.small, textAlign: 'center' },
   attachPhotosAdded: { ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.tiny },
@@ -71,31 +74,39 @@ const styles = StyleSheet.create({
 });
 
 export class AttachmentGroupImages extends React.PureComponent<{
-  imageCallback: (image: ImagePicked) => void;
+  onAdd: (attachments: ILocalAttachment[]) => void;
   onRemove: (index: number) => void;
   images: ILocalAttachment[];
   moduleName: string;
+  pickerInfo: { modulename: string; useCase: string };
 }> {
-  public imagesAdded() {
-    const { images } = this.props;
-    return images.length > 0;
+  imagesAdded() {
+    return this.props.images.length > 0;
   }
 
-  public onOpenImage = () => {
+  onOpenImage = () => {
     const { images, moduleName } = this.props;
-    const carouselImages = images.map(image => ({ alt: 'image', src: { uri: image.uri }, type: 'image' as const }));
+    const carouselImages = images.map(image => ({
+      alt: 'image',
+      src: { uri: image.uri },
+      type: 'image' as const,
+    }));
     Trackers.trackEvent(moduleName, 'OPEN ATTACHMENT', 'Edit mode');
-    openCarousel({ data: carouselImages });
+    openCarousel({ data: carouselImages, referer: undefined });
   };
 
-  public renderItemSeparator() {
-    return <View style={styles.itemSeperator} />;
-  }
+  renderItemSeparator = () => <View style={styles.itemSeperator} />;
 
-  public AddPhotosButton() {
-    const { imageCallback } = this.props;
+  AddPhotosButton = () => {
+    const { onAdd, pickerInfo } = this.props;
+    const { modulename, useCase } = pickerInfo;
+
+    const fns = [cameraActionFm, galleryActionFm];
+
+    const attachOpts = { callback: (file: LocalFile | LocalFile[]) => onAdd((file as LocalFile[]).map(mapLocalFileToLegacy)) };
+
     return (
-      <BottomMenu actions={[cameraAction({ callback: imageCallback }), galleryAction({ callback: imageCallback, multiple: true })]}>
+      <BottomMenu actions={fns.map(fn => fn(modulename, useCase, attachOpts))}>
         <View style={[styles.attachPhotosContainer, this.imagesAdded() && styles.attachPhotosContainerAdded]}>
           <Picture
             type="Svg"
@@ -110,21 +121,18 @@ export class AttachmentGroupImages extends React.PureComponent<{
         </View>
       </BottomMenu>
     );
-  }
+  };
 
-  public renderItem = ({ index, item }) => {
+  renderItem = ({ index, item }) => {
     const { onRemove } = this.props;
     if (isEmpty(item)) return this.AddPhotosButton();
+
     return (
       <View style={styles.photoContainer}>
         <TouchableOpacity onPress={this.onOpenImage}>
-          <Image
-            style={styles.photo}
-            resizeMode="cover"
-            source={formatSource((item as ILocalAttachment).uri)}
-            onError={() => onRemove(index)}
-          />
+          <Image style={styles.photo} resizeMode="cover" source={formatSource(item.uri)} onError={() => onRemove(index)} />
         </TouchableOpacity>
+
         <IconButton
           icon="ui-close"
           style={styles.iconButton}
@@ -136,13 +144,13 @@ export class AttachmentGroupImages extends React.PureComponent<{
     );
   };
 
-  public render() {
+  render() {
     const { images } = this.props;
-    const numColumns = 3;
+
     return (
       <FlatList
         data={[...images, {}]}
-        numColumns={numColumns}
+        numColumns={3}
         scrollEnabled={false}
         style={[styles.container, this.imagesAdded() && styles.containerAdded]}
         contentContainerStyle={[styles.contentContainer, !this.imagesAdded() && styles.contentContainerAdded]}

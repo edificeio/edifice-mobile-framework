@@ -151,14 +151,14 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       }
 
       Alert.alert(
-        I18n.get('document-permissionblocked-title'),
-        I18n.get('document-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('documents-read-permissionblocked-title'),
+        I18n.get('documents-read-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
       );
     }
   }
   static async pickFromGallery(callback, multiple: boolean, synchrone?: boolean, callbackOnce?: boolean) {
     try {
-      await assertPermissions('galery.read');
+      await assertPermissions('gallery.read');
       console.debug('[Gallery] Opening picker...');
 
       const response = await launchImageLibrary({
@@ -170,10 +170,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       if (!response.assets || response.didCancel) {
         return;
       }
-      // Sort picked files by ascending modification date
-      response.assets.sort((a, b) => (!a.timestamp ? -1 : !b.timestamp ? 1 : a.timestamp.localeCompare(b.timestamp)));
       const pickedFiles = (await processImages(response.assets)).filter((f): f is Asset => f !== undefined);
-
       const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
 
       if (Platform.OS === 'android') {
@@ -193,7 +190,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       }
       console.error('[GalleryPicker] Error:', e);
       toast.showError(
-        I18n.get('gallery-readpermissionblocked-text', {
+        I18n.get('gallery-read-permissionblocked-text', {
           appName: DeviceInfo.getApplicationName(),
         }),
       );
@@ -220,7 +217,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         await this.imageCallback([], callback, synchrone, callbackOnce);
         return;
       } else {
-        toast.showError(I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
+        toast.showError(I18n.get('gallery-read-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }));
       }
     }
   }

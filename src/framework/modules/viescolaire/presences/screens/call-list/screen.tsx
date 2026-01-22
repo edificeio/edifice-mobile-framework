@@ -212,29 +212,31 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
 
     return (
       <BottomSheetModal ref={bottomSheetModalRef} onDismiss={clearBottomSheetContent}>
-        {isValidated && !bottomSheetCall ? (
-          <CallSummaryPlaceholder />
-        ) : (
-          <View style={styles.bottomSheetContainer}>
-            {isValidated ? (
-              <CallSummary call={bottomSheetCall!} />
-            ) : (
-              <View style={styles.bottomSheetMissedCallContainer}>
-                <HeadingSText>{I18n.get('presences-calllist-bottomsheet-heading')}</HeadingSText>
-                <BodyText style={styles.bottomSheetMissedCallText}>
-                  {I18n.get('presences-calllist-bottomsheet-missedcall')}
-                </BodyText>
-              </View>
-            )}
-            <PrimaryButton
-              text={I18n.get(
-                isValidated ? 'presences-calllist-bottomsheet-action-edit' : 'presences-calllist-bottomsheet-action-new',
+        <View style={styles.bottomSheet}>
+          {isValidated && !bottomSheetCall ? (
+            <CallSummaryPlaceholder />
+          ) : (
+            <View style={styles.bottomSheetContainer}>
+              {isValidated ? (
+                <CallSummary call={bottomSheetCall!} />
+              ) : (
+                <View style={styles.bottomSheetMissedCallContainer}>
+                  <HeadingSText>{I18n.get('presences-calllist-bottomsheet-heading')}</HeadingSText>
+                  <BodyText style={styles.bottomSheetMissedCallText}>
+                    {I18n.get('presences-calllist-bottomsheet-missedcall')}
+                  </BodyText>
+                </View>
               )}
-              iconLeft={isValidated ? 'ui-edit' : 'presences'}
-              action={() => openCall(course)}
-            />
-          </View>
-        )}
+              <PrimaryButton
+                text={I18n.get(
+                  isValidated ? 'presences-calllist-bottomsheet-action-edit' : 'presences-calllist-bottomsheet-action-new',
+                )}
+                iconLeft={isValidated ? 'ui-edit' : 'presences'}
+                action={() => openCall(course)}
+              />
+            </View>
+          )}
+        </View>
       </BottomSheetModal>
     );
   };

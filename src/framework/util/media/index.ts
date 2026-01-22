@@ -6,3 +6,4 @@
 export * from './types';
 export * from './navigation';
 export * from './mime';
+export * from './source';

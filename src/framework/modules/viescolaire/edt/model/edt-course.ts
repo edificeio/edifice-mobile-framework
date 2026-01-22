@@ -1,7 +1,7 @@
 import { ITimetableCourse } from '~/framework/modules/viescolaire/common/components/Timetable';
 
 export interface IEdtCourse extends ITimetableCourse {
-  classes: string[];
+  classes?: string[];
   groups: string[];
   id: string;
   roomLabels: string[];

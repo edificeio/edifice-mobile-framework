@@ -27,6 +27,7 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { audienceService } from '~/framework/modules/audience/service';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
@@ -51,7 +52,7 @@ import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import communitiesStyles from '~/framework/modules/communities/styles';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
-import { INotificationMedia } from '~/framework/util/notifications';
+import { toURISource } from '~/framework/util/media';
 import { accountApi, sessionApi } from '~/framework/util/transport';
 
 const ANNOUNCEMENTS_PAGE_SIZE = 20;
@@ -93,318 +94,6 @@ export const CommunitiesHomeScreenLoaded = function ({
   totalMembers,
   welcomeNote,
 }: Readonly<CommunitiesHomeScreen.AllPropsLoaded>) {
-  const mockSingleImage: INotificationMedia[] = [
-    {
-      src: '/workspace/document/58f637a3-ff3d-454b-8f38-76dcd2e7c83b',
-      type: 'image',
-    },
-  ];
-
-  const mockPpt: INotificationMedia[] = [
-    {
-      name: 'ppt',
-      src: '/workspace/document/6bb75edd-571c-477d-95d7-14948bf18e00',
-      type: 'attachment',
-    },
-    {
-      name: 'wordxx',
-      src: '/workspace/document/98edf108-a86a-404b-93b9-d864965375ef',
-      type: 'attachment',
-    },
-  ];
-
-  const mockImages: INotificationMedia[] = [
-    {
-      src: '/workspace/document/58f637a3-ff3d-454b-8f38-76dcd2e7c83b',
-      type: 'image',
-    },
-    {
-      src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
-      type: 'image',
-    },
-    {
-      src: '/workspace/document/58f637a3-ff3d-454b-8f38-76dcd2e7c83b',
-      type: 'image',
-    },
-    {
-      src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
-      type: 'image',
-    },
-    {
-      src: '/workspace/document/58f637a3-ff3d-454b-8f38-76dcd2e7c83b',
-      type: 'image',
-    },
-    {
-      src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
-      type: 'image',
-    },
-    {
-      src: '/workspace/document/58f637a3-ff3d-454b-8f38-76dcd2e7c83b',
-      type: 'image',
-    },
-    {
-      src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
-      type: 'image',
-    },
-  ];
-
-  const mockVideos: INotificationMedia[] = [
-    {
-      src: '/workspace/document/5daf2aa5-77cf-43c4-a574-a5bb605e98bc',
-      type: 'video',
-    },
-    // {
-    //   src: '/workspace/document/720ae42a-e07e-4d2a-9f53-8d18053299cb?timestamp=1758790192403',
-    //   type: 'image',
-    // },
-  ];
-
-  const mockAudio: INotificationMedia[] = [
-    {
-      src: '/workspace/document/28b71f0c-ca67-450c-9c4c-1d8ab645a6ec',
-      type: 'audio',
-    },
-    {
-      src: '/workspace/document/c3d044e9-8070-455a-9829-434a02d7d51e',
-      type: 'audio',
-    },
-    {
-      src: '/workspace/document/7bb45220-7eb8-467c-894c-9272ab37180a',
-      type: 'audio',
-    },
-  ];
-
-  const mockPdfs: INotificationMedia[] = [
-    {
-      name: 'MonFichier1.pdf',
-      src: '/workspace/document/6e759db9-f2fc-4573-a507-0aba43015165',
-      type: 'attachment',
-    },
-    {
-      name: 'MonFichier2Avecuntitrevraimenttreslonglonglonglonglong.pdf',
-      src: '/workspace/document/7355784a-d409-4bd7-b35f-b03cc684fd60',
-      type: 'attachment',
-    },
-    {
-      name: 'MonFichier3.pdf',
-      src: '/workspace/document/6d357098-9a3f-4fd1-80d9-455ea6ac68be',
-      type: 'attachment',
-    },
-    {
-      name: 'MonFichier1.pdf',
-      src: '/workspace/document/6e759db9-f2fc-4573-a507-0aba43015165',
-      type: 'attachment',
-    },
-    {
-      name: 'MonFichier2Avecuntitrevraimenttreslonglonglonglonglong.pdf',
-      src: '/workspace/document/7355784a-d409-4bd7-b35f-b03cc684fd60',
-      type: 'attachment',
-    },
-    {
-      name: 'MonFichier3.pdf',
-      src: '/workspace/document/6d357098-9a3f-4fd1-80d9-455ea6ac68be',
-      type: 'attachment',
-    },
-    {
-      name: 'MonFichier1.pdf',
-      src: '/workspace/document/6e759db9-f2fc-4573-a507-0aba43015165',
-      type: 'attachment',
-    },
-    {
-      name: 'MonFichier2Avecuntitrevraimenttreslonglonglonglonglong.pdf',
-      src: '/workspace/document/7355784a-d409-4bd7-b35f-b03cc684fd60',
-      type: 'attachment',
-    },
-    {
-      name: 'MonFichier3.pdf',
-      src: '/workspace/document/6d357098-9a3f-4fd1-80d9-455ea6ac68be',
-      type: 'attachment',
-    },
-  ];
-
-  const mockSinglePdf: INotificationMedia[] = [
-    {
-      name: 'MonFichier1.pdf',
-      src: '/workspace/document/6e759db9-f2fc-4573-a507-0aba43015165',
-      type: 'attachment',
-    },
-  ];
-
-  const mockAnnouncements = [
-    {
-      audience: {
-        infosReactions: {
-          total: 5,
-          types: [] as string[],
-          userReaction: '',
-        },
-        referer: {
-          module: 'communities',
-          resourceId: 'announcement-1',
-          resourceType: 'announcement',
-        },
-        session: session,
-      },
-      author: {
-        userId: '91c22b66-ba1b-4fde-a3fe-95219cc18d4a ',
-        username: 'Auteur Polonio',
-      },
-      content:
-        "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
-      date: Temporal.Instant.from('2025-10-01T14:30:00Z'),
-      media: mockImages,
-      resourceId: 'announcement-1',
-      title: "Titre de l'annonce test",
-    },
-    {
-      audience: {
-        infosReactions: {
-          total: 12,
-          types: [] as string[],
-          userReaction: '',
-        },
-        referer: {
-          module: 'communities',
-          resourceId: 'announcement-2',
-          resourceType: 'announcement',
-        },
-        session: session,
-      },
-      author: {
-        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
-        username: 'Auteur Test2',
-      },
-      content:
-        "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
-      date: Temporal.Instant.from('2025-03-01T14:30:00Z'),
-      media: mockVideos,
-      resourceId: 'announcement-2',
-      title: "Titre de l'annonce test2",
-    },
-    {
-      audience: {
-        infosReactions: {
-          total: 12,
-          types: [] as string[],
-          userReaction: '',
-        },
-        referer: {
-          module: 'communities',
-          resourceId: 'announcement-3',
-          resourceType: 'announcement',
-        },
-        session: session,
-      },
-      author: {
-        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
-        username: 'Auteur Test3',
-      },
-      content:
-        "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
-      date: Temporal.Instant.from('2025-03-01T14:30:00Z'),
-      media: mockAudio,
-      resourceId: 'announcement-3',
-      title: "Titre de l'annonce test3",
-    },
-    {
-      audience: {
-        infosReactions: {
-          total: 12,
-          types: [] as string[],
-          userReaction: '',
-        },
-        referer: {
-          module: 'communities',
-          resourceId: 'announcement-4',
-          resourceType: 'announcement',
-        },
-        session: session,
-      },
-      author: {
-        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
-        username: 'Auteur Test4',
-      },
-      content: '<p>Plusieurs pdfs</p>',
-      date: Temporal.Instant.from('2025-03-01T14:30:00Z'),
-      media: mockPdfs,
-      resourceId: 'announcement-4',
-      title: "Titre de l'annonce test4",
-    },
-    {
-      audience: {
-        infosReactions: {
-          total: 12,
-          types: [] as string[],
-          userReaction: '',
-        },
-        referer: {
-          module: 'communities',
-          resourceId: 'announcement-5',
-          resourceType: 'announcement',
-        },
-        session: session,
-      },
-      author: {
-        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
-        username: 'Auteur Test5',
-      },
-      content: '<p>Un seul pdf</p>',
-      date: Temporal.Instant.from('2025-03-01T14:30:00Z'),
-      media: mockSinglePdf,
-      resourceId: 'announcement-5',
-      title: "Titre de l'annonce test5",
-    },
-    {
-      audience: {
-        infosReactions: {
-          total: 5,
-          types: [] as string[],
-          userReaction: '',
-        },
-        referer: {
-          module: 'communities',
-          resourceId: 'announcement-6',
-          resourceType: 'announcement',
-        },
-        session: session,
-      },
-      author: {
-        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
-        username: 'Auteur Test6',
-      },
-      content:
-        "<p>Ceci est le contenu de l'annonce de test avec du <strong>texte en gras</strong> et des <em>italiques</em>.</p><p>Voici un second paragraphe pour tester l'affichage du contenu riche.</p>",
-      date: Temporal.Instant.from('2025-10-01T14:30:00Z'),
-      media: mockSingleImage,
-      resourceId: 'announcement-6',
-      title: "Titre de l'annonce test",
-    },
-    {
-      audience: {
-        infosReactions: {
-          total: 5,
-          types: [] as string[],
-          userReaction: '',
-        },
-        referer: {
-          module: 'communities',
-          resourceId: 'announcement-7',
-          resourceType: 'announcement',
-        },
-        session: session,
-      },
-      author: {
-        userId: '0738b742-8e00-481e-bdcc-8e0f18bf0d79',
-        username: 'Auteur Test7',
-      },
-      content: '<p>Test ppt</p>',
-      date: Temporal.Instant.from('2025-10-01T14:30:00Z'),
-      media: mockPpt,
-      resourceId: 'announcement-7',
-      title: "Titre de l'annonce test",
-    },
-  ];
-
   const welcomeModalRef = React.useRef<BottomSheetModalMethods>(null);
   React.useEffect(() => {
     (showWelcome && invitationId !== undefined ? welcomeModalRef.current?.present : welcomeModalRef.current?.dismiss)?.();
@@ -417,7 +106,6 @@ export const CommunitiesHomeScreenLoaded = function ({
   const { role, sentBy } = invitation || {};
   const { displayName: senderName, entId: senderId } = sentBy || {};
   const canShowInfoModal = role && senderId && senderName;
-  console.info({ canShowInfoModal, role, senderId, senderName });
 
   const infoModalRef = React.useRef<BottomSheetModalMethods>(null);
 
@@ -434,14 +122,16 @@ export const CommunitiesHomeScreenLoaded = function ({
     [],
   );
 
+  const [announcements, setAnnouncements] = React.useState<(PostDetailsProps<number> | typeof LOADING_ITEM_DATA)[]>([]);
+
   const renderItem = React.useCallback(
     ({ index, item }: { index: number; item: PostDetailsProps<number> }) => {
-      const itemSeparator = getItemSeparatorStyle(index, mockAnnouncements.length, styles.itemSeparator);
+      const itemSeparator = getItemSeparatorStyle(index, announcements.length, styles.itemSeparator);
       const itemStyle = [styles.itemContainer, itemSeparator];
 
       return <AnnouncementListItem announcement={item} style={itemStyle} />;
     },
-    [mockAnnouncements.length],
+    [announcements.length],
   );
 
   const [scrollElements, statusBar, scrollViewProps] = useCommunityScrollableThumbnail({
@@ -472,7 +162,13 @@ export const CommunitiesHomeScreenLoaded = function ({
     [communityId, membersId, navigation, scrollElements, title, totalMembers],
   );
 
-  const [announcements, setAnnouncements] = React.useState<(PostDetailsProps<number> | typeof LOADING_ITEM_DATA)[]>([]);
+  const audienceReferer = React.useMemo(
+    () => ({
+      module: moduleConfig.name,
+      resourceType: 'announcement',
+    }),
+    [],
+  );
 
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
@@ -483,8 +179,22 @@ export const CommunitiesHomeScreenLoaded = function ({
         };
 
         const items = await sessionApi(moduleConfig, AnnouncementClient).getAnnouncements(communityId, baseQueryParams);
+        const itemsIds = items.items.map(i => i.id.toString());
+        const reactions = await audienceService.reaction.getSummary(audienceReferer.module, audienceReferer.resourceType, itemsIds);
 
         const newAnnouncements: PostDetailsProps<number>[] = items.items.map(e => ({
+          audience: {
+            infosReactions: {
+              total: reactions.reactionsByResource[e.id].totalReactionsCounter,
+              types: reactions.reactionsByResource[e.id].reactionTypes,
+              userReaction: reactions.reactionsByResource[e.id].userReaction,
+            },
+            referer: {
+              ...audienceReferer,
+              resourceId: e.id.toString(),
+            },
+            session,
+          },
           author: {
             userId: e.author.entId,
             username: e.author.displayName,
@@ -508,7 +218,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         console.error('Error while loading community members list', e);
       }
     },
-    [communityId],
+    [audienceReferer, communityId, session],
   );
 
   return (
@@ -531,7 +241,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         renderItem={renderItem}
         renderPlaceholderItem={PostDetailsLoader}
         scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
-        stickyElements={stickyElements}
+        decorations={stickyElements}
         {...scrollViewProps}
       />
       {invitation?.role && <CommunityWelcomeBottomSheetModal role={invitation?.role} title={title} ref={welcomeModalRef} />}
@@ -603,6 +313,16 @@ export default (function CommunitiesHomeScreen({
     });
   }, [communityId, session, setData]);
 
+  const image = React.useMemo(
+    () =>
+      data
+        ? data.mobileThumbnails?.length
+          ? data.mobileThumbnails.map(src => ({ ...src, height: 130, width: 440 }))
+          : [toURISource(data.image!)]
+        : undefined,
+    [data],
+  );
+
   const renderContent: NonNullable<ContentLoaderProps['renderContent']> = React.useCallback(
     refreshControl =>
       data && session ? (
@@ -611,12 +331,13 @@ export default (function CommunitiesHomeScreen({
           route={route}
           refreshControl={refreshControl}
           {...data}
+          image={image!}
           session={session}
         />
       ) : (
         <EmptyContentScreen />
       ),
-    [data, navigation, route, session],
+    [data, navigation, route, session, image],
   );
 
   return (

@@ -1,15 +1,21 @@
 import type reducer from './reducer';
 
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'support', ReturnType<typeof reducer>>({
-  displayAs: 'myAppsSecondaryModule',
+  displayAs: ModuleType.MYAPPS_SECONDARY_MODULE,
   displayColor: theme.apps.support.accentColors,
   displayI18n: 'support-appname',
   displayPicture: theme.apps.support.icon,
   entcoreScope: ['support'],
-
+  fileManager: {
+    attachments: {
+      allow: ['image', 'video', 'document'],
+      multiple: true,
+      sources: ['camera', 'gallery', 'documents'],
+    },
+  } as const,
   matchEntcoreApp: '/support',
   name: 'support',
   storageName: 'support',

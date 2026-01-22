@@ -2,6 +2,7 @@ import Mime from 'mime';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { mimeCompare } from './mime';
+import { toURISource } from './source';
 import {
   AttachmentMedia,
   AudioMedia,
@@ -20,7 +21,6 @@ import {
   LinkMedia,
   Media,
   MediaType,
-  toURISource,
   VideoMedia,
 } from './types';
 

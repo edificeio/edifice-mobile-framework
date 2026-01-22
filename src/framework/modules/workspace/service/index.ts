@@ -5,12 +5,11 @@ import moment from 'moment';
 import queryString from 'query-string';
 
 import { I18n } from '~/app/i18n';
-import { UI_SIZES } from '~/framework/components/constants';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { workspaceFolderListAdapter } from '~/framework/modules/workspace/service/folderAdaptater';
-import { IMAGE_MAX_DIMENSION, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 
@@ -32,12 +31,12 @@ type IEntcoreWorkspaceDocument = {
   _id: string;
   name: string;
   metadata: {
-    name: 'file';
-    filename: string;
+    'name': 'file';
+    'filename': string;
     'content-type': string;
     'content-transfer-encoding': string;
-    charset: 'UTF-8';
-    size: number;
+    'charset': 'UTF-8';
+    'size': number;
   };
   deleted: boolean;
   eParent: string | null;
@@ -130,21 +129,6 @@ const compareFiles = (a: IFile, b: IFile): number => {
 
 const getImplicitWorkspaceUploadParams = (params: IWorkspaceUploadParams) => {
   return !params?.parent ? {} : implicitWorkspaceUploadParams[params.parent] || { parentId: params.parent };
-};
-
-const getThumbnailWorkspaceUploadParams = () => {
-  return {
-    quality: '1',
-    thumbnail: [
-      '100x100',
-      '120x120',
-      '150x150',
-      '2600x0',
-      `${UI_SIZES.standardScreen.width / 2}x0`,
-      `${UI_SIZES.standardScreen.width}x0`,
-      `${IMAGE_MAX_DIMENSION}x0`,
-    ],
-  };
 };
 
 const workspaceService = {

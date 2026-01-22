@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import Attachment, { IRemoteAttachment } from './Attachment';
+import Attachment, { ILocalAttachment, IRemoteAttachment } from './Attachment';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -15,6 +15,7 @@ const getAttachmentStyle = (index: number) => {
     marginTop: index === 0 ? 0 : UI_SIZES.spacing.tiny / 2,
   };
 };
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.palette.grey.fog,
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
 
 export class AttachmentGroup extends React.PureComponent<
   {
-    attachments: IRemoteAttachment[];
+    attachments: (IRemoteAttachment | ILocalAttachment)[];
     containerStyle?: any;
     editMode?: boolean;
     isContainerHalfScreen?: boolean;
@@ -49,41 +50,45 @@ export class AttachmentGroup extends React.PureComponent<
     downloadAll: boolean;
   }
 > {
-  public constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       downloadAll: false,
     };
   }
 
-  public render() {
+  render() {
     const { attachments, containerStyle, editMode, onDownload, onError, onOpen, onRemove } = this.props;
     const { downloadAll } = this.state;
 
     return (
       <TouchableOpacity activeOpacity={1} style={[styles.container, containerStyle]}>
-        {editMode ? null : (
+        {!editMode ? (
           <View style={styles.header}>
             <SmallBoldText>{I18n.get(attachments.length > 1 ? 'attachment-attachments' : 'attachment-attachment')}</SmallBoldText>
           </View>
-        )}
+        ) : null}
+
         <View style={{ paddingVertical: UI_SIZES.spacing.tiny / 2 }}>
-          {attachments.map((item, index) => (
-            <Attachment
-              key={item.id ?? `${item.url}-${index}`}
-              attachment={item}
-              starDownload={downloadAll}
-              onDownload={() => {
-                onDownload?.();
-                if (this.props.referer) markViewAudience(this.props.referer);
-              }}
-              onError={onError}
-              onOpen={onOpen}
-              style={getAttachmentStyle(index)}
-              editMode={editMode && !item.hasOwnProperty('id')}
-              onRemove={() => onRemove?.(index)}
-            />
-          ))}
+          {attachments.map((item, index) => {
+            const key = 'uri' in item ? item.uri : item.url;
+            return (
+              <Attachment
+                key={`attachment#${key}`}
+                attachment={item}
+                starDownload={downloadAll}
+                onDownload={() => {
+                  onDownload?.();
+                  if (this.props.referer) markViewAudience(this.props.referer);
+                }}
+                onError={onError}
+                onOpen={onOpen}
+                style={getAttachmentStyle(index)}
+                editMode={editMode && !item.hasOwnProperty('id')}
+                onRemove={() => onRemove?.(index)}
+              />
+            );
+          })}
         </View>
       </TouchableOpacity>
     );

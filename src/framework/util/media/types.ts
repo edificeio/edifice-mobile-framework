@@ -92,8 +92,3 @@ export interface ResourceMedia extends Media {
 }
 
 export const isResourceMedia = (media: Media): media is ResourceMedia => media.type === MediaType.RESOURCE;
-
-export const toURISource = (src: Media['src']): typeof src extends undefined ? undefined : Pick<ImageURISource, 'uri'> =>
-  src instanceof URL ? { uri: src.href } : typeof src === 'string' ? { uri: src } : src;
-
-export const toImageURISourceArray = (srcs: Media['src'][]) => srcs.map(toURISource);

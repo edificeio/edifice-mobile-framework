@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Platform, ScrollView, View } from 'react-native';
 
-import { InvitationClient, InvitationResponseDto, InvitationStatus } from '@edifice.io/community-client-rest-rn';
+import { InvitationClient, InvitationStatus } from '@edifice.io/community-client-rest-rn';
+import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
 import { BlurView } from '@react-native-community/blur';
 import { Header } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -31,6 +32,7 @@ import { communitiesSelectors } from '~/framework/modules/communities/store';
 import communitiesStyles from '~/framework/modules/communities/styles';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/http';
+import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
 
 export const computeNavBar = ({
@@ -115,7 +117,7 @@ export default (function CommunitiesJoinConfirmScreen({
 
   const data = useSelector(communitiesSelectors.getPendingCommunities).find(
     invitation => invitation !== LOADING_ITEM_DATA && invitation.id === invitationId,
-  ) as InvitationResponseDto | undefined;
+  ) as InvitationResponseDtoWithThumbnails | undefined;
 
   const containerStyle = React.useMemo(
     () => [
@@ -129,7 +131,9 @@ export default (function CommunitiesJoinConfirmScreen({
     [],
   );
 
-  if (!data) return <EmptyContentScreen />;
+  if (!data || !data.community) return <EmptyContentScreen />;
+
+  const image = data.community?.mobileThumbnails?.length ? data.community.mobileThumbnails : toURISource(data.community.image!);
 
   return (
     <PageView style={communitiesStyles.screen}>
@@ -137,7 +141,7 @@ export default (function CommunitiesJoinConfirmScreen({
         <SafeAreaView style={containerStyle} edges={safeEdges}>
           <CommunityCardLarge
             title={data.community?.title}
-            image={data.community?.image}
+            image={image}
             membersCount={data.communityStats?.totalMembers}
             senderId={data.sentBy.entId}
             senderName={data.sentBy.displayName}

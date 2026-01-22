@@ -16,7 +16,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import { cameraActionFm, documentActionFm, galleryActionFm } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -25,11 +25,12 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
+import moduleConfig from '~/framework/modules/support/module-config';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
 import { getSupportWorkflowInformation } from '~/framework/modules/support/rights';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 export const computeNavBar = ({
@@ -54,10 +55,8 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
   const [attachments, setAttachments] = React.useState<LocalFile[]>([]);
   const [isSending, setSending] = React.useState(false);
 
-  const addAttachment = fileOrFiles => {
-    const files = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles];
-    const newAttachments = files.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
-    setAttachments(prev => [...prev, ...newAttachments]);
+  const addAttachment = (fileOrFiles: LocalFile[]) => {
+    setAttachments(prev => [...prev, ...fileOrFiles]);
   };
 
   const removeAttachment = (filepath: string) => {
@@ -94,6 +93,9 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
     const filesAdded = attachments.length > 0;
     const isActionDisabled = subject === '' || subject.length > 255 || description === '';
 
+    const fns = [cameraActionFm, galleryActionFm, documentActionFm];
+
+    const attachOpts = { callback: (file: LocalFile | LocalFile[]) => addAttachment(file as LocalFile[]) };
     return hasTicketCreationRights ? (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
@@ -146,11 +148,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             <View style={styles.attachmentsContainer}>
               <BottomMenu
                 title={I18n.get('support-createticket-addfiles')}
-                actions={[
-                  cameraAction({ callback: addAttachment }),
-                  galleryAction({ callback: addAttachment, multiple: true }),
-                  documentAction({ callback: addAttachment }),
-                ]}>
+                actions={fns.map(fn => fn(moduleConfig.name, 'attachments', attachOpts))}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
                   <SmallActionText style={styles.actionText}>{I18n.get('support-createticket-addfiles')}</SmallActionText>
                   <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />

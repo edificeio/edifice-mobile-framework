@@ -11,8 +11,12 @@ import {
   VideoMedia,
 } from '~/framework/util/media';
 
+export const COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE = {
+  height: 130,
+  width: 440,
+};
+
 export const toMedia = (media: MediaDto): Media => {
-  console.info('MediaType', MediaType);
   switch (media.type) {
     case MediaTypeDto.IMAGE:
       return {

@@ -1,15 +1,22 @@
 import type { WikiStore } from './store';
 
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'wiki', WikiStore>({
-  displayAs: 'myAppsModule',
+  displayAs: ModuleType.MYAPPS_MODULE,
   displayColor: theme.apps.wiki.accentColors,
   displayI18n: 'wiki-module-title',
   displayOrder: 0,
   displayPicture: theme.apps.wiki.icon,
   entcoreScope: ['wiki', 'explorer'],
+  fileManager: {
+    ressource: {
+      allow: ['image'],
+      multiple: false,
+      sources: ['camera', 'gallery'],
+    },
+  } as const,
   matchEntcoreApp: '/wiki',
   name: 'wiki',
   storageName: 'wiki',

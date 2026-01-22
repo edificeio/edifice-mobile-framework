@@ -1,8 +1,8 @@
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'mails', null>({
-  displayAs: 'tabModule',
+  displayAs: ModuleType.TAB_MODULE,
   displayColor: theme.apps.conversation.accentColors,
   displayI18n: 'mails-tabname',
   displayOrder: 1,
@@ -10,6 +10,13 @@ export default new NavigableModuleConfig<'mails', null>({
   displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },
 
   entcoreScope: ['conversation', 'userbook', 'communication'],
+  fileManager: {
+    attachments: {
+      allow: ['image', 'video', 'document'],
+      multiple: true,
+      sources: ['camera', 'gallery', 'documents'],
+    },
+  } as const,
   matchEntcoreApp: '/conversation/conversation',
   name: 'mails',
   storageName: 'mails',

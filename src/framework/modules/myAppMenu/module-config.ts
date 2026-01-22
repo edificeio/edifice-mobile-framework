@@ -1,9 +1,9 @@
 import { myAppsModules } from './myAppsModules';
 
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'myapps', null>({
-  displayAs: 'tabModule',
+  displayAs: ModuleType.TAB_MODULE,
   displayI18n: 'myapp-appname',
   displayOrder: 3,
   displayPicture: { name: 'icon-apps-off', type: 'Icon' },

@@ -16,7 +16,7 @@ import {
   PresencesUserChild,
   Statistics,
 } from '~/framework/modules/viescolaire/presences/model';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache, fetchWithCache, signedFetch } from '~/infra/fetchWithCache';
 

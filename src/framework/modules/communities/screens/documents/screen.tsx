@@ -3,18 +3,21 @@ import { PixelRatio } from 'react-native';
 
 import {
   CommunityClient,
+  FolderClient,
+  FolderDto,
+  getResourceUrl,
   MembershipClient,
   ResourceClient,
   ResourceDto,
   ResourceType,
-  utils,
 } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
+import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
-import CommunityPaginatedDocumentList from './community-paginated-document-list';
+import { DecoratedDocumentFlatList } from './community-paginated-document-list';
 import styles from './styles';
 import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
 
@@ -33,31 +36,13 @@ import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import communitiesStyles from '~/framework/modules/communities/styles';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
+import { toURISource } from '~/framework/util/media';
 import { IMedia } from '~/framework/util/media-deprecated';
 import { accountApi } from '~/framework/util/transport';
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>,
 ): NativeStackNavigationOptions => communityNavBar(props);
-
-const __debug__folders__: FolderItem[] = [
-  // {
-  //   id: 1,
-  //   title: 'F1',
-  // },
-  // {
-  //   id: 2,
-  //   title: 'F2',
-  // },
-  // {
-  //   id: 3,
-  //   title: 'F3',
-  // },
-  // {
-  //   id: 4,
-  //   title: 'F4',
-  // },
-];
 
 const documentTypeMap: Record<ResourceType, DocumentItemWorkspace['type'] | undefined> = {
   [ResourceType.IMAGE]: 'image',
@@ -83,10 +68,14 @@ const formatDocuments = (data: ResourceDto[]): CommunitiesDocumentItem[] =>
         } as Exclude<DocumentItemEntApp<ResourceDto['appName']>, 'workspace'>),
   );
 
+const formatFolders = (data: FolderDto[]): FolderItem[] => data.map(({ id, name }) => ({ id, title: name }));
+
 export default (function CommunitiesDocumentsScreen({
+  navigation,
   route: {
-    params: { communityId },
+    params: { communityId, folderId },
   },
+  route,
 }: Readonly<CommunitiesDocumentsScreen.AllProps>) {
   const session = getSession();
   const communityData = useSelector(communitiesSelectors.getCommunityDetails(communityId));
@@ -96,6 +85,12 @@ export default (function CommunitiesDocumentsScreen({
       dispatch(communitiesActions.loadCommunityDetails(communityId, newData)),
     [dispatch, communityId],
   );
+  const setCommunityFolderMeta = React.useCallback(
+    (newData: Parameters<typeof communitiesActions.loadCommunityFoldersMeta>[1]) =>
+      dispatch(communitiesActions.loadCommunityFoldersMeta(communityId, newData)),
+    [dispatch, communityId],
+  );
+  const currentFolderMeta = useSelector(communitiesSelectors.getCommunityFolderMeta(communityId, folderId));
 
   // Store the data of the list here. It will contain both loaded and non-loaded elements.
   // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
@@ -112,16 +107,18 @@ export default (function CommunitiesDocumentsScreen({
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       if (!session) return;
-      const [community, members, newData] = await Promise.all([
+      const [community, members, newData, folders] = await Promise.all([
         accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
         accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
-        accountApi(session, moduleConfig, ResourceClient).getResources(communityId, { page: page + 1, size: PAGE_SIZE }),
+        accountApi(session, moduleConfig, ResourceClient).getResources(communityId, { folderId, page: page + 1, size: PAGE_SIZE }),
+        accountApi(session, moduleConfig, FolderClient).getFolders(communityId, { parentId: folderId }).then(formatFolders),
       ]);
       setCommunityData({
         ...community,
         membersId: members.items.map(item => item.user.entId),
         totalMembers: members.meta.totalItems,
       });
+      setCommunityFolderMeta(folders.reduce((acc, item) => ({ ...acc, [item.id]: { title: item.title } }), {}));
       setData(prevData => {
         // The merge logic is contained in `staleOrSplice`. It inserts the new elements at the right place in `prevData`.
         // If `total` changes, there's a risk that the prevData is outdated, and should be flushed before inserting the new elements.
@@ -134,10 +131,10 @@ export default (function CommunitiesDocumentsScreen({
           start: page * PAGE_SIZE,
           total: newData.meta.totalItems,
         });
-        return { documents: mergedData, folders: __debug__folders__ };
+        return { documents: mergedData, folders };
       });
     },
-    [communityId, session, setCommunityData],
+    [communityId, folderId, session, setCommunityData, setCommunityFolderMeta],
   );
 
   // For perforance purpose, estimatedListSize must be the dimensions of the container (here the screen sithout, navBar and tabBar)
@@ -159,7 +156,7 @@ export default (function CommunitiesDocumentsScreen({
   );
 
   const openDocument = React.useCallback(async (doc: CommunitiesDocumentItem) => {
-    const url = utils.getResourceUrl(doc); // ToDo : patch package to narrow type required
+    const url = getResourceUrl(doc); // ToDo : patch package to narrow type required
     if (!url) return;
     const openInBrowser = () => openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
     if (doc.appName === 'workspace') {
@@ -173,42 +170,60 @@ export default (function CommunitiesDocumentsScreen({
     }
   }, []);
 
+  const isFocused = useIsFocused();
+  const openFolder = React.useCallback(
+    async (folder: FolderItem) => {
+      isFocused && navigation.push(route.name, { communityId, folderId: folder.id });
+    },
+    [communityId, navigation, route.name, isFocused],
+  );
+
+  const image = React.useMemo(
+    () =>
+      communityData.mobileThumbnails?.length
+        ? communityData.mobileThumbnails.map(src => ({ ...src, height: 130, width: 440 }))
+        : [toURISource(communityData.image!)],
+    [communityData],
+  );
+
   const [scrollElements, statusBar, { ...scrollViewProps }, placeholderBanner] = useCommunityScrollableThumbnail({
     contentContainerStyle: styles.list,
-    image: communityData.image,
-    title: I18n.get('communities-documents-title'),
+    image,
+    title: currentFolderMeta?.title ?? I18n.get('communities-documents-title'),
   });
-
-  const stickyElements = React.useMemo(
-    () => [
-      ...scrollElements,
-      <HeadingXSText key="title" style={styles.title}>
-        {I18n.get('communities-documents-title')}
-      </HeadingXSText>,
-    ],
-    [scrollElements],
-  );
 
   const stickyPlaceholderElements = React.useMemo(
     () => [placeholderBanner, <PlaceholderLine width={60} noMargin style={styles.titlePlaceholder} />],
     [placeholderBanner],
   );
 
+  const stickyElements = React.useMemo(
+    () => [
+      ...scrollElements,
+      <HeadingXSText key="title" style={styles.title}>
+        {currentFolderMeta?.title ?? I18n.get('communities-documents-title')}
+      </HeadingXSText>,
+    ],
+    [currentFolderMeta?.title, scrollElements],
+  );
+
   return (
     <PageView style={communitiesStyles.screen}>
       {statusBar}
-      <CommunityPaginatedDocumentList
+      <DecoratedDocumentFlatList
         estimatedListSize={estimatedListSize}
         estimatedItemSize={estimatedItemSize}
         numColumns={2}
         pageSize={PAGE_SIZE}
-        stickyElements={stickyElements}
-        stickyPlaceholderElements={stickyPlaceholderElements}
+        decorations={stickyElements}
+        placeholderDecorations={stickyPlaceholderElements}
         folders={data.folders}
         documents={data.documents}
+        placeholderNumberOfRows={3}
         showsVerticalScrollIndicator={false}
         onPageReached={loadData}
         onPressDocument={openDocument}
+        onPressFolder={openFolder}
         ListEmptyComponent={
           <EmptyScreen
             svgImage="empty-workspace"

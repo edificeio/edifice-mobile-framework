@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Image, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -20,7 +20,7 @@ import { NavBarActionsGroup } from '~/framework/components/navigation';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { pageGutterSize, PageView } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
-import { SmallText } from '~/framework/components/text';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -32,17 +32,19 @@ import {
 import TimelineNotification from '~/framework/modules/timeline/components/notification';
 import TimelineSpace from '~/framework/modules/timeline/components/space';
 import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
+import { WidgetChip } from '~/framework/modules/timeline/components/widget-chip';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { NotificationsState } from '~/framework/modules/timeline/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';
-import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modules';
+import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navigate } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
+import { NavigableModuleArray } from '~/framework/util/moduleTool';
 import {
   IAbstractNotification,
   IResourceUriNotification,
@@ -172,45 +174,34 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   rights = getTimelineWorkflowInformation(this.props.session);
 
+  // Get available widgets for the current session
+  getAvailableWidgets(): NavigableModuleArray {
+    return new NavigableModuleArray(...timelineWidgets.get().filterAvailables(this.props.session));
+  }
+
   // RENDER =======================================================================================
 
   render() {
     return (
-      <>
-        {/*<Image
-          style={{ aspectRatio: 1, flex: 0.2 }}
-          source={[
-            {
-              height: 200,
-              scale: 1,
-              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/26d50510-ccc0-42c3-a392-dada4760913b',
-              width: 200,
-            },
-            {
-              height: 200,
-              scale: 2,
-              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/ac0ca85a-5fde-4049-939b-0e9e2c70026f',
-              width: 200,
-            },
-            {
-              height: 200,
-              scale: 3,
-              uri: 'https://recette-ode2.opendigitaleducation.com/workspace/pub/document/48966b77-d506-4a4a-a3c4-a5ec6dbb36b7',
-              width: 200,
-            },
-          ]}
-        />*/}
-        <PageView>
-          {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
-            <LoadingIndicator />
-          ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
-            this.renderError()
-          ) : (
-            this.renderList()
-          )}
-        </PageView>
-      </>
+      <PageView>
+        {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
+          <LoadingIndicator />
+        ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
+          this.renderError()
+        ) : (
+          this.renderList()
+        )}
+      </PageView>
     );
+  }
+
+  renderChipsNavigation(widgets: NavigableModuleArray) {
+    return <WidgetChip widgets={widgets} navigation={this.props.navigation} />;
+  }
+
+  renderSelectedContent() {
+    // Always render timeline list - widgets are shown in modals
+    return this.renderList();
   }
 
   renderError() {
@@ -280,9 +271,22 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   listSeparator = (
     <>
       <View style={{ height: pageGutterSize }} />
+      <HeadingSText style={{ marginBottom: UI_SIZES.spacing.minor, marginLeft: UI_SIZES.spacing.medium }}>
+        {I18n.get('timeline-greeting', { firstName: this.props.session.user.firstName })}
+      </HeadingSText>
       <TimelineSpace session={this.props.session} />
     </>
   );
+
+  renderListHeader() {
+    const widgets = this.getAvailableWidgets();
+    return (
+      <>
+        {widgets.length > 0 && this.renderChipsNavigation(widgets)}
+        {this.listSeparator}
+      </>
+    );
+  }
 
   listRef = React.createRef<SwipeListView<ITimelineItem & { key: string }>>();
 
@@ -312,7 +316,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               <LoadingIndicator withVerticalMargins />
             ) : null
           }
-          ListHeaderComponent={this.listSeparator}
+          ListHeaderComponent={this.renderListHeader()}
           onEndReached={this.doNextPage.bind(this)}
           onEndReachedThreshold={1}
           // Swipeable props
@@ -347,10 +351,11 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     this.doInit();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: ITimelineScreenProps, _prevState: ITimelineScreenState) {
     const { navigation, route, session } = this.props;
+    const prevReload = prevProps.route.params?.reloadWithNewSettings;
     const reloadWithNewSettings = route.params.reloadWithNewSettings;
-    if (navigation.isFocused !== prevProps.isFocused && reloadWithNewSettings) {
+    if (reloadWithNewSettings && reloadWithNewSettings !== prevReload) {
       this.doInit();
       navigation.setParams({ reloadWithNewSettings: undefined });
     }

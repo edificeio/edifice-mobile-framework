@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
-import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 
 export interface ISupportCreateTicketScreenDataProps {
   apps: { label: string; value: string }[];

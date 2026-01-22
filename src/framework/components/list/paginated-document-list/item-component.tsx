@@ -9,12 +9,13 @@ import { DocumentItem, DocumentItemWorkspace, DocumentItemWorkspaceDocumentMedia
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { Picture, Svg } from '~/framework/components/picture';
 import ImageWithFallback from '~/framework/components/picture/image-with-fallback';
 import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
-import http from '~/framework/util/http';
+import { toURISource } from '~/framework/util/media';
+import { sessionImageSource } from '~/framework/util/transport';
 
 const isItemWorkspaceResource = (item: DocumentItem): item is DocumentItemWorkspace => item.appName === 'workspace';
 const isItemWorkspaceDocumentMedia = (item: DocumentItemWorkspace): item is DocumentItemWorkspaceDocumentMedia =>
@@ -72,7 +73,7 @@ export function DocumentListItem({
     () =>
       item.thumbnail ? (
         <View style={styles.documentThumbnail}>
-          <ImageWithFallback {...http.imagePropsForSession({ source: { uri: item.thumbnail } })} style={styles.documentImage} />
+          <ImageWithFallback source={sessionImageSource(toURISource(item.thumbnail))} style={styles.documentImage} />
           <View style={styles.documentThumbnailFloatingIconWrapper}>
             <DocumentListItemIcon size="small" item={item} />
           </View>
@@ -117,7 +118,9 @@ export function FolderListItem({
         width={UI_SIZES.elements.icon.small}
         fill={theme.ui.text.regular}
       />
-      <SmallBoldText numberOfLines={1}>{item.title}</SmallBoldText>
+      <SmallBoldText style={UI_STYLES.flex1} numberOfLines={1}>
+        {item.title}
+      </SmallBoldText>
     </WrapperComponent>
   );
 }

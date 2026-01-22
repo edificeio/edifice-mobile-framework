@@ -148,7 +148,7 @@ export function ResourceExplorerTemplate({
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(() => loadPage(0, true), [loadPage]);
 
   const onPressFolder = React.useCallback<NonNullable<ResourceGridTypes.Props<(typeof content.items)[0]>['onPressFolder']>>(
-    f => navigation.push(route.name, { folderId: f.id }),
+    f => navigation.isFocused() && navigation.push(route.name, { folderId: f.id }),
     [navigation, route.name],
   );
 

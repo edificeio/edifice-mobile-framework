@@ -1,5 +1,5 @@
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
-index 6891fa3..ca221eb 100644
+index 2e6e38d..be2e0e4 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 @@ -11,7 +11,7 @@ buildscript {
@@ -11,3 +11,25 @@ index 6891fa3..ca221eb 100644
      }
    }
  }
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/ios/RNCCameraRoll.mm b/node_modules/@react-native-camera-roll/camera-roll/ios/RNCCameraRoll.mm
+index d63f1a7..39c4be1 100644
+--- a/node_modules/@react-native-camera-roll/camera-roll/ios/RNCCameraRoll.mm
++++ b/node_modules/@react-native-camera-roll/camera-roll/ios/RNCCameraRoll.mm
+@@ -215,10 +215,16 @@ RCT_EXPORT_METHOD(saveToCameraRoll:(NSURLRequest *)request
+         options.fetchLimit = 1;
+         PHFetchResult<PHAsset *> *createdAsset = [PHAsset fetchAssetsWithLocalIdentifiers:@[placeholder.localIdentifier]
+                                                                                   options:options];
++
++        // PATCH @see https://github.com/react-native-cameraroll/react-native-cameraroll/issues/693#issuecomment-3306652591
++        // The aim of this patch is to remove false-error when only write-only permissions are granted.
+         if (createdAsset.count < 1) {
+-          reject(kErrorUnableToSave, nil, nil);
++          // reject(kErrorUnableToSave, nil, nil);
++          // Asset saved but we can’t fetch it back (likely due to add-only permission)
++          resolve(@{ @"localIdentifier": placeholder.localIdentifier });
+           return;
+         }
++        // Asset saved and fetched successfully, return full dictionary
+         NSDictionary *dictionary = [self convertAssetToDictionary:[createdAsset firstObject]
+                                                     includeAlbums:YES
+                                                   includeFilename:YES

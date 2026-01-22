@@ -1,5 +1,5 @@
-import { ImagePicked } from '~/framework/components/menus/actions';
 import { AccountType } from '~/framework/modules/auth/model';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 
 export interface IUserCardProps {
   id: string;
@@ -9,6 +9,6 @@ export interface IUserCardProps {
   hasAvatar: boolean;
   updatingAvatar?: boolean;
   onPressInlineButton?: () => void;
-  onChangeAvatar?: (image: ImagePicked) => void;
+  onChangeAvatar?: (image: LocalFile) => void;
   onDeleteAvatar?: () => void;
 }

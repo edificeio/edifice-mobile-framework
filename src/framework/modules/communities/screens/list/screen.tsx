@@ -5,10 +5,10 @@ import {
   CommunityType,
   InvitationClient,
   InvitationFields,
-  InvitationResponseDto,
   InvitationStatus,
   SearchInvitationDto,
 } from '@edifice.io/community-client-rest-rn';
+import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,7 +22,6 @@ import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { SegmentedControlLoader } from '~/framework/components/segmented-control';
 import { TextSizeStyle } from '~/framework/components/text';
@@ -44,6 +43,7 @@ import {
 import communitiesStyles from '~/framework/modules/communities/styles';
 import { ESTIMATED_LIST_SIZE, getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
 
 export const AVAILABLE_FILTERS = [CommunityType.CLASS, CommunityType.FREE];
@@ -91,7 +91,7 @@ export default (function CommunitiesListScreen({
   const [totalPendingInvitations, setTotalPendingInvitations] = React.useState<number>(pendingCommunities.length);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
-  const paginatedListRef = React.useRef<FlashList<InvitationResponseDto | typeof LOADING_ITEM_DATA>>(null);
+  const paginatedListRef = React.useRef<FlashList<InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA>>(null);
   const filtersListBottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
 
   const activeFiltersCount = filters.length;
@@ -169,21 +169,23 @@ export default (function CommunitiesListScreen({
     filtersListBottomSheetRef.current?.present();
   }, []);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<InvitationResponseDto>['keyExtractor']>>(
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<InvitationResponseDtoWithThumbnails>['keyExtractor']>>(
     item => item.id.toString(),
     [],
   );
 
   const renderItem = React.useCallback(
-    ({ index, item }: { item: InvitationResponseDto; index: number }) => {
+    ({ index, item }: { item: InvitationResponseDtoWithThumbnails; index: number }) => {
       if (!item.community) return null;
       const itemSeparator = getItemSeparatorStyle(index, displayedCommunities.length, styles.itemSeparator);
+
+      const image = item.community.mobileThumbnails?.length ? item.community.mobileThumbnails : toURISource(item.community.image!);
 
       return (
         <CommunityCardSmall
           key={item.id}
           title={item.community.title}
-          image={item.community.image}
+          image={image}
           invitationStatus={item.status}
           itemSeparatorStyle={itemSeparator}
           membersCount={item.communityStats?.totalMembers}

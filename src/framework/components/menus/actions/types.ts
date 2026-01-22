@@ -1,6 +1,8 @@
 import { DocumentPickerResponse } from '@react-native-documents/picker';
 
-import { Asset } from '~/framework/util/fileHandler/types';
+import { LocalFile } from '~/framework/util/fileHandler/models';
+import { FileManagerError } from '~/framework/util/fileHandler/pickerErrors';
+import { Asset, FileManagerConfigOverrideType } from '~/framework/util/fileHandler/types';
 
 export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 
@@ -11,6 +13,7 @@ export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri'>> & {
 };
 
 export interface MenuAction {
+  disabled?: boolean;
   title: string;
   action: () => void;
   icon?: {
@@ -21,6 +24,7 @@ export interface MenuAction {
 }
 
 export interface MenuActionProps {
+  disabled?: boolean;
   title?: string;
   action: () => void;
 }
@@ -30,4 +34,10 @@ export interface MenuPickerActionProps {
     document: ImagePicked | DocumentPicked | (ImagePicked | DocumentPicked)[],
     sourceType?: string,
   ) => Promise<void> | void;
+}
+
+export interface MenuPickerActionFmProps {
+  callback: (files: LocalFile[] | LocalFile, sourceType?: string) => void | Promise<void>;
+  configOverride?: FileManagerConfigOverrideType;
+  onError?: (error: FileManagerError) => void;
 }

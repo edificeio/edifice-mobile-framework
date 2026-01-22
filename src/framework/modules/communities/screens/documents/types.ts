@@ -7,6 +7,7 @@ import type { CommunitiesNavigationParams } from '~/framework/modules/communitie
 export namespace CommunitiesDocumentsScreen {
   export interface NavParams {
     communityId: number;
+    folderId?: number;
   }
   export type NavigationProps = NativeStackScreenProps<CommunitiesNavigationParams, 'documents'>;
   export type AllProps = CommunitiesDocumentsScreen.NavigationProps;

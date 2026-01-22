@@ -1,0 +1,244 @@
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
+index b4c347f..0c34c5b 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
+@@ -7,18 +7,19 @@
+  * @format
+  */
+ 
+-import type * as React from 'react';
+-import {Constructor} from '../../../types/private/Utilities';
+-import {Insets} from '../../../types/public/Insets';
+-import {ColorValue, StyleProp} from '../../StyleSheet/StyleSheet';
+-import {ViewStyle} from '../../StyleSheet/StyleSheetTypes';
++import type * as React from "react";
++import { Constructor } from "../../../types/private/Utilities";
++import { Insets } from "../../../types/public/Insets";
++import { ColorValue, StyleProp } from "../../StyleSheet/StyleSheet";
++import { ViewStyle } from "../../StyleSheet/StyleSheetTypes";
+ import {
+   NativeSyntheticEvent,
+   NativeTouchEvent,
+-} from '../../Types/CoreEventTypes';
+-import {RefreshControlProps} from '../RefreshControl/RefreshControl';
+-import {Touchable} from '../Touchable/Touchable';
+-import {ViewProps} from '../View/ViewPropTypes';
++} from "../../Types/CoreEventTypes";
++import { RefreshControlProps } from "../RefreshControl/RefreshControl";
++import { Touchable } from "../Touchable/Touchable";
++import { ViewProps } from "../View/ViewPropTypes";
++import type { Props as ScrollViewStickyHeaderProps } from "./ScrollViewStickyHeader";
+ 
+ // See https://reactnative.dev/docs/scrollview#contentoffset
+ export interface PointProp {
+@@ -408,10 +409,10 @@ export interface ScrollViewPropsIOS {
+    * The default value of this property is "never".
+    */
+   contentInsetAdjustmentBehavior?:
+-    | 'automatic'
+-    | 'scrollableAxes'
+-    | 'never'
+-    | 'always'
++    | "automatic"
++    | "scrollableAxes"
++    | "never"
++    | "always"
+     | undefined;
+ 
+   /**
+@@ -428,7 +429,7 @@ export interface ScrollViewPropsIOS {
+    * - white, scroll indicator is white. This style is good against
+    *   a black content background.
+    */
+-  indicatorStyle?: 'default' | 'black' | 'white' | undefined;
++  indicatorStyle?: "default" | "black" | "white" | undefined;
+ 
+   /**
+    * When set, the scroll view will adjust the scroll position so that the first child
+@@ -514,7 +515,7 @@ export interface ScrollViewPropsIOS {
+    *      - `center` will align the snap in the center
+    *      - `end` will align the snap at the right (horizontal) or bottom (vertical)
+    */
+-  snapToAlignment?: 'start' | 'center' | 'end' | undefined;
++  snapToAlignment?: "start" | "center" | "end" | undefined;
+ 
+   /**
+    * Fires when the scroll view scrolls to top after the status bar has been tapped
+@@ -557,7 +558,7 @@ export interface ScrollViewPropsAndroid {
+         *   - 'always' - Always allow a user to over-scroll this view.
+         *   - 'never' - Never allow a user to over-scroll this view.
+         */
+-  overScrollMode?: 'auto' | 'always' | 'never' | undefined;
++  overScrollMode?: "auto" | "always" | "never" | undefined;
+ 
+   /**
+    * Enables nested scrolling for Android API level 21+. Nested scrolling is supported by default on iOS.
+@@ -614,7 +615,7 @@ export interface ScrollViewProps
+    *  - `'normal'`: 0.998 on iOS, 0.985 on Android (the default)
+    *  - `'fast'`: 0.99 on iOS, 0.9 on Android
+    */
+-  decelerationRate?: 'fast' | 'normal' | number | undefined;
++  decelerationRate?: "fast" | "normal" | number | undefined;
+ 
+   /**
+    * When true the scroll view's children are arranged horizontally in a row
+@@ -636,7 +637,7 @@ export interface ScrollViewProps
+    *     and moves in synchrony with the touch; dragging upwards cancels the
+    *     dismissal.
+    */
+-  keyboardDismissMode?: 'none' | 'interactive' | 'on-drag' | undefined;
++  keyboardDismissMode?: "none" | "interactive" | "on-drag" | undefined;
+ 
+   /**
+    * Determines when the keyboard should stay visible after a tap.
+@@ -648,9 +649,9 @@ export interface ScrollViewProps
+    */
+   keyboardShouldPersistTaps?:
+     | boolean
+-    | 'always'
+-    | 'never'
+-    | 'handled'
++    | "always"
++    | "never"
++    | "handled"
+     | undefined;
+ 
+   /**
+@@ -803,7 +804,9 @@ export interface ScrollViewProps
+    * transforms, for example, when you want your list to have an animated and hidable header.
+    * If component have not been provided, the default ScrollViewStickyHeader component will be used.
+    */
+-  StickyHeaderComponent?: React.ComponentType<any> | undefined;
++  StickyHeaderComponent?:
++    | React.ComponentType<ScrollViewStickyHeaderProps>
++    | undefined;
+ }
+ 
+ declare class ScrollViewComponent extends React.Component<ScrollViewProps> {}
+@@ -840,7 +843,7 @@ export class ScrollView extends ScrollViewBase {
+    * The options object has an animated prop, that enables the scrolling animation or not.
+    * The animated prop defaults to true
+    */
+-  scrollToEnd(options?: {animated?: boolean | undefined}): void;
++  scrollToEnd(options?: { animated?: boolean | undefined }): void;
+ 
+   /**
+    * Displays the scroll indicators momentarily.
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
+index efd6632..a7850e9 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
+@@ -1680,6 +1680,7 @@ class ScrollView extends React.Component<ScrollViewProps, ScrollViewState> {
+           return (
+             <StickyHeaderComponent
+               key={key}
++              index={index}
+               ref={ref => this._setStickyHeaderRef(key, ref)}
+               nextHeaderLayoutY={this._headerLayoutYs.get(
+                 this._getKeyForIndex(nextIndex, children),
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+index 89d62da..b609856 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+@@ -30,6 +30,7 @@ export type ScrollViewStickyHeaderProps = $ReadOnly<{
+   scrollViewHeight: ?number,
+   nativeID?: ?string,
+   hiddenOnScroll?: ?boolean,
++  index: number,
+ }>;
+ 
+ interface Instance extends React.ElementRef<typeof Animated.View> {
+diff --git a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-dev.js b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-dev.js
+index 9d66361..2d0dafa 100644
+--- a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-dev.js
++++ b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-dev.js
+@@ -679,9 +679,6 @@ __DEV__ &&
+       } finally {
+         setCurrentFiber(previousFiber);
+       }
+-      throw Error(
+-        "runWithFiberInDEV should never be called in production. This is a bug in React."
+-      );
+     }
+     function setCurrentFiber(fiber) {
+       ReactSharedInternals.getCurrentStack =
+@@ -9259,9 +9256,6 @@ __DEV__ &&
+                 throw Error(
+                   "A dehydrated suspense component was completed without a hydrated node. This is probably a bug in React."
+                 );
+-                throw Error(
+-                  "Expected prepareToHydrateHostSuspenseInstance() to never be called. This error is likely caused by a bug in React. Please file an issue."
+-                );
+               }
+               emitPendingHydrationWarnings();
+               0 === (workInProgress.flags & 128) &&
+@@ -16868,11 +16862,11 @@ __DEV__ &&
+       shouldSuspendImpl = newShouldSuspendImpl;
+     };
+     var isomorphicReactPackageVersion = React.version;
+-    if ("19.1.0" !== isomorphicReactPackageVersion)
++    if ("19.1.2" !== isomorphicReactPackageVersion)
+       throw Error(
+         'Incompatible React versions: The "react" and "react-native-renderer" packages must have the exact same version. Instead got:\n  - react:                  ' +
+           (isomorphicReactPackageVersion +
+-            "\n  - react-native-renderer:  19.1.0\nLearn more: https://react.dev/warnings/version-mismatch")
++            "\n  - react-native-renderer:  19.1.2\nLearn more: https://react.dev/warnings/version-mismatch")
+       );
+     if (
+       "function" !==
+diff --git a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js
+index b3d1cfa..81174e1 100644
+--- a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js
++++ b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js
+@@ -7284,9 +7284,6 @@ function completeWork(current, workInProgress, renderLanes) {
+             throw Error(
+               "A dehydrated suspense component was completed without a hydrated node. This is probably a bug in React."
+             );
+-            throw Error(
+-              "Expected prepareToHydrateHostSuspenseInstance() to never be called. This error is likely caused by a bug in React. Please file an issue."
+-            );
+           }
+           0 === (workInProgress.flags & 128) &&
+             (workInProgress.memoizedState = null);
+@@ -10603,11 +10600,11 @@ function updateContainer(element, container, parentComponent, callback) {
+   return lane;
+ }
+ var isomorphicReactPackageVersion = React.version;
+-if ("19.1.0" !== isomorphicReactPackageVersion)
++if ("19.1.2" !== isomorphicReactPackageVersion)
+   throw Error(
+     'Incompatible React versions: The "react" and "react-native-renderer" packages must have the exact same version. Instead got:\n  - react:                  ' +
+       (isomorphicReactPackageVersion +
+-        "\n  - react-native-renderer:  19.1.0\nLearn more: https://react.dev/warnings/version-mismatch")
++        "\n  - react-native-renderer:  19.1.2\nLearn more: https://react.dev/warnings/version-mismatch")
+   );
+ if (
+   "function" !==
+diff --git a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-profiling.js b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-profiling.js
+index b317ca1..24ab001 100644
+--- a/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-profiling.js
++++ b/node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-profiling.js
+@@ -7501,9 +7501,6 @@ function completeWork(current, workInProgress, renderLanes) {
+             throw Error(
+               "A dehydrated suspense component was completed without a hydrated node. This is probably a bug in React."
+             );
+-            throw Error(
+-              "Expected prepareToHydrateHostSuspenseInstance() to never be called. This error is likely caused by a bug in React. Please file an issue."
+-            );
+           }
+           0 === (workInProgress.flags & 128) &&
+             (workInProgress.memoizedState = null);
+@@ -11245,11 +11242,11 @@ function updateContainer(element, container, parentComponent, callback) {
+   return lane;
+ }
+ var isomorphicReactPackageVersion = React.version;
+-if ("19.1.0" !== isomorphicReactPackageVersion)
++if ("19.1.2" !== isomorphicReactPackageVersion)
+   throw Error(
+     'Incompatible React versions: The "react" and "react-native-renderer" packages must have the exact same version. Instead got:\n  - react:                  ' +
+       (isomorphicReactPackageVersion +
+-        "\n  - react-native-renderer:  19.1.0\nLearn more: https://react.dev/warnings/version-mismatch")
++        "\n  - react-native-renderer:  19.1.2\nLearn more: https://react.dev/warnings/version-mismatch")
+   );
+ if (
+   "function" !==

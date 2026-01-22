@@ -5,15 +5,18 @@ phrase:
 
   push:
     sources:
-      - file: ./assets/i18n/fr.json
+      - file: ./assets/i18n/co.json
         params:
-          locale_id: a3f0ad82fbd7ad5c3f72d15c1c66a60d
+          locale_id: 7b1ad45dee2316639223db6e6839da6b
       - file: ./assets/i18n/en.json
         params:
           locale_id: 0d41789e356f6f46dddb1117b9c43bd7
       - file: ./assets/i18n/es.json
         params:
           locale_id: 80f576935a8cb9630a4a8bd0f2c4c122
+      - file: ./assets/i18n/fr.json
+        params:
+          locale_id: a3f0ad82fbd7ad5c3f72d15c1c66a60d
       - file: ./assets/i18n/it.json
         params:
           locale_id: f314cbcc1eb240bf4620f7c3e88a531e
@@ -21,15 +24,18 @@ phrase:
 
   pull:
     targets:
-      - file: ./assets/i18n/fr.json
+      - file: ./assets/i18n/co.json
         params:
-          locale_id: a3f0ad82fbd7ad5c3f72d15c1c66a60d
+          locale_id: 7b1ad45dee2316639223db6e6839da6b
       - file: ./assets/i18n/en.json
         params:
           locale_id: 0d41789e356f6f46dddb1117b9c43bd7
       - file: ./assets/i18n/es.json
         params:
           locale_id: 80f576935a8cb9630a4a8bd0f2c4c122
+      - file: ./assets/i18n/fr.json
+        params:
+          locale_id: a3f0ad82fbd7ad5c3f72d15c1c66a60d
       - file: ./assets/i18n/it.json
         params:
           locale_id: f314cbcc1eb240bf4620f7c3e88a531e

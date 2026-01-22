@@ -4,9 +4,7 @@
         <domain includeSubdomains="true">10.0.1.1</domain>
         <domain includeSubdomains="true">127.0.0.1</domain>
         <domain includeSubdomains="true">localhost</domain>
-        <domain includeSubdomains="true">authentification.ac-martinique.fr</domain>
         <domain includeSubdomains="true">id.ac-nice.fr</domain>
-        <domain includeSubdomains="true">extranet.ac-guyane.fr</domain>
         <domain includeSubdomains="true">extranet.ac-reims.fr</domain>
         <domain includeSubdomains="true">moncompte.ac-nantes.fr</domain>
         <domain includeSubdomains="true">extranet.ac-versailles.fr</domain>
@@ -14,66 +12,84 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">ent-ecoles.ac-reims.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">externet.ac-creteil.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">connexion.l-educdenormandie.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">ent.l-educdenormandie.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">extranet.ac-normandie.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">arena.ac-normandie.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">login.ac-normandie.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">ent.e-primo.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">aaa-idp.ac-nantes.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">appli.ac-aix-marseille.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">login.ac-lyon.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">portail.ac-lyon.fr</domain>
         <trust-anchors>
+            <certificates src="system"/>
             <certificates src="@raw/harica_ca"/>
         </trust-anchors>
     </domain-config>
@@ -82,6 +98,34 @@
         <trust-anchors>
             <certificates src="system"/>
             <certificates src="@raw/harica_ca"/>
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">authentification.ac-martinique.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca" />
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">extranet.ac-guyane.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca" />
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">extranet.ac-mayotte.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca" />
+        </trust-anchors>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">login.ac-mayotte.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
 </network-security-config>

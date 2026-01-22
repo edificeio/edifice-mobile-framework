@@ -2,16 +2,22 @@ import type { IFormReduxState } from './reducer';
 import { getFormWorkflowInformation } from './rights';
 
 import theme from '~/app/theme';
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'form', IFormReduxState>({
-  displayAs: 'myAppsModule',
+  displayAs: ModuleType.MYAPPS_MODULE,
   displayColor: theme.apps.formulaire.accentColors,
   displayI18n: 'form-moduleconfig-appname',
   displayPicture: theme.apps.formulaire.icon,
   entcoreScope: ['formulaire'],
+  fileManager: {
+    file: {
+      allow: ['image', 'video'],
+      multiple: true,
+      sources: ['camera', 'gallery', 'documents'],
+    },
+  } as const,
   hasRight: ({ session }) => !!getFormWorkflowInformation(session).initResponse,
-
   matchEntcoreApp: '/formulaire',
   name: 'form',
   storageName: 'form',

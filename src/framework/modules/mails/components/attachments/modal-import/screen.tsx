@@ -13,10 +13,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import {
-  cameraAction,
-  documentAction,
+  cameraActionFm,
+  documentActionFm,
   DocumentPicked,
-  galleryAction,
+  galleryActionFm,
   ImagePicked,
   imagePickedToLocalFile,
 } from '~/framework/components/menus/actions';
@@ -26,9 +26,10 @@ import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import Thumbnail from '~/framework/modules/mails/components/attachments/thumbnail';
+import moduleConfig from '~/framework/modules/mails/module-config';
 import { mailsService } from '~/framework/modules/mails/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness,
@@ -274,28 +275,41 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
   }, [listReady, uploadAttachments]);
 
   React.useEffect(() => {
-    setTimeout(() => {
-      const commonCallback = (files: ImagePicked | ImagePicked[] | DocumentPicked | DocumentPicked[]) => {
-        const arr = Array.isArray(files) ? files : [files];
-        const formatted = arr.map(formatFile);
-        setFiles(formatted);
+    const formatFiles = (files: LocalFile | LocalFile[]): UploadAttachment[] => {
+      const list = Array.isArray(files) ? files : [files];
+      return list.map(f => ({
+        error: undefined,
+        localFile: f,
+        status: UploadAttachmentStatus.IDLE,
+      })) as UploadAttachment[];
+    };
+
+    const handleFilesCallback = (files: LocalFile | LocalFile[]) => {
+      const formatted = formatFiles(files);
+      setFiles(formatted);
+    };
+
+    const executeAction = (source: string) => {
+      const actionParams = { callback: handleFilesCallback };
+      const modulename = moduleConfig.name;
+      const useCase = 'attachments';
+
+      const actionsMap = {
+        camera: () => cameraActionFm(modulename, useCase, actionParams).action(),
+
+        documents: () => documentActionFm(modulename, useCase, actionParams).action(),
+
+        gallery: () => galleryActionFm(modulename, useCase, actionParams).action(),
       };
 
-      if (route.params.source === 'galery')
-        return galleryAction({
-          callback: commonCallback,
-          multiple: true,
-        }).action({ callbackOnce: true });
-      if (route.params.source === 'camera')
-        return cameraAction({
-          callback: commonCallback,
-        }).action({ callbackOnce: true });
-      // Last source is 'documents'
-      return documentAction({
-        callback: commonCallback,
-      }).action();
+      actionsMap[source as keyof typeof actionsMap]?.();
+    };
+
+    const timer = setTimeout(() => {
+      executeAction(route.params.source);
     }, 350);
-    // On purpose : only when component is mounted.
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
