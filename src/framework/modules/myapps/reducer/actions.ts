@@ -1,16 +1,15 @@
 import { UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { appsInfoActionTypes } from './action-types';
-import { computeNextBookmarks, isMobileApp, isNavigableModule } from './adapter';
-import { selectAppsState } from './selectors';
-
+import { I18n } from '~/app/i18n';
 import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { appsInfoActionTypes, computeNextBookmarks, isMobileApp, selectAppsState } from '~/framework/modules/myapps/reducer';
 import { myAppsService } from '~/framework/modules/myapps/service';
 import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoState } from '~/framework/modules/myapps/types';
+import { getModuleRouteName } from '~/framework/modules/myapps/utils';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 type ThunkResult = ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction>;
@@ -29,7 +28,7 @@ export const afterLoginSetup =
   (session): ThunkResult =>
   async dispatch => {
     dispatch(appInfoActions.fetchStart());
-    const navigableModules = AllModules().filter(isNavigableModule);
+    const modules = AllModules();
 
     try {
       let [appsInfo, appsConfig, favorites] = await Promise.all([
@@ -38,8 +37,9 @@ export const afterLoginSetup =
         myAppsService.bookmarks(session),
       ]);
       appsInfo = appsInfo.map(app => {
-        const isMobile = isMobileApp(app as IEntcoreApp, navigableModules);
-        return { ...app, isMobile };
+        const isMobile = isMobileApp(app as IEntcoreApp, modules);
+        const routeName = isMobile ? getModuleRouteName(app as IEntcoreApp, modules) : undefined;
+        return { ...app, isMobile, routeName };
       });
       dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
     } catch (e) {
@@ -86,10 +86,10 @@ export const toggleFavorite =
         }),
       );
 
-      Toast.showSuccess('Vos modifications ont bien été enregistrées');
+      Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
     } catch (e) {
       console.error('Error updating favorites:', e);
       dispatch(appInfoActions.toggleFavorite(appName));
-      Toast.showError('Une erreur est survenue lors de la mise à jour des favoris');
+      Toast.showError(I18n.get('myapp-add-favorite-error-message'));
     }
   };

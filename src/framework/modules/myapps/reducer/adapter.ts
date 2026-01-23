@@ -1,5 +1,5 @@
 import { AppsInfoAggregated, MyAppsCategories } from '~/framework/modules/myapps/types';
-import { AnyModule, AnyNavigableModule, IEntcoreApp } from '~/framework/util/moduleTool';
+import { AnyModule, AnyNavigableModule, IEntcoreApp, ModuleArray } from '~/framework/util/moduleTool';
 
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
   if (!app.isMobile) {
@@ -25,9 +25,10 @@ export const isNavigableModule = (module: AnyModule): module is AnyNavigableModu
   return typeof (module as AnyNavigableModule).getRoot === 'function';
 };
 
-export const isMobileApp = (app: IEntcoreApp, modules: AnyNavigableModule[]): boolean => {
+export const isMobileApp = (app: IEntcoreApp, modules: ModuleArray<AnyModule>): boolean => {
   return modules.some(module => module.config.matchEntcoreApp(app));
 };
+
 export const computeNextBookmarks = (bookmarks: string[], appName: string): string[] => {
   const isFavorite = bookmarks.includes(appName);
 

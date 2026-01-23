@@ -12,12 +12,11 @@ export interface AppsInfoWithCategory extends AppsInfoAggregated {
   resolvedCategory: MyAppsCategories;
 }
 
-export type AppType = 'mobile' | 'web' | 'connector';
-
 export interface AppsInfo extends Omit<ApplicationsList, 'casType' | 'scope'>, Partial<Omit<ApplicationsConfig, 'name'>> {
   isMobile: boolean;
   isFavorite: boolean;
   isLibrary?: boolean;
+  routeName?: string;
 }
 
 export interface ApplicationsConfig {

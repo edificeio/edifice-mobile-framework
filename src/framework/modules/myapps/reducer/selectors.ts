@@ -4,7 +4,7 @@ import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { appsInfoInitialState } from '~/framework/modules/myapps/reducer/reducer';
 import { AppsInfoAggregated, AppsInfoWithCategory, MyAppsFilter } from '~/framework/modules/myapps/types';
-import getAppI18nLabel from '~/framework/modules/myapps/utils/app-i18n';
+import { getAppName } from '~/framework/modules/myapps/utils';
 
 export const selectAppsState = (state: IGlobalState) => {
   return moduleConfig.getState(state) ?? appsInfoInitialState;
@@ -22,7 +22,7 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
       let config = configByName.get(app.name);
 
       const isLibrary = app.address?.includes('library.edifice.io') && !config?.category;
-      const isFavorite = favorites.bookmarks.includes(app.name);
+      const isFavorite = favorites.bookmarks?.includes(app.name);
 
       if (isLibrary) {
         const libraryConfig = configByName.get('library-info');
@@ -38,7 +38,7 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
         ...app,
         category: config?.category,
         color: config?.color,
-        displayName: getAppI18nLabel(app), // remove when translated names given
+        displayName: getAppName(app),
         help: config?.help,
         isFavorite,
         isLibrary,
@@ -83,4 +83,14 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
     case 'libraries':
       return apps.filter(app => app.isLibrary);
   }
+};
+
+export const selectFilteredAppsWithMobile = (state: IGlobalState, filter: MyAppsFilter, showAllApps: boolean) => {
+  const apps = selectFilteredApps(state, filter);
+
+  if (showAllApps) {
+    return apps;
+  }
+
+  return apps.filter(app => app.isMobile);
 };
