@@ -49,15 +49,8 @@ export const myAppsService = {
   },
 
   updateBookmarks: async (session: AuthActiveAccount, favorites: AppBookmarks): Promise<void> => {
-    const body = {
-      preference: JSON.stringify({
-        applications: favorites.applications,
-        bookmarks: favorites.bookmarks,
-      }),
-    };
-
     await signedFetch(`${session.platform.url}/userbook/preference/apps`, {
-      body: JSON.stringify(body),
+      body: JSON.stringify(favorites),
       method: 'PUT',
     });
   },

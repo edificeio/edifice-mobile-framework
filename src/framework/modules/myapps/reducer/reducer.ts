@@ -1,4 +1,5 @@
 import { appsInfoActionTypes, FetchErrorAction, FetchSuccessAction, ToggleFavoriteAction } from './action-types';
+import { computeNextBookmarks } from './adapter';
 
 import { Reducers } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
@@ -45,14 +46,11 @@ const reducer = createReducer(appsInfoInitialState, {
   [appsInfoActionTypes.toggleFavorite]: (state, action) => {
     const { appName } = action as ToggleFavoriteAction;
 
-    const isFavorite = state.favorites.bookmarks.includes(appName);
     return {
       ...state,
       favorites: {
         ...state.favorites,
-        bookmarks: isFavorite
-          ? state.favorites.bookmarks.filter(name => name !== appName)
-          : [...state.favorites.bookmarks, appName],
+        bookmarks: computeNextBookmarks(state.favorites.bookmarks, appName),
       },
     };
   },
