@@ -41,11 +41,6 @@ const hasAllergy = (item: MenuItem): boolean => {
   return ALLERGY_CONFIG.some(allergy => item[allergy.key as keyof MenuItem] !== 0);
 };
 
-// Helper function to capitalize first letter
-const capitalizeFirstLetter = (text: string): string => {
-  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-};
-
 // Icon configuration for menu items
 const MENU_ICONS = {
   bio: require('ASSETS/images/cantine/bio-logo.png'),
@@ -115,7 +110,11 @@ const MenuSection: React.FC<{
               onPress={() => hasAllergies && toggleExpanded(String(item.id))}>
               <View style={styles.menuItemHeader}>
                 <View style={styles.menuItemNameContainer}>
-                  <BodyText style={styles.menuItemName}>{capitalizeFirstLetter(item.nom)}</BodyText>
+                  <BodyText style={styles.menuItemName}>
+                    {item.designationMenu && item.designationMenu.length > 0 && item.designationMenu.trim() !== ''
+                      ? item.designationMenu
+                      : item.nom}
+                  </BodyText>
                 </View>
                 <View style={styles.menuItemRightContainer}>
                   {activeIcons.length > 0 && (
@@ -137,7 +136,7 @@ const MenuSection: React.FC<{
                         height={UI_SIZES.elements.icon.xsmall}
                         width={UI_SIZES.elements.icon.xsmall}
                       />
-                      <SmallText style={styles.allergyText}>Allérgenes</SmallText>
+                      <SmallText style={styles.allergyText}>{I18n.get('widget-cantine-menu-allergenes-label')}</SmallText>
                     </View>
                     <View style={styles.allergyHeaderRight}>
                       <Svg
