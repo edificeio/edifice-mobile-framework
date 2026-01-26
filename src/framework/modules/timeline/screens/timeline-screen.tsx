@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -11,17 +11,20 @@ import { I18n } from '~/app/i18n';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
+import { AvatarSizes } from '~/framework/components/avatar/styles';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { CommentForm } from '~/framework/components/comments/comment-form';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import { BaseTextArea, BaseTextInput } from '~/framework/components/inputs/text2/base';
+import { ChatTextArea } from '~/framework/components/inputs/text2/chat';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarActionsGroup } from '~/framework/components/navigation';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { pageGutterSize, PageView } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
-import { HeadingSText, SmallText } from '~/framework/components/text';
+import { CaptionText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -89,6 +92,7 @@ export enum TimelineLoadingState {
 }
 export interface ITimelineScreenState {
   loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
+  test: string;
 }
 
 export enum ITimelineItemType {
@@ -171,6 +175,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   state: ITimelineScreenState = {
     loadingState: TimelineLoadingState.PRISTINE,
+    test: '',
   };
 
   rights = getTimelineWorkflowInformation(this.props.session);
@@ -181,18 +186,64 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   // RENDER =======================================================================================
+  //
+
+  onChange = ({ nativeEvent: { text } }) => {
+    this.setState({ test: text });
+  };
+
+  boxStyle = { backgroundColor: theme.palette.grey.pearl, flex: 1 };
+  boxStyle2 = { ...this.boxStyle, padding: getScaleWidth(7.5) };
 
   render() {
     return (
       <PageView>
-        <CommentForm userId={getSession()?.user.id!} />
-        {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
+        <View style={{ gap: 8 }}>
+          <CommentForm userId={getSession()?.user.id!} />
+          {/*<View style={{ alignItems: 'flex-start', flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
+            <View style={{ backgroundColor: 'orange', height: UI_SIZES.elements.avatar.md, width: UI_SIZES.elements.avatar.md }} />
+            <BaseTextArea
+              aimHeight={UI_SIZES.elements.avatar.md}
+              wrapperStyle={this.boxStyle}
+              value={this.state.test}
+              onChange={this.onChange}
+              maxLines={5}
+            />
+            <CaptionText style={this.boxStyle2}>{this.state.test}</CaptionText>
+          </View>*/}
+          <View style={{ alignItems: 'flex-start', flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
+            <View style={{ backgroundColor: 'pink', height: UI_SIZES.elements.avatar.md, width: UI_SIZES.elements.avatar.md }} />
+            <BaseTextInput
+              aimHeight={UI_SIZES.elements.avatar.md}
+              wrapperStyle={this.boxStyle}
+              value={this.state.test}
+              onChange={this.onChange}
+              placeholder="Ajouter un commentaire"
+            />
+            <CaptionText numberOfLines={1} style={this.boxStyle2}>
+              {this.state.test}
+            </CaptionText>
+          </View>
+          <View style={{ alignItems: 'flex-start', flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
+            <View style={{ backgroundColor: 'pink', height: UI_SIZES.elements.avatar.md, width: UI_SIZES.elements.avatar.md }} />
+            <ChatTextArea
+              wrapperStyle={UI_STYLES.flex1}
+              value={this.state.test}
+              onChange={this.onChange}
+              maxLength={80}
+              minLines={2}
+              placeholder="Ajouter un commentaire. Avec beaucoup de texte on s'y méprendrait"
+            />
+          </View>
+          <View style={{ flex: 1 }}></View>
+          {/*{[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
           <LoadingIndicator />
         ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
           this.renderError()
         ) : (
           this.renderList()
-        )}
+        )}*/}
+        </View>
       </PageView>
     );
   }
