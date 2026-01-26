@@ -16,13 +16,15 @@ import theme from '~/app/theme';
 import { SelfAvatar } from '~/framework/components/avatar/self';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { CommentForm } from '~/framework/components/comments/comment-form';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import { BaseTextArea, BaseTextInput } from '~/framework/components/inputs/text2/base';
+import { ChatTextArea } from '~/framework/components/inputs/text2/chat';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
 import { pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
-import { HeadingSText, SmallText } from '~/framework/components/text';
+import { CaptionText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
@@ -86,6 +88,7 @@ export enum TimelineLoadingState {
 }
 export interface ITimelineScreenState {
   loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
+  test: string;
 }
 
 export enum ITimelineItemType {
@@ -190,6 +193,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   state: ITimelineScreenState = {
     loadingState: TimelineLoadingState.PRISTINE,
+    test: '',
   };
 
   rights = this.props.session ? getTimelineWorkflowInformation(this.props.session) : undefined;
@@ -202,6 +206,14 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   // RENDER =======================================================================================
+  //
+
+  onChange = ({ nativeEvent: { text } }) => {
+    this.setState({ test: text });
+  };
+
+  boxStyle = { backgroundColor: theme.palette.grey.pearl, flex: 1 };
+  boxStyle2 = { ...this.boxStyle, padding: getScaleWidth(7.5) };
 
   render() {
     return (
