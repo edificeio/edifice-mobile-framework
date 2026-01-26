@@ -1,8 +1,9 @@
 import { Temporal } from '@js-temporal/polyfill';
 import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { CommentsThread } from '~/framework/modules/comments/templates/comments-thread/types';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
 import { API } from '~/framework/modules/wiki/service/types';
 import { sessionFetch } from '~/framework/util/transport/fetch';
@@ -19,22 +20,22 @@ const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResource
 });
 
 const computeRights = (data: Pick<API.Wiki.ListPagesResponse, 'rights'>, session: AuthActiveAccount) => {
-  const rights: string[] = [];
+  const rights: Set<string> = new Set();
   for (const rightStr of data.rights) {
     const right = rightStr.split(':'); // 0: target, 1: id, 2: right if not creator
     switch (right[0]) {
       case 'creator':
-        if (right[1] === session.user.id) rights.push(right[0]);
+        if (right[1] === session.user.id) rights.add(right[0]);
         break;
       case 'user':
-        if (right[1] === session.user.id) rights.push(right[2]);
+        if (right[1] === session.user.id) rights.add(right[2]);
         break;
       case 'group':
-        if (session.user.groups.includes(right[1])) rights.push(right[2]);
+        if (session.user.groups.includes(right[1])) rights.add(right[2]);
         break;
     }
   }
-  return rights;
+  return [...rights];
 };
 
 const rightsThatSeeHiddenPages = new Set(['creator', 'manager']); // Business rule here. Need to be implemented into the backend.
@@ -90,7 +91,8 @@ const hydrateWikiData = (data: API.Wiki.ListPagesResponse, session: AuthActiveAc
   };
 };
 
-const hydrateWikiPageData = (data: API.Wiki.GetPageResponse): WikiPage => ({
+const hydrateWikiPageData = async (data: API.Wiki.GetPageResponse): Promise<WikiPage> => ({
+  comments: await hydratePageComments(data.comments),
   content: data.content,
   contentVersion: data.contentVersion,
   createdAt: Temporal.Instant.from((data.created ?? data.modified).$date),
@@ -104,11 +106,116 @@ const hydrateWikiPageData = (data: API.Wiki.GetPageResponse): WikiPage => ({
   updaterName: data.lastContributerName,
 });
 
+const parseAccountTypesMap = {
+  External: AccountType.External,
+  Guest: AccountType.Guest,
+  Personnel: AccountType.Personnel,
+  Relative: AccountType.Relative,
+  Student: AccountType.Student,
+  Teacher: AccountType.Teacher,
+} as const;
+
+const hydratePageComments = async (data: API.Wiki.GetPageResponse['comments'] = []): Promise<CommentsThread.Props['data']> => {
+  // 1. Fetch fucking account type for each author because backend does not provide them by itself.
+  const authors = new Set<
+    (
+      | CommentsThread.CommentItem
+      | CommentsThread.ReplyItem
+      | CommentsThread.CommentDeletedItem
+      | CommentsThread.ReplyDeletedItem
+    )['authorId']
+  >();
+  for (const item of data) {
+    if ('author' in item) authors.add(item.author);
+  }
+  const userTypes = Object.fromEntries(
+    await Promise.all(
+      [...authors].map(async authorId => {
+        const userData = await sessionFetch.json<{
+          status: 'ok';
+          result: Record<string, { type: (keyof typeof parseAccountTypesMap)[] }>;
+        }>(`/userbook/api/person?id=${authorId}`);
+        return [authorId, parseAccountTypesMap[userData.result[0]?.type[0]] ?? undefined] as const;
+      }),
+    ),
+  );
+
+  // 2. Prepare parsed data arrays.
+  const parsedComments: Record<
+    (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)['id'],
+    Omit<CommentsThread.CommentItem | CommentsThread.CommentDeletedItem, 'replies'>
+  > = {};
+  const parsedReplies: Record<
+    (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)['id'],
+    (CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem)[]
+  > = {};
+
+  // 3. Parse data
+  for (const item of data) {
+    const ret: Pick<
+      CommentsThread.CommentItem | CommentsThread.CommentDeletedItem | CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem,
+      'id' | 'date'
+    > &
+      Partial<
+        Pick<
+          CommentsThread.CommentItem | CommentsThread.ReplyItem,
+          'authorAccountType' | 'authorId' | 'authorName' | 'content' | 'isRichContent'
+        >
+      > &
+      Partial<Pick<CommentsThread.CommentDeletedItem | CommentsThread.ReplyDeletedItem, 'deleted'>> = {
+      date: Temporal.Instant.from(item.created.$date),
+      id: item._id,
+    };
+    if (!('deleted' in item)) {
+      ret.authorId = item.author;
+      ret.authorName = item.authorName;
+      ret.authorAccountType = userTypes[item.author] ?? AccountType.Guest; // use guest if user is not found... Don't known what to do.
+      ret.content = item.comment;
+      ret.isRichContent = false;
+    } else {
+      ret.deleted = true;
+    }
+
+    if ('replyTo' in item) {
+      if (!(item.replyTo in parsedReplies)) parsedReplies[item.replyTo] = [];
+      parsedReplies[item.replyTo].push(ret as CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem);
+    } else {
+      parsedComments[ret.id] = ret as CommentsThread.CommentItem | CommentsThread.CommentDeletedItem;
+    }
+  }
+
+  // 4. Compose & sort data
+  const sortedComments = Object.values(parsedComments).sort((a, b) => Temporal.Instant.compare(b.date, a.date)); // comments are in reverse-ordrer
+  for (const comment of sortedComments) {
+    (comment as CommentsThread.CommentItem | CommentsThread.CommentDeletedItem).replies =
+      comment.id in parsedReplies ? parsedReplies[comment.id].sort((a, b) => Temporal.Instant.compare(a.date, b.date)) : [];
+  }
+
+  return sortedComments as (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)[];
+};
+
 export default {
   page: {
+    deleteComment: async (opts: API.Wiki.GetPagePayload, id: string) => {
+      return sessionFetch.json<API.Wiki.PostCommentResponse>(`/wiki/${opts.id}/page/${opts.pageId}/comment/${id}`, {
+        method: 'DELETE',
+      });
+    },
+    editComment: async (opts: API.Wiki.GetPagePayload, id: string, comment: string) => {
+      return sessionFetch.json<API.Wiki.PostCommentResponse>(`/wiki/${opts.id}/page/${opts.pageId}/comment/${id}`, {
+        body: JSON.stringify({ comment }),
+        method: 'PUT',
+      });
+    },
     get: async (opts: API.Wiki.GetPagePayload) => {
       const rawData = await sessionFetch.json<API.Wiki.GetPageResponse>(`/wiki/${opts.id}/page/${opts.pageId}`);
       return hydrateWikiPageData(rawData);
+    },
+    postComment: async (opts: API.Wiki.GetPagePayload, comment: string, replyTo?: string) => {
+      return sessionFetch.json<API.Wiki.PostCommentResponse>(`/wiki/${opts.id}/page/${opts.pageId}/comment`, {
+        body: JSON.stringify({ comment, replyTo }),
+        method: 'POST',
+      });
     },
   },
   wiki: {

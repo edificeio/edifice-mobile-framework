@@ -5966,7 +5966,7 @@ __metadata:
     react-native-image-pan-zoom: "npm:2.1.12"
     react-native-image-picker: "npm:8.2.1"
     react-native-keyboard-avoiding-scroll-view: "npm:1.0.1"
-    react-native-keyboard-controller: "npm:1.21.11"
+    react-native-keyboard-controller: "npm:1.22.4"
     react-native-layout-debug: "npm:1.1.1"
     react-native-localize: "npm:3.7.0"
     react-native-logs: "npm:5.6.0"
@@ -6021,6 +6021,7 @@ __metadata:
     unorm: "npm:1.6.0"
     whatwg-fetch: "npm:3.6.20"
     yargs: "npm:18.0.0"
+    zustand: "npm:5.0.15"
   languageName: unknown
   linkType: soft
 
@@ -13921,16 +13922,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-keyboard-controller@npm:1.21.11":
-  version: 1.21.11
-  resolution: "react-native-keyboard-controller@npm:1.21.11"
+"react-native-keyboard-controller@npm:1.22.4":
+  version: 1.22.4
+  resolution: "react-native-keyboard-controller@npm:1.22.4"
   dependencies:
     react-native-is-edge-to-edge: "npm:^1.2.1"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-reanimated: ">=3.0.0"
-  checksum: 10/4f6119207132cb837b4d3f02b60826907b8ea5d7440c3f1907bd256272a89cda0552d70f26b24918f663d91143df9723ebf6920a43e84139b4f65e133da853e8
+  checksum: 10/f4e8529622c231c9619ca72afa1e66444dfe7a2063b1392b4f37322007406da5e71b01bd26792d1972ae71968524eaf9393e8a5de10de1387b9e145ed0ecd812
   languageName: node
   linkType: hard
 
@@ -17001,5 +17002,26 @@ __metadata:
   version: 4.5.4
   resolution: "zod@npm:4.5.4"
   checksum: 10/b2fd4aaf358359650a1f27f303a462f0f49b4e5582f517ad8894ed566fdceb9da391b59babffe3c70574c8064174883735657eb28e12db5c7021455a631866c4
+  languageName: node
+  linkType: hard
+
+"zustand@npm:5.0.15":
+  version: 5.0.15
+  resolution: "zustand@npm:5.0.15"
+  peerDependencies:
+    "@types/react": ">=18.0.0"
+    immer: ">=9.0.6"
+    react: ">=18.0.0"
+    use-sync-external-store: ">=1.2.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    immer:
+      optional: true
+    react:
+      optional: true
+    use-sync-external-store:
+      optional: true
+  checksum: 10/5124e93d8f57483985981ea9795df6872991f0693eb3730d562b3cb09e72af8a892703f2610744e5814b2045f7373df3d6f80625a646197d700572f2c7f70db3
   languageName: node
   linkType: hard

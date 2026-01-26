@@ -228,8 +228,7 @@ const usePagination = <TItem, TCustomPlaceholderItem>({
 // # Paginated FlashList Component
 
 export interface PaginatedFlashListProps<TItem, TCustomPlaceholderItem = never>
-  extends
-    CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
+  extends CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
       FlashListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>,
       | 'onRefresh'
@@ -376,8 +375,7 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
 // # Paginated FlatList Component
 
 export interface PaginatedFlatListProps<TItem, TCustomPlaceholderItem = never>
-  extends
-    CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
+  extends CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
       FlatListProps<PaginatedListItem<TItem>>,
       | 'onRefresh'

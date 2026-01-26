@@ -11,7 +11,7 @@ const PageListBottomSheet = React.forwardRef<BottomSheetModalMethods, PageListBo
     }, [ref]);
 
     return (
-      <BottomSheetModal additionalTopInset={additionalTopInset} ref={ref} onDismiss={hidePagesBottomSheet} style={false}>
+      <BottomSheetModal additionalTopInset={additionalTopInset} ref={ref} onDismiss={hidePagesBottomSheet} gutters={false}>
         <PageList
           borderless={true}
           currentPageId={currentPageId}

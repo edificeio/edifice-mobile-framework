@@ -1,0 +1,191 @@
+import * as React from 'react';
+import { ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
+
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { KeyboardStickyView, KeyboardStickyViewProps, useKeyboardState } from 'react-native-keyboard-controller';
+import Animated, { AnimatedStyle } from 'react-native-reanimated';
+import { useSelector } from 'react-redux';
+
+import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
+import { SingleAvatar } from '~/framework/components/avatar';
+import { PrimaryButton, TerciaryButton } from '~/framework/components/button';
+import { UI_STYLES } from '~/framework/components/constants';
+import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
+import toast from '~/framework/components/toast';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
+
+import { CommentsThreadContext } from './context';
+import styles from './styles';
+import { CommentsThreadInternals, CommentsThreadProps } from './types';
+
+export const CommentsThreadAddForm = ({
+  onBlur,
+  onFocus,
+  onSubmit,
+  ref,
+  stickyOffset = {},
+  style,
+}: {
+  style?: AnimatedStyle<ViewStyle>;
+  onFocus?: ChatTextAreaProps['onFocus'];
+  onBlur?: ChatTextAreaProps['onBlur'];
+  onSubmit?: CommentsThreadProps['onSubmit'];
+  ref?: ChatTextAreaProps['ref'];
+  stickyOffset?: KeyboardStickyViewProps['offset'];
+}) => {
+  const [{ newCommentValue }, dispatch] = React.useContext(CommentsThreadContext);
+  const [isSending, setIsSending] = React.useState(false);
+  const onPress = React.useCallback(async () => {
+    if (!onSubmit) return;
+    try {
+      setIsSending(true);
+      await onSubmit({ content: newCommentValue, isRichContent: false });
+      dispatch({ newCommentValue: '' });
+    } catch {
+      toast.showError();
+    } finally {
+      setIsSending(false);
+    }
+  }, [dispatch, newCommentValue, onSubmit]);
+  const session = useSelector(selectors.session);
+
+  return (
+    <Animated.View
+      style={style}
+      onLayout={React.useCallback(
+        ({ nativeEvent: { layout } }) => {
+          dispatch({ newCommentHeight: layout.height });
+        },
+        [dispatch],
+      )}>
+      <KeyboardStickyView offset={stickyOffset}>
+        <View style={styles.stickyCommentWrapper}>
+          <SingleAvatar size="md" userId={session?.user.id} />
+          <ChatTextArea
+            ref={ref}
+            maxLength={80}
+            wrapperStyle={[UI_STYLES.flex1]}
+            value={newCommentValue}
+            onChangeText={React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
+              text => {
+                dispatch({ newCommentValue: text });
+              },
+              [dispatch],
+            )}
+            editable={!isSending}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            placeholder={I18n.get('comment-add-comment')}
+          />
+          <PrimaryButton
+            onPress={onPress}
+            testID="comment-add"
+            disabled={!newCommentValue.length}
+            icon="ui-send"
+            loading={isSending}
+          />
+        </View>
+      </KeyboardStickyView>
+    </Animated.View>
+  );
+};
+
+// ToDo : refacto these components
+
+export const CommentsThreadEditForm = ({
+  listRef,
+  onBlur,
+  onFocus,
+  onSubmit,
+  ref,
+  style: _style,
+  ...info
+}: {
+  style?: StyleProp<ViewStyle>;
+  onFocus?: ChatTextAreaProps['onFocus'];
+  onBlur?: ChatTextAreaProps['onBlur'];
+  onSubmit?: CommentsThreadProps['onEdit'];
+  ref?: ChatTextAreaProps['ref'];
+} & ListRenderItemInfo<CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem> &
+  Pick<CommentsThreadInternals.ItemProps, 'listRef'>) => {
+  const scrollToAllowed = React.useRef(true);
+  const [{ editId, editValue }, dispatch] = React.useContext(CommentsThreadContext);
+  const [isSending, setIsSending] = React.useState(false);
+  const onPress = React.useCallback(async () => {
+    if (!onSubmit || editValue === undefined || editId === undefined) return;
+    try {
+      setIsSending(true);
+      await onSubmit({ content: editValue, isRichContent: false }, editId);
+      dispatch({ editHasChanges: undefined, editId: undefined, editValue: undefined });
+    } catch {
+      toast.showError();
+    } finally {
+      setIsSending(false);
+    }
+  }, [dispatch, editId, editValue, onSubmit]);
+
+  const onCancel = React.useCallback(async () => {
+    dispatch({ editHasChanges: undefined, editId: undefined, editValue: undefined });
+  }, [dispatch]);
+
+  const style = React.useMemo(() => [styles.nonStickyEditWrapper, _style], [_style]);
+  const buttonsStyle = React.useMemo(() => [styles.itemContentButtons, styles.itemContentButtonsEdit], []);
+
+  // Note: FlashList and FlatList have opposite behavior of scroll offset. The first line is for FlashList, the second is for FlatList.
+  // const viewOffset = useKeyboardState(state => state.height) - useBottomTabBarHeight();
+  const viewOffset = -useKeyboardState(state => state.height) + useBottomTabBarHeight();
+
+  const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
+    text => {
+      if (editValue === undefined || editId === undefined) return;
+      dispatch({ editHasChanges: text !== info.item.content, editId, editValue: text });
+      if (scrollToAllowed.current === true) {
+        listRef?.current?.scrollToIndex({ animated: true, index: info.index, viewOffset, viewPosition: 1 });
+        scrollToAllowed.current = false;
+        setTimeout(() => {
+          scrollToAllowed.current = true;
+        }, 500);
+      }
+    },
+    [dispatch, editId, editValue, info.index, info.item.content, listRef, viewOffset],
+  );
+
+  return (
+    editId !== undefined &&
+    editValue !== undefined && (
+      <View style={style}>
+        <ChatTextArea
+          ref={ref}
+          maxLength={80}
+          wrapperStyle={UI_STYLES.flex1}
+          value={editValue}
+          onChangeText={onChangeText}
+          editable={!isSending}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          placeholder={I18n.get('comment-add-response')}
+        />
+        <View style={buttonsStyle}>
+          <TerciaryButton
+            // Note : very ugly workaround because of this one-time specific gray terciary button that is a single one of all its brood
+            // @ts-ignore
+            contentColor={theme.palette.grey.black}
+            contentColorActive={theme.palette.grey.darkness}
+            text={I18n.get('comment-cancel')}
+            testID="comment-cancel"
+            onPress={onCancel}
+            disabled={isSending}
+          />
+          <TerciaryButton
+            text={I18n.get('comment-save')}
+            testID="comment-save"
+            onPress={onPress}
+            loading={isSending}
+            disabled={editValue.length === 0}
+          />
+        </View>
+      </View>
+    )
+  );
+};

@@ -7,7 +7,6 @@ export const BUTTON_ICON_SIZE = UI_SIZES.elements.icon.small;
 export default StyleSheet.create({
   commonView: {
     alignItems: 'center',
-    alignSelf: 'center',
     columnGap: UI_SIZES.spacing.minor,
     flexDirection: 'row',
     justifyContent: 'center',

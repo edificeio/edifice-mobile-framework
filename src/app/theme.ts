@@ -137,6 +137,7 @@ export interface ITheme {
       Personnel: ColorValue;
       Teacher: ColorValue;
       Guest: ColorValue;
+      External: ColorValue;
     };
   };
   media: { [key in MediaType | 'default']: IntentIcon };
@@ -246,6 +247,7 @@ export const defaultTheme: ThemeInitializer = {
         unread: this.palette.secondary.pale,
       },
       profileTypes: {
+        External: this.palette.grey.stone,
         Guest: this.palette.complementary.pink.regular,
         Personnel: this.palette.complementary.purple.regular,
         Relative: this.palette.complementary.blue.regular,

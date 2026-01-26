@@ -28,14 +28,13 @@ const FontWeightIOS = {
   Normal: '400',
 };
 
-type TextFontStyleKey = 'Regular' | 'Italic' | 'Bold' | 'BoldItalic';
 export const TextFontStyle = Platform.select({
   android: {
     Bold: { color: theme.ui.text.regular, fontFamily: `${textFontFamilyPrefixAndroid}bold` },
     BoldItalic: { color: theme.ui.text.regular, fontFamily: `${textFontFamilyPrefixAndroid}bolditalic` },
     Italic: { color: theme.ui.text.regular, fontFamily: `${textFontFamilyPrefixAndroid}italic` },
     Regular: { color: theme.ui.text.regular, fontFamily: `${textFontFamilyPrefixAndroid}regular` },
-  },
+  } as const,
   ios: {
     Bold: { color: theme.ui.text.regular, fontFamily: textFontFamilyIOS, fontWeight: FontWeightIOS.Bold },
     BoldItalic: {
@@ -46,8 +45,8 @@ export const TextFontStyle = Platform.select({
     },
     Italic: { color: theme.ui.text.regular, fontFamily: textFontFamilyIOS, fontStyle: 'italic' },
     Regular: { color: theme.ui.text.regular, fontFamily: textFontFamilyIOS },
-  },
-})! as { [key in TextFontStyleKey]: TextStyle };
+  } as const,
+})!;
 
 type HeadingFontStyleKey = 'Bold';
 export const HeadingFontStyle = Platform.select({

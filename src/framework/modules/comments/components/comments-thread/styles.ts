@@ -1,0 +1,189 @@
+import { StyleSheet } from 'react-native';
+
+import theme from '~/app/theme';
+import { AvatarSizes } from '~/framework/components/avatar/styles';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+
+export const COMMENT_FORM_OVERSCROLL_SIZE = UI_SIZES.spacing.huge;
+
+export default StyleSheet.create({
+  buttonCancel: {
+    color: theme.palette.grey.black,
+  },
+  emptyBorderBottom: {
+    backgroundColor: theme.palette.grey.cloudy,
+    height: UI_SIZES.border.thin,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  emptyBorderTop: {
+    backgroundColor: theme.palette.grey.cloudy,
+    bottom: 0,
+    height: UI_SIZES.border.thin,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+  emptyDeco: {
+    flex: 0,
+    height: getScaleWidth(40),
+    width: getScaleWidth(50),
+  },
+  emptyDecoBackground: {
+    alignSelf: 'center',
+    height: getScaleWidth(92),
+    left: -UI_SIZES.spacing.tiny,
+    position: 'absolute',
+    transform: [{ scaleX: -1 }],
+    width: getScaleWidth(46),
+  },
+  emptyDescription: {
+    color: theme.palette.grey.graphite,
+  },
+  emptyTexts: { flex: 1, flexDirection: 'column' },
+  emptyTitle: {},
+  emptyWrapper: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.medium,
+    marginBottom: -UI_SIZES.border.thin,
+    overflow: 'hidden',
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
+  itemAuthor: {
+    flexShrink: 1,
+  },
+  itemComment: {
+    borderColor: theme.palette.grey.cloudy,
+    borderTopWidth: UI_SIZES.border.thin,
+    paddingTop: UI_SIZES.spacing.small - UI_SIZES.border.thin,
+  },
+  itemCommentContentWrapper: { flex: 1, gap: UI_SIZES.spacing.tiny, paddingBottom: UI_SIZES.spacing.minor },
+  itemCommentContentWrapperDeletedComment: { paddingBottom: 0 },
+  itemCommentEdit: {
+    gap: 0,
+  },
+  itemCommon: {
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.big,
+  },
+  itemContentButtons: { flexDirection: 'row', gap: UI_SIZES.spacing.minor, justifyContent: 'flex-start' },
+  itemContentButtonsEdit: { justifyContent: 'space-between' },
+  itemContentDeletedText: {
+    borderColor: theme.palette.grey.pearl,
+    borderWidth: UI_SIZES.border.small,
+  },
+  itemContentText: {
+    backgroundColor: theme.palette.grey.fog,
+    borderRadius: UI_SIZES.radius.medium,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
+  itemDate: {
+    color: theme.palette.grey.graphite,
+    flex: 0,
+    marginLeft: UI_SIZES.spacing.minor,
+  },
+  itemRepliesUnfoldButtonWrapper: {
+    alignItems: 'flex-start',
+    marginLeft: -UI_SIZES.spacing.medium, // Compensate Ghost Button padding to align inner text
+    paddingVertical: UI_SIZES.spacing.tiny,
+  },
+  itemReply: {},
+  itemReplyAvatar: { paddingTop: UI_SIZES.spacing.small },
+  itemReplyContentWrapper: { flex: 1, gap: UI_SIZES.spacing.tiny, paddingVertical: UI_SIZES.spacing.small },
+  itemReplyDeleted: {
+    gap: 0, // reset gap for deleted replies
+  },
+  itemTreeComment: { gap: UI_SIZES.spacing.minor - UI_SIZES.border.small },
+  itemTreeCommon: { alignItems: 'center', flex: 0, flexBasis: AvatarSizes.xsm, flexDirection: 'column' },
+  itemTreeDecoCurveCenter: {
+    marginBottom: AvatarSizes.xsm / 4 + UI_SIZES.border.small * 2,
+  },
+  itemTreeDecoCurveCommon: {
+    alignSelf: 'stretch',
+    borderBottomLeftRadius: UI_SIZES.radius.newCard,
+    borderBottomWidth: UI_SIZES.border.small,
+    borderColor: theme.palette.grey.cloudy,
+    borderLeftWidth: UI_SIZES.border.small,
+
+    height: AvatarSizes.xsm / 2 + UI_SIZES.border.small / 2,
+    marginLeft: AvatarSizes.xsm / 2 - UI_SIZES.border.small / 2,
+    marginRight: -UI_SIZES.spacing.tiny,
+  },
+  itemTreeDecoCurveForm: {
+    height: UI_SIZES.spacing.small + 2 * UI_SIZES.border.small + AvatarSizes.sm / 2,
+  },
+  itemTreeDecoCurveTop: {
+    height: UI_SIZES.spacing.small + UI_SIZES.border.small / 2 + AvatarSizes.xsm / 2 + UI_SIZES.border.small / 2,
+  },
+  itemTreeDecoStraight: {
+    backgroundColor: theme.palette.grey.cloudy,
+    bottom: 0,
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    width: UI_SIZES.border.small,
+  },
+  itemTreeDecoStraightComment: {
+    top: AvatarSizes.xsm + UI_SIZES.spacing.minor - UI_SIZES.border.small,
+  },
+  itemTreeDecoStraightTop: {
+    bottom: '50%',
+    marginBottom: UI_SIZES.spacing.small - UI_SIZES.border.small / 2,
+  },
+  itemTreeReply: {
+    marginRight: UI_SIZES.spacing.tiny,
+  },
+  itemTreeReplyDeleted: {
+    justifyContent: 'center',
+  },
+  itemUserHeader: {
+    alignItems: 'baseline',
+    flexDirection: 'row',
+  },
+  nonStickyEditWrapper: {
+    alignItems: 'stretch',
+    // backgroundColor: theme.ui.background.card,
+    // borderTopColor: theme.palette.grey.cloudy,
+    // borderTopWidth: UI_SIZES.border.thin,
+    flex: 1,
+    flexDirection: 'column',
+    // gap: UI_SIZES.spacing.minor,
+    // marginBottom: -COMMENT_FORM_OVERSCROLL_SIZE,
+    // paddingBottom: UI_SIZES.spacing.medium + COMMENT_FORM_OVERSCROLL_SIZE,
+    // paddingVertical: UI_SIZES.spacing.tiny,
+    // paddingTop: UI_SIZES.spacing.medium,
+  },
+  nonStickyReplyWrapper: {
+    alignItems: 'flex-end',
+    // backgroundColor: theme.ui.background.card,
+    // borderTopColor: theme.palette.grey.cloudy,
+    // borderTopWidth: UI_SIZES.border.thin,
+    flex: 1,
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.minor,
+    // marginBottom: -COMMENT_FORM_OVERSCROLL_SIZE,
+    // paddingBottom: UI_SIZES.spacing.medium + COMMENT_FORM_OVERSCROLL_SIZE,
+    paddingVertical: UI_SIZES.spacing.small,
+    // paddingTop: UI_SIZES.spacing.medium,
+  },
+  page: { backgroundColor: theme.ui.background.page },
+  stickyCommentWrapper: {
+    alignItems: 'flex-end',
+    backgroundColor: theme.ui.background.card,
+    borderTopColor: theme.palette.grey.cloudy,
+    borderTopWidth: UI_SIZES.border.thin,
+    flex: 0,
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.minor,
+    marginBottom: -COMMENT_FORM_OVERSCROLL_SIZE,
+    paddingBottom: UI_SIZES.spacing.medium + COMMENT_FORM_OVERSCROLL_SIZE,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
+  },
+});
