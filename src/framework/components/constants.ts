@@ -39,6 +39,10 @@ const getScaleDimension = (dimension: number, type: ScaleDimensionType) =>
       ),
   );
 
+// const getScaleDimension = (dimension: number, type: ScaleDimensionType) => dimension;
+
+// const getScaleDimension = (dimension: number, type: ScaleDimensionType) => dimension;
+
 export const getScaleFontSize = (size: number) => getScaleDimension(size, ScaleDimensionType.FONT);
 
 export const getScaleHeight = (height: number) => getScaleDimension(height, ScaleDimensionType.HEIGHT);
