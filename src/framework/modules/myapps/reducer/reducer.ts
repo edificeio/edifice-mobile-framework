@@ -1,4 +1,10 @@
-import { appsInfoActionTypes, FetchErrorAction, FetchSuccessAction, ToggleFavoriteAction } from './action-types';
+import {
+  appsInfoActionTypes,
+  FetchErrorAction,
+  FetchSuccessAction,
+  SaveGroupedFavoritesSuccessAction,
+  ToggleFavoriteAction,
+} from './action-types';
 import { computeNextBookmarks } from './adapter';
 
 import { Reducers } from '~/app/store';
@@ -13,21 +19,19 @@ export const appsInfoInitialState: AppsInfoState = {
     applications: [],
     bookmarks: [],
   },
+  isSavingFavorites: false,
   loading: false,
+  showAllApps: false,
 };
 
 const reducer = createReducer(appsInfoInitialState, {
-  [appsInfoActionTypes.fetchStart]: state => {
-    return {
-      ...state,
-      error: undefined,
-      loading: true,
-    };
-  },
-
+  [appsInfoActionTypes.fetchStart]: state => ({
+    ...state,
+    error: undefined,
+    loading: true,
+  }),
   [appsInfoActionTypes.fetchSuccess]: (state, action) => {
-    const { appsConfig, appsInfo, favorites } = (action as unknown as FetchSuccessAction).payload;
-
+    const { appsConfig, appsInfo, favorites } = (action as FetchSuccessAction).payload;
     return {
       ...state,
       appsConfig,
@@ -36,19 +40,13 @@ const reducer = createReducer(appsInfoInitialState, {
       loading: false,
     };
   },
-
-  [appsInfoActionTypes.fetchError]: (state, action) => {
-    const { error } = action as unknown as FetchErrorAction;
-
-    return {
-      ...state,
-      error,
-      loading: false,
-    };
-  },
+  [appsInfoActionTypes.fetchError]: (state, action) => ({
+    ...state,
+    error: (action as FetchErrorAction).error,
+    loading: false,
+  }),
   [appsInfoActionTypes.toggleFavorite]: (state, action) => {
     const { appName } = action as ToggleFavoriteAction;
-
     return {
       ...state,
       favorites: {
@@ -57,6 +55,31 @@ const reducer = createReducer(appsInfoInitialState, {
       },
     };
   },
+  [appsInfoActionTypes.saveGroupedFavoritesStart]: state => ({
+    ...state,
+    isSavingFavorites: true,
+  }),
+
+  [appsInfoActionTypes.saveGroupedFavoritesSuccess]: (state, action) => {
+    const { bookmarks } = action as SaveGroupedFavoritesSuccessAction;
+    return {
+      ...state,
+      favorites: {
+        ...state.favorites,
+        bookmarks,
+      },
+      isSavingFavorites: false,
+    };
+  },
+
+  [appsInfoActionTypes.saveGroupedFavoritesError]: state => ({
+    ...state,
+    isSavingFavorites: false,
+  }),
+  [appsInfoActionTypes.toggleAllApps]: state => ({
+    ...state,
+    showAllApps: !state.showAllApps,
+  }),
 });
 
 Reducers.register(moduleConfig.reducerName, reducer);

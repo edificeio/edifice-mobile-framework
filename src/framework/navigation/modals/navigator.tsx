@@ -15,6 +15,10 @@ import { infosNavBar, InfosScreen, logNavBar, LogScreen, networkNavBar, NetworkS
 import AttachmentsImportScreen, {
   computeNavBar as AttachmentsImportAddNavBar,
 } from '~/framework/modules/mails/components/attachments/modal-import';
+import {
+  computeNavBar as ManageFavoritesAddNavbar,
+  ManageFavoritesModalScreen,
+} from '~/framework/modules/myAppMenu/components/manage-favorite-modal';
 import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
@@ -66,6 +70,11 @@ export default (
         component={SplashadsScreen}
         initialParams={{}}
       />
+      <RootStack.Screen
+        name={ModalsRouteNames.FavoritesManagement}
+        options={ManageFavoritesAddNavbar}
+        component={ManageFavoritesModalScreen}
+      />
     </RootStack.Group>
   </>
 );
@@ -83,6 +92,7 @@ setModalModeForRoutes([
   ModalsRouteNames.Pdf,
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.SplashAds,
+  ModalsRouteNames.FavoritesManagement,
 ]);
 
 setCrossIconBlackForRoutes([ModalsRouteNames.FileImport, ModalsRouteNames.SplashAds]);

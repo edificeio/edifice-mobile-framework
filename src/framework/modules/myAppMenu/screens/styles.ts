@@ -1,0 +1,15 @@
+import { StyleSheet } from 'react-native';
+
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+
+export const styles = StyleSheet.create({
+  bottomSheetContainer: {
+    paddingBottom: UI_SIZES.spacing.large,
+  },
+  separatorLine: {
+    backgroundColor: theme.palette.grey.cloudy,
+    height: 1,
+    width: '100%',
+  },
+});

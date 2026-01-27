@@ -3,18 +3,30 @@ import { resolveAppCategory } from './adapter';
 import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { appsInfoInitialState } from '~/framework/modules/myapps/reducer/reducer';
-import { AppsInfoAggregated, AppsInfoWithCategory, MyAppsFilter } from '~/framework/modules/myapps/types';
+import { AppBookmarks, AppsInfoAggregated, AppsInfoWithCategory, MyAppsFilter } from '~/framework/modules/myapps/types';
 import { getAppName } from '~/framework/modules/myapps/utils';
 
 export const selectAppsState = (state: IGlobalState) => {
   return moduleConfig.getState(state) ?? appsInfoInitialState;
 };
 
+export const selectIsSavingFavorites = (state: IGlobalState): boolean => Boolean(selectAppsState(state).isSavingFavorites);
+
+export const selectAppBookmarks = (state: IGlobalState): AppBookmarks => {
+  const slice = selectAppsState(state);
+  return slice.favorites;
+};
+
+export const getAllappsShowedState = (state: IGlobalState): boolean => {
+  const { showAllApps } = selectAppsState(state);
+  return Boolean(showAllApps);
+};
+
 export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] => {
   const slice = selectAppsState(state);
   const appsConfig = slice?.appsConfig ?? [];
   const appsInfo = slice?.appsInfo ?? [];
-  const favorites = slice.favorites;
+  const favorites = selectAppBookmarks(state);
   const configByName = new Map(appsConfig.map(c => [c.name, c]));
 
   return appsInfo

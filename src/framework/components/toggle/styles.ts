@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
@@ -16,6 +16,9 @@ export const styles = StyleSheet.create({
   containerChecked: {
     backgroundColor: theme.palette.primary.regular,
     borderColor: theme.palette.primary.regular,
+  },
+  disabledThumb: {
+    backgroundColor: Platform.select({ android: theme.palette.primary.light, ios: theme.palette.primary.regular }),
   },
   thumb: {
     backgroundColor: theme.palette.grey.stone,

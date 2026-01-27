@@ -23,22 +23,11 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   const isFavorite = React.useMemo(() => app.isFavorite, [app.isFavorite]);
   const { animatedFavoriteStyle, imageDimensions } = useController(isFavorite);
 
-  const imageDimensions = React.useMemo(
-    () => ({
-      height: UI_SIZES.spacing.huge,
-      width: UI_SIZES.spacing.huge,
-    }),
-    [],
-  );
-
-  const imageSource = React.useMemo(
-    () => (icon ? sessionImageSource(injectImageSource({ uri: icon }, imageDimensions)) : undefined),
-    [icon, imageDimensions],
-  );
-
-  const svgIconName = useMemo(() => {
-    if (!icon) return null;
-    if (isImageDistant(icon)) return null;
+  const svgIconName = React.useMemo(() => {
+    if (!icon || isImageDistant(icon)) return null;
+    if (!icon.includes('/') && !icon.includes('.')) return icon;
+    return null;
+  }, [icon, isImageDistant]);
 
   const imageSource = React.useMemo(() => {
     if (!icon || svgIconName) return undefined;
@@ -68,10 +57,7 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
     }
 
     return <Image source={imageSource} style={styles.image} />;
-  }, [imageSource, icon, svgIconName, styles.image]);
-
-  const renderFavoriteBadge = useCallback(() => {
-    if (!app.isFavorite) return null;
+  }, [icon, svgIconName, imageSource, styles.image]);
 
   const renderFavoriteBadge = React.useCallback(() => {
     return (
@@ -82,22 +68,15 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   }, [animatedFavoriteStyle, styles.favoriteIcon]);
 
   return (
-    <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={styles.wrapper}>
-      <View style={styles.card}>
-        {renderFavoriteBadge()}
-        {renderIcon()}
-      </Pressable>
-
-      <View style={styles.titleRow}>
-        <BodyText numberOfLines={2} style={styles.title}>
-          {app.displayName}
-        </BodyText>
-
-          {canShowWebIcon && (
-            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="#000" />
-          )}
+    <Pressable
+      onPress={onPress}
+      onLongPress={onLongPress}
+      style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}>
+      <View style={styles.contentContainer}>
+        <View style={styles.card}>
+          {renderFavoriteBadge()}
+          {renderIcon()}
         </View>
-      </View>
 
         <View style={styles.titleRow}>
           <BodyText numberOfLines={2} style={styles.title}>
@@ -105,7 +84,7 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
           </BodyText>
 
           {canShowWebIcon && (
-            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="black" />
+            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="#000" />
           )}
         </View>
       </View>

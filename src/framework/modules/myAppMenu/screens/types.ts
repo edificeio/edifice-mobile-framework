@@ -10,3 +10,5 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
 }
 
 export type MyAppsEmptyScreenConfig = Record<'favorites' | 'search' | 'other', { title: string; text: string }>;
+
+export type BottomSheetMode = 'home_menu' | 'app_actions';

@@ -3,58 +3,43 @@ import { View } from 'react-native';
 
 import { FlashList } from '@shopify/flash-list';
 
-import { MyAppsCard } from '../my-apps-card';
 import { styles } from './styles';
 import { MyAppsListItem, MyAppsListProps } from './types';
 import { buildAppItem, buildFavoritesList, isSeparator } from './utils';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import {
-  LOADING_ITEM_DATA,
-  PaginatedFlashList,
-  PaginatedFlashListProps,
-  PaginatedListItem,
-} from '~/framework/components/list/paginated-list';
 import { SmallBoldText } from '~/framework/components/text';
+import { MyAppsCard } from '~/framework/modules/myAppMenu/components';
 
 const NUM_COLUMNS = 2;
-const PAGE_SIZE = 20;
 
 export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongPressApp, onPressApp }: MyAppsListProps) => {
-  const appsListRef = React.useRef<FlashList<PaginatedListItem<MyAppsListItem>>>(null);
+  const appsListRef = React.useRef<FlashList<MyAppsListItem>>(null);
+  const { text, title } = emptyScreenConfig;
 
   const data: MyAppsListItem[] = React.useMemo(() => {
-    if (!isFavoritesFilter) {
-      return apps.map(buildAppItem);
-    }
-
-    return buildFavoritesList(apps);
+    return isFavoritesFilter ? buildFavoritesList(apps) : apps.map(buildAppItem);
   }, [apps, isFavoritesFilter]);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<MyAppsListItem>['keyExtractor']>>((item, index) => {
-    if (isSeparator(item)) return `separator-${index}`;
-    return item.app.name;
-  }, []);
-
-  const getItemType = React.useCallback<NonNullable<PaginatedFlashListProps<MyAppsListItem>['getItemType']>>(item => item.type, []);
-
-  const overrideItemLayout = React.useCallback<NonNullable<PaginatedFlashListProps<MyAppsListItem>['overrideItemLayout']>>(
-    (layout, item) => {
-      if (item === LOADING_ITEM_DATA) return;
-
-      if (item.type === 'separator') {
-        layout.span = NUM_COLUMNS;
-        layout.size = 40;
-      } else {
-        layout.span = 1;
-      }
-    },
+  const keyExtractor = React.useCallback(
+    (item: MyAppsListItem, index: number) => (isSeparator(item) ? `separator-${index}` : item.app.name),
     [],
   );
 
-  const renderItem = React.useCallback<PaginatedFlashListProps<MyAppsListItem>['renderItem']>(
-    ({ item }) => {
+  const getItemType = React.useCallback((item: MyAppsListItem) => item.type, []);
+
+  const overrideItemLayout = React.useCallback((layout, item: MyAppsListItem) => {
+    if (item.type === 'separator') {
+      layout.span = NUM_COLUMNS;
+      layout.size = 40;
+    } else {
+      layout.span = 1;
+    }
+  }, []);
+
+  const renderItem = React.useCallback(
+    ({ item }: { item: MyAppsListItem }) => {
       if (isSeparator(item)) {
         return (
           <View style={styles.separatorContainer}>
@@ -64,33 +49,36 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongP
         );
       }
 
-      return <MyAppsCard app={item.app} onPress={() => onPressApp(item.app)} onLongPress={() => onLongPressApp?.(item.app)} />;
+      return (
+        <MyAppsCard
+          isFavoritesFilter={isFavoritesFilter}
+          app={item.app}
+          onPress={() => onPressApp(item.app)}
+          onLongPress={() => onLongPressApp?.(item.app)}
+        />
+      );
     },
-    [onLongPressApp, onPressApp],
+    [isFavoritesFilter, onPressApp, onLongPressApp],
   );
 
-  if (!data.length) {
-    const { text, title } = emptyScreenConfig;
-    return (
-      <View style={styles.emptyContainer}>
-        <EmptyScreen svgImage="empty-search" title={I18n.get(title)} text={I18n.get(text)} />
-      </View>
-    );
-  }
-
   return (
-    <PaginatedFlashList
+    <FlashList
       ref={appsListRef}
       data={data}
-      pageSize={PAGE_SIZE}
       numColumns={NUM_COLUMNS}
+      estimatedItemSize={120}
       keyExtractor={keyExtractor}
-      contentContainerStyle={styles.content}
+      renderItem={renderItem}
       getItemType={getItemType}
       overrideItemLayout={overrideItemLayout}
-      renderItem={renderItem}
-      renderPlaceholderItem={() => <View style={[styles.item, styles.placeholder]} />}
+      contentContainerStyle={styles.content}
+      ListEmptyComponent={
+        <View style={styles.emptyContainer}>
+          <EmptyScreen svgImage="empty-search" title={I18n.get(title)} text={I18n.get(text)} />
+        </View>
+      }
     />
   );
 };
+
 export default MyAppsList;

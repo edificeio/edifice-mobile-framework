@@ -1,5 +1,11 @@
 import { MyAppsFilter } from '~/framework/modules/myapps/types';
 
+/**
+ * To add new category we do it here after creating the I18n key
+ * and update the @type {MyAppsCategories} in ~/framework/modules/myapps/types
+ * and thats it.
+ */
+
 export const MY_APPS_FILTER_LABEL_KEYS = {
   all: 'myapp-home-filter-all',
   communication: 'myapp-home-filter-communication',
@@ -18,6 +24,8 @@ export interface MyAppsFilterItem {
   filter: MyAppsFilter;
   labelKey: MyAppsFilterLabelKey;
 }
+
+//:Record<keyof MyAppsFilterLabelKeyMap, MyAppsFilterItem>;
 
 export const MY_APPS_FILTER_CONFIG = {
   all: {
@@ -50,7 +58,7 @@ export const MY_APPS_FILTER_CONFIG = {
   },
 } as const;
 
-export const MY_APPS_FILTERS: readonly MyAppsFilterItem[] = [
+export const MY_APPS_FILTERS: Readonly<MyAppsFilterItem[]> = [
   MY_APPS_FILTER_CONFIG.all,
   MY_APPS_FILTER_CONFIG.favorites,
   MY_APPS_FILTER_CONFIG.communication,
@@ -59,14 +67,3 @@ export const MY_APPS_FILTERS: readonly MyAppsFilterItem[] = [
   // MY_APPS_FILTER_CONFIG.libraries,
   MY_APPS_FILTER_CONFIG.servicesExternes,
 ];
-
-export const resolveFilterLabelKey = (filter: MyAppsFilter): MyAppsFilterLabelKey => {
-  if (filter.type === 'favorites') {
-    return MY_APPS_FILTER_CONFIG.favorites.labelKey;
-  }
-
-  return (
-    MY_APPS_FILTERS.find(item => item.filter.type === 'category' && item.filter.value === filter.value)?.labelKey ??
-    MY_APPS_FILTER_CONFIG.servicesExternes.labelKey
-  );
-};

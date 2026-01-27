@@ -6,7 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { styles, TRANSLATE_X_OFF, TRANSLATE_X_ON } from './styles';
 import { ToggleProps } from './types';
 
-export const Toggle: React.FC<ToggleProps> = ({ checked, onChange }) => {
+export const Toggle: React.FC<ToggleProps> = ({ checked, disabled = false, onChange }) => {
   const translateX = useSharedValue(checked ? TRANSLATE_X_ON : TRANSLATE_X_OFF);
 
   useEffect(() => {
@@ -18,8 +18,11 @@ export const Toggle: React.FC<ToggleProps> = ({ checked, onChange }) => {
   }));
 
   return (
-    <Pressable onPress={() => onChange(!checked)} style={[styles.container, checked && styles.containerChecked]}>
-      <Animated.View style={[styles.thumb, checked && styles.thumbChecked, thumbAnimatedStyle]} />
+    <Pressable
+      disabled={disabled}
+      onPress={() => onChange(!checked)}
+      style={[styles.container, checked && styles.containerChecked]}>
+      <Animated.View style={[styles.thumb, checked && styles.thumbChecked, disabled && styles.disabledThumb, thumbAnimatedStyle]} />
     </Pressable>
   );
 };

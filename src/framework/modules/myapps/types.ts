@@ -51,6 +51,8 @@ export interface AppsInfoState {
   favorites: AppBookmarks;
   loading: boolean;
   error?: string;
+  showAllApps: boolean;
+  isSavingFavorites?: boolean;
 }
 
 export interface AppsInfoActionPayloads {
