@@ -3,19 +3,18 @@
  */
 import React from 'react';
 
+import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-
-import { selectors } from '../reducer';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { sessionScreen } from '~/framework/components/screen';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
+import { selectors } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { useIsFocused } from '@react-navigation/native';
 
 // # Props
 
@@ -23,8 +22,7 @@ export namespace BlogExplorerScreen {
   export interface NavParams extends ResourceExplorerTemplate.NavParams {}
   export type NavigationProps = NativeStackScreenProps<BlogNavigationParams, 'blogExplorer'>;
   export interface AllProps
-    extends Omit<ResourceExplorerTemplate.ScreenProps, keyof ResourceExplorerTemplate.NavigationProps>,
-      NavigationProps {}
+    extends Omit<ResourceExplorerTemplate.ScreenProps, keyof ResourceExplorerTemplate.NavigationProps>, NavigationProps {}
 }
 
 // # NavBar

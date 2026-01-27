@@ -4,11 +4,10 @@ import { StyleSheet } from 'react-native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Pdf, { PdfProps } from 'react-native-pdf';
 
-import { PageView } from '../page';
-
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { PageView } from '~/framework/components/page';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';

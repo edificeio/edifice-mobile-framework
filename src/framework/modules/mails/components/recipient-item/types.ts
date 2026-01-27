@@ -1,4 +1,4 @@
-import { MailsRecipientGroupInfo, MailsRecipientInfo, MailsVisible } from '../../model';
+import { MailsRecipientGroupInfo, MailsRecipientInfo, MailsVisible } from '~/framework/modules/mails/model';
 
 export interface MailsRecipientContainerProps {
   disabled?: boolean;

@@ -1,7 +1,13 @@
 import { combineReducers, Reducer } from 'redux';
 
 import moduleConfig from './module-config';
-import { createExplorerActions, createExplorerReducer, createExplorerSelectors, ExplorerState } from '../explorer/store';
+
+import {
+  createExplorerActions,
+  createExplorerReducer,
+  createExplorerSelectors,
+  ExplorerState,
+} from '~/framework/modules/explorer/store';
 
 export interface ScrapbookStore {
   explorer: ExplorerState;

@@ -4,12 +4,12 @@ import { ReactVideoSourceProperties } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { getAuthenticationHeaderForAccount, getDeviceHeaders, getUrlWithBase } from './common';
-import { isRequireSource } from '../media';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
+import { isRequireSource } from '~/framework/util/media';
 
 // # DEVICE FETCH
 

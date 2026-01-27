@@ -16,7 +16,6 @@ import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeho
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
-import { useCommunityBannerHeight } from '../../hooks/use-community-navbar/community-navbar/component';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';

@@ -3,7 +3,6 @@ import { Animated, Keyboard, Platform, TextInput as RNTextInput, TouchableOpacit
 
 import debounce from 'lodash.debounce';
 
-import styles from '../styles';
 import { MailsContactFieldProps } from './types';
 
 import { I18n } from '~/app/i18n';
@@ -15,6 +14,7 @@ import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import MailsContactItem from '~/framework/modules/mails/components/contact-item';
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
+import styles from '~/framework/modules/mails/components/fields/styles';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
 import { HEIGHT_RECIPIENT_CONTAINER } from '~/framework/modules/mails/components/recipient-item/container/styles';
 import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';

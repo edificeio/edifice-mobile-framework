@@ -5,8 +5,7 @@ import DocumentPicker, { DocumentPickerResponse } from '@react-native-documents/
 import moment from 'moment';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
 
-import { openDocument } from '../actions';
-
+import { openDocument } from '~/framework/util/fileHandler/actions';
 import { Asset } from '~/framework/util/fileHandler/types';
 import { assertPermissions } from '~/framework/util/permissions';
 

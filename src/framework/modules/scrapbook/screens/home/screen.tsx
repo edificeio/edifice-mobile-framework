@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useHeaderHeight } from '@react-navigation/elements';
 
 import { ScrapbookHomeScreenProps } from './types';
-import { selectors } from '../../store';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -14,6 +13,7 @@ import ResourceExplorerTemplate, {
 } from '~/framework/modules/explorer/templates/resource-explorer/screen';
 import moduleConfig from '~/framework/modules/scrapbook/module-config';
 import { scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
+import { selectors } from '~/framework/modules/scrapbook/store';
 
 export const computeNavBar = createResourceExplorerNavBar('scrapbook-appname', selectors.explorer);
 

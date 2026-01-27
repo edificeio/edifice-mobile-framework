@@ -19,11 +19,9 @@ import { PlaceholderLine } from 'rn-placeholder';
 import { DecoratedDocumentFlatList } from './community-paginated-document-list';
 import styles from './styles';
 import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
-import { useCommunityBannerHeight } from '../../hooks/use-community-navbar/community-navbar/component';
 
 import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';

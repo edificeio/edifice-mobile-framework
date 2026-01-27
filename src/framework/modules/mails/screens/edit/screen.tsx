@@ -5,7 +5,6 @@ import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
-import { getNoReplyRight } from '../../rights';
 import styles from './styles';
 import { type MailsEditScreenPrivateProps } from './types';
 import { useMailsEditController } from './useController';
@@ -24,6 +23,7 @@ import { InactiveUserModalContentContainer } from '~/framework/modules/mails/com
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsRecipientsType } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { getNoReplyRight } from '~/framework/modules/mails/rights';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({

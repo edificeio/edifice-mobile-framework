@@ -1,24 +1,22 @@
 import * as React from 'react';
 
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import ResourceExplorer, { ResourceExplorerTemplate } from '../../explorer/templates/resource-explorer';
-import { createResourceExplorerNavBar } from '../../explorer/templates/resource-explorer/screen';
-import moduleConfig from '../module-config';
-import { HomeworkNavigationParams, homeworkRouteNames } from '../navigation';
-import { selectors } from '../reducers';
-import { getHomeworkWorkflowInformation } from '../rights';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { sessionScreen } from '~/framework/components/screen';
+import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
+import { createResourceExplorerNavBar } from '~/framework/modules/explorer/templates/resource-explorer/screen';
 import homeworkDiarySelected from '~/framework/modules/homework/actions/selectedDiary';
 import { HomeworkExplorerScreen } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import moduleConfig from '~/framework/modules/homework/module-config';
+import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
+import { selectors } from '~/framework/modules/homework/reducers';
+import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { Trackers } from '~/framework/util/tracker';
 
 // # Props
@@ -27,8 +25,7 @@ export namespace HomeworkExplorerScreen {
   export interface NavParams extends ResourceExplorerTemplate.NavParams {}
   export type NavigationProps = NativeStackScreenProps<HomeworkNavigationParams, 'homeworkExplorer'>;
   export interface AllProps
-    extends Omit<ResourceExplorerTemplate.ScreenProps, keyof ResourceExplorerTemplate.NavigationProps>,
-      NavigationProps {}
+    extends Omit<ResourceExplorerTemplate.ScreenProps, keyof ResourceExplorerTemplate.NavigationProps>, NavigationProps {}
 }
 
 // # NavBar

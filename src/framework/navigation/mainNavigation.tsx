@@ -30,7 +30,6 @@ import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
-import { selectors } from '../modules/auth/reducer';
 
 import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
@@ -38,6 +37,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
+import { selectors } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';

@@ -6,11 +6,11 @@ import { combineReducers } from 'redux';
 
 import moduleConfig from './module-config';
 import { createBlogPostResourceRight } from './rights';
-import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '../explorer/store';
 
 import { IGlobalState, Reducers } from '~/app/store';
 import { PaginatedListItem, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '~/framework/modules/explorer/store';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { resourceRightFilter } from '~/framework/util/resourceRights';

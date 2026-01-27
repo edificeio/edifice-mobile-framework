@@ -1,8 +1,7 @@
 import * as React from 'react';
 
-import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
-
 import { PageView } from '~/framework/components/page';
+import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import PronoteCarnetDeBordScreen, {
   computeNavBar as carnetDeBordNavBar,
 } from '~/framework/modules/widgets/carnet-de-board/screens/carnet-de-bord';

@@ -12,7 +12,7 @@ import React, {
 import { useNavigation } from '@react-navigation/native';
 import ErrorBoundary, { ErrorBoundaryProps, FallbackComponentProps } from 'react-native-error-boundary';
 
-import EmptyErrorScreen from '../empty-screens/error/component';
+import EmptyErrorScreen from '~/framework/components/empty-screens/error/component';
 
 export default function ErrorScreenView({ resetError }: FallbackComponentProps) {
   const navigation = useNavigation();
