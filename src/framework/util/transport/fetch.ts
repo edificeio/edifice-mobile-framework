@@ -13,8 +13,8 @@ import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/fra
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
-import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/http/error';
 import { isTokenExpired, refreshTokenForAccount } from '~/framework/util/oauth2';
+import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
 
 /**
  * Returns the url that will be used by the provided fetch arguments
@@ -51,37 +51,43 @@ function getRequestMethod(input: Parameters<typeof fetch>[0], init: Parameters<t
  * @throws {HTTPError} If the response status is not ok (status is not in the range 200-299).
  */
 const _baseFetch = async (input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]): Promise<Response> => {
-  CookieManager.clearAll();
-  let response: Response;
   try {
     if (__DEV__) {
-      console.debug(`[Fetch] ${getRequestMethod(input, init).toUpperCase()} ${getRequestUrl(input)}`);
-      console.debug(
-        JSON.stringify(new Request(input, init), null, '  ').replaceAll(/\n/g, '\n                                   '),
+      // eslint-disable-next-line no-console
+      console.groupCollapsed(`[Fetch] ${getRequestMethod(input, init).toUpperCase()} ${getRequestUrl(input)}`);
+      // eslint-disable-next-line no-console
+      console.dir(input);
+      // eslint-disable-next-line no-console
+      console.dir(init);
+    }
+    CookieManager.clearAll();
+    let response: Response;
+    try {
+      response = await global.fetch(input, init);
+      if (__DEV__) {
+        console.info(` ➔ ${response.status} ${response.statusText}`);
+      }
+    } catch (e) {
+      console.error(` ➔ Network Error`, e);
+      throw new FetchError(
+        FetchErrorCode.NETWORK_ERROR,
+        `Failed to fetch resource: ${getRequestMethod(input, init)} ${getRequestUrl(input)}`,
+        {
+          cause: e,
+        },
       );
     }
-    response = await global.fetch(input, init);
-    if (__DEV__) {
-      console.debug(`➔ ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+      console.error(` ➔ ${response.status} ${response.statusText}`, await response.clone().text());
+      throw new HTTPError(response);
     }
-  } catch (e) {
-    console.error(`➔ Network Error`, e);
-    throw new FetchError(
-      FetchErrorCode.NETWORK_ERROR,
-      `Failed to fetch resource: ${getRequestMethod(input, init)} ${getRequestUrl(input)}`,
-      {
-        cause: e,
-      },
-    );
-  }
-  if (!response.ok) {
+    return response;
+  } finally {
     if (__DEV__) {
-      console.error(`  ➔ ${response.status} ${response.statusText}`);
-      console.error(await response.clone().text());
+      // eslint-disable-next-line no-console
+      console.groupEnd();
     }
-    throw new HTTPError(response);
   }
-  return response;
 };
 
 /**
@@ -150,8 +156,8 @@ deviceFetch.json = async <ReturnType>(...fetchArgs: Parameters<typeof fetch>) =>
 export function getPlatformFetch(_platform: Pick<Platform, 'url'> | string) {
   const platform = typeof _platform === 'string' ? appConf.getExpandedPlatform(_platform) : _platform;
   if (!platform) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[usePlatformFetch] No platform provided');
-  return (input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]) =>
-    deviceFetch(getPlatformRequest(input, platform), init);
+  return async (input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]) =>
+    deviceFetch(await getPlatformRequest(input, platform), init);
 }
 
 /**
@@ -183,8 +189,8 @@ platformFetch.json = async <ReturnType>(platform: Parameters<typeof getPlatformF
  */
 
 export function getTokenFetch(tokens: Pick<AuthTokenSet, 'access' | 'origin'>) {
-  return (input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]) =>
-    deviceFetch(getOriginRequest(input, tokens), {
+  return async (input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]) =>
+    deviceFetch(await getOriginRequest(input, tokens), {
       ...init,
       headers: {
         ...getAuthenticationHeaderForToken(tokens),

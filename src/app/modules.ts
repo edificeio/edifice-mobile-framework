@@ -1,6 +1,8 @@
 /**
  * Every module is imported here.
  */
+import React from 'react';
+
 import IncludedModules from '~/app/override/modules';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import {
@@ -43,6 +45,7 @@ export default () => {
  * Call this function when all modules have been loaded to init them and register them.
  */
 export const setUpModulesAccess = (sessionIfExists?: AuthActiveAccount) => {
+  console.info('[BOB] setUpModulesAccess', sessionIfExists, AllModules);
   if (AllModules) {
     if (!sessionIfExists) return [];
     AllModules.initModuleConfigs(sessionIfExists);
@@ -54,3 +57,16 @@ export const setUpModulesAccess = (sessionIfExists?: AuthActiveAccount) => {
     throw new Error('setUpModulesAccess cannot perform until modules are loaded.');
   }
 };
+
+export const useAvailableModules = (session?: AuthActiveAccount) =>
+  React.useMemo(() => {
+    if (!session) return;
+    console.info(`[App] Init modules for session: ${session.user.id} (${session.user.login})`);
+    if (AllModules) {
+      AllModules.initModuleConfigs(session);
+      dynamiclyRegisterModules(AllModules.filter(m => m instanceof NavigableModule) as NavigableModuleArray);
+      return AllModules.filterAvailables(session).initModules(session);
+    } else {
+      throw new Error('setUpModulesAccess cannot perform until modules are loaded.');
+    }
+  }, [session]);

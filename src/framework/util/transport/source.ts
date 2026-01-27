@@ -8,8 +8,8 @@ import { getAuthenticationHeaderForAccount, getDeviceHeaders, getUrlWithBase } f
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
-import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 import { isRequireSource } from '~/framework/util/media';
+import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
 
 // # DEVICE FETCH
 

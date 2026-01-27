@@ -15,7 +15,7 @@ import { ExplorerAppTypes, ExplorerResourceIdType, RootFolderId } from '~/framew
 import service from '~/framework/modules/explorer/service/index';
 import { emptyFolderData, ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { HTTPError } from '~/framework/util/http';
+import { HTTPError } from '~/framework/util/transport/error';
 
 const estimatedListSize = {
   height: UI_SIZES.getViewHeight(),

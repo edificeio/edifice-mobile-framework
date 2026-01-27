@@ -8,14 +8,14 @@
 import * as React from 'react';
 import { ImageURISource, Image as RNImage, ImageProps as RNImageProps, StyleSheet, View } from 'react-native';
 
-import { FastImageProps, default as RNFastImage } from 'react-native-fast-image';
+import { FastImageProps, default as RNFastImage, Source } from 'react-native-fast-image';
 
-import { imagePropsForSession } from './http/source';
+import { sessionImageSource } from './transport';
+import { getSession } from '../modules/auth/reducer';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { urlSigner } from '~/infra/oauth';
 
 interface IMediaCommonAttributes {
   src: string | ImageURISource;
@@ -86,9 +86,16 @@ export interface ImageProps extends RNImageProps {
 
 export class Image extends React.PureComponent<ImageProps> {
   render() {
-    const { thumbnail, ...imageProps } = this.props;
+    const { source: _source, thumbnail, ...imageProps } = this.props;
     try {
-      return <RNImage {...imagePropsForSession(imageProps, thumbnail)} />;
+      const session = getSession();
+      const source = session ? _source && sessionImageSource(_source) : _source;
+      if (thumbnail && source && (source as ImageURISource).uri) {
+        const url = new URL((source as ImageURISource).uri!);
+        url.searchParams.append('thumbnail', thumbnail);
+        (source as ImageURISource).uri = url.href;
+      }
+      return <RNImage source={source} {...imageProps} />;
     } catch {
       return <UnavailableImage {...this.props} />;
     }
@@ -99,9 +106,8 @@ export class FastImage extends React.PureComponent<FastImageProps> {
   render() {
     try {
       const { source, ...rest } = this.props;
-      const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
-      const newSource = hasSource ? urlSigner.signURISource(source) : undefined;
-      // if (newSource) newSource.cache = RNFastImage.cacheControl.web;
+      const session = getSession();
+      const newSource = session ? (sessionImageSource(source as ImageURISource) as Source) : source;
       return <RNFastImage source={newSource} {...rest} />;
     } catch {
       return <UnavailableImage {...this.props} />;

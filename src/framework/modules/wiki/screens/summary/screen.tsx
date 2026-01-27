@@ -26,7 +26,7 @@ import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/n
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { toURISource } from '~/framework/util/media/types';
+import { toURISource } from '~/framework/util/media';
 import { sessionImageSource } from '~/framework/util/transport';
 
 const TITLE_PLACEHOLDER_HEIGHT = getScaleWidth(30);

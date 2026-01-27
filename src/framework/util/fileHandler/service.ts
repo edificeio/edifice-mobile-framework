@@ -7,6 +7,8 @@
  * - separate fileTransferService and workspaceService
  * - make standard thunks for upload/download + thunk builder
  */
+import { ImageURISource } from 'react-native';
+
 import mime from 'mime';
 import path from 'path';
 import RNFS, {
@@ -16,11 +18,13 @@ import RNFS, {
   UploadProgressCallbackResult,
 } from 'react-native-fs';
 
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { toURISource } from '../media';
+import { sessionURISource } from '../transport';
+
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
 import { assertPermissions } from '~/framework/util/permissions';
 import { getSafeFileName } from '~/framework/util/string';
-import { urlSigner } from '~/infra/oauth';
 
 export interface IUploadCommonParams {
   fields?: { [key: string]: string };
@@ -54,7 +58,7 @@ const mimeAliases = {
 const fileTransferService = {
   /** Download a file that exists in the server. */
   downloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
+    session: AuthActiveAccount,
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -69,7 +73,7 @@ const fileTransferService = {
   },
 
   downloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
+    session: AuthActiveAccount,
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -82,7 +86,7 @@ const fileTransferService = {
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
   startDownloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
+    session: AuthActiveAccount,
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -91,12 +95,12 @@ const fileTransferService = {
     const sfclass = (syncedFileClass ?? SyncedFile) as new (
       ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
     ) => SyncedFileType;
-    const fileUrl = urlSigner.getRelativeUrl(file.url)!;
-    file.filename = getSafeFileName(file.filename || fileUrl.split('/').pop());
-    const folderDest = `${RNFS.DocumentDirectoryPath}${fileUrl}`;
+    const downloadUrl = sessionURISource(toURISource(file.url)).uri!;
+    const filePath = new URL(downloadUrl).pathname;
+    file.filename = getSafeFileName(file.filename || filePath.split('/').pop());
+    const folderDest = `${RNFS.DocumentDirectoryPath}${filePath}`;
     const downloadDest = `${folderDest}/${file.filename}`;
-    const downloadUrl = urlSigner.getAbsoluteUrl(file.url);
-    const headers = { ...urlSigner.getAuthHeader() };
+    const headers = sessionURISource<ImageURISource>({ uri: '/' }).headers;
     const localFile = new LocalFile(
       {
         filename: file.filename!,
@@ -178,7 +182,7 @@ const fileTransferService = {
   },
 
   startDownloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
+    session: AuthActiveAccount,
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -189,7 +193,7 @@ const fileTransferService = {
 
   /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
   startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
+    session: AuthActiveAccount,
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -232,7 +236,7 @@ const fileTransferService = {
   },
 
   startUploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
+    session: AuthActiveAccount,
     files: LocalFile[],
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -244,7 +248,7 @@ const fileTransferService = {
 
   /** Upload a file to the given url. */
   uploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
+    session: AuthActiveAccount,
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -260,7 +264,7 @@ const fileTransferService = {
   },
 
   uploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: AuthLoggedAccount,
+    session: AuthActiveAccount,
     files: LocalFile[],
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],

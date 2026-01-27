@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Animated, Easing, LayoutChangeEvent } from 'react-native';
 
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
@@ -151,22 +153,12 @@ const config: ToastConfig = {
 // Toast Containers
 //
 
-const defaultRootScreenOffset = UI_SIZES.elements.navbarHeight + (UI_SIZES.screen.topInset || UI_SIZES.elements.statusbarHeight);
-
-function useToastOffset(customOffset?: number) {
-  const route = useRoute();
-  if (customOffset) return customOffset;
-  const isModal = isModalModeOnThisRoute(route.name);
-  return isModal
-    ? DEFAULTS.offset // On modal screens, zero is below the navBar
-    : DEFAULTS.offset + defaultRootScreenOffset; // Anywhere else, zero is the very top of screen
+export function ToastContainer({ offset, ...props }: ToastProps) {
+  const navBarHeight = useHeaderHeight();
+  return <ToastMessage config={config} topOffset={offset ? DEFAULTS.offset + offset : navBarHeight + DEFAULTS.offset} {...props} />;
 }
 
-export function ToastHandler(props: ToastProps) {
-  const offset = useToastOffset(props.offset);
-  return <ToastMessage config={config} topOffset={offset} {...props} />;
-}
-
-export function RootToastHandler(props: ToastProps) {
-  return <ToastMessage config={config} topOffset={props.offset ?? DEFAULTS.offset + defaultRootScreenOffset} />; // For the global Toast, zero is the very top of screen
+export function RootToastContainer(props: ToastProps) {
+  const { top } = useSafeAreaInsets();
+  return <ToastMessage config={config} topOffset={DEFAULTS.offset + top + UI_SIZES.elements.navbarHeight} {...props} />;
 }

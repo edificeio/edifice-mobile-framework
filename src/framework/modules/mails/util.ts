@@ -14,7 +14,8 @@ import {
 
 import { I18n } from '~/app/i18n';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
-import { urlSigner } from '~/infra/oauth';
+import { toURISource } from '~/framework/util/media';
+import { sessionURISource } from '~/framework/util/transport';
 
 export const MailsRecipientPrefixsI18n = {
   [MailsRecipientsType.TO]: {
@@ -74,7 +75,7 @@ export function convertAttachmentToDistantFile(attachment: IMailsMailAttachment,
     filesize: attachment.size,
     filetype: attachment.contentType,
     id: attachment.id,
-    url: urlSigner.getAbsoluteUrl(`/conversation/message/${mailId}/attachment/${attachment.id}`) ?? '',
+    url: sessionURISource(toURISource(`/conversation/message/${mailId}/attachment/${attachment.id}`)).uri ?? '',
   };
 }
 

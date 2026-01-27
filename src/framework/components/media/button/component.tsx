@@ -6,6 +6,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
 import { IPlayerProps } from './types';
+import { MediaPlayerParams } from '../player/types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -16,7 +17,7 @@ import { Svg } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
 import { MediaType } from '~/framework/util/media';
 import { Image } from '~/framework/util/media-deprecated';
-import { urlSigner } from '~/infra/oauth';
+import { sessionURISource } from '~/framework/util/transport';
 
 const iconSizeAudio = getScaleImageSize(20);
 const iconSizeVideo = getScaleImageSize(24);
@@ -44,9 +45,9 @@ const MediaButton = (props: IPlayerProps) => {
   const showMediaPlayer = () => {
     openMediaPlayer({
       referer: props.referer,
-      source: urlSigner.signURISource(props.source),
+      source: sessionURISource(props.source),
       type: props.type,
-    });
+    } as MediaPlayerParams);
   };
 
   const getPreviewVideo = () => {

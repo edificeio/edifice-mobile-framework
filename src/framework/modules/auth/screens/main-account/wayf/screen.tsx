@@ -29,7 +29,7 @@ export const computeNavBar = ({
 });
 
 export default connect(
-  (state: any, props: any) => {
+  (state: any) => {
     return {
       auth: getAuthState(state),
       session: getSession(),

@@ -11,7 +11,7 @@ import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
-import { urlSigner } from '~/infra/oauth';
+import { sessionImageSource } from '~/framework/util/transport';
 
 const styles = StyleSheet.create({
   choiceContainer: {
@@ -125,7 +125,7 @@ export const FormSingleAnswerRadioCard = ({
                 <TouchableOpacity
                   onPress={() => openCarousel({ data: [{ src: item.image, type: 'image' }] })}
                   style={styles.imageContainer}>
-                  <Image source={{ headers: urlSigner.getAuthHeader(), height: 75, uri: item.image, width: 75 }} />
+                  <Image source={sessionImageSource({ height: 75, uri: item.image, width: 75 })} />
                 </TouchableOpacity>
               ) : null}
             </TouchableOpacity>

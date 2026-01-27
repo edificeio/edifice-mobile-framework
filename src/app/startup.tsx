@@ -1,3 +1,8 @@
+import React from 'react';
+
+import inAppMessaging from '@react-native-firebase/in-app-messaging';
+import SplashScreen from 'react-native-splash-screen';
+import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from './i18n';
@@ -7,7 +12,8 @@ import { useConstructor } from '~/framework/hooks/constructor';
 import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
 import track from '~/framework/modules/auth/tracking';
-import { appReadyAction } from '~/framework/navigation/redux';
+import { appReadyAction, getState as getAppStartupState } from '~/framework/navigation/redux';
+import { RootNavigator } from '~/framework/navigation/root-navigation';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Storage } from '~/framework/util/storage';
 
@@ -16,8 +22,15 @@ const initFeatures = async () => {
   await I18n.init();
 };
 
-// const MAX_STARTUP_TIME_MS = 15000;
-// Todo : implement this again.
+function SplashScreenComponent() {
+  React.useEffect(() => {
+    return () => {
+      SplashScreen.hide();
+      inAppMessaging().setMessagesDisplaySuppressed(false).finally();
+    };
+  }, []);
+  return null;
+}
 
 /**
  * Logic code that is run for the app start
@@ -40,4 +53,10 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
       dispatch(appReadyAction());
     }
   });
+}
+
+export function AppStartupHandler() {
+  useAppStartup(useDispatch());
+  const isAppReady = useSelector(getAppStartupState).isReady;
+  return isAppReady ? <RootNavigator /> : <SplashScreenComponent />;
 }

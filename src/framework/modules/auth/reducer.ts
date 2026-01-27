@@ -436,7 +436,6 @@ const reducer = createReducer(initialState, {
     const { account, id } = action as unknown as ActionPayloads['replaceAccount'];
     const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
     if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
-    console.debug('REPLACE_ACCOUNT', account);
     return {
       ...state,
       accounts: { ...newAccounts, [account.user.id]: account },
@@ -674,6 +673,10 @@ Reducers.register(moduleConfig.reducerName, reducer);
 export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as IAuthState;
 
 export const selectors = {
+  requirement: (state: IGlobalState) => {
+    const authState = getState(state);
+    return authState.requirement;
+  },
   session: (state: IGlobalState) => {
     const authState = getState(state);
     return authState.connected ? (authState.accounts as AuthLoggedAccountMap)[authState.connected] : undefined;

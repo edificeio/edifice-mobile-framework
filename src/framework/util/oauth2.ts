@@ -2,9 +2,9 @@ import moment from 'moment';
 
 import { platformFetch } from './transport';
 
+import AllModules from '~/app/modules';
 import { getStore } from '~/app/store';
 import {
-  accountIsActive,
   AuthActiveAccount,
   AuthCredentials,
   AuthSavedLoggedInAccount,
@@ -18,18 +18,7 @@ import { actions as authActions } from '~/framework/modules/auth/reducer';
 import { writeUpdateAccount } from '~/framework/modules/auth/storage';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
-import { HTTPError } from '~/framework/util/http';
-import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
-import { ModuleArray } from '~/framework/util/moduleTool';
-import { IOAuthCustomToken, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
-
-// This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
-// ToDo: find a better way to handle this.
-export const AppModules = {
-  value: undefined,
-} as {
-  value?: ModuleArray;
-};
+import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
 
 /**
  * Represents the client (device) information required for OAuth2 authentication.
@@ -39,7 +28,7 @@ export interface OAuth2ClientInfo {
   clientSecret: string;
 }
 
-namespace API {
+export namespace API {
   export interface OAuth2ResponseOK {
     token_type: string;
     access_token: string;
@@ -50,6 +39,10 @@ namespace API {
   export interface OAuth2ResponseError {
     error: string;
     error_description: string;
+  }
+  export interface OAuth2CustomToken {
+    structureName: string;
+    key: string;
   }
 }
 
@@ -94,7 +87,7 @@ const createDeviceAuthenticationHeader = (clientId: string, clientSecret: string
  *
  * @returns A space-separated string of OAuth2 scopes.
  */
-const createScope = (): string => [...new Set(AppModules.value!.getScopes())].join(' ');
+const createScope = (): string => [...new Set(AllModules().getScopes())].join(' ');
 
 /**
  * Fetches an OAuth2 token for the specified platform using the given grant type and parameters.
@@ -123,7 +116,7 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
       headers,
       method: 'post',
     });
-    return tokenFactory(response);
+    return tokenSetFactory(response);
   } catch (e) {
     if (e instanceof HTTPError) {
       console.error('[OAuth2] Error fetching token:', e, await e.clone().text());
@@ -135,6 +128,16 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
   }
 };
 
+export const expirableTokenFactory = <TokenType extends string>(
+  data: Pick<API.OAuth2ResponseOK, 'access_token' | 'token_type' | 'expires_in'>,
+) => {
+  return {
+    expiresAt: moment().add(data.expires_in, 'seconds').toISOString(),
+    type: data.token_type as TokenType,
+    value: data.access_token,
+  };
+};
+
 /**
  * Generates an AuthTokenSet by parsing the given OAuth2 response data.
  *
@@ -142,19 +145,15 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
  * @returns An AuthTokenSet containing access and refresh tokens, along with their metadata.
  * @throws Will throw an error if the token type is not 'Bearer'.
  */
-const tokenFactory = async (response: Response): Promise<AuthTokenSet> => {
+const tokenSetFactory = async (response: Response): Promise<AuthTokenSet> => {
   const data = (await response.json()) as Partial<API.OAuth2ResponseOK>;
   const origin = new URL(response.url).origin;
   if (data.token_type !== 'Bearer')
     throw new FetchError(FetchErrorCode.BAD_RESPONSE, `[OAuth2] Unsupported token type: ${data.token_type}`);
-  if (!data.access_token || !data.refresh_token || !data.scope)
+  if (!data.access_token || !data.refresh_token || !data.scope || !data.access_token)
     throw new FetchError(FetchErrorCode.BAD_RESPONSE, `[OAuth2] Incomplete token data`);
   return {
-    access: {
-      expiresAt: moment().add(data.expires_in, 'seconds').toISOString(),
-      type: data.token_type,
-      value: data.access_token,
-    },
+    access: expirableTokenFactory(data as API.OAuth2ResponseOK),
     origin,
     refresh: {
       value: data.refresh_token,
@@ -166,7 +165,7 @@ const tokenFactory = async (response: Response): Promise<AuthTokenSet> => {
 /**
  * Utility object for obtaining OAuth2 tokens using different authentication methods.
  */
-export const getOAuth2Token = {
+export const getOAuth2AccessToken = {
   /**
    * Fetches an OAuth2 token using a custom token.
    *
@@ -236,18 +235,13 @@ export const refreshTokenForAccount = async (account: AuthSavedLoggedInAccount |
   // 1. Get new token
   const platform = appConf.getExpandedPlatform(account.platform);
   if (!platform) throw new AccountError(AccountErrorCode.INVALID_PLATFORM_CONFIG, `Platform not foune: ${account.platform}`);
-  const newTokens = await getOAuth2Token.withRefreshToken(platform, account.tokens.refresh);
+  const newTokens = await getOAuth2AccessToken.withRefreshToken(platform, account.tokens.refresh);
 
   // 2. Update account in store + storage + parameter
   account.tokens = newTokens; // Update account in parameter
   getStore().dispatch(authActions.refreshToken(account.user.id, newTokens)); // Update redux store
   const serialisedAccount = isSerializedLoggedInAccount(account) ? account : getSerializedLoggedInAccountInfo(account);
   writeUpdateAccount(serialisedAccount); // Update Storage
-
-  // 3. If this account is active, update LEGACY OAuth2 client token
-  if (accountIsActive(account)) {
-    OAuth2RessourceOwnerPasswordClient.connection?.importToken(newTokens);
-  }
 };
 
 export enum OAuth2ErrorCode {
@@ -325,7 +319,7 @@ export class OAuth2Error extends global.Error implements Error.WithCode<OAuth2Er
 export class OAuth2SamlMultipleVectorError extends OAuth2Error implements Error.WithCode<OAuth2ErrorCode.SAML_MULTIPLE_VECTOR> {
   public readonly code: OAuth2ErrorCode.SAML_MULTIPLE_VECTOR = OAuth2ErrorCode.SAML_MULTIPLE_VECTOR; // Must be redefined here to avoid TypeScript error
   constructor(
-    public readonly data: { users: IOAuthCustomToken[] },
+    public readonly data: { users: API.OAuth2CustomToken[] },
     ...args: ConstructorParameters<typeof global.Error>
   ) {
     super(OAuth2ErrorCode.SAML_MULTIPLE_VECTOR, ...args); // Note: built-in Error class break the prototype chain when extending it like this...
@@ -378,7 +372,7 @@ export async function oAuth2ErrorFactory(e: HTTPError): Promise<OAuth2Error | HT
       }
     case 'multiple_vector_choice': {
       if (content.error_description) {
-        const data = JSON.parse(content.error_description) as { users: IOAuthCustomToken[] };
+        const data = JSON.parse(content.error_description) as { users: API.OAuth2CustomToken[] };
         return new OAuth2SamlMultipleVectorError(data, undefined, { cause: e });
       } else {
         return e;

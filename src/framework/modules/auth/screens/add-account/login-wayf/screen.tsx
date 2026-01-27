@@ -30,7 +30,7 @@ export const computeNavBar = ({
 });
 
 export default connect(
-  (state: any, props: AuthLoginWayfAddAccountScreenPrivateProps): LoginWayfScreenStoreProps => {
+  (state: any): LoginWayfScreenStoreProps => {
     const auth = getAuthState(state);
     return {
       auth,

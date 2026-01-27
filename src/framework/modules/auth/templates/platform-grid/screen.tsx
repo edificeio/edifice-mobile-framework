@@ -8,7 +8,7 @@ import type { AuthPlatformGridScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import GridList from '~/framework/components/GridList';
 import { PageView } from '~/framework/components/page';
 import { HeadingSText, SmallText } from '~/framework/components/text';

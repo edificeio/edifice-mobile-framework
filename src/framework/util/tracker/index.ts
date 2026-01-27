@@ -4,10 +4,11 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 
+import { sessionFetch } from '../transport';
+
 import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
-import { urlSigner } from '~/infra/oauth';
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [Pick<IAnyModuleConfig, 'trackingName'>, string, string?, number?];
@@ -223,7 +224,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     while (this.sending && this.reportQueue.length) {
       try {
         const req = this.reportQueue[0].clone();
-        const res = await fetch(urlSigner.signRequest(this.reportQueue[0]));
+        const res = await sessionFetch(this.reportQueue[0]);
         const module = JSON.parse(await req.text())?.module;
         if (res.ok) {
           this.reportQueue.shift();

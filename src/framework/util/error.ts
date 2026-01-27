@@ -3,30 +3,17 @@
  * Be SURE to NOT reuse same values accross different categories.
  */
 
-import * as React from 'react';
+import React from 'react';
 
 import DeviceInfo from 'react-native-device-info';
 
-import { FetchErrorCode } from './http/error';
+import { FetchErrorCode } from './transport/error';
 
 import { I18n } from '~/app/i18n';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
-import { IOAuthCustomToken } from '~/infra/oauth';
 
 export namespace Error {
-  //  8888888888                                                      d8b 888    888            888
-  //  888                                                             Y8P 888    888            888
-  //  888                                                                 888    888            888
-  //  8888888    888d888 888d888  .d88b.  888d888       888  888  888 888 888888 88888b.        888  888  .d88b.  888  888
-  //  888        888P"   888P"   d88""88b 888P"         888  888  888 888 888    888 "88b       888 .88P d8P  Y8b 888  888
-  //  888        888     888     888  888 888           888  888  888 888 888    888  888       888888K  88888888 888  888
-  //  888        888     888     Y88..88P 888           Y88b 888 d88P 888 Y88b.  888  888       888 "88b Y8b.     Y88b 888
-  //  8888888888 888     888      "Y88P"  888            "Y8888888P"  888  "Y888 888  888       888  888  "Y8888   "Y88888
-  //                                                                                                                   888
-  //                                                                                                              Y8b d88P
-  //                                                                                                               "Y88P"
-
   /**
    * Represents an Error and its generation key.
    * It depends on the screen that led to its generation so that it can be displayed only once on the correct screen. */
@@ -59,19 +46,7 @@ export namespace Error {
    */
   export const generateErrorKey = performance.now;
 
-  //  8888888888                                                      d8b 888    888            888
-  //  888                                                             Y8P 888    888            888
-  //  888                                                                 888    888            888
-  //  8888888    888d888 888d888  .d88b.  888d888       888  888  888 888 888888 88888b.        888888 888  888 88888b.   .d88b.
-  //  888        888P"   888P"   d88""88b 888P"         888  888  888 888 888    888 "88b       888    888  888 888 "88b d8P  Y8b
-  //  888        888     888     888  888 888           888  888  888 888 888    888  888       888    888  888 888  888 88888888
-  //  888        888     888     Y88..88P 888           Y88b 888 d88P 888 Y88b.  888  888       Y88b.  Y88b 888 888 d88P Y8b.
-  //  8888888888 888     888      "Y88P"  888            "Y8888888P"  888  "Y888 888  888        "Y888  "Y88888 88888P"   "Y8888
-  //                                                                                                        888 888
-  //                                                                                                   Y8b d88P 888
-  //                                                                                                    "Y88P"  888
-
-  export enum AnyErrorType { }
+  export enum AnyErrorType {}
 
   export class ErrorWithType<Types = AnyErrorType> extends global.Error {
     constructor(
@@ -104,18 +79,6 @@ export namespace Error {
   type Constructor<T> = new (...args: any[]) => T;
 
   export type ErrorTypes<ErrorClass> = ErrorClass extends Constructor<ErrorWithType<infer T>> ? T : AnyErrorType;
-
-  //  8888888888                                        88888888888
-  //  888                                                   888
-  //  888                                                   888
-  //  8888888    888d888 888d888  .d88b.  888d888           888  888  888 88888b.   .d88b.  .d8888b
-  //  888        888P"   888P"   d88""88b 888P"             888  888  888 888 "88b d8P  Y8b 88K
-  //  888        888     888     888  888 888               888  888  888 888  888 88888888 "Y8888b.
-  //  888        888     888     Y88..88P 888               888  Y88b 888 888 d88P Y8b.          X88
-  //  8888888888 888     888      "Y88P"  888               888   "Y88888 88888P"   "Y8888   88888P'
-  //                                                                  888 888
-  //                                                             Y8b d88P 888
-  //                                                              "Y88P"  888
 
   export enum FetchErrorType {
     NOT_AUTHENTICATED = 'NOT_AUTHENTICATED', // Signed request but no token available
@@ -203,42 +166,7 @@ export namespace Error {
         return I18n.get('auth-error-unknownerror');
     }
   };
-
-  //  8888888888                                                      d8b 888    888                 888          888
-  //  888                                                             Y8P 888    888                 888          888
-  //  888                                                                 888    888                 888          888
-  //  8888888    888d888 888d888  .d88b.  888d888       888  888  888 888 888888 88888b.         .d88888  8888b.  888888  8888b.
-  //  888        888P"   888P"   d88""88b 888P"         888  888  888 888 888    888 "88b       d88" 888     "88b 888        "88b
-  //  888        888     888     888  888 888           888  888  888 888 888    888  888       888  888 .d888888 888    .d888888
-  //  888        888     888     Y88..88P 888           Y88b 888 d88P 888 Y88b.  888  888       Y88b 888 888  888 Y88b.  888  888
-  //  8888888888 888     888      "Y88P"  888            "Y8888888P"  888  "Y888 888  888        "Y88888 "Y888888  "Y888 "Y888888
-  //
-  //
-  //
-
-  export class SamlMultipleVectorError extends Error.ErrorWithType<OAuth2ErrorCode.SAML_MULTIPLE_VECTOR> {
-    constructor(
-      public data: { users: IOAuthCustomToken[] },
-      ...args: ConstructorParameters<typeof global.Error>
-    ) {
-      super(OAuth2ErrorCode.SAML_MULTIPLE_VECTOR, ...args); // Note: built-in Error class break the prototype chain when extending it like this...
-      Object.setPrototypeOf(this, new.target.prototype); // ... So, we need to restore the prototype chain like this.
-      // @see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#example
-    }
-  }
 }
-
-//  8888888888                                        888    888                   888
-//  888                                               888    888                   888
-//  888                                               888    888                   888
-//  8888888    888d888 888d888  .d88b.  888d888       8888888888  .d88b.   .d88b.  888  888
-//  888        888P"   888P"   d88""88b 888P"         888    888 d88""88b d88""88b 888 .88P
-//  888        888     888     888  888 888           888    888 888  888 888  888 888888K
-//  888        888     888     Y88..88P 888           888    888 Y88..88P Y88..88P 888 "88b
-//  8888888888 888     888      "Y88P"  888           888    888  "Y88P"   "Y88P"  888  888
-//
-//
-//
 
 /**
  * Manage the raw error informatino and returns usable valeus like error message, type, and clear function.

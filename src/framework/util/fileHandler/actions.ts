@@ -2,7 +2,8 @@
  * Actions for file handler
  */
 import FileViewer from 'react-native-file-viewer';
-import type { ThunkDispatch } from 'redux-thunk';
+
+import { sessionURISource } from '../transport';
 
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { openMediaPlayer } from '~/framework/components/media/player';
@@ -14,9 +15,8 @@ import fileTransferService, {
   IUploadCallbaks,
   IUploadParams,
 } from '~/framework/util/fileHandler/service';
-import { MediaType } from '~/framework/util/media';
+import { MediaType, toURISource } from '~/framework/util/media';
 import type { IMedia } from '~/framework/util/media-deprecated';
-import { urlSigner } from '~/infra/oauth';
 
 export const startUploadFileAction =
   <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
@@ -26,7 +26,7 @@ export const startUploadFileAction =
     callbacks?: IUploadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  () => {
     const session = assertSession();
     return fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
   };
@@ -39,7 +39,7 @@ export const startUploadFilesAction =
     callbacks?: IUploadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  () => {
     const session = assertSession();
     return fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass);
   };
@@ -52,7 +52,7 @@ export const uploadFileAction =
     callbacks?: IUploadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  () => {
     const session = assertSession();
     return fileTransferService.uploadFile(session, file, params, adapter, callbacks, syncedFileClass);
   };
@@ -65,7 +65,7 @@ export const uploadFilesAction =
     callbacks?: IUploadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  () => {
     const session = assertSession();
     return fileTransferService.uploadFiles(session, files, params, adapter, callbacks, syncedFileClass);
   };
@@ -77,7 +77,7 @@ export const startDownloadFileAction =
     callbacks?: IDownloadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  () => {
     const session = assertSession();
     return fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
   };
@@ -89,7 +89,7 @@ export const startDownloadFilesAction =
     callbacks?: IDownloadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  () => {
     const session = assertSession();
     return fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass);
   };
@@ -101,7 +101,7 @@ export const downloadFileAction =
     callbacks?: IDownloadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  () => {
     const session = assertSession();
     return fileTransferService.downloadFile(session, file, params, callbacks, syncedFileClass);
   };
@@ -113,7 +113,7 @@ export const downloadFilesAction =
     callbacks?: IDownloadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  () => {
     const session = assertSession();
     return fileTransferService.downloadFiles(session, files, params, callbacks, syncedFileClass);
   };
@@ -168,7 +168,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia, 
           onlineMedia ?? {
             mime: localFile?.filetype,
             src: localFile?.filepath!,
-            type: 'image',
+            type: MediaType.IMAGE,
           },
         ],
       });
@@ -177,7 +177,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia, 
     case 'audio':
       openMediaPlayer({
         filetype: document.filetype,
-        source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
+        source: sessionURISource(toURISource(onlineMedia?.src ?? localFile?.filepath)),
         type: MediaType.AUDIO,
       });
       success = true;
@@ -185,7 +185,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia, 
     case 'video':
       openMediaPlayer({
         filetype: document.filetype,
-        source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
+        source: sessionURISource(toURISource(onlineMedia?.src ?? localFile?.filepath)),
         type: MediaType.VIDEO,
       });
       success = true;

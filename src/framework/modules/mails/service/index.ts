@@ -81,11 +81,6 @@ export const mailsService = {
       const api = `/conversation/api/folders/${params.id}`;
       await sessionFetch.json(api, { method: 'DELETE' });
     },
-    // move: async (params: { id: string }, payload: { parentId: string }) => {
-    //   const api = `/conversation/folder/${params.id}`;
-    //   const body = JSON.stringify({ parentId: payload.parentId });
-    //   await http.fetchJsonForSession('PUT', api, { body });
-    // },
     rename: async (params: { id: string }, payload: { name: string }) => {
       const api = `/conversation/folder/${params.id}`;
       const body = JSON.stringify({ name: payload.name });

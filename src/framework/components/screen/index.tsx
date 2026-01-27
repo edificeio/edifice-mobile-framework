@@ -9,7 +9,7 @@ import styles from './styles';
 import { ScreenViewProps } from './types';
 
 import StatusBar from '~/framework/components/status-bar';
-import { ToastHandler } from '~/framework/components/toast';
+import { ToastContainer } from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
@@ -32,7 +32,7 @@ export const ScreenView = withErrorBoundary(
     return isModal ? (
       <BottomSheetModalProvider>
         {content}
-        <ToastHandler />
+        <ToastContainer />
       </BottomSheetModalProvider>
     ) : (
       content

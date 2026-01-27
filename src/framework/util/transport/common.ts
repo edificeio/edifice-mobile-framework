@@ -28,11 +28,19 @@ export const getUrlWithBase = <T extends string | URL>(input: T, base: string): 
   return typeof input === 'string' && input.startsWith('/') ? (new URL(input, base).toString() as T) : input;
 };
 
-export const getPlatformRequest = (input: Parameters<typeof fetch>[0], platform: Pick<Platform, 'url'>) => {
+export const getPlatformRequest = async (input: Parameters<typeof fetch>[0], platform: Pick<Platform, 'url'>) => {
   if (typeof input === 'string' || input instanceof URL) {
     return getUrlWithBase(input, platform.url);
   } else {
-    return new Request(getUrlWithBase(input.url, platform.url), input);
+    const inputClone = input.clone();
+    const bodyContent = await inputClone.text(); // ou .json(), .blob(), etc.
+
+    const ret = new Request(getUrlWithBase(input.url, platform.url), {
+      ...input,
+      body: bodyContent,
+    });
+
+    return ret;
   }
 };
 
@@ -40,11 +48,19 @@ export const getUrlForToken = <T extends string | URL>(input: T, token: Pick<Aut
   return getUrlWithBase(input, token.origin);
 };
 
-export const getOriginRequest = (input: Parameters<typeof fetch>[0], token: Pick<AuthTokenSet, 'origin'>) => {
+export const getOriginRequest = async (input: Parameters<typeof fetch>[0], token: Pick<AuthTokenSet, 'origin'>) => {
   if (typeof input === 'string' || input instanceof URL) {
     return getUrlForToken(input, token);
   } else {
-    return new Request(getUrlForToken(input.url, token), input);
+    const inputClone = input.clone();
+    const bodyContent = await inputClone.text(); // ou .json(), .blob(), etc.
+
+    const ret = new Request(getUrlForToken(input.url, token), {
+      ...input,
+      body: bodyContent,
+    });
+
+    return ret;
   }
 };
 

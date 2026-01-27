@@ -2,9 +2,12 @@ import { Error } from '~/framework/util/error';
 
 /**
  * HTTPError class that is Response-like but with additional error properties.
+ * Note: `clone` cannot implement Repsonse interface since it clones the HTTPError and not only the Response.
+ * Note: `formData` cannot implement Response due to some Typescript issue.
  */
-export class HTTPError extends global.Error implements Response, Error.WithCode<FetchErrorCode> {
+export class HTTPError extends global.Error implements Omit<Response, 'clone' | 'formData'>, Error.WithCode<FetchErrorCode> {
   public readonly code: FetchErrorCode = FetchErrorCode.NOT_OK;
+
   constructor(
     private response: Response,
     message?: string,
@@ -22,19 +25,22 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
     this.body = response.body;
     this.bodyUsed = response.bodyUsed;
   }
-  headers: Headers;
-  ok: boolean;
-  redirected: boolean;
-  status: number;
-  statusText: string;
-  type: ResponseType;
-  url: string;
-  body: ReadableStream<Uint8Array> | null;
-  bodyUsed: boolean;
+
+  headers: Response['headers'];
+  ok: Response['ok'];
+  redirected: Response['redirected'];
+  status: Response['status'];
+  statusText: Response['statusText'];
+  type: Response['type'];
+  url: Response['url'];
+  body: Response['body'];
+  bodyUsed: Response['bodyUsed'];
+
   clone(): HTTPError {
     return new HTTPError(this.response.clone(), this.message);
   }
-  arrayBuffer(): Promise<ArrayBuffer> {
+
+  arrayBuffer(): ReturnType<Response['arrayBuffer']> {
     try {
       return this.response.arrayBuffer();
     } catch (e) {
@@ -42,7 +48,8 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
       else throw e;
     }
   }
-  blob(): Promise<Blob> {
+
+  blob(): ReturnType<Response['blob']> {
     try {
       return this.response.blob();
     } catch (e) {
@@ -50,7 +57,8 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
       else throw e;
     }
   }
-  formData(): Promise<FormData> {
+
+  formData(): ReturnType<Response['formData']> {
     try {
       return this.response.formData();
     } catch (e) {
@@ -58,7 +66,8 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
       else throw e;
     }
   }
-  json(): Promise<any> {
+
+  json(): ReturnType<Response['json']> {
     try {
       return this.response.json();
     } catch (e) {
@@ -66,7 +75,8 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
       else throw e;
     }
   }
-  text(): Promise<string> {
+
+  text(): ReturnType<Response['text']> {
     try {
       return this.response.text();
     } catch (e) {
@@ -74,7 +84,8 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
       else throw e;
     }
   }
-  bytes(): Promise<Uint8Array> {
+
+  bytes(): ReturnType<Response['bytes']> {
     try {
       return this.response.bytes();
     } catch (e) {
@@ -97,7 +108,7 @@ export class HTTPError extends global.Error implements Response, Error.WithCode<
       | typeof this.text
       | typeof this.bytes,
   ): Promise<T | undefined> {
-    return parseFn.call(this).catch(e => undefined);
+    return parseFn.call(this).catch(() => undefined);
   }
 }
 

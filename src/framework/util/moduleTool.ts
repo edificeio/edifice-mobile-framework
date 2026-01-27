@@ -812,6 +812,7 @@ export class NavigableModuleArray<
  * @returns
  */
 export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(moduleInclusions: ModuleInclusion<ModuleType>[]) => {
+  console.info(`[App] Load ${moduleInclusions.length} modules...`);
   const moduleMap: { [key: string]: ModuleType } = {};
   moduleInclusions.forEach(moduleInc => {
     // 1. Load module in the map
@@ -919,6 +920,7 @@ export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule =
   // 2. Write new data
   modules.forEach(module => {
     if (module.config.displayAs) {
+      console.info(`Register module "${module.config.name}" into ${module.config.displayAs}`);
       getGlobalRegister(module.config.displayAs)?.register(module, module.config.displayOrder);
     }
   });

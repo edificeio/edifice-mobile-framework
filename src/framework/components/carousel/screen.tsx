@@ -11,7 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import DeviceInfo from 'react-native-device-info';
-import RNFastImage from 'react-native-fast-image';
+import RNFastImage, { FastImageProps } from 'react-native-fast-image';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
@@ -27,7 +27,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { DEFAULTS, ToastHandler } from '~/framework/components/toast/component';
+import { DEFAULTS, ToastContainer } from '~/framework/components/toast/component';
 import { markViewAudience } from '~/framework/modules/audience';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -35,11 +35,12 @@ import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigatio
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
+import { toURISource } from '~/framework/util/media';
 import { FastImage, IMedia } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
 import { OldStorageFunctions } from '~/framework/util/storage';
-import { urlSigner } from '~/infra/oauth';
+import { sessionURISource } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 
 export interface ICarouselNavParams {
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
 export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
   const showPrivacyAlert = async action => {
     try {
-      const getDatePrivacyAlert: Moment | undefined = await OldStorageFunctions.getItemJson('privacyAlert');
+      const getDatePrivacyAlert: Moment | undefined | null = await OldStorageFunctions.getItemJson('privacyAlert');
       if (isEmpty(getDatePrivacyAlert) || moment().startOf('day').isAfter(getDatePrivacyAlert)) {
         Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
           {
@@ -138,11 +139,11 @@ export function Carousel(props: ICarouselProps) {
   const dataAsImages = React.useMemo(
     () =>
       data.map(d => {
-        const source = urlSigner.signURISource(d.src);
-        const uri = new URL(source.uri);
+        const source = sessionURISource(toURISource(d.src));
+        const uri = new URL(source.uri!);
         uri.searchParams.delete('thumbnail');
         source.uri = uri.toString();
-        source.cache = 'web';
+        // source.cache = 'web';
         return {
           props: { source },
         };
@@ -156,7 +157,7 @@ export function Carousel(props: ICarouselProps) {
 
   const [isNavBarVisible, setNavBarVisible] = React.useState(true);
 
-  const imageViewerRef = React.useRef<ImageViewer>();
+  const imageViewerRef = React.useRef<ImageViewer>(null);
 
   const getButtons = React.useCallback(
     (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} />,
@@ -165,7 +166,7 @@ export function Carousel(props: ICarouselProps) {
 
   const downloadFile = React.useCallback(
     async (url: string | ImageURISource) => {
-      const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
+      const realUrl = sessionURISource(toURISource(url)).uri;
       if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
       await assertPermissions('gallery.write');
       const foundData = data.find(d => (d.src = url));
@@ -179,7 +180,7 @@ export function Carousel(props: ICarouselProps) {
     async (url: string | ImageURISource) => {
       let sf: SyncedFile;
       const foundData = data.find(d => (d.src = url));
-      const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
+      const realUrl = sessionURISource(toURISource(url)).uri;
       if (realUrl!.indexOf('file://') > -1) {
         sf = new SyncedFile(
           new LocalFile({ filename: '', filepath: realUrl!, filetype: foundData?.mime! }, { _needIOSReleaseSecureAccess: false }),
@@ -188,7 +189,7 @@ export function Carousel(props: ICarouselProps) {
           },
         );
       } else {
-        sf = await downloadFile(url);
+        sf = (await downloadFile(url)) as SyncedFile;
       }
       return sf;
     },
@@ -273,11 +274,11 @@ export function Carousel(props: ICarouselProps) {
   const loadingComponent = React.useMemo(() => <Loading />, []);
   const renderLoading = React.useCallback(() => loadingComponent, [loadingComponent]);
 
-  const renderImage = React.useCallback(imageProps => {
+  const renderImage = React.useCallback((imageProps: FastImageProps) => {
     return <FastImage {...imageProps} />;
   }, []);
 
-  const renderFailImage = React.useCallback(imageProps => {
+  const renderFailImage = React.useCallback(() => {
     return (
       <EmptyScreen
         customStyle={styles.errorScreen}
@@ -370,13 +371,10 @@ export function Carousel(props: ICarouselProps) {
     [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading],
   );
 
-  const navBarAndStatusBarHeight = useHeaderHeight();
-
   return (
     <PageView style={styles.page} showNetworkBar={false} showToast={false}>
       <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
       {imageViewer}
-      <ToastHandler offset={navBarAndStatusBarHeight + DEFAULTS.offset} />
     </PageView>
   );
 }

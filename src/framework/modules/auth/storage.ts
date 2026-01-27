@@ -10,7 +10,15 @@ import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
 
 import appConf from '~/framework/util/appConf';
 import { Storage } from '~/framework/util/storage';
-import type { IOAuthToken } from '~/infra/oauth';
+
+export interface Pre_1_12_OAuthToken {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  expires_at: Date;
+  refresh_token: string;
+  scope: string;
+}
 
 export interface AuthStorageData {
   'accounts': Record<string, AuthSavedAccount>;
@@ -18,7 +26,7 @@ export interface AuthStorageData {
     account?: string;
     platform?: string;
     /** used to migrate pre-1.12 automatic connections */
-    anonymousToken?: IOAuthToken;
+    anonymousToken?: Pre_1_12_OAuthToken;
   };
   'show-onboarding': boolean;
 }
@@ -48,9 +56,9 @@ export const readSavedAccounts = () => {
 };
 export const readSavedStartup = () => {
   let startup = storage.getJSON('startup');
-  const oldCurrentPlatform = Storage.global.getString('currentPlatform');
+  const oldCurrentPlatform = Storage.global.getString('currentPlatform'); // pre-1.12 storage
   if (!startup?.platform && oldCurrentPlatform) startup = { platform: oldCurrentPlatform };
-  const oldCurrentToken = Storage.global.getString('token');
+  const oldCurrentToken = Storage.global.getString('token'); // pre-1.12 storage
   if (!startup?.account && oldCurrentToken) startup = { ...startup, anonymousToken: JSON.parse(oldCurrentToken) };
   return { ...startup } as AuthStorageData['startup'];
 };

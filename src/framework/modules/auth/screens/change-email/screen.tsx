@@ -9,6 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
 import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
+import { assertSession } from '../../reducer';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -19,9 +20,9 @@ import { Picture, Svg } from '~/framework/components/picture';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { manualLogoutAction } from '~/framework/modules/auth/actions';
+import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getEmailValidationInfos, requestEmailVerificationCode } from '~/framework/modules/auth/service';
+import { emailValidation } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
@@ -49,6 +50,7 @@ export const computeNavBar = ({
 const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const { navigation, route, tryLogout } = props;
   const isScreenFocused = useIsFocused();
+  const session = assertSession();
 
   const platform = route.params.platform;
   const defaultEmail = route.params.defaultEmail;
@@ -83,13 +85,13 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         if (isModifyingEmail) {
           // We don't want to check this on mail validation scenario at login
           // Exit if email has already been verified
-          const emailValidationInfos = await getEmailValidationInfos(platform.url);
+          const emailValidationInfos = await emailValidation.getValidationState(session);
           if (toVerify === emailValidationInfos?.emailState?.valid) {
             setIsSendingCode(false);
             return EmailState.EMAIL_ALREADY_VERIFIED;
           }
         }
-        await requestEmailVerificationCode(platform, toVerify);
+        await emailValidation.requestCode(session, toVerify);
         navigation.navigate(authRouteNames.mfa, {
           email: toVerify,
           isEmailMFA: true,
@@ -103,7 +105,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         setIsSendingCode(false);
       }
     },
-    [isModifyingEmail, modificationType, navigation, platform, route],
+    [isModifyingEmail, modificationType, navigation, platform, route, session],
   );
 
   const sendEmail = useCallback(async () => {
@@ -205,7 +207,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      tryLogout: tryAction(manualLogoutAction),
+      tryLogout: tryAction(logoutAction),
     },
     dispatch,
   );

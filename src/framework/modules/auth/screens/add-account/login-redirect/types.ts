@@ -10,5 +10,6 @@ export interface AuthLoginRedirectAddAccountScreenNavParams {
 export interface AuthLoginRedirectAddAccountScreenProps {}
 
 export interface AuthLoginRedirectAddAccountScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountLoginRedirect>,
+  extends
+    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountLoginRedirect>,
     AuthLoginRedirectAddAccountScreenProps {}

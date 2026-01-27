@@ -1,4 +1,4 @@
-import type { Error } from "~/framework/util/error";
+import type { Error } from '~/framework/util/error';
 
 export enum AccountErrorCode {
   /** Invalid or missing platform information */
@@ -23,7 +23,10 @@ export enum AccountErrorCode {
  * @param {...ConstructorParameters<typeof global.Error>} args - Additional arguments passed to the base `Error` constructor.
  */
 export class AccountError extends global.Error implements Error.WithCode<AccountErrorCode> {
-  constructor(public readonly code: AccountErrorCode, ...args: ConstructorParameters<typeof global.Error>) {
+  constructor(
+    public readonly code: AccountErrorCode,
+    ...args: ConstructorParameters<typeof global.Error>
+  ) {
     super(...args);
     this.name = 'AuthError'; // Note: built-in Error class break the prototype chain when extending it like this...
     Object.setPrototypeOf(this, new.target.prototype); // ... So, we need to restore the prototype chain like this.

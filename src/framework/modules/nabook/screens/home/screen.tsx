@@ -2,13 +2,17 @@ import * as React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useDispatch } from 'react-redux';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-//import styles from './styles';
 import type { NabookHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
-import { getPlatform } from '~/framework/modules/auth/reducer';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
+import { assertSession, getPlatform } from '~/framework/modules/auth/reducer';
 import ErrorScreen from '~/framework/modules/nabook/components/ErrorScreen';
 import HomeScreen from '~/framework/modules/nabook/components/HomeScreen';
 import OnboardScreen from '~/framework/modules/nabook/components/OnboardScreen';
@@ -17,7 +21,6 @@ import { NabookNavigationParams, nabookRouteNames } from '~/framework/modules/na
 import { NBK_BASE_URL, NBK_COLORS } from '~/framework/modules/nabook/utils/constants';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { sessionFetch } from '~/framework/util/transport';
-import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
 const styles = StyleSheet.create({
   containerLoading: {
@@ -41,13 +44,15 @@ export const computeNavBar = ({
 
 export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
   const { navigation } = props;
+  const dispatch = useDispatch<ThunkDispatch<IGlobalState, never, Action>>();
+  const session = assertSession();
 
   const [nbkTk, setNBKTk] = React.useState<any | null>(null);
   const [screen, setScreen] = React.useState<string | null>(null);
   const [msgError, setMsgError] = React.useState<string | null>(null);
 
   const load = async () => {
-    const t = await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
+    const t = await dispatch(refreshSessionIdForAccountAction(session));
 
     if (!getPlatform() || !t) {
       console.error('[🛑] Nabook | Screen: Cannot load token:', t, getPlatform());

@@ -6,7 +6,8 @@ import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/temp
 export interface AuthChangePasswordScreenProps {}
 
 export interface AuthChangePasswordScreenOwnProps
-  extends AuthChangePasswordScreenProps,
+  extends
+    AuthChangePasswordScreenProps,
     NativeStackScreenProps<
       AuthNavigationParams,
       typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal

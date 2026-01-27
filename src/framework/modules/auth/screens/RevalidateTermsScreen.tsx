@@ -10,7 +10,6 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -19,7 +18,7 @@ import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { manualLogoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
+import { logoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
 import { LegalUrls } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformLegalUrls } from '~/framework/modules/auth/reducer';
@@ -32,7 +31,7 @@ export interface IRevalidateTermsScreenDataProps {
 }
 
 export interface IRevalidateTermsScreenEventProps {
-  tryLogout: (...args: Parameters<typeof manualLogoutAction>) => Promise<void>;
+  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
   tryRevalidate: (...args: Parameters<typeof revalidateTermsAction>) => ReturnType<ReturnType<typeof revalidateTermsAction>>;
 }
 
@@ -142,13 +141,13 @@ const RevalidateTermsScreen = (props: IRevalidateTermsScreenProps) => {
 // MAPPING ========================================================================================
 
 export default connect(
-  (state: IGlobalState) => ({
+  () => ({
     legalUrls: getPlatformLegalUrls(),
   }),
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators<IRevalidateTermsScreenEventProps>(
       {
-        tryLogout: tryAction(manualLogoutAction),
+        tryLogout: tryAction(logoutAction),
         tryRevalidate: tryAction(revalidateTermsAction),
       },
       dispatch,

@@ -124,7 +124,8 @@ const mediaIntents = [
   {
     condition: media => isLinkMedia(media),
     exec(media, _) {
-      openUrl(toURISource(media.src).uri);
+      const url = toURISource(media.src).uri;
+      url && openUrl(url);
     },
     icon(_) {
       // const absoluteSrc = sessionURISource(toURISource(media.src));
@@ -140,7 +141,8 @@ const mediaIntents = [
   {
     condition: media => isFileMedia(media),
     exec(media, _) {
-      openUrl(toURISource(media.src).uri);
+      const url = toURISource(media.src).uri;
+      url && openUrl(url);
     },
     icon(media) {
       const extension = Mime.getExtension(media.mime);

@@ -4,9 +4,10 @@ import { PermissionsAndroid, Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
 
+import { accountFetch } from '../transport';
+
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import http from '~/framework/util/http';
 import { Storage } from '~/framework/util/storage';
 
 export interface FirebaseNotificationStorage {
@@ -128,7 +129,7 @@ class FirebaseCloudMessagingService {
       if (lastKnownToken && lastKnownToken !== token) {
         await this.disablePushNotificationsForAccount(account, lastKnownToken);
       }
-      await http.fetchForAccount(account, 'PUT', `/timeline/pushNotif/fcmToken?fcmToken=${token}`);
+      await accountFetch(account, `/timeline/pushNotif/fcmToken?fcmToken=${token}`, { method: 'PUT' });
 
       console.debug('[FirebaseMessagingService] putTokenForAccount - OK -', account.user.displayName, '-', token);
       storageForAccount.set('last-known-firebase-token', token);
@@ -153,7 +154,7 @@ class FirebaseCloudMessagingService {
         console.error('[FirebaseMessagingService] deleteTokenForAccount - No token to delete for -', account.user.displayName);
         return;
       }
-      await http.fetchForAccount(account, 'DELETE', `/timeline/pushNotif/fcmToken?fcmToken=${token}`);
+      await accountFetch(account, `/timeline/pushNotif/fcmToken?fcmToken=${token}`, { method: 'DELETE' });
       console.debug('[FirebaseMessagingService] deleteTokenForAccount - OK -', account.user.displayName, '-', token);
       storageForAccount.delete('last-known-firebase-token');
     } catch (e) {

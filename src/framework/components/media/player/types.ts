@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ReactVideoSourceProperties } from 'react-native-video';
+import { ReactVideoSource } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { AudienceParameter } from '~/framework/modules/audience/types';
@@ -9,7 +9,7 @@ import { MediaType } from '~/framework/util/media';
 
 export interface MediaPlayerPlayableParams {
   type: MediaType.AUDIO | MediaType.VIDEO;
-  source: ReactVideoSourceProperties;
+  source: ReactVideoSource;
 }
 
 export interface MediaPlayerEmbeddedParams {

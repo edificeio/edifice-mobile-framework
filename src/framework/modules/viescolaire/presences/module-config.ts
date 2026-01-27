@@ -19,7 +19,7 @@ export default new NavigableModuleConfig<'presences', PresencesReduxState>({
   displayColor: theme.apps.presences.accentColors,
   displayI18n: 'presences-moduleconfig-appname',
   displayPicture: theme.apps.presences.icon,
-  entcoreScope: ['presences'],
+  entcoreScope: ['presences', 'incidents'],
   entcoreTrackingName: 'Presences',
   fileManager: {
     attachment: {

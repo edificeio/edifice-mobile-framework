@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import WebView from 'react-native-webview';
+import WebView, { WebViewProps } from 'react-native-webview';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import styles from './styles';
@@ -56,7 +56,7 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
     return () => clearTimeout(timeoutId);
   }, [isLoaded]);
 
-  const onShouldStartLoadWithRequest = React.useCallback(request => {
+  const onShouldStartLoadWithRequest = React.useCallback<NonNullable<WebViewProps['onShouldStartLoadWithRequest']>>(request => {
     if (firstLoadRef.current) return true;
 
     openUrl(request.url);

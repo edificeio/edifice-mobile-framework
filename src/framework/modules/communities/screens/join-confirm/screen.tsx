@@ -29,9 +29,9 @@ import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesSelectors } from '~/framework/modules/communities/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { HTTPError } from '~/framework/util/http';
 import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
+import { HTTPError } from '~/framework/util/transport/error';
 
 export const computeNavBar = ({
   navigation,

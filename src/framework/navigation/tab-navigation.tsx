@@ -21,38 +21,23 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initialWindowMetrics, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
 import { getTabBarStyleForNavState } from './hideTabBarAndroid';
-import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
-import { getTypedRootStack } from './navigators';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
+import useChange from '../hooks/change';
 
 import { I18n } from '~/app/i18n';
-import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
-import { selectors } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
-
-//  88888888888       888      888b    888                   d8b                   888
-//      888           888      8888b   888                   Y8P                   888
-//      888           888      88888b  888                                         888
-//      888   8888b.  88888b.  888Y88b 888  8888b.  888  888 888  .d88b.   8888b.  888888  .d88b.  888d888
-//      888      "88b 888 "88b 888 Y88b888     "88b 888  888 888 d88P"88b     "88b 888    d88""88b 888P"
-//      888  .d888888 888  888 888  Y88888 .d888888 Y88  88P 888 888  888 .d888888 888    888  888 888
-//      888  888  888 888 d88P 888   Y8888 888  888  Y8bd8P  888 Y88b 888 888  888 Y88b.  Y88..88P 888
-//      888  "Y888888 88888P"  888    Y888 "Y888888   Y88P   888  "Y88888 "Y888888  "Y888  "Y88P"  888
-//                                                                    888
-//                                                               Y8b d88P
-//                                                                "Y88P"
 
 const Tab = createBottomTabNavigator();
 
@@ -141,18 +126,16 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
     <Stack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName} screenListeners={stackListeners}>
       {ModuleScreens.all}
       {authNavigation}
-      {modals}
     </Stack.Navigator>
   );
 }
 
-export function MainTabNavigator() {
-  // Simple Hack : session can be recreated with same values.
-  // By using JSON-stringified version for useMemo() deps, we ensure that the navigation will be re-rendered only if necessary.
-  const session = useSelector(selectors.session);
-  const appsJson = JSON.stringify(session?.rights.apps);
+export function TabNavigation() {
+  const session = assertSession();
+  // Note: the following tabModules.get() reintanciates return value every time. We need to memoize it to avoid re-renders
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const tabModulesCache = React.useMemo(() => tabModules.get(), [session]);
 
-  const tabModulesCache = tabModules.get();
   const moduleTabStackCache = React.useMemo(
     () => tabModulesCache.map(module => <TabStack module={module} key={module.config.name} />),
     [tabModulesCache],
@@ -160,14 +143,11 @@ export function MainTabNavigator() {
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
     () =>
-      session
-        ? tabModules
-            .get()
-            .filterAvailables(session)
-            .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
-        : [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [tabModulesCache.length, appsJson],
+      tabModules
+        .get()
+        .filterAvailables(session)
+        .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
+    [session],
   );
 
   const tabRoutes = React.useMemo(() => {
@@ -185,9 +165,7 @@ export function MainTabNavigator() {
         </Tab.Screen>
       );
     });
-    // We effectively want to have this deps to minimise re-renders
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabModulesCache.length, appsJson]);
+  }, [availableTabModules, tabModulesCache, moduleTabStackGetterCache]);
 
   // Avoid bug when launching app after first push
   const initialBottomInset = initialWindowMetrics?.insets.bottom ?? UI_SIZES.screen.bottomInset;
@@ -246,40 +224,5 @@ export function MainTabNavigator() {
         <View />
       )}
     </BottomSheetModalProvider>
-  );
-}
-
-//   .d8888b.  888                      888      888b    888                   d8b                   888
-//  d88P  Y88b 888                      888      8888b   888                   Y8P                   888
-//  Y88b.      888                      888      88888b  888                                         888
-//   "Y888b.   888888  8888b.   .d8888b 888  888 888Y88b 888  8888b.  888  888 888  .d88b.   8888b.  888888  .d88b.  888d888
-//      "Y88b. 888        "88b d88P"    888 .88P 888 Y88b888     "88b 888  888 888 d88P"88b     "88b 888    d88""88b 888P"
-//        "888 888    .d888888 888      888888K  888  Y88888 .d888888 Y88  88P 888 888  888 .d888888 888    888  888 888
-//  Y88b  d88P Y88b.  888  888 Y88b.    888 "88b 888   Y8888 888  888  Y8bd8P  888 Y88b 888 888  888 Y88b.  Y88..88P 888
-//   "Y8888P"   "Y888 "Y888888  "Y8888P 888  888 888    Y888 "Y888888   Y88P   888  "Y88888 "Y888888  "Y888  "Y88P"  888
-//                                                                                      888
-//                                                                                 Y8b d88P
-//                                                                                  "Y88P"
-
-export enum MainRouteNames {
-  Tabs = '$tabs',
-}
-
-/**
- * Computes the main navigation screens as a Group.
- * This operation is heavy so be careful to not call it unless content of apps or widgets really changes.
- * @param apps available apps for the user
- * @param widgets available widgets for the user
- * @returns
- */
-export function useMainNavigation() {
-  const RootStack = getTypedRootStack();
-  const session = useSelector(selectors.session);
-  setUpModulesAccess(session);
-
-  return (
-    <RootStack.Group screenOptions={navBarOptions}>
-      <RootStack.Screen name={MainRouteNames.Tabs} component={MainTabNavigator} options={{ headerShown: false }} />
-    </RootStack.Group>
   );
 }

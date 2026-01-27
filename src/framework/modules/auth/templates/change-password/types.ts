@@ -1,14 +1,10 @@
 import { NavigationAction } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import type { changePasswordActionAddFirstAccount, IChangePasswordModel, logoutAction } from '~/framework/modules/auth/actions';
 import type {
-  changePasswordActionAddFirstAccount,
-  IChangePasswordModel,
-  manualLogoutAction,
-} from '~/framework/modules/auth/actions';
-import type {
+  AuthActiveAccount,
   AuthCredentials,
-  AuthLoggedAccount,
   AuthUsernameCredential,
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
@@ -33,13 +29,13 @@ export interface ChangePasswordScreenNavParams {
 }
 
 export interface ChangePasswordScreenStoreProps {
-  session?: AuthLoggedAccount;
+  session?: AuthActiveAccount;
   platform?: Platform;
   context?: PlatformAuthContext;
 }
 
 export interface ChangePasswordScreenDispatchProps {
-  tryLogout: (...args: Parameters<typeof manualLogoutAction>) => ReturnType<ReturnType<typeof manualLogoutAction>>;
+  tryLogout: (...args: Parameters<typeof logoutAction>) => ReturnType<ReturnType<typeof logoutAction>>;
   trySubmit: (
     ...args: Parameters<typeof changePasswordActionAddFirstAccount>
   ) => ReturnType<ReturnType<typeof changePasswordActionAddFirstAccount>>;

@@ -19,8 +19,8 @@ const getRedirectUrl = (session: AuthActiveAccount, connectorAddress: string, pa
 
 export default async (session: AuthActiveAccount, connectorAddress: string, pageId?: string, dryRun?: boolean) => {
   const finalUrl = getRedirectUrl(session, connectorAddress, pageId);
-  if (dryRun) return finalUrl ?? undefined;
-  openUrl(finalUrl ?? undefined, {
+  if (dryRun) return finalUrl;
+  openUrl(finalUrl, {
     error: I18n.get('pronote-redirect-error-message'),
     errorTitle: I18n.get('pronote-redirect-error-title'),
   });
