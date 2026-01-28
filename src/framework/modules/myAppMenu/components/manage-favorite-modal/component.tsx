@@ -12,7 +12,7 @@ import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigat
 import { PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
 import { MyAppsList } from '~/framework/modules/myAppMenu/components/my-apps-list';
-import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myAppMenu/screens/utils.ts';
+import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myAppMenu/screens/utils';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 const headerTitleStyle = {

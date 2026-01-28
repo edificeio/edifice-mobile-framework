@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 
 import { styles } from './styles';
 import { MyAppsListItem, MyAppsListProps } from './types';
@@ -38,8 +38,8 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongP
     }
   }, []);
 
-  const renderItem = React.useCallback(
-    ({ item }: { item: MyAppsListItem }) => {
+  const renderItem = React.useCallback<ListRenderItem<MyAppsListItem>>(
+    ({ item }) => {
       if (isSeparator(item)) {
         return (
           <View style={styles.separatorContainer}>

@@ -11,6 +11,7 @@ import { I18n } from '~/app/i18n';
 import { AppDispatch, getStore } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
@@ -19,6 +20,7 @@ import { Toggle } from '~/framework/components/toggle';
 import { MyAppsFilters } from '~/framework/modules/myAppMenu/components/my-apps-filters';
 import { MyAppsList } from '~/framework/modules/myAppMenu/components/my-apps-list';
 import { MyAppsMenuItem } from '~/framework/modules/myAppMenu/components/my-apps-menu-item';
+import { MAOSProps, MyAppsOnboardingModal } from '~/framework/modules/myAppMenu/components/my-apps-onboarding-modal';
 import {
   appInfoActions,
   getAllappsShowedState,
@@ -44,6 +46,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   const isFavoritesTab = filter.type === 'favorites';
 
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
+  const modalRef = React.useRef<ModalBoxHandle>(null);
 
   const openBottomSheet = (mode: BottomSheetMode, app?: AppsInfoAggregated) => {
     setSelectedApp(app ?? null);
@@ -173,6 +176,36 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     );
   }, [renderBottomSheetContent]);
 
+  const slides: MAOSProps[] = [
+    {
+      description: I18n.get('myapp-onboarding-favorites-description'),
+      illustration: {
+        name: 'ui-myapps-list',
+        type: 'svg',
+      },
+      key: 'favorites',
+      title: I18n.get('myapp-onboarding-favorites-title'),
+    },
+    {
+      description: I18n.get('myapp-onboarding-lonpress-description'),
+      illustration: {
+        source: require('ASSETS/animations/myapps/myapps-more-actions.json'),
+        type: 'animated',
+      },
+      key: 'filter-gif',
+      title: I18n.get('myapp-onboarding-longpress-title'),
+    },
+    {
+      description: I18n.get('myapp-onboarding-favorite-add-description'),
+      illustration: {
+        name: 'ui-make-favorite',
+        type: 'svg',
+      },
+      key: 'make-favorite',
+      title: I18n.get('myapp-onboarding-favorite-add-title'),
+    },
+  ];
+
   React.useEffect(() => {
     const store = getStore();
 
@@ -192,11 +225,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
-            <NavBarAction
-              // disabled={isContentLoading}
-              icon="ui-notif-empty"
-              onPress={() => {}}
-            />,
+            <NavBarAction icon="ui-notif-empty" onPress={() => modalRef.current?.doShowModal()} />,
             <NavBarAction disabled={false} icon="ui-options" onPress={onPresentBottomSheet} />,
           ]}
         />
@@ -222,6 +251,12 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
         onLongPressApp={app => openBottomSheet('app_actions', app)}
       />
       {renderBottomSheet()}
+      <MyAppsOnboardingModal
+        ref={modalRef}
+        slides={slides}
+        onComplete={() => {}}
+        onDismiss={() => modalRef.current?.doDismissModal()}
+      />
     </PageView>
   );
 };
