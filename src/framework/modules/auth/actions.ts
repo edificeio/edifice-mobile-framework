@@ -59,6 +59,7 @@ import { isTokenExpired, OAuth2ErrorCode, refreshTokenForAccount } from '~/frame
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
+import { platformFetch } from '~/framework/util/transport';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, Action>;
 
@@ -790,16 +791,12 @@ function changePasswordAction(
       if (!deviceId) {
         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }
-      const res = await fetch(`${platform.url}/auth/reset`, {
+      const res = await platformFetch(platform, `/auth/reset`, {
         body: formdata,
         headers: {
           'Accept': 'application/json',
           'Accept-Language': I18n.getLanguage(),
           'Content-Type': 'multipart/form-data',
-          'X-APP': 'mobile',
-          'X-APP-NAME': DeviceInfo.getBundleId(),
-          'X-APP-VERSION': DeviceInfo.getReadableVersion(),
-          'X-Device-Id': deviceId,
         },
         method: 'post',
       });

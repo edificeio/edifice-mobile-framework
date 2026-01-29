@@ -10,6 +10,7 @@ import {
   WebViewHttpErrorEvent,
   WebViewNavigation,
   WebViewNavigationEvent,
+  WebViewSourceUri,
 } from 'react-native-webview/lib/WebViewTypes';
 
 import styles from './styles';
@@ -28,8 +29,10 @@ import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
+import { toURISource } from '~/framework/util/media';
 import { API, OAuth2ErrorCode, OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
+import { deviceURISource } from '~/framework/util/transport';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -165,7 +168,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           scalesPageToFit
           setSupportMultipleWindows={false}
           showsHorizontalScrollIndicator={false}
-          source={{ headers: { 'X-APP': 'mobile' }, uri: this.wayfUrl! }}
+          source={deviceURISource(toURISource<WebViewSourceUri>({ uri: this.wayfUrl! }))}
           startInLoadingState
           style={styles.webview}
           userAgent={`X-APP=mobile-${Platform.OS}`}
