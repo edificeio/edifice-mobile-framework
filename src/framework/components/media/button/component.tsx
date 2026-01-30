@@ -11,9 +11,10 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { getScaleHeight, getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
-import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
+import { openMediaPlayer } from '~/framework/components/media/player';
 import { Svg } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
+import { MediaType } from '~/framework/util/media';
 import { Image } from '~/framework/util/media-deprecated';
 import { urlSigner } from '~/infra/oauth';
 
@@ -33,8 +34,8 @@ const MediaButton = (props: IPlayerProps) => {
   const widthWaves = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.medium - getScaleHeight(36) - 3 * UI_SIZES.spacing.small;
   const heightWaves = Math.round(widthWaves * (36 / 237));
 
-  const isAudio = type === 'audio';
-  const isVideoOrWebview = type === 'video' || type === 'web';
+  const isAudio = type === MediaType.AUDIO;
+  const isVideoOrWebview = type === MediaType.VIDEO || type === MediaType.EMBEDDED;
 
   const playerStyle = {
     aspectRatio: ratio || 16 / 10,
@@ -44,7 +45,7 @@ const MediaButton = (props: IPlayerProps) => {
     openMediaPlayer({
       referer: props.referer,
       source: urlSigner.signURISource(props.source),
-      type: props.type as MediaType,
+      type: props.type,
     });
   };
 

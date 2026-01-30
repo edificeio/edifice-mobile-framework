@@ -9,6 +9,7 @@ import MediaButton from '~/framework/components/media/button';
 import { SmallItalicText } from '~/framework/components/text';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
+import { MediaType } from '~/framework/util/media';
 import { formatSource } from '~/framework/util/media-deprecated';
 import { INotificationMedia } from '~/framework/util/notifications';
 import AttachmentCount from '~/ui/AttachmentCount';
@@ -168,7 +169,7 @@ const renderAudioVideoPreview = (media: INotificationMedia, referer: AudiencePar
   }
   return (
     <MediaButton
-      type={media.type as 'audio' | 'video'}
+      type={media.type as MediaType.AUDIO | MediaType.VIDEO}
       source={formatSource(media.src as string)}
       posterSource={videoId && videoDimensions ? formatSource(computeVideoThumbnail(videoId, videoDimensions)) : undefined}
       ratio={videoDimensions && videoDimensions[1] !== 0 ? videoDimensions[0] / videoDimensions[1] : undefined}
@@ -178,7 +179,7 @@ const renderAudioVideoPreview = (media: INotificationMedia, referer: AudiencePar
 };
 
 const renderIframePreview = (media: INotificationMedia, referer: AudienceParameter) => {
-  return <MediaButton type="web" source={formatSource(media.src as string)} referer={referer} />;
+  return <MediaButton type={MediaType.EMBEDDED} source={formatSource(media.src as string)} referer={referer} />;
 };
 
 const renderImagesPreview = (medias: INotificationMedia[], referer: AudienceParameter) => {

@@ -212,7 +212,7 @@ export class OAuth2RessourceOwnerPasswordClient {
           'Accept-Language': I18n.getLanguage(),
           'Authorization': 'Bearer ' + token.access_token,
           'X-APP': 'mobile',
-          'X-APP-NAME': DeviceInfo.getApplicationName(),
+          'X-APP-NAME': DeviceInfo.getBundleId(),
           'X-APP-VERSION': DeviceInfo.getReadableVersion(),
           'X-Device-Id': uniqueId(),
         },
@@ -259,7 +259,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers: {
           ...options.headers,
           'X-APP': 'mobile',
-          'X-APP-NAME': DeviceInfo.getApplicationName(),
+          'X-APP-NAME': DeviceInfo.getBundleId(),
           'X-APP-VERSION': DeviceInfo.getReadableVersion(),
           'X-Device-Id': getDeviceId(),
         },

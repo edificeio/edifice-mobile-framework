@@ -7,7 +7,7 @@ export const MAX_FETCH_TIMEOUT_MS = 30000; // 30 seconds
 
 export const DEFAULT_HEADERS = {
   'X-APP': 'mobile',
-  'X-APP-NAME': DeviceInfo.getApplicationName(),
+  'X-APP-NAME': DeviceInfo.getBundleId(),
   'X-APP-VERSION': DeviceInfo.getReadableVersion(),
 };
 

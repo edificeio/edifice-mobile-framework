@@ -66,7 +66,7 @@ export class RequestBuilder {
 
   static defaultHeaders = {
     'X-APP': 'mobile',
-    'X-APP-NAME': DeviceInfo.getApplicationName(),
+    'X-APP-NAME': DeviceInfo.getBundleId(),
     'X-APP-VERSION': DeviceInfo.getReadableVersion(),
   };
 
