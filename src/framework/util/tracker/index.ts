@@ -4,11 +4,10 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 
-import { sessionFetch } from '../transport';
-
 import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
+import { sessionFetch } from '~/framework/util/transport';
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [Pick<IAnyModuleConfig, 'trackingName'>, string, string?, number?];

@@ -6,13 +6,13 @@ import { TouchableOpacity, View } from 'react-native';
 
 import styles from './styles';
 import { IPlayerProps } from './types';
-import { MediaPlayerParams } from '../player/types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { getScaleHeight, getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
 import { openMediaPlayer } from '~/framework/components/media/player';
+import { MediaPlayerParams } from '~/framework/components/media/player/types';
 import { Svg } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
 import { MediaType } from '~/framework/util/media';

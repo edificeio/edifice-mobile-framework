@@ -3,8 +3,6 @@
  */
 import FileViewer from 'react-native-file-viewer';
 
-import { sessionURISource } from '../transport';
-
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { openMediaPlayer } from '~/framework/components/media/player';
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -17,6 +15,7 @@ import fileTransferService, {
 } from '~/framework/util/fileHandler/service';
 import { MediaType, toURISource } from '~/framework/util/media';
 import type { IMedia } from '~/framework/util/media-deprecated';
+import { sessionURISource } from '~/framework/util/transport';
 
 export const startUploadFileAction =
   <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(

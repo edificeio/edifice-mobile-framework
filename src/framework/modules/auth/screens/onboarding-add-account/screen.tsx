@@ -5,7 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 
 import styles from './styles';
 import type { AuthOnboardingAddAccountScreenPrivateProps } from './types';
-import { getAddAccountOnboardingNextScreen } from '../../navigation/add-account/router';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -14,6 +13,7 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getAddAccountOnboardingNextScreen } from '~/framework/modules/auth/navigation/add-account/router';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({

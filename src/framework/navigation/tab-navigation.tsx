@@ -27,7 +27,6 @@ import { getTabBarStyleForNavState } from './hideTabBarAndroid';
 import { ModuleScreens } from './moduleScreens';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
-import useChange from '../hooks/change';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';

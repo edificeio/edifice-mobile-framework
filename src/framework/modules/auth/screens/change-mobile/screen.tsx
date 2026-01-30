@@ -17,7 +17,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
 import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
-import { assertSession } from '../../reducer';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -33,6 +32,7 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { mobileValidation, requirements } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';

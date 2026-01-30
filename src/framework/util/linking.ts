@@ -9,10 +9,9 @@ import { decode } from 'html-entities';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { refreshQueryParamTokenAction } from '../modules/auth/actions';
-
 import { I18n } from '~/app/i18n';
 import { getStore, IGlobalState } from '~/app/store';
+import { refreshQueryParamTokenAction } from '~/framework/modules/auth/actions';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { nabookRouteNames } from '~/framework/modules/nabook/navigation/';
 import { handleNotificationNavigationAction } from '~/framework/util/notifications/routing';

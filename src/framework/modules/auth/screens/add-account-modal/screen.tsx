@@ -4,11 +4,13 @@ import { CommonActions, StackActionType } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
-import { getAddAccountLoginNextScreen, getAddAccountNavActionForRedirect } from '../../navigation/add-account/router';
-
 import { I18n } from '~/app/i18n';
 import { AuthNavigationParams, authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
 import useAuthNavigation from '~/framework/modules/auth/navigation/add-account/navigator';
+import {
+  getAddAccountLoginNextScreen,
+  getAddAccountNavActionForRedirect,
+} from '~/framework/modules/auth/navigation/add-account/router';
 import { getState, IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';

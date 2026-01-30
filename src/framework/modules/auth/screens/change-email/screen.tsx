@@ -9,7 +9,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
 import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
-import { assertSession } from '../../reducer';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -22,6 +21,7 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { emailValidation } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';

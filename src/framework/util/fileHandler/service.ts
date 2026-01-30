@@ -18,13 +18,12 @@ import RNFS, {
   UploadProgressCallbackResult,
 } from 'react-native-fs';
 
-import { toURISource } from '../media';
-import { sessionURISource } from '../transport';
-
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
+import { toURISource } from '~/framework/util/media';
 import { assertPermissions } from '~/framework/util/permissions';
 import { getSafeFileName } from '~/framework/util/string';
+import { sessionURISource } from '~/framework/util/transport';
 
 export interface IUploadCommonParams {
   fields?: { [key: string]: string };
