@@ -57,15 +57,10 @@ export default function Attachment(props: AttachmentProps) {
     await shareFile(synfile);
   }, [props.data, props.session]);
 
-  const share = React.useCallback(async () => {
-    if (!sf) return;
-    await shareFile(sf);
-  }, [sf]);
-
   const onShare = React.useCallback(async () => {
     try {
       setIsDownloading(true);
-      sf ? await share() : await downloadAndShare();
+      sf ? await shareFile(sf) : await downloadAndShare();
       setIsDownloading(false);
     } catch (e) {
       setIsDownloading(false);
@@ -78,7 +73,7 @@ export default function Attachment(props: AttachmentProps) {
         toast.showError(I18n.get('carousel-share-error'));
       }
     }
-  }, [downloadAndShare, sf, share]);
+  }, [downloadAndShare, sf]);
 
   const onOpen = async () => {
     try {

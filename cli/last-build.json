@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-01-29 19:29:06",
-  "notes": "chore: yarn cache update\nfix: SUPPORT-4080 could not open pdf files\nfix: PEDAGO-3715 send `bundleId` instead of `applicationName` in 'x-app-name' headers\nfix: PEDAGO-2308 fix embed items in MediaPlayer\nchore: yarn cache update\nrelease: 1.16.3-rc.3(1160305)",
-  "version": "1.16.3-rc.4(1160306)",
+  "last": "2026-02-03 11:02:30",
+  "notes": "chore: yarn cache update\nupdate(stack): yarn cache update.\nfix(mails): PEDAGO-3732 download files attached\nrelease: 1.16.3-rc.4(1160306)",
+  "version": "1.16.3-rc.5(1160307)",
   "track": "1.16.3"
 }
