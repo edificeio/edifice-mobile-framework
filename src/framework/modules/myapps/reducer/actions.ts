@@ -14,6 +14,7 @@ import {
   selectAppsState,
 } from '~/framework/modules/myapps/reducer';
 import { myAppsService } from '~/framework/modules/myapps/service';
+import { MyAppsPreferencesStorageData, readMyAppsPreferences, writeShowAllApps } from '~/framework/modules/myapps/storage';
 import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoState } from '~/framework/modules/myapps/types';
 import { getModuleRouteName } from '~/framework/modules/myapps/utils';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
@@ -33,6 +34,12 @@ export const appInfoActions = {
       type: appsInfoActionTypes.fetchSuccess,
     }) as const,
 
+  hydratePreferences: (payload: Partial<MyAppsPreferencesStorageData>) =>
+    ({
+      payload,
+      type: appsInfoActionTypes.hydratePreferences,
+    }) as const,
+
   saveGroupedFavoritesError: () =>
     ({
       type: appsInfoActionTypes.saveGroupedFavoritesError,
@@ -49,17 +56,20 @@ export const appInfoActions = {
       type: appsInfoActionTypes.saveGroupedFavoritesSuccess,
     }) as const,
 
-  toggleAllApps: () =>
-    ({
-      type: appsInfoActionTypes.toggleAllApps,
-    }) as const,
-
   toggleFavorite: (appName: string) =>
     ({
       appName,
       type: appsInfoActionTypes.toggleFavorite,
     }) as const,
 };
+
+export const toggleAllApps = (): ThunkResult => async (dispatch, getState) => {
+  dispatch({ type: appsInfoActionTypes.toggleAllApps });
+
+  const { showAllApps } = selectAppsState(getState());
+  writeShowAllApps(showAllApps);
+};
+
 export const afterLoginSetup =
   (session): ThunkResult =>
   async dispatch => {
@@ -168,3 +178,8 @@ export const saveGroupedFavorites =
       Toast.showError(I18n.get('myapp-add-favorite-error-message'));
     }
   };
+
+export const hydrateMyAppsPreferences = (): ThunkResult => async dispatch => {
+  const prefs = readMyAppsPreferences();
+  dispatch(appInfoActions.hydratePreferences(prefs));
+};

@@ -3,9 +3,6 @@ import { Action } from 'redux';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { AppBookmarks, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
 
-/* =========================
- * FETCH
- * ========================= */
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
 }
@@ -19,18 +16,11 @@ export interface FetchErrorAction extends Action {
   type: typeof appsInfoActionTypes.fetchError;
   error: string;
 }
-
-/* =========================
- * FAVORITES – UNITAIRE
- * ========================= */
 export interface ToggleFavoriteAction extends Action {
   type: typeof appsInfoActionTypes.toggleFavorite;
   appName: string;
 }
 
-/* =========================
- * FAVORITES – GROUPÉ
- * ========================= */
 export interface SaveGroupedFavoritesStartAction extends Action {
   type: typeof appsInfoActionTypes.saveGroupedFavoritesStart;
 }
@@ -44,16 +34,17 @@ export interface SaveGroupedFavoritesErrorAction extends Action {
   type: typeof appsInfoActionTypes.saveGroupedFavoritesError;
 }
 
-/* =========================
- * UI
- * ========================= */
 export interface ToggleAllAppsAction extends Action {
   type: typeof appsInfoActionTypes.toggleAllApps;
 }
 
-/* =========================
- * UNION
- * ========================= */
+export interface HydratePreferencesAction extends Action {
+  type: typeof appsInfoActionTypes.hydratePreferences;
+  payload: {
+    showAllApps: boolean;
+  };
+}
+
 export type MyAppsActions =
   | FetchStartAction
   | FetchSuccessAction
@@ -62,21 +53,20 @@ export type MyAppsActions =
   | SaveGroupedFavoritesStartAction
   | SaveGroupedFavoritesSuccessAction
   | SaveGroupedFavoritesErrorAction
-  | ToggleAllAppsAction;
+  | ToggleAllAppsAction
+  | HydratePreferencesAction;
 
-/* =========================
- * ACTION TYPES
- * ========================= */
 export const appsInfoActionTypes = {
   fetchError: moduleConfig.namespaceActionType('FETCH_ERROR'),
   fetchStart: moduleConfig.namespaceActionType('FETCH_START'),
   fetchSuccess: moduleConfig.namespaceActionType('FETCH_SUCCESS'),
 
-  saveGroupedFavoritesError: moduleConfig.namespaceActionType('SAVE_GROUPED_FAVORITES_ERROR'),
+  hydratePreferences: moduleConfig.namespaceActionType('HYDRATE_PREFERENCES'),
 
+  saveGroupedFavoritesError: moduleConfig.namespaceActionType('SAVE_GROUPED_FAVORITES_ERROR'),
   saveGroupedFavoritesStart: moduleConfig.namespaceActionType('SAVE_GROUPED_FAVORITES_START'),
   saveGroupedFavoritesSuccess: moduleConfig.namespaceActionType('SAVE_GROUPED_FAVORITES_SUCCESS'),
-  toggleAllApps: moduleConfig.namespaceActionType('TOGGLE_ALL_APPS'),
 
+  toggleAllApps: moduleConfig.namespaceActionType('TOGGLE_ALL_APPS'),
   toggleFavorite: moduleConfig.namespaceActionType('TOGGLE_FAVORITE'),
 };

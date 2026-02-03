@@ -9,7 +9,7 @@ export const buildAppItem = (app: AppsInfoAggregated): MyAppsListItem => ({
   type: 'app',
 });
 
-export const buildFavoritesList = (apps: AppsInfoAggregated[]): MyAppsListItem[] => {
+export const buildAllAppsCategoryList = (apps: AppsInfoAggregated[]): MyAppsListItem[] => {
   const mobileApps = apps.filter(app => app.isMobile);
   const otherApps = apps.filter(app => !app.isMobile);
 

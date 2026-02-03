@@ -1,6 +1,6 @@
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
-export type MyAppsCategories = 'communication' | 'pedagogie' | 'organisation' | 'servicesExternes' | 'toutes';
+export type MyAppsCategories = 'communication' | 'pedagogie' | 'organisation' | 'otherServices' | 'toutes';
 
 export type MyAppsFilter =
   | { type: 'category'; value: MyAppsCategories }

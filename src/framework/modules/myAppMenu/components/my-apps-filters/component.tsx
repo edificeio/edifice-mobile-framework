@@ -14,7 +14,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';
 import SearchBar from '~/framework/components/search-bar';
 import { SmallActionText } from '~/framework/components/text';
-import { MyAppsFilterCell } from '~/framework/modules/myAppMenu/components/my-apps-filters-cell';
+import { MyAppsFilterCell } from '~/framework/modules/myAppMenu/components';
 
 export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersProps) => {
   const searchQuery = selectedFilter.type === 'search' ? selectedFilter.value : '';
@@ -73,7 +73,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
         <View style={styles.searchContainerWrapper}>
           <Animated.View style={[styles.animatedSearchContainer, animatedContainerStyle]}>
             <Animated.View style={[styles.searchIcon, animatedIconStyle]}>
-              <Pressable onPress={openSearch}>
+              <Pressable style={styles.clickzone} onPress={openSearch}>
                 <Svg name="ui-search" width={20} height={20} fill={theme.ui.text.regular} />
               </Pressable>
             </Animated.View>

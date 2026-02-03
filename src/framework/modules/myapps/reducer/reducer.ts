@@ -2,6 +2,7 @@ import {
   appsInfoActionTypes,
   FetchErrorAction,
   FetchSuccessAction,
+  HydratePreferencesAction,
   SaveGroupedFavoritesSuccessAction,
   ToggleFavoriteAction,
 } from './action-types';
@@ -59,7 +60,6 @@ const reducer = createReducer(appsInfoInitialState, {
     ...state,
     isSavingFavorites: true,
   }),
-
   [appsInfoActionTypes.saveGroupedFavoritesSuccess]: (state, action) => {
     const { bookmarks } = action as SaveGroupedFavoritesSuccessAction;
     return {
@@ -71,7 +71,6 @@ const reducer = createReducer(appsInfoInitialState, {
       isSavingFavorites: false,
     };
   },
-
   [appsInfoActionTypes.saveGroupedFavoritesError]: state => ({
     ...state,
     isSavingFavorites: false,
@@ -80,6 +79,13 @@ const reducer = createReducer(appsInfoInitialState, {
     ...state,
     showAllApps: !state.showAllApps,
   }),
+  [appsInfoActionTypes.hydratePreferences]: (state, action) => {
+    const { payload } = action as HydratePreferencesAction;
+    return {
+      ...state,
+      showAllApps: payload.showAllApps,
+    };
+  },
 });
 
 Reducers.register(moduleConfig.reducerName, reducer);

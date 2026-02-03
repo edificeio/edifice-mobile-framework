@@ -86,6 +86,7 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
 
     case 'category':
       if (filter.value === 'toutes') return apps;
+      if (filter.value === 'otherServices') return apps.filter(app => app.isExternal);
       return apps.filter(app => app.resolvedCategory === filter.value);
     case 'search': {
       if (!filter.value.trim()) return apps;

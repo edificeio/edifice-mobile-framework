@@ -12,8 +12,8 @@ export const MY_APPS_FILTER_LABEL_KEYS = {
   favorites: 'myapp-home-filter-favorites',
   libraries: 'myapp-home-filter-libraries',
   organisation: 'myapp-home-filter-organisation',
+  otherServices: 'myapp-home-filter-other-services',
   pedagogie: 'myapp-home-filter-pedagogie',
-  servicesExternes: 'myapp-home-filter-servicesExternes',
 } as const;
 
 export type MyAppsFilterLabelKeyMap = typeof MY_APPS_FILTER_LABEL_KEYS;
@@ -24,8 +24,6 @@ export interface MyAppsFilterItem {
   filter: MyAppsFilter;
   labelKey: MyAppsFilterLabelKey;
 }
-
-//:Record<keyof MyAppsFilterLabelKeyMap, MyAppsFilterItem>;
 
 export const MY_APPS_FILTER_CONFIG = {
   all: {
@@ -48,13 +46,13 @@ export const MY_APPS_FILTER_CONFIG = {
     filter: { type: 'category', value: 'organisation' } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.organisation,
   },
+  otherServices: {
+    filter: { type: 'category', value: 'otherServices' } as const,
+    labelKey: MY_APPS_FILTER_LABEL_KEYS.otherServices,
+  },
   pedagogie: {
     filter: { type: 'category', value: 'pedagogie' } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.pedagogie,
-  },
-  servicesExternes: {
-    filter: { type: 'category', value: 'servicesExternes' } as const,
-    labelKey: MY_APPS_FILTER_LABEL_KEYS.servicesExternes,
   },
 } as const;
 
@@ -65,5 +63,5 @@ export const MY_APPS_FILTERS: Readonly<MyAppsFilterItem[]> = [
   MY_APPS_FILTER_CONFIG.pedagogie,
   MY_APPS_FILTER_CONFIG.organisation,
   // MY_APPS_FILTER_CONFIG.libraries,
-  MY_APPS_FILTER_CONFIG.servicesExternes,
+  MY_APPS_FILTER_CONFIG.otherServices,
 ];

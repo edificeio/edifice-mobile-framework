@@ -3,7 +3,7 @@ import { AnyModule, AnyNavigableModule, IEntcoreApp } from '~/framework/util/mod
 
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
   if (!app.isMobile) {
-    return 'servicesExternes';
+    return 'otherServices';
   }
 
   switch (app.category) {
@@ -17,7 +17,7 @@ export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories =>
       return 'organisation';
 
     default:
-      return 'servicesExternes';
+      return 'otherServices';
   }
 };
 

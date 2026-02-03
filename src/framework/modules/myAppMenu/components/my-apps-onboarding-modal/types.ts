@@ -9,6 +9,6 @@ export type MAOSProps = {
 
 export type MyAppsOnboardingModalProps = {
   slides: MAOSProps[];
-  onDismiss: () => void;
+  onDismiss?: () => void;
   onComplete: () => void;
 };

@@ -2,70 +2,84 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 
 import Animated from 'react-native-reanimated';
+import { SvgUri } from 'react-native-svg';
 
 import { MyAppsCardProps } from './types';
 import { useController } from './useController';
 import { useStyles } from './useStyles';
+import { resolveAppIcon } from './utils';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { BodyText } from '~/framework/components/text';
-import { injectImageSource } from '~/framework/util/media';
+import { BodyBoldText, BodyText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media/components/image';
-import { sessionImageSource } from '~/framework/util/transport';
 
-const HTTP_REGEX: RegExp = /^https?:\/\//;
+const LetterFallback = ({ label }: { label: string }) => {
+  const letter = label?.trim()?.charAt(0)?.toUpperCase() ?? '?';
+
+  return (
+    <BodyBoldText
+      style={{
+        color: theme.palette.grey.black,
+        fontSize: UI_SIZES.spacing.big,
+      }}>
+      {letter}
+    </BodyBoldText>
+  );
+};
 
 export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   const styles = useStyles(app);
-  const isImageDistant = React.useCallback((icon: string): boolean => HTTP_REGEX.test(icon) || icon.startsWith('/workspace/'), []);
-  const icon = React.useMemo(() => app.icon, [app.icon]);
-  const isFavorite = React.useMemo(() => app.isFavorite, [app.isFavorite]);
-  const { animatedFavoriteStyle, imageDimensions } = useController(isFavorite);
+  const { animatedFavoriteStyle } = useController(app.isFavorite);
 
-  const svgIconName = React.useMemo(() => {
-    if (!icon || isImageDistant(icon)) return null;
-    if (!icon.includes('/') && !icon.includes('.')) return icon;
-    return null;
-  }, [icon, isImageDistant]);
+  const [iconError, setIconError] = React.useState(false);
 
-  const imageSource = React.useMemo(() => {
-    if (!icon || svgIconName) return undefined;
+  React.useEffect(() => {
+    setIconError(false);
+  }, [app.icon]);
 
-    if (HTTP_REGEX.test(icon)) {
-      return { uri: icon };
+  const appIcon = React.useMemo(() => resolveAppIcon(app.icon), [app.icon]);
+
+  const isLetterFallback = appIcon.type === 'fallback' || iconError;
+
+  const canShowWebIcon = !app.isMobile;
+
+  const renderIcon = () => {
+    if (isLetterFallback) {
+      return <LetterFallback label={app.displayName} />;
     }
 
-    if (icon.startsWith('/workspace/')) {
-      const fullSource = sessionImageSource(injectImageSource({ uri: icon }, imageDimensions));
-      return fullSource;
+    switch (appIcon.type) {
+      case 'svg':
+        return <Svg name={appIcon.name} width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} fill="white" />;
+
+      case 'svg-uri':
+        return (
+          <SvgUri
+            uri={appIcon.uri}
+            width={UI_SIZES.spacing.huge}
+            height={UI_SIZES.spacing.huge}
+            onError={() => setIconError(true)}
+          />
+        );
+
+      case 'image':
+        return <Image source={appIcon.source} style={styles.image} onError={() => setIconError(true)} />;
+
+      default:
+        return <LetterFallback label={app.displayName} />;
     }
+  };
 
-    const source = sessionImageSource(injectImageSource({ uri: icon }, imageDimensions));
-    return source;
-  }, [icon, svgIconName, imageDimensions]);
-
-  const canShowWebIcon = React.useMemo(() => !app.isMobile, [app]);
-
-  const renderIcon = React.useCallback(() => {
-    if (!icon) {
-      return null;
-    }
-
-    if (svgIconName) {
-      return <Svg name={svgIconName} fill="white" width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} />;
-    }
-
-    return <Image source={imageSource} style={styles.image} />;
-  }, [icon, svgIconName, imageSource, styles.image]);
-
-  const renderFavoriteBadge = React.useCallback(() => {
-    return (
+  const renderFavoriteBadge = React.useCallback(
+    () => (
       <Animated.View style={[styles.favoriteIcon, animatedFavoriteStyle]}>
         <Svg name="ui-favorite" width={UI_SIZES.spacing.big} height={UI_SIZES.spacing.big} />
       </Animated.View>
-    );
-  }, [animatedFavoriteStyle, styles.favoriteIcon]);
+    ),
+    [animatedFavoriteStyle, styles.favoriteIcon],
+  );
 
   return (
     <Pressable
@@ -84,11 +98,17 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
           </BodyText>
 
           {canShowWebIcon && (
-            <Svg name="ui-external-link" width={UI_SIZES.spacing.medium} height={UI_SIZES.spacing.medium} fill="#000" />
+            <Svg
+              name="ui-external-link"
+              width={UI_SIZES.spacing.medium}
+              height={UI_SIZES.spacing.medium}
+              fill={theme.palette.grey.black}
+            />
           )}
         </View>
       </View>
     </Pressable>
   );
 };
+
 export default MyAppsCard;

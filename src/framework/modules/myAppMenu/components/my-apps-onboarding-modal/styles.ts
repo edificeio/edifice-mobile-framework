@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.newCard,
     height: UI_SIZES.spacing.small,
-    marginHorizontal: UI_SIZES.spacing.tiny,
+    marginHorizontal: UI_SIZES.spacing.medium,
     width: UI_SIZES.spacing.small,
   },
   navButton: {

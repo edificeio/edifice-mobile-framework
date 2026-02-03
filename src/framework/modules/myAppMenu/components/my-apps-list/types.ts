@@ -2,7 +2,7 @@ import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
 export interface MyAppsListProps {
   apps: AppsInfoAggregated[];
-  isFavoritesFilter: boolean;
+  isAllAppsFilter: boolean;
   onPressApp: (app: AppsInfoAggregated) => void;
   onLongPressApp?: (app: AppsInfoAggregated) => void;
   emptyScreenConfig: { text: string; title: string };

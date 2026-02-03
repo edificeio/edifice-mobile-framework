@@ -11,11 +11,12 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
-
   cancelTextStyle: {
     fontWeight: 'bold',
   },
-
+  clickzone: {
+    padding: UI_SIZES.spacing.minor,
+  },
   container: {
     alignItems: 'center',
     backgroundColor: theme.palette.grey.fog,
@@ -24,18 +25,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: UI_SIZES.spacing.small,
   },
-
   list: {
     flexGrow: 0,
     flexShrink: 0,
   },
-
   search: {
     borderRadius: UI_SIZES.radius.extraLarge,
     height: getScaleWidth(36),
     width: '100%',
   },
-
   searchContainerWrapper: {
     alignItems: 'center',
     backgroundColor: theme.palette.grey.fog,
@@ -44,18 +42,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.small,
   },
-
   searchIcon: {
     alignItems: 'center',
     height: '100%',
     justifyContent: 'center',
   },
-
   searchOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
   },
-
   selectedButton: {
     backgroundColor: theme.palette.primary.regular,
     borderWidth: 0,

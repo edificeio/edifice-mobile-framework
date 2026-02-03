@@ -23,11 +23,6 @@ export class FileManager {
         config = opts.standaloneConfig;
         source = opts.source ?? config.sources[0];
 
-        console.debug('[FileManager] Running in STANDALONE mode');
-        console.debug('[FileManager] allow=', config.allow);
-        console.debug('[FileManager] sources=', config.sources);
-        console.debug('[FileManager] chosen source=', source);
-
         //module compatibility here
       } else {
         if (!opts.module || !opts.usecase)
@@ -40,11 +35,6 @@ export class FileManager {
         if (!config) throw new Error(`Unknown usecase ${opts.usecase} for module ${opts.module}`);
 
         source = opts.source ?? config.sources[0];
-
-        console.debug(`[FileManager] Module=${opts.module} Usecase=${opts.usecase}`);
-        console.debug('[FileManager] allow=', config.allow);
-        console.debug('[FileManager] sources=', config.sources);
-        console.debug('[FileManager] chosen source=', source);
       }
 
       if (!source) {
@@ -129,8 +119,6 @@ export class FileManager {
       if (!skipMimeFilter) {
         files = files.filter(f => allowedPrefixes.some(prefix => f.filetype?.startsWith(prefix)));
       }
-
-      console.debug('[FileManager] Final files returned:', files);
 
       callback(files);
     } catch (err) {

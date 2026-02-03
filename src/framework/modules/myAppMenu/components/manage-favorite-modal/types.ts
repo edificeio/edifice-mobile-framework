@@ -15,6 +15,16 @@ export type ManageFavoriteSheetContentProps = {
   };
 };
 
+export type HeaderLeftProps = {
+  isSaving: boolean;
+  onClose: () => void;
+};
+export type HeaderRightProps = {
+  isSaving: boolean;
+  hasUnsavedChanges: boolean;
+  onValidate: () => void;
+};
+
 export namespace ManageFavoriteScreenProps {
   export interface Public {}
 

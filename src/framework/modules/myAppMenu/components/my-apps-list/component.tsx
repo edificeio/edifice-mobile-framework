@@ -5,7 +5,7 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list';
 
 import { styles } from './styles';
 import { MyAppsListItem, MyAppsListProps } from './types';
-import { buildAppItem, buildFavoritesList, isSeparator } from './utils';
+import { buildAllAppsCategoryList, buildAppItem, isSeparator } from './utils';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -14,13 +14,13 @@ import { MyAppsCard } from '~/framework/modules/myAppMenu/components';
 
 const NUM_COLUMNS = 2;
 
-export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongPressApp, onPressApp }: MyAppsListProps) => {
+export const MyAppsList = ({ apps, emptyScreenConfig, isAllAppsFilter, onLongPressApp, onPressApp }: MyAppsListProps) => {
   const appsListRef = React.useRef<FlashList<MyAppsListItem>>(null);
   const { text, title } = emptyScreenConfig;
 
   const data: MyAppsListItem[] = React.useMemo(() => {
-    return isFavoritesFilter ? buildFavoritesList(apps) : apps.map(buildAppItem);
-  }, [apps, isFavoritesFilter]);
+    return isAllAppsFilter ? buildAllAppsCategoryList(apps) : apps.map(buildAppItem);
+  }, [apps, isAllAppsFilter]);
 
   const keyExtractor = React.useCallback(
     (item: MyAppsListItem, index: number) => (isSeparator(item) ? `separator-${index}` : item.app.name),
@@ -51,14 +51,14 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isFavoritesFilter, onLongP
 
       return (
         <MyAppsCard
-          isFavoritesFilter={isFavoritesFilter}
+          isAllAppsFilter={isAllAppsFilter}
           app={item.app}
           onPress={() => onPressApp(item.app)}
           onLongPress={() => onLongPressApp?.(item.app)}
         />
       );
     },
-    [isFavoritesFilter, onPressApp, onLongPressApp],
+    [isAllAppsFilter, onPressApp, onLongPressApp],
   );
 
   return (
