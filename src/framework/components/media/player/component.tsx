@@ -4,11 +4,10 @@ import { AppState, BackHandler, Platform, StatusBar, View } from 'react-native';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LottieView from 'lottie-react-native';
-import VideoPlayer from 'react-native-media-console';
+import { getBundleId } from 'react-native-device-info';
+import VideoPlayer, { VideoPlayerProps } from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
-import { OnVideoErrorData } from 'react-native-video';
-import WebView from 'react-native-webview';
-import { WebViewErrorEvent, WebViewHttpErrorEvent } from 'react-native-webview/lib/WebViewTypes';
+import WebView, { WebViewProps } from 'react-native-webview';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -38,11 +37,24 @@ const ERRORS_I18N = {
 const DELAY_STATUS_HIDE = Platform.select({ default: 0, ios: 250 });
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const { connected, navigation, route } = props;
+  const { connected, navigation, route, session } = props;
 
   const { filetype, source: _source, type } = route.params;
 
-  const source = React.useMemo(() => sessionURISource(_source), [_source]);
+  const source = React.useMemo(
+    () =>
+      type === MediaType.EMBEDDED
+        ? sessionURISource({
+            ..._source,
+            headers: {
+              ...(_source.headers as Record<string, string>),
+              'Referer': session?.platform.url ?? getBundleId(),
+              'Referrer-Policy': 'strict-origin-when-cross-origin',
+            },
+          })
+        : sessionURISource(_source),
+    [_source, session?.platform.url, type],
+  );
 
   const animationRef = React.useRef<LottieView>(null);
 
@@ -138,13 +150,19 @@ function MediaPlayer(props: MediaPlayerProps) {
     );
   };
 
-  const onError = React.useCallback((e: OnVideoErrorData | WebViewErrorEvent | WebViewHttpErrorEvent) => {
-    console.error('[Media Player] Error |', JSON.stringify(e));
-    if ((e as OnVideoErrorData).error) {
-      setError((e as OnVideoErrorData).error.domain ?? (e as OnVideoErrorData).error.errorString ?? 'default');
-    } else {
-      setError((e as WebViewErrorEvent | WebViewHttpErrorEvent).nativeEvent.title ?? 'default');
-    }
+  const onPlayerError = React.useCallback<NonNullable<VideoPlayerProps['onError']>>(({ error: eventError }) => {
+    console.error('[Media Player] Error |', JSON.stringify(eventError));
+    setError((eventError.domain ?? eventError.errorString) || 'default');
+  }, []);
+
+  const onWebViewError = React.useCallback<NonNullable<WebViewProps['onError']>>(({ nativeEvent }) => {
+    console.error('[WebView Player] Error |', JSON.stringify(nativeEvent));
+    setError(nativeEvent.title || 'default');
+  }, []);
+
+  const onHttpError = React.useCallback<NonNullable<WebViewProps['onHttpError']>>(({ nativeEvent }) => {
+    console.error('[WebView Player] HTTP Error |', JSON.stringify(nativeEvent));
+    setError(nativeEvent.title || 'default');
   }, []);
 
   const onLoad = React.useCallback(() => {
@@ -174,8 +192,8 @@ function MediaPlayer(props: MediaPlayerProps) {
             startInLoadingState
             style={isPortrait ? [styles.playerPortrait, styles.externalPlayerPortrait] : [styles.playerLandscape]}
             webviewDebuggingEnabled={__DEV__}
-            onHttpError={onError}
-            onError={onError}
+            onHttpError={onHttpError}
+            onError={onWebViewError}
           />
         </>
       );
@@ -189,7 +207,7 @@ function MediaPlayer(props: MediaPlayerProps) {
           ignoreSilentSwitch="ignore"
           onBack={handleBack}
           onEnd={handleVideoPlayerEnd}
-          onError={onError}
+          onError={onPlayerError}
           onLoad={onLoad}
           onPause={onPause}
           onPlay={onPlay}
@@ -211,11 +229,13 @@ function MediaPlayer(props: MediaPlayerProps) {
     type,
     source,
     isPortrait,
-    onError,
+    onHttpError,
+    onWebViewError,
     navigation,
     videoPlayerControlTimeoutDelay,
     handleBack,
     handleVideoPlayerEnd,
+    onPlayerError,
     onLoad,
     onPause,
     onPlay,
