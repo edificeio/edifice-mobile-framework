@@ -200,12 +200,13 @@ const fileTransferService = {
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     const url = session.platform.url + params.url;
+    const headers = sessionURISource<ImageURISource>({ uri: '/' }).headers;
     const job = RNFS.uploadFiles({
       begin: callbacks?.onBegin,
       binaryStreamOnly: params.binaryStreamOnly,
       fields: { ...params.fields },
       files: [{ ...file, name: 'file' }],
-      headers: { ...urlSigner.getAuthHeader(), ...params.headers },
+      headers: { ...headers, ...params.headers },
       method: 'POST',
       progress: callbacks?.onProgress,
       toUrl: url,
