@@ -4,7 +4,8 @@ import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'rea
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
@@ -21,6 +22,8 @@ import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { useSyncRef } from '~/framework/hooks/ref';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
+import { getSession } from '~/framework/modules/auth/reducer';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 
@@ -31,6 +34,19 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
 
   const navigation = useNavigation() as any;
   const route = useRoute();
+
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  React.useEffect(() => {
+    if (!props.oneSessionId) {
+      const session = getSession();
+      if (session) {
+        dispatch(refreshSessionIdForAccountAction(session)).catch(e => {
+          console.warn('[RichEditorForm] Failed to refresh oneSessionId:', e);
+        });
+      }
+    }
+  }, [props.oneSessionId, dispatch]);
 
   //
   // Editor management
