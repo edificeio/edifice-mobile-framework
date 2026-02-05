@@ -22,6 +22,21 @@ export default function Attachment(props: AttachmentProps) {
   const [showModal, setShowModal] = React.useState(false);
   const [sf, setSf] = React.useState<SyncedFile>();
 
+  const ensureFileReadyForShare = React.useCallback(async (): Promise<SyncedFile> => {
+    if (sf && (await sf.lf.exists())) {
+      return sf;
+    }
+
+    const synfile = await fileTransferService.downloadFile(props.session, props.data, {});
+
+    if (Platform.OS === 'android') {
+      await synfile.moveToDownloadFolder();
+    }
+
+    setSf(synfile);
+    return synfile;
+  }, [props.data, props.session, sf]);
+
   const onDownload = async () => {
     try {
       setShowModal(true);
@@ -43,37 +58,47 @@ export default function Attachment(props: AttachmentProps) {
   };
 
   const shareFile = async (syncedFile: SyncedFile) => {
+    if (Platform.OS === 'android') {
+      await syncedFile.moveToDownloadFolder();
+    }
+
+    const filepath = syncedFile.filepath;
+    if (!filepath) {
+      throw new Error('Invalid filepath for sharing');
+    }
+
+    const url = filepath.startsWith('file://') ? filepath : `file://${filepath}`;
+
     await Share.open({
       failOnCancel: false,
-      showAppsToView: true,
       type: syncedFile.filetype,
-      url: Platform.OS === 'android' ? 'file://' + syncedFile.filepath : syncedFile.filepath,
+      url,
     });
   };
-
-  const downloadAndShare = React.useCallback(async () => {
-    const synfile = await fileTransferService.downloadFile(props.session, props.data, {});
-    setSf(synfile);
-    await shareFile(synfile);
-  }, [props.data, props.session]);
 
   const onShare = React.useCallback(async () => {
     try {
       setIsDownloading(true);
-      sf ? await shareFile(sf) : await downloadAndShare();
-      setIsDownloading(false);
+
+      const file = await ensureFileReadyForShare();
+      await shareFile(file);
     } catch (e) {
-      setIsDownloading(false);
+      console.debug('SHARE_ERROR_MESSAGE =', e);
+
       if (e instanceof PermissionError) {
         Alert.alert(
           I18n.get('carousel-share-permissionblocked-title'),
-          I18n.get('carousel-share-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+          I18n.get('carousel-share-permissionblocked-text', {
+            appName: DeviceInfo.getApplicationName(),
+          }),
         );
       } else {
         toast.showError(I18n.get('carousel-share-error'));
       }
+    } finally {
+      setIsDownloading(false);
     }
-  }, [downloadAndShare, sf]);
+  }, [ensureFileReadyForShare]);
 
   const onOpen = async () => {
     try {
@@ -98,6 +123,8 @@ export default function Attachment(props: AttachmentProps) {
   };
 
   const renderDownloadAction = () => {
+    if (isDownloading) return <ActivityIndicator size="small" />;
+
     return (
       <TouchableOpacity style={styles.button} onPress={onShare} disabled={isDownloading}>
         <Svg
