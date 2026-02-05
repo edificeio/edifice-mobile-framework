@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-02-03 11:26:54",
-  "notes": "chore: yarn cache update\nMerge branch 'release/1.16.3' into dev/1.16.4\nrelease: 1.16.3-rc.5(1160307)",
-  "version": "1.16.4-alpha.1(1160401)",
-  "track": "1.16.4"
+  "last": "2026-02-05 12:47:16",
+  "notes": "chore: yarn cache update\nchore(i18n): change phrase sync branch\nupdate(stack): yarn cache update\nrelease: 1.16.5(1160500)\nMerge branch 'release/1.16.4' into dev/1.16.5\nrelease: 1.16.4(1160400)\nMerge branch 'dev/1.16.4' of https://github.com/edificeio/edifice-mobile-framework into dev/1.16.4\nfix(blog): ENABLING-619 fixing navigation param, adding missing i18n keys\nMerge remote-tracking branch 'origin/release/1.16.3' into dev/1.16.4\nfix(fileHandler): ENABLING-604 correcting headers in startDownloadFile post request\nfix: SUPPORT-4052 add referrer on webview\nfix: SUPPORT-4052 add referrer on webview\nrelease: 1.16.4-alpha.1(1160401)",
+  "version": "1.16.5-alpha.1(1160501)",
+  "track": "1.16.5"
 }
