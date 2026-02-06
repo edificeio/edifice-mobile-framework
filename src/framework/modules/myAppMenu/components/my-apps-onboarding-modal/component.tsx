@@ -94,8 +94,8 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
             }}>
             <View style={styles.top}>
               <View style={styles.pagination}>
-                {slides.map((_, i) => (
-                  <Pressable key={i} onPress={() => scrollToIndex(i)}>
+                {slides.map((slide, i) => (
+                  <Pressable key={slide.key} onPress={() => scrollToIndex(i)}>
                     <View style={[styles.dot, i === index && styles.activeDot]} />
                   </Pressable>
                 ))}
