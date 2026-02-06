@@ -51,7 +51,8 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     {
       description: getLang('myapp-onboarding-favorites-description'),
       illustration: { name: 'ui-myapps-list', type: 'svg' },
-      key: 'favorites',
+      key: 'applist',
+      subtitle: getLang('myapp-onboarding-favorites-subtitle'),
       title: getLang('myapp-onboarding-favorites-title'),
     },
     {
@@ -61,12 +62,14 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         type: 'animated',
       },
       key: 'longpress',
+      subtitle: getLang('myapp-onboarding-longpress-subtitle'),
       title: getLang('myapp-onboarding-longpress-title'),
     },
     {
       description: getLang('myapp-onboarding-favorite-add-description'),
       illustration: { name: 'ui-make-favorite', type: 'svg' },
       key: 'add-favorite',
+      subtitle: getLang('myapp-onboarding-favorite-add-subtitle'),
       title: getLang('myapp-onboarding-favorite-add-title'),
     },
   ];

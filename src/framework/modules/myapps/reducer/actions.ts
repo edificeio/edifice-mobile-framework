@@ -5,7 +5,7 @@ import { I18n } from '~/app/i18n';
 import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import Toast from '~/framework/components/toast';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import {
   appsInfoActionTypes,
   computeNextBookmarks,
@@ -70,34 +70,32 @@ export const toggleAllApps = (): ThunkResult => async (dispatch, getState) => {
   writeShowAllApps(showAllApps);
 };
 
-export const afterLoginSetup =
-  (session): ThunkResult =>
-  async dispatch => {
-    dispatch(appInfoActions.fetchStart());
-    const modules = AllModules().filter(isNavigableModule);
+export const afterLoginSetup = (): ThunkResult => async dispatch => {
+  dispatch(appInfoActions.fetchStart());
+  const modules = AllModules().filter(isNavigableModule);
 
-    try {
-      let [appsInfo, appsConfig, favorites] = await Promise.all([
-        myAppsService.list(session),
-        myAppsService.config(session),
-        myAppsService.bookmarks(session),
-      ]);
-      appsInfo = appsInfo.map(app => {
-        const isMobile = isMobileApp(app as IEntcoreApp, modules);
-        const routeName = isMobile ? getModuleRouteName(app as IEntcoreApp, modules) : undefined;
-        return { ...app, isMobile, routeName };
-      });
-      dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
-    } catch (e) {
-      console.error('[afterLoginSetup] ERROR', e);
-      dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
-    }
-  };
+  try {
+    let [appsInfo, appsConfig, favorites] = await Promise.all([
+      myAppsService.list(),
+      myAppsService.config(),
+      myAppsService.bookmarks(),
+    ]);
+    appsInfo = appsInfo.map(app => {
+      const isMobile = isMobileApp(app as IEntcoreApp, modules);
+      const routeName = isMobile ? getModuleRouteName(app as IEntcoreApp, modules) : undefined;
+      return { ...app, isMobile, routeName };
+    });
+    dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
+  } catch (e) {
+    console.error('[afterLoginSetup] ERROR', e);
+    dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
+  }
+};
 
 export const initMesAppliAtLogin = (): ThunkResult => async dispatch => {
   const session = getSession();
   if (!session) return;
-  await dispatch(afterLoginSetup(assertSession()));
+  await dispatch(afterLoginSetup());
 };
 
 export const toggleFavorite =
@@ -120,9 +118,9 @@ export const toggleFavorite =
     dispatch(appInfoActions.toggleFavorite(appName));
 
     try {
-      await myAppsService.updateBookmarks(session, optimisticFavorites);
+      await myAppsService.updateBookmarks(optimisticFavorites);
 
-      const refreshedFavorites = await myAppsService.bookmarks(session);
+      const refreshedFavorites = await myAppsService.bookmarks();
 
       dispatch(
         appInfoActions.fetchSuccess({
@@ -157,9 +155,9 @@ export const saveGroupedFavorites =
     dispatch(appInfoActions.saveGroupedFavoritesStart());
 
     try {
-      await myAppsService.updateBookmarks(session, payload);
+      await myAppsService.updateBookmarks(payload);
 
-      const refreshed = await myAppsService.bookmarks(session);
+      const refreshed = await myAppsService.bookmarks();
 
       dispatch(
         appInfoActions.fetchSuccess({

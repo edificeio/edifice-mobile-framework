@@ -74,3 +74,7 @@ export interface AppsInfoAggregated extends AppsInfo {
   help?: Record<string, string | null>;
   libraries?: string;
 }
+
+export interface ApplicationsListResponse {
+  apps: ApplicationsList[];
+}

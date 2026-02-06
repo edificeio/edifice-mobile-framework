@@ -2,6 +2,7 @@ type Illustration = { type: 'svg'; name: string } | { type: 'animated'; source: 
 export type MAOSProps = {
   key: string;
   title: string;
+  subtitle: string;
   description: string;
   illustration: Illustration;
   isActive?: boolean;

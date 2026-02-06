@@ -6,11 +6,10 @@ import LottieView from 'lottie-react-native';
 import { styles } from './styles';
 import { MAOSProps } from './types';
 
-import { getScaleWidth } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { BodyText, HeadingXSText } from '~/framework/components/text';
+import { BodyBoldText, BodyText, HeadingXSText } from '~/framework/components/text';
 
-export const MyAppsOnboardingSlide: React.FC<MAOSProps> = ({ description, illustration, isActive, title }) => {
+export const MyAppsOnboardingSlide: React.FC<MAOSProps> = ({ description, illustration, isActive, subtitle, title }) => {
   const animationRef = React.useRef<LottieView>(null);
 
   React.useEffect(() => {
@@ -23,26 +22,28 @@ export const MyAppsOnboardingSlide: React.FC<MAOSProps> = ({ description, illust
 
   return (
     <View style={styles.containerSlide}>
-      <HeadingXSText style={styles.title}>{title}</HeadingXSText>
+      <View style={styles.titleWrapper}>
+        <HeadingXSText style={styles.title}>{title}</HeadingXSText>
+      </View>
 
-      {illustration.type === 'svg' && (
-        <View style={{ height: getScaleWidth(180), width: getScaleWidth(180) }}>
-          <Svg name={illustration.name} width={getScaleWidth(180)} height={getScaleWidth(180)} />
-        </View>
-      )}
-
-      {illustration.type === 'animated' && (
-        <LottieView
-          ref={animationRef}
-          resizeMode="contain"
-          source={illustration.source}
-          autoPlay
-          loop
-          speed={0.8}
-          style={styles.animation}
-        />
-      )}
-      <BodyText style={styles.description}>{description}</BodyText>
+      <View style={styles.illustrationWrapper}>
+        {illustration.type === 'svg' && <Svg name={illustration.name} width="100%" height="100%" />}
+        {illustration.type === 'animated' && (
+          <LottieView
+            ref={animationRef}
+            source={illustration.source}
+            resizeMode="contain"
+            loop
+            speed={0.8}
+            style={styles.animation}
+          />
+        )}
+      </View>
+      <View style={styles.bottomContainerWrapper}>
+        <BodyText style={styles.description}>
+          <BodyBoldText style={styles.description}>{subtitle}</BodyBoldText> {description}
+        </BodyText>
+      </View>
     </View>
   );
 };

@@ -5,44 +5,52 @@ import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 
 export const styles = StyleSheet.create({
-  actions: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: UI_SIZES.spacing.large,
-  },
-
   activeDot: {
     backgroundColor: theme.palette.primary.regular,
   },
   animation: {
-    height: getScaleWidth(180),
-    width: getScaleWidth(180),
+    height: '100%',
+    width: '100%',
+  },
+  bottom: {
+    alignItems: 'center',
+    flexDirection: 'row',
+
+    justifyContent: 'space-between',
+    paddingHorizontal: UI_SIZES.spacing.medium,
+  },
+  bottomContainerWrapper: { paddingVertical: 5 },
+  carousel: {
+    flex: 1,
+    justifyContent: 'center',
   },
   container: {
-    maxHeight: UI_SIZES.screen.height * 0.8,
-    minHeight: UI_SIZES.screen.height * 0.7,
-    paddingHorizontal: 0,
-    paddingTop: UI_SIZES.screen.topInset + UI_SIZES.spacing.big,
+    height: UI_SIZES.screen.height * 0.65,
+    paddingTop: UI_SIZES.spacing.big,
   },
   containerSlide: {
     alignItems: 'center',
-    flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: UI_SIZES.spacing.tiny,
   },
   description: {
     color: theme.palette.grey.darkness,
-    fontSize: TextSizeStyle.Normal.fontSize,
     marginTop: UI_SIZES.spacing.small,
     textAlign: 'center',
+    ...TextSizeStyle.Normal,
   },
   dot: {
     backgroundColor: theme.palette.grey.cloudy,
-    borderRadius: UI_SIZES.radius.newCard,
+    borderRadius: UI_SIZES.spacing.small,
     height: UI_SIZES.spacing.small,
-    marginHorizontal: UI_SIZES.spacing.medium,
+    marginHorizontal: UI_SIZES.spacing.tiny,
     width: UI_SIZES.spacing.small,
+  },
+  illustrationWrapper: {
+    alignItems: 'center',
+    height: getScaleWidth(180),
+    justifyContent: 'center',
+    marginBottom: UI_SIZES.spacing.medium,
+    width: getScaleWidth(180),
   },
   navButton: {
     alignItems: 'center',
@@ -51,6 +59,7 @@ export const styles = StyleSheet.create({
   },
   navButtonPrimary: {
     color: theme.palette.grey.graphite,
+    fontSize: getScaleWidth(14),
   },
   navButtonText: {
     color: theme.palette.primary.regular,
@@ -59,13 +68,21 @@ export const styles = StyleSheet.create({
   pagination: {
     flexDirection: 'row',
     justifyContent: 'center',
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: UI_SIZES.spacing.minor,
+  },
+  slide: {
+    alignContent: 'center',
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    width: '100%',
   },
   title: {
-    marginVertical: UI_SIZES.spacing.small,
     textAlign: 'center',
+  },
+  titleWrapper: {
+    marginVertical: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tinyExtra,
+  },
+  top: {
+    alignItems: 'center',
+    marginBottom: UI_SIZES.spacing.small,
   },
 });

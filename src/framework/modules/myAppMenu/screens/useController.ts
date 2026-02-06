@@ -30,6 +30,7 @@ export function useMyAppsHomeController() {
 
   const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
   const modalRef = React.useRef<ModalBoxHandle>(null);
+  const hasShownOnboardingForThisScreen = React.useRef(false);
 
   const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
   const [filter, setFilter] = React.useState<MyAppsFilter>({ type: 'category', value: 'toutes' });
@@ -45,11 +46,21 @@ export function useMyAppsHomeController() {
       const onboarding = readMyAppsOnboarding();
       setHasSeenOnboarding(Boolean(onboarding?.seen));
 
-      if (onboarding?.version !== ONBOARDING_VERSION) {
+      if (onboarding?.version !== ONBOARDING_VERSION && !hasShownOnboardingForThisScreen.current) {
+        hasShownOnboardingForThisScreen.current = true;
         modalRef.current?.doShowModal();
       }
     }, []),
   );
+
+  // we make sure the onboarding modal is shwon only when wnated
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
+      hasShownOnboardingForThisScreen.current = false;
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const openBottomSheet = React.useCallback((mode: BottomSheetMode, app?: AppsInfoAggregated) => {
     setSelectedApp(app ?? null);
