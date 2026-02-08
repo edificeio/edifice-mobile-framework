@@ -5,10 +5,16 @@ import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   avatar: {
+    alignItems: 'center',
     aspectRatio: 1,
     backgroundColor: theme.palette.primary.light,
     borderRadius: UI_SIZES.radius.big,
     height: getScaleWidth(24),
+    justifyContent: 'center',
+  },
+  avatarText: {
+    color: theme.palette.primary.regular,
+    fontSize: getScaleWidth(10),
   },
   container: {
     alignItems: 'center',
@@ -28,7 +34,16 @@ export default StyleSheet.create({
     paddingLeft: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.tinyExtra,
   },
+  idText: {
+    color: theme.palette.grey.graphite,
+    flexShrink: 1,
+    fontSize: getScaleWidth(10),
+  },
   text: {
+    flexShrink: 1,
+  },
+  textContainer: {
+    flex: 1,
     flexShrink: 1,
   },
 });

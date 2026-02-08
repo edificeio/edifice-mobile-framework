@@ -47,7 +47,7 @@ import {
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
 import { readLastCallTimestamp, reloadVisibles } from '~/framework/modules/mails/storage';
-import { flattenFolders, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
+import { flattenFolders, isServiceMethodAvailable, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/http';
 
@@ -137,6 +137,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const loadFolders = React.useCallback(async () => {
     try {
+      if (!isServiceMethodAvailable(mailsService.folders.get)) {
+        return;
+      }
       const foldersData = await mailsService.folders.get({ depth: 2 });
       const flattenedFolders = flattenFolders(foldersData);
       setFolders(flattenedFolders);
@@ -147,11 +150,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           if (folder === MailsDefaultFolders.OUTBOX || folder === MailsDefaultFolders.TRASH) {
             counts[folder] = 0;
           } else {
-            const countData = await mailsService.folder.count({
-              folderId: folder,
-              unread: folder === MailsDefaultFolders.DRAFTS ? false : true,
-            });
-            counts[folder] = countData.count;
+            if (isServiceMethodAvailable(mailsService.folder.count)) {
+              const countData = await mailsService.folder.count({
+                folderId: folder,
+                unread: folder === MailsDefaultFolders.DRAFTS ? false : true,
+              });
+              counts[folder] = countData.count;
+            }
           }
         } catch (e) {
           console.error(`Failed to fetch count for folder: ${folder}`, e);
@@ -213,6 +218,19 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     setIdParentFolder(undefined);
   }, [isSubfolder, setIsSubfolder, setIdParentFolder]);
 
+  const onActionMultiple = React.useCallback(
+    async (action: () => Promise<void>) => {
+      try {
+        await action();
+        setSelectedMails([]);
+        setIsSelectionMode(false);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [setSelectedMails, setIsSelectionMode],
+  );
+
   const handleFolderOperation = React.useCallback(
     async (operation: 'create' | 'rename', valueFolderName: string, successMessage: string) => {
       try {
@@ -220,15 +238,27 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         setIsLoadingCreateNewFolder(true);
 
         if (operation === 'create') {
+          if (!isServiceMethodAvailable(mailsService.folder.create)) {
+            toast.showError();
+            return;
+          }
           const dataNewFolder = await mailsService.folder.create({
             name: valueFolderName,
             parentId: idParentFolder ?? '',
           });
           if (!isSelectionMode) switchFolder({ id: dataNewFolder, name: valueFolderName });
           else {
-            onActionMultiple(() => onMove(selectedMails, dataNewFolder));
+            await onActionMultiple(async () => {
+              if (isServiceMethodAvailable(mailsService.mail.moveToFolder)) {
+                await onMove(selectedMails, dataNewFolder);
+              }
+            });
           }
         } else if (operation === 'rename') {
+          if (!isServiceMethodAvailable(mailsService.folder.rename)) {
+            toast.showError();
+            return;
+          }
           await mailsService.folder.rename({ id: (selectedFolder as MailsFolderInfo).id }, { name: valueFolderName });
           setSelectedFolder({
             id: (selectedFolder as MailsFolderInfo).id,
@@ -320,6 +350,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, [navigation]);
 
   const onDeleteFolder = React.useCallback(() => {
+    if (!isServiceMethodAvailable(mailsService.folder.delete)) {
+      toast.showError();
+      return;
+    }
     Alert.alert(I18n.get('mails-list-deletefolder'), I18n.get('mails-list-deletefoldertext'), [
       {
         style: 'default',
@@ -371,8 +405,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onDelete = React.useCallback(
     async (ids: string[], permanently?: boolean) => {
+      const deleteMethod = permanently ? mailsService.mail.delete : mailsService.mail.moveToTrash;
+      if (!isServiceMethodAvailable(deleteMethod)) {
+        toast.showError();
+        return;
+      }
       await handleMailAction({
-        action: () => (permanently ? mailsService.mail.delete({ ids }) : mailsService.mail.moveToTrash({ ids })),
+        action: () => deleteMethod({ ids }),
         successMessage: permanently ? 'mails-toastsuccessdelete' : 'mails-toastsuccesstrash',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
@@ -382,6 +421,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onToggleUnread = React.useCallback(
     async (ids: string[], unread: boolean) => {
+      if (!isServiceMethodAvailable(mailsService.mail.toggleUnread)) {
+        toast.showError();
+        return;
+      }
       await handleMailAction({
         action: () => mailsService.mail.toggleUnread({ ids, unread: !unread }),
         successMessage: unread ? 'mails-toastsuccessread' : 'mails-toastsuccessunread',
@@ -394,6 +437,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onRestore = React.useCallback(
     async (ids: string[]) => {
+      if (!isServiceMethodAvailable(mailsService.mail.restore)) {
+        toast.showError();
+        return;
+      }
       await handleMailAction({
         action: () => mailsService.mail.restore({ ids }),
         successMessage: 'mails-toastsuccessrestore',
@@ -405,6 +452,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onMove = React.useCallback(
     async (ids: string[], folderId: string) => {
+      if (!isServiceMethodAvailable(mailsService.mail.moveToFolder)) {
+        toast.showError();
+        return;
+      }
       bottomSheetModalRef.current?.dismiss();
       await handleMailAction({
         action: () => mailsService.mail.moveToFolder({ folderId }, { ids }),
@@ -417,6 +468,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onRemoveFromFolder = React.useCallback(
     async (ids: string[]) => {
+      if (!isServiceMethodAvailable(mailsService.mail.removeFromFolder)) {
+        toast.showError();
+        return;
+      }
       await handleMailAction({
         action: () => mailsService.mail.removeFromFolder({ ids }),
         successMessage: 'mails-toastsuccessremovefromfolder',
@@ -439,21 +494,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     else setSelectedMails(mails.map(mail => mail.id));
   }, [mails, selectedMails]);
 
-  const onActionMultiple = React.useCallback(
-    async (action: () => Promise<void>) => {
-      try {
-        action();
-        setSelectedMails([]);
-        setIsSelectionMode(false);
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [setSelectedMails, setIsSelectionMode],
-  );
-
-  const allPopupActionsMenu = React.useMemo(
-    () => [
+  const allPopupActionsMenu = React.useMemo(() => {
+    const actions = [
       {
         action: onActiveSelectMode,
         icon: {
@@ -470,29 +512,41 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         },
         title: I18n.get('common-search'),
       },
-      {
+    ];
+
+    if (isServiceMethodAvailable(mailsService.signature?.get)) {
+      actions.push({
         action: onConfigureSignature,
         icon: {
           android: 'ic_signature',
           ios: 'scribble',
         },
         title: I18n.get('mails-list-configuresignature'),
-      },
-      {
+      });
+    }
+
+    if (isServiceMethodAvailable(mailsService.folder.rename)) {
+      actions.push({
         action: onRenameFolder,
         icon: {
           android: 'ic_pencil',
           ios: 'pencil',
         },
         title: I18n.get('mails-list-renamefolder'),
-      },
-      deleteAction({
-        action: onDeleteFolder,
-        title: I18n.get('mails-list-deletefolder'),
-      }),
-    ],
-    [onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder],
-  );
+      });
+    }
+
+    if (isServiceMethodAvailable(mailsService.folder.delete)) {
+      actions.push(
+        deleteAction({
+          action: onDeleteFolder,
+          title: I18n.get('mails-list-deletefolder'),
+        }),
+      );
+    }
+
+    return actions;
+  }, [onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder]);
 
   const handleHardwareBack = React.useCallback(() => {
     if (isSelectionMode) onDisableSelectMode();
@@ -653,7 +707,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const renderBottomMode = React.useCallback(() => {
     if (!isSelectionMode) return;
 
-    const moveButton = (
+    const moveButton = isServiceMethodAvailable(mailsService.mail.moveToFolder) ? (
       <TertiaryButton
         iconLeft="ui-folderMove"
         disabled={selectedMails.length === 0}
@@ -662,65 +716,80 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           bottomSheetModalRef.current?.present();
         }}
       />
-    );
+    ) : null;
 
     const actionsByFolder: Record<string, React.ReactNode> = {
       [MailsDefaultFolders.INBOX]: (
         <>
-          <TertiaryButton
-            iconLeft="ui-mailUnread"
-            disabled={selectedMails.length === 0 || selectedMails.every(mailId => mails.find(mail => mail.id === mailId)?.unread)}
-            action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
-          />
-          <TertiaryButton
-            iconLeft="ui-mailRead"
-            disabled={selectedMails.length === 0 || selectedMails.every(mailId => !mails.find(mail => mail.id === mailId)?.unread)}
-            action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
-          />
+          {isServiceMethodAvailable(mailsService.mail.toggleUnread) && (
+            <>
+              <TertiaryButton
+                iconLeft="ui-mailUnread"
+                disabled={
+                  selectedMails.length === 0 || selectedMails.every(mailId => mails.find(mail => mail.id === mailId)?.unread)
+                }
+                action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
+              />
+              <TertiaryButton
+                iconLeft="ui-mailRead"
+                disabled={
+                  selectedMails.length === 0 || selectedMails.every(mailId => !mails.find(mail => mail.id === mailId)?.unread)
+                }
+                action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
+              />
+            </>
+          )}
           {moveButton}
         </>
       ),
-      [MailsDefaultFolders.TRASH]: (
+      [MailsDefaultFolders.TRASH]: isServiceMethodAvailable(mailsService.mail.restore) ? (
         <TertiaryButton
           iconLeft="ui-restore"
           disabled={selectedMails.length === 0}
           action={() => onActionMultiple(() => onRestore(selectedMails))}
         />
-      ),
+      ) : null,
       [MailsDefaultFolders.OUTBOX]: moveButton,
       [MailsDefaultFolders.DRAFTS]: null,
     };
 
-    const renderActions = selectedFolder.name ? (
-      <>
-        <TertiaryButton
-          iconLeft="ui-mailUnread"
-          disabled={
-            selectedMails.length === 0 ||
-            selectedMails.every(mailId => mails.find(mail => mail.id === mailId)?.unread) ||
-            selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === props.session?.user.id)
-          }
-          action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
-        />
-        <TertiaryButton
-          iconLeft="ui-mailRead"
-          disabled={
-            selectedMails.length === 0 ||
-            selectedMails.every(mailId => !mails.find(mail => mail.id === mailId)?.unread) ||
-            selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === props.session?.user.id)
-          }
-          action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
-        />
-        {moveButton}
-        <TertiaryButton
-          iconLeft="ui-deleteFromFolder"
-          disabled={selectedMails.length === 0}
-          action={() => onActionMultiple(() => onRemoveFromFolder(selectedMails))}
-        />
-      </>
-    ) : (
-      actionsByFolder[selectedFolder as MailsDefaultFolders]
-    );
+    const renderActions =
+      typeof selectedFolder === 'object' && selectedFolder.name ? (
+        <>
+          {isServiceMethodAvailable(mailsService.mail.toggleUnread) && (
+            <>
+              <TertiaryButton
+                iconLeft="ui-mailUnread"
+                disabled={
+                  selectedMails.length === 0 ||
+                  selectedMails.every(mailId => mails.find(mail => mail.id === mailId)?.unread) ||
+                  selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === props.session?.user.id)
+                }
+                action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
+              />
+              <TertiaryButton
+                iconLeft="ui-mailRead"
+                disabled={
+                  selectedMails.length === 0 ||
+                  selectedMails.every(mailId => !mails.find(mail => mail.id === mailId)?.unread) ||
+                  selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === props.session?.user.id)
+                }
+                action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
+              />
+            </>
+          )}
+          {moveButton}
+          {isServiceMethodAvailable(mailsService.mail.removeFromFolder) && (
+            <TertiaryButton
+              iconLeft="ui-deleteFromFolder"
+              disabled={selectedMails.length === 0}
+              action={() => onActionMultiple(() => onRemoveFromFolder(selectedMails))}
+            />
+          )}
+        </>
+      ) : (
+        actionsByFolder[selectedFolder as MailsDefaultFolders]
+      );
 
     return (
       <View style={[styles.selectMode, styles.selectModeShadow, styles.selectModeBottom]}>
@@ -773,12 +842,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           </>
         }
         ListFooterComponent={
-          <TertiaryButton
-            style={styles.newFolderButton}
-            iconLeft="ui-plus"
-            text={I18n.get('mails-list-newfolder')}
-            action={() => setTypeModal(MailsListTypeModal.CREATE)}
-          />
+          isServiceMethodAvailable(mailsService.folder.create) ? (
+            <TertiaryButton
+              style={styles.newFolderButton}
+              iconLeft="ui-plus"
+              text={I18n.get('mails-list-newfolder')}
+              action={() => setTypeModal(MailsListTypeModal.CREATE)}
+            />
+          ) : null
         }
         renderItem={({ item }) => (
           <MailsFolderItem
@@ -940,8 +1011,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           isTrashed={isTrashed}
           onSelect={onSelectMail}
           onDelete={() => onDelete([mail.id], isTrashed ? true : false)}
-          onToggleUnread={!isDraft && !isSender && !isTrashed ? () => onToggleUnread([mail.id], mail.unread) : undefined}
-          onRestore={isTrashed ? () => onRestore([mail.id]) : undefined}
+          onToggleUnread={
+            !isDraft && !isSender && !isTrashed && isServiceMethodAvailable(mailsService.mail.toggleUnread)
+              ? () => onToggleUnread([mail.id], mail.unread)
+              : undefined
+          }
+          onRestore={isTrashed && isServiceMethodAvailable(mailsService.mail.restore) ? () => onRestore([mail.id]) : undefined}
         />
       );
     },

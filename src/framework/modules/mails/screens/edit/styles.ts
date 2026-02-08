@@ -9,6 +9,9 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
     zIndex: -1,
   },
+  bottomSheet: {
+    minHeight: 600,
+  },
   editor: {
     minHeight: '20%',
     paddingHorizontal: UI_SIZES.spacing.medium,

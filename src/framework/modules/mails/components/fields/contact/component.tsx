@@ -3,6 +3,7 @@ import { Animated, Keyboard, Platform, TextInput as RNTextInput, TouchableOpacit
 
 import debounce from 'lodash.debounce';
 
+import { mailsService } from '../../../service';
 import styles from '../styles';
 import { MailsContactFieldProps } from './types';
 
@@ -19,7 +20,7 @@ import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/mod
 import { HEIGHT_RECIPIENT_CONTAINER } from '~/framework/modules/mails/components/recipient-item/container/styles';
 import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
 import { readVisibles } from '~/framework/modules/mails/storage';
-import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
+import { isServiceMethodAvailable, MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
 
 function removeAccents(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -200,10 +201,17 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(
     debounce(text => {
-      const filterFunction = onSearch(text);
-      const result = users.filter(user => filterFunction(user));
-      setFilteredUsers(result);
-      setLoading(false);
+      if (isServiceMethodAvailable(mailsService.visibles.getOnSearch)) {
+        mailsService.visibles.getOnSearch(text).then(result => {
+          setFilteredUsers(result);
+          setLoading(false);
+        });
+      } else {
+        const filterFunction = onSearch(text);
+        const result = users.filter(user => filterFunction(user));
+        setFilteredUsers(result);
+        setLoading(false);
+      }
     }, 500),
     [],
   );

@@ -1,6 +1,7 @@
 import { MailsVisible } from './model';
 import moduleConfig from './module-config';
 import { mailsService } from './service';
+import { isServiceMethodAvailable } from './util';
 
 import { Storage } from '~/framework/util/storage';
 
@@ -29,6 +30,7 @@ export const writeVisibles = (visibles: MailsVisible[]) => {
 };
 
 export const reloadVisibles = async () => {
+  if (!isServiceMethodAvailable(mailsService.visibles.get)) return;
   const now = Date.now();
   try {
     const visibles = await mailsService.visibles.get();

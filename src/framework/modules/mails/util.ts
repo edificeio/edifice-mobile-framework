@@ -221,3 +221,27 @@ export const hasContent = (
     hasMediaInHtml(body)
   );
 };
+
+/**
+ * Check if a service method is available (not null)
+ */
+export const isServiceMethodAvailable = (method: any): method is (...args: any[]) => any => {
+  return method !== null && typeof method === 'function';
+};
+
+export const getExternalInitials = (name: string): string => {
+  const words = name
+    .trim()
+    .split(/\s+/)
+    .filter(word => word.length > 0);
+  if (words.length === 0) return '';
+  if (words.length === 1) {
+    const word = words[0];
+    return word.length > 0 ? word[0] : '';
+  }
+  const firstWord = words[0];
+  const lastWord = words[words.length - 1];
+  const firstLetter = firstWord.length > 0 ? firstWord[0] : '';
+  const lastLetter = lastWord.length > 0 ? lastWord[lastWord.length - 1] : '';
+  return `${firstLetter}${lastLetter}`.toUpperCase();
+};
