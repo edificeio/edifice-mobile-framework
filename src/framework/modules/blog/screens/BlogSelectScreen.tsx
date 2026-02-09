@@ -9,7 +9,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
@@ -18,7 +18,7 @@ import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export interface BlogSelectScreenDataProps {
-  session?: AuthLoggedAccount;
+  session?: AuthActiveAccount;
 }
 export interface BlogSelectScreenEventProps {
   handleGetPublishableBlogList(): Promise<BlogList | undefined>;
@@ -95,7 +95,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
   }
 }
 
-const mapStateToProps: (s: IGlobalState) => BlogSelectScreenDataProps = s => ({ session: getSession() });
+const mapStateToProps: (s: IGlobalState) => BlogSelectScreenDataProps = _ => ({ session: getSession() });
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,

@@ -1,18 +1,21 @@
 import * as React from 'react';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import WebView, { WebViewProps } from 'react-native-webview';
+import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import styles from './styles';
 import { SplashadsScreenProps } from './types';
 
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import WebView from '~/framework/components/webview';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { urlSigner } from '~/infra/oauth';
+import { toURISource } from '~/framework/util/media';
+import { platformURISource } from '~/framework/util/transport';
 
 export const computeNavBar = ({
   navigation,
@@ -26,15 +29,14 @@ export const computeNavBar = ({
   }),
   headerShadowVisible: false,
   headerStyle: {
-    backgroundColor: theme.palette.grey.white,
-    elevation: 0,
-    shadowOpacity: 0,
+    backgroundColor: theme.palette.grey.white.toString(),
   },
 });
 
 const SplashadsScreen = (props: SplashadsScreenProps) => {
   const { route } = props;
-  const source = route.params.resourceUri;
+  const source = route.params.resourceUri as string; // Fixme : type is not auto-inferred from props
+  const session = getSession();
 
   const [isTimeout, setIsTimeout] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
@@ -54,7 +56,7 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
     return () => clearTimeout(timeoutId);
   }, [isLoaded]);
 
-  const onShouldStartLoadWithRequest = React.useCallback(request => {
+  const onShouldStartLoadWithRequest = React.useCallback<NonNullable<WebViewProps['onShouldStartLoadWithRequest']>>(request => {
     if (firstLoadRef.current) return true;
 
     openUrl(request.url);
@@ -65,7 +67,7 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
     setIsLoaded(true);
   };
 
-  return isTimeout ? (
+  return isTimeout || !session ? (
     <EmptyContentScreen />
   ) : (
     <WebView
@@ -73,7 +75,7 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
       scalesPageToFit
       setSupportMultipleWindows={false}
       showsHorizontalScrollIndicator={false}
-      source={{ uri: urlSigner.getAbsoluteUrl(source)! }}
+      source={platformURISource(session.platform, toURISource<WebViewSourceUri>(source))}
       startInLoadingState
       style={styles.splashads}
       webviewDebuggingEnabled={__DEV__}

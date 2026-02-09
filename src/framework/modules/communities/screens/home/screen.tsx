@@ -23,12 +23,11 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import { PageView } from '~/framework/components/page';
+import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { audienceService } from '~/framework/modules/audience/service';
-import { getSession } from '~/framework/modules/auth/reducer';
 import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
 import PostDetailsLoader from '~/framework/modules/communities/components/announcements/post/details/loader';
@@ -50,7 +49,6 @@ import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-co
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
-import communitiesStyles from '~/framework/modules/communities/styles';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { toURISource } from '~/framework/util/media';
 import { accountApi, sessionApi } from '~/framework/util/transport';
@@ -284,14 +282,14 @@ export const CommunitiesHomeScreenPlaceholder = () => (
   </ScrollView>
 );
 
-export default (function CommunitiesHomeScreen({
+export default sessionScreen<CommunitiesHomeScreen.AllProps>(function CommunitiesHomeScreen({
   navigation,
   route,
   route: {
     params: { communityId },
   },
-}: Readonly<CommunitiesHomeScreen.AllProps>) {
-  const session = getSession();
+  session,
+}) {
   const data = useSelector(communitiesSelectors.getCommunityDetails(communityId));
   const dispatch = useDispatch();
   const setData = React.useCallback(
@@ -301,7 +299,6 @@ export default (function CommunitiesHomeScreen({
   );
 
   const loadContent = React.useCallback(async () => {
-    if (!session) return;
     const [community, invitations] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
       accountApi(session, moduleConfig, InvitationClient).getInvitationsAndMembers(communityId, { page: 1, size: 20 }),
@@ -325,7 +322,7 @@ export default (function CommunitiesHomeScreen({
 
   const renderContent: NonNullable<ContentLoaderProps['renderContent']> = React.useCallback(
     refreshControl =>
-      data && session ? (
+      data ? (
         <CommunitiesHomeScreenLoaded
           navigation={navigation}
           route={route}
@@ -340,9 +337,5 @@ export default (function CommunitiesHomeScreen({
     [data, navigation, route, session, image],
   );
 
-  return (
-    <PageView style={communitiesStyles.screen}>
-      <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />
-    </PageView>
-  );
+  return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;
 });

@@ -317,16 +317,6 @@ export const mapStateToProps: (
   };
 };
 
-// const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePasswordScreenDispatchProps = dispatch => {
-//   return bindActionCreators<ChangePasswordScreenDispatchProps>(
-//     {
-//       trySubmit: tryAction(changePasswordAction),
-//       tryLogout: tryAction(manualLogoutAction),
-//     },
-//     dispatch,
-//   );
-// };
-
 const ChangePasswordScreenLoader = (props: ChangePasswordScreenPrivateProps) => {
   const { context, route, session } = props;
   const platform = route.params.platform ?? session?.platform;

@@ -21,6 +21,7 @@ export default new NavigableModuleConfig<'diary', IDiaryReduxState>({
   displayPicture: theme.apps.diary.icon,
   entcoreScope: ['diary'],
 
+  entcoreTrackingName: 'Diary',
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
   name: 'diary',
   storageName: 'diary',

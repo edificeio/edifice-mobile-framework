@@ -1,4 +1,4 @@
-import { signedFetchJsonRelative } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 // example : /collaborativewall#/view/d12e609a-6d77-418f-80f6-04ddddfa76d6
 export type CollaborativewallResourceUri = `/collaborativewall#/view/${string}`;
@@ -19,6 +19,6 @@ export const collaborativewallUriParser = {
 export const collaborativewallService = {
   get: async (id: string) => {
     const api = `/collaborativewall/${id}`;
-    return signedFetchJsonRelative(api);
+    return sessionFetch.json(api);
   },
 };

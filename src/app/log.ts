@@ -1,5 +1,6 @@
 import { InteractionManager } from 'react-native';
 
+import crashlytics from '@react-native-firebase/crashlytics';
 import RNFS from 'react-native-fs';
 import { consoleTransport, fileAsyncTransport, logger } from 'react-native-logs';
 import Share from 'react-native-share';
@@ -7,62 +8,65 @@ import Share from 'react-native-share';
 import appConf from '~/framework/util/appConf';
 
 export namespace Log {
+  const crashlyticsModule = crashlytics();
+  const crashlyticsTransport = props => {
+    // Only log errors and above
+    if (props.level.severity >= 3) {
+      try {
+        crashlyticsModule.log(`[${props.level.text}] ${props.msg}`);
+        if (props.rawMsg instanceof Error) {
+          crashlyticsModule.recordError(props.rawMsg);
+        }
+      } catch (error) {
+        console.warn('Failed to log to Crashlytics:', error);
+      }
+    }
+  };
+
+  let log;
   const logFileName = 'appe.log';
   export const logFilePath = `${RNFS.DocumentDirectoryPath}/${logFileName}`;
 
-  let log;
-
   export async function init() {
-    if (appConf.isDebugEnabled) {
-      try {
-        // initialize logger
-        log = logger.createLogger({
-          async: true,
-          asyncFunc: InteractionManager.runAfterInteractions,
-          levels: {
-            debug: 0,
-            error: 3,
-            info: 1,
-            warn: 2,
-          },
-          transport: [consoleTransport, fileAsyncTransport],
-          transportOptions: {
-            colors: {
-              debug: 'white',
-              error: 'redBright',
-              info: 'blueBright',
-              warn: 'yellowBright',
-            },
-            fileName: logFileName,
-            FS: RNFS,
-            mapLevels: {
-              debug: 'log',
-              error: 'error',
-              info: 'info',
-              warn: 'warn',
-            },
-          },
-        });
-        // Patch standard console.* statements
-        log?.patchConsole();
-        // Clear log if needed
-        try {
-          const logFileStats = await RNFS.stat(logFilePath);
-          if (logFileStats) {
-            const today = new Date();
-            const creationDate = new Date(logFileStats.ctime);
-            if (today.toDateString() !== creationDate.toDateString()) clear();
-          }
-        } catch (e) {
-          console.error('Unable to retrieve log file stats: ', (e as Error).message);
-        }
-      } catch (e) {
-        console.error('Unable to initialize logger: ', (e as Error).message);
+    const isDebuggable = appConf.isDebugEnabled;
+    try {
+      // Start network logging if debug is enabled
+      if (isDebuggable) {
+        const { startNetworkLogging } = await import('react-native-network-logger');
+        startNetworkLogging();
       }
+      // initialize logger
+      log = logger.createLogger({
+        async: true,
+        asyncFunc: InteractionManager.runAfterInteractions,
+        levels: {
+          debug: 0,
+          error: 3,
+          fatal: 4,
+          info: 1,
+          warn: 2,
+        },
+        transport: __DEV__ ? [consoleTransport] : isDebuggable ? [fileAsyncTransport] : [crashlyticsTransport],
+        transportOptions: {
+          colors: {
+            debug: 'white',
+            error: 'red',
+            fatal: 'redBright',
+            info: 'blue',
+            warn: 'yellow',
+          },
+          fileName: logFileName,
+          FS: RNFS,
+        },
+      });
+      // Patch standard console.* statements
+      log?.patchConsole();
+    } catch (e) {
+      console.error('Unable to initialize logger: ', (e as Error).message);
     }
   }
 
-  export function clear() {
+  export async function clear() {
     RNFS.unlink(logFilePath);
   }
 
@@ -72,10 +76,8 @@ export namespace Log {
     try {
       const contents = await RNFS.readFile(logFilePath);
       const lines = contents.split('\n');
-
       let currentLog = '';
       const timeRegex = /^\d{2}:\d{2}:\d{2}/;
-
       lines.forEach(line => {
         if (timeRegex.test(line)) {
           if (currentLog) {
@@ -86,7 +88,6 @@ export namespace Log {
           currentLog += '\n' + line;
         }
       });
-
       if (currentLog) logs.push(currentLog.trim());
       logs.reverse();
     } catch (e) {

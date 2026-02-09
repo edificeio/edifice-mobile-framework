@@ -1,111 +1,42 @@
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { Resource, Source } from '~/framework/modules/mediacentre/model';
-import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-
-type BackendResource = {
-  id: string | number;
-  _id?: string;
-  title: string;
-  plain_text: string;
-  image: string;
-  document_types?: string[];
-  source?: Source;
-  link?: string;
-  url?: string;
-  authors: string[];
-  editors: string[];
-  disciplines?: string[] | [number, string][];
-  levels: string[] | [number, string][];
-  user: string;
-  archived?: boolean;
-  favorite?: boolean;
-  is_textbook?: boolean;
-  is_parent?: boolean;
-  structure_uai?: string;
-  orientation?: boolean;
-  owner_id?: string;
-  owner_name?: string;
-  pinned_title?: string;
-  pinned_description?: string;
-};
-
-type BackendSearch = {
-  event: string;
-  state: string;
-  status: string;
-  data: {
-    source: Source;
-    resources: BackendResource[];
-  };
-}[];
-
-type BackendGlobalResources = {
-  event: string;
-  state: string;
-  status: string;
-  data: {
-    global: BackendResource[];
-  };
-};
-
-const transformArray = (array: string[] | [number, string][]): string[] =>
-  array.map((value: string | [number, string]) => (Array.isArray(value) ? value[1] : value));
-
-const resourceAdapter = (data: BackendResource): Resource => {
-  const id = (data._id ?? typeof data.id === 'number') ? data.id.toString() : data.id;
-  return {
-    authors: data.owner_name ?? data.authors,
-    disciplines: data.disciplines ? transformArray(data.disciplines) : [],
-    editors: data.editors,
-    id,
-    image: data.image,
-    isParent: data.is_parent,
-    isTextbook: data.is_textbook,
-    levels: transformArray(data.levels),
-    link: (data.link ?? data.url) as string,
-    pinnedDescription: data.pinned_description,
-    source: data.source ?? Source.SIGNET,
-    themes:
-      data.source === Source.SIGNET
-        ? data.orientation || data.document_types?.includes('Orientation')
-          ? ['Orientation et découverte des métiers']
-          : ['Sans thématique']
-        : undefined,
-    title: data.pinned_title ?? data.title,
-    types: data.document_types?.filter(value => value !== 'Orientation') ?? ['livre numérique'],
-    uid: data.structure_uai ? data.id + data.structure_uai : id,
-  };
-};
+import { resourceAdapter } from '~/framework/modules/mediacentre/service/adapters';
+import {
+  BackendGlobalResources,
+  BackendResource,
+  BackendSearch,
+  BackendSignetsResourcesType,
+  BackendTextBooksType,
+} from '~/framework/modules/mediacentre/service/types';
+import { sessionFetch } from '~/framework/util/transport';
 
 export const mediacentreService = {
   favorites: {
     add: async (session: AuthActiveAccount, resource: Resource) => {
       const api = `/mediacentre/favorites?id=${resource.id}`;
-      return signedFetch(`${session.platform.url}${api}`, {
+      return sessionFetch.json<any>(api, {
         body: JSON.stringify({
           ...resource,
           id: resource.source === Source.SIGNET ? Number(resource.id) : resource.id,
         }),
         method: 'POST',
-      }) as Promise<any>;
+      });
     },
     get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/favorites';
-      const { data: favorites } = (await fetchJSONWithCache(api)) as { data: BackendResource[] };
+      const { data: favorites } = await sessionFetch.json<{ data: BackendResource[] }>(api);
       if (!Array.isArray(favorites)) return [];
       return favorites.map(resourceAdapter);
     },
     remove: async (session: AuthActiveAccount, id: string, source: Source) => {
       const api = `/mediacentre/favorites?id=${id}&source=${source}`;
-      return signedFetch(`${session.platform.url}${api}`, {
-        method: 'DELETE',
-      }) as Promise<any>;
+      return sessionFetch(api, { method: 'DELETE' });
     },
   },
   globalResources: {
     get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/global/resources';
-      const response = (await fetchJSONWithCache(api)) as BackendGlobalResources;
+      const response = await sessionFetch.json<BackendGlobalResources>(api);
       if (response.status !== 'ok') return [];
       return response.data.global.map(resourceAdapter);
     },
@@ -113,7 +44,7 @@ export const mediacentreService = {
   pins: {
     get: async (session: AuthActiveAccount, structureId: string) => {
       const api = `/mediacentre/structures/${structureId}/pins`;
-      const resources = (await fetchJSONWithCache(api)) as BackendResource[];
+      const resources = await sessionFetch.json<BackendResource[]>(api);
       return resources.map(resourceAdapter);
     },
   },
@@ -128,7 +59,7 @@ export const mediacentreService = {
         state: 'PLAIN_TEXT',
       };
       const api = `/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`;
-      const response = (await fetchJSONWithCache(api)) as BackendSearch;
+      const response = await sessionFetch.json<BackendSearch>(api);
       return response
         .filter(r => r.status === 'ok')
         .flatMap(s => [...s.data.resources])
@@ -138,29 +69,22 @@ export const mediacentreService = {
   selectedStructure: {
     get: async (session: AuthActiveAccount) => {
       const api = `/userbook/preference/selectedStructure`;
-      const { preference } = (await fetchJSONWithCache(api)) as { preference?: string };
+      const { preference } = await sessionFetch.json<{ preference?: string }>(api);
       if (!preference) return null;
       return preference.replaceAll('"', '');
     },
     update: async (session: AuthActiveAccount, id: string) => {
       const api = `/userbook/preference/selectedStructure`;
-      return signedFetch(`${session.platform.url}${api}`, {
-        body: JSON.stringify(id),
-        method: 'PUT',
-      }) as Promise<any>;
+      return sessionFetch(api, { body: JSON.stringify(id), method: 'PUT' });
     },
   },
   signets: {
     get: async (session: AuthActiveAccount) => {
-      const response = (await fetchJSONWithCache('/mediacentre/signets')) as {
-        data: {
-          signets: {
-            resources: BackendResource[];
-          };
-        };
-      };
+      const api = '/mediacentre/signets';
+      const mySignetsApi = '/mediacentre/mysignets';
+      const response = await sessionFetch.json<BackendSignetsResourcesType>(api);
       const signets = response.data.signets.resources;
-      const mysignets = (await fetchJSONWithCache('/mediacentre/mysignets')) as BackendResource[];
+      const mysignets = await sessionFetch.json<BackendResource[]>(mySignetsApi);
       return signets
         .concat(mysignets.filter(ms => !signets.some(s => s.id === ms.id.toString()) && !ms.archived))
         .map(resourceAdapter);
@@ -169,11 +93,7 @@ export const mediacentreService = {
   textbooks: {
     get: async (session: AuthActiveAccount, structureId: string) => {
       const api = `/mediacentre/textbooks/refresh?structureIds=${structureId}`;
-      const response = (await fetchJSONWithCache(api)) as {
-        data: {
-          textbooks: BackendResource[];
-        };
-      };
+      const response = await sessionFetch.json<BackendTextBooksType>(api);
       return response.data.textbooks.map(resourceAdapter);
     },
   },

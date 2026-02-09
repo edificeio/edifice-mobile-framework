@@ -49,7 +49,7 @@ import { mailsService } from '~/framework/modules/mails/service';
 import { readLastCallTimestamp, reloadVisibles } from '~/framework/modules/mails/storage';
 import { flattenFolders, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { HTTPError } from '~/framework/util/http';
+import { HTTPError } from '~/framework/util/transport/error';
 
 export const computeNavBar = ({
   navigation,

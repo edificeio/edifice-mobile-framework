@@ -36,6 +36,7 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { markViewAudience } from '~/framework/modules/audience';
 import { audienceService } from '~/framework/modules/audience/service';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   deleteBlogPostAction,
@@ -56,10 +57,10 @@ import {
   publishBlogPostResourceRight,
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
-import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
+import { blogService } from '~/framework/modules/blog/service';
+import { blogPostGenerateResourceUriFunction, blogUriCaptureFunction } from '~/framework/modules/blog/service/adapters';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
 export const computeNavBar = ({
   navigation,
@@ -77,12 +78,12 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   usePreventBack({
     showAlert: infoComment.changed,
     text: I18n.get(
-      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`
+      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
     ),
     title: I18n.get(
       infoComment.isPublication
         ? 'blog-postdetails-confirmation-unsaved-publication'
-        : 'blog-postdetails-confirmation-unsaved-modification'
+        : 'blog-postdetails-confirmation-unsaved-modification',
     ),
   });
   return null;
@@ -190,11 +191,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   async doInit() {
     try {
+      const { dispatch, session } = this.props;
       this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
-      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
+      await dispatch(refreshSessionIdForAccountAction(session!));
       await this.doGetBlogPostDetails();
       await this.doGetBlogInfos();
-      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
       if (this.state.blogPostData?._id)
@@ -449,13 +450,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   };
 
   async componentDidMount() {
-    const { route } = this.props;
+    const { dispatch, route, session } = this.props;
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
 
     if (blog && blogPost) {
-      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
+      await dispatch(refreshSessionIdForAccountAction(session!));
       this.setState({
         blogInfos: blog,
         blogPostData: blogPost,
@@ -505,7 +506,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               }
             }
           }, 50);
-        }
+        },
       );
 
       this.hideSubscription = Keyboard.addListener(
@@ -513,7 +514,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         () => {
           if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
             this.setState({ isCommentFieldFocused: false });
-        }
+        },
       );
     }
   }
@@ -747,7 +748,7 @@ const mapStateToProps: (s: IGlobalState) => BlogPostDetailsScreenDataProps = s =
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
+  getState: () => IGlobalState,
 ) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
   dispatch,
 
@@ -778,7 +779,7 @@ const mapDispatchToProps: (
   // TS BUG: dispatch mishandled
   handleUpdateBlogPostComment: async (
     blogPostCommentId: { blogId: string; postId: string; commentId: string },
-    comment: string
+    comment: string,
   ) => {
     return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
   },

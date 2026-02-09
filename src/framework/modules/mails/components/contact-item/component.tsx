@@ -46,7 +46,7 @@ export const MailsContactItem = (props: MailsContactItemProps) => {
 
   return (
     <View style={styles.container}>
-      <MailsRecipientAvatar size="sm" id={id} type={props.user.type} />
+      <MailsRecipientAvatar size="xsm" id={id} type={props.user.type} />
       <SmallText style={styles.text} numberOfLines={1}>
         <SmallBoldText>{displayName}</SmallBoldText>
         {renderAccountType()}

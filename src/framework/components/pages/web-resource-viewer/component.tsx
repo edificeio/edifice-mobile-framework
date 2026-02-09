@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, StatusBar, View } from 'react-native';
+import { StatusBar, View } from 'react-native';
 
 import CookieManager from '@react-native-cookies/cookies';
 import { ParamListBase, useFocusEffect } from '@react-navigation/native';
@@ -12,11 +12,13 @@ import Orientation, {
   OrientationType,
   PORTRAIT,
 } from 'react-native-orientation-locker';
-import { OnShouldStartLoadWithRequest, WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
-import { connect } from 'react-redux';
+import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes';
+import { useDispatch, useSelector } from 'react-redux';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
-import { WebResourceViewerPrivateProps, WebResourceViewerStoreProps } from './types';
+import { WebResourceViewerPrivateProps } from './types';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -28,10 +30,10 @@ import { PageView } from '~/framework/components/page';
 import WebView from '~/framework/components/webview';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getCurrentQueryParamToken, getPlatform } from '~/framework/modules/auth/reducer';
+import { refreshQueryParamTokenAction } from '~/framework/modules/auth/actions';
+import { selectors } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 
 export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<ParamListBase>): NativeStackNavigationOptions => ({
   ...navBarOptions({
@@ -43,7 +45,6 @@ export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<Para
 });
 
 const renderLoading = () => <LoadingIndicator />;
-const truePromiseFn = async () => true;
 
 const useScreenUnlockOrientation = () => {
   const [orientation, setOrientation] = React.useState<OrientationLockerProps['orientation']>(PORTRAIT);
@@ -80,21 +81,23 @@ const useScreenUnlockOrientation = () => {
   return [orientationElement, orientation, toggleOrientation] as const;
 };
 
-const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<WebResourceViewerStoreProps>) => {
-  const { fetchResource, injectSearchParams = {}, navigation, platform, queryParamToken, source } = props;
-  const sourceObject: WebViewSourceUri = React.useMemo(() => {
-    let uri = typeof source === 'string' ? urlSigner.getAbsoluteUrl(source)! : urlSigner.getAbsoluteUrl(source.uri)!;
-    const uriObj = new URL(uri);
-    if (queryParamToken) {
-      uriObj.searchParams.append('queryparam_token', queryParamToken.value);
+export default function WebviewResourceViewer({ fetchResource, navigation, source: _source }: WebResourceViewerPrivateProps) {
+  const session = useSelector(selectors.session);
+  const sourceOrigin = new URL(_source.uri).origin;
+  const dispatch = useDispatch<ThunkDispatch<IGlobalState, never, Action>>();
+  const isUrlInternal = session && sourceOrigin === session.platform.url;
+  const source = React.useMemo(() => {
+    const url = new URL(_source.uri);
+    if (isUrlInternal && session.tokens.queryParam) url.searchParams.append('queryparam_token', session.tokens.queryParam.value);
+    return { ..._source, uri: url.href };
+  }, [_source, isUrlInternal, session?.tokens.queryParam]);
+
+  const checkResourceAvailability = React.useCallback(async () => {
+    if (isUrlInternal) {
+      await dispatch(refreshQueryParamTokenAction(session));
     }
-    uriObj.searchParams.append('xApp', 'mobile');
-    for (const searchParam in injectSearchParams) {
-      uriObj.searchParams.append(searchParam, injectSearchParams[searchParam]);
-    }
-    uri = uriObj.href;
-    return typeof source === 'string' ? { uri } : { ...source, uri };
-  }, [injectSearchParams, queryParamToken, source]);
+    return fetchResource?.();
+  }, [dispatch, fetchResource, isUrlInternal, session]);
 
   const [orientationElement, orientation, toggleOrientation] = useScreenUnlockOrientation();
 
@@ -112,7 +115,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
       const reqUrl = request.url;
 
       if (
-        !reqUrl.startsWith(platform.url) &&
+        !(session && reqUrl.startsWith(session.platform.url)) &&
         !reqUrl.includes('embed') &&
         !reqUrl.includes('imasdk.googleapis.com') &&
         !reqUrl.includes('player.vimeo.com') &&
@@ -124,7 +127,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
       }
       return true;
     },
-    [platform.url],
+    [session],
   );
 
   useConstructor(() => {
@@ -139,7 +142,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         scalesPageToFit
         setSupportMultipleWindows={false}
         showsHorizontalScrollIndicator={false}
-        source={sourceObject}
+        source={source}
         startInLoadingState
         style={styles.webview}
         webviewDebuggingEnabled={__DEV__}
@@ -149,7 +152,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
     ),
-    [onError, onLoad, onShouldStartLoadWithRequest, sourceObject],
+    [onError, onLoad, onShouldStartLoadWithRequest, source],
   );
 
   const closeButton = React.useMemo(
@@ -195,28 +198,11 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
     [webviewError, closeButton],
   );
 
-  const loadContent = React.useCallback(async () => {
-    if (!fetchResource) return truePromiseFn();
-    if (urlSigner.getIsUrlSignable(sourceObject.uri)) {
-      await OAuth2RessourceOwnerPasswordClient.connection?.getQueryParamToken();
-    }
-    return fetchResource();
-  }, [fetchResource, sourceObject.uri]);
-
   return (
-    <ContentLoader loadContent={loadContent} renderContent={webviewError ? renderEmpty : renderContent} renderError={renderEmpty} />
+    <ContentLoader
+      loadContent={checkResourceAvailability}
+      renderContent={webviewError ? renderEmpty : renderContent}
+      renderError={renderEmpty}
+    />
   );
-};
-
-export const EnsurePlatformDefinedComponent = (props: WebResourceViewerPrivateProps) => {
-  return props.platform ? (
-    <WebviewResourceViewer {...(props as WebResourceViewerPrivateProps & Required<WebResourceViewerStoreProps>)} />
-  ) : (
-    <EmptyContentScreen />
-  );
-};
-
-export default connect((state: IGlobalState) => ({
-  platform: getPlatform(),
-  queryParamToken: getCurrentQueryParamToken(),
-}))(EnsurePlatformDefinedComponent);
+}

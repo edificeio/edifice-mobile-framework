@@ -4,7 +4,7 @@
 import deepmerge from 'deepmerge';
 import queryString from 'query-string';
 
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import {
@@ -12,26 +12,26 @@ import {
   PushNotifsSettingsStateData,
 } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '~/framework/util/notifications';
-import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 // Notifications
 
 export const registeredNotificationsService = {
-  list: async (session: AuthLoggedAccount) => {
+  list: async (session: AuthActiveAccount) => {
     const api = '/timeline/registeredNotifications';
-    return fetchJSONWithCache(api) as Promise<IEntcoreNotificationType[]>;
+    return sessionFetch.json<IEntcoreNotificationType[]>(api);
   },
 };
 
 export const notifFiltersService = {
-  list: async (session: AuthLoggedAccount) => {
+  list: async (session: AuthActiveAccount) => {
     const api = '/timeline/types';
-    return fetchJSONWithCache(api) as Promise<string[]>;
+    return sessionFetch.json<string[]>(api);
   },
 };
 
 export const notificationsService = {
-  page: async (session: AuthLoggedAccount, page: number, filters: string[]) => {
+  page: async (session: AuthActiveAccount, page: number, filters: string[]) => {
     const url = '/timeline/lastNotifications';
     const query = {
       page,
@@ -41,34 +41,35 @@ export const notificationsService = {
     const headers = {
       Accept: 'application/json;version=3.0',
     };
-    const entcoreNotifications = (await fetchJSONWithCache(api, { headers })) as {
+    const entcoreNotifications = await sessionFetch.json<{
       results: IEntcoreTimelineNotification[];
       status: string;
       number: number;
-    };
+    }>(api, { headers });
+
     if (entcoreNotifications.status !== 'ok') {
       throw new Error('[notificationsService.page] got status not ok from ' + api);
     }
     // Run the notification adapter for each received notification
     return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
   },
-  report: async (session: AuthLoggedAccount, id: string) => {
-    const api = `${session.platform.url}/timeline/${id}/report`;
+  report: async (session: AuthActiveAccount, id: string) => {
+    const api = `/timeline/${id}/report`;
     const method = 'PUT';
-    return signedFetchJson(api, { method });
+    return sessionFetch.json(api, { method });
   },
 };
 
 // Flash Messages
 
 export const flashMessagesService = {
-  dismiss: async (session: AuthLoggedAccount, flashMessageId: number) => {
+  dismiss: async (session: AuthActiveAccount, flashMessageId: number) => {
     const api = `/timeline/flashmsg/${flashMessageId}/markasread`;
-    return fetchJSONWithCache(api, { method: 'PUT' }) as any;
+    return sessionFetch.json<any>(api, { method: 'PUT' });
   },
-  list: async (session: AuthLoggedAccount) => {
+  list: async (session: AuthActiveAccount) => {
     const api = '/timeline/flashmsg/listuser';
-    return fetchJSONWithCache(api) as Promise<IEntcoreFlashMessage[]>;
+    return sessionFetch.json<IEntcoreFlashMessage[]>(api);
   },
 };
 
@@ -79,19 +80,19 @@ export interface IEntcoreTimelinePreference {
 }
 export interface IEntcoreTimelinePreferenceContent {
   config:
-  | {
-    [notifKey: string]: {
-      defaultFrequency: string;
-      type?: string;
-      'event-type'?: string;
-      'app-name'?: string;
-      'app-address'?: string;
-      key?: string;
-      'push-notif'?: boolean;
-      restriction?: string;
-    };
-  }
-  | undefined;
+    | {
+        [notifKey: string]: {
+          'defaultFrequency': string;
+          'type'?: string;
+          'event-type'?: string;
+          'app-name'?: string;
+          'app-address'?: string;
+          'key'?: string;
+          'push-notif'?: boolean;
+          'restriction'?: string;
+        };
+      }
+    | undefined;
   page: number;
   type: string[];
 }
@@ -101,9 +102,9 @@ export const pushNotifsService = {
     const prefs = await pushNotifsService._getPrefs(session);
     return prefs?.config ?? {};
   },
-  _getPrefs: async (session: AuthLoggedAccount) => {
+  _getPrefs: async (session: AuthActiveAccount) => {
     const api = '/userbook/preference/timeline';
-    const response = (await fetchJSONWithCache(api)) as IEntcoreTimelinePreference;
+    const response = await sessionFetch.json<IEntcoreTimelinePreference>(api);
     const prefs = JSON.parse(response.preference) as IEntcoreTimelinePreferenceContent | null;
     return prefs;
   },
@@ -117,7 +118,7 @@ export const pushNotifsService = {
     }
     return notifPrefs;
   },
-  set: async (session: AuthLoggedAccount, changes: PushNotifsSettingsStateData) => {
+  set: async (session: AuthActiveAccount, changes: PushNotifsSettingsStateData) => {
     const api = '/userbook/preference/timeline';
     const method = 'PUT';
     const notifPrefsUpdated = {} as { 'push-notif': boolean };
@@ -129,7 +130,7 @@ export const pushNotifsService = {
     const notifPrefs = deepmerge(notifPrefsOriginal, notifPrefsUpdated);
     const prefsUpdated = { config: notifPrefs };
     const payload = { ...prefsOriginal, ...prefsUpdated };
-    const responseJson = await signedFetchJson(`${session.platform.url}${api}`, {
+    const responseJson = await sessionFetch.json(api, {
       body: JSON.stringify(payload),
       method,
     });

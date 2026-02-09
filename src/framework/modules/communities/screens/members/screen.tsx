@@ -19,7 +19,7 @@ import {
   PaginatedFlashListProps,
   staleOrSplice,
 } from '~/framework/components/list/paginated-list';
-import { PageView } from '~/framework/components/page';
+import { sessionScreen } from '~/framework/components/screen';
 import StatusBar from '~/framework/components/status-bar';
 import { TextSizeStyle } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -27,7 +27,6 @@ import MemberListItem, { MemberListItemLoader } from '~/framework/modules/commun
 import MembersListCount, { MembersListCountLoader } from '~/framework/modules/communities/components/members-list-count';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import communitiesStyles from '~/framework/modules/communities/styles';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { sessionApi } from '~/framework/util/transport';
 
@@ -54,7 +53,7 @@ export const computeNavBar = ({
   }),
 });
 
-export default (function CommunitiesMembersScreen({ route }: Readonly<CommunitiesMembersScreen.AllProps>) {
+export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(function CommunitiesMembersScreen({ route }) {
   const [allMembers, setAllMembers] = React.useState<(InvitationOrMemberDto | typeof LOADING_ITEM_DATA)[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const communityId = route.params.communityId;
@@ -101,7 +100,7 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
     return (
       <VisibleItem
         backgroundColor={backgroundColor}
-        avatarSize="md"
+        avatarSize="sm"
         key={item.user.entId}
         // rightElement={<ItemOptions />} // for next version
         userId={item.user.entId}>
@@ -131,7 +130,7 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
   }, [allMembers.length, isLoading]);
 
   return (
-    <PageView style={communitiesStyles.screen}>
+    <>
       <StatusBar type="primary" />
       {renderMembersCount()}
       <PaginatedFlashList
@@ -153,6 +152,6 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
           />
         }
       />
-    </PageView>
+    </>
   );
 });

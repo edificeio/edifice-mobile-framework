@@ -11,6 +11,7 @@ export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>
   displayPictureBlur: { name: 'diary-outline', type: 'Svg' },
   displayPictureFocus: { name: 'diary-fill', type: 'Svg' },
   entcoreScope: ['homeworks'],
+  entcoreTrackingName: 'Homeworks',
   fileManager: {
     attachments: {
       allow: ['image'],

@@ -59,7 +59,7 @@ export const CommunityCardLarge = ({
           </View>
           <View style={styles.infoSeparator} />
           <View style={styles.infoInviterContainer}>
-            <SingleAvatar userId={senderId} size="sm" />
+            <SingleAvatar userId={senderId} size="xsm" />
             <SmallText style={styles.infoInviterText}>
               {I18n.get('community-invitation-from-label', { name: senderName })}
             </SmallText>

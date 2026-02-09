@@ -79,7 +79,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
   };
 
 const handleFormResponseNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  const uri = notification.backupData.params.formResultsUri;
+  const uri: string = notification.backupData.params.formResultsUri;
 
   if (!uri) return { managed: 0 };
   openUrl(uri);
@@ -93,12 +93,12 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': 'NEW_FORM_NOTIFICATION',
-      notifHandlerAction: handleNewFormNotificationAction,
-      type: 'FORMULAIRE',
+      'notifHandlerAction': handleNewFormNotificationAction,
+      'type': 'FORMULAIRE',
     },
     {
       'event-type': 'RESPONSE_NOTIFICATION',
-      notifHandlerAction: handleFormResponseNotificationAction,
-      type: 'FORMULAIRE',
+      'notifHandlerAction': handleFormResponseNotificationAction,
+      'type': 'FORMULAIRE',
     },
   ]);

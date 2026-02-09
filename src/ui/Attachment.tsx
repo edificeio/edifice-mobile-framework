@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { filesize } from 'filesize';
-import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -16,12 +15,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/icon';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import Notifier from '~/framework/util/notifier';
-import { urlSigner } from '~/infra/oauth';
+import { getPlatformUrl } from '~/framework/util/transport/common';
 
 export interface IRemoteAttachment {
   charset?: string;
@@ -223,7 +222,7 @@ class Attachment extends React.PureComponent<
                     (editMode && (att as ILocalAttachment).name) ||
                       (att as IRemoteAttachment).filename ||
                       (att as IRemoteAttachment).displayName ||
-                      ''
+                      '',
                   )}
                   style={{ marginRight: UI_SIZES.spacing.minor }}
                 />
@@ -262,7 +261,7 @@ class Attachment extends React.PureComponent<
           {Platform.OS !== 'ios' ? (
             <View>
               {!editMode ? (
-                <RNGHTouchableOpacity
+                <TouchableOpacity
                   onPress={async () => {
                     await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
                       requestAnimationFrame(() => {
@@ -279,7 +278,7 @@ class Attachment extends React.PureComponent<
                     iconColor={theme.palette.grey.black}
                     buttonStyle={{ backgroundColor: theme.palette.grey.fog }}
                   />
-                </RNGHTouchableOpacity>
+                </TouchableOpacity>
               ) : null}
             </View>
           ) : null}
@@ -301,7 +300,7 @@ class Attachment extends React.PureComponent<
           filepath: att.uri,
           filetype: att.mime,
         },
-        { _needIOSReleaseSecureAccess: false }
+        { _needIOSReleaseSecureAccess: false },
       ) as LocalFile;
     const file = editMode ? toLocalFile(attachment as ILocalAttachment) : newDownloadedFile;
     if (!this.attId) {
@@ -329,7 +328,7 @@ class Attachment extends React.PureComponent<
   }
 
   public async startDownload(att: IRemoteAttachment, callback?: (lf: LocalFile) => void) {
-    const url = urlSigner.getRelativeUrl(att.url);
+    const url = new URL(getPlatformUrl(att.url, assertSession().platform)).pathname;
     if (!url) throw new Error('[Attachment] url invalid');
     const df: IDistantFileWithId = {
       ...att,
@@ -357,7 +356,7 @@ class Attachment extends React.PureComponent<
                 progress: res.bytesWritten / res.contentLength,
               });
             },
-          }
+          },
         )
         .then(lf => {
           this.setState({ newDownloadedFile: lf });

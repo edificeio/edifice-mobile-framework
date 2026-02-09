@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
@@ -25,11 +25,11 @@ import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
-import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
+import { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
   accountIsLoggable,
   AccountType,
-  AuthLoggedAccount,
+  AuthActiveAccount,
   AuthSavedLoggedInAccount,
   getOrderedAccounts,
   InitialAuthenticationMethod,
@@ -43,7 +43,7 @@ import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
-import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import { mfaValidation, platformConfig, requirements } from '~/framework/modules/auth/service';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { DebugOptions } from '~/framework/modules/debug';
@@ -57,10 +57,10 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { formatSource } from '~/framework/util/media-deprecated';
+import { toURISource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
+import { platformURISource } from '~/framework/util/transport';
 import { useZendesk } from '~/framework/util/zendesk';
-import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 export const computeNavBar = ({
@@ -116,18 +116,12 @@ useCurvedNavBarFeature.svgDisplayTopOffsetTolerance = 2;
  */
 function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session']) {
   const userProfilePicture = React.useMemo(() => {
-    const uri = session?.platform && session?.user.avatar ? new URL(session.user.avatar, session.platform.url) : undefined;
-    if (uri) {
-      const uti = OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier();
-      if (uti) uri.searchParams.append('uti', uti);
-    }
-    return (
-      uri &&
-      ({
-        ...formatSource(uri.href),
-      } as ImageURISource)
-    );
-  }, [session?.platform, session?.user.avatar]);
+    if (!session?.platform || !session?.user.avatar || !session?.logTimestamp) return undefined;
+    const url = new URL(session.user.avatar, session.platform.url);
+    url.searchParams.append('uti', session.logTimestamp.toString());
+    return session?.user.avatar ? platformURISource(session?.platform, toURISource(url)) : undefined;
+  }, [session?.logTimestamp, session?.platform, session?.user.avatar]);
+
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
     return !userProfilePicture ? (
@@ -182,14 +176,13 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
-    if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
+    if (!authContextRef.current) authContextRef.current = await platformConfig.context(session.platform);
     return authContextRef.current;
   }, [session]);
 
   const fetchMFAValidationInfos = React.useCallback(async () => {
-    const requirements = await getUserRequirements(session?.platform!);
-    const needMfa = requirements?.needMfa;
-    if (needMfa) await getMFAValidationInfos();
+    const { needMfa } = await requirements.getState(session!);
+    if (needMfa) await mfaValidation.getValidationState(session!);
     return needMfa;
   }, [session]);
 
@@ -283,7 +276,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const openHelpCenter = async () => {
+  const openHelpCenter = React.useCallback(async () => {
     if (showHelpCenter)
       try {
         await zendesk?.openHelpCenter({
@@ -295,7 +288,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       } catch (error) {
         Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
       }
-  };
+  }, [showHelpCenter, zendesk]);
 
   //
   // Show User Home Screen
@@ -448,7 +441,7 @@ function useAccountsFeature(
   const data = React.useMemo(() => getOrderedAccounts(accounts), [accounts]);
 
   const onPressItem = React.useCallback(
-    async (item: (typeof data)[0], index: number) => {
+    async (item: (typeof data)[0]) => {
       const activeSession = assertSession();
 
       accountListRef.current?.dismiss();
@@ -469,7 +462,7 @@ function useAccountsFeature(
         try {
           setLoadingState(LoginState.RUNNING);
           const account = accounts[item.user.id];
-          await trySwitch(account as AuthSavedLoggedInAccount | AuthLoggedAccount);
+          await trySwitch(account as AuthSavedLoggedInAccount | AuthActiveAccount);
           setLoadingState(LoginState.DONE);
         } catch (e) {
           setLoadingState(LoginState.IDLE);
@@ -484,7 +477,7 @@ function useAccountsFeature(
   );
 
   const onDeleteItem = React.useCallback(
-    async (item: (typeof data)[0], index: number) => {
+    async (item: (typeof data)[0]) => {
       try {
         trackingAccountEvents.deleteAccountFromSwitchAccount();
         const account = accounts[item.user.id];
@@ -685,7 +678,7 @@ export default connect(
   dispatch =>
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
-        handleLogout: handleAction(manualLogoutAction, { track: track.logout }),
+        handleLogout: handleAction(logoutAction, { track: track.logout }),
         tryRemoveAccount: handleAction(removeAccountAction),
         trySwitch: tryAction(switchAccountAction, {
           track: track.loginRestore,

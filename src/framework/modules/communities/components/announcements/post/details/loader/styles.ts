@@ -28,8 +28,8 @@ export default StyleSheet.create({
     width: getScaleWidth(232),
   },
   avatar: {
-    height: UI_SIZES.elements.avatar.md,
-    width: UI_SIZES.elements.avatar.md,
+    height: UI_SIZES.elements.avatar.sm,
+    width: UI_SIZES.elements.avatar.sm,
   },
   container: {
     flexDirection: 'column',

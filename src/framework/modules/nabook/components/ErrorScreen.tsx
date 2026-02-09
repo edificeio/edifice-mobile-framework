@@ -34,7 +34,7 @@ const ErrorScreen = (props: ErrorScreenProps) => {
   const { getBack, msg } = props;
 
   return (
-    <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
+    <PageView gutters="both" showNetworkBar={false} statusBar="translucent-dark" style={{ backgroundColor: NBK_COLORS.darkColor }}>
       <View style={styles.container}>
         <Text style={textStyle.bodyRoboto}>{I18n.get('nabook-error-title')}</Text>
         <View style={styles.errorTextContainer}>

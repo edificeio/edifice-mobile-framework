@@ -6,7 +6,7 @@ import { VisibleItemProps } from './types';
 
 import { SingleAvatar } from '~/framework/components/avatar';
 
-const VisibleItem = ({ avatarSize = 'md', backgroundColor, children, rightElement, userId }: Readonly<VisibleItemProps>) => {
+const VisibleItem = ({ avatarSize = 'sm', backgroundColor, children, rightElement, userId }: Readonly<VisibleItemProps>) => {
   const containerStyle = React.useMemo(() => {
     return [styles.container, backgroundColor && { backgroundColor }];
   }, [backgroundColor]);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppState, AppStateStatus, Platform } from 'react-native';
+import { AppState, AppStateStatus, Platform, StatusBar } from 'react-native';
 
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
@@ -7,26 +7,25 @@ import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider } from 'react-redux';
+import * as Redux from 'react-redux';
 
 import { I18n } from './i18n';
+import loadModules from './modules';
 import { connectWithStore, IStoreProp, Reducers } from './store';
+import theme from './theme';
 
-import AppModules from '~/app/modules';
+import { AppStartupHandler } from '~/app/startup';
 import { UI_STYLES } from '~/framework/components/constants';
 import { reducer as navigationReducer } from '~/framework/navigation/redux';
-import Navigation from '~/framework/navigation/RootNavigator';
 import appConf from '~/framework/util/appConf';
-import { AppModules as AllModulesBackup2 } from '~/framework/util/oauth2';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { ZendeskProvider } from '~/framework/util/zendesk';
-import { AllModulesBackup } from '~/infra/oauth';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
-  const currentState = React.useRef<AppStateStatus>();
+  const currentState = React.useRef<AppStateStatus>(AppState.currentState);
 
   const handleAppStateChange = React.useCallback(
     (nextAppState: AppStateStatus) => {
@@ -64,43 +63,44 @@ function useTrackers() {
   }, []);
 }
 
-interface AppProps extends IStoreProp {}
-
-function App(props: AppProps) {
-  const onRemoteNotification = notification => {
-    const result = PushNotificationIOS.FetchResult.NoData;
-    notification.finish(result);
-  };
-
-  useAppState();
-  useTrackers();
-
+function useNotificationEvent() {
   React.useEffect(() => {
     const type = 'notification';
-    PushNotificationIOS.addEventListener(type, onRemoteNotification);
+    PushNotificationIOS.addEventListener(type, notification => {
+      const result = PushNotificationIOS.FetchResult.NoData;
+      notification.finish(result);
+    });
     if (Platform.OS === 'ios') inAppMessaging().setMessagesDisplaySuppressed(true).finally();
     return () => {
       PushNotificationIOS.removeEventListener(type);
     };
   }, []);
+}
+
+interface AppProps extends IStoreProp {}
+
+function App(props: AppProps) {
+  useAppState();
+  useTrackers();
+  useNotificationEvent();
+
+  React.useEffect(() => {
+    if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
+  }, []);
 
   const content = (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <Provider store={props.store}>
-          <Navigation />
-        </Provider>
+        <Redux.Provider store={props.store}>
+          <AppStartupHandler />
+        </Redux.Provider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
   return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }
 
-// Hack to generate scopes without circular deps. ToDo: fix it !
-AllModulesBackup.value = AppModules();
-AllModulesBackup2.value = AppModules();
-
-// Hack : Flatten reducers to prevent misordring of module execution
+loadModules();
 Reducers.register('startup', navigationReducer);
 Reducers.register('connectionTracker', connectionTrackerReducer);
 

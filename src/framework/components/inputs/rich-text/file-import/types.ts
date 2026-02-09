@@ -1,7 +1,7 @@
 import { ParamListBase, Route } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
+import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service/types';
 import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { FileSource } from '~/framework/util/fileHandler/types';

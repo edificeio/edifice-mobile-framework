@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { ActivityIndicator, Platform, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Platform, TouchableWithoutFeedback, View } from 'react-native';
 
 import CookieManager from '@react-native-cookies/cookies';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
   WebViewErrorEvent,
   WebViewHttpErrorEvent,
   WebViewNavigation,
   WebViewNavigationEvent,
+  WebViewSourceUri,
 } from 'react-native-webview/lib/WebViewTypes';
 
 import styles from './styles';
@@ -27,8 +29,10 @@ import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
-import { OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { toURISource } from '~/framework/util/media';
+import { API, OAuth2ErrorCode, OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
+import { deviceURISource } from '~/framework/util/transport';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -164,7 +168,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           scalesPageToFit
           setSupportMultipleWindows={false}
           showsHorizontalScrollIndicator={false}
-          source={{ headers: { 'X-APP': 'mobile' }, uri: this.wayfUrl! }}
+          source={deviceURISource(toURISource<WebViewSourceUri>({ uri: this.wayfUrl! }))}
           startInLoadingState
           style={styles.webview}
           userAgent={`X-APP=mobile-${Platform.OS}`}
@@ -262,10 +266,10 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         await this.props.tryLogin(this.props.route.params.platform, { saml }, this.state.errkey);
       } catch (error) {
         const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
-        if (error instanceof Error.SamlMultipleVectorError && errtype === OAuth2ErrorCode.SAML_MULTIPLE_VECTOR) {
+        if (error instanceof OAuth2SamlMultipleVectorError && errtype === OAuth2ErrorCode.SAML_MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
-            (error.data.users as OAuthCustomTokens).forEach(token => {
+            (error.data.users as API.OAuth2CustomToken[]).forEach(token => {
               this.dropdownItems.push({ label: token.structureName, value: token.key });
             });
             this.setState({ errkey: Error.generateErrorKey() }); // clear error

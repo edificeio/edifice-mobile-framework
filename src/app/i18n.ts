@@ -124,8 +124,8 @@ export namespace I18n {
   }
 
   // Get current language
-  export function getLanguage() {
-    return i18n.language;
+  export function getLanguage(): I18n.SupportedLocales {
+    return i18n.language as I18n.SupportedLocales;
   }
 
   // Set language to device one

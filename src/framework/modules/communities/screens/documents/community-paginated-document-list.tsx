@@ -2,6 +2,7 @@ import React from 'react';
 import { RefreshControl } from 'react-native';
 
 import { createDecoratedArrayProxy } from './proxy';
+import { CommunitiesDocumentAppName, CommunitiesDocumentId } from './types';
 
 import { useDocumentPagination } from '~/framework/components/list/paginated-document-list/component';
 import {
@@ -18,9 +19,14 @@ import {
 import ScrollView from '~/framework/components/scrollView';
 import { LoadingState } from '~/framework/hooks/loader';
 
-export type DecoratedDocumentListItem = PaginatedDocumentListItem | React.ReactElement;
+export type DecoratedDocumentListItem =
+  | PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>
+  | React.ReactElement;
 
-export interface DecoratedDocumentFlatListProps extends Omit<PaginatedDocumentFlatListProps, 'CellRendererComponent'> {
+export interface DecoratedDocumentFlatListProps extends Omit<
+  PaginatedDocumentFlatListProps<CommunitiesDocumentAppName, CommunitiesDocumentId>,
+  'CellRendererComponent'
+> {
   decorations?: React.ReactElement[];
   placeholderDecorations?: React.ReactElement[];
   CellRendererComponent?: PaginatedFlatListProps<DecoratedDocumentListItem>['CellRendererComponent'];
@@ -40,6 +46,7 @@ export const DecoratedDocumentFlatList = ({
   onViewableItemsChanged: _onViewableItemsChanged,
   ListEmptyComponent,
   onPageReached: _onPageReached,
+  alwaysShowAppIcon = true,
   ...props
 }: Readonly<DecoratedDocumentFlatListProps>) => {
   const {
@@ -49,6 +56,7 @@ export const DecoratedDocumentFlatList = ({
     renderItem: _renderItem,
     renderPlaceholderItem: _renderPlaceholderItem,
   } = useDocumentPagination({
+    alwaysShowAppIcon,
     documents,
     folders,
     numColumns,
@@ -126,7 +134,10 @@ export const DecoratedDocumentFlatList = ({
             return index < stickyItemsPadding
               ? { index: index - stickyItemsPadding, length: 0, offset: 0 }
               : _getItemLayout(
-                  d as ArrayLike<PaginatedListItem<PaginatedDocumentListItem>> | null | undefined,
+                  d as
+                    | ArrayLike<PaginatedListItem<PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>>>
+                    | null
+                    | undefined,
                   index - stickyItemsPadding,
                 );
           }

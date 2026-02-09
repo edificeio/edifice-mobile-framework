@@ -29,17 +29,14 @@ import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~
 import Toast from '~/framework/components/toast';
 import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import {
-  getMFAValidationInfos,
+  emailValidation,
   IEntcoreEmailValidationState,
   IEntcoreMFAValidationState,
   IEntcoreMobileValidationState,
-  requestEmailVerificationCode,
-  requestMobileVerificationCode,
-  verifyEmailCode,
-  verifyMFACode,
-  verifyMobileCode,
+  mfaValidation,
+  mobileValidation,
 } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { userRouteNames } from '~/framework/modules/user/navigation';
@@ -98,7 +95,6 @@ const feedbackTexts = {
 const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const { navigation, route, tryRefreshRequirements, tryUpdateProfile } = props;
 
-  const platform = props.route.params.platform;
   const modificationType = route.params.modificationType;
   const mfaRedirectionRoute = route.params.mfaRedirectionRoute;
   const isEmailMFA = route.params.isEmailMFA;
@@ -108,6 +104,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const isModifyingEmail = modificationType === ModificationType.EMAIL;
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
   const isEmailOrMobileMFA = isEmailMFA || isMobileMFA;
+  const platform = route.params.platform;
 
   const [isVerifyingEnabled, setIsVerifyingEnabled] = useState(false);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
@@ -205,14 +202,16 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     animationRef.current?.play();
   };
 
+  const session = assertSession();
+
   const verifyCode = useCallback(
     async (toVerify: string) => {
       try {
         setIsVerifyingCode(true);
         let validationState: IEntcoreEmailValidationState | IEntcoreMobileValidationState | IEntcoreMFAValidationState | undefined;
-        if (isEmailMFA) validationState = await verifyEmailCode(toVerify);
-        else if (isMobileMFA) validationState = await verifyMobileCode(toVerify);
-        else validationState = await verifyMFACode(toVerify);
+        if (isEmailMFA) validationState = await emailValidation.validate(session, toVerify);
+        else if (isMobileMFA) validationState = await mobileValidation.validate(session, toVerify);
+        else validationState = await mfaValidation.validate(session, toVerify);
         const state =
           validationState?.state === 'valid'
             ? CodeState.CODE_CORRECT
@@ -228,7 +227,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         setIsVerifyingCode(false);
       }
     },
-    [codeState, isEmailMFA, isMobileMFA],
+    [codeState, isEmailMFA, isMobileMFA, session],
   );
 
   const verifyTypedCode = useCallback(() => {
@@ -249,17 +248,17 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     try {
       setIsResendingVerificationCode(true);
       if (isEmailMFA) {
-        await requestEmailVerificationCode(platform, email!);
+        await emailValidation.requestCode(session, email!);
       } else if (isMobileMFA) {
-        await requestMobileVerificationCode(platform, mobile!);
-      } else await getMFAValidationInfos();
+        await mobileValidation.requestCode(session, mobile!);
+      } else await mfaValidation.getValidationState(session);
       return ResendResponse.SUCCESS;
     } catch {
       return ResendResponse.FAIL;
     } finally {
       setIsResendingVerificationCode(false);
     }
-  }, [email, isEmailMFA, isMobileMFA, mobile, platform]);
+  }, [email, isEmailMFA, isMobileMFA, mobile, session]);
 
   const resendCode = useCallback(async () => {
     setResendTimer();
@@ -277,7 +276,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       const params = { modificationType, navBarTitle: route.params.navBarTitle, platform };
       navigation.replace(mfaRedirectionRoute!, params);
     }
-  }, [isCodeCorrect, modificationType, navigation, platform, route.params.navBarTitle, mfaRedirectionRoute]);
+  }, [isCodeCorrect, modificationType, route.params.navBarTitle, platform, navigation, mfaRedirectionRoute]);
 
   const redirectEmailOrMobileMFA = useCallback(async () => {
     if (isModifyingEmail || isModifyingMobile) {
@@ -424,7 +423,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   );
 };
 
-const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = state => {
+const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = () => {
   return { session: getSession() };
 };
 

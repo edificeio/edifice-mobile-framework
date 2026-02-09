@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { ListRenderItemInfo as FlatListRenderItemInfo, ViewStyle } from 'react-native';
+import { ListRenderItemInfo as FlatListRenderItemInfo, StyleSheet, ViewStyle } from 'react-native';
 
 import { ListRenderItemInfo as FlashListRenderItemInfo } from '@shopify/flash-list';
 
@@ -27,22 +27,29 @@ import {
   PaginatedDocumentListItem,
 } from './types';
 
+import { EntAppNameOrSynonym } from '~/app/intents';
 import { PaginatedFlashList, PaginatedFlatList } from '~/framework/components/list/paginated-list';
 
 export const useDocumentPagination = <
-  InfoType extends FlatListRenderItemInfo<PaginatedDocumentListItem> | FlashListRenderItemInfo<PaginatedDocumentListItem>,
+  AppTypes extends EntAppNameOrSynonym,
+  IdType,
+  InfoType extends
+    | FlatListRenderItemInfo<PaginatedDocumentListItem<AppTypes, IdType>>
+    | FlashListRenderItemInfo<PaginatedDocumentListItem<AppTypes, IdType>>,
 >({
+  alwaysShowAppIcon,
   documents,
   folders,
   numColumns = 1,
   onPressDocument,
   onPressFolder,
 }: {
-  documents: CommonPaginatedDocumentListProps['documents'];
-  folders: CommonPaginatedDocumentListProps['folders'];
-  onPressFolder: CommonPaginatedDocumentListProps['onPressFolder'];
-  onPressDocument: CommonPaginatedDocumentListProps['onPressDocument'];
+  documents: CommonPaginatedDocumentListProps<AppTypes, IdType>['documents'];
+  folders: CommonPaginatedDocumentListProps<AppTypes, IdType>['folders'];
+  onPressFolder: CommonPaginatedDocumentListProps<AppTypes, IdType>['onPressFolder'];
+  onPressDocument: CommonPaginatedDocumentListProps<AppTypes, IdType>['onPressDocument'];
   numColumns?: number;
+  alwaysShowAppIcon: CommonPaginatedDocumentListProps<AppTypes, IdType>['alwaysShowAppIcon'];
 }) => {
   const { data, documentsIndexStart } = React.useMemo(
     () => createDocumentArrayProxy(folders ?? [], documents ?? [], numColumns),
@@ -53,7 +60,7 @@ export const useDocumentPagination = <
 
   // getItemType exists only in FlashList so no need to use the generic type
   const getItemType = React.useCallback(
-    (item: PaginatedDocumentListItem, index: number) => {
+    (item: PaginatedDocumentListItem<AppTypes, IdType>, index: number) => {
       if (item === FOLDER_SPACER_ITEM_DATA) return 'spacer';
       return isIndexForFolderOrSpacerItem(index) ? 'folder' : 'document';
     },
@@ -61,7 +68,7 @@ export const useDocumentPagination = <
   );
 
   const keyExtractor = React.useCallback(
-    (item: PaginatedDocumentListItem, index: number) => {
+    (item: PaginatedDocumentListItem<AppTypes, IdType>, index: number) => {
       if (item === FOLDER_SPACER_ITEM_DATA || item === DOCUMENT_SPACER_ITEM_DATA) return 'spacer' + index.toString();
       return (getItemType(item, index) ?? '')?.toString() + item.id;
     },
@@ -71,9 +78,11 @@ export const useDocumentPagination = <
   const getItemStyle = React.useCallback(
     ({ index }: Pick<InfoType, 'index'>) => {
       const outputStyle: ViewStyle = {};
+      // Left
       if (index % numColumns === 0) {
         outputStyle.marginLeft = styles.item.margin * 2;
       }
+      // Right
       if (index % numColumns === numColumns - 1) {
         outputStyle.marginRight = styles.item.margin * 2;
       }
@@ -82,6 +91,8 @@ export const useDocumentPagination = <
     [numColumns],
   );
 
+  const contentContainerStyle = { paddingVertical: styles.item.margin };
+
   const renderItem = React.useCallback<(info: InfoType) => React.ReactElement>(
     (info: InfoType) => {
       const itemStyle = getItemStyle(info);
@@ -89,25 +100,26 @@ export const useDocumentPagination = <
       if (info.item === DOCUMENT_SPACER_ITEM_DATA) return <DocumentSpacerListItem {...info} style={itemStyle} />;
       return isIndexForFolderOrSpacerItem(info.index) ? (
         <FolderListItem
-          {...(info as FlatListRenderItemInfo<FolderItem>)}
-          onPress={e => onPressFolder?.((info as FlatListRenderItemInfo<FolderItem>).item, e)}
+          {...(info as FlatListRenderItemInfo<FolderItem<IdType>>)}
+          onPress={e => onPressFolder?.((info as FlatListRenderItemInfo<FolderItem<IdType>>).item, e)}
           style={itemStyle}
         />
       ) : (
         <DocumentListItem
-          {...(info as FlatListRenderItemInfo<DocumentItem>)}
-          onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem>).item, e)}
+          {...(info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>)}
+          onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>).item, e)}
           style={itemStyle}
           testID={'document-item'}
+          alwaysShowAppIcon={alwaysShowAppIcon}
         />
       );
     },
-    [getItemStyle, isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder],
+    [getItemStyle, isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder, alwaysShowAppIcon],
   );
 
   const renderPlaceholderItem = React.useCallback<(info: Pick<InfoType, 'index'>) => React.ReactElement>(
     ({ index }) => {
-      const itemStyle = getItemStyle({ index });
+      const itemStyle = getItemStyle({ index }); // Note: No need to know how many elements we have during rendering placeholder data
       return <DocumentPlaceholderItem style={itemStyle} />;
     },
     [getItemStyle],
@@ -116,6 +128,7 @@ export const useDocumentPagination = <
   const getVisibleItemIndex = React.useCallback((n: number) => n - documentsIndexStart, [documentsIndexStart]);
 
   return {
+    contentContainerStyle,
     data,
     getItemType,
     getVisibleItemIndex,
@@ -125,23 +138,31 @@ export const useDocumentPagination = <
   };
 };
 
-export function PaginatedDocumentFlashList({
+export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym, IdType>({
+  alwaysShowAppIcon = true,
+  contentContainerStyle: _contentContainerStyle,
   documents,
   folders,
   onPressDocument,
   onPressFolder,
   ...paginatedListProps
-}: Readonly<PaginatedDocumentFlashListProps>) {
-  const { data, getItemType, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } = useDocumentPagination({
-    documents,
-    folders,
-    numColumns: paginatedListProps.numColumns,
-    onPressDocument,
-    onPressFolder,
-  });
+}: Readonly<PaginatedDocumentFlashListProps<AppTypes, IdType>>) {
+  const { contentContainerStyle, data, getItemType, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } =
+    useDocumentPagination({
+      alwaysShowAppIcon,
+      documents,
+      folders,
+      numColumns: paginatedListProps.numColumns,
+      onPressDocument,
+      onPressFolder,
+    });
 
   return (
     <PaginatedFlashList
+      contentContainerStyle={React.useMemo(
+        () => StyleSheet.flatten([contentContainerStyle, _contentContainerStyle]),
+        [_contentContainerStyle, contentContainerStyle],
+      )}
       data={data}
       getItemType={getItemType}
       keyExtractor={keyExtractor}
@@ -153,23 +174,31 @@ export function PaginatedDocumentFlashList({
   );
 }
 
-export function PaginatedDocumentFlatList({
+export function PaginatedDocumentFlatList<AppTypes extends EntAppNameOrSynonym, IdType>({
+  alwaysShowAppIcon = true,
+  contentContainerStyle: _contentContainerStyle,
   documents,
   folders,
   onPressDocument,
   onPressFolder,
   ...paginatedListProps
-}: Readonly<PaginatedDocumentFlatListProps>) {
-  const { data, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } = useDocumentPagination({
-    documents,
-    folders,
-    numColumns: paginatedListProps.numColumns,
-    onPressDocument,
-    onPressFolder,
-  });
+}: Readonly<PaginatedDocumentFlatListProps<AppTypes, IdType>>) {
+  const { contentContainerStyle, data, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } =
+    useDocumentPagination({
+      alwaysShowAppIcon,
+      documents,
+      folders,
+      numColumns: paginatedListProps.numColumns,
+      onPressDocument,
+      onPressFolder,
+    });
 
   return (
     <PaginatedFlatList
+      contentContainerStyle={React.useMemo(
+        () => StyleSheet.flatten([contentContainerStyle, _contentContainerStyle]),
+        [_contentContainerStyle, contentContainerStyle],
+      )}
       data={data}
       keyExtractor={keyExtractor}
       renderItem={renderItem}

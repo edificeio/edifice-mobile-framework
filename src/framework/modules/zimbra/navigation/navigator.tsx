@@ -1,10 +1,9 @@
 import * as React from 'react';
 
-import ZimbraHomeScreen from '../screens/home';
-
 import { ZimbraNavigationParams, zimbraRouteNames } from '.';
 
 import moduleConfig from '~/framework/modules/zimbra/module-config';
+import ZimbraHomeScreen from '~/framework/modules/zimbra/screens/home';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 
 export default () =>

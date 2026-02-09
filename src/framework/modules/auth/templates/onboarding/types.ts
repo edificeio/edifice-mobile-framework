@@ -12,8 +12,7 @@ export interface AuthOnboardingScreenProps {
 export type AuthOnboardingScreenNavParams = undefined;
 
 export interface AuthOnboardingScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationTemplatesParams, 'onboarding'>,
-    AuthOnboardingScreenProps {}
+  extends NativeStackScreenProps<AuthNavigationTemplatesParams, 'onboarding'>, AuthOnboardingScreenProps {}
 
 export interface AuthOnboardingScreenState {
   buttonsWidth: number;

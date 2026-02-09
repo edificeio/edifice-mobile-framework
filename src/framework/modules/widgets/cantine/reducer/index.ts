@@ -1,7 +1,6 @@
-import { CantineData } from '../model';
-import moduleConfig from '../module-config';
-
 import { IGlobalState, Reducers } from '~/app/store';
+import { CantineData } from '~/framework/modules/widgets/cantine/model';
+import moduleConfig from '~/framework/modules/widgets/cantine/module-config';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
 // State type

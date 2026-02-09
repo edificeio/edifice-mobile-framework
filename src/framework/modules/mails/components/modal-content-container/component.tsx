@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { ModalWrapper } from '../modal-wrapper';
 import styles from './styles';
 import { InactiveUserModalProps } from './types';
 
@@ -9,6 +8,7 @@ import { I18n } from '~/app/i18n';
 import IconButton from '~/framework/components/buttons/icon';
 import FlatList from '~/framework/components/list/flat-list';
 import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
+import { ModalWrapper } from '~/framework/modules/mails/components/modal-wrapper';
 
 export const InactiveUserModalContentContainer: React.FC<InactiveUserModalProps> = ({ action, inactiveUsers, isVisible }) => {
   return (

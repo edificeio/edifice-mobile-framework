@@ -1,6 +1,5 @@
 import CookieManager from '@react-native-cookies/cookies';
 import moment from 'moment';
-import DeviceInfo from 'react-native-device-info';
 import { getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-phone-number-input';
 
 import {
@@ -14,10 +13,9 @@ import {
   AuthActiveUserInfoStudent,
   AuthCredentials,
   AuthFederationCredentials,
-  AuthLoggedAccount,
   AuthPendingRedirection,
   AuthRequirement,
-  AuthTokenSet,
+  AuthSavedLoggedInAccount,
   createActivationError,
   credentialsAreCustomToken,
   credentialsAreLoginPassword,
@@ -34,13 +32,12 @@ import {
 import { AccountError, AccountErrorCode } from './model/error';
 
 import { I18n } from '~/app/i18n';
-import appConf, { Platform } from '~/framework/util/appConf';
+import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { OAuth2ErrorCode } from '~/framework/util/oauth2';
-import { Storage } from '~/framework/util/storage';
-import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-import { initOAuth2, OAuth2RessourceOwnerPasswordClient, uniqueId, urlSigner } from '~/infra/oauth';
+import { expirableTokenFactory, getOAuth2AccessToken, OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { platformFetch, tokenFetch } from '~/framework/util/transport';
+import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
 
 export interface IUserRequirements {
   forceChangePassword?: boolean;
@@ -181,64 +178,46 @@ export function formatStructuresWithClasses(
   }));
 }
 
-export async function createSession(platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) {
-  if (!platform) {
-    throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
-  }
-  initOAuth2(platform);
-  if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
-  }
-
+export async function getToken(platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) {
   if (credentialsAreLoginPassword(credentials)) {
-    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
-      credentials.username,
-      credentials.password,
-      false, // Do not save token until login is completely successful
-    );
+    return getOAuth2AccessToken.withLoginPassword(platform, credentials);
   } else if (credentialsAreSaml(credentials)) {
-    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithSAML(
-      credentials.saml,
-      false, // Do not save token until login is completely successful
-    );
+    return getOAuth2AccessToken.withSaml2(platform, credentials.saml);
   } else if (credentialsAreCustomToken(credentials)) {
-    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithCustomToken(
-      credentials.customToken,
-      false, // Do not save token until login is completely successful
-    );
+    return getOAuth2AccessToken.withCustomToken(platform, credentials.customToken);
   } else {
     throw new global.Error(`[auth.createSession] given credentials are not recognisable.`);
   }
 }
 
-export async function restoreSession(platform: Platform, token: AuthTokenSet) {
-  initOAuth2(platform);
-  if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
-  }
-  OAuth2RessourceOwnerPasswordClient.connection.importToken(token);
-  if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
-    throw new Error.LoginError(Error.FetchErrorType.NOT_AUTHENTICATED, 'Failed to restore saved session');
-  }
+export async function getOneSessionId({
+  tokens,
+}: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>): Promise<
+  NonNullable<AuthActiveAccount['tokens']['oneSessionId']>
+> {
+  const response = await tokenFetch(tokens, '/auth/oauth2/token-as-cookie', { method: 'POST' });
+  const cookie = response.headers.get('set-cookie');
+  if (!cookie) throw new FetchError(FetchErrorCode.BAD_RESPONSE, 'getOneSessionId: no set-cookie header recieved');
+  const match = cookie!.match(/oneSessionId=([^;]+)/);
+  if (!match || !match[1])
+    throw new FetchError(FetchErrorCode.BAD_RESPONSE, 'getOneSessionId: set-cookie header does not include oneSessionId');
+  return { value: match[1] };
 }
 
-/**
- * @deprecated
- * Remove the old storage data of saved token
- */
-export async function forgetPreviousSession() {
-  try {
-    if (!OAuth2RessourceOwnerPasswordClient.connection) {
-      throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
-    }
-    await OAuth2RessourceOwnerPasswordClient.connection.forgetToken();
-  } catch (err) {
-    throw new global.Error('Failed to forget previous (LEGACY) token', { cause: err });
-  }
+export async function getQueryParamToken({
+  tokens,
+}: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>): Promise<NonNullable<AuthActiveAccount['tokens']['queryParam']>> {
+  const response = await tokenFetch.json<{ token_type: 'QueryParam'; access_token: string; expires_in: number }>(
+    tokens,
+    '/auth/oauth2/token?type=queryparam',
+  );
+  return expirableTokenFactory(response);
 }
 
 export function formatSession(
+  tokens: (AuthActiveAccount | AuthSavedLoggedInAccount)['tokens'],
   addTimestamp: number,
+  logTimestamp: number,
   platform: Platform,
   loginUsed: string | undefined,
   userinfo: IUserInfoBackend,
@@ -247,9 +226,6 @@ export function formatSession(
   userPublicInfo?: UserPersonDataBackend,
   rememberMe?: boolean,
 ): AuthActiveAccount {
-  if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw new Error.LoginError(OAuth2ErrorCode.OAUTH2_INVALID_CLIENT);
-  }
   if (
     !userinfo.apps ||
     !userinfo.widgets ||
@@ -262,7 +238,7 @@ export function formatSession(
     !userinfo.firstName ||
     !userinfo.lastName
   ) {
-    throw new Error.LoginError(Error.FetchErrorType.BAD_RESPONSE, 'Missing data in user info');
+    throw new FetchError(FetchErrorCode.BAD_RESPONSE, 'Missing data in user info');
   }
   const user: Partial<AuthActiveUserInfo> = {
     avatar: userPublicInfo?.photo,
@@ -308,6 +284,7 @@ export function formatSession(
   }
   return {
     addTimestamp,
+    logTimestamp,
     method,
     persist: rememberMe ? SessionPersistence.PERMANENT : SessionPersistence.TEMPORARY,
     platform,
@@ -316,283 +293,145 @@ export function formatSession(
       authorizedActions: userinfo.authorizedActions,
       widgets: userinfo.widgets,
     },
-    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
+    tokens,
     user: user as AuthActiveUserInfo,
   } as AuthActiveAccountWithCredentials | AuthActiveAccountWithSaml;
 }
 
 /**
- * Old storage key used before 1.12 for selected platform
- * @deprecated
+ * Everything about checking that credentials matches one-time-passwords like activation codes or password renew code.
  */
-export const PLATFORM_STORAGE_KEY = 'currentPlatform';
-
-/**
- * Read the platform stored in MMKV.
- */
-export async function loadCurrentPlatform() {
-  const platformId = Storage.global.getString(PLATFORM_STORAGE_KEY);
-  if (platformId) {
-    const platform = appConf.getPlatformByName(platformId);
-    if (!platform)
-      throw new Error.LoginError(Error.LoginErrorType.INVALID_PLATFORM, `Loaded platform "${platformId}" doesn't exists.`);
-    else return platform;
-  } else {
-    return undefined;
-  }
-}
-
-/**
- * Read and select the platform stored in MMKV.
- * @deprecated
- */
-export function savePlatform(platform: Platform) {
-  Storage.global.set(PLATFORM_STORAGE_KEY, platform.name);
-}
-
-/**
- * @deprecated
- */
-export function forgetPlatform() {
-  Storage.global.delete(PLATFORM_STORAGE_KEY);
-}
-
-export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: AuthCredentials) {
-  if (!platform) {
-    throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
-  }
-  try {
-    const res = await fetch(`${platform.url}/auth/activation/match`, {
-      body: JSON.stringify({
-        login: credentials.username,
-        password: credentials.password,
-      }),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Device-Id': uniqueId(),
-      },
-      method: 'post',
-    });
-    if (!res.ok) {
-      throw new Error.LoginError(Error.FetchErrorType.NOT_OK, 'Activation match response not OK');
-    }
-    const body = await res.json();
-    if (!body.match) {
-      throw new Error.LoginError(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
-    }
-    return AuthPendingRedirection.ACTIVATE;
-  } catch (activationErr) {
-    throw new global.Error('Activation match error', { cause: activationErr });
-  }
-}
-
-export async function ensureCredentialsMatchPwdRenewCode(platform: Platform, credentials: AuthCredentials) {
-  if (!platform) {
-    throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
-  }
-  try {
-    const res = await fetch(`${platform.url}/auth/reset/match`, {
-      body: JSON.stringify({
-        login: credentials.username,
-        password: credentials.password,
-      }),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Device-Id': uniqueId(),
-      },
-      method: 'post',
-    });
-    if (!res.ok) {
-      throw new Error.LoginError(Error.FetchErrorType.NOT_OK, 'Renew match response not OK');
-    }
-    const body = await res.json();
-    if (!body.match) {
-      throw new Error.LoginError(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
-    }
-    return AuthPendingRedirection.RENEW_PASSWORD;
-  } catch (err) {
-    throw new global.Error('Pwd renew match error', { cause: err });
-  }
-}
-
-export async function getAuthContext(platform: Platform) {
-  const res = await fetch(`${platform.url}/auth/context`, {
-    headers: {
-      'X-Device-Id': uniqueId(),
-    },
-  });
-  if (!res.ok) {
-    throw new Error.LoginError(Error.FetchErrorType.NOT_OK, 'Get Auth context response not OK');
-  }
-  const activationContext: PlatformAuthContext = await res.json();
-  return activationContext;
-}
-
-export async function getAuthTranslationKeys(platform: Platform, language: I18n.SupportedLocales) {
-  try {
-    // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
-    const res = await fetch(`${platform.url}/auth/i18n`, { headers: { 'Accept-Language': language, 'X-Device-Id': uniqueId() } });
-    if (res.ok) {
-      const authTranslationKeys = await res.json();
-      const legalUrls: LegalUrls = {
-        cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
-        cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
-        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
-      };
-      if (authTranslationKeys) {
-        legalUrls.userCharter = urlSigner.getAbsoluteUrl(
-          authTranslationKeys['auth.charter'] || I18n.get('user-legalurl-usercharter'),
-          platform,
-        );
-      }
-      return legalUrls;
-    } else throw new Error.FetchError(Error.FetchErrorType.NOT_OK, 'getAuthTranslationKeys response not OK');
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('getAuthTranslationKeys error', { cause: err });
-  }
-}
-
-export async function revalidateTerms(session: AuthLoggedAccount) {
-  await signedFetch(session.platform.url + '/auth/cgu/revalidate', {
-    method: 'PUT',
-  });
-}
-
-export async function getMFAValidationInfos() {
-  try {
-    const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
-    return MFAValidationInfos;
-  } catch (e) {
-    console.error('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
-  }
-}
-
-export async function verifyMFACode(key: string) {
-  try {
-    const mfaValidationState = (await fetchJSONWithCache('/auth/user/mfa/code', {
-      body: JSON.stringify({ key }),
-      method: 'POST',
-    })) as IEntcoreMFAValidationState;
-    return mfaValidationState;
-  } catch (e) {
-    console.error('[UserService] verifyMFACode: could not verify mfa code', e);
-  }
-}
-
-export async function getMobileValidationInfos(platformUrl: string) {
-  try {
-    const mobileValidationInfos = await fetchJSONWithCache('/directory/user/mobilestate', {}, true, platformUrl);
-    return mobileValidationInfos;
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('getMobileValidationInfos error', { cause: err });
-  }
-}
-
-export async function requestMobileVerificationCode(platform: Platform, mobile: string) {
-  await signedFetch(platform.url + '/directory/user/mobilestate', {
-    body: JSON.stringify({ mobile }),
-    method: 'PUT',
-  });
-}
-
-export async function verifyMobileCode(key: string) {
-  try {
-    const mobileValidationState = (await fetchJSONWithCache('/directory/user/mobilestate', {
-      body: JSON.stringify({ key }),
-      method: 'POST',
-    })) as IEntcoreMobileValidationState;
-    return mobileValidationState;
-  } catch (e) {
-    console.error('[UserService] verifyMobileCode: could not verify mobile code', e);
-    if (e instanceof Error.ErrorWithType) throw e;
-    else throw new global.Error('verifyMobileCode: could not verify mobile code', { cause: e });
-  }
-}
-
-export async function getEmailValidationInfos(platformUrl: string) {
-  try {
-    const emailValidationInfos = (await fetchJSONWithCache(
-      '/directory/user/mailstate',
-      {},
-      true,
-      platformUrl,
-    )) as IEntcoreEmailValidationInfos;
-    return emailValidationInfos;
-  } catch (e) {
-    if (e instanceof Error.ErrorWithType) throw e;
-    else throw new global.Error('Failed to fetch email validation infos', { cause: e });
-  }
-}
-
-export async function requestEmailVerificationCode(platform: Platform, email: string) {
-  await signedFetch(platform.url + '/directory/user/mailstate', {
-    body: JSON.stringify({ email }),
-    method: 'PUT',
-  });
-}
-
-export async function verifyEmailCode(key: string) {
-  try {
-    const emailValidationState = (await fetchJSONWithCache('/directory/user/mailstate', {
-      body: JSON.stringify({ key }),
-      method: 'POST',
-    })) as IEntcoreEmailValidationState;
-    return emailValidationState;
-  } catch (e) {
-    console.error('[UserService] verifyEmailCode: could not verify email code', e);
-  }
-}
-
-export async function getUserRequirements(platform: Platform) {
-  const resp = await signedFetch(`${platform.url}/auth/user/requirements`);
-  return resp.status === 404 ? null : (resp.json() as IUserRequirements);
-}
-
-export async function fetchRawUserRequirements(platform: Platform) {
-  try {
-    const requirements = await getUserRequirements(platform);
-    return requirements as IUserRequirements;
-  } catch (e) {
-    if (e instanceof Error.ErrorWithType) throw e;
-    else throw new global.Error('Failed to fetch raw user requirements', { cause: e });
-  }
-}
-
-/**
- * Get flags status for the current user.
- * These flags may lead to partial session scenarios
- * where the user needs to do some action before retrying to login.
- *
- * CAUTION : the 'forceChangePassword' flag received from the server corresponds to a field named 'changePw' in the database.
- *
- * @param userRequirements get userRequirements from `fetchUserRequirements()`
- * @returns the first flag encountered (until there is none).
- */
-export function getRequirementScenario(userRequirements: IUserRequirements) {
-  // Note : MUST_CHANGE_PASSWORD need to be first, otherwise the other cases will not work and will be http 302.
-  if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
-  if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
-  // When the requirement for initial CGU validation for federated accounts, put it here :)
-  if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
-  if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
-}
-
-export async function fetchUserInfo(platform: Platform) {
-  try {
-    const userinfo = (await fetchJSONWithCache(
-      '/auth/oauth2/userinfo',
-      {
+export const otp = {
+  _matchGeneric: async function (
+    platform: Platform,
+    credentials: AuthCredentials,
+    api: string,
+    returnValue: AuthPendingRedirection,
+    message: string,
+  ) {
+    try {
+      const response = await platformFetch.json<{ match?: unknown }>(platform, api, {
+        body: JSON.stringify({
+          login: credentials.username,
+          password: credentials.password,
+        }),
         headers: {
-          Accept: 'application/json;version=2.0',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
+        method: 'POST',
+      });
+      if (!response.match) {
+        throw new Error.LoginError(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
+      }
+      return returnValue;
+    } catch (e) {
+      throw new global.Error(message, { cause: e });
+    }
+  },
+  matchActivation: (platform: Platform, credentials: AuthCredentials) =>
+    otp._matchGeneric(platform, credentials, `/auth/activation/match`, AuthPendingRedirection.ACTIVATE, 'Activation match error'),
+  matchRenewCode: (platform: Platform, credentials: AuthCredentials) =>
+    otp._matchGeneric(platform, credentials, `/auth/reset/match`, AuthPendingRedirection.RENEW_PASSWORD, 'Pwd renew match error'),
+};
+
+export const platformConfig = {
+  authI18n: async (platform: Platform, language: I18n.SupportedLocales): Promise<LegalUrls> => {
+    try {
+      const authTranslationKeys = await platformFetch.json<{ 'auth.charter'?: string } | undefined>(platform, `/auth/i18n`, {
+        headers: { 'Accept-Language': language },
+      });
+      return {
+        cgu: new URL(platform.url, I18n.get('user-legalurl-cgu')).href,
+        cookies: new URL(platform.url, I18n.get('user-legalurl-cookies')).href,
+        personalDataProtection: new URL(platform.url, I18n.get('user-legalurl-personaldataprotection')).href,
+        userCharter: new URL(platform.url, I18n.get(authTranslationKeys?.['auth.charter'] || I18n.get('user-legalurl-usercharter')))
+          .href,
+      };
+    } catch (err) {
+      if (err instanceof Error.ErrorWithType) throw err;
+      else throw new global.Error('getAuthTranslationKeys error', { cause: err });
+    }
+  },
+  context: (platform: Platform) => platformFetch.json<PlatformAuthContext>(platform, `/auth/context`),
+};
+
+export async function revalidateTerms({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) {
+  await tokenFetch(tokens, '/auth/cgu/revalidate', {
+    method: 'PUT',
+  });
+}
+
+export const mfaValidation = {
+  getValidationState: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) =>
+    tokenFetch.json<IEntcoreMFAValidationInfos>(tokens, '/auth/user/mfa/code'),
+  validate: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, key: string) =>
+    tokenFetch.json<IEntcoreMFAValidationState>(tokens, '/auth/user/mfa/code', {
+      body: JSON.stringify({ key }),
+      method: 'POST',
+    }),
+};
+
+export const mobileValidation = {
+  getValidationState: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) =>
+    tokenFetch.json<IEntcoreMobileValidationInfos>(tokens, '/directory/user/mobilestate'),
+  requestCode: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, mobile: string) =>
+    tokenFetch(tokens, '/directory/user/mobilestate', {
+      body: JSON.stringify({ mobile }),
+      method: 'PUT',
+    }),
+  validate: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, key: string) =>
+    tokenFetch.json<IEntcoreMobileValidationState>(tokens, '/directory/user/mobilestate', {
+      body: JSON.stringify({ key }),
+      method: 'POST',
+    }),
+};
+
+export const emailValidation = {
+  getValidationState: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) =>
+    tokenFetch.json<IEntcoreEmailValidationInfos>(tokens, '/directory/user/mailstate'),
+  requestCode: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, email: string) =>
+    tokenFetch(tokens, '/directory/user/mailstate', {
+      body: JSON.stringify({ email }),
+      method: 'PUT',
+    }),
+  validate: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, key: string) =>
+    tokenFetch.json<IEntcoreEmailValidationState>(tokens, '/directory/user/mailstate', {
+      body: JSON.stringify({ key }),
+      method: 'POST',
+    }),
+};
+
+export const requirements = {
+  /**
+   * Get flags status for the current user.
+   * These flags may lead to partial session scenarios
+   * where the user needs to do some action before retrying to login.
+   *
+   * CAUTION : the 'forceChangePassword' flag received from the server corresponds to a field named 'changePw' in the database.
+   *
+   * @param userRequirements get userRequirements from `fetchUserRequirements()`
+   * @returns the first flag encountered (until there is none).
+   */
+  getNextNeeded: (userRequirements: IUserRequirements) => {
+    // Note : MUST_CHANGE_PASSWORD need to be first, otherwise the other cases will not work and will be http 302.
+    if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
+    if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
+    // When the requirement for initial CGU validation for federated accounts, put it here :)
+    if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
+    if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
+  },
+  getState: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) =>
+    tokenFetch.json<IUserRequirements>(tokens, '/auth/user/requirements'),
+};
+
+export async function fetchUserInfo({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) {
+  try {
+    const userinfo = await tokenFetch.json<any>(tokens, '/auth/oauth2/userinfo', {
+      headers: {
+        Accept: 'application/json;version=2.0',
       },
-      true,
-      platform.url,
-    )) as any;
+    });
 
     // Legacy app names for eventual compatibility
     userinfo.appsNames = userinfo.apps.map((e: any) => e.name);
@@ -612,13 +451,16 @@ export async function fetchUserInfo(platform: Platform) {
  *        These corner-cases are managed in dedicated functions.
  * @param userInfo get userInfo from `fetchUserInfo()`
  */
-export function ensureUserValidity(userinfo: IUserInfoBackend) {
+export function assertNotPredeleted(userinfo: IUserInfoBackend) {
   if (userinfo.deletePending) {
     throw new AccountError(AccountErrorCode.ACCOUNT_INELIGIBLE_PRE_DELETED, 'User is predeleted');
   }
 }
 
-export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: Platform) {
+export async function fetchUserPublicInfo(
+  userinfo: IUserInfoBackend,
+  { tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>,
+) {
   try {
     if (!userinfo.userId) {
       throw new global.Error('fetchUserPublicInfo : User id has not being returned by the server');
@@ -627,15 +469,18 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
       throw new global.Error('fetchUserPublicInfo : User type has not being returned by the server');
     }
 
+    await tokenFetch.json<any>(tokens, `/directory/user/${userinfo.userId}`);
+    await tokenFetch.json<any>(tokens, `/userbook/api/person?id=${userinfo.userId}`);
+
     const [userdata, userPublicInfo] = await Promise.all([
-      fetchJSONWithCache(`/directory/user/${userinfo.userId}`, {}, true, platform.url) as any,
-      fetchJSONWithCache('/userbook/api/person?id=' + userinfo.userId, {}, true, platform.url),
+      tokenFetch.json<any>(tokens, `/directory/user/${userinfo.userId}`),
+      tokenFetch.json<any>(tokens, `/userbook/api/person?id=${userinfo.userId}`),
     ]);
 
     // We fetch children information only for relative users
     const childrenStructure: UserPrivateData['childrenStructure'] =
       userinfo.type === AccountType.Relative
-        ? await (fetchJSONWithCache('/directory/user/' + userinfo.userId + '/children', {}, true, platform.url) as any)
+        ? await (tokenFetch.json<any>(tokens, `/directory/user/${userinfo.userId}/children`) as any)
         : undefined;
     if (childrenStructure) {
       userdata.childrenStructure = childrenStructure;
@@ -693,7 +538,7 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
 
   if (!mobileNumberFormatted && mobileNumberNotEmpty) throw new global.Error('Failed to format mobile number');
 
-  const payload: IActivationSubmitPayload = {
+  const payload: Omit<IActivationSubmitPayload, 'mailState' | 'phoneCountry' | 'phoneState'> = {
     acceptCGU: true,
     activationCode: model.activationCode,
     callBack: '',
@@ -709,18 +554,14 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
   for (const key in payload) {
     formdata.append(key, payload[key]);
   }
-  const res = await fetch(`${platform.url}/auth/activation/no-login`, {
+  const res = await platformFetch(platform, `/auth/activation/no-login`, {
     body: formdata,
     headers: {
       'Accept': 'application/json',
       'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'multipart/form-data',
-      'X-APP': 'mobile',
-      'X-APP-NAME': DeviceInfo.getBundleId(),
-      'X-APP-VERSION': DeviceInfo.getReadableVersion(),
-      'X-Device-Id': uniqueId(),
     },
-    method: 'post',
+    method: 'POST',
   });
   if (!res.ok) {
     throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'));
@@ -739,31 +580,24 @@ export async function forgot<Mode extends 'password'>(
   platform: Platform,
   mode: Mode,
   payload: { login: string },
-  deviceId: string,
 ): Promise<API.AuthForgotResponse>;
 export async function forgot<Mode extends 'id'>(
   platform: Platform,
   mode: Mode,
   payload: { mail: string } | { mail: string; firstName: string; structureId: string },
-  deviceId: string,
 ): Promise<API.AuthForgotResponse>;
 export async function forgot<Mode extends ForgotMode>(
   platform: Platform,
   mode: Mode,
   payload: { login: string } | { mail: string } | { mail: string; firstName: string; structureId: string },
-  deviceId: string,
 ): Promise<API.AuthForgotResponse> {
   const realPayload = { ...payload, service: 'mail' };
-  const api = mode === 'id' ? `${platform.url}/auth/forgot-id` : `${platform.url}/auth/forgot-password`;
-  const res = await fetch(api, {
+  const api = mode === 'id' ? `/auth/forgot-id` : `/auth/forgot-password`;
+  const res = await platformFetch(platform, api, {
     body: JSON.stringify(realPayload),
     headers: {
       'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'application/json',
-      'X-APP': 'mobile',
-      'X-APP-NAME': DeviceInfo.getBundleId(),
-      'X-APP-VERSION': DeviceInfo.getReadableVersion(),
-      'X-Device-Id': uniqueId(),
     },
     method: 'POST',
   });

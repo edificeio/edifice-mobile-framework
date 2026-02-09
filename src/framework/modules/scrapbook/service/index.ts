@@ -3,7 +3,7 @@
  */
 
 import { ScrapbookItem } from '~/framework/modules/scrapbook/model';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 export interface BackendScrapbookItem {
   _id: string;
@@ -38,13 +38,13 @@ export const getResourceUri = (id: string) => `/scrapbook/get/${id}`;
 export const scrapbookService = {
   get: async (id: string) => {
     const api = getResourceUri(id);
-    const entcoreScrapbook = (await fetchJSONWithCache(api)) as any;
+    const entcoreScrapbook = await sessionFetch.json<any>(api);
 
     return entcoreScrapbook;
   },
   list: async () => {
     const api = `/scrapbook/list/all`;
-    const backendScrapbooks = (await fetchJSONWithCache(api)) as BackendScrapbookItem[];
+    const backendScrapbooks = await sessionFetch.json<BackendScrapbookItem[]>(api);
     const scrapbooks: ScrapbookItem[] = [];
 
     backendScrapbooks.forEach(scrapbook => {

@@ -36,6 +36,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
 
   const openActionUrl = async () => {
     try {
+      if (!url) throw new Error('DefaultButton: no url to open');
       setLoadingButton(true);
       await openUrl(url, undefined, undefined, showConfirmation, requireSession);
     } catch {

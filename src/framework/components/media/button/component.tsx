@@ -12,11 +12,12 @@ import theme from '~/app/theme';
 import { getScaleHeight, getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
 import { openMediaPlayer } from '~/framework/components/media/player';
+import { MediaPlayerParams } from '~/framework/components/media/player/types';
 import { Svg } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
 import { MediaType } from '~/framework/util/media';
 import { Image } from '~/framework/util/media-deprecated';
-import { urlSigner } from '~/infra/oauth';
+import { sessionURISource } from '~/framework/util/transport';
 
 const iconSizeAudio = getScaleImageSize(20);
 const iconSizeVideo = getScaleImageSize(24);
@@ -44,9 +45,9 @@ const MediaButton = (props: IPlayerProps) => {
   const showMediaPlayer = () => {
     openMediaPlayer({
       referer: props.referer,
-      source: urlSigner.signURISource(props.source),
+      source: sessionURISource(props.source),
       type: props.type,
-    });
+    } as MediaPlayerParams);
   };
 
   const getPreviewVideo = () => {

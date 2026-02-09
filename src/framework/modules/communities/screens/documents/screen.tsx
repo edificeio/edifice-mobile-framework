@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { PixelRatio } from 'react-native';
 
 import {
   CommunityClient,
@@ -23,18 +22,15 @@ import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './type
 
 import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
-import { PageView } from '~/framework/components/page';
-import { HeadingXSText, TextSizeStyle } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { sessionScreen } from '~/framework/components/screen';
+import { HeadingXSText } from '~/framework/components/text';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
-import communitiesStyles from '~/framework/modules/communities/styles';
 import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
 import { toURISource } from '~/framework/util/media';
 import { IMedia } from '~/framework/util/media-deprecated';
@@ -44,7 +40,7 @@ export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>,
 ): NativeStackNavigationOptions => communityNavBar(props);
 
-const documentTypeMap: Record<ResourceType, DocumentItemWorkspace['type'] | undefined> = {
+const documentTypeMap: Record<ResourceType, DocumentItemWorkspace<number>['type'] | undefined> = {
   [ResourceType.IMAGE]: 'image',
   [ResourceType.SOUND]: 'audio',
   [ResourceType.VIDEO]: 'video',
@@ -61,23 +57,22 @@ const formatDocuments = (data: ResourceDto[]): CommunitiesDocumentItem[] =>
           date: Temporal.Instant.from(item.updatedAt as unknown as string),
           extension: item.title.includes('.') ? item.title.split('.').at(-1) : undefined,
           type: documentTypeMap[type],
-        } as DocumentItemWorkspace)
+        } as DocumentItemWorkspace<number>)
       : ({
           ...item,
           date: Temporal.Instant.from(item.updatedAt as unknown as string),
-        } as Exclude<DocumentItemEntApp<ResourceDto['appName']>, 'workspace'>),
+        } as Exclude<DocumentItemEntApp<ResourceDto['appName'], number>, 'workspace'>),
   );
 
-const formatFolders = (data: FolderDto[]): FolderItem[] => data.map(({ id, name }) => ({ id, title: name }));
-
-export default (function CommunitiesDocumentsScreen({
+export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({
   navigation,
   route: {
     params: { communityId, folderId },
   },
   route,
-}: Readonly<CommunitiesDocumentsScreen.AllProps>) {
-  const session = getSession();
+  session,
+}) {
+  const formatFolders = (data: FolderDto[]): FolderItem<number>[] => data.map(({ id, name }) => ({ id, title: name }));
   const communityData = useSelector(communitiesSelectors.getCommunityDetails(communityId));
   const dispatch = useDispatch();
   const setCommunityData = React.useCallback(
@@ -95,7 +90,7 @@ export default (function CommunitiesDocumentsScreen({
   // Store the data of the list here. It will contain both loaded and non-loaded elements.
   // `LOADING_ITEM_DATA` is a Symbol that reprensent non-loaded elements present in the list.
   const [data, setData] = React.useState<{
-    folders: (FolderItem | typeof LOADING_ITEM_DATA)[];
+    folders: (FolderItem<number> | typeof LOADING_ITEM_DATA)[];
     documents: (CommunitiesDocumentItem | typeof LOADING_ITEM_DATA)[];
   }>({ documents: [], folders: [] });
 
@@ -106,7 +101,6 @@ export default (function CommunitiesDocumentsScreen({
   // This function fetch the data page the given page number and insert the resulting elements in the `data` array.
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
-      if (!session) return;
       const [community, members, newData, folders] = await Promise.all([
         accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
         accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
@@ -137,24 +131,6 @@ export default (function CommunitiesDocumentsScreen({
     [communityId, folderId, session, setCommunityData, setCommunityFolderMeta],
   );
 
-  // For perforance purpose, estimatedListSize must be the dimensions of the container (here the screen sithout, navBar and tabBar)
-  const estimatedListSize = React.useMemo(
-    () => ({
-      height:
-        UI_SIZES.screen.height - UI_SIZES.elements.navbarHeight - UI_SIZES.elements.tabbarHeight - UI_SIZES.screen.bottomInset,
-      width: UI_SIZES.screen.width,
-    }),
-    [],
-  );
-
-  // For perforance purpose, estimatedItemSize must be the height of each element.
-  // Don't forget to use style values and text sizes (including Pixel Ratio !) to compute that.
-  // It **not** need to be pixel-perfect, but find a value that is close to reality.
-  const estimatedItemSize = React.useMemo(
-    () => TextSizeStyle.Medium.lineHeight * 2 * PixelRatio.getFontScale() + 2 * (styles.item.borderWidth + styles.item.padding),
-    [],
-  );
-
   const openDocument = React.useCallback(async (doc: CommunitiesDocumentItem) => {
     const url = getResourceUrl(doc); // ToDo : patch package to narrow type required
     if (!url) return;
@@ -172,7 +148,7 @@ export default (function CommunitiesDocumentsScreen({
 
   const isFocused = useIsFocused();
   const openFolder = React.useCallback(
-    async (folder: FolderItem) => {
+    async (folder: FolderItem<number>) => {
       isFocused && navigation.push(route.name, { communityId, folderId: folder.id });
     },
     [communityId, navigation, route.name, isFocused],
@@ -208,11 +184,9 @@ export default (function CommunitiesDocumentsScreen({
   );
 
   return (
-    <PageView style={communitiesStyles.screen}>
+    <>
       {statusBar}
       <DecoratedDocumentFlatList
-        estimatedListSize={estimatedListSize}
-        estimatedItemSize={estimatedItemSize}
         numColumns={2}
         pageSize={PAGE_SIZE}
         decorations={stickyElements}
@@ -234,6 +208,6 @@ export default (function CommunitiesDocumentsScreen({
         }
         {...scrollViewProps}
       />
-    </PageView>
+    </>
   );
 });

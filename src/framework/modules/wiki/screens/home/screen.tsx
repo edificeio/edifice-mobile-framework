@@ -37,7 +37,7 @@ export default function WikiHomeScreen({ navigation, route, ...props }: WikiHome
 
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
-      navigation.navigate(wikiRouteNames.summary, { resourceId: r.assetId });
+      navigation.navigate(wikiRouteNames.summary, { resourceId: r.resourceEntId });
     },
     [navigation],
   );

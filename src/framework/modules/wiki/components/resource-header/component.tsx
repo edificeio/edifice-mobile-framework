@@ -97,7 +97,7 @@ const ResourceHeader: React.FC<ResourceHeaderProps> = ({ canAddDescription = fal
         name="ui-edifice-shape-half-circle"
       />
       <View style={styles.thumbnailAndCardContainer}>
-        <ResourceThumbnail {...image} />
+        <ResourceThumbnail source={image} />
         {description && (
           <ResourceDescription
             content={description}

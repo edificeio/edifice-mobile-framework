@@ -11,8 +11,8 @@ import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
-import { MediaType } from '~/framework/util/media';
-import { urlSigner } from '~/infra/oauth';
+import { MediaType, toURISource } from '~/framework/util/media';
+import { sessionURISource } from '~/framework/util/transport';
 
 const PlatformIOS = Platform.OS === 'ios';
 
@@ -183,7 +183,7 @@ export default class RichEditor extends Component {
     const { disabled } = this.props;
     if (disabled)
       openMediaPlayer({
-        source: urlSigner.signURISource(url),
+        source: sessionURISource(toURISource(url)),
         type: MediaType.AUDIO,
       });
   }
@@ -201,7 +201,7 @@ export default class RichEditor extends Component {
 
   _onLinkTouched(url, linksUrls) {
     const { disabled } = this.props;
-    if (disabled) {
+    if (url && disabled) {
       openUrl(url);
     }
   }
@@ -210,7 +210,7 @@ export default class RichEditor extends Component {
     const { disabled } = this.props;
     if (disabled)
       openMediaPlayer({
-        source: urlSigner.signURISource(url),
+        source: sessionURISource(toURISource(url)),
         type: MediaType.VIDEO,
       });
   }

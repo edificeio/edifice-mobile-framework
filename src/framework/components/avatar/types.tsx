@@ -4,6 +4,7 @@ import { SvgProps } from '~/framework/components/picture';
 
 export enum Size {
   sm = 'sm',
+  xsm = 'xsm',
   md = 'md',
   lg = 'lg',
   xl = 'xl',

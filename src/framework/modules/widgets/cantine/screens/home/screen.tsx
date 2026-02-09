@@ -16,13 +16,13 @@ import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import ScrollView from '~/framework/components/scrollView';
-import { getPlatform, getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
 import { CantineData } from '~/framework/modules/widgets/cantine/model';
 import { CantineNavigationParams, cantineRouteNames } from '~/framework/modules/widgets/cantine/navigation';
 import { actions, getCacheKey, getCantineData, shouldRetryCantineData } from '~/framework/modules/widgets/cantine/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { signedFetchJson } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 
 export const computeNavBar = ({
@@ -83,9 +83,9 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
 
     setIsLoading(true);
     try {
-      const cantineInfoResponse = (await signedFetchJson(
-        `${getPlatform()?.url}/appregistry/${selectedStructureValue}/cantine/menu?date=${selectedDate}`,
-      )) as CantineData;
+      const cantineInfoResponse = await sessionFetch.json<CantineData>(
+        `/appregistry/${selectedStructureValue}/cantine/menu?date=${selectedDate}`,
+      );
 
       // Check if the response has menu items
       if (cantineInfoResponse && cantineInfoResponse.menu && cantineInfoResponse.menu.length > 0) {

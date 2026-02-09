@@ -6,13 +6,13 @@ import { toURISource } from './source';
 import {
   AttachmentMedia,
   AudioMedia,
-  DocumentMedia,
+  // DocumentMedia,
   EmbeddedMedia,
   FileMedia,
   ImageMedia,
   isAttachmentMedia,
   isAudioMedia,
-  isDocumentMedia,
+  // isDocumentMedia,
   isEmbeddedMedia,
   isFileMedia,
   isImageMedia,
@@ -88,7 +88,7 @@ const mediaIntents = [
 
   // PDF
   {
-    condition: media => (isDocumentMedia(media) || isAttachmentMedia(media)) && mimeCompare(media.mime, 'application/pdf') === 0,
+    condition: media => /*isDocumentMedia(media) || */ isAttachmentMedia(media) && mimeCompare(media.mime, 'application/pdf') === 0,
     exec(media, _) {
       const source = toURISource(media.src);
       if (!source.uri) {
@@ -103,7 +103,7 @@ const mediaIntents = [
     icon(_) {
       return 'PDF';
     },
-  } as MediaIntent<DocumentMedia | AttachmentMedia>,
+  } as MediaIntent</*DocumentMedia | */ AttachmentMedia>,
 
   // Embedded ("Iframes")
   {
@@ -124,7 +124,8 @@ const mediaIntents = [
   {
     condition: media => isLinkMedia(media),
     exec(media, _) {
-      openUrl(toURISource(media.src).uri);
+      const url = toURISource(media.src).uri;
+      url && openUrl(url);
     },
     icon(_) {
       // const absoluteSrc = sessionURISource(toURISource(media.src));
@@ -140,11 +141,12 @@ const mediaIntents = [
   {
     condition: media => isFileMedia(media),
     exec(media, _) {
-      openUrl(toURISource(media.src).uri);
+      const url = toURISource(media.src).uri;
+      url && openUrl(url);
     },
     icon(media) {
       const extension = Mime.getExtension(media.mime);
-      console.info('EXTENSIONS', media.type, extension);
+      console.debug('EXTENSIONS', media.type, extension);
       return extension?.toLocaleUpperCase() ?? theme.media.default;
     },
   } as MediaIntent<FileMedia>,

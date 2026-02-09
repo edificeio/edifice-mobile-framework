@@ -4,17 +4,13 @@ import { CommonActions, StackActionType } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
-import type { AuthAddAccountModalScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
+import { AuthNavigationParams, authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
+import useAuthNavigation from '~/framework/modules/auth/navigation/add-account/navigator';
 import {
-  authRouteNames,
-  getLoginRouteName,
-  getNavActionForRedirect,
-  IAuthNavigationParams,
-  simulateNavAction,
-} from '~/framework/modules/auth/navigation';
-import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
+  getAddAccountLoginNextScreen,
+  getAddAccountNavActionForRedirect,
+} from '~/framework/modules/auth/navigation/add-account/router';
 import { getState, IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -24,7 +20,7 @@ import appConf, { Platform } from '~/framework/util/appConf';
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.addAccountModal>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountModal>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -36,7 +32,7 @@ const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;
 
-  routes.push({ name: authRouteNames.onboardingAddAccount });
+  routes.push({ name: authRouteNames.addAccountOnboarding });
 
   // 4 – Requirement & login redirections
 
@@ -53,12 +49,12 @@ const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
 
     // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
     let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
-    let login: string | undefined;
+    // let login: string | undefined;
     if (pending) {
       foundPlatform = pending.platform;
       if (pending.redirect !== undefined) {
         // Activation && password renew
-        login = pending.loginUsed;
+        // login = pending.loginUsed;
       }
     }
 
@@ -72,16 +68,8 @@ const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
       : allPlatforms[0];
 
     // 3.3 – Put the platform route into the stack
-    if (platform || !routes.length)
-      routes.push({
-        name: getLoginRouteName(platform),
-        params: {
-          login,
-          platform,
-        },
-      });
-
-    if (platform) navRedirection = getNavActionForRedirect(platform, pending);
+    if (platform && !routes.length) routes.push(getAddAccountLoginNextScreen(platform, pending));
+    if (platform) navRedirection = getAddAccountNavActionForRedirect(platform, pending);
   }
 
   // 4.2 – Apply redirection
@@ -94,7 +82,7 @@ const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
   }
 };
 
-export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScreenPrivateProps) {
+export default function AuthAddAccountModalScreen() {
   const RootStack = getTypedRootStack();
   const authNavigation = useAuthNavigation();
   const pending = useSelector(state => getState(state).pending);
