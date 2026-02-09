@@ -21,6 +21,7 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
+import { MediaType } from '~/framework/util/media';
 import { formatMediaSourceArray, formatSource, Image } from '~/framework/util/media-deprecated';
 import Images from '~/ui/Images';
 
@@ -322,7 +323,7 @@ function renderParseInlineImage(nugget: IInlineImageNugget, key: string, style: 
 function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle = {}): JSX.Element {
   return (
     <View key={key}>
-      <MediaButton type="web" source={formatSource(nugget.src)} />
+      <MediaButton type={MediaType.EMBEDDED} source={formatSource(nugget.src)} />
     </View>
   );
 }

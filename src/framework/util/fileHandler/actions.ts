@@ -167,7 +167,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia, 
         data: [
           onlineMedia ?? {
             mime: localFile?.filetype,
-            src: localFile?.filepath!,
+            src: localFile?._filepathNative!,
             type: 'image',
           },
         ],

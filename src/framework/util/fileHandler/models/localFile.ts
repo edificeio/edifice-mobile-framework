@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import DocumentPicker, { DocumentPickerResponse } from '@react-native-documents/picker';
 import moment from 'moment';
-import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
+import RNFS, { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
 
 import { openDocument } from '../actions';
 
@@ -100,20 +100,16 @@ export class LocalFile implements LocalFileNS.CustomUploadFileItem {
     return cleaned || url;
   }
 
+  async exists(): Promise<boolean> {
+    return RNFS.exists(this.filepath);
+  }
+
   async open() {
     let uri = this._filepathNative || this.filepath;
-
     if (!uri.startsWith('file://') && !uri.startsWith('content://')) {
       uri = 'file://' + uri;
     }
-
-    await openDocument({
-      ...this,
-      filename: this.filename,
-      filetype: this.filetype,
-      uri,
-      url: uri,
-    } as any);
+    await openDocument(new LocalFile({ ...this, _filepathNative: uri, filepath: uri }, { _needIOSReleaseSecureAccess: true }));
   }
 
   async moveToDownloadFolder() {
