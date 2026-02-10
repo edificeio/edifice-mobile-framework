@@ -119,23 +119,32 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
             </View>
 
             <View style={styles.bottom}>
-              {index > 0 ? (
-                <Pressable style={styles.navButton} onPress={handlePrevious}>
-                  <Svg name="ui-chevron-left" width={14} height={14} fill={theme.palette.primary.regular} />
-                  <BodyBoldText style={styles.navButtonText}>{getLang('myapp-onboarding-previous')}</BodyBoldText>
-                </Pressable>
-              ) : (
-                <Pressable onPress={closeModal}>
-                  <BodyBoldText style={styles.navButtonPrimary}>{getLang('myapp-onboarding-skip')}</BodyBoldText>
-                </Pressable>
-              )}
+              <View style={styles.navSide}>
+                {index > 0 ? (
+                  <Pressable style={styles.navButton} onPress={handlePrevious}>
+                    <Svg name="ui-chevron-left" width={14} height={14} fill={theme.palette.primary.regular} />
+                    <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={styles.navButtonText}>
+                      {getLang('myapp-onboarding-previous')}
+                    </BodyBoldText>
+                  </Pressable>
+                ) : (
+                  <Pressable onPress={closeModal}>
+                    <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={styles.navButtonPrimary}>
+                      {getLang('myapp-onboarding-skip')}
+                    </BodyBoldText>
+                  </Pressable>
+                )}
+              </View>
 
-              <Pressable style={styles.navButton} onPress={handleNext}>
-                <BodyBoldText style={styles.navButtonText}>
-                  {isLast ? getLang('myapp-onboarding-complete') : getLang('myapp-onboarding-next')}
-                </BodyBoldText>
-                {!isLast && <Svg name="ui-chevron-right" width={14} height={14} fill={theme.palette.primary.regular} />}
-              </Pressable>
+              <View style={styles.navSide}>
+                <Pressable style={styles.navButton} onPress={handleNext}>
+                  <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={styles.navButtonText}>
+                    {isLast ? getLang('myapp-onboarding-complete') : getLang('myapp-onboarding-next')}
+                  </BodyBoldText>
+
+                  {!isLast && <Svg name="ui-chevron-right" width={14} height={14} fill={theme.palette.primary.regular} />}
+                </Pressable>
+              </View>
             </View>
           </View>
         }

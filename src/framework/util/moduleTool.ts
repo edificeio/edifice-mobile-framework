@@ -14,7 +14,6 @@ import { IGlobalState } from '~/app/store';
 import theme, { IShades } from '~/app/theme';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { registerModuleFileManager } from '~/framework/util/fileHandler/services/fileManagerRegistry';
 import { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
@@ -672,9 +671,6 @@ export class NavigableModule<
   handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {
     super.handleInit(params);
     this.#root = this.getRoot(params);
-    if (this.config.displayBadges) {
-      updateAppBadges(this.config.displayBadges);
-    }
   }
 
   get isReady() {

@@ -72,7 +72,8 @@ export const toggleAllApps = (): ThunkResult => async (dispatch, getState) => {
 
 export const afterLoginSetup = (): ThunkResult => async dispatch => {
   dispatch(appInfoActions.fetchStart());
-  const modules = AllModules().filter(isNavigableModule);
+  const session = getSession();
+  const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
 
   try {
     let [appsInfo, appsConfig, favorites] = await Promise.all([

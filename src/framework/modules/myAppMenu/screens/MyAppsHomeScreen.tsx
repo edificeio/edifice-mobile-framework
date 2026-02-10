@@ -24,9 +24,9 @@ import {
 import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 import { navBarTitle } from '~/framework/navigation/navBar';
 
-const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
-  const getLang = I18n.get;
+const getLang = I18n.get;
 
+const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   const {
     apps,
     areAppsShowed,
@@ -96,7 +96,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
       headerRight: renderHeaderRight,
       headerTitle: navBarTitle(getLang('myapp-appname')),
     });
-  }, [navigation, renderHeaderRight, getLang]);
+  }, [navigation, renderHeaderRight]);
 
   const renderMenuIcon = React.useCallback(
     (name: string) => (
@@ -172,7 +172,6 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     bottomSheetMode,
     closeBottomSheet,
     filter.type,
-    getLang,
     navigateToFavorites,
     onToggleAllApps,
     onToggleFavorite,
