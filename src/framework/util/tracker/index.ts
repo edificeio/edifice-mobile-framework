@@ -195,11 +195,11 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   private static moduleAccessMap: Record<string, string> = {};
 
   private static defaultPayload = {
-    app_name: DeviceInfo.getBundleId(),
-    app_version: `${DeviceInfo.getVersion()}-${RNConfigReader.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
-    device_name: DeviceInfo.getModel(),
-    os_name: DeviceInfo.getSystemName(),
-    os_version: DeviceInfo.getSystemVersion(),
+    appName: DeviceInfo.getBundleId(),
+    appVersion: `${DeviceInfo.getVersion()}-${RNConfigReader.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
+    deviceName: DeviceInfo.getModel(),
+    osName: DeviceInfo.getSystemName(),
+    osVersion: DeviceInfo.getSystemVersion(),
   };
 
   errorCount: number = 0;
@@ -253,7 +253,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       const module = moduleAccessMap[moduleName];
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
-          body: JSON.stringify({ ...ConcreteEntcoreTracker.defaultPayload, module, platform_name: session?.platform?.displayName }),
+          body: JSON.stringify({ ...ConcreteEntcoreTracker.defaultPayload, module, platformName: session?.platform?.displayName }),
           method: 'POST',
         }),
       );
