@@ -114,11 +114,16 @@ class Images extends React.Component<
     images: { src: ImageURISource; alt?: string; linkTo?: string }[];
     style?: ViewStyle;
     referer: AudienceParameter;
+    onPreviewPress?: () => void;
   },
   any
 > {
   public openImage(startIndex: any) {
-    const { images } = this.props;
+    const { images, onPreviewPress } = this.props;
+    if (onPreviewPress) {
+      onPreviewPress();
+      return;
+    }
     const data = images.map(img => ({
       src: img.src,
       type: 'image' as const,
