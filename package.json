@@ -92,7 +92,7 @@
     "hoist-non-react-statics": "3.3.2",
     "html-entities": "2.6.0",
     "html-to-text": "9.0.5",
-    "i18next": "25.8.4",
+    "i18next": "25.8.5",
     "i18next-chained-backend": "5.0.2",
     "i18next-resources-to-backend": "1.2.1",
     "lodash.debounce": "4.0.8",
