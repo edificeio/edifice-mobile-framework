@@ -89,6 +89,10 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     },
   ];
 
+  const renderGhostLeftHeader = () => (
+    <NavBarActionsGroup elements={[<NavBarAction key="ghost#1" />, <NavBarAction key="ghost#2" />]} />
+  );
+
   const renderHeaderRight = React.useCallback(
     () => (
       <NavBarActionsGroup
@@ -108,7 +112,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   React.useEffect(() => {
     navigation.setOptions({
-      headerLeft: () => <NavBarActionsGroup elements={[<NavBarAction />, <NavBarAction />]} />,
+      headerLeft: renderGhostLeftHeader,
       headerRight: renderHeaderRight,
     });
   }, [navigation, renderHeaderRight]);

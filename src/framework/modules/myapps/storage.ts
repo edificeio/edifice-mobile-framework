@@ -34,7 +34,7 @@ export const writeShowAllApps = (value: boolean) => {
   myAppsStorage.setJSON(STORAGE_KEY, {
     ...data,
     preferences: {
-      ...(data?.preferences ?? {}),
+      ...data?.preferences,
       showAllApps: value,
     },
   });
