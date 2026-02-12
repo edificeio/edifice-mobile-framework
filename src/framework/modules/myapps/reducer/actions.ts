@@ -8,6 +8,7 @@ import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   appsInfoActionTypes,
+  checkIfIsConnector,
   computeNextBookmarks,
   isMobileApp,
   isNavigableModule,
@@ -83,8 +84,9 @@ export const afterLoginSetup = (): ThunkResult => async dispatch => {
     ]);
     appsInfo = appsInfo.map(app => {
       const isMobile = isMobileApp(app as IEntcoreApp, modules);
+      const isConnector = checkIfIsConnector(app);
       const routeName = isMobile ? getModuleRouteName(app as IEntcoreApp, modules) : undefined;
-      return { ...app, isMobile, routeName };
+      return { ...app, isConnector, isMobile, routeName };
     });
     dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
   } catch (e) {

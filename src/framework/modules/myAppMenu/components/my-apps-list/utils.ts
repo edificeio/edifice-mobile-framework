@@ -10,12 +10,13 @@ export const buildAppItem = (app: AppsInfoAggregated): MyAppsListItem => ({
 });
 
 export const buildAllAppsCategoryList = (apps: AppsInfoAggregated[]): MyAppsListItem[] => {
-  const mobileApps = apps.filter(app => app.isMobile);
-  const otherApps = apps.filter(app => !app.isMobile);
+  const mobileAndInternal = apps.filter(app => app.isMobile || (app.isConnector && !app.isExternal));
 
-  if (!otherApps.length) {
-    return mobileApps.map(buildAppItem);
+  const externalConnectors = apps.filter(app => app.isConnector && app.isExternal);
+
+  if (!externalConnectors.length) {
+    return mobileAndInternal.map(buildAppItem);
   }
 
-  return [...mobileApps.map(buildAppItem), { type: 'separator' }, ...otherApps.map(buildAppItem)];
+  return [...mobileAndInternal.map(buildAppItem), { type: 'separator' }, ...externalConnectors.map(buildAppItem)];
 };

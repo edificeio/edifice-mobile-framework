@@ -22,7 +22,7 @@ const LetterFallback = ({ label }: { label: string }) => {
     <BodyBoldText
       style={{
         color: theme.palette.grey.black,
-        fontSize: UI_SIZES.spacing.big,
+        fontSize: UI_SIZES.spacing.large,
       }}>
       {letter}
     </BodyBoldText>

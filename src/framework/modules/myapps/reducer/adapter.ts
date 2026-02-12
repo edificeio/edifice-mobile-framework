@@ -1,4 +1,4 @@
-import { AppsInfoAggregated, MyAppsCategories } from '~/framework/modules/myapps/types';
+import { AppsInfo, AppsInfoAggregated, MyAppsCategories } from '~/framework/modules/myapps/types';
 import { AnyModule, AnyNavigableModule, IEntcoreApp } from '~/framework/util/moduleTool';
 
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
@@ -33,4 +33,18 @@ export const computeNextBookmarks = (bookmarks: string[], appName: string): stri
   const isFavorite = bookmarks.includes(appName);
 
   return isFavorite ? bookmarks.filter(name => name !== appName) : [...bookmarks, appName];
+};
+
+export const checkIfIsConnector = (app: AppsInfo): boolean => {
+  if (app.target === '_blank') return true;
+
+  if (app.address?.startsWith('http://') || app.address?.startsWith('https://')) {
+    return true;
+  }
+
+  if (app.address?.includes('#/')) return true;
+
+  if (!app.prefix) return true;
+
+  return false;
 };

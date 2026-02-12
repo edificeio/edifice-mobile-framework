@@ -14,6 +14,7 @@ export interface AppsInfoWithCategory extends AppsInfoAggregated {
 
 export interface AppsInfo extends Omit<ApplicationsList, 'casType' | 'scope'>, Partial<Omit<ApplicationsConfig, 'name'>> {
   isMobile: boolean;
+  isConnector: boolean;
   isFavorite: boolean;
   isLibrary?: boolean;
   routeName?: string;

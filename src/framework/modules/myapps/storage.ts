@@ -15,9 +15,13 @@ export interface MyAppsStorageData {
   onboarding?: MyAppsOnboardingStorageData;
 }
 
-const STORAGE_KEY = 'myapps';
+type MyAppsStorageMap = {
+  myapps: MyAppsStorageData;
+};
 
-const myAppsStorage = Storage.slice<Record<string, MyAppsStorageData>>().withModule(moduleConfig);
+const STORAGE_KEY: keyof MyAppsStorageMap = 'myapps';
+
+const myAppsStorage = Storage.preferences<MyAppsStorageMap>(moduleConfig, function () {});
 
 export const readMyAppsPreferences = (): MyAppsPreferencesStorageData => {
   const data = myAppsStorage.getJSON(STORAGE_KEY);
@@ -25,11 +29,12 @@ export const readMyAppsPreferences = (): MyAppsPreferencesStorageData => {
 };
 
 export const writeShowAllApps = (value: boolean) => {
-  const data = myAppsStorage.getJSON(STORAGE_KEY) ?? {};
+  const data = myAppsStorage.getJSON(STORAGE_KEY);
+
   myAppsStorage.setJSON(STORAGE_KEY, {
     ...data,
     preferences: {
-      ...data.preferences,
+      ...(data?.preferences ?? {}),
       showAllApps: value,
     },
   });
@@ -41,7 +46,8 @@ export const readMyAppsOnboarding = (): MyAppsOnboardingStorageData | undefined 
 };
 
 export const writeMyAppsOnboardingSeen = (version: string) => {
-  const data = myAppsStorage.getJSON(STORAGE_KEY) ?? {};
+  const data = myAppsStorage.getJSON(STORAGE_KEY);
+
   myAppsStorage.setJSON(STORAGE_KEY, {
     ...data,
     onboarding: {

@@ -18,14 +18,14 @@ export const styles = StyleSheet.create({
     width: getScaleWidth(34),
   },
   wrapper: {
+    alignItems: 'center',
     borderRadius: UI_SIZES.radius.medium,
     flexDirection: 'row',
+
     gap: UI_SIZES.spacing.small,
     justifyContent: 'flex-start',
-    marginBottom: UI_SIZES.spacing.minor,
     marginVertical: UI_SIZES.spacing.tiny,
     minHeight: getScaleWidth(41),
-    padding: UI_SIZES.spacing.minor,
   },
   wrapperPressed: {
     backgroundColor: theme.palette.grey.pearl,

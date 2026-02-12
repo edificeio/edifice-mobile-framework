@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
   separatorLine: {
     backgroundColor: theme.palette.grey.cloudy,
     height: 1,
+    marginVertical: UI_SIZES.spacing.minor,
     width: '100%',
   },
 });

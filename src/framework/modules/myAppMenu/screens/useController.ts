@@ -37,6 +37,7 @@ export function useMyAppsHomeController() {
   const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState(false);
   const [selectedApp, setSelectedApp] = React.useState<AppsInfoAggregated | null>(null);
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
+  const [isBottomSheetOpened, setIsBottomSheetOpened] = React.useState<boolean>(false);
 
   const areAppsShowed = getAllappsShowedState(store.getState());
   const isAllAppsTab = filter.type === 'category' && filter.value === 'toutes';
@@ -111,6 +112,14 @@ export function useMyAppsHomeController() {
     return store.subscribe(updateApps);
   }, [filter, areAppsShowed, store]);
 
+  React.useEffect(() => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        display: isBottomSheetOpened ? 'none' : 'flex',
+      },
+    });
+  }, [isBottomSheetOpened, navigation]);
+
   return {
     apps,
     areAppsShowed,
@@ -129,5 +138,6 @@ export function useMyAppsHomeController() {
     openBottomSheet,
     selectedApp,
     setFilter,
+    setIsBottomSheetOpened,
   };
 }

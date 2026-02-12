@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import { IMyAppsNavigationParams, myAppsRouteNames } from '../navigation';
 import { styles } from './styles';
 import { MyAppsHomeScreenProps } from './types';
 import { useMyAppsHomeController } from './useController';
@@ -22,9 +25,20 @@ import {
   MyAppsOnboardingModal,
 } from '~/framework/modules/myAppMenu/components';
 import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
-import { navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 
 const getLang = I18n.get;
+
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+    title: getLang('myapp-appname'),
+  }),
+});
 
 const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   const {
@@ -45,6 +59,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     openBottomSheet,
     selectedApp,
     setFilter,
+    setIsBottomSheetOpened,
   } = useMyAppsHomeController();
 
   const slides: MAOSProps[] = [
@@ -93,8 +108,8 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   React.useEffect(() => {
     navigation.setOptions({
+      headerLeft: () => <NavBarActionsGroup elements={[<NavBarAction />, <NavBarAction />]} />,
       headerRight: renderHeaderRight,
-      headerTitle: navBarTitle(getLang('myapp-appname')),
     });
   }, [navigation, renderHeaderRight]);
 
@@ -184,14 +199,16 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
       <BottomSheetModal
         closeButton
         ref={bottomSheetRef}
-        onDismiss={closeBottomSheet}
+        onChange={index => {
+          setIsBottomSheetOpened(index >= 0);
+        }}
         enableDynamicSizing
         containerStyle={styles.bottomSheetContainer}>
         {renderBottomSheetContent()}
       </BottomSheetModal>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [closeBottomSheet, renderBottomSheetContent],
+    [renderBottomSheetContent],
   );
 
   return (
@@ -204,8 +221,8 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         onPressApp={onPressApp}
         onLongPressApp={(app: AppsInfoAggregated) => openBottomSheet('app_actions', app)}
       />
-      {renderBottomSheet()}
       <MyAppsOnboardingModal ref={modalRef} slides={slides} onComplete={completeOnboarding} />
+      {renderBottomSheet()}
     </PageView>
   );
 };
