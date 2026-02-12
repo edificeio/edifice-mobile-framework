@@ -4,6 +4,7 @@ import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'rea
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import styles from './styles';
@@ -27,7 +28,9 @@ import { ModalsRouteNames } from '~/framework/navigation/modals';
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
 const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
+  const { bottom } = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const containerStyle = { ...styles.container, marginBottom: bottom };
 
   const navigation = useNavigation() as any;
   const route = useRoute();
@@ -289,7 +292,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
       <PageView style={styles.page}>
         <KeyboardAvoidingView
           keyboardVerticalOffset={headerHeight}
-          style={styles.container}
+          style={containerStyle}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView
             keyboardDismissMode="none"
@@ -304,7 +307,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
             <RichEditor
               disabled={false}
               enterKeyHint="enter"
-              editorStyle={styles.container}
+              editorStyle={containerStyle}
               firstFocusEnd={false}
               initialContentHTML={props.initialContentHtml ?? ''}
               initialFocus={false}
