@@ -7,6 +7,13 @@ import type { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './docum
 import { EntAppNameOrSynonym } from '~/app/intents';
 import type { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { IMedia } from '~/framework/util/media-deprecated';
+import { IAppBadgeInfo } from '~/framework/util/moduleTool';
+
+export type AppBadgesType = { appBadges: Record<string, IAppBadgeInfo> };
+export type AppBadge = {
+  icon: string;
+  color?: string;
+};
 
 interface DocumentItemBase<IdType> {
   title: string;
@@ -55,6 +62,7 @@ export type PaginatedDocumentListItem<AppTypes extends EntAppNameOrSynonym, IdTy
 export interface CommonPaginatedDocumentListProps<AppTypes extends EntAppNameOrSynonym, IdType> {
   documents: PaginatedFlashListProps<DocumentItem<AppTypes, IdType>>['data'];
   folders: PaginatedFlashListProps<FolderItem<IdType>>['data'];
+  appBadges: Record<string, IAppBadgeInfo>;
   overrideItemLayout?: PaginatedFlashListProps<PaginatedDocumentListItem<AppTypes, IdType>>['overrideItemLayout'];
   onPressFolder?: (folder: FolderItem<IdType>, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
   onPressDocument?: (

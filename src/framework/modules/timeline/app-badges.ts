@@ -29,7 +29,7 @@ export const buildAppBadgesIndex = (appsInfo: AppsInfoAggregated[]): Record<stri
 
 export const normalizeNotificationType = (type: string): string => {
   if (type.startsWith('USERBOOK_')) return 'USERBOOK';
-  if (type === 'NEWS' || type === 'ACTUALITES') return 'ACTUALITES'; // will be removed in future after translation
+  if (type === 'NEWS') return 'ACTUALITES';
   return type;
 };
 
