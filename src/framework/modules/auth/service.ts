@@ -37,6 +37,7 @@ import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { expirableTokenFactory, getOAuth2AccessToken, OAuth2ErrorCode } from '~/framework/util/oauth2';
 import { platformFetch, tokenFetch } from '~/framework/util/transport';
+import { getUrlWithBase } from '~/framework/util/transport/common';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
 
 export interface IUserRequirements {
@@ -341,12 +342,13 @@ export const platformConfig = {
       const authTranslationKeys = await platformFetch.json<{ 'auth.charter'?: string } | undefined>(platform, `/auth/i18n`, {
         headers: { 'Accept-Language': language },
       });
+      const buildURIWithBase = (key: string) => getUrlWithBase(I18n.get(key), platform.url);
+
       return {
-        cgu: new URL(platform.url, I18n.get('user-legalurl-cgu')).href,
-        cookies: new URL(platform.url, I18n.get('user-legalurl-cookies')).href,
-        personalDataProtection: new URL(platform.url, I18n.get('user-legalurl-personaldataprotection')).href,
-        userCharter: new URL(platform.url, I18n.get(authTranslationKeys?.['auth.charter'] || I18n.get('user-legalurl-usercharter')))
-          .href,
+        cgu: buildURIWithBase('user-legalurl-cgu'),
+        cookies: buildURIWithBase('user-legalurl-cookies'),
+        personalDataProtection: buildURIWithBase('user-legalurl-personaldataprotection'),
+        userCharter: buildURIWithBase(authTranslationKeys?.['auth.charter'] ?? 'user-legalurl-usercharter'),
       };
     } catch (err) {
       if (err instanceof Error.ErrorWithType) throw err;
