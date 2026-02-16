@@ -58,7 +58,7 @@ export const mediacentreService = {
         sources,
         state: 'PLAIN_TEXT',
       };
-      const api = `/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`;
+      const api = `/mediacentre/search?jsondata=${encodeURIComponent(JSON.stringify(jsondata))}`;
       const response = await sessionFetch.json<BackendSearch>(api);
       return response
         .filter(r => r.status === 'ok')
