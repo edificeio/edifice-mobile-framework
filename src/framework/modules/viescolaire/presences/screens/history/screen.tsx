@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { RefreshControl, ScrollView } from 'react-native';
+import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import { NavigationState, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
+import { Route as TabRoute, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import styles from './styles';
-import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
+import type { CallListTabItemProps, PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -187,27 +187,35 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     }
   };
 
-  const renderTabBar = (
-    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
-  ) => {
+  const renderTabItem = (icon, title, focused) => {
+    const TextComponent = focused ? SmallBoldText : SmallText;
     return (
-      <TabBar
-        renderLabel={({ focused, route }) =>
-          focused ? (
-            <SmallBoldText style={styles.tabBarLabelFocused}>{route.title}</SmallBoldText>
-          ) : (
-            <SmallText style={styles.tabBarLabel}>{route.title}</SmallText>
-          )
-        }
-        renderIcon={({ focused, route }) => (
-          <Svg name={route.icon} fill={focused ? theme.palette.primary.regular : theme.palette.grey.black} height={20} width={20} />
-        )}
-        tabStyle={styles.tabBarTabContainer}
-        indicatorStyle={styles.tabBarIndicatorContainer}
-        style={styles.tabBarContainer}
-        pressColor={theme.palette.grey.pearl.toString()}
-        {...tabBarProps}
-      />
+      <View style={styles.headerItem}>
+        <TextComponent style={focused ? styles.tabLabelFocused : undefined}>{title}</TextComponent>
+        <Svg name={icon} fill={focused ? theme.palette.primary.regular : theme.palette.grey.black} height={20} width={20} />
+      </View>
+    );
+  };
+
+  const renderTabBar = (tabBarProps: CallListTabItemProps) => {
+    const { navigationState } = tabBarProps;
+    return (
+      <View style={styles.tabBarContainer}>
+        {navigationState.routes.map((route: TabRoute, i: number) => {
+          const focused = i === tabBarProps.navigationState.index;
+
+          return (
+            <TouchableOpacity
+              key={route.key}
+              style={[styles.headerItem, styles.tabBarItem]}
+              activeOpacity={0.7}
+              onPress={() => tabBarProps.jumpTo(route.key)}>
+              {renderTabItem(route.icon, route.title, focused)}
+              {focused ? <View style={styles.tabBarIndicator} /> : null}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     );
   };
 
