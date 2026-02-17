@@ -90,7 +90,7 @@ export const RootNavigator = connect((state: IGlobalState) => {
     // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
     if (navigationState && navigationRef.isReady()) {
       console.debug('[Navigation] Reset navigation state');
-      navigationRef.resetRoot(navigationState);
+      navigationRef.reset(navigationState);
     }
     trackNavigationChange(navigationState); // ToDo: runAfterInteractions
     // Note: `navigationState` can be recreated with same value. We WANT retrigger this layoutEffect only when new `navigationState` has a different value.
