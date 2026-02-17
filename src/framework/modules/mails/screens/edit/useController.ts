@@ -57,6 +57,8 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   const scrollViewRef = React.useRef<ScrollView>(null);
   const editorRef = React.useRef<RichEditor>(null);
+  const isDeletingRef = React.useRef(false);
+  const draftIdRef = React.useRef<string | undefined>(draftId);
 
   const haveInitialCcCci = React.useMemo(
     () => (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0),
@@ -185,13 +187,18 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         onPress: async () => {
           try {
             setIsSending(true);
-            if (!draftIdSaved)
-              return navigation.navigate(mailsRouteNames.home, {
-                from: fromFolder,
-              });
+
+            if (!draftIdSaved) {
+              isDeletingRef.current = true;
+              navigation.navigate(mailsRouteNames.home, { from: fromFolder });
+              return;
+            }
 
             await mailsService.mail.moveToTrash({ ids: [draftIdSaved] });
-            handleNavigateToDrafts();
+
+            isDeletingRef.current = true;
+            navigation.goBack();
+
             toast.showSuccess(I18n.get('mails-edit-toastsuccessdeletedraft'));
             setIsSending(false);
           } catch (e) {
@@ -204,7 +211,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         text: I18n.get('common-delete'),
       },
     ]);
-  }, [draftIdSaved, fromFolder, handleNavigateToDrafts, navigation]);
+  }, [draftIdSaved, fromFolder, navigation]);
 
   const onSendDraft = React.useCallback(async () => {
     if (!hasAnyContent) return;
@@ -218,9 +225,9 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       const bodyToSave = isHistoryOpen ? bodyContent : `${bodyContent}${history}`;
 
       // create or update draft
-      if (draftIdSaved) {
+      if (draftIdRef.current) {
         await mailsService.mail.updateDraft(
-          { draftId: draftIdSaved },
+          { draftId: draftIdRef.current },
           { body: bodyToSave, cc: ccIds, cci: cciIds, noReply, subject, to: toIds },
         );
       } else {
@@ -232,10 +239,11 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
           { inReplyTo: initialMailInfo?.id ?? undefined },
           { body: bodyForCreation, cc: ccIds, cci: cciIds, noReply, subject, to: toIds },
         );
+        draftIdRef.current = newDraftId;
         setDraftIdSaved(newDraftId);
       }
 
-      handleNavigateToDrafts();
+      // handleNavigateToDrafts();
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
       setIsSending(false);
     } catch (e) {
@@ -243,21 +251,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       toast.showError();
       setIsSending(false);
     }
-  }, [
-    hasAnyContent,
-    draftIdSaved,
-    to,
-    cc,
-    cci,
-    bodyContent,
-    history,
-    subject,
-    isHistoryOpen,
-    handleNavigateToDrafts,
-    getContentForDraft,
-    initialMailInfo?.id,
-    noReply,
-  ]);
+  }, [hasAnyContent, to, cc, cci, bodyContent, history, subject, isHistoryOpen, getContentForDraft, initialMailInfo?.id, noReply]);
 
   const onSend = React.useCallback(async () => {
     try {
@@ -452,7 +446,10 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   const popupActionsMenu = React.useMemo(
     () => [
       {
-        action: onSendDraft,
+        action: async () => {
+          await onSendDraft();
+          handleNavigateToDrafts();
+        },
         disabled: !shouldSaveDraft,
         icon: {
           android: 'ic_pencil',
@@ -462,7 +459,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       },
       deleteAction({ action: onDeleteDraft, disabled: !shouldSaveDraft, title: I18n.get('mails-edit-deletedraft') }),
     ],
-    [onDeleteDraft, onSendDraft, shouldSaveDraft],
+    [handleNavigateToDrafts, onDeleteDraft, onSendDraft, shouldSaveDraft],
   );
 
   React.useEffect(() => {
@@ -474,13 +471,11 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   }, [route.params?.importAttachmentsResult, navigation]);
 
   React.useEffect(() => {
-    let createdDraftId: string | undefined;
-
     const createInitialDraft = async () => {
       try {
-        if (!draftIdSaved) {
+        if (!draftIdRef.current) {
           const newDraftId = await mailsService.mail.sendToDraft({}, { body: '', cc: [], cci: [], subject: '', to: [] });
-          createdDraftId = newDraftId;
+          draftIdRef.current = newDraftId;
           setDraftIdSaved(newDraftId);
         }
       } catch (err) {
@@ -492,24 +487,59 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     createInitialDraft();
 
     const unsubscribe = navigation.addListener('beforeRemove', async e => {
+      /**
+       * If the draft is being deleted explicitly by the user,
+       * skip auto save or auto delete logic and allow navigation.
+       */
+      if (isDeletingRef.current) {
+        isDeletingRef.current = false;
+        return;
+      }
+
       const action = e.data?.action;
 
       const payload = action?.payload as NavPayload | undefined;
       const destName = action?.type === 'NAVIGATE' ? (payload?.name ?? payload?.screen ?? payload?.params?.screen) : undefined;
 
       if (destName === ModalsRouteNames.AttachmentsImport) {
-        console.debug('[MAILS_EDIT] Skipping cleanup');
         return;
       }
 
-      const currentDraftId = draftIdSaved || createdDraftId;
-      if (currentDraftId && !hasAnyContent) {
+      /**
+       * Use ref instead of state to avoid race conditions
+       * caused by async React state updates.
+       */
+      const currentDraftId = draftIdRef.current;
+
+      /**
+       * case 1: The email contains content.auto save the draft before allowing navigation.
+       *&temporarily block navigation
+       */
+      if (hasAnyContent) {
+        e.preventDefault();
+
+        try {
+          await onSendDraft();
+        } catch (err) {
+          console.error(err);
+        }
+
+        navigation.dispatch(action);
+
+        setTimeout(() => {
+          toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
+        }, 100);
+
+        return;
+      }
+
+      /**
+       * case 2: no content detected.
+       * clean up by deleting the empty draft on quit.
+       */
+      if (currentDraftId) {
         try {
           await mailsService.mail.moveToTrash({ ids: [currentDraftId] });
-          navigation.navigate(mailsRouteNames.home, {
-            from: fromFolder,
-            reload: true,
-          });
         } catch (err) {
           console.error('[MAILS_EDIT] Failed to delete empty draft', err);
         }
@@ -541,6 +571,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     refs: { editorRef, scrollViewRef },
     state: {
       attachments,
+      bodyContent,
       cc,
       cci,
       draftIdSaved,

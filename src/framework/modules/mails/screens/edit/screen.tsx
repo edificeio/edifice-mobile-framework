@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
@@ -52,7 +51,6 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       onPressAddAttachments,
       onRemoveAttachment,
       onScrollBeginDrag,
-      onSendDraft,
       onToggleShowList,
       openMoreRecipientsFields,
     },
@@ -60,6 +58,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     refs: { editorRef, scrollViewRef },
     state: {
       attachments,
+      bodyContent,
       cc,
       cci,
       draftIdSaved,
@@ -77,15 +76,15 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       to,
     },
   } = useMailsEditController({ navigation, route });
-
-  UNSTABLE_usePreventRemove(shouldSaveDraft, () => onSendDraft());
+  const hasRecipients = to.length > 0 || cc.length > 0 || cci.length > 0;
+  const hasContentToSend = subject.trim().length > 0 || bodyContent?.trim().length > 0;
 
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
-            <NavBarAction icon="ui-send" disabled={to.length === 0 && cc.length === 0 && cci.length === 0} onPress={onCheckSend} />,
+            <NavBarAction icon="ui-send" disabled={!hasRecipients || !hasContentToSend} onPress={onCheckSend} />,
             <PopupMenu
               disabled={!shouldSaveDraft && !getNoReplyRight(props.session!)}
               actions={
@@ -100,8 +99,17 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       ),
       headerTitle: navBarTitle('', undefined, undefined, 1, 2),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [to, cc, cci, subject, draftIdSaved, onCheckSend]);
+  }, [
+    draftIdSaved,
+    hasContentToSend,
+    hasRecipients,
+    navigation,
+    noReplyMenu,
+    onCheckSend,
+    popupActionsMenu,
+    props.session,
+    shouldSaveDraft,
+  ]);
 
   const renderTopForm = React.useCallback(() => {
     const commonProps = {

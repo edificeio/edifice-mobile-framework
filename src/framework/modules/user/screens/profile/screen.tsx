@@ -28,7 +28,7 @@ import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import { MailsVisibleType } from '~/framework/modules/mails/model';
+import { MailsDefaultFolders, MailsVisibleType } from '~/framework/modules/mails/model';
 import { mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
@@ -154,55 +154,84 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     }
   };
 
+  const normalizeName = (name?: string | null) => (name ?? '').trim().toLowerCase();
+
   const init = async () => {
     const data = isMyProfile ? await userService.person.get() : await userService.person.get(route.params.userId);
 
     if (!isEmpty(data[0].relatedId)) {
-      const filteredDataFamily = data.map(({ relatedId, relatedName }) => ({ relatedId, relatedName }));
-      setFamily(filteredDataFamily);
+      const seen = new Set<string>();
+
+      const uniqueFamily = data
+        .map(({ relatedId, relatedName }) => ({ relatedId, relatedName }))
+        .filter(item => {
+          const key = normalizeName(item.relatedName) || item.relatedId || '';
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+      setFamily(uniqueFamily);
     }
 
     setUserInfo(data[0]);
   };
 
   const onNewMessage = () => {
-    const user = [{ displayName: userInfo?.displayName, id: userInfo?.id, profile: userInfo?.type, type: MailsVisibleType.USER }];
+    const user = [
+      {
+        displayName: userInfo?.displayName,
+        id: userInfo?.id,
+        profile: userInfo?.type,
+        type: MailsVisibleType.USER,
+      },
+    ];
+
+    const baseParams = {
+      fromFolder: MailsDefaultFolders.INBOX,
+    };
+
     if (userInfo?.type === AccountType.Student && !isEmpty(family) && session?.user.type !== AccountType.Student) {
-      const familyUser: any = [];
-      family?.forEach(item =>
-        familyUser.push({
-          displayName: item.relatedName,
-          id: item.relatedId,
+      const familyUser =
+        family?.map(item => ({
+          displayName: item.relatedName ?? undefined,
+          id: item.relatedId ?? undefined,
           profile: AccountType.Relative,
           type: MailsVisibleType.USER,
-        }),
-      );
+        })) ?? [];
+
       showBottomMenu([
         {
           action: () =>
             navigation.navigate(mailsRouteNames.edit, {
-              initialMailInfo: user,
+              ...baseParams,
+              initialMailInfo: { to: user },
             }),
           title: I18n.get('user-profile-sendMessage-student'),
         },
         {
           action: () =>
             navigation.navigate(mailsRouteNames.edit, {
-              initialMailInfo: familyUser,
+              ...baseParams,
+              initialMailInfo: { to: familyUser },
             }),
           title: I18n.get('user-profile-sendMessage-relatives'),
         },
         {
           action: () =>
             navigation.navigate(mailsRouteNames.edit, {
-              initialMailInfo: user.concat(familyUser),
+              ...baseParams,
+              initialMailInfo: { to: user.concat(familyUser) },
             }),
           title: I18n.get('user-profile-sendMessage-relatives&student'),
         },
       ]);
+
       return;
     }
+
     return navigation.navigate(mailsRouteNames.edit, {
+      ...baseParams,
       initialMailInfo: { to: user },
     });
   };
