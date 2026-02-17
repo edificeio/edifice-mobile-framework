@@ -15,6 +15,7 @@ import {
 
 import styles from './styles';
 import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
+import { AccountErrorCode } from '../../model/error';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -33,7 +34,7 @@ import { toURISource } from '~/framework/util/media';
 import { API, OAuth2ErrorCode, OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { deviceURISource } from '~/framework/util/transport';
-import { OAuthCustomTokens } from '~/infra/oauth';
+import { FetchErrorCode } from '~/framework/util/transport/error';
 import { Loading } from '~/ui/Loading';
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
@@ -44,7 +45,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private dropdownValue: string | null = null;
 
   // Error if any
-  private error: Error.ErrorTypes<typeof Error.LoginError> | undefined;
+  private error: AccountErrorCode | FetchErrorCode | OAuth2ErrorCode | undefined;
 
   // WAYF url
   private wayfUrl: string | undefined = undefined;
@@ -98,7 +99,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         <View style={styles.container}>
           <PFLogo pf={this.props.route.params.platform} />
           <SmallText style={styles.errorMsg}>
-            {this.error ? Error.getAuthErrorText<typeof Error.LoginError>(this.error, this.props.route.params.platform.url) : ''}
+            {this.error ? Error.getAuthErrorText(this.error, this.props.route.params.platform.url) : ''}
           </SmallText>
           <PrimaryButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
@@ -189,18 +190,16 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     CookieManager.clearAll(true);
   }
 
-  componentDidUpdate(prevProps: IWayfScreenProps) {
+  componentDidUpdate(_prevProps: IWayfScreenProps) {
     const { auth } = this.props;
-    const errorType = Error.getDeepErrorType<typeof Error.LoginError>(auth.error);
+    const errorCode = Error.findCode(auth.error?.info) as AccountErrorCode | FetchErrorCode | OAuth2ErrorCode;
     // Detect && display potential login error sent after checkVersionThenLogin(false) call
     if (
       (auth.error?.key === undefined || auth.error.key === this.state.errkey) &&
-      errorType?.length &&
-      errorType?.length > 0 &&
-      errorType !== this.error &&
-      errorType !== OAuth2ErrorCode.SAML_MULTIPLE_VECTOR
+      errorCode &&
+      errorCode !== OAuth2ErrorCode.SAML_MULTIPLE_VECTOR
     ) {
-      this.displayError(errorType);
+      this.displayError(errorCode);
     }
     // Update page title
     this.props.navigation.setOptions({
@@ -233,7 +232,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   }
 
   // Display error message
-  displayError(error: Error.ErrorTypes<typeof Error.LoginError>) {
+  displayError(error: AccountErrorCode | FetchErrorCode | OAuth2ErrorCode) {
     this.clearDatas(() => {
       this.error = error;
       this.setState({ mode: WAYFPageMode.ERROR });
@@ -265,8 +264,8 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       try {
         await this.props.tryLogin(this.props.route.params.platform, { saml }, this.state.errkey);
       } catch (error) {
-        const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
-        if (error instanceof OAuth2SamlMultipleVectorError && errtype === OAuth2ErrorCode.SAML_MULTIPLE_VECTOR) {
+        const errorCode = Error.findCode(error) as AccountErrorCode | FetchErrorCode | OAuth2ErrorCode;
+        if (error instanceof OAuth2SamlMultipleVectorError && errorCode === OAuth2ErrorCode.SAML_MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
             (error.data.users as API.OAuth2CustomToken[]).forEach(token => {
@@ -277,11 +276,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
             return;
           } catch {
             // Malformed multiple users error description
-            this.displayError(Error.FetchErrorType.BAD_RESPONSE);
+            this.displayError(FetchErrorCode.BAD_RESPONSE);
           }
         }
-        if (errtype) {
-          this.displayError(errtype);
+        if (errorCode) {
+          this.displayError(errorCode);
         }
       }
     });
@@ -295,9 +294,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     try {
       await this.props.tryLogin(this.props.route.params.platform, { customToken }, this.state.errkey);
     } catch (error) {
-      const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
-      if (errtype) {
-        this.displayError(errtype);
+      const errorCode = Error.findCode(error) as AccountErrorCode | FetchErrorCode | OAuth2ErrorCode;
+      if (errorCode) {
+        this.displayError(errorCode);
       }
     } finally {
       this.dropdownValue = null;
@@ -313,9 +312,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       try {
         await this.props.tryLogin(this.props.route.params.platform, { customToken: oidToken }, this.state.errkey);
       } catch (error) {
-        const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
-        if (errtype) {
-          this.displayError(errtype);
+        const errorCode = Error.findCode(error) as AccountErrorCode | FetchErrorCode | OAuth2ErrorCode;
+        if (errorCode) {
+          this.displayError(errorCode);
         }
       }
     });

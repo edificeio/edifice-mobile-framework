@@ -1,5 +1,4 @@
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
-import { Error } from '~/framework/util/error';
 import { OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { createTrackEvents, TRACK_DEFAULT, TRACK_ERROR } from '~/framework/util/tracker/track-opt';

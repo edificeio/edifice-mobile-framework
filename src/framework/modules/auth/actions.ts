@@ -55,7 +55,7 @@ import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import firebaseService from '~/framework/util/notifications/service';
-import { isTokenExpired, OAuth2ErrorCode, refreshTokenForAccount } from '~/framework/util/oauth2';
+import { isTokenExpired, OAuth2Error, OAuth2ErrorCode, refreshTokenForAccount } from '~/framework/util/oauth2';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
@@ -179,32 +179,6 @@ const withErrorTracking = <Fn extends (...args: any[]) => any>(
  * Every step for login process is here.
  */
 export const loginSteps = {
-  /**
-   * Check password against activation and password renew codes.
-   */
-  checkActivationAndRenew: withErrorTracking(
-    withMeasure(async (platform: Platform, credentials: AuthCredentials) => {
-      try {
-        const response = await Promise.any([
-          authService.otp.matchActivation(platform, credentials),
-          authService.otp.matchRenewCode(platform, credentials),
-        ]);
-        return response;
-      } catch (e) {
-        if (e instanceof AggregateError) {
-          const ee = e.errors.find(
-            eee => Error.getDeepErrorType<typeof Error.LoginError>(eee as Error) !== OAuth2ErrorCode.CREDENTIALS_MISMATCH,
-          );
-          if (ee) throw ee;
-          else throw e.errors.at(0);
-        } else throw e;
-      }
-    }, 'checkActivationAndRenew'),
-    'Auth',
-    'LOGIN ERROR',
-    'loginSteps.checkActivationAndRenew',
-  ),
-
   /**
    * Saves the new account information & registers tokens (fcm) into the backend
    * @param platform
@@ -463,10 +437,21 @@ const loginCredentialsAction =
         functions.writeStorage(session, getAuthState(getState()).showOnboarding);
         return session;
       } catch (ee) {
-        if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === OAuth2ErrorCode.ACTIVATION_CODE) {
+        console.error('loginCredentialsAction', JSON.stringify(ee));
+        if (
+          Error.findCause(
+            ee,
+            (error): error is OAuth2Error => error instanceof OAuth2Error && error.code === OAuth2ErrorCode.ACTIVATION_CODE,
+          )
+        ) {
           dispatch(functions.activation(platform.name, credentials.username, credentials.password));
           return AuthPendingRedirection.ACTIVATE;
-        } else if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === OAuth2ErrorCode.PASSWORD_RESET) {
+        } else if (
+          Error.findCause(
+            ee,
+            (error): error is OAuth2Error => error instanceof OAuth2Error && error.code === OAuth2ErrorCode.PASSWORD_RESET,
+          )
+        ) {
           dispatch(functions.passwordRenew(platform.name, credentials.username, credentials.password));
           return AuthPendingRedirection.RENEW_PASSWORD;
         } else {
@@ -544,8 +529,8 @@ const loginFederationAction =
       // When login in with federation, "CREDENTIALS_MISMATCH" is the errcode obtained if the saml token does not link to an actual user account.
       // We override the error type to "SAML_INVALID" in this case.
       const error =
-        e instanceof Error.ErrorWithType && e.type === OAuth2ErrorCode.CREDENTIALS_MISMATCH
-          ? new Error.LoginError(OAuth2ErrorCode.SAML_INVALID, undefined, { cause: e.cause })
+        e instanceof OAuth2Error && e.code === OAuth2ErrorCode.CREDENTIALS_MISMATCH
+          ? new OAuth2Error(OAuth2ErrorCode.SAML_INVALID, undefined, { cause: e.cause })
           : e;
 
       console.error(`[Auth] Login federation error :`, error);

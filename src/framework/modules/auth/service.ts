@@ -35,7 +35,7 @@ import { I18n } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { expirableTokenFactory, getOAuth2AccessToken, OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { expirableTokenFactory, getOAuth2AccessToken, OAuth2Error, OAuth2ErrorCode } from '~/framework/util/oauth2';
 import { platformFetch, tokenFetch } from '~/framework/util/transport';
 import { getUrlWithBase } from '~/framework/util/transport/common';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
@@ -272,7 +272,7 @@ export function formatSession(
       for (const child of structure.children) {
         const foundChild = userinfo.children?.[child.id];
         if (!foundChild) {
-          throw new Error.LoginError(Error.FetchErrorType.BAD_RESPONSE, 'Missing data in user children');
+          throw new FetchError(FetchErrorCode.BAD_RESPONSE, 'Missing data in user children');
         }
         child.lastName = foundChild.lastName;
         child.firstName = foundChild.firstName;
@@ -323,7 +323,8 @@ export const otp = {
         method: 'POST',
       });
       if (!response.match) {
-        throw new Error.LoginError(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
+        // ToDo: change error here, it is not related to OAuth2
+        throw new OAuth2Error(OAuth2ErrorCode.CREDENTIALS_MISMATCH);
       }
       return returnValue;
     } catch (e) {

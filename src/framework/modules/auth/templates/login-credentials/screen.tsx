@@ -17,8 +17,9 @@ import { PFLogo } from '~/framework/components/pfLogo';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredentials } from '~/framework/modules/auth/model';
+import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import { getAccountById } from '~/framework/modules/auth/reducer';
-import { Error, useErrorWithKey } from '~/framework/util/error';
+import { useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 
@@ -45,7 +46,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
 
-  const { errclear, errkey, errmsg, errtype } = useErrorWithKey<typeof Error.LoginError>(platform.url, error, handleConsumeError);
+  const { errclear, errkey, errmsg, errtype } = useErrorWithKey(platform.url, error, handleConsumeError);
 
   const inputLogin = React.useRef<any>(null);
   const inputPassword = React.useRef<any>(null);
@@ -222,8 +223,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     if (
       !typing &&
       errmsg &&
-      (errtype === Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM ||
-        errtype === Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED)
+      (errtype === AccountErrorCode.ACCOUNT_INELIGIBLE_NOT_PREMIUM || errtype === AccountErrorCode.ACCOUNT_INELIGIBLE_PRE_DELETED)
     ) {
       return (
         <PrimaryButton action={goToWeb} text={I18n.get('auth-login-web')} iconRight="ui-externalLink" testID="login-opentoweb" />

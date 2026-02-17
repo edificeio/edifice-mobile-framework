@@ -26,6 +26,8 @@ export namespace Error {
     code: CodeType;
   }
 
+  export const hasCode = (e: unknown): e is WithCode<unknown> => e instanceof global.Error && Object.hasOwn(e, 'code');
+
   /**
    * Retrieves the deepest cause of an error by traversing the `cause` property.
    *
@@ -60,67 +62,52 @@ export namespace Error {
   }
 
   /**
-   * Dig into every cause of the given error to return the last encountered type.
+   * Returns the deepest cause of the given error.
+   * Returns the given error if it has no causes
    * @param error
    * @returns
    */
-  export const getDeepErrorType = <ErrorClass = ErrorWithType>(error?: WithKey | Error) => {
-    let currentError = (error as WithKey)?.info ?? error;
-    let type: Error.ErrorTypes<ErrorClass> | undefined | unknown;
+  export const getCause = (error: { cause?: unknown }): unknown => {
+    let currentError: typeof error | null | undefined = error;
     do {
-      if (currentError instanceof Error.ErrorWithType) type = currentError.type as Error.ErrorTypes<ErrorClass>;
-      else if (currentError instanceof global.Error && (currentError as WithCode<unknown>).code !== undefined)
-        type = (currentError as WithCode<unknown>).code;
-      currentError = currentError?.cause as Error;
+      if (currentError?.cause === undefined) return currentError;
+      currentError = currentError.cause;
     } while (currentError);
-    return type;
   };
 
-  type Constructor<T> = new (...args: any[]) => T;
+  /**
+   * Find the deepest cause of the given error that corresponds to the given predicate.
+   * If no cause nor given error matches the predicate, returns undefined.
+   * @param error
+   * @param predicate
+   * @returns
+   */
+  export const findCause = <ResultType>(error: unknown, predicate: (e: unknown) => e is ResultType): ResultType | undefined => {
+    const causes: (typeof error)[] = [];
+    let currentError: typeof error | null | undefined = error;
+    do {
+      if ((currentError as { cause?: unknown })?.cause === undefined) {
+        causes.unshift(error);
+        break;
+      }
+      currentError = (currentError as { cause?: unknown }).cause;
+    } while (currentError);
+    return causes.find(predicate);
+  };
 
-  export type ErrorTypes<ErrorClass> = ErrorClass extends Constructor<ErrorWithType<infer T>> ? T : AnyErrorType;
+  export const findCode = (error: unknown) => Error.findCause(error, Error.hasCode)?.code;
 
-  export enum FetchErrorType {
-    NOT_AUTHENTICATED = 'NOT_AUTHENTICATED', // Signed request but no token available
-    NETWORK_ERROR = 'NETWORK_ERROR', // Server is unreachable or not responding
-    NOT_OK = 'NOT_OK', // Response is not Http 2xx
-    BAD_RESPONSE = 'BAD_RESPONSE', // Response is Http 2xx but given data is unintended
-    TIMEOUT = 'TIMEOUT',
-  }
-
-  export const FetchError = ErrorWithType<FetchErrorType>;
-
-  export const OAuth2Error = ErrorWithType<OAuth2ErrorCode | ErrorTypes<typeof FetchError>>;
-
-  export enum LoginErrorType {
-    NO_SPECIFIED_PLATFORM = 'NO_SPECIFIED_PLATFORM',
-    INVALID_PLATFORM = 'INVALID_PLATFORM',
-    ACCOUNT_INELIGIBLE_NOT_PREMIUM = 'ACCOUNT_INELIGIBLE_NOT_PREMIUM',
-    ACCOUNT_INELIGIBLE_PRE_DELETED = 'ACCOUNT_INELIGIBLE_PRE_DELETED',
-    TOO_MANY_ACCOUNTS = 'TOO_MANY_ACCOUNTS',
-  }
-
-  export const LoginError = ErrorWithType<LoginErrorType | ErrorTypes<typeof OAuth2Error>>;
-
-  export const getAuthErrorText = <ErrorClass = ErrorWithType>(
-    type: Error.ErrorTypes<ErrorClass> | undefined,
-    platformUrl: string,
-  ) => {
+  export const getAuthErrorText = (type: any, platformUrl: string) => {
     switch (type) {
-      case Error.FetchErrorType.NOT_AUTHENTICATED:
       case FetchErrorCode.NOT_LOGGED:
         return I18n.get('auth-error-notinitilized');
-      case Error.FetchErrorType.BAD_RESPONSE:
       case FetchErrorCode.PARSE_ERROR:
       case FetchErrorCode.BAD_RESPONSE:
         return I18n.get('auth-error-badresponse');
-      case Error.FetchErrorType.NETWORK_ERROR:
       case FetchErrorCode.NETWORK_ERROR:
         return I18n.get('auth-error-networkerror');
-      case Error.FetchErrorType.NOT_OK:
       case FetchErrorCode.NOT_OK:
         return I18n.get('auth-error-unknownresponse');
-      case Error.FetchErrorType.TIMEOUT:
       case FetchErrorCode.TIMEOUT:
         return I18n.get('auth-error-networkerror');
 
@@ -151,13 +138,10 @@ export namespace Error {
       case OAuth2ErrorCode.PASSWORD_RESET:
         return I18n.get('auth-error-passwordreset');
 
-      case Error.LoginErrorType.NO_SPECIFIED_PLATFORM:
-      case Error.LoginErrorType.INVALID_PLATFORM:
       case AccountErrorCode.INVALID_PLATFORM_CONFIG:
         return I18n.get('auth-error-runtimeerror');
-      case Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM:
+      case AccountErrorCode.ACCOUNT_INELIGIBLE_NOT_PREMIUM:
         return I18n.get('auth-error-notpremium');
-      case Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED:
       case AccountErrorCode.ACCOUNT_INELIGIBLE_PRE_DELETED:
         return I18n.get('auth-error-predeleted', { currentplatform: platformUrl });
 
@@ -178,20 +162,15 @@ export namespace Error {
  *  - errkey : current key of the displaying context. Contains the timestamp of the last screen mount / error cleared
  *  - errclear : function to call to clear the error (set state, so it does fire a re-render !).
  */
-export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
-  platformUrl: string,
-  error?: Error.WithKey,
-  consumeError?: (errorKey: number) => void,
-) => {
+export const useErrorWithKey = (platformUrl: string, error?: Error.WithKey, consumeError?: (errorKey: number) => void) => {
   const [errkey, setErrkey] = React.useState(Error.generateErrorKey);
   const showError = error?.key === errkey || error?.key === undefined;
-  const errtype = React.useMemo(() => (showError ? Error.getDeepErrorType<ErrorClass>(error) : undefined), [error, showError]);
+  const errtype = React.useMemo(() => (showError ? Error.findCode(error?.info) : undefined), [error, showError]);
   const errclear = React.useCallback(() => {
     if (error && showError) setErrkey(Error.generateErrorKey());
   }, [error, showError]);
   const errmsg = React.useMemo(
-    () =>
-      showError && error ? Error.getAuthErrorText<ErrorClass>(errtype as Error.ErrorTypes<ErrorClass>, platformUrl) : undefined,
+    () => (showError && error ? Error.getAuthErrorText(errtype, platformUrl) : undefined),
     [error, errtype, platformUrl, showError],
   );
   React.useEffect(() => {

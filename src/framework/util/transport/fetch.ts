@@ -51,43 +51,38 @@ function getRequestMethod(input: Parameters<typeof fetch>[0], init: Parameters<t
  * @throws {HTTPError} If the response status is not ok (status is not in the range 200-299).
  */
 const _baseFetch = async (input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]): Promise<Response> => {
-  try {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.groupCollapsed(`[Fetch] ${getRequestMethod(input, init).toUpperCase()} ${getRequestUrl(input)}`);
-      // eslint-disable-next-line no-console
-      console.dir(input);
-      // eslint-disable-next-line no-console
-      console.dir(init);
-    }
-    CookieManager.clearAll();
-    let response: Response;
-    try {
-      response = await global.fetch(input, init);
-      if (__DEV__) {
-        console.info(` ➔ ${response.status} ${response.statusText}`);
-      }
-    } catch (e) {
-      console.error(` ➔ Network Error`, e);
-      throw new FetchError(
-        FetchErrorCode.NETWORK_ERROR,
-        `Failed to fetch resource: ${getRequestMethod(input, init)} ${getRequestUrl(input)}`,
-        {
-          cause: e,
-        },
-      );
-    }
-    if (!response.ok) {
-      console.error(` ➔ ${response.status} ${response.statusText}`, await response.clone().text());
-      throw new HTTPError(response);
-    }
-    return response;
-  } finally {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.groupEnd();
-    }
+  if (__DEV__) {
+    // eslint-disable-next-line no-console
+    console.groupCollapsed(`[Fetch] ${getRequestMethod(input, init).toUpperCase()} ${getRequestUrl(input)}`);
+    // eslint-disable-next-line no-console
+    console.dir(input);
+    // eslint-disable-next-line no-console
+    console.dir(init);
+    // eslint-disable-next-line no-console
+    console.groupEnd();
   }
+  CookieManager.clearAll();
+  let response: Response;
+  try {
+    response = await global.fetch(input, init);
+  } catch (e) {
+    console.error(` ➔ Network Error`, e);
+    throw new FetchError(
+      FetchErrorCode.NETWORK_ERROR,
+      `Failed to fetch resource: ${getRequestMethod(input, init)} ${getRequestUrl(input)}`,
+      {
+        cause: e,
+      },
+    );
+  }
+  if (!response.ok) {
+    console.error(` ➔ ${response.status} ${response.statusText}`, await response.clone().text());
+    throw new HTTPError(response);
+  }
+  if (__DEV__) {
+    console.info(` ➔ ${response.status} ${response.statusText}`);
+  }
+  return response;
 };
 
 /**
