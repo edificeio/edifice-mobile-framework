@@ -42,21 +42,11 @@ const RootStack = getTypedRootStack();
 const tabOptions = { headerShown: false };
 
 export function MainNavigation() {
-  return (
-    <>
-      <RootStack.Screen name="$tabs" component={TabNavigation} options={tabOptions} />
-      {modals}
-    </>
-  );
+  return <RootStack.Screen name="$tabs" component={TabNavigation} options={tabOptions} />;
 }
 
 export function GuestNavigation() {
-  return (
-    <>
-      {useAuthNavigation()}
-      {modals}
-    </>
-  );
+  return useAuthNavigation();
 }
 
 export const RootNavigator = connect((state: IGlobalState) => {
@@ -105,6 +95,7 @@ export const RootNavigator = connect((state: IGlobalState) => {
         <AppPushNotificationHandlerComponent>
           <RootStack.Navigator screenOptions={navBarOptions}>
             {showAppContent ? MainNavigation() : GuestNavigation()}
+            {modals}
           </RootStack.Navigator>
         </AppPushNotificationHandlerComponent>
       </BottomSheetModalProvider>

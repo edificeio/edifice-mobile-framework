@@ -24,6 +24,7 @@ import { initialWindowMetrics, useSafeAreaInsets } from 'react-native-safe-area-
 
 import { handleCloseModalActions } from './helper';
 import { getTabBarStyleForNavState } from './hideTabBarAndroid';
+import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
@@ -125,6 +126,17 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
     <Stack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName} screenListeners={stackListeners}>
       {ModuleScreens.all}
       {authNavigation}
+      {/** * iOS workaround:
+       * Modals are already registered in RootStack, but on iOS
+       * fullScreenModal screens may not appear correctly when triggered
+       * from a nested TabStack NativeStack.
+       * Registering modals here ensures they belong to the active
+       * native stack so modal presentation works properly.
+       * Intentional duplication
+       *
+       * — do not remove unless navigation  structure is refactored.
+       * */}
+      {Platform.OS === 'ios' ? modals : null}
     </Stack.Navigator>
   );
 }

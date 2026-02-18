@@ -135,6 +135,10 @@ export class FileManager {
       callback(files);
     } catch (err) {
       const normalized = normalizePickerError(err, source!);
+      if (normalized.code === 'PICKER_CANCELLED') {
+        callback([]);
+        return;
+      }
       console.error('[FM_NORMALIZED_ERROR] ==', normalized);
       onError(normalized);
       callback([]);
