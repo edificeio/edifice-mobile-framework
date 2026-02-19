@@ -52,10 +52,10 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
   const [msgError, setMsgError] = React.useState<string | null>(null);
 
   const load = async () => {
-    const t = await dispatch(refreshSessionIdForAccountAction(session));
+    const oneSessionId = await dispatch(refreshSessionIdForAccountAction(session));
 
-    if (!getPlatform() || !t) {
-      console.error('[🛑] Nabook | Screen: Cannot load token:', t, getPlatform());
+    if (!getPlatform() || !oneSessionId?.value) {
+      console.error('[🛑] Nabook | Screen: Cannot load token:', oneSessionId, getPlatform());
       setMsgError(I18n.get('nabook-error-no-session'));
       setScreen('error');
       return;
@@ -70,7 +70,7 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
         }),
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'oneSessionId=' + t,
+          'Cookie': 'oneSessionId=' + oneSessionId.value,
         },
         method: 'POST',
       });
