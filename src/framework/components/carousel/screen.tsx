@@ -12,6 +12,7 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import moment, { Moment } from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import RNFS from 'react-native-fs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Share from 'react-native-share';
 
 import { I18n } from '~/app/i18n';
@@ -288,7 +289,7 @@ export function Carousel(props: ICarouselProps) {
     );
   }, []);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (isNavBarVisible) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
@@ -364,8 +365,13 @@ export function Carousel(props: ICarouselProps) {
     [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading],
   );
 
+  const { top } = useSafeAreaInsets();
+
   return (
-    <PageView style={styles.page} showNetworkBar={false} showToast={false}>
+    <PageView
+      style={React.useMemo(() => [styles.page, { paddingTop: Platform.OS === 'android' ? top : undefined }], [top])}
+      showNetworkBar={false}
+      showToast={false}>
       <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
       {imageViewer}
     </PageView>

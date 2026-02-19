@@ -12,7 +12,6 @@ const statusBarConfig = {
     backgroundColor: theme.palette.grey.darkness,
     barStyle: 'light-content' as const,
     hidden: false,
-    translucent: false,
   },
   'hidden': {
     backgroundColor: 'transparent',
@@ -24,13 +23,11 @@ const statusBarConfig = {
     backgroundColor: theme.ui.background.page,
     barStyle: 'dark-content' as const,
     hidden: false,
-    translucent: false,
   },
   'primary': {
     backgroundColor: theme.palette.primary.regular,
     barStyle: 'light-content' as const,
     hidden: false,
-    translucent: false,
   },
   'translucent-dark': {
     backgroundColor: 'transparent',
@@ -48,7 +45,6 @@ const statusBarConfig = {
     backgroundColor: theme.palette.grey.white,
     barStyle: 'dark-content' as const,
     hidden: false,
-    translucent: false,
   },
 };
 
@@ -56,15 +52,10 @@ const statusBarConfig = {
  * @deprecated Set status bar with navigation options instead.
  */
 export const StatusBar = ({ type }: StatusBarProps) => {
-  const { backgroundColor, barStyle, hidden, translucent } = statusBarConfig[type];
+  const { backgroundColor, barStyle, hidden } = statusBarConfig[type];
 
   return (
-    <RNStatusBar
-      hidden={hidden}
-      translucent={translucent}
-      backgroundColor={Platform.OS === 'android' ? backgroundColor : undefined}
-      barStyle={barStyle}
-    />
+    <RNStatusBar hidden={hidden} backgroundColor={Platform.OS === 'android' ? backgroundColor : undefined} barStyle={barStyle} />
   );
 };
 

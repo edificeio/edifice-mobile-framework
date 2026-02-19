@@ -42,10 +42,10 @@ export const BaseTextInput = ({
   const fontScale = PixelRatio.getFontScale();
   const wrapperStyle = React.useMemo(() => StyleSheet.flatten([defaultStyles.wrapper, _wrapperStyle]), [_wrapperStyle]);
 
-  const { lineHeight = defaultStyles.input.lineHeight, ...intermediate } = StyleSheet.flatten([
-    defaultStyles.input as typeof _inputStyle,
-    _inputStyle,
-  ]);
+  const { lineHeight = defaultStyles.input.lineHeight, ...intermediate } = React.useMemo(
+    () => StyleSheet.flatten([defaultStyles.input as typeof _inputStyle, _inputStyle]),
+    [_inputStyle],
+  );
   const borderWidth = wrapperStyle.borderWidth ?? 0;
   const aimHeight = _aimHeight - borderWidth * 2;
   const paddingVertical = (aimHeight - fontScale * lineHeight * IOS_TEXT_INPUT_LINE_HEIGHT_RATIO) / 2;
@@ -155,8 +155,10 @@ export const BaseTextArea = ({
 
   return (
     <View style={wrapperStyle}>
-      <TextInput value={value} maxLength={maxLength} multiline style={inputStyle} aria-label={placeholder} {...props} />
-      {wrapperStyle.backgroundColor && <TextAreaDecoration color={wrapperStyle.backgroundColor} />}
+      <View>
+        <TextInput value={value} maxLength={maxLength} multiline style={inputStyle} aria-label={placeholder} {...props} />
+        {wrapperStyle.backgroundColor && <TextAreaDecoration color={wrapperStyle.backgroundColor} />}
+      </View>
       {placeholder && !value && <Text style={placeholderStyle}>{placeholder}</Text>}
       {children}
     </View>

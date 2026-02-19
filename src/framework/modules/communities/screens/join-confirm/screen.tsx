@@ -51,6 +51,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
   route,
   session,
 }) {
+  const { top } = useSafeAreaInsets();
   const onValidate = React.useCallback(async () => {
     try {
       await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {

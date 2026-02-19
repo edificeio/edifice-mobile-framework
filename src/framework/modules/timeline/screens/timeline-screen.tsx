@@ -88,7 +88,6 @@ export enum TimelineLoadingState {
 }
 export interface ITimelineScreenState {
   loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
-  test: string;
 }
 
 export enum ITimelineItemType {
@@ -193,7 +192,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   state: ITimelineScreenState = {
     loadingState: TimelineLoadingState.PRISTINE,
-    test: '',
   };
 
   rights = this.props.session ? getTimelineWorkflowInformation(this.props.session) : undefined;
@@ -208,17 +206,12 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   // RENDER =======================================================================================
   //
 
-  onChange = ({ nativeEvent: { text } }) => {
-    this.setState({ test: text });
-  };
-
   boxStyle = { backgroundColor: theme.palette.grey.pearl, flex: 1 };
   boxStyle2 = { ...this.boxStyle, padding: getScaleWidth(7.5) };
 
   render() {
     return (
       <>
-        <CommentForm userId={getSession()?.user.id!} />
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
           <LoadingIndicator />
         ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (

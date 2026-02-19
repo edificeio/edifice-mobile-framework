@@ -1,20 +1,17 @@
 import React from 'react';
-import { PixelRatio, ScrollView, StyleSheet, TextInput, TextInputProps, View } from 'react-native';
+// eslint-disable-next-line no-restricted-imports
+import { PixelRatio, ScrollView, StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
 
 import { TextAreaDecoration } from './base.common';
 import defaultStyles from './style';
 import { BaseTextAreaProps, BaseTextInputProps } from './types';
 
-import { UI_STYLES } from '~/framework/components/constants';
-
 /**
  * DISCLAIMER
  *
- * @see https://github.com/facebook/react-native/issues/46207
- *
- * React Native's TextInput is broken on iOS.
- * Cumulating `value` and `lineHeight` settings goes wrong, so this implementation is full of
- * little hacks to make things look ok. This is not perfect (autogrow grows too much) but fine enough.
+ * React Native's TextInput is broken on Android.
+ * Padding crop content in scrollable TextInput, so we use an external ScrollView to handle this.
+ * Height is manually calculated as automatic sizing by the OS is completely broken.
  */
 
 /**
@@ -27,22 +24,24 @@ import { UI_STYLES } from '~/framework/components/constants';
 export const BaseTextInput = ({
   aimHeight: _aimHeight,
   inputStyle: _inputStyle,
+  placeholder,
+  placeholderTextColor,
+  value,
   wrapperStyle: _wrapperStyle,
   ...props
 }: BaseTextInputProps) => {
   const fontScale = PixelRatio.getFontScale();
   const wrapperStyle = React.useMemo(() => StyleSheet.flatten([defaultStyles.wrapper, _wrapperStyle]), [_wrapperStyle]);
+  const borderWidth = wrapperStyle.borderWidth ?? 0;
+  const aimHeight = _aimHeight - borderWidth * 2;
+  const { lineHeight = defaultStyles.input.lineHeight, ...intermediate } = React.useMemo(
+    () => StyleSheet.flatten([defaultStyles.input as typeof _inputStyle, _inputStyle]),
+    [_inputStyle],
+  );
+  const height = lineHeight * fontScale + (aimHeight - fontScale * lineHeight);
+  const paddingVertical = (aimHeight - fontScale * lineHeight) / 2;
 
   const inputStyle = React.useMemo(() => {
-    const { lineHeight = defaultStyles.input.lineHeight, ...intermediate } = StyleSheet.flatten([
-      defaultStyles.input as typeof _inputStyle,
-      _inputStyle,
-    ]);
-    const borderWidth = wrapperStyle.borderWidth ?? 0;
-    const aimHeight = _aimHeight - borderWidth * 2;
-    const height = lineHeight * fontScale + (aimHeight - fontScale * lineHeight);
-    const paddingVertical = (aimHeight - fontScale * lineHeight) / 2;
-
     return [
       intermediate,
       {
@@ -50,11 +49,32 @@ export const BaseTextInput = ({
         paddingVertical,
       },
     ];
-  }, [_aimHeight, _inputStyle, fontScale, wrapperStyle.borderWidth]);
+  }, [height, intermediate, paddingVertical]);
+
+  const placeholderStyle = React.useMemo(
+    () =>
+      placeholder
+        ? [
+            defaultStyles.placeholder,
+            placeholderTextColor ? { color: placeholderTextColor } : undefined,
+            {
+              height,
+              lineHeight,
+              paddingVertical: (aimHeight - fontScale * lineHeight) / 2,
+            },
+          ]
+        : undefined,
+    [aimHeight, fontScale, height, lineHeight, placeholder, placeholderTextColor],
+  );
 
   return (
     <View style={wrapperStyle}>
-      <TextInput style={inputStyle} {...props} />
+      <TextInput value={value} style={inputStyle} aria-label={placeholder} {...props} />
+      {placeholder && !value && (
+        <Text style={placeholderStyle} numberOfLines={1}>
+          {placeholder}
+        </Text>
+      )}
     </View>
   );
 };
@@ -74,6 +94,9 @@ export const BaseTextArea = ({
   maxLines = 5,
   minLines = 1,
   onContentSizeChange: _onContentSizeChange,
+  placeholder,
+  placeholderTextColor,
+  value,
   wrapperStyle: _wrapperStyle,
   ...props
 }: BaseTextAreaProps) => {
@@ -81,80 +104,121 @@ export const BaseTextArea = ({
 
   const {
     backgroundColor = 'transparent',
+    borderColor,
+    borderRadius,
     borderWidth = 0,
     ...intermediateWrapperStyle
   } = React.useMemo(() => StyleSheet.flatten([defaultStyles.wrapper as typeof _wrapperStyle, _wrapperStyle]), [_wrapperStyle]);
 
-  const { lineHeight = defaultStyles.input.lineHeight, ...intermediateInputStyme } = React.useMemo(
+  const { lineHeight = defaultStyles.input.lineHeight, ...intermediateInputStyle } = React.useMemo(
     () => StyleSheet.flatten([defaultStyles.input as typeof _inputStyle, _inputStyle]),
     [_inputStyle],
   );
 
   const [contentLines, setContentLines] = React.useState(0);
-  const onContentSizeChange = React.useCallback<NonNullable<TextInputProps['onContentSizeChange']>>(
-    e => {
-      const lines = Math.ceil(e.nativeEvent.contentSize.height / (fontScale * lineHeight));
-      setContentLines(lines);
-      _onContentSizeChange?.(e);
-    },
-    [_onContentSizeChange, fontScale, lineHeight],
-  );
-
   const aimHeight = _aimHeight - borderWidth * 2;
   const height =
     lineHeight * fontScale * Math.max(minLines, Math.min(maxLines, contentLines)) + (aimHeight - fontScale * lineHeight);
+  const paddingVertical = (aimHeight - fontScale * lineHeight) / 2;
+
+  const onContentSizeChange = React.useCallback<NonNullable<TextInputProps['onContentSizeChange']>>(
+    e => {
+      const lines =
+        !value || value.length === 0
+          ? 1
+          : Math.ceil((e.nativeEvent.contentSize.height - 2 * paddingVertical) / (fontScale * lineHeight));
+      setContentLines(lines);
+      _onContentSizeChange?.(e);
+    },
+    [_onContentSizeChange, fontScale, lineHeight, paddingVertical, value],
+  );
 
   const inputStyle = React.useMemo(() => {
     return [
-      intermediateInputStyme,
+      intermediateInputStyle,
       {
-        lineHeight: lineHeight,
-        padding: 0,
-      },
-    ];
-  }, [intermediateInputStyme, lineHeight]);
-
-  const wrapperContentStyle = React.useMemo(() => {
-    const paddingVertical = (aimHeight - fontScale * lineHeight) / 2;
-    return [
-      defaultStyles.wrapper,
-      intermediateWrapperStyle,
-      {
-        backgroundColor,
-        borderWidth: 0,
         flex: 0,
-        height: contentLines <= 1 ? aimHeight : undefined,
+        lineHeight: lineHeight,
         padding: 0,
         paddingVertical,
       },
     ];
-  }, [aimHeight, backgroundColor, contentLines, fontScale, intermediateWrapperStyle, lineHeight]);
+  }, [intermediateInputStyle, lineHeight, paddingVertical]);
 
-  const wrapperStyle = React.useMemo(() => {
-    const paddingVertical = (aimHeight - fontScale * lineHeight) / 2;
-    const minHeight = paddingVertical * 2 + lineHeight * fontScale * minLines;
-    const maxHeight = paddingVertical * 2 + lineHeight * fontScale * maxLines;
+  const scrollContentStyle = React.useMemo(() => {
     return [
       {
-        flex: 1,
-        flexBasis: aimHeight,
-        height,
+        backgroundColor,
+        borderWidth: 0,
+        flex: 0,
+        padding: 0,
+      },
+    ];
+  }, [backgroundColor]);
+  const minHeight = paddingVertical * 2 + lineHeight * fontScale * minLines;
+  const maxHeight = paddingVertical * 2 + lineHeight * fontScale * maxLines;
+  const scrollStyle = React.useMemo(() => {
+    return [
+      {
+        flex: 0,
+        height: contentLines <= 1 ? aimHeight : height,
         maxHeight,
         minHeight,
       },
     ];
-  }, [aimHeight, fontScale, height, lineHeight, maxLines, minLines]);
+  }, [aimHeight, contentLines, height, maxHeight, minHeight]);
+
+  const placeholderStyle = React.useMemo(
+    () =>
+      placeholder
+        ? [
+            defaultStyles.placeholder,
+            placeholderTextColor ? { color: placeholderTextColor } : undefined,
+            {
+              lineHeight,
+              minHeight,
+              paddingVertical,
+            },
+          ]
+        : undefined,
+    [lineHeight, minHeight, paddingVertical, placeholder, placeholderTextColor],
+  );
+
+  const wrapperStyle = React.useMemo(
+    () => [
+      defaultStyles.wrapper,
+      intermediateWrapperStyle,
+      {
+        backgroundColor,
+        borderColor,
+        borderRadius,
+        borderWidth,
+        flex: 1,
+      },
+    ],
+    [backgroundColor, borderColor, borderRadius, borderWidth, intermediateWrapperStyle],
+  );
 
   return (
-    <View style={UI_STYLES.flex1}>
-      <ScrollView
-        style={wrapperStyle}
-        contentContainerStyle={wrapperContentStyle}
-        showsVerticalScrollIndicator={contentLines > maxLines}>
-        <TextInput multiline style={inputStyle} {...props} scrollEnabled={false} onContentSizeChange={onContentSizeChange} />
-      </ScrollView>
-      {backgroundColor && <TextAreaDecoration color={backgroundColor} />}
+    <View style={wrapperStyle}>
+      <View>
+        <ScrollView
+          style={scrollStyle}
+          contentContainerStyle={scrollContentStyle}
+          showsVerticalScrollIndicator={contentLines > maxLines}>
+          <TextInput
+            value={value}
+            multiline
+            style={inputStyle}
+            aria-label={placeholder}
+            {...props}
+            onContentSizeChange={onContentSizeChange}
+          />
+        </ScrollView>
+        {backgroundColor && <TextAreaDecoration color={backgroundColor} />}
+      </View>
       {children}
+      {placeholder && !value && <Text style={placeholderStyle}>{placeholder}</Text>}
     </View>
   );
 };
