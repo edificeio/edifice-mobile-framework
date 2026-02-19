@@ -3,6 +3,7 @@ import { PixelRatio } from 'react-native';
 
 import {
   CommunityClient,
+  CommunitySection,
   FolderClient,
   FolderDto,
   getResourceUrl,
@@ -12,7 +13,7 @@ import {
   ResourceType,
 } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
-import { useIsFocused } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
@@ -135,6 +136,15 @@ export default (function CommunitiesDocumentsScreen({
       });
     },
     [communityId, folderId, session, setCommunityData, setCommunityFolderMeta],
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      session &&
+        accountApi(session, moduleConfig, MembershipClient).updateLastVisit(communityId, {
+          section: CommunitySection.RESOURCES,
+        });
+    }, [communityId, session]),
   );
 
   // For perforance purpose, estimatedListSize must be the dimensions of the container (here the screen sithout, navBar and tabBar)
