@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
   CommunityClient,
+  CommunitySection,
   FolderClient,
   FolderDto,
   getResourceUrl,
@@ -11,7 +12,7 @@ import {
   ResourceType,
 } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
-import { useIsFocused } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
@@ -129,6 +130,15 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
       });
     },
     [communityId, folderId, session, setCommunityData, setCommunityFolderMeta],
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      session &&
+        accountApi(session, moduleConfig, MembershipClient).updateLastVisit(communityId, {
+          section: CommunitySection.RESOURCES,
+        });
+    }, [communityId, session]),
   );
 
   const openDocument = React.useCallback(async (doc: CommunitiesDocumentItem) => {

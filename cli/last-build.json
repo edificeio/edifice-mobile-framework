@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-02-12 08:44:56",
-  "notes": "update(stack): yarn cache update\nchore(build): remove build commands\nchore: change mobile/store API payload to camelCase\nupdate(stack): go to rn 0.81.6\nMerge remote-tracking branch 'origin/release/1.16.4' into dev/1.16.5\nSquashed commit of the following:\nchore(i18n): change phrase sync branch\nrelease: 1.16.4-rc.1(1160401)\nchore: yarn cache update\nrelease: 1.16.5-alpha.1(1160501)",
-  "version": "1.16.5-alpha.2(1160502)",
+  "last": "2026-02-19 16:12:19",
+  "notes": "chore: yarn cache update\nfix(communities): PEDAGO-3786 call access tracking\nchore: update to latest communities client\nrelease: 1.16.5(1160500)\nSquashed commit of the following:\nchore(i18n): change phrase sync branch",
+  "version": "1.16.5-rc.1(1160501)",
   "track": "1.16.5"
 }

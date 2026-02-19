@@ -4,11 +4,14 @@ import { View } from 'react-native';
 import {
   AnnouncementClient,
   CommunityClient,
+  CommunitySection,
   InvitationClient,
   InvitationResponseDto,
+  MembershipClient,
   SearchAnnouncementDto,
 } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
+import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -217,6 +220,12 @@ export const CommunitiesHomeScreenLoaded = function ({
       }
     },
     [audienceReferer, communityId, session],
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      sessionApi(moduleConfig, MembershipClient).updateLastVisit(communityId, { section: CommunitySection.ANNOUNCEMENTS });
+    }, [communityId]),
   );
 
   return (
