@@ -15,6 +15,7 @@ export default StyleSheet.create({
 
   page: {
     backgroundColor: theme.palette.grey.darkness,
+    flex: 1,
   },
 
   playerLandscape: {

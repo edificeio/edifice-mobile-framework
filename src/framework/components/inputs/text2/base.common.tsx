@@ -1,5 +1,6 @@
 import React from 'react';
 import { type ViewStyle } from 'react-native';
+import { StyleProp } from 'react-native';
 
 import Svg, { Defs, LinearGradient, LinearGradientProps, Rect, Stop } from 'react-native-svg';
 
@@ -13,7 +14,7 @@ export const GradientSvgDeco = ({
   style,
   y1,
   y2,
-}: LinearGradientProps & { style?: ViewStyle; color: ViewStyle['backgroundColor'] }) => (
+}: LinearGradientProps & { style?: StyleProp<ViewStyle>; color: ViewStyle['backgroundColor'] }) => (
   <Svg style={React.useMemo(() => [defaultStyles.deco, style], [style])}>
     <Defs>
       <LinearGradient id="backgroundGradient" x1={0} y1={y1} x2={0} y2={y2}>
@@ -30,10 +31,10 @@ export const GradientSvgDeco = ({
 /**
  * TextAreas with scrollable content show gradients at the top & the bottom.
  */
-export const TextAreaDecoration = ({ color }: { color: ViewStyle['backgroundColor'] }) => (
+export const TextAreaDecoration = ({ color, style }: { style?: StyleProp<ViewStyle>; color: ViewStyle['backgroundColor'] }) => (
   <>
-    <GradientSvgDeco y1={0} y2={1} style={defaultStyles.decoTop} color={color} />
-    <GradientSvgDeco y1={1} y2={0} style={defaultStyles.decoBottom} color={color} />
+    <GradientSvgDeco y1={0} y2={1} style={React.useMemo(() => [defaultStyles.decoTop, style], [style])} color={color} />
+    <GradientSvgDeco y1={1} y2={0} style={React.useMemo(() => [defaultStyles.decoBottom, style], [style])} color={color} />
   </>
 );
 

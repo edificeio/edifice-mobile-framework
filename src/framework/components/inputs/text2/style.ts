@@ -42,6 +42,7 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
     pointerEvents: 'none',
     position: 'absolute',
+    right: 0,
     top: 0,
     verticalAlign: 'middle',
   },
