@@ -3,7 +3,7 @@ import { Alert, Keyboard, ScrollView } from 'react-native';
 
 import moment from 'moment';
 
-import { MailsEditType, NavPayload, UseMailsEditControllerParams } from './types';
+import { MailsEditType, NavPayload, SendMailResponse, UseMailsEditControllerParams } from './types';
 
 import { I18n } from '~/app/i18n';
 import { RichEditor } from '~/framework/components/inputs/rich-text';
@@ -59,6 +59,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   const editorRef = React.useRef<RichEditor>(null);
   const isDeletingRef = React.useRef(false);
   const draftIdRef = React.useRef<string | undefined>(draftId);
+  const hasBeenSentRef = React.useRef<boolean>(false);
 
   const haveInitialCcCci = React.useMemo(
     () => (initialMailInfo?.cc && initialMailInfo?.cc.length > 0) || (initialMailInfo?.cci && initialMailInfo?.cci.length > 0),
@@ -243,7 +244,6 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         setDraftIdSaved(newDraftId);
       }
 
-      // handleNavigateToDrafts();
       toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
       setIsSending(false);
     } catch (e) {
@@ -265,7 +265,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       const response = (await mailsService.mail.send(
         { draftId: draftIdSaved, inReplyTo: initialMailInfo?.id ?? undefined },
         { body: bodyToSave, cc: ccIds, cci: cciIds, noReply, subject, to: toIds },
-      )) as any;
+      )) as SendMailResponse;
 
       let shouldNavigate = true;
 
@@ -283,13 +283,17 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
           shouldNavigate = false;
         }
       }
+      hasBeenSentRef.current = true;
+      setHasBeenSent(true);
 
       if (shouldNavigate) {
         handleCloseInactiveUserModal();
+
+        requestAnimationFrame(() => {
+          toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
+        });
       }
 
-      setHasBeenSent(true);
-      toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
       setIsSending(false);
     } catch (e) {
       console.error(e);
@@ -427,7 +431,12 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   const onCloseInactiveUserModal = React.useCallback(() => {
     setInactiveUsersModalVisible(false);
+
     handleCloseInactiveUserModal();
+
+    requestAnimationFrame(() => {
+      toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
+    });
   }, [handleCloseInactiveUserModal]);
 
   const noReplyMenu = React.useMemo(
@@ -474,7 +483,10 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     const createInitialDraft = async () => {
       try {
         if (!draftIdRef.current) {
-          const newDraftId = await mailsService.mail.sendToDraft({}, { body: '', cc: [], cci: [], subject: '', to: [] });
+          const newDraftId = await mailsService.mail.sendToDraft(
+            { inReplyTo: initialMailInfo?.id ?? undefined },
+            { body: '', cc: [], cci: [], subject: '', to: [] },
+          );
           draftIdRef.current = newDraftId;
           setDraftIdSaved(newDraftId);
         }
@@ -487,6 +499,10 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     createInitialDraft();
 
     const unsubscribe = navigation.addListener('beforeRemove', async e => {
+      if (isSending || hasBeenSentRef.current) {
+        return;
+      }
+
       /**
        * If the draft is being deleted explicitly by the user,
        * skip auto save or auto delete logic and allow navigation.
@@ -512,8 +528,8 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       const currentDraftId = draftIdRef.current;
 
       /**
-       * case 1: The email contains content.auto save the draft before allowing navigation.
-       *&temporarily block navigation
+       * case 1: The email contains content; auto save the draft before allowing navigation.
+       * & temporarily block navigation
        */
       if (hasAnyContent) {
         e.preventDefault();
