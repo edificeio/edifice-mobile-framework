@@ -6,7 +6,7 @@ import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-clien
 import { BlurView } from '@react-native-community/blur';
 import { Header } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Edges, SafeAreaView } from 'react-native-safe-area-context';
+import { Edges, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import styles from './styles';
@@ -33,6 +33,50 @@ import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
 import { HTTPError } from '~/framework/util/transport/error';
 
+const ScreenHeader = ({ navigation }) => {
+  const { top } = useSafeAreaInsets();
+  return (
+    <Header
+      modal
+      headerStyle={React.useMemo(
+        () => ({
+          height:
+            UI_SIZES.elements.navbarHeight +
+            Platform.select({ default: UI_SIZES.spacing.small, ios: UI_SIZES.spacing.big }) +
+            (Platform.OS === 'android' ? top : 0),
+        }),
+        [top],
+      )}
+      headerLeft={props => (
+        <NavBarAction
+          {...props}
+          color={theme.palette.grey.darkness}
+          onPress={navigation.goBack}
+          icon="ui-close"
+          testID="close-btn"
+        />
+      )}
+      headerStatusBarHeight={Platform.OS === 'android' ? top : undefined}
+      headerRight={() => <NavBarAction />}
+      headerLeftContainerStyle={{
+        paddingHorizontal: UI_SIZES.spacing.medium,
+      }}
+      headerRightContainerStyle={{
+        paddingHorizontal: UI_SIZES.spacing.medium,
+      }}
+      title=""
+      headerTransparent={Platform.select({ default: false, ios: true })}
+      headerShadowVisible={false}
+      headerTitleAlign="center"
+      headerTitle={() => <HeadingSText style={styles.headerTitle}>{I18n.get('communities-join-confirm-title')}</HeadingSText>}
+      headerBackground={Platform.select({
+        default: undefined,
+        ios: () => <BlurView reducedTransparencyFallbackColor="white" blurType="regular" style={styles.headerBlur} />,
+      })}
+    />
+  );
+};
+
 export const computeNavBar = ({
   navigation,
   route,
@@ -45,38 +89,7 @@ export const computeNavBar = ({
     route,
     title: I18n.get('communities-join-confirm-title'),
   }),
-  header: () => {
-    return (
-      <Header
-        headerStyle={styles.header}
-        headerLeft={props => (
-          <NavBarAction
-            {...props}
-            color={theme.palette.grey.darkness}
-            onPress={navigation.goBack}
-            icon="ui-close"
-            testID="close-btn"
-          />
-        )}
-        headerRight={() => <NavBarAction />}
-        headerLeftContainerStyle={{
-          paddingHorizontal: UI_SIZES.spacing.medium,
-        }}
-        headerRightContainerStyle={{
-          paddingHorizontal: UI_SIZES.spacing.medium,
-        }}
-        title=""
-        headerTransparent={Platform.select({ default: false, ios: true })}
-        headerShadowVisible={false}
-        headerTitleAlign="center"
-        headerTitle={() => <HeadingSText style={styles.headerTitle}>{I18n.get('communities-join-confirm-title')}</HeadingSText>}
-        headerBackground={Platform.select({
-          default: undefined,
-          ios: () => <BlurView reducedTransparencyFallbackColor="white" blurType="regular" style={styles.headerBlur} />,
-        })}
-      />
-    );
-  },
+  header: ScreenHeader,
   headerBlurEffect: 'extraLight',
   headerShadowVisible: false,
   headerTransparent: true,
@@ -96,6 +109,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
   },
   session,
 }) {
+  const { top } = useSafeAreaInsets();
   const onValidate = React.useCallback(async () => {
     try {
       await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {
@@ -127,12 +141,14 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
     [],
   );
 
+  const pageStyle = React.useMemo(() => [styles.page, { paddingTop: Platform.OS === 'android' ? top : undefined }], [top]);
+
   if (!data || !data.community) return <EmptyContentScreen />;
 
   const image = data.community?.mobileThumbnails?.length ? data.community.mobileThumbnails : toURISource(data.community.image!);
 
   return (
-    <ScrollView style={styles.page}>
+    <ScrollView style={pageStyle}>
       <SafeAreaView style={containerStyle} edges={safeEdges}>
         <CommunityCardLarge
           title={data.community?.title}

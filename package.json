@@ -133,6 +133,7 @@
     "react-native-image-pan-zoom": "2.1.12",
     "react-native-image-picker": "8.2.1",
     "react-native-keyboard-avoiding-scroll-view": "1.0.1",
+    "react-native-keyboard-controller": "1.20.7",
     "react-native-layout-debug": "1.1.1",
     "react-native-localize": "3.6.1",
     "react-native-logs": "5.5.0",

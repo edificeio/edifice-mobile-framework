@@ -7,6 +7,7 @@ import LottieView from 'lottie-react-native';
 import { getBundleId } from 'react-native-device-info';
 import VideoPlayer, { VideoPlayerProps } from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebView, { WebViewProps } from 'react-native-webview';
 import { connect } from 'react-redux';
 
@@ -15,7 +16,6 @@ import { MediaPlayerEmbeddedParams, MediaPlayerPlayableParams, MediaPlayerProps 
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
@@ -260,15 +260,17 @@ function MediaPlayer(props: MediaPlayerProps) {
     };
   }, [handleHardwareBack]);
 
+  const { bottom } = useSafeAreaInsets();
+
   // force page to be 100% height of the screen
   const wrapperStyle = React.useMemo(
     () => [
       styles.page,
       {
-        height: isPortrait ? UI_SIZES.screen.height : UI_SIZES.screen.width,
+        paddingBottom: Platform.OS === 'android' ? bottom : undefined,
       },
     ],
-    [isPortrait],
+    [bottom],
   );
 
   const [hideStatusBar, setHideStatusBar] = React.useState<boolean | undefined>(undefined);

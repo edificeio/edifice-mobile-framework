@@ -92,7 +92,6 @@ export enum TimelineLoadingState {
 }
 export interface ITimelineScreenState {
   loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
-  test: string;
 }
 
 export enum ITimelineItemType {
@@ -175,7 +174,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   state: ITimelineScreenState = {
     loadingState: TimelineLoadingState.PRISTINE,
-    test: '',
   };
 
   rights = getTimelineWorkflowInformation(this.props.session);
@@ -188,62 +186,19 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   // RENDER =======================================================================================
   //
 
-  onChange = ({ nativeEvent: { text } }) => {
-    this.setState({ test: text });
-  };
-
   boxStyle = { backgroundColor: theme.palette.grey.pearl, flex: 1 };
   boxStyle2 = { ...this.boxStyle, padding: getScaleWidth(7.5) };
 
   render() {
     return (
       <PageView>
-        <View style={{ gap: 8 }}>
-          <CommentForm userId={getSession()?.user.id!} />
-          {/*<View style={{ alignItems: 'flex-start', flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
-            <View style={{ backgroundColor: 'orange', height: UI_SIZES.elements.avatar.md, width: UI_SIZES.elements.avatar.md }} />
-            <BaseTextArea
-              aimHeight={UI_SIZES.elements.avatar.md}
-              wrapperStyle={this.boxStyle}
-              value={this.state.test}
-              onChange={this.onChange}
-              maxLines={5}
-            />
-            <CaptionText style={this.boxStyle2}>{this.state.test}</CaptionText>
-          </View>*/}
-          <View style={{ alignItems: 'flex-start', flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
-            <View style={{ backgroundColor: 'pink', height: UI_SIZES.elements.avatar.md, width: UI_SIZES.elements.avatar.md }} />
-            <BaseTextInput
-              aimHeight={UI_SIZES.elements.avatar.md}
-              wrapperStyle={this.boxStyle}
-              value={this.state.test}
-              onChange={this.onChange}
-              placeholder="Ajouter un commentaire"
-            />
-            <CaptionText numberOfLines={1} style={this.boxStyle2}>
-              {this.state.test}
-            </CaptionText>
-          </View>
-          <View style={{ alignItems: 'flex-start', flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
-            <View style={{ backgroundColor: 'pink', height: UI_SIZES.elements.avatar.md, width: UI_SIZES.elements.avatar.md }} />
-            <ChatTextArea
-              wrapperStyle={UI_STYLES.flex1}
-              value={this.state.test}
-              onChange={this.onChange}
-              maxLength={80}
-              minLines={2}
-              placeholder="Ajouter un commentaire. Avec beaucoup de texte on s'y méprendrait"
-            />
-          </View>
-          <View style={{ flex: 1 }}></View>
-          {/*{[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
+        {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
           <LoadingIndicator />
         ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
           this.renderError()
         ) : (
           this.renderList()
-        )}*/}
-        </View>
+        )}
       </PageView>
     );
   }

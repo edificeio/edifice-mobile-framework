@@ -5,6 +5,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import * as RNLocalize from 'react-native-localize';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Redux from 'react-redux';
@@ -100,16 +101,25 @@ function App(props: AppProps) {
     if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
   }, []);
 
+  /**
+   * on Android, edge-to-edge compatibility for react-native-keyboard-controller force us to make Status bar transparent
+   *  and take insets into account when needed.
+   */
   const content = (
-    <DeviceTrust>
-      <GestureHandlerRootView style={UI_STYLES.flex1}>
-        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <Redux.Provider store={props.store}>
-            <AppStartupHandler />
-          </Redux.Provider>
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
-    </DeviceTrust>
+    <>
+      <StatusBar translucent />
+      <DeviceTrust>
+        <KeyboardProvider navigationBarTranslucent>
+          <GestureHandlerRootView style={UI_STYLES.flex1}>
+            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+              <Redux.Provider store={props.store}>
+                <AppStartupHandler />
+              </Redux.Provider>
+            </SafeAreaProvider>
+          </GestureHandlerRootView>
+        </KeyboardProvider>
+      </DeviceTrust>
+    </>
   );
   return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }

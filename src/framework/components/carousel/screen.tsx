@@ -6,13 +6,13 @@ import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-na
 
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import RNFastImage, { FastImageProps } from 'react-native-fast-image';
 import RNFS from 'react-native-fs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Share from 'react-native-share';
 
 import { IImageSize } from './image-viewer/image-viewer.type';
@@ -27,7 +27,6 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { DEFAULTS, ToastContainer } from '~/framework/components/toast/component';
 import { markViewAudience } from '~/framework/modules/audience';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -291,7 +290,7 @@ export function Carousel(props: ICarouselProps) {
     );
   }, []);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (isNavBarVisible) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
@@ -371,8 +370,13 @@ export function Carousel(props: ICarouselProps) {
     [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading],
   );
 
+  const { top } = useSafeAreaInsets();
+
   return (
-    <PageView style={styles.page} showNetworkBar={false} showToast={false}>
+    <PageView
+      style={React.useMemo(() => [styles.page, { paddingTop: Platform.OS === 'android' ? top : undefined }], [top])}
+      showNetworkBar={false}
+      showToast={false}>
       <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
       {imageViewer}
     </PageView>
