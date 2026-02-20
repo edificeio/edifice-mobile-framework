@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { AudienceReferer, AudienceViews } from '~/framework/modules/audience/types';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { NewsCommentItem, NewsItem, NewsItemDetails } from '~/framework/modules/news/model';
 import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
@@ -17,6 +18,7 @@ export interface NewsDetailsScreenEventProps {
   handleDeleteComment(infoId: number, commentId: number): Promise<number | undefined>;
   handlePublishComment(infoId: number, comment: string): Promise<number | undefined>;
   handleEditComment(infoId: number, comment: string, commentId: number): Promise<number | undefined>;
+  handleViewsCount(referer: Omit<AudienceReferer, 'resourceType'>): Promise<AudienceViews>;
 }
 
 export interface NewsDetailsScreenNavParams {
