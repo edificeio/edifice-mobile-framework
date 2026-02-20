@@ -89,7 +89,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const [infoComment, setInfoComment] = useState<InfoCommentField>({ changed: false, isPublication: false, type: '', value: '' });
   const [indexEditingComment, setIndexEditingComment] = useState<number | undefined>(undefined);
   const [listHeight, setListHeight] = useState<number>(0);
-  const [_, setAudieceViews] = useState<AudienceViews | undefined>(undefined);
+  const [audienceViews, setAudienceViews] = useState<AudienceViews | undefined>(undefined);
   const hasCountedViewRef = useRef<boolean>(false);
 
   const isThreadManager = useMemo(
@@ -427,10 +427,10 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     hasCountedViewRef.current = true;
 
     handleViewsCount({ module: 'actualites', resourceId: String(news.id) })
-      .then(setAudieceViews)
-      .catch(reason => {
+      .then(setAudienceViews)
+      .catch(error => {
         //for now donno what to put here
-        console.error('[Audience] View count failed', reason);
+        console.error('[Audience] View count failed', error);
       });
   }, [news, loadingState, handleViewsCount]);
 
