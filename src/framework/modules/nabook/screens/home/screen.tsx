@@ -20,7 +20,7 @@ import WelcomeScreen from '~/framework/modules/nabook/components/WelcomeScreen';
 import { NabookNavigationParams, nabookRouteNames } from '~/framework/modules/nabook/navigation';
 import { NBK_BASE_URL, NBK_COLORS } from '~/framework/modules/nabook/utils/constants';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { sessionFetch } from '~/framework/util/transport';
+import { deviceFetch, sessionFetch } from '~/framework/util/transport';
 
 const styles = StyleSheet.create({
   containerLoading: {
@@ -64,7 +64,7 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
     try {
       const r = await sessionFetch.json<{ nabookMobile?: string; nabookUrl?: string }>(`/nabook/conf`);
 
-      const res = await fetch(`${r.nabookMobile || NBK_BASE_URL}/main/edifice/token/session`, {
+      const res = await deviceFetch(`${r.nabookMobile || NBK_BASE_URL}/main/edifice/token/session`, {
         body: JSON.stringify({
           origin: getPlatform()?.url,
         }),
