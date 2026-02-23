@@ -248,16 +248,17 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
 
   React.useEffect(() => {
     if (validateImport) {
-      navigation.navigate(route.params.redirectTo.name, {
-        ...route.params.redirectTo.params,
-        importAttachmentsResult: filesRef.current
-          .filter(f => f.status === UploadAttachmentStatus.OK)
-          .map(f => ({
-            filename: f.localFile.filename,
-            id: f.id,
-            url: f.url,
-          })),
-      });
+      const result = filesRef.current
+        .filter(f => f.status === UploadAttachmentStatus.OK)
+        .map(f => ({
+          filename: f.localFile.filename,
+          id: f.id,
+          url: f.url,
+        }));
+
+      route.params.onImportAttachmentsResult?.(result);
+
+      navigation.goBack();
     }
   }, [validateImport, navigation, route]);
 

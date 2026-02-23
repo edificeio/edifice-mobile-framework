@@ -172,11 +172,10 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   const handleChoosePics = async () => {
     hideChoosePicsMenu();
     setTimeout(() => {
-      // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
-          redirectTo: route,
+          onImportResult: handleAddFiles,
           source: 'gallery',
           uploadParams: props.uploadParams,
         },
@@ -187,18 +186,16 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   const handleTakePic = async () => {
     hideChoosePicsMenu();
     setTimeout(() => {
-      // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
-          redirectTo: route,
+          onImportResult: handleAddFiles,
           source: 'camera',
           uploadParams: props.uploadParams,
         },
       });
     }, OPEN_FILE_IMPORT_TIMEOUT);
   };
-
   const choosePicsMenu = () => {
     return (
       <BottomSheetModal ref={choosePicsMenuRef} onDismiss={handleChoosePicsMenuDismissed}>

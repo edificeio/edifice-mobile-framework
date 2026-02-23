@@ -16,6 +16,7 @@ export namespace AttachmentsImportScreenProps {
     redirectTo: Route<string, ParamListBase>;
     source: FileSource;
     draftId: string;
+    onImportAttachmentsResult?: (result: Array<{ filename: string; id: string | undefined; url: string | undefined }>) => void;
   }
 
   export type Navigation = NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.AttachmentsImport>;
