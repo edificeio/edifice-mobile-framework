@@ -1,6 +1,7 @@
 import { ParamListBase, Route } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { UploadStatus } from '~/framework/components/inputs/rich-text/form/types';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service/types';
 import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { LocalFile } from '~/framework/util/fileHandler/models';
@@ -12,6 +13,7 @@ export namespace FileImportScreenProps {
   export interface NavParams {
     files: LocalFile[];
     uploadParams: IWorkspaceUploadParams;
+    onImportResult?: (result: Array<{ status: UploadStatus; workspaceID: string | undefined }>) => void;
     redirectTo: Route<string, ParamListBase>;
     source: FileSource;
   }

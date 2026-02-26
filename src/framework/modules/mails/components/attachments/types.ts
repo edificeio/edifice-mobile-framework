@@ -9,4 +9,5 @@ export interface AttachmentsProps {
   addAttachmentAction?: (attachment: IDistantFileWithId) => Promise<SyncedFileWithId>;
   removeAttachmentAction?: (attachment: IDistantFileWithId) => Promise<void>;
   onPressAddAttachments?: () => void;
+  onImportAttachmentsResult?: (result: Array<{ filename: string; id: string | undefined; url: string | undefined }>) => void;
 }

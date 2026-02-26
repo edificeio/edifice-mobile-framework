@@ -47,6 +47,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       onCheckSend,
       onCloseInactiveUserModal,
       onFocus,
+      onImportAttachmentsResult,
       onOpenHistory,
       onPressAddAttachments,
       onRemoveAttachment,
@@ -170,11 +171,22 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           removeAttachmentAction={onRemoveAttachment}
           draftId={draftIdSaved}
           onPressAddAttachments={onPressAddAttachments}
+          onImportAttachmentsResult={onImportAttachmentsResult}
         />
         <View style={{ minHeight: 600 }} />
       </View>
     ),
-    [history, isHistoryOpen, session, onOpenHistory, attachments, onRemoveAttachment, draftIdSaved, onPressAddAttachments],
+    [
+      history,
+      isHistoryOpen,
+      session,
+      onOpenHistory,
+      attachments,
+      onRemoveAttachment,
+      draftIdSaved,
+      onPressAddAttachments,
+      onImportAttachmentsResult,
+    ],
   );
 
   const renderContent = React.useCallback(() => {
