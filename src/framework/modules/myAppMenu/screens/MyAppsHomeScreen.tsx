@@ -49,6 +49,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     closeBottomSheet,
     completeOnboarding,
     filter,
+    handleDismiss,
     hasSeenOnboarding,
     isAllAppsTab,
     modalRef,
@@ -201,13 +202,12 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   const renderBottomSheet = React.useCallback(
     () => (
       <BottomSheetModal
-        closeButton
         ref={bottomSheetRef}
-        onChange={index => {
-          setIsBottomSheetOpened(index >= 0);
-        }}
+        onDismiss={handleDismiss}
+        onChange={index => setIsBottomSheetOpened(index >= 0)}
         enableDynamicSizing
-        containerStyle={styles.bottomSheetContainer}>
+        containerStyle={styles.bottomSheetContainer}
+        closeButton>
         {renderBottomSheetContent()}
       </BottomSheetModal>
     ),

@@ -13,6 +13,7 @@ import theme from '~/app/theme';
 import FlatList from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';
 import SearchBar from '~/framework/components/search-bar';
+import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { SmallActionText } from '~/framework/components/text';
 import { MyAppsFilterCell } from '~/framework/modules/myAppMenu/components';
 
@@ -20,7 +21,10 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
   const searchQuery = selectedFilter.type === 'search' ? selectedFilter.value : '';
 
   const [searchActive, setSearchActive] = React.useState(false);
+  const [searchFocused, setSearchFocused] = React.useState<boolean>(false);
+
   const listRef = React.useRef<any>(null);
+  const searchRef = React.useRef<SearchBarHandle>(null);
 
   const { animatedContainerStyle, animatedIconStyle, animatedSearchStyle, close, open } = useAnimatedSearchStyles();
 
@@ -49,6 +53,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
     setSearchActive(true);
     resetCategory();
     open();
+    setTimeout(() => searchRef.current?.focus(), 250);
   }, [open, resetCategory, scrollToStart]);
 
   const closeSearch = React.useCallback(() => {
@@ -71,7 +76,8 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
       scrollEnabled={!searchActive}
       ListHeaderComponent={
         <View style={styles.searchContainerWrapper}>
-          <Animated.View style={[styles.animatedSearchContainer, animatedContainerStyle]}>
+          <Animated.View
+            style={[styles.animatedSearchContainer, searchActive && styles.activeAnimatedContainer, animatedContainerStyle]}>
             <Animated.View style={[styles.searchIcon, animatedIconStyle]}>
               <Pressable style={styles.clickzone} onPress={openSearch}>
                 <Svg name="ui-search" width={20} height={20} fill={theme.ui.text.regular} />
@@ -80,11 +86,14 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
 
             <Animated.View style={[styles.searchOverlay, animatedSearchStyle]}>
               <SearchBar
+                ref={searchRef}
+                clearButtonCustomColor={styles.clearButtonColor.color}
                 query={searchQuery}
                 placeholder={I18n.get('common-search')}
                 onChangeQuery={value => onFilterChange({ type: 'search', value })}
                 onClear={clearSearch}
-                containerStyle={styles.search}
+                onFocusChange={setSearchFocused}
+                containerStyle={[styles.search, !searchFocused && searchQuery.length === 0 ? styles.searchInactive : undefined]}
               />
             </Animated.View>
           </Animated.View>

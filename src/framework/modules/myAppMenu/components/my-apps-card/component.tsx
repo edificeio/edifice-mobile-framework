@@ -17,21 +17,14 @@ import { Image } from '~/framework/util/media/components/image';
 
 const LetterFallback = ({ label }: { label: string }) => {
   const letter = label?.trim()?.charAt(0)?.toUpperCase() ?? '?';
+  const styles = useStyles();
 
-  return (
-    <BodyBoldText
-      style={{
-        color: theme.palette.grey.black,
-        fontSize: UI_SIZES.spacing.large,
-      }}>
-      {letter}
-    </BodyBoldText>
-  );
+  return <BodyBoldText style={styles.letterFallbackStyle}>{letter}</BodyBoldText>;
 };
 
 export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   const styles = useStyles(app);
-  const { animatedFavoriteStyle } = useController(app.isFavorite);
+  const { animatedFavoriteStyle } = useController(app.name, app.isFavorite);
 
   const [iconError, setIconError] = React.useState(false);
 

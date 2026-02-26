@@ -21,6 +21,9 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
     const [layoutWidth, setLayoutWidth] = React.useState(0);
 
     const isLast = index === slides.length - 1;
+    const isFirst = index === 0;
+
+    const leftLabel = isFirst ? getLang('myapp-onboarding-skip') : getLang('myapp-onboarding-previous');
 
     const reset = React.useCallback(() => {
       setIndex(0);
@@ -76,10 +79,12 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
         modalBoxRef.current?.doShowModal();
       },
     }));
+    const leftAction = isFirst ? closeModal : handlePrevious;
 
     return (
       <ModalBox
         ref={modalBoxRef}
+        contentContainerStyle={styles.modalContentContainerStyle}
         content={
           <View
             style={styles.container}
@@ -120,20 +125,13 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
 
             <View style={styles.bottom}>
               <View style={styles.navSide}>
-                {index > 0 ? (
-                  <Pressable style={styles.navButton} onPress={handlePrevious}>
-                    <Svg name="ui-chevron-left" width={14} height={14} fill={theme.palette.primary.regular} />
-                    <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={styles.navButtonText}>
-                      {getLang('myapp-onboarding-previous')}
-                    </BodyBoldText>
-                  </Pressable>
-                ) : (
-                  <Pressable onPress={closeModal}>
-                    <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={styles.navButtonPrimary}>
-                      {getLang('myapp-onboarding-skip')}
-                    </BodyBoldText>
-                  </Pressable>
-                )}
+                <Pressable style={!isFirst && styles.navButton} onPress={leftAction}>
+                  {!isFirst && <Svg name="ui-chevron-left" width={14} height={14} fill={theme.palette.grey.graphite} />}
+
+                  <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={styles.navButtonPrimary}>
+                    {leftLabel}
+                  </BodyBoldText>
+                </Pressable>
               </View>
 
               <View style={styles.navSide}>

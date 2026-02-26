@@ -1,10 +1,8 @@
 import { UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
-import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   appsInfoActionTypes,
@@ -102,7 +100,7 @@ export const initMesAppliAtLogin = (): ThunkResult => async dispatch => {
 };
 
 export const toggleFavorite =
-  (appName: string): ThunkResult =>
+  (appName: string, onDone?: (ok: boolean) => void): ThunkResult =>
   async (dispatch, getState: () => AppsInfoState) => {
     const session = getSession();
     if (!session) return;
@@ -133,16 +131,16 @@ export const toggleFavorite =
         }),
       );
 
-      Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
+      onDone?.(true);
     } catch (e) {
       console.error('Error updating favorites:', e);
       dispatch(appInfoActions.toggleFavorite(appName));
-      Toast.showError(I18n.get('myapp-add-favorite-error-message'));
+      onDone?.(false);
     }
   };
 
 export const saveGroupedFavorites =
-  (bookmarks: string[]): ThunkResult =>
+  (bookmarks: string[], onDone?: (ok: boolean) => void): ThunkResult =>
   async (dispatch, getState) => {
     const session = getSession();
     if (!session) return;
@@ -172,11 +170,11 @@ export const saveGroupedFavorites =
 
       dispatch(appInfoActions.saveGroupedFavoritesSuccess(refreshed.bookmarks));
 
-      Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
+      onDone?.(true);
     } catch (e) {
       console.error('[saveGroupedFavorites] ERROR', e);
       dispatch(appInfoActions.saveGroupedFavoritesError());
-      Toast.showError(I18n.get('myapp-add-favorite-error-message'));
+      onDone?.(false);
     }
   };
 

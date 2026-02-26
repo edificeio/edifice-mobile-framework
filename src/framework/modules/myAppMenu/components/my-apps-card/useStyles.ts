@@ -5,8 +5,8 @@ import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
-export const useStyles = (app: AppsInfoAggregated) => {
-  const appColor = app.color;
+export const useStyles = (app?: AppsInfoAggregated) => {
+  const appColor = app?.color;
   const themeMainColor = theme.palette.complementary;
   const backgroundColor = appColor && themeMainColor[appColor] ? themeMainColor[appColor].regular : undefined;
 
@@ -42,6 +42,13 @@ export const useStyles = (app: AppsInfoAggregated) => {
           height: '100%',
           objectFit: 'fill',
           width: '100%',
+        },
+        letterFallbackStyle: {
+          color: theme.palette.grey.black,
+          fontSize: UI_SIZES.spacing.large,
+          includeFontPadding: false,
+          lineHeight: UI_SIZES.spacing.large * 1.2,
+          textAlignVertical: 'center',
         },
         title: {
           textAlign: 'center',

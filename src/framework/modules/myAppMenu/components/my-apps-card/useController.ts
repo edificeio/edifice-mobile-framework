@@ -20,7 +20,7 @@ const ANIMATION = {
   UNFAVORITE_DURATION: 500,
 };
 
-export const useController = (isFavorite: boolean) => {
+export const useController = (appId: string, isFavorite: boolean) => {
   const scaleProgress = useSharedValue(0);
   const rotateProgress = useSharedValue(0);
 
@@ -42,6 +42,7 @@ export const useController = (isFavorite: boolean) => {
     }),
     [],
   );
+
   React.useEffect(() => {
     if (previousFavoriteRef.current === null) {
       scaleProgress.value = isFavorite ? 1 : 0;
@@ -79,6 +80,13 @@ export const useController = (isFavorite: boolean) => {
 
     previousFavoriteRef.current = isFavorite;
   }, [isFavorite, rotateProgress, scaleProgress]);
+
+  React.useEffect(() => {
+    scaleProgress.value = isFavorite ? 1 : 0;
+    rotateProgress.value = isFavorite ? ANIMATION.ROTATION_ANGLE : 0;
+    previousFavoriteRef.current = isFavorite;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appId]);
 
   return { animatedFavoriteStyle, imageDimensions };
 };

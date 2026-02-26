@@ -16,9 +16,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: UI_SIZES.spacing.small,
   },
-  bottomContainerWrapper: { paddingVertical: getScaleHeight(5) },
+  bottomContainerWrapper: {
+    paddingVertical: getScaleHeight(5),
+  },
   carousel: {
     flex: 1,
     justifyContent: 'center',
@@ -32,7 +33,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   description: {
-    color: theme.palette.grey.darkness,
     marginTop: UI_SIZES.spacing.small,
     textAlign: 'center',
     ...TextSizeStyle.Normal,
@@ -41,7 +41,6 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.spacing.small,
     height: UI_SIZES.spacing.small,
-    marginHorizontal: UI_SIZES.spacing.tiny,
     width: UI_SIZES.spacing.small,
   },
   illustrationWrapper: {
@@ -50,6 +49,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: UI_SIZES.spacing.medium,
     width: getScaleWidth(180),
+  },
+  modalContentContainerStyle: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.big,
   },
   navButton: {
     alignItems: 'center',
@@ -72,11 +75,11 @@ export const styles = StyleSheet.create({
   },
   pagination: {
     flexDirection: 'row',
+    gap: 16,
     justifyContent: 'center',
   },
   slide: {
     alignContent: 'center',
-    paddingHorizontal: UI_SIZES.spacing.medium,
     width: '100%',
   },
   title: {

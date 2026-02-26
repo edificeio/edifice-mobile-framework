@@ -5,6 +5,7 @@ import { ManageFavoriteScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { AppDispatch, getStore } from '~/app/store';
+import Toast from '~/framework/components/toast';
 import {
   getAllappsShowedState,
   saveGroupedFavorites,
@@ -53,8 +54,17 @@ export const useManageFavoritesController = (navigation: ManageFavoriteScreenPro
   }, []);
 
   const onValidate = React.useCallback(() => {
-    dispatch(saveGroupedFavorites(Array.from(selected)));
-  }, [dispatch, selected]);
+    dispatch(
+      saveGroupedFavorites(Array.from(selected), ok => {
+        if (ok) {
+          navigation.goBack();
+          Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
+        } else {
+          Toast.showError(I18n.get('myapp-add-favorite-error-message'));
+        }
+      }),
+    );
+  }, [dispatch, selected, navigation]);
 
   const hasUnsavedChanges = React.useMemo(() => {
     const initial = initialSelectedRef.current;

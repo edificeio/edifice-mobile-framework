@@ -4,6 +4,9 @@ import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export const styles = StyleSheet.create({
+  clearButtonColor: {
+    color: theme.palette.grey.black,
+  },
   container: {
     alignItems: 'center',
     flexDirection: 'column',
@@ -25,5 +28,8 @@ export const styles = StyleSheet.create({
     paddingBottom: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingTop: UI_SIZES.spacing.small,
+  },
+  searchInactive: {
+    borderColor: theme.palette.grey.cloudy,
   },
 });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import NativeModal from 'react-native-modal';
 
@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
 });
 
 export interface ModalBoxProps {
-  content: JSX.Element;
+  content: React.JSX.Element;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
 export interface ModalBoxHandle {
@@ -47,7 +48,7 @@ export interface ModalBoxHandle {
   doDismissModal: () => void;
 }
 
-export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(({ content }, ref) => {
+export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(({ content, contentContainerStyle }, ref) => {
   const [showModal, setShowModal] = React.useState(false);
   const doDismissModal = React.useCallback(() => setShowModal(false), []);
   const doShowModal = React.useCallback(() => setShowModal(true), []);
@@ -60,7 +61,7 @@ export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(({ conte
       isVisible={showModal}
       onBackdropPress={doDismissModal}
       style={styles.nativeModal}>
-      <View style={styles.outerView}>
+      <View style={[styles.outerView, contentContainerStyle]}>
         {content}
         <View style={styles.innerView}>
           <TouchableOpacity onPress={doDismissModal}>

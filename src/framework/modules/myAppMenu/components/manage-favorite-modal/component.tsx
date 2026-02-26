@@ -11,13 +11,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
+import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { MyAppsList } from '~/framework/modules/myAppMenu/components/my-apps-list';
 import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myAppMenu/screens/utils';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-const headerTitleStyle = {
-  color: theme.palette.grey.darkness,
-};
 
 const HeaderLeft = ({ isSaving, onClose }: HeaderLeftProps) => (
   <NavBarAction color={theme.palette.grey.black} icon="ui-close" disabled={isSaving} onPress={onClose} />
@@ -43,18 +40,17 @@ export const computeNavBar: ManageFavoriteScreenProps.NavBarConfig = ({ navigati
   }),
   headerStyle: {
     backgroundColor: theme.ui.background.page as string,
-    borderBottomWidth: 0,
     elevation: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    shadowOpacity: 0,
-    top: 0,
-    zIndex: 100,
   },
-  ...headerTitleStyle,
+  headerTitle: '',
+  statusBarColor: theme.palette.grey.white.toString(),
+  statusBarStyle: 'dark',
+  statusBarTranslucent: false,
 });
 export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenProps.AllProps) => {
+  const searchRef = React.useRef<SearchBarHandle>(null);
+  const [searchFocused, setSearchFocused] = React.useState<boolean>(false);
+
   const { displayApps, handleGoBack, hasUnsavedChanges, isSaving, onToggle, onValidate, query, setQuery } =
     useManageFavoritesController(navigation);
 
@@ -79,11 +75,14 @@ export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenP
     <PageView>
       <View style={styles.searchContainer}>
         <SearchBar
-          containerStyle={styles.search}
+          ref={searchRef}
+          clearButtonCustomColor={styles.clearButtonColor.color}
+          containerStyle={[styles.search, !searchFocused && query.length === 0 ? styles.searchInactive : undefined]}
           query={query}
           placeholder={I18n.get('common-search')}
           onChangeQuery={setQuery}
           onClear={() => setQuery('')}
+          onFocusChange={setSearchFocused}
         />
       </View>
 

@@ -4,15 +4,19 @@ import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export const styles = StyleSheet.create({
+  activeAnimatedContainer: { borderWidth: 0 },
   animatedSearchContainer: {
     borderColor: theme.palette.primary.regular,
-    borderWidth: 2,
+    borderWidth: 1,
     height: getScaleWidth(40),
     justifyContent: 'center',
     overflow: 'hidden',
   },
   cancelTextStyle: {
     fontWeight: 'bold',
+  },
+  clearButtonColor: {
+    color: theme.palette.grey.black,
   },
   clickzone: {
     padding: UI_SIZES.spacing.minor,
@@ -23,6 +27,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: theme.palette.grey.cloudy,
     justifyContent: 'center',
+    paddingRight: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.small,
   },
   list: {
@@ -30,13 +35,13 @@ export const styles = StyleSheet.create({
     flexShrink: 0,
   },
   search: {
+    borderColor: theme.palette.primary.regular,
     borderRadius: UI_SIZES.radius.extraLarge,
-    height: getScaleWidth(36),
+    height: getScaleWidth(40),
     width: '100%',
   },
   searchContainerWrapper: {
     alignItems: 'center',
-    backgroundColor: theme.palette.grey.fog,
     flexDirection: 'row',
     gap: getScaleWidth(12),
     justifyContent: 'center',
@@ -46,6 +51,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     height: '100%',
     justifyContent: 'center',
+  },
+  searchInactive: {
+    borderColor: theme.palette.grey.cloudy,
   },
   searchOverlay: {
     ...StyleSheet.absoluteFillObject,
