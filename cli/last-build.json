@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-02-23 12:27:02",
-  "notes": "update(stack): yarn cache update\nrelease: 1.16.5-rc.1(1160501)",
-  "version": "1.16.5-rc.2(1160502)",
+  "last": "2026-02-26 18:12:19",
+  "notes": "chore(stack): yarn cache update\nfeat(mails): CLC-114 add Carbonio service in mails\nrelease: 1.16.5-rc.2(1160502)",
+  "version": "1.16.5-inte.1(1160503)",
   "track": "1.16.5"
 }
