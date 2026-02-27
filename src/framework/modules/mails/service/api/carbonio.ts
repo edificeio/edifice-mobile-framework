@@ -353,7 +353,7 @@ export const carbonioMailsApi = {
       }
 
       if (params.inReplyTo) {
-        sendRequest.m.did = params.inReplyTo;
+        sendRequest.m.origid = params.inReplyTo;
       }
 
       const response = await carbonioSoapRequest<any>(session, 'SendMsgRequest', sendRequest);
@@ -392,7 +392,7 @@ export const carbonioMailsApi = {
       };
 
       if (params.inReplyTo) {
-        draftRequest.m.inReplyTo = params.inReplyTo;
+        draftRequest.m.origid = params.inReplyTo;
       }
 
       const response = await carbonioSoapRequest<any>(session, 'SaveDraftRequest', draftRequest);
