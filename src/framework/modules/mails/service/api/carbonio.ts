@@ -28,7 +28,7 @@ async function getCarbonioAuthToken(_: AuthActiveAccount): Promise<string> {
 /**
  * Build SOAP request body for Carbonio API
  */
-function buildSoapRequest(authToken: string, requestName: string, body: any): any {
+function buildSoapRequest(authToken: string, requestName: string, body: any, contentName: string): any {
   return {
     Body: {
       [requestName]: {
@@ -39,10 +39,13 @@ function buildSoapRequest(authToken: string, requestName: string, body: any): an
     Header: {
       context: {
         _jsns: 'urn:zimbra',
-        account: {
-          _content: 'moustapha.hennawi@lyceeconnecte.fr',
-          by: 'name',
-        },
+        ...(contentName &&
+          contentName !== '' && {
+            account: {
+              _content: contentName,
+              by: 'name',
+            },
+          }),
         authToken: {
           _content: authToken,
         },
@@ -54,9 +57,19 @@ function buildSoapRequest(authToken: string, requestName: string, body: any): an
 /**
  * Make SOAP request to Carbonio API
  */
-async function carbonioSoapRequest<T>(session: AuthActiveAccount, requestName: string, requestBody: any): Promise<T> {
+async function carbonioSoapRequest<T>(
+  session: AuthActiveAccount,
+  requestName: string,
+  requestBody: any,
+  withContentName: boolean = false,
+): Promise<T> {
   const authToken = await getCarbonioAuthToken(session);
-  const soapBody = buildSoapRequest(authToken, requestName, requestBody);
+  const soapBody = buildSoapRequest(
+    authToken,
+    requestName,
+    requestBody,
+    withContentName ? `${session.user.login}@lyceeconnecte.fr` : '',
+  );
 
   const response = await fetch(`${CARBONIO_SOAP_BASE_URL}/${requestName}`, {
     body: JSON.stringify(soapBody),
@@ -473,13 +486,18 @@ export const carbonioMailsApi = {
       const session = getSession();
       if (!session) throw new Error('No session found');
 
-      const response = await carbonioSoapRequest<any>(session, 'FullAutocompleteRequest', {
-        _jsns: 'urn:zimbraMail',
-        AutoCompleteRequest: {
-          includeGal: 1,
-          name: query || '',
+      const response = await carbonioSoapRequest<any>(
+        session,
+        'FullAutocompleteRequest',
+        {
+          _jsns: 'urn:zimbraMail',
+          AutoCompleteRequest: {
+            includeGal: 1,
+            name: query || '',
+          },
         },
-      });
+        true,
+      );
 
       const contacts = response.Body?.FullAutocompleteResponse?.match || [];
       const visibles: MailsVisibleBackend[] = contacts.map((contact: any) => {
