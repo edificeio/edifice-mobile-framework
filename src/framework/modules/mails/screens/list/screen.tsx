@@ -7,6 +7,7 @@ import { FlatList as GHFlatList } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
+import { defaultUserIdCarbonio } from '../../service/api/carbonio';
 import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
@@ -995,7 +996,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderMailPreview = React.useCallback(
     (mail: IMailsMailPreview) => {
-      const isSender = props.session?.user.id === mail.from?.id && selectedFolder !== MailsDefaultFolders.INBOX;
+      const isSender =
+        (props.session?.user.id === mail.from?.id || defaultUserIdCarbonio(props.session) === mail.from?.id) &&
+        selectedFolder !== MailsDefaultFolders.INBOX;
       const isDraft = mail.state === MailsMailStatePreview.DRAFT;
       const isTrashed = selectedFolder === MailsDefaultFolders.TRASH;
       return (

@@ -116,6 +116,10 @@ const folderIdSwitch = (folderId: string) => {
   }
 };
 
+export const defaultUserIdCarbonio = (session: AuthActiveAccount | undefined) => {
+  if (!session) return '';
+  return `${session.user.login}@lyceeconnecte.fr`;
+};
 const getItemId = (id: string) => {
   if (id === null || id === undefined) {
     throw new Error('Invalid id');
