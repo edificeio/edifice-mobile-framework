@@ -65,7 +65,6 @@ export const MyAppsList = ({ apps, emptyScreenConfig, isAllAppsFilter, onLongPre
     <FlashList
       ref={appsListRef}
       data={data}
-      extraData={apps}
       numColumns={NUM_COLUMNS}
       estimatedItemSize={120}
       keyExtractor={keyExtractor}

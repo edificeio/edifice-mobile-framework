@@ -99,6 +99,12 @@ export const initMesAppliAtLogin = (): ThunkResult => async dispatch => {
   await dispatch(afterLoginSetup());
 };
 
+const bookmarksAreEqual = (a: string[], b: string[]): boolean => {
+  if (a.length !== b.length) return false;
+  const setA = new Set(a);
+  return b.every(name => setA.has(name));
+};
+
 export const toggleFavorite =
   (appName: string, onDone?: (ok: boolean) => void): ThunkResult =>
   async (dispatch, getState: () => AppsInfoState) => {
@@ -111,25 +117,27 @@ export const toggleFavorite =
 
     const nextBookmarks = computeNextBookmarks(favorites.bookmarks, appName).filter(name => favorites.applications.includes(name));
 
-    const optimisticFavorites: AppBookmarks = {
-      applications: favorites.applications,
-      bookmarks: nextBookmarks,
-    };
-
     dispatch(appInfoActions.toggleFavorite(appName));
 
     try {
-      await myAppsService.updateBookmarks(optimisticFavorites);
+      await myAppsService.updateBookmarks({
+        applications: favorites.applications,
+        bookmarks: nextBookmarks,
+      });
 
       const refreshedFavorites = await myAppsService.bookmarks();
 
-      dispatch(
-        appInfoActions.fetchSuccess({
-          appsConfig,
-          appsInfo,
-          favorites: refreshedFavorites,
-        }),
-      );
+      const currentBookmarks = selectAppsState(getState()).favorites.bookmarks;
+
+      if (!bookmarksAreEqual(currentBookmarks, refreshedFavorites.bookmarks)) {
+        dispatch(
+          appInfoActions.fetchSuccess({
+            appsConfig,
+            appsInfo,
+            favorites: refreshedFavorites,
+          }),
+        );
+      }
 
       onDone?.(true);
     } catch (e) {

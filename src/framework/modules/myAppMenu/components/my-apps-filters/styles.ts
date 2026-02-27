@@ -38,14 +38,12 @@ export const styles = StyleSheet.create({
     borderColor: theme.palette.primary.regular,
     borderRadius: UI_SIZES.radius.extraLarge,
     height: getScaleWidth(40),
-    width: '100%',
+    width: '93%',
   },
   searchContainerWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: getScaleWidth(12),
-    justifyContent: 'center',
-    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   searchIcon: {
     alignItems: 'center',
@@ -65,6 +63,7 @@ export const styles = StyleSheet.create({
   },
   selectedText: {
     color: theme.palette.primary.regular,
+    marginRight: UI_SIZES.spacing.tiny,
   },
   unselectedButton: {
     borderColor: theme.palette.primary.regular,

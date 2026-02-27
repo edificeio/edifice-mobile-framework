@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Alert } from 'react-native';
 
+import { useDispatch, useSelector } from 'react-redux';
+
 import { ManageFavoriteScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import { AppDispatch, getStore } from '~/app/store';
+import { AppDispatch } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import {
   getAllappsShowedState,
@@ -13,28 +15,37 @@ import {
   selectFilteredAppsWithMobile,
   selectIsSavingFavorites,
 } from '~/framework/modules/myapps/reducer';
-import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
 export const useManageFavoritesController = (navigation: ManageFavoriteScreenProps.ManageFavoritesNavigation['navigation']) => {
-  const store = getStore();
-  const appState = store.getState();
-  const dispatch = store.dispatch as AppDispatch;
+  const dispatch = useDispatch<AppDispatch>();
 
-  const isSaving = selectIsSavingFavorites(appState);
-  const savedBookmarks = selectAppBookmarks(appState).bookmarks;
-  const areAppsShowed = getAllappsShowedState(appState);
+  const isSaving = useSelector(selectIsSavingFavorites);
+  const savedBookmarks = useSelector(selectAppBookmarks).bookmarks;
+  const areAppsShowed = useSelector(getAllappsShowedState);
+
+  const allApps = useSelector(state => selectFilteredAppsWithMobile(state, { type: 'category', value: 'toutes' }, areAppsShowed));
 
   const [query, setQuery] = React.useState('');
-  const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
 
   const initialSelectedRef = React.useRef<Set<string>>(new Set());
+  const isSavingRef = React.useRef<boolean>(false);
+  const saveStartRef = React.useRef<number>(0);
+
+  React.useEffect(() => {
+    if (isSavingRef.current) return;
+
+    const initial = new Set(savedBookmarks);
+    initialSelectedRef.current = initial;
+    setSelected(initial);
+  }, [savedBookmarks]);
 
   const filteredApps = React.useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return apps;
-    return apps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(q));
-  }, [apps, query]);
+    if (!q) return allApps;
+
+    return allApps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(q));
+  }, [allApps, query]);
 
   const displayApps = React.useMemo(
     () =>
@@ -54,24 +65,45 @@ export const useManageFavoritesController = (navigation: ManageFavoriteScreenPro
   }, []);
 
   const onValidate = React.useCallback(() => {
+    isSavingRef.current = true;
+    saveStartRef.current = Date.now();
+
     dispatch(
       saveGroupedFavorites(Array.from(selected), ok => {
-        if (ok) {
-          navigation.goBack();
-          Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
-        } else {
+        if (!ok) {
+          isSavingRef.current = false;
           Toast.showError(I18n.get('myapp-add-favorite-error-message'));
         }
       }),
     );
-  }, [dispatch, selected, navigation]);
+  }, [dispatch, selected]);
+
+  React.useEffect(() => {
+    if (!isSavingRef.current || isSaving) return;
+
+    const elapsed = Date.now() - saveStartRef.current;
+    const remaining = Math.max(0, 400 - elapsed);
+
+    setTimeout(() => {
+      isSavingRef.current = false;
+
+      navigation.goBack();
+
+      setTimeout(() => {
+        Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
+      }, 300);
+    }, remaining);
+  }, [isSaving, navigation]);
 
   const hasUnsavedChanges = React.useMemo(() => {
     const initial = initialSelectedRef.current;
+
     if (initial.size !== selected.size) return true;
+
     for (const key of selected) {
       if (!initial.has(key)) return true;
     }
+
     return false;
   }, [selected]);
 
@@ -90,44 +122,6 @@ export const useManageFavoritesController = (navigation: ManageFavoriteScreenPro
       },
     ]);
   }, [hasUnsavedChanges, navigation]);
-
-  React.useEffect(() => {
-    const init = () => {
-      const state = store.getState();
-      const bookmarks = selectAppBookmarks(state).bookmarks;
-
-      const initial = new Set(bookmarks);
-      initialSelectedRef.current = initial;
-      setSelected(initial);
-
-      const aggregated = selectFilteredAppsWithMobile(state, { type: 'category', value: 'toutes' }, areAppsShowed);
-      setApps(aggregated);
-    };
-
-    init();
-    const unsub = store.subscribe(init);
-    return unsub;
-  }, [store, areAppsShowed]);
-
-  React.useEffect(() => {
-    if (isSaving) return;
-
-    const saved = new Set(savedBookmarks);
-
-    let equals = saved.size === selected.size;
-    if (equals) {
-      for (const key of saved) {
-        if (!selected.has(key)) {
-          equals = false;
-          break;
-        }
-      }
-    }
-
-    if (equals) {
-      initialSelectedRef.current = new Set(saved);
-    }
-  }, [savedBookmarks, selected, isSaving]);
 
   return {
     displayApps,
