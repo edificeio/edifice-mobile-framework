@@ -741,7 +741,6 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     return (
       <PageView>
         <ScrollView style={styles.page}>
-          {renderRederictToWebview()}
           <HeadingXSText>{renderSubject(mail?.subject, isRecall)}</HeadingXSText>
           <View style={styles.topInfos}>
             <SingleAvatar size="lg" userId={mail?.from.id} />
@@ -770,6 +769,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
               {renderAttachments()}
               {renderOriginalContent()}
               {renderHistory()}
+              {renderRederictToWebview()}
               {renderButtons()}
               {mail?.noReply && (
                 <AlertCard

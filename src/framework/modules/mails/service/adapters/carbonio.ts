@@ -123,7 +123,18 @@ function isImageToReplace(src: string): boolean {
  */
 function replaceInvalidImagesWithWebViewLink(html: string, webViewUrl: string): string {
   if (!html || !webViewUrl) return html;
-  const linkHtml = `<a href="${webViewUrl.replace(/"/g, '&quot;')}">${I18n.get('mails-details-editorRiche-openImageInWeb')}</a>`;
+  const safeUrl = webViewUrl.replace(/"/g, '&quot;');
+  const linkHtml = `<p style="margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
+  <a href="${safeUrl}" target="_blank" rel="noopener noreferrer"
+     style="display:inline-flex; align-items:center; gap:10px; padding:4px 8px;
+            border:1px dashed #d1d5db; border-radius:12px; text-decoration:none; color:#111827;
+            background:#fafafa;">
+    <span aria-hidden="true">🖼️</span>
+    <span style="font-size:12px;font-style:italic;">
+    ${I18n.get('mails-details-editorRiche-openImageInWeb')}
+    </span>
+  </a>
+</p>`;
   return html.replace(/<img\s[^>]*>/gi, tag => {
     const srcMatch = tag.match(/src\s*=\s*["']([^"']*)["']/i);
     const src = srcMatch ? srcMatch[1].trim() : '';
@@ -163,7 +174,7 @@ export function carbonioMessageToMailContentBackend(message: any, messageId: str
     subject: subjectString(message.su),
     thread_id: message.cid ?? message.id ?? messageId,
     to: { groups: [], users: extractRecipients(recipients, 't') },
-    trashed: false,
+    trashed: message.l === '3',
     unread: (message.f ?? '').includes('u'),
   };
 }
