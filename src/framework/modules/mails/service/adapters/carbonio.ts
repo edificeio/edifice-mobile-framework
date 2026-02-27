@@ -131,7 +131,7 @@ function replaceInvalidImagesWithWebViewLink(html: string, webViewUrl: string): 
             background:#fafafa;">
     <span aria-hidden="true">🖼️</span>
     <span style="font-size:12px;font-style:italic;">
-    ${I18n.get('mails-details-editorRiche-openImageInWeb')}
+    ${I18n.get('mails-details-editorriche-openimageinweb')}
     </span>
   </a>
 </p>`;
