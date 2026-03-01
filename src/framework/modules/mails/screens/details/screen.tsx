@@ -47,9 +47,10 @@ import {
   MailsVisible,
 } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
-import { getRecallMessageRight } from '~/framework/modules/mails/rights';
+import { getMailCarbonioRight, getRecallMessageRight } from '~/framework/modules/mails/rights';
 import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 import { mailsService } from '~/framework/modules/mails/service';
+import { defaultUserIdCarbonio } from '~/framework/modules/mails/service/api/carbonio';
 import {
   convertAttachmentToDistantFile,
   convertRecipientGroupInfoToVisible,
@@ -92,12 +93,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
+  const currentUserId =
+    props.session && getMailCarbonioRight(props.session) ? defaultUserIdCarbonio(props.session) : props.session?.user.id;
+
   const canRecall =
-    props.session?.user.id === mail?.from.id &&
-    !isDateOlderThan60Minutes(moment(mail?.date)) &&
-    getRecallMessageRight(props.session!);
+    currentUserId === mail?.from.id && !isDateOlderThan60Minutes(moment(mail?.date)) && getRecallMessageRight(props.session!);
   const isRecall = mail?.state === MailsMailStatePreview.RECALL;
-  const isRecallAndNotSender = mail?.state === MailsMailStatePreview.RECALL && mail?.from.id !== props.session?.user.id;
+  const isRecallAndNotSender = mail?.state === MailsMailStatePreview.RECALL && mail?.from.id !== currentUserId;
   const isContentEmpty = React.useMemo(() => mailContent === '' || mailContent === '<p></p>', [mailContent]);
 
   const convertedAttachments = React.useMemo(
@@ -130,7 +132,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const onReply = React.useCallback(() => {
     let to: MailsVisible[] = [];
-    if (mail?.from.id !== props.session?.user.id) to.push(convertRecipientUserInfoToVisible(mail!.from));
+    if (mail?.from.id !== currentUserId) to.push(convertRecipientUserInfoToVisible(mail!.from));
     else {
       let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
       let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
@@ -141,16 +143,14 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
-  }, [fromFolder, mail, props]);
+  }, [fromFolder, mail, currentUserId, props]);
 
   const onReplyAll = React.useCallback(() => {
     let to: MailsVisible[] = [];
-    if (mail?.from.id !== props.session?.user.id) {
+    if (mail?.from.id !== currentUserId) {
       to.push(convertRecipientUserInfoToVisible(mail!.from));
       if (mail!.to.groups.length > 0 || mail!.to.users.length > 0) {
-        let users = mail!.to.users
-          .filter(user => user.id !== props.session?.user.id)
-          .map(user => convertRecipientUserInfoToVisible(user));
+        let users = mail!.to.users.filter(user => user.id !== currentUserId).map(user => convertRecipientUserInfoToVisible(user));
         let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
         to = [...to, ...users, ...groups];
       }
@@ -161,12 +161,12 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     }
 
     let cc: MailsVisible[] = [
-      ...mail!.cc.users.filter(user => user.id !== props.session?.user.id).map(user => convertRecipientUserInfoToVisible(user)),
+      ...mail!.cc.users.filter(user => user.id !== currentUserId).map(user => convertRecipientUserInfoToVisible(user)),
       ...mail!.cc.groups.map(group => convertRecipientGroupInfoToVisible(group)),
     ];
 
     let cci: MailsVisible[] = [
-      ...mail!.cci.users.filter(user => user.id !== props.session?.user.id).map(user => convertRecipientUserInfoToVisible(user)),
+      ...mail!.cci.users.filter(user => user.id !== currentUserId).map(user => convertRecipientUserInfoToVisible(user)),
       ...mail!.cci.groups.map(group => convertRecipientGroupInfoToVisible(group)),
     ];
 
@@ -175,7 +175,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       initialMailInfo: { body: mail?.body, cc, cci, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
-  }, [fromFolder, mail, props]);
+  }, [fromFolder, mail, currentUserId, props]);
 
   const onForward = React.useCallback(async () => {
     if (!isServiceMethodAvailable(mailsService.mail.forward)) {
@@ -460,7 +460,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       case 'recall':
         return canRecall;
       case 'markUnread':
-        return fromFolder !== MailsDefaultFolders.TRASH && mail?.from.id !== props.session?.user.id;
+        return fromFolder !== MailsDefaultFolders.TRASH && mail?.from.id !== currentUserId;
       case 'move':
         return fromFolder !== MailsDefaultFolders.TRASH;
       case 'removeFromFolder': {
@@ -775,7 +775,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
                 <AlertCard
                   type="warning"
                   text={
-                    mail.from.id === props.session?.user.id
+                    mail.from.id === currentUserId
                       ? I18n.get('mails-no-reply-disabled-sender-info-text')
                       : I18n.get('mails-no-reply-disabled-info-text')
                   }
@@ -790,7 +790,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   }, [
     error,
     mail,
-    props.session?.user.id,
+    currentUserId,
     isRecall,
     renderRecipients,
     isRecallAndNotSender,

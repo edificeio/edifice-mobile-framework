@@ -46,6 +46,7 @@ import {
   MailsMailStatePreview,
 } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { getMailCarbonioRight } from '~/framework/modules/mails/rights';
 import { mailsService } from '~/framework/modules/mails/service';
 import { readLastCallTimestamp, reloadVisibles } from '~/framework/modules/mails/storage';
 import { flattenFolders, isServiceMethodAvailable, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
@@ -94,6 +95,9 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isDeletingFolder, setIsDeletingFolder] = React.useState<boolean>(false);
 
   const isContentLoading = React.useMemo(() => isDeletingFolder || isLoading, [isDeletingFolder, isLoading]);
+
+  const currentUserId =
+    props.session && getMailCarbonioRight(props.session) ? defaultUserIdCarbonio(props.session) : props.session?.user.id;
 
   const loadMails = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo, searchValue?: string) => {
@@ -764,7 +768,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
                 disabled={
                   selectedMails.length === 0 ||
                   selectedMails.every(mailId => mails.find(mail => mail.id === mailId)?.unread) ||
-                  selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === props.session?.user.id)
+                  selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === currentUserId)
                 }
                 action={() => onActionMultiple(() => onToggleUnread(selectedMails, false))}
               />
@@ -773,7 +777,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
                 disabled={
                   selectedMails.length === 0 ||
                   selectedMails.every(mailId => !mails.find(mail => mail.id === mailId)?.unread) ||
-                  selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === props.session?.user.id)
+                  selectedMails.some(mailId => mails.find(mail => mail.id === mailId)?.from.id === currentUserId)
                 }
                 action={() => onActionMultiple(() => onToggleUnread(selectedMails, true))}
               />
@@ -996,9 +1000,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderMailPreview = React.useCallback(
     (mail: IMailsMailPreview) => {
-      const isSender =
-        (props.session?.user.id === mail.from?.id || defaultUserIdCarbonio(props.session) === mail.from?.id) &&
-        selectedFolder !== MailsDefaultFolders.INBOX;
+      const isSender = currentUserId === mail.from?.id && selectedFolder !== MailsDefaultFolders.INBOX;
       const isDraft = mail.state === MailsMailStatePreview.DRAFT;
       const isTrashed = selectedFolder === MailsDefaultFolders.TRASH;
       return (
@@ -1031,7 +1033,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       onActiveSelectMode,
       onSelectMail,
       onToggleUnread,
-      props.session?.user.id,
+      currentUserId,
       selectedFolder,
       selectedMails,
     ],
