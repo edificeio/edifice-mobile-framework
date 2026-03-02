@@ -415,6 +415,9 @@ const performLogin = async (
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
 
+  // Refresh oneSessionId token
+  await dispatch(refreshSessionIdForAccountAction(accountInfo));
+
   return accountInfo;
 };
 
