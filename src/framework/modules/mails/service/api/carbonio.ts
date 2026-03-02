@@ -459,12 +459,12 @@ export const carbonioMailsApi = {
       if (!session) throw new Error('No session found');
       const response = await carbonioSoapRequest<any>(session, 'SearchRequest', {
         _jsns: 'urn:zimbraMail',
-        limit: 100,
+        limit: _params.pageSize,
         locale: {
           _content: 'fr',
         },
         needExp: 1,
-        offset: 0,
+        offset: _params.pageNb * _params.pageSize,
         query: _params.search ? _params.search : folderIdSwitch(_params.folderId),
         recip: '2',
         sortBy: 'dateDesc',
