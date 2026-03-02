@@ -7,7 +7,6 @@ import { FlatList as GHFlatList } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import { defaultUserIdCarbonio } from '../../service/api/carbonio';
 import styles from './styles';
 import type { MailsListScreenPrivateProps } from './types';
 
@@ -48,6 +47,7 @@ import {
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { getMailCarbonioRight } from '~/framework/modules/mails/rights';
 import { mailsService } from '~/framework/modules/mails/service';
+import { defaultUserIdCarbonio } from '~/framework/modules/mails/service/api/carbonio';
 import { readLastCallTimestamp, reloadVisibles } from '~/framework/modules/mails/storage';
 import { flattenFolders, isServiceMethodAvailable, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
@@ -93,6 +93,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [selectedMails, setSelectedMails] = React.useState<string[]>([]);
   const [search, setSearch] = React.useState<string>('');
   const [isDeletingFolder, setIsDeletingFolder] = React.useState<boolean>(false);
+  const mailsRef = React.useRef<IMailsMailPreview[]>(mails);
+  mailsRef.current = mails;
 
   const isContentLoading = React.useMemo(() => isDeletingFolder || isLoading, [isDeletingFolder, isLoading]);
 
@@ -388,18 +390,31 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const handleMailAction = React.useCallback(
     async ({
       action,
+      idsToRemove,
       successMessage,
       updateMails,
     }: {
       action: () => Promise<void>;
-      updateMails?: () => void;
+      idsToRemove?: string[];
       successMessage: string;
+      updateMails?: () => void;
     }) => {
       try {
         await action();
-        if (updateMails) updateMails();
-        loadFolders();
-        toast.showSuccess(I18n.get(successMessage));
+        if (idsToRemove?.length && Platform.OS === 'android') {
+          const filtered = mailsRef.current.filter(mail => !idsToRemove.includes(mail.id));
+
+          setTimeout(() => {
+            setMails([]);
+            setMails(filtered);
+            loadFolders();
+            toast.showSuccess(I18n.get(successMessage));
+          }, 50);
+        } else {
+          if (updateMails) updateMails();
+          loadFolders();
+          toast.showSuccess(I18n.get(successMessage));
+        }
       } catch (e) {
         console.error(e);
         toast.showError();
@@ -417,6 +432,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       }
       await handleMailAction({
         action: () => deleteMethod({ ids }),
+        idsToRemove: ids,
         successMessage: permanently ? 'mails-toastsuccessdelete' : 'mails-toastsuccesstrash',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
@@ -448,6 +464,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       }
       await handleMailAction({
         action: () => mailsService.mail.restore({ ids }),
+        idsToRemove: ids,
         successMessage: 'mails-toastsuccessrestore',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
@@ -464,6 +481,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       bottomSheetModalRef.current?.dismiss();
       await handleMailAction({
         action: () => mailsService.mail.moveToFolder({ folderId }, { ids }),
+        idsToRemove: ids,
         successMessage: 'mails-toastsuccessmove',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
@@ -479,6 +497,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       }
       await handleMailAction({
         action: () => mailsService.mail.removeFromFolder({ ids }),
+        idsToRemove: ids,
         successMessage: 'mails-toastsuccessremovefromfolder',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
@@ -1005,7 +1024,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       const isTrashed = selectedFolder === MailsDefaultFolders.TRASH;
       return (
         <MailsMailPreview
-          key={mail.id}
           data={mail}
           onPress={() => onPressItem(mail.id, mail.unread, mail.state)}
           onLongPress={() => onActiveSelectMode(mail.id)}
