@@ -166,13 +166,17 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
                   icon={`ui-${actions.redo}`}
                   key={actions.redo}
                 />,
-                <RichToolbarSeparator key="separator1" />,
-                <RichToolbarCustomItem
-                  action={this.showBottomSheet}
-                  fill={theme.palette.complementary.green.regular}
-                  icon="ui-image"
-                  key="bottomSheet"
-                />,
+                ...(this.props.showBottomSheet
+                  ? [
+                      <RichToolbarSeparator key="separator1" />,
+                      <RichToolbarCustomItem
+                        action={this.showBottomSheet}
+                        fill={theme.palette.complementary.green.regular}
+                        icon="ui-image"
+                        key="bottomSheet"
+                      />,
+                    ]
+                  : []),
                 <RichToolbarCustomItem icon="ui-text-options" key="text" action={this.startAnimation} />,
               ]}
             />

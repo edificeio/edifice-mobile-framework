@@ -23,6 +23,8 @@ import MailsPlaceholderEdit from '~/framework/modules/mails/components/placehold
 import { MailsRecipientsType } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { getNoReplyRight } from '~/framework/modules/mails/rights';
+import { mailsService } from '~/framework/modules/mails/service';
+import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -164,16 +166,18 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     () => (
       <View style={styles.bottomForm}>
         {history !== '' && !isHistoryOpen ? <MailsHistoryButton content={history} onPress={onOpenHistory} /> : null}
-        <Attachments
-          session={session!}
-          isEditing
-          attachments={attachments}
-          removeAttachmentAction={onRemoveAttachment}
-          draftId={draftIdSaved}
-          onPressAddAttachments={onPressAddAttachments}
-          onImportAttachmentsResult={onImportAttachmentsResult}
-        />
-        <View style={{ minHeight: 600 }} />
+        {isServiceMethodAvailable(mailsService.attachments.remove) && isServiceMethodAvailable(mailsService.attachments.add) ? (
+          <Attachments
+            session={session!}
+            isEditing
+            attachments={attachments}
+            removeAttachmentAction={onRemoveAttachment}
+            draftId={draftIdSaved}
+            onPressAddAttachments={onPressAddAttachments}
+            onImportAttachmentsResult={onImportAttachmentsResult}
+          />
+        ) : null}
+        <View style={styles.bottomSheet} />
       </View>
     ),
     [
@@ -207,6 +211,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           }}
           placeholder={I18n.get('mails-edit-contentplaceholder')}
           onScrollBeginDrag={onScrollBeginDrag}
+          allowMultimediaUpload={mailsService.attachments.allowMultimediaUpload ?? true}
         />
         <InactiveUserModalContentContainer
           isVisible={inactiveUserModalVisible}

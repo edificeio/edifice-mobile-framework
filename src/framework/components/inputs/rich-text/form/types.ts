@@ -21,6 +21,8 @@ export interface RichEditorFormProps extends ScrollViewProps {
   editorStyle?: ViewStyle;
   placeholder?: string;
   editorRef?: React.Ref<RichEditor>;
+  /** When true (default), the toolbar shows the button to add photos. Set to false to disable. */
+  allowMultimediaUpload?: boolean;
 }
 
 export interface RichEditorFormReduxProps {

@@ -20,6 +20,7 @@ import {
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
   hasContent,
+  isServiceMethodAvailable,
 } from '~/framework/modules/mails/util';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { IDistantFileWithId } from '~/framework/util/fileHandler/models';
@@ -138,6 +139,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   const onRemoveAttachment = React.useCallback(
     async (attachment: IDistantFileWithId) => {
+      if (!isServiceMethodAvailable(mailsService.attachments.remove)) return;
       try {
         await mailsService.attachments.remove({ attachmentId: attachment.id, draftId: draftIdSaved! });
         setAttachments(prevAttachments => prevAttachments.filter(att => att.id !== attachment.id));
@@ -150,6 +152,8 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   );
 
   const fetchSignature = React.useCallback(async () => {
+    if (!isServiceMethodAvailable(mailsService.signature.get)) return { signature: '', useSignature: false };
+
     try {
       const signatureData = await mailsService.signature.get();
       if (!signatureData) return { signature: '', useSignature: false };

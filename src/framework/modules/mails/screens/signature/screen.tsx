@@ -17,6 +17,7 @@ import { Toggle } from '~/framework/components/toggle';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
+import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -36,6 +37,7 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
   const [initialValue, setInitialValue] = React.useState<boolean>();
 
   const loadContent = async () => {
+    if (!isServiceMethodAvailable(mailsService.signature.get)) return;
     try {
       const data = await mailsService.signature.get();
       const dataJson = data ? JSON.parse(data) : { signature: '', useSignature: false };
@@ -53,6 +55,7 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
   }, [useSignature]);
 
   const onSave = React.useCallback(async () => {
+    if (!isServiceMethodAvailable(mailsService.signature.update)) return;
     try {
       await mailsService.signature.update({ signature, useSignature });
       props.navigation.goBack();

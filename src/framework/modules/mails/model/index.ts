@@ -16,6 +16,7 @@ export enum MailsRecipientsType {
 export enum MailsVisibleType {
   GROUP = 'Group',
   USER = 'User',
+  EXTERNAL = 'External',
   SHAREBOOKMARK = 'ShareBookmark',
   BROADCASTGROUP = 'BroadcastGroup',
 }
