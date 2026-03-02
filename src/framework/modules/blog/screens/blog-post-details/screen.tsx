@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Alert, EmitterSubscription, Keyboard, Platform, RefreshControl, View } from 'react-native';
 
-import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
@@ -418,7 +417,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                   {
                     onPress: () => {
                       this.doDeleteBlogPost(blogPostData!._id).then(() => {
-                        navigation.dispatch(CommonActions.goBack());
+                        navigation.navigate(blogRouteNames.blogPostList, {
+                          blogId,
+                          forceReload: true,
+                        });
                       });
                     },
                     style: 'destructive',

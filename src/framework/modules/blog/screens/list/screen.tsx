@@ -82,8 +82,9 @@ const BlogPostListItem = ({
 const BlogPostListScreenLoaded = ({
   blogId,
   navigation,
+  route,
   session,
-}: Pick<BlogPostListScreenProps, 'navigation'> &
+}: Pick<BlogPostListScreenProps, 'navigation' | 'route'> &
   Pick<BlogPostListScreenProps['route']['params'], 'blogId'> & { session: AuthActiveAccount }) => {
   const dispatch = useDispatch();
   const blog = useSelector(selectors.blog(blogId));
@@ -174,6 +175,10 @@ const BlogPostListScreenLoaded = ({
     [blogId, dispatch, getAudienceForPosts, session],
   );
 
+  const onFlushPosts = React.useCallback(async () => {
+    onPageReached(0, true);
+  }, [onPageReached]);
+
   const keyExtractor = React.useCallback((item: BlogPostWithAudience) => item._id, []);
 
   const PAGE_SIZE = 20;
@@ -198,6 +203,13 @@ const BlogPostListScreenLoaded = ({
     );
   }, [hasBlogPostCreationRights, onGoToPostCreationScreen]);
 
+  React.useEffect(() => {
+    if (route.params.forceReload) {
+      onFlushPosts();
+      navigation.setParams({ forceReload: false });
+    }
+  }, [navigation, onFlushPosts, route.params.forceReload]);
+
   return (
     <PaginatedFlatList
       contentContainerStyle={styles.list}
@@ -217,6 +229,7 @@ export default sessionScreen<BlogPostListScreenProps>(function BlogPostListScree
   route: {
     params: { blogId },
   },
+  route,
   session,
 }) {
   const dispatch = useDispatch();
@@ -224,8 +237,8 @@ export default sessionScreen<BlogPostListScreenProps>(function BlogPostListScree
     dispatch(actions.blog.load(await blogService.get(session, blogId)));
   }, [blogId, dispatch, session]);
   const renderContent = React.useCallback(
-    () => <BlogPostListScreenLoaded navigation={navigation} blogId={blogId} session={session} />,
-    [navigation, blogId, session],
+    () => <BlogPostListScreenLoaded navigation={navigation} blogId={blogId} session={session} route={route} />,
+    [navigation, blogId, session, route],
   );
   return <ContentLoader renderContent={renderContent} loadContent={loadContent} renderLoading={BlogPlaceholderList} />;
 });
