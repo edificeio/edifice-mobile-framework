@@ -1,7 +1,7 @@
 import { Action } from 'redux';
 
 import moduleConfig from '~/framework/modules/myapps/module-config';
-import { AppBookmarks, AppsInfoActionPayloads } from '~/framework/modules/myapps/types';
+import { AppBookmarks, ApplicationsConfig, AppsInfo } from '~/framework/modules/myapps/types';
 
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
@@ -9,7 +9,11 @@ export interface FetchStartAction extends Action {
 
 export interface FetchSuccessAction extends Action {
   type: typeof appsInfoActionTypes.fetchSuccess;
-  payload: AppsInfoActionPayloads['fetchSuccess'];
+  payload: {
+    appsInfo: AppsInfo[];
+    appsConfig: ApplicationsConfig[];
+    favorites: AppBookmarks;
+  };
 }
 
 export interface FetchErrorAction extends Action {

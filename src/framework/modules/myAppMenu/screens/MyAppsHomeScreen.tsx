@@ -60,7 +60,6 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     openBottomSheet,
     selectedApp,
     setFilter,
-    setIsBottomSheetOpened,
   } = useMyAppsHomeController();
 
   const slides: MAOSProps[] = [
@@ -204,7 +203,6 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
       <BottomSheetModal
         ref={bottomSheetRef}
         onDismiss={handleDismiss}
-        onChange={index => setIsBottomSheetOpened(index >= 0)}
         enableDynamicSizing
         containerStyle={styles.bottomSheetContainer}
         closeButton>

@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 import { BottomSheetMode } from './types';
 
@@ -41,9 +42,8 @@ export function useMyAppsHomeController() {
   const [onboardingSeen, setOnboardingSeen] = React.useState(0);
   const [selectedApp, setSelectedApp] = React.useState<AppsInfoAggregated | null>(null);
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
-  const [isBottomSheetOpened, setIsBottomSheetOpened] = React.useState<boolean>(false);
 
-  const areAppsShowed = getAllappsShowedState(store.getState());
+  const areAppsShowed = useSelector(getAllappsShowedState);
 
   const isAllAppsTab = filter.type === 'category' && filter.value === 'toutes';
 
@@ -153,14 +153,6 @@ export function useMyAppsHomeController() {
     return store.subscribe(updateApps);
   }, [filter, areAppsShowed, store]);
 
-  React.useEffect(() => {
-    navigation.getParent()?.setOptions({
-      tabBarStyle: {
-        display: isBottomSheetOpened ? 'none' : 'flex',
-      },
-    });
-  }, [isBottomSheetOpened, navigation]);
-
   return {
     apps,
     areAppsShowed,
@@ -181,6 +173,5 @@ export function useMyAppsHomeController() {
     openBottomSheet,
     selectedApp,
     setFilter,
-    setIsBottomSheetOpened,
   };
 }

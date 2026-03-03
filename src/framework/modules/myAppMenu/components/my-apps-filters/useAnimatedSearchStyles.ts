@@ -1,11 +1,10 @@
-import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth } from '~/framework/components/constants';
 
 const COLLAPSED_WIDTH = getScaleWidth(40);
-const CANCEL_WIDTH = getScaleWidth(58);
-const EXPANDED_WIDTH = UI_SIZES.screen.width - UI_SIZES.spacing.small * 2 - CANCEL_WIDTH;
 
+const EXPANDED_WIDTH = getScaleWidth(275);
 export const useAnimatedSearchStyles = () => {
   const progress = useSharedValue(0);
 
@@ -24,14 +23,14 @@ export const useAnimatedSearchStyles = () => {
   };
 
   const containerStyle = useAnimatedStyle(() => ({
-    borderRadius: UI_SIZES.radius.huge - (UI_SIZES.radius.huge - UI_SIZES.radius.extraLarge) * progress.value,
+    borderRadius: 25,
     width: COLLAPSED_WIDTH + (EXPANDED_WIDTH - COLLAPSED_WIDTH) * progress.value,
   }));
 
   const iconStyle = useAnimatedStyle(() => ({
-    opacity: 1 - progress.value,
+    opacity: interpolate(progress.value, [0, 0.2], [1, 0]),
     pointerEvents: progress.value === 0 ? 'auto' : 'none',
-    transform: [{ scale: 1 - 0.1 * progress.value }],
+    transform: [{ scale: 1 - 0.15 * progress.value }],
   }));
 
   const searchStyle = useAnimatedStyle(() => ({

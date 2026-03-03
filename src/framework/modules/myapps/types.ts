@@ -1,5 +1,3 @@
-import { IEntcoreApp } from '~/framework/util/moduleTool';
-
 export type MyAppsCategories = 'communication' | 'pedagogie' | 'organisation' | 'otherServices' | 'toutes';
 
 export type MyAppsFilter =
@@ -54,19 +52,6 @@ export interface AppsInfoState {
   error?: string;
   showAllApps: boolean;
   isSavingFavorites?: boolean;
-}
-
-export interface AppsInfoActionPayloads {
-  fetchStart: undefined;
-  fetchSuccess: {
-    appsInfo: AppsInfo[];
-    appsConfig: ApplicationsConfig[];
-    entcoreApps: IEntcoreApp[];
-    favorites: AppBookmarks;
-  };
-  fetchError: {
-    error: string;
-  };
 }
 
 export interface AppsInfoAggregated extends AppsInfo {

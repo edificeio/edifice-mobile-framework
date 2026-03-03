@@ -4,19 +4,24 @@ import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export const styles = StyleSheet.create({
-  activeAnimatedContainer: { borderWidth: 0 },
+  activeAnimatedContainer: { borderWidth: 1 },
   animatedSearchContainer: {
+    backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
     height: getScaleWidth(40),
     justifyContent: 'center',
     overflow: 'hidden',
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   cancelTextStyle: {
     fontWeight: 'bold',
   },
   clearButtonColor: {
     color: theme.palette.grey.black,
+    paddingLeft: UI_SIZES.spacing.minor,
+    paddingRight: UI_SIZES.spacing.small,
   },
   clickzone: {
     padding: UI_SIZES.spacing.minor,
@@ -34,15 +39,17 @@ export const styles = StyleSheet.create({
     flexGrow: 0,
     flexShrink: 0,
   },
+  // eslint-disable-next-line react-native/no-color-literals
   search: {
-    borderColor: theme.palette.primary.regular,
+    backgroundColor: 'transparent',
     borderRadius: UI_SIZES.radius.extraLarge,
+    borderWidth: 0,
     height: getScaleWidth(40),
-    width: '93%',
   },
   searchContainerWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
+    gap: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   searchIcon: {

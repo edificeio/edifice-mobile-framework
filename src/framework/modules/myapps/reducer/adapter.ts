@@ -36,6 +36,7 @@ export const computeNextBookmarks = (bookmarks: string[], appName: string): stri
 };
 
 export const checkIfIsConnector = (app: AppsInfo): boolean => {
+  if (!app.isMobile) return true;
   if (app.target === '_blank') return true;
 
   if (app.address?.startsWith('http://') || app.address?.startsWith('https://')) {
@@ -48,3 +49,6 @@ export const checkIfIsConnector = (app: AppsInfo): boolean => {
 
   return false;
 };
+
+export const appShouldBeAtBottom = (app: AppsInfoAggregated) =>
+  app.isConnector && !app.isMobile && !['communication', 'organisation', 'pedagogy'].includes(app.category ?? '');

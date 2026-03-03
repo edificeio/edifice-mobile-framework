@@ -1,4 +1,4 @@
-import { resolveAppCategory } from './adapter';
+import { appShouldBeAtBottom, resolveAppCategory } from './adapter';
 
 import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
@@ -86,7 +86,9 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
 
     case 'category':
       if (filter.value === 'toutes') return apps;
-      if (filter.value === 'otherServices') return apps.filter(app => app.isExternal);
+      if (filter.value === 'otherServices') {
+        return apps.filter(appShouldBeAtBottom);
+      }
       return apps.filter(app => app.resolvedCategory === filter.value);
     case 'search': {
       if (!filter.value.trim()) return apps;
