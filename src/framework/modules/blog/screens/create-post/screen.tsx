@@ -93,6 +93,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
       await handleInitTimeline();
       navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
         ...(route.params.referrer ? { blogId: route.params.blog.id } : {}),
+        forceReload: true,
       });
       Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
