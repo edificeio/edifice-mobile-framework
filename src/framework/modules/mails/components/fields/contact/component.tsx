@@ -14,6 +14,7 @@ import { TextInputType } from '~/framework/components/inputs/text/component';
 import FlatList from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { AccountType } from '~/framework/modules/auth/model';
 import MailsContactItem from '~/framework/modules/mails/components/contact-item';
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
@@ -24,6 +25,14 @@ import { isServiceMethodAvailable, MailsRecipientPrefixsI18n } from '~/framework
 
 function removeAccents(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function isValidEmail(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  // Basic email validation for manual entry
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(trimmed);
 }
 
 const HEIGHT_HEADER_RESULTS = UI_SIZES.spacing.small + TextSizeStyle.Normal.lineHeight;
@@ -203,6 +212,17 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     debounce(text => {
       if (isServiceMethodAvailable(mailsService.visibles.getOnSearch)) {
         mailsService.visibles.getOnSearch(text).then(result => {
+          if (isValidEmail(text)) {
+            const newRecipient: MailsVisible = {
+              displayName: text,
+              id: text,
+              profile: AccountType.External,
+              type: MailsVisibleType.EXTERNAL,
+            };
+
+            result = [newRecipient, ...result];
+          }
+
           setFilteredUsers(result);
           setLoading(false);
         });
