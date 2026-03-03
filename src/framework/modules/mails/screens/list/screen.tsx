@@ -357,7 +357,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, [navigation]);
 
   const onDeleteFolder = React.useCallback(() => {
-    if (!isServiceMethodAvailable(mailsService.folder.delete)) {
+    const deleteFolder = mailsService.folder.delete;
+    if (!isServiceMethodAvailable(deleteFolder)) {
       toast.showError();
       return;
     }
@@ -370,7 +371,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         onPress: async () => {
           try {
             setIsDeletingFolder(true);
-            await mailsService.folder.delete({ id: (selectedFolder as MailsFolderInfo).id });
+            await deleteFolder({ id: (selectedFolder as MailsFolderInfo).id });
             switchFolder(MailsDefaultFolders.INBOX);
             loadFolders();
             toast.showSuccess(I18n.get('mails-list-toastsuccessdeletefolder'));
@@ -458,12 +459,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onRestore = React.useCallback(
     async (ids: string[]) => {
-      if (!isServiceMethodAvailable(mailsService.mail.restore)) {
+      const restore = mailsService.mail.restore;
+      if (!isServiceMethodAvailable(restore)) {
         toast.showError();
         return;
       }
       await handleMailAction({
-        action: () => mailsService.mail.restore({ ids }),
+        action: () => restore({ ids }),
         idsToRemove: ids,
         successMessage: 'mails-toastsuccessrestore',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
@@ -474,13 +476,14 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onMove = React.useCallback(
     async (ids: string[], folderId: string) => {
-      if (!isServiceMethodAvailable(mailsService.mail.moveToFolder)) {
+      const moveToFolder = mailsService.mail.moveToFolder;
+      if (!isServiceMethodAvailable(moveToFolder)) {
         toast.showError();
         return;
       }
       bottomSheetModalRef.current?.dismiss();
       await handleMailAction({
-        action: () => mailsService.mail.moveToFolder({ folderId }, { ids }),
+        action: () => moveToFolder({ folderId }, { ids }),
         idsToRemove: ids,
         successMessage: 'mails-toastsuccessmove',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
@@ -835,6 +838,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     onDelete,
     onRemoveFromFolder,
     onRestore,
+    currentUserId,
     onToggleUnread,
     selectedFolder,
     selectedMails,
