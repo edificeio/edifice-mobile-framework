@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styles from './styles';
 import type { SocialResourceViewer } from './types';
 
+import { I18n } from '~/app/i18n';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
@@ -21,6 +22,7 @@ import { FlatListProps } from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import usePreventBack from '~/framework/hooks/prevent-back';
 
 /**
  * Note: FlashList v1 contains a bug that duplicates sticky elements. FflatList handles it correctly.
@@ -193,6 +195,12 @@ const SocialResourceViewerLoaded = ({ data, renderResource: _renderResource }) =
     () => ({ bottom: newCommentInputState.height + jsKeyboardHeight }),
     [newCommentInputState.height, jsKeyboardHeight],
   );
+
+  usePreventBack({
+    showAlert: newCommentInputState.value.length > 0,
+    text: I18n.get('comment-preventback-alert-text'),
+    title: I18n.get('comment-preventback-alert-title'),
+  });
 
   return (
     <NewCommentInputContext value={newCommentInputState}>
