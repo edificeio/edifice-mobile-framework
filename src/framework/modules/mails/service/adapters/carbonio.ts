@@ -117,14 +117,27 @@ function isImageToReplace(src: string): boolean {
   return s.startsWith('https://mon.lyceeconnecte.fr') || s.startsWith('https://mail.lyceeconnecte.fr');
 }
 
+/** Extract content-id from img src (e.g. "cid:foo" or "cid:<foo>"). HTML may have &#64; for @. */
+function contentIdFromSrc(src: string): string {
+  if (!src || !src.toLowerCase().startsWith('cid:')) return '';
+  const value = src.slice(4).trim().replace(/^<|>$/g, '').replace(/&#64;/g, '@');
+  return value;
+}
+
 /**
  * Replaces each <img> in html whose src is invalid (not a URL or lyceeconnecte host)
- * with a link to the web version of the mail.
+ * with a link to the web version of the mail. Each replacement has data-message-id, data-part, data-ci for reuse.
  */
 function replaceInvalidImagesWithWebViewLink(html: string, webViewUrl: string): string {
   if (!html || !webViewUrl) return html;
   const safeUrl = webViewUrl.replace(/"/g, '&quot;');
-  const linkHtml = `<p style="margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
+  return html.replace(/<img\s[^>]*>/gi, tag => {
+    const srcMatch = tag.match(/src\s*=\s*["']([^"']*)["']/i);
+    const src = srcMatch ? srcMatch[1].trim() : '';
+    if (!isImageToReplace(src)) return tag;
+    const ci = contentIdFromSrc(src) || src;
+    const safeCi = (ci || '').replace(/"/g, '&quot;');
+    return `<p style="margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;" data-image-replacement data-ci="${safeCi}">
   <a href="${safeUrl}" target="_blank" rel="noopener noreferrer"
      style="display:inline-flex; align-items:center; gap:10px; padding:4px 8px;
             border:1px dashed #d1d5db; border-radius:12px; text-decoration:none; color:#111827;
@@ -135,11 +148,6 @@ function replaceInvalidImagesWithWebViewLink(html: string, webViewUrl: string): 
     </span>
   </a>
 </p>`;
-  return html.replace(/<img\s[^>]*>/gi, tag => {
-    const srcMatch = tag.match(/src\s*=\s*["']([^"']*)["']/i);
-    const src = srcMatch ? srcMatch[1].trim() : '';
-    if (isImageToReplace(src)) return linkHtml;
-    return tag;
   });
 }
 
@@ -211,32 +219,25 @@ export function carbonioMessageToMailPreviewBackend(carbonioMessage: any): Mails
 }
 
 /**
- * Removes the div with class "conversation-histor" (or "conversation-history") from HTML body
- * so that conversation history is not sent with the email.
+ * Replaces each data-image-replacement block (the placeholder <p> with data-message-id, data-part, data-ci)
+ * with an <img> that loads the inline image via the service URL.
  */
-export function removeConversationHistoryFromBody(html: string): string {
-  const classRegex = /<div\s[^>]*class=["'][^"']*conversation-histor[^"']*["'][^>]*>/i;
-  const match = html.match(classRegex);
-  if (!match) return html;
-  const openTag = match[0];
-  const startIndex = html.indexOf(openTag);
-  const afterOpen = startIndex + openTag.length;
-  let depth = 1;
-  let pos = afterOpen;
-  while (depth > 0 && pos < html.length) {
-    const nextOpen = html.indexOf('<div', pos);
-    const nextClose = html.indexOf('</div>', pos);
-    if (nextClose === -1) break;
-    if (nextOpen !== -1 && nextOpen < nextClose) {
-      depth++;
-      pos = nextOpen + 4;
-    } else {
-      depth--;
-      pos = nextClose + 6;
-      if (depth === 0) {
-        return html.slice(0, startIndex).trimEnd() + html.slice(pos);
-      }
-    }
+/** Insert newline and horizontal line before conversation-history block. */
+const CONVERSATION_HISTORY_START = '<div class="conversation-history">';
+const SEPARATOR_BEFORE_HISTORY = '\n<hr id="zwchr">\n';
+
+export function normalizeFromMobileToWeb(html: string): string {
+  if (!html) return html;
+  const blockRegex = /<p\s[^>]*data-image-replacement[^>]*>[\s\S]*?<\/p>/gi;
+  let result = html.replace(blockRegex, block => {
+    const ciMatch = block.match(/data-ci=["']([^"']*)["']/i);
+    const ci = (ciMatch?.[1] ?? '').replace(/&quot;/g, '"');
+    const safeCi = ci.replace(/"/g, '&quot;');
+    return `<img src="cid:${safeCi}" data-src="cid:${safeCi}">`;
+  });
+  const historyIndex = result.indexOf(CONVERSATION_HISTORY_START);
+  if (historyIndex !== -1) {
+    result = result.slice(0, historyIndex).trimEnd() + SEPARATOR_BEFORE_HISTORY + result.slice(historyIndex);
   }
-  return html;
+  return result;
 }

@@ -1,7 +1,7 @@
 import {
   carbonioMessageToMailContentBackend,
   carbonioMessageToMailPreviewBackend,
-  removeConversationHistoryFromBody,
+  normalizeFromMobileToWeb,
 } from '../adapters/carbonio';
 import { mailContentAdapter, mailsAdapter, MailsVisibleBackend, mailVisibleAdapter } from '../adapters/mails';
 
@@ -376,7 +376,7 @@ export const carbonioMailsApi = {
       const ccRecipients = cc.map(email => ({ a: email, t: 'c' }));
       const cciRecipients = cci.map(email => ({ a: email, t: 'b' }));
 
-      const finalBody = removeConversationHistoryFromBody(body || '');
+      const finalBody = normalizeFromMobileToWeb(body || '');
 
       const sendRequest: any = {
         _jsns: 'urn:zimbraMail',
@@ -418,7 +418,7 @@ export const carbonioMailsApi = {
       const ccRecipients = cc.map(email => ({ a: email, t: 'c' }));
       const cciRecipients = cci.map(email => ({ a: email, t: 'b' }));
 
-      const finalBody = removeConversationHistoryFromBody(body || '');
+      const finalBody = normalizeFromMobileToWeb(body || '');
 
       const draftRequest: any = {
         _jsns: 'urn:zimbraMail',
@@ -479,7 +479,7 @@ export const carbonioMailsApi = {
       const cciRecipients = cci.map(email => ({ a: email, t: 'b' }));
       const id = getItemId(params.draftId);
 
-      const finalBody = removeConversationHistoryFromBody(body || '');
+      const finalBody = normalizeFromMobileToWeb(body || '');
 
       await carbonioSoapRequest<any>(session, 'SaveDraftRequest', {
         _jsns: 'urn:zimbraMail',

@@ -555,8 +555,6 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         const url = await mailsService.mail.rederictToWebview!({ folderId: mail?.folder_id ?? '', id });
         openUrl(url);
       };
-      console.error('mail!.attachments', mail!.attachments);
-      console.error('convertedAttachments', convertedAttachments);
       return (
         <View style={styles.attachmentsExternal}>
           {mail!.attachments.map(att => (
