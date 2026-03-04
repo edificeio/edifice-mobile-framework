@@ -7,6 +7,7 @@ import theme from '~/app/theme';
 export default StyleSheet.create({
   page: { backgroundColor: theme.ui.background.page },
   stickyCommentWrapper: {
+    alignItems: 'flex-end',
     backgroundColor: theme.ui.background.card,
     borderTopColor: theme.palette.grey.cloudy,
     borderTopWidth: UI_SIZES.border.thin,
