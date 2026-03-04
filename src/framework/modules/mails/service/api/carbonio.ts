@@ -311,7 +311,7 @@ export const carbonioMailsApi = {
     },
     recall: null,
     rederictToWebview: async (params: { id: string; folderId: string }) => {
-      return `/auth/carbonio/preauth?callback=https://mail.lyceeconnecte.fr/carbonio/focus-mode/mail-view/folder/${params.folderId}/message/${params.id}`;
+      return `/auth/carbonio/preauth?callback=${encodeURIComponent(`https://mail.lyceeconnecte.fr/carbonio/focus-mode/mail-view/folder/${params.folderId}/message/${params.id}`)}`;
     },
     removeFromFolder: async (params: { ids: string[] }) => {
       const session = getSession();
