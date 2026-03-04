@@ -201,7 +201,7 @@ export const carbonioMailsApi = {
       const session = getSession();
       if (!session) throw new Error('No session found');
 
-      payload.ids.forEach(async itemId => {
+      for (const itemId of payload.ids) {
         const id = getItemId(itemId);
         // ItemActionRequest with action="delete"
         await carbonioSoapRequest<any>(session, 'ItemActionRequest', {
@@ -211,7 +211,7 @@ export const carbonioMailsApi = {
             op: 'delete',
           },
         });
-      });
+      }
     },
     forward: null,
     // forward: async (params: { id: string }) => {
@@ -332,7 +332,7 @@ export const carbonioMailsApi = {
       const session = getSession();
       if (!session) throw new Error('No session found');
 
-      payload.ids.forEach(async itemId => {
+      for (const itemId of payload.ids) {
         const id = getItemId(itemId);
 
         // ItemActionRequest with action="trash"
@@ -343,7 +343,7 @@ export const carbonioMailsApi = {
             op: 'trash',
           },
         });
-      });
+      }
     },
     recall: null,
     rederictToWebview: async (params: { id: string; folderId: string }) => {
@@ -353,7 +353,7 @@ export const carbonioMailsApi = {
       const session = getSession();
       if (!session) throw new Error('No session found');
 
-      params.ids.forEach(async itemId => {
+      for (const itemId of params.ids) {
         const id = getItemId(itemId);
 
         // MoveRequest to move items to root (inbox)
@@ -362,7 +362,7 @@ export const carbonioMailsApi = {
           id: id,
           l: '2', // Inbox folder ID
         });
-      });
+      }
     },
     restore: null,
     send: async (params: { draftId?: string; inReplyTo?: string }, payload: MailsConversationPayload) => {
@@ -454,7 +454,7 @@ export const carbonioMailsApi = {
       const session = getSession();
       if (!session) throw new Error('No session found');
 
-      payload.ids.forEach(async itemId => {
+      for (const itemId of payload.ids) {
         const id = getItemId(itemId);
 
         // ItemActionRequest with action="read" or "!read"
@@ -465,7 +465,7 @@ export const carbonioMailsApi = {
             op: payload.unread ? '!read' : 'read',
           },
         });
-      });
+      }
     },
     updateDraft: async (params: { draftId: string }, payload: MailsConversationPayload) => {
       const session = getSession();
