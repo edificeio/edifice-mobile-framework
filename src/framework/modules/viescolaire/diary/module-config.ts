@@ -22,7 +22,8 @@ export default new NavigableModuleConfig<'diary', IDiaryReduxState>({
   entcoreScope: ['diary'],
 
   entcoreTrackingName: 'Diary',
-  matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
+  hasRight: ({ matchingApps }) => matchingApps.some(hasNecessaryRight),
+  matchEntcoreApp: 'Diary',
   name: 'diary',
   storageName: 'diary',
 });

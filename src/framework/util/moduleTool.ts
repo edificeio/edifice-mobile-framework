@@ -14,7 +14,6 @@ import { IGlobalState } from '~/app/store';
 import theme, { IShades } from '~/app/theme';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { registerModuleFileManager } from '~/framework/util/fileHandler/services/fileManagerRegistry';
 import { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
@@ -77,14 +76,14 @@ interface IModuleConfigBase<Name extends string> {
   apiName?: string; // prefix for api calls
 }
 interface IModuleConfigRights {
-  matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[]) => boolean;
+  matchEntcoreApp: (entcoreApp: IEntcoreApp) => boolean;
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
   hasRight: (params: { matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[]; session: AuthActiveAccount }) => boolean;
   getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
   getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
 interface IModuleConfigDeclarationRights {
-  matchEntcoreApp: IModuleConfigRights['matchEntcoreApp'] | string;
+  matchEntcoreApp: string;
   matchEntcoreWidget?: IModuleConfigRights['matchEntcoreWidget'];
   hasRight?: IModuleConfigRights['hasRight'];
 }
@@ -181,13 +180,10 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.entcoreScope = entcoreScope;
     this.apiName = apiName ?? name;
     // Rights
-    this.matchEntcoreApp =
-      (typeof matchEntcoreApp === 'string'
-        ? (entcoreApp: IEntcoreApp) => entcoreApp.address === matchEntcoreApp
-        : matchEntcoreApp) || (() => true);
+    this.matchEntcoreApp = (entcoreApp: IEntcoreApp) => entcoreApp.name === matchEntcoreApp;
     this.matchEntcoreWidget = matchEntcoreWidget ?? (() => false);
     this.hasRight = hasRight ?? (({ matchingApps }) => matchingApps.length > 0);
-    this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => this.matchEntcoreApp(app, allEntcoreApps));
+    this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => this.matchEntcoreApp(app));
     this.getMatchingEntcoreWidgets = allEntcoreWidgets =>
       allEntcoreWidgets.filter(wig => this.matchEntcoreWidget(wig, allEntcoreWidgets));
     // Redux
@@ -675,9 +671,6 @@ export class NavigableModule<
   handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {
     super.handleInit(params);
     this.#root = this.getRoot(params);
-    if (this.config.displayBadges) {
-      updateAppBadges(this.config.displayBadges);
-    }
   }
 
   get isReady() {

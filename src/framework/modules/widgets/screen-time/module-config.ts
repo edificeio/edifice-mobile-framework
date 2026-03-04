@@ -5,7 +5,7 @@ export default new NavigableModuleConfig<'screenTime', null>({
   displayI18n: 'widget-screen-time-title',
   entcoreScope: ['appregistry'],
   hasRight: param => param.matchingWidgets.length > 0,
-  matchEntcoreApp: () => true,
+  matchEntcoreApp: 'Screentime',
   matchEntcoreWidget: entcoreWidget => entcoreWidget.name === 'screen-time-widget',
   name: 'screenTime',
   storageName: 'screenTime',

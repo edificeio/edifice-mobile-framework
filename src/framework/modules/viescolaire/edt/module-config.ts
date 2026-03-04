@@ -22,7 +22,8 @@ export default new NavigableModuleConfig<'edt', IEdtReduxState>({
   entcoreScope: ['edt'],
 
   entcoreTrackingName: 'Edt',
-  matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
+  hasRight: ({ matchingApps }) => matchingApps.some(hasNecessaryRight),
+  matchEntcoreApp: 'Edt',
   name: 'edt',
   storageName: 'edt',
 });

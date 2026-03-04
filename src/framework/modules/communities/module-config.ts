@@ -14,8 +14,8 @@ export default new NavigableModuleConfig<'communities', CommunitiesStore>({
 
   entcoreScope: ['communities'],
   entcoreTrackingName: 'Communities',
+  matchEntcoreApp: 'Community',
 
-  matchEntcoreApp: '/communities',
   name: 'communities',
   storageName: 'communities',
 });

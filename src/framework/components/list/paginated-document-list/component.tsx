@@ -29,6 +29,7 @@ import {
 
 import { EntAppNameOrSynonym } from '~/app/intents';
 import { PaginatedFlashList, PaginatedFlatList } from '~/framework/components/list/paginated-list';
+import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
 export const useDocumentPagination = <
   AppTypes extends EntAppNameOrSynonym,
@@ -38,6 +39,7 @@ export const useDocumentPagination = <
     | FlashListRenderItemInfo<PaginatedDocumentListItem<AppTypes, IdType>>,
 >({
   alwaysShowAppIcon,
+  appBadges,
   documents,
   folders,
   numColumns = 1,
@@ -50,6 +52,7 @@ export const useDocumentPagination = <
   onPressDocument: CommonPaginatedDocumentListProps<AppTypes, IdType>['onPressDocument'];
   numColumns?: number;
   alwaysShowAppIcon: CommonPaginatedDocumentListProps<AppTypes, IdType>['alwaysShowAppIcon'];
+  appBadges: Record<string, IAppBadgeInfo>;
 }) => {
   const { data, documentsIndexStart } = React.useMemo(
     () => createDocumentArrayProxy(folders ?? [], documents ?? [], numColumns),
@@ -98,23 +101,29 @@ export const useDocumentPagination = <
       const itemStyle = getItemStyle(info);
       if (info.item === FOLDER_SPACER_ITEM_DATA) return <FolderSpacerListItem {...info} style={itemStyle} />;
       if (info.item === DOCUMENT_SPACER_ITEM_DATA) return <DocumentSpacerListItem {...info} style={itemStyle} />;
-      return isIndexForFolderOrSpacerItem(info.index) ? (
-        <FolderListItem
-          {...(info as FlatListRenderItemInfo<FolderItem<IdType>>)}
-          onPress={e => onPressFolder?.((info as FlatListRenderItemInfo<FolderItem<IdType>>).item, e)}
-          style={itemStyle}
-        />
-      ) : (
-        <DocumentListItem
-          {...(info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>)}
-          onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>).item, e)}
-          style={itemStyle}
-          testID={'document-item'}
-          alwaysShowAppIcon={alwaysShowAppIcon}
-        />
-      );
+      if (isIndexForFolderOrSpacerItem(info.index)) {
+        return (
+          <FolderListItem
+            {...(info as FlatListRenderItemInfo<FolderItem<IdType>>)}
+            onPress={e => onPressFolder?.((info as FlatListRenderItemInfo<FolderItem<IdType>>).item, e)}
+            style={itemStyle}
+          />
+        );
+      } else {
+        const documentInfo = info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>;
+        return (
+          <DocumentListItem
+            {...documentInfo}
+            appBadges={appBadges}
+            onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>).item, e)}
+            style={itemStyle}
+            testID={'document-item'}
+            alwaysShowAppIcon={alwaysShowAppIcon}
+          />
+        );
+      }
     },
-    [getItemStyle, isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder, alwaysShowAppIcon],
+    [appBadges, getItemStyle, isIndexForFolderOrSpacerItem, alwaysShowAppIcon, onPressFolder, onPressDocument],
   );
 
   const renderPlaceholderItem = React.useCallback<(info: Pick<InfoType, 'index'>) => React.ReactElement>(
@@ -140,6 +149,7 @@ export const useDocumentPagination = <
 
 export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym, IdType>({
   alwaysShowAppIcon = true,
+  appBadges,
   contentContainerStyle: _contentContainerStyle,
   documents,
   folders,
@@ -150,6 +160,7 @@ export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym,
   const { contentContainerStyle, data, getItemType, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } =
     useDocumentPagination({
       alwaysShowAppIcon,
+      appBadges,
       documents,
       folders,
       numColumns: paginatedListProps.numColumns,
@@ -176,6 +187,7 @@ export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym,
 
 export function PaginatedDocumentFlatList<AppTypes extends EntAppNameOrSynonym, IdType>({
   alwaysShowAppIcon = true,
+  appBadges,
   contentContainerStyle: _contentContainerStyle,
   documents,
   folders,
@@ -186,6 +198,7 @@ export function PaginatedDocumentFlatList<AppTypes extends EntAppNameOrSynonym, 
   const { contentContainerStyle, data, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } =
     useDocumentPagination({
       alwaysShowAppIcon,
+      appBadges,
       documents,
       folders,
       numColumns: paginatedListProps.numColumns,

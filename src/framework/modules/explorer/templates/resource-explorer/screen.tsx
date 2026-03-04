@@ -14,6 +14,7 @@ import { PageView } from '~/framework/components/page';
 import { ExplorerAppTypes, ExplorerResourceIdType, RootFolderId } from '~/framework/modules/explorer/model/types';
 import service from '~/framework/modules/explorer/service/index';
 import { emptyFolderData, ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
+import { getAppBadges } from '~/framework/modules/timeline/app-badges';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/transport/error';
 
@@ -48,11 +49,14 @@ export function ResourceExplorerTemplate({
   selectors,
 }: ResourceExplorerTemplate.AllProps) {
   const { folderId = RootFolderId.ROOT } = route.params;
-
+  const store = getStore();
+  const state = store.getState();
   const folder = useSelector(selectors.folder(folderId));
+  const appBadges = getAppBadges(state);
   const content = folder?.content ?? emptyFolderData;
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();
   const actions = useExplorerActions(moduleConfig);
+  console.debug('appBadges', appBadges);
 
   const loadPage = React.useCallback(
     async (start_idx: number, nb: number, reloadAll: boolean = false) => {
@@ -76,7 +80,6 @@ export function ResourceExplorerTemplate({
     },
     [context, folderId, dispatch, actions],
   );
-
   const onPressFolder = React.useCallback<
     NonNullable<PaginatedDocumentFlashListProps<ExplorerAppTypes, ExplorerResourceIdType>['onPressFolder']>
   >(f => navigation.push(route.name, { folderId: f.id }), [navigation, route.name]);
@@ -98,6 +101,7 @@ export function ResourceExplorerTemplate({
         onItemsReached={loadPage}
         documents={content.resources}
         folders={content.folders}
+        appBadges={appBadges}
         numColumns={2}
         pageSize={PAGE_SIZE}
         onPressFolder={onPressFolder}

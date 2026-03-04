@@ -18,7 +18,7 @@ export default new NavigableModuleConfig<'wiki', WikiStore>({
       sources: ['camera', 'gallery'],
     },
   } as const,
-  matchEntcoreApp: '/wiki',
+  matchEntcoreApp: 'Wiki',
   name: 'wiki',
   storageName: 'wiki',
 });

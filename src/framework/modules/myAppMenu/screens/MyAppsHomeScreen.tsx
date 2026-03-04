@@ -1,126 +1,230 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import { IMyAppsNavigationParams, myAppsRouteNames } from '../navigation';
+import { styles } from './styles';
+import { MyAppsHomeScreenProps } from './types';
+import { useMyAppsHomeController } from './useController';
+import { EMPTY_SCREEN_CONFIG, openHelpLink, resolveEmptyScreenKey } from './utils';
 
 import { I18n } from '~/app/i18n';
-import SecondaryButton from '~/framework/components/buttons/secondary';
-import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import GridList from '~/framework/components/GridList';
-import FlatList from '~/framework/components/list/flat-list';
+import BottomSheetModal from '~/framework/components/modals/bottom-sheet';
+import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
-import { HeadingSText } from '~/framework/components/text';
-import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
-import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
-import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
-import { isEmpty } from '~/framework/util/object';
+import { Svg } from '~/framework/components/picture';
+import { Toggle } from '~/framework/components/toggle';
+import {
+  MAOSProps,
+  MyAppsFilters,
+  MyAppsList,
+  MyAppsMenuItem,
+  MyAppsOnboardingModal,
+} from '~/framework/modules/myAppMenu/components';
+import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
+import { navBarOptions } from '~/framework/navigation/navBar';
 
-export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
-  modules: NavigableModuleArray;
-  secondaryModules: NavigableModuleArray;
-  connectors: NavigableModuleArray;
-  widgets: NavigableModuleArray;
-}
+const getLang = I18n.get;
 
-const styles = StyleSheet.create({
-  container: { flexGrow: 1 },
-  flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
-  image: { height: 64, width: '100%' },
-  otherModules: { paddingBottom: UI_SIZES.spacing.major },
-  otherModulesTitle: {
-    marginBottom: UI_SIZES.spacing.small,
-    marginTop: UI_SIZES.spacing.small,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
-  webButton: { marginBottom: UI_SIZES.spacing.major },
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+    title: getLang('myapp-appname'),
+  }),
 });
 
-const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
-  const renderGrid = () => {
-    const allModules = (props.modules ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
-    ) as NavigableModuleArray;
+const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
+  const {
+    apps,
+    areAppsShowed,
+    bottomSheetMode,
+    bottomSheetRef,
+    closeBottomSheet,
+    completeOnboarding,
+    filter,
+    handleDismiss,
+    hasSeenOnboarding,
+    isAllAppsTab,
+    modalRef,
+    navigateToFavorites,
+    onPressApp,
+    onToggleAllApps,
+    onToggleFavorite,
+    openBottomSheet,
+    selectedApp,
+    setFilter,
+  } = useMyAppsHomeController();
 
-    const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
-      return (
-        <TouchableSelectorPictureCard
-          onPress={() => props.navigation.navigate(item.config.routeName)}
-          text={I18n.get(item.config.displayI18n)}
-          picture={
-            item.config.displayPicture
-              ? item.config.displayPicture.type === 'Svg'
-                ? { ...item.config.displayPicture, height: 64, width: '100%' }
-                : item.config.displayPicture.type === 'Image'
-                  ? { ...item.config.displayPicture }
-                  : /* item.config.displayPicture.type === 'Icon' */ { ...item.config.displayPicture, size: 64 }
-              : {
-                  color: item.config.iconColor,
+  const slides: MAOSProps[] = [
+    {
+      description: getLang('myapp-onboarding-favorites-description'),
+      illustration: { name: 'ui-myapps-list', type: 'svg' },
+      key: 'applist',
+      subtitle: getLang('myapp-onboarding-favorites-subtitle'),
+      title: getLang('myapp-onboarding-favorites-title'),
+    },
+    {
+      description: getLang('myapp-onboarding-lonpress-description'),
+      illustration: {
+        source: require('ASSETS/animations/myapps/myapps-more-actions.json'),
+        type: 'animated',
+      },
+      key: 'longpress',
+      subtitle: getLang('myapp-onboarding-longpress-subtitle'),
+      title: getLang('myapp-onboarding-longpress-title'),
+    },
+    {
+      description: getLang('myapp-onboarding-favorite-add-description'),
+      illustration: { name: 'ui-make-favorite', type: 'svg' },
+      key: 'add-favorite',
+      subtitle: getLang('myapp-onboarding-favorite-add-subtitle'),
+      title: getLang('myapp-onboarding-favorite-add-title'),
+    },
+  ];
 
-                  name: item.config.iconName,
+  const renderGhostLeftHeader = () => (
+    <NavBarActionsGroup elements={[<NavBarAction key="ghost#1" />, <NavBarAction key="ghost#2" />]} />
+  );
 
-                  size: 64,
-                  // Fallback on legacy moduleConfig properties
-                  type: 'Icon',
-                }
-          }
-          pictureStyle={item.config.displayPicture?.type === 'Image' ? styles.image : {}}
-        />
-      );
-    };
-
-    return (
-      <GridList
-        data={allModules}
-        renderItem={renderGridItem}
-        keyExtractor={item => item.config.name}
-        gap={UI_SIZES.spacing.big}
-        gapOutside={UI_SIZES.spacing.big}
-        alwaysBounceVertical={false}
-        overScrollMode="never"
-        contentContainerStyle={styles.container}
-        bottomInset={false}
+  const renderHeaderRight = React.useCallback(
+    () => (
+      <NavBarActionsGroup
+        elements={[
+          <NavBarAction
+            key="notif"
+            icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
+            onPress={() => modalRef.current?.doShowModal()}
+          />,
+          <NavBarAction key="options" icon="ui-options" onPress={() => openBottomSheet('home_menu')} />,
+        ]}
       />
-    );
-  };
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [hasSeenOnboarding, openBottomSheet],
+  );
 
-  const renderOtherModules = () => {
-    if (isEmpty(props.secondaryModules) && isEmpty(props.connectors)) return null;
-    const secondaryModules = (props.secondaryModules ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
-    ) as NavigableModuleArray;
-    const connectors = (props.connectors ?? [])?.sort((a, b) =>
-      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
-    ) as NavigableModuleArray;
-    return (
-      <View style={styles.otherModules}>
-        <HeadingSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingSText>
-        <FlatList
-          bottomInset={false}
-          renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}
-          data={secondaryModules}
-          style={styles.flatlist}
-        />
-        <FlatList
-          bottomInset={false}
-          renderItem={({ item }) => <OtherModuleElement item={item} type="connector" />}
-          data={connectors}
-          style={styles.flatlist}
-        />
-      </View>
-    );
-  };
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerLeft: renderGhostLeftHeader,
+      headerRight: renderHeaderRight,
+    });
+  }, [navigation, renderHeaderRight]);
+
+  const renderMenuIcon = React.useCallback(
+    (name: string) => (
+      <Svg name={name} width={UI_SIZES.spacing.big} height={UI_SIZES.spacing.big} fill={theme.palette.grey.black} />
+    ),
+    [],
+  );
+
+  const renderBottomSheetContent = React.useCallback(() => {
+    switch (bottomSheetMode) {
+      case 'home_menu':
+        return (
+          <React.Fragment>
+            <MyAppsMenuItem
+              onPress={() => {
+                closeBottomSheet();
+                setTimeout(() => navigateToFavorites(), 300);
+              }}
+              leftElement={renderMenuIcon('ui-star-outline')}
+              label={getLang('myapp-bottomsheet-handle-favorites')}
+            />
+
+            {filter.type !== 'favorites' && (
+              <React.Fragment>
+                <View style={styles.separatorLine} />
+
+                <MyAppsMenuItem
+                  isPressable={false}
+                  leftElement={<Toggle checked={areAppsShowed} onChange={onToggleAllApps} />}
+                  label={getLang('myapp-bottomsheet-render-all-favorites')}
+                />
+
+                <MyAppsMenuItem
+                  isPressable={false}
+                  leftElement={renderMenuIcon('ui-infoCircle')}
+                  label={getLang('myapp-bottomsheet-info-message')}
+                />
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        );
+
+      case 'app_actions':
+        if (!selectedApp) return null;
+
+        return (
+          <>
+            <MyAppsMenuItem
+              label={
+                selectedApp.isFavorite
+                  ? getLang('myapp-bottomsheet-withdraw-from-favorites')
+                  : getLang('myapp-bottomsheet-add-to-favorites')
+              }
+              leftElement={renderMenuIcon('ui-star-outline')}
+              onPress={() => onToggleFavorite(selectedApp.name)}
+            />
+
+            <View style={styles.separatorLine} />
+
+            <MyAppsMenuItem
+              leftElement={renderMenuIcon('ui-infoCircle')}
+              label={getLang('myapp-bottomsheet-app-info')}
+              onPress={() => {
+                closeBottomSheet();
+                openHelpLink(selectedApp.help);
+              }}
+            />
+          </>
+        );
+    }
+  }, [
+    areAppsShowed,
+    bottomSheetMode,
+    closeBottomSheet,
+    filter.type,
+    navigateToFavorites,
+    onToggleAllApps,
+    onToggleFavorite,
+    renderMenuIcon,
+    selectedApp,
+  ]);
+
+  const renderBottomSheet = React.useCallback(
+    () => (
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        onDismiss={handleDismiss}
+        enableDynamicSizing
+        containerStyle={styles.bottomSheetContainer}
+        closeButton>
+        {renderBottomSheetContent()}
+      </BottomSheetModal>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [renderBottomSheetContent],
+  );
 
   return (
     <PageView>
-      <ScrollView bottomInset={false}>
-        {renderGrid()}
-        {renderOtherModules()}
-        <View style={styles.webButton}>
-          <SecondaryButton text={I18n.get('myapp-accessweb')} url="/welcome" />
-        </View>
-      </ScrollView>
+      <MyAppsFilters selectedFilter={filter} onFilterChange={setFilter} />
+      <MyAppsList
+        apps={apps}
+        emptyScreenConfig={EMPTY_SCREEN_CONFIG[resolveEmptyScreenKey(filter)]}
+        isAllAppsFilter={isAllAppsTab}
+        onPressApp={onPressApp}
+        onLongPressApp={(app: AppsInfoAggregated) => openBottomSheet('app_actions', app)}
+      />
+      <MyAppsOnboardingModal ref={modalRef} slides={slides} onComplete={completeOnboarding} />
+      {renderBottomSheet()}
     </PageView>
   );
 };
