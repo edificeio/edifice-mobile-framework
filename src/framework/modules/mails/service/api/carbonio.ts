@@ -5,8 +5,9 @@ import {
 } from '../adapters/carbonio';
 import { mailContentAdapter, mailsAdapter, MailsVisibleBackend, mailVisibleAdapter } from '../adapters/mails';
 
+import { getStore } from '~/app/store';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { actions as authActions, getSession } from '~/framework/modules/auth/reducer';
 import { MailsConversationPayload } from '~/framework/modules/mails/model';
 import { sessionFetch } from '~/framework/util/transport';
 
@@ -16,12 +17,15 @@ const CARBONIO_SOAP_BASE_URL = 'https://mail.lyceeconnecte.fr/service/soap';
 /**
  * Get Carbonio authToken from token endpoint
  */
-async function getCarbonioAuthToken(_: AuthActiveAccount): Promise<string> {
+export async function getCarbonioAuthToken(_: AuthActiveAccount): Promise<string> {
   // get token from /auth/carbonio/token
 
   const responseText = await sessionFetch.text('/auth/carbonio/token', { method: 'GET' });
   const token = responseText.trim();
 
+  const session = getSession();
+  if (!session) throw new Error('No session found');
+  getStore().dispatch(authActions.setCarbonioToken(session.user.id, token));
   return token;
 }
 
@@ -63,7 +67,15 @@ async function carbonioSoapRequest<T>(
   requestBody: any,
   withContentName: boolean = false,
 ): Promise<T> {
-  const authToken = await getCarbonioAuthToken(session);
+  let authToken = getStore().getState().auth.accounts[session.user.id]?.tokens.carbonioToken;
+
+  if (!authToken) {
+    authToken = await getCarbonioAuthToken(session);
+    if (!authToken) {
+      throw new Error('Carbonio auth token not found');
+    }
+  }
+
   const soapBody = buildSoapRequest(
     authToken,
     requestName,
@@ -71,7 +83,7 @@ async function carbonioSoapRequest<T>(
     withContentName ? `${session.user.login}@lyceeconnecte.fr` : '',
   );
 
-  const response = await fetch(`${CARBONIO_SOAP_BASE_URL}/${requestName}`, {
+  const response = await sessionFetch(`${CARBONIO_SOAP_BASE_URL}/${requestName}`, {
     body: JSON.stringify(soapBody),
     headers: {
       'Content-Type': 'application/json',
