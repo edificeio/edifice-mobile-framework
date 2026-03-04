@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-03 18:40:56",
-  "notes": "chore: yarn cache update\nfix(blog): ENABLING-634 update list after post creation and deletion\nfix: ENABLING-603 workaround for keyboard on Android 16+\nfix(viescolaire): ENABLING-621, app crashing when module pressed.\nfix(auth):COCO-5266 fixing image thumbnails in editor (284)\nfix(wiki): ENABLING-628 show wiki pages even when content is empty\nfix(typo): replace pronote folder with right one\nrelease: 1.16.7(1160700)\nupdate(stack): yarn cache update\nfix(mails): ENABLING-635,  Android screen remount when returning from file/attachment import screen\nchore(stack): update yarn caches\nupdate(stack): yarn cache update && minor packages updates\nchore: replace node fetch with deviceFetch in nabook\nfix(nabook): ENABLING-626 fix oneSessionId refacto issue\nMerge branch 'dev/1.16.5' into dev/1.16.6\nrelease: 1.16.5-rc.1(1160501)",
-  "version": "1.16.7-alpha.1(1160701)",
+  "last": "2026-03-04 16:52:49",
+  "notes": "chore(stack): yarn cache update\nfeat(myapps): Refonte (286)\nfeat(component): COCO-4775 creating multimedia-carousel\nchore(stack): yarn cache update\nMerging dev/1.16.7 into dev/comm",
+  "version": "1.16.7-comm.1(1160702)",
   "track": "1.16.7"
 }
