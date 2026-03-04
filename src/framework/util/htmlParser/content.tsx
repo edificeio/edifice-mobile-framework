@@ -157,7 +157,7 @@ const notAvailableMediaTexts = {
   video: 'htmlparser-video-notavailable',
 };
 
-const renderAudioVideoPreview = (media: INotificationMedia, referer: AudienceParameter) => {
+const renderAudioVideoPreview = (media: INotificationMedia, referer: AudienceParameter, onPreviewPress?: () => void) => {
   const videoDimensions = media['video-resolution'] ? extractVideoResolution(media['video-resolution']) : undefined;
   const videoId = media['document-id'] as string | undefined;
   if (!media.src) {
@@ -174,15 +174,23 @@ const renderAudioVideoPreview = (media: INotificationMedia, referer: AudiencePar
       posterSource={videoId && videoDimensions ? formatSource(computeVideoThumbnail(videoId, videoDimensions)) : undefined}
       ratio={videoDimensions && videoDimensions[1] !== 0 ? videoDimensions[0] / videoDimensions[1] : undefined}
       referer={referer}
+      onPreviewPress={onPreviewPress}
     />
   );
 };
 
-const renderIframePreview = (media: INotificationMedia, referer: AudienceParameter) => {
-  return <MediaButton type={MediaType.EMBEDDED} source={formatSource(media.src as string)} referer={referer} />;
+const renderIframePreview = (media: INotificationMedia, referer: AudienceParameter, onPreviewPress?: () => void) => {
+  return (
+    <MediaButton
+      type={MediaType.EMBEDDED}
+      source={formatSource(media.src as string)}
+      referer={referer}
+      onPreviewPress={onPreviewPress}
+    />
+  );
 };
 
-const renderImagesPreview = (medias: INotificationMedia[], referer: AudienceParameter) => {
+const renderImagesPreview = (medias: INotificationMedia[], referer: AudienceParameter, onPreviewPress?: () => void) => {
   const images: INotificationMedia[] = [];
   for (const mediaItem of medias) {
     if (mediaItem.type !== 'image') break;
@@ -192,21 +200,21 @@ const renderImagesPreview = (medias: INotificationMedia[], referer: AudiencePara
     alt: `image-${index}`,
     src: formatSource(image.src as string),
   }));
-  return <Images images={imageSrcs} referer={referer} />;
+  return <Images images={imageSrcs} referer={referer} onPreviewPress={onPreviewPress} />;
 };
 
 /**
  * Renders first medias from an input media array
  * @param medias
  */
-export const renderMediaPreview = (medias: INotificationMedia[], referer: AudienceParameter) => {
+export const renderMediaPreview = (medias: INotificationMedia[], referer: AudienceParameter, onPreviewPress?: () => void) => {
   const firstMedia = medias && medias[0];
   const components = {
     attachment: () => renderAttachementsPreview(medias, referer),
-    audio: () => renderAudioVideoPreview(firstMedia, referer),
-    iframe: () => renderIframePreview(firstMedia, referer),
-    image: () => renderImagesPreview(medias, referer),
-    video: () => renderAudioVideoPreview(firstMedia, referer),
+    audio: () => renderAudioVideoPreview(firstMedia, referer, onPreviewPress),
+    iframe: () => renderIframePreview(firstMedia, referer, onPreviewPress),
+    image: () => renderImagesPreview(medias, referer, onPreviewPress),
+    video: () => renderAudioVideoPreview(firstMedia, referer, onPreviewPress),
   };
   return firstMedia && components[firstMedia.type]?.();
 };

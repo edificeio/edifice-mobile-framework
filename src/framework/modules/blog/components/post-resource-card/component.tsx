@@ -80,7 +80,9 @@ export const BlogPostResourceCard = React.memo(
               {blogPostText}
             </SmallText>
           ) : null}
-          {hasBlogPostMedia ? renderMediaPreview(blogPostMedia, { module: 'blog', resourceId, resourceType: 'post' }) : null}
+          {hasBlogPostMedia
+            ? renderMediaPreview(blogPostMedia, { module: 'blog', resourceId, resourceType: 'post' }, action)
+            : null}
         </TouchableResourceCard>
       </ArticleContainer>
     );

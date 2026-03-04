@@ -3,6 +3,8 @@ import * as React from 'react';
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
 
 import CarouselScreen from '~/framework/components/carousel';
+import MultimediaCarousel, { CarouselMultimediaNavBar } from '~/framework/components/carousel-multimedia/';
+// eslint-disable-next-line import/order
 import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
@@ -42,6 +44,11 @@ export default (
         component={AttachmentsImportScreen}
         initialParams={{}}
       />
+      <RootStack.Screen
+        name={ModalsRouteNames.CarouselMultimedia}
+        options={CarouselMultimediaNavBar}
+        component={MultimediaCarousel}
+      />
       <RootStack.Screen name={ModalsRouteNames.Carousel} options={CarouselNavBar} component={CarouselScreen} />
       <RootStack.Screen
         name={ModalsRouteNames.FileImport}
@@ -67,6 +74,7 @@ setModalModeForRoutes([
   ModalsRouteNames.AudienceReactions,
   ModalsRouteNames.AudienceViews,
   ModalsRouteNames.Carousel,
+  ModalsRouteNames.CarouselMultimedia,
   ModalsRouteNames.FileImport,
   ModalsRouteNames.Infos,
   ModalsRouteNames.Log,
