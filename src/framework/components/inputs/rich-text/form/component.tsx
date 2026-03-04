@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Alert, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import DeviceInfo from 'react-native-device-info';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
@@ -22,8 +24,11 @@ import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { useSyncRef } from '~/framework/hooks/ref';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
+import { getSession } from '~/framework/modules/auth/reducer';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { ANDROID_14, ANDROID_16 } from '~/framework/util/permissions';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
@@ -34,6 +39,19 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
 
   const navigation = useNavigation() as any;
   const route = useRoute();
+
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  React.useEffect(() => {
+    if (!props.oneSessionId) {
+      const session = getSession();
+      if (session) {
+        dispatch(refreshSessionIdForAccountAction(session)).catch(e => {
+          console.warn('[RichEditorForm] Failed to refresh oneSessionId:', e);
+        });
+      }
+    }
+  }, [props.oneSessionId, dispatch]);
 
   //
   // Editor management
@@ -284,12 +302,36 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
     [topForm],
   );
 
+  /**
+   * KeyboardAvoidingView does not work with Android 16+ (api level 36)
+   * So we manually add the padding from the Keyboard event.
+   *
+   * Fixme: Use react-native-keyboard-controller instead of this fix.
+   */
+  const [kbHeight, setKbHeight] = React.useState(0);
+  React.useEffect(() => {
+    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', e => {
+      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
+      setKbHeight(e.endCoordinates.height);
+    });
+
+    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', e => {
+      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
+      setKbHeight(0);
+    });
+
+    return () => {
+      keyboardShowListener.remove();
+      keyboardHideListener.remove();
+    };
+  }, []);
+
   return (
     <BottomSheetModalProvider>
       <PageView style={styles.page}>
         <KeyboardAvoidingView
           keyboardVerticalOffset={headerHeight}
-          style={containerStyle}
+          style={[containerStyle, { paddingBottom: kbHeight }]}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView
             keyboardDismissMode="none"

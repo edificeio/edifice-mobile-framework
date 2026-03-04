@@ -4,5 +4,6 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 
 export interface BlogPostListScreenNavigationParams {
   blogId: string;
+  forceReload?: boolean;
 }
 export type BlogPostListScreenProps = NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogPostList>;

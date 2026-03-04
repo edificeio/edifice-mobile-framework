@@ -35,7 +35,7 @@ import { SubjectAverageCard } from '~/framework/modules/viescolaire/competences/
 import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
-import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
+import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service/adapters';
 import { storage } from '~/framework/modules/viescolaire/competences/storage';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
