@@ -10,11 +10,13 @@ import {
 } from 'react-native-keyboard-controller';
 import Animated, { runOnJS, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 
 import styles from './styles';
 import type { SocialResourceViewer } from './types';
 
 import { I18n } from '~/app/i18n';
+import { SingleAvatar } from '~/framework/components/avatar';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
@@ -23,6 +25,8 @@ import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import usePreventBack from '~/framework/hooks/prevent-back';
+import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
+import { selectors } from '~/framework/modules/auth/reducer';
 
 /**
  * Note: FlashList v1 contains a bug that duplicates sticky elements. FflatList handles it correctly.
@@ -79,7 +83,13 @@ export const NewCommentInputDispatchContext = React.createContext<
   React.Dispatch<React.SetStateAction<{ height: number; value: string }>>
 >(_ => _);
 
-export function SocialResourceViewer({ fetchResource, renderPlaceholder, renderResource, style }: SocialResourceViewer.Props) {
+export function SocialResourceViewer({
+  canAddComment,
+  fetchResource,
+  renderPlaceholder,
+  renderResource,
+  style,
+}: SocialResourceViewer.Props) {
   const loadContent = React.useCallback(async () => {
     if (!fetchResource) return truePromiseFn();
     return fetchResource();
@@ -89,8 +99,8 @@ export function SocialResourceViewer({ fetchResource, renderPlaceholder, renderR
   const data: SocialResourceViewerItemType[] = DEBUG_LIST_DATA;
 
   const renderContent = React.useCallback<NonNullable<ContentLoaderProps['renderContent']>>(() => {
-    return <SocialResourceViewerLoaded renderResource={renderResource} data={data} />;
-  }, [data, renderResource]);
+    return <SocialResourceViewerLoaded renderResource={renderResource} data={data} canAddComment={canAddComment} />;
+  }, [canAddComment, data, renderResource]);
 
   return (
     <PageView style={React.useMemo(() => [styles.page, style], [style])}>
@@ -104,7 +114,18 @@ export function SocialResourceViewer({ fetchResource, renderPlaceholder, renderR
   );
 }
 
-const SocialResourceViewerLoaded = ({ data, renderResource: _renderResource }) => {
+const SocialResourceViewerLoaded = ({
+  canAddComment: _canAddComment,
+  data,
+  renderResource: _renderResource,
+}: {
+  data: any;
+  renderResource: any;
+  canAddComment: boolean;
+}) => {
+  const session = useSelector(selectors.session);
+  const canAddComment = session && _canAddComment;
+
   const listRef = React.useRef<Animated.FlatList<SocialResourceViewerItemType>>(null);
   const [newCommentInputState, newCommentInputDispatch] = React.useState({ height: 0, value: '' });
   const [isNewCommentFocused, setNewCommentIsFocused] = React.useState(false);
@@ -219,7 +240,9 @@ const SocialResourceViewerLoaded = ({ data, renderResource: _renderResource }) =
           ListFooterComponent={<View style={{ height: newCommentInputState.height }} />}
           scrollIndicatorInsets={scrollIndicatorInsets}
         />
-        <SocialResourceViewerAddCommentForm style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+        {canAddComment && (
+          <SocialResourceViewerAddCommentForm session={session} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+        )}
       </NewCommentInputDispatchContext>
     </NewCommentInputContext>
   );
@@ -228,11 +251,13 @@ const SocialResourceViewerLoaded = ({ data, renderResource: _renderResource }) =
 export const SocialResourceViewerAddCommentForm = ({
   onBlur,
   onFocus,
+  session,
   style,
 }: {
   style: ViewStyle;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
+  session: AuthActiveAccount | AuthSavedLoggedInAccount;
 }) => {
   const inputState = React.useContext(NewCommentInputContext);
   const inputDispatch = React.useContext(NewCommentInputDispatchContext);
@@ -254,6 +279,7 @@ export const SocialResourceViewerAddCommentForm = ({
          * When edge-to-edge will be implemented at project-level, this would be no more necessary.
          */
         offset={{ closed: 0, opened: navBarHeight + (Platform.OS === 'android' ? bottom - top : 0) }}>
+        <SingleAvatar size="md" userId={session.user.id} />
         <ChatTextArea
           maxLength={80}
           wrapperStyle={[UI_STYLES.flexGrow1]}
