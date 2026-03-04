@@ -26,9 +26,43 @@ export async function getCarbonioAuthToken(_: AuthActiveAccount): Promise<string
   const session = getSession();
   if (!session) throw new Error('No session found');
   getStore().dispatch(authActions.setCarbonioToken(session.user.id, token));
+  try {
+    const carbonioUserInfos = await getCarbonioUserInfos(token);
+    getStore().dispatch(authActions.setCarbonioUserInfos(session.user.id, carbonioUserInfos));
+  } catch (error) {
+    console.error('Failed to get Carbonio user infos', error);
+  }
+
   return token;
 }
 
+const getCarbonioUserInfos = async (tokenCarbonio: string) => {
+  const response = await sessionFetch(`${CARBONIO_SOAP_BASE_URL}/GetInfoRequest`, {
+    body: JSON.stringify({
+      Body: {
+        GetInfoRequest: {
+          _jsns: 'urn:zimbraAccount',
+          rights: 'sendAs,sendAsDistList,viewFreeBusy,sendOnBehalfOf,sendOnBehalfOfDistList',
+        },
+      },
+      Header: {
+        context: {
+          _jsns: 'urn:zimbra',
+          authToken: {
+            _content: tokenCarbonio,
+          },
+        },
+      },
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+      'Cookie': `ZM_AUTH_TOKEN=${tokenCarbonio}`,
+    },
+    method: 'POST',
+  });
+  const data = await response.json();
+  return data.Body?.GetInfoResponse ?? data;
+};
 /**
  * Build SOAP request body for Carbonio API
  */
@@ -80,7 +114,9 @@ async function carbonioSoapRequest<T>(
     authToken,
     requestName,
     requestBody,
-    withContentName ? `${session.user.login}@lyceeconnecte.fr` : '',
+    withContentName
+      ? (getStore().getState().auth.accounts[session.user.id]?.carbonioUserInfos?.name ?? `${session.user.login}@lyceeconnecte.fr`)
+      : '',
   );
 
   const response = await sessionFetch(`${CARBONIO_SOAP_BASE_URL}/${requestName}`, {
@@ -130,7 +166,7 @@ const folderIdSwitch = (folderId: string) => {
 
 export const defaultUserIdCarbonio = (session: AuthActiveAccount | undefined) => {
   if (!session) return '';
-  return `${session.user.login}@lyceeconnecte.fr`;
+  return getStore().getState().auth.accounts[session.user.id]?.carbonioUserInfos?.name ?? `${session.user.login}@lyceeconnecte.fr`;
 };
 const getItemId = (id: string) => {
   if (id === null || id === undefined) {
