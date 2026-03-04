@@ -8,7 +8,7 @@ export default new NavigableModuleConfig<string, null>({
   displayPicture: theme.apps.nabook.icon,
   entcoreScope: ['nabook'],
   entcoreTrackingName: 'Nabook',
-  matchEntcoreApp: '/nabook',
+  matchEntcoreApp: 'nabook',
   name: 'nabook',
   storageName: 'nabook',
 });

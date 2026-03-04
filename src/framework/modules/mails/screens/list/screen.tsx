@@ -811,7 +811,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
             <View style={styles.selectFolderTitle}>
               <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
-              <Toggle checked={isSubfolder} onCheckChange={onToggleSubfolders} color={theme.palette.primary} />
+              <Toggle checked={isSubfolder} onChange={onToggleSubfolders} />
             </View>
             {isSubfolder ? (
               <GHFlatList

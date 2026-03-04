@@ -28,7 +28,8 @@ export default new NavigableModuleConfig<'presences', PresencesReduxState>({
       sources: ['camera', 'gallery', 'documents'],
     },
   } as const,
-  matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
+  hasRight: ({ matchingApps }) => matchingApps.some(hasNecessaryRight),
+  matchEntcoreApp: 'Presences',
   name: 'presences',
   storageName: 'presences',
 });

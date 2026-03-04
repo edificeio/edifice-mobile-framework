@@ -11,7 +11,7 @@ export default new NavigableModuleConfig<'schoolbook', ISchoolbookState>({
   entcoreScope: ['schoolbook'],
 
   entcoreTrackingName: 'SchoolBook',
-  matchEntcoreApp: '/schoolbook',
+  matchEntcoreApp: 'Schoolbook',
   name: 'schoolbook',
   storageName: 'schoolbook',
 });

@@ -17,7 +17,7 @@ export default new NavigableModuleConfig<'support', ReturnType<typeof reducer>>(
       sources: ['camera', 'gallery', 'documents'],
     },
   } as const,
-  matchEntcoreApp: '/support',
+  matchEntcoreApp: 'Aide et support',
   name: 'support',
   storageName: 'support',
 });
