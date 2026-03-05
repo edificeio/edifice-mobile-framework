@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-05 11:44:45",
-  "notes": "release: 1.16.6(1160600)\nupdate(stack): yarn cache update\nfix: INTEG-1284 conserve the mail history and adapt img\nfix: INTEG-1299 replace foreach by for to handle errors\nchore: add carbonio userInfo\nchore: encode url callback\nchore: get Carbonio token once and put it in the store\nfix: some warnings\nfix: INTEG-1295 add possibility to send mail to external email\nfix: INTEG-1282 android crash on list change\nfix: pagination mail from carbonio\nfix: INTEG-1290 INTEG-1289 detect currentUserId in case of carbonio\nfix: INTEG-1285 create new draft on reply\nUpdated translations from Phrase (282)\nfix: INTEG-1289 detect if user isSender\nchore: add i18N key\nchore(i18n): restore missing keys\nUpdated translations from Phrase (281)\nchore(i18n): change phrase sync branch\nchore(i18n): add missing translations\nchore: change wording\nfix: INTEG-1288 remove send message for user from user card\nfix: INTEG-1280 add right content name for visible api\nfix(mails): CLC-114 improve css for empty img and change text placement and flag trashed message\nupdate(stack): yarn cache update\nrelease: 1.16.5-inte.1(1160503)\nchore(stack): yarn cache update\nfeat(mails): CLC-114 add Carbonio service in mails",
-  "version": "1.16.6-rc.1(1160601)",
+  "last": "2026-03-05 17:02:58",
+  "notes": "fix: ENABLING-655 add `login.ac-guyane.fr` to Android permitted domain certificates\nrelease: 1.16.6-rc.1(1160601)",
+  "version": "1.16.6-rc.2(1160602)",
   "track": "1.16.6"
 }
