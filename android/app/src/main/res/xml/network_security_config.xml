@@ -125,4 +125,11 @@
             <certificates src="@raw/harica_ca" />
         </trust-anchors>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">login.ac-guyane.fr</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="@raw/harica_ca" />
+        </trust-anchors>
+    </domain-config>
 </network-security-config>
