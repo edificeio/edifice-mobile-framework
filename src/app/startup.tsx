@@ -22,16 +22,6 @@ const initFeatures = async () => {
   await I18n.init();
 };
 
-function SplashScreenComponent() {
-  React.useEffect(() => {
-    return () => {
-      SplashScreen.hide();
-      inAppMessaging().setMessagesDisplaySuppressed(false).finally();
-    };
-  }, []);
-  return null;
-}
-
 /**
  * Logic code that is run for the app start
  */
@@ -51,6 +41,15 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
     } finally {
       initEditor().finally(null);
       dispatch(appReadyAction());
+
+      /**
+       * Hide the splash screen only after the app startup is fully finished.
+       * Doing it earlier caused issues on Android when the app was put on foreground again.
+       * sometimes freezing/crasshing the app (android.view.WindowLeaked: Activity com.ode.appe.MainActivity has leaked window...).
+       */
+
+      SplashScreen.hide();
+      inAppMessaging().setMessagesDisplaySuppressed(false).finally();
     }
   });
 }
@@ -58,5 +57,6 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
 export function AppStartupHandler() {
   useAppStartup(useDispatch());
   const isAppReady = useSelector(getAppStartupState).isReady;
-  return isAppReady ? <RootNavigator /> : <SplashScreenComponent />;
+
+  return isAppReady ? <RootNavigator /> : null;
 }
