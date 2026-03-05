@@ -16,17 +16,19 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: UI_SIZES.spacing.large,
   },
   bottomContainerWrapper: {
     paddingVertical: getScaleHeight(5),
   },
   carousel: {
-    flex: 1,
-    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  carouselInner: {
+    height: getScaleHeight(319),
   },
   container: {
-    height: UI_SIZES.screen.height * 0.65,
-    paddingTop: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.medium,
   },
   containerSlide: {
     alignItems: 'center',
@@ -47,7 +49,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     height: getScaleWidth(180),
     justifyContent: 'center',
-    marginBottom: UI_SIZES.spacing.medium,
+    overflow: 'hidden',
+    resizeMode: 'cover',
     width: getScaleWidth(180),
   },
   modalContentContainerStyle: {
@@ -79,7 +82,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   slide: {
-    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
   },
   title: {

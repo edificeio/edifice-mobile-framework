@@ -56,7 +56,6 @@ export function ResourceExplorerTemplate({
   const content = folder?.content ?? emptyFolderData;
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();
   const actions = useExplorerActions(moduleConfig);
-  console.debug('appBadges', appBadges);
 
   const loadPage = React.useCallback(
     async (start_idx: number, nb: number, reloadAll: boolean = false) => {

@@ -2,10 +2,6 @@ import { AppsInfo, AppsInfoAggregated, MyAppsCategories } from '~/framework/modu
 import { AnyModule, AnyNavigableModule, IEntcoreApp } from '~/framework/util/moduleTool';
 
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
-  if (!app.isMobile) {
-    return 'otherServices';
-  }
-
   switch (app.category) {
     case 'communication':
       return 'communication';
