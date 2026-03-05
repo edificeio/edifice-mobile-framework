@@ -32,6 +32,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: theme.palette.grey.cloudy,
     justifyContent: 'center',
+    marginBottom: UI_SIZES.spacing.small,
     paddingRight: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.small,
   },
