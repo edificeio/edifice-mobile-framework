@@ -35,6 +35,8 @@ export const MyAppsOnboardingSlide: React.FC<MAOSProps> = ({ description, illust
             resizeMode="contain"
             loop
             speed={0.8}
+            autoPlay={false}
+            renderMode="HARDWARE"
             style={styles.animation}
           />
         )}

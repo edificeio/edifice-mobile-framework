@@ -81,16 +81,21 @@ export function useMyAppsHomeController() {
     }, []),
   );
 
-  const openBottomSheet = React.useCallback((mode: BottomSheetMode, app?: AppsInfoAggregated) => {
-    setSelectedApp(app ?? null);
-    setBottomSheetMode(mode);
-    bottomSheetRef.current?.present();
-  }, []);
+  const openBottomSheet = React.useCallback(
+    (mode: BottomSheetMode, app?: AppsInfoAggregated) => {
+      setSelectedApp(app ?? null);
+      setBottomSheetMode(mode);
+      navigation.setParams({ tabBarVisible: false });
+      bottomSheetRef.current?.present();
+    },
+    [navigation],
+  );
 
   const closeBottomSheet = React.useCallback(() => {
     setSelectedApp(null);
+    navigation.setParams({ tabBarVisible: true });
     bottomSheetRef.current?.dismiss();
-  }, []);
+  }, [navigation]);
 
   const onPressApp = React.useCallback(
     (app: AppsInfoAggregated) => {
@@ -113,6 +118,7 @@ export function useMyAppsHomeController() {
   );
 
   const handleDismiss = React.useCallback(() => {
+    navigation.setParams({ tabBarVisible: true });
     const appName = pendingToggleRef.current;
 
     if (!appName) {
@@ -132,7 +138,7 @@ export function useMyAppsHomeController() {
         displayToast();
       }),
     );
-  }, [dispatch, displayToast, queueToast]);
+  }, [dispatch, displayToast, navigation, queueToast]);
 
   const onToggleAllApps = React.useCallback(() => {
     dispatch(toggleAllApps());
