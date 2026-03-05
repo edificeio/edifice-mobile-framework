@@ -13,4 +13,9 @@ export const styles = StyleSheet.create({
     marginVertical: UI_SIZES.spacing.minor,
     width: '100%',
   },
+  tabBarStyle: {
+    opacity: 0,
+    pointerEvents: 'none',
+    position: 'absolute',
+  },
 });
