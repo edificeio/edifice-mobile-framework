@@ -25,9 +25,8 @@ export const styles = StyleSheet.create({
   },
   searchContainer: {
     height: getScaleWidth(56),
-    paddingBottom: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingTop: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   searchInactive: {
     borderColor: theme.palette.grey.cloudy,
