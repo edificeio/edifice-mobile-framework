@@ -67,6 +67,7 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
     const onMomentumEnd = React.useCallback(
       (e: NativeSyntheticEvent<NativeScrollEvent>) => {
         const newIndex = Math.round(e.nativeEvent.contentOffset.x / layoutWidth);
+
         if (newIndex !== index) setIndex(newIndex);
       },
       [index, layoutWidth],
@@ -84,16 +85,19 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
     return (
       <ModalBox
         ref={modalBoxRef}
+        useNativeDriver
         contentContainerStyle={styles.modalContentContainerStyle}
         content={
           <View
             style={styles.container}
             onLayout={e => {
-              const w = e.nativeEvent.layout.width;
-              if (w && w !== layoutWidth) {
-                setLayoutWidth(w);
+              const { width } = e.nativeEvent.layout;
+
+              if (width && width !== layoutWidth) {
+                setLayoutWidth(width);
+
                 requestAnimationFrame(() => {
-                  scrollRef.current?.scrollTo({ animated: false, x: index * w });
+                  scrollRef.current?.scrollTo({ animated: false, x: index * width });
                 });
               }
             }}>
@@ -108,19 +112,23 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
             </View>
 
             <View style={styles.carousel}>
-              <ScrollView
-                ref={scrollRef}
-                horizontal
-                pagingEnabled
-                bounces={false}
-                showsHorizontalScrollIndicator={false}
-                onMomentumScrollEnd={onMomentumEnd}>
-                {slides.map((slide, i) => (
-                  <View key={slide.key ?? i} style={[styles.slide, { width: layoutWidth }]}>
-                    <MyAppsOnboardingSlide {...slide} isActive={i === index} />
-                  </View>
-                ))}
-              </ScrollView>
+              <View style={styles.carouselInner}>
+                {layoutWidth > 0 && (
+                  <ScrollView
+                    ref={scrollRef}
+                    horizontal
+                    pagingEnabled
+                    bounces={false}
+                    showsHorizontalScrollIndicator={false}
+                    onMomentumScrollEnd={onMomentumEnd}>
+                    {slides.map((slide, i) => (
+                      <View key={slide.key ?? i} style={[styles.slide, { width: layoutWidth }]}>
+                        <MyAppsOnboardingSlide {...slide} isActive={i === index} />
+                      </View>
+                    ))}
+                  </ScrollView>
+                )}
+              </View>
             </View>
 
             <View style={styles.bottom}>
