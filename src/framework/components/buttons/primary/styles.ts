@@ -10,6 +10,7 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
   },
   round: {
+    borderWidth: 0,
     paddingHorizontal: UI_SIZES.spacing.minor,
   },
 });

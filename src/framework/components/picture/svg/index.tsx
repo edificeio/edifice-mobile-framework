@@ -307,6 +307,8 @@ const imports = {
   'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
 };
 
+export type BundleIconName = keyof typeof imports;
+
 let importsCache = {};
 
 export const addToCache = async (name: string) => {
