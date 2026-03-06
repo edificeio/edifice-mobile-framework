@@ -17,6 +17,7 @@ import type { SocialResourceViewer } from './types';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
@@ -294,6 +295,7 @@ export const SocialResourceViewerAddCommentForm = ({
           onBlur={onBlur}
           placeholder="Ajouter un commentaire"
         />
+        <PrimaryButton disabled={!inputState.value.length} iconLeft="ui-send" round />
       </KeyboardStickyView>
     </Animated.View>
   );
