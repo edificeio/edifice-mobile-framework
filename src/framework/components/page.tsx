@@ -9,6 +9,7 @@
  */
 import * as React from 'react';
 import {
+  Keyboard,
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
@@ -22,11 +23,13 @@ import {
 import styled from '@emotion/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
+import DeviceInfo from 'react-native-device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { UI_SIZES } from './constants';
 import { ScreenView } from './screen';
 import { ScreenViewProps } from './screen/types';
+import { ANDROID_16 } from '../util/permissions';
 
 import theme from '~/app/theme';
 import Notifier from '~/framework/util/notifier';
@@ -91,6 +94,24 @@ export const KeyboardPageView = (
     }
   >,
 ) => {
+  const [kbHeight, setKbHeight] = React.useState(0);
+  React.useEffect(() => {
+    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', e => {
+      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
+      setKbHeight(e.endCoordinates.height);
+    });
+
+    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', e => {
+      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
+      setKbHeight(0);
+    });
+
+    return () => {
+      keyboardShowListener.remove();
+      keyboardHideListener.remove();
+    };
+  }, []);
+
   const keyboardAvoidingViewBehavior = Platform.select({
     android: undefined,
     ios: 'padding',
@@ -105,7 +126,7 @@ export const KeyboardPageView = (
         behavior={keyboardAvoidingViewBehavior}
         keyboardVerticalOffset={headerHeight} // top inset height is included in headerHeight by React Navigation
         contentContainerStyle={styles.flexGrow1}
-        style={styles.flex1}>
+        style={React.useMemo(() => [styles.flex1, { paddingBottom: kbHeight }], [kbHeight])}>
         <InnerViewComponent
           style={styles.flex1}
           contentContainerStyle={styles.flexGrow1}
