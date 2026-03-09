@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-05 17:02:58",
-  "notes": "fix: ENABLING-655 add `login.ac-guyane.fr` to Android permitted domain certificates\nrelease: 1.16.6-rc.1(1160601)",
-  "version": "1.16.6-rc.2(1160602)",
+  "last": "2026-03-09 10:43:54",
+  "notes": "update(stack): yarn cache update\nrelease: 1.16.6-rc.2(1160602)",
+  "version": "1.16.6-rc.3(1160603)",
   "track": "1.16.6"
 }
