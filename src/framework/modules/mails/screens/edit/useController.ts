@@ -258,7 +258,6 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
         setDraftIdSaved(newDraftId);
       }
 
-      toast.showSuccess(I18n.get('mails-edit-toastsuccesssavedraft'));
       setIsSending(false);
     } catch (e) {
       console.error(e);

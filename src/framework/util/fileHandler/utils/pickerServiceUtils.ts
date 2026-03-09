@@ -73,3 +73,8 @@ export async function processImage(asset: RNImageAsset): Promise<Asset | null> {
     return null;
   }
 }
+
+export const logFileManagerConfig = (label: string, data: Record<string, unknown>) => {
+  if (!__DEV__) return;
+  console.debug(`[FileManager] ${label}`, data);
+};
