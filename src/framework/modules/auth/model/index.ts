@@ -16,6 +16,7 @@ export enum AccountType {
   Teacher = 'Teacher',
   Personnel = 'Personnel',
   Guest = 'Guest',
+  External = 'External',
 }
 
 /**

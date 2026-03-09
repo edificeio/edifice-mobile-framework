@@ -5,7 +5,6 @@ import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
-import { getNoReplyRight } from '../../rights';
 import styles from './styles';
 import { type MailsEditScreenPrivateProps } from './types';
 import { useMailsEditController } from './useController';
@@ -24,6 +23,9 @@ import { InactiveUserModalContentContainer } from '~/framework/modules/mails/com
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsRecipientsType } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { getNoReplyRight } from '~/framework/modules/mails/rights';
+import { mailsService } from '~/framework/modules/mails/service';
+import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -155,15 +157,17 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     () => (
       <View style={styles.bottomForm}>
         {history !== '' && !isHistoryOpen ? <MailsHistoryButton content={history} onPress={onOpenHistory} /> : null}
-        <Attachments
-          session={session!}
-          isEditing
-          attachments={attachments}
-          removeAttachmentAction={onRemoveAttachment}
-          draftId={draftIdSaved}
-          onPressAddAttachments={onPressAddAttachments}
-        />
-        <View style={{ minHeight: 600 }} />
+        {isServiceMethodAvailable(mailsService.attachments.remove) && isServiceMethodAvailable(mailsService.attachments.add) ? (
+          <Attachments
+            session={session!}
+            isEditing
+            attachments={attachments}
+            removeAttachmentAction={onRemoveAttachment}
+            draftId={draftIdSaved}
+            onPressAddAttachments={onPressAddAttachments}
+          />
+        ) : null}
+        <View style={styles.bottomSheet} />
       </View>
     ),
     [history, isHistoryOpen, session, onOpenHistory, attachments, onRemoveAttachment, draftIdSaved, onPressAddAttachments],
@@ -187,6 +191,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           }}
           placeholder={I18n.get('mails-edit-contentplaceholder')}
           onScrollBeginDrag={onScrollBeginDrag}
+          allowMultimediaUpload={mailsService.attachments.allowMultimediaUpload ?? true}
         />
         <InactiveUserModalContentContainer
           isVisible={inactiveUserModalVisible}

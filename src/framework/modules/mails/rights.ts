@@ -11,3 +11,9 @@ export const noReplyRight = 'org.entcore.conversation.controllers.ConversationCo
 export const getNoReplyRight = (session: AuthActiveAccount): boolean => {
   return session.rights.authorizedActions.some(a => a.name === noReplyRight);
 };
+
+export const carbonioMailRight = 'org.entcore.auth.controllers.CarbonioPreauthController|preauth';
+
+export const getMailCarbonioRight = (session: AuthActiveAccount): boolean => {
+  return session.rights.authorizedActions.some(a => a.name === carbonioMailRight);
+};
