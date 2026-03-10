@@ -138,23 +138,19 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
               label={getLang('myapp-bottomsheet-handle-favorites')}
             />
 
-            {filter.type !== 'favorites' && (
-              <React.Fragment>
-                <View style={styles.separatorLine} />
+            <View style={styles.separatorLine} />
 
-                <MyAppsMenuItem
-                  isPressable={false}
-                  leftElement={<Toggle checked={areAppsShowed} onChange={onToggleAllApps} />}
-                  label={getLang('myapp-bottomsheet-render-all-favorites')}
-                />
+            <MyAppsMenuItem
+              isPressable={false}
+              leftElement={<Toggle checked={areAppsShowed} onChange={onToggleAllApps} />}
+              label={getLang('myapp-bottomsheet-render-all-favorites')}
+            />
 
-                <MyAppsMenuItem
-                  isPressable={false}
-                  leftElement={renderMenuIcon('ui-infoCircle')}
-                  label={getLang('myapp-bottomsheet-info-message')}
-                />
-              </React.Fragment>
-            )}
+            <MyAppsMenuItem
+              isPressable={false}
+              leftElement={renderMenuIcon('ui-infoCircle')}
+              label={getLang('myapp-bottomsheet-info-message')}
+            />
           </React.Fragment>
         );
 
@@ -190,7 +186,6 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     areAppsShowed,
     bottomSheetMode,
     closeBottomSheet,
-    filter.type,
     navigateToFavorites,
     onToggleAllApps,
     onToggleFavorite,
