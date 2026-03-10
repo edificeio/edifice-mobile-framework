@@ -87,8 +87,8 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1160800
-        versionName "1.16.8"
+        versionCode 1170000
+        versionName "1.17.0"
         manifestPlaceholders.applicationName = APPNAME
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
         buildConfigField "String", "BundleVersionType", "\"\""
