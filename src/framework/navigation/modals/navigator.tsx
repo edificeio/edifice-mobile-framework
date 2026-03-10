@@ -66,6 +66,7 @@ export default (
 setModalModeForRoutes([
   ModalsRouteNames.AudienceReactions,
   ModalsRouteNames.AudienceViews,
+  ModalsRouteNames.AttachmentsImport,
   ModalsRouteNames.Carousel,
   ModalsRouteNames.FileImport,
   ModalsRouteNames.Infos,
@@ -77,4 +78,4 @@ setModalModeForRoutes([
   ModalsRouteNames.SplashAds,
 ]);
 
-setCrossIconBlackForRoutes([ModalsRouteNames.FileImport, ModalsRouteNames.SplashAds]);
+setCrossIconBlackForRoutes([ModalsRouteNames.AttachmentsImport, ModalsRouteNames.FileImport, ModalsRouteNames.SplashAds]);
