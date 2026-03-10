@@ -47,7 +47,7 @@ export default StyleSheet.create({
   selectModeBottom: {
     alignItems: 'baseline',
     columnGap: UI_SIZES.spacing.medium,
-    height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
+    // height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
     justifyContent: 'flex-end',
     paddingTop: UI_SIZES.spacing.small,
   },

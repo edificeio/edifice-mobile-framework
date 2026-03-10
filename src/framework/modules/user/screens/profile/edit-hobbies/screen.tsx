@@ -68,16 +68,6 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [indexHobbie, setIndexHobbie] = React.useState<number>();
 
-  const ListComponent = React.useMemo(() => {
-    return Platform.select<React.ComponentType<any>>({
-      android: KeyboardAvoidingFlatList,
-      ios: FlatList,
-    })!;
-  }, []);
-  const PageComponent = React.useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
-  }, []);
-
   const flatListRef: { current: any } = React.useRef<typeof FlatList>(null);
   const inputRefs: any[] = [];
 
@@ -173,7 +163,7 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
   const renderInputs = () => {
     if (!hobbies) return;
     return (
-      <ListComponent
+      <FlatList
         ref={flatListRef}
         keyboardShouldPersistTaps="handled"
         data={route.params.hobbies}
@@ -220,7 +210,11 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
     init();
   }, []);
 
-  return <PageComponent style={styles.page}>{renderInputs()}</PageComponent>;
+  return (
+    <KeyboardPageView scrollable style={styles.page}>
+      {renderInputs()}
+    </KeyboardPageView>
+  );
 };
 
 export default UserEditHobbiesScreen;

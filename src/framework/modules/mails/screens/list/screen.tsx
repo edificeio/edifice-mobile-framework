@@ -650,6 +650,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     );
   }, [isSearchMode, isSelectionMode, onDisableSelectMode, onDisabledSearchMode, renderAllSelect, renderSearch, statusBarHeight]);
 
+  const { bottom } = useSafeAreaInsets();
+
   const renderBottomMode = React.useCallback(() => {
     if (!isSelectionMode) return;
 
@@ -723,7 +725,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     );
 
     return (
-      <View style={[styles.selectMode, styles.selectModeShadow, styles.selectModeBottom]}>
+      <View
+        style={[
+          styles.selectMode,
+          styles.selectModeShadow,
+          styles.selectModeBottom,
+          { height: UI_SIZES.elements.tabbarHeight + bottom },
+        ]}>
         {renderActions}
         <TertiaryButton
           iconLeft="ui-delete"
@@ -736,6 +744,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       </View>
     );
   }, [
+    bottom,
     isSelectionMode,
     mails,
     onActionMultiple,
@@ -743,6 +752,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     onRemoveFromFolder,
     onRestore,
     onToggleUnread,
+    props.session?.user.id,
     selectedFolder,
     selectedMails,
   ]);
