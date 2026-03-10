@@ -3,6 +3,7 @@ import { Animated, Keyboard, Platform, TextInput as RNTextInput, TouchableOpacit
 
 import debounce from 'lodash.debounce';
 
+import { mailsService } from '~/framework/modules/mails/service';
 import { MailsContactFieldProps } from './types';
 
 import { I18n } from '~/app/i18n';
@@ -12,6 +13,7 @@ import { TextInputType } from '~/framework/components/inputs/text/component';
 import FlatList from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { AccountType } from '~/framework/modules/auth/model';
 import MailsContactItem from '~/framework/modules/mails/components/contact-item';
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
 import styles from '~/framework/modules/mails/components/fields/styles';
@@ -19,10 +21,18 @@ import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/mod
 import { HEIGHT_RECIPIENT_CONTAINER } from '~/framework/modules/mails/components/recipient-item/container/styles';
 import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
 import { readVisibles } from '~/framework/modules/mails/storage';
-import { MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
+import { isServiceMethodAvailable, MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
 
 function removeAccents(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function isValidEmail(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  // Basic email validation for manual entry
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(trimmed);
 }
 
 const HEIGHT_HEADER_RESULTS = UI_SIZES.spacing.small + TextSizeStyle.Normal.lineHeight;
@@ -200,10 +210,28 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(
     debounce(text => {
-      const filterFunction = onSearch(text);
-      const result = users.filter(user => filterFunction(user));
-      setFilteredUsers(result);
-      setLoading(false);
+      if (isServiceMethodAvailable(mailsService.visibles.getOnSearch)) {
+        mailsService.visibles.getOnSearch(text).then(result => {
+          if (isValidEmail(text)) {
+            const newRecipient: MailsVisible = {
+              displayName: text,
+              id: text,
+              profile: AccountType.External,
+              type: MailsVisibleType.EXTERNAL,
+            };
+
+            result = [newRecipient, ...result];
+          }
+
+          setFilteredUsers(result);
+          setLoading(false);
+        });
+      } else {
+        const filterFunction = onSearch(text);
+        const result = users.filter(user => filterFunction(user));
+        setFilteredUsers(result);
+        setLoading(false);
+      }
     }, 500),
     [],
   );

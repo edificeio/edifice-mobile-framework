@@ -107,6 +107,8 @@ export const actionTypes = {
   removeAccount: moduleConfig.namespaceActionType('REMOVE_ACCOUNT'),
   replaceAccount: moduleConfig.namespaceActionType('REPLACE_ACCOUNT'),
   replaceAccountRequirement: moduleConfig.namespaceActionType('REPLACE_ACCOUNT_REQUIREMENT'),
+  setCarbonioToken: moduleConfig.namespaceActionType('SET_CARBONIO_TOKEN'),
+  setCarbonioUserInfos: moduleConfig.namespaceActionType('SET_CARBONIO_USER_INFOS'),
   setOneSessionId: moduleConfig.namespaceActionType('SET_ONE_SESSION_ID'),
   setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
   updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
@@ -136,6 +138,8 @@ export interface ActionPayloads {
   refreshToken: { id: keyof IAuthState['accounts']; tokens: AuthTokenSet };
   setQueryParamToken: { id: keyof IAuthState['accounts']; token: AuthTokenSet['queryParam'] };
   setOneSessionId: { id: keyof IAuthState['accounts']; token: AuthTokenSet['oneSessionId'] };
+  setCarbonioToken: { id: keyof IAuthState['accounts']; token: string };
+  setCarbonioUserInfos: { id: keyof IAuthState['accounts']; carbonioUserInfos: any };
   authError: {
     account: keyof IAuthState['accounts'];
     error: NonNullable<Required<IAuthState['error']>>;
@@ -316,12 +320,23 @@ export const actions = {
     type: actionTypes.replaceAccountRequirement,
   }),
 
+  setCarbonioToken: (id: string, token: string) => ({
+    id,
+    token,
+    type: actionTypes.setCarbonioToken,
+  }),
+
+  setCarbonioUserInfos: (id: string, carbonioUserInfos: any) => ({
+    carbonioUserInfos,
+    id,
+    type: actionTypes.setCarbonioUserInfos,
+  }),
+
   setOneSessionId: (id: string, token: AuthTokenSet['oneSessionId']) => ({
     id,
     token,
     type: actionTypes.setOneSessionId,
   }),
-
   setQueryParamToken: (id: string, token: AuthTokenSet['queryParam']) => ({
     id,
     token,
@@ -510,6 +525,17 @@ const reducer = createReducer(initialState, {
       : state;
   },
 
+  [actionTypes.setCarbonioToken]: (state, action) => {
+    const { id, token } = action as unknown as ActionPayloads['setCarbonioToken'];
+    const tokens = (state.accounts[id] as Partial<AuthActiveAccount | AuthSavedLoggedInAccount>).tokens
+      ? { ...(state.accounts[id] as AuthActiveAccount | AuthSavedLoggedInAccount).tokens, carbonioToken: token }
+      : undefined;
+    return tokens ? { ...state, accounts: { ...state.accounts, [id]: { ...state.accounts[id], tokens } } } : state;
+  },
+  [actionTypes.setCarbonioUserInfos]: (state, action) => {
+    const { carbonioUserInfos, id } = action as unknown as ActionPayloads['setCarbonioUserInfos'];
+    return { ...state, accounts: { ...state.accounts, [id]: { ...state.accounts[id], carbonioUserInfos } } };
+  },
   [actionTypes.authError]: (state, action) => {
     const { error } = action as unknown as ActionPayloads['authError'];
     return {

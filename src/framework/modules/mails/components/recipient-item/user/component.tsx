@@ -1,14 +1,14 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import styles from './styles';
-
 import { I18n } from '~/app/i18n';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
 import { MailsRecipientContainer, MailsRecipientContainerProps } from '~/framework/modules/mails/components/recipient-item';
+import styles from '~/framework/modules/mails/components/recipient-item/user/styles';
 import { MailsRecipientInfo, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
+import { getExternalInitials } from '~/framework/modules/mails/util';
 import { accountTypeInfos } from '~/framework/util/accountType';
 import { isEmpty } from '~/framework/util/object';
 
@@ -73,7 +73,10 @@ const renderProfile = profile => {
 
 const MailsRecipientUserItem = (props: MailsRecipientContainerProps) => {
   //   const { id, displayName, classrooms, relatives, profile, children, disciplines, functions } = props.item;
-  const { children, displayName, id, profile, relatives } = props.item as MailsRecipientInfo | MailsVisible;
+  const { displayName, id, profile } = props.item as MailsRecipientInfo | MailsVisible;
+  const children = (props.item as MailsVisible).children;
+  const relatives = (props.item as MailsVisible).relatives;
+  const isExternal = profile === AccountType.External;
 
   const renderSubtitle = () => {
     switch (profile) {
@@ -105,13 +108,24 @@ const MailsRecipientUserItem = (props: MailsRecipientContainerProps) => {
     }
   };
 
+  const renderAvatar = () => {
+    if (isExternal) {
+      const initials = getExternalInitials(displayName);
+      return (
+        <View style={styles.avatar}>
+          <SmallBoldText style={styles.avatarText}>{initials}</SmallBoldText>
+        </View>
+      );
+    }
+    return <MailsRecipientAvatar id={id} type={MailsVisibleType.USER} />;
+  };
   return (
     <MailsRecipientContainer {...props}>
-      <MailsRecipientAvatar id={id} type={MailsVisibleType.USER} />
+      {renderAvatar()}
       <View style={styles.flex1}>
         <SmallBoldText numberOfLines={1} ellipsizeMode="tail">
           {displayName}
-          {renderProfile(profile)}
+          {isExternal ? <SmallText style={styles.idText}> - {id}</SmallText> : renderProfile(profile)}
         </SmallBoldText>
         {children || relatives ? renderSubtitle() : null}
       </View>
