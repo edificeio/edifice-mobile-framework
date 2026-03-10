@@ -22,6 +22,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
 import { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { CarouselItem } from './component';
@@ -83,6 +84,7 @@ const CarouselScreen = ({
   const playerContextValue = React.useContext(PlayerContext);
   const pdfContextValue = React.useContext(PdfContext);
   const { onSave, onShare } = useCarouselFileHandler(media[currentIndex]);
+  const insets = useSafeAreaInsets();
 
   const isCurrentMediaUnknown = React.useMemo(() => {
     return !media[currentIndex]?.src;
@@ -243,6 +245,11 @@ const CarouselScreen = ({
     [isPortrait],
   );
 
+  const containerStyle = React.useMemo(
+    () => [styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }],
+    [insets.top, insets.bottom],
+  );
+
   React.useEffect(() => {
     if (isNavBarVisible) {
       navigation.setOptions({
@@ -281,7 +288,7 @@ const CarouselScreen = ({
   }, []);
 
   return (
-    <PageView style={styles.container} showNetworkBar={false} showToast={false}>
+    <PageView style={containerStyle} showNetworkBar={false} showToast={false}>
       <OrientationLocker orientation={'UNLOCK'} onChange={onOrientationChange} />
       <View style={styles.carouselContainer}>
         {media.length === 1 ? (
@@ -303,7 +310,8 @@ const CarouselScreen = ({
             data={media}
             defaultIndex={startIndex}
             enabled={media.length > 1 && isCarouselSwipeEnabled}
-            height={isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH - STATUS_BAR_HEIGHT}
+            height={isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH}
+            width={isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT}
             onConfigurePanGesture={configurePanGesture}
             onProgressChange={paginationProgress}
             onSnapToItem={onSnapToItem}
@@ -328,7 +336,6 @@ const CarouselScreen = ({
               );
             }}
             ref={carouselRef}
-            width={isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT}
           />
         )}
       </View>

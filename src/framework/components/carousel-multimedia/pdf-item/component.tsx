@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 
 import Pdf from 'react-native-pdf';
 
@@ -19,7 +19,6 @@ const MIN_PDF_SCALE = 1;
 const MAX_PDF_SCALE = 5;
 // Workaround to know if the loading process has at least started since onLoadComplete is unusable
 const MIN_LOADING_PROGRESS = 0.00001;
-const isIos = Platform.OS === 'ios';
 
 const PdfItem = ({
   hideNavBar,
@@ -71,12 +70,6 @@ const PdfItem = ({
     <View style={styles.flex1}>
       <Pdf
         key={resetComponent}
-        source={source}
-        style={styles.flex1}
-        // enablePaging renders poorly on Android
-        enablePaging={isIos}
-        horizontal={false}
-        trustAllCerts={false}
         minScale={MIN_PDF_SCALE}
         maxScale={MAX_PDF_SCALE}
         onError={onPdfError}
@@ -84,6 +77,9 @@ const PdfItem = ({
         onPageSingleTap={toggleNavBar}
         onScaleChanged={onZoom}
         scale={MIN_PDF_SCALE}
+        source={source}
+        style={styles.flex1}
+        trustAllCerts={false}
       />
       {!isPdfLoaded && <LoaderItem />}
     </View>
