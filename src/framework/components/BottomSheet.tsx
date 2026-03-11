@@ -8,18 +8,21 @@ import { UI_SIZES } from './constants';
 import theme from '~/app/theme';
 
 export interface BottomSheetProps {
-  content: JSX.Element;
+  content: React.ReactNode;
   displayShadow?: boolean;
 }
 
+const edges = {};
+
 export const BottomSheet = ({ content, displayShadow }: BottomSheetProps) => {
   return (
-    <SafeAreaView style={[BottomSheet.styles.outerWrapper, displayShadow && BottomSheet.styles.outerWrapperShadow]}>
-      <View style={BottomSheet.styles.innerWrapper}>{content}</View>
+    <SafeAreaView edges={edges} style={[styles.outerWrapper, displayShadow && styles.outerWrapperShadow]}>
+      <View style={styles.innerWrapper}>{content}</View>
     </SafeAreaView>
   );
 };
-BottomSheet.styles = StyleSheet.create({
+
+const styles = StyleSheet.create({
   innerWrapper: {
     alignItems: 'center',
     padding: UI_SIZES.spacing.medium,
