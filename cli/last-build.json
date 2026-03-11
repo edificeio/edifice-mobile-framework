@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-04 16:52:49",
-  "notes": "chore(stack): yarn cache update\nfeat(myapps): Refonte (286)\nfeat(component): COCO-4775 creating multimedia-carousel\nchore(stack): yarn cache update\nMerging dev/1.16.7 into dev/comm",
-  "version": "1.16.7-comm.1(1160702)",
-  "track": "1.16.7"
+  "last": "2026-03-11 14:55:58",
+  "notes": "Merge branch 'dev/1.16.7' into dev/comm\nfix: ENABLING-654 bottom sheet margins fix\nfix(carrousel): COCO-5478 navbar options\nMerge branch 'dev/1.16.7' into dev/comm\nfix(carrousel): COCO-5477 pdf display\nMerge remote-tracking branch 'origin/release/1.16.6' into dev/1.16.7\nrelease: 1.17.0(1170000)\nrelease: 1.16.8(1160800)\nchore(stack): update yarn cache\nfix(myapps): COCO-4918, allow favorite management on all tabs\nMerge branch 'dev/1.16.7' into dev/comm\nfix(modals): COCO-5317, header transparent titles & close icon\nfix(mails): COCO-5459 fix action bar height in selection mode\nfix(profile): ENABLING-603 profile editors keyboard on Android\nupdate(stack): yarn cache update\nfix(android): COCO-5438, patch react-native-pdf to allow onPressLink to work.\nchore(stack): update yarn caches\nMerge branch 'dev/1.16.7' into dev/comm\nfix(navigation): ENABLING-638 downgrading react-native-screens to 4.18\ni18n(phrase): change Phrase sync branch\ni18n(phrase): change Phrase sync branch\nrelease: 1.16.6-rc.3(1160603)\nupdate(stack): yarn cache update\nfix(profile): COCO-5449, crash on camera picker cancel & toaster error not displaying\nfix: COCO-5446 keyboard handling for Android 16\nrelease: 1.16.6-rc.2(1160602)\nfix: ENABLING-655 add `login.ac-guyane.fr` to Android permitted domain certificates\nfix(startup): COCO-5433, prevent Android WindowLeaked crash by hiding splash after startup\nfix(myapps): COCO-4894 UI feeback\nrelease: 1.16.6-rc.1(1160601)\nrelease: 1.16.6(1160600)\nupdate(stack): yarn cache update\nfix(mails): COCO-5437 : removing duplicate toast on mail edit\nfix: INTEG-1284 conserve the mail history and adapt img\nfix: INTEG-1299 replace foreach by for to handle errors\nchore: add carbonio userInfo\nrelease: 1.16.7-comm.1(1160702)",
+  "version": "1.17.0-alpha.1(1170001)",
+  "track": "1.17.0"
 }
