@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createContext } from 'react';
-import { Platform, StatusBar, View } from 'react-native';
+import { Platform, View } from 'react-native';
 
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PanGesture } from 'react-native-gesture-handler';
 import Orientation, {
   LANDSCAPE_LEFT,
@@ -34,6 +34,7 @@ import { getSignedMediaSource, getSignedPosterSource } from './util';
 
 import { I18n } from '~/app/i18n';
 import { PageView } from '~/framework/components/page';
+import StatusBar from '~/framework/components/status-bar';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/util/media';
@@ -49,7 +50,6 @@ const PAGINATION_ANIMATION_DURATION = 300;
 const PAGINATION_ANIMATION_DELAY = 300;
 const PAGINATION_ANIMATION_START_INDEX_DELAY = 1000;
 const PAGINATION_ANIMATION_OFFSET = 200;
-const STATUS_BAR_HEIGHT = isAndroid ? (StatusBar.currentHeight ?? 0) : 0;
 
 export const PlayerContext = createContext<{ pauseCurrentPlayingMedia?: () => void }>({});
 export const PdfContext = createContext<{ disableCarouselSwipe?: () => void; setResetComponent?: () => void }>({});
@@ -259,18 +259,13 @@ const CarouselScreen = ({
         headerTitle: navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title),
       });
     } else {
-      const options: NativeStackNavigationOptions = isAndroid
-        ? { headerShown: false }
-        : {
-            headerBlurEffect: undefined,
-            headerLeft: undefined,
-            headerRight: undefined,
-            headerShadowVisible: false,
-            headerStyle: { backgroundColor: 'transparent' },
-            headerTitle: '',
-          };
       navigation.setOptions({
-        ...options,
+        headerBlurEffect: undefined,
+        headerLeft: undefined,
+        headerRight: undefined,
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: 'transparent' },
+        headerTitle: '',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -289,6 +284,7 @@ const CarouselScreen = ({
 
   return (
     <PageView style={containerStyle} showNetworkBar={false} showToast={false}>
+      <StatusBar type="dark" />
       <OrientationLocker orientation={'UNLOCK'} onChange={onOrientationChange} />
       <View style={styles.carouselContainer}>
         {media.length === 1 ? (
