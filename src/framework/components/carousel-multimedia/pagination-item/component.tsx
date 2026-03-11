@@ -40,7 +40,7 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
     };
   });
 
-  if (isImageContent(item) && thumbnailSrc) {
+  if (item.mime && isImageContent(item) && thumbnailSrc) {
     return (
       <View style={styles.itemContainer}>
         <Picture type="Image" source={thumbnailSrc} style={styles.thumbnail} resizeMode="cover" />
@@ -48,7 +48,7 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
     );
   }
 
-  if (isVideoContent(item) && thumbnailSrc) {
+  if (item.mime && isVideoContent(item) && thumbnailSrc) {
     return (
       <View style={styles.itemContainer}>
         {thumbnailSrc && <Picture type="Image" source={thumbnailSrc} style={styles.thumbnail} resizeMode="cover" />}
@@ -64,7 +64,7 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
     );
   }
 
-  if (isAudioContent(item)) {
+  if (item.mime && isAudioContent(item)) {
     return (
       <View style={styles.itemContainer}>
         <Animated.View style={[styles.videoIcon, iconAnimatedStyle]}>
@@ -79,7 +79,7 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
     );
   }
 
-  if (isPdfContent(item)) {
+  if ((item.mime && isPdfContent(item)) || !item.mime) {
     return (
       <View style={styles.itemContainer}>
         <Animated.View style={[styles.videoIcon, iconAnimatedStyle]}>
