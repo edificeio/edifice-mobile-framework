@@ -156,7 +156,7 @@ const ImageItem = ({
 
   const singleTapGesture = React.useMemo(() => {
     return Gesture.Tap()
-      .maxDuration(250)
+      .maxDuration(350)
       .maxDistance(10)
       .numberOfTaps(1)
       .onStart(event => {
