@@ -48,7 +48,7 @@ export const useCarouselFileHandler = (media: FileMedia | undefined) => {
     try {
       if (!media) throw new Error('[Carousel] no media provided');
       const syncedFile = await getSyncedFile();
-      const isGalleryContent = isImageContent(media) || isVideoContent(media);
+      const isGalleryContent = media.mime && (isImageContent(media) || isVideoContent(media));
       const permissionType = isGalleryContent ? 'gallery.write' : 'documents.write';
 
       try {

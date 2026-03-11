@@ -155,6 +155,7 @@ export const UI_SIZES = {
     tabbarLabelMarginTop: Platform.select({ default: 8, ios: insets.bottom ? 0 : 4 }),
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
+    videoThumbnail: 200,
   },
   getViewHeight: (parms: { withoutNavbar?: boolean; withoutTabbar?: boolean } = { withoutNavbar: true, withoutTabbar: true }) => {
     const { withoutNavbar, withoutTabbar } = parms;

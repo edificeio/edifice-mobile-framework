@@ -34,6 +34,8 @@ export const CarouselItem = ({
   const media = isSingleMediaMode ? singleMedia! : info!.item;
   const isCurrentItem = isSingleMediaMode ? true : info!.index === currentIndex;
 
+  if (!media.mime && media.src) return <UnviewableItem file={media} />;
+
   if (isImageContent(media)) {
     return (
       <ImageItem

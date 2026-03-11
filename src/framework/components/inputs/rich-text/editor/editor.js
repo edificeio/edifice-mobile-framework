@@ -778,6 +778,46 @@ function createHTML(options = {}) {
                                     type: 'attachment'
                                 });
                             }
+                        } else if (contentType.startsWith('image/')) {
+                            const href = el.getAttribute('href');
+                            if (href) {
+                                medias.push({
+                                    name: el.name,
+                                    mime: 'image/*',
+                                    src: href,
+                                    type: 'image'
+                                });
+                            }
+                        } else if (contentType.startsWith('video/')) {
+                            const href = el.getAttribute('href');
+                            if (href) {
+                                medias.push({
+                                    name: el.name,
+                                    mime: 'video/*',
+                                    poster: href + '?thumbnail=' + ${UI_SIZES.elements.videoThumbnail},
+                                    src: href,
+                                    type: 'video'
+                                });
+                            }
+                        } else if (contentType.startsWith('audio/')) {
+                            const href = el.getAttribute('href');
+                            if (href) {
+                                medias.push({
+                                    name: el.name,
+                                    mime: 'audio/*',
+                                    src: href,
+                                    type: 'audio'
+                                });
+                            }            
+                        } else {
+                            const href = el.getAttribute('href');
+                            if (href) {
+                                medias.push({
+                                    name: el.name,
+                                    src: href,
+                                    type: 'attachment'
+                                });
+                            }
                         }
                     }
                 });
@@ -932,11 +972,7 @@ function createHTML(options = {}) {
                     return false;
                 } else if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     const contentType = ele.getAttribute('data-content-type');
-                    if (contentType === 'application/pdf') {
-                        postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('href')}, true);
-                    } else {
-                        postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
-                    }                 
+                    postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('href')}, true);
                     return false;
                 } else if (ele.getAttribute('class') === 'audio-wrapper') {
                     var audioSrc = ele.querySelector('audio').getAttribute('src');

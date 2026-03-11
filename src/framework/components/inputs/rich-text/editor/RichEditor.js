@@ -262,6 +262,7 @@ export default class RichEditor extends Component {
         case messages.MEDIAS_URLS:
           that.mediasUrls = data.map(media => ({
             ...media,
+            poster: media.poster ? that._getAbsoluteUrl(media.poster) : undefined,
             src: that._getAbsoluteUrl(media.src),
           }));
           break;

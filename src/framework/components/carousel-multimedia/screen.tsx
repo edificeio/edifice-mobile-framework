@@ -99,9 +99,9 @@ const CarouselScreen = ({
   const renderPaginationItem = React.useCallback(
     (item: FileMedia, index: number) => {
       const thumbnailSrc =
-        isImageContent(item) && item.src
+        item.mime && isImageContent(item) && item.src
           ? getSignedPosterSource(item.src)
-          : isPlayableMedia(item) && item.poster
+          : item.mime && isPlayableMedia(item) && item.poster
             ? getSignedPosterSource(item.poster)
             : undefined;
 
