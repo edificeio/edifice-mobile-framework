@@ -18,6 +18,10 @@ export default new NavigableModuleConfig<'mails', null>({
       sources: ['camera', 'gallery', 'documents'],
     },
   } as const,
+  hasRight: ({ matchingApps }) =>
+    matchingApps.some(
+      entcoreApp => entcoreApp.address === '/conversation/conversation' || entcoreApp.address.includes('/auth/carbonio/preauth'),
+    ),
   matchEntcoreApp: 'Messagerie',
   name: 'mails',
   storageName: 'mails',

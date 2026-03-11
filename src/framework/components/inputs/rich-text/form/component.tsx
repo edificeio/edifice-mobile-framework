@@ -34,6 +34,7 @@ const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
 const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
   const { bottom } = useSafeAreaInsets();
+  const { allowMultimediaUpload = true, ...restProps } = props;
   const headerHeight = useHeaderHeight();
   const containerStyle = { ...styles.container, marginBottom: bottom };
 
@@ -59,7 +60,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
 
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
-  const richText = React.useRef<RichEditor>(null);
+  const richText = React.useRef<RichEditor | null>(null);
 
   const blurRichText = () => {
     setIsFocused(false);
@@ -251,7 +252,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   const toolbar = () => {
     return (
       <Animated.View style={[styles.toolbar, { transform: [{ translateY: toolbarYPos }] }, { opacity: toolbarOpacity }]}>
-        <RichToolbar editor={richText} showBottomSheet={showChoosePicsMenu} />
+        <RichToolbar editor={richText} showBottomSheet={allowMultimediaUpload ? showChoosePicsMenu : undefined} />
       </Animated.View>
     );
   };
@@ -341,7 +342,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
             alwaysBounceVertical={false}
             bounces
             style={[styles.scrollView, props.pageStyle]}
-            {...props}>
+            {...restProps}>
             {realTopForm}
             <RichEditor
               disabled={false}

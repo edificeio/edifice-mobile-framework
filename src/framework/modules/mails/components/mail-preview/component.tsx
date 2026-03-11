@@ -43,10 +43,8 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
 
   React.useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
-    return () => {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    };
+    // No LayoutAnimation on unmount: batch removal (multi-delete) causes Android
+    // "Trying to remove a view index above child count" with ReanimatedSwipeable.
   }, []);
 
   const onCheck = React.useCallback(() => {
@@ -182,27 +180,29 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
       enableTrackpadTwoFingerGesture
       overshootFriction={8}
       renderRightActions={swipeRightAction}>
-      <TouchableOpacity
-        style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
-        onPress={isSelectMode ? onCheck : onPress}
-        onLongPress={isSelectMode ? () => {} : props.onLongPress}>
-        {renderSelectIcon()}
-        {renderAvatar()}
-        {renderDefaultFolder()}
-        {renderIcon()}
-        <View style={styles.texts}>
-          <View style={styles.line}>
-            {renderFirstText()}
-            <CaptionBoldText style={styles.date}>{displayPastDate(moment(date))}</CaptionBoldText>
+      <View>
+        <TouchableOpacity
+          style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
+          onPress={isSelectMode ? onCheck : onPress}
+          onLongPress={isSelectMode ? () => {} : props.onLongPress}>
+          {renderSelectIcon()}
+          {renderAvatar()}
+          {renderDefaultFolder()}
+          {renderIcon()}
+          <View style={styles.texts}>
+            <View style={styles.line}>
+              {renderFirstText()}
+              <CaptionBoldText style={styles.date}>{displayPastDate(moment(date))}</CaptionBoldText>
+            </View>
+            <View style={styles.line}>
+              <TextComponent numberOfLines={1} style={styles.firstText}>
+                {renderSubject(subject, state === MailsMailStatePreview.RECALL)}
+              </TextComponent>
+              {renderAttachmentIcon()}
+            </View>
           </View>
-          <View style={styles.line}>
-            <TextComponent numberOfLines={1} style={styles.firstText}>
-              {renderSubject(subject, state === MailsMailStatePreview.RECALL)}
-            </TextComponent>
-            {renderAttachmentIcon()}
-          </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     </ReanimatedSwipeable>
   );
 };

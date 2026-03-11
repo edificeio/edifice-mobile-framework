@@ -26,9 +26,10 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import Separator from '~/framework/components/separator';
-import { HeadingXSText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
+import { BodyText, HeadingXSText, NestedActionText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import Attachments from '~/framework/modules/mails/components/attachments';
 import MailsHistoryButton from '~/framework/modules/mails/components/history-button';
@@ -46,13 +47,15 @@ import {
   MailsVisible,
 } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
-import { getRecallMessageRight } from '~/framework/modules/mails/rights';
+import { getMailCarbonioRight, getRecallMessageRight } from '~/framework/modules/mails/rights';
 import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 import { mailsService } from '~/framework/modules/mails/service';
+import { defaultUserIdCarbonio } from '~/framework/modules/mails/service/api/carbonio';
 import {
   convertAttachmentToDistantFile,
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
+  isServiceMethodAvailable,
   mailsFormatRecipients,
   renderSubject,
   separateContentAndHistory,
@@ -60,6 +63,7 @@ import {
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
+import { openUrl } from '~/framework/util/linking';
 
 const isDateOlderThan60Minutes = (date: moment.Moment) => {
   const now = moment();
@@ -89,12 +93,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const [typeModal, setTypeModal] = React.useState<MailsListTypeModal | undefined>(undefined);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
+  const currentUserId =
+    props.session && getMailCarbonioRight(props.session) ? defaultUserIdCarbonio(props.session) : props.session?.user.id;
+
   const canRecall =
-    props.session?.user.id === mail?.from.id &&
-    !isDateOlderThan60Minutes(moment(mail?.date)) &&
-    getRecallMessageRight(props.session!);
+    currentUserId === mail?.from.id && !isDateOlderThan60Minutes(moment(mail?.date)) && getRecallMessageRight(props.session!);
   const isRecall = mail?.state === MailsMailStatePreview.RECALL;
-  const isRecallAndNotSender = mail?.state === MailsMailStatePreview.RECALL && mail?.from.id !== props.session?.user.id;
+  const isRecallAndNotSender = mail?.state === MailsMailStatePreview.RECALL && mail?.from.id !== currentUserId;
   const isContentEmpty = React.useMemo(() => mailContent === '' || mailContent === '<p></p>', [mailContent]);
 
   const convertedAttachments = React.useMemo(
@@ -127,7 +132,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const onReply = React.useCallback(() => {
     let to: MailsVisible[] = [];
-    if (mail?.from.id !== props.session?.user.id) to.push(convertRecipientUserInfoToVisible(mail!.from));
+    if (mail?.from.id !== currentUserId) to.push(convertRecipientUserInfoToVisible(mail!.from));
     else {
       let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
       let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
@@ -138,16 +143,14 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
-  }, [fromFolder, mail, props]);
+  }, [fromFolder, mail, currentUserId, props]);
 
   const onReplyAll = React.useCallback(() => {
     let to: MailsVisible[] = [];
-    if (mail?.from.id !== props.session?.user.id) {
+    if (mail?.from.id !== currentUserId) {
       to.push(convertRecipientUserInfoToVisible(mail!.from));
       if (mail!.to.groups.length > 0 || mail!.to.users.length > 0) {
-        let users = mail!.to.users
-          .filter(user => user.id !== props.session?.user.id)
-          .map(user => convertRecipientUserInfoToVisible(user));
+        let users = mail!.to.users.filter(user => user.id !== currentUserId).map(user => convertRecipientUserInfoToVisible(user));
         let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
         to = [...to, ...users, ...groups];
       }
@@ -158,12 +161,12 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     }
 
     let cc: MailsVisible[] = [
-      ...mail!.cc.users.filter(user => user.id !== props.session?.user.id).map(user => convertRecipientUserInfoToVisible(user)),
+      ...mail!.cc.users.filter(user => user.id !== currentUserId).map(user => convertRecipientUserInfoToVisible(user)),
       ...mail!.cc.groups.map(group => convertRecipientGroupInfoToVisible(group)),
     ];
 
     let cci: MailsVisible[] = [
-      ...mail!.cci.users.filter(user => user.id !== props.session?.user.id).map(user => convertRecipientUserInfoToVisible(user)),
+      ...mail!.cci.users.filter(user => user.id !== currentUserId).map(user => convertRecipientUserInfoToVisible(user)),
       ...mail!.cci.groups.map(group => convertRecipientGroupInfoToVisible(group)),
     ];
 
@@ -172,9 +175,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       initialMailInfo: { body: mail?.body, cc, cci, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
       type: MailsEditType.REPLY,
     });
-  }, [fromFolder, mail, props]);
+  }, [fromFolder, mail, currentUserId, props]);
 
   const onForward = React.useCallback(async () => {
+    if (!isServiceMethodAvailable(mailsService.mail.forward)) {
+      toast.showError();
+      return;
+    }
     try {
       const draftId = await mailsService.mail.forward({ id });
       let users = mail!.to.users.map(user => convertRecipientUserInfoToVisible(user));
@@ -203,6 +210,10 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const onCreateNewFolder = React.useCallback(
     async (valueNewFolder: string) => {
+      if (!isServiceMethodAvailable(mailsService.folder.create) || !isServiceMethodAvailable(mailsService.mail.moveToFolder)) {
+        toast.showError();
+        return;
+      }
       try {
         const folderId = await mailsService.folder.create({ name: valueNewFolder });
         await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
@@ -238,21 +249,32 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   );
 
   const onRecall = () => {
+    const recall = mailsService.mail.recall;
+    if (!isServiceMethodAvailable(recall)) {
+      toast.showError();
+      return;
+    }
     Alert.alert(I18n.get('mails-details-recalltitle'), I18n.get('mails-details-recalltext'), [
       {
         style: 'cancel',
         text: I18n.get('common-cancel'),
       },
       {
-        onPress: () => handleMailAction(() => mailsService.mail.recall({ id }), 'mails-toastsuccessrecall'),
+        onPress: () => handleMailAction(() => recall({ id }), 'mails-toastsuccessrecall'),
         style: 'default',
         text: I18n.get('mails-details-recall'),
       },
     ]);
   };
 
-  const onMarkUnread = () =>
-    handleMailAction(() => mailsService.mail.toggleUnread({ ids: [id], unread: true }), 'mails-toastsuccessunread');
+  const onMarkUnread = React.useCallback(() => {
+    const toggleUnread = mailsService.mail.toggleUnread;
+    if (!isServiceMethodAvailable(toggleUnread)) {
+      toast.showError();
+      return;
+    }
+    handleMailAction(() => toggleUnread({ ids: [id], unread: true }), 'mails-toastsuccessunread');
+  }, [handleMailAction, id]);
 
   const onOpenMoveModal = () => {
     setTypeModal(MailsListTypeModal.MOVE);
@@ -260,19 +282,50 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   };
 
   const onMove = React.useCallback(
-    (folderId: string) =>
-      handleMailAction(() => mailsService.mail.moveToFolder({ folderId }, { ids: [id] }), 'mails-toastsuccessmove'),
+    (folderId: string) => {
+      const moveToFolder = mailsService.mail.moveToFolder;
+      if (!isServiceMethodAvailable(moveToFolder)) {
+        toast.showError();
+        return;
+      }
+      handleMailAction(() => moveToFolder({ folderId }, { ids: [id] }), 'mails-toastsuccessmove');
+    },
     [handleMailAction, id],
   );
 
-  const onRemoveFromFolder = () =>
-    handleMailAction(() => mailsService.mail.removeFromFolder({ ids: [id] }), 'mails-toastsuccessremovefromfolder');
+  const onRemoveFromFolder = React.useCallback(() => {
+    const removeFromFolder = mailsService.mail.removeFromFolder;
+    if (!isServiceMethodAvailable(removeFromFolder)) {
+      toast.showError();
+      return;
+    }
+    handleMailAction(() => removeFromFolder({ ids: [id] }), 'mails-toastsuccessremovefromfolder');
+  }, [handleMailAction, id]);
 
-  const onRestore = () => handleMailAction(() => mailsService.mail.restore({ ids: [id] }), 'mails-toastsuccessrestore');
+  const onRestore = React.useCallback(() => {
+    const restore = mailsService.mail.restore;
+    if (!isServiceMethodAvailable(restore)) {
+      toast.showError();
+      return;
+    }
+    handleMailAction(() => restore({ ids: [id] }), 'mails-toastsuccessrestore');
+  }, [handleMailAction, id]);
 
-  const onTrash = () => handleMailAction(() => mailsService.mail.moveToTrash({ ids: [id] }), 'mails-toastsuccesstrash');
+  const onTrash = React.useCallback(() => {
+    if (!isServiceMethodAvailable(mailsService.mail.moveToTrash)) {
+      toast.showError();
+      return;
+    }
+    handleMailAction(() => mailsService.mail.moveToTrash({ ids: [id] }), 'mails-toastsuccesstrash');
+  }, [handleMailAction, id]);
 
-  const onDelete = () => handleMailAction(() => mailsService.mail.delete({ ids: [id] }), 'mails-toastsuccessdelete');
+  const onDelete = React.useCallback(() => {
+    if (!isServiceMethodAvailable(mailsService.mail.delete)) {
+      toast.showError();
+      return;
+    }
+    handleMailAction(() => mailsService.mail.delete({ ids: [id] }), 'mails-toastsuccessdelete');
+  }, [handleMailAction, id]);
 
   const replayAction = mail?.noReply
     ? []
@@ -295,77 +348,109 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           id: 'replyAll',
           title: I18n.get('mails-details-replyall'),
         },
-        {
-          action: onForward,
-          icon: {
-            android: 'ic_forward',
-            ios: 'arrowshape.turn.up.forward',
-          },
-          id: 'forward',
-          title: I18n.get('mails-details-forward'),
-        },
+        ...(isServiceMethodAvailable(mailsService.mail.forward)
+          ? [
+              {
+                action: onForward,
+                icon: {
+                  android: 'ic_forward',
+                  ios: 'arrowshape.turn.up.forward',
+                },
+                id: 'forward',
+                title: I18n.get('mails-details-forward'),
+              },
+            ]
+          : []),
       ];
   const allPopupActionsMenu = [
     ...replayAction,
-    {
-      action: onRecall,
-      icon: {
-        android: 'ic_recall',
-        ios: 'arrow.uturn.backward.circle',
-      },
-      id: 'recall',
-      title: I18n.get('mails-details-recallpopup'),
-    },
-    {
-      action: onMarkUnread,
-      icon: {
-        android: 'ic_visibility_off',
-        ios: 'envelope.badge',
-      },
-      id: 'markUnread',
-      title: I18n.get('mails-details-markunread'),
-    },
-    {
-      action: onOpenMoveModal,
-      icon: {
-        android: 'ic_move_to_inbox',
-        ios: 'tray.2',
-      },
-      id: 'move',
-      title: I18n.get('mails-details-move'),
-    },
-    {
-      action: onRemoveFromFolder,
-      icon: {
-        android: 'ic_remove_from_folder',
-        ios: 'xmark.bin',
-      },
-      id: 'removeFromFolder',
-      title: I18n.get('mails-details-removefromfolder'),
-    },
-    {
-      action: onRestore,
-      icon: {
-        android: 'ic_restore',
-        ios: 'arrow.uturn.backward.circle',
-      },
-      id: 'restore',
-      title: I18n.get('mails-details-restore'),
-    },
-    {
-      action: fromFolder === MailsDefaultFolders.TRASH ? onDelete : onTrash,
-      destructive: true,
-      icon: {
-        android: 'ic_delete_item',
-        ios: 'trash',
-      },
-      id: 'delete',
-      title: I18n.get('common-delete'),
-    },
+    ...(isServiceMethodAvailable(mailsService.mail.recall)
+      ? [
+          {
+            action: onRecall,
+            icon: {
+              android: 'ic_recall',
+              ios: 'arrow.uturn.backward.circle',
+            },
+            id: 'recall',
+            title: I18n.get('mails-details-recallpopup'),
+          },
+        ]
+      : []),
+    ...(isServiceMethodAvailable(mailsService.mail.toggleUnread)
+      ? [
+          {
+            action: onMarkUnread,
+            icon: {
+              android: 'ic_visibility_off',
+              ios: 'envelope.badge',
+            },
+            id: 'markUnread',
+            title: I18n.get('mails-details-markunread'),
+          },
+        ]
+      : []),
+    ...(isServiceMethodAvailable(mailsService.mail.moveToFolder)
+      ? [
+          {
+            action: onOpenMoveModal,
+            icon: {
+              android: 'ic_move_to_inbox',
+              ios: 'tray.2',
+            },
+            id: 'move',
+            title: I18n.get('mails-details-move'),
+          },
+        ]
+      : []),
+    ...(isServiceMethodAvailable(mailsService.mail.removeFromFolder)
+      ? [
+          {
+            action: onRemoveFromFolder,
+            icon: {
+              android: 'ic_remove_from_folder',
+              ios: 'xmark.bin',
+            },
+            id: 'removeFromFolder',
+            title: I18n.get('mails-details-removefromfolder'),
+          },
+        ]
+      : []),
+    ...(isServiceMethodAvailable(mailsService.mail.restore)
+      ? [
+          {
+            action: onRestore,
+            icon: {
+              android: 'ic_restore',
+              ios: 'arrow.uturn.backward.circle',
+            },
+            id: 'restore',
+            title: I18n.get('mails-details-restore'),
+          },
+        ]
+      : []),
+    ...((
+      fromFolder === MailsDefaultFolders.TRASH
+        ? isServiceMethodAvailable(mailsService.mail.delete)
+        : isServiceMethodAvailable(mailsService.mail.moveToTrash)
+    )
+      ? [
+          {
+            action: fromFolder === MailsDefaultFolders.TRASH ? onDelete : onTrash,
+            destructive: true,
+            icon: {
+              android: 'ic_delete_item',
+              ios: 'trash',
+            },
+            id: 'delete',
+            title: I18n.get('common-delete'),
+          },
+        ]
+      : []),
   ];
 
-  const popupActionsMenu = allPopupActionsMenu.filter(({ id }) => {
-    switch (id) {
+  const popupActionsMenu = allPopupActionsMenu.filter(({ id: actionId }) => {
+    switch (actionId) {
       case 'reply':
         return fromFolder !== MailsDefaultFolders.TRASH && !isRecall;
       case 'replyAll':
@@ -375,11 +460,17 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       case 'recall':
         return canRecall;
       case 'markUnread':
-        return fromFolder !== MailsDefaultFolders.TRASH && mail?.from.id !== props.session?.user.id;
+        return fromFolder !== MailsDefaultFolders.TRASH && mail?.from.id !== currentUserId;
       case 'move':
         return fromFolder !== MailsDefaultFolders.TRASH;
-      case 'removeFromFolder':
-        return ![MailsDefaultFolders.TRASH, MailsDefaultFolders.INBOX, MailsDefaultFolders.OUTBOX].includes(fromFolder);
+      case 'removeFromFolder': {
+        const defaultFolders: MailsDefaultFolders[] = [
+          MailsDefaultFolders.TRASH,
+          MailsDefaultFolders.INBOX,
+          MailsDefaultFolders.OUTBOX,
+        ];
+        return typeof fromFolder === 'object' && 'id' in fromFolder ? true : !defaultFolders.includes(fromFolder);
+      }
       case 'restore':
         return fromFolder === MailsDefaultFolders.TRASH;
       case 'delete':
@@ -458,8 +549,32 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const renderAttachments = React.useCallback(() => {
     if (mail!.attachments.length <= 0) return;
+    // Carbonio: open attachments in web instead of using the base Attachments component
+    if (isServiceMethodAvailable(mailsService.mail.rederictToWebview) && !mailsService.attachments.supportViewAttachments) {
+      const onOpenWeb = async () => {
+        const url = await mailsService.mail.rederictToWebview!({ folderId: mail?.folder_id ?? '', id });
+        openUrl(url);
+      };
+      return (
+        <View style={styles.attachmentsExternal}>
+          {mail!.attachments.map(att => (
+            <TouchableOpacity key={att.id} onPress={onOpenWeb} style={styles.attachmentExternalContainer}>
+              <Svg
+                name="ui-attachment"
+                fill={theme.palette.grey.black}
+                width={UI_SIZES.elements.icon.medium}
+                height={UI_SIZES.elements.icon.medium}
+              />
+              <BodyText style={styles.attachmentCarbonioLabel} numberOfLines={1}>
+                {att.filename || ''}
+              </BodyText>
+            </TouchableOpacity>
+          ))}
+        </View>
+      );
+    }
     return <Attachments session={props.session!} attachments={convertedAttachments} />;
-  }, [convertedAttachments, mail, props.session]);
+  }, [convertedAttachments, id, mail, props.session]);
 
   const renderOriginalContent = React.useCallback(() => {
     const navigateToOriginalContent = () => {
@@ -485,9 +600,10 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     if (mail?.trashed || isRecallAndNotSender) return null;
 
     const isMultipleRecipients = infosRecipients && infosRecipients.ids.length > 1;
-    const renderForwardButton = () => (
-      <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
-    );
+    const renderForwardButton = () =>
+      isServiceMethodAvailable(mailsService.mail.forward) ? (
+        <SecondaryButton iconLeft="ui-redo" text={I18n.get('mails-details-forward')} action={onForward} />
+      ) : null;
     const renderReplyButton = () => <SecondaryButton iconLeft="ui-undo" text={I18n.get('mails-details-reply')} action={onReply} />;
     const renderReplyAllButton = () => (
       <SecondaryButton iconLeft="ui-answerall" text={I18n.get('mails-details-replyall')} action={onReplyAll} />
@@ -561,14 +677,17 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   );
 
   const renderMoveFolder = React.useCallback(
-    () => (
-      <MailsMoveBottomSheet
-        onMove={onMove}
-        folders={folders}
-        mailFolderId={mail!.folder_id}
-        onPressCreateFolderButton={() => setTypeModal(MailsListTypeModal.CREATE)}
-      />
-    ),
+    () =>
+      isServiceMethodAvailable(mailsService.mail.moveToFolder) ? (
+        <MailsMoveBottomSheet
+          onMove={onMove}
+          folders={folders}
+          mailFolderId={mail!.folder_id}
+          onPressCreateFolderButton={
+            isServiceMethodAvailable(mailsService.folder.create) ? () => setTypeModal(MailsListTypeModal.CREATE) : undefined
+          }
+        />
+      ) : null,
     [folders, mail, onMove],
   );
 
@@ -596,6 +715,25 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     );
   }, [onDismissBottomSheet, renderContentBottomSheet, typeModal]);
 
+  const renderRederictToWebview = React.useCallback(() => {
+    if (!isServiceMethodAvailable(mailsService.mail.rederictToWebview)) return null;
+    const onRedirect = async () => {
+      const url = await mailsService.mail.rederictToWebview!({ folderId: mail?.folder_id ?? '', id });
+      openUrl(url);
+    };
+    return (
+      <AlertCard
+        type="info"
+        style={styles.redirectToWebview}
+        text={
+          <SmallText>
+            {I18n.get('mails-details-redirecttowebview')}{' '}
+            <NestedActionText onPress={onRedirect}>{I18n.get('mails-details-button-redirecttowebview')}</NestedActionText>
+          </SmallText>
+        }
+      />
+    );
+  }, [id, mail]);
   const renderContent = React.useCallback(() => {
     if (error) return <EmptyContentScreen />;
     return (
@@ -608,7 +746,10 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
               <View style={styles.sender}>
                 <TouchableOpacity
                   style={styles.touchableSender}
-                  onPress={() => props.navigation.navigate(userRouteNames.profile, { userId: mail?.from.id })}>
+                  onPress={() =>
+                    mail?.from.profile !== AccountType.External &&
+                    props.navigation.navigate(userRouteNames.profile, { userId: mail?.from.id })
+                  }>
                   <SmallBoldText style={styles.senderName} numberOfLines={1} ellipsizeMode="tail">
                     {mail?.from.displayName}
                   </SmallBoldText>
@@ -626,12 +767,13 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
               {renderAttachments()}
               {renderOriginalContent()}
               {renderHistory()}
+              {renderRederictToWebview()}
               {renderButtons()}
               {mail?.noReply && (
                 <AlertCard
                   type="warning"
                   text={
-                    mail.from.id === props.session?.user.id
+                    mail.from.id === currentUserId
                       ? I18n.get('mails-no-reply-disabled-sender-info-text')
                       : I18n.get('mails-no-reply-disabled-info-text')
                   }
@@ -646,7 +788,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   }, [
     error,
     mail,
-    props.session?.user.id,
+    currentUserId,
     isRecall,
     renderRecipients,
     isRecallAndNotSender,
@@ -658,6 +800,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     renderButtons,
     renderBottomSheet,
     props.navigation,
+    renderRederictToWebview,
   ]);
 
   return (
