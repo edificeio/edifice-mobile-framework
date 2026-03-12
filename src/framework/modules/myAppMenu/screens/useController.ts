@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
 import { useSelector } from 'react-redux';
 
 import { BottomSheetMode } from './types';
@@ -10,8 +11,10 @@ import { I18n } from '~/app/i18n';
 import { AppDispatch, getStore } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import Toast from '~/framework/components/toast';
+import { MyAppsListItem } from '~/framework/modules/myAppMenu/components/my-apps-list/types';
 import {
   getAllappsShowedState,
+  initMesAppliAtLogin,
   selectFilteredAppsWithMobile,
   toggleAllApps,
   toggleFavorite,
@@ -36,12 +39,14 @@ export function useMyAppsHomeController() {
   const modalRef = React.useRef<ModalBoxHandle>(null);
   const pendingToastRef = React.useRef<null | { type: 'success' | 'error'; message: string }>(null);
   const pendingToggleRef = React.useRef<string | null>(null);
+  const appsListRef = React.useRef<FlashList<MyAppsListItem>>(null);
 
   const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
   const [filter, setFilter] = React.useState<MyAppsFilter>({ type: 'category', value: 'toutes' });
   const [onboardingSeen, setOnboardingSeen] = React.useState(0);
   const [selectedApp, setSelectedApp] = React.useState<AppsInfoAggregated | null>(null);
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
+  const [refreshing, setRefreshing] = React.useState<boolean>(false);
 
   const areAppsShowed = useSelector(getAllappsShowedState);
 
@@ -149,6 +154,15 @@ export function useMyAppsHomeController() {
     setOnboardingSeen(t => t + 1);
   }, []);
 
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await dispatch(initMesAppliAtLogin());
+    } finally {
+      setRefreshing(false);
+    }
+  }, [dispatch]);
+
   React.useEffect(() => {
     const updateApps = () => {
       const state = store.getState();
@@ -159,8 +173,17 @@ export function useMyAppsHomeController() {
     return store.subscribe(updateApps);
   }, [filter, areAppsShowed, store]);
 
+  //Listens to tab press to scroll to top of the list
+  React.useEffect(() => {
+    const unsubscribe = navigation.getParent('tabs')?.addListener('tabPress', () => {
+      appsListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   return {
     apps,
+    appsListRef,
     areAppsShowed,
     bottomSheetMode,
     bottomSheetRef,
@@ -174,9 +197,11 @@ export function useMyAppsHomeController() {
     navigateToFavorites: () => navigation.navigate(ModalsRouteNames.FavoritesManagement),
     onboardingSeen,
     onPressApp,
+    onRefresh,
     onToggleAllApps,
     onToggleFavorite,
     openBottomSheet,
+    refreshing,
     selectedApp,
     setFilter,
   };
