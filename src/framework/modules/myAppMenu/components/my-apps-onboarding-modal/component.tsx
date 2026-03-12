@@ -123,7 +123,7 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
                     onMomentumScrollEnd={onMomentumEnd}>
                     {slides.map((slide, i) => (
                       <View key={slide.key ?? i} style={[styles.slide, { width: layoutWidth }]}>
-                        <MyAppsOnboardingSlide {...slide} isActive={i === index} />
+                        <MyAppsOnboardingSlide {...slide} key={slide.key} isActive={i === index} />
                       </View>
                     ))}
                   </ScrollView>
