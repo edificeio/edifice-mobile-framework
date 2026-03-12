@@ -8,7 +8,7 @@ import styles from './styles';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, Svg } from '~/framework/components/picture';
-import { FileMedia, isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
+import { FileMedia, isAudioContent, isImageContent, isVideoContent } from '~/framework/util/media';
 
 interface PaginationItemProps {
   item: FileMedia;
@@ -40,15 +40,26 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
     };
   });
 
-  if (item.mime && isImageContent(item) && thumbnailSrc) {
+  if (item.mime && isImageContent(item)) {
     return (
       <View style={styles.itemContainer}>
-        <Picture type="Image" source={thumbnailSrc} style={styles.thumbnail} resizeMode="cover" />
+        {thumbnailSrc ? (
+          <Picture type="Image" source={thumbnailSrc} style={styles.thumbnail} resizeMode="cover" />
+        ) : (
+          <Animated.View style={[styles.videoIcon, iconAnimatedStyle]}>
+            <Svg
+              name="image-not-found"
+              fill={theme.palette.grey.white}
+              height={UI_SIZES.elements.icon.default}
+              width={UI_SIZES.elements.icon.default}
+            />
+          </Animated.View>
+        )}
       </View>
     );
   }
 
-  if (item.mime && isVideoContent(item) && thumbnailSrc) {
+  if (item.mime && isVideoContent(item)) {
     return (
       <View style={styles.itemContainer}>
         {thumbnailSrc && <Picture type="Image" source={thumbnailSrc} style={styles.thumbnail} resizeMode="cover" />}
@@ -79,26 +90,11 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
     );
   }
 
-  if ((item.mime && isPdfContent(item)) || !item.mime) {
-    return (
-      <View style={styles.itemContainer}>
-        <Animated.View style={[styles.videoIcon, iconAnimatedStyle]}>
-          <Svg
-            name="ui-text-page"
-            fill={theme.palette.grey.white}
-            height={UI_SIZES.elements.icon.default}
-            width={UI_SIZES.elements.icon.default}
-          />
-        </Animated.View>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.itemContainer}>
       <Animated.View style={[styles.videoIcon, iconAnimatedStyle]}>
         <Svg
-          name="image-not-found"
+          name="ui-text-page"
           fill={theme.palette.grey.white}
           height={UI_SIZES.elements.icon.default}
           width={UI_SIZES.elements.icon.default}
