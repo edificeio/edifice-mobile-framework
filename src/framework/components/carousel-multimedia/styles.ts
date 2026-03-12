@@ -43,11 +43,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
   },
-  paginationGradientSvg: {
-    height: PAGINATION_COMPONENT_HEIGHT,
-    position: 'absolute',
-    width: '100%',
-  },
   title: {
     width: undefined,
   },

@@ -23,11 +23,11 @@ import Animated, {
 import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
 import { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { CarouselItem } from './component';
 import { useCarouselFileHandler } from './hooks';
 import { computeNavBar, NavbarButtons } from './navbar';
+import PaginationBackground from './pagination-background/component';
 import PaginationItem from './pagination-item/component';
 import styles, { ACTIVE_ITEM_WIDTH, INACTIVE_ITEM_WIDTH, ITEM_GAP, SCREEN_HEIGHT, SCREEN_WIDTH } from './styles';
 import { getSignedMediaSource, getSignedPosterSource } from './util';
@@ -226,25 +226,6 @@ const CarouselScreen = ({
     };
   });
 
-  const PaginationGradientBackground = React.useCallback(
-    () => (
-      <Svg
-        style={{
-          ...styles.paginationGradientSvg,
-          width: isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT,
-        }}>
-        <Defs>
-          <LinearGradient id="paginationGradient" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor="#000000" stopOpacity="0.5" />
-            <Stop offset="1" stopColor="#000000" stopOpacity="0.8" />
-          </LinearGradient>
-        </Defs>
-        <Rect width="100%" height="100%" fill="url(#paginationGradient)" />
-      </Svg>
-    ),
-    [isPortrait],
-  );
-
   const containerStyle = React.useMemo(
     () => [styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }],
     [insets.top, insets.bottom],
@@ -325,7 +306,7 @@ const CarouselScreen = ({
       {canShowPagination && (
         <View style={styles.paginationGradient}>
           <Animated.View style={paginationContainerAnimatedStyle}>
-            <PaginationGradientBackground />
+            <PaginationBackground isPortrait={isPortrait} />
             <Animated.View style={paginationItemsAnimatedStyle}>
               <Pagination.Custom
                 containerStyle={styles.paginationContainer}
