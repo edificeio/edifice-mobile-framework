@@ -27,12 +27,15 @@ export const useController = (appId: string, isFavorite: boolean) => {
   const previousAppIdRef = React.useRef<string>(appId);
   const previousFavoriteRef = React.useRef<boolean>(isFavorite);
 
-  if (previousAppIdRef.current !== appId) {
-    previousAppIdRef.current = appId;
-    previousFavoriteRef.current = isFavorite;
-    scaleProgress.value = isFavorite ? 1 : 0;
-    rotateProgress.value = isFavorite ? ANIMATION.ROTATION_ANGLE : 0;
-  }
+  React.useEffect(() => {
+    if (previousAppIdRef.current !== appId) {
+      previousAppIdRef.current = appId;
+      previousFavoriteRef.current = isFavorite;
+      scaleProgress.value = isFavorite ? 1 : 0;
+      rotateProgress.value = isFavorite ? ANIMATION.ROTATION_ANGLE : 0;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appId, isFavorite]);
 
   const animatedFavoriteStyle = useAnimatedStyle(() => {
     const opacity = interpolate(rotateProgress.value, [0, 160, ANIMATION.ROTATION_ANGLE], [0, 0.4, 1], Extrapolation.CLAMP);
