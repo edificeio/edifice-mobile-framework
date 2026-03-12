@@ -27,7 +27,7 @@
     "override-restore-local": "node cli/override.js restore --local",
     "patch-package": "npx patch-package --exclude 'nothing'",
     "pod-install": "cd ios && rm -rf pods && rm -f Podfile.lock && pod install --repo-update && cd ..",
-    "postinstall": "npx react-native-jetifier; npx patch-package;",
+    "postinstall": "npx react-native-jetifier; npx patch-package; npx copy-files-from-to;",
     "prepare-alpha": "node cli/prepare-build.js alpha",
     "prepare-comm": "node cli/prepare-build.js comm",
     "prepare-inte": "node cli/prepare-build.js inte",
@@ -81,6 +81,7 @@
     "@skele/components": "1.0.0-alpha.40",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
+    "copy-files-from-to": "4.0.0",
     "deepmerge": "4.3.1",
     "depcheck": "1.4.7",
     "deprecated-react-native-prop-types": "5.0.0",
@@ -282,5 +283,47 @@
       "defaultBranch": "main"
     }
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.12.0",
+  "copyFiles": [
+    {
+      "from": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@1.5x.ios.png",
+      "to": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@1.5x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@1x.ios.png",
+      "to": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@1x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@2x.ios.png",
+      "to": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@2x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@3x.ios.png",
+      "to": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@3x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@4x.ios.png",
+      "to": "node_modules/@react-navigation/elements/lib/module/assets/back-icon@4x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/src/assets/back-icon@1.5x.ios.png",
+      "to": "node_modules/@react-navigation/elements/src/assets/back-icon@1.5x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/src/assets/back-icon@1x.ios.png",
+      "to": "node_modules/@react-navigation/elements/src/assets/back-icon@1x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/src/assets/back-icon@2x.ios.png",
+      "to": "node_modules/@react-navigation/elements/src/assets/back-icon@2x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/src/assets/back-icon@3x.ios.png",
+      "to": "node_modules/@react-navigation/elements/src/assets/back-icon@3x.png"
+    },
+    {
+      "from": "node_modules/@react-navigation/elements/src/assets/back-icon@4x.ios.png",
+      "to": "node_modules/@react-navigation/elements/src/assets/back-icon@4x.png"
+    }
+  ]
 }
