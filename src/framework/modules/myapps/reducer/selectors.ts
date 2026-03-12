@@ -4,7 +4,7 @@ import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { appsInfoInitialState } from '~/framework/modules/myapps/reducer/reducer';
 import { AppBookmarks, AppsInfoAggregated, AppsInfoWithCategory, MyAppsFilter } from '~/framework/modules/myapps/types';
-import { getAppName } from '~/framework/modules/myapps/utils';
+import { getAppName, normalizeString } from '~/framework/modules/myapps/utils';
 
 export const selectAppsState = (state: IGlobalState) => {
   return moduleConfig.getState(state) ?? appsInfoInitialState;
@@ -57,7 +57,7 @@ export const selectAggregatedApps = (state: IGlobalState): AppsInfoAggregated[] 
         libraries: config?.libraries,
       };
     })
-    .sort((a, b) => (a.displayName ?? a.name).localeCompare(b.displayName ?? b.name))
+    .sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)))
     .filter(app => app.display);
 };
 
@@ -92,8 +92,8 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
       return apps.filter(app => app.resolvedCategory === filter.value);
     case 'search': {
       if (!filter.value.trim()) return apps;
-      const str = filter.value.toLowerCase();
-      return apps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(str));
+      const normalizedStr = normalizeString(filter.value);
+      return apps.filter(app => normalizeString(app.displayName).includes(normalizedStr));
     }
     case 'libraries':
       return apps.filter(app => app.isLibrary);

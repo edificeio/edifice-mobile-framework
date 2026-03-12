@@ -8,7 +8,7 @@ export const buildAppBadgesIndex = (appsInfo: AppsInfoAggregated[]): Record<stri
   const badgesCollection: Record<string, IAppBadgeInfo> = {};
 
   appsInfo.forEach(app => {
-    const key = app.displayName.toUpperCase();
+    const key = app.name.toUpperCase();
     const appColor = app.color;
     const themeMainColor = theme.palette.complementary;
     const backgroundColor = appColor && themeMainColor[appColor] ? themeMainColor[appColor].regular : undefined;

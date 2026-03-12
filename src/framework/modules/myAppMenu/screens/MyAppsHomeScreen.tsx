@@ -43,6 +43,7 @@ export const computeNavBar = ({
 const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   const {
     apps,
+    appsListRef,
     areAppsShowed,
     bottomSheetMode,
     bottomSheetRef,
@@ -55,9 +56,11 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     modalRef,
     navigateToFavorites,
     onPressApp,
+    onRefresh,
     onToggleAllApps,
     onToggleFavorite,
     openBottomSheet,
+    refreshing,
     selectedApp,
     setFilter,
   } = useMyAppsHomeController();
@@ -212,11 +215,14 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     <PageView>
       <MyAppsFilters selectedFilter={filter} onFilterChange={setFilter} />
       <MyAppsList
+        ref={appsListRef}
         apps={apps}
         emptyScreenConfig={EMPTY_SCREEN_CONFIG[resolveEmptyScreenKey(filter)]}
         isAllAppsFilter={isAllAppsTab}
         onPressApp={onPressApp}
+        onRefresh={onRefresh}
         onLongPressApp={(app: AppsInfoAggregated) => openBottomSheet('app_actions', app)}
+        refreshing={refreshing}
       />
       <MyAppsOnboardingModal ref={modalRef} slides={slides} onComplete={completeOnboarding} />
       {renderBottomSheet()}
