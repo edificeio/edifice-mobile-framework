@@ -15,6 +15,7 @@ import {
   selectFilteredAppsWithMobile,
   selectIsSavingFavorites,
 } from '~/framework/modules/myapps/reducer';
+import { normalizeString } from '~/framework/modules/myapps/utils';
 
 export const useManageFavoritesController = (navigation: ManageFavoriteScreenProps.ManageFavoritesNavigation['navigation']) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,10 +42,11 @@ export const useManageFavoritesController = (navigation: ManageFavoriteScreenPro
   }, [savedBookmarks]);
 
   const filteredApps = React.useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim();
     if (!q) return allApps;
 
-    return allApps.filter(app => (app.displayName ?? app.name).toLowerCase().includes(q));
+    const normalizedQuery = normalizeString(q);
+    return allApps.filter(app => normalizeString(app.displayName).includes(normalizedQuery));
   }, [allApps, query]);
 
   const displayApps = React.useMemo(
