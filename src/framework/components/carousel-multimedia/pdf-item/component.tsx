@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import Pdf from 'react-native-pdf';
 
@@ -81,6 +81,8 @@ const PdfItem = ({
     <View style={styles.flex1}>
       <Pdf
         key={resetComponent}
+        // mandatory on iOS to prevent gesture conflicts between pdf and carousel
+        enablePaging={isIos}
         minScale={MIN_PDF_SCALE}
         maxScale={MAX_PDF_SCALE}
         onError={onPdfError}
