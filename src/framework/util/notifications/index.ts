@@ -8,10 +8,6 @@ import { decode } from 'html-entities';
 import moment, { Moment } from 'moment';
 
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
-import { extractVideoResolution } from '~/framework/util/htmlParser/content';
-import { FileMedia, toURISource } from '~/framework/util/media';
-import { sessionURISource } from '~/framework/util/transport';
 
 // Types
 
@@ -182,25 +178,4 @@ export const notificationAdapter = (n: IEntcoreAbstractNotification) => {
   }
   // ToDo Modules this with registered modules map
   return ret as IAbstractNotification;
-};
-
-const normalizeUrl = (url: string) => url.split('?')[0];
-
-// Type conversion needed to open media from a notification with the carousel
-export const convertNotificationToFileMedia = (notificationMedias: INotificationMedia[]): FileMedia[] => {
-  return notificationMedias
-    .filter(media => ['image', 'audio', 'video'].includes(media.type))
-    .map(
-      media =>
-        ({
-          mime: media.type === 'image' ? 'image/*' : media.type === 'audio' ? 'audio/*' : 'video/*',
-          name: media.name,
-          poster:
-            media.type === 'video' && media['document-id'] && media['video-resolution']
-              ? computeVideoThumbnail(media['document-id'], extractVideoResolution(media['video-resolution']) || undefined)
-              : undefined,
-          src: normalizeUrl(sessionURISource(toURISource(media.src.toString())).uri || ''),
-          type: media.type,
-        }) as FileMedia,
-    );
 };
