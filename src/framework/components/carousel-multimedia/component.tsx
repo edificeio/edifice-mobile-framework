@@ -24,6 +24,7 @@ export const CarouselItem = ({
   toggleNavBarVisibility,
 }: CarouselItemProps) => {
   const [isPdfError, setIsPdfError] = React.useState(false);
+  const [isPdfLoadTimeout, setIsPdfLoadTimeout] = React.useState(false);
 
   if (isCurrentMediaUnknown || !info) {
     return <UnknownItem />;
@@ -64,16 +65,18 @@ export const CarouselItem = ({
   }
 
   if (isPdfContent(media)) {
-    if (isPdfError) {
+    if (isPdfError || isPdfLoadTimeout) {
       return <UnviewableItem file={media} />;
     }
     return (
       <PdfItem
         hideNavBar={hideNavBar}
         isNavBarVisible={isNavBarVisible}
+        isPdfLoadTimeout={isPdfLoadTimeout}
         isShown={isCurrentItem}
         setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
         setIsPdfError={setIsPdfError}
+        setIsPdfLoadTimeout={setIsPdfLoadTimeout}
         source={itemSource}
         toggleNavBar={toggleNavBarVisibility}
       />

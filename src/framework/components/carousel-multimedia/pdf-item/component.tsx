@@ -9,23 +9,19 @@ import { PdfItemProps } from './types';
 import LoaderItem from '~/framework/components/carousel-multimedia/loader-item/component';
 import { PdfContext } from '~/framework/components/carousel-multimedia/screen';
 
-/**
- * Known issues with the react-native-pdf library :
- * 1 - The prop onLoadComplete is completely broken and unusable
- * 2 - The onError prop is not reliable, sometimes triggered for nothing
- */
-
 const MIN_PDF_SCALE = 1;
 const MAX_PDF_SCALE = 5;
-// Workaround to know if the loading process has at least started since onLoadComplete is unusable
-const MIN_LOADING_PROGRESS = 0.00001;
+const isIos = Platform.OS === 'ios';
+const PDF_LOAD_TIMEOUT = 10000;
 
 const PdfItem = ({
   hideNavBar,
   isNavBarVisible,
+  isPdfLoadTimeout,
   isShown,
   setIsCarouselSwipeEnabled,
   setIsPdfError,
+  setIsPdfLoadTimeout,
   source,
   toggleNavBar,
 }: PdfItemProps) => {
@@ -38,10 +34,8 @@ const PdfItem = ({
     setIsPdfError(true);
   }, [setIsPdfError]);
 
-  const onPdfLoadProgress = React.useCallback((progress: number) => {
-    if (progress >= MIN_LOADING_PROGRESS) {
-      setIsPdfLoaded(true);
-    }
+  const onPdfLoadComplete = React.useCallback(() => {
+    setIsPdfLoaded(true);
   }, []);
 
   const onZoom = React.useCallback(
@@ -66,6 +60,23 @@ const PdfItem = ({
     [hideNavBar, isNavBarVisible, isShown, pdfContextValue, setIsCarouselSwipeEnabled],
   );
 
+  // Since onLoadComplete prop is broken, this is a workaround to ensure we do not stay indefinitely in loading state
+  React.useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    if (isShown && !isPdfLoaded && !isPdfLoadTimeout) {
+      timeoutId = setTimeout(() => {
+        setIsPdfLoadTimeout(true);
+      }, PDF_LOAD_TIMEOUT);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [isShown, isPdfLoaded, isPdfLoadTimeout, setIsPdfLoadTimeout]);
+
   return (
     <View style={styles.flex1}>
       <Pdf
@@ -73,7 +84,7 @@ const PdfItem = ({
         minScale={MIN_PDF_SCALE}
         maxScale={MAX_PDF_SCALE}
         onError={onPdfError}
-        onLoadProgress={onPdfLoadProgress}
+        onLoadComplete={onPdfLoadComplete}
         onPageSingleTap={toggleNavBar}
         onScaleChanged={onZoom}
         scale={MIN_PDF_SCALE}
