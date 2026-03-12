@@ -17,22 +17,20 @@ export const CarouselItem = ({
   info,
   isCurrentMediaUnknown,
   isNavBarVisible,
-  isSingleMediaMode,
   itemSource,
   onInitialAVMediaLoad,
   setIsCarouselSwipeEnabled,
   showNavBar,
-  singleMedia,
   toggleNavBarVisibility,
 }: CarouselItemProps) => {
   const [isPdfError, setIsPdfError] = React.useState(false);
 
-  if (isCurrentMediaUnknown || (isSingleMediaMode && !singleMedia) || (!isSingleMediaMode && !info)) {
+  if (isCurrentMediaUnknown || !info) {
     return <UnknownItem />;
   }
 
-  const media = isSingleMediaMode ? singleMedia! : info!.item;
-  const isCurrentItem = isSingleMediaMode ? true : info!.index === currentIndex;
+  const media = info!.item;
+  const isCurrentItem = info!.index === currentIndex;
 
   if (!media.mime && media.src) return <UnviewableItem file={media} />;
 
@@ -54,7 +52,8 @@ export const CarouselItem = ({
   if (isAudioContent(media) || isVideoContent(media)) {
     return (
       <PlayerItem
-        {...(isSingleMediaMode ? { index: 0, item: singleMedia! } : info!)}
+        index={currentIndex}
+        item={media}
         isCurrentItem={isCurrentItem}
         hideNavBar={hideNavBar}
         onInitialMediaLoad={onInitialAVMediaLoad}

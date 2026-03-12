@@ -41,8 +41,8 @@ import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/util/med
 
 /**
  * The react-native-reanimated-carousel library creates duplicate components with the same indexes
- * This means, for a given item in the carousel, in some cases the lib can create up to 3 components with the same index and item source, but different internal states (zoom and loading state for instance).
- * That is why we use contexts to share and reset these internal states
+ * This means, for a given item in the carousel, in some cases the lib can create up to 2 components with the same index and item source, but different internal states (zoom and loading state for instance).
+ * That is why we use contexts to share and reset these internal states, and also why we need to disable looping when there are only 2 items in the carrousel.
  */
 
 const isAndroid = Platform.OS === 'android';
@@ -256,7 +256,10 @@ const CarouselScreen = ({
         ...computeNavBar({ navigation, route }),
         headerRight: () => <NavbarButtons disabled={isCurrentMediaUnknown} onSave={onSave} onShare={onShare} />,
         headerShown: isAndroid ? true : undefined,
-        headerTitle: navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title),
+        headerTitle:
+          media.length !== 1
+            ? navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title)
+            : '',
       });
     } else {
       navigation.setOptions({
@@ -287,53 +290,37 @@ const CarouselScreen = ({
       <StatusBar type="dark" />
       <OrientationLocker orientation={'UNLOCK'} onChange={onOrientationChange} />
       <View style={styles.carouselContainer}>
-        {media.length === 1 ? (
-          <CarouselItem
-            currentIndex={currentIndex}
-            hideNavBar={hideNavBar}
-            itemSource={getSignedMediaSource(media[0])}
-            isCurrentMediaUnknown={isCurrentMediaUnknown}
-            isNavBarVisible={isNavBarVisible}
-            isSingleMediaMode={true}
-            onInitialAVMediaLoad={onInitialAVMediaLoad}
-            setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
-            showNavBar={showNavBar}
-            singleMedia={media[0]}
-            toggleNavBarVisibility={toggleNavBarVisibility}
-          />
-        ) : (
-          <Carousel
-            data={media}
-            defaultIndex={startIndex}
-            enabled={media.length > 1 && isCarouselSwipeEnabled}
-            height={isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH}
-            width={isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT}
-            onConfigurePanGesture={configurePanGesture}
-            onProgressChange={paginationProgress}
-            onSnapToItem={onSnapToItem}
-            renderItem={(info: CarouselRenderItemInfo<FileMedia>) => {
-              const source = getSignedMediaSource(info.item);
-              const isInitialItem = info.index === startIndex;
+        <Carousel
+          height={isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH}
+          width={isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT}
+          data={media}
+          defaultIndex={startIndex}
+          enabled={media.length > 1 && isCarouselSwipeEnabled}
+          loop={media.length > 2}
+          onConfigurePanGesture={configurePanGesture}
+          onProgressChange={paginationProgress}
+          onSnapToItem={onSnapToItem}
+          renderItem={(info: CarouselRenderItemInfo<FileMedia>) => {
+            const source = getSignedMediaSource(info.item);
+            const isInitialItem = info.index === startIndex;
 
-              return (
-                <CarouselItem
-                  currentIndex={currentIndex}
-                  hideNavBar={hideNavBar}
-                  info={info}
-                  itemSource={source}
-                  isCurrentMediaUnknown={isCurrentMediaUnknown}
-                  isNavBarVisible={isNavBarVisible}
-                  isSingleMediaMode={false}
-                  onInitialAVMediaLoad={isInitialItem ? onInitialAVMediaLoad : undefined}
-                  setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
-                  showNavBar={showNavBar}
-                  toggleNavBarVisibility={toggleNavBarVisibility}
-                />
-              );
-            }}
-            ref={carouselRef}
-          />
-        )}
+            return (
+              <CarouselItem
+                currentIndex={currentIndex}
+                hideNavBar={hideNavBar}
+                info={info}
+                itemSource={source}
+                isCurrentMediaUnknown={isCurrentMediaUnknown}
+                isNavBarVisible={isNavBarVisible}
+                onInitialAVMediaLoad={isInitialItem ? onInitialAVMediaLoad : undefined}
+                setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
+                showNavBar={showNavBar}
+                toggleNavBarVisibility={toggleNavBarVisibility}
+              />
+            );
+          }}
+          ref={carouselRef}
+        />
       </View>
       {canShowPagination && (
         <View style={styles.paginationGradient}>

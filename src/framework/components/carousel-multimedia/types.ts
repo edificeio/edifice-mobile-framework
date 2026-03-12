@@ -12,12 +12,10 @@ export interface CarouselItemProps {
   info?: CarouselRenderItemInfo<FileMedia>;
   isCurrentMediaUnknown: boolean;
   isNavBarVisible: boolean;
-  isSingleMediaMode: boolean;
   itemSource: SignedMediaSource;
   onInitialAVMediaLoad?: () => void;
   setIsCarouselSwipeEnabled: (isEnabled: boolean) => void;
   showNavBar: () => void;
-  singleMedia?: FileMedia;
   startIndex?: number;
   toggleNavBarVisibility: () => void;
 }
