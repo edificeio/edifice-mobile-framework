@@ -5,6 +5,8 @@ export interface MyAppsListProps {
   isAllAppsFilter: boolean;
   onPressApp: (app: AppsInfoAggregated) => void;
   onLongPressApp?: (app: AppsInfoAggregated) => void;
+  onRefresh?: () => Promise<void>;
+  refreshing?: boolean;
   emptyScreenConfig: { text: string; title: string };
 }
 
