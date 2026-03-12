@@ -16,6 +16,7 @@ import { AttachmentGroup } from './AttachmentGroup';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
+import { convertNotificationToFileMedia } from '~/framework/components/carousel-multimedia/util';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -23,7 +24,6 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { FileMedia } from '~/framework/util/media';
-import { convertNotificationToFileMedia } from '~/framework/util/notifications';
 import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 

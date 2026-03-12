@@ -4,7 +4,10 @@ import { Source } from 'react-native-pdf';
 import { ReactVideoSourceProperties } from 'react-native-video';
 
 import { IFile } from '~/framework/modules/workspace/reducer';
+import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
+import { extractVideoResolution } from '~/framework/util/htmlParser/content';
 import { FileMedia, isPdfContent, MediaType, toURISource } from '~/framework/util/media';
+import { INotificationMedia } from '~/framework/util/notifications';
 import { sessionURISource } from '~/framework/util/transport/source';
 
 export type SignedMediaSource = ImageURISource | ReactVideoSourceProperties | Source;
@@ -38,6 +41,7 @@ export const getSignedPosterSource = (src: FileMedia['src']): ImageURISource => 
 // File formatters
 const normalizeUrl = (url: string) => url.split('?')[0];
 
+// For workspace files
 export const convertIFileToFileMedia = (files: IFile[]): FileMedia[] => {
   return files
     .filter(file => file.url !== undefined)
@@ -54,4 +58,23 @@ export const convertIFileToFileMedia = (files: IFile[]): FileMedia[] => {
         type: isImage ? 'image' : isAudio ? 'audio' : isVideo ? 'video' : 'attachment',
       } as FileMedia;
     });
+};
+
+// For Timeline notifications
+export const convertNotificationToFileMedia = (notificationMedias: INotificationMedia[]): FileMedia[] => {
+  return notificationMedias
+    .filter(media => ['image', 'audio', 'video'].includes(media.type))
+    .map(
+      media =>
+        ({
+          mime: media.type === 'image' ? 'image/*' : media.type === 'audio' ? 'audio/*' : 'video/*',
+          name: media.name,
+          poster:
+            media.type === 'video' && media['document-id'] && media['video-resolution']
+              ? computeVideoThumbnail(media['document-id'], extractVideoResolution(media['video-resolution']) || undefined)
+              : undefined,
+          src: normalizeUrl(sessionURISource(toURISource(media.src.toString())).uri || ''),
+          type: media.type,
+        }) as FileMedia,
+    );
 };
