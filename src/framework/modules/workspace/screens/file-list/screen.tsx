@@ -14,6 +14,8 @@ import { IWorkspaceFileListScreenProps } from './types';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
+import { convertIFileToFileMedia } from '~/framework/components/carousel-multimedia/util';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -27,7 +29,6 @@ import SwipeableList from '~/framework/components/swipeableList';
 import { BodyBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
-  convertIFileToIDistantFile,
   copyWorkspaceFilesAction,
   deleteWorkspaceFilesAction,
   downloadThenOpenWorkspaceFileAction,
@@ -46,7 +47,6 @@ import moduleConfig from '~/framework/modules/workspace/module-config';
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { openDocument } from '~/framework/util/fileHandler/actions';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -160,29 +160,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
-  const openMedia = (file: IFile) => {
-    //const { /*files, */ navigation } = props;
-    // const data = files
-    //   .filter(f => f.contentType?.startsWith('image'))
-    //   .map(f => ({
-    //     type: 'image',
-    //     src: { uri: f.url },
-    //     link: f.url,
-    //   })) as IMedia[];
-    // const startIndex = data.findIndex(f => f.link === file.url);
-    // openCarousel({ data, startIndex }, navigation)
-    openDocument(convertIFileToIDistantFile(file));
-  };
-
   const onPressFile = (file: IFile) => {
     if (isSelectionActive) {
       return selectFile(file);
-    }
-    if (file.contentType?.startsWith('image')) {
-      return openMedia(file);
-    }
-    if (Platform.OS === 'ios' && !file.isFolder) {
-      return props.previewFile(file, props.navigation);
     }
     const { navigation } = props;
     const { id, isFolder, name: title } = file;
@@ -190,7 +170,13 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       const newFilter = filter === Filter.ROOT ? id : filter;
       navigation.isFocused() && navigation.push(moduleConfig.routeName, { filter: newFilter, parentId: id, title });
     } else {
-      navigation.navigate(workspaceRouteNames.filePreview, { file, title });
+      const allFiles = props.files.filter(f => !f.isFolder && f.url !== undefined);
+      const mediaList = convertIFileToFileMedia(allFiles);
+      const startIndex = allFiles.findIndex(f => f.id === file.id);
+      openMultimediaCarousel({
+        media: mediaList,
+        startIndex: startIndex >= 0 ? startIndex : 0,
+      });
     }
   };
 
