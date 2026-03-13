@@ -14,7 +14,7 @@ import Toast from '~/framework/components/toast';
 import { MyAppsListItem } from '~/framework/modules/myAppMenu/components/my-apps-list/types';
 import {
   getAllappsShowedState,
-  initMesAppliAtLogin,
+  refreshMyApps,
   selectFilteredAppsWithMobile,
   toggleAllApps,
   toggleFavorite,
@@ -157,7 +157,7 @@ export function useMyAppsHomeController() {
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     try {
-      await dispatch(initMesAppliAtLogin());
+      await dispatch(refreshMyApps());
     } finally {
       setRefreshing(false);
     }
