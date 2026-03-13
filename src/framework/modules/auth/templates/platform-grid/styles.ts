@@ -7,7 +7,7 @@ export default StyleSheet.create({
   heading: {
     color: theme.ui.text.regular,
     marginBottom: UI_SIZES.spacing.big,
-    marginTop: UI_SIZES.spacing.medium + UI_SIZES.screen.topInset,
+    marginTop: UI_SIZES.spacing.medium,
     textAlign: 'center',
   },
   lightP: { color: theme.ui.text.light, marginBottom: UI_SIZES.spacing.small, textAlign: 'center' },

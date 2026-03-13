@@ -369,7 +369,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               testID="timeline-profile-button"
               // Style here is needed to prevent Android autocropping border of avatar
               style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
-              <SingleAvatar size="md" userId={session?.user.id || ''} />
+              <SingleAvatar size="sm" userId={session?.user.id || ''} />
             </TouchableOpacity>,
             <NavBarAction />,
           ]}
@@ -394,9 +394,12 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           <NavBarAction icon="ui-plus" testID="timeline-add-button" />
         </PopupMenu>,
       );
-    } else {
-      headerRightItems.push(<NavBarAction />);
     }
+
+    if (headerRightItems.length < 2) {
+      headerRightItems.unshift(<NavBarAction />);
+    }
+
     this.props.navigation.setOptions({
       headerRight: () => <NavBarActionsGroup elements={headerRightItems} />,
     });

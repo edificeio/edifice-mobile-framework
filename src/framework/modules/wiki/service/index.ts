@@ -5,7 +5,7 @@ import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
 import { API } from '~/framework/modules/wiki/service/types';
-import http from '~/framework/util/http';
+import { sessionFetch } from '~/framework/util/transport/fetch';
 import { ArrayElement } from '~/utils/types';
 
 const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResourceMetadata => ({
@@ -107,13 +107,13 @@ const hydrateWikiPageData = (data: API.Wiki.GetPageResponse): WikiPage => ({
 export default {
   page: {
     get: async (opts: API.Wiki.GetPagePayload) => {
-      const rawData: API.Wiki.GetPageResponse = await http.fetchJsonForSession(`/wiki/${opts.id}/page/${opts.pageId}`);
+      const rawData = await sessionFetch.json<API.Wiki.GetPageResponse>(`/wiki/${opts.id}/page/${opts.pageId}`);
       return hydrateWikiPageData(rawData);
     },
   },
   wiki: {
     get: async (opts: API.Wiki.ListPagesPayload) => {
-      const rawData: API.Wiki.ListPagesResponse = await http.fetchJsonForSession(`/wiki/${opts.id}`);
+      const rawData = await sessionFetch.json<API.Wiki.ListPagesResponse>(`/wiki/${opts.id}`);
       return hydrateWikiData(rawData, getSession()!);
     },
   },

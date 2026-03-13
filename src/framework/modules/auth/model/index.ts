@@ -16,6 +16,7 @@ export enum AccountType {
   Teacher = 'Teacher',
   Personnel = 'Personnel',
   Guest = 'Guest',
+  External = 'External',
 }
 
 /**
@@ -80,7 +81,9 @@ interface AuthSavedLoggedOutAccountCommon {
   platform: string; // name of the platform
   addTimestamp: number; // date of the account addition into the app to preserve display order.
 }
-interface AuthSavedLoggedInAccountCommon extends AuthSavedLoggedOutAccountCommon, AuthLoggedInAccountTokens {}
+interface AuthSavedLoggedInAccountCommon extends AuthSavedLoggedOutAccountCommon, AuthLoggedInAccountTokens {
+  logTimestamp: number;
+}
 
 // Saved account that is Credentials / Saml
 
@@ -97,8 +100,7 @@ interface AuthSavedAccountWithFederation {
 // Mixup between logged status and auth method
 
 export interface AuthSavedLoggedOutAccountWithCredentials
-  extends AuthSavedAccountWithCredentials,
-    AuthSavedLoggedOutAccountCommon {}
+  extends AuthSavedAccountWithCredentials, AuthSavedLoggedOutAccountCommon {}
 export interface AuthSavedLoggedInAccountWithCredentials extends AuthSavedAccountWithCredentials, AuthSavedLoggedInAccountCommon {}
 
 export interface AuthSavedLoggedOutAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedOutAccountCommon {}
@@ -169,7 +171,8 @@ interface AuthActiveAccountCommon {
   tokens: AuthTokenSet;
   rights: AuthActiveAccountRights;
   persist: SessionPersistence;
-  addTimestamp: AuthSavedAccount['addTimestamp'];
+  addTimestamp: AuthSavedAccount['addTimestamp']; // date of the account addition into the app to preserve display order.
+  logTimestamp: AuthSavedAccount['addTimestamp']; // date of the latest access to that account on this device.
 }
 
 interface AuthActiveUserInfoWithCredentialsSpecifics {
@@ -235,6 +238,7 @@ export interface AuthTokenSet {
   queryParam?: AuthQueryParamToken;
   oneSessionId?: AuthToken;
   scope: string[];
+  origin: string;
 }
 
 export interface AuthActiveAccountRights {

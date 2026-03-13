@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   absenceActionContainer: {
@@ -13,6 +13,12 @@ export default StyleSheet.create({
   childListContentContainer: {
     padding: UI_SIZES.spacing.medium,
   },
+  headerItem: {
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.minor,
+    flexDirection: 'row',
+    position: 'relative',
+  },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,
   },
@@ -21,20 +27,22 @@ export default StyleSheet.create({
     borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: UI_SIZES.border.thin,
     elevation: 0,
-  },
-  tabBarIndicatorContainer: {
-    backgroundColor: theme.palette.primary.regular,
-    height: 2,
-  },
-  tabBarLabel: {
-    paddingRight: UI_SIZES.spacing.minor, // fix to android trimming last character
-  },
-  tabBarLabelFocused: {
-    color: theme.palette.primary.regular,
-  },
-  tabBarTabContainer: {
-    alignItems: 'center',
-    columnGap: UI_SIZES.spacing.minor,
     flexDirection: 'row',
+  },
+  tabBarIndicator: {
+    backgroundColor: theme.palette.primary.regular,
+    bottom: 0,
+    height: getScaleHeight(2),
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+  tabBarItem: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingVertical: UI_SIZES.spacing.small,
+  },
+  tabLabelFocused: {
+    color: theme.palette.primary.regular,
   },
 });

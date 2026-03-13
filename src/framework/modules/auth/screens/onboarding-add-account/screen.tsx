@@ -12,13 +12,14 @@ import { getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallText } from '~/framework/components/text';
-import { authRouteNames, IAuthNavigationParams, navigateAfterOnboarding } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getAddAccountOnboardingNextScreen } from '~/framework/modules/auth/navigation/add-account/router';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.onboardingAddAccount>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountOnboarding>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -28,7 +29,7 @@ export const computeNavBar = ({
 
 export default function AuthOnboardingAddAccountScreen(props: AuthOnboardingAddAccountScreenPrivateProps) {
   const onNavigate = React.useCallback(() => {
-    navigateAfterOnboarding(props.navigation);
+    props.navigation.dispatch(getAddAccountOnboardingNextScreen());
   }, [props.navigation]);
   return (
     <PageView style={styles.page}>

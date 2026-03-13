@@ -20,20 +20,18 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA } from '~/framework/components/list/paginated-list';
 import { NavBarAction } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
+import { sessionScreen } from '~/framework/components/screen';
 import { BodyText, HeadingSText, HeadingXSText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
 import CommunityCardLarge from '~/framework/modules/communities/components/community-card-large';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesSelectors } from '~/framework/modules/communities/store';
-import communitiesStyles from '~/framework/modules/communities/styles';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { HTTPError } from '~/framework/util/http';
 import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
+import { HTTPError } from '~/framework/util/transport/error';
 
 export const computeNavBar = ({
   navigation,
@@ -91,22 +89,20 @@ const safeEdges: Edges = {
   top: 'off',
 };
 
-export default (function CommunitiesJoinConfirmScreen({
+export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(function CommunitiesJoinConfirmScreen({
   navigation,
   route: {
     params: { communityId, invitationId },
   },
-}: Readonly<CommunitiesJoinConfirmScreen.AllProps>) {
-  const session = getSession();
+  session,
+}) {
   const onValidate = React.useCallback(async () => {
-    if (!session) return;
     try {
       await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {
         status: InvitationStatus.ACCEPTED,
       });
       navigation.replace(communitiesRouteNames.home, { communityId, invitationId, showWelcome: true });
     } catch (e) {
-      console.info(communityId, invitationId);
       console.error(e);
       if (e instanceof HTTPError) {
         console.error(await e.read(e.text));
@@ -136,28 +132,26 @@ export default (function CommunitiesJoinConfirmScreen({
   const image = data.community?.mobileThumbnails?.length ? data.community.mobileThumbnails : toURISource(data.community.image!);
 
   return (
-    <PageView style={communitiesStyles.screen}>
-      <ScrollView style={styles.page}>
-        <SafeAreaView style={containerStyle} edges={safeEdges}>
-          <CommunityCardLarge
-            title={data.community?.title}
-            image={image}
-            membersCount={data.communityStats?.totalMembers}
-            senderId={data.sentBy.entId}
-            senderName={data.sentBy.displayName}
-            role={data.role}
-          />
-          <View style={styles.welcomeNote}>
-            <View style={styles.welcomeNoteTitleContainer}>
-              <Svg name="ui-notes" fill={styles.welcomeNoteTitle.color} />
-              <HeadingXSText style={styles.welcomeNoteTitle}>{I18n.get('community-welcome-note')}</HeadingXSText>
-            </View>
-            <BodyText>{data.community?.welcomeNote}</BodyText>
+    <ScrollView style={styles.page}>
+      <SafeAreaView style={containerStyle} edges={safeEdges}>
+        <CommunityCardLarge
+          title={data.community?.title}
+          image={image}
+          membersCount={data.communityStats?.totalMembers}
+          senderId={data.sentBy.entId}
+          senderName={data.sentBy.displayName}
+          role={data.role}
+        />
+        <View style={styles.welcomeNote}>
+          <View style={styles.welcomeNoteTitleContainer}>
+            <Svg name="ui-notes" fill={styles.welcomeNoteTitle.color} />
+            <HeadingXSText style={styles.welcomeNoteTitle}>{I18n.get('community-welcome-note')}</HeadingXSText>
           </View>
-          <PrimaryButton text={I18n.get('community-invitation-validate')} action={onValidate} testID="validate-btn" />
-          <TertiaryButton text={I18n.get('community-invitation-skip')} action={navigation.goBack} testID="skip-btn" />
-        </SafeAreaView>
-      </ScrollView>
-    </PageView>
+          <BodyText>{data.community?.welcomeNote}</BodyText>
+        </View>
+        <PrimaryButton text={I18n.get('community-invitation-validate')} action={onValidate} testID="validate-btn" />
+        <TertiaryButton text={I18n.get('community-invitation-skip')} action={navigation.goBack} testID="skip-btn" />
+      </SafeAreaView>
+    </ScrollView>
   );
 });

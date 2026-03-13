@@ -17,8 +17,8 @@ export default StyleSheet.create({
     flex: 5,
   },
   page: {
-    paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.screen.topInset + UI_SIZES.spacing.big,
+    paddingBottom: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.big,
   },
   swiper: {
     backgroundColor: theme.ui.background.page,

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Platform } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -12,8 +11,7 @@ import IconButton from '~/framework/components/buttons/icon';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { NavBarAction } from '~/framework/components/navigation';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
+import { KeyboardPageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
@@ -38,10 +36,6 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
   const [description, setDescription] = React.useState<string>();
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [visibility, setVisibility] = React.useState<boolean>(route.params.visibility ?? false);
-
-  const PageComponent = React.useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
-  }, []);
 
   const onChangeVisibility = () => {
     setVisibility(!visibility);
@@ -89,27 +83,25 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
   }, []);
 
   return (
-    <PageComponent style={styles.page}>
-      <ScrollView bounces={false}>
-        <InputContainer
-          label={{ text: 'Description' }}
-          input={
-            <MultilineTextInput
-              placeholder={I18n.get('user-profile-about-empty')}
-              numberOfLines={15}
-              value={description}
-              onChangeText={txt => setDescription(txt)}
-            />
-          }
-        />
-        <IconButton
-          icon={visibility ? 'ui-internet' : 'ui-lock'}
-          color={theme.palette.grey.black}
-          action={onChangeVisibility}
-          style={styles.buttonVisibility}
-        />
-      </ScrollView>
-    </PageComponent>
+    <KeyboardPageView style={styles.page} scrollable gutters>
+      <InputContainer
+        label={{ text: 'Description' }}
+        input={
+          <MultilineTextInput
+            placeholder={I18n.get('user-profile-about-empty')}
+            numberOfLines={15}
+            value={description}
+            onChangeText={txt => setDescription(txt)}
+          />
+        }
+      />
+      <IconButton
+        icon={visibility ? 'ui-internet' : 'ui-lock'}
+        color={theme.palette.grey.black}
+        action={onChangeVisibility}
+        style={styles.buttonVisibility}
+      />
+    </KeyboardPageView>
   );
 };
 

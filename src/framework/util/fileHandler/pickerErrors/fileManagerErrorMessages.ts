@@ -1,4 +1,5 @@
 import { FileSource } from '~/framework/util/fileHandler/types';
+import { logFileManagerConfig } from '~/framework/util/fileHandler/utils';
 
 export enum FileManagerErrorCode {
   PICKER_CANCELLED = 'PICKER_CANCELLED',
@@ -43,7 +44,7 @@ export interface FileManagerError {
 
 export function makeError(code: FileManagerErrorCode, source: FileSource, raw?: any): FileManagerError {
   const message = getFileManagerErrorMessageKey(code);
-  console.debug('[FM_ERROR_MESSAGE] ==', { code, message });
+  logFileManagerConfig('[FM_ERROR_MESSAGE]', { code, message });
   return {
     code,
     message,

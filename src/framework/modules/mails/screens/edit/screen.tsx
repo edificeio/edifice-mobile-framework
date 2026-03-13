@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
-import { getNoReplyRight } from '../../rights';
 import styles from './styles';
 import { type MailsEditScreenPrivateProps } from './types';
 import { useMailsEditController } from './useController';
@@ -24,6 +22,9 @@ import { InactiveUserModalContentContainer } from '~/framework/modules/mails/com
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsRecipientsType } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { getNoReplyRight } from '~/framework/modules/mails/rights';
+import { mailsService } from '~/framework/modules/mails/service';
+import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -48,11 +49,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       onCheckSend,
       onCloseInactiveUserModal,
       onFocus,
+      onImportAttachmentsResult,
       onOpenHistory,
       onPressAddAttachments,
       onRemoveAttachment,
       onScrollBeginDrag,
-      onSendDraft,
       onToggleShowList,
       openMoreRecipientsFields,
     },
@@ -60,6 +61,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     refs: { editorRef, scrollViewRef },
     state: {
       attachments,
+      bodyContent,
       cc,
       cci,
       draftIdSaved,
@@ -77,15 +79,15 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       to,
     },
   } = useMailsEditController({ navigation, route });
-
-  UNSTABLE_usePreventRemove(shouldSaveDraft, () => onSendDraft());
+  const hasRecipients = to.length > 0 || cc.length > 0 || cci.length > 0;
+  const hasContentToSend = subject.trim().length > 0 || bodyContent?.trim().length > 0;
 
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
-            <NavBarAction icon="ui-send" disabled={to.length === 0 && cc.length === 0 && cci.length === 0} onPress={onCheckSend} />,
+            <NavBarAction icon="ui-send" disabled={!hasRecipients || !hasContentToSend} onPress={onCheckSend} />,
             <PopupMenu
               disabled={!shouldSaveDraft && !getNoReplyRight(props.session!)}
               actions={
@@ -100,8 +102,17 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       ),
       headerTitle: navBarTitle('', undefined, undefined, 1, 2),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [to, cc, cci, subject, draftIdSaved, onCheckSend]);
+  }, [
+    draftIdSaved,
+    hasContentToSend,
+    hasRecipients,
+    navigation,
+    noReplyMenu,
+    onCheckSend,
+    popupActionsMenu,
+    props.session,
+    shouldSaveDraft,
+  ]);
 
   const renderTopForm = React.useCallback(() => {
     const commonProps = {
@@ -155,18 +166,31 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     () => (
       <View style={styles.bottomForm}>
         {history !== '' && !isHistoryOpen ? <MailsHistoryButton content={history} onPress={onOpenHistory} /> : null}
-        <Attachments
-          session={session!}
-          isEditing
-          attachments={attachments}
-          removeAttachmentAction={onRemoveAttachment}
-          draftId={draftIdSaved}
-          onPressAddAttachments={onPressAddAttachments}
-        />
-        <View style={{ minHeight: 600 }} />
+        {isServiceMethodAvailable(mailsService.attachments.remove) && isServiceMethodAvailable(mailsService.attachments.add) ? (
+          <Attachments
+            session={session!}
+            isEditing
+            attachments={attachments}
+            removeAttachmentAction={onRemoveAttachment}
+            draftId={draftIdSaved}
+            onPressAddAttachments={onPressAddAttachments}
+            onImportAttachmentsResult={onImportAttachmentsResult}
+          />
+        ) : null}
+        <View style={styles.bottomSheet} />
       </View>
     ),
-    [history, isHistoryOpen, session, onOpenHistory, attachments, onRemoveAttachment, draftIdSaved, onPressAddAttachments],
+    [
+      history,
+      isHistoryOpen,
+      session,
+      onOpenHistory,
+      attachments,
+      onRemoveAttachment,
+      draftIdSaved,
+      onPressAddAttachments,
+      onImportAttachmentsResult,
+    ],
   );
 
   const renderContent = React.useCallback(() => {
@@ -187,6 +211,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           }}
           placeholder={I18n.get('mails-edit-contentplaceholder')}
           onScrollBeginDrag={onScrollBeginDrag}
+          allowMultimediaUpload={mailsService.attachments.allowMultimediaUpload ?? true}
         />
         <InactiveUserModalContentContainer
           isVisible={inactiveUserModalVisible}

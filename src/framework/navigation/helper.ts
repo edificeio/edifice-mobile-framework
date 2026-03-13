@@ -4,7 +4,6 @@
  * In components, it is recommended to use navigation & route props & hooks instead of these helper functions.
  */
 import {
-  CommonActions,
   createNavigationContainerRef,
   NavigationAction,
   NavigationHelpers,
@@ -20,17 +19,7 @@ export const navigationRef = createNavigationContainerRef<INavigationParams>();
 
 export type RouteStack = Omit<Route<string>, 'key'>[];
 
-export const resetNavigation = (routes: RouteStack, index?: number) => {
-  return navigationRef.dispatch(
-    CommonActions.reset({
-      index: index ?? 0,
-      routes,
-    }),
-  );
-};
-
 export const navigate = navigationRef.navigate;
-export const reset = navigationRef.reset;
 
 export const handleRemoveConfirmNavigationEvent = (action: NavigationAction, navigation: NavigationProp<ParamListBase>) => {
   const [nextJumps, delayed] = consumeConfirmQuitAction();

@@ -47,3 +47,14 @@ export interface NavPayload {
   screen?: string;
   params?: { screen?: string };
 }
+
+export interface SendMailResponse {
+  id: string;
+  subject: string;
+  body: string;
+  thread_id: string;
+  inactive: string[];
+  undelivered: string[];
+  sent: number;
+  inactiveCount: number;
+}

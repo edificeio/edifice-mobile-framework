@@ -2,13 +2,17 @@ import * as React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useDispatch } from 'react-redux';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-//import styles from './styles';
 import type { NabookHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
-import { getPlatform } from '~/framework/modules/auth/reducer';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
+import { assertSession, getPlatform } from '~/framework/modules/auth/reducer';
 import ErrorScreen from '~/framework/modules/nabook/components/ErrorScreen';
 import HomeScreen from '~/framework/modules/nabook/components/HomeScreen';
 import OnboardScreen from '~/framework/modules/nabook/components/OnboardScreen';
@@ -16,8 +20,7 @@ import WelcomeScreen from '~/framework/modules/nabook/components/WelcomeScreen';
 import { NabookNavigationParams, nabookRouteNames } from '~/framework/modules/nabook/navigation';
 import { NBK_BASE_URL, NBK_COLORS } from '~/framework/modules/nabook/utils/constants';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { signedFetchJson } from '~/infra/fetchWithCache';
-import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
+import { deviceFetch, sessionFetch } from '~/framework/util/transport';
 
 const styles = StyleSheet.create({
   containerLoading: {
@@ -41,34 +44,33 @@ export const computeNavBar = ({
 
 export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
   const { navigation } = props;
+  const dispatch = useDispatch<ThunkDispatch<IGlobalState, never, Action>>();
+  const session = assertSession();
 
   const [nbkTk, setNBKTk] = React.useState<any | null>(null);
   const [screen, setScreen] = React.useState<string | null>(null);
   const [msgError, setMsgError] = React.useState<string | null>(null);
 
   const load = async () => {
-    const t = await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
+    const oneSessionId = await dispatch(refreshSessionIdForAccountAction(session));
 
-    if (!getPlatform() || !t) {
-      console.error('[🛑] Nabook | Screen: Cannot load token:', t, getPlatform());
+    if (!getPlatform() || !oneSessionId?.value) {
+      console.error('[🛑] Nabook | Screen: Cannot load token:', oneSessionId, getPlatform());
       setMsgError(I18n.get('nabook-error-no-session'));
       setScreen('error');
       return;
     }
 
     try {
-      const r = (await signedFetchJson(`${getPlatform()?.url}/nabook/conf`)) as {
-        nabookMobile?: string;
-        nabookUrl?: string;
-      };
+      const r = await sessionFetch.json<{ nabookMobile?: string; nabookUrl?: string }>(`/nabook/conf`);
 
-      const res = await fetch(`${r.nabookMobile || NBK_BASE_URL}/main/edifice/token/session`, {
+      const res = await deviceFetch(`${r.nabookMobile || NBK_BASE_URL}/main/edifice/token/session`, {
         body: JSON.stringify({
           origin: getPlatform()?.url,
         }),
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'oneSessionId=' + t,
+          'Cookie': 'oneSessionId=' + oneSessionId.value,
         },
         method: 'POST',
       });
@@ -100,7 +102,11 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
 
   if (!screen)
     return (
-      <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
+      <PageView
+        gutters="both"
+        showNetworkBar={false}
+        statusBar="translucent-dark"
+        style={{ backgroundColor: NBK_COLORS.darkColor }}>
         <View style={styles.containerLoading}>
           <ActivityIndicator size="large" color={NBK_COLORS.white} />
         </View>

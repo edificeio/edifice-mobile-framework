@@ -63,7 +63,7 @@ const PageHeaderLoader = () => (
         <View style={styles.headerAuthorInfo}>
           <PlaceholderMedia
             isRound
-            size={AvatarSizes.md}
+            size={AvatarSizes.sm}
             style={styles.headerPlaceholderAvatar}
             testID="page-author-avatar-loader"
           />
@@ -100,7 +100,7 @@ export function WikiReaderScreenLoaded({
   onGoToPage: (id: WikiPage['id'], reverse?: boolean) => void;
   renderLoading: ContentLoaderProps['renderLoading'];
 }) {
-  const [webViewReady, setWebViewReady] = React.useState(false);
+  const [webViewReady, setWebViewReady] = React.useState(page.content === '');
 
   const pageIndex = React.useMemo(() => wiki.pages.findIndex(p => p.id === page.id), [page, wiki.pages]);
   const prevPageId = React.useMemo(() => (pageIndex > 0 ? wiki.pages.at(pageIndex - 1)?.id : undefined), [pageIndex, wiki.pages]);
@@ -124,6 +124,17 @@ export function WikiReaderScreenLoaded({
     if (buttonHeight) return buttonHeight + styles.selectButtonWrapper.marginVertical * 2;
   }, [buttonHeight]);
 
+  const onLoad = React.useCallback(() => {
+    setWebViewReady(true);
+  }, []);
+
+  const goPrevPage = React.useCallback(() => {
+    onGoToPage(prevPageId!, true);
+  }, [onGoToPage, prevPageId]);
+  const goNextPage = React.useCallback(() => {
+    onGoToPage(nextPageId!);
+  }, [nextPageId, onGoToPage]);
+
   return (
     <>
       <ScrollView refreshControl={refreshControl} contentContainerStyle={styles.scrollContent}>
@@ -140,7 +151,7 @@ export function WikiReaderScreenLoaded({
         <PageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
           <HeadingMText testID="page-title">{page.title}</HeadingMText>
           <View style={styles.headerAuthorInfo}>
-            <SingleAvatar userId={page.updaterId ?? page.creatorId} size="md" testID="page-author-avatar" border />
+            <SingleAvatar userId={page.updaterId ?? page.creatorId} size="sm" testID="page-author-avatar" border />
             <View style={styles.headerAuthorInfoText}>
               <BodyBoldText numberOfLines={1} testID="page-author-name">
                 {page.updaterName ?? page.creatorName}
@@ -152,7 +163,7 @@ export function WikiReaderScreenLoaded({
           </View>
         </PageHeader>
         <View style={styles.content} testID="page-content">
-          <RichEditorViewer content={page.content} onLoad={() => setWebViewReady(true)} />
+          <RichEditorViewer content={page.content} onLoad={onLoad} />
         </View>
         <View style={styles.bottomNavigation}>
           <GhostButton
@@ -161,9 +172,7 @@ export function WikiReaderScreenLoaded({
             disabled={!prevPageId}
             testID="previous-page-button"
             text={I18n.get('wiki-page-previous')}
-            action={() => {
-              onGoToPage(prevPageId!, true);
-            }}
+            action={goPrevPage}
           />
           <GhostButton
             style={styles.bottomNavigationRight}
@@ -172,9 +181,7 @@ export function WikiReaderScreenLoaded({
             disabled={!nextPageId}
             testID="next-page-button"
             text={I18n.get('wiki-page-next')}
-            action={() => {
-              onGoToPage(nextPageId!);
-            }}
+            action={goNextPage}
           />
         </View>
       </ScrollView>

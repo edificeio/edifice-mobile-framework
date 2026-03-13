@@ -1,14 +1,14 @@
 // # API CONSUMER (signed, active account) FETCH
 
-import { ApiClientOptions, BaseApiClient } from '@edifice.io/community-client-rest-rn/clients/base-api.client';
+import { ApiClientOptions, BaseApiClient } from '@edifice.io/community-client-rest-rn';
 
 import { getAccountFetch } from './fetch';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf from '~/framework/util/appConf';
-import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
 import { IUnkownModuleConfig } from '~/framework/util/moduleTool';
+import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
 
 export function accountApi<Client extends BaseApiClient>(
   account: AuthActiveAccount | AuthSavedLoggedInAccount,

@@ -17,7 +17,8 @@ export interface LoginWayfScreenDispatchProps {
   handleConsumeError: (...args: Parameters<typeof consumeAuthErrorAction>) => void;
 }
 export interface LoginWayfScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginWayf>,
+  extends
+    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginWayf>,
     LoginWayfScreenProps,
     LoginWayfScreenStoreProps,
     LoginWayfScreenDispatchProps {}

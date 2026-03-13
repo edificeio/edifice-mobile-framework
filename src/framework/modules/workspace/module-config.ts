@@ -9,6 +9,7 @@ export default new NavigableModuleConfig<'workspace', IWorkspaceState>({
   displayI18n: 'workspace-moduleconfig-modulename',
   displayPicture: theme.apps.workspace.icon,
   entcoreScope: ['workspace'],
+  entcoreTrackingName: 'Workspace',
   fileManager: {
     upload: {
       allow: ['image', 'video', 'document'],

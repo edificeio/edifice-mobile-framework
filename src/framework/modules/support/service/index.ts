@@ -1,6 +1,6 @@
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { SyncedFileWithId } from '~/framework/util/fileHandler/models';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { SyncedFileWithId } from '~/framework/util/fileHandler';
+import { sessionFetch } from '~/framework/util/transport';
 
 interface IBackendTicket {
   id: number | null;
@@ -18,7 +18,7 @@ interface IBackendTicket {
 export const supportService = {
   ticket: {
     post: async (
-      session: AuthLoggedAccount,
+      session: AuthActiveAccount,
       category: string,
       structure: string,
       subject: string,
@@ -37,10 +37,11 @@ export const supportService = {
         school_id: structure,
         subject,
       });
-      const ticket = (await fetchJSONWithCache(api, {
+      const ticket = await sessionFetch.json<IBackendTicket>(api, {
         body,
         method: 'POST',
-      })) as IBackendTicket;
+      });
+
       return ticket.id;
     },
   },

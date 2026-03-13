@@ -6,7 +6,7 @@ export enum MediaType {
   // File medias
   ATTACHMENT = 'attachment', // Unknown file. Use provided mime type to handle correctly.
   AUDIO = 'audio', // Audio file that can be displayed in a thumbnail & player
-  DOCUMENT = 'document', // Printable documents like text / pdf / office / etc
+  // DOCUMENT = 'document', // Printable documents like text / pdf / office / etc
   IMAGE = 'image', // Image file that can be displayed in a thumbnail
   VIDEO = 'video', // Video file that can be displayed in a thumbnail & player
   // Redirected medias
@@ -22,7 +22,7 @@ export interface Media {
 }
 
 export interface FileMedia extends Media {
-  type: MediaType.IMAGE | MediaType.VIDEO | MediaType.AUDIO | MediaType.DOCUMENT | MediaType.ATTACHMENT;
+  type: MediaType.IMAGE | MediaType.VIDEO | MediaType.AUDIO | /*MediaType.DOCUMENT |*/ MediaType.ATTACHMENT;
   alt?: string;
   mime: string;
   name?: string;
@@ -30,7 +30,7 @@ export interface FileMedia extends Media {
 }
 
 export const isFileMedia = (media: Media): media is FileMedia =>
-  [MediaType.IMAGE, MediaType.VIDEO, MediaType.AUDIO, MediaType.DOCUMENT, MediaType.ATTACHMENT].includes(media.type);
+  [MediaType.IMAGE, MediaType.VIDEO, MediaType.AUDIO, /* MediaType.DOCUMENT, */ MediaType.ATTACHMENT].includes(media.type);
 
 export interface PlayableMedia extends FileMedia {
   type: MediaType.VIDEO | MediaType.AUDIO;
@@ -52,11 +52,11 @@ export interface AudioMedia extends PlayableMedia {
 
 export const isAudioMedia = (media: Media): media is AudioMedia => media.type === MediaType.AUDIO;
 
-export interface DocumentMedia extends FileMedia {
-  type: MediaType.DOCUMENT;
-}
+// export interface DocumentMedia extends FileMedia {
+//   type: MediaType.DOCUMENT;
+// }
 
-export const isDocumentMedia = (media: Media): media is DocumentMedia => media.type === MediaType.DOCUMENT;
+// export const isDocumentMedia = (media: Media): media is DocumentMedia => media.type === MediaType.DOCUMENT;
 
 export interface ImageMedia extends FileMedia {
   type: MediaType.IMAGE;

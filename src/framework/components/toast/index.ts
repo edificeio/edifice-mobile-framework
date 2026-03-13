@@ -6,7 +6,7 @@ import { ToastOptions } from './types';
 import { I18n } from '~/app/i18n';
 import Feedback from '~/framework/util/feedback/feedback';
 
-export { RootToastHandler, ToastHandler } from './component';
+export { ToastContainer, RootToastContainer } from './component';
 
 function showToastGeneric(type: string, text: string, options: ToastOptions & ToastShowParams = {}) {
   ToastMessage.show({

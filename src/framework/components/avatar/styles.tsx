@@ -6,6 +6,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export const AvatarSizes = {
+  [Avatar.Size.xsm]: UI_SIZES.elements.avatar.xsm,
   [Avatar.Size.sm]: UI_SIZES.elements.avatar.sm,
   [Avatar.Size.md]: UI_SIZES.elements.avatar.md,
   [Avatar.Size.lg]: UI_SIZES.elements.avatar.lg,

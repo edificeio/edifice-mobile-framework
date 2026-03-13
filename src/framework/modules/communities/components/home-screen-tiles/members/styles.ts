@@ -4,7 +4,7 @@ import { AvatarSizes } from '~/framework/components/avatar/styles';
 import { UI_SIZES } from '~/framework/components/constants';
 import { baseStyles } from '~/framework/modules/communities/components/home-screen-tiles/styles';
 
-const MEDIUM_AVATAR_HEIGHT = AvatarSizes.md;
+const MEDIUM_AVATAR_HEIGHT = AvatarSizes.sm;
 const LOADER_HEIGHT = 2 * UI_SIZES.spacing.small + MEDIUM_AVATAR_HEIGHT;
 
 export default StyleSheet.create({

@@ -1,25 +1,28 @@
 import { Platform } from 'react-native';
 
 import Share from 'react-native-share';
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { ThunkAction } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { actionTypes, Filter, IFile } from '~/framework/modules/workspace/reducer';
-import workspaceService, { factoryRootFolder, IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
+import workspaceService from '~/framework/modules/workspace/service';
+import { factoryRootFolder } from '~/framework/modules/workspace/service/adapters';
+import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service/types';
+import { IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
-import { IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
 import type { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import fileTransferService from '~/framework/util/fileHandler/service';
+import { toURISource } from '~/framework/util/media';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
-import { urlSigner } from '~/infra/oauth';
+import { sessionURISource } from '~/framework/util/transport';
 
 /**
  * Take a file from the mobile and post it to the backend.
  */
 export const workspaceUploadActionsCreators = createAsyncActionCreators(actionTypes.upload);
-export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => async (dispatch, getState) => {
+export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => async dispatch => {
   try {
     dispatch(workspaceUploadActionsCreators.request());
     const file = await workspaceService.file.uploadFile(assertSession(), lf, {
@@ -71,43 +74,41 @@ export const fetchWorkspaceFilesAction =
  * Copy files with given ids to specified directory.
  */
 export const workspaceCopyActionsCreators = createAsyncActionCreators(actionTypes.copy);
-export const copyWorkspaceFilesAction =
-  (parentId: string, files: string[], destinationId: string) => async (dispatch, getState) => {
-    try {
-      const session = assertSession();
-      dispatch(workspaceCopyActionsCreators.request());
-      await workspaceService.files.copy(session, parentId, files, destinationId);
-      dispatch(workspaceCopyActionsCreators.receipt(files.length));
-      Toast.showSuccess(I18n.get('workspace-filelist-filetransfer-successfully-copied'));
-    } catch (e) {
-      dispatch(workspaceCopyActionsCreators.error(e as Error));
-      throw e;
-    }
-  };
+export const copyWorkspaceFilesAction = (parentId: string, files: string[], destinationId: string) => async dispatch => {
+  try {
+    const session = assertSession();
+    dispatch(workspaceCopyActionsCreators.request());
+    await workspaceService.files.copy(session, parentId, files, destinationId);
+    dispatch(workspaceCopyActionsCreators.receipt(files.length));
+    Toast.showSuccess(I18n.get('workspace-filelist-filetransfer-successfully-copied'));
+  } catch (e) {
+    dispatch(workspaceCopyActionsCreators.error(e as Error));
+    throw e;
+  }
+};
 
 /**
  * Move files with given ids to specified directory.
  */
 export const workspaceMoveActionsCreators = createAsyncActionCreators(actionTypes.move);
-export const moveWorkspaceFilesAction =
-  (parentId: string, files: string[], destinationId: string) => async (dispatch, getState) => {
-    try {
-      const session = assertSession();
-      dispatch(workspaceMoveActionsCreators.request());
-      await workspaceService.files.move(session, parentId, files, destinationId);
-      dispatch(workspaceMoveActionsCreators.receipt(files.length));
-      Toast.showSuccess(I18n.get('workspace-filelist-filetransfer-successfully-moved'));
-    } catch (e) {
-      dispatch(workspaceMoveActionsCreators.error(e as Error));
-      throw e;
-    }
-  };
+export const moveWorkspaceFilesAction = (parentId: string, files: string[], destinationId: string) => async dispatch => {
+  try {
+    const session = assertSession();
+    dispatch(workspaceMoveActionsCreators.request());
+    await workspaceService.files.move(session, parentId, files, destinationId);
+    dispatch(workspaceMoveActionsCreators.receipt(files.length));
+    Toast.showSuccess(I18n.get('workspace-filelist-filetransfer-successfully-moved'));
+  } catch (e) {
+    dispatch(workspaceMoveActionsCreators.error(e as Error));
+    throw e;
+  }
+};
 
 /**
  * Restore files with given ids.
  */
 export const workspaceRestoreActionsCreators = createAsyncActionCreators(actionTypes.restore);
-export const restoreWorkspaceFilesAction = (parentId: string, files: string[]) => async (dispatch, getState) => {
+export const restoreWorkspaceFilesAction = (parentId: string, files: string[]) => async dispatch => {
   try {
     const session = assertSession();
     dispatch(workspaceRestoreActionsCreators.request());
@@ -124,7 +125,7 @@ export const restoreWorkspaceFilesAction = (parentId: string, files: string[]) =
  * Trash files with given ids.
  */
 export const workspaceTrashActionsCreators = createAsyncActionCreators(actionTypes.trash);
-export const trashWorkspaceFilesAction = (parentId: string, files: string[]) => async (dispatch, getState) => {
+export const trashWorkspaceFilesAction = (parentId: string, files: string[]) => async dispatch => {
   try {
     const session = assertSession();
     dispatch(workspaceTrashActionsCreators.request());
@@ -141,7 +142,7 @@ export const trashWorkspaceFilesAction = (parentId: string, files: string[]) => 
  * Delete files with given ids.
  */
 export const workspaceDeleteActionsCreators = createAsyncActionCreators(actionTypes.delete);
-export const deleteWorkspaceFilesAction = (parentId: string, files: string[]) => async (dispatch, getState) => {
+export const deleteWorkspaceFilesAction = (parentId: string, files: string[]) => async dispatch => {
   try {
     const session = assertSession();
     dispatch(workspaceDeleteActionsCreators.request());
@@ -158,7 +159,7 @@ export const deleteWorkspaceFilesAction = (parentId: string, files: string[]) =>
  * Rename a file.
  */
 export const workspaceRenameActionsCreators = createAsyncActionCreators(actionTypes.rename);
-export const renameWorkspaceFileAction = (file: IFile, name: string) => async (dispatch, getState) => {
+export const renameWorkspaceFileAction = (file: IFile, name: string) => async dispatch => {
   try {
     const session = assertSession();
     dispatch(workspaceRenameActionsCreators.request());
@@ -180,7 +181,7 @@ export const convertIFileToIDistantFile = (file: IFile) => {
     filename: file.name,
     filesize: file.size,
     filetype: file.contentType,
-    url: urlSigner.getAbsoluteUrl(file.url),
+    url: file.url ? sessionURISource(toURISource(file.url)).uri : undefined,
   } as IDistantFile;
 };
 
@@ -188,7 +189,7 @@ export const convertIFileToIDistantFile = (file: IFile) => {
  * Download and open the given file.
  */
 export const workspacePreviewActionsCreators = createAsyncActionCreators(actionTypes.preview);
-export const downloadThenOpenWorkspaceFileAction = (file: IFile) => async (dispatch, getState) => {
+export const downloadThenOpenWorkspaceFileAction = (file: IFile) => async dispatch => {
   try {
     dispatch(workspacePreviewActionsCreators.request());
     const distanteFile = convertIFileToIDistantFile(file);
@@ -204,7 +205,7 @@ export const downloadThenOpenWorkspaceFileAction = (file: IFile) => async (dispa
  * Download and share the given file.
  */
 export const workspaceShareActionsCreators = createAsyncActionCreators(actionTypes.share);
-export const downloadThenShareWorkspaceFileAction = (file: IFile) => async (dispatch, getState) => {
+export const downloadThenShareWorkspaceFileAction = (file: IFile) => async dispatch => {
   try {
     dispatch(workspaceShareActionsCreators.request());
     const session = assertSession();
@@ -226,7 +227,7 @@ export const downloadThenShareWorkspaceFileAction = (file: IFile) => async (disp
  * Download and save the given files.
  */
 export const workspaceDownloadActionsCreators = createAsyncActionCreators(actionTypes.download);
-export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch, getState) => {
+export const downloadWorkspaceFilesAction = (files: IFile[]) => async dispatch => {
   try {
     dispatch(workspaceDownloadActionsCreators.request());
     const syncedFiles: SyncedFile[] = [];
@@ -235,7 +236,7 @@ export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch,
       const distanteFile = convertIFileToIDistantFile(file);
       const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
       await syncedFile.moveToDownloadFolder();
-      syncedFiles.push(syncedFile);
+      syncedFiles.push(syncedFile as SyncedFile<IDistantFile>);
     }
     dispatch(workspaceDownloadActionsCreators.receipt(syncedFiles));
     Toast.showSuccess(
@@ -250,10 +251,8 @@ export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch,
 };
 
 export default {
-  uploadFilesAction:
-    (files: LocalFile[], params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) =>
-    (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-      const session = assertSession();
-      return workspaceService.files.uploadFiles(session, files, params, callbacks);
-    },
+  uploadFilesAction: (files: LocalFile[], params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => () => {
+    const session = assertSession();
+    return workspaceService.files.uploadFiles(session, files, params, callbacks);
+  },
 };

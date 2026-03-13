@@ -3,7 +3,6 @@ import { View } from 'react-native';
 
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 
-import MailsFolderItem from '../folder-item';
 import styles from './styles';
 import { MailsMoveBottomSheetProps } from './types';
 
@@ -13,6 +12,7 @@ import { getScaleWidth } from '~/framework/components/constants';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
+import MailsFolderItem from '~/framework/modules/mails/components/folder-item/index';
 import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import { MailsFolderInfo } from '~/framework/modules/mails/model';
 

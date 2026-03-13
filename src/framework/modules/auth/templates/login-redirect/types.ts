@@ -4,5 +4,4 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 
 export interface LoginRedirectScreenProps {}
 export interface LoginRedirectScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginRedirect>,
-    LoginRedirectScreenProps {}
+  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginRedirect>, LoginRedirectScreenProps {}

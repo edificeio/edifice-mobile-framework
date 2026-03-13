@@ -1,5 +1,6 @@
 import { DocumentItem, FolderItem, PaginatedDocumentListItem } from './types';
 
+import { EntAppNameOrSynonym } from '~/app/intents';
 import { PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 
 /**
@@ -12,11 +13,14 @@ export const FOLDER_SPACER_ITEM_DATA = Symbol('FOLDER_SPACER_ITEM_DATA');
  */
 export const DOCUMENT_SPACER_ITEM_DATA = Symbol('DOCUMENT_SPACER_ITEM_DATA');
 
-export const createDocumentArrayProxy = (
-  folders: NonNullable<PaginatedFlashListProps<FolderItem>['data']>,
-  documents: NonNullable<PaginatedFlashListProps<DocumentItem>['data']>,
+export const createDocumentArrayProxy = <AppTypes extends EntAppNameOrSynonym, IdType>(
+  folders: NonNullable<PaginatedFlashListProps<FolderItem<IdType>>['data']>,
+  documents: NonNullable<PaginatedFlashListProps<DocumentItem<AppTypes, IdType>>['data']>,
   numColumns: number = 1,
-): { data: NonNullable<PaginatedFlashListProps<PaginatedDocumentListItem>['data']>; documentsIndexStart: number } => {
+): {
+  data: NonNullable<PaginatedFlashListProps<PaginatedDocumentListItem<AppTypes, IdType>>['data']>;
+  documentsIndexStart: number;
+} => {
   if (!Number.isInteger(numColumns) || numColumns <= 0) {
     throw new TypeError('createDocumentArrayProxy: numColumns must be a positive non-null integer.');
   }

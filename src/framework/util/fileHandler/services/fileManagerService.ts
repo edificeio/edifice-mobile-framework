@@ -8,6 +8,7 @@ import {
   pickFromGallery,
 } from '~/framework/util/fileHandler/services/filePickerService';
 import { FileManagerStandalonePickOptions, FileManagerUsecase, FileSource } from '~/framework/util/fileHandler/types';
+import { logFileManagerConfig } from '~/framework/util/fileHandler/utils';
 import { assertPermissions, PermissionScenario } from '~/framework/util/permissions';
 
 export class FileManager {
@@ -23,10 +24,11 @@ export class FileManager {
         config = opts.standaloneConfig;
         source = opts.source ?? config.sources[0];
 
-        console.debug('[FileManager] Running in STANDALONE mode');
-        console.debug('[FileManager] allow=', config.allow);
-        console.debug('[FileManager] sources=', config.sources);
-        console.debug('[FileManager] chosen source=', source);
+        logFileManagerConfig('STANDALONE', {
+          allow: config.allow,
+          chosenSource: source,
+          sources: config.sources,
+        });
 
         //module compatibility here
       } else {
@@ -41,10 +43,13 @@ export class FileManager {
 
         source = opts.source ?? config.sources[0];
 
-        console.debug(`[FileManager] Module=${opts.module} Usecase=${opts.usecase}`);
-        console.debug('[FileManager] allow=', config.allow);
-        console.debug('[FileManager] sources=', config.sources);
-        console.debug('[FileManager] chosen source=', source);
+        logFileManagerConfig('MODULE', {
+          allow: config.allow,
+          chosenSource: source,
+          module: opts.module,
+          sources: config.sources,
+          usecase: opts.usecase,
+        });
       }
 
       if (!source) {
@@ -135,7 +140,6 @@ export class FileManager {
       callback(files);
     } catch (err) {
       const normalized = normalizePickerError(err, source!);
-      console.error('[FM_NORMALIZED_ERROR] ==', normalized);
       onError(normalized);
       callback([]);
     }

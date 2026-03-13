@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -51,22 +52,20 @@ export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, 
 
   public render() {
     const { error, navigation, route, wayfRoute } = this.props;
+
+    const errorCode = Error.findCode(error?.info);
+    const shownErrorText =
+      error && (error.key === undefined || error.key === this.state.errkey)
+        ? Error.getAuthErrorText(errorCode, route.params.platform.url)
+        : '';
+
     return (
       <PageView>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.safeAreaInner}>
             <PFLogo pf={route.params.platform} />
             <SmallText style={styles.textCenter}>{I18n.get('auth-wayf-main-text')}</SmallText>
-            <SmallText style={styles.textError}>
-              {error
-                ? error.key === undefined || error.key === this.state.errkey
-                  ? Error.getAuthErrorText<Error.ErrorTypes<typeof Error.LoginError>>(
-                      Error.getDeepErrorType(error),
-                      route.params.platform.url,
-                    )
-                  : ''
-                : ''}
-            </SmallText>
+            <SmallText style={styles.textError}>{shownErrorText}</SmallText>
             <PrimaryButton
               text={I18n.get('auth-wayf-main-button')}
               action={() => navigation.dispatch(wayfRoute)}
@@ -80,7 +79,7 @@ export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, 
 }
 
 export default connect(
-  (state: any, props: any): LoginWayfScreenStoreProps => {
+  (state: any): LoginWayfScreenStoreProps => {
     const auth = getAuthState(state);
     return {
       auth,

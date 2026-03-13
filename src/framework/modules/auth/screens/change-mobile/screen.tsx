@@ -30,9 +30,10 @@ import { Picture, Svg } from '~/framework/components/picture';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { manualLogoutAction } from '~/framework/modules/auth/actions';
+import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getUserRequirements, requestMobileVerificationCode } from '~/framework/modules/auth/service';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { mobileValidation, requirements } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -70,6 +71,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const { navigation, route, tryLogout } = props;
   const isScreenFocused = useIsFocused();
   const phoneInputRef = useRef<PhoneInput>(null);
+  const session = assertSession();
 
   const platform = route.params.platform;
   const defaultMobile = route.params.defaultMobile;
@@ -95,8 +97,8 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       try {
         setRequirementsChecked(true);
         setIsLoading(true);
-        const requirements = await getUserRequirements(platform);
-        setIsCheckMobile(containsKey(requirements as object, 'needRevalidateMobile'));
+        const neededRequirements = await requirements.getState(session);
+        setIsCheckMobile(containsKey(neededRequirements as object, 'needRevalidateMobile'));
       } catch {
         setIsError(true);
       } finally {
@@ -104,7 +106,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       }
     }
     if (!requirementsChecked) checkRequirements();
-  }, [platform, requirementsChecked]);
+  }, [platform, requirementsChecked, session]);
 
   const button = isCheckMobile ? I18n.get('auth-change-mobile-verify-button') : I18n.get('auth-change-mobile-edit-button');
   const message = isModifyingMobile
@@ -164,7 +166,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         if (!isValidMobileNumberForRegion || !mobileNumberFormatted) return MobileState.MOBILE_FORMAT_INVALID;
         if (isCheckMobile) {
           setIsSendingCode(true);
-          await requestMobileVerificationCode(platform, mobileNumberFormatted);
+          await mobileValidation.requestCode(session, mobileNumberFormatted);
           navigation.navigate(authRouteNames.mfa, {
             isMobileMFA: true,
             mobile: mobileNumberFormatted,
@@ -188,7 +190,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         setIsSendingCode(false);
       }
     },
-    [getIsValidMobileNumberForRegion, isCheckMobile, modificationType, navigation, platform, props, region, route],
+    [getIsValidMobileNumberForRegion, isCheckMobile, modificationType, navigation, platform, props, region, route, session],
   );
 
   const sendSMS = useCallback(async () => {
@@ -342,7 +344,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeMobileScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      tryLogout: tryAction(manualLogoutAction),
+      tryLogout: tryAction(logoutAction),
       trySaveNewMobile: tryAction(profileUpdateAction),
     },
     dispatch,

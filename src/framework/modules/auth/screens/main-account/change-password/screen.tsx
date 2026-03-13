@@ -11,7 +11,7 @@ import { I18n } from '~/app/i18n';
 import {
   buildChangePasswordActionReplaceAccount,
   changePasswordActionAddFirstAccount,
-  manualLogoutAction,
+  logoutAction,
 } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
@@ -48,7 +48,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>, props: AuthChangePasswordScreenOwnProps) => {
     return bindActionCreators<ChangePasswordScreenDispatchProps>(
       {
-        tryLogout: tryAction(manualLogoutAction),
+        tryLogout: tryAction(logoutAction),
         trySubmit: tryAction(
           (...args: Parameters<typeof changePasswordActionAddFirstAccount>) =>
             (d, gs) => {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PixelRatio } from 'react-native';
 
-import { InvitationClient, InvitationOrMemberDto, PaginationQueryDto } from '@edifice.io/community-client-rest-rn';
+import { MembershipClient, MembershipResponseDto, PaginationQueryDto } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
@@ -19,7 +19,7 @@ import {
   PaginatedFlashListProps,
   staleOrSplice,
 } from '~/framework/components/list/paginated-list';
-import { PageView } from '~/framework/components/page';
+import { sessionScreen } from '~/framework/components/screen';
 import StatusBar from '~/framework/components/status-bar';
 import { TextSizeStyle } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -27,7 +27,6 @@ import MemberListItem, { MemberListItemLoader } from '~/framework/modules/commun
 import MembersListCount, { MembersListCountLoader } from '~/framework/modules/communities/components/members-list-count';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import communitiesStyles from '~/framework/modules/communities/styles';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { sessionApi } from '~/framework/util/transport';
 
@@ -54,8 +53,8 @@ export const computeNavBar = ({
   }),
 });
 
-export default (function CommunitiesMembersScreen({ route }: Readonly<CommunitiesMembersScreen.AllProps>) {
-  const [allMembers, setAllMembers] = React.useState<(InvitationOrMemberDto | typeof LOADING_ITEM_DATA)[]>([]);
+export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(function CommunitiesMembersScreen({ route }) {
+  const [allMembers, setAllMembers] = React.useState<(MembershipResponseDto | typeof LOADING_ITEM_DATA)[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const communityId = route.params.communityId;
 
@@ -67,18 +66,15 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
           size: PAGE_SIZE,
         };
 
-        const invitations = await sessionApi(moduleConfig, InvitationClient).getInvitationsAndMembers(
-          Number(communityId),
-          baseQueryParams,
-        );
+        const members = await sessionApi(moduleConfig, MembershipClient).getMembers(Number(communityId), baseQueryParams);
 
         setAllMembers(prevData => {
           return staleOrSplice({
-            newData: invitations.items,
+            newData: members.items,
             previousData: prevData,
             reloadAll,
             start: page * PAGE_SIZE,
-            total: invitations.meta.totalItems,
+            total: members.meta.totalItems,
           });
         });
       } catch (e) {
@@ -94,14 +90,14 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
     loadData(0, true);
   }, [loadData]);
 
-  const renderItem = React.useCallback(({ index, item }: { item: InvitationOrMemberDto; index: number }) => {
+  const renderItem = React.useCallback(({ index, item }: { item: MembershipResponseDto; index: number }) => {
     if (!item.user) return null;
     const backgroundColor = getItemBackgroundColor(index);
 
     return (
       <VisibleItem
         backgroundColor={backgroundColor}
-        avatarSize="md"
+        avatarSize="sm"
         key={item.user.entId}
         // rightElement={<ItemOptions />} // for next version
         userId={item.user.entId}>
@@ -119,7 +115,7 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
     );
   }, []);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<InvitationOrMemberDto>['keyExtractor']>>(
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<MembershipResponseDto>['keyExtractor']>>(
     item => item.user.entId.toString(),
     [],
   );
@@ -131,7 +127,7 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
   }, [allMembers.length, isLoading]);
 
   return (
-    <PageView style={communitiesStyles.screen}>
+    <>
       <StatusBar type="primary" />
       {renderMembersCount()}
       <PaginatedFlashList
@@ -153,6 +149,6 @@ export default (function CommunitiesMembersScreen({ route }: Readonly<Communitie
           />
         }
       />
-    </PageView>
+    </>
   );
 });

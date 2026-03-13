@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { TextInput as RNTextInput, View } from 'react-native';
 
-import styles from '../styles';
 import { MailsSubjectFieldProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import styles from '~/framework/modules/mails/components/fields/styles';
 import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 
 export const MailsSubjectField = (props: MailsSubjectFieldProps) => {

@@ -12,6 +12,9 @@ import { MenuPickerActionFmProps } from '~/framework/components/menus/actions/ty
 import BottomMenu from '~/framework/components/menus/bottom';
 import { HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { i18nAccountTypes } from '~/framework/components/text/account-type';
+import Toast from '~/framework/components/toast';
+import { mailsService } from '~/framework/modules/mails/service';
+import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
 import moduleConfig from '~/framework/modules/user/module-config';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
@@ -33,10 +36,18 @@ export const UserCard = ({
 
   const renderActions = (avatar: boolean, changeAvatar?: (image: LocalFile) => void, deleteAvatar?: () => void) => {
     const attachOpts: MenuPickerActionFmProps = {
-      callback: (file: LocalFile | LocalFile[]) => (updatingAvatar ? undefined : changeAvatar?.(file[0])),
+      callback: (file: LocalFile | LocalFile[]) => {
+        if (updatingAvatar) return;
+
+        const selectedFile = Array.isArray(file) ? file[0] : file;
+        if (!selectedFile) return;
+
+        changeAvatar?.(selectedFile);
+      },
       configOverride: {
         camera: { useFrontCamera: true },
       },
+      onError: _error => Toast.showError(I18n.get('user-profile-changeavatar-error-upload')),
     };
 
     return (
@@ -79,7 +90,7 @@ export const UserCard = ({
       <View style={styles.boxTexts}>
         <HeadingXSText style={styles.name}>{displayName}</HeadingXSText>
         <SmallBoldText style={{ color: theme.color.profileTypes[type] }}>{I18n.get(i18nAccountTypes[type])}</SmallBoldText>
-        {!canEdit ? (
+        {!canEdit && isServiceMethodAvailable(mailsService.visibles.get) ? (
           <TertiaryButton
             style={styles.sendMessage}
             iconLeft="ui-mail"

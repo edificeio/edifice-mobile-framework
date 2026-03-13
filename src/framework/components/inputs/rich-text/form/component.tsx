@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Alert, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { connect } from 'react-redux';
+import DeviceInfo from 'react-native-device-info';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { connect, useDispatch } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
@@ -21,16 +24,35 @@ import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { useSyncRef } from '~/framework/hooks/ref';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
+import { getSession } from '~/framework/modules/auth/reducer';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { ANDROID_14, ANDROID_16 } from '~/framework/util/permissions';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
 const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
+  const { bottom } = useSafeAreaInsets();
+  const { allowMultimediaUpload = true, ...restProps } = props;
   const headerHeight = useHeaderHeight();
+  const containerStyle = { ...styles.container, marginBottom: bottom };
 
   const navigation = useNavigation() as any;
   const route = useRoute();
+
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  React.useEffect(() => {
+    if (!props.oneSessionId) {
+      const session = getSession();
+      if (session) {
+        dispatch(refreshSessionIdForAccountAction(session)).catch(e => {
+          console.warn('[RichEditorForm] Failed to refresh oneSessionId:', e);
+        });
+      }
+    }
+  }, [props.oneSessionId, dispatch]);
 
   //
   // Editor management
@@ -38,7 +60,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
 
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
-  const richText = React.useRef<RichEditor>(null);
+  const richText = React.useRef<RichEditor | null>(null);
 
   const blurRichText = () => {
     setIsFocused(false);
@@ -169,11 +191,10 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   const handleChoosePics = async () => {
     hideChoosePicsMenu();
     setTimeout(() => {
-      // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
-          redirectTo: route,
+          onImportResult: handleAddFiles,
           source: 'gallery',
           uploadParams: props.uploadParams,
         },
@@ -184,18 +205,16 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   const handleTakePic = async () => {
     hideChoosePicsMenu();
     setTimeout(() => {
-      // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
       navigation.navigate({
         name: ModalsRouteNames.FileImport,
         params: {
-          redirectTo: route,
+          onImportResult: handleAddFiles,
           source: 'camera',
           uploadParams: props.uploadParams,
         },
       });
     }, OPEN_FILE_IMPORT_TIMEOUT);
   };
-
   const choosePicsMenu = () => {
     return (
       <BottomSheetModal ref={choosePicsMenuRef} onDismiss={handleChoosePicsMenuDismissed}>
@@ -233,7 +252,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   const toolbar = () => {
     return (
       <Animated.View style={[styles.toolbar, { transform: [{ translateY: toolbarYPos }] }, { opacity: toolbarOpacity }]}>
-        <RichToolbar editor={richText} showBottomSheet={showChoosePicsMenu} />
+        <RichToolbar editor={richText} showBottomSheet={allowMultimediaUpload ? showChoosePicsMenu : undefined} />
       </Animated.View>
     );
   };
@@ -284,12 +303,36 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
     [topForm],
   );
 
+  /**
+   * KeyboardAvoidingView does not work with Android 16+ (api level 36)
+   * So we manually add the padding from the Keyboard event.
+   *
+   * Fixme: Use react-native-keyboard-controller instead of this fix.
+   */
+  const [kbHeight, setKbHeight] = React.useState(0);
+  React.useEffect(() => {
+    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', e => {
+      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
+      setKbHeight(e.endCoordinates.height);
+    });
+
+    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', e => {
+      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
+      setKbHeight(0);
+    });
+
+    return () => {
+      keyboardShowListener.remove();
+      keyboardHideListener.remove();
+    };
+  }, []);
+
   return (
     <BottomSheetModalProvider>
       <PageView style={styles.page}>
         <KeyboardAvoidingView
           keyboardVerticalOffset={headerHeight}
-          style={styles.container}
+          style={[containerStyle, { paddingBottom: kbHeight }]}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView
             keyboardDismissMode="none"
@@ -299,12 +342,12 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
             alwaysBounceVertical={false}
             bounces
             style={[styles.scrollView, props.pageStyle]}
-            {...props}>
+            {...restProps}>
             {realTopForm}
             <RichEditor
               disabled={false}
               enterKeyHint="enter"
-              editorStyle={styles.container}
+              editorStyle={containerStyle}
               firstFocusEnd={false}
               initialContentHTML={props.initialContentHtml ?? ''}
               initialFocus={false}

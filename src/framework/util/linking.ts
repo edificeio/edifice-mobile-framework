@@ -6,12 +6,15 @@ import { Alert, Linking } from 'react-native';
 
 import { CommonActions } from '@react-navigation/native';
 import { decode } from 'html-entities';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { getStore, IGlobalState } from '~/app/store';
+import { refreshQueryParamTokenAction } from '~/framework/modules/auth/actions';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { nabookRouteNames } from '~/framework/modules/nabook/navigation/';
 import { handleNotificationNavigationAction } from '~/framework/util/notifications/routing';
-import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 
 export interface OpenUrlCustomLabels {
   title?: string;
@@ -31,22 +34,27 @@ const verifyAndOpenUrl = async (finalUrl: string) => {
 };
 
 export async function openUrl(
-  url?: string,
+  _url: string,
   customLabels?: OpenUrlCustomLabels,
   generateException?: boolean,
   showConfirmation: boolean = true,
   autoLogin: boolean = true,
 ): Promise<void> {
   try {
-    if (!url) {
-      throw new Error('openUrl : no url provided.');
-    }
-
+    let url = decode(_url);
     const session = getSession();
+    // Note: openUrl must work also with relative urls.
+    // This is NOT a good practice. Developer should use platformURISource or sessionURISource instead.
+    if (session && url.startsWith('/')) {
+      url = new URL(url, session.platform.url).href;
+    }
+    const urlOrigin = new URL(url).origin;
+    const dispatch = getStore().dispatch as ThunkDispatch<IGlobalState, never, Action>;
+    const isUrlInternal = session && urlOrigin === session.platform.url;
 
     // Special case for nabook: Do not redirect to responsive but open nabook module
     try {
-      if (session && url.startsWith(session.platform.url) && url.endsWith('nabook')) {
+      if (isUrlInternal && url.endsWith('nabook')) {
         handleNotificationNavigationAction(CommonActions.navigate({ name: nabookRouteNames.home }));
         return;
       }
@@ -54,25 +62,18 @@ export async function openUrl(
       console.error('Error navigating to nabook home:', error);
     }
 
-    let finalUrl = urlSigner.getAbsoluteUrl(decode(url));
-
-    if (autoLogin) {
+    if (autoLogin && isUrlInternal) {
       try {
-        if (urlSigner.getIsUrlSignable(finalUrl)) {
-          const customToken = await OAuth2RessourceOwnerPasswordClient.connection?.getQueryParamToken();
-          if (customToken && finalUrl) {
-            // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
-            const urlObj = new URL(finalUrl);
-            urlObj.searchParams.append('queryparam_token', customToken);
-            finalUrl = urlObj.href;
-          }
+        const queryParamToken = await dispatch(refreshQueryParamTokenAction(session));
+        if (queryParamToken && url) {
+          const urlObj = new URL(url);
+          urlObj.searchParams.append('queryparam_token', queryParamToken.value);
+          url = urlObj.href;
         }
       } catch (e) {
         console.error('Error getting query param token: ', e);
       }
     }
-
-    console.info('Try to redirect to:', finalUrl);
 
     if (showConfirmation) {
       Alert.alert(
@@ -84,7 +85,7 @@ export async function openUrl(
             text: customLabels?.cancel ?? I18n.get('common-cancel'),
           },
           {
-            onPress: () => verifyAndOpenUrl(finalUrl!),
+            onPress: () => verifyAndOpenUrl(url),
             style: 'default',
             text: customLabels?.continue ?? I18n.get('common-continue'),
           },
@@ -93,7 +94,7 @@ export async function openUrl(
           cancelable: true,
         },
       );
-    } else verifyAndOpenUrl(finalUrl!);
+    } else verifyAndOpenUrl(url);
   } catch (e) {
     const title = customLabels?.errorTitle ?? customLabels?.error ?? I18n.get('linking-redirectbrowser-error');
     const message = customLabels?.error ?? (title ? undefined : I18n.get('linking-redirectbrowser-error'));

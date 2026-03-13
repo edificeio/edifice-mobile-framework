@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, ViewStyle } from 'react-native';
 
 import { BottomSheetModal as RNBottomSheetModal } from '@gorhom/bottom-sheet';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 import Attachment from './attachment';
 import styles from './styles';
@@ -17,23 +17,18 @@ import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/h
 import Separator from '~/framework/components/separator';
 import toast from '~/framework/components/toast';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-import { IDistantFileWithId } from '~/framework/util/fileHandler/models';
 import { FileSource } from '~/framework/util/fileHandler/types';
 
 const MODAL_DISMISS_DELAY = 500;
 
 export default function Attachments(props: AttachmentsProps) {
-  const [attachments, setAttachments] = useState<IDistantFileWithId[]>([]);
-
   const bottomSheetModalRef = React.useRef<RNBottomSheetModal>(null);
   const navigation = useNavigation() as any;
-  const route = useRoute();
 
   const removeAttachment = async attachment => {
     try {
       if (!props.removeAttachmentAction) return;
       await props.removeAttachmentAction(attachment);
-      setAttachments(atts => atts.filter(a => a.id !== attachment.id));
     } catch (e) {
       console.error(e);
       toast.showError(I18n.get('attachment-removeerror'));
@@ -54,7 +49,7 @@ export default function Attachments(props: AttachmentsProps) {
         name: ModalsRouteNames.AttachmentsImport,
         params: {
           draftId: props.draftId,
-          redirectTo: route,
+          onImportAttachmentsResult: props.onImportAttachmentsResult,
           source,
         },
       });
@@ -64,10 +59,6 @@ export default function Attachments(props: AttachmentsProps) {
   const handleChoosePics = () => navigateToAttachmentImport('gallery');
   const handleTakePic = () => navigateToAttachmentImport('camera');
   const handleChooseDocs = () => navigateToAttachmentImport('documents');
-
-  useEffect(() => {
-    if (props.attachments) setAttachments(props.attachments);
-  }, [props.attachments]);
 
   const suppContainerStyle: ViewStyle = {
     borderStyle: props.isEditing ? 'dashed' : 'solid',
@@ -88,9 +79,9 @@ export default function Attachments(props: AttachmentsProps) {
 
   return (
     <View style={[styles.container, suppContainerStyle]}>
-      {attachments.length > 0 ? (
+      {props.attachments && props?.attachments?.length > 0 ? (
         <View style={styles.attachments}>
-          {attachments.map(attachment => (
+          {props.attachments.map(attachment => (
             <Attachment
               session={props.session}
               data={attachment}

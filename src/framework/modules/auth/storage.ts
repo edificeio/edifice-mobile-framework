@@ -1,9 +1,24 @@
-import { AuthActiveAccount, AuthSavedAccount, AuthSavedLoggedInAccount, getSerializedLoggedInAccountInfo } from './model';
+import {
+  accountIsLoggable,
+  AuthActiveAccount,
+  AuthSavedAccount,
+  AuthSavedLoggedInAccount,
+  getSerializedLoggedInAccountInfo,
+} from './model';
 import moduleConfig from './module-config';
 import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
 
+import appConf from '~/framework/util/appConf';
 import { Storage } from '~/framework/util/storage';
-import type { IOAuthToken } from '~/infra/oauth';
+
+export interface Pre_1_12_OAuthToken {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  expires_at: Date;
+  refresh_token: string;
+  scope: string;
+}
 
 export interface AuthStorageData {
   'accounts': Record<string, AuthSavedAccount>;
@@ -11,7 +26,7 @@ export interface AuthStorageData {
     account?: string;
     platform?: string;
     /** used to migrate pre-1.12 automatic connections */
-    anonymousToken?: IOAuthToken;
+    anonymousToken?: Pre_1_12_OAuthToken;
   };
   'show-onboarding': boolean;
 }
@@ -19,12 +34,31 @@ export interface AuthStorageData {
 export const storage = Storage.slice<AuthStorageData>().withModule(moduleConfig);
 // No storage init for auth, the functions below manage the item migration by custom logic.
 
-export const readSavedAccounts = () => storage.getJSON('accounts') ?? {};
+export const readSavedAccounts = () => {
+  const raw = storage.getJSON('accounts');
+  if (!raw) return {};
+
+  // Need to populate origin for tokens generated before v1.16.3
+  return Object.fromEntries(
+    Object.entries(raw).map(([key, value]) => {
+      if (accountIsLoggable(value)) {
+        return [
+          key,
+          {
+            ...value,
+            tokens: { ...value.tokens, origin: value.tokens.origin ?? appConf.getExpandedPlatform(value.platform)?.url },
+          },
+        ];
+      }
+      return [key, value];
+    }),
+  );
+};
 export const readSavedStartup = () => {
   let startup = storage.getJSON('startup');
-  const oldCurrentPlatform = Storage.global.getString('currentPlatform');
+  const oldCurrentPlatform = Storage.global.getString('currentPlatform'); // pre-1.12 storage
   if (!startup?.platform && oldCurrentPlatform) startup = { platform: oldCurrentPlatform };
-  const oldCurrentToken = Storage.global.getString('token');
+  const oldCurrentToken = Storage.global.getString('token'); // pre-1.12 storage
   if (!startup?.account && oldCurrentToken) startup = { ...startup, anonymousToken: JSON.parse(oldCurrentToken) };
   return { ...startup } as AuthStorageData['startup'];
 };

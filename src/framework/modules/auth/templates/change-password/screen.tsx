@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';
 import { ChangePasswordScreenPrivateProps, ChangePasswordScreenProps, ChangePasswordScreenStoreProps, IFields } from './types';
+import { AccountError } from '../../model/error';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -38,7 +39,7 @@ import {
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
-import { Error } from '~/framework/util/error';
+import { OAuth2Error } from '~/framework/util/oauth2';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';
 
@@ -118,7 +119,8 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     } catch (e) {
       const changePwdError = e as IChangePasswordError;
       // We don't show toaster if it's login error since that case is handled by redirecting the user to the login page, with error displayed.
-      if (!(e instanceof Error.LoginError)) Toast.showError(I18n.get('toast-error-text'), { testID: 'toaster-error-password' });
+      if (!(e instanceof AccountError || e instanceof OAuth2Error))
+        Toast.showError(I18n.get('toast-error-text'), { testID: 'toaster-error-password' });
       setError(changePwdError.error);
       setSumitState('IDLE');
       setTyping(false);
@@ -316,16 +318,6 @@ export const mapStateToProps: (
     session: getSession(),
   };
 };
-
-// const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePasswordScreenDispatchProps = dispatch => {
-//   return bindActionCreators<ChangePasswordScreenDispatchProps>(
-//     {
-//       trySubmit: tryAction(changePasswordAction),
-//       tryLogout: tryAction(manualLogoutAction),
-//     },
-//     dispatch,
-//   );
-// };
 
 const ChangePasswordScreenLoader = (props: ChangePasswordScreenPrivateProps) => {
   const { context, route, session } = props;

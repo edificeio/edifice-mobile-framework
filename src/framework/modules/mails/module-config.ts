@@ -10,6 +10,7 @@ export default new NavigableModuleConfig<'mails', null>({
   displayPictureFocus: { name: 'messagerie-on', type: 'Icon' },
 
   entcoreScope: ['conversation', 'userbook', 'communication'],
+  entcoreTrackingName: 'Conversation',
   fileManager: {
     attachments: {
       allow: ['image', 'video', 'document'],
@@ -17,7 +18,8 @@ export default new NavigableModuleConfig<'mails', null>({
       sources: ['camera', 'gallery', 'documents'],
     },
   } as const,
-  matchEntcoreApp: '/conversation/conversation',
+  matchEntcoreApp: entcoreApp =>
+    entcoreApp.address === '/conversation/conversation' || entcoreApp.address.includes('/auth/carbonio/preauth'),
   name: 'mails',
   storageName: 'mails',
   testID: 'tabbar-messages',

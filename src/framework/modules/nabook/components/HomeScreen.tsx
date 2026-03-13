@@ -11,11 +11,10 @@ import theme from '~/app/theme';
 import { getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { getPlatform } from '~/framework/modules/auth/reducer';
 import BtnNBK from '~/framework/modules/nabook/components/BtnNBK';
 import { NBK_BASE_URL, NBK_COLORS, ONE_LINK_NBK } from '~/framework/modules/nabook/utils/constants';
 import textStyle from '~/framework/modules/nabook/utils/textStyle';
-import { signedFetchJson } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 export interface HomeScreenProps {
   token: {
@@ -89,10 +88,10 @@ const HomeScreen = (props: HomeScreenProps) => {
     const load = async () => {
       setIsLoading(true);
       try {
-        const r = (await signedFetchJson(`${getPlatform()?.url}/nabook/conf`)) as {
+        const r = await sessionFetch.json<{
           nabookMobile?: string;
           nabookUrl?: string;
-        };
+        }>(`/nabook/conf`);
 
         const res = await fetch(`${r.nabookMobile || NBK_BASE_URL}/main/edifice/code`, {
           headers: {
@@ -138,7 +137,7 @@ const HomeScreen = (props: HomeScreenProps) => {
   };
 
   return (
-    <PageView gutters="both" showNetworkBar={false} statusBar="none" style={{ backgroundColor: NBK_COLORS.darkColor }}>
+    <PageView gutters="both" showNetworkBar={false} statusBar="translucent-dark" style={{ backgroundColor: NBK_COLORS.darkColor }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={[textStyle.title, styles.title]}>{I18n.get('nabook-homescreen-title')}</Text>
         <Text style={[textStyle.bodyRoboto, styles.content]}>{I18n.get('nabook-homescreen-content')}</Text>

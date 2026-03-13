@@ -34,7 +34,7 @@ const FILE_IMPORT_DEFAULT_CONFIG: FileManagerUsecase = {
 };
 
 const headerTitleStyle = {
-  color: theme.palette.grey.darkness,
+  color: theme.palette.grey.darkness.toString(),
 };
 
 export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, route }) => ({
@@ -45,7 +45,7 @@ export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, 
     title: I18n.get('import-title'),
   }),
   headerStyle: {
-    backgroundColor: theme.ui.background.page,
+    backgroundColor: theme.ui.background.page.toString(),
     borderBottomWidth: 0,
     elevation: 0,
     left: 0,
@@ -224,13 +224,13 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
 
   React.useEffect(() => {
     if (validateImport) {
-      navigation.navigate(route.params.redirectTo.name, {
-        ...route.params.redirectTo.params,
-        importResult: filesRef.current.map(f => ({
-          status: f.status,
-          workspaceID: f.workspaceID,
-        })),
-      });
+      const importResult = filesRef.current.map(f => ({
+        status: f.status,
+        workspaceID: f.workspaceID,
+      }));
+
+      route.params.onImportResult?.(importResult);
+      navigation.goBack();
     }
   }, [validateImport, navigation, route]);
 

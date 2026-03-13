@@ -26,11 +26,11 @@ export const getRecipientIconName = (type: string | undefined): string => {
 const MailsRecipientAvatar = (props: MailsRecipientAvatarProps) => {
   const { id, type } = props;
 
-  if (type === 'User' && id) return <SingleAvatar size={props.size ?? 'md'} userId={id} />;
+  if (type === 'User' && id) return <SingleAvatar size={props.size ?? 'sm'} userId={id} />;
 
   const suppViewStyles: ViewStyle = {
     aspectRatio: 1,
-    width: AvatarSizes[props.size ?? 'md'],
+    width: AvatarSizes[props.size ?? 'sm'],
   };
 
   return (

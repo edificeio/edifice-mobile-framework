@@ -9,7 +9,8 @@ export default StyleSheet.create({
     borderColor: theme.palette.grey.pearl,
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: 1,
-    marginBottom: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.medium,
+    marginHorizontal: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.small,
   },
 

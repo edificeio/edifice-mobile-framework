@@ -7,16 +7,19 @@ import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-export const getAddAccountLoginNextScreen: (platform: Platform) => PartialState<NavigationState>['routes'][0] = platform => {
+export const getAddAccountLoginNextScreen: (
+  platform: Platform,
+  pending?: IAuthState['pending'],
+) => PartialState<NavigationState>['routes'][0] = (platform, pending) => {
   return platform.wayf
     ? { name: authRouteNames.addAccountLoginWayf, params: { platform } }
     : platform.redirect
-      ? { name: authRouteNames.addAccountLoginRedirect, params: { platform } }
+      ? { name: authRouteNames.addAccountLoginRedirect, params: { loginUsed: pending?.loginUsed, platform } }
       : { name: authRouteNames.addAccountLoginCredentials, params: { platform } };
 };
 
-export const getAddAccountLoginNextScreenNavAction = (platform: Platform) => {
-  return CommonActions.navigate(getAddAccountLoginNextScreen(platform));
+export const getAddAccountLoginNextScreenNavAction = (platform: Platform, pending?: IAuthState['pending']) => {
+  return CommonActions.navigate(getAddAccountLoginNextScreen(platform, pending));
 };
 
 export const getAddAccountOnboardingNextScreen = () => {
@@ -89,7 +92,7 @@ export const getAddAccountNavigationState = (pending: IAuthState['pendingAddAcco
 
     // 3.3 – Put the platform route into the stack
     if (platform && pending && pending.redirect === undefined && (accountId || loginWithoutAccountId)) {
-      const nextScreen = getAddAccountLoginNextScreen(platform);
+      const nextScreen = getAddAccountLoginNextScreen(platform, pending);
       routes.push({
         ...nextScreen,
         params: { ...nextScreen.params, accountId, loginUsed: accountId === undefined ? loginWithoutAccountId : undefined },

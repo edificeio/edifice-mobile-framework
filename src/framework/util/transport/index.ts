@@ -70,7 +70,7 @@
  */
 
 export { accountApi, sessionApi } from './api';
-export { accountFetch, deviceFetch, platformFetch, sessionFetch } from './fetch';
+export { accountFetch, deviceFetch, platformFetch, sessionFetch, tokenFetch } from './fetch';
 export {
   deviceImageSource,
   deviceURISource,
