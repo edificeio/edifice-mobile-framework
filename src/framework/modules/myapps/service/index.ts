@@ -1,3 +1,4 @@
+import { AuthTokenSet } from '~/framework/modules/auth/model';
 import {
   AppBookmarks,
   ApplicationsConfig,
@@ -5,13 +6,22 @@ import {
   ApplicationsListResponse,
   AppsInfo,
 } from '~/framework/modules/myapps/types';
-import { sessionFetch } from '~/framework/util/transport';
+import { sessionFetch, tokenFetch } from '~/framework/util/transport';
 
-const adaptApplicationList = (app: ApplicationsList): AppsInfo => ({ ...app, isFavorite: false, isMobile: false });
+interface IMyAppsFetch {
+  json<T>(path: string, options?: any): Promise<T>;
+}
 
-export const myAppsService = {
+const adaptApplicationList = (app: ApplicationsList): AppsInfo => ({
+  ...app,
+  isConnector: false,
+  isFavorite: false,
+  isMobile: false,
+});
+
+const createMyAppsServiceCore = (fetch: IMyAppsFetch) => ({
   bookmarks: async (): Promise<AppBookmarks> => {
-    const json = await sessionFetch.json<{ preference?: string }>('/userbook/preference/apps', { method: 'GET' });
+    const json = await fetch.json<{ preference?: string }>('/userbook/preference/apps', { method: 'GET' });
 
     if (!json?.preference) {
       return {
@@ -30,16 +40,25 @@ export const myAppsService = {
     }
   },
   config: async () => {
-    const conf = await sessionFetch.json<ApplicationsConfig[]>('/myApps/config', { method: 'GET' });
+    const conf = await fetch.json<ApplicationsConfig[]>('/myApps/config', { method: 'GET' });
     return conf;
   },
   list: async () => {
-    const { apps } = await sessionFetch.json<ApplicationsListResponse>('/applications-list', { method: 'GET' });
+    const { apps } = await fetch.json<ApplicationsListResponse>('/applications-list', { method: 'GET' });
 
     return apps.map(adaptApplicationList);
   },
+});
+
+export const myAppsService = {
+  ...createMyAppsServiceCore(sessionFetch),
   updateBookmarks: async (favorites: AppBookmarks) => {
     const api = '/userbook/preference/apps';
     await sessionFetch(api, { body: JSON.stringify(favorites), method: 'PUT' });
   },
 };
+
+export const createMyAppsServiceWithTokenFetch = (tokens: Pick<AuthTokenSet, 'access' | 'origin'>) =>
+  createMyAppsServiceCore({
+    json: <T>(path: string, options?: any) => tokenFetch.json<T>(tokens, path, options),
+  });

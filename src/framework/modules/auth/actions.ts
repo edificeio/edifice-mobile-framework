@@ -51,6 +51,8 @@ import {
   getSession,
   IAuthState,
 } from '~/framework/modules/auth/reducer';
+import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
+import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
@@ -368,6 +370,29 @@ const getLoginFunctions = {
   }),
 };
 
+/**
+ * Load MyApps data during login.
+ * This ensures that if loading apps fails, the login will fail too.
+ */
+const loadMyAppsAtLogin = async (tokens: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, dispatch: AuthDispatch) => {
+  try {
+    const myAppsServiceWithTokens = createMyAppsServiceWithTokenFetch(tokens.tokens);
+
+    const [appsInfo, appsConfig, favorites] = await Promise.all([
+      myAppsServiceWithTokens.list(),
+      myAppsServiceWithTokens.config(),
+      myAppsServiceWithTokens.bookmarks(),
+    ]);
+
+    //enrichment will be done in init with callAtLogin
+    dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
+  } catch (error) {
+    console.error('[loadMyAppsAtLogin] ERROR:', error);
+    dispatch(appInfoActions.fetchError('MYAPPS_FETCH_ERROR_AT_LOGIN'));
+    throw error;
+  }
+};
+
 /** Generic function that perform login task when token got. Only affects Redux, not storage ! */
 const performLogin = async (
   tokens: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>,
@@ -379,6 +404,9 @@ const performLogin = async (
 ) => {
   const requirement = await loginSteps.getRequirement(tokens);
   const user = await loginSteps.getUserData(tokens, requirement);
+
+  await loadMyAppsAtLogin(tokens, dispatch);
+
   const accountInfo = await loginSteps.finalizeSession(
     tokens.tokens,
     reduxActions.getTimestamp(),

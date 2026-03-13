@@ -6,17 +6,14 @@ import { IGlobalState } from '~/app/store';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   appsInfoActionTypes,
-  checkIfIsConnector,
   computeNextBookmarks,
-  isMobileApp,
+  enrichAppsWithModuleInfo,
   isNavigableModule,
   selectAppsState,
 } from '~/framework/modules/myapps/reducer';
 import { myAppsService } from '~/framework/modules/myapps/service';
 import { MyAppsPreferencesStorageData, readMyAppsPreferences, writeShowAllApps } from '~/framework/modules/myapps/storage';
 import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoState } from '~/framework/modules/myapps/types';
-import { getModuleRouteName } from '~/framework/modules/myapps/utils';
-import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 type ThunkResult = ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction>;
 
@@ -69,23 +66,18 @@ export const toggleAllApps = (): ThunkResult => async (dispatch, getState) => {
   writeShowAllApps(showAllApps);
 };
 
-export const afterLoginSetup = (): ThunkResult => async dispatch => {
+export const afterLoginSetup = (): ThunkResult => async (dispatch, getState) => {
   dispatch(appInfoActions.fetchStart());
   const session = getSession();
   const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
+  const currentState = selectAppsState(getState());
 
   try {
-    let [appsInfo, appsConfig, favorites] = await Promise.all([
-      myAppsService.list(),
-      myAppsService.config(),
-      myAppsService.bookmarks(),
-    ]);
-    appsInfo = appsInfo.map(app => {
-      const isMobile = isMobileApp(app as IEntcoreApp, modules);
-      const isConnector = checkIfIsConnector(app);
-      const routeName = isMobile ? getModuleRouteName(app as IEntcoreApp, modules) : undefined;
-      return { ...app, isConnector, isMobile, routeName };
-    });
+    let appsInfo = currentState?.appsInfo || [];
+    let appsConfig = currentState?.appsConfig || [];
+    let favorites = currentState?.favorites || { applications: [], bookmarks: [] };
+
+    appsInfo = enrichAppsWithModuleInfo(appsInfo, modules);
     dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
   } catch (e) {
     console.error('[afterLoginSetup] ERROR', e);
@@ -97,6 +89,26 @@ export const initMesAppliAtLogin = (): ThunkResult => async dispatch => {
   const session = getSession();
   if (!session) return;
   await dispatch(afterLoginSetup());
+};
+
+export const refreshMyApps = (): ThunkResult => async (dispatch, _) => {
+  dispatch(appInfoActions.fetchStart());
+  const session = getSession();
+  const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
+
+  try {
+    let [appsInfo, appsConfig, favorites] = await Promise.all([
+      myAppsService.list(),
+      myAppsService.config(),
+      myAppsService.bookmarks(),
+    ]);
+
+    appsInfo = enrichAppsWithModuleInfo(appsInfo, modules);
+    dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
+  } catch (e) {
+    console.error('[refreshMyApps] ERROR', e);
+    dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
+  }
 };
 
 const bookmarksAreEqual = (a: string[], b: string[]): boolean => {
@@ -115,7 +127,12 @@ export const toggleFavorite =
     const appsInfostate = selectAppsState(state);
     const { appsConfig, appsInfo, favorites } = appsInfostate;
 
-    const nextBookmarks = computeNextBookmarks(favorites.bookmarks, appName).filter(name => favorites.applications.includes(name));
+    const computedNextBookmarks = computeNextBookmarks(favorites.bookmarks, appName);
+
+    const nextBookmarks =
+      favorites.applications && favorites.applications.length > 0
+        ? computedNextBookmarks.filter(name => favorites.applications.includes(name))
+        : computedNextBookmarks;
 
     dispatch(appInfoActions.toggleFavorite(appName));
 

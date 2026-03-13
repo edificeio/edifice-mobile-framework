@@ -1,4 +1,5 @@
 import { AppsInfo, AppsInfoAggregated, MyAppsCategories } from '~/framework/modules/myapps/types';
+import { getModuleRouteName } from '~/framework/modules/myapps/utils';
 import { AnyModule, AnyNavigableModule, IEntcoreApp } from '~/framework/util/moduleTool';
 
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
@@ -48,3 +49,11 @@ export const checkIfIsConnector = (app: AppsInfo): boolean => {
 
 export const appShouldBeAtBottom = (app: AppsInfoAggregated) =>
   app.isConnector && !app.isMobile && !['communication', 'organisation', 'pedagogy'].includes(app.category ?? '');
+
+export const enrichAppsWithModuleInfo = (appsInfo: AppsInfo[], modules: any) =>
+  appsInfo.map(app => {
+    const isMobile = isMobileApp(app as IEntcoreApp, modules);
+    const isConnector = checkIfIsConnector(app);
+    const routeName = isMobile ? getModuleRouteName(app as IEntcoreApp, modules) : undefined;
+    return { ...app, isConnector, isMobile, routeName };
+  });

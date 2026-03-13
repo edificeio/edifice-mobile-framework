@@ -12,7 +12,7 @@ export default new NavigableModuleConfig<'scrapbook', ScrapbookStore>({
 
   entcoreScope: ['scrapbook'],
   entcoreTrackingName: 'Scrapbook',
-  matchEntcoreApp: 'Scrapbook',
+  matchEntcoreApp: 'Cahier Multimédia',
   name: 'scrapbook',
   storageName: 'scrapbook',
 });

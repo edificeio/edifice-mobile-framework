@@ -24,6 +24,7 @@ const imports = {
   'collaborative-wall-large': async () => import('ASSETS/icons/moduleIcons/collaborativeWall.svg'),
   'communities': async () => import('ASSETS/icons/moduleIcons/communities.svg'),
   'communities-fill': async () => import('ASSETS/icons/moduleIcons/communities-fill.svg'),
+  'communities-large': async () => import('ASSETS/icons/moduleIcons/communities.svg'),
   'communities-outline': async () => import('ASSETS/icons/moduleIcons/communities-outline.svg'),
   'community-large': async () => import('ASSETS/icons/moduleIcons/community.svg'),
   'competences': async () => import('ASSETS/icons/moduleIcons/competences.svg'),

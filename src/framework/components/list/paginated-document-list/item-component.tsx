@@ -28,6 +28,10 @@ import { toURISource } from '~/framework/util/media';
 import { sessionImageSource } from '~/framework/util/transport';
 
 export function buildPictureFromBadge(badge: AppBadge): PictureProps {
+  if (!badge?.icon) {
+    return { name: 'information', type: 'Svg' };
+  }
+
   const isImage = badge.icon.startsWith('/');
 
   if (isImage) {
