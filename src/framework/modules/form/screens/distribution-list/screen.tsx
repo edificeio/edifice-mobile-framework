@@ -116,6 +116,7 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
         editable: form.editable,
         formId: form.id,
         id,
+        showProgressBar: form.showProgressBar,
         status,
         title: form.title,
       });

@@ -47,6 +47,7 @@ export const formAdapter = (data: IBackendForm): IForm => {
     multiple: data.multiple,
     ownerName: data.owner_name,
     picture: data.picture,
+    showProgressBar: !data.is_progress_bar_disabled,
     title: data.title,
   };
 };

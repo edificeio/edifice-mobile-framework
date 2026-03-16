@@ -50,6 +50,7 @@ export interface IForm {
   archived: boolean;
   multiple: boolean;
   editable: boolean;
+  showProgressBar: boolean;
 }
 
 export interface IQuestionChoice {

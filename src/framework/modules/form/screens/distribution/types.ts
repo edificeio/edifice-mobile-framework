@@ -17,6 +17,7 @@ export interface FormDistributionScreenNavParams {
   id: number;
   status: DistributionStatus;
   title: string;
+  showProgressBar: boolean;
 }
 
 export interface FormDistributionScreenStoreProps {

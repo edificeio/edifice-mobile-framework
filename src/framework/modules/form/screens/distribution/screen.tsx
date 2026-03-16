@@ -58,7 +58,7 @@ export const computeNavBar = ({
 });
 
 const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
-  const { editable, formId, id: distributionId, status } = props.route.params;
+  const { editable, formId, id: distributionId, showProgressBar, status } = props.route.params;
   const [hasResponderRight, setHasResponderRight] = React.useState(true);
   const [position, setPosition] = React.useState(0);
   const [positionHistory, setPositionHistory] = React.useState<number[]>([]);
@@ -346,7 +346,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
 
   const renderHeader = () => {
     if (isPositionAtSummary) return <HeadingSText style={styles.summaryText}>{I18n.get('form-distribution-summary')}</HeadingSText>;
-    return props.elements.length > 1 ? (
+    return showProgressBar && props.elements.length > 1 ? (
       <ProgressBar
         formElementCount={positionHistory.length + findLongestPathInFormElement(listElements[0].id, props.elements)}
         position={positionHistory.length + 1}
@@ -451,7 +451,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
 
   const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
 
-  return <PageComponent>{renderPage()}</PageComponent>;
+  return <PageComponent safeArea={false}>{renderPage()}</PageComponent>;
 };
 
 export default connect(

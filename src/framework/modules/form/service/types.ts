@@ -26,7 +26,7 @@ export interface IBackendForm {
   collab: boolean;
   archived: boolean;
   date_opening: string;
-  date_ending?: string;
+  date_ending: string | null;
   multiple: boolean;
   anonymous: boolean;
   reminded: boolean;
@@ -36,7 +36,11 @@ export interface IBackendForm {
   rgpd_goal: string;
   rgpd_lifetime: number;
   is_public: boolean;
-  public_key?: number;
+  public_key: number | null;
+  original_form_id: number | null;
+  is_progress_bar_disabled: boolean;
+  folder_id: number;
+  nb_responses: number;
 }
 
 export interface IBackendQuestion {
