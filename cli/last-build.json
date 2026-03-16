@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-16 13:13:39",
-  "notes": "release: 1.16.7-rc.1(1160703)",
-  "version": "1.16.7-rc.2(1160704)",
+  "last": "2026-03-16 13:15:44",
+  "notes": "release: 1.16.7-rc.2(1160704)",
+  "version": "1.16.7-rc.3(1160705)",
   "track": "1.16.7"
 }
