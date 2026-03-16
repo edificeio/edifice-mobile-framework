@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-16 13:08:48",
-  "notes": "chore(stack): yarn cache update\nUpdated translations from Phrase (289)\nUpdated translations from Phrase (288)\nUpdated translations from Phrase (287)\nfix(nabook): ENABLING-668 issue with nabook navBar\nupdate(stack): yarn cache update\nfix(communities): PEDAGO-3858 use MembershipCLient instead of InvitationClient to show members list\nfix: CLC-128 send message to external email from carbonio\nrelease: 1.16.7-alpha.2(1160702)",
-  "version": "1.16.7-rc.1(1160703)",
+  "last": "2026-03-16 13:13:39",
+  "notes": "release: 1.16.7-rc.1(1160703)",
+  "version": "1.16.7-rc.2(1160704)",
   "track": "1.16.7"
 }
