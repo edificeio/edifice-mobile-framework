@@ -1,10 +1,8 @@
 {
   "accountlistitem-removealert-description": "¿Está seguro de que desea eliminar este identificador?",
   "accountlistitem-removealert-title": "Confirmar la eliminación",
-  "attachment-adderror": "Error al añadir un archivo adjunto",
   "attachment-attachment": "Documento adjunto",
   "attachment-attachments": "Documentos adjuntos",
-  "attachment-download-all": "Descargar todo",
   "attachment-download-error": "Error al abrir el archivo",
   "attachment-download-invalidurl": "(vínculo no válido)",
   "attachment-download-open": "Abrir",
@@ -22,7 +20,6 @@
   "audience-reactions-all": "Todo",
   "audience-reactions-empty": "Aún no hay reacciones",
   "audience-reactions-title": "Reacciones",
-  "audience-views-empty": "Aún no hay vistas",
   "audience-views-title": "Audiencia",
   "audience-views-uniqueviews": "Personas vieron la publicación",
   "audience-views-views": "Vistas totales",

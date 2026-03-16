@@ -1,10 +1,8 @@
 {
   "accountlistitem-removealert-description": "Êtes vous sur de vouloir supprimer cet identifiant ?",
   "accountlistitem-removealert-title": "Confirmer la suppression",
-  "attachment-adderror": "Erreur lors de l'ajout de la pièce jointe",
   "attachment-attachment": "Pièce jointe",
   "attachment-attachments": "Pièces jointes",
-  "attachment-download-all": "Tout télécharger",
   "attachment-download-error": "Erreur à l'ouverture du fichier",
   "attachment-download-invalidurl": "(lien invalide)",
   "attachment-download-open": "Ouvrir",
@@ -22,7 +20,6 @@
   "audience-reactions-all": "Tout",
   "audience-reactions-empty": "Pas encore de réactions",
   "audience-reactions-title": "Réactions",
-  "audience-views-empty": "Pas encore de vues",
   "audience-views-title": "Audience",
   "audience-views-uniqueviews": "Personnes ont vu le billet",
   "audience-views-views": "Vues au total",
