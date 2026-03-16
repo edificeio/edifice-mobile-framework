@@ -1,10 +1,8 @@
 {
   "accountlistitem-removealert-description": "Sei sicuro di voler eliminare questo identificatore?",
   "accountlistitem-removealert-title": "Confermare l'eliminazione",
-  "attachment-adderror": "Errore durante l'aggiunta dell'allegato",
   "attachment-attachment": "Allegato",
   "attachment-attachments": "Allegati",
-  "attachment-download-all": "Scarica tutto",
   "attachment-download-error": "Errore durante l'apertura del file",
   "attachment-download-invalidurl": "(link non valido)",
   "attachment-download-open": "Aperto",
@@ -22,7 +20,6 @@
   "audience-reactions-all": "Tutto",
   "audience-reactions-empty": "Ancora nessuna reazione",
   "audience-reactions-title": "Reazioni",
-  "audience-views-empty": "Nessuna visualizzazione ancora",
   "audience-views-title": "Pubblico",
   "audience-views-uniqueviews": "Persone hanno visto il post",
   "audience-views-views": "Visualizzazioni totali",
