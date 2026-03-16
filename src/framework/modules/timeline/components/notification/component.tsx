@@ -51,7 +51,11 @@ export function TimelineNotification(props: ITimelineNotificationProps) {
             {text}
           </SmallText>
         ) : null}
-        {media ? <View style={styles.contentNotif}>{renderMediaPreview(media, uri, notificationAction)}</View> : null}
+        {media ? (
+          <View style={styles.contentNotif} pointerEvents="none">
+            {renderMediaPreview(media, uri)}
+          </View>
+        ) : null}
         {notificationAction && media?.length ? (
           <TertiaryButton text={I18n.get('resource-preview-read-more')} iconRight="ui-arrowRight" style={styles.notifReadMore} />
         ) : null}
