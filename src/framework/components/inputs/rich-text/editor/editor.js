@@ -174,6 +174,12 @@ function createHTML(options = {}) {
         #content>p:first-child { margin-block-start: 0;}
         #content>p:last-child { margin-block-end: 0;}
     </style>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.css" integrity="sha384-/L6i+LN3dyoaK2jYG5ZLh5u13cjdsPDcFOSNJeFBFa/KgVXR5kOfTdiN3ft1uMAq" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.js" integrity="sha384-H6s1ZrH2CKpFpqR680poRdStIRJGXty7fSkxAcIfxwl9iu6A4BOPtTk7vQ58Ovio" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
+
+
 </head>
 <body>
 <div class="content"><div id="editor" class="pell"/></div>
@@ -537,6 +543,14 @@ function createHTML(options = {}) {
                     editor.content.innerHTML = html;
                     Actions.content.init();
                     detectImageErrors();
+
+                    renderMathInElement(document.body, {
+                      delimiters: [
+                          {left: '$$', right: '$$', display: true},
+                          {left: '$', right: '$', display: false},
+                      ],
+                      throwOnError : false
+                    });
                 },
                 setCookie: function(cookie) {
                     if (cookie) {
