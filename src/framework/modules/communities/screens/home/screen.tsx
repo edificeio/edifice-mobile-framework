@@ -5,7 +5,6 @@ import {
   AnnouncementClient,
   CommunityClient,
   CommunitySection,
-  InvitationClient,
   InvitationResponseDto,
   MembershipClient,
   SearchAnnouncementDto,
@@ -310,7 +309,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
   const loadContent = React.useCallback(async () => {
     const [community, invitations] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
-      accountApi(session, moduleConfig, InvitationClient).getInvitationsAndMembers(communityId, { page: 1, size: 20 }),
+      accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 20 }),
     ]);
     setData({
       ...community,

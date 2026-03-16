@@ -3,12 +3,17 @@ import {
   carbonioMessageToMailPreviewBackend,
   normalizeFromMobileToWeb,
 } from '../adapters/carbonio';
-import { mailContentAdapter, mailsAdapter, MailsVisibleBackend, mailVisibleAdapter } from '../adapters/mails';
 
 import { getStore } from '~/app/store';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { actions as authActions, getSession } from '~/framework/modules/auth/reducer';
 import { MailsConversationPayload } from '~/framework/modules/mails/model';
+import {
+  mailContentAdapter,
+  mailsAdapter,
+  MailsVisibleBackend,
+  mailVisibleAdapter,
+} from '~/framework/modules/mails/service/adapters/mails';
 import { sessionFetch } from '~/framework/util/transport';
 
 // Carbonio SOAP API base URL
@@ -556,7 +561,7 @@ export const carbonioMailsApi = {
         const type = 'External';
         return {
           displayName: contact.display || contact.name || contact.email || '',
-          id: contact.id || contact.email || '',
+          id: contact.email || '',
           profile: contact.profile || '',
           type: type,
           usedIn: ['TO', 'CC', 'CCI'],
