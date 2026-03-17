@@ -103,7 +103,7 @@ export const selectFilteredApps = (state: IGlobalState, filter: MyAppsFilter) =>
 export const selectFilteredAppsWithMobile = (state: IGlobalState, filter: MyAppsFilter, showAllApps: boolean) => {
   const apps = selectFilteredApps(state, filter);
 
-  if (showAllApps) {
+  if (showAllApps || filter.type === 'favorites') {
     return apps;
   }
 
