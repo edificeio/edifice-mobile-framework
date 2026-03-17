@@ -5,7 +5,7 @@ import Animated from 'react-native-reanimated';
 
 import { MY_APPS_FILTERS } from './filter-config';
 import { styles } from './styles';
-import { MyAppsFiltersProps } from './types';
+import { MyAppsFilterItemFilter, MyAppsFiltersProps } from './types';
 import { useAnimatedSearchStyles } from './useAnimatedSearchStyles';
 
 import { I18n } from '~/app/i18n';
@@ -74,7 +74,10 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
       ref={listRef}
       horizontal
       data={MY_APPS_FILTERS}
-      keyExtractor={item => item.labelKey}
+      keyExtractor={item => {
+        if (item.type === 'separator') return 'filter-separator';
+        return item.labelKey;
+      }}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
       style={styles.list}
@@ -110,16 +113,21 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
         </View>
       }
       renderItem={({ index, item }) => {
+        if (item.type === 'separator') {
+          return <View style={styles.separator} />;
+        }
+
+        const filterItem = item as MyAppsFilterItemFilter;
         const isSelected =
-          selectedFilter.type === item.filter.type && JSON.stringify(item.filter) === JSON.stringify(selectedFilter);
+          selectedFilter.type === filterItem.filter.type && JSON.stringify(filterItem.filter) === JSON.stringify(selectedFilter);
 
         return (
           <MyAppsFilterCell
-            label={I18n.get(item.labelKey)}
+            label={I18n.get(filterItem.labelKey)}
             selected={isSelected}
             onPress={() => {
               scrollToItem(index);
-              onFilterChange(item.filter);
+              onFilterChange(filterItem.filter);
             }}
           />
         );

@@ -73,6 +73,12 @@ export const styles = StyleSheet.create({
     color: theme.palette.primary.regular,
     marginRight: UI_SIZES.spacing.tiny,
   },
+  separator: {
+    backgroundColor: theme.palette.primary.regular,
+    height: UI_SIZES.spacing.large,
+    marginHorizontal: UI_SIZES.spacing.tiny,
+    width: UI_SIZES.spacing.tinyExtra,
+  },
   unselectedButton: {
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
