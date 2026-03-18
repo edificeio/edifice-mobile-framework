@@ -9,6 +9,15 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
   },
+  introContainer: {
+    flexGrow: 1,
+    marginBottom: pageGutterSize,
+    marginHorizontal: pageGutterSize,
+  },
+  introScrollContainer: {
+    flexGrow: 1,
+    paddingVertical: pageGutterSize,
+  },
   listContainer: {
     flexGrow: 1,
     padding: pageGutterSize,

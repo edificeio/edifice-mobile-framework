@@ -2,6 +2,7 @@ import {
   compareChoices,
   compareMatrixChildren,
   compareSectionQuestions,
+  delegateAdapter,
   distributionAdapter,
   formAdapter,
   questionAdapter,
@@ -15,6 +16,7 @@ import {
   IBackendDistributionList,
   IBackendForm,
   IBackendFormList,
+  IBackendGdprDelegate,
   IBackendQuestionChoiceList,
   IBackendQuestionList,
   IBackendQuestionResponse,
@@ -111,6 +113,13 @@ export const formService = {
       const api = '/formulaire/forms/sent';
       const forms = await sessionFetch.json<IBackendFormList>(api);
       return forms.map(formAdapter);
+    },
+  },
+  gdprDelegates: {
+    get: async (session: AuthActiveAccount) => {
+      const api = '/formulaire/delegates';
+      const delegates = await sessionFetch.json<IBackendGdprDelegate[]>(api);
+      return delegates.map(delegateAdapter);
     },
   },
   question: {

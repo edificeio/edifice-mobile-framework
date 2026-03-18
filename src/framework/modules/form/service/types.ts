@@ -43,6 +43,15 @@ export interface IBackendForm {
   nb_responses: number;
 }
 
+export interface IBackendGdprDelegate {
+  id: number;
+  entity: string;
+  mail: string;
+  address: string;
+  zipcode: number;
+  city: string;
+}
+
 export interface IBackendQuestion {
   id: number;
   form_id: number;

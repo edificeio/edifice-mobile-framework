@@ -9,6 +9,7 @@ import {
   IForm,
   IFormContent,
   IFormElement,
+  IGdprDelegate,
   IQuestionChoice,
   IQuestionResponse,
   IResponseFile,
@@ -146,3 +147,20 @@ export const fetchResponseFilesAction =
       throw new Error();
     }
   };
+
+/**
+ * Fetch the gdpr delegates.
+ */
+export const formListGdprDelegatesActionsCreators = createAsyncActionCreators(actionTypes.listGdprDelegates);
+export const fetchGdprDelegatesAction = (): ThunkAction<Promise<IGdprDelegate[]>, any, any, any> => async (dispatch, getState) => {
+  try {
+    const session = assertSession();
+    dispatch(formListGdprDelegatesActionsCreators.request());
+    const delegates = await formService.gdprDelegates.get(session);
+    dispatch(formListGdprDelegatesActionsCreators.receipt(delegates));
+    return delegates;
+  } catch (e) {
+    dispatch(formListGdprDelegatesActionsCreators.error(e as Error));
+    throw new Error();
+  }
+};

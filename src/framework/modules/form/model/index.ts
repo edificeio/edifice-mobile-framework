@@ -41,16 +41,32 @@ export interface IDistribution {
   originalId?: number;
 }
 
+export type IDistributionPosition = 'description' | 'gdpr' | 'summary' | number;
+
 export interface IForm {
   id: number;
   title: string;
-  description: string;
+  description: string | null;
   picture: string;
   ownerName: string;
   archived: boolean;
+  dateOpening: string;
   multiple: boolean;
   editable: boolean;
   showProgressBar: boolean;
+  gdpr: {
+    goal: string;
+    lifetime: number;
+  } | null;
+}
+
+export interface IGdprDelegate {
+  id: number;
+  entity: string;
+  mail: string;
+  address: string;
+  zipcode: number;
+  city: string;
 }
 
 export interface IQuestionChoice {

@@ -3,6 +3,7 @@ import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'rea
 
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -17,13 +18,18 @@ import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-sc
 import { LoadingIndicator } from '~/framework/components/loading';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { HeadingSText } from '~/framework/components/text';
+import { BodyText, HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/framework/modules/form/actions';
+import {
+  fetchDistributionResponsesAction,
+  fetchFormContentAction,
+  fetchGdprDelegatesAction,
+} from '~/framework/modules/form/actions';
 import { ProgressBar } from '~/framework/modules/form/components/DistributionProgressBar';
 import { FormSectionCard } from '~/framework/modules/form/components/FormSectionCard';
 import FormSubmissionModal from '~/framework/modules/form/components/FormSubmissionModal';
+import { GdprText } from '~/framework/modules/form/components/GdprText';
 import { getQuestionCard } from '~/framework/modules/form/components/question-cards';
 import {
   DistributionStatus,
@@ -33,6 +39,7 @@ import {
   getIsElementSection,
   getIsMandatoryAnswerMissing,
   getPositionHistory,
+  IDistributionPosition,
   IFormElement,
   IQuestion,
   IQuestionResponse,
@@ -41,6 +48,7 @@ import {
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { formService } from '~/framework/modules/form/service';
+import { getInitialPosition, getNextPosition } from '~/framework/modules/form/utils/position';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -53,24 +61,29 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.title,
+    title: route.params.form.title,
   }),
 });
 
 const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
-  const { editable, formId, id: distributionId, showProgressBar, status } = props.route.params;
+  const { form, id: distributionId, status } = props.route.params;
   const [hasResponderRight, setHasResponderRight] = React.useState(true);
-  const [position, setPosition] = React.useState(0);
-  const [positionHistory, setPositionHistory] = React.useState<number[]>([]);
+  const [position, setPosition] = React.useState<IDistributionPosition>(getInitialPosition(form));
+  const [positionHistory, setPositionHistory] = React.useState<IDistributionPosition[]>([]);
   const [responses, setResponses] = React.useState<IQuestionResponse[]>([]);
   const [isLoadingNext, setLoadingNext] = React.useState<boolean>(false);
   const [isLoadingPrevious, setLoadingPrevious] = React.useState<boolean>(false);
   const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
   const flatListRef = React.useRef<FlatList>(null);
   const modalBoxRef = React.useRef<ModalBoxHandle>(null);
-  const isPositionAtSummary = position === props.elementsCount;
-  const listElements = isPositionAtSummary ? formatSummary(props.elements, responses) : formatElement(props.elements[position]);
+  const listElements =
+    position === 'summary'
+      ? formatSummary(props.elements, responses)
+      : typeof position === 'number'
+        ? formatElement(props.elements[position])
+        : [];
   const isMandatoryAnswerMissing = getIsMandatoryAnswerMissing(listElements, responses);
+  const gdprExpiryDate = moment(form.dateOpening).add(form.gdpr?.lifetime, 'months');
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -82,16 +95,19 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       const { session } = props;
 
       if (!session) throw new Error();
-      if (!(await formService.form.hasResponderRight(session, formId))) {
+      if (!(await formService.form.hasResponderRight(session, form.id))) {
         setHasResponderRight(false);
         return;
       }
-      const content = await props.tryFetchFormContent(formId);
+      const content = await props.tryFetchFormContent(form.id);
       const res = await props.tryFetchDistributionResponses(distributionId);
       setResponses(res);
       if (content.elementsCount && status !== DistributionStatus.TO_DO) {
         setPosition(content.elementsCount);
         setPositionHistory(getPositionHistory(content.elements, res));
+      }
+      if (form.gdpr && !props.gdprDelegates.length) {
+        await props.tryFetchGdprDelegates();
       }
     } catch {
       throw new Error();
@@ -253,7 +269,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
   };
 
-  const updatePosition = (newPosition: number) => {
+  const updatePosition = (newPosition: IDistributionPosition) => {
     setPositionHistory([...positionHistory, position]);
     setPosition(newPosition);
   };
@@ -263,19 +279,21 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       setLoadingNext(true);
       await postResponsesChanges();
       setLoadingNext(false);
-      const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
+      const conditionalQuestion =
+        typeof position === 'number' &&
+        (listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion);
       if (conditionalQuestion) {
         const res = responses.find(r => r.questionId === conditionalQuestion.id);
         const nextFormElementId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextFormElementId;
         if (nextFormElementId === null) {
-          return updatePosition(props.elementsCount);
+          return updatePosition('summary');
         }
         const formElementPosition = props.elements.find(e => e.id === nextFormElementId)?.position;
         if (formElementPosition) {
           return updatePosition(formElementPosition - 1);
         }
       }
-      updatePosition(position + 1);
+      updatePosition(getNextPosition(position, form, props.elementsCount));
     } catch {
       setLoadingNext(false);
       Toast.showError(I18n.get('form-distribution-error-text'));
@@ -330,14 +348,14 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
     const FormQuestionCard = getQuestionCard(item.type);
     const onEditQuestion =
-      isPositionAtSummary && (status !== DistributionStatus.FINISHED || editable)
+      position === 'summary' && (status !== DistributionStatus.FINISHED || form.editable)
         ? () => setPositionToQuestion(item as IQuestion)
         : undefined;
     return (
       <FormQuestionCard
         question={item}
         responses={questionResponses}
-        isDisabled={isPositionAtSummary}
+        isDisabled={position === 'summary'}
         onChangeAnswer={updateQuestionResponses}
         onEditQuestion={onEditQuestion}
       />
@@ -345,18 +363,22 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   };
 
   const renderHeader = () => {
-    if (isPositionAtSummary) return <HeadingSText style={styles.summaryText}>{I18n.get('form-distribution-summary')}</HeadingSText>;
-    return showProgressBar && props.elements.length > 1 ? (
+    if (position === 'summary')
+      return <HeadingSText style={styles.summaryText}>{I18n.get('form-distribution-summary')}</HeadingSText>;
+    return form.showProgressBar && props.elements.length > 1 ? (
       <ProgressBar
-        formElementCount={positionHistory.length + findLongestPathInFormElement(listElements[0].id, props.elements)}
-        position={positionHistory.length + 1}
+        formElementCount={
+          positionHistory.filter(p => typeof p === 'number').length +
+          findLongestPathInFormElement(listElements[0].id, props.elements)
+        }
+        position={positionHistory.filter(p => typeof p === 'number').length + 1}
       />
     ) : null;
   };
 
   const renderPositionActions = () => {
-    if (isPositionAtSummary) {
-      return status !== DistributionStatus.FINISHED || editable ? (
+    if (position === 'summary') {
+      return status !== DistributionStatus.FINISHED || form.editable ? (
         <PrimaryButton text={I18n.get('form-distribution-submit')} action={() => modalBoxRef.current?.doShowModal()} />
       ) : null;
     }
@@ -380,7 +402,21 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   };
 
   const renderDistribution = () => {
-    return hasResponderRight ? (
+    if (position === 'gdpr' || position === 'description') {
+      return (
+        <View style={styles.introContainer}>
+          <ScrollView style={styles.introScrollContainer}>
+            {position === 'gdpr' && form.gdpr ? (
+              <GdprText date={gdprExpiryDate} delegates={props.gdprDelegates} {...form.gdpr} />
+            ) : (
+              <BodyText>{form.description}</BodyText>
+            )}
+          </ScrollView>
+          {renderPositionActions()}
+        </View>
+      );
+    }
+    return (
       <>
         <FlatList
           ref={flatListRef}
@@ -396,22 +432,20 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
         />
         <FormSubmissionModal
           ref={modalBoxRef}
-          editable={editable}
+          editable={form.editable}
           loading={isSubmitting}
           status={status}
           structures={props.structures}
           onSubmit={submitDistribution}
         />
       </>
-    ) : (
-      renderEmpty()
     );
   };
 
   const renderPage = () => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
-        return renderDistribution();
+        return hasResponderRight ? renderDistribution() : renderEmpty();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
         return <LoadingIndicator />;
@@ -462,6 +496,7 @@ export default connect(
     return {
       elements: formState.formContent.data.elements,
       elementsCount: formState.formContent.data.elementsCount,
+      gdprDelegates: formState.gdprDelegates.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       session,
       structures:
@@ -478,6 +513,7 @@ export default connect(
       {
         tryFetchDistributionResponses: tryAction(fetchDistributionResponsesAction),
         tryFetchFormContent: tryAction(fetchFormContentAction),
+        tryFetchGdprDelegates: tryAction(fetchGdprDelegatesAction),
       },
       dispatch,
     ),

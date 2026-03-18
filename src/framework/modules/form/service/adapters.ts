@@ -3,6 +3,7 @@ import moment from 'moment';
 import {
   IBackendDistribution,
   IBackendForm,
+  IBackendGdprDelegate,
   IBackendQuestion,
   IBackendQuestionChoice,
   IBackendQuestionResponse,
@@ -14,6 +15,7 @@ import {
   DistributionStatus,
   IDistribution,
   IForm,
+  IGdprDelegate,
   IQuestion,
   IQuestionChoice,
   IQuestionResponse,
@@ -41,14 +43,32 @@ export const distributionAdapter = (data: IBackendDistribution): IDistribution =
 export const formAdapter = (data: IBackendForm): IForm => {
   return {
     archived: data.archived,
-    description: data.description,
+    dateOpening: data.date_opening,
+    description: data.description?.length ? data.description : null,
     editable: data.editable,
+    gdpr: data.rgpd
+      ? {
+          goal: data.rgpd_goal,
+          lifetime: data.rgpd_lifetime,
+        }
+      : null,
     id: data.id,
     multiple: data.multiple,
     ownerName: data.owner_name,
     picture: data.picture,
     showProgressBar: !data.is_progress_bar_disabled,
     title: data.title,
+  };
+};
+
+export const delegateAdapter = (data: IBackendGdprDelegate): IGdprDelegate => {
+  return {
+    address: data.address,
+    city: data.city,
+    entity: data.entity,
+    id: data.id,
+    mail: data.mail,
+    zipcode: data.zipcode,
   };
 };
 
