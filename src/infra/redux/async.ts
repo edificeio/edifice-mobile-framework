@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 // OBSOLETE.
 
@@ -95,7 +95,7 @@ export const asyncFetchJson: <DataTypeBackend, DataType>(
   adapter: (data: DataTypeBackend) => DataType,
   opts: object,
 ) => Promise<DataType> = async (uri, adapter, opts) => {
-  const json = (await fetchJSONWithCache(uri, opts)) as any;
+  const json = (await sessionFetch.json(uri, opts)) as any;
   return adapter(json);
 };
 

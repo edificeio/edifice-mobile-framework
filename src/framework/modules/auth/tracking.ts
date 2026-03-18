@@ -1,5 +1,5 @@
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
-import { Error } from '~/framework/util/error';
+import { OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { createTrackEvents, TRACK_DEFAULT, TRACK_ERROR } from '~/framework/util/tracker/track-opt';
 
@@ -23,7 +23,7 @@ export default createTrackEvents({
   loginFederation: {
     [TRACK_DEFAULT]: [TrackCategory.Authentification, 'Connexion fédérée'],
     [TRACK_ERROR]: e => {
-      if (e instanceof Error.SamlMultipleVectorError)
+      if (e instanceof OAuth2SamlMultipleVectorError)
         return [TrackCategory.Authentification, ['Connexion fédérée', 'Multiple'], undefined, e.data.users.length];
       return undefined;
     },

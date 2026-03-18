@@ -35,7 +35,7 @@ export function logNavBar({
     ...navBarOptions({
       navigation,
       route,
-      title: 'Network Log',
+      title: 'App Log',
     }),
   };
 }

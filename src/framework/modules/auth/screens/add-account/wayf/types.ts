@@ -12,6 +12,7 @@ export interface AuthWayfAddAccountScreenNavParams {
 export interface AuthWayfAddAccountScreenProps {}
 
 export interface AuthWayfAddAccountScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountWayf>,
+  extends
+    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountWayf>,
     AuthWayfAddAccountScreenProps,
     WAYFScreenDispatchProps {}

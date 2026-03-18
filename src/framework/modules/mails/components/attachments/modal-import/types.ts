@@ -2,7 +2,7 @@ import { ParamListBase, Route } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ImagePicked } from '~/framework/components/menus/actions';
-import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
+import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service/types';
 import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { FileSource } from '~/framework/util/fileHandler/types';
@@ -16,6 +16,7 @@ export namespace AttachmentsImportScreenProps {
     redirectTo: Route<string, ParamListBase>;
     source: FileSource;
     draftId: string;
+    onImportAttachmentsResult?: (result: Array<{ filename: string; id: string | undefined; url: string | undefined }>) => void;
   }
 
   export type Navigation = NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.AttachmentsImport>;

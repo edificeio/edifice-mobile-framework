@@ -36,15 +36,15 @@ export const makeTrackOption =
     if (returnedValue instanceof global.Error) {
       if (typeof err === 'function') {
         const realErr = err(returnedValue);
-        if (!realErr) return [mConf, trackingActionAddSuffix(name, false), Error.getDeepErrorType(returnedValue)?.toString()];
+        if (!realErr) return [mConf, trackingActionAddSuffix(name, false), Error.findCode(returnedValue)?.toString()];
         return [
           mConf,
           trackingActionAddSuffix(name, realErr[0]),
-          realErr[1] ?? Error.getDeepErrorType(returnedValue)?.toString(),
+          realErr[1] ?? Error.findCode(returnedValue)?.toString(),
           realErr[2],
         ];
       } else {
-        return [mConf, trackingActionAddSuffix(name, false), Error.getDeepErrorType(returnedValue)?.toString(), err[0]];
+        return [mConf, trackingActionAddSuffix(name, false), Error.findCode(returnedValue)?.toString(), err[0]];
       }
     } else {
       for (const [k, v] of Object.entries(customValues)) {
@@ -119,7 +119,7 @@ const createTrackOption =
             ? trackingActionAddSuffix(errorScenarioValues[1][0], errorScenarioValues[1][1])
             : trackingActionAddSuffix(errorScenarioValues[1], false),
           errorScenarioValues[2] === undefined || errorScenarioValues[2] === TRACK_ERROR_CODE
-            ? Error.getDeepErrorType(returnedValue)?.toString()
+            ? Error.findCode(returnedValue)?.toString()
             : errorScenarioValues[2],
           errorScenarioValues[3],
         ] as TrackEventOfModuleArgs)

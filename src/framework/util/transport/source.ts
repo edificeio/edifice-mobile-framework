@@ -3,13 +3,13 @@ import { ImageSourcePropType, ImageURISource } from 'react-native';
 import { ReactVideoSourceProperties } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
-import { getAuthenticationHeader, getDeviceHeaders, getPlatformUrl } from './common';
-import { isRequireSource } from '../media';
+import { getAuthenticationHeaderForAccount, getDeviceHeaders, getUrlWithBase } from './common';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
-import { FetchError, FetchErrorCode } from '~/framework/util/http/error';
+import { isRequireSource } from '~/framework/util/media';
+import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
 
 // # DEVICE FETCH
 
@@ -44,7 +44,7 @@ export function platformURISource<SourceType extends ImageURISource | ReactVideo
     return result;
   }
 
-  result.uri = result.uri ? getPlatformUrl(result.uri, platform).toString() : result.uri;
+  result.uri = result.uri ? getUrlWithBase(result.uri, platform.url).toString() : result.uri;
   return result;
 }
 
@@ -74,7 +74,7 @@ export function accountURISource<SourceType extends ImageURISource | ReactVideoS
   // This is important regarding to the security of the user's auth token.
   if (result.uri && result.uri.startsWith(platform.url)) {
     result.headers = {
-      ...getAuthenticationHeader(account),
+      ...getAuthenticationHeaderForAccount(account),
       ...result.headers,
     };
   }

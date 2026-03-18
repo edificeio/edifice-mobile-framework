@@ -9,10 +9,10 @@
  */
 import * as React from 'react';
 import {
+  Keyboard,
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
-  SafeAreaView,
   ScrollView,
   ScrollViewProps,
   StyleSheet,
@@ -23,21 +23,22 @@ import {
 import styled from '@emotion/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
+import DeviceInfo from 'react-native-device-info';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { UI_SIZES } from './constants';
-import { StatusBar } from './status-bar';
-import { ToastHandler } from './toast/component';
+import { ScreenView } from './screen';
+import { ScreenViewProps } from './screen/types';
+import { ANDROID_16 } from '../util/permissions';
 
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import theme from '~/app/theme';
-import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
-  statusBar?: 'primary' | 'light' | 'dark' | 'none';
+  statusBar?: ScreenViewProps['statusBar'];
   showToast?: boolean;
 }
 
@@ -60,7 +61,7 @@ export const PageViewStyle = styled.View({
   flex: 1,
 });
 export const PageView = (props: PageViewProps) => {
-  const { children, gutters, showNetworkBar = true, showToast = true, statusBar, ...viewProps } = props;
+  const { children, gutters, showNetworkBar = true, statusBar, ...viewProps } = props;
   const route = useRoute();
 
   const gutterStyle = React.useMemo(
@@ -71,25 +72,17 @@ export const PageView = (props: PageViewProps) => {
     [gutters],
   );
 
-  const statusBarComponent = React.useMemo(
-    () => (statusBar !== 'none' ? <StatusBar type={statusBar ?? 'primary'} /> : null),
-    [statusBar],
-  );
-
-  const isModal = isModalModeOnThisRoute(route.name);
   const page = (
     <PageViewStyle {...viewProps}>
       <>
-        {statusBarComponent}
         {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
-        {isModal && showToast ? <ToastHandler /> : null}
       </>
     </PageViewStyle>
   );
 
-  return isModal ? <BottomSheetModalProvider>{page}</BottomSheetModalProvider> : page;
+  return <ScreenView statusBar={statusBar}>{page}</ScreenView>;
 };
 
 export const KeyboardPageView = (
@@ -101,6 +94,24 @@ export const KeyboardPageView = (
     }
   >,
 ) => {
+  const [kbHeight, setKbHeight] = React.useState(0);
+  React.useEffect(() => {
+    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', e => {
+      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
+      setKbHeight(e.endCoordinates.height);
+    });
+
+    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', e => {
+      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
+      setKbHeight(0);
+    });
+
+    return () => {
+      keyboardShowListener.remove();
+      keyboardHideListener.remove();
+    };
+  }, []);
+
   const keyboardAvoidingViewBehavior = Platform.select({
     android: undefined,
     ios: 'padding',
@@ -115,7 +126,7 @@ export const KeyboardPageView = (
         behavior={keyboardAvoidingViewBehavior}
         keyboardVerticalOffset={headerHeight} // top inset height is included in headerHeight by React Navigation
         contentContainerStyle={styles.flexGrow1}
-        style={styles.flex1}>
+        style={React.useMemo(() => [styles.flex1, { paddingBottom: kbHeight }], [kbHeight])}>
         <InnerViewComponent
           style={styles.flex1}
           contentContainerStyle={styles.flexGrow1}

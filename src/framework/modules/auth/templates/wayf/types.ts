@@ -25,9 +25,7 @@ export interface WAYFScreenStoreProps {
 }
 
 export interface IWayfScreenProps
-  extends WAYFScreenDispatchProps,
-    WAYFScreenStoreProps,
-    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.wayf> {
+  extends WAYFScreenDispatchProps, WAYFScreenStoreProps, NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.wayf> {
   dispatch: ThunkDispatch<any, any, any>;
   loginCredentialsNavAction: StackNavigationAction;
 }

@@ -31,7 +31,7 @@ export const computeNavBar = ({
 
 export const navigationRef = createNavigationContainerRef<INavigationParams>();
 
-export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScreenPrivateProps) {
+export default function AuthAddAccountModalScreen() {
   const RootStack = getTypedRootStack();
   const authNavigation = useAuthNavigation();
   const routes = React.useMemo(() => authNavigation, [authNavigation]);

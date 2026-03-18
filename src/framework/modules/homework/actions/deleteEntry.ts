@@ -5,9 +5,8 @@
 import { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
 import homeworkConfig from '~/framework/modules/homework/module-config';
-import { signedFetch } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 import { asyncActionTypes } from '~/infra/redux/async';
 
 // ACTION LIST ------------------------------------------------------------------------------------
@@ -38,11 +37,9 @@ export function homeworkDeleteEntryError(errmsg: string) {
  */
 export function deleteHomeworkDiaryEntry(diaryId: string, entryId: string, date: Moment) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = assertSession();
-
     dispatch(homeworkDeleteEntryRequested());
     try {
-      await signedFetch(`${session?.platform.url}/homeworks/${diaryId}/entry/delete`, {
+      await sessionFetch(`/homeworks/${diaryId}/entry/delete`, {
         body: JSON.stringify({
           date: date?.format('YYYY-MM-DD'),
           entryid: entryId,

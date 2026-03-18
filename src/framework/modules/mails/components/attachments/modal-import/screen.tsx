@@ -32,7 +32,7 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 
 const headerTitleStyle = {
-  color: theme.palette.grey.darkness,
+  color: theme.palette.grey.darkness.toString(),
 };
 
 export const computeNavBar: AttachmentsImportScreenProps.NavBarConfig = ({ navigation, route }) => ({
@@ -43,7 +43,7 @@ export const computeNavBar: AttachmentsImportScreenProps.NavBarConfig = ({ navig
     title: I18n.get('import-title'),
   }),
   headerStyle: {
-    backgroundColor: theme.ui.background.page as string,
+    backgroundColor: theme.ui.background.page.toString(),
     borderBottomWidth: 0,
     elevation: 0,
     left: 0,
@@ -53,7 +53,7 @@ export const computeNavBar: AttachmentsImportScreenProps.NavBarConfig = ({ navig
     top: 0,
     zIndex: 100,
   },
-  ...headerTitleStyle,
+  headerTitleStyle,
 });
 
 const formatFile = (pic: ImagePicked | DocumentPicked) =>
@@ -248,16 +248,17 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
 
   React.useEffect(() => {
     if (validateImport) {
-      navigation.navigate(route.params.redirectTo.name, {
-        ...route.params.redirectTo.params,
-        importAttachmentsResult: filesRef.current
-          .filter(f => f.status === UploadAttachmentStatus.OK)
-          .map(f => ({
-            filename: f.localFile.filename,
-            id: f.id,
-            url: f.url,
-          })),
-      });
+      const result = filesRef.current
+        .filter(f => f.status === UploadAttachmentStatus.OK)
+        .map(f => ({
+          filename: f.localFile.filename,
+          id: f.id,
+          url: f.url,
+        }));
+
+      route.params.onImportAttachmentsResult?.(result);
+
+      navigation.goBack();
     }
   }, [validateImport, navigation, route]);
 

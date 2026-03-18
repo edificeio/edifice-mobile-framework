@@ -14,5 +14,4 @@ export interface AuthIntroductionScreenProps {
 export type AuthIntroductionScreenNavParams = undefined;
 
 export interface AuthIntroductionScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams>,
-    AuthIntroductionScreenProps {}
+  extends NativeStackScreenProps<AuthNavigationParams>, AuthIntroductionScreenProps {}

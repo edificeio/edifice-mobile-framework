@@ -48,7 +48,7 @@ export const mailsApi = {
     allowMultimediaUpload: true,
     remove: async (params: { draftId: string; attachmentId: string }) => {
       const api = `/conversation/message/${params.draftId}/attachment/${params.attachmentId}`;
-      await sessionFetch(api, { method: 'DELETE' });
+      await sessionFetch.json(api, { method: 'DELETE' });
     },
     supportViewAttachments: true,
   },
@@ -80,17 +80,12 @@ export const mailsApi = {
     },
     delete: async (params: { id: string }) => {
       const api = `/conversation/api/folders/${params.id}`;
-      await sessionFetch(api, { method: 'DELETE' });
+      await sessionFetch.json(api, { method: 'DELETE' });
     },
-    // move: async (params: { id: string }, payload: { parentId: string }) => {
-    //   const api = `/conversation/folder/${params.id}`;
-    //   const body = JSON.stringify({ parentId: payload.parentId });
-    //   await http.fetchJsonForSession('PUT', api, { body });
-    // },
     rename: async (params: { id: string }, payload: { name: string }) => {
       const api = `/conversation/folder/${params.id}`;
       const body = JSON.stringify({ name: payload.name });
-      await sessionFetch(api, { body, method: 'PUT' });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
   },
   folders: {
@@ -127,12 +122,12 @@ export const mailsApi = {
     moveToFolder: async (params: { folderId: string }, payload: { ids: string[] }) => {
       const api = `/conversation/move/userfolder/${params.folderId}`;
       const body = JSON.stringify({ id: payload.ids });
-      await sessionFetch(api, { body, method: 'PUT' });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
     moveToTrash: async (payload: { ids: string[] }) => {
       const api = '/conversation/trash';
       const body = JSON.stringify({ id: payload.ids });
-      await sessionFetch(api, { body, method: 'PUT' });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
     recall: async (params: { id: string }) => {
       const api = `/conversation/api/messages/${params.id}/recall`;
@@ -142,13 +137,13 @@ export const mailsApi = {
     removeFromFolder: async (params: { ids: string[] }) => {
       params.ids.forEach(async id => {
         const api = `/conversation/move/root?id=${id}`;
-        await sessionFetch(api, { method: 'PUT' });
+        await sessionFetch.json(api, { method: 'PUT' });
       });
     },
     restore: async (payload: { ids: string[] }) => {
       const api = '/conversation/restore';
       const body = JSON.stringify({ id: payload.ids });
-      await sessionFetch(api, { body, method: 'PUT' });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
     send: async (params: { draftId?: string; inReplyTo?: string }, payload: MailsConversationPayload) => {
       const { draftId, inReplyTo } = params;
@@ -164,10 +159,7 @@ export const mailsApi = {
       const api = queryString ? `${baseUrl}?${queryString}` : baseUrl;
 
       const bodyJson = JSON.stringify({ body, cc, cci, noReply, subject, to });
-      const response = await sessionFetch(api, { body: bodyJson, method: 'POST' });
-      const jsonRsponse = await response.json();
-
-      return jsonRsponse;
+      return sessionFetch.json(api, { body: bodyJson, method: 'POST' });
     },
     sendToDraft: async (params: { inReplyTo?: string }, payload: MailsConversationPayload) => {
       const api = `/conversation/draft${params.inReplyTo ? `?In-Reply-To=${params.inReplyTo}` : ''}`;
@@ -181,7 +173,7 @@ export const mailsApi = {
     toggleUnread: async (payload: { ids: string[]; unread: boolean }) => {
       const api = '/conversation/toggleUnread';
       const body = JSON.stringify({ id: payload.ids, unread: payload.unread });
-      await sessionFetch(api, { body, method: 'POST' });
+      await sessionFetch.json(api, { body, method: 'POST' });
     },
     updateDraft: async (params: { draftId: string }, payload: MailsConversationPayload) => {
       const api = `/conversation/draft/${params.draftId}`;
@@ -210,7 +202,7 @@ export const mailsApi = {
     update: async (payload: { signature: string; useSignature: boolean }) => {
       const api = '/userbook/preference/conversation';
       const body = JSON.stringify(payload);
-      await sessionFetch(api, { body, method: 'PUT' });
+      await sessionFetch.json(api, { body, method: 'PUT' });
     },
   },
   visibles: {

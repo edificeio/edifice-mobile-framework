@@ -32,7 +32,7 @@ export const MailsContactItem = (props: MailsContactItemProps) => {
         </View>
       );
     }
-    return <MailsRecipientAvatar size="sm" id={id} type={props.user.type} />;
+    return <MailsRecipientAvatar size="xsm" id={id} type={props.user.type} />;
   }, [displayName, id, props.user.type]);
 
   const renderAccountType = React.useCallback(() => {

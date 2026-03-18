@@ -92,7 +92,8 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
       await handleInitTimeline();
       navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
-        ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
+        ...(route.params.referrer ? { blogId: route.params.blog.id } : {}),
+        forceReload: true,
       });
       Toast.showSuccess(toastSuccessText);
     } catch (e: any) {

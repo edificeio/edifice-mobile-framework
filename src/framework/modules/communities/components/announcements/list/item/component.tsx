@@ -16,7 +16,7 @@ const PostHeader = ({ author, date }: Readonly<Pick<PostDetailsProps, 'author' |
 
   return (
     <View style={styles.container}>
-      <SingleAvatar userId={author.userId} size="md" />
+      <SingleAvatar userId={author.userId} size="sm" />
       <View style={styles.authorAndDate}>
         <SmallBoldText numberOfLines={1} style={UI_STYLES.flex1}>
           {author.username}

@@ -27,3 +27,5 @@ declare interface JSON {
   stringify<T>(value: T, replacer?: (this: any, key: string, value: any) => any, space?: string | number): JSONReturnType<T>;
   stringify<T>(value: T, replacer?: (number | string)[] | null, space?: string | number): JSONReturnType<T>;
 }
+
+type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[] ? ElementType : never;

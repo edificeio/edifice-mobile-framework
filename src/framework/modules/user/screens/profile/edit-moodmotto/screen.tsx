@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Alert, Image, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+// eslint-disable-next-line no-restricted-imports
+import { Alert, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -13,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { NavBarAction } from '~/framework/components/navigation';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { KeyboardPageView } from '~/framework/components/page';
 import { CaptionText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
@@ -41,9 +42,7 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
   const [motto, setMotto] = React.useState<string>();
   const [isSending, setIsSending] = React.useState<boolean>(false);
 
-  const PageComponent = React.useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
-  }, []);
+  const alertAlreadyShownRef = React.useRef(false);
 
   const scrollViewRef = React.useRef<ScrollView>(null);
 
@@ -51,7 +50,7 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
 
   const widthMood = React.useMemo(() => (UI_SIZES.screen.width - 2 * UI_SIZES.spacing.medium - 3 * UI_SIZES.spacing.small) / 4, []);
 
-  const onSaveMoodMotto = async () => {
+  const onSaveMoodMotto = React.useCallback(async () => {
     if (mood === route.params.mood && motto === route.params.motto) navigation.goBack();
     try {
       setIsSending(true);
@@ -71,15 +70,17 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
     } finally {
       setIsSending(false);
     }
-  };
+  }, [description, descriptionVisibility, hobbies, mood, motto, navigation, route.params.mood, route.params.motto, userId]);
 
   const onFocusMottoInput = () => {
+    if (alertAlreadyShownRef.current) return;
     Alert.alert(I18n.get('user-profile-editMoodMotto-alerttitle'), I18n.get('user-profile-editMoodMotto-alerttext'), [
       {
         onPress: () => setTimeout(() => scrollViewRef.current?.scrollToEnd(), 500),
         text: I18n.get('user-profile-editMoodMotto-alertbutton'),
       },
     ]);
+    alertAlreadyShownRef.current = true;
   };
 
   const renderMoodItem = moodValue => {
@@ -104,19 +105,19 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
     navigation.setOptions({
       headerRight: () => <NavBarAction icon="ui-check" onPress={onSaveMoodMotto} />,
     });
-  });
+  }, [navigation, onSaveMoodMotto]);
 
   React.useEffect(() => {
     setMood(route.params.mood);
     setMotto(route.params.motto);
-  }, []);
+  }, [route.params.mood, route.params.motto]);
 
   return (
-    <PageComponent style={styles.page}>
+    <KeyboardPageView style={styles.page}>
       <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false} bounces={false} style={styles.scrollview}>
         <InputContainer
           label={{ text: I18n.get('user-profile-mood') }}
-          input={<View style={styles.moods}>{moods.map(mood => renderMoodItem(mood))}</View>}
+          input={<View style={styles.moods}>{moods.map(item => renderMoodItem(item))}</View>}
         />
         <InputContainer
           label={{ text: I18n.get('user-profile-motto') }}
@@ -129,13 +130,13 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
               onChangeText={txt => setMotto(txt)}
               maxLength={75}
               onFocus={onFocusMottoInput}
-              annotation={`${motto ? motto.length : '0'}/75`}
-              annotationStyle={styles.annotationMotto}
+              // annotation={`${motto ? motto.length : '0'}/75`}
+              // annotationStyle={styles.annotationMotto}
             />
           }
         />
       </ScrollView>
-    </PageComponent>
+    </KeyboardPageView>
   );
 };
 

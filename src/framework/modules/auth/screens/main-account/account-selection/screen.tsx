@@ -21,7 +21,7 @@ import HandleAccountList from '~/framework/modules/auth/components/handle-accoun
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import {
   accountIsLoggable,
-  AuthLoggedAccount,
+  AuthActiveAccount,
   AuthSavedLoggedInAccount,
   AuthSavedLoggedInAccountWithCredentials,
   getOrderedAccounts,
@@ -73,7 +73,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   );
 
   const onItemPress = React.useCallback(
-    async (item: (typeof dataforList)[0], index: number) => {
+    async (item: (typeof dataforList)[0]) => {
       const redirect = (i: typeof item) => {
         const navAction = getNavActionForAccountLoad(i);
         if (!navAction) {
@@ -88,7 +88,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         try {
           setLoadingState(LoginState.RUNNING);
           const account = accounts[item.id];
-          await tryRestore(account as AuthSavedLoggedInAccount | AuthLoggedAccount);
+          await tryRestore(account as AuthSavedLoggedInAccount | AuthActiveAccount);
           setLoadingState(LoginState.DONE);
         } catch (e) {
           setLoadingState(LoginState.IDLE);
@@ -103,7 +103,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   );
 
   const onDeleteItem = React.useCallback(
-    async (item: (typeof data)[0], index: number) => {
+    async (item: (typeof data)[0]) => {
       try {
         trackingAccountEvents.deleteAccountFromManageAccounts();
         const account = accounts[item.user.id];

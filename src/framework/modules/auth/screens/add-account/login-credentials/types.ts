@@ -7,6 +7,7 @@ import {
 } from '~/framework/modules/auth/templates/login-credentials/types';
 
 export interface AuthLoginCredentialsScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, 'loginCredentials'>,
+  extends
+    NativeStackScreenProps<AuthNavigationParams, 'loginCredentials'>,
     LoginCredentialsScreenStoreProps,
     LoginCredentialsScreenDispatchProps {}

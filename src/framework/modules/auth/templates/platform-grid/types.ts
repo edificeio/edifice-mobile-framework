@@ -11,5 +11,4 @@ export interface AuthPlatformGridScreenProps {
 export type AuthPlatformGridScreenNavParams = undefined;
 
 export interface AuthPlatformGridScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationTemplatesParams, 'platforms'>,
-    AuthPlatformGridScreenProps {}
+  extends NativeStackScreenProps<AuthNavigationTemplatesParams, 'platforms'>, AuthPlatformGridScreenProps {}

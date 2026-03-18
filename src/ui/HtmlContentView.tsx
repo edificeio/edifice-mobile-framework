@@ -20,7 +20,7 @@ import { SmallItalicText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 
 export interface IHtmlContentViewProps extends ViewProps {
@@ -118,7 +118,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
         );
       if (loading) return;
 
-      const responseJson = await fetchJSONWithCache(source);
+      const responseJson = await sessionFetch.json(source);
       const responseHtml = getContentFromResource(responseJson);
 
       if (!responseHtml) {

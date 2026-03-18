@@ -29,7 +29,7 @@ import { DashboardAssessmentCard } from '~/framework/modules/viescolaire/compete
 import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
-import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
+import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service/adapters';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import {

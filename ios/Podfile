@@ -83,7 +83,8 @@ target 'appe' do
   #
   use_react_native!(
     :path => config[:reactNativePath],
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :hermes_enabled => true,
   )
 
   post_install do |installer|

@@ -14,7 +14,7 @@ import { ModalBox, ModalBoxHandle } from '~/framework/components/ModalBox';
 import { PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
-import { AccountType, getFlattenedChildren, ILoggedUser } from '~/framework/modules/auth/model';
+import { AccountType, AuthActiveUserInfo, AuthActiveUserInfoRelative, getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import { BarChart } from '~/framework/modules/widgets/screen-time/components/BarChart';
 import { UsageCard } from '~/framework/modules/widgets/screen-time/components/UsageCard';
@@ -22,7 +22,7 @@ import WeekPicker from '~/framework/modules/widgets/screen-time/components/WeekP
 import { ScreenTimeDayResponse, ScreenTimeWeekResponse } from '~/framework/modules/widgets/screen-time/model';
 import { ScreenTimeNavigationParams, screenTimeRouteNames } from '~/framework/modules/widgets/screen-time/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { signedFetch } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 import HtmlContentView from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
 
@@ -69,8 +69,8 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
   const isRelativeProfile = session?.user?.type === AccountType.Relative;
 
   const userChildren = React.useMemo(() => {
-    const user = session?.user as ILoggedUser | undefined;
-    return getFlattenedChildren(user?.children) ?? [];
+    const user = session?.user as AuthActiveUserInfoRelative | AuthActiveUserInfo | undefined;
+    return getFlattenedChildren((user as AuthActiveUserInfoRelative | undefined)?.children) ?? [];
   }, [session?.user]);
 
   const [selectedChildId, setSelectedChildId] = React.useState<string | null>(() => {
@@ -143,7 +143,7 @@ function ScreenTimeHomeScreen({ embedded = false, noScroll = false }: { embedded
       }
 
       try {
-        const response = await signedFetch(url);
+        const response = await sessionFetch(url);
 
         if (response.ok) {
           return isWeek ? ((await response.json()) as ScreenTimeWeekResponse) : ((await response.json()) as ScreenTimeDayResponse);

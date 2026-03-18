@@ -1,5 +1,5 @@
 import { IFolder } from '~/framework/modules/workspace/reducer';
-import { IEntcoreWorkspaceFolder } from '~/framework/modules/workspace/service';
+import { IEntcoreWorkspaceFolder } from '~/framework/modules/workspace/service/types';
 
 type IEntcoreWorkspaceFolderList = IEntcoreWorkspaceFolder[];
 

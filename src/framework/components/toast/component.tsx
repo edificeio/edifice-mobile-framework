@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Animated, Easing, LayoutChangeEvent } from 'react-native';
 
-import { useRoute } from '@react-navigation/native';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
@@ -13,7 +14,6 @@ import AlertCard, { AlertCardProps } from '~/framework/components/alert';
 import { toastConfigColor } from '~/framework/components/alert/model';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
-import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 
 // Config constants for Toasts
 
@@ -49,35 +49,51 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
         duration: duration - TOAST_PROGESS_ANIMATION_DELAY,
         easing: TOAST_PROGESS_ANIMATION_EASING,
         toValue: TOAST_PROGESS_ANIMATION_END_VALUE,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }),
     [duration, progressValue],
   );
-  const progressStyle = React.useMemo(() => {
-    return [
+
+  const translateX = React.useMemo(
+    () =>
+      progressValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [-progressWidth / 2, 0],
+      }),
+    [progressValue, progressWidth],
+  );
+
+  const progressStyle = React.useMemo(
+    () => [
       { backgroundColor: colorShades.light },
       styles.progress,
       {
-        transform: [{ translateX: -progressWidth / 2 }, { scaleX: progressValue }, { translateX: progressWidth / 2 }],
+        transform: [{ translateX }, { scaleX: progressValue }],
       },
-    ];
-  }, [colorShades.light, progressValue, progressWidth]);
+    ],
+    [colorShades.light, progressValue, translateX],
+  );
 
   const onPause = React.useCallback(() => {
-    progressAnimation.stop();
+    progressValue.stopAnimation();
     Toast.pause();
-    remainingTime.current = remainingTime.current - (Date.now() - progressTimeStart.current);
-  }, [progressAnimation]);
+
+    const elapsedTime = Date.now() - progressTimeStart.current;
+    remainingTime.current = Math.max(0, remainingTime.current - elapsedTime);
+  }, [progressValue]);
 
   const onResume = React.useCallback(() => {
+    if (remainingTime.current <= 0) return;
+
     progressTimeStart.current = Date.now();
-    const progressResumeAnimation = Animated.timing(progressValue, {
+
+    Animated.timing(progressValue, {
       duration: remainingTime.current,
       easing: TOAST_PROGESS_ANIMATION_EASING,
       toValue: TOAST_PROGESS_ANIMATION_END_VALUE,
-      useNativeDriver: false,
-    });
-    progressResumeAnimation.start();
+      useNativeDriver: true,
+    }).start();
+
     Toast.resume();
   }, [progressValue]);
 
@@ -89,6 +105,12 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
     progressTimeStart.current = Date.now();
     remainingTime.current = duration;
   }, [duration, progressAnimation]);
+
+  React.useEffect(() => {
+    return () => {
+      progressValue.stopAnimation();
+    };
+  }, [progressValue]);
 
   return { measureProgressLayout, onPause, onResume, onStart, progressStyle };
 }
@@ -151,22 +173,12 @@ const config: ToastConfig = {
 // Toast Containers
 //
 
-const defaultRootScreenOffset = UI_SIZES.elements.navbarHeight + (UI_SIZES.screen.topInset || UI_SIZES.elements.statusbarHeight);
-
-function useToastOffset(customOffset?: number) {
-  const route = useRoute();
-  if (customOffset) return customOffset;
-  const isModal = isModalModeOnThisRoute(route.name);
-  return isModal
-    ? DEFAULTS.offset // On modal screens, zero is below the navBar
-    : DEFAULTS.offset + defaultRootScreenOffset; // Anywhere else, zero is the very top of screen
+export function ToastContainer({ offset, ...props }: ToastProps) {
+  const navBarHeight = useHeaderHeight();
+  return <ToastMessage config={config} topOffset={offset ? DEFAULTS.offset + offset : navBarHeight + DEFAULTS.offset} {...props} />;
 }
 
-export function ToastHandler(props: ToastProps) {
-  const offset = useToastOffset(props.offset);
-  return <ToastMessage config={config} topOffset={offset} {...props} />;
-}
-
-export function RootToastHandler(props: ToastProps) {
-  return <ToastMessage config={config} topOffset={props.offset ?? DEFAULTS.offset + defaultRootScreenOffset} />; // For the global Toast, zero is the very top of screen
+export function RootToastContainer(props: ToastProps) {
+  const { top } = useSafeAreaInsets();
+  return <ToastMessage config={config} topOffset={DEFAULTS.offset + top + UI_SIZES.elements.navbarHeight} {...props} />;
 }

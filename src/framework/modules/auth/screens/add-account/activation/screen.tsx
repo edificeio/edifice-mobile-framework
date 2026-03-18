@@ -35,7 +35,7 @@ export default connect(
       validReactionTypes: getValidReactionTypes(),
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>, props: AuthActivationAddAccountScreenPrivateProps) => {
+  (dispatch: ThunkDispatch<any, any, any>) => {
     return bindActionCreators<ActivationScreenDispatchProps>(
       {
         trySubmit: tryAction(activateAccountActionAddAnotherAccount, {

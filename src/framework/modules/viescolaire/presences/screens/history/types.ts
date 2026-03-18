@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NavigationState, SceneRendererProps } from 'react-native-tab-view';
 
 import type { AccountType, AuthLoggedAccount, UserChild } from '~/framework/modules/auth/model';
 import type { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
@@ -46,3 +47,7 @@ export type PresencesHistoryScreenPrivateProps = PresencesHistoryScreenProps &
   PresencesHistoryScreenStoreProps &
   PresencesHistoryScreenDispatchProps &
   NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.history>;
+
+export type CallListTabItemProps = SceneRendererProps & {
+  navigationState: NavigationState<{ key: string; title: string; icon: string }>;
+};

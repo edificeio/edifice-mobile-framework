@@ -6,6 +6,7 @@ import { ActivationScreenDispatchProps } from '~/framework/modules/auth/template
 export interface AuthActivationAddAccountScreenProps {}
 
 export interface AuthActivationAddAccountScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountActivation>,
+  extends
+    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountActivation>,
     AuthActivationAddAccountScreenProps,
     ActivationScreenDispatchProps {}

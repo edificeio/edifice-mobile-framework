@@ -3,7 +3,7 @@ import moment from 'moment';
 import { AccountType } from '~/framework/modules/auth/model';
 import { HobbieItem, InfoPerson } from '~/framework/modules/user/model';
 import { hobbiesItems } from '~/framework/modules/user/screens/profile';
-import { fetchJSONWithCache, signedFetchJsonRelative } from '~/infra/fetchWithCache';
+import { sessionFetch } from '~/framework/util/transport';
 
 interface BackendInfoPerson {
   id: string;
@@ -76,11 +76,11 @@ export const userService = {
     editHealthVisibility: async (visibility: 'prive' | 'public') => {
       const api = `/userbook/api/edit-user-info-visibility?info=health&state=${visibility}`;
 
-      return fetchJSONWithCache(api);
+      return sessionFetch.json(api);
     },
     get: async (id?: string) => {
       const api = id ? `/userbook/api/person?id=${id}` : `/userbook/api/person`;
-      const backendPerson = (await fetchJSONWithCache(api)) as BackendPerson;
+      const backendPerson = await sessionFetch.json<BackendPerson>(api);
 
       const person = backendPerson.result.map(p => infoPersonAdapter(p));
       return person as InfoPerson[];
@@ -88,7 +88,7 @@ export const userService = {
     put: async (userId: string, body) => {
       const api = `/directory/userbook/${userId}`;
 
-      return signedFetchJsonRelative(`${api}`, {
+      return sessionFetch.json(api, {
         body,
         method: 'PUT',
       });

@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import { changePasswordActionAddAnotherAccount, manualLogoutAction } from '~/framework/modules/auth/actions';
+import { changePasswordActionAddAnotherAccount, logoutAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf } from '~/framework/modules/auth/reducer';
 import ChangePasswordScreen from '~/framework/modules/auth/templates/change-password';
@@ -38,7 +38,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>, props: AuthChangePasswordScreenOwnProps) => {
     return bindActionCreators<ChangePasswordScreenDispatchProps>(
       {
-        tryLogout: tryAction(manualLogoutAction),
+        tryLogout: tryAction(logoutAction),
         trySubmit: tryAction(
           changePasswordActionAddAnotherAccount,
           props.route.params.useResetCode ? { track: track.passwordRenew } : undefined,

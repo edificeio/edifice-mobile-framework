@@ -1,10 +1,13 @@
 import CookieManager from '@react-native-cookies/cookies';
 //import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
+import RNConfigReader from 'react-native-config-reader';
+import DeviceInfo from 'react-native-device-info';
 
+import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
-import { urlSigner } from '~/infra/oauth';
+import { sessionFetch } from '~/framework/util/transport';
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [Pick<IAnyModuleConfig, 'trackingName'>, string, string?, number?];
@@ -189,10 +192,30 @@ export abstract class AbstractTracker<OptionsType> {
 }
 
 export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
+  private static moduleAccessMap: Record<string, string> = {};
+
+  private static defaultPayload = {
+    appName: DeviceInfo.getBundleId(),
+    appVersion: `${DeviceInfo.getVersion()}-${RNConfigReader.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
+    deviceName: DeviceInfo.getModel(),
+    osName: DeviceInfo.getSystemName(),
+    osVersion: DeviceInfo.getSystemVersion(),
+  };
+
   errorCount: number = 0;
   lastModulename: string | undefined = undefined;
   reportQueue: Request[] = [];
   sending: boolean = false;
+
+  async _init(): Promise<void> {
+    AllModules()
+      .map(m => m.config)
+      .forEach(config => {
+        if (config?.entcoreTrackingName) {
+          ConcreteEntcoreTracker.moduleAccessMap[config.name] = config.entcoreTrackingName;
+        }
+      });
+  }
 
   async sendReportQueue() {
     if (this.sending) return; // Once at a time
@@ -200,12 +223,14 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     while (this.sending && this.reportQueue.length) {
       try {
         const req = this.reportQueue[0].clone();
-        const res = await fetch(urlSigner.signRequest(this.reportQueue[0]));
+        const res = await sessionFetch(this.reportQueue[0]);
+        const module = JSON.parse(await req.text())?.module;
         if (res.ok) {
           this.reportQueue.shift();
           this.errorCount = 0;
+          console.debug(`[EntcoreTracker] Report sent: ${module}`);
         } else {
-          throw new Error('    [EntcoreTracker] Report failed. ' + (await req?.text()));
+          throw new Error(`[EntcoreTracker] Report failed: ${module} with status ${res.status}`);
         }
       } catch {
         if (++this.errorCount >= 3) this.sending = false;
@@ -217,45 +242,23 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 
   async _trackView(path: string[]) {
-    const platform = getSession()?.platform;
+    const session = getSession();
+    const platform = session?.platform;
+    const moduleAccessMap = ConcreteEntcoreTracker.moduleAccessMap;
     const moduleName = (
       path[0] === 'timeline' ? (['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase()) ? path[2] : 'timeline') : path[0]
     ).toLowerCase();
-    const moduleAccessMap = {
-      blog: 'Blog',
-      communities: 'Communities',
-      competences: 'Competences',
-      diary: 'Diary',
-      edt: 'Edt',
-      form: 'Formulaire',
-      homework: 'Homeworks',
-      homeworkAssistance: 'HomeworkAssistance',
-      mails: 'Conversation',
-      mediacentre: 'Mediacentre',
-      messagerie: 'Conversation', // duplicates conversation because of a tracking keyword issue
-      nabook: 'Nabook',
-      news: 'Actualites',
-      presences: 'Presences',
-      schoolbook: 'SchoolBook',
-      scrapbook: 'Scrapbook',
-      support: 'Support',
-      user: 'MyAccount',
-      widgets: 'Widgets',
-      // viesco: 'Presences', // not used anymore
-      wiki: 'Wiki',
-      workspace: 'Workspace',
-      zimbra: 'Zimbra',
-    };
-    let willLog = false;
-    if (platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
+    const willLog = !!platform && this.lastModulename !== moduleName && Object.hasOwn(moduleAccessMap, moduleName);
+    if (willLog) {
+      const module = moduleAccessMap[moduleName];
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
-          body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
+          body: JSON.stringify({ ...ConcreteEntcoreTracker.defaultPayload, module, platformName: session?.platform?.displayName }),
           method: 'POST',
         }),
       );
+      console.debug(`[EntcoreTracker] Report queued: ${module}`);
       this.lastModulename = moduleName;
-      willLog = moduleAccessMap[moduleName];
     }
     this.sendReportQueue();
     return willLog;

@@ -1,8 +1,8 @@
 import { I18n } from '~/app/i18n';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { openUrl } from '~/framework/util/linking';
 
-const getRedirectUrl = (session: AuthLoggedAccount, connectorAddress: string, pageId?: string) => {
+const getRedirectUrl = (session: AuthActiveAccount, connectorAddress: string, pageId?: string) => {
   const getSlash = (link: string) => {
     const service = decodeURIComponent(link);
     return service.charAt(service.length - 1) === '/' ? '' : '%2F';
@@ -17,10 +17,10 @@ const getRedirectUrl = (session: AuthLoggedAccount, connectorAddress: string, pa
   return link;
 };
 
-export default async (session: AuthLoggedAccount, connectorAddress: string, pageId?: string, dryRun?: boolean) => {
+export default async (session: AuthActiveAccount, connectorAddress: string, pageId?: string, dryRun?: boolean) => {
   const finalUrl = getRedirectUrl(session, connectorAddress, pageId);
-  if (dryRun) return finalUrl ?? undefined;
-  openUrl(finalUrl ?? undefined, {
+  if (dryRun) return finalUrl;
+  openUrl(finalUrl, {
     error: I18n.get('pronote-redirect-error-message'),
     errorTitle: I18n.get('pronote-redirect-error-title'),
   });

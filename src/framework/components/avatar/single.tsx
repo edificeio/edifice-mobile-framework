@@ -1,4 +1,5 @@
 import * as React from 'react';
+// eslint-disable-next-line no-restricted-imports
 import { Image, ImageProps, StyleSheet, View } from 'react-native';
 
 import {
@@ -18,8 +19,10 @@ import theme from '~/app/theme';
 import styles, { AvatarSizes } from '~/framework/components/avatar/styles';
 import { UI_SIZES } from '~/framework/components/constants';
 import { AuthActiveAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
-import { urlSigner } from '~/infra/oauth';
+import { toURISource } from '~/framework/util/media';
+import { platformURISource } from '~/framework/util/transport';
 
 const useAvatarStyle = ({ border = true, size, style }: Pick<SingleAvatarProps, 'size' | 'style' | 'border'>) => {
   return React.useMemo(
@@ -51,11 +54,12 @@ const useAvatarStyle = ({ border = true, size, style }: Pick<SingleAvatarProps, 
 const fallbackSource: ImageProps['source'] = require('ASSETS/images/no-avatar.png');
 
 export const buildRelativeUserAvatarUrl = (id: string) => `/userbook/avatar/${id}?thumbnail=100x100`;
-export const buildAbsoluteUserAvatarUrl = (id: string) => urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id));
-export const buildAbsoluteUserAvatarUrlWithPlatform = (id: string, platform?: Platform) =>
-  platform ? urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id), platform) : undefined;
+export const buildAbsoluteUserAvatarUrlWithPlatform = (id: string, platform: Platform) =>
+  platformURISource(platform, toURISource(buildRelativeUserAvatarUrl(id))).uri;
 export const buildAvatarSourceForAccount = (account: AuthSavedAccount | AuthActiveAccount) => {
-  const uri = buildAbsoluteUserAvatarUrlWithPlatform(account.user.id, appConf.getExpandedPlatform(account.platform));
+  const platform = appConf.getExpandedPlatform(account.platform);
+  if (!platform) return undefined;
+  const uri = buildAbsoluteUserAvatarUrlWithPlatform(account.user.id, platform);
   return uri
     ? {
         uri,
@@ -78,7 +82,9 @@ const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): I
   if (error) return fallbackSource;
   try {
     if (isUserAvatar(props)) {
-      return { uri: buildAbsoluteUserAvatarUrl(props.userId), ...commonSourceAttributes };
+      const session = getSession();
+      if (!session) return fallbackSource;
+      return { uri: buildAbsoluteUserAvatarUrlWithPlatform(props.userId, session.platform), ...commonSourceAttributes };
     } else if (isSourceAvatar(props)) {
       const { source } = props;
       if (typeof source === 'number') {

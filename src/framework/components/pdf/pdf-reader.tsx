@@ -4,18 +4,17 @@ import { StyleSheet } from 'react-native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Pdf, { PdfProps } from 'react-native-pdf';
 
-import { PageView } from '../page';
-
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import http from '~/framework/util/http';
 import { openUrl } from '~/framework/util/linking';
+import { toURISource } from '~/framework/util/media';
+import { accountURISource } from '~/framework/util/transport';
 
 export interface PDFReaderState {
   error: boolean;
@@ -44,9 +43,7 @@ export class PDFReader extends React.PureComponent<
     error: false,
   };
 
-  handlePressLink(
-    uri: string | ((session: AuthLoggedAccount) => string | false | Promise<string | false | undefined> | undefined) | undefined,
-  ) {
+  handlePressLink(uri: string) {
     openUrl(uri);
   }
 
@@ -62,8 +59,8 @@ export class PDFReader extends React.PureComponent<
     const { src: uri } = this.props.route.params;
     const session = getSession();
     let source: Exclude<PdfProps['source'], number>;
-    if (session) {
-      source = http.sourceForAccount(session, { uri }) as Exclude<PdfProps['source'], number>;
+    if (session && uri) {
+      source = accountURISource(session, toURISource(uri));
     } else {
       source = { uri };
     }
