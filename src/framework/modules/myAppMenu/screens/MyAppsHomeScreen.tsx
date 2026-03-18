@@ -26,6 +26,7 @@ import {
 } from '~/framework/modules/myAppMenu/components';
 import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import Feedback from '~/framework/util/feedback/feedback';
 
 const getLang = I18n.get;
 
@@ -126,7 +127,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     ),
     [],
   );
-
+  const isFavoritesFilter = filter.type === 'favorites';
   const renderBottomSheetContent = React.useCallback(() => {
     switch (bottomSheetMode) {
       case 'home_menu':
@@ -141,19 +142,21 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
               label={getLang('myapp-bottomsheet-handle-favorites')}
             />
 
-            <View style={styles.separatorLine} />
-
-            <MyAppsMenuItem
-              isPressable={false}
-              leftElement={<Toggle checked={areAppsShowed} onChange={onToggleAllApps} />}
-              label={getLang('myapp-bottomsheet-render-all-favorites')}
-            />
-
-            <MyAppsMenuItem
-              isPressable={false}
-              leftElement={renderMenuIcon('ui-infoCircle')}
-              label={getLang('myapp-bottomsheet-info-message')}
-            />
+            {!isFavoritesFilter && (
+              <React.Fragment>
+                <View style={styles.separatorLine} />
+                <MyAppsMenuItem
+                  isPressable={false}
+                  leftElement={<Toggle checked={areAppsShowed} onChange={onToggleAllApps} />}
+                  label={getLang('myapp-bottomsheet-render-all-favorites')}
+                />
+                <MyAppsMenuItem
+                  isPressable={false}
+                  leftElement={renderMenuIcon('ui-infoCircle')}
+                  label={getLang('myapp-bottomsheet-info-message')}
+                />
+              </React.Fragment>
+            )}
           </React.Fragment>
         );
 
@@ -189,6 +192,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     areAppsShowed,
     bottomSheetMode,
     closeBottomSheet,
+    isFavoritesFilter,
     navigateToFavorites,
     onToggleAllApps,
     onToggleFavorite,
@@ -221,7 +225,10 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         isAllAppsFilter={isAllAppsTab}
         onPressApp={onPressApp}
         onRefresh={onRefresh}
-        onLongPressApp={(app: AppsInfoAggregated) => openBottomSheet('app_actions', app)}
+        onLongPressApp={(app: AppsInfoAggregated) => {
+          Feedback.tabPressed();
+          openBottomSheet('app_actions', app);
+        }}
         refreshing={refreshing}
       />
       <MyAppsOnboardingModal ref={modalRef} slides={slides} onComplete={completeOnboarding} />
