@@ -37,7 +37,7 @@ function useAppState() {
         const locales = RNLocalize.getLocales();
         const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
         I18n.setLanguage().then(lng => {
-          if (newLocale !== currentLocale) setCurrentLocale(lng);
+          if (newLocale !== currentLocale) setCurrentLocale(lng as I18n.SupportedLocales);
         });
       }
     },
