@@ -1,5 +1,5 @@
 /**
- * Device Trust
+ * Privilege Trust
  *
  * Ensure device is not jail-broken or rooted before launching the app.
  * Only production builds are affected.
@@ -8,18 +8,16 @@
 import React, { PropsWithChildren } from 'react';
 import { Alert, View } from 'react-native';
 
-import { exitApp } from '@logicwind/react-native-exit-app';
 import JailMonkey from 'jail-monkey';
 import DeviceInfo from 'react-native-device-info';
 
-import { I18n } from './i18n';
-
+import { I18n } from '~/app/i18n';
 import { Loading } from '~/ui/Loading';
 
-export const DeviceTrust = React.memo(function DeviceTrust({
+export const PrivilegeTrust = React.memo(function PrivilegeTrust({
   children,
-  onUntrusted = exitApp,
-}: PropsWithChildren<{ onUntrusted?: () => void }>) {
+  onUntrusted,
+}: PropsWithChildren<{ onUntrusted: () => void }>) {
   const [isTrustedDevice, setIsTrustedDevice] = React.useState<boolean | undefined>(undefined);
 
   React.useEffect(() => {
@@ -31,12 +29,12 @@ export const DeviceTrust = React.memo(function DeviceTrust({
 
       setIsTrustedDevice(trusted);
       if (trusted) {
-        console.debug(`[DeviceTrust] Trusted device`);
+        console.debug(`[PrivilegeTrust] Trusted device`);
       } else {
-        console.error(`[DeviceTrust] UNTRUSTED DEVICE`);
+        console.error(`[PrivilegeTrust] UNTRUSTED DEVICE`);
         Alert.alert(
-          I18n.get('device-untrusted-title'),
-          I18n.get('device-untrusted-description', { name: DeviceInfo.getApplicationName() }),
+          I18n.get('device-untrusted-privilege-title'),
+          I18n.get('device-untrusted-privilege-description', { name: DeviceInfo.getApplicationName() }),
           [{ isPreferred: true, onPress: onUntrusted, text: I18n.get('device-untrusted-action') }],
           {
             cancelable: false,
