@@ -102,11 +102,7 @@ export default function NabookHomeScreen(props: NabookHomeScreenPrivateProps) {
 
   if (!screen)
     return (
-      <PageView
-        gutters="both"
-        showNetworkBar={false}
-        statusBar="translucent-dark"
-        style={{ backgroundColor: NBK_COLORS.darkColor }}>
+      <PageView gutters="both" showNetworkBar={false} style={{ backgroundColor: NBK_COLORS.darkColor }}>
         <View style={styles.containerLoading}>
           <ActivityIndicator size="large" color={NBK_COLORS.white} />
         </View>
