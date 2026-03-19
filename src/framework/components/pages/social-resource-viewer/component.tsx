@@ -13,7 +13,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import styles from './styles';
-import { ITEM_COMMENT, type SocialResourceViewer, type SocialResourceViewerItemType } from './types';
+import {
+  CommentItem,
+  ITEM_COMMENT,
+  ITEM_RESPONSE,
+  ResponseItem,
+  type SocialResourceViewer,
+  type SocialResourceViewerItemType,
+} from './types';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
