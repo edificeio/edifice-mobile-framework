@@ -4,7 +4,6 @@ import { ImageURISource } from 'react-native';
 import ImageItem from './image-item/component';
 import PdfItem from './pdf-item/component';
 import PlayerItem from './player-item/component';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from './styles';
 import { CarouselItemProps } from './types';
 import UnknownItem from './unknown-item/component';
 import UnviewableItem from './unviewable-item/component';
@@ -12,6 +11,8 @@ import UnviewableItem from './unviewable-item/component';
 import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
 
 export const CarouselItem = ({
+  containerHeight,
+  containerWidth,
   currentIndex,
   hideNavBar,
   info,
@@ -38,8 +39,8 @@ export const CarouselItem = ({
   if (isImageContent(media)) {
     return (
       <ImageItem
-        containerHeight={SCREEN_HEIGHT}
-        containerWidth={SCREEN_WIDTH}
+        containerHeight={containerHeight}
+        containerWidth={containerWidth}
         hideNavBar={hideNavBar}
         showNavBar={showNavBar}
         isNavBarVisible={isNavBarVisible}

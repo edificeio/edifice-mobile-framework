@@ -7,6 +7,8 @@ import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigatio
 import { FileMedia } from '~/framework/util/media';
 
 export interface CarouselItemProps {
+  containerHeight: number;
+  containerWidth: number;
   currentIndex: number;
   hideNavBar: () => void;
   info?: CarouselRenderItemInfo<FileMedia>;

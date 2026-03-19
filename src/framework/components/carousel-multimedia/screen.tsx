@@ -231,6 +231,14 @@ const CarouselScreen = ({
     [insets.top, insets.bottom],
   );
 
+  const carouselDimensions = React.useMemo(
+    () => ({
+      height: (isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH) - insets.top - insets.bottom,
+      width: isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT,
+    }),
+    [isPortrait, insets.top, insets.bottom],
+  );
+
   React.useEffect(() => {
     if (isNavBarVisible) {
       navigation.setOptions({
@@ -272,8 +280,8 @@ const CarouselScreen = ({
       <OrientationLocker orientation={'UNLOCK'} onChange={onOrientationChange} />
       <View style={styles.carouselContainer}>
         <Carousel
-          height={isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH}
-          width={isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT}
+          height={carouselDimensions.height}
+          width={carouselDimensions.width}
           data={media}
           defaultIndex={startIndex}
           enabled={media.length > 1 && isCarouselSwipeEnabled}
@@ -287,6 +295,8 @@ const CarouselScreen = ({
 
             return (
               <CarouselItem
+                containerHeight={carouselDimensions.height}
+                containerWidth={carouselDimensions.width}
                 currentIndex={currentIndex}
                 hideNavBar={hideNavBar}
                 info={info}
