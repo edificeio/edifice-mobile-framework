@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import styles from './styles';
-import type { SocialResourceViewer } from './types';
+import { ITEM_COMMENT, type SocialResourceViewer, type SocialResourceViewerItemType } from './types';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
@@ -22,60 +22,18 @@ import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import { FlatListProps } from '~/framework/components/list/flat-list';
-import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
-import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { selectors } from '~/framework/modules/auth/reducer';
 
 /**
- * Note: FlashList v1 contains a bug that duplicates sticky elements. FflatList handles it correctly.
+ * Note: FlashList v1 contains a bug that duplicates sticky elements. FlatList handles it correctly.
  *  That causes to lose focus on input chen scroll past to sticky position.
  * @see https://github.com/Shopify/flash-list/issues/739
  *
  * ToDo: test if FlashListv2 fixes the bug. Until then, we use FlatList.
  */
-
-const truePromiseFn = async () => true;
-
-const ITEM_ADD_RESPONSE = Symbol('ITEM_ADD_RESPONSE');
-const ITEM_COMMENT = Symbol('ITEM_COMMENT');
-const ITEM_RESPONSE = Symbol('ITEM_RESPONSE');
-
-interface CommentItem {
-  type: typeof ITEM_COMMENT;
-  value: string;
-}
-
-interface ResponseItem {
-  type: typeof ITEM_RESPONSE;
-  value: string;
-}
-
-interface AddResponseItem {
-  type: typeof ITEM_ADD_RESPONSE;
-  value: string;
-  commentId: string;
-}
-
-const DEBUG_LIST_DATA: SocialResourceViewerItemType[] = [
-  { type: ITEM_COMMENT, value: '1' },
-  { type: ITEM_COMMENT, value: '2' },
-  { type: ITEM_COMMENT, value: '3' },
-  { type: ITEM_COMMENT, value: '4' },
-  { type: ITEM_COMMENT, value: '5' },
-  { type: ITEM_COMMENT, value: '6' },
-  { type: ITEM_COMMENT, value: '8' },
-  { type: ITEM_COMMENT, value: '9' },
-  { type: ITEM_COMMENT, value: '10' },
-  { type: ITEM_COMMENT, value: '11' },
-  { type: ITEM_COMMENT, value: '12' },
-  { type: ITEM_COMMENT, value: '13' },
-  { type: ITEM_COMMENT, value: '14' },
-];
-
-type SocialResourceViewerItemType = CommentItem | ResponseItem | AddResponseItem;
 
 export const NewCommentInputContext = React.createContext<{ height: number; value: string }>({ height: 0, value: '' });
 export const NewCommentInputDispatchContext = React.createContext<
@@ -83,44 +41,11 @@ export const NewCommentInputDispatchContext = React.createContext<
 >(_ => _);
 
 export function SocialResourceViewer({
-  canAddComment,
-  fetchResource,
-  renderPlaceholder,
-  renderResource,
-  style,
-}: SocialResourceViewer.Props) {
-  const loadContent = React.useCallback(async () => {
-    if (!fetchResource) return truePromiseFn();
-    return fetchResource();
-  }, [fetchResource]);
-
-  const data: SocialResourceViewerItemType[] = DEBUG_LIST_DATA;
-
-  const renderContent = React.useCallback<NonNullable<ContentLoaderProps['renderContent']>>(() => {
-    return <SocialResourceViewerLoaded renderResource={renderResource} data={data} canAddComment={canAddComment} />;
-  }, [canAddComment, data, renderResource]);
-
-  return (
-    <PageView style={React.useMemo(() => [styles.page, style], [style])}>
-      <ContentLoader
-        loadContent={loadContent}
-        renderLoading={renderPlaceholder}
-        renderContent={renderContent}
-        renderError={SocialResourceViewerError}
-      />
-    </PageView>
-  );
-}
-
-const SocialResourceViewerLoaded = ({
+  alwaysShowCommentField = false,
   canAddComment: _canAddComment,
-  data,
-  renderResource: _renderResource,
-}: {
-  data: any;
-  renderResource: any;
-  canAddComment: boolean;
-}) => {
+  children,
+  comments,
+}: SocialResourceViewer.Props) {
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
 
@@ -128,7 +53,7 @@ const SocialResourceViewerLoaded = ({
   const [newCommentInputState, newCommentInputDispatch] = React.useState({ height: 0, value: '' });
   const [isNewCommentFocused, setNewCommentIsFocused] = React.useState(false);
   const [jsKeyboardHeight, setJsKeyboardHeight] = React.useState(0);
-  const alwaysShowNewCommentForm = isNewCommentFocused || newCommentInputState.value.length > 0;
+  const alwaysShowNewCommentForm = alwaysShowCommentField || isNewCommentFocused || newCommentInputState.value.length > 0;
 
   const navBarHeight = useHeaderHeight();
   const renderScrollComponent = React.useCallback<
@@ -196,10 +121,10 @@ const SocialResourceViewerLoaded = ({
         }) => {
           setResourceHeight(height);
         }}>
-        {_renderResource()}
+        {children}
       </View>
     );
-  }, [_renderResource]);
+  }, [children]);
 
   const onFocus = React.useCallback(() => {
     setNewCommentIsFocused(true);
@@ -230,7 +155,7 @@ const SocialResourceViewerLoaded = ({
           keyboardDismissMode="interactive"
           onScroll={scrollHandler}
           renderScrollComponent={renderScrollComponent}
-          data={data}
+          data={comments}
           renderItem={SocialResourceViewerItem}
           ListHeaderComponent={renderResource}
           ListFooterComponent={<View style={{ height: newCommentInputState.height }} />}
@@ -242,7 +167,7 @@ const SocialResourceViewerLoaded = ({
       </NewCommentInputDispatchContext>
     </NewCommentInputContext>
   );
-};
+}
 
 export const SocialResourceViewerAddCommentForm = ({
   onBlur,
