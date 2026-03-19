@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { LayoutChangeEvent, View } from 'react-native';
 
+import { Temporal } from '@js-temporal/polyfill';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,19 +40,18 @@ import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modu
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 const DEBUG_LIST_DATA: SocialResourceViewerTypes.Props['comments'] = [
-  { type: ITEM_COMMENT, value: '1' },
-  { type: ITEM_COMMENT, value: '2' },
-  { type: ITEM_COMMENT, value: '3' },
-  { type: ITEM_COMMENT, value: '4' },
-  { type: ITEM_COMMENT, value: '5' },
-  { type: ITEM_COMMENT, value: '6' },
-  { type: ITEM_COMMENT, value: '8' },
-  { type: ITEM_COMMENT, value: '9' },
-  { type: ITEM_COMMENT, value: '10' },
-  { type: ITEM_COMMENT, value: '11' },
-  { type: ITEM_COMMENT, value: '12' },
-  { type: ITEM_COMMENT, value: '13' },
-  { type: ITEM_COMMENT, value: '14' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '1', type: ITEM_COMMENT, value: '1' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '2', type: ITEM_COMMENT, value: '2' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '3', type: ITEM_COMMENT, value: '3' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '4', type: ITEM_COMMENT, value: '4' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '5', type: ITEM_COMMENT, value: '5' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '6', type: ITEM_COMMENT, value: '6' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '7', type: ITEM_COMMENT, value: '7' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '8', type: ITEM_COMMENT, value: '8' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '9', type: ITEM_COMMENT, value: '9' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '10', type: ITEM_COMMENT, value: '10' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '11', type: ITEM_COMMENT, value: '11' },
+  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '12', type: ITEM_COMMENT, value: '12' },
 ];
 
 export const computeNavBar = ({
