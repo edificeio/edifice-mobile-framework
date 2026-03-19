@@ -103,7 +103,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       const res = await props.tryFetchDistributionResponses(distributionId);
       setResponses(res);
       if (content.elementsCount && status !== DistributionStatus.TO_DO) {
-        setPosition(content.elementsCount);
+        setPosition('summary');
         setPositionHistory(getPositionHistory(content.elements, res));
       }
       if (form.gdpr && !props.gdprDelegates.length) {
@@ -336,9 +336,18 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     );
   };
 
-  const renderElement = (item: IFormElement) => {
+  const renderElement = ({ item }: { item: IFormElement }) => {
     if (!('type' in item)) {
       const { description, title } = item;
+      if (position === 'summary') {
+        return (
+          <FormSectionCard title={title} description={description}>
+            {item.questions.map(q => (
+              <View key={q.id}>{renderElement({ item: q })}</View>
+            ))}
+          </FormSectionCard>
+        );
+      }
       return <FormSectionCard title={title} description={description} />;
     }
     let questionResponses = responses.filter(response => response.questionId === item.id);
@@ -424,7 +433,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
           removeClippedSubviews={false}
           data={listElements}
           keyExtractor={element => (getIsElementSection(element) ? 's' : 'q') + element.id.toString()}
-          renderItem={({ item }) => renderElement(item)}
+          renderItem={renderElement}
           ListHeaderComponent={renderHeader()}
           ListFooterComponent={renderPositionActions()}
           ListFooterComponentStyle={styles.listFooterContainer}

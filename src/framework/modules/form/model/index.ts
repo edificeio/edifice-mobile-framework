@@ -182,7 +182,6 @@ export const formatSummary = (elements: IFormElement[], responses: IQuestionResp
       if (questions.length) {
         formatted.push(element);
       }
-      formatted.push(...questions);
     } else if ('type' in element && getIsQuestionAnswered(element, responses)) {
       formatted.push(element);
     }
