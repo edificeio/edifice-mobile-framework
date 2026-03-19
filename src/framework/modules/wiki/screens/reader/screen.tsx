@@ -19,8 +19,12 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
 import { RichEditorViewerProps } from '~/framework/components/inputs/rich-text/viewer/types';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import { PageView } from '~/framework/components/page';
 import SocialResourceViewer from '~/framework/components/pages/social-resource-viewer';
+import {
+  ITEM_COMMENT,
+  type SocialResourceViewer as SocialResourceViewerTypes,
+} from '~/framework/components/pages/social-resource-viewer/types';
+import { ScreenView } from '~/framework/components/screen';
 import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import PageHeader from '~/framework/modules/wiki/components/page-header';
@@ -33,6 +37,22 @@ import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/n
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+const DEBUG_LIST_DATA: SocialResourceViewerTypes.Props['comments'] = [
+  { type: ITEM_COMMENT, value: '1' },
+  { type: ITEM_COMMENT, value: '2' },
+  { type: ITEM_COMMENT, value: '3' },
+  { type: ITEM_COMMENT, value: '4' },
+  { type: ITEM_COMMENT, value: '5' },
+  { type: ITEM_COMMENT, value: '6' },
+  { type: ITEM_COMMENT, value: '8' },
+  { type: ITEM_COMMENT, value: '9' },
+  { type: ITEM_COMMENT, value: '10' },
+  { type: ITEM_COMMENT, value: '11' },
+  { type: ITEM_COMMENT, value: '12' },
+  { type: ITEM_COMMENT, value: '13' },
+  { type: ITEM_COMMENT, value: '14' },
+];
 
 export const computeNavBar = ({
   navigation,
@@ -95,13 +115,11 @@ const WikiReaderContentPlaceholder = () => (
   </View>
 );
 const WikiReaderScreenPlaceholder = () => (
-  <PageView style={styles.page}>
-    <View style={styles.loader}>
-      <WikiReaderPageSelectPlaceholder />
-      <WikiReaderHeaderPlaceholder />
-      <WikiReaderContentPlaceholder />
-    </View>
-  </PageView>
+  <View style={styles.loader}>
+    <WikiReaderPageSelectPlaceholder />
+    <WikiReaderHeaderPlaceholder />
+    <WikiReaderContentPlaceholder />
+  </View>
 );
 
 const WikiReaderPlaceholderWithData = () => (
@@ -234,10 +252,6 @@ export function WikiReaderScreenLoaded({
   const onLoad = React.useCallback(() => {
     setLoaded(true);
   }, []);
-  const renderResource = React.useCallback(
-    () => <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />,
-    [onLoad, pageId, resourceId, switchToPage],
-  );
   const renderPlaceholder = React.useCallback(
     () => (
       <WikiPageNavigationWrapper onGoToPage={switchToPage} page={page} wiki={wiki}>
@@ -249,12 +263,11 @@ export function WikiReaderScreenLoaded({
   return (
     <>
       <SocialResourceViewer
-        style={styles.page}
         navigation={navigation}
-        renderPlaceholder={renderPlaceholder}
-        renderResource={renderResource}
         canAddComment={true} // ToDo: use resource rights here
-      />
+        comments={DEBUG_LIST_DATA}>
+        <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />
+      </SocialResourceViewer>
       {!loaded && <View style={styles.webViewPlaceholder}>{renderPlaceholder()}</View>}
     </>
   );
@@ -278,26 +291,19 @@ export default function WikiReaderScreen({
     navigation.setOptions({ title: newPageData.title });
   }, [resourceId, pageId, dispatch, navigation]);
 
-  const renderError = React.useCallback(
-    () => (
-      <PageView style={styles.page}>
-        <EmptyContentScreen />
-      </PageView>
-    ),
-    [],
-  );
-
   const renderContent = React.useCallback(
     () => <WikiReaderScreenLoaded navigation={navigation} route={route} {...props} />,
     [navigation, props, route],
   );
 
   return (
-    <ContentLoader
-      loadContent={loadContent}
-      renderLoading={WikiReaderScreenPlaceholder}
-      renderError={renderError}
-      renderContent={renderContent}
-    />
+    <ScreenView>
+      <ContentLoader
+        loadContent={loadContent}
+        renderLoading={WikiReaderScreenPlaceholder}
+        renderError={EmptyContentScreen}
+        renderContent={renderContent}
+      />
+    </ScreenView>
   );
 }
