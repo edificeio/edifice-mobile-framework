@@ -555,7 +555,7 @@
   "date-week-of": "Semaine du {{startDate}} au {{endDate}}\n{{month}} {{year}}",
   "date-yesterday": "hier",
   "device-untrusted-action": "Quitter",
-  "device-untrusted-privilege-description": "Cet appareil a subi des modifications logicielles. {{name}} va être fermé pour ne pas compromettre la sécurité vos données personelles.",
+  "device-untrusted-privilege-description": "Cet appareil a subi des modifications logicielles. {{name}} va être fermé pour ne pas compromettre la sécurité de vos données personelles.",
   "device-untrusted-privilege-title": "Appareil non-sécurisé",
   "device-untrusted-simulator-description": "{{name}} ne peut pas être lancé sur un simulateur.",
   "device-untrusted-simulator-title": "Simulateur détecté",
