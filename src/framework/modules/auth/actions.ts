@@ -104,7 +104,7 @@ export const loadAuthContextAction = (platform: Platform) => async (dispatch: Au
  * @returns
  */
 export const loadPlatformLegalUrlsAction = (platform: Platform) => async (dispatch: AuthDispatch) => {
-  const legalUrls = await authService.platformConfig.authI18n(platform, I18n.getLanguage());
+  const legalUrls = await authService.platformConfig.authI18n(platform);
   if (!legalUrls) return;
   dispatch(actions.loadPfLegalUrls(platform.name, legalUrls));
   return legalUrls;
@@ -783,7 +783,6 @@ function changePasswordAction(
         body: formdata,
         headers: {
           'Accept': 'application/json',
-          'Accept-Language': I18n.getLanguage(),
           'Content-Type': 'multipart/form-data',
         },
         method: 'post',
