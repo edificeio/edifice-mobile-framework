@@ -223,6 +223,83 @@ index ef51f8d..e24c1bf 100644
      </Control>
    );
  };
+diff --git a/node_modules/react-native-media-console/src/components/BottomControls.tsx b/node_modules/react-native-media-console/src/components/BottomControls.tsx
+index 86a949d..34e87b7 100644
+--- a/node_modules/react-native-media-console/src/components/BottomControls.tsx
++++ b/node_modules/react-native-media-console/src/components/BottomControls.tsx
+@@ -1,18 +1,21 @@
+-import React, {Dispatch, SetStateAction} from 'react';
++import React, { Dispatch, SetStateAction } from 'react';
+ import {
++  GestureResponderHandlers,
+   ImageBackground,
++  Platform,
+   SafeAreaView,
+   StyleSheet,
+-  GestureResponderHandlers,
++  View
+ } from 'react-native';
+-import {Timer} from './Timer';
+-import {Title} from './Title';
+-import {NullControl} from './NullControl';
+-import {Fullscreen} from './Fullscreen';
+-import {Seekbar} from './Seekbar';
+-import {calculateTime} from '../utils';
+-import type {VideoAnimations} from '../types';
+-import {styles} from './styles';
++import { useSafeAreaInsets } from 'react-native-safe-area-context';
++import type { VideoAnimations } from '../types';
++import { calculateTime } from '../utils';
++import { Fullscreen } from './Fullscreen';
++import { NullControl } from './NullControl';
++import { Seekbar } from './Seekbar';
++import { styles } from './styles';
++import { Timer } from './Timer';
++import { Title } from './Title';
+ 
+ interface BottomControlsProps {
+   showControls: boolean;
+@@ -60,6 +63,11 @@ export const BottomControls = ({
+   disableFullscreen,
+   toggleFullscreen,
+ }: BottomControlsProps) => {
++  const insets = useSafeAreaInsets();
++  const dynamicBottomPadding = Platform.select({
++          android: Math.max(insets.bottom, 30),
++          ios: Math.max(insets.bottom * 0.3, 4),
++        });
+   const timerControl = disableTimer ? (
+     <NullControl />
+   ) : (
+@@ -116,9 +124,9 @@ export const BottomControls = ({
+           <Title title={title} />
+           {fullscreenControl}
+         </SafeAreaView>
+-        <SafeAreaView style={styles.seekBarContainer}>
++        <View style={[styles.seekBarContainer, {paddingBottom: dynamicBottomPadding}]}>
+           {seekbarControl}
+-        </SafeAreaView>
++        </View>
+       </ImageBackground>
+     </AnimatedView>
+   );
+diff --git a/node_modules/react-native-media-console/src/components/styles.ts b/node_modules/react-native-media-console/src/components/styles.ts
+index 380b624..1823313 100644
+--- a/node_modules/react-native-media-console/src/components/styles.ts
++++ b/node_modules/react-native-media-console/src/components/styles.ts
+@@ -1,4 +1,4 @@
+-import {StyleSheet} from 'react-native';
++import { StyleSheet } from 'react-native';
+ 
+ export const styles = StyleSheet.create({
+   row: {
+@@ -26,5 +26,6 @@ export const styles = StyleSheet.create({
+   },
+   seekBarContainer: {
+     width: '100%',
++    paddingVertical: 8,
+   },
+ });
 diff --git a/node_modules/react-native-media-console/src/types.ts b/node_modules/react-native-media-console/src/types.ts
 index 87c401b..781dd10 100644
 --- a/node_modules/react-native-media-console/src/types.ts
