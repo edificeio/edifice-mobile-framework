@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.grey.cloudy,
     borderTopWidth: UI_SIZES.border.thin,
-    marginVertical: -1,
+    marginVertical: -UI_SIZES.border.thin,
   },
   svgLowerLine: {
     bottom: 0,
