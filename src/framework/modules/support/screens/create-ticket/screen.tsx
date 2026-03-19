@@ -14,6 +14,7 @@ import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps }
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import { Attachment } from '~/framework/components/attachment';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { cameraActionFm, documentActionFm, galleryActionFm } from '~/framework/components/menus/actions';
@@ -28,7 +29,6 @@ import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~
 import moduleConfig from '~/framework/modules/support/module-config';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
 import { getSupportWorkflowInformation } from '~/framework/modules/support/rights';
-import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import { tryActionLegacy } from '~/framework/util/redux/actions';

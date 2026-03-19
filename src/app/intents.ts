@@ -38,8 +38,7 @@ export type EntAppName =
   | 'timelinegenerator'
   | 'userbook'
   | 'wiki'
-  | 'workspace'
-  | 'zimbra';
+  | 'workspace';
 
 /**
  * Some apps have various names depending of the context :/

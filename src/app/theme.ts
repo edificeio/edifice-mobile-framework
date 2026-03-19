@@ -331,10 +331,6 @@ export const defaultTheme: ThemeInitializer = {
         accentColors: this.palette.complementary.orange,
         icon: { name: 'files', type: 'Svg' },
       },
-      'zimbra': {
-        accentColors: this.palette.complementary.yellow,
-        icon: { name: 'messages', type: 'Svg' },
-      },
     };
     (this as Partial<ITheme>).ui = {
       background: {
