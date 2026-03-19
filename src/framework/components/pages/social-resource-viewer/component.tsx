@@ -39,8 +39,6 @@ import { selectors } from '~/framework/modules/auth/reducer';
 
 const truePromiseFn = async () => true;
 
-const PAGE_SIZE = 20;
-
 const ITEM_ADD_RESPONSE = Symbol('ITEM_ADD_RESPONSE');
 const ITEM_COMMENT = Symbol('ITEM_COMMENT');
 const ITEM_RESPONSE = Symbol('ITEM_RESPONSE');
@@ -96,7 +94,6 @@ export function SocialResourceViewer({
     return fetchResource();
   }, [fetchResource]);
 
-  // const renderPlaceholderComment = React.useCallback(() => <View />, []);
   const data: SocialResourceViewerItemType[] = DEBUG_LIST_DATA;
 
   const renderContent = React.useCallback<NonNullable<ContentLoaderProps['renderContent']>>(() => {
@@ -234,8 +231,6 @@ const SocialResourceViewerLoaded = ({
           onScroll={scrollHandler}
           renderScrollComponent={renderScrollComponent}
           data={data}
-          // pageSize={PAGE_SIZE}
-          // renderPlaceholderItem={renderPlaceholderComment}
           renderItem={SocialResourceViewerItem}
           ListHeaderComponent={renderResource}
           ListFooterComponent={<View style={{ height: newCommentInputState.height }} />}
