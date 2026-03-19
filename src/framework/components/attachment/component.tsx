@@ -1,32 +1,34 @@
 import * as React from 'react';
-import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
+
+import styles from './styles';
+import { IAttachmentProps } from './types';
 
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Icon, Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { getFileIcon } from '~/framework/modules/zimbra/utils/fileIcon';
+import { mimeCompare } from '~/framework/util/media/mime';
 
-const styles = StyleSheet.create({
-  iconContainer: {
-    alignItems: 'center',
-    height: 42,
-    justifyContent: 'center',
-    width: 48,
-  },
-  mainContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-});
+const fileIconPatterns = [
+  { icon: 'picture', pattern: 'image/*' },
+  { icon: 'file-audio', pattern: 'audio/*' },
+  { icon: 'file-video-outline', pattern: 'video/*' },
+  { icon: 'pdf_files', pattern: 'application/pdf' },
+  { icon: 'file-document-outline', pattern: 'text/*' },
+];
 
-interface IAttachmentProps {
-  name?: string;
-  type?: string;
-  uploadSuccess?: boolean;
-  onRemove?: () => void;
-}
+const getFileIcon = (type?: string): string => {
+  if (!type) return 'file-document-outline';
+
+  for (const { icon, pattern } of fileIconPatterns) {
+    if (mimeCompare(type, pattern) === 0) {
+      return icon;
+    }
+  }
+
+  return 'file-document-outline';
+};
 
 export const Attachment = ({ name, onRemove, type, uploadSuccess = true }: IAttachmentProps) => {
   const iconName = getFileIcon(type);
