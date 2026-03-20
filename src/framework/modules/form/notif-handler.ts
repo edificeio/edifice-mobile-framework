@@ -90,7 +90,7 @@ const handleFormResponseNotificationAction: NotifHandlerThunkAction = notificati
 export default () =>
   registerNotifHandlers([
     {
-      'event-type': 'NEW_FORM_NOTIFICATION',
+      'event-type': ['NEW_FORM_NOTIFICATION', 'CLOSING_FORM_NOTIFICATION'],
       'notifHandlerAction': handleNewFormNotificationAction,
       'type': 'FORMULAIRE',
     },
