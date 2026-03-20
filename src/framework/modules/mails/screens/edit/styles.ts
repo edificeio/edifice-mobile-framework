@@ -10,9 +10,10 @@ export default StyleSheet.create({
     zIndex: -1,
   },
   bottomSheet: {
-    minHeight: 600,
+    // minHeight: 600,
   },
   editor: {
+    flexGrow: 1,
     minHeight: '20%',
     paddingHorizontal: UI_SIZES.spacing.medium,
     zIndex: -1,
