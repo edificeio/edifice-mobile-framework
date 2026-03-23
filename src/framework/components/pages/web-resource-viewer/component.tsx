@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StatusBar, View } from 'react-native';
 
-import CookieManager from '@react-native-cookies/cookies';
+import CookieManager from '@preeternal/react-native-cookie-manager';
 import { ParamListBase, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Orientation, {

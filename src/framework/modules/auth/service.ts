@@ -1,4 +1,4 @@
-import CookieManager from '@react-native-cookies/cookies';
+import CookieManager from '@preeternal/react-native-cookie-manager';
 import moment from 'moment';
 import { getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-phone-number-input';
 

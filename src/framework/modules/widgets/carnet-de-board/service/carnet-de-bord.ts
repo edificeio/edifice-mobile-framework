@@ -2,7 +2,7 @@
  * CarnetDeBord Service
  * Controls and interpret API of the feature of Pronote.
  */
-import CookieManager from '@react-native-cookies/cookies';
+import CookieManager from '@preeternal/react-native-cookie-manager';
 
 import { carnetDeBordAdapter } from './adapters';
 import redirect from './redirect';

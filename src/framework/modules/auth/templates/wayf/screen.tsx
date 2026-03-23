@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActivityIndicator, Platform, TouchableWithoutFeedback, View } from 'react-native';
 
-import CookieManager from '@react-native-cookies/cookies';
+import CookieManager from '@preeternal/react-native-cookie-manager';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';

@@ -4,7 +4,6 @@ import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native
 import { useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
-import ViewOverflow from 'react-native-view-overflow';
 import { ThunkDispatch } from 'redux-thunk';
 
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
@@ -130,14 +129,14 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     const { tasksByDay } = this.props;
     const dataInfo: DataType[] = tasksByDay
       ? tasksByDay.map(day => ({
-        data: day.tasks.map(task => ({
-          ...task,
-          date: day.date,
+          data: day.tasks.map(task => ({
+            ...task,
+            date: day.date,
+            type: 'day',
+          })),
+          title: day.date,
           type: 'day',
-        })),
-        title: day.date,
-        type: 'day',
-      }))
+        }))
       : [];
     return dataInfo;
   }
@@ -254,10 +253,10 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
 
       setTimeout(() => {
         const createdTaskDayIndex = this.getDisplayedPastHomework()?.findIndex(day =>
-          day.data.some(task => task.taskId === createdEntryId)
+          day.data.some(task => task.taskId === createdEntryId),
         );
         const createdTaskIndex = this.getDisplayedPastHomework()?.[createdTaskDayIndex]?.data?.findIndex(
-          task => task.taskId === createdEntryId
+          task => task.taskId === createdEntryId,
         );
         this.sectionListRef?.current?.scrollToLocation({
           itemIndex: createdTaskIndex,
@@ -290,7 +289,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     const noRemainingPastHomework = this.remainingPastHomework().length === 0;
     const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
     const labelText = I18n.get(
-      noRemainingPastHomework ? 'homework-tasklist-nomorepasthomework' : 'homework-tasklist-displaypastdays'
+      noRemainingPastHomework ? 'homework-tasklist-nomorepasthomework' : 'homework-tasklist-displaypastdays',
     );
     const icon = noRemainingPastHomework ? undefined : 'back';
     return this.hasPastHomeWork() ? (
@@ -313,7 +312,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
         ? 'homework-tasklist-emptyscreen-title'
         : this.canCreateEntry()
           ? 'homework-tasklist-emptyscreen-title-notasks'
-          : 'homework-tasklist-emptyscreen-title-notasks-nocreationrights'
+          : 'homework-tasklist-emptyscreen-title-notasks-nocreationrights',
     );
     const text = I18n.get(
       this.hasPastHomeWork()
@@ -322,7 +321,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
           : 'homework-tasklist-emptyscreen-text-nocreationrights'
         : this.canCreateEntry()
           ? 'homework-tasklist-emptyscreen-text-notasks'
-          : 'homework-tasklist-emptyscreen-text-notasks-nocreationrights'
+          : 'homework-tasklist-emptyscreen-text-notasks-nocreationrights',
     );
     const buttonText = this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined;
 
@@ -414,7 +413,6 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
           ref={this.sectionListRef}
           contentContainerStyle={stylesContentSectionList}
           sections={this.getDisplayedPastHomework() as DataType[]}
-          CellRendererComponent={ViewOverflow}
           stickySectionHeadersEnabled={false}
           renderSectionHeader={section => this.renderSectionHeader(section)}
           renderItem={item => this.renderItem(item)}
