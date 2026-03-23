@@ -13,7 +13,7 @@ export interface NewsDetailsScreenDataProps {
 export interface NewsDetailsScreenEventProps {
   handleGetNewsItem(infoId: number): Promise<NewsItemDetails>;
   handleGetNewsItemComments(newsItemId: number): Promise<NewsCommentItem[]>;
-  handleDeleteInfo(threadId: number, infoId: number): Promise<number | undefined>;
+  handleDeleteInfo(infoId: number): Promise<number | undefined>;
   handleDeleteComment(infoId: number, commentId: number): Promise<number | undefined>;
   handlePublishComment(infoId: number, comment: string): Promise<number | undefined>;
   handleEditComment(infoId: number, comment: string, commentId: number): Promise<number | undefined>;

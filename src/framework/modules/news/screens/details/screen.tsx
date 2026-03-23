@@ -110,7 +110,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
 
-  const commentFieldRefs: any[] = [];
+  const commentFieldRefs = useRef<Record<number, any>>({});
 
   const getComments = useCallback(
     async (newsInfo: NewsItem) => {
@@ -169,7 +169,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           text: I18n.get('common-cancel'),
         },
         {
-          onPress: () => handleDeleteInfo(news?.threadId, news?.id).then(() => navigation.goBack()),
+          onPress: () => handleDeleteInfo(news?.id).then(() => navigation.goBack()),
           style: 'destructive',
           text: I18n.get('common-delete'),
         },
@@ -298,7 +298,9 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     (comment: NewsCommentItem) => {
       return (
         <CommentField
-          ref={element => (commentFieldRefs[comment.id] = element)}
+          ref={element => {
+            commentFieldRefs.current[comment.id] = element;
+          }}
           index={comment.id}
           isPublishingComment={false}
           onPublishComment={(commentValue, commentId) => doEditComment(news, commentValue, commentId)}
@@ -307,7 +309,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           editCommentCallback={() => {
             const otherComments = comments?.filter(commentItem => commentItem.id !== comment.id);
             otherComments?.forEach(otherBlogPostComment => {
-              commentFieldRefs[otherBlogPostComment.id]?.setIsEditingFalse();
+              commentFieldRefs.current[otherBlogPostComment.id]?.setIsEditingFalse();
             });
             const commentIndex = comments?.findIndex(c => c.id === comment.id);
 
@@ -331,7 +333,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         />
       );
     },
-    [commentFieldRefs, comments, doDeleteComment, doEditComment, isThreadManager, news],
+    [comments, doDeleteComment, doEditComment, isThreadManager, news],
   );
 
   const renderPage = useCallback(() => {
@@ -454,8 +456,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   handleDeleteComment: async (infoId, commentId) => {
     return (await dispatch(deleteCommentNewsItemAction(infoId, commentId))) as unknown as number | undefined;
   },
-  handleDeleteInfo: async (threadId, infoId) => {
-    return (await dispatch(deleteNewsItemAction(threadId, infoId))) as unknown as number | undefined;
+  handleDeleteInfo: async infoId => {
+    return (await dispatch(deleteNewsItemAction(infoId))) as unknown as number | undefined;
   },
   handleEditComment: async (infoId: number, comment: string, commentId: number) => {
     return (await dispatch(editCommentNewsItemAction(infoId, comment, commentId))) as unknown as number | undefined;
