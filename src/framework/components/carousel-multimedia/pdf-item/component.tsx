@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 
 import Pdf from 'react-native-pdf';
 
@@ -11,7 +11,6 @@ import { PdfContext } from '~/framework/components/carousel-multimedia/screen';
 
 const MIN_PDF_SCALE = 1;
 const MAX_PDF_SCALE = 5;
-const isIos = Platform.OS === 'ios';
 const PDF_LOAD_TIMEOUT = 10000;
 
 const PdfItem = ({
@@ -81,9 +80,6 @@ const PdfItem = ({
     <View style={styles.flex1}>
       <Pdf
         key={resetComponent}
-        // mandatory on iOS to prevent gesture conflicts between pdf and carousel
-        enablePaging={false}
-        spacing={isIos ? 10 : undefined}
         minScale={MIN_PDF_SCALE}
         maxScale={MAX_PDF_SCALE}
         onError={onPdfError}
