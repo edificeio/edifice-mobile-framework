@@ -10,3 +10,67 @@ index 34da324..1635531 100644
 +    implementation 'io.legere:pdfiumandroid:1.0.34'
      implementation 'com.google.code.gson:gson:2.13.2'
  }
+diff --git a/node_modules/react-native-pdf/ios/RNPDFPdf/RNPDFPdfView.mm b/node_modules/react-native-pdf/ios/RNPDFPdf/RNPDFPdfView.mm
+index 15c9b05..880b21b 100644
+--- a/node_modules/react-native-pdf/ios/RNPDFPdf/RNPDFPdfView.mm
++++ b/node_modules/react-native-pdf/ios/RNPDFPdf/RNPDFPdfView.mm
+@@ -504,6 +504,29 @@ using namespace facebook::react;
+             }
+         }
+ 
++        // When displaying vertically without paging, disable horizontal scrolling on the internal UIScrollView
++        // so that horizontal pan gestures pass through to the parent (e.g. a carousel).
++        // Vertical scroll remains fully functional. Also triggered on spacing change to allow JS-side re-application.
++        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"horizontal"] || [changedProps containsObject:@"enablePaging"] || [changedProps containsObject:@"spacing"])) {
++            BOOL shouldBlockHorizontalScroll = !_horizontal && !_enablePaging;
++            for (UIView *subview in _pdfView.subviews) {
++                if ([subview isKindOfClass:[UIScrollView class]]) {
++                    UIScrollView *scrollView = (UIScrollView *)subview;
++                    if (shouldBlockHorizontalScroll) {
++                        scrollView.alwaysBounceHorizontal = NO;
++                        scrollView.alwaysBounceVertical = YES;
++                        scrollView.directionalLockEnabled = YES;
++                        // Force contentSize width = scrollView width to eliminate any horizontal scroll
++                        dispatch_async(dispatch_get_main_queue(), ^{
++                            CGSize contentSize = scrollView.contentSize;
++                            contentSize.width = scrollView.bounds.size.width;
++                            scrollView.contentSize = contentSize;
++                        });
++                    }
++                }
++            }
++        }
++
+         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enablePaging"] || [changedProps containsObject:@"horizontal"] || [changedProps containsObject:@"page"])) {
+ 
+             PDFPage *pdfPage = [_pdfDocument pageAtIndex:_page-1];
+@@ -706,6 +729,29 @@ using namespace facebook::react;
+             _scale = _pdfView.scaleFactor/_fixScaleFactor;
+             [self notifyOnChangeWithMessage:[[NSString alloc] initWithString:[NSString stringWithFormat:@"scaleChanged|%f", _scale]]];
+         }
++
++        // Toggle horizontal scroll lock based on zoom level
++        if (!_horizontal && !_enablePaging) {
++            BOOL isAtMinScale = (_pdfView.scaleFactor <= _pdfView.minScaleFactor * 1.01);
++            for (UIView *subview in _pdfView.subviews) {
++                if ([subview isKindOfClass:[UIScrollView class]]) {
++                    UIScrollView *scrollView = (UIScrollView *)subview;
++                    if (isAtMinScale) {
++                        // At min scale: lock horizontal scroll so carousel can swipe
++                        scrollView.alwaysBounceHorizontal = NO;
++                        scrollView.alwaysBounceVertical = YES;
++                        scrollView.directionalLockEnabled = YES;
++                        CGSize contentSize = scrollView.contentSize;
++                        contentSize.width = scrollView.bounds.size.width;
++                        scrollView.contentSize = contentSize;
++                    } else {
++                        // Zoomed in: allow horizontal scroll for panning
++                        scrollView.alwaysBounceHorizontal = YES;
++                        scrollView.directionalLockEnabled = NO;
++                    }
++                }
++            }
++        }
+     }
+ }
+ 

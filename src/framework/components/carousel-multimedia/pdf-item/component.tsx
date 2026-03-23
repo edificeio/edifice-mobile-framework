@@ -82,7 +82,8 @@ const PdfItem = ({
       <Pdf
         key={resetComponent}
         // mandatory on iOS to prevent gesture conflicts between pdf and carousel
-        enablePaging={isIos}
+        enablePaging={false}
+        spacing={isIos ? 10 : undefined}
         minScale={MIN_PDF_SCALE}
         maxScale={MAX_PDF_SCALE}
         onError={onPdfError}
