@@ -4,13 +4,12 @@
  */
 import type { ImageStyle, PlatformOSType } from 'react-native';
 
-import RNConfigReader from 'react-native-config-reader';
-
 import AppConfValues from '~/app/appconf';
 import { I18n } from '~/app/i18n';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AccountType } from '~/framework/modules/auth/model';
 import { WhoAreWellustrationType, WhoAreWeQuoteType } from '~/framework/modules/user/screens/who-are-we';
+import BuildConfig from '~/framework/util/build-config';
 
 // Platforms ======================================================================================
 
@@ -198,7 +197,7 @@ export class AppConf {
   }
 
   get isDevOrAlpha() {
-    return __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
+    return __DEV__ || BuildConfig.BundleVersionType.toLowerCase().startsWith('alpha');
   }
 
   get splashadsEnabled() {

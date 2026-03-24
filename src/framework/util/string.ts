@@ -1,7 +1,7 @@
-import RNConfigReader from 'react-native-config-reader';
 import unorm from 'unorm';
 
 import { I18n } from '~/app/i18n';
+import BuildConfig from '~/framework/util/build-config';
 
 /**
  * Check if string is empty (only contains spaces).
@@ -166,7 +166,7 @@ export function createUUID() {
   const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     // The bitwise AND (&) operator is wanted here
     // eslint-disable-next-line no-bitwise
-    const r = (dt + Math.random() * 16) % 16 | 0;
+    const r = ((dt + Math.random() * 16) % 16) | 0;
     dt = Math.floor(dt / 16);
     // The bitwise OR (|) operator is wanted here
     // eslint-disable-next-line no-bitwise
@@ -180,7 +180,7 @@ export function createUUID() {
  * @returns The override name
  */
 export function getOverrideName() {
-  return (RNConfigReader.BundleVersionOverride as string).split('/')[0];
+  return BuildConfig.BundleVersionOverride.split('/')[0];
 }
 
 /**

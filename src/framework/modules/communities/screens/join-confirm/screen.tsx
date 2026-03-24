@@ -3,9 +3,9 @@ import { Platform, ScrollView, View } from 'react-native';
 
 import { InvitationClient, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
-import { BlurView } from '@react-native-community/blur';
 import { Header } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { BlurView } from '@sbaiahmed1/react-native-blur';
 import { Edges, SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 

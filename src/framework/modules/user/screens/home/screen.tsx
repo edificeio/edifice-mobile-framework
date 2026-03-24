@@ -4,7 +4,6 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -57,6 +56,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+import BuildConfig from '~/framework/util/build-config';
 import { toURISource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
@@ -607,8 +607,8 @@ useVersionDetailsFeature.buildNumber = DeviceInfo.getBuildNumber();
 useVersionDetailsFeature.deviceModel = DeviceInfo.getModel();
 useVersionDetailsFeature.os = DeviceInfo.getSystemName();
 useVersionDetailsFeature.osVersion = DeviceInfo.getSystemVersion();
-useVersionDetailsFeature.versionType = RNConfigReader.BundleVersionType as string;
-useVersionDetailsFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
+useVersionDetailsFeature.versionType = BuildConfig.BundleVersionType;
+useVersionDetailsFeature.versionOverride = BuildConfig.BundleVersionOverride;
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
 
 /**

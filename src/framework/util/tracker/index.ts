@@ -1,11 +1,11 @@
 import CookieManager from '@preeternal/react-native-cookie-manager';
 //import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
-import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 
 import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/reducer';
+import BuildConfig from '~/framework/util/build-config';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';
 
@@ -196,7 +196,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
 
   private static defaultPayload = {
     appName: DeviceInfo.getBundleId(),
-    appVersion: `${DeviceInfo.getVersion()}-${RNConfigReader.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
+    appVersion: `${DeviceInfo.getVersion()}-${BuildConfig.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
     deviceName: DeviceInfo.getModel(),
     osName: DeviceInfo.getSystemName(),
     osVersion: DeviceInfo.getSystemVersion(),
