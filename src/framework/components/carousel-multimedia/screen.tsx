@@ -226,13 +226,22 @@ const CarouselScreen = ({
   });
 
   const containerStyle = React.useMemo(
-    () => [styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }],
-    [insets.top, insets.bottom],
+    () => [
+      styles.container,
+      {
+        height: isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH,
+        paddingBottom: isPortrait ? insets.bottom : 0,
+        paddingTop: isPortrait ? insets.top : 0,
+        width: isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT,
+      },
+    ],
+
+    [insets.bottom, insets.top, isPortrait],
   );
 
   const carouselDimensions = React.useMemo(
     () => ({
-      height: (isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH) - insets.top - insets.bottom,
+      height: isPortrait ? SCREEN_HEIGHT - insets.top - insets.bottom : SCREEN_WIDTH,
       width: isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT,
     }),
     [isPortrait, insets.top, insets.bottom],
@@ -277,41 +286,39 @@ const CarouselScreen = ({
     <PageView style={containerStyle} showNetworkBar={false} showToast={false}>
       <StatusBar type="dark" />
       <OrientationLocker orientation={'UNLOCK'} onChange={onOrientationChange} />
-      <View style={styles.carouselContainer}>
-        <Carousel
-          height={carouselDimensions.height}
-          width={carouselDimensions.width}
-          data={media}
-          defaultIndex={startIndex}
-          enabled={media.length > 1 && isCarouselSwipeEnabled}
-          loop={media.length > 2}
-          onConfigurePanGesture={configurePanGesture}
-          onProgressChange={paginationProgress}
-          onSnapToItem={onSnapToItem}
-          renderItem={(info: CarouselRenderItemInfo<FileMedia>) => {
-            const source = getSignedMediaSource(info.item);
-            const isInitialItem = info.index === startIndex;
+      <Carousel
+        height={carouselDimensions.height}
+        width={carouselDimensions.width}
+        data={media}
+        defaultIndex={startIndex}
+        enabled={media.length > 1 && isCarouselSwipeEnabled}
+        loop={media.length > 2}
+        onConfigurePanGesture={configurePanGesture}
+        onProgressChange={paginationProgress}
+        onSnapToItem={onSnapToItem}
+        renderItem={(info: CarouselRenderItemInfo<FileMedia>) => {
+          const source = getSignedMediaSource(info.item);
+          const isInitialItem = info.index === startIndex;
 
-            return (
-              <CarouselItem
-                containerHeight={carouselDimensions.height}
-                containerWidth={carouselDimensions.width}
-                currentIndex={currentIndex}
-                hideNavBar={hideNavBar}
-                info={info}
-                itemSource={source}
-                isCurrentMediaUnknown={isCurrentMediaUnknown}
-                isNavBarVisible={isNavBarVisible}
-                onInitialAVMediaLoad={isInitialItem ? onInitialAVMediaLoad : undefined}
-                setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
-                showNavBar={showNavBar}
-                toggleNavBarVisibility={toggleNavBarVisibility}
-              />
-            );
-          }}
-          ref={carouselRef}
-        />
-      </View>
+          return (
+            <CarouselItem
+              containerHeight={carouselDimensions.height}
+              containerWidth={carouselDimensions.width}
+              currentIndex={currentIndex}
+              hideNavBar={hideNavBar}
+              info={info}
+              itemSource={source}
+              isCurrentMediaUnknown={isCurrentMediaUnknown}
+              isNavBarVisible={isNavBarVisible}
+              onInitialAVMediaLoad={isInitialItem ? onInitialAVMediaLoad : undefined}
+              setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
+              showNavBar={showNavBar}
+              toggleNavBarVisibility={toggleNavBarVisibility}
+            />
+          );
+        }}
+        ref={carouselRef}
+      />
       {canShowPagination && (
         <View style={styles.paginationGradient}>
           <Animated.View style={paginationContainerAnimatedStyle}>

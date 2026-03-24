@@ -12,7 +12,6 @@ export const SCREEN_HEIGHT = UI_SIZES.screen.height;
 export const SCREEN_WIDTH = UI_SIZES.screen.width;
 
 const styles = StyleSheet.create({
-  carouselContainer: { flex: 1 },
   container: { backgroundColor: theme.palette.grey.darkness, flex: 1, flexDirection: 'column' },
   paginationActiveDot: {
     backgroundColor: theme.palette.grey.darkness as string,
