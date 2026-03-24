@@ -142,8 +142,15 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         setThread(route.params.thread);
         await getComments(route.params.news);
       } else if (notif) {
-        const infoId = newsUriCaptureFunction(notif.resource.uri);
-        await onRefresh(infoId);
+        // Priority to resource.idÒ, fallback to regex for retrocompatibility
+        const infoId = notif.resource?.id ?? newsUriCaptureFunction(notif.resource?.uri);
+        if (!infoId) {
+          console.error('[NewsDetailsScreen] No ID found in Notification', notif);
+          setLoadingState(AsyncPagedLoadingState.INIT_FAILED);
+          setShowPlaceholder(false);
+          return;
+        }
+        await onRefresh(Number(infoId));
       } else {
         setLoadingState(AsyncPagedLoadingState.INIT_FAILED);
         throw new Error();
@@ -169,7 +176,11 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           text: I18n.get('common-cancel'),
         },
         {
-          onPress: () => handleDeleteInfo(news?.id).then(() => navigation.goBack()),
+          onPress: () => {
+            if (news?.id !== undefined) {
+              handleDeleteInfo(news.id).then(() => navigation.goBack());
+            }
+          },
           style: 'destructive',
           text: I18n.get('common-delete'),
         },
@@ -273,7 +284,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
             />
           }
           customHeaderStyle={styles.detailsHeader}
-          footer={<CardFooter icon="ui-messageInfo" text={commentsString(comments?.length)} />}
+          footer={<CardFooter icon="ui-messageInfo" text={commentsString(comments?.length ?? 0)} />}
           style={styles.ressourceView}>
           <CaptionItalicText style={styles.detailsDate}>
             {moment(news.modified).isAfter(news.created)
@@ -294,6 +305,28 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     }
   }, [news, thread, comments]);
 
+  const handleEditComments = React.useCallback(
+    (comment: NewsCommentItem) => {
+      const otherComments = comments?.filter(commentItem => commentItem.id !== comment.id);
+      otherComments?.forEach(otherBlogPostComment => {
+        commentFieldRefs.current[otherBlogPostComment.id]?.setIsEditingFalse();
+      });
+      const commentIndex = comments?.findIndex(c => c.id === comment.id);
+
+      if (Platform.OS !== 'ios') {
+        setTimeout(() => {
+          flatListRef.current?.scrollToIndex({
+            index: commentIndex,
+            viewPosition: 1,
+          });
+        }, 100);
+      }
+
+      setIndexEditingComment(commentIndex);
+    },
+    [comments],
+  );
+
   const renderComment = useCallback(
     (comment: NewsCommentItem) => {
       return (
@@ -306,24 +339,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           onPublishComment={(commentValue, commentId) => doEditComment(news, commentValue, commentId)}
           onDeleteComment={commentId => doDeleteComment(commentId)}
           onChangeText={data => setInfoComment(() => ({ ...data }))}
-          editCommentCallback={() => {
-            const otherComments = comments?.filter(commentItem => commentItem.id !== comment.id);
-            otherComments?.forEach(otherBlogPostComment => {
-              commentFieldRefs.current[otherBlogPostComment.id]?.setIsEditingFalse();
-            });
-            const commentIndex = comments?.findIndex(c => c.id === comment.id);
-
-            if (Platform.OS !== 'ios') {
-              setTimeout(() => {
-                flatListRef.current?.scrollToIndex({
-                  index: commentIndex,
-                  viewPosition: 1,
-                });
-              }, 100);
-            }
-
-            setIndexEditingComment(commentIndex);
-          }}
+          editCommentCallback={() => handleEditComments(comment)}
           comment={comment.comment}
           commentId={comment.id}
           commentAuthorId={comment.owner}
@@ -333,37 +349,43 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         />
       );
     },
-    [comments, doDeleteComment, doEditComment, isThreadManager, news],
+    [doDeleteComment, doEditComment, handleEditComments, isThreadManager, news],
   );
+
+  const handleRefresh = React.useCallback(() => {
+    if (news?.id === undefined) return;
+    onRefresh(news.id);
+  }, [news, onRefresh]);
 
   const renderPage = useCallback(() => {
     if (
-      loadingState === (AsyncPagedLoadingState.INIT_FAILED || AsyncPagedLoadingState.REFRESH_FAILED) ||
+      loadingState === AsyncPagedLoadingState.INIT_FAILED ||
+      loadingState === AsyncPagedLoadingState.REFRESH_FAILED ||
       (news?.expirationDate && today().isAfter(news.expirationDate))
-    )
+    ) {
       return renderError();
+    }
+
     return (
       <>
         <ListComponent
           ref={flatListRef}
-          initialNumToRender={comments?.length}
+          initialNumToRender={comments ? comments.length : 0}
           keyboardShouldPersistTaps="handled"
           keyExtractor={(item: NewsCommentItem) => item.id.toString()}
           data={comments}
           ListHeaderComponent={renderNewsDetails}
           removeClippedSubviews={false}
-          renderItem={({ index, item }) => renderComment(item)}
-          onContentSizeChange={(width, height) => setListHeight(height)}
-          refreshControl={
-            <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => onRefresh(news?.id)} />
-          }
+          renderItem={({ item }) => renderComment(item)}
+          onContentSizeChange={(_width, height) => setListHeight(height)}
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={handleRefresh} />}
           scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
           {...Platform.select({ android: { stickyFooter: renderFooter() }, ios: {} })}
         />
         {Platform.select({ android: null, ios: renderFooter() })}
       </>
     );
-  }, [ListComponent, comments, loadingState, news, onRefresh, renderComment, renderError, renderFooter, renderNewsDetails]);
+  }, [ListComponent, comments, handleRefresh, loadingState, news, renderComment, renderError, renderFooter, renderNewsDetails]);
 
   useEffect(() => {
     if (hasPermissionDelete) {
@@ -395,7 +417,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      const keyboardSubscription = Keyboard.addListener('keyboardDidShow', event => {
+      const keyboardSubscription = Keyboard.addListener('keyboardDidShow', _event => {
         setTimeout(() => {
           if (indexEditingComment !== undefined && indexEditingComment > -1) {
             flatListRef.current?.scrollToIndex({
@@ -445,13 +467,13 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   );
 };
 
-const mapStateToProps: (s: IGlobalState) => NewsDetailsScreenDataProps = s => ({
+const mapStateToProps: (_s: IGlobalState) => NewsDetailsScreenDataProps = _s => ({
   session: getSession(),
 });
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => NewsDetailsScreenEventProps = (
   dispatch,
-  getState,
+  _getState,
 ) => ({
   handleDeleteComment: async (infoId, commentId) => {
     return (await dispatch(deleteCommentNewsItemAction(infoId, commentId))) as unknown as number | undefined;
