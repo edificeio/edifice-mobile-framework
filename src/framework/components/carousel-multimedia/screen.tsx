@@ -320,7 +320,7 @@ const CarouselScreen = ({
         ref={carouselRef}
       />
       {canShowPagination && (
-        <View style={styles.paginationGradient}>
+        <View style={styles.paginationGradient} pointerEvents="box-none">
           <Animated.View style={paginationContainerAnimatedStyle}>
             <PaginationBackground />
             <Animated.View style={paginationItemsAnimatedStyle}>
