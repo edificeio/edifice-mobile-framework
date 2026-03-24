@@ -85,7 +85,6 @@ const CarouselScreen = ({
   const pdfContextValue = React.useContext(PdfContext);
   const { onSave, onShare } = useCarouselFileHandler(media[currentIndex]);
   const insets = useSafeAreaInsets();
-
   const isCurrentMediaUnknown = React.useMemo(() => {
     return !media[currentIndex]?.src;
   }, [currentIndex, media]);
@@ -316,7 +315,7 @@ const CarouselScreen = ({
       {canShowPagination && (
         <View style={styles.paginationGradient}>
           <Animated.View style={paginationContainerAnimatedStyle}>
-            <PaginationBackground isPortrait={isPortrait} />
+            <PaginationBackground />
             <Animated.View style={paginationItemsAnimatedStyle}>
               <Pagination.Custom
                 containerStyle={styles.paginationContainer}
