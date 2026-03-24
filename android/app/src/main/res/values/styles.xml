@@ -4,7 +4,7 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
-    <style name="SplashScreenTheme" parent="SplashScreen_SplashTheme">
+    <style name="SplashScreenTheme">
         <item name="android:background">@drawable/launch_screen</item>
     </style>
     <!-- Zendesk Help Center -->

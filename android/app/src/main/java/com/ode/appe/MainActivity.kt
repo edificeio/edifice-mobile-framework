@@ -10,13 +10,15 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
-import org.devio.rn.splashscreen.SplashScreen
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
+import com.zoontek.rnbootsplash.RNBootSplash
 
 class MainActivity : ReactActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        SplashScreen.show(this, R.style.SplashScreenTheme, true)
+        supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
+        RNBootSplash.init(this, R.style.SplashScreenTheme) // ⬅️ initialize the splash screen
         super.onCreate(null)
     }
 
