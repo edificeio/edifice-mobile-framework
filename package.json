@@ -49,7 +49,7 @@
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.14.0",
     "@flyerhq/react-native-android-uri-path": "2.3.0",
-    "@gorhom/bottom-sheet": "5.0.6",
+    "@gorhom/bottom-sheet": "5.2.8",
     "@js-temporal/polyfill": "0.5.1",
     "@preeternal/react-native-cookie-manager": "6.3.1",
     "@react-native-async-storage/async-storage": "2.2.0",
