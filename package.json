@@ -44,6 +44,7 @@
     "ts-all": "tsc --noEmit"
   },
   "dependencies": {
+    "@bam.tech/react-native-image-resizer": "3.0.11",
     "@edifice.io/community-client-rest-rn": "1.3.2",
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.14.0",
@@ -130,9 +131,10 @@
     "react-native-localize": "3.6.1",
     "react-native-logs": "5.5.0",
     "react-native-media-console": "2.2.4",
-    "react-native-mmkv": "2.12.2",
+    "react-native-mmkv": "4.3.0",
     "react-native-modal": "13.0.2",
     "react-native-network-logger": "2.0.1",
+    "react-native-nitro-modules": "0.35.2",
     "react-native-orientation-locker": "1.7.0",
     "react-native-pager-view": "8.0.0",
     "react-native-pdf": "7.0.3",

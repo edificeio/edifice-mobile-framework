@@ -17,6 +17,6 @@ export const preferences = Storage.preferences<PronotePreferencesData>(moduleCon
   const oldData = oldDataStr ? (JSON.parse(oldDataStr) as string) : undefined;
   if (oldData) {
     this.set('carnet-de-bord.selected-user', oldData);
-    Storage.global.delete(oldStorageKey);
+    Storage.global.remove(oldStorageKey);
   }
 });

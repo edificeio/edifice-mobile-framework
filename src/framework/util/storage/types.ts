@@ -17,7 +17,7 @@ export type KeysWithValueNotOfType<T extends StorageTypeMap, U> = {
  */
 export interface IStorageBackend {
   contains(key: StorageKey): boolean;
-  delete(key: StorageKey): void;
+  remove(key: StorageKey): void;
   getBoolean(key: StorageKey): boolean | undefined;
   getNumber(key: StorageKey): number | undefined;
   getString(key: StorageKey): string | undefined;

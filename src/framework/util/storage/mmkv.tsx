@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 
 import { StorageHandler } from './handler';
 import type { IStorageBackend } from './types';
@@ -42,7 +42,7 @@ const migrateFromAsyncStorage = async (storage: IStorageBackend) => {
   }
 };
 
-export const mmkvInstance = new MMKV({
+export const mmkvInstance = createMMKV({
   encryptionKey: BuildConfig.CFBundleIdentifier,
   id: getOverrideName(),
 }) satisfies IStorageBackend;

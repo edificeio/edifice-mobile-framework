@@ -132,7 +132,7 @@ export const writeLogout = (account: AuthActiveAccount) => {
   // Remove token for loegged out account
   writeRemoveToken(account);
   // Remove account id in startup object
-  storage.delete('startup');
+  storage.remove('startup');
 };
 
 /**

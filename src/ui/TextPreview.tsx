@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { LayoutChangeEvent, View } from 'react-native';
 
-import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
+// import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -17,7 +17,7 @@ export interface ITextPreviewProps {
   expandMessage?: string;
   collapseMessage?: string;
   expansionTextStyle?: object;
-  additionalText?: JSX.Element;
+  additionalText?: React.ReactNode;
 }
 
 interface ITextPreviewState {
@@ -39,16 +39,16 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
   };
 
   public measureText = (numberOfLines: number | undefined) => async (evt: LayoutChangeEvent) => {
-    if (numberOfLines) {
-      const { textContent } = this.props;
-      const result: TSMeasureResult = await rnTextSize.measure({
-        ...TextFontStyle.Regular,
-        ...TextSizeStyle.Small,
-        text: textContent,
-        width: evt.nativeEvent.layout.width,
-      } as TSMeasureParams);
-      result.lineCount > numberOfLines && this.setState({ longText: true });
-    }
+    // if (numberOfLines) {
+    //   const { textContent } = this.props;
+    //   const result: TSMeasureResult = await rnTextSize.measure({
+    //     ...TextFontStyle.Regular,
+    //     ...TextSizeStyle.Small,
+    //     text: textContent,
+    //     width: evt.nativeEvent.layout.width,
+    //   } as TSMeasureParams);
+    //   result.lineCount > numberOfLines && this.setState({ longText: true });
+    // }
   };
 
   public showExpansionLabels() {

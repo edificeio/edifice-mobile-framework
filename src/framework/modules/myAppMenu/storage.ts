@@ -13,5 +13,5 @@ export const storage = Storage.create<MyAppsStorageData>(moduleConfig).setAppIni
   if (oldValue === 'true') {
     this.set('infobubble-ack', true);
   }
-  Storage.global.delete(oldStorageKey);
+  Storage.global.remove(oldStorageKey);
 });

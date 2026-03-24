@@ -48,7 +48,7 @@ export class Storage {
   static erasePreferences(id: keyof IAuthState['accounts']) {
     const keys = Storage.global.getAllKeys().filter(k => k.startsWith(`${Storage.PREFERENCES_PREFIX}${id}`));
     for (const key of keys) {
-      Storage.global.delete(key);
+      Storage.global.remove(key);
     }
   }
 
@@ -140,7 +140,7 @@ export const OldStorageFunctions = {
    */
   removeItem: async (key: string) => {
     try {
-      Storage.global.delete(key);
+      Storage.global.remove(key);
     } catch (error) {
       console.error(
         `[Storage] removeItemJson: failed to remove key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
@@ -158,7 +158,7 @@ export const OldStorageFunctions = {
   removeItems: async (keys: string[]) => {
     try {
       for (const key of keys) {
-        Storage.global.delete(key);
+        Storage.global.remove(key);
       }
     } catch (error) {
       console.error(

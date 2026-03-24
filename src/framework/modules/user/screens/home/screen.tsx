@@ -60,7 +60,7 @@ import BuildConfig from '~/framework/util/build-config';
 import { toURISource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
-import { useZendesk } from '~/framework/util/zendesk';
+// import { useZendesk } from '~/framework/util/zendesk';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 export const computeNavBar = ({
@@ -249,46 +249,46 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   // Zendesk stuff
   //
   const showHelpCenter = appConf.zendeskHelpCenterEnabled;
-  const zendesk = useZendesk();
+  // const zendesk = useZendesk();
 
-  const loadHealthCheck = React.useCallback(async () => {
-    try {
-      const healthCheckResult = await zendesk?.healthCheck();
-      console.debug('Zendesk health check: ', healthCheckResult);
-    } catch (error) {
-      Toast.showError(`Zendesk health check error: ${(error as Error).message}`);
-    }
-  }, [zendesk]);
+  // const loadHealthCheck = React.useCallback(async () => {
+  //   try {
+  //     const healthCheckResult = await zendesk?.healthCheck();
+  //     console.debug('Zendesk health check: ', healthCheckResult);
+  //   } catch (error) {
+  //     Toast.showError(`Zendesk health check error: ${(error as Error).message}`);
+  //   }
+  // }, [zendesk]);
 
-  React.useEffect(() => {
-    if (showHelpCenter)
-      try {
-        loadHealthCheck();
-        zendesk?.changeTheme(theme.palette.primary.regular as string);
-        zendesk?.setAnonymousIdentity({
-          email: 'mobile@edifice.io',
-          name: 'Edifice Mobile',
-        });
-        zendesk?.setHelpCenterLocaleOverride('fr');
-      } catch (error) {
-        Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // React.useEffect(() => {
+  //   if (showHelpCenter)
+  //     try {
+  //       loadHealthCheck();
+  //       zendesk?.changeTheme(theme.palette.primary.regular as string);
+  //       zendesk?.setAnonymousIdentity({
+  //         email: 'mobile@edifice.io',
+  //         name: 'Edifice Mobile',
+  //       });
+  //       zendesk?.setHelpCenterLocaleOverride('fr');
+  //     } catch (error) {
+  //       Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
+  //     }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
-  const openHelpCenter = React.useCallback(async () => {
-    if (showHelpCenter)
-      try {
-        await zendesk?.openHelpCenter({
-          groupIds: appConf.zendeskSections!,
-          groupType: 'section',
-          labels: [],
-          showContactOptions: false,
-        });
-      } catch (error) {
-        Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
-      }
-  }, [showHelpCenter, zendesk]);
+  // const openHelpCenter = React.useCallback(async () => {
+  //   if (showHelpCenter)
+  //     try {
+  //       await zendesk?.openHelpCenter({
+  //         groupIds: appConf.zendeskSections!,
+  //         groupType: 'section',
+  //         labels: [],
+  //         showContactOptions: false,
+  //       });
+  //     } catch (error) {
+  //       Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
+  //     }
+  // }, [showHelpCenter, zendesk]);
 
   //
   // Show User Home Screen
@@ -358,7 +358,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               <LineButton
                 title={I18n.get('user-help-title')}
                 onPress={() => {
-                  openHelpCenter();
+                  // openHelpCenter();
                 }}
                 icon="ui-question"
                 testID="account-help"
@@ -406,7 +406,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       session,
       navigation,
       editUserInformation,
-      openHelpCenter,
+      // openHelpCenter,
       splashads,
     ],
   );

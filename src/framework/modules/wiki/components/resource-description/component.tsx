@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, LayoutChangeEvent, PixelRatio, TouchableOpacity, useAnimatedValue, View, ViewProps } from 'react-native';
 
-import RNTextSize, { TSFontSpecs } from 'react-native-text-size';
+// import RNTextSize, { TSFontSpecs } from 'react-native-text-size';
 
 import { CARD_EXPANDED_MARGIN_BOTTOM, CARD_EXPANDED_MARGIN_TOP, CARD_UNEXPANDED_MARGIN_TOP, styles } from './styles';
 import { ExpandButtonProps, ResourceDescriptionProps } from './types';
@@ -17,7 +17,7 @@ const ANIMATION_CONFIG = UI_ANIMATIONS.size;
 const TEXT_FONT_SPECS = {
   fontFamily: TextFontStyle.Regular.fontFamily,
   fontStyle: TextFontStyle.Regular.fontStyle,
-  fontWeight: TextFontStyle.Regular.fontWeight as TSFontSpecs['fontWeight'],
+  fontWeight: TextFontStyle.Regular.fontWeight,
   ...TextSizeStyle.Medium,
 };
 
@@ -111,70 +111,70 @@ const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
   }, [content, expanded, truncatedContent]);
 
   // beofre rendering, we set the size of all the elements involved in animation
-  React.useLayoutEffect(() => {
-    (async () => {
-      const measuredFontProperties = await RNTextSize.fontFromSpecs({
-        ...TEXT_FONT_SPECS,
-      });
-      const measuredLineHeightBase = measuredFontProperties.lineHeight + measuredFontProperties.leading;
-      const lineHeightRatio = TextSizeStyle.Medium.lineHeight / measuredLineHeightBase;
+  // React.useLayoutEffect(() => {
+  //   (async () => {
+  //     const measuredFontProperties = await RNTextSize.fontFromSpecs({
+  //       ...TEXT_FONT_SPECS,
+  //     });
+  //     const measuredLineHeightBase = measuredFontProperties.lineHeight + measuredFontProperties.leading;
+  //     const lineHeightRatio = TextSizeStyle.Medium.lineHeight / measuredLineHeightBase;
 
-      const measuredContent = await RNTextSize.measure({
-        ...TEXT_FONT_SPECS,
-        allowFontScaling: true,
-        lineInfoForLine: 0,
-        text: content,
-        usePreciseWidth: true,
-        width: textWidth,
-      });
-      const measuredLineHeight = (measuredContent.lineInfo?.bottom ?? 0) * lineHeightRatio;
-      setCollapsedCardHeight(() => {
-        const value = measuredLineHeight * Math.min(minNumberOfLines, measuredContent.lineCount);
-        animatedHeight.setValue(value);
-        return value;
-      });
-      setExpandedCardHeight(measuredContent.height * lineHeightRatio);
-      setLastLineWidth(measuredContent.lastLineWidth!);
-      setLineCount(measuredContent.lineCount);
+  //     const measuredContent = await RNTextSize.measure({
+  //       ...TEXT_FONT_SPECS,
+  //       allowFontScaling: true,
+  //       lineInfoForLine: 0,
+  //       text: content,
+  //       usePreciseWidth: true,
+  //       width: textWidth,
+  //     });
+  //     const measuredLineHeight = (measuredContent.lineInfo?.bottom ?? 0) * lineHeightRatio;
+  //     setCollapsedCardHeight(() => {
+  //       const value = measuredLineHeight * Math.min(minNumberOfLines, measuredContent.lineCount);
+  //       animatedHeight.setValue(value);
+  //       return value;
+  //     });
+  //     setExpandedCardHeight(measuredContent.height * lineHeightRatio);
+  //     setLastLineWidth(measuredContent.lastLineWidth!);
+  //     setLineCount(measuredContent.lineCount);
 
-      const measuredSeeMore = await RNTextSize.measure({
-        ...TEXT_FONT_SPECS,
-        allowFontScaling: true,
-        text: I18n.get('text-ellipsis') + I18n.get('textpreview-seemore'),
-        usePreciseWidth: true,
-      });
-      const expandButtonTextSpacing = styles.expandButtonText.marginHorizontal * 2;
-      setExpandButtonWidth(measuredSeeMore.width + expandButtonTextSpacing + UI_SIZES.elements.icon.xsmall);
-    })();
-  }, [content, minNumberOfLines, textWidth, pixelRatio, animatedHeight]);
+  //     const measuredSeeMore = await RNTextSize.measure({
+  //       ...TEXT_FONT_SPECS,
+  //       allowFontScaling: true,
+  //       text: I18n.get('text-ellipsis') + I18n.get('textpreview-seemore'),
+  //       usePreciseWidth: true,
+  //     });
+  //     const expandButtonTextSpacing = styles.expandButtonText.marginHorizontal * 2;
+  //     setExpandButtonWidth(measuredSeeMore.width + expandButtonTextSpacing + UI_SIZES.elements.icon.xsmall);
+  //   })();
+  // }, [content, minNumberOfLines, textWidth, pixelRatio, animatedHeight]);
 
   // if the text is longer than the available space we truncate it after ensuring we will have enough width on the last line to display the ellipsis and the see-more button
-  React.useLayoutEffect(() => {
-    (async () => {
-      if (isExpendable === undefined) return undefined;
-      if (isExpendable === false) return content;
-      let currentLineCount = lineCount;
-      let currentLastLineWidth = lastLineWidth;
-      let currentText = content;
-      while (
-        (currentLineCount && currentLineCount > minNumberOfLines) ||
-        (currentLastLineWidth && expandButtonWidth && currentLastLineWidth > textWidth - expandButtonWidth)
-      ) {
-        const lastSpaceIndex = content.lastIndexOf(' ', currentText.length - 1);
-        currentText = content.slice(0, lastSpaceIndex);
-        const currentMeasuredContent = await RNTextSize.measure({
-          ...TEXT_FONT_SPECS,
-          allowFontScaling: true,
-          text: currentText,
-          usePreciseWidth: true,
-          width: textWidth,
-        });
-        currentLineCount = currentMeasuredContent.lineCount;
-        currentLastLineWidth = currentMeasuredContent.lastLineWidth;
-      }
-      setTruncatedContent(currentText + I18n.get('text-ellipsis'));
-    })();
-  }, [content, isExpendable, lastLineWidth, lineCount, minNumberOfLines, expandButtonWidth, textWidth]);
+  // React.useLayoutEffect(() => {
+  //   (async () => {
+  //     if (isExpendable === undefined) return undefined;
+  //     if (isExpendable === false) return content;
+  //     let currentLineCount = lineCount;
+  //     let currentLastLineWidth = lastLineWidth;
+  //     let currentText = content;
+  //     while (
+  //       (currentLineCount && currentLineCount > minNumberOfLines) ||
+  //       (currentLastLineWidth && expandButtonWidth && currentLastLineWidth > textWidth - expandButtonWidth)
+  //     ) {
+  //       const lastSpaceIndex = content.lastIndexOf(' ', currentText.length - 1);
+  //       currentText = content.slice(0, lastSpaceIndex);
+  //       const currentMeasuredContent = await RNTextSize.measure({
+  //         ...TEXT_FONT_SPECS,
+  //         allowFontScaling: true,
+  //         text: currentText,
+  //         usePreciseWidth: true,
+  //         width: textWidth,
+  //       });
+  //       currentLineCount = currentMeasuredContent.lineCount;
+  //       currentLastLineWidth = currentMeasuredContent.lastLineWidth;
+  //     }
+  //     setTruncatedContent(currentText + I18n.get('text-ellipsis'));
+  //   })();
+  // }, [content, isExpendable, lastLineWidth, lineCount, minNumberOfLines, expandButtonWidth, textWidth]);
 
   const animateCard = React.useCallback(
     (isExpanding: ResourceDescriptionProps['expanded']) => {

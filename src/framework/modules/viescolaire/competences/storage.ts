@@ -15,5 +15,5 @@ export const storage = Storage.create<CompetencesStorageData>(moduleConfig).setA
   if (oldValue === 'true') {
     this.set('show-average-colors', true);
   }
-  Storage.global.delete(oldStorageKey);
+  Storage.global.remove(oldStorageKey);
 });

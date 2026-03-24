@@ -20,7 +20,7 @@ import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
-import { ZendeskProvider } from '~/framework/util/zendesk';
+// import { ZendeskProvider } from '~/framework/util/zendesk';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
 function useAppState() {
@@ -97,7 +97,8 @@ function App(props: AppProps) {
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
-  return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
+  // return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
+  return <>{content}</>;
 }
 
 loadModules();

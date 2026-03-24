@@ -32,6 +32,6 @@ export const preferences = Storage.preferences<TimelinePreferencesData>(moduleCo
   }
 
   for (const version in oldKeys) {
-    Storage.global.delete(oldKeys[version]);
+    Storage.global.remove(oldKeys[version]);
   }
 });

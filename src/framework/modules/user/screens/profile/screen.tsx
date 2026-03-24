@@ -3,7 +3,7 @@ import { Linking, Platform, TouchableOpacity, View } from 'react-native';
 
 import Clipboard from '@react-native-clipboard/clipboard';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import BottomSheet from 'react-native-bottomsheet';
+// import BottomSheet from 'react-native-bottomsheet';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -86,19 +86,19 @@ const renderTextIcon = ({
 
 const showBottomMenu = (actions: MenuAction[]) => {
   actions.push({ action: () => {}, title: I18n.get('common-cancel') });
-  BottomSheet.showBottomSheetWithOptions(
-    {
-      cancelButtonIndex: actions.length - 1,
-      options: [
-        ...actions.map(action => {
-          return action.title;
-        }),
-      ],
-    },
-    index => {
-      actions[index].action();
-    },
-  );
+  // BottomSheet.showBottomSheetWithOptions(
+  //   {
+  //     cancelButtonIndex: actions.length - 1,
+  //     options: [
+  //       ...actions.map(action => {
+  //         return action.title;
+  //       }),
+  //     ],
+  //   },
+  //   index => {
+  //     actions[index].action();
+  //   },
+  // );
 };
 
 const callPhoneNumber = tel => {

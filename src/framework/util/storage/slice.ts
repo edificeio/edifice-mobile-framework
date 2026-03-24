@@ -56,16 +56,16 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
    * @param key
    * @returns
    */
-  delete(key: StorageStringKeys<StorageTypes>): void {
-    return this.storage instanceof StorageSlice ? this.storage.#delete(this.computeKey(key)) : this.#delete(this.computeKey(key));
+  remove(key: StorageStringKeys<StorageTypes>): void {
+    return this.storage instanceof StorageSlice ? this.storage.#remove(this.computeKey(key)) : this.#remove(this.computeKey(key));
   }
 
-  #delete(key: StorageKey) {
+  #remove(key: StorageKey) {
     if (this.storage instanceof StorageSlice) {
-      return this.storage.#delete(key);
+      return this.storage.#remove(key);
     } else {
-      console.debug(`[Storage] ${this.name || this.constructor.name}#delete`, key);
-      return (this.storage as IStorageBackend).delete(key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#remove`, key);
+      return (this.storage as IStorageBackend).remove(key);
     }
   }
 
