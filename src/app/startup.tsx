@@ -1,7 +1,7 @@
 import React from 'react';
 
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
-import SplashScreen from 'react-native-splash-screen';
+import BootSplash from 'react-native-bootsplash';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -48,7 +48,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
        * sometimes freezing/crasshing the app (android.view.WindowLeaked: Activity com.ode.appe.MainActivity has leaked window...).
        */
 
-      SplashScreen.hide();
+      BootSplash.hide({ fade: true });
       inAppMessaging().setMessagesDisplaySuppressed(false).finally();
     }
   });

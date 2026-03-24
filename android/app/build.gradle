@@ -151,8 +151,8 @@ dependencies {
     implementation('org.jetbrains:annotations:26.0.2-1')
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     // Zendesk
-    implementation("com.zendesk:answerbot:3.2.0")
-    implementation("com.zendesk:chat:3.7.0")
-    implementation("com.zendesk:messaging:5.7.0")
-    implementation("com.zendesk:support:5.5.0")
+    // implementation("com.zendesk:answerbot:3.2.0")
+    // implementation("com.zendesk:chat:3.7.0")
+    // implementation("com.zendesk:messaging:5.7.0")
+    // implementation("com.zendesk:support:5.5.0")
 }

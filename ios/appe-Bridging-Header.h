@@ -13,7 +13,4 @@
 // Orientation
 #import "Orientation.h"
 
-// Splash Screen
-#import "RNSplashScreen.h"
-
 #endif /* appe_Bridging_Header_h */

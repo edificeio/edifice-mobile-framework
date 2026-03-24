@@ -6,6 +6,8 @@
 	<string>dev/default</string>
 	<key>BundleVersionType</key>
 	<string>rc.4</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr_FR</string>
 	<key>CFBundleDisplayName</key>
