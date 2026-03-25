@@ -40,10 +40,9 @@ export const getNewsItemAction = (infoId: number) => async (dispatch: ThunkDispa
 /**
  * Delete info by id
  */
-export const deleteNewsItemAction =
-  (threadId: number, infoId: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    return newsService.info.delete(threadId, infoId);
-  };
+export const deleteNewsItemAction = (infoId: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  return newsService.info.delete(infoId);
+};
 
 /**
  * Delete comment

@@ -11,14 +11,14 @@ import { newsRouteNames } from './navigation';
 
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
-import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
+import type { IResourceIdNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
   NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
-export interface INewsNotification extends ITimelineNotification, IResourceUriNotification {}
+export interface INewsNotification extends ITimelineNotification, IResourceIdNotification {}
 
 const handleNewsPostNotificationAction: NotifHandlerThunkAction<INewsNotification> =
   (notification, trackCategory, navigation) => async (dispatch, getState) => {
