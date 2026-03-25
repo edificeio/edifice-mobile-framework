@@ -15,7 +15,7 @@ import { Svg } from '~/framework/components/picture';
 import SearchBar from '~/framework/components/search-bar';
 import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { SmallActionText } from '~/framework/components/text';
-import { MyAppsFilterCell } from '~/framework/modules/myAppMenu/components';
+import { MyAppsFilterCell } from '~/framework/modules/myapps/components';
 
 export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersProps) => {
   const searchQuery = selectedFilter.type === 'search' ? selectedFilter.value : '';

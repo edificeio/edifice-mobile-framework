@@ -10,7 +10,7 @@ import { buildAllAppsCategoryList, buildAppItem, isSeparator } from './utils';
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { SmallBoldText } from '~/framework/components/text';
-import { MyAppsCard } from '~/framework/modules/myAppMenu/components';
+import { MyAppsCard } from '~/framework/modules/myapps/components';
 
 const NUM_COLUMNS = 2;
 

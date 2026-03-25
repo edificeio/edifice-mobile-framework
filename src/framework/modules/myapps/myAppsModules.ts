@@ -1,5 +1,5 @@
 /**
- * A specific moduleMap that exists inside myAppMenu
+ * A specific moduleMap that exists inside myapps
  */
 import { ModuleRegister, setGlobalRegister, UnknownNavigableModule } from '~/framework/util/moduleTool';
 

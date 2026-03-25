@@ -11,7 +11,7 @@ import { I18n } from '~/app/i18n';
 import { AppDispatch, getStore } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import Toast from '~/framework/components/toast';
-import { MyAppsListItem } from '~/framework/modules/myAppMenu/components/my-apps-list/types';
+import { MyAppsListItem } from '~/framework/modules/myapps/components/my-apps-list/types';
 import {
   getAllappsShowedState,
   refreshMyApps,

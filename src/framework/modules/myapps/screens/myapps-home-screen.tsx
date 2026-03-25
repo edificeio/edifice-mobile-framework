@@ -17,13 +17,7 @@ import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigat
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { Toggle } from '~/framework/components/toggle';
-import {
-  MAOSProps,
-  MyAppsFilters,
-  MyAppsList,
-  MyAppsMenuItem,
-  MyAppsOnboardingModal,
-} from '~/framework/modules/myAppMenu/components';
+import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingModal } from '~/framework/modules/myapps/components';
 import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';

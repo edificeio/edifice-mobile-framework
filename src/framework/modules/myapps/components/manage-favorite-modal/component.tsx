@@ -12,8 +12,8 @@ import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigat
 import { PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
 import { SearchBarHandle } from '~/framework/components/search-bar/types';
-import { MyAppsList } from '~/framework/modules/myAppMenu/components/my-apps-list';
-import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myAppMenu/screens/utils';
+import { MyAppsList } from '~/framework/modules/myapps/components/my-apps-list';
+import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myapps/screens/utils';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 const HeaderLeft = ({ isSaving, onClose }: HeaderLeftProps) => (

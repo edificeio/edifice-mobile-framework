@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
 
-import moduleConfig from '~/framework/modules/myAppMenu/module-config';
-import { myAppsConnector, myAppsModules, myAppsSecondaryModules } from '~/framework/modules/myAppMenu/myAppsModules';
-import MyAppsHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
+import moduleConfig from '~/framework/modules/myapps/module-config';
+import { myAppsConnector, myAppsModules, myAppsSecondaryModules } from '~/framework/modules/myapps/myAppsModules';
+import MyAppsHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/myapps/screens/myapps-home-screen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 

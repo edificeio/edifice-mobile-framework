@@ -1,6 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '~/framework/modules/myAppMenu/module-config';
+import moduleConfig from '~/framework/modules/myapps/module-config';
 
 export const myAppsRouteNames = {
   Home: `${moduleConfig.routeName}` as 'Home',
