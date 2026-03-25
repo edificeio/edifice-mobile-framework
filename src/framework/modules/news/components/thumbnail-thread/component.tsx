@@ -16,6 +16,7 @@ import { Image } from '~/framework/util/media-deprecated';
 const Selected = () => (
   <View style={[styles.thumbnailSelectedItem, { borderColor: (moduleConfig.displayPicture as SvgProps).fill }]} />
 );
+const rawNewsIconName = 'actualites-large';
 
 export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...props }: ThumbnailThreadProps) {
   const { icon, square } = props;
@@ -51,20 +52,20 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
     return (
       <View style={[globalStyle, styles.thumbnailContainerSelected]}>
         <Selected />
-        <Svg name="newsFeed" fill={(moduleConfig.displayPicture as SvgProps).fill} height={heightSVGNoIcon} />
+        <Svg name={rawNewsIconName} fill={(moduleConfig.displayPicture as SvgProps).fill} height={heightSVGNoIcon} />
       </View>
     );
   }
   if (status === ThreadItemStatus.DISABLED) {
     return (
       <View style={[globalStyle, styles.thumbnailNoIconDisabled]}>
-        <Svg name="newsFeed" fill={theme.palette.grey.graphite} height={heightSVGNoIcon} />
+        <Svg name={rawNewsIconName} fill={theme.palette.grey.graphite} height={heightSVGNoIcon} />
       </View>
     );
   }
   return (
     <View style={globalStyle}>
-      <Svg name="newsFeed" fill={(moduleConfig.displayPicture as SvgProps).fill} height={heightSVGNoIcon} />
+      <Svg name={rawNewsIconName} fill={(moduleConfig.displayPicture as SvgProps).fill} height={heightSVGNoIcon} />
     </View>
   );
 }
