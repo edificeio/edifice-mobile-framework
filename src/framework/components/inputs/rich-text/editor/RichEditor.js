@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
   },
   webview: {
     backgroundColor: theme.palette.grey.white,
+    flexGrow: 1,
   },
 });
 
@@ -331,6 +332,7 @@ export default class RichEditor extends Component {
     const { editorStyle, html, onLink, style, useContainer, ...rest } = that.props;
     const { html: viewHTML } = that.state;
     const js = `document.cookie="oneSessionId=${this.props.oneSessionId?.value}"; true;`;
+    const { height } = this.state;
     return (
       <>
         <WebView
@@ -344,7 +346,7 @@ export default class RichEditor extends Component {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={!useContainer}
-          style={[styles.webview, style]}
+          style={[styles.webview, { height }]}
           {...rest}
           ref={that.setRef}
           onMessage={that.onMessage}
@@ -374,10 +376,9 @@ export default class RichEditor extends Component {
     // if (!oneSessionId) return <EmptyConnectionScreen />;
     // useContainer is an optional prop with default value of true
     // If set to true, it will use a View wrapper with styles and height.
-    const { height } = this.state;
     if (useContainer)
       return (
-        <View style={[style, { height }]} onLayout={this.onViewLayout}>
+        <View style={style} onLayout={this.onViewLayout}>
           {this.renderWebView()}
         </View>
       );
