@@ -6,10 +6,10 @@
  * To add an SVG in the app, add its path to the "imports" list below.
  * ToDo: make this list compute automatically.
  */
-import React, { useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
+import React, { Suspense, useEffect, useRef } from 'react';
+import { Platform, View } from 'react-native';
 
-import type { SvgProps as RNSvgProps } from 'react-native-svg';
+import type { Svg as RNSvg, SvgProps as RNSvgProps } from 'react-native-svg';
 
 const imports = {
   'admin': async () => import('ASSETS/icons/moduleIcons/admin.svg'),
@@ -307,6 +307,8 @@ const imports = {
   'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
 };
 
+export type SvgIconName = keyof typeof imports;
+
 let importsCache = {};
 
 export const addToCache = async (name: string) => {
@@ -336,6 +338,10 @@ export interface SvgProps extends RNSvgProps {
 export const Svg = ({ cached, name, ...rest }: SvgProps): React.JSX.Element | null => {
   const ImportedSVGRef = useRef<any>(importsCache[name]);
   const [loading, setLoading] = React.useState(false);
+  const fallbackStyle = React.useMemo(
+    () => ({ height: Number(rest.height), width: Number(rest.width) }),
+    [rest.width, rest.height],
+  );
   useEffect((): void => {
     if (!importsCache[name]) {
       // We use the cached item even if props.cached === false, if it has already been cached in another context.
@@ -358,7 +364,5 @@ export const Svg = ({ cached, name, ...rest }: SvgProps): React.JSX.Element | nu
     const { current: ImportedSVG } = ImportedSVGRef;
     return <ImportedSVG {...rest} />;
   }
-  return null;
+  return <View style={fallbackStyle} />;
 };
-
-export default Svg;

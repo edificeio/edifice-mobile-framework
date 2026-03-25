@@ -210,6 +210,7 @@ export const UI_SIZES = {
 };
 
 export const UI_STYLES = StyleSheet.create({
+  alignCenter: { alignSelf: 'center' },
   clickZone: { minHeight: 48, minWidth: 48 },
   flex0: { flex: 0 },
   flex1: { flex: 1 },

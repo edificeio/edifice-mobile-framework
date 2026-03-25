@@ -6,13 +6,6 @@ import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 const pictureSize = getScaleWidth(207);
 
 export default StyleSheet.create({
-  buttons: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  discoverButton: {
-    marginTop: UI_SIZES.spacing.medium,
-  },
   mainContainer: {
     flex: 5,
   },
