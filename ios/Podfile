@@ -42,9 +42,9 @@ target 'appe' do
   #
   # Zendesk stuff
   #
-  # pod 'ZendeskAnswerBotSDK'
-  # pod 'ZendeskChatSDK'
-  # pod 'ZendeskSupportSDK'
+  pod 'ZendeskAnswerBotSDK'
+  pod 'ZendeskChatSDK'
+  pod 'ZendeskSupportSDK'
 
   #
   # react-native-permissions : @see: https://github.com/zoontek/react-native-permissions#ios
