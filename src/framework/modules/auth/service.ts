@@ -338,11 +338,9 @@ export const otp = {
 };
 
 export const platformConfig = {
-  authI18n: async (platform: Platform, language: I18n.SupportedLocales): Promise<LegalUrls> => {
+  authI18n: async (platform: Platform): Promise<LegalUrls> => {
     try {
-      const authTranslationKeys = await platformFetch.json<{ 'auth.charter'?: string } | undefined>(platform, `/auth/i18n`, {
-        headers: { 'Accept-Language': language },
-      });
+      const authTranslationKeys = await platformFetch.json<{ 'auth.charter'?: string } | undefined>(platform, `/auth/i18n`);
       const buildURIWithBase = (key: string) => getUrlWithBase(I18n.get(key), platform.url);
 
       return {
@@ -561,7 +559,6 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
     body: formdata,
     headers: {
       'Accept': 'application/json',
-      'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'multipart/form-data',
     },
     method: 'POST',
@@ -599,7 +596,6 @@ export async function forgot<Mode extends ForgotMode>(
   const res = await platformFetch(platform, api, {
     body: JSON.stringify(realPayload),
     headers: {
-      'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'application/json',
     },
     method: 'POST',

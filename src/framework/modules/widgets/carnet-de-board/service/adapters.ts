@@ -21,15 +21,6 @@ import {
   IPronoteConnectorInfo,
   sortCarnetDeBordItems,
 } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
-<<<<<<<< HEAD:src/framework/modules/widgets/carnet-de-board/service/carnet-de-bord.ts
-import { IEntcoreApp } from '~/framework/util/moduleTool';
-import { fetchWithCache } from '~/infra/fetchWithCache';
-
-export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
-  xmlResponse: string;
-})[];
-========
->>>>>>>> release/1.16.7:src/framework/modules/widgets/carnet-de-board/service/adapters.ts
 
 const parseCompetencesItem = (itemTag, item) => {
   if (Object.hasOwn(itemTag, 'Date')) {
