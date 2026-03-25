@@ -76,7 +76,7 @@
     "@react-navigation/native": "6.1.18",
     "@react-navigation/native-stack": "6.11.0",
     "@sbaiahmed1/react-native-blur": "4.6.0",
-    "@shopify/flash-list": "1.8.3",
+    "@shopify/flash-list": "2.3.1",
     "@skele/components": "1.0.0-alpha.40",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
