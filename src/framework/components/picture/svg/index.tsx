@@ -6,10 +6,12 @@
  * To add an SVG in the app, add its path to the "imports" list below.
  * ToDo: make this list compute automatically.
  */
-import React, { Suspense, useEffect, useRef } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Platform, View } from 'react-native';
 
 import type { Svg as RNSvg, SvgProps as RNSvgProps } from 'react-native-svg';
+
+import { usePrevious } from '~/framework/hooks/previous';
 
 const imports = {
   'admin': async () => import('ASSETS/icons/moduleIcons/admin.svg'),
@@ -334,31 +336,35 @@ export interface SvgProps extends RNSvgProps {
   name: string;
 }
 
-export const Svg = ({ name, ...rest }: SvgProps): React.JSX.Element | null => {
-  const ImportedSVGRef = useRef<any>(importsCache[name]);
-  const [loading, setLoading] = React.useState(false);
+export const Svg = ({ name, ...rest }: SvgProps) => {
+  const previousName = usePrevious(name);
+  const [ImportedSVG, setImportedSvg] = useState<typeof RNSvg | undefined>(() => importsCache[name]); // Need a function because imported is a callable object.
+  const [loading, setLoading] = React.useState(!importsCache[name]);
+  if (previousName !== name) {
+    setImportedSvg(() => importsCache[name]); // Need a function because imported is a callable object.
+    setLoading(!importsCache[name]);
+  }
   const fallbackStyle = React.useMemo(
     () => ({ height: Number(rest.height), width: Number(rest.width) }),
     [rest.width, rest.height],
   );
-  useEffect((): void => {
-    if (!importsCache[name]) {
+
+  const loadSvg = React.useCallback(async () => {
+    try {
+      if (importsCache[name]) return importsCache[name];
       setLoading(true);
-      const importSVG = async (): Promise<void> => {
-        try {
-          if (__DEV__ && !imports[name]) console.error(`[Svg] Icon not found : ${name}`);
-          ImportedSVGRef.current = (await imports[name]()).default;
-          importsCache[name] = ImportedSVGRef.current;
-        } finally {
-          setLoading(false);
-        }
-      };
-      importSVG();
+      if (__DEV__ && !imports[name]) console.error(`[Svg] Icon not found : ${name}`);
+      const imported = (await imports[name]()).default;
+      setImportedSvg(() => imported); // Need a function because imported is a callable object.
+      importsCache[name] = imported;
+    } finally {
+      setLoading(false);
     }
   }, [name]);
-  if (!loading && ImportedSVGRef.current) {
-    const { current: ImportedSVG } = ImportedSVGRef;
-    return <ImportedSVG {...rest} />;
-  }
-  return <View style={fallbackStyle} />;
+
+  useEffect((): void => {
+    loadSvg();
+  }, [loadSvg]);
+
+  return !loading && ImportedSVG ? <ImportedSVG {...rest} /> : <View style={fallbackStyle} />;
 };

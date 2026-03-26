@@ -1,9 +1,9 @@
 import React from 'react';
 
 export function usePrevious<T>(value: T) {
-  const ref = React.useRef(value);
-  React.useEffect(() => {
-    ref.current = value;
-  }, [value]);
-  return ref.current;
+  const [previous, setPrevious] = React.useState<T>(value);
+  if (previous !== value) {
+    setPrevious(value);
+  }
+  return previous;
 }

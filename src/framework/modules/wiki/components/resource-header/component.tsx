@@ -8,12 +8,8 @@ import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import ResourceDescription from '~/framework/modules/wiki/components/resource-description';
-import { styles as descriptionStyle } from '~/framework/modules/wiki/components/resource-description/styles';
 import ResourceHeaderLoader from '~/framework/modules/wiki/components/resource-header-loader';
 import ResourceThumbnail from '~/framework/modules/wiki/components/resource-thumbnail';
-
-const DESCRIPTION_TEXT_WIDTH =
-  UI_SIZES.screen.width - descriptionStyle.cardContainer.marginHorizontal * 2 - descriptionStyle.cardContainer.padding * 2;
 
 // height of the svg file we need to withdraw from the view but still needed in positionning calculation
 // depends on the original dimensions and content of the svg file
@@ -98,14 +94,7 @@ const ResourceHeader: React.FC<ResourceHeaderProps> = ({ canAddDescription = fal
       />
       <View style={styles.thumbnailAndCardContainer}>
         <ResourceThumbnail source={image} />
-        {description && (
-          <ResourceDescription
-            content={description}
-            expanded={isCardExpanded}
-            onToggleVisibility={setIsCardExpanded}
-            textWidth={DESCRIPTION_TEXT_WIDTH}
-          />
-        )}
+        {description && <ResourceDescription content={description} expanded={isCardExpanded} onPress={setIsCardExpanded} />}
       </View>
     </View>
   );
