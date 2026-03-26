@@ -63,8 +63,8 @@ const PlayerItem = ({ hideNavBar, index, isCurrentItem, item, onInitialMediaLoad
   }, [onInitialMediaLoad]);
 
   React.useEffect(() => {
-    if (isCurrentItem && videoRef.current?.toggleControls) {
-      videoRef.current.toggleControls();
+    if (isCurrentItem && videoRef.current?.showControls) {
+      videoRef.current.showControls();
     }
   }, [isCurrentItem]);
 
