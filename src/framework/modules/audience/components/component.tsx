@@ -110,7 +110,6 @@ const Audience = (props: AudienceAllProps) => {
                   height={UI_SIZES.elements.icon.default}
                   width={UI_SIZES.elements.icon.default}
                   style={styles.statsReactionsItem}
-                  cached
                 />
               ))
             ) : (
@@ -132,7 +131,6 @@ const Audience = (props: AudienceAllProps) => {
               fill={theme.palette.grey.graphite}
               height={UI_SIZES.elements.icon.small}
               width={UI_SIZES.elements.icon.small}
-              cached
             />
           </Component>
         ) : null}
@@ -144,7 +142,6 @@ const Audience = (props: AudienceAllProps) => {
               fill={theme.palette.grey.graphite}
               height={UI_SIZES.elements.icon.small}
               width={UI_SIZES.elements.icon.small}
-              cached
             />
           </View>
         )}

@@ -209,7 +209,6 @@ const SchoolbookWordDetailsCard = (
                 {acknowledgementsString(word?.ackNumber, word?.total)}
               </SmallBoldText>
               <Picture
-                cached
                 type="Svg"
                 name="pictos-arrow-right"
                 width={UI_SIZES.dimensions.width.large}
@@ -262,7 +261,6 @@ const SchoolbookWordDetailsCard = (
           isTeacher && schoolbookWordResponsesNumber ? (
             <TouchableOpacity style={styles.responsesContainer} onPress={action}>
               <Picture
-                cached
                 type="Svg"
                 name="pictos-answer"
                 width={UI_SIZES.dimensions.width.large}

@@ -332,10 +332,9 @@ export const removeFromCache = (name: string) => {
 
 export interface SvgProps extends RNSvgProps {
   name: string;
-  cached?: boolean;
 }
 
-export const Svg = ({ cached, name, ...rest }: SvgProps): React.JSX.Element | null => {
+export const Svg = ({ name, ...rest }: SvgProps): React.JSX.Element | null => {
   const ImportedSVGRef = useRef<any>(importsCache[name]);
   const [loading, setLoading] = React.useState(false);
   const fallbackStyle = React.useMemo(
@@ -344,22 +343,19 @@ export const Svg = ({ cached, name, ...rest }: SvgProps): React.JSX.Element | nu
   );
   useEffect((): void => {
     if (!importsCache[name]) {
-      // We use the cached item even if props.cached === false, if it has already been cached in another context.
       setLoading(true);
       const importSVG = async (): Promise<void> => {
         try {
           if (__DEV__ && !imports[name]) console.error(`[Svg] Icon not found : ${name}`);
           ImportedSVGRef.current = (await imports[name]()).default;
-          if (cached) {
-            importsCache[name] = ImportedSVGRef.current;
-          }
+          importsCache[name] = ImportedSVGRef.current;
         } finally {
           setLoading(false);
         }
       };
       importSVG();
     }
-  }, [cached, name]);
+  }, [name]);
   if (!loading && ImportedSVGRef.current) {
     const { current: ImportedSVG } = ImportedSVGRef;
     return <ImportedSVG {...rest} />;

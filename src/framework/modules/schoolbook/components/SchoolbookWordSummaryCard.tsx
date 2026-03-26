@@ -112,7 +112,6 @@ export const SchoolbookWordSummaryCard = ({
           responsesNumber ? (
             <View style={styles.responsesContainer}>
               <Picture
-                cached
                 type="Svg"
                 name="pictos-answer"
                 width={UI_SIZES.dimensions.width.large}

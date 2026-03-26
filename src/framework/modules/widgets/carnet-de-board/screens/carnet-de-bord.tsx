@@ -207,7 +207,6 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-cahierdetextes-title')}
               picture={{
-                cached: true,
                 name: 'ui-calendar',
                 type: 'Svg',
               }}
@@ -235,7 +234,6 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-transcript-title')}
               picture={{
-                cached: true,
                 name: 'ui-success',
                 type: 'Svg',
               }}
@@ -258,7 +256,6 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-skills-title')}
               picture={{
-                cached: true,
                 name: 'ui-skills',
                 type: 'Svg',
               }}
@@ -279,7 +276,6 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-viescolaire-title')}
               picture={{
-                cached: true,
                 name: 'ui-flag',
                 type: 'Svg',
               }}
