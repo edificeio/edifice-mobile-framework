@@ -34,7 +34,7 @@ export const useCarouselFileHandler = (media: FileMedia | undefined) => {
 
     if (stringSrc.indexOf('file://') > -1) {
       syncedFile = new SyncedFile(
-        new LocalFile({ filename: '', filepath: media!.src, filetype: media!.mime }, { _needIOSReleaseSecureAccess: false }),
+        new LocalFile({ filepath: media!.src, filetype: media!.mime }, { _needIOSReleaseSecureAccess: false }),
         { url: stringSrc },
       );
     } else {
@@ -74,9 +74,9 @@ export const useCarouselFileHandler = (media: FileMedia | undefined) => {
 
       if (isGalleryContent) {
         if (isAndroid) {
-          await CameraRoll.saveAsset(realFilePath, { album: 'Download' });
+          await CameraRoll.saveAsset(realFilePath, { album: 'Download', type: isVideoContent(media) ? 'video' : 'photo' });
         } else {
-          await CameraRoll.saveAsset(realFilePath);
+          await CameraRoll.saveAsset(realFilePath, { type: isVideoContent(media) ? 'video' : 'photo' });
         }
       } else {
         if (isAndroid) {
