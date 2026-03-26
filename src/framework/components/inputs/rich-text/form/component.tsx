@@ -13,7 +13,7 @@ import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 import { I18n } from '~/app/i18n';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
@@ -342,6 +342,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
             alwaysBounceVertical={false}
             bounces
             style={[styles.scrollView, props.pageStyle]}
+            contentContainerStyle={UI_STYLES.flexGrow1}
             {...restProps}>
             {realTopForm}
             <RichEditor
