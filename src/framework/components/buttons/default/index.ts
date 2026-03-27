@@ -1,7 +1,5 @@
 import { Platform } from 'react-native';
 
-// import TextSize from 'react-native-text-size';
-
 import { DefaultButton } from './component';
 import { BUTTON_ICON_SIZE } from './styles';
 import { DefaultButtonProps } from './types';
