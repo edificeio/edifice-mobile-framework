@@ -148,19 +148,9 @@ export const buildAppBadgesIndex = (
   return index;
 };
 
-export const resolveBadgeForNotification = (
-  type: string,
-  badgesIndex: Record<string, IAppBadgeInfo>,
-  notifTypes?: IEntcoreNotificationType[],
-): IAppBadgeInfo => {
+export const resolveBadgeForNotification = (type: string, badgesIndex: Record<string, IAppBadgeInfo>): IAppBadgeInfo => {
   if (type.startsWith('USERBOOK')) {
     return badgesIndex.USERBOOK ?? FALLBACK_BADGE;
-  }
-
-  if (notifTypes) {
-    const notifTypeToAppName = buildNotifTypeToAppName(notifTypes);
-    const appName = notifTypeToAppName.get(type);
-    if (appName && badgesIndex[appName]) return badgesIndex[appName];
   }
 
   return badgesIndex[type] ?? FALLBACK_BADGE;

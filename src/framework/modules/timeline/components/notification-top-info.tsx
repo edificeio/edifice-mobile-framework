@@ -11,9 +11,9 @@ import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card'
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { getAppBadges, resolveBadgeForNotification } from '~/framework/modules/timeline/app-badges';
+import { useAppBadges } from '~/framework/modules/myapps/hooks';
+import { resolveBadgeForNotification } from '~/framework/modules/myapps/reducer';
 import appConf from '~/framework/util/appConf';
-import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 import {
   getAsNamedResourceNotification,
   getAsSenderNotification,
@@ -22,15 +22,8 @@ import {
 } from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
 
-const NotificationTopInfo = ({
-  appBadges,
-  notification,
-  session,
-}: {
-  notification: ITimelineNotification;
-  session: AuthActiveAccount;
-  appBadges: Record<string, IAppBadgeInfo>;
-}) => {
+const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: AuthActiveAccount }) => {
+  const appBadges = useAppBadges();
   const message = notification && notification.message;
   const date = notification && notification.date;
   const sender = notification && getAsSenderNotification(notification)?.sender;
@@ -89,11 +82,10 @@ const NotificationTopInfo = ({
   );
 };
 
-const mapStateToProps = (s: IGlobalState) => {
+const mapStateToProps = (_s: IGlobalState) => {
   const session = getSession();
   if (!session) throw new Error('[NotificationTopInfo] session not provided');
   return {
-    appBadges: getAppBadges(s),
     session,
   };
 };
