@@ -27,11 +27,8 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
   const searchRef = React.useRef<SearchBarHandle>(null);
 
   const { animatedContainerStyle, animatedIconStyle, animatedSearchStyle, close, open } = useAnimatedSearchStyles();
-  const borderColor = !searchActive
-    ? theme.palette.primary.regular
-    : searchFocused
-      ? theme.palette.primary.regular
-      : theme.palette.grey.cloudy;
+
+  const borderColor = !searchActive || searchFocused ? theme.palette.primary.regular : theme.palette.grey.cloudy;
 
   const scrollToItem = React.useCallback((index: number) => {
     listRef.current?.scrollToIndex({
@@ -83,7 +80,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
       style={styles.list}
       scrollEnabled={!searchActive}
       ListHeaderComponent={
-        <View style={styles.searchContainerWrapper}>
+        <View style={[styles.searchContainerWrapper, searchActive && styles.searchContainerWrapperActive]}>
           <Animated.View style={[styles.animatedSearchContainer, { borderColor }, animatedContainerStyle]}>
             <Animated.View style={[styles.searchIcon, animatedIconStyle]}>
               <Pressable style={styles.clickzone} onPress={openSearch}>

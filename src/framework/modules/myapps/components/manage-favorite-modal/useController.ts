@@ -8,13 +8,8 @@ import { ManageFavoriteScreenProps } from './types';
 import { I18n } from '~/app/i18n';
 import { AppDispatch } from '~/app/store';
 import Toast from '~/framework/components/toast';
-import {
-  getAllappsShowedState,
-  saveGroupedFavorites,
-  selectAppBookmarks,
-  selectFilteredAppsWithMobile,
-  selectIsSavingFavorites,
-} from '~/framework/modules/myapps/reducer';
+import { useFilteredApps } from '~/framework/modules/myapps/hooks';
+import { saveGroupedFavorites, selectAppBookmarks, selectIsSavingFavorites } from '~/framework/modules/myapps/reducer';
 import { normalizeString } from '~/framework/modules/myapps/utils';
 
 export const useManageFavoritesController = (navigation: ManageFavoriteScreenProps.ManageFavoritesNavigation['navigation']) => {
@@ -22,9 +17,9 @@ export const useManageFavoritesController = (navigation: ManageFavoriteScreenPro
 
   const isSaving = useSelector(selectIsSavingFavorites);
   const savedBookmarks = useSelector(selectAppBookmarks).bookmarks;
-  const areAppsShowed = useSelector(getAllappsShowedState);
 
-  const allApps = useSelector(state => selectFilteredAppsWithMobile(state, { type: 'category', value: 'toutes' }, areAppsShowed));
+  const filter = React.useMemo(() => ({ type: 'category', value: 'toutes' }) as const, []);
+  const allApps = useFilteredApps(filter);
 
   const [query, setQuery] = React.useState('');
   const [selected, setSelected] = React.useState<Set<string>>(new Set());

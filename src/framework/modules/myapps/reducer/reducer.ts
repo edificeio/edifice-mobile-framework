@@ -14,6 +14,7 @@ import { AppsInfoState } from '~/framework/modules/myapps/types';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
 export const appsInfoInitialState: AppsInfoState = {
+  aggregatedApps: [],
   appsConfig: [],
   appsInfo: [],
   favorites: {
@@ -32,9 +33,10 @@ const reducer = createReducer(appsInfoInitialState, {
     loading: true,
   }),
   [appsInfoActionTypes.fetchSuccess]: (state, action) => {
-    const { appsConfig, appsInfo, favorites } = (action as FetchSuccessAction).payload;
+    const { aggregatedApps, appsConfig, appsInfo, favorites } = (action as FetchSuccessAction).payload;
     return {
       ...state,
+      aggregatedApps,
       appsConfig,
       appsInfo,
       favorites,
@@ -48,12 +50,15 @@ const reducer = createReducer(appsInfoInitialState, {
   }),
   [appsInfoActionTypes.toggleFavorite]: (state, action) => {
     const { appName } = action as ToggleFavoriteAction;
+    const nextBookmarks = computeNextBookmarks(state.favorites.bookmarks, appName);
+    const nextFavorites = { ...state.favorites, bookmarks: nextBookmarks };
     return {
       ...state,
-      favorites: {
-        ...state.favorites,
-        bookmarks: computeNextBookmarks(state.favorites.bookmarks, appName),
-      },
+      aggregatedApps: state.aggregatedApps.map(app => ({
+        ...app,
+        isFavorite: nextBookmarks.includes(app.name),
+      })),
+      favorites: nextFavorites,
     };
   },
   [appsInfoActionTypes.saveGroupedFavoritesStart]: state => ({

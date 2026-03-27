@@ -1,19 +1,20 @@
 import { Action } from 'redux';
 
 import moduleConfig from '~/framework/modules/myapps/module-config';
-import { AppBookmarks, ApplicationsConfig, AppsInfo } from '~/framework/modules/myapps/types';
+import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
 export interface FetchStartAction extends Action {
   type: typeof appsInfoActionTypes.fetchStart;
 }
-
+export type FetchSuccessPayload = {
+  aggregatedApps: AppsInfoAggregated[];
+  appsInfo: AppsInfo[];
+  appsConfig: ApplicationsConfig[];
+  favorites: AppBookmarks;
+};
 export interface FetchSuccessAction extends Action {
   type: typeof appsInfoActionTypes.fetchSuccess;
-  payload: {
-    appsInfo: AppsInfo[];
-    appsConfig: ApplicationsConfig[];
-    favorites: AppBookmarks;
-  };
+  payload: FetchSuccessPayload;
 }
 
 export interface FetchErrorAction extends Action {

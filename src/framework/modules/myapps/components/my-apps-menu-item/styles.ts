@@ -19,13 +19,13 @@ export const styles = StyleSheet.create({
   },
   wrapper: {
     alignItems: 'center',
-    borderRadius: UI_SIZES.radius.medium,
+    borderRadius: UI_SIZES.radius.input,
     flexDirection: 'row',
-
     gap: UI_SIZES.spacing.small,
     justifyContent: 'flex-start',
     marginVertical: UI_SIZES.spacing.tiny,
     minHeight: getScaleWidth(41),
+    paddingHorizontal: UI_SIZES.spacing.minor,
   },
   wrapperPressed: {
     backgroundColor: theme.palette.grey.pearl,

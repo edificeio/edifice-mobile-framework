@@ -45,6 +45,7 @@ export interface ApplicationsList {
 }
 
 export interface AppsInfoState {
+  aggregatedApps: AppsInfoAggregated[];
   appsInfo: AppsInfo[];
   appsConfig: ApplicationsConfig[];
   favorites: AppBookmarks;

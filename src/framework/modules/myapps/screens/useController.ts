@@ -3,26 +3,31 @@ import * as React from 'react';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { BottomSheetMode } from './types';
 
 import { I18n } from '~/app/i18n';
-import { AppDispatch, getStore } from '~/app/store';
+import AllModules from '~/app/modules';
+import { AppDispatch } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import Toast from '~/framework/components/toast';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { MyAppsListItem } from '~/framework/modules/myapps/components/my-apps-list/types';
+import { useFilteredApps } from '~/framework/modules/myapps/hooks';
 import {
   getAllappsShowedState,
+  isNavigableModule,
   refreshMyApps,
-  selectFilteredAppsWithMobile,
   toggleAllApps,
   toggleFavorite,
 } from '~/framework/modules/myapps/reducer';
 import { readMyAppsOnboarding, writeMyAppsOnboardingSeen } from '~/framework/modules/myapps/storage';
 import { AppsInfoAggregated, MyAppsFilter } from '~/framework/modules/myapps/types';
+import { getModuleRouteName } from '~/framework/modules/myapps/utils';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { openUrl } from '~/framework/util/linking';
+import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 /**
  * gonna allow us to display again modal if we made updates or wana show it again
@@ -32,8 +37,7 @@ let hasAutoShownOnboardingThisSession = false;
 
 export function useMyAppsHomeController() {
   const navigation = useNavigation() as any;
-  const store = getStore();
-  const dispatch = store.dispatch as AppDispatch;
+  const dispatch = useDispatch<AppDispatch>();
 
   const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
   const modalRef = React.useRef<ModalBoxHandle>(null);
@@ -41,7 +45,6 @@ export function useMyAppsHomeController() {
   const pendingToggleRef = React.useRef<string | null>(null);
   const appsListRef = React.useRef<FlashList<MyAppsListItem>>(null);
 
-  const [apps, setApps] = React.useState<AppsInfoAggregated[]>([]);
   const [filter, setFilter] = React.useState<MyAppsFilter>({ type: 'category', value: 'toutes' });
   const [onboardingSeen, setOnboardingSeen] = React.useState(0);
   const [selectedApp, setSelectedApp] = React.useState<AppsInfoAggregated | null>(null);
@@ -49,7 +52,7 @@ export function useMyAppsHomeController() {
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
 
   const areAppsShowed = useSelector(getAllappsShowedState);
-
+  const apps = useFilteredApps(filter);
   const isAllAppsTab = filter.type === 'category' && filter.value === 'toutes';
 
   const queueToast = React.useCallback((type: 'success' | 'error', message: string) => {
@@ -83,6 +86,10 @@ export function useMyAppsHomeController() {
         hasAutoShownOnboardingThisSession = true;
         requestAnimationFrame(() => modalRef.current?.doShowModal());
       }
+      // return () => {
+      //   // reset filter
+      //   setFilter({ type: 'category', value: 'toutes' });
+      // };
     }, []),
   );
 
@@ -105,7 +112,12 @@ export function useMyAppsHomeController() {
   const onPressApp = React.useCallback(
     (app: AppsInfoAggregated) => {
       if (app.routeName) {
-        navigation.navigate(app.routeName);
+        const session = getSession();
+        const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
+        const routeName = getModuleRouteName(app as IEntcoreApp, modules);
+        if (routeName) {
+          navigation.navigate(routeName);
+        }
       } else {
         openUrl(app.address);
       }
@@ -162,16 +174,6 @@ export function useMyAppsHomeController() {
       setRefreshing(false);
     }
   }, [dispatch]);
-
-  React.useEffect(() => {
-    const updateApps = () => {
-      const state = store.getState();
-      setApps(selectFilteredAppsWithMobile(state, filter, areAppsShowed));
-    };
-
-    updateApps();
-    return store.subscribe(updateApps);
-  }, [filter, areAppsShowed, store]);
 
   //Listens to tab press to scroll to top of the list
   React.useEffect(() => {

@@ -51,6 +51,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     gap: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.minor,
+  },
+  searchContainerWrapperActive: {
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   searchIcon: {

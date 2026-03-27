@@ -74,9 +74,10 @@ export const MY_APPS_FILTER_CONFIG = {
 } as const;
 
 export const MY_APPS_FILTERS: Readonly<MyAppsFilterItem[]> = [
-  MY_APPS_FILTER_CONFIG.favorites,
-  { type: 'separator' } as MyAppsFilterItemSeparator,
   MY_APPS_FILTER_CONFIG.all,
+
+  MY_APPS_FILTER_CONFIG.favorites,
+  // { type: 'separator' } as MyAppsFilterItemSeparator,
   MY_APPS_FILTER_CONFIG.communication,
   MY_APPS_FILTER_CONFIG.pedagogie,
   MY_APPS_FILTER_CONFIG.organisation,
