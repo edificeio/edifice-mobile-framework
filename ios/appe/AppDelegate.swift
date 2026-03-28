@@ -11,7 +11,7 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
 
     // MARK: - SplashScreen using react-native-bootsplash
   
-  override func customize(_ rootView: RCTRootView) {
+    override func customize(_ rootView: RCTRootView) {
       super.customize(rootView)
       RNBootSplash.initWithStoryboard("LaunchScreen", rootView: rootView) // ⬅️ initialize the splash screen
     }

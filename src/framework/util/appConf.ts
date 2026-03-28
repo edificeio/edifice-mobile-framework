@@ -9,7 +9,7 @@ import { I18n } from '~/app/i18n';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AccountType } from '~/framework/modules/auth/model';
 import { WhoAreWellustrationType, WhoAreWeQuoteType } from '~/framework/modules/user/screens/who-are-we';
-import BuildConfig from '~/framework/util/build-config';
+import BuildInfo from '~/framework/util/build-info';
 
 // Platforms ======================================================================================
 
@@ -197,7 +197,7 @@ export class AppConf {
   }
 
   get isDevOrAlpha() {
-    return __DEV__ || BuildConfig.BundleVersionType.toLowerCase().startsWith('alpha');
+    return __DEV__ || BuildInfo.BundleVersionType.toLowerCase().startsWith('alpha');
   }
 
   get splashadsEnabled() {

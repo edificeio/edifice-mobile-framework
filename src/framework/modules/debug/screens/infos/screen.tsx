@@ -10,7 +10,7 @@ import { SmallBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import BuildConfig from '~/framework/util/build-config';
+import BuildInfo from '~/framework/util/build-info';
 
 export function infosNavBar({
   navigation,
@@ -28,11 +28,11 @@ export function infosNavBar({
 export function InfosScreen() {
   const infos = {
     buildNumber: DeviceInfo.getBuildNumber(),
-    buildType: BuildConfig.BundleVersionType,
+    buildType: BuildInfo.BundleVersionType,
     deviceModel: DeviceInfo.getModel(),
     os: DeviceInfo.getSystemName(),
     osVersion: DeviceInfo.getSystemVersion(),
-    override: BuildConfig.BundleVersionOverride,
+    override: BuildInfo.BundleVersionOverride,
     version: DeviceInfo.getVersion(),
   };
   const session = getSession();

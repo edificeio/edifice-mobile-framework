@@ -5,7 +5,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/reducer';
-import BuildConfig from '~/framework/util/build-config';
+import BuildInfo from '~/framework/util/build-info';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';
 
@@ -196,7 +196,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
 
   private static defaultPayload = {
     appName: DeviceInfo.getBundleId(),
-    appVersion: `${DeviceInfo.getVersion()}-${BuildConfig.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
+    appVersion: `${DeviceInfo.getVersion()}-${BuildInfo.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
     deviceName: DeviceInfo.getModel(),
     osName: DeviceInfo.getSystemName(),
     osVersion: DeviceInfo.getSystemVersion(),

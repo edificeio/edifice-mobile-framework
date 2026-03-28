@@ -47,9 +47,10 @@
 		F06C18682B61837F00FBA3A2 /* splash-screen.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18652B61837F00FBA3A2 /* splash-screen.png */; };
 		F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */; };
 		F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */; };
-		F090B8342F75447600131BC5 /* ZendeskUnified.mm in Sources */ = {isa = PBXBuildFile; fileRef = F090B8322F75447600131BC5 /* ZendeskUnified.mm */; };
-		F090B8352F75447600131BC5 /* ZendeskUnified.swift in Sources */ = {isa = PBXBuildFile; fileRef = F090B8332F75447600131BC5 /* ZendeskUnified.swift */; };
 		F0AC1B422BDAA6A900563199 /* help_center_article_style.css in Resources */ = {isa = PBXBuildFile; fileRef = F0AC1B412BDAA6A900563199 /* help_center_article_style.css */; };
+		F0B3BE252F782D95009E69F9 /* ZendeskUnified.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */; };
+		F0B3BE262F782D95009E69F9 /* ZendeskUnified.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE242F782D95009E69F9 /* ZendeskUnified.swift */; };
+		F0B3BE272F782D95009E69F9 /* BuildInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE222F782D95009E69F9 /* BuildInfo.mm */; };
 		F0CB475F2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */; };
 		F0E1FD482C0F1D6C00B9CE7C /* image-not-found.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */; };
 		F0FDEEF32BDBE64F00056775 /* attachment.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF02BDBE64F00056775 /* attachment.svg */; };
@@ -119,9 +120,10 @@
 		F06C18652B61837F00FBA3A2 /* splash-screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen.png"; path = "appe/images/splash-screen.png"; sourceTree = "<group>"; };
 		F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@3x.png"; path = "appe/images/splash-screen@3x.png"; sourceTree = "<group>"; };
 		F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@2x.png"; path = "appe/images/splash-screen@2x.png"; sourceTree = "<group>"; };
-		F090B8322F75447600131BC5 /* ZendeskUnified.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZendeskUnified.mm; sourceTree = "<group>"; };
-		F090B8332F75447600131BC5 /* ZendeskUnified.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZendeskUnified.swift; sourceTree = "<group>"; };
 		F0AC1B412BDAA6A900563199 /* help_center_article_style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = help_center_article_style.css; path = appe/help_center_article_style.css; sourceTree = "<group>"; };
+		F0B3BE222F782D95009E69F9 /* BuildInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BuildInfo.mm; path = appe/BuildInfo.mm; sourceTree = "<group>"; };
+		F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = ZendeskUnified.mm; path = appe/ZendeskUnified.mm; sourceTree = "<group>"; };
+		F0B3BE242F782D95009E69F9 /* ZendeskUnified.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZendeskUnified.swift; path = appe/ZendeskUnified.swift; sourceTree = "<group>"; };
 		F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = appe/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "image-not-found.svg"; path = "appe/images/image-not-found.svg"; sourceTree = "<group>"; };
 		F0FDEEF02BDBE64F00056775 /* attachment.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = attachment.svg; path = appe/images/attachment.svg; sourceTree = "<group>"; };
@@ -144,18 +146,19 @@
 		13B07FAE1A68108700A75B9A /* appe */ = {
 			isa = PBXGroup;
 			children = (
-				F090B8322F75447600131BC5 /* ZendeskUnified.mm */,
-				F090B8332F75447600131BC5 /* ZendeskUnified.swift */,
 				F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */,
 				745D891922DE0F770038F1FA /* appe.entitlements */,
 				74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */,
 				7404C07322E8B012008546A8 /* Assets.xcassets */,
+				F0B3BE222F782D95009E69F9 /* BuildInfo.mm */,
 				745D891422DE014D0038F1FA /* GoogleService-Info.plist */,
 				F0AC1B412BDAA6A900563199 /* help_center_article_style.css */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				F062593E26454B14001AE555 /* InfoPlist.strings */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */,
+				F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */,
+				F0B3BE242F782D95009E69F9 /* ZendeskUnified.swift */,
 			);
 			name = appe;
 			sourceTree = "<group>";
@@ -605,8 +608,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F090B8342F75447600131BC5 /* ZendeskUnified.mm in Sources */,
-				F090B8352F75447600131BC5 /* ZendeskUnified.swift in Sources */,
+				F0B3BE252F782D95009E69F9 /* ZendeskUnified.mm in Sources */,
+				F0B3BE262F782D95009E69F9 /* ZendeskUnified.swift in Sources */,
+				F0B3BE272F782D95009E69F9 /* BuildInfo.mm in Sources */,
 				F069BA6F2E86F29D00B3BA52 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

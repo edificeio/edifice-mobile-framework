@@ -13,4 +13,7 @@
 // Orientation
 #import "Orientation.h"
 
+// Required to make RCTAppDelegate visible to Obj-C++ when BuildInfo.mm compiles
+#import "RCTAppDelegate.h"
+
 #endif /* appe_Bridging_Header_h */

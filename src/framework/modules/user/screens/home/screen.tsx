@@ -56,7 +56,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import BuildConfig from '~/framework/util/build-config';
+import BuildInfo from '~/framework/util/build-info';
 import { toURISource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
@@ -607,8 +607,8 @@ useVersionDetailsFeature.buildNumber = DeviceInfo.getBuildNumber();
 useVersionDetailsFeature.deviceModel = DeviceInfo.getModel();
 useVersionDetailsFeature.os = DeviceInfo.getSystemName();
 useVersionDetailsFeature.osVersion = DeviceInfo.getSystemVersion();
-useVersionDetailsFeature.versionType = BuildConfig.BundleVersionType;
-useVersionDetailsFeature.versionOverride = BuildConfig.BundleVersionOverride;
+useVersionDetailsFeature.versionType = BuildInfo.BundleVersionType;
+useVersionDetailsFeature.versionOverride = BuildInfo.BundleVersionOverride;
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
 
 /**
