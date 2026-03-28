@@ -41,6 +41,7 @@
 		AF33229A2DB137020021465B /* NabookRoboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322972DB137020021465B /* NabookRoboto.ttf */; };
 		AF33229B2DB137020021465B /* NabookPoppinsItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */; };
 		AF33229C2DB137020021465B /* NabookPoppinsRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */; };
+		F014BC672F7865EB003559F5 /* ZendeskUnifiedImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014BC662F7865EB003559F5 /* ZendeskUnifiedImpl.swift */; };
 		F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */; };
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
 		F069BA6F2E86F29D00B3BA52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */; };
@@ -49,7 +50,6 @@
 		F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */; };
 		F0AC1B422BDAA6A900563199 /* help_center_article_style.css in Resources */ = {isa = PBXBuildFile; fileRef = F0AC1B412BDAA6A900563199 /* help_center_article_style.css */; };
 		F0B3BE252F782D95009E69F9 /* ZendeskUnified.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */; };
-		F0B3BE262F782D95009E69F9 /* ZendeskUnified.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE242F782D95009E69F9 /* ZendeskUnified.swift */; };
 		F0B3BE272F782D95009E69F9 /* BuildInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE222F782D95009E69F9 /* BuildInfo.mm */; };
 		F0CB475F2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */; };
 		F0E1FD482C0F1D6C00B9CE7C /* image-not-found.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */; };
@@ -112,6 +112,7 @@
 		DAAB12508AD5F6829B136F0F /* Pods-appe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe.release.xcconfig"; path = "Target Support Files/Pods-appe/Pods-appe.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		F014BC662F7865EB003559F5 /* ZendeskUnifiedImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZendeskUnifiedImpl.swift; path = appe/ZendeskUnifiedImpl.swift; sourceTree = "<group>"; };
 		F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Comfortaa-Bold.ttf"; sourceTree = "<group>"; };
 		F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = appe/AppDelegate.swift; sourceTree = "<group>"; };
 		F062593D26454B14001AE555 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -123,7 +124,6 @@
 		F0AC1B412BDAA6A900563199 /* help_center_article_style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = help_center_article_style.css; path = appe/help_center_article_style.css; sourceTree = "<group>"; };
 		F0B3BE222F782D95009E69F9 /* BuildInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BuildInfo.mm; path = appe/BuildInfo.mm; sourceTree = "<group>"; };
 		F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = ZendeskUnified.mm; path = appe/ZendeskUnified.mm; sourceTree = "<group>"; };
-		F0B3BE242F782D95009E69F9 /* ZendeskUnified.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZendeskUnified.swift; path = appe/ZendeskUnified.swift; sourceTree = "<group>"; };
 		F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = appe/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "image-not-found.svg"; path = "appe/images/image-not-found.svg"; sourceTree = "<group>"; };
 		F0FDEEF02BDBE64F00056775 /* attachment.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = attachment.svg; path = appe/images/attachment.svg; sourceTree = "<group>"; };
@@ -158,7 +158,7 @@
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */,
 				F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */,
-				F0B3BE242F782D95009E69F9 /* ZendeskUnified.swift */,
+				F014BC662F7865EB003559F5 /* ZendeskUnifiedImpl.swift */,
 			);
 			name = appe;
 			sourceTree = "<group>";
@@ -609,7 +609,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0B3BE252F782D95009E69F9 /* ZendeskUnified.mm in Sources */,
-				F0B3BE262F782D95009E69F9 /* ZendeskUnified.swift in Sources */,
+				F014BC672F7865EB003559F5 /* ZendeskUnifiedImpl.swift in Sources */,
 				F0B3BE272F782D95009E69F9 /* BuildInfo.mm in Sources */,
 				F069BA6F2E86F29D00B3BA52 /* AppDelegate.swift in Sources */,
 			);
