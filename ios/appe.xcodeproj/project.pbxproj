@@ -35,7 +35,6 @@
 		91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */; };
 		91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */; };
 		91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */; };
-		A60AD48C2F72D2AD004B3C8C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A60AD48B2F72D2AD004B3C8C /* LaunchScreen.storyboard */; };
 		AF3322982DB137020021465B /* NabookPoppinsBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322932DB137020021465B /* NabookPoppinsBoldItalic.ttf */; };
 		AF3322992DB137020021465B /* NabookPoppinsSemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322962DB137020021465B /* NabookPoppinsSemiBold.ttf */; };
 		AF33229A2DB137020021465B /* NabookRoboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322972DB137020021465B /* NabookRoboto.ttf */; };
@@ -53,6 +52,7 @@
 		F0B3BE272F782D95009E69F9 /* BuildInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE222F782D95009E69F9 /* BuildInfo.mm */; };
 		F0CB475F2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */; };
 		F0E1FD482C0F1D6C00B9CE7C /* image-not-found.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */; };
+		F0EA94912F78802E000B5428 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0EA948F2F78801A000B5428 /* LaunchScreen.storyboard */; };
 		F0FDEEF32BDBE64F00056775 /* attachment.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF02BDBE64F00056775 /* attachment.svg */; };
 		F0FDEEF42BDBE64F00056775 /* audio.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF12BDBE64F00056775 /* audio.svg */; };
 		F0FDEEF52BDBE64F00056775 /* play.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF22BDBE64F00056775 /* play.svg */; };
@@ -102,7 +102,6 @@
 		91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Bold.ttf"; sourceTree = "<group>"; };
 		91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Regular.ttf"; sourceTree = "<group>"; };
 		95CC73870D22D38A2E17B6AA /* libPods-appe-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appe-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A60AD48B2F72D2AD004B3C8C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AF3322932DB137020021465B /* NabookPoppinsBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsBoldItalic.ttf; sourceTree = "<group>"; };
 		AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsItalic.ttf; sourceTree = "<group>"; };
 		AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsRegular.ttf; sourceTree = "<group>"; };
@@ -126,6 +125,7 @@
 		F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = ZendeskUnified.mm; path = appe/ZendeskUnified.mm; sourceTree = "<group>"; };
 		F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = appe/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "image-not-found.svg"; path = "appe/images/image-not-found.svg"; sourceTree = "<group>"; };
+		F0EA948F2F78801A000B5428 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = appe/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F0FDEEF02BDBE64F00056775 /* attachment.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = attachment.svg; path = appe/images/attachment.svg; sourceTree = "<group>"; };
 		F0FDEEF12BDBE64F00056775 /* audio.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = audio.svg; path = appe/images/audio.svg; sourceTree = "<group>"; };
 		F0FDEEF22BDBE64F00056775 /* play.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = play.svg; path = appe/images/play.svg; sourceTree = "<group>"; };
@@ -178,6 +178,7 @@
 		74264AB722DF7D2E00A0E2A6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F0EA948F2F78801A000B5428 /* LaunchScreen.storyboard */,
 				F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */,
 				F0FDEEF02BDBE64F00056775 /* attachment.svg */,
 				F0FDEEF12BDBE64F00056775 /* audio.svg */,
@@ -186,7 +187,6 @@
 				F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */,
 				F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */,
 				74EC2C3F26E63F04008EB301 /* Fonts */,
-				A60AD48B2F72D2AD004B3C8C /* LaunchScreen.storyboard */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -357,12 +357,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0EA94912F78802E000B5428 /* LaunchScreen.storyboard in Resources */,
 				1D20447F2B6BD70B0020EABA /* ecriturea_italic.woff in Resources */,
 				1D2044802B6BD70B0020EABA /* ecriturea_regular.woff in Resources */,
 				1D20446B2B6BD1810020EABA /* font_bold.woff in Resources */,
 				1D20446C2B6BD1810020EABA /* font_bolditalic.woff in Resources */,
 				1D20446D2B6BD1810020EABA /* font_italic.woff in Resources */,
-				A60AD48C2F72D2AD004B3C8C /* LaunchScreen.storyboard in Resources */,
 				1D20446E2B6BD1810020EABA /* font_regular.woff in Resources */,
 				1D20446F2B6BD1810020EABA /* ibmplexmono_bold.woff in Resources */,
 				F0E1FD482C0F1D6C00B9CE7C /* image-not-found.svg in Resources */,

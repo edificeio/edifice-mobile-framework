@@ -13,9 +13,8 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
   
     override func customize(_ rootView: RCTRootView) {
       super.customize(rootView)
-      RNBootSplash.initWithStoryboard("LaunchScreen", rootView: rootView) // ⬅️ initialize the splash screen
+      RNBootSplash.initWithStoryboard("LaunchScreen", rootView: rootView)
     }
-
   
     // MARK: - Badge Management
   
@@ -123,4 +122,5 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
             completionHandler([.sound, .alert, .badge])
         }
     }
+  
 }
