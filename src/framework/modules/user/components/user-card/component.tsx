@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import { MenuView } from '@react-native-menu/menu';
+
 import styles from './styles';
 import { IUserCardProps } from './types';
 
@@ -26,9 +28,10 @@ export const UserCard = ({
   displayName,
   hasAvatar,
   id,
+  messageActions,
   onChangeAvatar,
   onDeleteAvatar,
-  onPressInlineButton,
+  onPressMessageAction,
   type,
   updatingAvatar,
 }: IUserCardProps) => {
@@ -80,6 +83,8 @@ export const UserCard = ({
     );
   };
 
+  console.info(messageActions);
+
   return (
     <View style={styles.main}>
       <View style={[styles.boxAvatar, { ...(canEdit ? styles.boxAvatarEdit : {}) }]}>
@@ -91,12 +96,18 @@ export const UserCard = ({
         <HeadingXSText style={styles.name}>{displayName}</HeadingXSText>
         <SmallBoldText style={{ color: theme.color.profileTypes[type] }}>{I18n.get(i18nAccountTypes[type])}</SmallBoldText>
         {!canEdit && isServiceMethodAvailable(mailsService.visibles.get) ? (
-          <TertiaryButton
-            style={styles.sendMessage}
-            iconLeft="ui-mail"
-            text={I18n.get('user-profile-sendMessage')}
-            action={onPressInlineButton}
-          />
+          messageActions && messageActions.length > 0 ? (
+            <MenuView actions={messageActions} onPressAction={onPressMessageAction}>
+              <TertiaryButton style={styles.sendMessage} iconLeft="ui-mail" text={I18n.get('user-profile-sendMessage')} />
+            </MenuView>
+          ) : (
+            <TertiaryButton
+              style={styles.sendMessage}
+              iconLeft="ui-mail"
+              text={I18n.get('user-profile-sendMessage')}
+              action={onPressMessageAction}
+            />
+          )
         ) : null}
       </View>
     </View>

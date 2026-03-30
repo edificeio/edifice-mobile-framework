@@ -6,12 +6,10 @@ import { HobbieItem } from '~/framework/modules/user/model';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
 
-export interface ProfilePageDataProps {
-  session?: AuthLoggedAccount;
-}
+export interface ProfilePageDataProps {}
 
 export interface ProfilePageEventProps {
-  dispatch: Dispatch;
+  // dispatch: Dispatch;
 }
 
 export type ProfilePageProps = ProfilePageDataProps &

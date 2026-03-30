@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Linking, Platform, TouchableOpacity, View } from 'react-native';
 
 import Clipboard from '@react-native-clipboard/clipboard';
+import { MenuAction, MenuComponentProps, MenuView, NativeActionEvent } from '@react-native-menu/menu';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-// import BottomSheet from 'react-native-bottomsheet';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -19,15 +19,15 @@ import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import { MenuAction } from '~/framework/components/menus/actions';
-import { Svg } from '~/framework/components/picture';
-import ScrollView from '~/framework/components/scrollView';
+import { Svg, SvgIconName } from '~/framework/components/picture';
+import { ScreenView } from '~/framework/components/screen';
+import ScrollView, { ScrollViewProps } from '~/framework/components/scrollView';
 import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import Toast from '~/framework/components/toast';
-import { ContentLoader } from '~/framework/hooks/loader';
-import { AccountType } from '~/framework/modules/auth/model';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
+import { assertSession, selectors } from '~/framework/modules/auth/reducer';
 import { MailsDefaultFolders, MailsVisibleType } from '~/framework/modules/mails/model';
 import { mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
@@ -42,6 +42,7 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler/models';
+import { toURISource } from '~/framework/util/media';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 
@@ -56,52 +57,32 @@ export const computeNavBar = ({
   }),
 });
 
-const renderTextIcon = ({
+const ProfileItem = ({
   icon,
   onPress,
-  show,
   showArrow,
   text,
   textEmpty,
 }: {
-  icon: string;
+  icon: SvgIconName;
   text: string | undefined;
   textEmpty?: string;
   onPress?: () => any;
   show?: boolean;
   showArrow?: boolean;
 }) => {
-  if (isEmpty(text) && !show) return;
-  const emptyText = textEmpty ?? I18n.get('user-profile-notSpecified');
   return (
     <LineButton
-      title={isEmpty(text) ? emptyText : text!}
+      title={text || textEmpty || I18n.get('user-profile-notSpecified')}
       icon={icon}
-      {...(onPress && !isEmpty(text) ? { onPress } : null)}
-      {...(isEmpty(text) ? { textStyle: styles.textEmpty } : null)}
+      onPress={onPress}
+      textStyle={!text ? styles.textEmpty : undefined}
       showArrow={showArrow}
     />
   );
 };
 
-const showBottomMenu = (actions: MenuAction[]) => {
-  actions.push({ action: () => {}, title: I18n.get('common-cancel') });
-  // BottomSheet.showBottomSheetWithOptions(
-  //   {
-  //     cancelButtonIndex: actions.length - 1,
-  //     options: [
-  //       ...actions.map(action => {
-  //         return action.title;
-  //       }),
-  //     ],
-  //   },
-  //   index => {
-  //     actions[index].action();
-  //   },
-  // );
-};
-
-const callPhoneNumber = tel => {
+const callPhoneNumber = (tel: string) => {
   const telWithoutSpaces = tel.replace(/\s/g, '');
   Linking.canOpenURL(`tel:${telWithoutSpaces}`)
     .then(supported => {
@@ -113,13 +94,215 @@ const callPhoneNumber = tel => {
     });
 };
 
-const UserProfileScreen = (props: ProfilePageProps) => {
-  const { navigation, onUpdateAvatar, onUploadAvatar, onUploadAvatarError, route, session } = props;
+const UserPersonalInfo = React.memo(
+  ({ userInfo: { birthdate, email, mobile, tel } }: { userInfo: Pick<InfoPerson, 'birthdate' | 'email' | 'mobile' | 'tel'> }) => {
+    return (
+      <View style={styles.bloc}>
+        <HeadingSText style={styles.blocTitle}>{I18n.get('user-profile-personnalInfos')}</HeadingSText>
+        {
+          <ButtonLineGroup>
+            <ProfileItem icon="ui-anniversary" text={birthdate ? birthdate.format('D MMMM Y') : undefined} />
+            <MenuView
+              shouldOpenOnLongPress={false}
+              actions={[{ title: I18n.get('user-profile-copyEmail') }]}
+              onPressAction={() => {
+                Clipboard.setString(email!);
+              }}>
+              <ProfileItem icon="ui-mail" showArrow text={email} />
+            </MenuView>
+            {Platform.OS === 'ios' ? (
+              <ProfileItem icon="ui-phone" text={tel ?? undefined} onPress={() => tel && callPhoneNumber(tel)} />
+            ) : (
+              <MenuView
+                actions={[{ title: I18n.get('user-profile-call') + ' ' + tel }]}
+                onPressAction={() => {
+                  tel && callPhoneNumber(tel);
+                }}>
+                <ProfileItem icon="ui-phone" text={tel ?? undefined} />
+              </MenuView>
+            )}
+            {Platform.OS === 'ios' ? (
+              <ProfileItem icon="ui-smartphone" text={mobile ?? undefined} onPress={() => mobile && callPhoneNumber(mobile)} />
+            ) : (
+              <MenuView
+                actions={[{ title: I18n.get('user-profile-call') + ' ' + mobile }]}
+                onPressAction={() => {
+                  mobile && callPhoneNumber(mobile);
+                }}>
+                <ProfileItem icon="ui-smartphone" text={mobile ?? undefined} />
+              </MenuView>
+            )}
+          </ButtonLineGroup>
+        }
+      </View>
+    );
+  },
+);
+
+const UserTopCard = React.memo(
+  ({
+    family,
+    navigation,
+    onUpdateAvatar,
+    onUploadAvatar,
+    onUploadAvatarError,
+    route,
+    session,
+    userInfo: { displayName, id, type },
+  }: {
+    session?: AuthActiveAccount;
+    userInfo: Pick<InfoPerson, 'displayName' | 'type' | 'id' | 'avatar'>;
+    route: ProfilePageProps['route'];
+    navigation: ProfilePageProps['navigation'];
+    onUpdateAvatar: ProfilePageProps['onUpdateAvatar'];
+    onUploadAvatar: ProfilePageProps['onUploadAvatar'];
+    onUploadAvatarError: ProfilePageProps['onUploadAvatarError'];
+    family: FamilyInfo;
+  }) => {
+    const isMyProfile = getIsMyProfile(route, session);
+
+    const [updatingAvatar, setUpdatingAvatar] = React.useState<boolean>(false);
+
+    const onChangeAvatar = React.useCallback(
+      async (image: LocalFile) => {
+        try {
+          setUpdatingAvatar(true);
+          const sc = await onUploadAvatar(image);
+          await onUpdateAvatar(sc.url);
+        } catch (err: any) {
+          if (err.message === 'Error picking image') {
+            Toast.showError(I18n.get('pickfile-error-storageaccess'));
+          } else if (!(err instanceof Error)) {
+            onUploadAvatarError();
+          }
+        } finally {
+          setUpdatingAvatar(false);
+        }
+      },
+      [onUpdateAvatar, onUploadAvatar, onUploadAvatarError],
+    );
+
+    const onDeleteAvatar = async () => {
+      try {
+        setUpdatingAvatar(true);
+        await onUpdateAvatar('');
+      } catch {
+        onUploadAvatarError();
+      } finally {
+        setUpdatingAvatar(false);
+      }
+    };
+
+    const {
+      handleMessageAction,
+      messageActions,
+    }: { handleMessageAction: (e?: NativeActionEvent) => void; messageActions?: MenuAction[] } = React.useMemo(() => {
+      const user = [
+        {
+          displayName: displayName,
+          id: id,
+          profile: type,
+          type: MailsVisibleType.USER,
+        },
+      ];
+
+      const baseParams = {
+        fromFolder: MailsDefaultFolders.INBOX,
+      };
+
+      console.info('family', family);
+
+      if (type === AccountType.Student && !isEmpty(family) && session?.user.type !== AccountType.Student) {
+        const familyUser =
+          family?.map(item => ({
+            displayName: item.relatedName ?? undefined,
+            id: item.relatedId ?? undefined,
+            profile: AccountType.Relative,
+            type: MailsVisibleType.USER,
+          })) ?? [];
+
+        return {
+          handleMessageAction: e => {
+            switch (e?.nativeEvent.event) {
+              case 'student':
+                navigation.navigate(mailsRouteNames.edit, {
+                  ...baseParams,
+                  initialMailInfo: { to: user },
+                });
+                break;
+              case 'relatives':
+                navigation.navigate(mailsRouteNames.edit, {
+                  ...baseParams,
+                  initialMailInfo: { to: familyUser },
+                });
+                break;
+              case 'relatives&student':
+                navigation.navigate(mailsRouteNames.edit, {
+                  ...baseParams,
+                  initialMailInfo: { to: user.concat(familyUser) },
+                });
+                break;
+            }
+          },
+          messageActions: [
+            {
+              id: 'student',
+              title: I18n.get('user-profile-sendMessage-student'),
+            },
+            {
+              id: 'relatives',
+              title: I18n.get('user-profile-sendMessage-relatives'),
+            },
+            {
+              id: 'relatives&student',
+              title: I18n.get('user-profile-sendMessage-relatives&student'),
+            },
+          ],
+        };
+      }
+
+      return {
+        handleMessageAction: () => {
+          navigation.navigate(mailsRouteNames.edit, {
+            ...baseParams,
+            initialMailInfo: { to: user },
+          });
+        },
+        messageActions: undefined,
+      };
+    }, [displayName, family, id, navigation, session?.user.type, type]);
+
+    return (
+      <UserCard
+        id={session && isMyProfile ? (session.user.avatar ? toURISource(session.user.avatar) : session.user.id) : id}
+        displayName={displayName}
+        type={type}
+        hasAvatar={!!(isMyProfile && session && session.user.avatar)}
+        updatingAvatar={updatingAvatar}
+        onChangeAvatar={onChangeAvatar}
+        onDeleteAvatar={onDeleteAvatar}
+        canEdit={!!isMyProfile}
+        onPressMessageAction={handleMessageAction}
+        messageActions={messageActions}
+      />
+    );
+  },
+);
+
+const getIsMyProfile = (route: ProfilePageProps['route'], session?: AuthActiveAccount) =>
+  route.params.userId === undefined || (session && route.params.userId === session.user.id);
+
+type FamilyInfo = { relatedId: string | null; relatedName: string | null }[] | undefined;
+
+const UserProfileScreen = ({ navigation, route, ...props }: ProfilePageProps) => {
+  const session = useSelector(selectors.session);
+  const isMyProfile = getIsMyProfile(route, session);
+
+  const { onUpdateAvatar, onUploadAvatar, onUploadAvatarError } = props;
 
   const [updatingAvatar, setUpdatingAvatar] = React.useState<boolean>(false);
   const [userInfo, setUserInfo] = React.useState<undefined | InfoPerson>(undefined);
-  const [family, setFamily] = React.useState<undefined | { relatedId: string | null; relatedName: string | null }[]>(undefined);
-  const isMyProfile = React.useMemo(() => !(route.params.userId && route.params.userId !== session?.user.id), [route, session]);
+  const [family, setFamily] = React.useState<FamilyInfo>(undefined);
 
   const descriptionVisibility = route.params.newDescriptionVisibility ?? userInfo?.visibleInfos.includes('SHOW_HEALTH');
   const description = route.params.newDescription ?? userInfo?.health;
@@ -141,40 +324,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     } finally {
       setUpdatingAvatar(false);
     }
-  };
-
-  const onDeleteAvatar = async () => {
-    try {
-      setUpdatingAvatar(true);
-      await onUpdateAvatar('');
-    } catch {
-      onUploadAvatarError();
-    } finally {
-      setUpdatingAvatar(false);
-    }
-  };
-
-  const normalizeName = (name?: string | null) => (name ?? '').trim().toLowerCase();
-
-  const init = async () => {
-    const data = isMyProfile ? await userService.person.get() : await userService.person.get(route.params.userId);
-
-    if (!isEmpty(data[0].relatedId)) {
-      const seen = new Set<string>();
-
-      const uniqueFamily = data
-        .map(({ relatedId, relatedName }) => ({ relatedId, relatedName }))
-        .filter(item => {
-          const key = normalizeName(item.relatedName) || item.relatedId || '';
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
-
-      setFamily(uniqueFamily);
-    }
-
-    setUserInfo(data[0]);
   };
 
   const onNewMessage = () => {
@@ -243,23 +392,23 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const renderUserCard = () => {
-    const selfAvatar = isMyProfile ? session?.user.avatar : undefined;
-    const userAvatar = userInfo?.id;
-    return (
-      <UserCard
-        id={selfAvatar ? formatSource(`${session?.platform.url}${selfAvatar}`) : (userAvatar ?? '')}
-        displayName={userInfo?.displayName}
-        type={userInfo?.type}
-        hasAvatar={!!session?.user.avatar}
-        updatingAvatar={updatingAvatar}
-        onChangeAvatar={onChangeAvatar.bind(this)}
-        onDeleteAvatar={onDeleteAvatar.bind(this)}
-        canEdit={isMyProfile}
-        onPressInlineButton={() => onNewMessage()}
-      />
-    );
-  };
+  // const renderUserCard = () => {
+  //   const selfAvatar = isMyProfile ? session?.user.avatar : undefined;
+  //   const userAvatar = userInfo?.id;
+  //   return (
+  //     <UserCard
+  //       id={selfAvatar ? formatSource(`${session?.platform.url}${selfAvatar}`) : (userAvatar ?? '')}
+  //       displayName={userInfo?.displayName}
+  //       type={userInfo?.type}
+  //       hasAvatar={!!session?.user.avatar}
+  //       updatingAvatar={updatingAvatar}
+  //       onChangeAvatar={onChangeAvatar.bind(this)}
+  //       onDeleteAvatar={onDeleteAvatar.bind(this)}
+  //       canEdit={isMyProfile}
+  //       onPressInlineButton={() => onNewMessage()}
+  //     />
+  //   );
+  // };
 
   const renderPersonFamily = user => {
     if (
@@ -330,14 +479,15 @@ const UserProfileScreen = (props: ProfilePageProps) => {
           {I18n.get(schools.length > 1 ? 'user-profile-structures' : 'user-profile-structure')}
         </HeadingSText>
         <ButtonLineGroup>
-          {renderTextIcon({
-            icon: 'ui-school',
-            onPress:
+          <ProfileItem
+            icon="ui-school"
+            onPress={
               schools.length > 1
                 ? () => navigation.navigate(userRouteNames.structures, { structures: userInfo?.schools })
-                : undefined,
-            showArrow: true,
-            text: `${
+                : undefined
+            }
+            showArrow
+            text={`${
               schools[0] +
               (schools.length > 1
                 ? ' + ' +
@@ -345,9 +495,9 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                   ' ' +
                   I18n.get(schools.length > 2 ? 'user-profile-structures' : 'user-profile-structure').toLowerCase()
                 : '')
-            }`,
-          })}
-          {renderTextIcon({
+            }`}
+          />
+          {ProfileItem({
             icon: 'ui-class',
             onPress:
               classes.length > 1
@@ -367,64 +517,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 }`
               : '',
             textEmpty: I18n.get('user-profile-classEmpty'),
-          })}
-        </ButtonLineGroup>
-      </View>
-    );
-  };
-
-  const renderPersonnalInfos = () => {
-    if (
-      isEmpty(userInfo?.birthdate) &&
-      isEmpty(userInfo?.email) &&
-      isEmpty(userInfo?.tel) &&
-      isEmpty(userInfo?.mobile) &&
-      !isMyProfile
-    )
-      return;
-    return (
-      <View style={styles.bloc}>
-        <HeadingSText style={styles.blocTitle}>{I18n.get('user-profile-personnalInfos')}</HeadingSText>
-        <ButtonLineGroup>
-          {renderTextIcon({
-            icon: 'ui-anniversary',
-            show: isMyProfile,
-            text: userInfo?.birthdate ? userInfo?.birthdate.format('D MMMM Y') : undefined,
-          })}
-          {renderTextIcon({
-            icon: 'ui-mail',
-            onPress: () =>
-              showBottomMenu([{ action: () => Clipboard.setString(userInfo?.email!), title: I18n.get('user-profile-copyEmail') }]),
-            show: isMyProfile,
-            showArrow: false,
-            text: userInfo?.email,
-          })}
-          {renderTextIcon({
-            icon: 'ui-phone',
-            onPress: () =>
-              Platform.OS === 'ios'
-                ? callPhoneNumber(userInfo?.tel)
-                : showBottomMenu([
-                    { action: () => callPhoneNumber(userInfo?.tel), title: I18n.get('user-profile-call') + ' ' + userInfo?.tel },
-                  ]),
-            show: isMyProfile,
-            showArrow: false,
-            text: userInfo?.tel ?? undefined,
-          })}
-          {renderTextIcon({
-            icon: 'ui-smartphone',
-            onPress: () =>
-              Platform.OS === 'ios'
-                ? callPhoneNumber(userInfo?.mobile)
-                : showBottomMenu([
-                    {
-                      action: () => callPhoneNumber(userInfo?.mobile),
-                      title: I18n.get('user-profile-call') + ' ' + userInfo?.mobile,
-                    },
-                  ]),
-            show: isMyProfile,
-            showArrow: false,
-            text: userInfo?.mobile,
           })}
         </ButtonLineGroup>
       </View>
@@ -556,28 +648,102 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     );
   };
 
-  const renderPage = () => {
-    return (
-      <ScrollView style={styles.page}>
-        {renderUserCard()}
-        {appConf.is1d ? renderMoodMotto() : null}
-        {renderFamily()}
-        {renderStructures()}
-        {renderPersonnalInfos()}
-        {renderAbout()}
-        {appConf.is2d ? renderMoodMotto() : null}
-        {renderHobbies()}
-      </ScrollView>
-    );
+  // const renderContent = () => {
+  //   return (
+  //     <ScrollView style={styles.page}>
+  //       {renderUserCard()}
+  //       {appConf.is1d && renderMoodMotto()}
+  //       {renderFamily()}
+  //       {renderStructures()}
+  //       {shouldRenderPersonnalInfos && userInfo && <UserPersonalInfo userInfo={userInfo} />}
+  //       {renderAbout()}
+  //       {appConf.is2d && renderMoodMotto()}
+  //       {renderHobbies()}
+  //     </ScrollView>
+  //   );
+  // };
+  //
+
+  const normalizeName = (name?: string | null) => (name ?? '').trim().toLowerCase();
+
+  const loadContent = async () => {
+    const data = isMyProfile ? await userService.person.get() : await userService.person.get(route.params.userId);
+
+    if (!isEmpty(data[0].relatedId)) {
+      const seen = new Set<string>();
+
+      const uniqueFamily = data
+        .map(({ relatedId, relatedName }) => ({ relatedId, relatedName }))
+        .filter(item => {
+          const key = normalizeName(item.relatedName) || item.relatedId || '';
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+      setFamily(uniqueFamily);
+    }
+
+    setUserInfo(data[0]);
   };
 
+  const renderContent = React.useCallback<NonNullable<ContentLoaderProps['renderContent']>>(
+    refreshControl => {
+      if (!userInfo) throw new Error('no user info');
+      return (
+        <UserProfileLoaded
+          {...props}
+          session={session}
+          navigation={navigation}
+          route={route}
+          refreshControl={refreshControl}
+          userInfo={userInfo}
+          family={family}
+        />
+      );
+    },
+    [family, navigation, props, route, session, userInfo],
+  );
+
   return (
-    <ContentLoader
-      loadContent={init}
-      renderContent={renderPage}
-      renderError={() => <EmptyConnectionScreen />}
-      renderLoading={() => <UserPlaceholderProfile />}
-    />
+    <ScreenView>
+      <ContentLoader
+        loadContent={loadContent}
+        renderContent={renderContent}
+        renderError={EmptyConnectionScreen}
+        renderLoading={UserPlaceholderProfile}
+      />
+    </ScreenView>
+  );
+};
+
+const UserProfileLoaded = ({
+  family,
+  navigation,
+  onUpdateAvatar,
+  onUploadAvatar,
+  onUploadAvatarError,
+  refreshControl,
+  route,
+  session,
+  userInfo,
+}: Pick<ScrollViewProps, 'refreshControl'> &
+  ProfilePageProps & { userInfo: InfoPerson; session?: AuthActiveAccount; family: FamilyInfo }) => {
+  const isMyProfile = getIsMyProfile(route, session);
+  return (
+    <ScrollView refreshControl={refreshControl} style={styles.page}>
+      <UserTopCard
+        session={session}
+        route={route}
+        navigation={navigation}
+        userInfo={userInfo}
+        onUpdateAvatar={onUpdateAvatar}
+        onUploadAvatar={onUploadAvatar}
+        onUploadAvatarError={onUploadAvatarError}
+        family={family}
+      />
+      {isMyProfile && <UserPersonalInfo userInfo={userInfo} />}
+    </ScrollView>
   );
 };
 
@@ -593,19 +759,11 @@ const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: ThunkDispatc
   }
 };
 
-const UserProfileScreenConnected = connect(
-  (state: any) => {
-    const ret = {
-      session: getSession(),
-    };
-    return ret;
-  },
-  (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
-    onUpdateAvatar: (imageWorkspaceUrl: string) =>
-      dispatch(profileUpdateAction({ avatar: imageWorkspaceUrl })) as unknown as Promise<void>,
-    onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
-    onUploadAvatarError: () => dispatch(uploadAvatarError()),
-  }),
-)(UserProfileScreen);
+const UserProfileScreenConnected = connect(undefined, (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
+  onUpdateAvatar: (imageWorkspaceUrl: string) =>
+    dispatch(profileUpdateAction({ avatar: imageWorkspaceUrl })) as unknown as Promise<void>,
+  onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
+  onUploadAvatarError: () => dispatch(uploadAvatarError()),
+}))(UserProfileScreen);
 
 export default UserProfileScreenConnected;
