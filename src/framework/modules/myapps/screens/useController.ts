@@ -86,10 +86,6 @@ export function useMyAppsHomeController() {
         hasAutoShownOnboardingThisSession = true;
         requestAnimationFrame(() => modalRef.current?.doShowModal());
       }
-      // return () => {
-      //   // reset filter
-      //   setFilter({ type: 'category', value: 'toutes' });
-      // };
     }, []),
   );
 

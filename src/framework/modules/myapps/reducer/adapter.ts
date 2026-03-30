@@ -112,17 +112,6 @@ const FALLBACK_BADGE: IAppBadgeInfo = {
   icon: 'ui-infoCircle',
 };
 
-export const buildNotifTypeToAppName = (notifTypes: IEntcoreNotificationType[]): Map<string, string> => {
-  const map = new Map<string, string>();
-  if (!notifTypes) return map;
-  for (const notif of notifTypes) {
-    if (notif['app-name'] && !map.has(notif.type)) {
-      map.set(notif.type, notif['app-name']);
-    }
-  }
-  return map;
-};
-
 export const buildAppBadgesIndex = (
   aggregatedApps: AppsInfoAggregated[],
   notifTypes: IEntcoreNotificationType[],
