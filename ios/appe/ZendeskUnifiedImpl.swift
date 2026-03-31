@@ -204,7 +204,7 @@ public class ZendeskUnifiedImpl: NSObject {
   }
 
   private func uiColor(fromHex hex: String) -> UIColor {
-    var s = hex.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "#", with: "")
+    let s = hex.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "#", with: "")
     var rgb: UInt64 = 0
     Scanner(string: s).scanHexInt64(&rgb)
     return UIColor(
