@@ -63,7 +63,7 @@
     "@react-native-async-storage/async-storage": "3.0.2",
     "@react-native-camera-roll/camera-roll": "7.10.2",
     "@react-native-clipboard/clipboard": "1.16.3",
-    "@react-native-community/datetimepicker": "8.6.0",
+    "@react-native-community/datetimepicker": "9.1.0",
     "@react-native-community/eslint-config": "3.2.0",
     "@react-native-community/netinfo": "11.5.2",
     "@react-native-community/push-notification-ios": "1.12.0",
