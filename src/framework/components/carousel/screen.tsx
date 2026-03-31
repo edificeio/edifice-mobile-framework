@@ -15,6 +15,7 @@ import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
 import { I18n } from '~/app/i18n';
+import { NavigationRootParams, NavigationScreenName } from '~/app/navigation/types';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -41,13 +42,13 @@ import { Loading } from '~/ui/Loading';
 
 import { IImageSize } from './image-viewer/image-viewer.type';
 
-export interface ICarouselNavParams {
+export interface CarouselParams {
   data: IMedia[];
   startIndex?: number;
   referer: AudienceParameter; // used for audience tracking
 }
 
-export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
+export interface ICarouselProps extends NativeStackScreenProps<NavigationRootParams, 'carousel'> {}
 
 const styles = StyleSheet.create({
   errorScreen: {
@@ -111,7 +112,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
 export function computeNavBar({
   navigation,
   route,
-}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel>): NativeStackNavigationOptions {
+}: NativeStackScreenProps<NavigationRootParams, 'carousel'>): NativeStackNavigationOptions {
   return {
     ...navBarOptions({
       navigation,
