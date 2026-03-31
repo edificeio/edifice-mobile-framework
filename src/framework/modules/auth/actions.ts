@@ -46,10 +46,10 @@ import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
 import {
   actions,
   assertSession,
+  AuthState,
   ERASE_ALL_ACCOUNTS,
   getState as getAuthState,
   getSession,
-  IAuthState,
 } from '~/framework/modules/auth/reducer';
 import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
 import { buildFetchSuccessPayload } from '~/framework/modules/myapps/reducer/adapter';
@@ -64,7 +64,7 @@ import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { platformFetch } from '~/framework/util/transport';
 
-type AuthDispatch = ThunkDispatch<IAuthState, any, Action>;
+type AuthDispatch = ThunkDispatch<AuthState, any, Action>;
 
 /**
  * Initialize Auth state by reading in the storage.
@@ -333,7 +333,7 @@ const getLoginFunctions = {
     writeStorage: (...args: Parameters<typeof storage.writeCreateAccount>) =>
       storage.writeReplaceAccount(ERASE_ALL_ACCOUNTS, ...args),
   }),
-  replaceAccount: (id: keyof IAuthState['accounts'], timestamp: number): AuthLoginFunctions => ({
+  replaceAccount: (id: keyof AuthState['accounts'], timestamp: number): AuthLoginFunctions => ({
     activation: actions.redirectActivation,
     getTimestamp: () => timestamp,
     passwordRenew: (...[platformName, login, code]: Parameters<typeof actions.redirectPasswordRenew>) =>
@@ -343,7 +343,7 @@ const getLoginFunctions = {
     success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
     writeStorage: (...args: Parameters<typeof storage.writeCreateAccount>) => storage.writeReplaceAccount(id, ...args),
   }),
-  restoreAccount: (id: keyof IAuthState['accounts'], timestamp: number): AuthLoginFunctions => ({
+  restoreAccount: (id: keyof AuthState['accounts'], timestamp: number): AuthLoginFunctions => ({
     activation: actions.redirectActivation,
     getTimestamp: () => timestamp,
     passwordRenew: actions.redirectPasswordRenew,
@@ -352,7 +352,7 @@ const getLoginFunctions = {
     success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
     writeStorage: (...args: Parameters<typeof storage.writeCreateAccount>) => storage.writeReplaceAccount(id, ...args),
   }),
-  switchAccount: (id: keyof IAuthState['accounts'], timestamp: number): AuthLoginFunctions => ({
+  switchAccount: (id: keyof AuthState['accounts'], timestamp: number): AuthLoginFunctions => ({
     activation: actions.redirectActivation,
     getTimestamp: () => timestamp,
     passwordRenew: actions.redirectPasswordRenew,
@@ -523,7 +523,7 @@ export const loginCredentialsActionAddFirstAccount = (platform: Platform, creden
  * @throws
  */
 export const loginCredentialsActionReplaceAccount = (
-  accountId: keyof IAuthState['accounts'],
+  accountId: keyof AuthState['accounts'],
   timestamp: number,
   platform: Platform,
   credentials: AuthCredentials,
@@ -578,7 +578,7 @@ export const loginFederationActionAddFirstAccount = (platform: Platform, credent
   loginFederationAction(getLoginFunctions.addFirstAccount(), platform, credentials, key);
 
 export const loginFederationActionReplaceAccount = (
-  accountId: keyof IAuthState['accounts'],
+  accountId: keyof AuthState['accounts'],
   timestamp: number,
   platform: Platform,
   credentials: AuthFederationCredentials,
@@ -865,7 +865,7 @@ export const changePasswordActionAddFirstAccount = (
 ) => changePasswordAction(getLoginFunctions.addFirstAccount(), platform, p, forceChange, rememberMe);
 
 export const changePasswordActionReplaceAccount = (
-  accountId: keyof IAuthState['accounts'],
+  accountId: keyof AuthState['accounts'],
   timestamp: number,
   platform: Platform,
   p: IChangePasswordPayload,
@@ -874,12 +874,12 @@ export const changePasswordActionReplaceAccount = (
 ) => changePasswordAction(getLoginFunctions.replaceAccount(accountId, timestamp), platform, p, forceChange, rememberMe);
 
 export const buildChangePasswordActionReplaceAccount =
-  (accountId: keyof IAuthState['accounts'], timestamp: number) =>
+  (accountId: keyof AuthState['accounts'], timestamp: number) =>
   (platform: Platform, p: IChangePasswordPayload, forceChange?: boolean, rememberMe?: boolean) =>
     changePasswordAction(getLoginFunctions.replaceAccount(accountId, timestamp), platform, p, forceChange, rememberMe);
 
 export const buildLoginFederationActionReplaceAccount =
-  (accountId: keyof IAuthState['accounts'], timestamp: number) =>
+  (accountId: keyof AuthState['accounts'], timestamp: number) =>
   (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
     loginFederationAction(getLoginFunctions.replaceAccount(accountId, timestamp), platform, credentials, key);
 

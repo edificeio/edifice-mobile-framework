@@ -9,7 +9,7 @@ import type {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { IAuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/reducer';
 import type { Platform } from '~/framework/util/appConf';
 
 export type IFields = 'oldPassword' | 'newPassword' | 'confirm';
@@ -24,7 +24,7 @@ export interface ChangePasswordScreenNavParams {
   useResetCode?: boolean;
   platform?: Platform;
   credentials?: AuthCredentials | AuthUsernameCredential;
-  replaceAccountId?: keyof IAuthState['accounts'];
+  replaceAccountId?: keyof AuthState['accounts'];
   replaceAccountTimestamp?: number;
 }
 

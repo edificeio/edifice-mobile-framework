@@ -42,3 +42,4 @@ export default function AuthOnboardingScreen(props: AuthOnboardingScreenProps) {
     </>
   );
 }
+AuthOnboardingScreen.options = { headerShown: false };

@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { loginFederationActionAddFirstAccount } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { IAuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/reducer';
 import { StackNavigationAction } from '~/framework/navigation/types';
 
 export enum WAYFPageMode {
@@ -21,7 +21,7 @@ export interface WAYFScreenDispatchProps {
 }
 
 export interface WAYFScreenStoreProps {
-  auth: IAuthState;
+  auth: AuthState;
 }
 
 export interface IWayfScreenProps

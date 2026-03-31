@@ -1,9 +1,9 @@
 import type { IGlobalState } from '~/app/store';
 import { accountIsActive } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
-import type { IAuthState } from '~/framework/modules/auth/reducer';
+import type { AuthState } from '~/framework/modules/auth/reducer';
 
-export const authState = (s: IGlobalState) => s[moduleConfig.reducerName] as IAuthState;
+export const authState = (s: IGlobalState) => s[moduleConfig.reducerName] as AuthState;
 
 export const session = (s: IGlobalState) => {
   const connectedId = authState(s).connected;

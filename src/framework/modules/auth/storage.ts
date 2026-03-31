@@ -6,7 +6,7 @@ import {
   getSerializedLoggedInAccountInfo,
 } from './model';
 import moduleConfig from './module-config';
-import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
+import { AuthState, ERASE_ALL_ACCOUNTS } from './reducer';
 
 import appConf from '~/framework/util/appConf';
 import { Storage } from '~/framework/util/storage';
@@ -139,7 +139,7 @@ export const writeLogout = (account: AuthActiveAccount) => {
  * Delete the given account information in the storage
  * @param account
  */
-export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
+export const writeDeleteAccount = (id: keyof AuthState['accounts']) => {
   const savedAccounts = readSavedAccounts();
   delete savedAccounts[id];
   storage.setJSON('accounts', savedAccounts);

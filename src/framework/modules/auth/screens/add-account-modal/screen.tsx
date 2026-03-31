@@ -11,7 +11,7 @@ import {
   getAddAccountLoginNextScreen,
   getAddAccountNavActionForRedirect,
 } from '~/framework/modules/auth/navigation/add-account/router';
-import { getState, IAuthState } from '~/framework/modules/auth/reducer';
+import { getState, AuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
@@ -28,7 +28,7 @@ export const computeNavBar = ({
   }),
 });
 
-const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
+const getAddAccountNavigationState = (pending: AuthState['pending']) => {
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;
 

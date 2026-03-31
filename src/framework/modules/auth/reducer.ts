@@ -25,7 +25,7 @@ import createReducer from '~/framework/util/redux/reducerFactory';
 
 export interface AuthPendingRestore {
   redirect: undefined;
-  account?: keyof IAuthState['accounts']; // If it concerns a saved account, which one
+  account?: keyof AuthState['accounts']; // If it concerns a saved account, which one
   platform: string; // Platform id of the login task (duplicated the value in `account` if present)
   loginUsed?: string; // Login to display if account is not defined
 }
@@ -42,15 +42,15 @@ export interface AuthPendingPasswordRenew {
   platform: string;
   loginUsed: string;
   code: string;
-  accountId?: keyof IAuthState['accounts']; // If it concerns a saved account, which one
+  accountId?: keyof AuthState['accounts']; // If it concerns a saved account, which one
   accountTimestamp?: number;
 }
 
-export interface IAuthState {
+export interface AuthState {
   accounts: AuthMixedAccountMap; // account list with populated info
-  connected?: keyof IAuthState['accounts']; // Currently logged user if so
+  connected?: keyof AuthState['accounts']; // Currently logged user if so
   requirement?: AuthRequirement; // Requirement for the current account
-  lastDeletedAccount?: keyof IAuthState['accounts']; // Last account was deleted
+  lastDeletedAccount?: keyof AuthState['accounts']; // Last account was deleted
   showOnboarding: AuthStorageData['show-onboarding'];
   platformContexts: Record<string, PlatformAuthContext>; // Platform contexts by pf name
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
@@ -73,7 +73,7 @@ export interface IAuthState {
 }
 
 // Initial state
-export const initialState: IAuthState = {
+export const initialState: AuthState = {
   accounts: {},
   deviceInfo: {},
   lastAddAccount: 0,
@@ -118,7 +118,7 @@ export const ERASE_ALL_ACCOUNTS = Symbol('ERASE_ALL_ACCOUNTS');
 
 export interface ActionPayloads {
   authInit: Pick<AuthStorageData, 'accounts' | 'startup'> & {
-    deviceId: IAuthState['deviceInfo']['uniqueId'];
+    deviceId: AuthState['deviceInfo']['uniqueId'];
     showOnboarding: AuthStorageData['show-onboarding'];
   };
   loadPfContext: { name: Platform['name']; context: PlatformAuthContext };
@@ -126,23 +126,23 @@ export interface ActionPayloads {
   loadPfValidReactionTypes: { validReactionTypes: AudienceValidReactionTypes };
   addAccount: { account: AuthLoggedAccount };
   addAccountRequirement: { account: AuthLoggedAccount; requirement: AuthRequirement; context: PlatformAuthContext };
-  removeAccount: { id: keyof IAuthState['accounts'] };
-  replaceAccount: { id: keyof IAuthState['accounts'] | typeof ERASE_ALL_ACCOUNTS; account: AuthLoggedAccount };
+  removeAccount: { id: keyof AuthState['accounts'] };
+  replaceAccount: { id: keyof AuthState['accounts'] | typeof ERASE_ALL_ACCOUNTS; account: AuthLoggedAccount };
   replaceAccountRequirement: {
-    id: keyof IAuthState['accounts'] | typeof ERASE_ALL_ACCOUNTS;
+    id: keyof AuthState['accounts'] | typeof ERASE_ALL_ACCOUNTS;
     account: AuthLoggedAccount;
     requirement: AuthRequirement;
     context: PlatformAuthContext;
   };
   updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: PlatformAuthContext };
-  refreshToken: { id: keyof IAuthState['accounts']; tokens: AuthTokenSet };
-  setQueryParamToken: { id: keyof IAuthState['accounts']; token: AuthTokenSet['queryParam'] };
-  setOneSessionId: { id: keyof IAuthState['accounts']; token: AuthTokenSet['oneSessionId'] };
-  setCarbonioToken: { id: keyof IAuthState['accounts']; token: string };
-  setCarbonioUserInfos: { id: keyof IAuthState['accounts']; carbonioUserInfos: any };
+  refreshToken: { id: keyof AuthState['accounts']; tokens: AuthTokenSet };
+  setQueryParamToken: { id: keyof AuthState['accounts']; token: AuthTokenSet['queryParam'] };
+  setOneSessionId: { id: keyof AuthState['accounts']; token: AuthTokenSet['oneSessionId'] };
+  setCarbonioToken: { id: keyof AuthState['accounts']; token: string };
+  setCarbonioUserInfos: { id: keyof AuthState['accounts']; carbonioUserInfos: any };
   authError: {
-    account: keyof IAuthState['accounts'];
-    error: NonNullable<Required<IAuthState['error']>>;
+    account: keyof AuthState['accounts'];
+    error: NonNullable<Required<AuthState['error']>>;
   };
   logout: object;
   deactivate: object;
@@ -151,13 +151,13 @@ export interface ActionPayloads {
     platformName: Platform['name'];
     login: string;
     code: string;
-    accountId?: keyof IAuthState['accounts'];
+    accountId?: keyof AuthState['accounts'];
     accountTimestamp?: number;
   };
   redirectCancel: {
     platformName: Platform['name'];
     login: string;
-    accountId?: keyof IAuthState['accounts'];
+    accountId?: keyof AuthState['accounts'];
     accountTimestamp?: number;
   };
   addAccountInit: object;
@@ -167,7 +167,7 @@ export interface ActionPayloads {
     platformName: Platform['name'];
     login: string;
   };
-  profileUpdate: { id: keyof IAuthState['accounts']; user: Partial<AuthLoggedAccount['user']> };
+  profileUpdate: { id: keyof AuthState['accounts']; user: Partial<AuthLoggedAccount['user']> };
   invalidate: object;
 }
 
@@ -192,7 +192,7 @@ export const actions = {
     platformName: Platform['name'],
     login: string,
     code: string,
-    accountId?: keyof IAuthState['accounts'],
+    accountId?: keyof AuthState['accounts'],
     accountTimestamp?: number,
   ) => ({
     accountId,
@@ -216,7 +216,7 @@ export const actions = {
     type: actionTypes.addAccountRequirement,
   }),
 
-  authError: (error: NonNullable<IAuthState['error']>, account?: string) => ({
+  authError: (error: NonNullable<AuthState['error']>, account?: string) => ({
     account,
     error,
     type: actionTypes.authError,
@@ -226,7 +226,7 @@ export const actions = {
     startup: AuthStorageData['startup'],
     accounts: AuthStorageData['accounts'],
     showOnboarding: AuthStorageData['show-onboarding'],
-    deviceId: IAuthState['deviceInfo']['uniqueId'],
+    deviceId: AuthState['deviceInfo']['uniqueId'],
   ) => ({ accounts, deviceId, showOnboarding, startup, type: actionTypes.authInit }),
 
   deactivate: () => ({
@@ -265,7 +265,7 @@ export const actions = {
   redirectCancel: (
     platformName: Platform['name'],
     login: string,
-    accountId?: keyof IAuthState['accounts'],
+    accountId?: keyof AuthState['accounts'],
     accountTimestamp?: number,
   ) => ({
     accountId,
@@ -279,7 +279,7 @@ export const actions = {
     platformName: Platform['name'],
     login: string,
     code: string,
-    accountId?: keyof IAuthState['accounts'],
+    accountId?: keyof AuthState['accounts'],
     accountTimestamp?: number,
   ) => ({
     accountId,
@@ -296,7 +296,7 @@ export const actions = {
     type: actionTypes.refreshToken,
   }),
 
-  removeAccount: (id: keyof IAuthState['accounts']) => ({
+  removeAccount: (id: keyof AuthState['accounts']) => ({
     id,
     type: actionTypes.removeAccount,
   }),
@@ -696,7 +696,7 @@ const reducer = createReducer(initialState, {
 
 Reducers.register(moduleConfig.reducerName, reducer);
 
-export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as IAuthState;
+export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as AuthState;
 
 export const selectors = {
   requirement: (state: IGlobalState) => {
@@ -767,7 +767,7 @@ export function getAccounts() {
   return Object.values(state.accounts);
 }
 
-export function getAccountById(id?: keyof IAuthState['accounts']) {
+export function getAccountById(id?: keyof AuthState['accounts']) {
   const state = getState(getStore().getState());
   return id ? state.accounts[id] : undefined;
 }

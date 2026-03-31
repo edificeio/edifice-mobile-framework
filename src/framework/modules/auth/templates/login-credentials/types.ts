@@ -6,7 +6,7 @@ import type {
   loginCredentialsActionReplaceAccount,
 } from '~/framework/modules/auth/actions';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import type { IAuthState } from '~/framework/modules/auth/reducer';
+import type { AuthState } from '~/framework/modules/auth/reducer';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import type { Platform } from '~/framework/util/appConf';
 
@@ -28,7 +28,7 @@ export interface LoginCredentialsScreenNavParams {
 }
 
 export interface LoginCredentialsScreenStoreProps {
-  error: IAuthState['error'];
+  error: AuthState['error'];
   lockLogin: boolean;
 }
 

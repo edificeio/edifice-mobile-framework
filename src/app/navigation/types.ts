@@ -6,6 +6,7 @@ import type { CarouselParams } from '~/framework/components/carousel/screen';
 
 export type NavigationRootParams = {
   tabs: undefined;
+  guest: undefined;
   carousel: CarouselParams;
 };
 

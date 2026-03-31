@@ -4,7 +4,7 @@ import { StorageSlice } from './slice';
 import { StorageTypeMap } from './types';
 
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { IAuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/reducer';
 import { IModuleConfig } from '~/framework/util/moduleTool';
 import { Trackers } from '~/framework/util/tracker';
 
@@ -45,7 +45,7 @@ export class Storage {
     return ret;
   }
 
-  static erasePreferences(id: keyof IAuthState['accounts']) {
+  static erasePreferences(id: keyof AuthState['accounts']) {
     const keys = Storage.global.getAllKeys().filter(k => k.startsWith(`${Storage.PREFERENCES_PREFIX}${id}`));
     for (const key of keys) {
       Storage.global.remove(key);

@@ -19,7 +19,7 @@ import { IGlobalState } from '~/app/store';
 import { RootToastContainer } from '~/framework/components/toast';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getAuthNavigationState, getFirstTabRoute } from '~/framework/modules/auth/navigation/main-account/router';
-import { getState as getAuthState, IAuthState, selectors } from '~/framework/modules/auth/reducer';
+import { AuthState, getState as getAuthState, selectors } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
@@ -27,13 +27,13 @@ import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTrac
 import './tabModules';
 
 export interface RootNavigatorStoreProps {
-  pending: IAuthState['pending'];
-  accounts: IAuthState['accounts'];
-  showOnboarding: IAuthState['showOnboarding'];
-  connected: IAuthState['connected'];
-  requirement: IAuthState['requirement'];
-  lastAddAccount: IAuthState['lastAddAccount'];
-  lastDeletedAccount: IAuthState['lastDeletedAccount'];
+  pending: AuthState['pending'];
+  accounts: AuthState['accounts'];
+  showOnboarding: AuthState['showOnboarding'];
+  connected: AuthState['connected'];
+  requirement: AuthState['requirement'];
+  lastAddAccount: AuthState['lastAddAccount'];
+  lastDeletedAccount: AuthState['lastDeletedAccount'];
 }
 export type RootNavigatorProps = RootNavigatorStoreProps;
 

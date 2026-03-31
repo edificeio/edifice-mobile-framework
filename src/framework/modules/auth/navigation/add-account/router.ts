@@ -2,14 +2,14 @@ import { CommonActions, NavigationState, PartialState, StackActions } from '@rea
 
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
-import { IAuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 export const getAddAccountLoginNextScreen: (
   platform: Platform,
-  pending?: IAuthState['pending'],
+  pending?: AuthState['pending'],
 ) => PartialState<NavigationState>['routes'][0] = (platform, pending) => {
   return platform.wayf
     ? { name: authRouteNames.addAccountLoginWayf, params: { platform } }
@@ -18,7 +18,7 @@ export const getAddAccountLoginNextScreen: (
       : { name: authRouteNames.addAccountLoginCredentials, params: { platform } };
 };
 
-export const getAddAccountLoginNextScreenNavAction = (platform: Platform, pending?: IAuthState['pending']) => {
+export const getAddAccountLoginNextScreenNavAction = (platform: Platform, pending?: AuthState['pending']) => {
   return CommonActions.navigate(getAddAccountLoginNextScreen(platform, pending));
 };
 
@@ -28,7 +28,7 @@ export const getAddAccountOnboardingNextScreen = () => {
     : CommonActions.navigate(getAddAccountLoginNextScreen(appConf.platforms[0]));
 };
 
-export const getAddAccountNavActionForRedirect = (platform: Platform, pending: IAuthState['pending'] | undefined) => {
+export const getAddAccountNavActionForRedirect = (platform: Platform, pending: AuthState['pending'] | undefined) => {
   switch (pending?.redirect) {
     case AuthPendingRedirection.ACTIVATE:
       return StackActions.push(authRouteNames.addAccountActivation, {
@@ -51,7 +51,7 @@ export const getAddAccountNavActionForRedirect = (platform: Platform, pending: I
   }
 };
 
-export const getAddAccountNavigationState = (pending: IAuthState['pendingAddAccount']) => {
+export const getAddAccountNavigationState = (pending: AuthState['pendingAddAccount']) => {
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;
 
@@ -70,7 +70,7 @@ export const getAddAccountNavigationState = (pending: IAuthState['pendingAddAcco
     // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
     let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
     let loginWithoutAccountId: string | undefined;
-    let accountId: keyof IAuthState['accounts'] | undefined;
+    let accountId: keyof AuthState['accounts'] | undefined;
 
     foundPlatform = pending.platform;
     if (pending.redirect === undefined) {

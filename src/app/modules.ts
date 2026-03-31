@@ -24,7 +24,7 @@ export default () => {
   else {
     const moduleDeclarations = [
       // Built-in modules
-      require('~/framework/modules/auth'),
+      // require('~/framework/modules/auth'),
       require('~/framework/modules/timeline'),
       require('~/framework/modules/audience').default,
       require('~/framework/modules/explorer').default,
@@ -43,7 +43,6 @@ export default () => {
  * Call this function when all modules have been loaded to init them and register them.
  */
 export const setUpModulesAccess = (sessionIfExists?: AuthActiveAccount) => {
-  console.info('[BOB] setUpModulesAccess', sessionIfExists, AllModules);
   if (AllModules) {
     if (!sessionIfExists) return [];
     AllModules.initModuleConfigs(sessionIfExists);
