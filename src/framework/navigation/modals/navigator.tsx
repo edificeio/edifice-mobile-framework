@@ -18,7 +18,7 @@ import AttachmentsImportScreen, {
 import {
   computeNavBar as ManageFavoritesAddNavbar,
   ManageFavoritesModalScreen,
-} from '~/framework/modules/myAppMenu/components/manage-favorite-modal';
+} from '~/framework/modules/myapps/components/manage-favorite-modal';
 import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';

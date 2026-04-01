@@ -9,13 +9,11 @@ function hasViescoApp(entcoreApp: IEntcoreApp): boolean {
 
 export default new NavigableModuleConfig<'dashboard', IDashboardReduxState>({
   displayAs: ModuleType.TAB_MODULE,
-  displayI18n: 'dashboard-moduleconfig-tabname',
   displayOrder: 2,
-  displayPicture: { name: 'school', type: 'Icon' },
   entcoreScope: ['viescolaire'],
-
   hasRight: ({ matchingApps, session }) => session.platform.showVieScolaireDashboard === true && matchingApps.some(hasViescoApp),
   matchEntcoreApp: 'Dashboard',
   name: 'dashboard',
   storageName: 'dashboard',
+  tabDisplayName: 'dashboard-moduleconfig-tabname',
 });

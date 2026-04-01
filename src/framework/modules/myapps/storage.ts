@@ -11,8 +11,9 @@ export interface MyAppsOnboardingStorageData {
 }
 
 export interface MyAppsStorageData {
-  preferences?: MyAppsPreferencesStorageData;
-  onboarding?: MyAppsOnboardingStorageData;
+  'preferences'?: MyAppsPreferencesStorageData;
+  'onboarding'?: MyAppsOnboardingStorageData;
+  'infobubble-ack'?: boolean;
 }
 
 type MyAppsStorageMap = {
@@ -21,7 +22,16 @@ type MyAppsStorageMap = {
 
 const STORAGE_KEY: keyof MyAppsStorageMap = 'myapps';
 
-const myAppsStorage = Storage.preferences<MyAppsStorageMap>(moduleConfig, function () {});
+const oldStorageKey = 'infoBubbleAck-myAppsScreen.redirect';
+
+const myAppsStorage = Storage.preferences<MyAppsStorageMap>(moduleConfig, function () {
+  const oldValue = Storage.global.getString(oldStorageKey) as 'true' | 'false' | undefined;
+  if (oldValue === 'true') {
+    const data = this.getJSON(STORAGE_KEY) ?? {};
+    this.setJSON(STORAGE_KEY, { ...data, 'infobubble-ack': true });
+  }
+  Storage.global.delete(oldStorageKey);
+});
 
 export const readMyAppsPreferences = (): MyAppsPreferencesStorageData => {
   const data = myAppsStorage.getJSON(STORAGE_KEY);
@@ -60,3 +70,5 @@ export const writeMyAppsOnboardingSeen = (version: string) => {
 export const resetMyAppsStorage = () => {
   myAppsStorage.delete(STORAGE_KEY);
 };
+
+export const storage = myAppsStorage;

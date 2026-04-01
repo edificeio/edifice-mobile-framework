@@ -1,0 +1,14 @@
+/**
+ * A specific moduleMap that exists inside myapps
+ */
+import { ModuleRegister, setGlobalRegister, UnknownNavigableModule } from '~/framework/util/moduleTool';
+
+// myApps module register =========================================================================
+
+export const myAppsModules = new ModuleRegister<UnknownNavigableModule>();
+export const myAppsSecondaryModules = new ModuleRegister<UnknownNavigableModule>();
+export const myAppsConnector = new ModuleRegister<UnknownNavigableModule>();
+
+setGlobalRegister('myAppsModule', myAppsModules);
+setGlobalRegister('myAppsSecondaryModule', myAppsSecondaryModules);
+setGlobalRegister('myAppsConnector', myAppsConnector);

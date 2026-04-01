@@ -4,91 +4,63 @@ import { ThunkAction } from 'redux-thunk';
 import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { appsInfoActionTypes, FetchSuccessPayload } from '~/framework/modules/myapps/reducer/action-types';
 import {
-  appsInfoActionTypes,
+  buildFetchSuccessPayload,
   computeNextBookmarks,
   enrichAppsWithModuleInfo,
   isNavigableModule,
-  selectAppsState,
-} from '~/framework/modules/myapps/reducer';
+} from '~/framework/modules/myapps/reducer/adapter';
+import { selectAppsState } from '~/framework/modules/myapps/reducer/selectors';
 import { myAppsService } from '~/framework/modules/myapps/service';
 import { MyAppsPreferencesStorageData, readMyAppsPreferences, writeShowAllApps } from '~/framework/modules/myapps/storage';
-import { AppBookmarks, ApplicationsConfig, AppsInfo, AppsInfoState } from '~/framework/modules/myapps/types';
 
 type ThunkResult = ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction>;
 
 export const appInfoActions = {
-  fetchError: (error: string) =>
-    ({
-      error,
-      type: appsInfoActionTypes.fetchError,
-    }) as const,
+  fetchError: (error: string) => ({ error, type: appsInfoActionTypes.fetchError }) as const,
+
   fetchStart: () => ({ type: appsInfoActionTypes.fetchStart }) as const,
-  fetchSuccess: (payload: { appsInfo: AppsInfo[]; appsConfig: ApplicationsConfig[]; favorites: AppBookmarks }) =>
-    ({
-      payload,
-      type: appsInfoActionTypes.fetchSuccess,
-    }) as const,
+
+  fetchSuccess: (payload: FetchSuccessPayload) => ({ payload, type: appsInfoActionTypes.fetchSuccess }) as const,
 
   hydratePreferences: (payload: Partial<MyAppsPreferencesStorageData>) =>
-    ({
-      payload,
-      type: appsInfoActionTypes.hydratePreferences,
-    }) as const,
+    ({ payload, type: appsInfoActionTypes.hydratePreferences }) as const,
 
-  saveGroupedFavoritesError: () =>
-    ({
-      type: appsInfoActionTypes.saveGroupedFavoritesError,
-    }) as const,
+  saveGroupedFavoritesError: () => ({ type: appsInfoActionTypes.saveGroupedFavoritesError }) as const,
 
-  saveGroupedFavoritesStart: () =>
-    ({
-      type: appsInfoActionTypes.saveGroupedFavoritesStart,
-    }) as const,
+  saveGroupedFavoritesStart: () => ({ type: appsInfoActionTypes.saveGroupedFavoritesStart }) as const,
 
   saveGroupedFavoritesSuccess: (bookmarks: string[]) =>
-    ({
-      bookmarks,
-      type: appsInfoActionTypes.saveGroupedFavoritesSuccess,
-    }) as const,
+    ({ bookmarks, type: appsInfoActionTypes.saveGroupedFavoritesSuccess }) as const,
 
-  toggleFavorite: (appName: string) =>
-    ({
-      appName,
-      type: appsInfoActionTypes.toggleFavorite,
-    }) as const,
+  toggleFavorite: (appName: string) => ({ appName, type: appsInfoActionTypes.toggleFavorite }) as const,
 };
 
 export const toggleAllApps = (): ThunkResult => async (dispatch, getState) => {
   dispatch({ type: appsInfoActionTypes.toggleAllApps });
-
   const { showAllApps } = selectAppsState(getState());
   writeShowAllApps(showAllApps);
 };
 
-export const afterLoginSetup = (): ThunkResult => async (dispatch, getState) => {
+export const enrichAppsAtLogin = (): ThunkResult => async (dispatch, getState) => {
   dispatch(appInfoActions.fetchStart());
   const session = getSession();
-  const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
+  if (!session) return;
+
+  const modules = AllModules().filterAvailables(session).filter(isNavigableModule);
   const currentState = selectAppsState(getState());
 
   try {
-    let appsInfo = currentState?.appsInfo || [];
-    let appsConfig = currentState?.appsConfig || [];
-    let favorites = currentState?.favorites || { applications: [], bookmarks: [] };
+    const appsInfo = enrichAppsWithModuleInfo(currentState?.appsInfo ?? [], modules);
+    const appsConfig = currentState?.appsConfig ?? [];
+    const favorites = currentState?.favorites ?? { applications: [], bookmarks: [] };
 
-    appsInfo = enrichAppsWithModuleInfo(appsInfo, modules);
-    dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
+    dispatch(appInfoActions.fetchSuccess(buildFetchSuccessPayload(appsInfo, appsConfig, favorites)));
   } catch (e) {
-    console.error('[afterLoginSetup] ERROR', e);
+    console.error('[enrichAppsAtLogin] ERROR', e);
     dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
   }
-};
-
-export const initMesAppliAtLogin = (): ThunkResult => async dispatch => {
-  const session = getSession();
-  if (!session) return;
-  await dispatch(afterLoginSetup());
 };
 
 export const refreshMyApps = (): ThunkResult => async (dispatch, _) => {
@@ -97,14 +69,14 @@ export const refreshMyApps = (): ThunkResult => async (dispatch, _) => {
   const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
 
   try {
-    let [appsInfo, appsConfig, favorites] = await Promise.all([
+    const [rawAppsInfo, appsConfig, favorites] = await Promise.all([
       myAppsService.list(),
       myAppsService.config(),
       myAppsService.bookmarks(),
     ]);
 
-    appsInfo = enrichAppsWithModuleInfo(appsInfo, modules);
-    dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
+    const appsInfo = enrichAppsWithModuleInfo(rawAppsInfo, modules);
+    dispatch(appInfoActions.fetchSuccess(buildFetchSuccessPayload(appsInfo, appsConfig, favorites)));
   } catch (e) {
     console.error('[refreshMyApps] ERROR', e);
     dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
@@ -119,18 +91,14 @@ const bookmarksAreEqual = (a: string[], b: string[]): boolean => {
 
 export const toggleFavorite =
   (appName: string, onDone?: (ok: boolean) => void): ThunkResult =>
-  async (dispatch, getState: () => AppsInfoState) => {
+  async (dispatch, getState: () => IGlobalState) => {
     const session = getSession();
     if (!session) return;
 
-    const state = getState();
-    const appsInfostate = selectAppsState(state);
-    const { appsConfig, appsInfo, favorites } = appsInfostate;
-
+    const { appsConfig, appsInfo, favorites } = selectAppsState(getState());
     const computedNextBookmarks = computeNextBookmarks(favorites.bookmarks, appName);
-
     const nextBookmarks =
-      favorites.applications && favorites.applications.length > 0
+      favorites.applications?.length > 0
         ? computedNextBookmarks.filter(name => favorites.applications.includes(name))
         : computedNextBookmarks;
 
@@ -143,17 +111,10 @@ export const toggleFavorite =
       });
 
       const refreshedFavorites = await myAppsService.bookmarks();
-
       const currentBookmarks = selectAppsState(getState()).favorites.bookmarks;
 
       if (!bookmarksAreEqual(currentBookmarks, refreshedFavorites.bookmarks)) {
-        dispatch(
-          appInfoActions.fetchSuccess({
-            appsConfig,
-            appsInfo,
-            favorites: refreshedFavorites,
-          }),
-        );
+        dispatch(appInfoActions.fetchSuccess(buildFetchSuccessPayload(appsInfo, appsConfig, refreshedFavorites)));
       }
 
       onDone?.(true);
@@ -170,29 +131,16 @@ export const saveGroupedFavorites =
     const session = getSession();
     if (!session) return;
 
-    const state = getState();
-    const { appsConfig, appsInfo, favorites } = selectAppsState(state);
-
-    const payload: AppBookmarks = {
-      applications: favorites.applications,
-      bookmarks,
-    };
+    const { appsConfig, appsInfo, favorites } = selectAppsState(getState());
 
     dispatch(appInfoActions.saveGroupedFavoritesStart());
 
     try {
-      await myAppsService.updateBookmarks(payload);
+      await myAppsService.updateBookmarks({ applications: favorites.applications, bookmarks });
 
       const refreshed = await myAppsService.bookmarks();
 
-      dispatch(
-        appInfoActions.fetchSuccess({
-          appsConfig,
-          appsInfo,
-          favorites: refreshed,
-        }),
-      );
-
+      dispatch(appInfoActions.fetchSuccess(buildFetchSuccessPayload(appsInfo, appsConfig, refreshed)));
       dispatch(appInfoActions.saveGroupedFavoritesSuccess(refreshed.bookmarks));
 
       onDone?.(true);

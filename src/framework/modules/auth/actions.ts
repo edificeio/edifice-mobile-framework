@@ -52,6 +52,7 @@ import {
   IAuthState,
 } from '~/framework/modules/auth/reducer';
 import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
+import { buildFetchSuccessPayload } from '~/framework/modules/myapps/reducer/adapter';
 import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -374,9 +375,9 @@ const getLoginFunctions = {
  * Load MyApps data during login.
  * This ensures that if loading apps fails, the login will fail too.
  */
-const loadMyAppsAtLogin = async (tokens: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, dispatch: AuthDispatch) => {
+const loadMyAppsAtLogin = async (param: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, dispatch: AuthDispatch) => {
   try {
-    const myAppsServiceWithTokens = createMyAppsServiceWithTokenFetch(tokens.tokens);
+    const myAppsServiceWithTokens = createMyAppsServiceWithTokenFetch(param.tokens);
 
     const [appsInfo, appsConfig, favorites] = await Promise.all([
       myAppsServiceWithTokens.list(),
@@ -384,11 +385,9 @@ const loadMyAppsAtLogin = async (tokens: Pick<AuthActiveAccount | AuthSavedLogge
       myAppsServiceWithTokens.bookmarks(),
     ]);
 
-    //enrichment will be done in init with callAtLogin
-    dispatch(appInfoActions.fetchSuccess({ appsConfig, appsInfo, favorites }));
+    //enrichment will be done in init with callAtLogin cause session is not yet available here
+    dispatch(appInfoActions.fetchSuccess(buildFetchSuccessPayload(appsInfo, appsConfig, favorites)));
   } catch (error) {
-    console.error('[loadMyAppsAtLogin] ERROR:', error);
-    dispatch(appInfoActions.fetchError('MYAPPS_FETCH_ERROR_AT_LOGIN'));
     throw error;
   }
 };

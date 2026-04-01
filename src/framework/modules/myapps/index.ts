@@ -1,13 +1,9 @@
-import { Action } from 'redux';
-
 import './init';
 import config from './module-config';
+import getRoot from './navigation/navigator';
 import reducer from './reducer/reducer';
-import { AppsInfoState } from './types';
+import { storage } from './storage';
 
-import { Module } from '~/framework/util/moduleTool';
+import { NavigableModule } from '~/framework/util/moduleTool';
 
-module.exports = new Module<'myapps', typeof config, AppsInfoState, Action>({
-  config,
-  reducer,
-});
+module.exports = new NavigableModule({ config, getRoot, reducer, storage });
