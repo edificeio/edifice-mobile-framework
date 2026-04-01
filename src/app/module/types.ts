@@ -20,11 +20,11 @@ export namespace Entcore {
   }
 }
 
-export interface ModuleConfigBase<State = never, ActionType extends Action = never> {
+export interface ModuleConfigBase<Name extends string, State = never, ActionType extends Action = never> {
   /**
    * Technical name of this module. Needs to be the same as its folder name.
    */
-  name: string;
+  name: Name;
 
   /**
    * Scope needed to this module to consume apis. Scopes will be used when login in.
@@ -89,13 +89,20 @@ export type ModuleConfigStorageParameter<S extends StorageTypeMap, P extends Sto
   | ModuleConfigStorage<S, P>;
 
 export type ModuleConfigParameter<
+  Name extends string,
   State,
   ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap,
   ModulePreferencesSliceTypeMap extends StorageTypeMap,
-> = ModuleConfigBase<State, ActionType> & ModuleConfigStorageParameter<ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>;
+> = ModuleConfigBase<Name, State, ActionType> &
+  ModuleConfigStorageParameter<ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>;
 
-export type ModuleConfig<S, A extends Action, Sg extends StorageTypeMap, Sp extends StorageTypeMap> = ModuleConfigBase<S, A> &
-  Partial<ModuleConfigStorage<Sg, Sp>>;
+export type ModuleConfig<
+  Name extends string,
+  S,
+  A extends Action,
+  Sg extends StorageTypeMap,
+  Sp extends StorageTypeMap,
+> = ModuleConfigBase<Name, S, A> & Partial<ModuleConfigStorage<Sg, Sp>>;
 
-export type ModuleNavigationParams<T> = T extends Module<infer NavParams> ? NavParams : never;
+export type ModuleNavigationParams<T> = T extends Module<infer Name, infer NavParams, any, any> ? NavParams : never;

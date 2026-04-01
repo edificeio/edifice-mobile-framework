@@ -3,6 +3,7 @@ import * as React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
+import { ScreenLayout, screenOptions } from './layout';
 import { NavigationRootParams } from './types';
 
 import CarouselScreen from '~/framework/components/carousel';
@@ -40,7 +41,7 @@ export function RootNavigation() {
   // ToDo : deep linking
 
   return (
-    <RootStack.Navigator>
+    <RootStack.Navigator screenLayout={ScreenLayout} screenOptions={screenOptions}>
       {/* Add the main screen of the app depending on authentication flow */}
       {showAppContent ? renderMainNavigation() : renderGuestNavigation()}
 

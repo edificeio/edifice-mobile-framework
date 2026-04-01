@@ -1,32 +1,18 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Trans } from 'react-i18next';
 
 import styles from './styles';
+import { AuthDiscoveryClassScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingMText, NestedBoldText, SmallText } from '~/framework/components/text';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media-deprecated';
 import { Trackers } from '~/framework/util/tracker';
-
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.discoveryClass>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-discovery-class-title'),
-  }),
-});
 
 const renderDiscoveryClassPics = {
   illu1: require('ASSETS/images/discovery-class/illu1.png'),
@@ -34,15 +20,15 @@ const renderDiscoveryClassPics = {
   illu3: require('ASSETS/images/discovery-class/illu3.png'),
 };
 
-export default function AuthDiscoveryClassScreen() {
+export default function AuthDiscoveryClassScreen(_: AuthDiscoveryClassScreenProps) {
   const onPressButton = () => {
     Trackers.trackEvent('onboarding', 'Inscription classe découverte');
     openUrl(I18n.get('auth-discovery-class-buttonlink'));
   };
 
   return (
-    <PageView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.page} alwaysBounceVertical={false}>
+    <ScrollView alwaysBounceVertical={false}>
+      <View style={styles.container}>
         <HeadingMText style={styles.title}>{I18n.get('auth-discovery-class-heading')}</HeadingMText>
         <View style={styles.card}>
           <SmallText style={styles.text}>{I18n.get('auth-discovery-class-text1')}</SmallText>
@@ -65,7 +51,8 @@ export default function AuthDiscoveryClassScreen() {
           action={onPressButton}
           style={styles.button}
         />
-      </ScrollView>
-    </PageView>
+      </View>
+    </ScrollView>
   );
 }
+AuthDiscoveryClassScreen.options = { title: I18n.get('auth-discovery-class-title') };

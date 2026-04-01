@@ -19,27 +19,32 @@ function configContainsStorage<StorageType extends StorageTypeMap = object, Pref
   return !!(config as ModuleConfigStorage<StorageType, PreferencesType>).storageName;
 }
 
+type StrictNavigationParams<Name extends string, T> = {
+  [K in keyof T]: K extends `${Name}/${string}` ? T[K] : never;
+};
+
 export class Module<
-  NavigationParams extends ParamListBase = {},
+  Name extends string,
+  NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams> = {},
   State = undefined,
   StorageType extends StorageTypeMap = object,
   PreferencesType extends StorageTypeMap = object,
-> implements ModuleConfig<State, Action, StorageType, PreferencesType> {
-  name: ModuleConfig<State, Action, StorageType, PreferencesType>['name'];
-  apiPrefix: ModuleConfig<State, Action, StorageType, PreferencesType>['apiPrefix'];
-  apiScope: ModuleConfig<State, Action, StorageType, PreferencesType>['apiScope'];
-  storageName: ModuleConfig<State, Action, StorageType, PreferencesType>['storageName'];
-  matchEntcoreApp: ModuleConfig<State, Action, StorageType, PreferencesType>['matchEntcoreApp'];
-  matchEntcoreWidget: ModuleConfig<State, Action, StorageType, PreferencesType>['matchEntcoreWidget'];
-  hasRight: ModuleConfig<State, Action, StorageType, PreferencesType>['hasRight'];
+> implements ModuleConfig<Name, State, Action, StorageType, PreferencesType> {
+  name: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['name'];
+  apiPrefix: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['apiPrefix'];
+  apiScope: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['apiScope'];
+  storageName: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['storageName'];
+  matchEntcoreApp: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['matchEntcoreApp'];
+  matchEntcoreWidget: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['matchEntcoreWidget'];
+  hasRight: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['hasRight'];
 
   renderScreens: (Stack: ReturnType<typeof createNativeStackNavigator<NavigationParams>>) => React.ReactElement | null;
-  reducer: ModuleConfig<State, Action, StorageType, PreferencesType>['reducer'];
-  storage: ModuleConfig<State, Action, StorageType, PreferencesType>['storage'] = undefined;
-  preferences: ModuleConfig<State, Action, StorageType, PreferencesType>['preferences'] = undefined;
+  reducer: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['reducer'];
+  storage: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['storage'] = undefined;
+  preferences: ModuleConfig<Name, State, Action, StorageType, PreferencesType>['preferences'] = undefined;
 
   constructor(
-    config: ModuleConfigParameter<State, Action, StorageType, PreferencesType>,
+    config: ModuleConfigParameter<Name, State, Action, StorageType, PreferencesType>,
     screens?: (Stack: ReturnType<typeof createNativeStackNavigator<NavigationParams>>) => React.ReactElement,
   ) {
     this.name = config.name;

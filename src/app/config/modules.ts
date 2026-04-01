@@ -1,1 +1,1 @@
-export default [import('~/framework/modules/auth')];
+export default [import('~/framework/modules/auth')] as const;

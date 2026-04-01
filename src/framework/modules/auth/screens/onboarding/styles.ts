@@ -8,6 +8,7 @@ const pictureSize = getScaleWidth(207);
 export default StyleSheet.create({
   mainContainer: {
     flex: 5,
+    marginVertical: UI_SIZES.spacing.big,
   },
   page: {
     paddingBottom: UI_SIZES.spacing.big,

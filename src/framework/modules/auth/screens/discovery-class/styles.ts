@@ -21,18 +21,13 @@ export default StyleSheet.create({
     flexDirection: 'row-reverse',
   },
   container: {
-    backgroundColor: theme.palette.grey.white,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.big,
   },
   hint: {
     flex: 0,
     marginTop: UI_SIZES.spacing.large - UI_SIZES.spacing.minor,
     textAlign: 'center',
-  },
-  page: {
-    backgroundColor: theme.palette.grey.white,
-    flex: 1,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.big,
   },
   pic: {
     height: getScaleWidth(80),

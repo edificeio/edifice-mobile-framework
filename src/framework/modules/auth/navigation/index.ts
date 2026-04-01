@@ -12,9 +12,9 @@ import type { AuthAccountSelectionScreenNavParams } from '~/framework/modules/au
 import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/main-account/add-account-modal';
 import { AuthLoginRedirectScreenNavParams } from '~/framework/modules/auth/screens/main-account/login-redirect';
 import type { AuthLoginWayfScreenNavParams } from '~/framework/modules/auth/screens/main-account/login-wayf';
-import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
 import type { AuthPlatformsScreenNavParams } from '~/framework/modules/auth/screens/main-account/platforms';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
+import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/onboarding';
 import type { ActivationScreenNavParams } from '~/framework/modules/auth/templates/activation';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import type { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';

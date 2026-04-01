@@ -1,12 +1,19 @@
 import React from 'react';
 
 import reducer, { AuthState } from './reducer';
-import AuthOnboardingScreen from './screens/main-account/onboarding';
+import AuthDiscoveryClassScreen from './screens/discovery-class';
+import AuthOnboardingScreen from './screens/onboarding';
+// import AuthPlatformsScreen from './screens/main-account/platforms';
 import { AuthStorageData, storage } from './storage';
 
 import { Module } from '~/app/module';
 
-export default new Module<{ 'auth/onboarding': { foo: 'bar' } }, AuthState, AuthStorageData>(
+export default new Module<
+  'auth',
+  { 'auth/onboarding': undefined; 'auth/platforms': undefined; 'auth/discovery-class': undefined },
+  AuthState,
+  AuthStorageData
+>(
   {
     apiScope: [
       'auth',
@@ -14,7 +21,7 @@ export default new Module<{ 'auth/onboarding': { foo: 'bar' } }, AuthState, Auth
       'directory',
       /* ToDo: put the following scopes anywhere else that not belongs to auth module */
       'infra', // seems to be tracking related
-      'portal', // dont knwo if used somewhere
+      'portal', // dont know if used somewhere
       'userinfo', // wtf is this thing ?
     ],
     name: 'auth',
@@ -24,6 +31,8 @@ export default new Module<{ 'auth/onboarding': { foo: 'bar' } }, AuthState, Auth
   Stack => (
     <>
       <Stack.Screen name={'auth/onboarding'} component={AuthOnboardingScreen} options={AuthOnboardingScreen.options} />
+      <Stack.Screen name={'auth/discovery-class'} component={AuthDiscoveryClassScreen} options={AuthDiscoveryClassScreen.options} />
+      {/*<Stack.Screen name={'auth/platforms'} component={AuthPlatformsScreen} />*/}
     </>
   ),
 );

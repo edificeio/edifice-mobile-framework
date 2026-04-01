@@ -8,9 +8,9 @@ import { DeepPartial } from '~/utils/types';
 export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(DefaultTheme, {
   colors: {
     background: theme.ui.background.card.toString(),
-    card: theme.ui.background.card.toString(),
+    card: theme.palette.primary.regular.toString(),
     primary: theme.palette.primary.regular.toString(),
-    text: theme.ui.text.regular.toString(),
+    text: theme.ui.text.inverse.toString(),
   },
   dark: false,
   fonts: {
