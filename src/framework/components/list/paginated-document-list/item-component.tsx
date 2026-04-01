@@ -33,10 +33,10 @@ export function buildPictureFromBadge(badge: AppBadge): PictureProps {
   }
 
   if (typeof badge.icon !== 'string') {
-    return badge.icon as PictureProps;
+    return badge.icon;
   }
 
-  const iconString = badge.icon as string;
+  const iconString = badge.icon;
   const isImage = iconString.startsWith('/');
 
   if (isImage) {

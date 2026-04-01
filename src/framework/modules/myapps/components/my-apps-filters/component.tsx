@@ -28,7 +28,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
 
   const { animatedContainerStyle, animatedIconStyle, animatedSearchStyle, close, open } = useAnimatedSearchStyles();
 
-  const borderColor = !searchActive || searchFocused ? theme.palette.primary.regular : theme.palette.grey.cloudy;
+  const borderColor = searchActive && !searchFocused ? theme.palette.grey.cloudy : theme.palette.primary.regular;
 
   const scrollToItem = React.useCallback((index: number) => {
     listRef.current?.scrollToIndex({
