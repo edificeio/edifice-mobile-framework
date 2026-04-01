@@ -22,7 +22,10 @@ import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/t
 import type { StackNavigationAction } from '~/framework/navigation/types';
 import type { Platform } from '~/framework/util/appConf';
 
-// We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
+/**
+ * We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
+ * @deprecated use new module system
+ */
 export const authRouteNames = {
   accounts: `${moduleConfig.name}/accounts` as 'accounts',
 

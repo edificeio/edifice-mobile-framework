@@ -1,27 +1,20 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
+import { ModuleScreenProps } from '~/app/navigation/types';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { AuthState } from '~/framework/modules/auth/reducer';
 import { StackNavigationAction } from '~/framework/navigation/types';
 
-export interface LoginWayfScreenStoreProps {
+export interface AuthLoginWayfScreenStoreProps {
   auth: AuthState;
   error: AuthState['error'];
 }
 
-export interface LoginWayfScreenProps {
-  wayfRoute: StackNavigationAction;
-}
-export interface LoginWayfScreenDispatchProps {
+export interface AuthLoginWayfScreenDispatchProps {
   handleConsumeError: (...args: Parameters<typeof consumeAuthErrorAction>) => void;
 }
-export interface LoginWayfScreenPrivateProps
-  extends
-    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginWayf>,
-    LoginWayfScreenProps,
-    LoginWayfScreenStoreProps,
-    LoginWayfScreenDispatchProps {}
+export interface AuthLoginWayfScreenProps
+  extends ModuleScreenProps<'auth/login/wayf'>, AuthLoginWayfScreenStoreProps, AuthLoginWayfScreenDispatchProps {
+  wayfRoute: StackNavigationAction;
+}
 
 export interface LoginWayfScreenState {
   errkey: number;

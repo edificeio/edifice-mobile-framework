@@ -7,15 +7,14 @@ import { bindActionCreators } from 'redux';
 
 import styles from './styles';
 import {
-  LoginWayfScreenDispatchProps,
-  LoginWayfScreenPrivateProps,
+  AuthLoginWayfScreenDispatchProps,
+  AuthLoginWayfScreenProps,
+  AuthLoginWayfScreenStoreProps,
   LoginWayfScreenState,
-  LoginWayfScreenStoreProps,
 } from './types';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
@@ -23,44 +22,59 @@ import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Error } from '~/framework/util/error';
 import { handleAction } from '~/framework/util/redux/actions';
 
-export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, LoginWayfScreenState> {
-  private mounted = false;
+export default connect(
+  (state: any): AuthLoginWayfScreenStoreProps => {
+    const auth = getAuthState(state);
+    return {
+      auth,
+      error: auth.error,
+    };
+  },
+  dispatch =>
+    bindActionCreators<AuthLoginWayfScreenDispatchProps>(
+      {
+        handleConsumeError: handleAction(consumeAuthErrorAction),
+      },
+      dispatch,
+    ),
+)(
+  class AuthLoginWayfScreenTemplate extends React.Component<AuthLoginWayfScreenProps, LoginWayfScreenState> {
+    private mounted = false;
 
-  constructor(props: LoginWayfScreenPrivateProps) {
-    super(props);
-    this.state = { errkey: Error.generateErrorKey() };
-  }
-
-  consumeError() {
-    if (this.props.auth.error && this.props.auth.error.key === undefined) {
-      this.props.handleConsumeError(this.state.errkey);
+    constructor(props: AuthLoginWayfScreenProps) {
+      super(props);
+      this.state = { errkey: Error.generateErrorKey() };
     }
-  }
 
-  resetError() {
-    this.setState({ errkey: Error.generateErrorKey() });
-  }
+    consumeError() {
+      if (this.props.auth.error && this.props.auth.error.key === undefined) {
+        this.props.handleConsumeError(this.state.errkey);
+      }
+    }
 
-  componentDidMount() {
-    this.mounted = true;
-    this.consumeError();
-  }
+    resetError() {
+      this.setState({ errkey: Error.generateErrorKey() });
+    }
 
-  componentWillUnmount(): void {
-    this.mounted = false;
-  }
+    componentDidMount() {
+      this.mounted = true;
+      this.consumeError();
+    }
 
-  public render() {
-    const { error, navigation, route, wayfRoute } = this.props;
+    componentWillUnmount(): void {
+      this.mounted = false;
+    }
 
-    const errorCode = Error.findCode(error?.info);
-    const shownErrorText =
-      error && (error.key === undefined || error.key === this.state.errkey)
-        ? Error.getAuthErrorText(errorCode, route.params.platform.url)
-        : '';
+    public render() {
+      const { error, navigation, route, wayfRoute } = this.props;
 
-    return (
-      <PageView>
+      const errorCode = Error.findCode(error?.info);
+      const shownErrorText =
+        error && (error.key === undefined || error.key === this.state.errkey)
+          ? Error.getAuthErrorText(errorCode, route.params.platform.url)
+          : '';
+
+      return (
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.safeAreaInner}>
             <PFLogo pf={route.params.platform} />
@@ -73,24 +87,7 @@ export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, 
             />
           </View>
         </SafeAreaView>
-      </PageView>
-    );
-  }
-}
-
-export default connect(
-  (state: any): LoginWayfScreenStoreProps => {
-    const auth = getAuthState(state);
-    return {
-      auth,
-      error: auth.error,
-    };
+      );
+    }
   },
-  dispatch =>
-    bindActionCreators<LoginWayfScreenDispatchProps>(
-      {
-        handleConsumeError: handleAction(consumeAuthErrorAction),
-      },
-      dispatch,
-    ),
-)(LoginWAYFPage);
+);

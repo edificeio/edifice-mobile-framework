@@ -6,7 +6,7 @@ import type { AuthLoginRedirectAddAccountScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import LoginRedirectPage from '~/framework/modules/auth/templates/login-redirect';
+import AuthLoginRedirectScreenTemplate from '~/framework/modules/auth/templates/login-redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -21,7 +21,7 @@ export const computeNavBar = ({
 });
 
 function AuthLoginRedirectAddAccountScreen(props: AuthLoginRedirectAddAccountScreenPrivateProps) {
-  return <LoginRedirectPage {...props} />;
+  return <AuthLoginRedirectScreenTemplate {...props} />;
 }
 
 export default AuthLoginRedirectAddAccountScreen;

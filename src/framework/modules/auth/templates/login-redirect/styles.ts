@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 const ICON_SIZE = getScaleWidth(80);
@@ -21,7 +20,6 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   safeArea: {
-    backgroundColor: theme.ui.background.card,
     flex: 1,
   },
   text: {

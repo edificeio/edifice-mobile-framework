@@ -12,8 +12,8 @@ import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import LoginWAYFScreen, {
-  LoginWayfScreenDispatchProps,
-  LoginWayfScreenStoreProps,
+  AuthLoginWayfScreenDispatchProps,
+  AuthLoginWayfScreenStoreProps,
 } from '~/framework/modules/auth/templates/login-wayf';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -30,7 +30,7 @@ export const computeNavBar = ({
 });
 
 export default connect(
-  (state: any): LoginWayfScreenStoreProps => {
+  (state: any): AuthLoginWayfScreenStoreProps => {
     const auth = getAuthState(state);
     return {
       auth,
@@ -38,7 +38,7 @@ export default connect(
     };
   },
   dispatch =>
-    bindActionCreators<LoginWayfScreenDispatchProps>(
+    bindActionCreators<AuthLoginWayfScreenDispatchProps>(
       {
         handleConsumeError: tryAction(consumeAuthErrorAction),
       },

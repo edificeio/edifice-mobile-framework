@@ -16,8 +16,8 @@ import {
 } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/reducer';
-import LoginCredentialsScreen from '~/framework/modules/auth/templates/login-credentials';
-import { LoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
+import AuthLoginCredentialsScreenTemplate from '~/framework/modules/auth/templates/login-credentials';
+import { AuthLoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
@@ -37,7 +37,7 @@ export const computeNavBar = ({
 
 function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProps) {
   return (
-    <LoginCredentialsScreen
+    <AuthLoginCredentialsScreenTemplate
       {...props}
       forgotPasswordRoute={(login?: string) =>
         CommonActions.navigate({
@@ -60,7 +60,7 @@ export default connect(
     };
   },
   dispatch =>
-    bindActionCreators<LoginCredentialsScreenDispatchProps>(
+    bindActionCreators<AuthLoginCredentialsScreenDispatchProps>(
       {
         handleConsumeError: handleAction(consumeAuthErrorAction),
 

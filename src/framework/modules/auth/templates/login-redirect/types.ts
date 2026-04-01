@@ -1,7 +1,3 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ModuleScreenProps } from '~/app/navigation/types';
 
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-
-export interface LoginRedirectScreenProps {}
-export interface LoginRedirectScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginRedirect>, LoginRedirectScreenProps {}
+export interface AuthLoginRedirectScreenProps extends ModuleScreenProps<'auth/login/redirect'> {}

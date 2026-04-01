@@ -1,14 +1,11 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-
+import { ModuleScreenProps } from '~/app/navigation/types';
 import type {
   consumeAuthErrorAction,
   loginCredentialsActionAddFirstAccount,
   loginCredentialsActionReplaceAccount,
 } from '~/framework/modules/auth/actions';
-import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { AuthState } from '~/framework/modules/auth/reducer';
 import { StackNavigationAction } from '~/framework/navigation/types';
-import type { Platform } from '~/framework/util/appConf';
 
 export enum LoginState {
   IDLE = 'IDLE',
@@ -16,23 +13,12 @@ export enum LoginState {
   DONE = 'DONE',
 }
 
-export interface LoginCredentialsScreenProps {
-  forgotPasswordRoute: (login?: string) => StackNavigationAction;
-  forgotIdRoute: StackNavigationAction;
-}
-
-export interface LoginCredentialsScreenNavParams {
-  platform: Platform;
-  accountId?: string;
-  loginUsed?: string; // used when activation & pwd renews fails
-}
-
-export interface LoginCredentialsScreenStoreProps {
+export interface AuthLoginCredentialsScreenStoreProps {
   error: AuthState['error'];
   lockLogin: boolean;
 }
 
-export interface LoginCredentialsScreenDispatchProps {
+export interface AuthLoginCredentialsScreenDispatchProps {
   tryLoginAdd: (
     ...args: Parameters<typeof loginCredentialsActionAddFirstAccount>
   ) => ReturnType<ReturnType<typeof loginCredentialsActionAddFirstAccount>>;
@@ -42,7 +28,11 @@ export interface LoginCredentialsScreenDispatchProps {
   handleConsumeError: (...args: Parameters<typeof consumeAuthErrorAction>) => ReturnType<ReturnType<typeof consumeAuthErrorAction>>;
 }
 
-export type LoginCredentialsScreenPrivateProps = LoginCredentialsScreenProps &
-  LoginCredentialsScreenStoreProps &
-  LoginCredentialsScreenDispatchProps &
-  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginCredentials>;
+export interface AuthLoginCredentialsScreenProps
+  extends
+    AuthLoginCredentialsScreenStoreProps,
+    AuthLoginCredentialsScreenDispatchProps,
+    ModuleScreenProps<'auth/login/credentials'> {
+  forgotPasswordRoute: (login?: string) => StackNavigationAction;
+  forgotIdRoute: StackNavigationAction;
+}

@@ -60,6 +60,12 @@ export const PageViewStyle = styled.View({
   backgroundColor: theme.ui.background.page,
   flex: 1,
 });
+
+/**
+ * @deprecated
+ * @param props
+ * @returns
+ */
 export const PageView = (props: PageViewProps) => {
   const { children, gutters, showNetworkBar = true, statusBar, ...viewProps } = props;
   const route = useRoute();
@@ -85,6 +91,11 @@ export const PageView = (props: PageViewProps) => {
   return <ScreenView statusBar={statusBar}>{page}</ScreenView>;
 };
 
+/**
+ * @deprecated
+ * @param props
+ * @returns
+ */
 export const KeyboardPageView = (
   props: React.PropsWithChildren<
     PageViewProps & {

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
 
 import styles from './styles';
-import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
+import { AuthLoginCredentialsScreenProps, LoginState } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -12,7 +12,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
 import TextInput from '~/framework/components/inputs/text';
-import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
@@ -23,7 +22,7 @@ import { useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 
-const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
+const AuthLoginCredentialsScreenTemplate = (props: AuthLoginCredentialsScreenProps) => {
   const {
     error,
     forgotIdRoute,
@@ -241,8 +240,8 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     }
   }, [typing, errmsg, errtype, goToWeb, doLogin, isSubmitDisabled, loginState]);
 
-  const renderPage = React.useCallback(() => {
-    return (
+  return (
+    <KeyboardAvoidingView>
       <ScrollView
         keyboardShouldPersistTaps="handled"
         alwaysBounceVertical={false}
@@ -272,20 +271,8 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
           </View>
         </View>
       </ScrollView>
-    );
-  }, [
-    renderPlatform,
-    renderInputs,
-    renderError,
-    renderLoginButton,
-    lockLogin,
-    navigation,
-    forgotPasswordRoute,
-    login,
-    forgotIdRoute,
-  ]);
-
-  return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
+    </KeyboardAvoidingView>
+  );
 };
 
-export default LoginCredentialsScreen;
+export default AuthLoginCredentialsScreenTemplate;

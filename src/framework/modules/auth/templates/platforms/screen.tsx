@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -12,21 +11,8 @@ import { TouchableSelectorPictureCard } from '~/framework/components/card/pictur
 import { UI_SIZES } from '~/framework/components/constants';
 import GridList from '~/framework/components/GridList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
-import { AuthNavigationTemplatesParams } from '~/framework/modules/auth/navigation';
 import { DebugOptions } from '~/framework/modules/debug';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf, { Platform } from '~/framework/util/appConf';
-
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationTemplatesParams, 'platforms'>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-platform-grid-title'),
-  }),
-});
 
 export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
   const { getNextRoute, navigation } = props;

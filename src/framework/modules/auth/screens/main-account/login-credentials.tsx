@@ -1,11 +1,9 @@
 import * as React from 'react';
 
 import { CommonActions } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackNavigatorProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import type { AuthLoginCredentialsScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -14,29 +12,23 @@ import {
   loginCredentialsActionAddFirstAccount,
   loginCredentialsActionReplaceAccount,
 } from '~/framework/modules/auth/actions';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/reducer';
-import LoginCredentialsScreen from '~/framework/modules/auth/templates/login-credentials';
-import { LoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
+import AuthLoginCredentialsScreenTemplate from '~/framework/modules/auth/templates/login-credentials';
+import {
+  AuthLoginCredentialsScreenDispatchProps,
+  AuthLoginCredentialsScreenProps,
+} from '~/framework/modules/auth/templates/login-credentials/types';
 import track from '~/framework/modules/auth/tracking';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginCredentials>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    backButtonTestID: 'login-back',
-    navigation,
-    route,
-    title: I18n.get('auth-login-title'),
-    titleTestID: 'login-title',
-  }),
-});
-function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProps) {
+export const AuthLoginCredentialsScreenOptions = {
+  title: I18n.get('auth-login-title'),
+} satisfies NativeStackNavigatorProps['screenOptions'];
+
+function AuthLoginCredentialsScreen(props: Omit<AuthLoginCredentialsScreenProps, 'forgotPasswordRoute' | 'forgotIdRoute'>) {
   return (
-    <LoginCredentialsScreen
+    <AuthLoginCredentialsScreenTemplate
       {...props}
       forgotPasswordRoute={(login?: string) =>
         CommonActions.navigate({
@@ -60,7 +52,7 @@ export default connect(
     };
   },
   dispatch =>
-    bindActionCreators<LoginCredentialsScreenDispatchProps>(
+    bindActionCreators<AuthLoginCredentialsScreenDispatchProps>(
       {
         handleConsumeError: handleAction(consumeAuthErrorAction),
         tryLoginAdd: tryAction(loginCredentialsActionAddFirstAccount, {
