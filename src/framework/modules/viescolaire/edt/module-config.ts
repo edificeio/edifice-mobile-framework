@@ -1,6 +1,5 @@
 import type { IEdtReduxState } from './reducer';
 
-import theme from '~/app/theme';
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { IEntcoreApp, ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
@@ -16,9 +15,7 @@ function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
 
 export default new NavigableModuleConfig<'edt', IEdtReduxState>({
   displayAs: ModuleType.MYAPPS_MODULE,
-  displayColor: theme.apps.edt.accentColors,
-  displayI18n: 'edt-moduleconfig-appname',
-  displayPicture: theme.apps.edt.icon,
+
   entcoreScope: ['edt'],
 
   entcoreTrackingName: 'Edt',

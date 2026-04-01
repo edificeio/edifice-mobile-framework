@@ -5,8 +5,6 @@ import { ColorValue } from 'react-native';
 
 import deepmerge from 'deepmerge';
 
-import { EntAppName } from './intents';
-
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
 import { MediaType } from '~/framework/util/media';
@@ -139,7 +137,6 @@ export interface ITheme {
       Guest: ColorValue;
     };
   };
-  apps: { [key in EntAppName]: EntAppTheme };
   media: { [key in MediaType | 'default']: IntentIcon };
   // Legacy values
   legacy: {

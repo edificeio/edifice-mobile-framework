@@ -8,8 +8,6 @@ export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', null>({
   matchEntcoreApp: entcoreApp => true, // @scaffolder Replace this with a function that returns boolean regarding of the given entcoreApp
   storageName: '{{moduleName | toCamelCase}}',
 
-  displayI18n: '{{moduleName | toCamelCase}}.tabName',
   displayAs: ModuleType.TAB_MODULE,
   displayOrder: 0,
-  displayPicture: { type: 'Svg', name: 'ui-tool' },
 });

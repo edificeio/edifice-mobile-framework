@@ -1,5 +1,6 @@
 import { FetchSuccessPayload } from './action-types';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import {
   AppBadgesType,
@@ -12,7 +13,7 @@ import {
 } from '~/framework/modules/myapps/types';
 import { getAppName, getModuleRouteName, normalizeString } from '~/framework/modules/myapps/utils';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
-import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
+import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
 
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
   switch (app.category) {
@@ -122,6 +123,39 @@ export const buildAppNameToBadge = (aggregatedApps: AppsInfoAggregated[]): AppBa
     badgesMap[app.badgeKey] = { color, icon: app.icon };
   }
   return badgesMap;
+};
+
+/**
+ * Build a map of app names to their complete theme information (all color shades + icon)
+ */
+export const buildAppNameToTheme = (aggregatedApps: AppsInfoAggregated[]): Record<string, IAppThemeInfo> => {
+  const themesMap: Record<string, IAppThemeInfo> = {};
+  for (const app of aggregatedApps) {
+    const appColor = app.color;
+    const colors = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor] : theme.palette.grey;
+
+    themesMap[app.badgeKey] = {
+      colors,
+      icon: app.icon,
+    };
+  }
+  return themesMap;
+};
+
+export const buildModuleTabDisplayName = (
+  moduleConfig: AnyNavigableModule['config'],
+  aggregatedApps: AppsInfoAggregated[],
+): string => {
+  const matchingApp = aggregatedApps.find(app => app.name === moduleConfig.name);
+  if (matchingApp) {
+    return matchingApp.displayName;
+  }
+
+  if (moduleConfig.tabDisplayName) {
+    return I18n.get(moduleConfig.tabDisplayName);
+  }
+
+  return moduleConfig.name;
 };
 
 export const resolveBadgeByAppName = (appName: string, badgesIndex: AppBadgesType): IAppBadgeInfo =>

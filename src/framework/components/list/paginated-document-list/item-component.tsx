@@ -16,14 +16,14 @@ import {
 } from './types';
 
 import { I18n } from '~/app/i18n';
-import { EntAppNameOrSynonym, getEntAppName } from '~/app/intents';
+import { EntAppNameOrSynonym } from '~/app/intents';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import ImageWithFallback from '~/framework/components/picture/image-with-fallback';
 import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
-import { useAppBadge } from '~/framework/modules/myapps/hooks';
+import { useAppBadge, useAppTheme } from '~/framework/modules/myapps/hooks';
 import { toURISource } from '~/framework/util/media';
 import { sessionImageSource } from '~/framework/util/transport';
 
@@ -121,6 +121,7 @@ export function DocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType>({
   Pick<PaginatedDocumentFlashListProps<AppTypes, IdType> & PaginatedDocumentFlatListProps<AppTypes, IdType>, 'alwaysShowAppIcon'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
   const appBadge = useAppBadge(item.appName);
+  const appTheme = useAppTheme(item.appName);
 
   const thumbnail = React.useMemo(() => {
     if (item.thumbnail)
@@ -135,11 +136,11 @@ export function DocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType>({
         </View>
       );
     return (
-      <View style={[styles.documentThumbnail, { backgroundColor: theme.apps[getEntAppName(item.appName)]?.accentColors.pale }]}>
+      <View style={[styles.documentThumbnail, { backgroundColor: appTheme.colors.pale }]}>
         <DocumentListItemIcon badge={appBadge} size="large" item={item} />
       </View>
     );
-  }, [alwaysShowAppIcon, appBadge, item]);
+  }, [alwaysShowAppIcon, appBadge, item, appTheme]);
   return (
     <WrapperComponent style={[styles.item, styles.itemDocument, style]} onPress={onPress} testID={testID}>
       {thumbnail}

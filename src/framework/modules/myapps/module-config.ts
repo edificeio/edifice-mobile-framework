@@ -4,9 +4,8 @@ import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'myapps', AppsInfoState>({
   displayAs: ModuleType.TAB_MODULE,
-  displayI18n: 'myapp-appname',
   displayOrder: 3,
-  displayPicture: { name: 'icon-apps-off', type: 'Icon' },
+  displayPictureBlur: { name: 'icon-apps-off', type: 'Icon' },
   displayPictureFocus: { name: 'icon-apps-on', type: 'Icon' },
   entcoreScope: [],
   hasRight: () => true,
@@ -14,5 +13,6 @@ export default new NavigableModuleConfig<'myapps', AppsInfoState>({
   matchEntcoreWidget: () => false,
   name: 'myapps',
   storageName: 'myapps',
+  tabDisplayName: 'myapp-appname',
   testID: 'tabbar-apps',
 });

@@ -10,7 +10,7 @@ import type { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export namespace ResourceExplorerTemplate {
   export interface Props {
-    moduleConfig: Pick<AnyNavigableModuleConfig, 'displayPicture' | 'displayColor' | 'namespaceActionType'>;
+    moduleConfig: Pick<AnyNavigableModuleConfig, 'namespaceActionType'>;
     onOpenResource?: (r: DocumentItemEntApp<ExplorerAppTypes, ExplorerResourceIdType>) => void;
     selectors: ReturnType<typeof createExplorerSelectors>;
     emptyComponent?: FlashListProps<any>['ListEmptyComponent'];

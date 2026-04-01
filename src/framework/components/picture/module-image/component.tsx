@@ -4,45 +4,39 @@ import { View } from 'react-native';
 import { Fade, Placeholder, PlaceholderMedia } from 'rn-placeholder';
 
 import styles from './styles';
-import { ImageFallbackProps, ImageLoaderProps, ModuleConfigForFallbackImage, ModuleImageProps } from './types';
+import { ImageFallbackProps, ImageLoaderProps, ModuleImageProps } from './types';
 
 import theme from '~/app/theme';
 import { Icon, Svg } from '~/framework/components/picture';
+import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { Image, ImageLoadingState, ImageProps } from '~/framework/util/media-deprecated';
 
-const DEFAULT_MODULE_CONFIG: Required<ModuleConfigForFallbackImage> = {
-  displayColor: {
-    pale: theme.palette.grey.pearl,
-    regular: theme.palette.grey.grey,
-  },
-  displayPicture: {
-    name: 'ui-image',
-    type: 'Svg',
-  },
+const DEFAULT_DISPLAY_PICTURE = {
+  name: 'ui-image',
+  type: 'Svg' as const,
 };
 
 const DEFAULT_ICON_SIZE = '58%';
 
-const ImageFallback: React.FC<ImageFallbackProps> = ({ fallbackIcon, iconSize, imageProps, moduleConfig }) => {
-  const displayColor = moduleConfig?.displayColor ?? DEFAULT_MODULE_CONFIG.displayColor;
-  const displayPicture = moduleConfig?.displayPicture ?? fallbackIcon ?? DEFAULT_MODULE_CONFIG.displayPicture;
+const ImageFallback: React.FC<ImageFallbackProps> = ({ badge, fallbackIcon, iconSize, imageProps }) => {
+  const displayPicture = typeof badge?.icon === 'string' ? { name: badge.icon, type: 'Svg' as const } : (badge?.icon as any);
+  const picture = displayPicture ?? fallbackIcon ?? DEFAULT_DISPLAY_PICTURE;
+  const bgColor = badge?.color ?? theme.palette.grey.pearl;
 
   const containerStyle = React.useMemo(() => {
-    if (displayPicture.type === 'Svg' || displayPicture.type === 'Icon')
-      return [styles.moduleImage, imageProps.style, { backgroundColor: displayColor.pale }];
-    else if (displayPicture.type === 'Image') return [styles.moduleImage, imageProps.style];
-    else return undefined;
-  }, [displayColor.pale, displayPicture.type, imageProps.style]);
+    if (picture.type === 'Svg' || picture.type === 'Icon')
+      return [styles.moduleImage, imageProps.style, { backgroundColor: bgColor }];
+    if (picture.type === 'Image') return [styles.moduleImage, imageProps.style];
+    return undefined;
+  }, [bgColor, picture.type, imageProps.style]);
 
   return (
     <View style={containerStyle} testID="wiki-image-fallback">
-      {displayPicture.type === 'Svg' ? (
-        <Svg {...displayPicture} height={iconSize ?? DEFAULT_ICON_SIZE} width={iconSize ?? DEFAULT_ICON_SIZE} />
-      ) : displayPicture.type === 'Icon' ? (
-        <Icon {...displayPicture} />
-      ) : displayPicture.type === 'Image' ? (
-        <Image {...displayPicture} />
-      ) : null}
+      {picture.type === 'Svg' && picture.name && (
+        <Svg {...(picture as any)} height={iconSize ?? DEFAULT_ICON_SIZE} width={iconSize ?? DEFAULT_ICON_SIZE} />
+      )}
+      {picture.type === 'Icon' && picture.name && <Icon {...(picture as any)} />}
+      {picture.type === 'Image' && <Image {...picture} />}
     </View>
   );
 };
@@ -60,7 +54,11 @@ const ImageLoader: React.FC<ImageLoaderProps> = ({ imageProps }) => {
   );
 };
 
-const ModuleImage: React.FC<ModuleImageProps> = ({ fallbackIcon, iconSize, moduleConfig, onError, onLoad, ...props }) => {
+const ModuleImage: React.FC<ModuleImageProps> = ({ appName, fallbackIcon, iconSize, onError, onLoad, ...props }) => {
+  // Retrieve badge info from theme using appName
+  const appTheme = useAppTheme(appName);
+  const finalBadgeInfo = { color: appTheme.colors.regular, icon: appTheme.icon };
+
   // Restore loading state when source changes
   const isSourceEmpty = !props.source && !props.src && !props.srcSet;
 
@@ -111,7 +109,7 @@ const ModuleImage: React.FC<ModuleImageProps> = ({ fallbackIcon, iconSize, modul
         </>
       );
   } catch {
-    return <ImageFallback fallbackIcon={fallbackIcon} moduleConfig={moduleConfig} imageProps={props} iconSize={iconSize} />;
+    return <ImageFallback badge={finalBadgeInfo} fallbackIcon={fallbackIcon} iconSize={iconSize} imageProps={props} />;
   }
 };
 
