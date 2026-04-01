@@ -10,9 +10,6 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 
 class MainApplication : Application(), ReactApplication {
 
-    override val reactNativeHost: ReactNativeHost
-        get() = TODO("Deprecated.")
-
     override val reactHost: ReactHost by lazy {
         getDefaultReactHost(
             context = applicationContext,
