@@ -2,8 +2,8 @@ import React from 'react';
 
 import reducer, { AuthState } from './reducer';
 import AuthDiscoveryClassScreen from './screens/discovery-class';
+import AuthPlatformsScreen from './screens/main-account/platforms';
 import AuthOnboardingScreen from './screens/onboarding';
-// import AuthPlatformsScreen from './screens/main-account/platforms';
 import { AuthStorageData, storage } from './storage';
 
 import { Module } from '~/app/module';
@@ -32,7 +32,7 @@ export default new Module<
     <>
       <Stack.Screen name={'auth/onboarding'} component={AuthOnboardingScreen} options={AuthOnboardingScreen.options} />
       <Stack.Screen name={'auth/discovery-class'} component={AuthDiscoveryClassScreen} options={AuthDiscoveryClassScreen.options} />
-      {/*<Stack.Screen name={'auth/platforms'} component={AuthPlatformsScreen} />*/}
+      <Stack.Screen name={'auth/platforms'} component={AuthPlatformsScreen} options={AuthPlatformsScreen.options} />
     </>
   ),
 );

@@ -33,7 +33,7 @@ type AllModulesNavigationParamsTuple = {
   [I in keyof AllModulesTuple]: ModuleNavigationParams<AllModulesTuple[I]>;
 };
 
-type AllModulesNavigationParams = AllModulesNavigationParamsTuple[keyof AllModulesNavigationParamsTuple];
+export type AllModulesNavigationParams = AllModulesNavigationParamsTuple[keyof AllModulesNavigationParamsTuple];
 
 export type NavigationRootScreenProps<T extends keyof NavigationRootParams> = NativeStackScreenProps<NavigationRootParams, T>;
 export type NavigationTabScreenProps<T extends keyof NavigationTabParams> = CompositeScreenProps<

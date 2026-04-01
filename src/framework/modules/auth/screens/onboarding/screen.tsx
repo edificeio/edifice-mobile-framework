@@ -8,12 +8,13 @@ import Swiper from 'react-native-swiper';
 
 import styles from './styles';
 import { AuthOnboardingScreenProps } from './types';
+import { getNavActionForOnboarding } from '../../new-navigation';
 
 import { I18n } from '~/app/i18n';
+import { navigationDispatchMultiple } from '~/app/navigation';
 import { ButtonGroup, PrimaryButton, SecondaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
-import { getNavActionForOnboarding, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
 import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media-deprecated';
@@ -36,7 +37,7 @@ export function AuthOnboardingScreen({ navigation }: AuthOnboardingScreenProps) 
 
   const texts = I18n.getArray('user-onboarding-text');
 
-  const nextScreenAction = React.useMemo(() => getNavActionForOnboarding(), []);
+  const nextScreenAction = React.useMemo(() => getNavActionForOnboarding(navigation), [navigation]);
 
   const buttons = React.useMemo(() => {
     const ret = [

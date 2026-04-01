@@ -6,7 +6,7 @@ import type { AuthPlatformsAddAccountScreenPrivateProps } from './types';
 
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getAddAccountLoginNextScreenNavAction } from '~/framework/modules/auth/navigation/add-account/router';
-import AuthPlatformGridScreen from '~/framework/modules/auth/templates/platform-grid';
+import AuthPlatformsScreenTemplate from '~/framework/modules/auth/templates/platforms';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({
@@ -21,5 +21,5 @@ export const computeNavBar = ({
 });
 
 export default function AuthPlatformsAddAccountScreen(props: AuthPlatformsAddAccountScreenPrivateProps) {
-  return <AuthPlatformGridScreen {...props} getNextRoute={getAddAccountLoginNextScreenNavAction} />;
+  return <AuthPlatformsScreenTemplate {...props} getNextRoute={getAddAccountLoginNextScreenNavAction} />;
 }

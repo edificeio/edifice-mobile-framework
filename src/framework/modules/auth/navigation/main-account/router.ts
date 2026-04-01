@@ -10,7 +10,7 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   InitialAuthenticationMethod,
 } from '~/framework/modules/auth/model';
-import { AuthPendingRestore, getPlatform, getSession, AuthState } from '~/framework/modules/auth/reducer';
+import { AuthPendingRestore, AuthState, getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -141,24 +141,6 @@ export const getNavActionForAccountLoad = (account: {
 }) => {
   if (!account.platform) return undefined;
   return getNavActionsForLoginRedirection(account.platform, { method: account.method, user: { id: account.id } }, account.login);
-};
-
-/**
- * Dispatch given actions, can work with multiple actions as an array.
- * @param navigation
- * @param actions
- */
-export const navigationDispatchMultiple = (
-  navigation: NavigationProp<ParamListBase>,
-  actions: (CommonActions.Action | StackNavigationAction)[] | CommonActions.Action | StackNavigationAction,
-) => {
-  if (Array.isArray(actions)) {
-    actions.forEach(a => {
-      navigation.dispatch(a);
-    });
-  } else {
-    navigation.dispatch(actions);
-  }
 };
 
 /**

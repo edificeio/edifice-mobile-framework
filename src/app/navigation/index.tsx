@@ -14,10 +14,11 @@ import {
   NavigationContainer as RNNavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { RootNavigation } from './root-navigation';
 import navigationLightTheme from './theme';
-import { NavigationRootParams } from './types';
+import { AllModulesNavigationParams, NavigationRootParams } from './types';
 
 export const NavigationContainer = React.forwardRef(function NavigationContainer(
   { theme: _, ...props }: NavigationContainerProps,
@@ -49,5 +50,23 @@ export function AppNavigation() {
     </NavigationContainer>
   );
 }
+
+/**
+ * Dispatch given actions, can work with multiple actions as an array.
+ * @param navigation
+ * @param actions
+ */
+export const navigationDispatchMultiple = <ParamList extends AllModulesNavigationParams, RouteName extends keyof ParamList>(
+  navigation: NativeStackScreenProps<ParamList, RouteName>['navigation'],
+  actions: Parameters<typeof navigation.dispatch>[0] | Parameters<typeof navigation.dispatch>[0][],
+) => {
+  if (Array.isArray(actions)) {
+    actions.forEach(a => {
+      navigation.dispatch(a);
+    });
+  } else {
+    navigation.dispatch(actions);
+  }
+};
 
 export default AppNavigation;
