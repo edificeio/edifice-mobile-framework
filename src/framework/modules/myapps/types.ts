@@ -1,3 +1,5 @@
+import { IAppBadgeInfo } from '~/framework/util/moduleTool';
+
 export type MyAppsCategories = 'communication' | 'pedagogie' | 'organisation' | 'otherServices' | 'toutes';
 
 export type MyAppsFilter =
@@ -56,6 +58,7 @@ export interface AppsInfoState {
 }
 
 export interface AppsInfoAggregated extends AppsInfo {
+  badgeKey: string;
   category?: string;
   color?: string;
   help?: Record<string, string | null>;
@@ -65,3 +68,5 @@ export interface AppsInfoAggregated extends AppsInfo {
 export interface ApplicationsListResponse {
   apps: ApplicationsList[];
 }
+
+export type AppBadgesType = Record<string, IAppBadgeInfo>;

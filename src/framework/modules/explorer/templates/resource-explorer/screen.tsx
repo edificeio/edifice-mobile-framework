@@ -14,7 +14,6 @@ import { PageView } from '~/framework/components/page';
 import { ExplorerAppTypes, ExplorerResourceIdType, RootFolderId } from '~/framework/modules/explorer/model/types';
 import service from '~/framework/modules/explorer/service/index';
 import { emptyFolderData, ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
-import { useAppBadges } from '~/framework/modules/myapps/hooks';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/transport/error';
 
@@ -50,7 +49,6 @@ export function ResourceExplorerTemplate({
 }: ResourceExplorerTemplate.AllProps) {
   const { folderId = RootFolderId.ROOT } = route.params;
   const folder = useSelector(selectors.folder(folderId));
-  const appBadges = useAppBadges();
   const content = folder?.content ?? emptyFolderData;
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();
   const actions = useExplorerActions(moduleConfig);
@@ -98,7 +96,6 @@ export function ResourceExplorerTemplate({
         onItemsReached={loadPage}
         documents={content.resources}
         folders={content.folders}
-        appBadges={appBadges}
         numColumns={2}
         pageSize={PAGE_SIZE}
         onPressFolder={onPressFolder}

@@ -7,7 +7,6 @@ import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-
 import styles from './styles';
 import {
   AppBadge,
-  AppBadgesType,
   DocumentItem,
   DocumentItemWorkspace,
   DocumentItemWorkspaceDocumentMedia,
@@ -24,6 +23,7 @@ import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/com
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import ImageWithFallback from '~/framework/components/picture/image-with-fallback';
 import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
+import { useAppBadge } from '~/framework/modules/myapps/hooks';
 import { toURISource } from '~/framework/util/media';
 import { sessionImageSource } from '~/framework/util/transport';
 
@@ -32,18 +32,23 @@ export function buildPictureFromBadge(badge: AppBadge): PictureProps {
     return { name: 'information', type: 'Svg' };
   }
 
-  const isImage = badge.icon.startsWith('/');
+  if (typeof badge.icon !== 'string') {
+    return badge.icon as PictureProps;
+  }
+
+  const iconString = badge.icon as string;
+  const isImage = iconString.startsWith('/');
 
   if (isImage) {
     return {
-      source: { uri: badge.icon },
+      source: { uri: iconString },
       type: 'Image',
     };
   }
 
   return {
     fill: badge.color,
-    name: badge.icon,
+    name: iconString,
     type: 'Svg',
   };
 }
@@ -99,7 +104,6 @@ export function DocumentListItemIcon<AppTypes extends EntAppNameOrSynonym, IdTyp
 
 export function DocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType>({
   alwaysShowAppIcon,
-  appBadges,
   item,
   onPress,
   style,
@@ -114,11 +118,11 @@ export function DocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType>({
   >
 > &
   Pick<TouchableOpacityProps, 'onPress' | 'style' | 'testID'> &
-  Pick<PaginatedDocumentFlashListProps<AppTypes, IdType> & PaginatedDocumentFlatListProps<AppTypes, IdType>, 'alwaysShowAppIcon'> &
-  AppBadgesType) {
+  Pick<PaginatedDocumentFlashListProps<AppTypes, IdType> & PaginatedDocumentFlatListProps<AppTypes, IdType>, 'alwaysShowAppIcon'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
+  const appBadge = useAppBadge(item.appName);
+
   const thumbnail = React.useMemo(() => {
-    const appBadge = appBadges[item.appName.toUpperCase()] as AppBadge;
     if (item.thumbnail)
       return (
         <View style={styles.documentThumbnail}>
@@ -135,7 +139,7 @@ export function DocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType>({
         <DocumentListItemIcon badge={appBadge} size="large" item={item} />
       </View>
     );
-  }, [alwaysShowAppIcon, appBadges, item]);
+  }, [alwaysShowAppIcon, appBadge, item]);
   return (
     <WrapperComponent style={[styles.item, styles.itemDocument, style]} onPress={onPress} testID={testID}>
       {thumbnail}

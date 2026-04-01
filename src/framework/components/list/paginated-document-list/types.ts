@@ -9,10 +9,9 @@ import type { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framewor
 import { IMedia } from '~/framework/util/media-deprecated';
 import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
-export type AppBadgesType = { appBadges: Record<string, IAppBadgeInfo> };
 export type AppBadge = {
-  icon: string;
-  color?: string;
+  icon: string | IAppBadgeInfo['icon'];
+  color?: IAppBadgeInfo['color'];
 };
 
 interface DocumentItemBase<IdType> {
@@ -62,7 +61,6 @@ export type PaginatedDocumentListItem<AppTypes extends EntAppNameOrSynonym, IdTy
 export interface CommonPaginatedDocumentListProps<AppTypes extends EntAppNameOrSynonym, IdType> {
   documents: PaginatedFlashListProps<DocumentItem<AppTypes, IdType>>['data'];
   folders: PaginatedFlashListProps<FolderItem<IdType>>['data'];
-  appBadges: Record<string, IAppBadgeInfo>;
   overrideItemLayout?: PaginatedFlashListProps<PaginatedDocumentListItem<AppTypes, IdType>>['overrideItemLayout'];
   onPressFolder?: (folder: FolderItem<IdType>, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
   onPressDocument?: (
@@ -73,14 +71,16 @@ export interface CommonPaginatedDocumentListProps<AppTypes extends EntAppNameOrS
 }
 
 export interface PaginatedDocumentFlashListProps<AppTypes extends EntAppNameOrSynonym, IdType>
-  extends Omit<
+  extends
+    Omit<
       PaginatedFlashListProps<DocumentItem<AppTypes, IdType> | FolderItem<IdType>>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,
     CommonPaginatedDocumentListProps<AppTypes, IdType> {}
 
 export interface PaginatedDocumentFlatListProps<AppTypes extends EntAppNameOrSynonym, IdType>
-  extends Omit<
+  extends
+    Omit<
       PaginatedFlatListProps<PaginatedDocumentListItem<AppTypes, IdType>>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,

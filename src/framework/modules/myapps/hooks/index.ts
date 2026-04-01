@@ -1,2 +1,2 @@
-export * from './use-app-badges';
+export * from './use-app-badge';
 export * from './use-filtered-apps';

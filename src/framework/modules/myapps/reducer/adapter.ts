@@ -2,6 +2,7 @@ import { FetchSuccessPayload } from './action-types';
 
 import theme from '~/app/theme';
 import {
+  AppBadgesType,
   AppBookmarks,
   ApplicationsConfig,
   AppsInfo,
@@ -89,6 +90,7 @@ export const aggregateApps = (
 
       return {
         ...app,
+        badgeKey: app.displayName.toUpperCase(),
         category: config?.category,
         color: config?.color,
         displayName: getAppName(app),
@@ -112,37 +114,43 @@ const FALLBACK_BADGE: IAppBadgeInfo = {
   icon: 'ui-infoCircle',
 };
 
-export const buildAppBadgesIndex = (
+export const buildAppNameToBadge = (aggregatedApps: AppsInfoAggregated[]): AppBadgesType => {
+  const badgesMap: AppBadgesType = {};
+  for (const app of aggregatedApps) {
+    const appColor = app.color;
+    const color = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
+    badgesMap[app.badgeKey] = { color, icon: app.icon };
+  }
+  return badgesMap;
+};
+
+export const resolveBadgeByAppName = (appName: string, badgesIndex: AppBadgesType): IAppBadgeInfo =>
+  badgesIndex[appName.toUpperCase()] ?? FALLBACK_BADGE;
+
+export const buildNotifTypeToBadge = (
   aggregatedApps: AppsInfoAggregated[],
   notifTypes: IEntcoreNotificationType[],
-): Record<string, IAppBadgeInfo> => {
+): AppBadgesType => {
   const appNameToInfo = new Map<string, IAppBadgeInfo>();
   for (const app of aggregatedApps) {
     const appColor = app.color;
     const color = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
     appNameToInfo.set(app.name, { color, icon: app.icon });
   }
-
-  const index: Record<string, IAppBadgeInfo> = {};
+  const badgesMap: AppBadgesType = {};
   for (const notif of notifTypes) {
     if (!notif['app-name']) continue;
-    const info = appNameToInfo.get(notif['app-name']);
-    if (info) {
-      index[notif.type] = info;
+
+    if (notif.type.startsWith('USERBOOK')) {
+      badgesMap[notif.type] = { ...USERBOOK_BADGE };
+      continue;
     }
+
+    const info = appNameToInfo.get(notif['app-name']);
+    if (info) badgesMap[notif.type] = info;
   }
 
-  index.USERBOOK = USERBOOK_BADGE;
-
-  return index;
-};
-
-export const resolveBadgeForNotification = (type: string, badgesIndex: Record<string, IAppBadgeInfo>): IAppBadgeInfo => {
-  if (type.startsWith('USERBOOK')) {
-    return badgesIndex.USERBOOK ?? FALLBACK_BADGE;
-  }
-
-  return badgesIndex[type] ?? FALLBACK_BADGE;
+  return badgesMap;
 };
 
 export const buildFetchSuccessPayload = (

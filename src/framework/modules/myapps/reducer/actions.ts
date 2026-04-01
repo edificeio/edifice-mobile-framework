@@ -43,10 +43,12 @@ export const toggleAllApps = (): ThunkResult => async (dispatch, getState) => {
   writeShowAllApps(showAllApps);
 };
 
-export const afterLoginSetup = (): ThunkResult => async (dispatch, getState) => {
+export const enrichAppsAtLogin = (): ThunkResult => async (dispatch, getState) => {
   dispatch(appInfoActions.fetchStart());
   const session = getSession();
-  const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
+  if (!session) return;
+
+  const modules = AllModules().filterAvailables(session).filter(isNavigableModule);
   const currentState = selectAppsState(getState());
 
   try {
@@ -56,15 +58,9 @@ export const afterLoginSetup = (): ThunkResult => async (dispatch, getState) => 
 
     dispatch(appInfoActions.fetchSuccess(buildFetchSuccessPayload(appsInfo, appsConfig, favorites)));
   } catch (e) {
-    console.error('[afterLoginSetup] ERROR', e);
+    console.error('[enrichAppsAtLogin] ERROR', e);
     dispatch(appInfoActions.fetchError('APPS_FETCH_ERROR'));
   }
-};
-
-export const initMesAppliAtLogin = (): ThunkResult => async dispatch => {
-  const session = getSession();
-  if (!session) return;
-  await dispatch(afterLoginSetup());
 };
 
 export const refreshMyApps = (): ThunkResult => async (dispatch, _) => {
