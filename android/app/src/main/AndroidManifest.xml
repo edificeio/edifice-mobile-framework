@@ -26,7 +26,7 @@
         android:enableOnBackInvokedCallback="false">
         <meta-data
             android:name="android.window.extensions.disableEdgeToEdge"
-            android:value="true" />
+            android:value="false" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/icon_white" />
