@@ -41,13 +41,6 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
     } finally {
       initEditor().finally(null);
       dispatch(appReadyAction());
-
-      /**
-       * Hide the splash screen only after the app startup is fully finished.
-       * Doing it earlier caused issues on Android when the app was put on foreground again.
-       * sometimes freezing/crasshing the app (android.view.WindowLeaked: Activity com.ode.appe.MainActivity has leaked window...).
-       */
-
       BootSplash.hide({ fade: true });
       inAppMessaging().setMessagesDisplaySuppressed(false).finally();
     }
