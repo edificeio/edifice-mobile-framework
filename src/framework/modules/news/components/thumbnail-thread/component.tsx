@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { ColorValue, View } from 'react-native';
 
 import { Grayscale } from 'react-native-color-matrix-image-filters';
 
@@ -14,13 +14,17 @@ import { Image } from '~/framework/util/media-deprecated';
 
 const rawNewsIconName = 'actualites-large';
 
+type SelectedProps = {
+  borderColor: ColorValue;
+};
+
+const Selected = ({ borderColor }: SelectedProps) => <View style={[styles.thumbnailSelectedItem, { borderColor }]} />;
+
 export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...props }: ThumbnailThreadProps) {
   const { icon, square } = props;
   const appTheme = useAppTheme('news');
 
   const [error, setError] = React.useState(false);
-
-  const Selected = () => <View style={[styles.thumbnailSelectedItem, { borderColor: appTheme.colors.regular }]} />;
 
   const globalStyle = [
     styles.thumbnailItem,
@@ -32,7 +36,7 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
   if (icon && !error && status === ThreadItemStatus.SELECTED) {
     return (
       <View style={styles.thumbnailContainerSelected}>
-        <Selected />
+        <Selected borderColor={appTheme.colors.regular} />
         <Image source={icon} style={globalStyle} onError={() => setError(true)} />
       </View>
     );
@@ -50,7 +54,7 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
   if (status === ThreadItemStatus.SELECTED) {
     return (
       <View style={[globalStyle, styles.thumbnailContainerSelected]}>
-        <Selected />
+        <Selected borderColor={appTheme.colors.regular} />
         <Svg name={rawNewsIconName} fill={appTheme.colors.regular} height={heightSVGNoIcon} />
       </View>
     );

@@ -19,7 +19,7 @@ const DEFAULT_DISPLAY_PICTURE = {
 const DEFAULT_ICON_SIZE = '58%';
 
 const ImageFallback: React.FC<ImageFallbackProps> = ({ badge, fallbackIcon, iconSize, imageProps }) => {
-  const displayPicture = typeof badge?.icon === 'string' ? { name: badge.icon, type: 'Svg' as const } : (badge?.icon as any);
+  const displayPicture = typeof badge?.icon === 'string' ? { name: badge.icon, type: 'Svg' as const } : badge?.icon;
   const picture = displayPicture ?? fallbackIcon ?? DEFAULT_DISPLAY_PICTURE;
   const bgColor = badge?.color ?? theme.palette.grey.pearl;
 
@@ -33,9 +33,9 @@ const ImageFallback: React.FC<ImageFallbackProps> = ({ badge, fallbackIcon, icon
   return (
     <View style={containerStyle} testID="wiki-image-fallback">
       {picture.type === 'Svg' && picture.name && (
-        <Svg {...(picture as any)} height={iconSize ?? DEFAULT_ICON_SIZE} width={iconSize ?? DEFAULT_ICON_SIZE} />
+        <Svg {...picture} height={iconSize ?? DEFAULT_ICON_SIZE} width={iconSize ?? DEFAULT_ICON_SIZE} />
       )}
-      {picture.type === 'Icon' && picture.name && <Icon {...(picture as any)} />}
+      {picture.type === 'Icon' && picture.name && <Icon {...picture} />}
       {picture.type === 'Image' && <Image {...picture} />}
     </View>
   );
