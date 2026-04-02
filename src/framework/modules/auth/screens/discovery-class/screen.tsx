@@ -7,6 +7,7 @@ import styles from './styles';
 import { AuthDiscoveryClassScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingMText, NestedBoldText, SmallText } from '~/framework/components/text';
@@ -55,4 +56,4 @@ export default function AuthDiscoveryClassScreen(_: AuthDiscoveryClassScreenProp
     </ScrollView>
   );
 }
-AuthDiscoveryClassScreen.options = { title: I18n.get('auth-discovery-class-title') };
+AuthDiscoveryClassScreen.options = screenOptions(() => ({ title: I18n.get('auth-discovery-class-title') }));

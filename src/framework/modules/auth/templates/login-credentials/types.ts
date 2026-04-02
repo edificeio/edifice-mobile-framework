@@ -1,10 +1,10 @@
 import { ModuleScreenProps } from '~/app/navigation/types';
+import type { AuthState } from '~/framework/modules/auth/redux/types';
 import type {
   consumeAuthErrorAction,
   loginCredentialsActionAddFirstAccount,
   loginCredentialsActionReplaceAccount,
-} from '~/framework/modules/auth/actions';
-import type { AuthState } from '~/framework/modules/auth/redux/types';
+} from '~/framework/modules/auth/thunks';
 import { StackNavigationAction } from '~/framework/navigation/types';
 
 export enum LoginState {

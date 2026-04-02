@@ -27,7 +27,6 @@ import { Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { loadAuthContextAction } from '~/framework/modules/auth/actions';
 import {
   AuthActiveAccountWithCredentials,
   AuthCredentials,
@@ -39,6 +38,7 @@ import {
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/redux/reducer';
+import { loadAuthContextAction } from '~/framework/modules/auth/thunks';
 import { OAuth2Error } from '~/framework/util/oauth2';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';

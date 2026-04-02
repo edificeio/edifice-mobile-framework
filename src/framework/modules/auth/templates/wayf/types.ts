@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { loginFederationActionAddFirstAccount } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { AuthState } from '~/framework/modules/auth/redux/types';
+import { loginFederationActionAddFirstAccount } from '~/framework/modules/auth/thunks';
 import { StackNavigationAction } from '~/framework/navigation/types';
 
 export enum WAYFPageMode {

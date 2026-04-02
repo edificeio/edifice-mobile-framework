@@ -8,10 +8,10 @@ import { bindActionCreators } from 'redux';
 import { AuthWayfAddAccountScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import { loginFederationActionAddAnotherAccount } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import WayfScreen, { WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';
+import { loginFederationActionAddAnotherAccount } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';

@@ -83,9 +83,7 @@ export default function configureStore(preloadedState?: AllModulesState) {
   const middlewares = [thunk];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
-  const enhancers = __DEV__
-    ? [middlewareEnhancer, monitorReducerEnhancer, reactotronEnhancer]
-    : [middlewareEnhancer, monitorReducerEnhancer];
+  const enhancers = __DEV__ ? [middlewareEnhancer, monitorReducerEnhancer, reactotronEnhancer] : [middlewareEnhancer];
   const composedEnhancers: StoreEnhancer = compose(...enhancers);
 
   const rootReducer = combineReducers({
@@ -97,6 +95,10 @@ export default function configureStore(preloadedState?: AllModulesState) {
   return store;
 }
 
+/**
+ * @deprecated
+ * use new module system for reducer that has automatic strict type-checking
+ */
 export type IGlobalState = any; // Todo: Make any TS logic that can get composed state from module definitions IF POSSIBLE
 export type AppDispatch = ThunkDispatch<IGlobalState, unknown, UnknownAction>;
 

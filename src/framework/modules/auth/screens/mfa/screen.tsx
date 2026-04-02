@@ -16,7 +16,6 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture, Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { assertSession, getSession } from '~/framework/modules/auth/redux/reducer';
 import {
@@ -27,6 +26,7 @@ import {
   mfaValidation,
   mobileValidation,
 } from '~/framework/modules/auth/service';
+import { refreshRequirementsAction } from '~/framework/modules/auth/thunks';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';

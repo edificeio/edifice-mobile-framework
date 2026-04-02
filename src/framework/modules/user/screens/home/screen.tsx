@@ -25,7 +25,6 @@ import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
-import { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
   accountIsLoggable,
   AccountType,
@@ -45,6 +44,7 @@ import { LoginState } from '~/framework/modules/auth/screens/main-account/accoun
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { mfaValidation, platformConfig, requirements } from '~/framework/modules/auth/service';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
+import { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/thunks';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { DebugOptions } from '~/framework/modules/debug';
 import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';

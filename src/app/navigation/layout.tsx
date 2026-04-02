@@ -17,7 +17,7 @@ export function ScreenLayout({ children }: React.PropsWithChildren) {
   );
 }
 
-export const screenOptions: NativeStackNavigatorProps['screenOptions'] = ({ theme: navTheme }) => ({
+export const defaultScreenOptions: NativeStackNavigatorProps['screenOptions'] = ({ theme: navTheme }) => ({
   headerBackButtonDisplayMode: 'minimal',
   headerTintColor: navTheme.colors.text,
   headerTitleAlign: 'center',

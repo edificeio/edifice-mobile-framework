@@ -16,7 +16,6 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import {
@@ -30,6 +29,7 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { getNavActionForAccountLoad, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
+import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';

@@ -18,10 +18,10 @@ import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { logoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
 import { LegalUrls } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformLegalUrls } from '~/framework/modules/auth/redux/reducer';
+import { logoutAction, revalidateTermsAction } from '~/framework/modules/auth/thunks';
 import { tryAction } from '~/framework/util/redux/actions';
 
 // TYPES ==========================================================================================

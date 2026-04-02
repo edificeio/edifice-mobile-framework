@@ -1,8 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { logoutAction } from '~/framework/modules/auth/actions';
 import { UpdatableUserInfo } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import type { logoutAction } from '~/framework/modules/auth/thunks';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 

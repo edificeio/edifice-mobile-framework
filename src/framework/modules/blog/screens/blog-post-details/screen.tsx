@@ -35,8 +35,8 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { markViewAudience } from '~/framework/modules/audience';
 import { audienceService } from '~/framework/modules/audience/service';
-import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/thunks';
 import {
   deleteBlogPostAction,
   deleteBlogPostCommentAction,

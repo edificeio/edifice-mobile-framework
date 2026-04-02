@@ -8,13 +8,13 @@ import { bindActionCreators } from 'redux';
 import type { AuthLoginWayfAddAccountScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import LoginWAYFScreen, {
   AuthLoginWayfScreenDispatchProps,
   AuthLoginWayfScreenStoreProps,
 } from '~/framework/modules/auth/templates/login-wayf';
+import { consumeAuthErrorAction } from '~/framework/modules/auth/thunks';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 

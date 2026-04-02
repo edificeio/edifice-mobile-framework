@@ -1,7 +1,6 @@
 import { NavigationAction } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { changePasswordActionAddFirstAccount, IChangePasswordModel, logoutAction } from '~/framework/modules/auth/actions';
 import type {
   AuthActiveAccount,
   AuthCredentials,
@@ -10,6 +9,7 @@ import type {
 } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { AuthState } from '~/framework/modules/auth/redux/types';
+import type { changePasswordActionAddFirstAccount, IChangePasswordModel, logoutAction } from '~/framework/modules/auth/thunks';
 import type { Platform } from '~/framework/util/appConf';
 
 export type IFields = 'oldPassword' | 'newPassword' | 'confirm';

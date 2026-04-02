@@ -25,9 +25,9 @@ import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallActionText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
 import { ActivationFormModel, ValueChangeArgs } from '~/framework/modules/auth/components/ActivationForm';
 import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
+import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/thunks';
 import { Loading } from '~/ui/Loading';
 import { ValidatorBuilder } from '~/utils/form';
 

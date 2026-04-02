@@ -9,8 +9,8 @@ import AppNavigation from './navigation';
 
 import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
+import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
 import { appReadyAction, getState as getAppStartupState } from '~/framework/navigation/redux';
 import { tryAction } from '~/framework/util/redux/actions';

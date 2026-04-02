@@ -1,11 +1,11 @@
 import * as React from 'react';
 
 import { CommonActions } from '@react-navigation/native';
-import type { NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
 import AuthLoginWayfScreenTemplate from '../../templates/login-wayf/screen';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { AuthLoginWayfScreenProps } from '~/framework/modules/auth/templates/login-wayf';
 
@@ -22,4 +22,4 @@ export default function AuthLoginWayfScreen(
     />
   );
 }
-AuthLoginWayfScreen.options = { title: I18n.get('auth-wayf-main-title') } satisfies NativeStackNavigatorProps['screenOptions'];
+AuthLoginWayfScreen.options = screenOptions(() => ({ title: I18n.get('auth-wayf-main-title') }));

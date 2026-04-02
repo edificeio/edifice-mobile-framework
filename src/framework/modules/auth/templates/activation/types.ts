@@ -1,6 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { activateAccountActionAddFirstAccount } from '~/framework/modules/auth/actions';
 import {
   IActivationPayload as ActivationPayload,
   AuthCredentials,
@@ -8,6 +7,7 @@ import {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { activateAccountActionAddFirstAccount } from '~/framework/modules/auth/thunks';
 import { Platform } from '~/framework/util/appConf';
 
 export type IFields = 'login' | 'password' | 'confirmPassword' | 'phone' | 'mail';

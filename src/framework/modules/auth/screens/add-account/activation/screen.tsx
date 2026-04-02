@@ -8,11 +8,11 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { AuthActivationAddAccountScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import { activateAccountActionAddAnotherAccount } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContextOf, getPlatformLegalUrlsOf, getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import ActivationScreen from '~/framework/modules/auth/templates/activation';
 import { ActivationScreenDispatchProps } from '~/framework/modules/auth/templates/activation/types';
+import { activateAccountActionAddAnotherAccount } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';

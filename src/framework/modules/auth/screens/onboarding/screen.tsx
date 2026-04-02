@@ -1,7 +1,6 @@
 import React from 'react';
 import { Platform, View } from 'react-native';
 
-import { NativeStackNavigatorProps } from '@react-navigation/native-stack';
 import deviceInfoModule from 'react-native-device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
@@ -12,6 +11,7 @@ import { getNavActionForOnboarding } from '../../new-navigation';
 
 import { I18n } from '~/app/i18n';
 import { navigationDispatchMultiple } from '~/app/navigation';
+import { screenOptions } from '~/app/navigation/util';
 import { ButtonGroup, PrimaryButton, SecondaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
@@ -92,4 +92,4 @@ export function AuthOnboardingScreen({ navigation }: AuthOnboardingScreenProps) 
     </>
   );
 }
-AuthOnboardingScreen.options = { headerShown: false, statusBarStyle: 'dark' } satisfies NativeStackNavigatorProps['screenOptions'];
+AuthOnboardingScreen.options = screenOptions(() => ({ headerShown: false, statusBarStyle: 'dark' }));

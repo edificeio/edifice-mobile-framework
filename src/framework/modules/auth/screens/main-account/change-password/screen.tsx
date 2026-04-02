@@ -8,16 +8,16 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import {
-  buildChangePasswordActionReplaceAccount,
-  changePasswordActionAddFirstAccount,
-  logoutAction,
-} from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/redux/reducer';
 import * as selectors from '~/framework/modules/auth/redux/selectors';
 import ChangePasswordScreen from '~/framework/modules/auth/templates/change-password';
 import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
+import {
+  buildChangePasswordActionReplaceAccount,
+  changePasswordActionAddFirstAccount,
+  logoutAction,
+} from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';

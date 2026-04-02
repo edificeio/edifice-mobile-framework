@@ -17,8 +17,8 @@ import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
-import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
+import { consumeAuthErrorAction } from '~/framework/modules/auth/thunks';
 import { Error } from '~/framework/util/error';
 import { handleAction } from '~/framework/util/redux/actions';
 

@@ -24,9 +24,9 @@ import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { useSyncRef } from '~/framework/hooks/ref';
-import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/thunks';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { ANDROID_14, ANDROID_16 } from '~/framework/util/permissions';
 
