@@ -7,17 +7,14 @@ import ReactAppDependencyProvider
 import RNBootSplash
 
 @main
-class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
-    // MARK: - SplashScreen using react-native-bootsplash
-  
-    override func customize(_ rootView: RCTRootView) {
-      super.customize(rootView)
-      RNBootSplash.initWithStoryboard("LaunchScreen", rootView: rootView)
-    }
-  
+    var window: UIWindow?
+    var reactNativeDelegate: ReactNativeDelegate?
+    var reactNativeFactory: RCTReactNativeFactory?
+
     // MARK: - Badge Management
-  
+
     private let RECEIVED_PUSHES_KEY = "RECEIVED_PUSHES"
 
     func incrementApplicationBadge() {
@@ -36,12 +33,12 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
 
     // MARK: - UIApplicationDelegate
 
-    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         // Force portrait mode
         Orientation.setOrientation(UIInterfaceOrientationMask.portrait)
 
-        // Firebase Initialization
+        // Firebase setup
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
             #if DEBUG
@@ -49,61 +46,57 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
             #endif
         }
 
-        // New Architecture setup
-        self.moduleName = "appe"
-        self.dependencyProvider = RCTAppDependencyProvider()
-        self.initialProps = [:]
+        // React Native setup
+        let delegate = ReactNativeDelegate()
+        let factory = RCTReactNativeFactory(delegate: delegate)
+        delegate.dependencyProvider = RCTAppDependencyProvider()
+
+        reactNativeDelegate = delegate
+        reactNativeFactory = factory
+        window = UIWindow(frame: UIScreen.main.bounds)
+        factory.startReactNative(
+            withModuleName: "appe",
+            in: window,
+            launchOptions: launchOptions
+        )
 
         // UNUserNotificationCenter
         let center = UNUserNotificationCenter.current()
         center.delegate = self
         application.registerForRemoteNotifications()
 
-        let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
-        return result
+        return true
     }
 
-    override func sourceURL(for bridge: RCTBridge) -> URL? {
-        bundleURL()
-    }
-
-    override func bundleURL() -> URL? {
-        #if DEBUG
-        return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-        #else
-        return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-        #endif
-    }
-
-    override func applicationDidBecomeActive(_ application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         resetApplicationBadge()
     }
 
-    override func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return Orientation.getOrientation()
     }
 
     // MARK: - Deep Linking
 
-    override func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         return RCTLinkingManager.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
-    override func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         return RCTLinkingManager.application(application, open: url, options: options)
     }
 
     // MARK: - Push Notifications
 
-    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         RNCPushNotificationIOS.didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
     }
 
-    override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         RNCPushNotificationIOS.didFailToRegisterForRemoteNotificationsWithError(error)
     }
 
-    override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         incrementApplicationBadge()
         RNCPushNotificationIOS.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler)
     }
@@ -122,5 +115,25 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
             completionHandler([.sound, .alert, .badge])
         }
     }
-  
+
+}
+
+// MARK: - ReactNativeDelegate
+
+class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
+
+    override func bundleURL() -> URL? {
+        #if DEBUG
+        return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+        #else
+        return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+        #endif
+    }
+
+    // TO change after RNBootSplash update
+    override func customize(_ rootView: RCTRootView) {
+        super.customize(rootView)
+        RNBootSplash.initWithStoryboard("LaunchScreen", rootView: rootView)
+    }
+
 }
