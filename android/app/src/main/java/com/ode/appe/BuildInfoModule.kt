@@ -12,14 +12,8 @@ class BuildInfoModule(
 
     override fun fetchInfo(): WritableNativeMap {
         val map = WritableNativeMap()
-        fun getStringField(name: String): String = try {
-            buildConfig.getField(name).get(null) as? String ?: ""
-        } catch (e: Exception) {
-            ""
-        }
-        map.putString("BundleVersionType", getStringField("BundleVersionType"))
-        map.putString("BundleVersionOverride", getStringField("BundleVersionOverride"))
-        map.putString("CFBundleIdentifier", getStringField("CFBundleIdentifier"))
+        map.putString("BundleVersionType", BuildConfig.BundleVersionType)
+        map.putString("BundleVersionOverride", BuildConfig.BundleVersionOverride)
         return map
     }
 

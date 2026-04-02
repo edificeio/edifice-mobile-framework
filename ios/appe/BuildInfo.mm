@@ -20,14 +20,8 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(fetchInfo) {
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
   NSDictionary *info = [[NSBundle mainBundle] infoDictionary];
   if (!info) return result;
-  NSSet *allowedKeys = [NSSet setWithArray:@[
-    @"BundleVersionType",
-    @"BundleVersionOverride",
-    @"CFBundleIdentifier"
-  ]];
-  [info enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
-    if ([allowedKeys containsObject:key]) result[key] = value;
-  }];
+  result[@"BundleVersionType"] = [info valueForKey:@"BundleVersionType"];
+  result[@"BundleVersionOverride"] = [info valueForKey:@"BundleVersionOverride"];
   return [result copy];
 }
 
