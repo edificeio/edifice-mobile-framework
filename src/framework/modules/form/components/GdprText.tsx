@@ -31,7 +31,7 @@ export const GdprText = ({ date, delegates, goal }: GdprTextProps) => {
   const renderDelegate = ({ item }: { item: IGdprDelegate }) => {
     return (
       <View>
-        <BodyText>
+        <BodyText selectable>
           <NestedBoldText>{'• ' + I18n.get('form-distribution-gdprtext-delegateentity', { entity: item.entity })}</NestedBoldText>
           {` (${item.mail})`}
         </BodyText>
@@ -55,6 +55,7 @@ export const GdprText = ({ date, delegates, goal }: GdprTextProps) => {
         data={delegates}
         renderItem={renderDelegate}
         keyExtractor={i => i.id.toString()}
+        scrollEnabled={false}
         contentContainerStyle={styles.listContentContainer}
       />
     </View>

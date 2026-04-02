@@ -414,7 +414,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     if (position === 'gdpr' || position === 'description') {
       return (
         <View style={styles.introContainer}>
-          <ScrollView style={styles.introScrollContainer}>
+          <ScrollView contentContainerStyle={styles.introScrollContainer}>
             {position === 'gdpr' && form.gdpr ? (
               <GdprText date={gdprExpiryDate} delegates={props.gdprDelegates} {...form.gdpr} />
             ) : (

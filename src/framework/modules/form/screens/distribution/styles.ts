@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
@@ -10,13 +10,12 @@ export default StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   introContainer: {
-    flexGrow: 1,
+    flex: 1,
     marginBottom: pageGutterSize,
-    marginHorizontal: pageGutterSize,
+    rowGap: UI_SIZES.spacing.small,
   },
   introScrollContainer: {
-    flexGrow: 1,
-    paddingVertical: pageGutterSize,
+    padding: pageGutterSize,
   },
   listContainer: {
     flexGrow: 1,
