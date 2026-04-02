@@ -105,4 +105,10 @@ export type ModuleConfig<
   Sp extends StorageTypeMap,
 > = ModuleConfigBase<Name, S, A> & Partial<ModuleConfigStorage<Sg, Sp>>;
 
-export type ModuleNavigationParams<T> = T extends Module<infer Name, infer NavParams, any, any> ? NavParams : never;
+/**
+ * Note :
+ * `Name extends any` is an awlays-true condition and is used is used only to prevent the following linting error:
+ * "'Name' is defined but never used."
+ */
+export type ModuleNavigationParams<T> =
+  T extends Module<infer Name, infer NavParams, any, any> ? (Name extends any ? NavParams : never) : never;
