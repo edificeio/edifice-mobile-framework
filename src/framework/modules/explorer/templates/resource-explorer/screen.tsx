@@ -48,7 +48,6 @@ export function ResourceExplorerTemplate({
   selectors,
 }: ResourceExplorerTemplate.AllProps) {
   const { folderId = RootFolderId.ROOT } = route.params;
-
   const folder = useSelector(selectors.folder(folderId));
   const content = folder?.content ?? emptyFolderData;
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();
@@ -76,7 +75,6 @@ export function ResourceExplorerTemplate({
     },
     [context, folderId, dispatch, actions],
   );
-
   const onPressFolder = React.useCallback<
     NonNullable<PaginatedDocumentFlashListProps<ExplorerAppTypes, ExplorerResourceIdType>['onPressFolder']>
   >(f => navigation.push(route.name, { folderId: f.id }), [navigation, route.name]);

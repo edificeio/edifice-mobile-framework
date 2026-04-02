@@ -30,6 +30,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
+import { AudienceViews } from '~/framework/modules/audience/types';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   deleteCommentNewsItemAction,
@@ -37,6 +38,7 @@ import {
   editCommentNewsItemAction,
   getNewsItemAction,
   getNewsItemCommentsAction,
+  newsCountViewsAction,
   publishCommentNewsItemAction,
 } from '~/framework/modules/news/actions';
 import NewsPlaceholderDetails from '~/framework/modules/news/components/placeholder/details';
@@ -72,6 +74,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     handleGetNewsItem,
     handleGetNewsItemComments,
     handlePublishComment,
+    handleViewsCount,
     navigation,
     route,
     session,
@@ -86,14 +89,18 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const [infoComment, setInfoComment] = useState<InfoCommentField>({ changed: false, isPublication: false, type: '', value: '' });
   const [indexEditingComment, setIndexEditingComment] = useState<number | undefined>(undefined);
   const [listHeight, setListHeight] = useState<number>(0);
+  const [audienceViews, setAudienceViews] = useState<AudienceViews | undefined>(undefined);
+  const hasCountedViewRef = useRef<boolean>(false);
 
   const isThreadManager = useMemo(
     () => thread?.sharedRights.includes(NewsThreadItemRights.MANAGER) || session!.user.id === thread?.ownerId,
     [thread, session],
   );
+
   const hasPermissionDelete = useMemo(() => {
     return session!.user.id === news?.owner.id || isThreadManager;
   }, [news, session, isThreadManager]);
+
   const hasPermissionComment = useMemo(() => {
     return news?.sharedRights.includes(NewsItemRights.COMMENT) || session!.user.id === news?.owner.id;
   }, [news, session]);
@@ -550,6 +557,9 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   },
   handlePublishComment: async (infoId: number, comment: string) => {
     return (await dispatch(publishCommentNewsItemAction(infoId, comment))) as unknown as number | undefined;
+  },
+  handleViewsCount: async ({ module, resourceId }) => {
+    return (await dispatch(newsCountViewsAction({ module, resourceId }))) as AudienceViews;
   },
 });
 

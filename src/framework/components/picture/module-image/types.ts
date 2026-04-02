@@ -2,23 +2,19 @@ import { SvgProps } from 'react-native-svg';
 
 import { PictureProps } from '~/framework/components/picture';
 import { ImageProps } from '~/framework/util/media-deprecated';
-import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
 export type ImageFallbackProps = Partial<PictureProps> &
-  Pick<ModuleImageProps, 'iconSize' | 'moduleConfig'> & {
+  Pick<ModuleImageProps, 'iconSize'> & {
+    badge?: IAppBadgeInfo;
+    fallbackIcon?: Partial<PictureProps>;
     imageProps: ImageProps;
-    fallbackIcon?: ModuleImageProps['fallbackIcon'];
   };
 
 export type ImageLoaderProps = Pick<ImageFallbackProps, 'imageProps'>;
 
-export type ModuleConfigForFallbackImage = {
-  displayPicture?: AnyNavigableModuleConfig['displayPicture'];
-  displayColor?: Pick<Required<AnyNavigableModuleConfig>['displayColor'], 'pale' | 'regular'>;
-};
-
 export type ModuleImageProps = ImageProps & {
-  moduleConfig?: ModuleConfigForFallbackImage;
+  appName: string;
+  fallbackIcon?: Partial<PictureProps>;
   iconSize?: SvgProps['width'];
-  fallbackIcon?: ModuleConfigForFallbackImage['displayPicture'];
 };

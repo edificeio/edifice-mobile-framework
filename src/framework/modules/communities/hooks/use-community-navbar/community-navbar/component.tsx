@@ -8,6 +8,7 @@ import styles, { BANNER_BASE_HEIGHT } from './styles';
 import { CommunityNavbarProps } from './types';
 
 import theme from '~/app/theme';
+import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { Image } from '~/framework/util/media/components/image';
 import { sessionImageSource } from '~/framework/util/transport';
 
@@ -17,6 +18,7 @@ export const useCommunityBannerHeight = () => {
 };
 
 export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavbarProps>) {
+  const appTheme = useAppTheme('communities');
   const source = React.useMemo(() => image && sessionImageSource(image), [image]);
   const height = useCommunityBannerHeight();
   const style = React.useMemo(
@@ -32,7 +34,7 @@ export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavb
   );
   return (
     <View style={style}>
-      <Image fallback={theme.apps.communities} style={StyleSheet.absoluteFill} source={source} />
+      <Image fallback={appTheme as any} style={StyleSheet.absoluteFill} source={source} />
     </View>
   );
 }

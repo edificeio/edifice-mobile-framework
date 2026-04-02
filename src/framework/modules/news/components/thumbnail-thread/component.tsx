@@ -1,30 +1,34 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { ColorValue, View } from 'react-native';
 
 import { Grayscale } from 'react-native-color-matrix-image-filters';
 
 import styles from './styles';
 import { ThumbnailThreadProps } from './types';
 
-import theme from '~/app/theme';
 import { getScaleHeight } from '~/framework/components/constants';
-import { Svg, SvgProps } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
+import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
-import moduleConfig from '~/framework/modules/news/module-config';
 import { Image } from '~/framework/util/media-deprecated';
 
-const Selected = () => (
-  <View style={[styles.thumbnailSelectedItem, { borderColor: (moduleConfig.displayPicture as SvgProps).fill }]} />
-);
+const rawNewsIconName = 'actualites-large';
+
+type SelectedProps = {
+  borderColor: ColorValue;
+};
+
+const Selected = ({ borderColor }: SelectedProps) => <View style={[styles.thumbnailSelectedItem, { borderColor }]} />;
 
 export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...props }: ThumbnailThreadProps) {
   const { icon, square } = props;
+  const appTheme = useAppTheme('news');
 
   const [error, setError] = React.useState(false);
 
   const globalStyle = [
     styles.thumbnailItem,
-    { backgroundColor: moduleConfig.displayColor.pale },
+    { backgroundColor: appTheme.colors.pale },
     { ...(square ? styles.thumbnailItemSquare : styles.thumbnailItemRectangle) },
   ];
   const heightSVGNoIcon = square ? getScaleHeight(12.5) : getScaleHeight(40);
@@ -32,7 +36,7 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
   if (icon && !error && status === ThreadItemStatus.SELECTED) {
     return (
       <View style={styles.thumbnailContainerSelected}>
-        <Selected />
+        <Selected borderColor={appTheme.colors.regular} />
         <Image source={icon} style={globalStyle} onError={() => setError(true)} />
       </View>
     );
@@ -50,21 +54,21 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
   if (status === ThreadItemStatus.SELECTED) {
     return (
       <View style={[globalStyle, styles.thumbnailContainerSelected]}>
-        <Selected />
-        <Svg name="newsFeed" fill={(moduleConfig.displayPicture as SvgProps).fill} height={heightSVGNoIcon} />
+        <Selected borderColor={appTheme.colors.regular} />
+        <Svg name={rawNewsIconName} fill={appTheme.colors.regular} height={heightSVGNoIcon} />
       </View>
     );
   }
   if (status === ThreadItemStatus.DISABLED) {
     return (
       <View style={[globalStyle, styles.thumbnailNoIconDisabled]}>
-        <Svg name="newsFeed" fill={theme.palette.grey.graphite} height={heightSVGNoIcon} />
+        <Svg name={rawNewsIconName} fill={appTheme.colors.dark} height={heightSVGNoIcon} />
       </View>
     );
   }
   return (
     <View style={globalStyle}>
-      <Svg name="newsFeed" fill={(moduleConfig.displayPicture as SvgProps).fill} height={heightSVGNoIcon} />
+      <Svg name={rawNewsIconName} fill={appTheme.colors.regular} height={heightSVGNoIcon} />
     </View>
   );
 }

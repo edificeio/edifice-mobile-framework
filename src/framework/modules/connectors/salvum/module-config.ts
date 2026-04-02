@@ -4,10 +4,9 @@ const SALVUM = 'salvum';
 
 export default new NavigableModuleConfig<string, null>({
   displayAs: ModuleType.MYAPPS_CONNECTOR,
-  displayI18n: 'salvum-moduleconfig-appname',
-  displayPicture: { source: require('ASSETS/icons/moduleIcons/salvum.png'), type: 'Image' },
   entcoreScope: ['cas'],
-  matchEntcoreApp: entcoreApp => entcoreApp.name.toLowerCase().includes(SALVUM),
+  hasRight: ({ matchingApps }) => matchingApps.some(entcoreApp => entcoreApp.name.toLowerCase().includes(SALVUM)),
+  matchEntcoreApp: 'Salvum',
   name: SALVUM,
   storageName: SALVUM,
 });

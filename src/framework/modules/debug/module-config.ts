@@ -3,7 +3,7 @@ import { ModuleConfig } from '~/framework/util/moduleTool';
 export default new ModuleConfig<'debug', null>({
   entcoreScope: [],
   hasRight: () => true,
-  matchEntcoreApp: () => false,
+  matchEntcoreApp: 'debug',
   name: 'debug',
   storageName: 'debug',
 });

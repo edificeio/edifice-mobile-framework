@@ -10,10 +10,9 @@ const LVS = 'lvs';
 
 export default new NavigableModuleConfig<string, null>({
   displayAs: ModuleType.MYAPPS_CONNECTOR,
-  displayI18n: 'lvs-moduleconfig-appname',
-  displayPicture: { name: LVS, type: 'Svg' },
   entcoreScope: [LVS],
-  matchEntcoreApp: entcoreApp => hasConnectorApp(entcoreApp),
+  hasRight: ({ matchingApps }) => matchingApps.some(entcoreApp => hasConnectorApp(entcoreApp)),
+  matchEntcoreApp: 'Lvs',
   name: LVS,
   storageName: LVS,
 });

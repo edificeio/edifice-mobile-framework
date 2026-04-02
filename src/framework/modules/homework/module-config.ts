@@ -1,13 +1,9 @@
 import type reducer from './reducers';
 
-import theme from '~/app/theme';
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>({
   displayAs: ModuleType.MYAPPS_MODULE,
-  displayColor: theme.apps.homeworks.accentColors,
-  displayI18n: 'homework',
-  displayPicture: theme.apps.homeworks.icon,
   displayPictureBlur: { name: 'diary-outline', type: 'Svg' },
   displayPictureFocus: { name: 'diary-fill', type: 'Svg' },
   entcoreScope: ['homeworks'],
@@ -19,7 +15,7 @@ export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>
       sources: ['camera', 'gallery'],
     },
   } as const,
-  matchEntcoreApp: '/homeworks',
+  matchEntcoreApp: 'Cahier de texte',
   name: 'homework',
   storageName: 'homework',
 });

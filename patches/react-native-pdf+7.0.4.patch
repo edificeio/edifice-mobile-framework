@@ -1,0 +1,346 @@
+diff --git a/node_modules/react-native-pdf/android/build.gradle b/node_modules/react-native-pdf/android/build.gradle
+index 34da324..1635531 100644
+--- a/node_modules/react-native-pdf/android/build.gradle
++++ b/node_modules/react-native-pdf/android/build.gradle
+@@ -143,6 +143,6 @@ dependencies {
+     // The repo from zacharee is based on PdfiumAndroidKt, a much newer fork of PdfiumAndroid, with better maintenance and updated native libraries.
+     implementation 'com.github.zacharee:AndroidPdfViewer:4.0.1'
+     // Depend on PdfiumAndroidKt directly so this can be updated independently of AndroidPdfViewer as updates are provided.
+-    implementation 'io.legere:pdfiumandroid:1.0.32'
++    implementation 'io.legere:pdfiumandroid:1.0.34'
+     implementation 'com.google.code.gson:gson:2.13.2'
+ }
+diff --git a/node_modules/react-native-pdf/android/build/generated/source/buildConfig/debug/org/wonday/pdf/BuildConfig.java b/node_modules/react-native-pdf/android/build/generated/source/buildConfig/debug/org/wonday/pdf/BuildConfig.java
+deleted file mode 100644
+index de3771d..0000000
+--- a/node_modules/react-native-pdf/android/build/generated/source/buildConfig/debug/org/wonday/pdf/BuildConfig.java
++++ /dev/null
+@@ -1,12 +0,0 @@
+-/**
+- * Automatically generated file. DO NOT MODIFY
+- */
+-package org.wonday.pdf;
+-
+-public final class BuildConfig {
+-  public static final boolean DEBUG = Boolean.parseBoolean("true");
+-  public static final String LIBRARY_PACKAGE_NAME = "org.wonday.pdf";
+-  public static final String BUILD_TYPE = "debug";
+-  // Field from default config.
+-  public static final boolean IS_NEW_ARCHITECTURE_ENABLED = false;
+-}
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/react-native-pdf/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+deleted file mode 100644
+index 7a4bce1..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
++++ /dev/null
+@@ -1,7 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="org.wonday.pdf" >
+-
+-    <uses-sdk android:minSdkVersion="24" />
+-
+-</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/react-native-pdf/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+deleted file mode 100644
+index ef0be3c..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
++++ /dev/null
+@@ -1,18 +0,0 @@
+-{
+-  "version": 3,
+-  "artifactType": {
+-    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
+-    "kind": "Directory"
+-  },
+-  "applicationId": "org.wonday.pdf",
+-  "variantName": "debug",
+-  "elements": [
+-    {
+-      "type": "SINGLE",
+-      "filters": [],
+-      "attributes": [],
+-      "outputFile": "AndroidManifest.xml"
+-    }
+-  ],
+-  "elementType": "File"
+-}
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-pdf/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+deleted file mode 100644
+index 776557e..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
++++ /dev/null
+@@ -1,5 +0,0 @@
+-aarFormatVersion=1.0
+-aarMetadataVersion=1.0
+-minCompileSdk=1
+-minCompileSdkExtension=0
+-minAndroidGradlePluginVersion=1.0.0
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/react-native-pdf/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+deleted file mode 100644
+index 1211b1e..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
++++ /dev/null
+@@ -1,6 +0,0 @@
+-aarFormatVersion=1.0
+-aarMetadataVersion=1.0
+-minCompileSdk=1
+-minCompileSdkExtension=0
+-minAndroidGradlePluginVersion=1.0.0
+-coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json b/node_modules/react-native-pdf/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+deleted file mode 100644
+index 9e26dfe..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
++++ /dev/null
+@@ -1 +0,0 @@
+-{}
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/react-native-pdf/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar
+deleted file mode 100644
+index 30012f9..0000000
+Binary files a/node_modules/react-native-pdf/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar and /dev/null differ
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt b/node_modules/react-native-pdf/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-pdf/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+deleted file mode 100644
+index 29d8279..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
++++ /dev/null
+@@ -1 +0,0 @@
+-#Wed Mar 18 01:01:39 CST 2026
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-pdf/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+deleted file mode 100644
+index 43c18ce..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\build\generated\res\resValues\debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\build\generated\res\resValues\debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/react-native-pdf/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+deleted file mode 100644
+index df391c1..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\debug\shaders"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/incremental/packageDebugAssets/merger.xml b/node_modules/react-native-pdf/android/build/intermediates/incremental/packageDebugAssets/merger.xml
+deleted file mode 100644
+index 3ee89ab..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/incremental/packageDebugAssets/merger.xml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\assets"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\debug\assets"/></dataSet><dataSet config="generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\build\intermediates\shader_assets\debug\compileDebugShaders\out"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt b/node_modules/react-native-pdf/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+deleted file mode 100644
+index 78ac5b8..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
++++ /dev/null
+@@ -1,2 +0,0 @@
+-R_DEF: Internal format may change without notice
+-local
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/react-native-pdf/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+deleted file mode 100644
+index d3b4f64..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
++++ /dev/null
+@@ -1,7 +0,0 @@
+-1<?xml version="1.0" encoding="utf-8"?>
+-2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-3    package="org.wonday.pdf" >
+-4
+-5    <uses-sdk android:minSdkVersion="24" />
+-6
+-7</manifest>
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/react-native-pdf/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+deleted file mode 100644
+index 7a4bce1..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
++++ /dev/null
+@@ -1,7 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="org.wonday.pdf" >
+-
+-    <uses-sdk android:minSdkVersion="24" />
+-
+-</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/react-native-pdf/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+deleted file mode 100644
+index 0637a08..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
++++ /dev/null
+@@ -1 +0,0 @@
+-[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/react-native-pdf/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+deleted file mode 100644
+index 08f4ebe..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/react-native-pdf/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt b/node_modules/react-native-pdf/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+deleted file mode 100644
+index 3512665..0000000
+--- a/node_modules/react-native-pdf/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-org.wonday.pdf
+diff --git a/node_modules/react-native-pdf/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-pdf/android/build/outputs/logs/manifest-merger-debug-report.txt
+deleted file mode 100644
+index 1b0bde8..0000000
+--- a/node_modules/react-native-pdf/android/build/outputs/logs/manifest-merger-debug-report.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+--- Merging decision tree log ---
+-manifest
+-ADDED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml:1:1-4:12
+-INJECTED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml:1:1-4:12
+-	package
+-		INJECTED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml
+-	xmlns:android
+-		ADDED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml:1:11-69
+-uses-sdk
+-INJECTED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml reason: use-sdk injection requested
+-INJECTED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml
+-INJECTED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml
+-	android:targetSdkVersion
+-		INJECTED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml
+-	android:minSdkVersion
+-		INJECTED from W:\wonday\project\react-native-pdf\example\node_modules\react-native-pdf\android\src\main\AndroidManifestNew.xml
+diff --git a/node_modules/react-native-pdf/ios/RNPDFPdf/RNPDFPdfView.mm b/node_modules/react-native-pdf/ios/RNPDFPdf/RNPDFPdfView.mm
+index de46c98..2d24042 100644
+--- a/node_modules/react-native-pdf/ios/RNPDFPdf/RNPDFPdfView.mm
++++ b/node_modules/react-native-pdf/ios/RNPDFPdf/RNPDFPdfView.mm
+@@ -190,6 +190,16 @@ using namespace facebook::react;
+ {
+     [super prepareForRecycle];
+ 
++    // Remove contentSize observers before cleanup
++    for (UIView *subview in _pdfView.subviews) {
++        if ([subview isKindOfClass:[UIScrollView class]]) {
++            @try {
++                [(UIScrollView *)subview removeObserver:self forKeyPath:@"contentSize"];
++            } @catch (NSException *exception) {}
++        }
++    }
++
++
+     [_pdfView removeFromSuperview];
+     _pdfDocument = Nil;
+     _pdfView = Nil;
+@@ -535,6 +545,35 @@ using namespace facebook::react;
+             }
+         }
+ 
++        // When displaying vertically without paging, disable horizontal scrolling on the internal UIScrollView
++        // so that horizontal pan gestures pass through to the parent (e.g. a carousel).
++        // Vertical scroll remains fully functional. Also triggered on spacing change to allow JS-side re-application.
++        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"horizontal"] || [changedProps containsObject:@"enablePaging"] || [changedProps containsObject:@"spacing"])) {
++            BOOL shouldBlockHorizontalScroll = !_horizontal && !_enablePaging;
++            for (UIView *subview in _pdfView.subviews) {
++                if ([subview isKindOfClass:[UIScrollView class]]) {
++                    UIScrollView *scrollView = (UIScrollView *)subview;
++                    if (shouldBlockHorizontalScroll) {
++                        scrollView.alwaysBounceHorizontal = NO;
++                        scrollView.alwaysBounceVertical = YES;
++                        scrollView.directionalLockEnabled = YES;
++                        // Force contentSize width = scrollView width to eliminate any horizontal scroll
++                        dispatch_async(dispatch_get_main_queue(), ^{
++                            CGSize contentSize = scrollView.contentSize;
++                            contentSize.width = scrollView.bounds.size.width;
++                            scrollView.contentSize = contentSize;
++                        
++                            // Observe contentSize changes to maintain lock
++                            [scrollView addObserver:self 
++                                        forKeyPath:@"contentSize" 
++                                        options:NSKeyValueObservingOptionNew 
++                                        context:nil];
++                            });
++                        }
++                    }
++                }
++            }
++
+         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enablePaging"] || [changedProps containsObject:@"horizontal"] || [changedProps containsObject:@"page"])) {
+ 
+             PDFPage *pdfPage = [_pdfDocument pageAtIndex:_page-1];
+@@ -600,6 +639,15 @@ using namespace facebook::react;
+ 
+ - (void)dealloc{
+ 
++    // Remove contentSize observers
++    for (UIView *subview in _pdfView.subviews) {
++        if ([subview isKindOfClass:[UIScrollView class]]) {
++            @try {
++                [(UIScrollView *)subview removeObserver:self forKeyPath:@"contentSize"];
++            } @catch (NSException *exception) {}
++        }
++    }
++
+     _pdfDocument = Nil;
+     _pdfView = Nil;
+ 
+@@ -740,6 +788,27 @@ using namespace facebook::react;
+             _scale = _pdfView.scaleFactor/_fixScaleFactor;
+             [self notifyOnChangeWithMessage:[[NSString alloc] initWithString:[NSString stringWithFormat:@"scaleChanged|%f", _scale]]];
+         }
++
++        // Toggle horizontal scroll lock based on zoom level
++        BOOL isAtMinScale = (_pdfView.scaleFactor <= _pdfView.minScaleFactor * 1.01);
++        for (UIView *subview in _pdfView.subviews) {
++            if ([subview isKindOfClass:[UIScrollView class]]) {
++                UIScrollView *scrollView = (UIScrollView *)subview;
++                if (isAtMinScale) {
++                    // At min scale: lock horizontal scroll so carousel can swipe
++                    scrollView.alwaysBounceHorizontal = NO;
++                    scrollView.alwaysBounceVertical = YES;
++                    scrollView.directionalLockEnabled = YES;
++                    CGSize contentSize = scrollView.contentSize;
++                    contentSize.width = scrollView.bounds.size.width;
++                    scrollView.contentSize = contentSize;
++                } else {
++                    // Zoomed in: allow horizontal scroll for panning
++                    scrollView.alwaysBounceHorizontal = YES;
++                    scrollView.directionalLockEnabled = NO;
++                }
++            }
++        }
+     }
+ }
+ 
+@@ -950,6 +1019,23 @@ using namespace facebook::react;
+     }
+ }
+ 
++- (void)observeValueForKeyPath:(NSString *)keyPath 
++                      ofObject:(id)object 
++                        change:(NSDictionary *)change 
++                       context:(void *)context {
++    if ([keyPath isEqualToString:@"contentSize"] && [object isKindOfClass:[UIScrollView class]]) {
++        UIScrollView *scrollView = (UIScrollView *)object;
++        if (_pdfView.scaleFactor <= _pdfView.minScaleFactor * 1.01) {
++            // Maintain horizontal scroll lock
++            CGSize currentSize = scrollView.contentSize;
++            if (currentSize.width != scrollView.bounds.size.width) {
++                currentSize.width = scrollView.bounds.size.width;
++                scrollView.contentSize = currentSize;
++            }
++        }
++    }
++}
++
+ @end
+ 
+ #ifdef RCT_NEW_ARCH_ENABLED

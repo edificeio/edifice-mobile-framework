@@ -30,7 +30,7 @@ const notAvailableMediaText = {
 };
 
 const MediaButton = (props: IPlayerProps) => {
-  const { posterSource, ratio, source, style, type } = props;
+  const { onPreviewPress, posterSource, ratio, source, style, type } = props;
 
   const widthWaves = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.medium - getScaleHeight(36) - 3 * UI_SIZES.spacing.small;
   const heightWaves = Math.round(widthWaves * (36 / 237));
@@ -54,7 +54,9 @@ const MediaButton = (props: IPlayerProps) => {
     return !source || !type ? (
       <SmallItalicText>{I18n.get(notAvailableMediaText[type || 'media'])}</SmallItalicText>
     ) : (
-      <TouchableOpacity onPress={() => showMediaPlayer()} style={[styles.previewVideo, style]}>
+      <TouchableOpacity
+        onPress={() => (onPreviewPress ? onPreviewPress() : showMediaPlayer())}
+        style={[styles.previewVideo, style]}>
         {posterSource ? <Image source={posterSource || {}} style={[playerStyle, styles.player]} resizeMode="contain" /> : null}
         <View style={styles.viewVideo}>
           <MediaIcon icon="ui-play-filled" iconSize={iconSizeVideo} />
@@ -65,7 +67,7 @@ const MediaButton = (props: IPlayerProps) => {
 
   const getPreviewAudio = () => {
     return (
-      <TouchableOpacity onPress={() => showMediaPlayer()}>
+      <TouchableOpacity onPress={() => (onPreviewPress ? onPreviewPress() : showMediaPlayer())}>
         <View style={styles.previewAudio}>
           <MediaIcon icon="ui-play-filled" iconSize={iconSizeAudio} style={styles.iconAudio} />
           <Svg width={widthWaves} height={heightWaves} fill={theme.palette.primary.light} name="ui-wavering" />

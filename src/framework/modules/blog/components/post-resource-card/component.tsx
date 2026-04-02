@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { View } from 'react-native';
 
 import { BlogPostResourceCardProps } from './types';
 
@@ -80,7 +81,11 @@ export const BlogPostResourceCard = React.memo(
               {blogPostText}
             </SmallText>
           ) : null}
-          {hasBlogPostMedia ? renderMediaPreview(blogPostMedia, { module: 'blog', resourceId, resourceType: 'post' }) : null}
+          {hasBlogPostMedia ? (
+            <View pointerEvents="none">
+              {renderMediaPreview(blogPostMedia, { module: 'blog', resourceId, resourceType: 'post' })}
+            </View>
+          ) : null}
         </TouchableResourceCard>
       </ArticleContainer>
     );
