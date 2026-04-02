@@ -1,6 +1,6 @@
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { CompositeScreenProps } from '@react-navigation/native';
-import type { NativeStackNavigatorProps, NativeStackOptionsArgs, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AllModulesAsTuple, ModuleNavigationParams } from '../module/types';
 
@@ -41,7 +41,3 @@ declare global {
     interface RootParamList extends NavigationRootParams {}
   }
 }
-
-export type ScreenOptions<T extends keyof AllModulesNavigationParams = keyof AllModulesNavigationParams> = (
-  props: NativeStackOptionsArgs<AllModulesNavigationParams, T>,
-) => Exclude<NativeStackNavigatorProps['screenOptions'], Function>;

@@ -396,12 +396,9 @@ const performLogin = async (
   method: InitialAuthenticationMethod | undefined,
   dispatch: AuthDispatch,
 ) => {
-  console.info(1);
   const requirement = await loginSteps.getRequirement(tokens);
-  console.info(2);
   const user = await loginSteps.getUserData(tokens, requirement);
   await loadMyAppsAtLogin(tokens, dispatch);
-  console.info(3);
   const accountInfo = await loginSteps.finalizeSession(
     tokens.tokens,
     reduxActions.getTimestamp(),
@@ -412,7 +409,6 @@ const performLogin = async (
     user.publicInfos,
     method,
   );
-  console.info(4);
   if (requirement) {
     const context = await authService.platformConfig.context(platform);
     const infos = await getRequirementAdditionalInfos(requirement, tokens);

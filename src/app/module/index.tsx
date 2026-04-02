@@ -94,4 +94,9 @@ export class Module<
     if (!Module.allModules) throw new Error('[Module] Module.allModulesReducers: modules are not loaded yet');
     return Object.fromEntries(Object.entries(Module.allModules).map(([name, m]) => [name, m.reducer])) as AllModulesReducers;
   }
+
+  static get allModulesScopes() {
+    if (!Module.allModules) throw new Error('[Module] Module.allModulesScopes: modules are not loaded yet');
+    return [...new Set(...Object.values(Module.allModules).map(m => m.apiScope))];
+  }
 }

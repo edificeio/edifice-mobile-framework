@@ -2,6 +2,7 @@ import moment from 'moment';
 
 import { platformFetch } from './transport';
 
+import { Module } from '~/app/module';
 import AllModules from '~/app/modules';
 import { getStore } from '~/app/store';
 import {
@@ -87,7 +88,7 @@ const createDeviceAuthenticationHeader = (clientId: string, clientSecret: string
  *
  * @returns A space-separated string of OAuth2 scopes.
  */
-const createScope = (): string => [...new Set(AllModules().getScopes())].join(' ');
+const createScope = (): string => [...new Set(AllModules().getScopes()), ...Module.allModulesScopes].join(' ');
 
 /**
  * Fetches an OAuth2 token for the specified platform using the given grant type and parameters.
