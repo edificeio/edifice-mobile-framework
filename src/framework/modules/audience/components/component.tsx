@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { audienceService } from '~/framework/modules/audience/service';
-import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
+import { getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { isEmpty } from '~/framework/util/object';
 

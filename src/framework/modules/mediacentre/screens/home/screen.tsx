@@ -17,7 +17,7 @@ import DropdownPicker from '~/framework/components/pickers/dropdown';
 import SearchBar from '~/framework/components/search-bar';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   addFavoriteAction,
   editSelectedStructureAction,

@@ -25,6 +25,9 @@ import {
   InitialAuthenticationMethod,
   PlatformAuthContext,
 } from './model';
+import { actions, ERASE_ALL_ACCOUNTS } from './redux/actions';
+import { assertSession, getState as getAuthState, getSession } from './redux/reducer';
+import { AuthState } from './redux/types';
 import * as authService from './service';
 import {
   assertNotPredeleted,
@@ -38,22 +41,14 @@ import {
   UserPrivateData,
 } from './service';
 import * as storage from './storage';
+import { appInfoActions } from '../myapps/reducer/actions';
+import { buildFetchSuccessPayload } from '../myapps/reducer/adapter';
+import { createMyAppsServiceWithTokenFetch } from '../myapps/service';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { audienceService } from '~/framework/modules/audience/service';
 import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
-import {
-  actions,
-  assertSession,
-  AuthState,
-  ERASE_ALL_ACCOUNTS,
-  getState as getAuthState,
-  getSession,
-} from '~/framework/modules/auth/reducer';
-import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
-import { buildFetchSuccessPayload } from '~/framework/modules/myapps/reducer/adapter';
-import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';

@@ -2,7 +2,7 @@ import { Temporal } from '@js-temporal/polyfill';
 import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
 import { API } from '~/framework/modules/wiki/service/types';
 import { sessionFetch } from '~/framework/util/transport/fetch';

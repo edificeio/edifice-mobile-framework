@@ -6,7 +6,7 @@ import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 import { getAuthenticationHeaderForAccount, getDeviceHeaders, getUrlWithBase } from './common';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { isRequireSource } from '~/framework/util/media';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';

@@ -19,7 +19,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-handler';

@@ -38,7 +38,7 @@ import {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
+import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/redux/reducer';
 import { OAuth2Error } from '~/framework/util/oauth2';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';

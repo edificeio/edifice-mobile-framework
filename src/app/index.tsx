@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppState, AppStateStatus, Platform, StatusBar } from 'react-native';
+import { AppState, AppStateStatus, Platform } from 'react-native';
 
 import FastImage from '@d11/react-native-fast-image';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
@@ -9,12 +9,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Redux from 'react-redux';
+import { Action, Store } from 'redux';
 
 import { DeviceTrust } from './device-trust';
 import { I18n } from './i18n';
+import { Module } from './module';
 import loadModules from './modules';
-import { connectWithStore, IStoreProp, Reducers } from './store';
-import theme from './theme';
+import configureStore, { connectWithStore, Reducers } from './store';
 
 import { AppStartupHandler } from '~/app/startup';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -96,8 +97,6 @@ function useNotificationEvent() {
   }, []);
 }
 
-interface AppProps extends IStoreProp {}
-
 const useCoreDependencies = () => {
   useConstructor(async () => {
     await Storage.init();
@@ -105,22 +104,25 @@ const useCoreDependencies = () => {
   });
 };
 
-function App(props: AppProps) {
+const modulesPromises = Module.loadModules();
+
+function App() {
   useCoreDependencies();
+  React.use(modulesPromises);
+  const [store, setStore] = React.useState<Store<unknown, Action<string>, unknown> | null>(null);
+  if (!store) setStore(configureStore());
 
   useAppState();
   useTrackers();
   useNotificationEvent();
 
-  React.useEffect(() => {
-    if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
-  }, []);
+  if (!store) return null;
 
   const content = (
     <DeviceTrust>
       <GestureHandlerRootView style={UI_STYLES.flex1}>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <Redux.Provider store={props.store}>
+          <Redux.Provider store={store}>
             <AppStartupHandler />
           </Redux.Provider>
         </SafeAreaProvider>

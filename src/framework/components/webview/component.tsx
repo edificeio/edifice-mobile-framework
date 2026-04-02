@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { WebView as RNWebView, WebViewProps } from 'react-native-webview';
 import type { WebViewSource, WebViewSourceHtml, WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf from '~/framework/util/appConf';
 
 const isSourceHtml = (source: WebViewSource | undefined): source is WebViewSourceHtml =>

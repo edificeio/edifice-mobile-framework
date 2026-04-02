@@ -11,7 +11,8 @@ import {
   getAddAccountLoginNextScreen,
   getAddAccountNavActionForRedirect,
 } from '~/framework/modules/auth/navigation/add-account/router';
-import { getState, AuthState } from '~/framework/modules/auth/reducer';
+import { getState } from '~/framework/modules/auth/redux/reducer';
+import { AuthState } from '~/framework/modules/auth/redux/types';
 import { RouteStack } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';

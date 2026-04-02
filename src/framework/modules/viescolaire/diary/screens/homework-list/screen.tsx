@@ -10,7 +10,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {

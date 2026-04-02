@@ -6,7 +6,7 @@ import {
 
 import { getStore } from '~/app/store';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { actions as authActions, getSession } from '~/framework/modules/auth/reducer';
+import { actions as authActions, getSession } from '~/framework/modules/auth/redux/reducer';
 import { MailsConversationPayload } from '~/framework/modules/mails/model';
 import {
   mailContentAdapter,

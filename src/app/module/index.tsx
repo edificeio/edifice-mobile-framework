@@ -9,7 +9,15 @@ import { ParamListBase } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Action } from 'redux';
 
-import { ModuleConfig, ModuleConfigParameter, ModuleConfigStorage, ModuleConfigStorageParameter } from './types';
+import {
+  AllModulesAsMap,
+  AllModulesReducers,
+  ModuleConfig,
+  ModuleConfigParameter,
+  ModuleConfigStorage,
+  ModuleConfigStorageParameter,
+} from './types';
+import modules from '../config/modules';
 
 import { StorageTypeMap } from '~/framework/util/storage/types';
 
@@ -22,6 +30,8 @@ function configContainsStorage<StorageType extends StorageTypeMap = object, Pref
 type StrictNavigationParams<Name extends string, T> = {
   [K in keyof T]: K extends `${Name}/${string}` ? T[K] : never;
 };
+
+// ToDo: type Action
 
 export class Module<
   Name extends string,
@@ -63,5 +73,25 @@ export class Module<
       this.storage = config.storage;
       this.preferences = config.preferences;
     }
+  }
+
+  static allModules?: AllModulesAsMap = undefined;
+  static async loadModules() {
+    if (Module.allModules) {
+      console.warn('[Module] Module.loadModules: loadModules should be called only once. Check when this method is called.');
+      return Module.allModules;
+    }
+    __DEV__ && console.info(`[Module] Loading ${modules.length} modules...`);
+    const loadedModules = (await Promise.all(modules)).map(m => {
+      __DEV__ && console.info(`[Module] Loaded module ${m.default.name}.`);
+      return m.default;
+    });
+    Module.allModules = Object.fromEntries(loadedModules.map(m => [m.name, m])) as AllModulesAsMap;
+    return Module.allModules;
+  }
+
+  static get allModulesReducers() {
+    if (!Module.allModules) throw new Error('[Module] Module.allModulesReducers: modules are not loaded yet');
+    return Object.fromEntries(Object.entries(Module.allModules).map(([name, m]) => [name, m.reducer])) as AllModulesReducers;
   }
 }

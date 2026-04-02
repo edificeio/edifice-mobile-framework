@@ -31,7 +31,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import { AudienceViews } from '~/framework/modules/audience/types';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   deleteCommentNewsItemAction,
   deleteNewsItemAction,

@@ -19,7 +19,7 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/framework/modules/form/actions';
 import { ProgressBar } from '~/framework/modules/form/components/DistributionProgressBar';
 import { FormSectionCard } from '~/framework/modules/form/components/FormSectionCard';

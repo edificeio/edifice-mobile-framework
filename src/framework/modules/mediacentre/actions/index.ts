@@ -3,7 +3,7 @@
  */
 import { ThunkAction } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { MediacentreResources, Resource, Source } from '~/framework/modules/mediacentre/model';
 import { actionTypes } from '~/framework/modules/mediacentre/reducer';
 import { actions as favoritesActions } from '~/framework/modules/mediacentre/reducer/favorites';

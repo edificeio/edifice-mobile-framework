@@ -19,7 +19,8 @@ import { IGlobalState } from '~/app/store';
 import { RootToastContainer } from '~/framework/components/toast';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getAuthNavigationState, getFirstTabRoute } from '~/framework/modules/auth/navigation/main-account/router';
-import { AuthState, getState as getAuthState, selectors } from '~/framework/modules/auth/reducer';
+import { getState as getAuthState, selectors } from '~/framework/modules/auth/redux/reducer';
+import { AuthState } from '~/framework/modules/auth/redux/types';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 

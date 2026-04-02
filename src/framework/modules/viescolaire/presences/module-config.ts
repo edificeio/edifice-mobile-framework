@@ -1,7 +1,7 @@
 import type { PresencesReduxState } from './reducer';
 
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { IEntcoreApp, ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {

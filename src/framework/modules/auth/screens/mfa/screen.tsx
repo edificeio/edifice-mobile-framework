@@ -18,7 +18,7 @@ import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~
 import Toast from '~/framework/components/toast';
 import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { assertSession, getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   emailValidation,
   IEntcoreEmailValidationState,

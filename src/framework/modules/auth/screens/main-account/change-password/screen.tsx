@@ -14,7 +14,7 @@ import {
   logoutAction,
 } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
+import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/redux/reducer';
 import * as selectors from '~/framework/modules/auth/redux/selectors';
 import ChangePasswordScreen from '~/framework/modules/auth/templates/change-password';
 import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';

@@ -20,7 +20,7 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
 import { markViewAudience } from '~/framework/modules/audience';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { MediaType } from '~/framework/util/media';
 import { sessionURISource } from '~/framework/util/transport';
 

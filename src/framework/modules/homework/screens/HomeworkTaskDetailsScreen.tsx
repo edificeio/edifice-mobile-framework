@@ -4,7 +4,7 @@ import { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { deleteHomeworkDiaryEntry } from '~/framework/modules/homework/actions/deleteEntry';
 import { toggleHomeworkDiaryEntryStatus } from '~/framework/modules/homework/actions/entryStatus';
 import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';

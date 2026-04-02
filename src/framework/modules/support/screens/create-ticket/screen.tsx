@@ -24,7 +24,7 @@ import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, NestedBoldText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
 import moduleConfig from '~/framework/modules/support/module-config';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';

@@ -15,7 +15,7 @@ import {
   loginCredentialsActionReplaceAccount,
 } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import AuthLoginCredentialsScreenTemplate from '~/framework/modules/auth/templates/login-credentials';
 import { AuthLoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
 import track from '~/framework/modules/auth/tracking';

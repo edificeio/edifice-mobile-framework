@@ -28,7 +28,7 @@ import {
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getNavActionForAccountLoad, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';

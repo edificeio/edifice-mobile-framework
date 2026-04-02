@@ -10,7 +10,7 @@ import type { AuthLoginWayfAddAccountScreenPrivateProps } from './types';
 import { I18n } from '~/app/i18n';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import LoginWAYFScreen, {
   AuthLoginWayfScreenDispatchProps,
   AuthLoginWayfScreenStoreProps,

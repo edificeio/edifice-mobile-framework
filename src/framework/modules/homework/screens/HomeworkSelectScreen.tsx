@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { fetchHomeworkDiaryList } from '~/framework/modules/homework/actions/diaryList';
 import homeworkDiarySelected from '~/framework/modules/homework/actions/selectedDiary';
 import {

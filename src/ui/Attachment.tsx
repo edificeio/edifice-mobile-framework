@@ -15,7 +15,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/icon';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { assertSession, getSession } from '~/framework/modules/auth/redux/reducer';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';

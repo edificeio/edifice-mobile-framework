@@ -29,7 +29,7 @@ import { BodyBoldText, BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { Toggle } from '~/framework/components/toggle';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';

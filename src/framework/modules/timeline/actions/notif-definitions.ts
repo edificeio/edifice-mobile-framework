@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import {
   computeNotificationFilterList,
   getAuthorizedNotificationFilterList,

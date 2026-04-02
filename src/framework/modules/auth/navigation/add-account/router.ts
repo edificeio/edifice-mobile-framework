@@ -2,7 +2,7 @@ import { CommonActions, NavigationState, PartialState, StackActions } from '@rea
 
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
-import { AuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/redux/types';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';

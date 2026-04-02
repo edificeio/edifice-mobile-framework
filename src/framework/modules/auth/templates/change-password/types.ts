@@ -9,7 +9,7 @@ import type {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { AuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/redux/types';
 import type { Platform } from '~/framework/util/appConf';
 
 export type IFields = 'oldPassword' | 'newPassword' | 'confirm';

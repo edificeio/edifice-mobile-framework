@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CaptionBoldText, CaptionItalicText, SmallBoldText } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { displayPastDate } from '~/framework/util/date';
 import { isEmpty } from '~/framework/util/object';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';

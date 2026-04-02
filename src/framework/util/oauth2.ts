@@ -14,7 +14,7 @@ import {
   isSerializedLoggedInAccount,
 } from '~/framework/modules/auth/model';
 import { AccountError, AccountErrorCode } from '~/framework/modules/auth/model/error';
-import { actions as authActions } from '~/framework/modules/auth/reducer';
+import { actions as authActions } from '~/framework/modules/auth/redux/actions';
 import { writeUpdateAccount } from '~/framework/modules/auth/storage';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';

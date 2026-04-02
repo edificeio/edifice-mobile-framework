@@ -19,7 +19,7 @@ import theme from '~/app/theme';
 import styles, { AvatarSizes } from '~/framework/components/avatar/styles';
 import { UI_SIZES } from '~/framework/components/constants';
 import { AuthActiveAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { toURISource } from '~/framework/util/media';
 import { platformURISource } from '~/framework/util/transport';

@@ -4,7 +4,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import DeviceInfo from 'react-native-device-info';
 
 import AllModules from '~/app/modules';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import BuildInfo from '~/framework/util/build-info';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';

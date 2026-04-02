@@ -4,7 +4,7 @@ import { StorageSlice } from './slice';
 import { StorageTypeMap } from './types';
 
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { AuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/redux/types';
 import { IModuleConfig } from '~/framework/util/moduleTool';
 import { Trackers } from '~/framework/util/tracker';
 

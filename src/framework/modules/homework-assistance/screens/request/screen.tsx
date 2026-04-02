@@ -19,7 +19,7 @@ import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AccountType, getFlattenedChildren } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   fetchHomeworkAssistanceParametersAction,
   fetchHomeworkAssistanceServicesAction,

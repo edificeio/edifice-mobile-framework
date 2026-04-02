@@ -16,7 +16,7 @@ import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { editBlogPostAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';

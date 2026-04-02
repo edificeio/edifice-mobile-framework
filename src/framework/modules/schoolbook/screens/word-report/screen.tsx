@@ -30,7 +30,7 @@ import {
 } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import UserList from '~/framework/components/UserList';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import { getStudentsByAcknowledgementForTeacher, IAcknowledgment, IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasResendRight } from '~/framework/modules/schoolbook/rights';

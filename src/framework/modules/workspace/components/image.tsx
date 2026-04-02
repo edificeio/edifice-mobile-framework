@@ -6,7 +6,7 @@ import FastImage from '@d11/react-native-fast-image';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import ImageOptional from '~/ui/ImageOptional';

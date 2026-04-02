@@ -31,7 +31,7 @@ import WebView from '~/framework/components/webview';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { refreshQueryParamTokenAction } from '~/framework/modules/auth/actions';
-import { selectors } from '~/framework/modules/auth/reducer';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 

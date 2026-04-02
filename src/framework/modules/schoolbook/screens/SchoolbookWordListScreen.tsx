@@ -21,7 +21,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import UserList from '~/framework/components/UserList';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { SchoolbookWordSummaryCard } from '~/framework/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import {

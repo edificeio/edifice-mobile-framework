@@ -2,9 +2,14 @@ import type { Action, Reducer } from 'redux';
 
 import type { Module } from '.';
 
+import type modules from '~/app/config/modules';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import type { StorageSlice } from '~/framework/util/storage/slice';
 import type { StorageTypeMap } from '~/framework/util/storage/types';
+
+/**
+ * Entcore data
+ */
 
 export namespace Entcore {
   export interface App {
@@ -19,6 +24,10 @@ export namespace Entcore {
     name: string;
   }
 }
+
+/**
+ * ModuleConfig
+ */
 
 export interface ModuleConfigBase<Name extends string, State = never, ActionType extends Action = never> {
   /**
@@ -106,9 +115,44 @@ export type ModuleConfig<
 > = ModuleConfigBase<Name, S, A> & Partial<ModuleConfigStorage<Sg, Sp>>;
 
 /**
+ * Extract Module Data
+ */
+
+type ModuleName<T> = T extends Module<infer Name, any, any, any, any> ? Name : never;
+/**
  * Note :
- * `Name extends any` is an awlays-true condition and is used is used only to prevent the following linting error:
+ * In the follow type definitions, `Name extends any` is an always-true condition and is used is used only to prevent the following linting error:
  * "'Name' is defined but never used."
  */
+
 export type ModuleNavigationParams<T> =
-  T extends Module<infer Name, infer NavParams, any, any> ? (Name extends any ? NavParams : never) : never;
+  T extends Module<infer Name, infer NavParams, any, any, any> ? (Name extends any ? NavParams : never) : never;
+
+export type ModuleReducer<T> =
+  T extends Module<infer Name, any, infer State, any, any> ? (Name extends any ? Reducer<State, Action> : never) : never;
+
+export type ModuleState<T> = T extends Module<infer Name, any, infer State, any, any> ? (Name extends any ? State : never) : never;
+
+/**
+ * Strongly-typed modules collection
+ */
+
+export type ResolvedModule<T> = T extends Promise<infer M> ? M : never;
+
+export type AllModulesAsTuple = {
+  [I in keyof typeof modules as I extends `${number}` ? I : never]: ResolvedModule<(typeof modules)[I]>['default'];
+};
+
+export type AllModulesNames = ModuleName<AllModulesAsTuple[keyof AllModulesAsTuple]>;
+
+export type AllModulesAsMap = {
+  [Name in AllModulesNames]: Extract<AllModulesAsTuple[keyof AllModulesAsTuple], Module<Name, any, any, any, any>>;
+};
+
+export type AllModulesReducers = {
+  [Name in AllModulesNames]: ModuleReducer<Extract<AllModulesAsTuple[keyof AllModulesAsTuple], Module<Name, any, any, any, any>>>;
+};
+
+export type AllModulesState = {
+  [Name in AllModulesNames]: ModuleState<Extract<AllModulesAsTuple[keyof AllModulesAsTuple], Module<Name, any, any, any, any>>>;
+};

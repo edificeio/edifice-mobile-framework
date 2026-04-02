@@ -6,7 +6,8 @@ import {
   getSerializedLoggedInAccountInfo,
 } from './model';
 import moduleConfig from './module-config';
-import { AuthState, ERASE_ALL_ACCOUNTS } from './reducer';
+import { ERASE_ALL_ACCOUNTS } from './redux/actions';
+import { AuthState } from './redux/types';
 
 import appConf from '~/framework/util/appConf';
 import { Storage } from '~/framework/util/storage';

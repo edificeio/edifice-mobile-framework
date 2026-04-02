@@ -14,7 +14,7 @@ import { FastImageProps, default as RNFastImage, Source } from '@d11/react-nativ
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 
 import { sessionImageSource } from './transport';
 

@@ -5,7 +5,7 @@ import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 import { ScrapbookDetailsScreenProps } from './types';
 
 import WebResourceViewer, { computeWebResourceViewerNavbar } from '~/framework/components/pages/web-resource-viewer';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { scrapbookService } from '~/framework/modules/scrapbook/service';
 import { toURISource } from '~/framework/util/media';
 import { platformURISource } from '~/framework/util/transport';

@@ -24,7 +24,7 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import Thumbnail from '~/framework/modules/mails/components/attachments/thumbnail';
 import moduleConfig from '~/framework/modules/mails/module-config';
 import { mailsService } from '~/framework/modules/mails/service';

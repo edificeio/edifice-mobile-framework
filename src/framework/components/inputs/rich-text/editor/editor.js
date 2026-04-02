@@ -8,7 +8,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 
 const base64Type = {
   FONT: 'fonts',

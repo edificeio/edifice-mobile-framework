@@ -4,7 +4,7 @@ import moment from 'moment';
 import { ICarnetDeBordBackend } from './types';
 
 import { UserChildrenFlattened } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import {
   ICarnetDeBord,
   ICarnetDeBordCahierDeTextesTravailAFaire,

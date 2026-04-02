@@ -6,7 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
 import { loadNotificationFiltersSettingsAction } from './notif-settings';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
 import { actions as flashMessagesActions } from '~/framework/modules/timeline/reducer/flash-messages';

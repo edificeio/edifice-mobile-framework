@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
 
 import { I18n } from '~/app/i18n';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
 import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notif-definitions';

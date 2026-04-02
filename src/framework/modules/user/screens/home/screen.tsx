@@ -12,6 +12,7 @@ import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
+import { navigationDispatchMultiple } from '~/app/navigation';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
@@ -36,8 +37,8 @@ import {
 } from '~/framework/modules/auth/model';
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getNavActionForAccountSwitch, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
-import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
+import { getNavActionForAccountSwitch } from '~/framework/modules/auth/navigation/main-account/router';
+import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/redux/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';

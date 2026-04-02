@@ -10,7 +10,8 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   InitialAuthenticationMethod,
 } from '~/framework/modules/auth/model';
-import { AuthPendingRestore, AuthState, getPlatform, getSession } from '~/framework/modules/auth/reducer';
+import { getPlatform, getSession } from '~/framework/modules/auth/redux/reducer';
+import { AuthPendingRestore, AuthState } from '~/framework/modules/auth/redux/types';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';

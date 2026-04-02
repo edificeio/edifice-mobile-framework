@@ -10,7 +10,7 @@ import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateP
 import { I18n } from '~/app/i18n';
 import { changePasswordActionAddAnotherAccount, logoutAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getPlatformContext, getPlatformContextOf } from '~/framework/modules/auth/reducer';
+import { getPlatformContext, getPlatformContextOf } from '~/framework/modules/auth/redux/reducer';
 import ChangePasswordScreen from '~/framework/modules/auth/templates/change-password';
 import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
 import track from '~/framework/modules/auth/tracking';

@@ -16,7 +16,7 @@ import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import ScrollView from '~/framework/components/scrollView';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
 import { CantineData } from '~/framework/modules/widgets/cantine/model';
 import { CantineNavigationParams, cantineRouteNames } from '~/framework/modules/widgets/cantine/navigation';

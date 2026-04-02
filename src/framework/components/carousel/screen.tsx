@@ -27,7 +27,7 @@ import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { markViewAudience } from '~/framework/modules/audience';
 import { AudienceParameter } from '~/framework/modules/audience/types';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';

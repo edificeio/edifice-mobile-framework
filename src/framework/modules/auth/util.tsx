@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { AuthActiveAccount } from './model';
-import { selectors } from './reducer';
+import { selectors } from './redux/reducer';
 
 export function withSession<Props extends object>(WrappedComponent: React.ComponentType<Props & { session: AuthActiveAccount }>) {
   const NewComponent = function (props: Props) {

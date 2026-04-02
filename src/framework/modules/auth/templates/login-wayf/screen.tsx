@@ -18,7 +18,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import { Error } from '~/framework/util/error';
 import { handleAction } from '~/framework/util/redux/actions';
 

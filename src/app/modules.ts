@@ -19,6 +19,9 @@ import {
 // The singleton pattern guarantee AllModules will be computed once.
 let AllModules: ModuleArray<AnyModule> | undefined;
 
+/**
+ * @deprecated use new module system
+ */
 export default () => {
   if (AllModules) return AllModules;
   else {

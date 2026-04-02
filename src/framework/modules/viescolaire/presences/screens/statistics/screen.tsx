@@ -15,7 +15,7 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {

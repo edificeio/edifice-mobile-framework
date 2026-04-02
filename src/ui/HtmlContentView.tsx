@@ -20,7 +20,7 @@ import { convertNotificationToFileMedia } from '~/framework/components/carousel-
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { FileMedia } from '~/framework/util/media';

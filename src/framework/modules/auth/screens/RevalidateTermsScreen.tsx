@@ -21,7 +21,7 @@ import Toast from '~/framework/components/toast';
 import { logoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
 import { LegalUrls } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getPlatformLegalUrls } from '~/framework/modules/auth/reducer';
+import { getPlatformLegalUrls } from '~/framework/modules/auth/redux/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 
 // TYPES ==========================================================================================

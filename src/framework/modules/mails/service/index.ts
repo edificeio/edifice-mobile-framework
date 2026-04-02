@@ -1,4 +1,4 @@
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { getMailCarbonioRight } from '~/framework/modules/mails/rights';
 import { carbonioMailsApi, getCarbonioAuthToken } from '~/framework/modules/mails/service/api/carbonio';
 import { mailsApi } from '~/framework/modules/mails/service/api/mails';

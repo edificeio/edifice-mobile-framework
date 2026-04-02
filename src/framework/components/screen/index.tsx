@@ -11,7 +11,7 @@ import { ScreenViewProps } from './types';
 import StatusBar from '~/framework/components/status-bar';
 import { ToastContainer } from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import { Trackers } from '~/framework/util/tracker';
 

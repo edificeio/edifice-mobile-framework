@@ -5,7 +5,7 @@ import { Moment } from 'moment';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { IUser } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
 import { IDiaryCourse, IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { actionTypes } from '~/framework/modules/viescolaire/diary/reducer';

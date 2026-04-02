@@ -9,7 +9,7 @@ import { NavigationRootParams } from './types';
 import CarouselScreen from '~/framework/components/carousel';
 import { BodyText } from '~/framework/components/text';
 import authModule from '~/framework/modules/auth';
-import { selectors } from '~/framework/modules/auth/reducer';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
 
 const tabsScreenOptions = { headerShown: false };
 

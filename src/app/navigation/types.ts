@@ -2,9 +2,8 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ModuleNavigationParams } from '../module/types';
+import { AllModulesAsTuple, ModuleNavigationParams } from '../module/types';
 
-import type modules from '~/app/config/modules';
 import type { CarouselParams } from '~/framework/components/carousel/screen';
 
 export type NavigationRootModalsParams = {
@@ -23,14 +22,8 @@ export type NavigationTabParams = {
   myapps: undefined;
 };
 
-type ResolvedModule<T> = T extends Promise<infer M> ? M : never;
-
-type AllModulesTuple = {
-  [I in keyof typeof modules as I extends `${number}` ? I : never]: ResolvedModule<(typeof modules)[I]>['default'];
-};
-
 type AllModulesNavigationParamsTuple = {
-  [I in keyof AllModulesTuple]: ModuleNavigationParams<AllModulesTuple[I]>;
+  [I in keyof AllModulesAsTuple]: ModuleNavigationParams<AllModulesAsTuple[I]>;
 };
 
 export type AllModulesNavigationParams = AllModulesNavigationParamsTuple[keyof AllModulesNavigationParamsTuple];

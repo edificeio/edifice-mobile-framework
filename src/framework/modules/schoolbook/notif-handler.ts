@@ -9,7 +9,7 @@ import { CommonActions } from '@react-navigation/native';
 import { schoolbookRouteNames } from './navigation';
 
 import { AccountType } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';

@@ -20,7 +20,7 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';

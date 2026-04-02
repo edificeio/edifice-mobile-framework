@@ -27,7 +27,7 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import SwipeableList from '~/framework/components/swipeableList';
 import { BodyBoldText } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   copyWorkspaceFilesAction,
   deleteWorkspaceFilesAction,

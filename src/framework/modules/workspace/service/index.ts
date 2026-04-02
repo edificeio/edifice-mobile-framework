@@ -6,7 +6,7 @@ import queryString from 'query-string';
 import { compareFiles, getImplicitWorkspaceUploadParams, workspaceFileAdapter } from './adapters';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { workspaceFolderListAdapter } from '~/framework/modules/workspace/service/folderAdaptater';
 import {

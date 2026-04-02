@@ -17,7 +17,7 @@ import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredentials } from '~/framework/modules/auth/model';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
-import { getAccountById } from '~/framework/modules/auth/reducer';
+import { getAccountById } from '~/framework/modules/auth/redux/reducer';
 import { useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';

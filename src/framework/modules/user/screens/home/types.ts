@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { AuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/redux/types';
 import type { UserNavigationParams } from '~/framework/modules/user/navigation';
 
 export enum ModificationType {

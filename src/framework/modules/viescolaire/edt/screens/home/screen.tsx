@@ -21,7 +21,7 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, SmallBoldItalicText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
 import Timetable from '~/framework/modules/viescolaire/common/components/Timetable';

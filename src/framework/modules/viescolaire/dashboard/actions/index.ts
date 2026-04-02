@@ -1,7 +1,7 @@
 import { ThunkAction } from 'redux-thunk';
 
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { actionTypes, getChildStorageKey, getStructureStorageKey } from '~/framework/modules/viescolaire/dashboard/reducer';
 import { OldStorageFunctions } from '~/framework/util/storage';
 

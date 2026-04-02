@@ -30,7 +30,7 @@ import { BodyText, HeadingXSText, NestedActionText, SmallBoldText, SmallItalicTe
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import Attachments from '~/framework/modules/mails/components/attachments';
 import MailsHistoryButton from '~/framework/modules/mails/components/history-button';
 import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';

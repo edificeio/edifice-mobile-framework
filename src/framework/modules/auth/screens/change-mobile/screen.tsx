@@ -32,7 +32,7 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { mobileValidation, requirements } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';

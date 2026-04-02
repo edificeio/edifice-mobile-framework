@@ -10,7 +10,7 @@ import { IGlobalState } from '~/app/store';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { useAppBadge } from '~/framework/modules/myapps/hooks';
 import appConf from '~/framework/util/appConf';
 import {

@@ -34,7 +34,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { buildModuleTabDisplayName } from '~/framework/modules/myapps/reducer/adapter';
 import { navBarOptions } from '~/framework/navigation/navBar';

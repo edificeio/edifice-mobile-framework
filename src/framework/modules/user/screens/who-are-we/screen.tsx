@@ -15,7 +15,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, BodyText, HeadingXSText } from '~/framework/components/text';
-import { getPlatform } from '~/framework/modules/auth/reducer';
+import { getPlatform } from '~/framework/modules/auth/redux/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';

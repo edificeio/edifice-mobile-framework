@@ -21,7 +21,7 @@ import { Svg } from '~/framework/components/picture';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import { CallEvent, CallEventType, CallState, Course } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';

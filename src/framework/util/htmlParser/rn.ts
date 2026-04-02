@@ -42,7 +42,7 @@ import {
   renderNuggets,
 } from './nuggetRenderer';
 
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { Platform } from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media-deprecated';

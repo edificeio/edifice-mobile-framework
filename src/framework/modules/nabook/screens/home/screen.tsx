@@ -12,7 +12,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
-import { assertSession, getPlatform } from '~/framework/modules/auth/reducer';
+import { assertSession, getPlatform } from '~/framework/modules/auth/redux/reducer';
 import ErrorScreen from '~/framework/modules/nabook/components/ErrorScreen';
 import HomeScreen from '~/framework/modules/nabook/components/HomeScreen';
 import OnboardScreen from '~/framework/modules/nabook/components/OnboardScreen';

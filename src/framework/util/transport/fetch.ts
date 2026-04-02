@@ -11,7 +11,7 @@ import {
 
 import { I18n } from '~/app/i18n';
 import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { isTokenExpired, refreshTokenForAccount } from '~/framework/util/oauth2';

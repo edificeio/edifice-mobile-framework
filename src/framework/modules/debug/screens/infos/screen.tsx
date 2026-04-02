@@ -7,7 +7,7 @@ import styles from './styles';
 
 import { PageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import BuildInfo from '~/framework/util/build-info';

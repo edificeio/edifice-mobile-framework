@@ -9,7 +9,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { FastImage } from '~/framework/util/media-deprecated';
 import { Connection } from '~/infra/Connection';
 

@@ -19,7 +19,7 @@ import { Icon } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
-import { getPlatform, getPlatformLegalUrls } from '~/framework/modules/auth/reducer';
+import { getPlatform, getPlatformLegalUrls } from '~/framework/modules/auth/redux/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Loading } from '~/ui/Loading';

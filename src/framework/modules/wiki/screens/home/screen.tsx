@@ -4,7 +4,7 @@ import type { WikiHomeScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { RootFolderId } from '~/framework/modules/explorer/model/types';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { createResourceExplorerNavBar } from '~/framework/modules/explorer/templates/resource-explorer/screen';

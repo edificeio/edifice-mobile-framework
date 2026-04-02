@@ -5,7 +5,7 @@ import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { Storage } from '~/framework/util/storage';
 import { accountFetch } from '~/framework/util/transport';
 

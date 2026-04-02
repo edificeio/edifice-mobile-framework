@@ -1,6 +1,6 @@
 import { ModuleScreenProps } from '~/app/navigation/types';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
-import { AuthState } from '~/framework/modules/auth/reducer';
+import { AuthState } from '~/framework/modules/auth/redux/types';
 import { StackNavigationAction } from '~/framework/navigation/types';
 
 export interface AuthLoginWayfScreenStoreProps {

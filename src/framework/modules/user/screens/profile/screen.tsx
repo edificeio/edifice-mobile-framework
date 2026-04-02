@@ -27,7 +27,7 @@ import { TextAvatar } from '~/framework/components/textAvatar';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { assertSession, getSession } from '~/framework/modules/auth/redux/reducer';
 import { MailsDefaultFolders, MailsVisibleType } from '~/framework/modules/mails/model';
 import { mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';

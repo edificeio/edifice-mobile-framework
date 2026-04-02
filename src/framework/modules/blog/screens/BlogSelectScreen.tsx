@@ -4,10 +4,9 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { useDispatch, useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogList } from '~/framework/modules/blog/reducer';
@@ -38,7 +37,7 @@ export const computeNavBar = ({
 function BlogSelectScreenComponent(props: BlogSelectScreenProps) {
   const appTheme = useAppTheme('blog');
   const dispatch = useDispatch() as any; // Thunk dispatch typing
-  const session = useSelector((state: IGlobalState) => getSession());
+  const session = useSelector(selectors.session);
   const [blogsData, setBlogsData] = React.useState<BlogList>(props.route.params.blogsData);
 
   const doGetPublishableBlogList = React.useCallback(async () => {

@@ -1,16 +1,17 @@
 import React from 'react';
 
-import reducer, { AuthState } from './reducer';
+import reducer from './redux/reducer';
+import { type AuthState } from './redux/types';
 import AuthDiscoveryClassScreen from './screens/discovery-class';
 import AuthLoginCredentialsScreen, { AuthLoginCredentialsScreenOptions } from './screens/main-account/login-credentials';
 import AuthLoginRedirectScreen from './screens/main-account/login-redirect';
-import AuthLoginWayfScreen, { AuthLoginWayfScreenOptions } from './screens/main-account/login-wayf';
+import AuthLoginWayfScreen from './screens/main-account/login-wayf';
 import AuthPlatformsScreen from './screens/main-account/platforms';
 import AuthOnboardingScreen from './screens/onboarding';
 import { AuthStorageData, storage } from './storage';
 
 import { Module } from '~/app/module';
-import { Platform } from '~/framework/util/appConf';
+import type { Platform } from '~/framework/util/appConf';
 
 export default new Module<
   'auth',
@@ -40,6 +41,7 @@ export default new Module<
       'userinfo', // wtf is this thing ?
     ],
     name: 'auth',
+    reducer,
     storage,
     storageName: 'auth',
   },

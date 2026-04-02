@@ -1,7 +1,10 @@
-import type { AuthState } from './reducer';
+import type { AuthState } from './redux/types';
 
 import { ModuleConfig } from '~/framework/util/moduleTool';
 
+/**
+ * @deprecated use new module system
+ */
 export default new ModuleConfig<'auth', AuthState>({
   entcoreScope: [
     'auth',

@@ -14,7 +14,7 @@ import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import Attachments from '~/framework/modules/mails/components/attachments';
 import { MailsContactField, MailsSubjectField } from '~/framework/modules/mails/components/fields';
 import MailsHistoryButton from '~/framework/modules/mails/components/history-button';

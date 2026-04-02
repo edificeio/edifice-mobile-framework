@@ -19,7 +19,7 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';

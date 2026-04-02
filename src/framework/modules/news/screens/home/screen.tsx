@@ -15,7 +15,7 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/news/actions';
 import NoNewsScreen from '~/framework/modules/news/components/empty-screen';
 import NewsCard from '~/framework/modules/news/components/news-card';

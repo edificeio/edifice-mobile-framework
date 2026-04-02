@@ -15,7 +15,7 @@ import { PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { AccountType, AuthActiveUserInfo, AuthActiveUserInfoRelative, getFlattenedChildren } from '~/framework/modules/auth/model';
-import { getPlatform, getSession } from '~/framework/modules/auth/reducer';
+import { getPlatform, getSession } from '~/framework/modules/auth/redux/reducer';
 import { BarChart } from '~/framework/modules/widgets/screen-time/components/BarChart';
 import { UsageCard } from '~/framework/modules/widgets/screen-time/components/UsageCard';
 import WeekPicker from '~/framework/modules/widgets/screen-time/components/WeekPicker';

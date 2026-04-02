@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { BottomSheet, BottomSheetProps } from '~/framework/components/BottomSheet';
 import CommentField, { CommentFieldProps } from '~/framework/components/commentField';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 
 const BottomEditorSheet = (
   {

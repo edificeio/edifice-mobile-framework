@@ -3,7 +3,7 @@
  */
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { actionTypes, Blog, BlogFolder, BlogPost, getPublishableBlogs } from '~/framework/modules/blog/reducer';
 import {
   createBlogPostResourceRight,

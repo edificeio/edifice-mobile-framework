@@ -13,10 +13,26 @@
 import * as React from 'react';
 
 import { connect } from 'react-redux';
-import { Action, applyMiddleware, combineReducers, compose, createStore, Reducer, Store, UnknownAction } from 'redux';
+import {
+  Action,
+  applyMiddleware,
+  combineReducers,
+  compose,
+  legacy_createStore as createStore,
+  Reducer,
+  Store,
+  StoreEnhancer,
+  UnknownAction,
+} from 'redux';
 import { thunk, ThunkDispatch } from 'redux-thunk';
 
-import reactotron from './reactotron';
+import { reactotronEnhancer } from './debug';
+import monitorReducerEnhancer from './monitor';
+import { Module } from '../module';
+import { AllModulesState } from '../module/types';
+
+import reducer from '~/framework/modules/auth/redux/reducer';
+import { reducer as startupReducer } from '~/framework/navigation/redux';
 
 /** === Store reducers map === */
 
@@ -45,6 +61,8 @@ export class Reducers {
   }
 }
 
+Reducers.register('auth', reducer);
+
 /** === Store generation === */
 
 export function createMainStore() {
@@ -56,9 +74,25 @@ export function createMainStore() {
 
   const enhancer = applyMiddleware(...middlewares);
 
-  const store = __DEV__
-    ? createStore(rootReducer, compose(enhancer, reactotron.createEnhancer()))
-    : createStore(rootReducer, enhancer);
+  const store = __DEV__ ? createStore(rootReducer, compose(enhancer, reactotronEnhancer)) : createStore(rootReducer, enhancer);
+
+  return store;
+}
+
+export default function configureStore(preloadedState?: AllModulesState) {
+  const middlewares = [thunk];
+  const middlewareEnhancer = applyMiddleware(...middlewares);
+
+  const enhancers = __DEV__
+    ? [middlewareEnhancer, monitorReducerEnhancer, reactotronEnhancer]
+    : [middlewareEnhancer, monitorReducerEnhancer];
+  const composedEnhancers: StoreEnhancer = compose(...enhancers);
+
+  const rootReducer = combineReducers({
+    ...Module.allModulesReducers,
+    startup: startupReducer,
+  });
+  const store = createStore(rootReducer, preloadedState, composedEnhancers);
 
   return store;
 }

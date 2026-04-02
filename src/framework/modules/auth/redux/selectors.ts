@@ -1,7 +1,7 @@
 import type { IGlobalState } from '~/app/store';
 import { accountIsActive } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
-import type { AuthState } from '~/framework/modules/auth/reducer';
+import type { AuthState } from '~/framework/modules/auth/redux/types';
 
 export const authState = (s: IGlobalState) => s[moduleConfig.reducerName] as AuthState;
 

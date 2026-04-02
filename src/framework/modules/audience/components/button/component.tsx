@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText } from '~/framework/components/text';
-import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
+import { getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import Feedback from '~/framework/util/feedback/feedback';
 
 const REACTION_ICON_SIZE = 30;
