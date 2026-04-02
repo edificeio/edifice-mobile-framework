@@ -18,7 +18,7 @@ class MainActivity : ReactActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
-        RNBootSplash.init(this, R.style.SplashScreenTheme) // ⬅️ initialize the splash screen
+        RNBootSplash.init(this, R.style.SplashScreenTheme)
         super.onCreate(null)
     }
 
