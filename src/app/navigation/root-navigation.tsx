@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 
 import { defaultScreenOptions, ScreenLayout } from './layout';
 import { NavigationRootParams } from './types';
+import { ModuleNavigationParams } from '../module/types';
 
 import CarouselScreen from '~/framework/components/carousel';
 import { BodyText } from '~/framework/components/text';
@@ -27,8 +28,10 @@ function renderMainNavigation() {
   );
 }
 
+type GuestStack = ReturnType<typeof createNativeStackNavigator<ModuleNavigationParams<typeof authModule>>>;
+
 function renderGuestNavigation() {
-  return <RootStack.Group>{authModule.renderScreens(RootStack)}</RootStack.Group>;
+  return <RootStack.Group>{authModule.renderScreens(RootStack as GuestStack)}</RootStack.Group>;
 }
 
 export function RootNavigation() {

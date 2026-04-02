@@ -5,15 +5,17 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AllModulesAsTuple, ModuleNavigationParams } from '../module/types';
 
 import type { CarouselParams } from '~/framework/components/carousel/screen';
+import type authModule from '~/framework/modules/auth';
 
 export type NavigationRootModalsParams = {
   carousel: CarouselParams;
 };
 
-export type NavigationRootParams = NavigationRootModalsParams & {
+export type NavigationRootParams = {
   tabs: undefined;
   guest: undefined;
-};
+} & NavigationRootModalsParams &
+  ModuleNavigationParams<typeof authModule>;
 
 export type NavigationTabParams = {
   timeline: undefined;
