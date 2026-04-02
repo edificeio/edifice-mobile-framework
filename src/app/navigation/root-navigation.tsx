@@ -3,29 +3,19 @@ import * as React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
-import { defaultScreenOptions, ScreenLayout } from './layout';
+import { defaultScreenOptions, StackScreenLayout } from './layout';
+import { MainNavigation } from './main-navigation';
 import { NavigationRootParams } from './types';
 import { ModuleNavigationParams } from '../module/types';
 
 import CarouselScreen from '~/framework/components/carousel';
-import { BodyText } from '~/framework/components/text';
 import authModule from '~/framework/modules/auth';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
-
-const tabsScreenOptions = { headerShown: false };
 
 export const RootStack = createNativeStackNavigator<NavigationRootParams>();
 
 function renderMainNavigation() {
-  return (
-    <RootStack.Screen
-      options={tabsScreenOptions}
-      name="tabs"
-      component={React.memo(() => (
-        <BodyText>Tabs</BodyText>
-      ))}
-    />
-  );
+  return <RootStack.Screen options={MainNavigation.options} name="tabs" component={MainNavigation} />;
 }
 
 type GuestStack = ReturnType<typeof createNativeStackNavigator<ModuleNavigationParams<typeof authModule>>>;
@@ -44,7 +34,7 @@ export function RootNavigation() {
   // ToDo : deep linking
 
   return (
-    <RootStack.Navigator screenLayout={ScreenLayout} screenOptions={defaultScreenOptions}>
+    <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
       {/* Add the main screen of the app depending on authentication flow */}
       {showAppContent ? renderMainNavigation() : renderGuestNavigation()}
 
