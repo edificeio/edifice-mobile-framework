@@ -142,7 +142,7 @@ export namespace I18n {
       i18n.language = (lang as string) ?? fallbackLng;
     }
     moment.locale(momentLocales[i18n.language?.split('-')[0]] ?? momentLocales.default);
-    return i18n.language;
+    return i18n.language as I18n.SupportedLocales;
   }
 
   export const changeLanguage = async (lang: SupportedLocales | 'auto') => {

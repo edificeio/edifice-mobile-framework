@@ -10,9 +10,7 @@
  * // With this, reducer will be registered automatically if the module is imported somewhere.
  * Reducers.register('REDUCER_NAME', reducer);
  */
-import * as React from 'react';
 
-import { connect } from 'react-redux';
 import {
   Action,
   applyMiddleware,
@@ -31,11 +29,14 @@ import monitorReducerEnhancer from './monitor';
 import { Module } from '../module';
 import { AllModulesState } from '../module/types';
 
-import reducer from '~/framework/modules/auth/redux/reducer';
 import { reducer as startupReducer } from '~/framework/navigation/redux';
 
 /** === Store reducers map === */
 
+/**
+ * @deprecated
+ * use the new module system
+ */
 export class Reducers {
   static $items: { [key: string]: Reducer } = {};
 
@@ -61,23 +62,8 @@ export class Reducers {
   }
 }
 
-Reducers.register('auth', reducer);
-
-/** === Store generation === */
-
-export function createMainStore() {
-  const rootReducer = combineReducers({
-    ...Reducers.all,
-  });
-
-  const middlewares = [thunk];
-
-  const enhancer = applyMiddleware(...middlewares);
-
-  const store = __DEV__ ? createStore(rootReducer, compose(enhancer, reactotronEnhancer)) : createStore(rootReducer, enhancer);
-
-  return store;
-}
+/** === Store getter === */
+const theStore: { current?: Store } = { current: undefined };
 
 export default function configureStore(preloadedState?: AllModulesState) {
   const middlewares = [thunk];
@@ -88,10 +74,12 @@ export default function configureStore(preloadedState?: AllModulesState) {
 
   const rootReducer = combineReducers({
     ...Module.allModulesReducers,
+    // Build-in reducers here
+    // ToDo: migrate in new module system (no more specific build-in reducers plz)
     startup: startupReducer,
   });
   const store = createStore(rootReducer, preloadedState, composedEnhancers);
-
+  theStore.current = store;
   return store;
 }
 
@@ -102,36 +90,9 @@ export default function configureStore(preloadedState?: AllModulesState) {
 export type IGlobalState = any; // Todo: Make any TS logic that can get composed state from module definitions IF POSSIBLE
 export type AppDispatch = ThunkDispatch<IGlobalState, unknown, UnknownAction>;
 
-/** === Store getter === */
-
-const theStore: { current?: Store } = { current: undefined };
-
 // IMPORTANT ! Do not call this function outside a component rendering.
 // This would cause it to be called before all reducers are registered.
 export const getStore = () => {
-  if (theStore.current === undefined) theStore.current = createMainStore();
+  if (!theStore.current) throw new Error('[Redux] no store !');
   return theStore.current;
 };
-
-/** === Store connecting to component === */
-
-export interface IStoreProp {
-  store: Store;
-}
-
-const mapStateToProps = () => ({
-  store: getStore(),
-});
-
-/**
- * Forward the store object to the `store` prop of the given component.
- * @param WrappedComponent the component
- * @param args args being forwarded after the mapStateToProps
- * @returns the connected component
- */
-export function connectWithStore(WrappedComponent: React.FunctionComponent<IStoreProp>, ...args: [any?, any?, any?]) {
-  const ConnectedWrappedComponent = connect(mapStateToProps, ...args)(WrappedComponent);
-  return (props: any) => {
-    return <ConnectedWrappedComponent {...props} store={getStore()} />;
-  };
-}

@@ -422,8 +422,10 @@ export const requirements = {
     if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
     if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
   },
-  getState: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) =>
-    tokenFetch.json<IUserRequirements>(tokens, '/auth/user/requirements'),
+  getState: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) => {
+    console.info(tokens);
+    return tokenFetch.json<IUserRequirements>(tokens, '/auth/user/requirements');
+  },
 };
 
 export async function fetchUserInfo({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) {

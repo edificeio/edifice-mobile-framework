@@ -14,8 +14,8 @@ import { Action, Store } from 'redux';
 import { DeviceTrust } from './device-trust';
 import { I18n } from './i18n';
 import { Module } from './module';
-import loadModules from './modules';
-import configureStore, { connectWithStore, Reducers } from './store';
+import loadOldModules from './modules';
+import configureStore, { Reducers } from './store';
 
 import { AppStartupHandler } from '~/app/startup';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -132,8 +132,8 @@ function App() {
   return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }
 
-loadModules();
 Reducers.register('startup', navigationReducer);
 Reducers.register('connectionTracker', connectionTrackerReducer);
+loadOldModules();
 
-export default connectWithStore(App);
+export default App;
