@@ -7,14 +7,14 @@ import TimelineSpaceScreen, { computeNavBar as spaceNavBar } from '~/framework/m
 import TimelineFiltersScreen, {
   computeNavBar as TimelineFiltersNavBar,
 } from '~/framework/modules/timeline/screens/timeline-filters-screen';
-import TimelineScreen, { computeNavBar as TimelineNavBar } from '~/framework/modules/timeline/screens/timeline-screen';
+import TimelineScreen, { TimelineScreenOptions } from '~/framework/modules/timeline/screens/timeline-screen';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 
 export default () =>
   createModuleNavigator<ITimelineNavigationParams>(moduleConfig.name, Stack => (
     <>
-      <Stack.Screen name={timelineRouteNames.Home} component={TimelineScreen} options={TimelineNavBar} initialParams={{}} />
+      <Stack.Screen name={timelineRouteNames.Home} component={TimelineScreen} options={TimelineScreenOptions} initialParams={{}} />
 
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen

@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions, ScreenOptions } from '~/app/navigation/util';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
@@ -119,17 +120,7 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
   return ret;
 };
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<ITimelineNavigationParams, typeof timelineRouteNames.Home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('timeline-appname'),
-    titleTestID: 'timeline-title',
-  }),
-});
+export const TimelineScreenOptions = screenOptions(() => ({ title: I18n.get('timeline-appname') }));
 
 // COMPONENT ======================================================================================
 
@@ -183,7 +174,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   render() {
     return (
-      <PageView>
+      <>
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
           <LoadingIndicator />
         ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
@@ -191,7 +182,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         ) : (
           this.renderList()
         )}
-      </PageView>
+      </>
     );
   }
 

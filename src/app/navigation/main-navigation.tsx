@@ -3,9 +3,10 @@ import * as React from 'react';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { defaultTabOptions, TabScreenLayout } from './layout';
+import { defaultScreenOptions, defaultTabOptions, TabScreenLayout } from './layout';
 import { Module } from '../module';
-import { ModuleNavigationParams, TabModule } from '../module/types';
+import { AllModulesNavigationParams } from './types';
+import { TabModule } from '../module/types';
 
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
@@ -36,10 +37,25 @@ export const MainNavigation = withSession(
 
     const tabModulesScreens = React.useMemo(
       () =>
-        availableTabModules.map(m => {
-          return () => <BodyBoldText>{m.name}</BodyBoldText>;
+        availableTabModules.map(tabModule => {
+          const TabStack = createNativeStackNavigator<AllModulesNavigationParams>();
+          return () => (
+            <TabStack.Navigator
+              key={tabModule.name}
+              screenLayout={TabScreenLayout}
+              screenOptions={defaultScreenOptions}
+              initialRouteName={tabModule.tabRoute}>
+              {availableModules.map(module => (
+                <TabStack.Group key={module.name}>
+                  {module.renderScreens
+                    ? module.renderScreens(TabStack as Parameters<NonNullable<Module<string>['renderScreens']>>[0])
+                    : null}
+                </TabStack.Group>
+              ))}
+            </TabStack.Navigator>
+          );
         }),
-      [availableTabModules],
+      [availableModules, availableTabModules],
     );
 
     return (

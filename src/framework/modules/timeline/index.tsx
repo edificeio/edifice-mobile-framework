@@ -2,14 +2,14 @@ import React from 'react';
 
 import reducer, { type TimelineState } from './reducer';
 import TimelineFiltersScreen from './screens/timeline-filters-screen';
-import TimelineScreen from './screens/timeline-screen';
+import TimelineScreen, { TimelineScreenOptions } from './screens/timeline-screen';
 import { preferences, storage, TimelinePreferencesData, TimelineStorageData } from './storage';
 
 import { Module } from '~/app/module';
 
 export default new Module<
   'timeline',
-  { 'timeline/home': undefined; 'timeline/filters': undefined },
+  { 'timeline/home': { reloadWithNewSettings?: boolean }; 'timeline/filters': undefined },
   TimelineState,
   TimelineStorageData,
   TimelinePreferencesData
@@ -31,8 +31,8 @@ export default new Module<
   },
   Stack => (
     <>
-      <Stack.Screen name="timeline/home" component={TimelineScreen} />
-      <Stack.Screen name="timeline/filters" component={TimelineFiltersScreen} />
+      <Stack.Screen name="timeline/home" component={TimelineScreen} options={TimelineScreenOptions} initialParams={{}} />
+      {/*<Stack.Screen name="timeline/filters" component={TimelineFiltersScreen} />*/}
     </>
   ),
 );
