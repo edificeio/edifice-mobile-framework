@@ -2,10 +2,11 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { AllModulesAsTuple, ModuleNavigationParams } from '../module/types';
+import { AllModulesAsMap, ModuleNavigationParams } from '../module/types';
 
 import type { CarouselParams } from '~/framework/components/carousel/screen';
 import type authModule from '~/framework/modules/auth';
+import { KeysOfUnion, ValueFromUnion } from '~/utils/types';
 
 export type NavigationRootModalsParams = {
   carousel: CarouselParams;
@@ -24,11 +25,11 @@ export type NavigationTabParams = {
   myapps: undefined;
 };
 
-type AllModulesNavigationParamsTuple = {
-  [I in keyof AllModulesAsTuple]: ModuleNavigationParams<AllModulesAsTuple[I]>;
+type AllModulesNavigationParamsAsUnion = ModuleNavigationParams<AllModulesAsMap[keyof AllModulesAsMap]>;
+export type AllModulesScreenNames = KeysOfUnion<AllModulesNavigationParamsAsUnion>;
+export type AllModulesNavigationParams = {
+  [RouteName in AllModulesScreenNames]: ValueFromUnion<AllModulesNavigationParamsAsUnion, RouteName>;
 };
-
-export type AllModulesNavigationParams = AllModulesNavigationParamsTuple[keyof AllModulesNavigationParamsTuple];
 
 export type NavigationRootScreenProps<T extends keyof NavigationRootParams> = NativeStackScreenProps<NavigationRootParams, T>;
 export type NavigationTabScreenProps<T extends keyof NavigationTabParams> = CompositeScreenProps<

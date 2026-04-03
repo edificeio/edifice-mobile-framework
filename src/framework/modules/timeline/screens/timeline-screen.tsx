@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import { screenOptions, ScreenOptions } from '~/app/navigation/util';
+import { screenOptions } from '~/app/navigation/util';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
@@ -19,7 +19,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarActionsGroup } from '~/framework/components/navigation';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { pageGutterSize, PageView } from '~/framework/components/page';
+import { pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -43,7 +43,6 @@ import { notificationsService } from '~/framework/modules/timeline/service';
 import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navigate } from '~/framework/navigation/helper';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { NavigableModuleArray } from '~/framework/util/moduleTool';
 import {
@@ -120,7 +119,9 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
   return ret;
 };
 
-export const TimelineScreenOptions = screenOptions(() => ({ title: I18n.get('timeline-appname') }));
+export const TimelineScreenOptions = screenOptions<'timeline/home'>(() => ({
+  title: I18n.get('timeline-appname'),
+}));
 
 // COMPONENT ======================================================================================
 

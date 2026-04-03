@@ -8,6 +8,6 @@ export type ScreenOptions<T extends keyof AllModulesNavigationParams = keyof All
 
 export function screenOptions<T extends keyof AllModulesNavigationParams = keyof AllModulesNavigationParams>(
   options: ScreenOptions<T>,
-): ScreenOptions<T> {
+): Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined> {
   return options;
 }
