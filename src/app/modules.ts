@@ -28,7 +28,7 @@ export default () => {
     const moduleDeclarations = [
       // Built-in modules
       // require('~/framework/modules/auth'),
-      require('~/framework/modules/timeline'),
+      // require('~/framework/modules/timeline'),
       require('~/framework/modules/audience').default,
       require('~/framework/modules/explorer').default,
       require('~/framework/modules/myapps'),

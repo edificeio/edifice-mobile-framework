@@ -1,8 +1,10 @@
+import { ParamListBase } from '@react-navigation/native';
 import type { Action, Reducer } from 'redux';
 
 import type { Module } from '.';
 
 import type modules from '~/app/config/modules';
+import { SvgIconName } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import type { StorageSlice } from '~/framework/util/storage/slice';
 import type { StorageTypeMap } from '~/framework/util/storage/types';
@@ -28,6 +30,10 @@ export namespace Entcore {
 /**
  * ModuleConfig
  */
+
+export type StrictNavigationParams<Name extends string, T> = {
+  [K in keyof T]: K extends `${Name}/${string}` ? T[K] : never;
+};
 
 export interface ModuleConfigBase<Name extends string, State = never, ActionType extends Action = never> {
   /**
@@ -97,22 +103,59 @@ export type ModuleConfigStorageParameter<S extends StorageTypeMap, P extends Sto
   | { [k in keyof ModuleConfigStorage<S, P>]?: never }
   | ModuleConfigStorage<S, P>;
 
+export interface ModuleConfigTab<
+  Name extends string,
+  NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams>,
+> {
+  /**
+   * Name of the route that goes to the tab home
+   */
+  tabRoute: keyof NavigationParams;
+
+  /**
+   * Visible icon when the tab is not active
+   */
+  tabIconInactive: SvgIconName;
+
+  /**
+   * Visible icon when the tab is active
+   */
+  tabIconActive: SvgIconName;
+
+  /**
+   * Value to tell in which order the tabs must be displayed
+   */
+  tabOrder: number;
+
+  /**
+   * TestID of the tab bar button
+   */
+  tabTestID: string;
+}
+
+export type ModuleConfigTabParameter<N extends string, NP extends ParamListBase & StrictNavigationParams<N, NP>> =
+  | { [k in keyof ModuleConfigTab<N, NP>]?: never }
+  | ModuleConfigTab<N, NP>;
+
 export type ModuleConfigParameter<
   Name extends string,
+  NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams>,
   State,
   ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap,
   ModulePreferencesSliceTypeMap extends StorageTypeMap,
 > = ModuleConfigBase<Name, State, ActionType> &
-  ModuleConfigStorageParameter<ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>;
+  ModuleConfigStorageParameter<ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> &
+  ModuleConfigTabParameter<Name, NavigationParams>;
 
 export type ModuleConfig<
   Name extends string,
+  NP extends ParamListBase & StrictNavigationParams<Name, NP>,
   S,
   A extends Action,
   Sg extends StorageTypeMap,
   Sp extends StorageTypeMap,
-> = ModuleConfigBase<Name, S, A> & Partial<ModuleConfigStorage<Sg, Sp>>;
+> = ModuleConfigBase<Name, S, A> & Partial<ModuleConfigStorage<Sg, Sp>> & Partial<ModuleConfigTab<Name, NP>>;
 
 /**
  * Extract Module Data
@@ -156,3 +199,15 @@ export type AllModulesReducers = {
 export type AllModulesState = {
   [Name in AllModulesNames]: ModuleState<Extract<AllModulesAsTuple[keyof AllModulesAsTuple], Module<Name, any, any, any, any>>>;
 };
+
+/**
+ * Tab modules
+ */
+
+export type TabModule<
+  Name extends string,
+  NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams> = {},
+  State = undefined,
+  StorageType extends StorageTypeMap = object,
+  PreferencesType extends StorageTypeMap = object,
+> = Module<Name, NavigationParams, State, StorageType, PreferencesType> & ModuleConfigTab<Name, NavigationParams>;

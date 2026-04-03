@@ -47,13 +47,13 @@ export default new Module<
   },
   Stack => (
     <>
-      <Stack.Screen name={'auth/onboarding'} component={AuthOnboardingScreen} options={AuthOnboardingScreen.options} />
-      <Stack.Screen name={'auth/discovery-class'} component={AuthDiscoveryClassScreen} options={AuthDiscoveryClassScreen.options} />
-      <Stack.Screen name={'auth/platforms'} component={AuthPlatformsScreen} options={AuthPlatformsScreen.options} />
-      <Stack.Screen name={'auth/login/redirect'} component={AuthLoginRedirectScreen} options={AuthLoginRedirectScreen.options} />
-      <Stack.Screen name={'auth/login/wayf'} component={AuthLoginWayfScreen} options={AuthLoginWayfScreen.options} />
+      <Stack.Screen name="auth/onboarding" component={AuthOnboardingScreen} options={AuthOnboardingScreen.options} />
+      <Stack.Screen name="auth/discovery-class" component={AuthDiscoveryClassScreen} options={AuthDiscoveryClassScreen.options} />
+      <Stack.Screen name="auth/platforms" component={AuthPlatformsScreen} options={AuthPlatformsScreen.options} />
+      <Stack.Screen name="auth/login/redirect" component={AuthLoginRedirectScreen} options={AuthLoginRedirectScreen.options} />
+      <Stack.Screen name="auth/login/wayf" component={AuthLoginWayfScreen} options={AuthLoginWayfScreen.options} />
       <Stack.Screen
-        name={'auth/login/credentials'}
+        name="auth/login/credentials"
         component={AuthLoginCredentialsScreen}
         options={AuthLoginCredentialsScreenOptions}
       />

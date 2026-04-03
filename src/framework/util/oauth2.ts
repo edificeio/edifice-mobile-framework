@@ -88,7 +88,7 @@ const createDeviceAuthenticationHeader = (clientId: string, clientSecret: string
  *
  * @returns A space-separated string of OAuth2 scopes.
  */
-const createScope = (): string => [...new Set(AllModules().getScopes()), ...Module.allModulesScopes].join(' ');
+const createScope = (): string => [...new Set(AllModules().getScopes()), ...Module.getAllModulesScopes()].join(' ');
 
 /**
  * Fetches an OAuth2 token for the specified platform using the given grant type and parameters.

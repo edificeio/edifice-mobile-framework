@@ -73,7 +73,7 @@ export default function configureStore(preloadedState?: AllModulesState) {
   const composedEnhancers: StoreEnhancer = compose(...enhancers);
 
   const rootReducer = combineReducers({
-    ...Module.allModulesReducers,
+    ...Module.getAllModulesReducers(),
     // Build-in reducers here
     // ToDo: migrate in new module system (no more specific build-in reducers plz)
     startup: startupReducer,

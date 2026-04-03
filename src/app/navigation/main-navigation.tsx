@@ -1,44 +1,91 @@
 import * as React from 'react';
-import { ScrollView } from 'react-native';
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { defaultTabOptions, TabScreenLayout } from './layout';
+import { Module } from '../module';
+import { ModuleNavigationParams, TabModule } from '../module/types';
 
-import { BodyText } from '~/framework/components/text';
+import { Svg } from '~/framework/components/picture';
+import { BodyBoldText } from '~/framework/components/text';
+import { withSession } from '~/framework/modules/auth/util';
 
 const MainTabs = createBottomTabNavigator();
 
-export function MainNavigation() {
-  return (
-    <MainTabs.Navigator screenLayout={TabScreenLayout} screenOptions={defaultTabOptions} detachInactiveScreens>
-      <MainTabs.Screen
-        name="tab1"
-        component={React.memo(() => (
-          <BodyText style={{ backgroundColor: 'cyan', padding: 32 }}>TAB 1</BodyText>
-        ))}
-      />
-      <MainTabs.Screen
-        name="tab2"
-        component={React.memo(() => (
-          <BodyText style={{ backgroundColor: 'cyan', padding: 32 }}>TAB 2</BodyText>
-        ))}
-      />
-      <MainTabs.Screen
-        name="tab3"
-        component={React.memo(() => (
-          <ScrollView>
-            <BodyText style={{ backgroundColor: 'lime', marginTop: 800, padding: 32 }}>TAB 3</BodyText>
-          </ScrollView>
-        ))}
-      />
-      <MainTabs.Screen
-        name="tab4"
-        component={React.memo(() => (
-          <BodyText style={{ backgroundColor: 'cyan', padding: 32 }}>TAB 4</BodyText>
-        ))}
-      />
-    </MainTabs.Navigator>
-  );
+function TabIcon({ color, focused, module, size }: { module: TabModule<string>; focused: boolean; color: string; size: number }) {
+  return <Svg width={size} height={size} name={focused ? module.tabIconActive : module.tabIconInactive} fill={color} />;
 }
-MainNavigation.options = { headerShown: false };
+
+export const MainNavigation = withSession(
+  React.memo(function MainNavigation({ session }) {
+    // ToDo: dependency narrowing over apps and not whole session
+
+    const availableModules = React.useMemo(() => Module.getAvailableModules(session), [session]);
+    const availableTabModules = React.useMemo(() => Module.filterTabModules(availableModules), [availableModules]);
+
+    const tabModulesOptions = React.useMemo(
+      () =>
+        availableTabModules.map<BottomTabNavigationOptions>(m => ({
+          tabBarButtonTestID: m.tabTestID,
+          tabBarIcon: ({ color, focused, size }) => <TabIcon module={m} focused={focused} size={size} color={color} />,
+          tabBarLabel: m.name,
+        })),
+      [availableTabModules],
+    );
+
+    const tabModulesScreens = React.useMemo(
+      () =>
+        availableTabModules.map(m => {
+          return () => <BodyBoldText>{m.name}</BodyBoldText>;
+        }),
+      [availableTabModules],
+    );
+
+    return (
+      <MainTabs.Navigator screenLayout={TabScreenLayout} screenOptions={defaultTabOptions} detachInactiveScreens>
+        {availableTabModules.map((tabModule, index) => {
+          return (
+            <MainTabs.Screen
+              component={tabModulesScreens[index]}
+              options={tabModulesOptions[index]}
+              key={`tab-${tabModule.name}`}
+              name={`tab-${tabModule.name}`}
+            />
+          );
+        })}
+        <MainTabs.Screen
+          component={() => <BodyBoldText>Messagerie</BodyBoldText>}
+          options={{
+            tabBarIcon: ({ color, focused, size }) => (
+              <Svg width={size} height={size} name={focused ? 'ui-rafterDown' : 'ui-rafterUp'} fill={color} />
+            ),
+            tabBarLabel: 'Messagerie',
+          }}
+          name="Messagerie"
+        />
+        <MainTabs.Screen
+          component={() => <BodyBoldText>Communautés</BodyBoldText>}
+          options={{
+            tabBarIcon: ({ color, focused, size }) => (
+              <Svg width={size} height={size} name={focused ? 'ui-rafterDown' : 'ui-rafterUp'} fill={color} />
+            ),
+            tabBarLabel: 'Communautés',
+          }}
+          name="Communautés"
+        />
+        <MainTabs.Screen
+          component={() => <BodyBoldText>Mes Applis</BodyBoldText>}
+          options={{
+            tabBarIcon: ({ color, focused, size }) => (
+              <Svg width={size} height={size} name={focused ? 'ui-rafterDown' : 'ui-rafterUp'} fill={color} />
+            ),
+            tabBarLabel: 'Mes Applis',
+          }}
+          name="Mes Applis"
+        />
+      </MainTabs.Navigator>
+    );
+  }),
+);
+export const MainNavigationOptions = { headerShown: false };

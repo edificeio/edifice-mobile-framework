@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
 import { defaultScreenOptions, StackScreenLayout } from './layout';
-import { MainNavigation } from './main-navigation';
+import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { NavigationRootParams } from './types';
 import { ModuleNavigationParams } from '../module/types';
 
@@ -15,13 +15,13 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 export const RootStack = createNativeStackNavigator<NavigationRootParams>();
 
 function renderMainNavigation() {
-  return <RootStack.Screen options={MainNavigation.options} name="tabs" component={MainNavigation} />;
+  return <RootStack.Screen options={MainNavigationOptions} name="tabs" component={MainNavigation} />;
 }
 
 type GuestStack = ReturnType<typeof createNativeStackNavigator<ModuleNavigationParams<typeof authModule>>>;
 
 function renderGuestNavigation() {
-  return <RootStack.Group>{authModule.renderScreens(RootStack as GuestStack)}</RootStack.Group>;
+  return <RootStack.Group>{authModule.renderScreens!(RootStack as GuestStack)}</RootStack.Group>;
 }
 
 export function RootNavigation() {
