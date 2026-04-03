@@ -389,6 +389,7 @@ export const selectors = {
  * Though `assertSession` should work, `getSession` does NOT throw exceptions, and return undefined instead,
  * letting you deal with the undefined value as you wish.
  * @returns the active session present in redux state. Can be undefined.
+ * @deprecated use the hook useSelector() or withSession() HOC.
  */
 export function getSession() {
   return selectors.session(getStore().getState());

@@ -10,6 +10,7 @@ import { TabModule } from '../module/types';
 
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
 
 const MainTabs = createBottomTabNavigator();
@@ -19,10 +20,10 @@ function TabIcon({ color, focused, module, size }: { module: TabModule<string>; 
 }
 
 export const MainNavigation = withSession(
-  React.memo(function MainNavigation({ session }) {
+  React.memo(function MainNavigation({ session: _session }: { session: AuthActiveAccount }) {
     // ToDo: dependency narrowing over apps and not whole session
 
-    const availableModules = React.useMemo(() => Module.getAvailableModules(session), [session]);
+    const availableModules = React.useMemo(() => Module.getAvailableModules(_session), [_session]);
     const availableTabModules = React.useMemo(() => Module.filterTabModules(availableModules), [availableModules]);
 
     const tabModulesOptions = React.useMemo(

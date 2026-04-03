@@ -148,10 +148,16 @@ export class Module<
   }
 
   static getAllModulesScopes() {
-    return [...new Set(...Object.values(Module.allModulesAsMap).map(m => m.apiScope))];
+    const scopesByModules = Object.values(Module.allModulesAsTuple).map(m => m.apiScope);
+    const set = new Set<string>();
+    for (const scopes of scopesByModules) {
+      if (!scopes) continue;
+      for (const scope of scopes) set.add(scope);
+    }
+    return [...set];
   }
 
-  static getAvailableModules(session: AuthActiveAccount): Partial<typeof Module._allModulesAsTuple> & Module<string>[] {
+  static getAvailableModules(_session: AuthActiveAccount): Partial<typeof Module._allModulesAsTuple> & Module<string>[] {
     // ToDo: filter with modules that are available to the user
     const predicate = () => true;
     return Object.values(Module.allModulesAsMap).filter(predicate) as Partial<typeof Module._allModulesAsTuple> & Module<string>[];

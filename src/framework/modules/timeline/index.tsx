@@ -32,7 +32,7 @@ export default new Module<
   Stack => (
     <>
       <Stack.Screen name="timeline/home" component={TimelineScreen} options={TimelineScreenOptions} initialParams={{}} />
-      {/*<Stack.Screen name="timeline/filters" component={TimelineFiltersScreen} />*/}
+      <Stack.Screen name="timeline/filters" component={TimelineFiltersScreen} />
     </>
   ),
 );

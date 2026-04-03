@@ -763,7 +763,7 @@ export class NavigableModuleArray<
  * @returns
  */
 export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(moduleInclusions: ModuleInclusion<ModuleType>[]) => {
-  console.info(`[App] Load ${moduleInclusions.length} modules...`);
+  console.info(`[Modules (legacy)] Load ${moduleInclusions.length} legacy modules...`);
   const moduleMap: { [key: string]: ModuleType } = {};
   moduleInclusions.forEach(moduleInc => {
     // 1. Load module in the map
