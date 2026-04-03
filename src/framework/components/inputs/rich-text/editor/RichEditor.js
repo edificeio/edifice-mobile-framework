@@ -349,7 +349,7 @@ export default class RichEditor extends Component {
           ref={that.setRef}
           onMessage={that.onMessage}
           originWhitelist={['*']}
-          dataDetectorTypes="none"
+          dataDetectorTypes={Platform.OS === 'ios' ? 'none' : undefined}
           domStorageEnabled={false}
           bounces={false}
           javaScriptEnabled
