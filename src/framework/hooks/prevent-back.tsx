@@ -1,6 +1,6 @@
 import { Alert } from 'react-native';
 
-import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useNavigation, usePreventRemove } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
@@ -18,7 +18,7 @@ function usePreventBack({
 }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
-  UNSTABLE_usePreventRemove(showAlert, ({ data }) => {
+  usePreventRemove(showAlert, ({ data }) => {
     Alert.alert(title, text, [
       {
         onPress: () => {
