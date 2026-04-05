@@ -2,12 +2,12 @@ import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { ModuleScreenProps } from '~/app/navigation/types';
 import { screenOptions } from '~/app/navigation/util';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -35,14 +35,12 @@ import TimelineSpace from '~/framework/modules/timeline/components/space';
 import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
 import { WidgetChip } from '~/framework/modules/timeline/components/widget-chip';
 import moduleConfig from '~/framework/modules/timeline/module-config';
-import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { NotificationsState } from '~/framework/modules/timeline/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';
 import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
-import { navigate } from '~/framework/navigation/helper';
 import { openUrl } from '~/framework/util/linking';
 import { NavigableModuleArray } from '~/framework/util/moduleTool';
 import {
@@ -75,9 +73,7 @@ export interface ITimelineScreenEventProps {
     navigation: NavigationProp<ParamListBase>,
   ): Promise<void>;
 }
-export type ITimelineScreenProps = ITimelineScreenDataProps &
-  ITimelineScreenEventProps &
-  NativeStackScreenProps<ITimelineNavigationParams, 'Home'>;
+export type ITimelineScreenProps = ITimelineScreenDataProps & ITimelineScreenEventProps & ModuleScreenProps<'timeline/home'>;
 
 export enum TimelineLoadingState {
   PRISTINE,
@@ -373,7 +369,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       <NavBarAction
         icon="ui-filter"
         onPress={() => {
-          navigate(timelineRouteNames.Filters);
+          this.props.navigation.navigate('timeline/filters');
         }}
         testID="timeline-filter-button"
       />,
@@ -450,11 +446,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   async doDismissFlashMessage(flashMessageId: number) {
     await this.props.handleDismissFlashMessage(flashMessageId);
-  }
-
-  goToFilters() {
-    // this.listRef.current?.recenter();
-    this.props.navigation.navigate(timelineRouteNames.Filters);
   }
 
   doReportConfirm(notif: ITimelineNotification) {

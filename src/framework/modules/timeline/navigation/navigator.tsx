@@ -5,7 +5,7 @@ import { ITimelineNavigationParams, timelineRouteNames } from '.';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import TimelineSpaceScreen, { computeNavBar as spaceNavBar } from '~/framework/modules/timeline/screens/space';
 import TimelineFiltersScreen, {
-  computeNavBar as TimelineFiltersNavBar,
+  TimelineFiltersScreenOptions as TimelineFiltersNavBar,
 } from '~/framework/modules/timeline/screens/timeline-filters-screen';
 import TimelineScreen, { TimelineScreenOptions } from '~/framework/modules/timeline/screens/timeline-screen';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
