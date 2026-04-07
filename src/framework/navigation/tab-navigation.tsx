@@ -159,16 +159,15 @@ export function TabNavigation() {
     () =>
       tabModules
         .get()
-        .filterAvailables(session)
+        .filterAvailables(session, aggregatedApps.length === 0)
         .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
-    [session],
+    [session, aggregatedApps.length],
   );
 
   const tabRoutes = React.useMemo(() => {
     return availableTabModules.map(module => {
       const index = tabModulesCache.findIndex(tm => tm.config.name === module.config.name);
       if (index < 0) return undefined;
-
       const tabLabel = buildModuleTabDisplayName(module.config, aggregatedApps);
       return (
         <Tab.Screen

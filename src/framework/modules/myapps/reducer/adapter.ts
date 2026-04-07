@@ -15,6 +15,12 @@ import { getAppName, getModuleRouteName, normalizeString } from '~/framework/mod
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
 
+const resolveAppColor = (appColor?: string) =>
+  appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
+
+const resolveAppShades = (appColor?: string) =>
+  appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor] : theme.palette.grey;
+
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
   switch (app.category) {
     case 'communication':
@@ -118,9 +124,7 @@ const FALLBACK_BADGE: IAppBadgeInfo = {
 export const buildAppNameToBadge = (aggregatedApps: AppsInfoAggregated[]): AppBadgesType => {
   const badgesMap: AppBadgesType = {};
   for (const app of aggregatedApps) {
-    const appColor = app.color;
-    const color = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
-    badgesMap[app.badgeKey] = { color, icon: app.icon };
+    badgesMap[app.badgeKey] = { color: resolveAppColor(app.color), icon: app.icon };
   }
   return badgesMap;
 };
@@ -131,11 +135,8 @@ export const buildAppNameToBadge = (aggregatedApps: AppsInfoAggregated[]): AppBa
 export const buildAppNameToTheme = (aggregatedApps: AppsInfoAggregated[]): Record<string, IAppThemeInfo> => {
   const themesMap: Record<string, IAppThemeInfo> = {};
   for (const app of aggregatedApps) {
-    const appColor = app.color;
-    const colors = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor] : theme.palette.grey;
-
     themesMap[app.badgeKey] = {
-      colors,
+      colors: resolveAppShades(app.color),
       icon: app.icon,
     };
   }
@@ -167,9 +168,7 @@ export const buildNotifTypeToBadge = (
 ): AppBadgesType => {
   const appNameToInfo = new Map<string, IAppBadgeInfo>();
   for (const app of aggregatedApps) {
-    const appColor = app.color;
-    const color = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
-    appNameToInfo.set(app.name, { color, icon: app.icon });
+    appNameToInfo.set(app.name, { color: resolveAppColor(app.color), icon: app.icon });
   }
   const badgesMap: AppBadgesType = {};
   for (const notif of notifTypes) {
