@@ -32,7 +32,7 @@ export namespace Entcore {
  */
 
 export type StrictNavigationParams<Name extends string, T> = {
-  [K in keyof T]: K extends `${Name}/${string}` ? T[K] : never;
+  [K in keyof T]: K extends `${Name}` | `${Name}/${string}` ? T[K] : never;
 };
 
 export interface ModuleConfigBase<Name extends string, State = never, ActionType extends Action = never> {

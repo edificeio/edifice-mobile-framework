@@ -9,7 +9,7 @@ import { Module } from '~/app/module';
 
 export default new Module<
   'timeline',
-  { 'timeline/home': { reloadWithNewSettings?: boolean }; 'timeline/filters': undefined },
+  { 'timeline': { reloadWithNewSettings?: boolean }; 'timeline/filters': undefined },
   TimelineState,
   TimelineStorageData,
   TimelinePreferencesData
@@ -26,12 +26,12 @@ export default new Module<
     tabIconActive: 'ui-checkbox-on',
     tabIconInactive: 'ui-checkbox-off',
     tabOrder: 0,
-    tabRoute: 'timeline/home',
+    tabRoute: 'timeline',
     tabTestID: 'tabbar-news',
   },
   Stack => (
     <>
-      <Stack.Screen name="timeline/home" component={TimelineScreen} options={TimelineScreenOptions} initialParams={{}} />
+      <Stack.Screen name="timeline" component={TimelineScreen} options={TimelineScreenOptions} initialParams={{}} />
       <Stack.Screen name="timeline/filters" component={TimelineFiltersScreen} options={TimelineFiltersScreenOptions} />
     </>
   ),

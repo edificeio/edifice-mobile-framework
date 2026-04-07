@@ -73,7 +73,7 @@ export interface ITimelineScreenEventProps {
     navigation: NavigationProp<ParamListBase>,
   ): Promise<void>;
 }
-export type ITimelineScreenProps = ITimelineScreenDataProps & ITimelineScreenEventProps & ModuleScreenProps<'timeline/home'>;
+export type ITimelineScreenProps = ITimelineScreenDataProps & ITimelineScreenEventProps & ModuleScreenProps<'timeline'>;
 
 export enum TimelineLoadingState {
   PRISTINE,
@@ -115,7 +115,7 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
   return ret;
 };
 
-export const TimelineScreenOptions = screenOptions<'timeline/home'>(() => ({
+export const TimelineScreenOptions = screenOptions<'timeline'>(() => ({
   title: I18n.get('timeline-appname'),
 }));
 

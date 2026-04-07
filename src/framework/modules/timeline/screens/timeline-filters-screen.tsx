@@ -126,7 +126,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     if (!this.mounted) return;
     const { handleSetFilters, navigation } = this.props;
     await handleSetFilters(selectedFilters);
-    navigation.navigate('timeline/home', { reloadWithNewSettings: true });
+    navigation.navigate('timeline', { reloadWithNewSettings: true });
   }
 
   updateNavBar() {

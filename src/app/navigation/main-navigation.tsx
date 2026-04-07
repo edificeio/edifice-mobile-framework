@@ -3,7 +3,7 @@ import * as React from 'react';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { defaultScreenOptions, defaultTabOptions, TabScreenLayout } from './layout';
+import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLayout } from './layout';
 import { Module } from '../module';
 import { AllModulesNavigationParams } from './types';
 import { TabModule } from '../module/types';
@@ -43,7 +43,7 @@ export const MainNavigation = withSession(
           return () => (
             <TabStack.Navigator
               key={tabModule.name}
-              screenLayout={TabScreenLayout}
+              screenLayout={StackScreenLayout}
               screenOptions={defaultScreenOptions}
               initialRouteName={tabModule.tabRoute}>
               {availableModules.map(module => (

@@ -34,6 +34,7 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ th
   freezeOnBlur: true,
   headerShown: false,
   lazy: true,
+  popToTopOnBlur: true,
   tabBarInactiveTintColor: theme.ui.text.light.toString(),
   tabBarLabelStyle: {
     fontSize: TextSizeStyle.Small.fontSize,
