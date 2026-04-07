@@ -79,7 +79,12 @@ interface IModuleConfigRights {
   matchEntcoreApp: string | null; // Name of the app matched by this module to be displayed.
   entcoreWidgetName?: string;
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
-  hasRight: (params: { matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[]; session: AuthActiveAccount }) => boolean;
+  hasRight: (params: {
+    matchingApps: IEntcoreApp[];
+    matchingWidgets: IEntcoreWidget[];
+    session: AuthActiveAccount;
+    isAggregatedAppsEmpty?: boolean;
+  }) => boolean;
   getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
   getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
@@ -661,10 +666,11 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     Object.setPrototypeOf(this, ModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
 
-  filterAvailables(session: AuthActiveAccount) {
+  filterAvailables(session: AuthActiveAccount, isAggregatedAppsEmpty?: boolean) {
     return new ModuleArray<ModuleType>(
       ...this.filter(m => {
         return m.config.hasRight({
+          isAggregatedAppsEmpty,
           matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
           matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
           session,
@@ -723,10 +729,11 @@ export class NavigableModuleArray<
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
 
-  filterAvailables(session: AuthActiveAccount) {
+  filterAvailables(session: AuthActiveAccount, isAggregatedAppsEmpty?: boolean) {
     return new NavigableModuleArray<ModuleType>(
       ...this.filter(m =>
         m.config.hasRight({
+          isAggregatedAppsEmpty,
           matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
           matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
           session: session,
