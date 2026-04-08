@@ -3,6 +3,8 @@
  */
 import { ParamListBase } from '@react-navigation/native';
 
+import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
+// eslint-disable-next-line import/order
 import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
@@ -17,6 +19,7 @@ export enum ModalsRouteNames {
   AudienceReactions = 'audience-reactions',
   AudienceViews = 'audience-views',
   Carousel = 'carousel',
+  CarouselMultimedia = 'carousel-multimedia',
   FileImport = 'file-import',
   Infos = 'infos',
   Log = 'log',
@@ -25,11 +28,13 @@ export enum ModalsRouteNames {
   Pdf = 'pdf',
   RichTextEditor = 'rich-editor',
   SplashAds = 'splashads',
+  FavoritesManagement = 'favorites-management',
 }
 
 export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.Pdf]: { title: string; src?: string };
   [ModalsRouteNames.Carousel]: ICarouselNavParams;
+  [ModalsRouteNames.CarouselMultimedia]: MultimediaCarouselNavParams;
   [ModalsRouteNames.MediaPlayer]: MediaPlayerParams;
   [ModalsRouteNames.AudienceReactions]: AudienceReactionsScreenNavParams;
   [ModalsRouteNames.AudienceViews]: AudienceViewsScreenNavParams;
@@ -37,4 +42,5 @@ export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.AttachmentsImport]: AttachmentsImportScreenProps.NavParams;
   [ModalsRouteNames.RichTextEditor]: RichEditorFormReduxNavParams;
   [ModalsRouteNames.SplashAds]: SplashadsScreenNavParams;
+  [ModalsRouteNames.FavoritesManagement]: undefined;
 }

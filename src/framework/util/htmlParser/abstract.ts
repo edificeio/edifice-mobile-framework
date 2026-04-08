@@ -25,6 +25,7 @@ export interface IHtmlParserAbstractOptions {
   emptyDiv2Br?: boolean;
   parseEntities?: boolean;
   fixVoidTags?: boolean;
+  onPress?: (src: string) => void;
 }
 
 export class HtmlParserAbstract<RenderType> {

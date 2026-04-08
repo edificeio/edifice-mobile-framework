@@ -11,10 +11,9 @@ import type { StorageSlice } from './storage/slice';
 import type { StorageTypeMap } from './storage/types';
 
 import { IGlobalState } from '~/app/store';
-import theme, { IShades } from '~/app/theme';
+import theme, { type IShades } from '~/app/theme';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { registerModuleFileManager } from '~/framework/util/fileHandler/services/fileManagerRegistry';
 import { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
@@ -77,14 +76,19 @@ interface IModuleConfigBase<Name extends string> {
   apiName?: string; // prefix for api calls
 }
 interface IModuleConfigRights {
-  matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[]) => boolean;
+  matchEntcoreApp: (entcoreApp: IEntcoreApp) => boolean;
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
-  hasRight: (params: { matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[]; session: AuthActiveAccount }) => boolean;
+  hasRight: (params: {
+    matchingApps: IEntcoreApp[];
+    matchingWidgets: IEntcoreWidget[];
+    session: AuthActiveAccount;
+    isAggregatedAppsEmpty?: boolean;
+  }) => boolean;
   getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
   getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
 interface IModuleConfigDeclarationRights {
-  matchEntcoreApp: IModuleConfigRights['matchEntcoreApp'] | string;
+  matchEntcoreApp: string;
   matchEntcoreWidget?: IModuleConfigRights['matchEntcoreWidget'];
   hasRight?: IModuleConfigRights['hasRight'];
 }
@@ -181,13 +185,10 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.entcoreScope = entcoreScope;
     this.apiName = apiName ?? name;
     // Rights
-    this.matchEntcoreApp =
-      (typeof matchEntcoreApp === 'string'
-        ? (entcoreApp: IEntcoreApp) => entcoreApp.address === matchEntcoreApp
-        : matchEntcoreApp) || (() => true);
+    this.matchEntcoreApp = (entcoreApp: IEntcoreApp) => entcoreApp.name === matchEntcoreApp;
     this.matchEntcoreWidget = matchEntcoreWidget ?? (() => false);
     this.hasRight = hasRight ?? (({ matchingApps }) => matchingApps.length > 0);
-    this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => this.matchEntcoreApp(app, allEntcoreApps));
+    this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => this.matchEntcoreApp(app));
     this.getMatchingEntcoreWidgets = allEntcoreWidgets =>
       allEntcoreWidgets.filter(wig => this.matchEntcoreWidget(wig, allEntcoreWidgets));
     // Redux
@@ -352,6 +353,15 @@ export interface IAppBadgeInfo {
   color: ColorValue;
 }
 
+/**
+ * Complete theme information for an app (colors + icon)
+ * Used by components that need multiple color shades (regular, pale, dark, etc.)
+ */
+export interface IAppThemeInfo {
+  colors: IShades;
+  icon: string | PictureProps;
+}
+
 export enum ModuleType {
   HIDDEN_MODULE = 'hiddenModule',
   MYAPPS_CONNECTOR = 'myAppsConnector',
@@ -364,29 +374,21 @@ export enum ModuleType {
 export type IAppBadgesInfoDeclaration = { [key: string]: { icon?: string | Partial<PictureProps>; color?: ColorValue } };
 
 interface INavigableModuleConfigDisplay {
-  displayI18n: string; // I18n key of the module title displayed.
   displayAs?: ModuleType; // In which global register to put this module
   displayOrder: number; // In which order
-  displayPicture?: PictureProps; // Picture used to show the module acces link/button
   displayPictureBlur?: PictureProps; // Picture used to show the module acces link/button when its inactive
   displayPictureFocus?: PictureProps; // Picture used to show the module acces link/button when its active
   displayBadges?: IAppBadgesInfoDeclaration; // Updates to app badges
-  displayColor?: IShades; // Main color palette of the module used to tint components
+  tabDisplayName?: string; // Custom display name for tab labels (fallback when not using aggregatedApps)
   routeName: string; // Technical route name of the module. Must be unique (by default, same as the module name).
 }
 interface IModuleConfigDeclarationDisplay {
-  displayI18n:
-    | INavigableModuleConfigDisplay['displayI18n']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayI18n']);
   displayAs?:
     | INavigableModuleConfigDisplay['displayAs']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayAs']);
   displayOrder?:
     | INavigableModuleConfigDisplay['displayOrder']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayOrder']);
-  displayPicture?:
-    | INavigableModuleConfigDisplay['displayPicture']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPicture']);
   displayPictureBlur?:
     | INavigableModuleConfigDisplay['displayPictureBlur']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayPictureBlur']);
@@ -396,9 +398,9 @@ interface IModuleConfigDeclarationDisplay {
   displayBadges?:
     | INavigableModuleConfigDisplay['displayBadges']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
-  displayColor?:
-    | INavigableModuleConfigDisplay['displayColor']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayColor']);
+  tabDisplayName?:
+    | INavigableModuleConfigDisplay['tabDisplayName']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['tabDisplayName']);
   routeName?: INavigableModuleConfigDisplay['routeName'];
   testID?: string;
 }
@@ -422,13 +424,9 @@ export class NavigableModuleConfig<Name extends string, State>
 
   // declaration backup for computing
 
-  #_displayI18n: INavigableModuleConfigDeclaration<Name>['displayI18n'];
-
   #_displayAs: INavigableModuleConfigDeclaration<Name>['displayAs'];
 
   #_displayOrder: INavigableModuleConfigDeclaration<Name>['displayOrder'];
-
-  #_displayPicture: INavigableModuleConfigDeclaration<Name>['displayPicture'];
 
   #_displayPictureBlur: INavigableModuleConfigDeclaration<Name>['displayPictureBlur'];
 
@@ -436,17 +434,13 @@ export class NavigableModuleConfig<Name extends string, State>
 
   #_displayBadges?: INavigableModuleConfigDeclaration<Name>['displayBadges'];
 
-  #_displayColor?: INavigableModuleConfigDeclaration<Name>['displayColor'];
+  #_tabDisplayName: INavigableModuleConfigDeclaration<Name>['tabDisplayName'];
 
   // computed values after init
-
-  #displayI18n?: INavigableModuleConfig<Name, State>['displayI18n'];
 
   #displayAs?: INavigableModuleConfig<Name, State>['displayAs'];
 
   #displayOrder?: INavigableModuleConfig<Name, State>['displayOrder'];
-
-  #displayPicture?: INavigableModuleConfig<Name, State>['displayPicture'];
 
   #displayPictureBlur?: INavigableModuleConfig<Name, State>['displayPictureBlur'];
 
@@ -454,41 +448,25 @@ export class NavigableModuleConfig<Name extends string, State>
 
   #displayBadges?: INavigableModuleConfig<Name, State>['displayBadges'];
 
-  #displayColor?: INavigableModuleConfig<Name, State>['displayColor'];
+  #tabDisplayName?: INavigableModuleConfig<Name, State>['tabDisplayName'];
 
   constructor(decl: INavigableModuleConfigDeclaration<Name>) {
-    const {
-      displayAs,
-      displayBadges,
-      displayColor,
-      displayI18n,
-      displayOrder,
-      displayPicture,
-      displayPictureBlur,
-      displayPictureFocus,
-      routeName,
-      ...rest
-    } = decl;
+    const { displayAs, displayBadges, displayOrder, displayPictureBlur, displayPictureFocus, routeName, tabDisplayName, ...rest } =
+      decl;
     super(rest);
-    this.#_displayI18n = displayI18n;
     this.#_displayAs = displayAs;
     this.#_displayOrder = displayOrder ?? 0;
-    this.#_displayPicture = displayPicture;
-    this.#_displayPictureBlur = displayPictureBlur ?? displayPicture;
-    this.#_displayPictureFocus = displayPictureFocus ?? displayPicture;
+    this.#_displayPictureBlur = displayPictureBlur;
+    this.#_displayPictureFocus = displayPictureFocus;
     this.#_displayBadges = displayBadges;
-    this.#_displayColor = displayColor;
+    this.#_tabDisplayName = tabDisplayName;
     this.routeName = routeName ?? this.name;
   }
 
   handleInit({ matchingApps, matchingWidgets }) {
-    this.#displayI18n =
-      typeof this.#_displayI18n === 'function' ? this.#_displayI18n(matchingApps, matchingWidgets) : this.#_displayI18n;
     this.#displayAs = typeof this.#_displayAs === 'function' ? this.#_displayAs(matchingApps, matchingWidgets) : this.#_displayAs;
     this.#displayOrder =
       typeof this.#_displayOrder === 'function' ? this.#_displayOrder(matchingApps, matchingWidgets) : this.#_displayOrder;
-    this.#displayPicture =
-      typeof this.#_displayPicture === 'function' ? this.#_displayPicture(matchingApps, matchingWidgets) : this.#_displayPicture;
     this.#displayPictureBlur =
       typeof this.#_displayPictureBlur === 'function'
         ? this.#_displayPictureBlur(matchingApps, matchingWidgets)
@@ -499,14 +477,8 @@ export class NavigableModuleConfig<Name extends string, State>
         : this.#_displayPictureFocus;
     this.#displayBadges =
       typeof this.#_displayBadges === 'function' ? this.#_displayBadges(matchingApps, matchingWidgets) : this.#_displayBadges;
-    this.#displayColor =
-      typeof this.#_displayColor === 'function' ? this.#_displayColor(matchingApps, matchingWidgets) : this.#_displayColor;
-  }
-
-  get displayI18n() {
-    if (!this.isReady || this.#displayI18n === undefined)
-      throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
-    return this.#displayI18n;
+    this.#tabDisplayName =
+      typeof this.#_tabDisplayName === 'function' ? this.#_tabDisplayName(matchingApps, matchingWidgets) : this.#_tabDisplayName;
   }
 
   get displayAs() {
@@ -520,18 +492,10 @@ export class NavigableModuleConfig<Name extends string, State>
     return this.#displayOrder;
   }
 
-  get displayPicture() {
-    if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
-    if (this.#displayPicture?.type === 'Svg' && this.#displayPicture.fill === undefined) {
-      return { ...this.#displayPicture, fill: this.displayColor.regular };
-    }
-    return this.#displayPicture;
-  }
-
   get displayPictureBlur() {
     if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
     if (this.#displayPictureBlur?.type === 'Svg' && this.#displayPictureBlur.fill === undefined) {
-      return { ...this.#displayPictureBlur, fill: this.displayColor.regular };
+      return { ...this.#displayPictureBlur, fill: theme.palette.primary.regular };
     }
     return this.#displayPictureBlur;
   }
@@ -539,7 +503,7 @@ export class NavigableModuleConfig<Name extends string, State>
   get displayPictureFocus() {
     if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
     if (this.#displayPictureFocus?.type === 'Svg' && this.#displayPictureFocus.fill === undefined) {
-      return { ...this.#displayPictureFocus, fill: this.displayColor.regular };
+      return { ...this.#displayPictureFocus, fill: theme.palette.primary.regular };
     }
     return this.#displayPictureFocus;
   }
@@ -549,33 +513,21 @@ export class NavigableModuleConfig<Name extends string, State>
     return this.#displayBadges;
   }
 
-  get displayColor() {
-    if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
-    return this.#displayColor ?? theme.palette.primary;
+  get tabDisplayName() {
+    if (!this.isReady) return undefined;
+    return this.#tabDisplayName;
   }
 
   assignValues(values: Partial<INavigableModuleConfigDeclaration<any>>) {
-    const {
-      displayAs,
-      displayBadges,
-      displayColor,
-      displayI18n,
-      displayOrder,
-      displayPicture,
-      displayPictureBlur,
-      displayPictureFocus,
-      routeName,
-      ...rest
-    } = values;
+    const { displayAs, displayBadges, displayOrder, displayPictureBlur, displayPictureFocus, routeName, tabDisplayName, ...rest } =
+      values;
     super.assignValues(rest);
     if (displayAs) this.#_displayAs = displayAs;
     if (displayBadges) this.#_displayBadges = displayBadges;
-    if (displayColor) this.#_displayColor = displayColor;
     if (displayOrder) this.#_displayOrder = displayOrder;
-    if (displayI18n) this.#_displayI18n = displayI18n;
-    if (displayPicture) this.#_displayPicture = displayPicture;
     if (displayPictureBlur) this.#_displayPictureBlur = displayPictureBlur;
     if (displayPictureFocus) this.#_displayPictureFocus = displayPictureFocus;
+    if (tabDisplayName) this.#_tabDisplayName = tabDisplayName;
     if (routeName) this.routeName = routeName;
   }
 }
@@ -675,9 +627,6 @@ export class NavigableModule<
   handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {
     super.handleInit(params);
     this.#root = this.getRoot(params);
-    if (this.config.displayBadges) {
-      updateAppBadges(this.config.displayBadges);
-    }
   }
 
   get isReady() {
@@ -731,10 +680,11 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     Object.setPrototypeOf(this, ModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
 
-  filterAvailables(session: AuthActiveAccount) {
+  filterAvailables(session: AuthActiveAccount, isAggregatedAppsEmpty?: boolean) {
     return new ModuleArray<ModuleType>(
       ...this.filter(m => {
         return m.config.hasRight({
+          isAggregatedAppsEmpty,
           matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
           matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
           session,
@@ -793,10 +743,11 @@ export class NavigableModuleArray<
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
 
-  filterAvailables(session: AuthActiveAccount) {
+  filterAvailables(session: AuthActiveAccount, isAggregatedAppsEmpty?: boolean) {
     return new NavigableModuleArray<ModuleType>(
       ...this.filter(m =>
         m.config.hasRight({
+          isAggregatedAppsEmpty,
           matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
           matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
           session: session,

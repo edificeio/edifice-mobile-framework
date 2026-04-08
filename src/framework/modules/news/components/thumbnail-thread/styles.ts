@@ -12,6 +12,7 @@ export default StyleSheet.create({
     position: 'relative',
   },
   thumbnailItem: {
+    alignItems: 'center',
     justifyContent: 'center',
   },
   thumbnailItemRectangle: {

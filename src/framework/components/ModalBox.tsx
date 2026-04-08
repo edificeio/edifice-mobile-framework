@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import NativeModal from 'react-native-modal';
 
@@ -39,7 +39,9 @@ const styles = StyleSheet.create({
 });
 
 export interface ModalBoxProps {
-  content: JSX.Element;
+  content: React.JSX.Element;
+  contentContainerStyle?: StyleProp<ViewStyle>;
+  useNativeDriver?: boolean;
 }
 
 export interface ModalBoxHandle {
@@ -47,35 +49,38 @@ export interface ModalBoxHandle {
   doDismissModal: () => void;
 }
 
-export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(({ content }, ref) => {
-  const [showModal, setShowModal] = React.useState(false);
-  const doDismissModal = React.useCallback(() => setShowModal(false), []);
-  const doShowModal = React.useCallback(() => setShowModal(true), []);
-  React.useImperativeHandle(ref, () => ({ doDismissModal, doShowModal }));
+export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(
+  ({ content, contentContainerStyle, useNativeDriver }, ref) => {
+    const [showModal, setShowModal] = React.useState(false);
+    const doDismissModal = React.useCallback(() => setShowModal(false), []);
+    const doShowModal = React.useCallback(() => setShowModal(true), []);
+    React.useImperativeHandle(ref, () => ({ doDismissModal, doShowModal }));
 
-  return (
-    <NativeModal
-      backdropTransitionOutTiming={0}
-      hideModalContentWhileAnimating
-      isVisible={showModal}
-      onBackdropPress={doDismissModal}
-      style={styles.nativeModal}>
-      <View style={styles.outerView}>
-        {content}
-        <View style={styles.innerView}>
-          <TouchableOpacity onPress={doDismissModal}>
-            <Picture
-              type="Svg"
-              name="ui-close"
-              width={UI_SIZES.dimensions.width.large}
-              height={UI_SIZES.dimensions.height.large}
-              fill={theme.palette.grey.black}
-            />
-          </TouchableOpacity>
+    return (
+      <NativeModal
+        backdropTransitionOutTiming={0}
+        useNativeDriver={useNativeDriver}
+        hideModalContentWhileAnimating
+        isVisible={showModal}
+        onBackdropPress={doDismissModal}
+        style={styles.nativeModal}>
+        <View style={[styles.outerView, contentContainerStyle]}>
+          {content}
+          <View style={styles.innerView}>
+            <TouchableOpacity onPress={doDismissModal}>
+              <Picture
+                type="Svg"
+                name="ui-close"
+                width={UI_SIZES.dimensions.width.large}
+                height={UI_SIZES.dimensions.height.large}
+                fill={theme.palette.grey.black}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </NativeModal>
-  );
-});
+      </NativeModal>
+    );
+  },
+);
 
 export default ModalBox;

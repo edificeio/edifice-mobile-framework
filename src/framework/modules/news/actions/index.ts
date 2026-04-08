@@ -1,5 +1,7 @@
 import { ThunkDispatch } from 'redux-thunk';
 
+import { audienceService } from '~/framework/modules/audience/service';
+import { AudienceReferer } from '~/framework/modules/audience/types';
 import { newsService } from '~/framework/modules/news/service';
 
 /**
@@ -38,10 +40,9 @@ export const getNewsItemAction = (infoId: number) => async (dispatch: ThunkDispa
 /**
  * Delete info by id
  */
-export const deleteNewsItemAction =
-  (threadId: number, infoId: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    return newsService.info.delete(threadId, infoId);
-  };
+export const deleteNewsItemAction = (infoId: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  return newsService.info.delete(infoId);
+};
 
 /**
  * Delete comment
@@ -65,4 +66,19 @@ export const publishCommentNewsItemAction =
 export const editCommentNewsItemAction =
   (infoId: number, comment: string, commentId: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     return newsService.comments.update(infoId, comment, commentId);
+  };
+
+/**
+ * Counte Views
+ */
+export const newsCountViewsAction =
+  ({ module, resourceId }: Omit<AudienceReferer, 'resourceType'>) =>
+  async () => {
+    audienceService.view.post(module, 'info', resourceId).catch(e => console.warn('View post failed', e));
+
+    return audienceService.view.getDetails({
+      module,
+      resourceId,
+      resourceType: 'info',
+    });
   };

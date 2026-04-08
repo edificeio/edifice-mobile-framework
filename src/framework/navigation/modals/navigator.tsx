@@ -3,6 +3,8 @@ import * as React from 'react';
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
 
 import CarouselScreen from '~/framework/components/carousel';
+import MultimediaCarousel, { CarouselMultimediaNavBar } from '~/framework/components/carousel-multimedia/';
+// eslint-disable-next-line import/order
 import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
@@ -13,6 +15,10 @@ import { infosNavBar, InfosScreen, logNavBar, LogScreen, networkNavBar, NetworkS
 import AttachmentsImportScreen, {
   computeNavBar as AttachmentsImportAddNavBar,
 } from '~/framework/modules/mails/components/attachments/modal-import';
+import {
+  computeNavBar as ManageFavoritesAddNavbar,
+  ManageFavoritesModalScreen,
+} from '~/framework/modules/myapps/components/manage-favorite-modal';
 import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
@@ -42,6 +48,11 @@ export default (
         component={AttachmentsImportScreen}
         initialParams={{}}
       />
+      <RootStack.Screen
+        name={ModalsRouteNames.CarouselMultimedia}
+        options={CarouselMultimediaNavBar}
+        component={MultimediaCarousel}
+      />
       <RootStack.Screen name={ModalsRouteNames.Carousel} options={CarouselNavBar} component={CarouselScreen} />
       <RootStack.Screen
         name={ModalsRouteNames.FileImport}
@@ -59,6 +70,11 @@ export default (
         component={SplashadsScreen}
         initialParams={{}}
       />
+      <RootStack.Screen
+        name={ModalsRouteNames.FavoritesManagement}
+        options={ManageFavoritesAddNavbar}
+        component={ManageFavoritesModalScreen}
+      />
     </RootStack.Group>
   </>
 );
@@ -68,6 +84,7 @@ setModalModeForRoutes([
   ModalsRouteNames.AudienceViews,
   ModalsRouteNames.AttachmentsImport,
   ModalsRouteNames.Carousel,
+  ModalsRouteNames.CarouselMultimedia,
   ModalsRouteNames.FileImport,
   ModalsRouteNames.Infos,
   ModalsRouteNames.Log,

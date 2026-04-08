@@ -1,16 +1,12 @@
 import type reducer from './reducer';
 
-import theme from '~/app/theme';
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   displayAs: ModuleType.MYAPPS_MODULE,
-  displayColor: theme.apps.blog.accentColors,
-  displayI18n: 'blog-tabname',
-  displayPicture: theme.apps.blog.icon,
   entcoreScope: ['blog'],
   entcoreTrackingName: 'Blog',
-  matchEntcoreApp: '/blog',
+  matchEntcoreApp: 'Blog',
   name: 'blog',
   storageName: 'blog',
 });

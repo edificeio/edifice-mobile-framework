@@ -5,8 +5,6 @@ import { ColorValue } from 'react-native';
 
 import deepmerge from 'deepmerge';
 
-import { EntAppName } from './intents';
-
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
 import { MediaType } from '~/framework/util/media';
@@ -139,7 +137,6 @@ export interface ITheme {
       Guest: ColorValue;
     };
   };
-  apps: { [key in EntAppName]: EntAppTheme };
   media: { [key in MediaType | 'default']: IntentIcon };
   // Legacy values
   legacy: {
@@ -330,10 +327,6 @@ export const defaultTheme: ThemeInitializer = {
       'workspace': {
         accentColors: this.palette.complementary.orange,
         icon: { name: 'files', type: 'Svg' },
-      },
-      'zimbra': {
-        accentColors: this.palette.complementary.yellow,
-        icon: { name: 'messages', type: 'Svg' },
       },
     };
     (this as Partial<ITheme>).ui = {

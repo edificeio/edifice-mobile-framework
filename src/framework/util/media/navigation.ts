@@ -1,7 +1,6 @@
-import Mime from 'mime';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
-import { mimeCompare } from './mime';
+import { mime, mimeCompare } from './mime';
 import { toURISource } from './source';
 import {
   AttachmentMedia,
@@ -145,7 +144,7 @@ const mediaIntents = [
       url && openUrl(url);
     },
     icon(media) {
-      const extension = Mime.getExtension(media.mime);
+      const extension = mime.getExtension(media.mime);
       console.debug('EXTENSIONS', media.type, extension);
       return extension?.toLocaleUpperCase() ?? theme.media.default;
     },

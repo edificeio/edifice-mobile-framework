@@ -5,8 +5,6 @@ import BootSplash from 'react-native-bootsplash';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from './i18n';
-
 import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
@@ -15,19 +13,12 @@ import track from '~/framework/modules/auth/tracking';
 import { appReadyAction, getState as getAppStartupState } from '~/framework/navigation/redux';
 import { RootNavigator } from '~/framework/navigation/root-navigation';
 import { tryAction } from '~/framework/util/redux/actions';
-import { Storage } from '~/framework/util/storage';
-
-const initFeatures = async () => {
-  await Storage.init();
-  await I18n.init();
-};
 
 /**
  * Logic code that is run for the app start
  */
 export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
   useConstructor(async () => {
-    await initFeatures();
     try {
       const tryRestore = tryAction(restoreAccountAction, {
         track: track.loginRestore,

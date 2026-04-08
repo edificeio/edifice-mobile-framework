@@ -14,9 +14,11 @@ export interface BackendNewsItem {
   title: string;
   headline: boolean;
   sharedRights: string[];
+  viewed: boolean;
 }
 
 export interface BackendNewsItemDetails extends Omit<BackendNewsItem, 'threadId'> {
+  contentVersion: number;
   thread: {
     id: number;
     title: string;
@@ -33,7 +35,10 @@ export interface BackendNewsThreadItem {
   created: string;
   modified: string;
   owner: NewsOwner;
+  structureId: string;
+  structure: { id: string; name: string };
   sharedRights: string[];
+  visible: boolean;
 }
 
 export interface BackendNewsCommentItem {
@@ -43,5 +48,6 @@ export interface BackendNewsCommentItem {
   created: string;
   modified: string;
   username: string;
+  deleted: boolean;
   info_id: number;
 }

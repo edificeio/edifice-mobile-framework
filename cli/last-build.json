@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-18 09:20:23",
-  "notes": "release: 1.16.7-rc.3(1160705)",
-  "version": "1.16.7-rc.4(1160706)",
-  "track": "1.16.7"
+  "last": "2026-03-27 14:25:56",
+  "notes": "fix(secu): remove jailbreak device test\nrelease: 1.17.0-comm.1(1170001)",
+  "version": "1.17.0-comm.2(1170002)",
+  "track": "1.17.0"
 }

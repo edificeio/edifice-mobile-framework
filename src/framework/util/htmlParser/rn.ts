@@ -554,6 +554,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       const img: IImageComponentAttributes = {
         alt: tag.attrs.alt,
         linkTo: this.currentLink,
+        onPress: this.opts.onPress,
         src,
       };
       // B - 2 - Detect if we have an active image group
@@ -607,6 +608,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       }
     }
     const audioNugget: IAudioNugget = {
+      onPress: this.opts.onPress,
       src,
       type: HtmlParserNuggetTypes.Audio,
     };
@@ -637,6 +639,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       : undefined;
     const videoId = tag.attrs['data-document-id'];
     const videoNugget: IVideoNugget = {
+      onPress: this.opts.onPress,
       src,
       type: HtmlParserNuggetTypes.Video,
       ...(videoDimensions && videoDimensions[1] !== 0 ? { ratio: videoDimensions[0] / videoDimensions[1] } : {}),

@@ -9,6 +9,7 @@ import {
   MAX_FETCH_TIMEOUT_MS,
 } from './common';
 
+import { I18n } from '~/app/i18n';
 import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -132,7 +133,8 @@ export const baseFetch = timeoutFetch(_baseFetch);
  */
 
 export function deviceFetch(input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]) {
-  const headers = getDeviceHeaders();
+  const headers: Record<string, string> = getDeviceHeaders();
+  headers['Accept-Language'] = I18n.getLanguage();
   if (input instanceof Request) {
     input.headers.forEach((value: string, key: string) => {
       headers[key] = value;

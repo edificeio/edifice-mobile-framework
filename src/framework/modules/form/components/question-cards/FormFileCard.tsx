@@ -5,6 +5,7 @@ import { FormAnswerText } from './FormAnswerText';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import { Attachment } from '~/framework/components/attachment';
 import { UI_SIZES } from '~/framework/components/constants';
 import { cameraActionFm, documentActionFm, galleryActionFm } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
@@ -13,7 +14,6 @@ import { SmallActionText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse, IResponseFile } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
-import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 
 const styles = StyleSheet.create({
@@ -87,9 +87,11 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
 
   const attachOpts = { callback: (file: LocalFile | LocalFile[]) => addFile(file) };
 
-  const removeFile = (file: IResponseFile) => {
-    setFiles(files.filter(a => a !== file));
-  };
+  const removeFile = (file: IResponseFile) => () => setFiles(files.filter(a => a !== file));
+
+  const renderAttachmentItem = ({ item }: { item: IResponseFile }) => (
+    <Attachment name={item.filename} type={item.type} onRemove={removeFile(item)} />
+  );
 
   return (
     <FormQuestionCard title={title} isMandatory={mandatory} onEditQuestion={onEditQuestion}>
@@ -105,11 +107,7 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
               <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
             </View>
           </BottomMenu>
-          <FlatList
-            data={files}
-            keyExtractor={attachment => attachment.filename}
-            renderItem={({ item }) => <Attachment name={item.filename} type={item.type} onRemove={() => removeFile(item)} />}
-          />
+          <FlatList data={files} keyExtractor={attachment => attachment.filename} renderItem={renderAttachmentItem} />
         </View>
       )}
     </FormQuestionCard>

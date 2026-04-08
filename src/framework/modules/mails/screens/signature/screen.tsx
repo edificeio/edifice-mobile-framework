@@ -7,7 +7,6 @@ import styles from './styles';
 import { MailsSignatureScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
@@ -78,7 +77,7 @@ const MailsSignatureScreen = (props: MailsSignatureScreenPrivateProps) => {
         <ScrollView showsVerticalScrollIndicator={false} style={styles.page}>
           <View style={styles.header}>
             <BodyText>{I18n.get('mails-signature-header')}</BodyText>
-            <Toggle checked={useSignature} onCheckChange={onToggleSignature} color={theme.palette.primary} />
+            <Toggle checked={useSignature} onChange={onToggleSignature} />
           </View>
           <CaptionText style={styles.textContent}>{I18n.get('mails-signature-content')}</CaptionText>
         </ScrollView>
