@@ -11,7 +11,7 @@
 -keep class com.facebook.react.runtime.** { *; }
 -keep class com.facebook.react.** { *; }
 
-# react-native-fast-image
+# @d11/react-native-fast-image
 -keep public class com.dylanvann.fastimage.* {*;}
 -keep public class com.dylanvann.fastimage.** {*;}
 -keep public class * implements com.bumptech.glide.module.GlideModule

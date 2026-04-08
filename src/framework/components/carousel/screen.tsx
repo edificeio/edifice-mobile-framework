@@ -4,18 +4,15 @@
 import * as React from 'react';
 import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 
+import RNFastImage, { FastImageProps } from '@d11/react-native-fast-image';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import DeviceInfo from 'react-native-device-info';
-import RNFastImage, { FastImageProps } from 'react-native-fast-image';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
-
-import { IImageSize } from './image-viewer/image-viewer.type';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -27,7 +24,6 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { DEFAULTS, ToastContainer } from '~/framework/components/toast/component';
 import { markViewAudience } from '~/framework/modules/audience';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -43,6 +39,8 @@ import { OldStorageFunctions } from '~/framework/util/storage';
 import { sessionURISource } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 
+import { IImageSize } from './image-viewer/image-viewer.type';
+
 export interface ICarouselNavParams {
   data: IMedia[];
   startIndex?: number;
@@ -52,7 +50,6 @@ export interface ICarouselNavParams {
 export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
 
 const styles = StyleSheet.create({
-  // eslint-disable-next-line react-native/no-color-literals
   errorScreen: {
     backgroundColor: 'transparent',
     height: UI_SIZES.screen.height,

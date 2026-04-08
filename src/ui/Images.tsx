@@ -1,12 +1,8 @@
 import * as React from 'react';
 import { ImageProps, ImageURISource, StyleSheet, View, ViewStyle } from 'react-native';
 
+import RNFastImage from '@d11/react-native-fast-image';
 import styled from '@emotion/native';
-import RNFastImage from 'react-native-fast-image';
-
-import TouchableOpacity from './CustomTouchableOpacity';
-import { Row } from './Grid';
-import ImageOptional from './ImageOptional';
 
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
@@ -17,6 +13,10 @@ import { AudienceParameter } from '~/framework/modules/audience/types';
 import { IMAGE_MAX_DIMENSION } from '~/framework/util/fileHandler';
 import { FastImage } from '~/framework/util/media-deprecated';
 import { sessionURISource } from '~/framework/util/transport';
+
+import TouchableOpacity from './CustomTouchableOpacity';
+import { Row } from './Grid';
+import ImageOptional from './ImageOptional';
 
 const ContainerImage = styled.View({});
 

@@ -9,14 +9,14 @@ import * as React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { ImageURISource, Image as RNImage, ImageProps as RNImageProps, StyleSheet, View } from 'react-native';
 
-import { FastImageProps, default as RNFastImage, Source } from 'react-native-fast-image';
-
-import { sessionImageSource } from './transport';
+import { FastImageProps, default as RNFastImage, Source } from '@d11/react-native-fast-image';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { getSession } from '~/framework/modules/auth/reducer';
+
+import { sessionImageSource } from './transport';
 
 interface IMediaCommonAttributes {
   src: string | ImageURISource;
