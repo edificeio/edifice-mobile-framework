@@ -3,7 +3,7 @@ import { ThunkAction } from 'redux-thunk';
 
 import AllModules from '~/app/modules';
 import { IGlobalState } from '~/app/store';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { appsInfoActionTypes, FetchSuccessPayload } from '~/framework/modules/myapps/reducer/action-types';
 import {
   buildFetchSuccessPayload,

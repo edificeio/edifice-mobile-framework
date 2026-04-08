@@ -12,7 +12,7 @@ import AllModules from '~/app/modules';
 import { AppDispatch } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { MyAppsListItem } from '~/framework/modules/myapps/components/my-apps-list/types';
 import { useFilteredApps } from '~/framework/modules/myapps/hooks';
 import {

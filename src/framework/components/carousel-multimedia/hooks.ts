@@ -9,7 +9,7 @@ import Share from 'react-native-share';
 
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FileMedia, isImageContent, isVideoContent } from '~/framework/util/media';

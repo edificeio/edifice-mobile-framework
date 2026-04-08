@@ -8,7 +8,7 @@ import { createHTML } from './editor';
 
 import theme from '~/app/theme';
 import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { openUrl } from '~/framework/util/linking';
 
 const PlatformIOS = Platform.OS === 'ios';
