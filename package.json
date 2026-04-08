@@ -181,7 +181,7 @@
     "ts-polyfill": "3.8.2",
     "unorm": "1.6.0",
     "whatwg-fetch": "3.6.20",
-    "yargs": "17.7.2"
+    "yargs": "18.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.29.0",

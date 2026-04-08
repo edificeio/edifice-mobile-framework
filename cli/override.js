@@ -27,7 +27,7 @@ const fs = require('fs');
 const path = require('path');
 const prompts = require('prompts');
 const util = require('util');
-const yargs = require('yargs');
+const yargs = require('yargs/yargs')(process.argv.slice(2));
 const exec = util.promisify(require('child_process').exec);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -809,13 +809,13 @@ async function _override_performApply(overrideNames, given_uri, given_branch, gi
  * Main script.
  * Parse command args & execute
  */
-const main = () => {
+const main = async () => {
   yargs
     .showHelpOnFail(false, 'Specify --help for available options')
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .fail(function (msg, err, _yargs) {
+    .fail((msg, err) => {
       msg && console.error(msg);
-      console.error(err);
+      err && console.error(err);
       process.exit(1);
     })
     .command(
@@ -884,7 +884,7 @@ const main = () => {
             default: true,
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
         if (argv.overrides && argv.overrides.length === 1) {
           if (argv.overrides[0] === 'restore') return _override_performRestoreCurrent();
@@ -912,9 +912,9 @@ const main = () => {
             alias: 'q',
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performRestoreCurrent();
+        await _override_performRestoreCurrent();
       },
     )
     .command(
@@ -938,9 +938,9 @@ const main = () => {
             alias: 'm',
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performStashCurrent(argv.message);
+        await _override_performStashCurrent(argv.message);
       },
     )
     .command(
@@ -959,9 +959,9 @@ const main = () => {
             alias: 'q',
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performLock();
+        await _override_performLock();
       },
     )
     .command(
@@ -980,9 +980,9 @@ const main = () => {
             alias: 'q',
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performUnlock();
+        await _override_performUnlock();
       },
     )
     .command(
@@ -990,11 +990,11 @@ const main = () => {
       'Remove overrides cache',
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       yargs => {},
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performClean();
+        await _override_performClean();
       },
-    ).argv;
+    ).parseAsync();
 };
 
 // Init local repo values
