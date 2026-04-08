@@ -8,17 +8,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import {
-  AuthMFAScreenDispatchProps,
-  AuthMFAScreenPrivateProps,
-  AuthMFAScreenStoreProps,
-  CodeState,
-  MFATestIds,
-  PageTexts,
-  ResendResponse,
-} from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -43,6 +32,17 @@ import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+
+import styles from './styles';
+import {
+  AuthMFAScreenDispatchProps,
+  AuthMFAScreenPrivateProps,
+  AuthMFAScreenStoreProps,
+  CodeState,
+  MFATestIds,
+  PageTexts,
+  ResendResponse,
+} from './types';
 
 const animationSources = {
   [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
