@@ -8,7 +8,8 @@ import styles from './styles';
 import { ImageItemProps } from './types';
 
 import LoaderItem from '~/framework/components/carousel-multimedia/loader-item/component';
-import { PAGINATION_COMPONENT_HEIGHT, SCREEN_HEIGHT } from '~/framework/components/carousel-multimedia/styles';
+import { PAGINATION_COMPONENT_HEIGHT } from '~/framework/components/carousel-multimedia/pagination/styles';
+import { SCREEN_HEIGHT } from '~/framework/components/carousel-multimedia/styles';
 
 /**
  * PanGesture recognizes drag movements on an image
@@ -233,6 +234,7 @@ const ImageItem = ({
   const combinedGesture = Gesture.Simultaneous(pinchGesture, panGesture, tapGestures);
 
   const animatedStyle = useAnimatedStyle(() => {
+    'worklet';
     // Calculate translations considering the current scale
     const adjustedTranslateX = scale.value > MIN_IMAGE_SCALE ? translateX.value / scale.value : 0;
     const adjustedTranslateY = scale.value > MIN_IMAGE_SCALE ? translateY.value / scale.value : 0;
@@ -271,4 +273,4 @@ const ImageItem = ({
   );
 };
 
-export default ImageItem;
+export default React.memo(ImageItem);

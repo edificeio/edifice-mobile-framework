@@ -3,7 +3,7 @@ import * as React from 'react';
 import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LottieView from 'lottie-react-native';
 import VideoPlayer from 'react-native-media-console';
-import { VideoRef } from 'react-native-video';
+import { OnProgressData, VideoRef } from 'react-native-video';
 
 import styles from './styles';
 import { PlayerItemProps } from './types';
@@ -14,14 +14,18 @@ import { isAudioContent } from '~/framework/util/media';
 
 const CONTROLS_TIMEOUT_DELAY = 60000;
 
-const PlayerItem = ({ hideNavBar, index, isCurrentItem, item, onInitialMediaLoad, showNavBar, source }: PlayerItemProps) => {
+const PlayerItem = ({ hideNavBar, isCurrentItem, item, itemIndex, onInitialMediaLoad, showNavBar, source }: PlayerItemProps) => {
   const audioPosterRefs = React.useRef<Map<number, LottieView | null>>(new Map());
   const playerContextValue = React.useContext(PlayerContext);
   const [isMediaLoading, setIsMediaLoading] = React.useState(true);
-  const [paused, setPaused] = React.useState(true);
+  const [paused, setPaused] = React.useState(() => {
+    const savedState = playerContextValue.savedStates.get(itemIndex);
+    // Start paused when there is a position to restore (otherwise content flashes back to the beginning before resuming to saved position)
+    if (savedState?.position) return true;
+    return savedState?.paused ?? true;
+  });
   const videoRef = React.useRef<VideoRef>(null);
 
-  // Fonction helper pour obtenir la ref d'un index
   const getAudioPosterRef = React.useCallback((idx: number) => {
     return (audioAnimationRef: LottieView | null) => {
       if (audioAnimationRef) {
@@ -34,22 +38,20 @@ const PlayerItem = ({ hideNavBar, index, isCurrentItem, item, onInitialMediaLoad
 
   const pause = React.useCallback(() => {
     setPaused(true);
-    playerContextValue.pauseCurrentPlayingMedia = undefined;
-    const animRef = audioPosterRefs.current.get(index);
+    const animRef = audioPosterRefs.current.get(itemIndex);
     animRef?.pause();
-  }, [index, playerContextValue]);
+  }, [itemIndex]);
 
   const onPlay = React.useCallback(() => {
     setPaused(false);
-    playerContextValue.pauseCurrentPlayingMedia = pause;
-    const animRef = audioPosterRefs.current.get(index);
+    const animRef = audioPosterRefs.current.get(itemIndex);
     animRef?.resume();
     if (videoRef.current?.toggleControls) {
       videoRef.current.toggleControls();
     }
-  }, [index, pause, playerContextValue]);
+  }, [itemIndex]);
 
-  // force pause because the video player prop 'repeat' doesn't work
+  // Force pause because the video player prop 'repeat' doesn't work
   const onEnd = React.useCallback(() => {
     pause();
     if (videoRef.current?.toggleControls) {
@@ -60,7 +62,40 @@ const PlayerItem = ({ hideNavBar, index, isCurrentItem, item, onInitialMediaLoad
   const onLoad = React.useCallback(() => {
     setIsMediaLoading(false);
     onInitialMediaLoad?.();
-  }, [onInitialMediaLoad]);
+    // After a Carousel remount (on device orientation change), seek the saved position and resume playing from there
+    const savedState = playerContextValue.savedStates.get(itemIndex);
+    if (savedState?.position) {
+      videoRef.current?.seek(savedState.position);
+      if (savedState.paused === false) {
+        setPaused(false);
+      }
+    }
+  }, [itemIndex, onInitialMediaLoad, playerContextValue.savedStates]);
+
+  const onProgress = React.useCallback(
+    (data: OnProgressData) => {
+      playerContextValue.savedStates.set(itemIndex, { paused, position: data.currentTime });
+    },
+    [itemIndex, paused, playerContextValue.savedStates],
+  );
+
+  // Ensure only one media plays at a time
+  // When playing: sets context.pauseCurrentPlayingMedia to this player's pause function.
+  // When paused: clears this player's pause function from context.
+  // Cleanup: removes stale references on unmount (handles carousel remounts on orientation change).
+  // Other players call context.pauseCurrentPlayingMedia() to pause the current player before starting.
+  React.useEffect(() => {
+    if (!paused) {
+      playerContextValue.pauseCurrentPlayingMedia = pause;
+    } else if (playerContextValue.pauseCurrentPlayingMedia === pause) {
+      playerContextValue.pauseCurrentPlayingMedia = undefined;
+    }
+    return () => {
+      if (playerContextValue.pauseCurrentPlayingMedia === pause) {
+        playerContextValue.pauseCurrentPlayingMedia = undefined;
+      }
+    };
+  }, [paused, pause, playerContextValue]);
 
   React.useEffect(() => {
     if (isCurrentItem && videoRef.current?.showControls) {
@@ -78,6 +113,7 @@ const PlayerItem = ({ hideNavBar, index, isCurrentItem, item, onInitialMediaLoad
         onHideControls={isCurrentItem ? hideNavBar : undefined}
         onShowControls={isCurrentItem ? showNavBar : undefined}
         onLoad={onLoad}
+        onProgress={onProgress}
         onEnd={onEnd}
         onPause={pause}
         onPlay={onPlay}
@@ -89,7 +125,7 @@ const PlayerItem = ({ hideNavBar, index, isCurrentItem, item, onInitialMediaLoad
         {...(isAudioContent(item)
           ? {
               posterElement: (
-                <LottieView ref={getAudioPosterRef(index)} source={ANIMATION_AUDIO} style={styles.poster} speed={0.5} />
+                <LottieView ref={getAudioPosterRef(itemIndex)} source={ANIMATION_AUDIO} style={styles.poster} speed={0.5} />
               ),
             }
           : {})}
@@ -99,4 +135,4 @@ const PlayerItem = ({ hideNavBar, index, isCurrentItem, item, onInitialMediaLoad
   );
 };
 
-export default PlayerItem;
+export default React.memo(PlayerItem);
