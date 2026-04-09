@@ -80,5 +80,3 @@ export interface AppsInfoAggregated extends AppsInfo {
 export interface ApplicationsListResponse {
   apps: ApplicationsList[];
 }
-
-export type AppBadgesType = Record<string, IAppBadgeInfo>;
