@@ -21,6 +21,8 @@ export const getAppName = (data: AppsInfo): string => {
     if (name && name !== data.displayName) {
       return name;
     }
+
+    return data.displayName;
   }
 
   return data.name || '';

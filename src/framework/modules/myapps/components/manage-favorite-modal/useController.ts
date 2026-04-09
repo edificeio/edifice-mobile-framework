@@ -9,28 +9,24 @@ import { I18n } from '~/app/i18n';
 import { AppDispatch } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { useFilteredApps } from '~/framework/modules/myapps/hooks';
-import { saveGroupedFavorites, selectAppBookmarks, selectIsSavingFavorites } from '~/framework/modules/myapps/reducer';
+import { saveGroupedFavorites, selectAppBookmarks } from '~/framework/modules/myapps/reducer';
 import { normalizeString } from '~/framework/modules/myapps/utils';
 
 export const useManageFavoritesController = (navigation: ManageFavoriteScreenProps.ManageFavoritesNavigation['navigation']) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const isSaving = useSelector(selectIsSavingFavorites);
   const savedBookmarks = useSelector(selectAppBookmarks).bookmarks;
 
-  const filter = React.useMemo(() => ({ type: 'category', value: 'toutes' }) as const, []);
-  const allApps = useFilteredApps(filter);
-
+  const [isSaving, setIsSaving] = React.useState(false);
   const [query, setQuery] = React.useState('');
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
 
   const initialSelectedRef = React.useRef<Set<string>>(new Set());
-  const isSavingRef = React.useRef<boolean>(false);
-  const saveStartRef = React.useRef<number>(0);
+
+  const filter = React.useMemo(() => ({ type: 'category', value: 'toutes' }) as const, []);
+  const allApps = useFilteredApps(filter);
 
   React.useEffect(() => {
-    if (isSavingRef.current) return;
-
     const initial = new Set(savedBookmarks);
     initialSelectedRef.current = initial;
     setSelected(initial);
@@ -62,35 +58,27 @@ export const useManageFavoritesController = (navigation: ManageFavoriteScreenPro
   }, []);
 
   const onValidate = React.useCallback(() => {
-    isSavingRef.current = true;
-    saveStartRef.current = Date.now();
+    setIsSaving(true);
 
     dispatch(
       saveGroupedFavorites(Array.from(selected), ok => {
         if (!ok) {
-          isSavingRef.current = false;
+          setIsSaving(false);
           Toast.showError(I18n.get('myapp-add-favorite-error-message'));
+          return;
         }
+
+        setTimeout(() => {
+          setIsSaving(false);
+          navigation.goBack();
+
+          setTimeout(() => {
+            Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
+          }, 300);
+        }, 400);
       }),
     );
-  }, [dispatch, selected]);
-
-  React.useEffect(() => {
-    if (!isSavingRef.current || isSaving) return;
-
-    const elapsed = Date.now() - saveStartRef.current;
-    const remaining = Math.max(0, 400 - elapsed);
-
-    setTimeout(() => {
-      isSavingRef.current = false;
-
-      navigation.goBack();
-
-      setTimeout(() => {
-        Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
-      }, 300);
-    }, remaining);
-  }, [isSaving, navigation]);
+  }, [dispatch, selected, navigation]);
 
   const hasUnsavedChanges = React.useMemo(() => {
     const initial = initialSelectedRef.current;
