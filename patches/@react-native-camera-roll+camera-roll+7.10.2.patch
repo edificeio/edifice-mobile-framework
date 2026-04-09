@@ -1,3 +1,7 @@
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/.DS_Store b/node_modules/@react-native-camera-roll/camera-roll/.DS_Store
+new file mode 100644
+index 0000000..0d21cbf
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/.DS_Store differ
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 index 2e6e38d..be2e0e4 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
@@ -11,8 +15,1326 @@ index 2e6e38d..be2e0e4 100644
      }
    }
  }
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/3dcec281e6bd41446fc6052a4901d24d/results.bin b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/3dcec281e6bd41446fc6052a4901d24d/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/3dcec281e6bd41446fc6052a4901d24d/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/3dcec281e6bd41446fc6052a4901d24d/transformed/classes/classes_dex/classes.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/3dcec281e6bd41446fc6052a4901d24d/transformed/classes/classes_dex/classes.dex
+new file mode 100644
+index 0000000..e42b000
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/3dcec281e6bd41446fc6052a4901d24d/transformed/classes/classes_dex/classes.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/results.bin b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/results.bin
+new file mode 100644
+index 0000000..7ed749e
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/results.bin
+@@ -0,0 +1 @@
++o/bundleLibRuntimeToDirDebug
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/BuildConfig.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/BuildConfig.dex
+new file mode 100644
+index 0000000..0c0f29e
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/BuildConfig.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$1.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$1.dex
+new file mode 100644
+index 0000000..472684b
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$1.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$2.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$2.dex
+new file mode 100644
+index 0000000..b212de3
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$2.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.dex
+new file mode 100644
+index 0000000..fa478a3
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.dex
+new file mode 100644
+index 0000000..945f97a
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.dex
+new file mode 100644
+index 0000000..e6fc487
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule.dex
+new file mode 100644
+index 0000000..2ffb284
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollModule.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollPackage$1.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollPackage$1.dex
+new file mode 100644
+index 0000000..e6dcef3
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollPackage$1.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollPackage.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollPackage.dex
+new file mode 100644
+index 0000000..63ac18d
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/CameraRollPackage.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.dex
+new file mode 100644
+index 0000000..67a6914
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.dex
+new file mode 100644
+index 0000000..6970734
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/Utils.dex b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/Utils.dex
+new file mode 100644
+index 0000000..1784a0b
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/reactnativecommunity/cameraroll/Utils.dex differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin
+new file mode 100644
+index 0000000..1a4a2cd
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/.transforms/f0745faa5c234a97829bd16e4ce7aa85/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/cameraroll/BuildConfig.java b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/cameraroll/BuildConfig.java
+new file mode 100644
+index 0000000..be91512
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/cameraroll/BuildConfig.java
+@@ -0,0 +1,10 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package com.reactnativecommunity.cameraroll;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = Boolean.parseBoolean("true");
++  public static final String LIBRARY_PACKAGE_NAME = "com.reactnativecommunity.cameraroll";
++  public static final String BUILD_TYPE = "debug";
++}
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/java/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.java b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/java/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.java
+new file mode 100644
+index 0000000..46c67e9
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/java/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.java
+@@ -0,0 +1,68 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJavaSpec.js
++ *
++ * @nolint
++ */
++
++package com.reactnativecommunity.cameraroll;
++
++import com.facebook.proguard.annotations.DoNotStrip;
++import com.facebook.react.bridge.Promise;
++import com.facebook.react.bridge.ReactApplicationContext;
++import com.facebook.react.bridge.ReactContextBaseJavaModule;
++import com.facebook.react.bridge.ReactMethod;
++import com.facebook.react.bridge.ReadableArray;
++import com.facebook.react.bridge.ReadableMap;
++import com.facebook.react.turbomodule.core.interfaces.TurboModule;
++import javax.annotation.Nonnull;
++
++public abstract class NativeCameraRollModuleSpec extends ReactContextBaseJavaModule implements TurboModule {
++  public static final String NAME = "RNCCameraRoll";
++
++  public NativeCameraRollModuleSpec(ReactApplicationContext reactContext) {
++    super(reactContext);
++  }
++
++  @Override
++  public @Nonnull String getName() {
++    return NAME;
++  }
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void saveToCameraRoll(String uri, ReadableMap options, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void getPhotos(ReadableMap params, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void getAlbums(ReadableMap params, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void deletePhotos(ReadableArray photoUris, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void getPhotoByInternalID(String internalID, ReadableMap options, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void getPhotoThumbnail(String internalID, ReadableMap options, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void addListener(String eventName);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void removeListeners(double count);
++}
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/java/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.java b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/java/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.java
+new file mode 100644
+index 0000000..f7159a4
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/java/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.java
+@@ -0,0 +1,58 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJavaSpec.js
++ *
++ * @nolint
++ */
++
++package com.reactnativecommunity.cameraroll;
++
++import com.facebook.proguard.annotations.DoNotStrip;
++import com.facebook.react.bridge.Promise;
++import com.facebook.react.bridge.ReactApplicationContext;
++import com.facebook.react.bridge.ReactContextBaseJavaModule;
++import com.facebook.react.bridge.ReactMethod;
++import com.facebook.react.turbomodule.core.interfaces.TurboModule;
++import javax.annotation.Nonnull;
++
++public abstract class NativeCameraRollPermissionModuleSpec extends ReactContextBaseJavaModule implements TurboModule {
++  public static final String NAME = "RNCCameraRollPermission";
++
++  public NativeCameraRollPermissionModuleSpec(ReactApplicationContext reactContext) {
++    super(reactContext);
++  }
++
++  @Override
++  public @Nonnull String getName() {
++    return NAME;
++  }
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void checkPermission(String content, Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void requestReadWritePermission(Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void requestAddOnlyPermission(Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void refreshPhotoSelection(Promise promise);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void addListener(String eventName);
++
++  @ReactMethod
++  @DoNotStrip
++  public abstract void removeListeners(double count);
++}
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/CMakeLists.txt b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/CMakeLists.txt
+new file mode 100644
+index 0000000..7515644
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/CMakeLists.txt
+@@ -0,0 +1,28 @@
++# Copyright (c) Meta Platforms, Inc. and affiliates.
++#
++# This source code is licensed under the MIT license found in the
++# LICENSE file in the root directory of this source tree.
++
++cmake_minimum_required(VERSION 3.13)
++set(CMAKE_VERBOSE_MAKEFILE on)
++
++file(GLOB react_codegen_SRCS CONFIGURE_DEPENDS *.cpp react/renderer/components/rncameraroll/*.cpp)
++
++add_library(
++  react_codegen_rncameraroll
++  OBJECT
++  ${react_codegen_SRCS}
++)
++
++target_include_directories(react_codegen_rncameraroll PUBLIC . react/renderer/components/rncameraroll)
++
++target_link_libraries(
++  react_codegen_rncameraroll
++  fbjni
++  jsi
++  # We need to link different libraries based on whether we are building rncore or not, that's necessary
++  # because we want to break a circular dependency between react_codegen_rncore and reactnative
++  reactnative
++)
++
++target_compile_reactnative_options(react_codegen_rncameraroll PRIVATE)
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ComponentDescriptors.cpp b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ComponentDescriptors.cpp
+new file mode 100644
+index 0000000..f5b55b8
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ComponentDescriptors.cpp
+@@ -0,0 +1,22 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateComponentDescriptorCpp.js
++ */
++
++#include <react/renderer/components/rncameraroll/ComponentDescriptors.h>
++#include <react/renderer/core/ConcreteComponentDescriptor.h>
++#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
++
++namespace facebook::react {
++
++void rncameraroll_registerComponentDescriptorsFromCodegen(
++  std::shared_ptr<const ComponentDescriptorProviderRegistry> registry) {
++
++}
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ComponentDescriptors.h b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ComponentDescriptors.h
+new file mode 100644
+index 0000000..db4b600
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ComponentDescriptors.h
+@@ -0,0 +1,24 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateComponentDescriptorH.js
++ */
++
++#pragma once
++
++#include <react/renderer/components/rncameraroll/ShadowNodes.h>
++#include <react/renderer/core/ConcreteComponentDescriptor.h>
++#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
++
++namespace facebook::react {
++
++
++
++void rncameraroll_registerComponentDescriptorsFromCodegen(
++  std::shared_ptr<const ComponentDescriptorProviderRegistry> registry);
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/EventEmitters.cpp b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/EventEmitters.cpp
+new file mode 100644
+index 0000000..0fa3d23
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/EventEmitters.cpp
+@@ -0,0 +1,16 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateEventEmitterCpp.js
++ */
++
++#include <react/renderer/components/rncameraroll/EventEmitters.h>
++
++
++namespace facebook::react {
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/EventEmitters.h b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/EventEmitters.h
+new file mode 100644
+index 0000000..2845a63
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/EventEmitters.h
+@@ -0,0 +1,17 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateEventEmitterH.js
++ */
++#pragma once
++
++#include <react/renderer/components/view/ViewEventEmitter.h>
++
++
++namespace facebook::react {
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/Props.cpp b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/Props.cpp
+new file mode 100644
+index 0000000..1a5177a
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/Props.cpp
+@@ -0,0 +1,19 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GeneratePropsCpp.js
++ */
++
++#include <react/renderer/components/rncameraroll/Props.h>
++#include <react/renderer/core/PropsParserContext.h>
++#include <react/renderer/core/propsConversions.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/Props.h b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/Props.h
+new file mode 100644
+index 0000000..870864b
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/Props.h
+@@ -0,0 +1,18 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GeneratePropsH.js
++ */
++#pragma once
++
++
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ShadowNodes.cpp b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ShadowNodes.cpp
+new file mode 100644
+index 0000000..fcd2758
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ShadowNodes.cpp
+@@ -0,0 +1,17 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateShadowNodeCpp.js
++ */
++
++#include <react/renderer/components/rncameraroll/ShadowNodes.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ShadowNodes.h b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ShadowNodes.h
+new file mode 100644
+index 0000000..58461a2
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/ShadowNodes.h
+@@ -0,0 +1,23 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateShadowNodeH.js
++ */
++
++#pragma once
++
++#include <react/renderer/components/rncameraroll/EventEmitters.h>
++#include <react/renderer/components/rncameraroll/Props.h>
++#include <react/renderer/components/rncameraroll/States.h>
++#include <react/renderer/components/view/ConcreteViewShadowNode.h>
++#include <jsi/jsi.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/States.cpp b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/States.cpp
+new file mode 100644
+index 0000000..58c3674
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/States.cpp
+@@ -0,0 +1,16 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateStateCpp.js
++ */
++#include <react/renderer/components/rncameraroll/States.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/States.h b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/States.h
+new file mode 100644
+index 0000000..2e55bce
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/States.h
+@@ -0,0 +1,20 @@
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateStateH.js
++ */
++#pragma once
++
++#include <react/renderer/core/StateData.h>
++#ifdef RN_SERIALIZABLE_STATE
++#include <folly/dynamic.h>
++#endif
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/rncamerarollJSI.h b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/rncamerarollJSI.h
+new file mode 100644
+index 0000000..aaebaa1
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/react/renderer/components/rncameraroll/rncamerarollJSI.h
+@@ -0,0 +1,329 @@
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleH.js
++ */
++
++#pragma once
++
++#include <ReactCommon/TurboModule.h>
++#include <react/bridging/Bridging.h>
++
++namespace facebook::react {
++
++
++#pragma mark - NativeCameraRollModuleAlbum
++
++template <typename P0, typename P1, typename P2, typename P3, typename P4>
++struct NativeCameraRollModuleAlbum {
++  P0 id;
++  P1 title;
++  P2 count;
++  P3 type;
++  P4 subtype;
++  bool operator==(const NativeCameraRollModuleAlbum &other) const {
++    return id == other.id && title == other.title && count == other.count && type == other.type && subtype == other.subtype;
++  }
++};
++
++template <typename T>
++struct NativeCameraRollModuleAlbumBridging {
++  static T types;
++
++  static T fromJs(
++      jsi::Runtime &rt,
++      const jsi::Object &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    T result{
++      bridging::fromJs<decltype(types.id)>(rt, value.getProperty(rt, "id"), jsInvoker),
++      bridging::fromJs<decltype(types.title)>(rt, value.getProperty(rt, "title"), jsInvoker),
++      bridging::fromJs<decltype(types.count)>(rt, value.getProperty(rt, "count"), jsInvoker),
++      bridging::fromJs<decltype(types.type)>(rt, value.getProperty(rt, "type"), jsInvoker),
++      bridging::fromJs<decltype(types.subtype)>(rt, value.getProperty(rt, "subtype"), jsInvoker)};
++    return result;
++  }
++
++#ifdef DEBUG
++  static jsi::String idToJs(jsi::Runtime &rt, decltype(types.id) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String titleToJs(jsi::Runtime &rt, decltype(types.title) value) {
++    return bridging::toJs(rt, value);
++  }
++  static double countToJs(jsi::Runtime &rt, decltype(types.count) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String typeToJs(jsi::Runtime &rt, decltype(types.type) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::String subtypeToJs(jsi::Runtime &rt, decltype(types.subtype) value) {
++    return bridging::toJs(rt, value);
++  }
++#endif
++
++  static jsi::Object toJs(
++      jsi::Runtime &rt,
++      const T &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    auto result = facebook::jsi::Object(rt);
++    result.setProperty(rt, "id", bridging::toJs(rt, value.id, jsInvoker));
++    result.setProperty(rt, "title", bridging::toJs(rt, value.title, jsInvoker));
++    result.setProperty(rt, "count", bridging::toJs(rt, value.count, jsInvoker));
++    result.setProperty(rt, "type", bridging::toJs(rt, value.type, jsInvoker));
++    if (value.subtype) {
++      result.setProperty(rt, "subtype", bridging::toJs(rt, value.subtype.value(), jsInvoker));
++    }
++    return result;
++  }
++};
++
++
++
++#pragma mark - NativeCameraRollModulePhotoIdentifier
++
++template <typename P0>
++struct NativeCameraRollModulePhotoIdentifier {
++  P0 node;
++  bool operator==(const NativeCameraRollModulePhotoIdentifier &other) const {
++    return node == other.node;
++  }
++};
++
++template <typename T>
++struct NativeCameraRollModulePhotoIdentifierBridging {
++  static T types;
++
++  static T fromJs(
++      jsi::Runtime &rt,
++      const jsi::Object &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    T result{
++      bridging::fromJs<decltype(types.node)>(rt, value.getProperty(rt, "node"), jsInvoker)};
++    return result;
++  }
++
++#ifdef DEBUG
++  static jsi::Object nodeToJs(jsi::Runtime &rt, decltype(types.node) value) {
++    return bridging::toJs(rt, value);
++  }
++#endif
++
++  static jsi::Object toJs(
++      jsi::Runtime &rt,
++      const T &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    auto result = facebook::jsi::Object(rt);
++    result.setProperty(rt, "node", bridging::toJs(rt, value.node, jsInvoker));
++    return result;
++  }
++};
++
++
++
++#pragma mark - NativeCameraRollModulePhotoIdentifiersPage
++
++template <typename P0, typename P1, typename P2>
++struct NativeCameraRollModulePhotoIdentifiersPage {
++  P0 edges;
++  P1 page_info;
++  P2 limited;
++  bool operator==(const NativeCameraRollModulePhotoIdentifiersPage &other) const {
++    return edges == other.edges && page_info == other.page_info && limited == other.limited;
++  }
++};
++
++template <typename T>
++struct NativeCameraRollModulePhotoIdentifiersPageBridging {
++  static T types;
++
++  static T fromJs(
++      jsi::Runtime &rt,
++      const jsi::Object &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    T result{
++      bridging::fromJs<decltype(types.edges)>(rt, value.getProperty(rt, "edges"), jsInvoker),
++      bridging::fromJs<decltype(types.page_info)>(rt, value.getProperty(rt, "page_info"), jsInvoker),
++      bridging::fromJs<decltype(types.limited)>(rt, value.getProperty(rt, "limited"), jsInvoker)};
++    return result;
++  }
++
++#ifdef DEBUG
++  static jsi::Array edgesToJs(jsi::Runtime &rt, decltype(types.edges) value) {
++    return bridging::toJs(rt, value);
++  }
++  static jsi::Object page_infoToJs(jsi::Runtime &rt, decltype(types.page_info) value) {
++    return bridging::toJs(rt, value);
++  }
++  static bool limitedToJs(jsi::Runtime &rt, decltype(types.limited) value) {
++    return bridging::toJs(rt, value);
++  }
++#endif
++
++  static jsi::Object toJs(
++      jsi::Runtime &rt,
++      const T &value,
++      const std::shared_ptr<CallInvoker> &jsInvoker) {
++    auto result = facebook::jsi::Object(rt);
++    result.setProperty(rt, "edges", bridging::toJs(rt, value.edges, jsInvoker));
++    result.setProperty(rt, "page_info", bridging::toJs(rt, value.page_info, jsInvoker));
++    if (value.limited) {
++      result.setProperty(rt, "limited", bridging::toJs(rt, value.limited.value(), jsInvoker));
++    }
++    return result;
++  }
++};
++
++
++template <typename T>
++class JSI_EXPORT NativeCameraRollModuleCxxSpec : public TurboModule {
++public:
++  static constexpr std::string_view kModuleName = "RNCCameraRoll";
++
++protected:
++  NativeCameraRollModuleCxxSpec(std::shared_ptr<CallInvoker> jsInvoker) : TurboModule(std::string{NativeCameraRollModuleCxxSpec::kModuleName}, jsInvoker) {
++    methodMap_["saveToCameraRoll"] = MethodMetadata {.argCount = 2, .invoker = __saveToCameraRoll};
++    methodMap_["getPhotos"] = MethodMetadata {.argCount = 1, .invoker = __getPhotos};
++    methodMap_["getAlbums"] = MethodMetadata {.argCount = 1, .invoker = __getAlbums};
++    methodMap_["deletePhotos"] = MethodMetadata {.argCount = 1, .invoker = __deletePhotos};
++    methodMap_["getPhotoByInternalID"] = MethodMetadata {.argCount = 2, .invoker = __getPhotoByInternalID};
++    methodMap_["getPhotoThumbnail"] = MethodMetadata {.argCount = 2, .invoker = __getPhotoThumbnail};
++    methodMap_["addListener"] = MethodMetadata {.argCount = 1, .invoker = __addListener};
++    methodMap_["removeListeners"] = MethodMetadata {.argCount = 1, .invoker = __removeListeners};
++  }
++  
++private:
++  static jsi::Value __saveToCameraRoll(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::saveToCameraRoll) == 3,
++      "Expected saveToCameraRoll(...) to have 3 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::saveToCameraRoll,  static_cast<NativeCameraRollModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt),
++      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt));
++  }
++
++  static jsi::Value __getPhotos(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::getPhotos) == 2,
++      "Expected getPhotos(...) to have 2 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::getPhotos,  static_cast<NativeCameraRollModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt));
++  }
++
++  static jsi::Value __getAlbums(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::getAlbums) == 2,
++      "Expected getAlbums(...) to have 2 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::getAlbums,  static_cast<NativeCameraRollModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt));
++  }
++
++  static jsi::Value __deletePhotos(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::deletePhotos) == 2,
++      "Expected deletePhotos(...) to have 2 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::deletePhotos,  static_cast<NativeCameraRollModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asObject(rt).asArray(rt));
++  }
++
++  static jsi::Value __getPhotoByInternalID(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::getPhotoByInternalID) == 3,
++      "Expected getPhotoByInternalID(...) to have 3 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::getPhotoByInternalID,  static_cast<NativeCameraRollModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt),
++      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt));
++  }
++
++  static jsi::Value __getPhotoThumbnail(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::getPhotoThumbnail) == 3,
++      "Expected getPhotoThumbnail(...) to have 3 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::getPhotoThumbnail,  static_cast<NativeCameraRollModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt),
++      count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt));
++  }
++
++  static jsi::Value __addListener(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::addListener) == 2,
++      "Expected addListener(...) to have 2 parameters");
++    bridging::callFromJs<void>(rt, &T::addListener,  static_cast<NativeCameraRollModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));return jsi::Value::undefined();
++  }
++
++  static jsi::Value __removeListeners(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::removeListeners) == 2,
++      "Expected removeListeners(...) to have 2 parameters");
++    bridging::callFromJs<void>(rt, &T::removeListeners,  static_cast<NativeCameraRollModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());return jsi::Value::undefined();
++  }
++};
++
++
++template <typename T>
++class JSI_EXPORT NativeCameraRollPermissionModuleCxxSpec : public TurboModule {
++public:
++  static constexpr std::string_view kModuleName = "RNCCameraRollPermission";
++
++protected:
++  NativeCameraRollPermissionModuleCxxSpec(std::shared_ptr<CallInvoker> jsInvoker) : TurboModule(std::string{NativeCameraRollPermissionModuleCxxSpec::kModuleName}, jsInvoker) {
++    methodMap_["checkPermission"] = MethodMetadata {.argCount = 1, .invoker = __checkPermission};
++    methodMap_["requestReadWritePermission"] = MethodMetadata {.argCount = 0, .invoker = __requestReadWritePermission};
++    methodMap_["requestAddOnlyPermission"] = MethodMetadata {.argCount = 0, .invoker = __requestAddOnlyPermission};
++    methodMap_["refreshPhotoSelection"] = MethodMetadata {.argCount = 0, .invoker = __refreshPhotoSelection};
++    methodMap_["addListener"] = MethodMetadata {.argCount = 1, .invoker = __addListener};
++    methodMap_["removeListeners"] = MethodMetadata {.argCount = 1, .invoker = __removeListeners};
++  }
++  
++private:
++  static jsi::Value __checkPermission(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::checkPermission) == 2,
++      "Expected checkPermission(...) to have 2 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::checkPermission,  static_cast<NativeCameraRollPermissionModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));
++  }
++
++  static jsi::Value __requestReadWritePermission(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
++    static_assert(
++      bridging::getParameterCount(&T::requestReadWritePermission) == 1,
++      "Expected requestReadWritePermission(...) to have 1 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::requestReadWritePermission,  static_cast<NativeCameraRollPermissionModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
++  }
++
++  static jsi::Value __requestAddOnlyPermission(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
++    static_assert(
++      bridging::getParameterCount(&T::requestAddOnlyPermission) == 1,
++      "Expected requestAddOnlyPermission(...) to have 1 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::requestAddOnlyPermission,  static_cast<NativeCameraRollPermissionModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
++  }
++
++  static jsi::Value __refreshPhotoSelection(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* /*args*/, size_t /*count*/) {
++    static_assert(
++      bridging::getParameterCount(&T::refreshPhotoSelection) == 1,
++      "Expected refreshPhotoSelection(...) to have 1 parameters");
++    return bridging::callFromJs<jsi::Value>(rt, &T::refreshPhotoSelection,  static_cast<NativeCameraRollPermissionModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule));
++  }
++
++  static jsi::Value __addListener(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::addListener) == 2,
++      "Expected addListener(...) to have 2 parameters");
++    bridging::callFromJs<void>(rt, &T::addListener,  static_cast<NativeCameraRollPermissionModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt));return jsi::Value::undefined();
++  }
++
++  static jsi::Value __removeListeners(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
++    static_assert(
++      bridging::getParameterCount(&T::removeListeners) == 2,
++      "Expected removeListeners(...) to have 2 parameters");
++    bridging::callFromJs<void>(rt, &T::removeListeners,  static_cast<NativeCameraRollPermissionModuleCxxSpec*>(&turboModule)->jsInvoker_, static_cast<T*>(&turboModule),
++      count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asNumber());return jsi::Value::undefined();
++  }
++};
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/rncameraroll-generated.cpp b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/rncameraroll-generated.cpp
+new file mode 100644
+index 0000000..55e8126
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/rncameraroll-generated.cpp
+@@ -0,0 +1,116 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJniCpp.js
++ */
++
++#include "rncameraroll.h"
++
++namespace facebook::react {
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollModuleSpecJSI_saveToCameraRoll(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "saveToCameraRoll", "(Ljava/lang/String;Lcom/facebook/react/bridge/ReadableMap;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollModuleSpecJSI_getPhotos(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "getPhotos", "(Lcom/facebook/react/bridge/ReadableMap;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollModuleSpecJSI_getAlbums(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "getAlbums", "(Lcom/facebook/react/bridge/ReadableMap;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollModuleSpecJSI_deletePhotos(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "deletePhotos", "(Lcom/facebook/react/bridge/ReadableArray;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollModuleSpecJSI_getPhotoByInternalID(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "getPhotoByInternalID", "(Ljava/lang/String;Lcom/facebook/react/bridge/ReadableMap;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollModuleSpecJSI_getPhotoThumbnail(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "getPhotoThumbnail", "(Ljava/lang/String;Lcom/facebook/react/bridge/ReadableMap;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollModuleSpecJSI_addListener(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, VoidKind, "addListener", "(Ljava/lang/String;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollModuleSpecJSI_removeListeners(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, VoidKind, "removeListeners", "(D)V", args, count, cachedMethodId);
++}
++
++NativeCameraRollModuleSpecJSI::NativeCameraRollModuleSpecJSI(const JavaTurboModule::InitParams &params)
++  : JavaTurboModule(params) {
++  methodMap_["saveToCameraRoll"] = MethodMetadata {2, __hostFunction_NativeCameraRollModuleSpecJSI_saveToCameraRoll};
++  methodMap_["getPhotos"] = MethodMetadata {1, __hostFunction_NativeCameraRollModuleSpecJSI_getPhotos};
++  methodMap_["getAlbums"] = MethodMetadata {1, __hostFunction_NativeCameraRollModuleSpecJSI_getAlbums};
++  methodMap_["deletePhotos"] = MethodMetadata {1, __hostFunction_NativeCameraRollModuleSpecJSI_deletePhotos};
++  methodMap_["getPhotoByInternalID"] = MethodMetadata {2, __hostFunction_NativeCameraRollModuleSpecJSI_getPhotoByInternalID};
++  methodMap_["getPhotoThumbnail"] = MethodMetadata {2, __hostFunction_NativeCameraRollModuleSpecJSI_getPhotoThumbnail};
++  methodMap_["addListener"] = MethodMetadata {1, __hostFunction_NativeCameraRollModuleSpecJSI_addListener};
++  methodMap_["removeListeners"] = MethodMetadata {1, __hostFunction_NativeCameraRollModuleSpecJSI_removeListeners};
++}
++static facebook::jsi::Value __hostFunction_NativeCameraRollPermissionModuleSpecJSI_checkPermission(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "checkPermission", "(Ljava/lang/String;Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollPermissionModuleSpecJSI_requestReadWritePermission(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "requestReadWritePermission", "(Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollPermissionModuleSpecJSI_requestAddOnlyPermission(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "requestAddOnlyPermission", "(Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollPermissionModuleSpecJSI_refreshPhotoSelection(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, PromiseKind, "refreshPhotoSelection", "(Lcom/facebook/react/bridge/Promise;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollPermissionModuleSpecJSI_addListener(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, VoidKind, "addListener", "(Ljava/lang/String;)V", args, count, cachedMethodId);
++}
++
++static facebook::jsi::Value __hostFunction_NativeCameraRollPermissionModuleSpecJSI_removeListeners(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
++  static jmethodID cachedMethodId = nullptr;
++  return static_cast<JavaTurboModule &>(turboModule).invokeJavaMethod(rt, VoidKind, "removeListeners", "(D)V", args, count, cachedMethodId);
++}
++
++NativeCameraRollPermissionModuleSpecJSI::NativeCameraRollPermissionModuleSpecJSI(const JavaTurboModule::InitParams &params)
++  : JavaTurboModule(params) {
++  methodMap_["checkPermission"] = MethodMetadata {1, __hostFunction_NativeCameraRollPermissionModuleSpecJSI_checkPermission};
++  methodMap_["requestReadWritePermission"] = MethodMetadata {0, __hostFunction_NativeCameraRollPermissionModuleSpecJSI_requestReadWritePermission};
++  methodMap_["requestAddOnlyPermission"] = MethodMetadata {0, __hostFunction_NativeCameraRollPermissionModuleSpecJSI_requestAddOnlyPermission};
++  methodMap_["refreshPhotoSelection"] = MethodMetadata {0, __hostFunction_NativeCameraRollPermissionModuleSpecJSI_refreshPhotoSelection};
++  methodMap_["addListener"] = MethodMetadata {1, __hostFunction_NativeCameraRollPermissionModuleSpecJSI_addListener};
++  methodMap_["removeListeners"] = MethodMetadata {1, __hostFunction_NativeCameraRollPermissionModuleSpecJSI_removeListeners};
++}
++
++std::shared_ptr<TurboModule> rncameraroll_ModuleProvider(const std::string &moduleName, const JavaTurboModule::InitParams &params) {
++  if (moduleName == "RNCCameraRoll") {
++    return std::make_shared<NativeCameraRollModuleSpecJSI>(params);
++  }
++  if (moduleName == "RNCCameraRollPermission") {
++    return std::make_shared<NativeCameraRollPermissionModuleSpecJSI>(params);
++  }
++  return nullptr;
++}
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/rncameraroll.h b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/rncameraroll.h
+new file mode 100644
+index 0000000..0272874
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/jni/rncameraroll.h
+@@ -0,0 +1,39 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJniH.js
++ */
++
++#pragma once
++
++#include <ReactCommon/JavaTurboModule.h>
++#include <ReactCommon/TurboModule.h>
++#include <jsi/jsi.h>
++
++namespace facebook::react {
++
++/**
++ * JNI C++ class for module 'NativeCameraRollModule'
++ */
++class JSI_EXPORT NativeCameraRollModuleSpecJSI : public JavaTurboModule {
++public:
++  NativeCameraRollModuleSpecJSI(const JavaTurboModule::InitParams &params);
++};
++
++/**
++ * JNI C++ class for module 'NativeCameraRollPermissionModule'
++ */
++class JSI_EXPORT NativeCameraRollPermissionModuleSpecJSI : public JavaTurboModule {
++public:
++  NativeCameraRollPermissionModuleSpecJSI(const JavaTurboModule::InitParams &params);
++};
++
++
++JSI_EXPORT
++std::shared_ptr<TurboModule> rncameraroll_ModuleProvider(const std::string &moduleName, const JavaTurboModule::InitParams &params);
++
++} // namespace facebook::react
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/schema.json b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/schema.json
+new file mode 100644
+index 0000000..23c2515
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/source/codegen/schema.json
+@@ -0,0 +1 @@
++{"libraryName":"","modules":{"NativeCameraRollModule":{"type":"NativeModule","aliasMap":{"Album":{"type":"ObjectTypeAnnotation","properties":[{"name":"id","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"title","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"count","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"type","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"subtype","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}}]},"PhotoIdentifier":{"type":"ObjectTypeAnnotation","properties":[{"name":"node","optional":false,"typeAnnotation":{"type":"ObjectTypeAnnotation","properties":[{"name":"id","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"type","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"subTypes","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"sourceType","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"group_name","optional":false,"typeAnnotation":{"type":"ArrayTypeAnnotation","elementType":{"type":"StringTypeAnnotation"}}},{"name":"image","optional":false,"typeAnnotation":{"type":"ObjectTypeAnnotation","properties":[{"name":"filename","optional":false,"typeAnnotation":{"type":"NullableTypeAnnotation","typeAnnotation":{"type":"StringTypeAnnotation"}}},{"name":"filepath","optional":false,"typeAnnotation":{"type":"NullableTypeAnnotation","typeAnnotation":{"type":"StringTypeAnnotation"}}},{"name":"extension","optional":false,"typeAnnotation":{"type":"NullableTypeAnnotation","typeAnnotation":{"type":"StringTypeAnnotation"}}},{"name":"uri","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"height","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"width","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"fileSize","optional":false,"typeAnnotation":{"type":"NullableTypeAnnotation","typeAnnotation":{"type":"NumberTypeAnnotation"}}},{"name":"playableDuration","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"orientation","optional":false,"typeAnnotation":{"type":"NullableTypeAnnotation","typeAnnotation":{"type":"NumberTypeAnnotation"}}}]}},{"name":"timestamp","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"modificationTimestamp","optional":false,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"location","optional":false,"typeAnnotation":{"type":"NullableTypeAnnotation","typeAnnotation":{"type":"ObjectTypeAnnotation","properties":[{"name":"latitude","optional":true,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"longitude","optional":true,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"altitude","optional":true,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"heading","optional":true,"typeAnnotation":{"type":"NumberTypeAnnotation"}},{"name":"speed","optional":true,"typeAnnotation":{"type":"NumberTypeAnnotation"}}]}}}]}}]},"PhotoIdentifiersPage":{"type":"ObjectTypeAnnotation","properties":[{"name":"edges","optional":false,"typeAnnotation":{"type":"ArrayTypeAnnotation","elementType":{"type":"TypeAliasTypeAnnotation","name":"PhotoIdentifier"}}},{"name":"page_info","optional":false,"typeAnnotation":{"type":"ObjectTypeAnnotation","properties":[{"name":"has_next_page","optional":false,"typeAnnotation":{"type":"BooleanTypeAnnotation"}},{"name":"start_cursor","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"end_cursor","optional":true,"typeAnnotation":{"type":"StringTypeAnnotation"}}]}},{"name":"limited","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation"}}]}},"enumMap":{},"spec":{"eventEmitters":[],"methods":[{"name":"saveToCameraRoll","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"TypeAliasTypeAnnotation","name":"PhotoIdentifier"}},"params":[{"name":"uri","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"options","optional":false,"typeAnnotation":{"type":"GenericObjectTypeAnnotation"}}]}},{"name":"getPhotos","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"TypeAliasTypeAnnotation","name":"PhotoIdentifiersPage"}},"params":[{"name":"params","optional":false,"typeAnnotation":{"type":"GenericObjectTypeAnnotation"}}]}},{"name":"getAlbums","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"ArrayTypeAnnotation","elementType":{"type":"TypeAliasTypeAnnotation","name":"Album"}}},"params":[{"name":"params","optional":false,"typeAnnotation":{"type":"GenericObjectTypeAnnotation"}}]}},{"name":"deletePhotos","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"VoidTypeAnnotation"}},"params":[{"name":"photoUris","optional":false,"typeAnnotation":{"type":"ArrayTypeAnnotation","elementType":{"type":"StringTypeAnnotation"}}}]}},{"name":"getPhotoByInternalID","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"TypeAliasTypeAnnotation","name":"PhotoIdentifier"}},"params":[{"name":"internalID","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"options","optional":false,"typeAnnotation":{"type":"GenericObjectTypeAnnotation"}}]}},{"name":"getPhotoThumbnail","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"VoidTypeAnnotation"}},"params":[{"name":"internalID","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}},{"name":"options","optional":false,"typeAnnotation":{"type":"GenericObjectTypeAnnotation"}}]}},{"name":"addListener","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"VoidTypeAnnotation"},"params":[{"name":"eventName","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}}]}},{"name":"removeListeners","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"VoidTypeAnnotation"},"params":[{"name":"count","optional":false,"typeAnnotation":{"type":"DoubleTypeAnnotation"}}]}}]},"moduleName":"RNCCameraRoll"},"NativeCameraRollPermissionModule":{"type":"NativeModule","aliasMap":{},"enumMap":{},"spec":{"eventEmitters":[],"methods":[{"name":"checkPermission","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"StringTypeAnnotation"}},"params":[{"name":"content","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}}]}},{"name":"requestReadWritePermission","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"StringTypeAnnotation"}},"params":[]}},{"name":"requestAddOnlyPermission","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"StringTypeAnnotation"}},"params":[]}},{"name":"refreshPhotoSelection","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"PromiseTypeAnnotation","elementType":{"type":"BooleanTypeAnnotation"}},"params":[]}},{"name":"addListener","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"VoidTypeAnnotation"},"params":[{"name":"eventName","optional":false,"typeAnnotation":{"type":"StringTypeAnnotation"}}]}},{"name":"removeListeners","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","returnTypeAnnotation":{"type":"VoidTypeAnnotation"},"params":[{"name":"count","optional":false,"typeAnnotation":{"type":"DoubleTypeAnnotation"}}]}}]},"moduleName":"RNCCameraRollPermission"}}}
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..5be9ccb
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnativecommunity.cameraroll" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..b97236b
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.reactnativecommunity.cameraroll",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar
+new file mode 100644
+index 0000000..55fc984
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar
+new file mode 100644
+index 0000000..3a8867a
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..8c3f0e6
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Thu Apr 09 17:12:10 CEST 2026
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..b077d16
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/build/generated/res/resValues/debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugAssets/merger.xml b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+new file mode 100644
+index 0000000..7ea50f1
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/assets"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/debug/assets"/></dataSet><dataSet config="generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/shader_assets/debug/compileDebugShaders/out"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+new file mode 100644
+index 0000000..87e17c4
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/debug/jniLibs"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+new file mode 100644
+index 0000000..1f2d869
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/debug/shaders"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/BuildConfig.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/BuildConfig.class
+new file mode 100644
+index 0000000..8f20855
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/BuildConfig.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$1.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$1.class
+new file mode 100644
+index 0000000..e207fe6
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$1.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$2.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$2.class
+new file mode 100644
+index 0000000..5cbc097
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$2.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.class
+new file mode 100644
+index 0000000..4a7aa90
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.class
+new file mode 100644
+index 0000000..28d8700
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.class
+new file mode 100644
+index 0000000..869bf9d
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule.class
+new file mode 100644
+index 0000000..e282f9d
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollModule.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollPackage$1.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollPackage$1.class
+new file mode 100644
+index 0000000..51f12e4
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollPackage$1.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollPackage.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollPackage.class
+new file mode 100644
+index 0000000..7382acb
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/CameraRollPackage.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.class
+new file mode 100644
+index 0000000..967e2c3
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.class
+new file mode 100644
+index 0000000..c528345
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/Utils.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/Utils.class
+new file mode 100644
+index 0000000..154de8b
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/Utils.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+@@ -0,0 +1,2 @@
++R_DEF: Internal format may change without notice
++local
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..80f2b93
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,7 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.reactnativecommunity.cameraroll" >
++4
++5    <uses-sdk android:minSdkVersion="24" />
++6
++7</manifest>
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..5be9ccb
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnativecommunity.cameraroll" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/BuildConfig.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/BuildConfig.class
+new file mode 100644
+index 0000000..8f20855
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/BuildConfig.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$1.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$1.class
+new file mode 100644
+index 0000000..e207fe6
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$1.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$2.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$2.class
+new file mode 100644
+index 0000000..5cbc097
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$2.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.class
+new file mode 100644
+index 0000000..4a7aa90
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$DeletePhotos.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.class
+new file mode 100644
+index 0000000..28d8700
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$GetMediaTask.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.class
+new file mode 100644
+index 0000000..869bf9d
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule$SaveToCameraRoll.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule.class
+new file mode 100644
+index 0000000..e282f9d
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollModule.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollPackage$1.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollPackage$1.class
+new file mode 100644
+index 0000000..51f12e4
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollPackage$1.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollPackage.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollPackage.class
+new file mode 100644
+index 0000000..7382acb
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/CameraRollPackage.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.class
+new file mode 100644
+index 0000000..967e2c3
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/NativeCameraRollModuleSpec.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.class
+new file mode 100644
+index 0000000..c528345
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/NativeCameraRollPermissionModuleSpec.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/Utils.class b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/Utils.class
+new file mode 100644
+index 0000000..154de8b
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativecommunity/cameraroll/Utils.class differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar
+new file mode 100644
+index 0000000..81dcf8e
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar differ
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..23c3f31
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+@@ -0,0 +1 @@
++com.reactnativecommunity.cameraroll
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/@react-native-camera-roll/camera-roll/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..6c08a99
+--- /dev/null
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,16 @@
++-- Merging decision tree log ---
++manifest
++ADDED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml:2:1-5:12
++INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml:2:1-5:12
++	package
++		INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
++	xmlns:android
++		ADDED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml:2:11-69
++uses-sdk
++INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
++INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from /Users/guillaume/edifice/repositories/edifice-mobile-framework.tech/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/@react-native-camera-roll/camera-roll/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
+new file mode 100644
+index 0000000..51bd752
+Binary files /dev/null and b/node_modules/@react-native-camera-roll/camera-roll/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/ios/RNCCameraRoll.mm b/node_modules/@react-native-camera-roll/camera-roll/ios/RNCCameraRoll.mm
-index d63f1a7..39c4be1 100644
+index d63f1a7..e0f4b42 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/ios/RNCCameraRoll.mm
 +++ b/node_modules/@react-native-camera-roll/camera-roll/ios/RNCCameraRoll.mm
 @@ -215,10 +215,16 @@ RCT_EXPORT_METHOD(saveToCameraRoll:(NSURLRequest *)request
@@ -33,3 +1355,70 @@ index d63f1a7..39c4be1 100644
          NSDictionary *dictionary = [self convertAssetToDictionary:[createdAsset firstObject]
                                                      includeAlbums:YES
                                                    includeFilename:YES
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/src/NativeCameraRollModule.ts b/node_modules/@react-native-camera-roll/camera-roll/src/NativeCameraRollModule.ts
+index 63e1136..430cc7b 100644
+--- a/node_modules/@react-native-camera-roll/camera-roll/src/NativeCameraRollModule.ts
++++ b/node_modules/@react-native-camera-roll/camera-roll/src/NativeCameraRollModule.ts
+@@ -5,17 +5,10 @@ import {TurboModuleRegistry, TurboModule} from 'react-native';
+ import type {PhotoThumbnail} from './CameraRoll';
+ import type {Double} from 'react-native/Libraries/Types/CodegenTypes';
+ 
+-export type AlbumType = 'All' | 'Album' | 'SmartAlbum';
+-
+-export type AlbumSubType =
+-  | 'AlbumRegular'
+-  | 'AlbumSyncedEvent'
+-  | 'AlbumSyncedFaces'
+-  | 'AlbumSyncedAlbum'
+-  | 'AlbumImported'
+-  | 'AlbumMyPhotoStream'
+-  | 'AlbumCloudShared'
+-  | 'Unknown';
++// RN 0.84 codegen fix: UnionTypeAnnotation not supported anywhere in TurboModule specs.
++// All union types widened to string — runtime behaviour is unchanged.
++export type AlbumType = string;
++export type AlbumSubType = string;
+ 
+ type Album = {
+   id: string;
+@@ -25,17 +18,8 @@ type Album = {
+   subtype?: AlbumSubType;
+ };
+ 
+-type SubTypes =
+-  | 'PhotoPanorama'
+-  | 'PhotoHDR'
+-  | 'PhotoScreenshot'
+-  | 'PhotoLive'
+-  | 'PhotoDepthEffect'
+-  | 'VideoStreamed'
+-  | 'VideoHighFrameRate'
+-  | 'VideoTimelapse';
+-
+-type SourceType = 'UserLibrary' | 'CloudShared';
++type SubTypes = string;
++type SourceType = string;
+ 
+ type PhotoIdentifier = {
+   node: {
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/src/NativeCameraRollPermissionModule.ts b/node_modules/@react-native-camera-roll/camera-roll/src/NativeCameraRollPermissionModule.ts
+index 362ee1f..ede1c49 100644
+--- a/node_modules/@react-native-camera-roll/camera-roll/src/NativeCameraRollPermissionModule.ts
++++ b/node_modules/@react-native-camera-roll/camera-roll/src/NativeCameraRollPermissionModule.ts
+@@ -1,13 +1,9 @@
+ import {TurboModuleRegistry, TurboModule} from 'react-native';
+ import type {Double} from 'react-native/Libraries/Types/CodegenTypes';
+ 
+-type CameraRollAuthorizationStatus =
+-  | 'granted'
+-  | 'limited'
+-  | 'denied'
+-  | 'unavailable'
+-  | 'blocked'
+-  | 'not-determined';
++// RN 0.84 codegen fix: UnionTypeAnnotation not supported as return type in TurboModule specs.
++// Widened to string — runtime behaviour is unchanged.
++type CameraRollAuthorizationStatus = string;
+ 
+ export interface Spec extends TurboModule {
+   checkPermission(content: string): Promise<CameraRollAuthorizationStatus>;

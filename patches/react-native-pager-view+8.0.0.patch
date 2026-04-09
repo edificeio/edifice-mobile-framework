@@ -1,0 +1,41 @@
+diff --git a/node_modules/react-native-pager-view/android/build/generated/source/codegen/schema.json b/node_modules/react-native-pager-view/android/build/generated/source/codegen/schema.json
+new file mode 100644
+index 0000000..965ccde
+--- /dev/null
++++ b/node_modules/react-native-pager-view/android/build/generated/source/codegen/schema.json
+@@ -0,0 +1 @@
++{"libraryName":"","modules":{"RNCViewPager":{"type":"Component","components":{"RNCViewPager":{"extendsProps":[{"type":"ReactNativeBuiltInType","knownTypeName":"ReactNativeCoreViewProps"}],"events":[{"name":"onPageScroll","optional":true,"bubblingType":"direct","typeAnnotation":{"type":"EventTypeAnnotation","argument":{"type":"ObjectTypeAnnotation","properties":[{"name":"position","optional":false,"typeAnnotation":{"type":"DoubleTypeAnnotation"}},{"name":"offset","optional":false,"typeAnnotation":{"type":"DoubleTypeAnnotation"}}]}}},{"name":"onPageSelected","optional":true,"bubblingType":"direct","typeAnnotation":{"type":"EventTypeAnnotation","argument":{"type":"ObjectTypeAnnotation","properties":[{"name":"position","optional":false,"typeAnnotation":{"type":"DoubleTypeAnnotation"}}]}}},{"name":"onPageScrollStateChanged","optional":true,"bubblingType":"direct","typeAnnotation":{"type":"EventTypeAnnotation","argument":{"type":"ObjectTypeAnnotation","properties":[{"name":"pageScrollState","optional":false,"typeAnnotation":{"type":"UnionTypeAnnotation","types":[{"type":"StringLiteralTypeAnnotation","value":"idle"},{"type":"StringLiteralTypeAnnotation","value":"dragging"},{"type":"StringLiteralTypeAnnotation","value":"settling"}]}}]}}}],"props":[{"name":"scrollEnabled","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation","default":true}},{"name":"layoutDirection","optional":true,"typeAnnotation":{"type":"StringEnumTypeAnnotation","default":"ltr","options":["ltr","rtl"]}},{"name":"initialPage","optional":true,"typeAnnotation":{"type":"Int32TypeAnnotation","default":0}},{"name":"orientation","optional":true,"typeAnnotation":{"type":"StringEnumTypeAnnotation","default":"horizontal","options":["horizontal","vertical"]}},{"name":"offscreenPageLimit","optional":true,"typeAnnotation":{"type":"Int32TypeAnnotation","default":0}},{"name":"pageMargin","optional":true,"typeAnnotation":{"type":"Int32TypeAnnotation","default":0}},{"name":"overScrollMode","optional":true,"typeAnnotation":{"type":"StringEnumTypeAnnotation","default":"auto","options":["auto","always","never"]}},{"name":"overdrag","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation","default":false}},{"name":"keyboardDismissMode","optional":true,"typeAnnotation":{"type":"StringEnumTypeAnnotation","default":"none","options":["none","on-drag"]}}],"commands":[{"name":"setPage","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","params":[{"name":"selectedPage","optional":false,"typeAnnotation":{"type":"Int32TypeAnnotation"}}],"returnTypeAnnotation":{"type":"VoidTypeAnnotation"}}},{"name":"setPageWithoutAnimation","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","params":[{"name":"selectedPage","optional":false,"typeAnnotation":{"type":"Int32TypeAnnotation"}}],"returnTypeAnnotation":{"type":"VoidTypeAnnotation"}}},{"name":"setScrollEnabledImperatively","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","params":[{"name":"scrollEnabled","optional":false,"typeAnnotation":{"type":"BooleanTypeAnnotation"}}],"returnTypeAnnotation":{"type":"VoidTypeAnnotation"}}}]}}}}}
+\ No newline at end of file
+diff --git a/node_modules/react-native-pager-view/src/PagerViewNativeComponent.ts b/node_modules/react-native-pager-view/src/PagerViewNativeComponent.ts
+index 19d935e..2c1d357 100644
+--- a/node_modules/react-native-pager-view/src/PagerViewNativeComponent.ts
++++ b/node_modules/react-native-pager-view/src/PagerViewNativeComponent.ts
+@@ -19,20 +19,23 @@ export type OnPageSelectedEventData = Readonly<{
+   position: Double;
+ }>;
+ 
++// RN 0.84 codegen fix: UnionTypeAnnotation not supported in event data.
++// Widened to string — runtime behaviour is unchanged.
+ export type OnPageScrollStateChangedEventData = Readonly<{
+-  pageScrollState: 'idle' | 'dragging' | 'settling';
++  pageScrollState: string;
+ }>;
+ 
+ export interface NativeProps extends ViewProps {
+   scrollEnabled?: WithDefault<boolean, true>;
+-  layoutDirection?: WithDefault<'ltr' | 'rtl', 'ltr'>;
++  // RN 0.84 codegen fix: union types in props not supported — widened to string.
++  layoutDirection?: WithDefault<string, 'ltr'>;
+   initialPage?: Int32;
+-  orientation?: WithDefault<'horizontal' | 'vertical', 'horizontal'>;
++  orientation?: WithDefault<string, 'horizontal'>;
+   offscreenPageLimit?: Int32;
+   pageMargin?: Int32;
+-  overScrollMode?: WithDefault<'auto' | 'always' | 'never', 'auto'>;
++  overScrollMode?: WithDefault<string, 'auto'>;
+   overdrag?: WithDefault<boolean, false>;
+-  keyboardDismissMode?: WithDefault<'none' | 'on-drag', 'none'>;
++  keyboardDismissMode?: WithDefault<string, 'none'>;
+   onPageScroll?: DirectEventHandler<OnPageScrollEventData>;
+   onPageSelected?: DirectEventHandler<OnPageSelectedEventData>;
+   onPageScrollStateChanged?: DirectEventHandler<OnPageScrollStateChangedEventData>;
