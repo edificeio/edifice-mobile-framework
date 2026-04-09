@@ -1,9 +1,8 @@
 import type { IWorkspaceState } from './reducer';
 
-import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'workspace', IWorkspaceState>({
-  displayAs: ModuleType.MYAPPS_MODULE,
   entcoreScope: ['workspace'],
   entcoreTrackingName: 'Workspace',
   fileManager: {

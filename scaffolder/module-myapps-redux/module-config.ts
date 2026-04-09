@@ -1,4 +1,3 @@
-import theme from '~/app/theme';
 import { {{moduleName | toCamelCase | capitalize}}State } from '~/framework/modules/{{moduleName}}/reducer';
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
@@ -9,6 +8,5 @@ export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', {{modul
   ],
   matchEntcoreApp: entcoreApp => true, // @scaffolder Replace this with a function that returns boolean regarding of the given entcoreApp
   storageName: '{{moduleName | toCamelCase}}',
-  displayAs: ModuleType.MYAPPS_MODULE,
   displayOrder: 0,
 });

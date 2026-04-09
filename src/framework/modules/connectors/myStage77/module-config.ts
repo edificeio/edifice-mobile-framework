@@ -1,9 +1,8 @@
-import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 const MYSTAGE77 = 'mystage77';
 
 export default new NavigableModuleConfig<string, null>({
-  displayAs: ModuleType.MYAPPS_CONNECTOR,
   entcoreScope: ['cas', 'sso'],
   hasRight: ({ matchingApps }) => matchingApps.some(entcoreApp => entcoreApp.address.toLowerCase().includes(MYSTAGE77)),
   matchEntcoreApp: 'MyStage77',
