@@ -1,11 +1,253 @@
-diff --git a/node_modules/react-native-pager-view/android/build/generated/source/codegen/schema.json b/node_modules/react-native-pager-view/android/build/generated/source/codegen/schema.json
-new file mode 100644
-index 0000000..965ccde
---- /dev/null
-+++ b/node_modules/react-native-pager-view/android/build/generated/source/codegen/schema.json
-@@ -0,0 +1 @@
-+{"libraryName":"","modules":{"RNCViewPager":{"type":"Component","components":{"RNCViewPager":{"extendsProps":[{"type":"ReactNativeBuiltInType","knownTypeName":"ReactNativeCoreViewProps"}],"events":[{"name":"onPageScroll","optional":true,"bubblingType":"direct","typeAnnotation":{"type":"EventTypeAnnotation","argument":{"type":"ObjectTypeAnnotation","properties":[{"name":"position","optional":false,"typeAnnotation":{"type":"DoubleTypeAnnotation"}},{"name":"offset","optional":false,"typeAnnotation":{"type":"DoubleTypeAnnotation"}}]}}},{"name":"onPageSelected","optional":true,"bubblingType":"direct","typeAnnotation":{"type":"EventTypeAnnotation","argument":{"type":"ObjectTypeAnnotation","properties":[{"name":"position","optional":false,"typeAnnotation":{"type":"DoubleTypeAnnotation"}}]}}},{"name":"onPageScrollStateChanged","optional":true,"bubblingType":"direct","typeAnnotation":{"type":"EventTypeAnnotation","argument":{"type":"ObjectTypeAnnotation","properties":[{"name":"pageScrollState","optional":false,"typeAnnotation":{"type":"UnionTypeAnnotation","types":[{"type":"StringLiteralTypeAnnotation","value":"idle"},{"type":"StringLiteralTypeAnnotation","value":"dragging"},{"type":"StringLiteralTypeAnnotation","value":"settling"}]}}]}}}],"props":[{"name":"scrollEnabled","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation","default":true}},{"name":"layoutDirection","optional":true,"typeAnnotation":{"type":"StringEnumTypeAnnotation","default":"ltr","options":["ltr","rtl"]}},{"name":"initialPage","optional":true,"typeAnnotation":{"type":"Int32TypeAnnotation","default":0}},{"name":"orientation","optional":true,"typeAnnotation":{"type":"StringEnumTypeAnnotation","default":"horizontal","options":["horizontal","vertical"]}},{"name":"offscreenPageLimit","optional":true,"typeAnnotation":{"type":"Int32TypeAnnotation","default":0}},{"name":"pageMargin","optional":true,"typeAnnotation":{"type":"Int32TypeAnnotation","default":0}},{"name":"overScrollMode","optional":true,"typeAnnotation":{"type":"StringEnumTypeAnnotation","default":"auto","options":["auto","always","never"]}},{"name":"overdrag","optional":true,"typeAnnotation":{"type":"BooleanTypeAnnotation","default":false}},{"name":"keyboardDismissMode","optional":true,"typeAnnotation":{"type":"StringEnumTypeAnnotation","default":"none","options":["none","on-drag"]}}],"commands":[{"name":"setPage","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","params":[{"name":"selectedPage","optional":false,"typeAnnotation":{"type":"Int32TypeAnnotation"}}],"returnTypeAnnotation":{"type":"VoidTypeAnnotation"}}},{"name":"setPageWithoutAnimation","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","params":[{"name":"selectedPage","optional":false,"typeAnnotation":{"type":"Int32TypeAnnotation"}}],"returnTypeAnnotation":{"type":"VoidTypeAnnotation"}}},{"name":"setScrollEnabledImperatively","optional":false,"typeAnnotation":{"type":"FunctionTypeAnnotation","params":[{"name":"scrollEnabled","optional":false,"typeAnnotation":{"type":"BooleanTypeAnnotation"}}],"returnTypeAnnotation":{"type":"VoidTypeAnnotation"}}}]}}}}}
-\ No newline at end of file
+diff --git a/node_modules/react-native-pager-view/ios/RNCPagerViewComponentView.mm b/node_modules/react-native-pager-view/ios/RNCPagerViewComponentView.mm
+index eeeecde..96bb304 100644
+--- a/node_modules/react-native-pager-view/ios/RNCPagerViewComponentView.mm
++++ b/node_modules/react-native-pager-view/ios/RNCPagerViewComponentView.mm
+@@ -1,5 +1,5 @@
+-#import <Foundation/Foundation.h>
+ #import "RNCPagerViewComponentView.h"
++#import <Foundation/Foundation.h>
+ #import <react/renderer/components/pagerview/ComponentDescriptors.h>
+ #import <react/renderer/components/pagerview/EventEmitters.h>
+ #import <react/renderer/components/pagerview/Props.h>
+@@ -18,7 +18,8 @@
+ 
+ using namespace facebook::react;
+ 
+-@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, PagerViewProviderDelegate>
++@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol,
++                                         PagerViewProviderDelegate>
+ @end
+ 
+ @implementation RNCPagerViewComponentView {
+@@ -26,16 +27,14 @@ using namespace facebook::react;
+ }
+ 
+ // Needed because of this: https://github.com/facebook/react-native/pull/37274
+-+ (void)load
+-{
+++ (void)load {
+   [super load];
+ }
+ 
+-
+-- (instancetype)initWithFrame:(CGRect)frame
+-{
++- (instancetype)initWithFrame:(CGRect)frame {
+   if (self = [super initWithFrame:frame]) {
+-    static const auto defaultProps = std::make_shared<const RNCViewPagerProps>();
++    static const auto defaultProps =
++        std::make_shared<const RNCViewPagerProps>();
+     _props = defaultProps;
+     _pagerViewProvider = [[PagerViewProvider alloc] initWithDelegate:self];
+     self.contentView = _pagerViewProvider;
+@@ -44,56 +43,67 @@ using namespace facebook::react;
+   return self;
+ }
+ 
+-
+ #pragma mark - React API
+ 
+-- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
++- (void)mountChildComponentView:
++            (UIView<RCTComponentViewProtocol> *)childComponentView
++                          index:(NSInteger)index {
+   [_pagerViewProvider insertChild:childComponentView atIndex:index];
+ }
+ 
+-- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
++- (void)unmountChildComponentView:
++            (UIView<RCTComponentViewProtocol> *)childComponentView
++                            index:(NSInteger)index {
+   [_pagerViewProvider removeChildAtIndex:index];
+   [childComponentView removeFromSuperview];
+ }
+ 
+-+ (BOOL)shouldBeRecycled
+-{
+++ (BOOL)shouldBeRecycled {
+   return NO;
+ }
+ 
+-- (void)updateProps:(const facebook::react::Props::Shared &)props oldProps:(const facebook::react::Props::Shared &)oldProps{
+-  const auto &oldScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
+-  const auto &newScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(props);
++- (void)updateProps:(const facebook::react::Props::Shared &)props
++           oldProps:(const facebook::react::Props::Shared &)oldProps {
++  const auto &oldScreenProps =
++      *std::static_pointer_cast<const RNCViewPagerProps>(_props);
++  const auto &newScreenProps =
++      *std::static_pointer_cast<const RNCViewPagerProps>(props);
+ 
+   if (_pagerViewProvider.currentPage == -1) {
+-     _pagerViewProvider.currentPage = newScreenProps.initialPage;
+-   }
++    _pagerViewProvider.currentPage = newScreenProps.initialPage;
++  }
+ 
+   if (oldScreenProps.scrollEnabled != newScreenProps.scrollEnabled) {
+-     _pagerViewProvider.scrollEnabled = newScreenProps.scrollEnabled;
+-   }
++    _pagerViewProvider.scrollEnabled = newScreenProps.scrollEnabled;
++  }
+ 
+   if (oldScreenProps.overdrag != newScreenProps.overdrag) {
+-     _pagerViewProvider.overdrag = newScreenProps.overdrag;
+-   }
+-
+-  if (oldScreenProps.keyboardDismissMode != newScreenProps.keyboardDismissMode) {
+-    switch (newScreenProps.keyboardDismissMode) {
+-      case RNCViewPagerKeyboardDismissMode::None:
+-        _pagerViewProvider.keyboardDismissMode = UIScrollViewKeyboardDismissModeNone;
+-        break;
++    _pagerViewProvider.overdrag = newScreenProps.overdrag;
++  }
+ 
+-      case RNCViewPagerKeyboardDismissMode::OnDrag:
+-        _pagerViewProvider.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
++  if (oldScreenProps.keyboardDismissMode !=
++      newScreenProps.keyboardDismissMode) {
++    const std::string &kdm = newScreenProps.keyboardDismissMode;
++    if (kdm == "on-drag") {
++      _pagerViewProvider.keyboardDismissMode =
++          UIScrollViewKeyboardDismissModeOnDrag;
++    } else {
++      _pagerViewProvider.keyboardDismissMode =
++          UIScrollViewKeyboardDismissModeNone;
+     }
+-   }
++  }
+ 
+   if (oldScreenProps.orientation != newScreenProps.orientation) {
+-    _pagerViewProvider.orientation = newScreenProps.orientation == RNCViewPagerOrientation::Vertical ? UICollectionViewScrollDirectionVertical : UICollectionViewScrollDirectionHorizontal;
++    _pagerViewProvider.orientation =
++        newScreenProps.orientation == "vertical"
++            ? UICollectionViewScrollDirectionVertical
++            : UICollectionViewScrollDirectionHorizontal;
+   }
+ 
+   if (oldScreenProps.layoutDirection != newScreenProps.layoutDirection) {
+-    _pagerViewProvider.layoutDirection = newScreenProps.layoutDirection == RNCViewPagerLayoutDirection::Rtl ? PagerLayoutDirectionRtl : PagerLayoutDirectionLtr;
++    _pagerViewProvider.layoutDirection = newScreenProps.layoutDirection == "rtl"
++                                             ? PagerLayoutDirectionRtl
++                                             : PagerLayoutDirectionLtr;
+   }
+ 
+   [super updateProps:props oldProps:oldProps];
+@@ -108,31 +118,32 @@ using namespace facebook::react;
+ 
+ - (void)onPageSelectedWithPosition:(NSInteger)position {
+   const auto eventEmitter = [self pagerEventEmitter];
+-  eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
++  eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{
++      .position = static_cast<double>(position)});
+ }
+ 
+ - (void)onPageScrollStateChangedWithState:(enum PageScrollState)state {
+   const auto eventEmitter = [self pagerEventEmitter];
+ 
+-  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState scrollState;
++  std::string scrollState;
+ 
+   switch (state) {
+-    case PageScrollStateIdle:
+-      scrollState = RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle;
+-      break;
++  case PageScrollStateIdle:
++    scrollState = "idle";
++    break;
+ 
+-    case PageScrollStateDragging:
+-      scrollState = RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Dragging;
+-      break;
++  case PageScrollStateDragging:
++    scrollState = "dragging";
++    break;
+ 
+-    case PageScrollStateSettling:
+-      scrollState = RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Settling;
+-      break;
++  case PageScrollStateSettling:
++    scrollState = "settling";
++    break;
+   }
+ 
+-  eventEmitter->onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{
+-    .pageScrollState = scrollState
+-  });
++  eventEmitter->onPageScrollStateChanged(
++      RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =
++                                                             scrollState});
+ }
+ 
+ #pragma mark - Internal methods
+@@ -159,45 +170,45 @@ using namespace facebook::react;
+   _pagerViewProvider.scrollEnabled = scrollEnabled;
+ }
+ 
+-- (std::shared_ptr<const RNCViewPagerEventEmitter>)pagerEventEmitter
+-{
++- (std::shared_ptr<const RNCViewPagerEventEmitter>)pagerEventEmitter {
+   if (!_eventEmitter) {
+     return nullptr;
+   }
+ 
+-  assert(std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter));
+-  return std::static_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
++  assert(
++      std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter));
++  return std::static_pointer_cast<const RNCViewPagerEventEmitter>(
++      _eventEmitter);
+ }
+ 
+ - (void)sendScrollEventsForPosition:(NSInteger)position offset:(CGFloat)offset {
+   const auto eventEmitter = [self pagerEventEmitter];
+   eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
+-    .position = static_cast<double>(position),
+-    .offset = offset
+-  });
+-
+-  // This is temporary workaround to allow animations based on onPageScroll event
+-  // until Fabric implements proper NativeAnimationDriver,
+-  // see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
+-  RCTOnPageScrollEvent *event = [[RCTOnPageScrollEvent alloc] initWithReactTag:@(self.tag)
+-                                                                      position:@(position)
+-                                                                        offset:@(offset)];
+-  NSDictionary *userInfo = @{@"event": event};
+-  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+-                                                      object:nil
+-                                                    userInfo:userInfo];
++      .position = static_cast<double>(position), .offset = offset});
++
++  // This is temporary workaround to allow animations based on onPageScroll
++  // event until Fabric implements proper NativeAnimationDriver, see:
++  // https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
++  RCTOnPageScrollEvent *event =
++      [[RCTOnPageScrollEvent alloc] initWithReactTag:@(self.tag)
++                                            position:@(position)
++                                              offset:@(offset)];
++  NSDictionary *userInfo = @{@"event" : event};
++  [[NSNotificationCenter defaultCenter]
++      postNotificationName:
++          @"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
++                    object:nil
++                  userInfo:userInfo];
+ }
+ 
+ #pragma mark - RCTComponentViewProtocol
+ 
+-+ (ComponentDescriptorProvider)componentDescriptorProvider
+-{
+++ (ComponentDescriptorProvider)componentDescriptorProvider {
+   return concreteComponentDescriptorProvider<RNCViewPagerComponentDescriptor>();
+ }
+ 
+ @end
+ 
+-Class<RCTComponentViewProtocol> RNCViewPagerCls(void)
+-{
++Class<RCTComponentViewProtocol> RNCViewPagerCls(void) {
+   return RNCPagerViewComponentView.class;
+ }
 diff --git a/node_modules/react-native-pager-view/src/PagerViewNativeComponent.ts b/node_modules/react-native-pager-view/src/PagerViewNativeComponent.ts
 index 19d935e..2c1d357 100644
 --- a/node_modules/react-native-pager-view/src/PagerViewNativeComponent.ts
