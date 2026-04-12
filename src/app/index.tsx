@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AppState, AppStateStatus, Platform, StatusBar } from 'react-native';
 
+import FastImage from '@d11/react-native-fast-image';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import DeviceInfo from 'react-native-device-info';
@@ -53,6 +54,21 @@ function useAppState() {
       appStateListener.remove();
     };
   }, [handleAppStateChange]);
+
+  const handleMemoryWarning = React.useCallback(() => {
+    FastImage.clearMemoryCache();
+    // TODO: Clear heavy reducers?
+    // TODO: Clear MMKV Heavy keys?
+    // TODO: Clear APIs responses?
+    Trackers.trackDebugEvent('Application', 'MEMORY WARNING TRIGGERED');
+  }, []);
+
+  React.useEffect(() => {
+    const memoryListener = AppState.addEventListener('memoryWarning', () => {
+      handleMemoryWarning();
+    });
+    return () => memoryListener.remove();
+  }, []);
 
   return currentState;
 }
