@@ -42,14 +42,15 @@ export interface ITheme {
     primary: IShades;
     secondary: IShades;
     complementary: {
-      red: IShades;
-      orange: IShades;
-      yellow: IShades;
-      green: IShades;
-      blue: IShades;
-      indigo: IShades;
-      purple: IShades;
-      pink: IShades;
+      'red': IShades;
+      'orange': IShades;
+      'yellow': IShades;
+      'green': IShades;
+      'blue': IShades;
+      'indigo': IShades;
+      'purple': IShades;
+      'pink': IShades;
+      'nabook-color': Pick<IShades, 'regular'>;
     };
     grey: {
       darkness: ColorValue;
@@ -289,56 +290,59 @@ export const defaultTheme: ThemeInitializer = {
   // Magenta color indicated non-defined values
   palette: {
     complementary: {
-      blue: {
+      'blue': {
         dark: '#1B84AC',
         evil: 'magenta',
         light: '#AADAED',
         pale: '#E4F4FF',
         regular: '#2A9CC8',
       },
-      green: {
+      'green': {
         dark: '#33A797',
         evil: 'magenta',
         light: '#A2E0D8',
         pale: '#E7F5F4',
         regular: '#46BFAF',
       },
-      indigo: {
+      'indigo': {
         dark: '#121982',
         evil: 'magenta',
         light: '#9297E5',
         pale: '#DDE8FD',
         regular: '#1A22A2',
       },
-      orange: {
+      'nabook-color': {
+        regular: '#120d37',
+      },
+      'orange': {
         dark: '#F17A17',
         evil: 'magenta',
         light: '#FFC696',
         pale: '#FFEFE3',
         regular: '#FF8D2E',
       },
-      pink: {
+      'pink': {
         dark: '#9C2288',
         evil: 'magenta',
         light: '#E39CD7',
         pale: '#FFE5FB',
         regular: '#B930A2',
       },
-      purple: {
+      'purple': {
         dark: '#5D1D79',
         evil: 'magenta',
         light: '#B68ACA',
         pale: '#F4EAF9',
         regular: '#763294',
       },
-      red: {
+      'red': {
         dark: '#C82222',
         evil: 'magenta',
         light: '#F48A8A',
         pale: '#FFD9D9',
         regular: '#E13A3A',
       },
-      yellow: {
+      'yellow': {
         dark: '#DAA910',
         evil: 'magenta',
         light: '#F6DE94',
