@@ -31,7 +31,7 @@ import { FileMedia, isPlayableMedia } from '~/framework/util/media';
  * This means, for a given item in the carousel, in some cases the lib can create up to 2 components with the same index and item source, but different internal states (zoom and loading state for instance).
  * That is why we use contexts to share and reset these internal states, and also why we need to disable looping when there are only 2 items in the carrousel.
  *
- * For a carousel with a large array of media (<=20), we need to use the prop windowSize that reduces the calculation of the swipe animation
+ * For a carousel with a large array of media (>=20), we need to use the prop windowSize that reduces the calculation of the swipe animation
  * However, windowSize used alone causes bugs on orientation changes (portrait / landscape) on the Player and Pdf components (that come from 3rd party libraries)
  * WindowSize doesn't take orientation changes into account, so Player and Pdf items end up being rendered outside of the viewport.
  * That is why we set a key={orientation} on the Carousel component, and handle the playing state of the Player in its PlayerContext.
@@ -221,7 +221,7 @@ const CarouselScreen = ({
           );
         }}
         ref={carouselRef}
-        windowSize={CAROUSEL_WINDOW_SIZE}
+        windowSize={Math.min(CAROUSEL_WINDOW_SIZE, media.length - 1)}
       />
       <CarouselPagination
         media={media}
