@@ -34,7 +34,19 @@ export const getSignedMediaSource = (item: FileMedia | FileMedia['src']): Signed
   return sessionURISource(uriSource);
 };
 
-export const getSignedPosterSource = (src: FileMedia['src']): ImageURISource => {
+export const getSignedPosterSource = (src: FileMedia['src'], thumbnailSize?: string): ImageURISource => {
+  if (thumbnailSize) {
+    const urlStr = src instanceof URL ? src.toString() : typeof src === 'string' ? src : undefined;
+    if (urlStr) {
+      // Replace existing thumbnail param in videos to fetch a smaller one or check the existence of params to choose between & and ?
+      const thumbnailSrc = urlStr.includes('thumbnail=')
+        ? urlStr.replace(/thumbnail=[^&]*/, `thumbnail=${thumbnailSize}`)
+        : urlStr.includes('?')
+          ? `${urlStr}&thumbnail=${thumbnailSize}`
+          : `${urlStr}?thumbnail=${thumbnailSize}`;
+      return getSignedMediaSource(thumbnailSrc) as ImageURISource;
+    }
+  }
   return getSignedMediaSource(src) as ImageURISource;
 };
 
