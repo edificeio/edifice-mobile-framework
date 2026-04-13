@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-25 09:28:37",
-  "notes": "release: 1.16.8-rc.1(1160801)",
-  "version": "1.16.8-rc.2(1160802)",
+  "last": "2026-04-13 13:28:42",
+  "notes": "fix(ios): xcode 26.4 compatibility\nupdate(stack): yarn cache update\nrelease: 1.16.8-rc.2(1160802)",
+  "version": "1.16.8-alpha.1(1160803)",
   "track": "1.16.8"
 }
