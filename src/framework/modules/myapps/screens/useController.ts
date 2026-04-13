@@ -19,6 +19,7 @@ import {
   getAllappsShowedState,
   isNavigableModule,
   refreshMyApps,
+  selectAggregatedApps,
   toggleAllApps,
   toggleFavorite,
 } from '~/framework/modules/myapps/reducer';
@@ -52,6 +53,7 @@ export function useMyAppsHomeController() {
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
 
   const areAppsShowed = useSelector(getAllappsShowedState);
+  const aggregatedApps = useSelector(selectAggregatedApps);
   const apps = useFilteredApps(filter);
   const isAllAppsTab = filter.type === 'category' && filter.value === 'toutes';
 
@@ -180,6 +182,7 @@ export function useMyAppsHomeController() {
   }, [navigation]);
 
   return {
+    aggregatedApps,
     apps,
     appsListRef,
     areAppsShowed,
