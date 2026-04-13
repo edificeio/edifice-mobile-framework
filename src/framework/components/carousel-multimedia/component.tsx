@@ -10,7 +10,7 @@ import UnviewableItem from './unviewable-item/component';
 
 import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
 
-export const CarouselItem = ({
+const CarouselItem = ({
   containerHeight,
   containerWidth,
   currentIndex,
@@ -54,10 +54,10 @@ export const CarouselItem = ({
   if (isAudioContent(media) || isVideoContent(media)) {
     return (
       <PlayerItem
-        index={currentIndex}
-        item={media}
-        isCurrentItem={isCurrentItem}
         hideNavBar={hideNavBar}
+        isCurrentItem={isCurrentItem}
+        item={media}
+        itemIndex={info.index}
         onInitialMediaLoad={onInitialAVMediaLoad}
         showNavBar={showNavBar}
         source={itemSource}
@@ -86,3 +86,5 @@ export const CarouselItem = ({
 
   return <UnviewableItem file={media} />;
 };
+
+export default React.memo(CarouselItem);

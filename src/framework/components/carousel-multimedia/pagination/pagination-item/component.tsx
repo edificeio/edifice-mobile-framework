@@ -19,6 +19,7 @@ interface PaginationItemProps {
 
 const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: PaginationItemProps) => {
   const iconAnimatedStyle = useAnimatedStyle(() => {
+    'worklet';
     const distance = Math.abs(paginationProgress.value - index);
 
     const scale = interpolate(
@@ -104,4 +105,4 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
   );
 };
 
-export default PaginationItem;
+export default React.memo(PaginationItem);

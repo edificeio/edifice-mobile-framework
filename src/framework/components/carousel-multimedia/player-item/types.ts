@@ -4,7 +4,7 @@ import { FileMedia } from '~/framework/util/media';
 
 export interface PlayerItemProps {
   hideNavBar: () => void;
-  index: number;
+  itemIndex: number;
   isCurrentItem: boolean;
   item: FileMedia;
   onInitialMediaLoad?: () => void;

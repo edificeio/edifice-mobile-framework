@@ -96,4 +96,4 @@ const PdfItem = ({
   );
 };
 
-export default PdfItem;
+export default React.memo(PdfItem);
