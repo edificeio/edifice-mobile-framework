@@ -1,9 +1,8 @@
 import type { WikiStore } from './store';
 
-import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'wiki', WikiStore>({
-  displayAs: ModuleType.MYAPPS_MODULE,
   displayOrder: 0,
   entcoreScope: ['wiki', 'explorer'],
   entcoreTrackingName: 'Wiki',

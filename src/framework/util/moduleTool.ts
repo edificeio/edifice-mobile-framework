@@ -78,12 +78,7 @@ interface IModuleConfigBase<Name extends string> {
 interface IModuleConfigRights {
   matchEntcoreApp: (entcoreApp: IEntcoreApp) => boolean;
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
-  hasRight: (params: {
-    matchingApps: IEntcoreApp[];
-    matchingWidgets: IEntcoreWidget[];
-    session: AuthActiveAccount;
-    isAggregatedAppsEmpty?: boolean;
-  }) => boolean;
+  hasRight: (params: { matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[]; session: AuthActiveAccount }) => boolean;
   getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
   getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
@@ -364,9 +359,6 @@ export interface IAppThemeInfo {
 
 export enum ModuleType {
   HIDDEN_MODULE = 'hiddenModule',
-  MYAPPS_CONNECTOR = 'myAppsConnector',
-  MYAPPS_MODULE = 'myAppsModule',
-  MYAPPS_SECONDARY_MODULE = 'myAppsSecondaryModule',
   MYAPPS_WIDGET = 'myAppsWidget',
   TAB_MODULE = 'tabModule',
 }
@@ -680,11 +672,10 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     Object.setPrototypeOf(this, ModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
 
-  filterAvailables(session: AuthActiveAccount, isAggregatedAppsEmpty?: boolean) {
+  filterAvailables(session: AuthActiveAccount) {
     return new ModuleArray<ModuleType>(
       ...this.filter(m => {
         return m.config.hasRight({
-          isAggregatedAppsEmpty,
           matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
           matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
           session,
@@ -743,11 +734,10 @@ export class NavigableModuleArray<
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
 
-  filterAvailables(session: AuthActiveAccount, isAggregatedAppsEmpty?: boolean) {
+  filterAvailables(session: AuthActiveAccount) {
     return new NavigableModuleArray<ModuleType>(
       ...this.filter(m =>
         m.config.hasRight({
-          isAggregatedAppsEmpty,
           matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
           matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
           session: session,

@@ -8,7 +8,7 @@ export default new NavigableModuleConfig<'myapps', AppsInfoState>({
   displayPictureBlur: { name: 'icon-apps-off', type: 'Icon' },
   displayPictureFocus: { name: 'icon-apps-on', type: 'Icon' },
   entcoreScope: [],
-  hasRight: ({ isAggregatedAppsEmpty }) => !isAggregatedAppsEmpty,
+  hasRight: () => true,
   matchEntcoreApp: 'myapps',
   matchEntcoreWidget: () => false,
   name: 'myapps',

@@ -47,14 +47,11 @@ export interface ApplicationsList {
 }
 
 export interface AppsInfoState {
-  aggregatedApps: AppsInfoAggregated[];
+  aggregatedApps: Record<ApplicationsList['name'], AppsInfoAggregated>;
   appsInfo: AppsInfo[];
   appsConfig: ApplicationsConfig[];
   favorites: AppBookmarks;
-  loading: boolean;
-  error?: string;
   showAllApps: boolean;
-  isSavingFavorites?: boolean;
 }
 
 export interface AppsInfoAggregated extends AppsInfo {

@@ -159,9 +159,9 @@ export function TabNavigation() {
     () =>
       tabModules
         .get()
-        .filterAvailables(session, aggregatedApps.length === 0)
+        .filterAvailables(session)
         .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
-    [session, aggregatedApps.length],
+    [session],
   );
 
   const tabRoutes = React.useMemo(() => {

@@ -14,6 +14,9 @@ export const useFilteredApps = (filter: MyAppsFilter) => {
     if (!aggregatedApps) return [];
     const filtered = applyFilter(aggregatedApps, filter) || [];
     if (showAllApps || filter.type === 'favorites') return filtered;
+    if (filter.type === 'search') {
+      return filtered.filter(app => app.isMobile || app.isFavorite);
+    }
     return filtered.filter(app => app.isMobile);
   }, [aggregatedApps, filter, showAllApps]);
 };

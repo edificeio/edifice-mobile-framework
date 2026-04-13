@@ -2,7 +2,7 @@ import type { IEdtReduxState } from './reducer';
 
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { IEntcoreApp, ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
@@ -14,8 +14,6 @@ function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
 }
 
 export default new NavigableModuleConfig<'edt', IEdtReduxState>({
-  displayAs: ModuleType.MYAPPS_MODULE,
-
   entcoreScope: ['edt'],
 
   entcoreTrackingName: 'Edt',

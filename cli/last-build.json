@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-27 14:25:56",
-  "notes": "fix(secu): remove jailbreak device test\nrelease: 1.17.0-comm.1(1170001)",
-  "version": "1.17.0-comm.2(1170002)",
+  "last": "2026-04-13 09:31:31",
+  "notes": "Merge branch 'dev/comm' of https://github.com/edificeio/edifice-mobile-framework into dev/comm\n  feat(myapps): COCO-5514, avoid favorites list rerendering\nupdate(stack): yarn cache update\nfix(carousel): COCO-5652 allowing large media arrays, adding performance improvements\nfeat(myapps): COCO-5514, remove displayAs from some modules\nfeat(myapps): COCO-5514, clean, refacto and enrich data at login once.\nfix(myapps): COCO-5598, search filters\nupdate(stack): yarn cache update\nfix(myapps): COCO-5623, hide myapps when hasNoRight or aggregatedApps are empty\nupdate(stack): yarn cache update\nfeat(myapps): clean & optimize\nMerge branch 'dev/1.17.0' into dev/comm\nupdate(stack): yarn cache update\nrelease: 1.17.0-comm.2(1170002)",
+  "version": "1.17.0-comm.3(1170003)",
   "track": "1.17.0"
 }

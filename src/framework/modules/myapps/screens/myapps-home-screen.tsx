@@ -12,6 +12,7 @@ import { EMPTY_SCREEN_CONFIG, openHelpLink, resolveEmptyScreenKey } from './util
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import BottomSheetModal from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
@@ -21,6 +22,7 @@ import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingM
 import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
+import { Loading } from '~/ui/Loading';
 
 const getLang = I18n.get;
 
@@ -37,6 +39,7 @@ export const computeNavBar = ({
 
 const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   const {
+    aggregatedApps,
     apps,
     appsListRef,
     areAppsShowed,
@@ -59,6 +62,9 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     selectedApp,
     setFilter,
   } = useMyAppsHomeController();
+
+  const isAppsEmpty = apps.length === 0;
+  const isAggregatedAppsEmpty = !aggregatedApps || Object.keys(aggregatedApps).length === 0;
 
   const slides: MAOSProps[] = [
     {
@@ -99,13 +105,14 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
             key="notif"
             icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
             onPress={() => modalRef.current?.doShowModal()}
+            disabled={isAppsEmpty}
           />,
-          <NavBarAction key="options" icon="ui-options" onPress={() => openBottomSheet('home_menu')} />,
+          <NavBarAction key="options" icon="ui-options" onPress={() => openBottomSheet('home_menu')} disabled={isAppsEmpty} />,
         ]}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [hasSeenOnboarding, openBottomSheet],
+    [hasSeenOnboarding, openBottomSheet, isAppsEmpty],
   );
 
   React.useEffect(() => {
@@ -209,9 +216,27 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     [renderBottomSheetContent],
   );
 
-  return (
-    <PageView>
-      <MyAppsFilters selectedFilter={filter} onFilterChange={setFilter} />
+  const renderEmptyScreen = React.useCallback(
+    () => (
+      <View style={styles.emptyScreen}>
+        <EmptyScreen
+          title={I18n.get('myapp-empty-screen-home-title')}
+          text={I18n.get('myapp-empty-screen-home-text')}
+          svgImage="empty-content"
+          buttonText={I18n.get('myapp-retry')}
+          buttonAction={onRefresh}
+          buttonIcon="ui-refresh"
+        />
+      </View>
+    ),
+    [onRefresh],
+  );
+
+  const renderMainContent = React.useMemo(() => {
+    if (isAggregatedAppsEmpty && refreshing) return <Loading />;
+    if (isAggregatedAppsEmpty) return renderEmptyScreen();
+
+    return (
       <MyAppsList
         ref={appsListRef}
         apps={apps}
@@ -225,7 +250,25 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         }}
         refreshing={refreshing}
       />
-      <MyAppsOnboardingModal ref={modalRef} slides={slides} onComplete={completeOnboarding} />
+    );
+  }, [
+    apps,
+    filter,
+    appsListRef,
+    isAllAppsTab,
+    isAggregatedAppsEmpty,
+    onPressApp,
+    onRefresh,
+    openBottomSheet,
+    refreshing,
+    renderEmptyScreen,
+  ]);
+
+  return (
+    <PageView>
+      {!isAggregatedAppsEmpty && <MyAppsFilters selectedFilter={filter} onFilterChange={setFilter} />}
+      {renderMainContent}
+      {!isAggregatedAppsEmpty && <MyAppsOnboardingModal ref={modalRef} slides={slides} onComplete={completeOnboarding} />}
       {renderBottomSheet()}
     </PageView>
   );

@@ -41,14 +41,13 @@ import {
   UserPrivateData,
 } from './service';
 import * as storage from './storage';
-import { appInfoActions } from '../myapps/reducer/actions';
-import { buildFetchSuccessPayload } from '../myapps/reducer/adapter';
-import { createMyAppsServiceWithTokenFetch } from '../myapps/service';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { audienceService } from '~/framework/modules/audience/service';
 import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
+import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
+import { loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
+import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
@@ -367,21 +366,15 @@ const getLoginFunctions = {
 };
 
 /**
- * Load MyApps data during login.
+ * Load MyApps data during login & enrich with module info.
  * This ensures that if loading apps fails, the login will fail too.
+ * Apps are enriched at this point since accountInfo contains the session rights.
  */
-const loadMyAppsAtLogin = async (param: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, dispatch: AuthDispatch) => {
+const loadMyAppsAtLogin = async (accountInfo: AuthActiveAccount, dispatch: AuthDispatch) => {
   try {
-    const myAppsServiceWithTokens = createMyAppsServiceWithTokenFetch(param.tokens);
-
-    const [appsInfo, appsConfig, favorites] = await Promise.all([
-      myAppsServiceWithTokens.list(),
-      myAppsServiceWithTokens.config(),
-      myAppsServiceWithTokens.bookmarks(),
-    ]);
-
-    //enrichment will be done in init with callAtLogin cause session is not yet available here
-    dispatch(appInfoActions.fetchSuccess(buildFetchSuccessPayload(appsInfo, appsConfig, favorites)));
+    const myAppsServiceWithTokens = createMyAppsServiceWithTokenFetch(accountInfo.tokens);
+    const payload = await loadAppsDataFromService(myAppsServiceWithTokens, accountInfo);
+    dispatch(appInfoActions.fetchSuccess(payload));
   } catch (error) {
     throw error;
   }
@@ -399,6 +392,7 @@ const performLogin = async (
   const requirement = await loginSteps.getRequirement(tokens);
   const user = await loginSteps.getUserData(tokens, requirement);
   await loadMyAppsAtLogin(tokens, dispatch);
+
   const accountInfo = await loginSteps.finalizeSession(
     tokens.tokens,
     reduxActions.getTimestamp(),
@@ -409,6 +403,7 @@ const performLogin = async (
     user.publicInfos,
     method,
   );
+
   if (requirement) {
     const context = await authService.platformConfig.context(platform);
     const infos = await getRequirementAdditionalInfos(requirement, tokens);
@@ -421,6 +416,7 @@ const performLogin = async (
   } else {
     await dispatch(deactivateLoggedAccountActionIfApplicable(reduxActions.success(accountInfo)));
   }
+  await loadMyAppsAtLogin(accountInfo, dispatch);
 
   // Setup push-notifications for the new account
   // No `await` as it is non-blocking for login process
