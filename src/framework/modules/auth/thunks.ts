@@ -391,7 +391,6 @@ const performLogin = async (
 ) => {
   const requirement = await loginSteps.getRequirement(tokens);
   const user = await loginSteps.getUserData(tokens, requirement);
-  await loadMyAppsAtLogin(tokens, dispatch);
 
   const accountInfo = await loginSteps.finalizeSession(
     tokens.tokens,
