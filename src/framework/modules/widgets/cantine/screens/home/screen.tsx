@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
@@ -16,6 +16,7 @@ import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import ScrollView from '~/framework/components/scrollView';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
 import { CantineData } from '~/framework/modules/widgets/cantine/model';
@@ -59,6 +60,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
   const [selectedStructureValue, setSelectedStructureValue] = React.useState<string | null>(defaultStructureValue);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [selectedMeal, setSelectedMeal] = React.useState<'lunch' | 'dinner'>('lunch');
 
   // Get data from Redux store
   const cantineInfo = useSelector((state: any) =>
@@ -108,7 +110,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     if (selectedDate.length === 0 || !selectedStructureValue) {
       return;
     }
-
+    setSelectedMeal('lunch');
     getCantineInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, selectedStructureValue]);
@@ -173,7 +175,30 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     }
 
     if (cantineInfo && cantineInfo.menu.length > 0) {
-      return <MenuCard menuItems={cantineInfo.menu} />;
+      const menuItems = selectedMeal === 'dinner' && cantineInfo.dinnerMenu ? cantineInfo.dinnerMenu : cantineInfo.menu;
+      return (
+        <>
+          {cantineInfo.dinnerAvailable && (
+            <View style={styles.mealSwitcher}>
+              <TouchableOpacity
+                style={[styles.mealSwitcherItem, selectedMeal === 'lunch' ? styles.mealSwitcherItemActive : styles.mealSwitcherItemInactive]}
+                onPress={() => setSelectedMeal('lunch')}>
+                {selectedMeal === 'lunch'
+                  ? <SmallBoldText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-lunch')}</SmallBoldText>
+                  : <SmallText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-lunch')}</SmallText>}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.mealSwitcherItem, selectedMeal === 'dinner' ? styles.mealSwitcherItemActive : styles.mealSwitcherItemInactive]}
+                onPress={() => setSelectedMeal('dinner')}>
+                {selectedMeal === 'dinner'
+                  ? <SmallBoldText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-dinner')}</SmallBoldText>
+                  : <SmallText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-dinner')}</SmallText>}
+              </TouchableOpacity>
+            </View>
+          )}
+          <MenuCard menuItems={menuItems} />
+        </>
+      );
     }
 
     // Show empty screen if no data is cached
