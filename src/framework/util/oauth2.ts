@@ -2,8 +2,6 @@ import moment from 'moment';
 
 import { platformFetch } from './transport';
 
-import { Module } from '~/app/module';
-import AllModules from '~/app/modules';
 import { getStore } from '~/app/store';
 import {
   AuthActiveAccount,
@@ -20,6 +18,7 @@ import { writeUpdateAccount } from '~/framework/modules/auth/storage';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
+import { ModuleCompat } from '~/app/module/compat';
 
 /**
  * Represents the client (device) information required for OAuth2 authentication.
@@ -88,7 +87,7 @@ const createDeviceAuthenticationHeader = (clientId: string, clientSecret: string
  *
  * @returns A space-separated string of OAuth2 scopes.
  */
-const createScope = (): string => [...new Set(AllModules().getScopes()), ...Module.getAllModulesScopes()].join(' ');
+const createScope = (): string => [...ModuleCompat.getAllModulesScopes()].join(' ');
 
 /**
  * Fetches an OAuth2 token for the specified platform using the given grant type and parameters.

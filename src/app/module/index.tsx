@@ -126,7 +126,7 @@ export class Module<
       if (!scopes) continue;
       for (const scope of scopes) set.add(scope);
     }
-    return [...set];
+    return set;
   }
 
   static getAvailableModules(_session: AuthActiveAccount): SomeModulesAsTuple {

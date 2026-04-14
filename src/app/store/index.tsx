@@ -30,6 +30,7 @@ import { Module } from '../module';
 import { AllModulesState } from '../module/types';
 
 import { reducer as startupReducer } from '~/framework/navigation/redux';
+import { ModuleCompat } from '../module/compat';
 
 /** === Store reducers map === */
 
@@ -73,7 +74,7 @@ export default function configureStore(preloadedState?: AllModulesState) {
   const composedEnhancers: StoreEnhancer = compose(...enhancers);
 
   const rootReducer = combineReducers({
-    ...Module.getAllModulesReducers(),
+    ...ModuleCompat.getAllModulesReducers(),
     // Build-in reducers here
     // ToDo: migrate in new module system (no more specific build-in reducers plz)
     startup: startupReducer,
