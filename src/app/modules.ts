@@ -58,10 +58,15 @@ export const setUpModulesAccess = (sessionIfExists?: AuthActiveAccount) => {
   }
 };
 
+/**
+ * @deprecated use new module system
+ * @param session
+ * @returns
+ */
 export const useAvailableModules = (session?: AuthActiveAccount) =>
   React.useMemo(() => {
+    console.info(`[App] Init modules for session: ${session?.user.id} (${session?.user.login})`);
     if (!session) return;
-    console.info(`[App] Init modules for session: ${session.user.id} (${session.user.login})`);
     if (AllModules) {
       AllModules.initModuleConfigs(session);
       dynamiclyRegisterModules(AllModules.filter(m => m instanceof NavigableModule) as NavigableModuleArray);

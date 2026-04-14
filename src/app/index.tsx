@@ -14,19 +14,17 @@ import { Action, Store } from 'redux';
 import { DeviceTrust } from './device-trust';
 import { I18n } from './i18n';
 import { Module } from './module';
-import loadOldModules from './modules';
-import configureStore, { Reducers } from './store';
+import configureStore from './store';
 
 import { AppStartupHandler } from '~/app/startup';
 import { UI_STYLES } from '~/framework/components/constants';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
 import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { ZendeskProvider } from '~/framework/util/zendesk';
-import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
+import { ModuleCompat } from './module/compat';
 
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
@@ -104,7 +102,7 @@ const useCoreDependencies = () => {
   });
 };
 
-const modulesPromises = Module.loadModules();
+const modulesPromises = ModuleCompat.loadModules();
 
 function App() {
   useCoreDependencies();
@@ -131,9 +129,5 @@ function App() {
   );
   return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }
-
-Reducers.register('startup', navigationReducer);
-Reducers.register('connectionTracker', connectionTrackerReducer);
-loadOldModules();
 
 export default App;

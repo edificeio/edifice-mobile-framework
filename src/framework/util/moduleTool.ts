@@ -862,6 +862,9 @@ export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule =
   modules.forEach(module => {
     if (module.config.displayAs) {
       console.info(`Register module "${module.config.name}" into ${module.config.displayAs}`);
+      if (!getGlobalRegister(module.config.displayAs)) {
+        console.warn(`No register named ${module.config.displayAs}`);
+      }
       getGlobalRegister(module.config.displayAs)?.register(module, module.config.displayOrder);
     }
   });

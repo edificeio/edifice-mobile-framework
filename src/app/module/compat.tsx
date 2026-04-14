@@ -6,6 +6,9 @@
 import { Module } from '.';
 import OldModules from '~/app/modules';
 import { Reducers } from '~/app/store';
+import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
+
+Reducers.register('connectionTracker', connectionTrackerReducer);
 
 export const ModuleCompat = {
   getAllModulesScopes: () => {
@@ -18,5 +21,10 @@ export const ModuleCompat = {
     const reducers = Module.getAllModulesReducers();
     const oldReducers = Reducers.all;
     return { ...oldReducers, ...reducers };
+  },
+
+  loadModules: async () => {
+    OldModules();
+    return Module.loadModules();
   },
 };

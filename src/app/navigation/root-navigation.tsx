@@ -11,6 +11,11 @@ import { ModuleNavigationParams } from '../module/types';
 import CarouselScreen from '~/framework/components/carousel';
 import authModule from '~/framework/modules/auth';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
+import { useAvailableModules } from '../modules';
+
+// Note: import tabModules register to initialize it
+// remove when all modules will be proted to new module system
+import '~/framework/navigation/tabModules';
 
 export const RootStack = createNativeStackNavigator<NavigationRootParams>();
 
@@ -32,6 +37,12 @@ export function RootNavigation() {
 
   // ToDo : screen tracking
   // ToDo : deep linking
+  //
+
+  /**
+   * @deprecated remove this when all modules are ported to the new module system
+   */
+  useAvailableModules(session);
 
   return (
     <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
