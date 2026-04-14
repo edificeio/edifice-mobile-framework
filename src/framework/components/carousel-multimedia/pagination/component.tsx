@@ -16,7 +16,7 @@ import { getSignedPosterSource } from '~/framework/components/carousel-multimedi
 import { UI_SIZES } from '~/framework/components/constants';
 import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/util/media';
 
-const MAX_PAGINATION_ITEMS = 20;
+const MAX_PAGINATION_ITEMS = 12;
 
 const CarouselPagination = ({
   carouselRef,
