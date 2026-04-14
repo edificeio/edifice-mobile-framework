@@ -35,7 +35,12 @@ export type StrictNavigationParams<Name extends string, T> = {
   [K in keyof T]: K extends `${Name}` | `${Name}/${string}` ? T[K] : never;
 };
 
-export interface ModuleConfigBase<Name extends string, State = never, ActionType extends Action = never> {
+export interface ModuleConfigBase<
+  Name extends string,
+  NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams>,
+  State = never,
+  ActionType extends Action = never,
+> {
   /**
    * Technical name of this module. Needs to be the same as its folder name.
    */
@@ -74,6 +79,11 @@ export interface ModuleConfigBase<Name extends string, State = never, ActionType
    * Reducer
    */
   reducer?: Reducer<State, ActionType>;
+
+  /**
+   * Tab config if module must be shown in tabs
+   */
+  tab?: ModuleTabConfig<Name, NavigationParams>;
 }
 
 export interface ModuleConfigStorage<
@@ -103,7 +113,7 @@ export type ModuleConfigStorageParameter<S extends StorageTypeMap, P extends Sto
   | { [k in keyof ModuleConfigStorage<S, P>]?: never }
   | ModuleConfigStorage<S, P>;
 
-export interface ModuleConfigTab<
+export interface ModuleTabConfig<
   Name extends string,
   NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams>,
 > {
@@ -125,17 +135,13 @@ export interface ModuleConfigTab<
   /**
    * Value to tell in which order the tabs must be displayed
    */
-  tabOrder: number;
+  tabOrder?: number;
 
   /**
    * TestID of the tab bar button
    */
   tabTestID: string;
 }
-
-export type ModuleConfigTabParameter<N extends string, NP extends ParamListBase & StrictNavigationParams<N, NP>> =
-  | { [k in keyof ModuleConfigTab<N, NP>]?: never }
-  | ModuleConfigTab<N, NP>;
 
 export type ModuleConfigParameter<
   Name extends string,
@@ -144,9 +150,8 @@ export type ModuleConfigParameter<
   ActionType extends Action,
   ModuleStorageSliceTypeMap extends StorageTypeMap,
   ModulePreferencesSliceTypeMap extends StorageTypeMap,
-> = ModuleConfigBase<Name, State, ActionType> &
-  ModuleConfigStorageParameter<ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> &
-  ModuleConfigTabParameter<Name, NavigationParams>;
+> = ModuleConfigBase<Name, NavigationParams, State, ActionType> &
+  ModuleConfigStorageParameter<ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>;
 
 export type ModuleConfig<
   Name extends string,
@@ -155,7 +160,7 @@ export type ModuleConfig<
   A extends Action,
   Sg extends StorageTypeMap,
   Sp extends StorageTypeMap,
-> = ModuleConfigBase<Name, S, A> & Partial<ModuleConfigStorage<Sg, Sp>> & Partial<ModuleConfigTab<Name, NP>>;
+> = ModuleConfigBase<Name, NP, S, A> & Partial<ModuleConfigStorage<Sg, Sp>>;
 
 /**
  * Extract Module Data
@@ -184,12 +189,20 @@ export type ResolvedModule<T> = T extends Promise<infer M> ? M : never;
 
 export type AllModulesAsTuple = {
   [I in keyof typeof modules as I extends `${number}` ? I : never]: ResolvedModule<(typeof modules)[I]>['default'];
-};
+} & Omit<Array<ResolvedModule<(typeof modules)[keyof typeof modules]>['default']>, number>;
+
+export type SomeModulesAsTuple = {
+  [I in keyof typeof modules as I extends `${number}` ? I : never]?: ResolvedModule<(typeof modules)[I]>['default'];
+} & Omit<Array<ResolvedModule<(typeof modules)[keyof typeof modules]>['default']>, number>;
 
 export type AllModulesNames = ModuleName<AllModulesAsTuple[keyof AllModulesAsTuple]>;
 
 export type AllModulesAsMap = {
   [Name in AllModulesNames]: Extract<AllModulesAsTuple[keyof AllModulesAsTuple], Module<Name, any, any, any, any>>;
+};
+
+export type SomeModulesAsMap = {
+  [Name in AllModulesNames]?: Extract<AllModulesAsTuple[keyof AllModulesAsTuple], Module<Name, any, any, any, any>>;
 };
 
 export type AllModulesReducers = {
@@ -200,14 +213,12 @@ export type AllModulesState = {
   [Name in AllModulesNames]: ModuleState<Extract<AllModulesAsTuple[keyof AllModulesAsTuple], Module<Name, any, any, any, any>>>;
 };
 
-/**
- * Tab modules
- */
-
 export type TabModule<
-  Name extends string,
+  Name extends string = string,
   NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams> = {},
   State = undefined,
   StorageType extends StorageTypeMap = object,
   PreferencesType extends StorageTypeMap = object,
-> = Module<Name, NavigationParams, State, StorageType, PreferencesType> & ModuleConfigTab<Name, NavigationParams>;
+> = Omit<Module<Name, NavigationParams, State, StorageType, PreferencesType>, 'tab'> & {
+  tab: NonNullable<Module<Name, NavigationParams, State, StorageType, PreferencesType>['tab']>;
+};

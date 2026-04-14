@@ -6,17 +6,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLayout } from './layout';
 import { Module } from '../module';
 import { AllModulesNavigationParams } from './types';
-import { TabModule } from '../module/types';
 
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
+import { TabModule } from '../module/types';
 
 const MainTabs = createBottomTabNavigator();
 
 function TabIcon({ color, focused, module, size }: { module: TabModule<string>; focused: boolean; color: string; size: number }) {
-  return <Svg width={size} height={size} name={focused ? module.tabIconActive : module.tabIconInactive} fill={color} />;
+  return <Svg width={size} height={size} name={focused ? module.tab.tabIconActive : module.tab.tabIconInactive} fill={color} />;
 }
 
 export const MainNavigation = withSession(
@@ -29,7 +29,7 @@ export const MainNavigation = withSession(
     const tabModulesOptions = React.useMemo(
       () =>
         availableTabModules.map<BottomTabNavigationOptions>(m => ({
-          tabBarButtonTestID: m.tabTestID,
+          tabBarButtonTestID: m.tab.tabTestID,
           tabBarIcon: ({ color, focused, size }) => <TabIcon module={m} focused={focused} size={size} color={color} />,
           tabBarLabel: m.name,
         })),
@@ -45,12 +45,10 @@ export const MainNavigation = withSession(
               key={tabModule.name}
               screenLayout={StackScreenLayout}
               screenOptions={defaultScreenOptions}
-              initialRouteName={tabModule.tabRoute}>
+              initialRouteName={tabModule.tab.tabRoute}>
               {availableModules.map(module => (
                 <TabStack.Group key={module.name}>
-                  {module.renderScreens
-                    ? module.renderScreens(TabStack as Parameters<NonNullable<Module<string>['renderScreens']>>[0])
-                    : null}
+                  {module.renderScreens ? module.renderScreens(TabStack as ReturnType<typeof createNativeStackNavigator>) : null}
                 </TabStack.Group>
               ))}
             </TabStack.Navigator>

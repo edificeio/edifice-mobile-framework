@@ -23,11 +23,13 @@ export default new Module<
     reducer,
     storage,
     storageName: 'timeline',
-    tabIconActive: 'ui-checkbox-on',
-    tabIconInactive: 'ui-checkbox-off',
-    tabOrder: 0,
-    tabRoute: 'timeline',
-    tabTestID: 'tabbar-news',
+    tab: {
+      tabIconActive: 'ui-checkbox-on',
+      tabIconInactive: 'ui-checkbox-off',
+      tabOrder: 0,
+      tabRoute: 'timeline',
+      tabTestID: 'tabbar-news',
+    },
   },
   Stack => (
     <>
