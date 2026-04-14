@@ -3,10 +3,17 @@ import { CantineData } from '~/framework/modules/widgets/cantine/model';
 import moduleConfig from '~/framework/modules/widgets/cantine/module-config';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+interface CantineCacheEntry {
+  data: CantineData;
+  fetchedAt: number;
+}
+
 // State type
 export interface CantineState {
   // Cache key format: `${structureUAI}-${date}`
-  cache: Record<string, CantineData>;
+  cache: Record<string, CantineCacheEntry>;
   // Track which cache keys had empty data (so we can retry them)
   // Empty results and errors are not cached to allow retrying when user returns to that date
   emptyResults: Record<string, boolean>;
@@ -57,7 +64,7 @@ const reducer = createReducer(initialState, {
     ...state,
     cache: {
       ...state.cache,
-      [action.key]: action.data,
+      [action.key]: { data: action.data, fetchedAt: Date.now() },
     },
     emptyResults: {
       ...state.emptyResults,
@@ -82,7 +89,7 @@ export const getCacheKey = (structureUAI: string, date: string) => `${structureU
 export const getCantineData = (state: IGlobalState, structureUAI: string, date: string) => {
   const cantineState = getState(state);
   const key = getCacheKey(structureUAI, date);
-  return cantineState.cache[key] || null;
+  return cantineState.cache[key]?.data || null;
 };
 
 export const getCantineEmptyResult = (state: IGlobalState, structureUAI: string, date: string) => {
@@ -94,12 +101,15 @@ export const getCantineEmptyResult = (state: IGlobalState, structureUAI: string,
 export const shouldRetryCantineData = (state: IGlobalState, structureUAI: string, date: string) => {
   const cantineState = getState(state);
   const key = getCacheKey(structureUAI, date);
+  const entry = cantineState.cache[key];
 
   // Retry if:
   // 1. No data is cached, OR
-  // 2. The previous result was empty (so we don't cache empty results)
+  // 2. The previous result was empty (so we don't cache empty results), OR
+  // 3. The cached data is older than CACHE_TTL_MS (1 hour)
   // Errors are treated the same as empty results - not cached at all
-  return !cantineState.cache[key] || cantineState.emptyResults[key];
+  const isStale = entry ? Date.now() - entry.fetchedAt > CACHE_TTL_MS : true;
+  return !entry || cantineState.emptyResults[key] || isStale;
 };
 
 // Register the reducer
