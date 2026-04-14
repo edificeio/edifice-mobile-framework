@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
   },
   cancelTextStyle: {
     fontWeight: 'bold',
+    marginHorizontal: UI_SIZES.spacing.medium,
   },
   clearButtonColor: {
     color: theme.palette.grey.black,
@@ -50,8 +51,8 @@ export const styles = StyleSheet.create({
   searchContainerWrapper: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: UI_SIZES.spacing.medium,
-    paddingHorizontal: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingRight: getScaleWidth(6),
   },
   searchContainerWrapperActive: {
     paddingHorizontal: UI_SIZES.spacing.medium,

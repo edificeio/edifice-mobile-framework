@@ -359,9 +359,6 @@ export interface IAppThemeInfo {
 
 export enum ModuleType {
   HIDDEN_MODULE = 'hiddenModule',
-  MYAPPS_CONNECTOR = 'myAppsConnector',
-  MYAPPS_MODULE = 'myAppsModule',
-  MYAPPS_SECONDARY_MODULE = 'myAppsSecondaryModule',
   MYAPPS_WIDGET = 'myAppsWidget',
   TAB_MODULE = 'tabModule',
 }

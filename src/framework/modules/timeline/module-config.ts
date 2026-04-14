@@ -8,6 +8,7 @@ export default new NavigableModuleConfig<'timeline', TimelineState>({
   displayPictureBlur: { name: 'nouveautes-off', type: 'Icon' },
   displayPictureFocus: { name: 'nouveautes-on', type: 'Icon' },
   entcoreScope: ['timeline', 'userbook'],
+  hasRight: () => true,
   matchEntcoreApp: 'Timeline',
   name: 'timeline',
   // The timeline is always displayed

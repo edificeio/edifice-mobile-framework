@@ -1,6 +1,5 @@
-import { FetchSuccessPayload } from './action-types';
-
 import { I18n } from '~/app/i18n';
+import AllModules from '~/app/modules';
 import theme from '~/app/theme';
 import {
   AppBadgesType,
@@ -14,6 +13,12 @@ import {
 import { getAppName, getModuleRouteName, normalizeString } from '~/framework/modules/myapps/utils';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
+
+const resolveAppColor = (appColor?: string) =>
+  appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
+
+const resolveAppShades = (appColor?: string) =>
+  appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor] : theme.palette.grey;
 
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
   switch (app.category) {
@@ -75,10 +80,12 @@ export const aggregateApps = (
   appsInfo: AppsInfo[],
   appsConfig: ApplicationsConfig[],
   favorites: AppBookmarks,
-): AppsInfoAggregated[] => {
+): Record<string, AppsInfoAggregated> => {
   const configByName = new Map(appsConfig.map(c => [c.name, c]));
 
-  return appsInfo
+  const aggregated: Record<string, AppsInfoAggregated> = {};
+
+  appsInfo
     .map(app => {
       let config = configByName.get(app.name);
       const isLibrary = app.address?.includes('library.edifice.io') && !config?.category;
@@ -102,7 +109,12 @@ export const aggregateApps = (
       };
     })
     .filter(app => app.display)
-    .sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)));
+    .sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)))
+    .forEach(app => {
+      aggregated[app.name] = app;
+    });
+
+  return aggregated;
 };
 
 const USERBOOK_BADGE: IAppBadgeInfo = {
@@ -115,12 +127,10 @@ const FALLBACK_BADGE: IAppBadgeInfo = {
   icon: 'ui-infoCircle',
 };
 
-export const buildAppNameToBadge = (aggregatedApps: AppsInfoAggregated[]): AppBadgesType => {
+export const buildAppNameToBadge = (aggregatedApps: Record<string, AppsInfoAggregated>): AppBadgesType => {
   const badgesMap: AppBadgesType = {};
-  for (const app of aggregatedApps) {
-    const appColor = app.color;
-    const color = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
-    badgesMap[app.badgeKey] = { color, icon: app.icon };
+  for (const app of Object.values(aggregatedApps)) {
+    badgesMap[app.badgeKey] = { color: resolveAppColor(app.color), icon: app.icon };
   }
   return badgesMap;
 };
@@ -128,14 +138,11 @@ export const buildAppNameToBadge = (aggregatedApps: AppsInfoAggregated[]): AppBa
 /**
  * Build a map of app names to their complete theme information (all color shades + icon)
  */
-export const buildAppNameToTheme = (aggregatedApps: AppsInfoAggregated[]): Record<string, IAppThemeInfo> => {
+export const buildAppNameToTheme = (aggregatedApps: Record<string, AppsInfoAggregated>): Record<string, IAppThemeInfo> => {
   const themesMap: Record<string, IAppThemeInfo> = {};
-  for (const app of aggregatedApps) {
-    const appColor = app.color;
-    const colors = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor] : theme.palette.grey;
-
+  for (const app of Object.values(aggregatedApps)) {
     themesMap[app.badgeKey] = {
-      colors,
+      colors: resolveAppShades(app.color),
       icon: app.icon,
     };
   }
@@ -144,9 +151,9 @@ export const buildAppNameToTheme = (aggregatedApps: AppsInfoAggregated[]): Recor
 
 export const buildModuleTabDisplayName = (
   moduleConfig: AnyNavigableModule['config'],
-  aggregatedApps: AppsInfoAggregated[],
+  aggregatedApps: Record<string, AppsInfoAggregated>,
 ): string => {
-  const matchingApp = aggregatedApps.find(app => app.name === moduleConfig.name);
+  const matchingApp = aggregatedApps[moduleConfig.name];
   if (matchingApp) {
     return matchingApp.displayName;
   }
@@ -162,14 +169,12 @@ export const resolveBadgeByAppName = (appName: string, badgesIndex: AppBadgesTyp
   badgesIndex[appName.toUpperCase()] ?? FALLBACK_BADGE;
 
 export const buildNotifTypeToBadge = (
-  aggregatedApps: AppsInfoAggregated[],
+  aggregatedApps: Record<string, AppsInfoAggregated>,
   notifTypes: IEntcoreNotificationType[],
 ): AppBadgesType => {
   const appNameToInfo = new Map<string, IAppBadgeInfo>();
-  for (const app of aggregatedApps) {
-    const appColor = app.color;
-    const color = appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
-    appNameToInfo.set(app.name, { color, icon: app.icon });
+  for (const app of Object.values(aggregatedApps)) {
+    appNameToInfo.set(app.name, { color: resolveAppColor(app.color), icon: app.icon });
   }
   const badgesMap: AppBadgesType = {};
   for (const notif of notifTypes) {
@@ -187,29 +192,42 @@ export const buildNotifTypeToBadge = (
   return badgesMap;
 };
 
-export const buildFetchSuccessPayload = (
-  appsInfo: AppsInfo[],
-  appsConfig: ApplicationsConfig[],
-  favorites: AppBookmarks,
-): FetchSuccessPayload => {
+export const buildFetchSuccessPayload = (appsInfo: AppsInfo[], appsConfig: ApplicationsConfig[], favorites: AppBookmarks) => {
   const aggregatedApps = aggregateApps(appsInfo, appsConfig, favorites);
   return { aggregatedApps, appsConfig, appsInfo, favorites };
 };
 
-export const applyFilter = (apps: AppsInfoAggregated[], filter: MyAppsFilter): AppsInfoAggregated[] => {
+/**
+ * Helper function to load apps data from a service given an account/session context.
+ * Fetches list, config, and bookmarks in parallel, enriches with module info, and builds the payload.
+ * @param appsService The apps service to fetch from (may use different tokens/auth)
+ * @param accountOrSession The account info or session used to filter available modules
+ * @returns Promise of FetchSuccessPayload ready to dispatch
+ */
+export const loadAppsDataFromService = async (appsService: any, accountOrSession: any) => {
+  const modules = AllModules().filterAvailables(accountOrSession).filter(isNavigableModule);
+
+  const [appsInfo, appsConfig, favorites] = await Promise.all([appsService.list(), appsService.config(), appsService.bookmarks()]);
+
+  const enrichedAppsInfo = enrichAppsWithModuleInfo(appsInfo, modules);
+  return buildFetchSuccessPayload(enrichedAppsInfo, appsConfig, favorites);
+};
+
+export const applyFilter = (apps: Record<string, AppsInfoAggregated>, filter: MyAppsFilter): AppsInfoAggregated[] => {
+  const appsArray = Object.values(apps);
   switch (filter.type) {
     case 'favorites':
-      return apps.filter(app => app.isFavorite);
+      return appsArray.filter(app => app.isFavorite);
     case 'category':
-      if (filter.value === 'toutes') return apps;
-      if (filter.value === 'otherServices') return apps.filter(appShouldBeAtBottom);
-      return apps.filter(app => resolveAppCategory(app) === filter.value);
+      if (filter.value === 'toutes') return appsArray;
+      if (filter.value === 'otherServices') return appsArray.filter(appShouldBeAtBottom);
+      return appsArray.filter(app => resolveAppCategory(app) === filter.value);
     case 'search': {
-      if (!filter.value.trim()) return apps;
+      if (!filter.value.trim()) return appsArray;
       const q = normalizeString(filter.value);
-      return apps.filter(app => normalizeString(app.displayName).includes(q));
+      return appsArray.filter(app => normalizeString(app.displayName).includes(q));
     }
     case 'libraries':
-      return apps.filter(app => app.isLibrary);
+      return appsArray.filter(app => app.isLibrary);
   }
 };

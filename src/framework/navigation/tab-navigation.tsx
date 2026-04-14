@@ -168,7 +168,6 @@ export function TabNavigation() {
     return availableTabModules.map(module => {
       const index = tabModulesCache.findIndex(tm => tm.config.name === module.config.name);
       if (index < 0) return undefined;
-
       const tabLabel = buildModuleTabDisplayName(module.config, aggregatedApps);
       return (
         <Tab.Screen

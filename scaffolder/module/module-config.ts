@@ -1,4 +1,4 @@
-import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', null>({
   name: '{{moduleName | toCamelCase}}',
@@ -8,6 +8,5 @@ export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', null>({
   matchEntcoreApp: entcoreApp => true, // @scaffolder Replace this with a function that returns boolean regarding of the given entcoreApp
   storageName: '{{moduleName | toCamelCase}}',
 
-  displayAs: ModuleType.MYAPPS_MODULE,
   displayOrder: 0,
 });

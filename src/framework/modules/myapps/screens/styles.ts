@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
   bottomSheetContainer: {
     paddingBottom: UI_SIZES.spacing.large,
   },
+  emptyScreen: { flex: 1, justifyContent: 'center' },
   separatorLine: {
     backgroundColor: theme.palette.grey.cloudy,
     height: 1,

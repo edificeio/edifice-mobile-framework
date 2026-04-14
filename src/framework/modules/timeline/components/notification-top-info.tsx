@@ -11,7 +11,7 @@ import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card'
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { useAppBadge } from '~/framework/modules/myapps/hooks';
+import { useAllNotificationBadges } from '~/framework/modules/myapps/hooks';
 import appConf from '~/framework/util/appConf';
 import {
   getAsNamedResourceNotification,
@@ -22,7 +22,7 @@ import {
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: AuthActiveAccount }) => {
-  const allNotifBadges = useAppBadge();
+  const allNotifBadges = useAllNotificationBadges();
   const message = notification && notification.message;
   const date = notification && notification.date;
   const sender = notification && getAsSenderNotification(notification)?.sender;

@@ -13,41 +13,41 @@ import { registeredNotificationTypesData } from '~/framework/modules/timeline/re
 import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
 /**
- * Polymorphic hook to get app badges.
+ * Get a specific app badge by app/module name
+ * Takes app/module name as REQUIRED parameter
+ * Returns the badge info (color + icon) for that app/module
  *
- * @param appName -> App name to get a specific badge
- * @returns IAppBadgeInfo for that app
- *
- * @example
- * const scrapbookBadge = useAppBadge('scrapbook');
+ * @param appName - The app/module name
+ * @returns IAppBadgeInfo with color and icon
  */
-export function useAppBadge(appName: string): IAppBadgeInfo;
+export function useAppBadge(appName: string): IAppBadgeInfo {
+  const aggregatedApps = useSelector(selectAggregatedApps);
+
+  return React.useMemo(() => {
+    const appBadgesByName = buildAppNameToBadge(aggregatedApps ?? []);
+    return resolveBadgeByAppName(appName, appBadgesByName);
+  }, [aggregatedApps, appName]);
+}
 
 /**
- * Get all notification badges indexed by notification type.
+ * Get all notification badges indexed by notification type
+ * Used to map notification types to badges
  *
  * @returns AppBadgesType mapping notif.type to IAppBadgeInfo
  *
  * @example
- * const notifBadges = useAppBadge();
- * const badge = notifBadges['SCRAPBOOK_COMMENT'];
+ * const notifBadges = useAllNotificationBadges();
+ * const badge = notifBadges['USERBOOK_MOTTO'];
  */
-export function useAppBadge(): AppBadgesType;
-
-export function useAppBadge(appName?: string): IAppBadgeInfo | AppBadgesType {
+export function useAllNotificationBadges(): AppBadgesType {
   const aggregatedApps = useSelector(selectAggregatedApps);
   const notifTypes = useSelector(registeredNotificationTypesData);
 
   return React.useMemo(() => {
-    if (appName) {
-      const appBadgesByName = buildAppNameToBadge(aggregatedApps ?? []);
-      return resolveBadgeByAppName(appName, appBadgesByName);
-    }
-
-    if (!aggregatedApps?.length || !notifTypes?.length) {
+    if (!Object.keys(aggregatedApps ?? {}).length || !notifTypes?.length) {
       return {};
     }
 
     return buildNotifTypeToBadge(aggregatedApps, notifTypes);
-  }, [aggregatedApps, notifTypes, appName]);
+  }, [aggregatedApps, notifTypes]);
 }

@@ -5,14 +5,24 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import DeviceInfo from 'react-native-device-info';
 import RNFS from 'react-native-fs';
+import Orientation, {
+  LANDSCAPE_LEFT,
+  LANDSCAPE_RIGHT,
+  OrientationLockerProps,
+  OrientationType,
+  PORTRAIT,
+} from 'react-native-orientation-locker';
+import { SharedValue, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import Share from 'react-native-share';
+
+import { PAGINATION_ANIMATION_DURATION, PAGINATION_ANIMATION_OFFSET } from './screen';
 
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { FileMedia, isImageContent, isVideoContent } from '~/framework/util/media';
+import { FileMedia, isImageContent, isPlayableMedia, isVideoContent } from '~/framework/util/media';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
 
 const isAndroid = Platform.OS === 'android';
@@ -145,4 +155,66 @@ export const useCarouselFileHandler = (media: FileMedia | undefined) => {
   }, [media, getSyncedFile]);
 
   return { onSave, onShare };
+};
+
+const PAGINATION_ANIMATION_DELAY = 300;
+
+export const useTogglePagination = (
+  media: FileMedia[],
+  paginationTranslateY: SharedValue<number>,
+  setIsPaginationVisible: (visible: boolean) => void,
+) => {
+  const togglePaginationComponent = React.useCallback(
+    (index: number, previousIndex: number) => {
+      const currentIsPlayable = isPlayableMedia(media[index]);
+      const previousWasPlayable = isPlayableMedia(media[previousIndex]);
+
+      if (currentIsPlayable) {
+        if (previousWasPlayable) {
+          // playable to playable
+          paginationTranslateY.value = PAGINATION_ANIMATION_OFFSET;
+          setIsPaginationVisible(false);
+        } else {
+          // non playable to playable
+          paginationTranslateY.value = 0;
+          paginationTranslateY.value = withDelay(
+            PAGINATION_ANIMATION_DELAY,
+            withTiming(PAGINATION_ANIMATION_OFFSET, { duration: PAGINATION_ANIMATION_DURATION }),
+          );
+          setIsPaginationVisible(true);
+        }
+      } else {
+        paginationTranslateY.value = withTiming(0, { duration: PAGINATION_ANIMATION_DURATION });
+        setIsPaginationVisible(true);
+      }
+    },
+    [media, paginationTranslateY, setIsPaginationVisible],
+  );
+
+  return togglePaginationComponent;
+};
+
+export const useCarouselOrientation = () => {
+  const [orientation, setOrientation] = React.useState<OrientationLockerProps['orientation']>(PORTRAIT);
+  const orientationShared = useSharedValue<OrientationLockerProps['orientation']>(PORTRAIT);
+
+  const onOrientationChange = React.useCallback((newOrientation: OrientationType) => {
+    if (newOrientation === 'PORTRAIT') setOrientation(PORTRAIT);
+    else if (newOrientation === 'LANDSCAPE-LEFT') setOrientation(LANDSCAPE_LEFT);
+    else if (newOrientation === 'LANDSCAPE-RIGHT') setOrientation(LANDSCAPE_RIGHT);
+  }, []);
+
+  // Synchronize state with shared value
+  React.useEffect(() => {
+    orientationShared.value = orientation;
+  }, [orientation, orientationShared]);
+
+  // Lock to portrait when leaving carousel
+  React.useEffect(() => {
+    return () => {
+      Orientation.lockToPortrait();
+    };
+  }, []);
+
+  return { onOrientationChange, orientation, orientationShared };
 };
