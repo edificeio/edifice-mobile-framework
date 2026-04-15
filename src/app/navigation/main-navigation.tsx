@@ -65,8 +65,6 @@ export const MainNavigation = withSession(
       [availableModules, availableTabModules],
     );
 
-    console.info('tabModules (all)', tabModules);
-
     /**
      * @deprecated remove when every module is ported to new module system.
      */
@@ -76,8 +74,6 @@ export const MainNavigation = withSession(
         .filterAvailables(session)
         .sort((a, b) => a.config.displayOrder - b.config.displayOrder);
     }, [session]);
-
-    console.info('oldTabModules (available)', oldTabModules);
 
     /**
      * @deprecated remove when every module is ported to new module system.
@@ -108,8 +104,6 @@ export const MainNavigation = withSession(
       });
     }, []);
 
-    console.info('oldTabModulesScreens (available)', oldTabModulesScreens);
-
     /**
      * @deprecated remove when every module is ported to new module system.
      */
@@ -120,8 +114,6 @@ export const MainNavigation = withSession(
         tabBarLabel: m.config.tabDisplayName,
       }));
     }, [session]);
-
-    console.info('oldTabModulesOptions (available)', oldTabModulesOptions);
 
     return (
       <MainTabs.Navigator screenLayout={TabScreenLayout} screenOptions={defaultTabOptions} detachInactiveScreens>

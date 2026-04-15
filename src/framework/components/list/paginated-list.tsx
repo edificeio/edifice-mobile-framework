@@ -6,7 +6,7 @@
 import React from 'react';
 import { FlatList, FlatListProps, ListRenderItemInfo as RNListRenderItemInfo, ViewToken, VirtualizedListProps } from 'react-native';
 
-import { FlashList, FlashListProps, ListRenderItemInfo as SHListRenderItemInfo } from '@shopify/flash-list';
+import { FlashList, FlashListProps, FlashListRef, ListRenderItemInfo as SHListRenderItemInfo } from '@shopify/flash-list';
 
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 
@@ -14,7 +14,7 @@ export const LOADING_ITEM_DATA = Symbol('LOADING_ITEM_DATA');
 
 const DEFAULT_WINDOW_SIZE = 3;
 
-export const DEFAULT_FLATLIST_PLACEHOLDER_COUNT = 4;
+export const DEFAULT_FLATLIST_PLACEHOLDER_ROWS = 4;
 
 const DEFAULT_VIEWABILIBY_CONFIG = {
   itemVisiblePercentThreshold: 0,
@@ -22,13 +22,13 @@ const DEFAULT_VIEWABILIBY_CONFIG = {
   waitForInteraction: false,
 };
 
-export type PaginatedListItem<TItem> = TItem | typeof LOADING_ITEM_DATA;
+export type PaginatedListItem<TItem, TPlaceholderItem = never> = TItem | typeof LOADING_ITEM_DATA | TPlaceholderItem;
 
 // # CommonPaginatedListProps
 
 interface CommonPaginatedListProps<TItem, TCustomPlaceholderItem = never> {
   data?: PaginatedListItem<TItem>[] | null;
-  keyExtractor?: (item: TItem, index: number) => string;
+  keyExtractor?: (item: TItem | TCustomPlaceholderItem, index: number) => string;
 
   /**
    * Called when a page needs to be loaded beacause one or more loading items are close to the viewport.
@@ -95,28 +95,6 @@ interface CommonPaginatedListProps<TItem, TCustomPlaceholderItem = never> {
 }
 
 /**
- * Estimates the number of initially displayed items to fill the screen with placeholder elements.
- * Give to it props that is used for paginated list component : pageSize, estimatedItemSize, estimatedListSize, horizontal and numColomns
- * @param pageSize
- * @param estimatedItemSize
- * @param estimatedListSize
- * @param horizontal
- * @param numColumns
- * @returns
- */
-const computeEstimatedVisibleElements = (
-  pageSize: PaginatedFlashListProps<unknown>['pageSize'],
-  estimatedItemSize: PaginatedFlashListProps<unknown>['estimatedItemSize'],
-  estimatedListSize: PaginatedFlashListProps<unknown>['estimatedListSize'],
-  horizontal: PaginatedFlashListProps<unknown>['horizontal'],
-  numColumns: PaginatedFlashListProps<unknown>['numColumns'],
-) => {
-  if (estimatedListSize === undefined || estimatedItemSize === undefined) return pageSize;
-  if (horizontal) return Math.ceil(estimatedListSize.width / estimatedItemSize);
-  return Math.ceil(estimatedListSize.height / estimatedItemSize) * (numColumns ?? 1);
-};
-
-/**
  * Function that returns new data array by combining old data with new received items
  * Use it with `useState` or withing a reducer function.
  * @param currentData all previous items
@@ -147,7 +125,7 @@ export const staleOrSplice = <TItem,>({
 
 // # Common pagination logic
 
-const usePagination = <TItem,>({
+const usePagination = <TItem, TCustomPlaceholderItem>({
   getItem,
   getVisibleItemIndex,
   keyExtractor: _keyExtractor,
@@ -158,7 +136,9 @@ const usePagination = <TItem,>({
   onViewableItemsChanged: _onViewableItemsChanged,
   pageSize,
   windowSize = DEFAULT_WINDOW_SIZE,
-}: Omit<CommonPaginatedListProps<TItem>, 'data'> & { getItem: (index: number) => PaginatedListItem<TItem> | undefined }) => {
+}: Omit<CommonPaginatedListProps<TItem, TCustomPlaceholderItem>, 'data'> & {
+  getItem: (index: number) => PaginatedListItem<TItem, TCustomPlaceholderItem> | undefined;
+}) => {
   // Pages currenlty fetching
   const loadingPagesRef = React.useRef<Set<number>>(new Set());
 
@@ -184,8 +164,8 @@ const usePagination = <TItem,>({
       changed,
       viewableItems,
     }: {
-      viewableItems: ViewToken<PaginatedListItem<TItem>>[];
-      changed: ViewToken<PaginatedListItem<TItem>>[];
+      viewableItems: ViewToken<PaginatedListItem<TItem, TCustomPlaceholderItem>>[];
+      changed: ViewToken<PaginatedListItem<TItem, TCustomPlaceholderItem>>[];
     }) => {
       // 1. Get visible item indices
       let firstVisibleIndex = viewableItems.at(0)?.index;
@@ -234,7 +214,7 @@ const usePagination = <TItem,>({
     [_onViewableItemsChanged, getItem, getVisibleItemIndex, loadData, pageSize, windowSize],
   );
 
-  const keyExtractor = React.useMemo<VirtualizedListProps<PaginatedListItem<TItem>>['keyExtractor']>(
+  const keyExtractor = React.useMemo<VirtualizedListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>['keyExtractor']>(
     () =>
       _keyExtractor
         ? (item, index) => (item === LOADING_ITEM_DATA ? 'loading' + index.toString() : _keyExtractor(item, index))
@@ -251,7 +231,7 @@ export interface PaginatedFlashListProps<TItem, TCustomPlaceholderItem = never>
   extends
     CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
-      FlashListProps<PaginatedListItem<TItem>>,
+      FlashListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>,
       | 'onRefresh'
       | 'refreshing'
       | 'refreshControl'
@@ -264,8 +244,9 @@ export interface PaginatedFlashListProps<TItem, TCustomPlaceholderItem = never>
       | 'ListHeaderComponent'
       | 'onViewableItemsChanged'
     > {
-  getItemType?: FlashListProps<TItem>['getItemType'];
-  overrideItemLayout?: FlashListProps<PaginatedListItem<TItem>>['overrideItemLayout'];
+  ref?: React.Ref<FlashListRef<PaginatedListItem<TItem, TCustomPlaceholderItem>>>;
+  getItemType?: FlashListProps<TItem | TCustomPlaceholderItem>['getItemType'];
+  overrideItemLayout?: FlashListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>['overrideItemLayout'];
 
   /**
    * render function for loaded items like every List component works
@@ -276,29 +257,33 @@ export interface PaginatedFlashListProps<TItem, TCustomPlaceholderItem = never>
    * render function for non-loaded items
    */
   renderPlaceholderItem: NonNullable<FlashListProps<typeof LOADING_ITEM_DATA | TCustomPlaceholderItem>['renderItem']>;
+
+  /**
+   * How many items to render when initial data loading
+   */
+  placeholderNumberOfRows?: number;
 }
 
-export const PaginatedFlashList = React.forwardRef(function <TItem, TCustomPlaceholderItem = never>(
-  {
-    data,
-    getItemType: _getItemType,
-    getVisibleItemIndex,
-    initialLoadingState,
-    keyExtractor: _keyExtractor,
-    onItemsError,
-    onItemsReached,
-    onPageError,
-    onPageReached,
-    pageSize,
-    placeholderData: _placeholderData,
-    renderItem: _renderItem,
-    renderPlaceholderItem,
-    viewabilityConfig,
-    windowSize,
-    ...flashListProps
-  }: Readonly<PaginatedFlashListProps<TItem, TCustomPlaceholderItem>>,
-  ref: React.ForwardedRef<FlashList<PaginatedListItem<TItem>>>,
-) {
+export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
+  data,
+  getItemType: _getItemType,
+  getVisibleItemIndex,
+  initialLoadingState,
+  keyExtractor: _keyExtractor,
+  onItemsError,
+  onItemsReached,
+  onPageError,
+  onPageReached,
+  pageSize,
+  placeholderData: _placeholderData,
+  renderItem: _renderItem,
+  renderPlaceholderItem,
+  viewabilityConfig,
+  windowSize,
+  ref,
+  placeholderNumberOfRows: totalPlaceholderRows = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
+  ...flashListProps
+}: Readonly<PaginatedFlashListProps<TItem, TCustomPlaceholderItem>>) {
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
   // This is a bug of FlashList component.
   const dataRef = React.useRef(data);
@@ -306,7 +291,7 @@ export const PaginatedFlashList = React.forwardRef(function <TItem, TCustomPlace
 
   const getItem = React.useCallback((index: number) => dataRef.current?.[index], [dataRef]);
 
-  const { keyExtractor, loadData, onViewableItemsChanged } = usePagination({
+  const { keyExtractor, loadData, onViewableItemsChanged } = usePagination<TItem, TCustomPlaceholderItem>({
     getItem,
     getVisibleItemIndex,
     keyExtractor: _keyExtractor,
@@ -318,15 +303,15 @@ export const PaginatedFlashList = React.forwardRef(function <TItem, TCustomPlace
     windowSize,
   });
 
-  const getItemType = React.useMemo<FlashListProps<PaginatedListItem<TItem>>['getItemType']>(
+  const getItemType = React.useMemo<FlashListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>['getItemType']>(
     () => (_getItemType ? (item, index) => (item === LOADING_ITEM_DATA ? 'loading' : _getItemType(item, index)) : undefined),
     [_getItemType],
   );
 
-  const renderItem = React.useCallback<NonNullable<FlashListProps<PaginatedListItem<TItem>>['renderItem']>>(
+  const renderItem = React.useCallback<NonNullable<FlashListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>['renderItem']>>(
     info => {
       return info.item === LOADING_ITEM_DATA
-        ? renderPlaceholderItem(info as SHListRenderItemInfo<typeof LOADING_ITEM_DATA>)
+        ? renderPlaceholderItem(info as SHListRenderItemInfo<typeof LOADING_ITEM_DATA | TCustomPlaceholderItem>)
         : _renderItem(info as SHListRenderItemInfo<TItem>);
     },
     [_renderItem, renderPlaceholderItem],
@@ -356,22 +341,10 @@ export const PaginatedFlashList = React.forwardRef(function <TItem, TCustomPlace
   const [placeholderData] = React.useState(
     React.useCallback(() => {
       if (_placeholderData) return _placeholderData;
-      const nbElementsInViewport = computeEstimatedVisibleElements(
-        pageSize,
-        flashListProps.estimatedItemSize,
-        flashListProps.estimatedListSize,
-        flashListProps.horizontal,
-        flashListProps.numColumns,
-      );
-      return new Array(nbElementsInViewport).fill(LOADING_ITEM_DATA) as (typeof LOADING_ITEM_DATA)[];
-    }, [
-      _placeholderData,
-      flashListProps.estimatedItemSize,
-      flashListProps.estimatedListSize,
-      flashListProps.horizontal,
-      flashListProps.numColumns,
-      pageSize,
-    ]),
+      return new Array(totalPlaceholderRows * (flashListProps.numColumns ?? 1)).fill(
+        LOADING_ITEM_DATA,
+      ) as (typeof LOADING_ITEM_DATA)[];
+    }, [flashListProps.numColumns, totalPlaceholderRows, _placeholderData]),
   );
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
@@ -390,6 +363,8 @@ export const PaginatedFlashList = React.forwardRef(function <TItem, TCustomPlace
 
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(() => loadData(0, true), [loadData]);
 
+  console.info('PaginatedFlashList');
+
   return (
     <ContentLoader
       initialLoadingState={initialLoadingState}
@@ -398,7 +373,7 @@ export const PaginatedFlashList = React.forwardRef(function <TItem, TCustomPlace
       renderLoading={renderLoading}
     />
   );
-});
+};
 
 // # Paginated FlatList Component
 
@@ -418,6 +393,7 @@ export interface PaginatedFlatListProps<TItem, TCustomPlaceholderItem = never>
       | 'ListFooterComponent'
       | 'onViewableItemsChanged'
     > {
+  ref?: React.Ref<FlatList>;
   /**
    * render function for loaded items like every List component works
    */
@@ -434,31 +410,29 @@ export interface PaginatedFlatListProps<TItem, TCustomPlaceholderItem = never>
   placeholderNumberOfRows?: number;
 }
 
-export const PaginatedFlatList = React.forwardRef(function <TItem, TCustomPlaceholderItem = never>(
-  {
-    data,
-    getVisibleItemIndex,
-    initialLoadingState,
-    keyExtractor: _keyExtractor,
-    ListFooterComponent: ListFooterComponentCustom,
-    ListHeaderComponent: ListHeaderComponentCustom,
-    onItemsError,
-    onItemsReached,
-    onPageError,
-    onPageReached,
-    onViewableItemsChanged: _onViewableItemsChanged,
-    pageSize,
-    placeholderData: _placeholderData,
-    placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
-    renderItem: _renderItem,
-    renderPlaceholderItem,
-    stickyHeaderIndices,
-    viewabilityConfig,
-    windowSize = DEFAULT_WINDOW_SIZE,
-    ...flatListProps
-  }: PaginatedFlatListProps<TItem, TCustomPlaceholderItem>,
-  ref: React.ForwardedRef<FlatList<PaginatedListItem<TItem>>>,
-) {
+export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never>({
+  data,
+  getVisibleItemIndex,
+  initialLoadingState,
+  keyExtractor: _keyExtractor,
+  ListFooterComponent: ListFooterComponentCustom,
+  ListHeaderComponent: ListHeaderComponentCustom,
+  onItemsError,
+  onItemsReached,
+  onPageError,
+  onPageReached,
+  onViewableItemsChanged: _onViewableItemsChanged,
+  pageSize,
+  placeholderData: _placeholderData,
+  placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
+  renderItem: _renderItem,
+  renderPlaceholderItem,
+  stickyHeaderIndices,
+  viewabilityConfig,
+  windowSize = DEFAULT_WINDOW_SIZE,
+  ref,
+  ...flatListProps
+}: PaginatedFlatListProps<TItem, TCustomPlaceholderItem>) {
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
   // const dataRef = React.useRef(data);
   // dataRef.current = data;
@@ -480,10 +454,10 @@ export const PaginatedFlatList = React.forwardRef(function <TItem, TCustomPlaceh
     windowSize,
   });
 
-  const renderItem = React.useCallback<NonNullable<FlatListProps<PaginatedListItem<TItem>>['renderItem']>>(
+  const renderItem = React.useCallback<NonNullable<FlatListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>['renderItem']>>(
     info => {
       return info.item === LOADING_ITEM_DATA
-        ? renderPlaceholderItem(info as RNListRenderItemInfo<typeof LOADING_ITEM_DATA>)
+        ? renderPlaceholderItem(info as RNListRenderItemInfo<typeof LOADING_ITEM_DATA | TCustomPlaceholderItem>)
         : _renderItem(info as RNListRenderItemInfo<TItem>);
     },
     [_renderItem, renderPlaceholderItem],
@@ -555,7 +529,10 @@ export const PaginatedFlatList = React.forwardRef(function <TItem, TCustomPlaceh
         ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={ListFooterComponent}
         scrollEnabled={false}
-        {...(flatListProps as Pick<PaginatedFlatListProps<typeof LOADING_ITEM_DATA>, keyof typeof flatListProps>)}
+        {...(flatListProps as Pick<
+          PaginatedFlatListProps<typeof LOADING_ITEM_DATA | TCustomPlaceholderItem>,
+          keyof typeof flatListProps
+        >)}
       />
     ),
     [ListFooterComponent, ListHeaderComponent, flatListProps, placeholderData, renderPlaceholderItem],
@@ -574,4 +551,4 @@ export const PaginatedFlatList = React.forwardRef(function <TItem, TCustomPlaceh
       renderLoading={renderLoading}
     />
   );
-});
+};

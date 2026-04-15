@@ -9,7 +9,6 @@ import { ListRenderItemInfo as FlatListRenderItemInfo, StyleSheet, ViewStyle } f
 
 import { ListRenderItemInfo as FlashListRenderItemInfo } from '@shopify/flash-list';
 
-import { createDocumentArrayProxy, DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
 import {
   DocumentListItem,
   DocumentPlaceholderItem,
@@ -29,6 +28,16 @@ import {
 
 import { EntAppNameOrSynonym } from '~/app/intents';
 import { PaginatedFlashList, PaginatedFlatList } from '~/framework/components/list/paginated-list';
+
+/**
+ * Symbol used to represent a spacer ensuring that folders are not on the same line as documents.
+ */
+export const FOLDER_SPACER_ITEM_DATA = Symbol('FOLDER_SPACER_ITEM_DATA');
+
+/**
+ * Symbol used to represent a spacer ensuring that items are a multiple of the number of columns.
+ */
+export const DOCUMENT_SPACER_ITEM_DATA = Symbol('DOCUMENT_SPACER_ITEM_DATA');
 
 export const useDocumentPagination = <
   AppTypes extends EntAppNameOrSynonym,
@@ -51,10 +60,19 @@ export const useDocumentPagination = <
   numColumns?: number;
   alwaysShowAppIcon: CommonPaginatedDocumentListProps<AppTypes, IdType>['alwaysShowAppIcon'];
 }) => {
-  const { data, documentsIndexStart } = React.useMemo(
-    () => createDocumentArrayProxy(folders ?? [], documents ?? [], numColumns),
-    [documents, folders, numColumns],
-  );
+  const { data, documentsIndexStart } = React.useMemo(() => {
+    const folderSpacers = (numColumns - ((folders?.length ?? 0) % numColumns)) % numColumns;
+    const documentSpacers = (numColumns - ((documents?.length ?? 0) % numColumns)) % numColumns;
+    return {
+      data: [
+        ...(folders ?? []),
+        ...new Array(folderSpacers).fill(FOLDER_SPACER_ITEM_DATA),
+        ...(documents ?? []),
+        ...new Array(documentSpacers).fill(DOCUMENT_SPACER_ITEM_DATA),
+      ],
+      documentsIndexStart: folderSpacers + (folders?.length ?? 0),
+    };
+  }, [documents, folders, numColumns]);
 
   const isIndexForFolderOrSpacerItem = React.useCallback((index: number) => index < documentsIndexStart, [documentsIndexStart]);
 
@@ -161,6 +179,8 @@ export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym,
       onPressDocument,
       onPressFolder,
     });
+
+  console.info('PaginatedDocumentFlashList');
 
   return (
     <PaginatedFlashList

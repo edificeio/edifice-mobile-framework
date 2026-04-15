@@ -15,6 +15,7 @@ import { selectors } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { withSession } from '../../auth/util';
 
 // # Props
 
@@ -45,7 +46,7 @@ const blogExplorerContext = {
 
 // # Screen
 
-export default sessionScreen<BlogExplorerScreen.AllProps>(({ navigation, route, session, ...props }) => {
+export default withSession<BlogExplorerScreen.AllProps>(({ navigation, route, session, ...props }) => {
   const hasBlogCreationRights = getBlogWorkflowInformation(session) && getBlogWorkflowInformation(session).blog.create;
 
   const isFocused = useIsFocused();
@@ -69,6 +70,8 @@ export default sessionScreen<BlogExplorerScreen.AllProps>(({ navigation, route, 
       />
     );
   }, [hasBlogCreationRights]);
+
+  console.info('BlogExplorerScreen');
 
   return (
     <ResourceExplorer

@@ -19,6 +19,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootNavigation } from './root-navigation';
 import navigationLightTheme from './theme';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export const NavigationContainer = React.forwardRef(function NavigationContainer(
   { theme: _, ...props }: NavigationContainerProps,
@@ -46,7 +47,9 @@ export function AppNavigation() {
 
   return (
     <NavigationContainer ref={navigationRef} onReady={onReady} onUnhandledAction={onUnhandledAction}>
-      <RootNavigation />
+      <BottomSheetModalProvider>
+        <RootNavigation />
+      </BottomSheetModalProvider>
     </NavigationContainer>
   );
 }

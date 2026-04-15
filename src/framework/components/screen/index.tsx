@@ -17,6 +17,9 @@ import { Trackers } from '~/framework/util/tracker';
 
 // ToDo manage keyboard
 
+/**
+ * @deprecated no need screenView anymore
+ */
 export const ScreenView = withErrorBoundary(
   function ({ children, statusBar = 'primary' }: PropsWithChildren<ScreenViewProps>) {
     const route = useRoute();
@@ -24,7 +27,7 @@ export const ScreenView = withErrorBoundary(
 
     const content = (
       <>
-        <StatusBar type={statusBar} />
+        {/*<StatusBar type={statusBar} />*/}
         <View style={styles.defaultScreenStyle}>{children}</View>
       </>
     );
@@ -48,6 +51,11 @@ export const ScreenView = withErrorBoundary(
   },
 );
 
+/**
+ * use `withSession` instead
+ * @param WrappedComponent
+ * @returns
+ */
 export const sessionScreen = function <Props extends object>(
   WrappedComponent: React.ComponentType<Props & { session: AuthActiveAccount }>,
 ) {

@@ -88,21 +88,20 @@ export function ResourceExplorerTemplate({
     [onOpenResource],
   );
 
+  console.info('ResourceExplorerTemplate');
+
   return (
-    <PageView>
-      <PaginatedDocumentFlashList
-        estimatedListSize={estimatedListSize}
-        ListEmptyComponent={emptyComponent}
-        onItemsReached={loadPage}
-        documents={content.resources}
-        folders={content.folders}
-        numColumns={2}
-        pageSize={PAGE_SIZE}
-        onPressFolder={onPressFolder}
-        onPressDocument={onPressDocument}
-        alwaysShowAppIcon={false}
-      />
-    </PageView>
+    <PaginatedDocumentFlashList
+      ListEmptyComponent={emptyComponent}
+      onItemsReached={loadPage}
+      documents={content.resources}
+      folders={content.folders}
+      numColumns={2}
+      pageSize={PAGE_SIZE}
+      onPressFolder={onPressFolder}
+      onPressDocument={onPressDocument}
+      alwaysShowAppIcon={false}
+    />
   );
 }
 

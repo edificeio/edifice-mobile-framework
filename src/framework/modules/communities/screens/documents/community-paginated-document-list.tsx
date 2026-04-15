@@ -10,7 +10,7 @@ import {
   PaginatedDocumentListItem,
 } from '~/framework/components/list/paginated-document-list/types';
 import {
-  DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
+  DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   LOADING_ITEM_DATA,
   PaginatedFlatList,
   PaginatedFlatListProps,
@@ -40,7 +40,7 @@ export const DecoratedDocumentFlatList = ({
   numColumns,
   onPressDocument,
   placeholderDecorations = decorations,
-  placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
+  placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   onPressFolder,
   placeholderData: _placeholderData,
   onViewableItemsChanged: _onViewableItemsChanged,
