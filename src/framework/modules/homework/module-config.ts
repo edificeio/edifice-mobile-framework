@@ -17,4 +17,5 @@ export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>
   matchEntcoreApp: 'Cahier de texte',
   name: 'homework',
   storageName: 'homework',
+  tabDisplayName: 'homework',
 });
