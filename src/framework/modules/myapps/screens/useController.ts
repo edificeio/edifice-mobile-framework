@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,7 +39,6 @@ export function useMyAppsHomeController() {
   const navigation = useNavigation() as any;
   const dispatch = useDispatch<AppDispatch>();
 
-  const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
   const modalRef = React.useRef<ModalBoxHandle>(null);
   const pendingToastRef = React.useRef<null | { type: 'success' | 'error'; message: string }>(null);
   const pendingToggleRef = React.useRef<string | null>(null);
@@ -51,6 +49,7 @@ export function useMyAppsHomeController() {
   const [selectedApp, setSelectedApp] = React.useState<AppsInfoAggregated | null>(null);
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = React.useState<boolean>(false);
 
   const areAppsShowed = useSelector(getAllappsShowedState);
   const aggregatedApps = useSelector(selectAggregatedApps);
@@ -96,7 +95,7 @@ export function useMyAppsHomeController() {
       setSelectedApp(app ?? null);
       setBottomSheetMode(mode);
       navigation.setParams({ tabBarVisible: false });
-      bottomSheetRef.current?.present();
+      setIsBottomSheetVisible(true);
     },
     [navigation],
   );
@@ -104,7 +103,7 @@ export function useMyAppsHomeController() {
   const closeBottomSheet = React.useCallback(() => {
     setSelectedApp(null);
     navigation.setParams({ tabBarVisible: true });
-    bottomSheetRef.current?.dismiss();
+    setIsBottomSheetVisible(false);
   }, [navigation]);
 
   const onPressApp = React.useCallback(
@@ -187,13 +186,13 @@ export function useMyAppsHomeController() {
     appsListRef,
     areAppsShowed,
     bottomSheetMode,
-    bottomSheetRef,
     closeBottomSheet,
     completeOnboarding,
     filter,
     handleDismiss,
     hasSeenOnboarding,
     isAllAppsTab,
+    isBottomSheetVisible,
     modalRef,
     navigateToFavorites: () => navigation.navigate(ModalsRouteNames.FavoritesManagement),
     onboardingSeen,

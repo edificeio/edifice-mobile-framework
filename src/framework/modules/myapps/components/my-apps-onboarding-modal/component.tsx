@@ -84,6 +84,7 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
 
     return (
       <ModalBox
+        translucentStatusBar
         ref={modalBoxRef}
         useNativeDriver
         contentContainerStyle={styles.modalContentContainerStyle}

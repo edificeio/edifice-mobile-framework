@@ -42,6 +42,7 @@ export interface ModalBoxProps {
   content: React.JSX.Element;
   contentContainerStyle?: StyleProp<ViewStyle>;
   useNativeDriver?: boolean;
+  translucentStatusBar?: boolean;
 }
 
 export interface ModalBoxHandle {
@@ -50,7 +51,7 @@ export interface ModalBoxHandle {
 }
 
 export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(
-  ({ content, contentContainerStyle, useNativeDriver }, ref) => {
+  ({ content, contentContainerStyle, translucentStatusBar, useNativeDriver }, ref) => {
     const [showModal, setShowModal] = React.useState(false);
     const doDismissModal = React.useCallback(() => setShowModal(false), []);
     const doShowModal = React.useCallback(() => setShowModal(true), []);
@@ -60,6 +61,7 @@ export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(
       <NativeModal
         backdropTransitionOutTiming={0}
         useNativeDriver={useNativeDriver}
+        statusBarTranslucent={translucentStatusBar}
         hideModalContentWhileAnimating
         isVisible={showModal}
         onBackdropPress={doDismissModal}

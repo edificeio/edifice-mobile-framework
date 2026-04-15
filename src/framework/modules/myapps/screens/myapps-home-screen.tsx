@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import NativeModal from 'react-native-modal';
 
 import { IMyAppsNavigationParams, myAppsRouteNames } from '../navigation';
 import { styles } from './styles';
@@ -13,7 +14,6 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import BottomSheetModal from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -44,13 +44,13 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     appsListRef,
     areAppsShowed,
     bottomSheetMode,
-    bottomSheetRef,
     closeBottomSheet,
     completeOnboarding,
     filter,
     handleDismiss,
     hasSeenOnboarding,
     isAllAppsTab,
+    isBottomSheetVisible,
     modalRef,
     navigateToFavorites,
     onPressApp,
@@ -65,6 +65,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   const isAppsEmpty = apps.length === 0;
   const isAggregatedAppsEmpty = !aggregatedApps || Object.keys(aggregatedApps).length === 0;
+  const isMenuDisabled = React.useMemo(() => isAppsEmpty || filter.type === 'search', [filter, isAppsEmpty]);
 
   const slides: MAOSProps[] = [
     {
@@ -105,14 +106,14 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
             key="notif"
             icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
             onPress={() => modalRef.current?.doShowModal()}
-            disabled={isAppsEmpty}
+            disabled={isMenuDisabled}
           />,
-          <NavBarAction key="options" icon="ui-options" onPress={() => openBottomSheet('home_menu')} disabled={isAppsEmpty} />,
+          <NavBarAction key="options" icon="ui-options" onPress={() => openBottomSheet('home_menu')} disabled={isMenuDisabled} />,
         ]}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [hasSeenOnboarding, openBottomSheet, isAppsEmpty],
+    [filter, hasSeenOnboarding, openBottomSheet, isMenuDisabled],
   );
 
   React.useEffect(() => {
@@ -201,19 +202,44 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     selectedApp,
   ]);
 
+  const bottomSheetCloseButton = React.useMemo(
+    () => (
+      <React.Fragment>
+        <View style={styles.bottomSheetHandle} />
+        <View style={styles.bottomSheetHeader}>
+          <TouchableOpacity onPress={closeBottomSheet}>
+            <Svg
+              name="ui-close"
+              height={UI_SIZES.elements.icon.small}
+              width={UI_SIZES.elements.icon.small}
+              fill={theme.palette.grey.black}
+            />
+          </TouchableOpacity>
+        </View>
+      </React.Fragment>
+    ),
+    [closeBottomSheet],
+  );
+
   const renderBottomSheet = React.useCallback(
     () => (
-      <BottomSheetModal
-        ref={bottomSheetRef}
-        onDismiss={handleDismiss}
-        enableDynamicSizing
-        containerStyle={styles.bottomSheetContainer}
-        closeButton>
-        {renderBottomSheetContent()}
-      </BottomSheetModal>
+      <NativeModal
+        isVisible={isBottomSheetVisible}
+        onBackdropPress={closeBottomSheet}
+        onSwipeComplete={closeBottomSheet}
+        onModalHide={handleDismiss}
+        swipeDirection="down"
+        statusBarTranslucent
+        backdropTransitionOutTiming={0}
+        hideModalContentWhileAnimating
+        style={styles.bottomSheetModal}>
+        <View style={styles.bottomSheetContent}>
+          {bottomSheetCloseButton}
+          <View style={styles.bottomSheetContainer}>{renderBottomSheetContent()}</View>
+        </View>
+      </NativeModal>
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [renderBottomSheetContent],
+    [isBottomSheetVisible, closeBottomSheet, handleDismiss, bottomSheetCloseButton, renderBottomSheetContent],
   );
 
   const renderEmptyScreen = React.useCallback(
@@ -223,13 +249,11 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
           title={I18n.get('myapp-empty-screen-home-title')}
           text={I18n.get('myapp-empty-screen-home-text')}
           svgImage="empty-content"
-          buttonText={I18n.get('myapp-retry')}
-          buttonAction={onRefresh}
           buttonIcon="ui-refresh"
         />
       </View>
     ),
-    [onRefresh],
+    [],
   );
 
   const renderMainContent = React.useMemo(() => {
