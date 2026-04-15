@@ -40,6 +40,7 @@ const imports = {
   'days-wednesday': async () => import('ASSETS/images/days/wednesday.svg'),
   'diary-fill': async () => import('ASSETS/icons/moduleIcons/diary-fill.svg'),
   'diary-outline': async () => import('ASSETS/icons/moduleIcons/diary-outline.svg'),
+  'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
   'edt-large': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
   'element': async () => import('ASSETS/icons/moduleIcons/element.svg'),
   'empty-blog': async () => import('ASSETS/images/empty-screen/empty-blog.svg'),

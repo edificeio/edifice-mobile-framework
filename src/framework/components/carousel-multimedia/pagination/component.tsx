@@ -13,9 +13,10 @@ import { CarouselPaginationProps } from './types';
 import { PAGINATION_ANIMATION_OFFSET } from '~/framework/components/carousel-multimedia/screen';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '~/framework/components/carousel-multimedia/styles';
 import { getSignedPosterSource } from '~/framework/components/carousel-multimedia/util';
+import { UI_SIZES } from '~/framework/components/constants';
 import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/util/media';
 
-const MAX_PAGINATION_ITEMS = 20;
+const MAX_PAGINATION_ITEMS = 12;
 
 const CarouselPagination = ({
   carouselRef,
@@ -43,9 +44,9 @@ const CarouselPagination = ({
     (item: FileMedia, index: number) => {
       const thumbnailSrc =
         item.mime && isImageContent(item) && item.src
-          ? getSignedPosterSource(item.src)
+          ? getSignedPosterSource(item.src, UI_SIZES.elements.thumbnailFetchSize.small)
           : item.mime && isPlayableMedia(item) && item.poster
-            ? getSignedPosterSource(item.poster)
+            ? getSignedPosterSource(item.poster, UI_SIZES.elements.thumbnailFetchSize.small)
             : undefined;
 
       return <PaginationItem item={item} thumbnailSrc={thumbnailSrc} index={index} paginationProgress={paginationProgress} />;
