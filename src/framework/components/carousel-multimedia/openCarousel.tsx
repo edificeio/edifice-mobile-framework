@@ -1,4 +1,4 @@
-import { navigate } from '~/framework/navigation/helper';
+import { useNavigation } from '@react-navigation/native';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { FileMedia } from '~/framework/util/media/types';
 
@@ -7,6 +7,11 @@ export interface MultimediaCarouselNavParams {
   media: FileMedia[];
 }
 
+/**
+ * @deprecated navigate directly (screens are now strongly typed)
+ * @param props
+ */
 export function openMultimediaCarousel(props: MultimediaCarouselNavParams) {
-  navigate(ModalsRouteNames.CarouselMultimedia, props);
+  console.info('hook', useNavigation());
+  useNavigation().navigate('media/carousel', props);
 }

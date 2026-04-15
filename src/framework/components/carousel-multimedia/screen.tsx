@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext } from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PanGesture } from 'react-native-gesture-handler';
@@ -18,8 +18,6 @@ import styles, { SCREEN_HEIGHT, SCREEN_WIDTH } from './styles';
 import { getSignedMediaSource } from './util';
 
 import { I18n } from '~/app/i18n';
-import { PageView } from '~/framework/components/page';
-import StatusBar from '~/framework/components/status-bar';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { FileMedia, isPlayableMedia } from '~/framework/util/media';
@@ -185,8 +183,7 @@ const CarouselScreen = ({
   }, [media.length, mediaLengthShared]);
 
   return (
-    <PageView style={containerStyle} showNetworkBar={false} showToast={false}>
-      <StatusBar type="dark" />
+    <View style={containerStyle}>
       <OrientationLocker orientation={'UNLOCK'} onChange={onOrientationChange} />
       <Carousel
         key={orientation}
@@ -235,6 +232,6 @@ const CarouselScreen = ({
         mediaLengthShared={mediaLengthShared}
         carouselRef={carouselRef}
       />
-    </PageView>
+    </View>
   );
 };

@@ -91,6 +91,8 @@ export function computeNavBar({
     headerShadowVisible: false,
     headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
     headerTransparent: true,
-    statusBarColor: theme.palette.grey.darkness.toString(),
+    statusBarStyle: 'dark',
+    // statusBarColor: theme.palette.grey.darkness.toString(),
+    presentation: 'fullScreenModal',
   };
 }

@@ -7,7 +7,6 @@ import { actions, messages } from './const';
 import { createHTML } from './editor';
 
 import theme from '~/app/theme';
-import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { openUrl } from '~/framework/util/linking';
 
@@ -186,7 +185,7 @@ export default class RichEditor extends Component {
     const { disabled } = this.props;
     if (disabled) {
       const startIndex = medias.findIndex(item => item.src === url);
-      openMultimediaCarousel({
+      this.props.navigation?.navigate('media/carousel', {
         media: medias,
         startIndex: startIndex !== -1 ? startIndex : 0,
       });

@@ -11,10 +11,9 @@ import Audience from '~/framework/modules/audience/components';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { type Blog, type BlogPostWithAudience, countComments } from '~/framework/modules/blog/reducer';
 import { hasPermissionManager } from '~/framework/modules/blog/rights';
-import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 
 interface BlogPostDetailsProps {
-  blog: DisplayedBlog | Blog;
+  blog: Blog;
   post: BlogPostWithAudience;
   session: AuthActiveAccount;
   onReady?: () => void;

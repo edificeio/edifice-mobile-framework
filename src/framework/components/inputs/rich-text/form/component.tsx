@@ -38,7 +38,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   const headerHeight = useHeaderHeight();
   const containerStyle = { ...styles.container, marginBottom: bottom };
 
-  const navigation = useNavigation() as any;
+  const navigation = useNavigation();
   const route = useRoute();
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -346,6 +346,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
             {...restProps}>
             {realTopForm}
             <RichEditor
+              navigation={navigation}
               disabled={false}
               enterKeyHint="enter"
               editorStyle={containerStyle}

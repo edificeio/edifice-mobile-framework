@@ -1,17 +1,16 @@
 import * as React from 'react';
 
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLayout } from './layout';
-import { Module } from '../module';
+import { EntModule } from '../module';
 import { AllModulesNavigationParams } from './types';
 
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
-import { BodyBoldText } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
-import { TabModule } from '../module/types';
+import { EntTabModule } from '../module/types';
 
 import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
@@ -24,13 +23,14 @@ export const MainNavigation = withSession(
   React.memo(function MainNavigation({ session: session }: { session: AuthActiveAccount }) {
     // ToDo: dependency narrowing over apps and not whole session
 
-    const availableModules = React.useMemo(() => Module.getAvailableModules(session), [session]);
-    const availableTabModules = React.useMemo(() => Module.filterTabModules(availableModules), [availableModules]);
+    const availableModules = React.useMemo(() => EntModule.getAvailableForAccount(session), [session]);
+
+    const availableTabModules = React.useMemo(() => EntModule.filterTabModules(availableModules), [availableModules]);
 
     const tabModulesOptions = React.useMemo(
       () =>
         availableTabModules.map<BottomTabNavigationOptions>(m => ({
-          tabBarButtonTestID: m.tab.tabTestID,
+          tabBarButtonTestID: m.tab.testId,
           tabBarIcon: ({ color, focused, size }) => <TabIcon module={m} focused={focused} size={size} color={color} />,
           tabBarLabel: m.name,
         })),
@@ -46,7 +46,7 @@ export const MainNavigation = withSession(
               key={tabModule.name}
               screenLayout={StackScreenLayout}
               screenOptions={defaultScreenOptions}
-              initialRouteName={tabModule.tab.tabRoute}>
+              initialRouteName={tabModule.tab.route}>
               {
                 // New Modules screens here
                 availableModules.map(module => (
@@ -147,10 +147,20 @@ export const MainNavigation = withSession(
     );
   }),
 );
-export const MainNavigationOptions = { headerShown: false };
+export const MainNavigationOptions: NativeStackNavigationOptions = { headerShown: false };
 
-function TabIcon({ color, focused, module, size }: { module: TabModule<string>; focused: boolean; color: string; size: number }) {
-  return <Svg width={size} height={size} name={focused ? module.tab.tabIconActive : module.tab.tabIconInactive} fill={color} />;
+function TabIcon({
+  color,
+  focused,
+  module,
+  size,
+}: {
+  module: EntTabModule<string>;
+  focused: boolean;
+  color: string;
+  size: number;
+}) {
+  return <Svg width={size} height={size} name={focused ? module.tab.iconActive : module.tab.iconInactive} fill={color} />;
 }
 
 /**

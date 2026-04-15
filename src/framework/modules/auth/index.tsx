@@ -10,10 +10,11 @@ import AuthPlatformsScreen from './screens/main-account/platforms';
 import AuthOnboardingScreen from './screens/onboarding';
 import { AuthStorageData, storage } from './storage';
 
-import { Module } from '~/app/module';
+import { RootModule } from '~/app/module';
 import type { Platform } from '~/framework/util/appConf';
+import { Action } from 'redux';
 
-export default new Module<
+export default new RootModule<
   'auth',
   {
     'auth/onboarding': undefined;
@@ -28,10 +29,11 @@ export default new Module<
     };
   },
   AuthState,
+  Action,
   AuthStorageData
 >(
   {
-    apiScope: [
+    scope: [
       'auth',
       'userbook',
       'directory',
@@ -41,9 +43,8 @@ export default new Module<
       'userinfo', // wtf is this thing ?
     ],
     name: 'auth',
-    reducer,
-    storage,
-    storageName: 'auth',
+    redux: { reducer },
+    storage: { namespace: 'auth', device: storage },
   },
   Stack => (
     <>

@@ -2,21 +2,19 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { AllModulesAsMap, ModuleNavigationParams } from '../module/types';
+import { ModuleNavigationParams, OneModule } from '../module/types';
 
-import type { CarouselParams } from '~/framework/components/carousel/screen';
 import type authModule from '~/framework/modules/auth';
+import type mediaModule from '~/framework/modules/media';
 import { KeysOfUnion, ValueFromUnion } from '~/utils/types';
-
-export type NavigationRootModalsParams = {
-  carousel: CarouselParams;
-};
 
 export type NavigationRootParams = {
   tabs: undefined;
   guest: undefined;
-} & NavigationRootModalsParams &
-  ModuleNavigationParams<typeof authModule>;
+} & ModuleNavigationParams<typeof authModule> &
+  ModuleNavigationParams<typeof mediaModule>;
+
+// ToDo : ^^^ find a way to have a typed set of root modules here instead of list it manually
 
 export type NavigationTabParams = {
   timeline: undefined;
@@ -25,7 +23,9 @@ export type NavigationTabParams = {
   myapps: undefined;
 };
 
-type AllModulesNavigationParamsAsUnion = ModuleNavigationParams<AllModulesAsMap[keyof AllModulesAsMap]>;
+// ToDo : ^^^ really need to staticly type this ?
+
+type AllModulesNavigationParamsAsUnion = ModuleNavigationParams<OneModule>;
 export type AllModulesScreenNames = KeysOfUnion<AllModulesNavigationParamsAsUnion>;
 export type AllModulesNavigationParams = {
   [RouteName in AllModulesScreenNames]: ValueFromUnion<AllModulesNavigationParamsAsUnion, RouteName>;

@@ -8,14 +8,15 @@ import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { NavigationRootParams } from './types';
 import { ModuleNavigationParams } from '../module/types';
 
-import CarouselScreen from '~/framework/components/carousel';
 import authModule from '~/framework/modules/auth';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { useAvailableModules } from '../modules';
+import modalScreens from '~/framework/navigation/modals/navigator';
 
 // Note: import tabModules register to initialize it
 // remove when all modules will be proted to new module system
 import '~/framework/navigation/tabModules';
+import { RootModule } from '../module';
 
 export const RootStack = createNativeStackNavigator<NavigationRootParams>();
 
@@ -37,7 +38,6 @@ export function RootNavigation() {
 
   // ToDo : screen tracking
   // ToDo : deep linking
-  //
 
   /**
    * @deprecated remove this when all modules are ported to the new module system
@@ -55,7 +55,14 @@ export function RootNavigation() {
        * @see https://reactnavigation.org/docs/auth-flow/#removing-shared-screens-when-auth-state-changes
        */}
       <RootStack.Group navigationKey={navigationKey}>
-        <RootStack.Screen name={'carousel'} component={CarouselScreen} />
+        {RootModule.allRootModules.map(module =>
+          module.renderScreens ? (
+            <RootStack.Group key={module.name}>
+              {module.renderScreens(RootStack as ReturnType<typeof createNativeStackNavigator>)}
+            </RootStack.Group>
+          ) : null,
+        )}
+        {modalScreens}
       </RootStack.Group>
     </RootStack.Navigator>
   );

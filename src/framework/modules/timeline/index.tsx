@@ -5,30 +5,30 @@ import TimelineFiltersScreen, { TimelineFiltersScreenOptions } from './screens/t
 import TimelineScreen, { TimelineScreenOptions } from './screens/timeline-screen';
 import { preferences, storage, TimelinePreferencesData, TimelineStorageData } from './storage';
 
-import { Module } from '~/app/module';
+import { EntModule } from '~/app/module';
+import { Action } from 'redux';
 
-export default new Module<
+export default new EntModule<
   'timeline',
   { 'timeline': { reloadWithNewSettings?: boolean }; 'timeline/filters': undefined },
   TimelineState,
+  Action,
   TimelineStorageData,
   TimelinePreferencesData
 >(
   {
-    apiPrefix: 'timeline',
-    apiScope: ['timeline', 'userbook'],
+    scope: ['timeline', 'userbook'],
     matchEntcoreApp: 'Timeline',
     name: 'timeline',
     preferences,
-    reducer,
-    storage,
-    storageName: 'timeline',
+    redux: { reducer },
+    storage: { namespace: 'timeline', device: storage },
     tab: {
-      tabIconActive: 'ui-checkbox-on',
-      tabIconInactive: 'ui-checkbox-off',
-      tabOrder: 0,
-      tabRoute: 'timeline',
-      tabTestID: 'tabbar-news',
+      iconActive: 'ui-checkbox-on',
+      iconInactive: 'ui-checkbox-off',
+      order: 0,
+      route: 'timeline',
+      testId: 'tabbar-news',
     },
   },
   Stack => (
