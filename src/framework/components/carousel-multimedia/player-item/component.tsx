@@ -121,6 +121,7 @@ const PlayerItem = ({ hideNavBar, isCurrentItem, item, itemIndex, onInitialMedia
         videoRef={videoRef as React.RefObject<VideoRef>}
         resizeMode="contain"
         rewindTime={10}
+        showDuration
         source={source}
         {...(isAudioContent(item)
           ? {
