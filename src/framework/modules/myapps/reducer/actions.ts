@@ -47,7 +47,7 @@ export const toggleFavorite =
     const computedNextBookmarks = computeNextBookmarks(favorites.bookmarks, appName);
     const nextBookmarks =
       favorites.applications?.length > 0
-        ? computedNextBookmarks.filter(name => favorites.applications.includes(name))
+        ? computedNextBookmarks.filter(name => favorites.applications.includes(name) || name === appName)
         : computedNextBookmarks;
 
     try {

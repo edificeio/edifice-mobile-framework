@@ -53,10 +53,10 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
   const openSearch = React.useCallback(() => {
     scrollToStart();
     setSearchActive(true);
-    resetCategory();
+    onFilterChange({ type: 'search', value: '' });
     open();
     setTimeout(() => searchRef.current?.focus(), 250);
-  }, [open, resetCategory, scrollToStart]);
+  }, [onFilterChange, open, scrollToStart]);
 
   const closeSearch = React.useCallback(() => {
     close();
@@ -65,6 +65,15 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
     resetCategory();
     scrollToStart();
   }, [clearSearch, close, resetCategory, scrollToStart]);
+
+  React.useEffect(() => {
+    if (searchActive && selectedFilter.type !== 'search') {
+      close();
+      setSearchActive(false);
+      scrollToStart();
+      searchRef.current?.clear();
+    }
+  }, [selectedFilter, searchActive, close, scrollToStart]);
 
   return (
     <FlatList

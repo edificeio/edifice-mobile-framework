@@ -495,6 +495,24 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     }
   }, [indexEditingComment]);
 
+  useEffect(() => {
+    if (!news) return;
+
+    if (loadingState !== AsyncPagedLoadingState.DONE) return;
+
+    if (news.expirationDate && today().isAfter(news.expirationDate)) return;
+
+    if (hasCountedViewRef.current) return;
+    hasCountedViewRef.current = true;
+
+    handleViewsCount({ module: 'actualites', resourceId: String(news.id) })
+      .then(setAudienceViews)
+      .catch(error => {
+        //for now donno what to put here
+        console.error('[Audience] View count failed', error);
+      });
+  }, [news, loadingState, handleViewsCount]);
+
   const handlePreventRemove = React.useCallback(
     ({ data }) => {
       Alert.alert(
