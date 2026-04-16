@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-03-25 09:28:37",
-  "notes": "release: 1.16.8-rc.1(1160801)",
-  "version": "1.16.8-rc.2(1160802)",
-  "track": "1.16.8"
+  "last": "2026-04-16 09:57:59",
+  "notes": "release: 1.16.9(1160900)\nupdate(stack): yarn cache update\nchore(cantine): INTEG-1082 add tracking cantine\nfix(pronote): INTEG-1366 add screen struct choice for pronote connector befor redirect\nchore(cantine): INTEG-1199 add dinner option\nfix(cantine): INTEG-1261 add TTL to refresh data\nfix(mediacentre): ENABLING-708, make /mediacentre/signets call non blocking\nrelease: 1.16.8-rc.2(1160802)",
+  "version": "1.16.9-rc.1(1160901)",
+  "track": "1.16.9"
 }
