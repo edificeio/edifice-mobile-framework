@@ -43,13 +43,14 @@ const PlayerItem = ({ hideNavBar, isCurrentItem, item, itemIndex, onInitialMedia
   }, [itemIndex]);
 
   const onPlay = React.useCallback(() => {
+    hideNavBar();
     setPaused(false);
     const animRef = audioPosterRefs.current.get(itemIndex);
     animRef?.resume();
     if (videoRef.current?.toggleControls) {
       videoRef.current.toggleControls();
     }
-  }, [itemIndex]);
+  }, [hideNavBar, itemIndex]);
 
   // Force pause because the video player prop 'repeat' doesn't work
   const onEnd = React.useCallback(() => {
@@ -110,7 +111,6 @@ const PlayerItem = ({ hideNavBar, isCurrentItem, item, itemIndex, onInitialMedia
         disableBack
         disableFullscreen
         disableVolume
-        onHideControls={isCurrentItem ? hideNavBar : undefined}
         onShowControls={isCurrentItem ? showNavBar : undefined}
         onLoad={onLoad}
         onProgress={onProgress}
