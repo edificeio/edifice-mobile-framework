@@ -39,4 +39,6 @@ export interface MenuItem {
 
 export interface CantineData {
   menu: MenuItem[];
+  dinnerAvailable?: boolean;
+  dinnerMenu?: MenuItem[];
 }
