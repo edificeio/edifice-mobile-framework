@@ -82,9 +82,18 @@ export const mediacentreService = {
     get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/signets';
       const mySignetsApi = '/mediacentre/mysignets';
-      const response = await sessionFetch.json<BackendSignetsResourcesType>(api);
-      const signets = response.data.signets.resources;
+      let signets: BackendResource[] = [];
+      // Signets
+      // This call must be non blocking
+      try {
+        const response = await sessionFetch.json<BackendSignetsResourcesType>(api);
+        signets = response?.data?.signets?.resources || [];
+      } catch (err) {
+        console.debug(`Mediacentre: /mediacentre/signets - ${err}`);
+      }
+      // My Signets
       const mysignets = await sessionFetch.json<BackendResource[]>(mySignetsApi);
+      // Agregate results
       return signets
         .concat(mysignets.filter(ms => !signets.some(s => s.id === ms.id.toString()) && !ms.archived))
         .map(resourceAdapter);
