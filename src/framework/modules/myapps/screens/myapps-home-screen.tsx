@@ -112,8 +112,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         ]}
       />
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filter, hasSeenOnboarding, openBottomSheet, isAppsEmpty],
+    [hasSeenOnboarding, handleOpenOnboarding, isAppsEmpty, openBottomSheet],
   );
 
   React.useEffect(() => {
