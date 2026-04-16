@@ -221,7 +221,7 @@ const CarouselScreen = ({
           );
         }}
         ref={carouselRef}
-        windowSize={Math.min(CAROUSEL_WINDOW_SIZE, media.length - 1)}
+        windowSize={media.length === 1 ? 1 : Math.min(CAROUSEL_WINDOW_SIZE, media.length - 1)}
       />
       <CarouselPagination
         media={media}
