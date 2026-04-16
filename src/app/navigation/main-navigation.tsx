@@ -3,19 +3,18 @@ import * as React from 'react';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
-import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLayout } from './layout';
-import { EntModule } from '../module';
-import { AllModulesNavigationParams } from './types';
-
+import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
-import { EntTabModule } from '../module/types';
-
 import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
-import { UI_SIZES } from '~/framework/components/constants';
+
+import { AllModulesNavigationParams } from './types';
+import { EntModule } from '../module';
+import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLayout } from './layout';
+import { EntTabModule } from '../module/types';
 
 const MainTabs = createBottomTabNavigator();
 
