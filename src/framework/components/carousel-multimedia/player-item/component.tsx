@@ -147,7 +147,6 @@ const PlayerItem = ({
         disableBack
         disableFullscreen
         disableVolume
-        onHideControls={isCurrentItem ? hideNavBar : undefined}
         onShowControls={isCurrentItem ? showNavBar : undefined}
         onLoad={onLoad}
         onProgress={onProgress}
