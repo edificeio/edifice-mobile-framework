@@ -173,6 +173,7 @@ function createHTML(options = {}) {
         .conversation-history > div {margin-left: 10px; padding-left: 10px; border-left: 1px ridge #C7C7C7;}
         #content>p:first-child { margin-block-start: 0;}
         #content>p:last-child { margin-block-end: 0;}
+        mark[data-color="transparent"] { background-color: transparent; }
     </style>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.css" integrity="sha384-/L6i+LN3dyoaK2jYG5ZLh5u13cjdsPDcFOSNJeFBFa/KgVXR5kOfTdiN3ft1uMAq" crossorigin="anonymous">
