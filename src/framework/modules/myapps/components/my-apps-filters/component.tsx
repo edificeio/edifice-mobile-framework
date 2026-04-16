@@ -66,6 +66,15 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
     scrollToStart();
   }, [clearSearch, close, resetCategory, scrollToStart]);
 
+  React.useEffect(() => {
+    if (searchActive && selectedFilter.type !== 'search') {
+      close();
+      setSearchActive(false);
+      scrollToStart();
+      searchRef.current?.clear();
+    }
+  }, [selectedFilter, searchActive, close, scrollToStart]);
+
   return (
     <FlatList
       ref={listRef}

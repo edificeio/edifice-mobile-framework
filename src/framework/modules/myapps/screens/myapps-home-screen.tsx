@@ -48,6 +48,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     completeOnboarding,
     filter,
     handleDismiss,
+    handleOpenOnboarding,
     hasSeenOnboarding,
     isAllAppsTab,
     isBottomSheetVisible,
@@ -65,7 +66,6 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   const isAppsEmpty = apps.length === 0;
   const isAggregatedAppsEmpty = !aggregatedApps || Object.keys(aggregatedApps).length === 0;
-  const isMenuDisabled = React.useMemo(() => isAppsEmpty || filter.type === 'search', [filter, isAppsEmpty]);
 
   const slides: MAOSProps[] = [
     {
@@ -105,15 +105,15 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
           <NavBarAction
             key="notif"
             icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
-            onPress={() => modalRef.current?.doShowModal()}
-            disabled={isMenuDisabled}
+            onPress={handleOpenOnboarding}
+            disabled={isAppsEmpty}
           />,
-          <NavBarAction key="options" icon="ui-options" onPress={() => openBottomSheet('home_menu')} disabled={isMenuDisabled} />,
+          <NavBarAction key="options" icon="ui-options" onPress={() => openBottomSheet('home_menu')} disabled={isAppsEmpty} />,
         ]}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filter, hasSeenOnboarding, openBottomSheet, isMenuDisabled],
+    [filter, hasSeenOnboarding, openBottomSheet, isAppsEmpty],
   );
 
   React.useEffect(() => {
@@ -130,6 +130,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     [],
   );
   const isFavoritesFilter = filter.type === 'favorites';
+
   const renderBottomSheetContent = React.useCallback(() => {
     switch (bottomSheetMode) {
       case 'home_menu':
