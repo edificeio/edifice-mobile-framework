@@ -3,20 +3,20 @@ import * as React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
+import authModule from '~/framework/modules/auth';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
+import modalScreens from '~/framework/navigation/modals/navigator';
+
 import { defaultScreenOptions, StackScreenLayout } from './layout';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { NavigationRootParams } from './types';
+import { RootModule } from '../module';
 import { ModuleNavigationParams } from '../module/types';
-
-import authModule from '~/framework/modules/auth';
-import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { useAvailableModules } from '../modules';
-import modalScreens from '~/framework/navigation/modals/navigator';
 
 // Note: import tabModules register to initialize it
-// remove when all modules will be proted to new module system
+// remove when all modules will be ported to new module system
 import '~/framework/navigation/tabModules';
-import { RootModule } from '../module';
 
 export const RootStack = createNativeStackNavigator<NavigationRootParams>();
 

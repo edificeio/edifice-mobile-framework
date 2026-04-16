@@ -101,7 +101,7 @@ export const MainNavigation = withSession(
           </TabStack.Navigator>
         );
       });
-    }, []);
+    }, [availableModules, oldTabModules]);
 
     /**
      * @deprecated remove when every module is ported to new module system.
@@ -112,7 +112,7 @@ export const MainNavigation = withSession(
         tabBarIcon: props => createOldTabIcon(m.config, props),
         tabBarLabel: m.config.tabDisplayName,
       }));
-    }, [session]);
+    }, [oldTabModules]);
 
     return (
       <MainTabs.Navigator screenLayout={TabScreenLayout} screenOptions={defaultTabOptions} detachInactiveScreens>
