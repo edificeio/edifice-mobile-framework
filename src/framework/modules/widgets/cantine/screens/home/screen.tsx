@@ -124,7 +124,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
   );
 
   const renderContent = () => (
-    <View>
+    <View style={styles.contentHeader}>
       {dropdownItemsStructures.length > 1 && (
         <DropdownPicker
           open={isOpen}
@@ -181,18 +181,28 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
           {cantineInfo.dinnerAvailable && (
             <View style={styles.mealSwitcher}>
               <TouchableOpacity
-                style={[styles.mealSwitcherItem, selectedMeal === 'lunch' ? styles.mealSwitcherItemActive : styles.mealSwitcherItemInactive]}
+                style={[
+                  styles.mealSwitcherItem,
+                  selectedMeal === 'lunch' ? styles.mealSwitcherItemActive : styles.mealSwitcherItemInactive,
+                ]}
                 onPress={() => setSelectedMeal('lunch')}>
-                {selectedMeal === 'lunch'
-                  ? <SmallBoldText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-lunch')}</SmallBoldText>
-                  : <SmallText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-lunch')}</SmallText>}
+                {selectedMeal === 'lunch' ? (
+                  <SmallBoldText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-lunch')}</SmallBoldText>
+                ) : (
+                  <SmallText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-lunch')}</SmallText>
+                )}
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.mealSwitcherItem, selectedMeal === 'dinner' ? styles.mealSwitcherItemActive : styles.mealSwitcherItemInactive]}
+                style={[
+                  styles.mealSwitcherItem,
+                  selectedMeal === 'dinner' ? styles.mealSwitcherItemActive : styles.mealSwitcherItemInactive,
+                ]}
                 onPress={() => setSelectedMeal('dinner')}>
-                {selectedMeal === 'dinner'
-                  ? <SmallBoldText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-dinner')}</SmallBoldText>
-                  : <SmallText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-dinner')}</SmallText>}
+                {selectedMeal === 'dinner' ? (
+                  <SmallBoldText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-dinner')}</SmallBoldText>
+                ) : (
+                  <SmallText style={styles.mealSwitcherText}>{I18n.get('widget-cantine-meal-dinner')}</SmallText>
+                )}
               </TouchableOpacity>
             </View>
           )}
@@ -203,11 +213,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
 
     // Show empty screen if no data is cached
     // This handles both truly empty results, errors, and cases where we haven't fetched yet
-    return (
-      <View>
-        <EmptyScreen svgImage="empty-search" title={I18n.get('widget-cantine-home-empty-title')} />
-      </View>
-    );
+    return <EmptyScreen svgImage="empty-search" title={I18n.get('widget-cantine-home-empty-title')} />;
   };
 
   const inner = (
