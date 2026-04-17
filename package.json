@@ -117,7 +117,7 @@
     "query-string": "9.3.1",
     "querystring": "0.2.1",
     "react": "19.2.3",
-    "react-i18next": "17.0.3",
+    "react-i18next": "17.0.4",
     "react-is": "19.2.5",
     "react-native": "0.85.1",
     "react-native-app-link": "1.0.1",
@@ -230,7 +230,7 @@
     "eslint-plugin-no-inline-styles": "1.0.5",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-hooks": "7.1.0",
     "eslint-plugin-react-native": "5.0.0",
     "eslint-plugin-sort-destructure-keys": "3.0.0",
     "eslint-plugin-sort-keys-fix": "1.1.2",
@@ -248,7 +248,7 @@
     "reactotron-redux": "3.2.1",
     "scaffolder-cli": "1.10.3",
     "set-value": "4.1.0",
-    "typescript": "6.0.2",
+    "typescript": "6.0.3",
     "typescript-eslint": "8.58.2"
   },
   "resolutions": {
