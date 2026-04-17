@@ -28,9 +28,19 @@ export const getAppName = (data: AppsInfo): string => {
   return data.name || '';
 };
 
+export const getAppTestID = (data: { testID?: string }): string => {
+  return data.testID || '';
+};
+
 export const normalizeString = (str: string): string => {
   return str
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
+};
+
+export const toKebabCase = (str: string): string => {
+  return normalizeString(str)
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
 };

@@ -13,6 +13,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
+import { getAppTestID } from '~/framework/modules/myapps/utils';
 import { Image } from '~/framework/util/media/components/image';
 
 const LetterFallback = ({ label }: { label: string }) => {
@@ -78,7 +79,8 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
     <Pressable
       onPress={onPress}
       onLongPress={onLongPress}
-      style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}>
+      style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}
+      testID={getAppTestID(app)}>
       <View style={styles.contentContainer}>
         <View style={styles.card}>
           {renderFavoriteBadge()}

@@ -6,10 +6,10 @@ import { MyAppsMenuItemProps } from './types';
 
 import { BodyText } from '~/framework/components/text';
 
-export const MyAppsMenuItem: React.FC<MyAppsMenuItemProps> = ({ isPressable = true, label, leftElement, onPress }) => {
+export const MyAppsMenuItem: React.FC<MyAppsMenuItemProps> = ({ isPressable = true, label, leftElement, onPress, testID }) => {
   if (!isPressable) {
     return (
-      <View style={styles.wrapper}>
+      <View style={styles.wrapper} testID={testID}>
         <View style={styles.leftElement}>{leftElement}</View>
         <View style={styles.labelWrapper}>
           <BodyText style={styles.label}>{label}</BodyText>
@@ -19,7 +19,7 @@ export const MyAppsMenuItem: React.FC<MyAppsMenuItemProps> = ({ isPressable = tr
   }
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}>
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]} testID={testID}>
       <View style={styles.leftElement}>{leftElement}</View>
       <View style={styles.labelWrapper}>
         <BodyText style={styles.label}>{label}</BodyText>

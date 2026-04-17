@@ -6,14 +6,17 @@ import { openUrl } from '~/framework/util/linking';
 
 export const EMPTY_SCREEN_CONFIG: MyAppsEmptyScreenConfig = {
   favorites: {
+    testID: 'myapps-empty-favorites',
     text: 'myapp-empty-screen-favorite-text',
     title: 'myapp-empty-screen-favorite-title',
   },
   other: {
+    testID: 'myapps-empty-other',
     text: 'myapp-empty-screen-other-text',
     title: 'myapp-empty-screen-other-title',
   },
   search: {
+    testID: 'myapps-empty-search',
     text: 'myapp-empty-screen-search-text',
     title: 'myapp-empty-screen-search-title',
   },

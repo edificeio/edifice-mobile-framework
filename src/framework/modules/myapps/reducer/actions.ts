@@ -28,6 +28,7 @@ export const toggleAllApps = (): ThunkResult => async (dispatch, getState) => {
 
 export const refreshMyApps = (): ThunkResult => async (dispatch, _) => {
   const session = getSession();
+  if (!session) return;
 
   try {
     const payload = await loadAppsDataFromService(myAppsService, session);

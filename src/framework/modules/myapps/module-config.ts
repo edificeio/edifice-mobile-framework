@@ -14,5 +14,5 @@ export default new NavigableModuleConfig<'myapps', AppsInfoState>({
   name: 'myapps',
   storageName: 'myapps',
   tabDisplayName: 'myapp-appname',
-  testID: 'tabbar-apps',
+  testID: 'myapps-home',
 });

@@ -7,7 +7,7 @@ export interface MyAppsListProps {
   onLongPressApp?: (app: AppsInfoAggregated) => void;
   onRefresh?: () => Promise<void>;
   refreshing?: boolean;
-  emptyScreenConfig: { text: string; title: string };
+  emptyScreenConfig: { text: string; title: string; testID?: string };
 }
 
 export type MyAppsListItem = { type: 'app'; app: AppsInfoAggregated } | { type: 'separator' };

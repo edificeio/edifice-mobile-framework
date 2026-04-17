@@ -1,6 +1,8 @@
 import { I18n } from '~/app/i18n';
 import AllModules from '~/app/modules';
 import theme from '~/app/theme';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { createMyAppsServiceWithTokenFetch, myAppsService } from '~/framework/modules/myapps/service';
 import {
   AppBadgesType,
   AppBookmarks,
@@ -10,7 +12,7 @@ import {
   MyAppsCategories,
   MyAppsFilter,
 } from '~/framework/modules/myapps/types';
-import { getAppName, getModuleRouteName, normalizeString } from '~/framework/modules/myapps/utils';
+import { getAppName, getModuleRouteName, normalizeString, toKebabCase } from '~/framework/modules/myapps/utils';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
 
@@ -68,7 +70,7 @@ export const checkIfIsConnector = (app: AppsInfo): boolean => {
 export const appShouldBeAtBottom = (app: AppsInfoAggregated) =>
   app.isConnector && !app.isMobile && !['communication', 'organisation', 'pedagogy'].includes(app.category ?? '');
 
-export const enrichAppsWithModuleInfo = (appsInfo: AppsInfo[], modules: any) =>
+export const enrichAppsWithModuleInfo = (appsInfo: AppsInfo[], modules: AnyNavigableModule[]) =>
   appsInfo.map(app => {
     const isMobile = isMobileApp(app as IEntcoreApp, modules);
     const routeName = getModuleRouteName(app as IEntcoreApp, modules);
@@ -106,6 +108,7 @@ export const aggregateApps = (
         isFavorite,
         isLibrary,
         libraries: config?.libraries,
+        testID: config ? toKebabCase(app.name) : '',
       };
     })
     .filter(app => app.display)
@@ -197,14 +200,10 @@ export const buildFetchSuccessPayload = (appsInfo: AppsInfo[], appsConfig: Appli
   return { aggregatedApps, appsConfig, appsInfo, favorites };
 };
 
-/**
- * Helper function to load apps data from a service given an account/session context.
- * Fetches list, config, and bookmarks in parallel, enriches with module info, and builds the payload.
- * @param appsService The apps service to fetch from (may use different tokens/auth)
- * @param accountOrSession The account info or session used to filter available modules
- * @returns Promise of FetchSuccessPayload ready to dispatch
- */
-export const loadAppsDataFromService = async (appsService: any, accountOrSession: any) => {
+export const loadAppsDataFromService = async (
+  appsService: typeof myAppsService | ReturnType<typeof createMyAppsServiceWithTokenFetch>,
+  accountOrSession: AuthActiveAccount,
+) => {
   const modules = AllModules().filterAvailables(accountOrSession).filter(isNavigableModule);
 
   const [appsInfo, appsConfig, favorites] = await Promise.all([appsService.list(), appsService.config(), appsService.bookmarks()]);

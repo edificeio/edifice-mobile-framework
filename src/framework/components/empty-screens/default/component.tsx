@@ -26,6 +26,7 @@ const EmptyScreen = ({
   imageHeight: _imageHeight,
   svgFillColor,
   svgImage,
+  testID,
   text,
   textColor,
   title,
@@ -42,12 +43,14 @@ const EmptyScreen = ({
   svgFillColor?: ColorValue;
   textColor?: ColorValue;
   imageHeight?: number;
+  testID?: string;
 }) => {
   const imageWidth = getScaleImageSize(280);
   const imageHeight = _imageHeight ?? getScaleImageSize(200);
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
     <PageViewStyle
+      testID={testID}
       style={[
         {
           paddingHorizontal: UI_SIZES.spacing.big,

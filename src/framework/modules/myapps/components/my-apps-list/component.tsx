@@ -18,7 +18,7 @@ export const MyAppsList = React.forwardRef<FlashList<MyAppsListItem>, MyAppsList
   ({ apps, emptyScreenConfig, isAllAppsFilter, onLongPressApp, onPressApp, onRefresh, refreshing }, forwardedRef) => {
     const localRef = React.useRef<FlashList<MyAppsListItem>>(null);
     const appsListRef = forwardedRef || localRef;
-    const { text, title } = emptyScreenConfig;
+    const { testID, text, title } = emptyScreenConfig;
 
     const data: MyAppsListItem[] = React.useMemo(() => {
       return isAllAppsFilter ? buildAllAppsCategoryList(apps) : apps.map(buildAppItem);
@@ -78,7 +78,7 @@ export const MyAppsList = React.forwardRef<FlashList<MyAppsListItem>, MyAppsList
         refreshing={refreshing}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <EmptyScreen svgImage="empty-search" title={I18n.get(title)} text={I18n.get(text)} />
+            <EmptyScreen svgImage="empty-search" title={I18n.get(title)} text={I18n.get(text)} testID={testID} />
           </View>
         }
       />

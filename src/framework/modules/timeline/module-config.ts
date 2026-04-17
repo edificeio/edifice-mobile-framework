@@ -14,5 +14,5 @@ export default new NavigableModuleConfig<'timeline', TimelineState>({
   // The timeline is always displayed
   storageName: 'timeline',
   tabDisplayName: 'timeline-tabname',
-  testID: 'tabbar-news',
+  testID: 'timeline-home',
 });
