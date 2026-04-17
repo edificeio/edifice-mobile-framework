@@ -60,7 +60,7 @@ import {
 export interface ITimelineScreenDataProps {
   flashMessages: FlashMessagesStateData;
   notifications: NotificationsState;
-  session: AuthActiveAccount;
+  session?: AuthActiveAccount;
 }
 export interface ITimelineScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
@@ -141,7 +141,7 @@ function NotificationItem({
       return undefined;
     },
     // Since notifications are immutable, we can memoize them only by id safely.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [notification.id, doOpenNotification],
   );
   return (
@@ -160,11 +160,13 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     loadingState: TimelineLoadingState.PRISTINE,
   };
 
-  rights = getTimelineWorkflowInformation(this.props.session);
+  rights = this.props.session ? getTimelineWorkflowInformation(this.props.session) : undefined;
 
   // Get available widgets for the current session
   getAvailableWidgets(): NavigableModuleArray {
-    return new NavigableModuleArray(...timelineWidgets.get().filterAvailables(this.props.session));
+    return this.props.session
+      ? new NavigableModuleArray(...timelineWidgets.get().filterAvailables(this.props.session))
+      : new NavigableModuleArray([]);
   }
 
   // RENDER =======================================================================================
@@ -483,7 +485,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
   const ts = moduleConfig.getState(s);
   const session = getSession();
-  if (session === undefined) throw new Error('TimelineScreen : session not defined');
   return {
     flashMessages: ts.flashMessages.data,
     notifications: ts.notifications,

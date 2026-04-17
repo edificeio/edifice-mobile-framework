@@ -8,18 +8,29 @@
 
 import * as React from 'react';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import {
   NavigationContainerProps,
   NavigationContainerRef,
   NavigationContainer as RNNavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useSelector } from 'react-redux';
 
-import { RootNavigation } from './root-navigation';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
+import modalScreens from '~/framework/navigation/modals/navigator';
+
+import { defaultScreenOptions, StackScreenLayout } from './layout';
+import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import navigationLightTheme from './theme';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { RootModule } from '../module';
+import { useAvailableModules } from '../modules';
+
+// Note: import tabModules register to initialize it
+// remove when all modules will be ported to new module system
+import '~/framework/navigation/tabModules';
 
 export const NavigationContainer = React.forwardRef(function NavigationContainer(
   { theme: _, ...props }: NavigationContainerProps,
@@ -27,6 +38,9 @@ export const NavigationContainer = React.forwardRef(function NavigationContainer
 ) {
   return <RNNavigationContainer ref={ref} theme={navigationLightTheme} {...props} />;
 });
+
+export const RootStack = createNativeStackNavigator<NavigationRootParams>();
+export const TABS_ROUTE_NAME = 'tabs' as const;
 
 export function AppNavigation() {
   const navigationRef = useNavigationContainerRef<NavigationRootParams>();
@@ -36,6 +50,22 @@ export function AppNavigation() {
   const onUnhandledAction = React.useCallback<NonNullable<NavigationContainerProps['onUnhandledAction']>>(action => {
     __DEV__ && console.error('[Navigation] Unhandled action', action);
   }, []);
+  const onStateChange = React.useCallback<NonNullable<NavigationContainerProps['onStateChange']>>(_action => {
+    // __DEV__ && console.info('[Navigation] onStateChange', action);
+  }, []);
+
+  const session = useSelector(selectors.session);
+  const requirement = useSelector(selectors.requirement);
+  const showAppContent = session && !requirement;
+  const navigationKey = showAppContent ? session.logTimestamp.toString() : 'guest';
+
+  // ToDo : screen tracking
+  // ToDo : deep linking
+
+  /**
+   * @deprecated remove this when all modules are ported to the new module system
+   */
+  useAvailableModules(session);
 
   /**
    * Note on initialState prop :
@@ -44,11 +74,44 @@ export function AppNavigation() {
    * In the future, make sure deep linking will be handled in addition to this behaviour.
    * @see https://reactnavigation.org/docs/navigation-container#initialstate
    */
+  const navigationState = React.useMemo<NonNullable<NavigationContainerProps['initialState']>>(
+    () => (showAppContent ? { routes: [{ name: TABS_ROUTE_NAME }] } : { routes: [] }),
+    [showAppContent],
+  );
+  React.useLayoutEffect(() => {
+    if (!navigationRef.isReady()) return;
+    navigationRef.reset(navigationState);
+  }, [navigationRef, navigationState]);
 
   return (
-    <NavigationContainer ref={navigationRef} onReady={onReady} onUnhandledAction={onUnhandledAction}>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={onReady}
+      onUnhandledAction={onUnhandledAction}
+      onStateChange={onStateChange}
+      initialState={navigationState}>
       <BottomSheetModalProvider>
-        <RootNavigation />
+        <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
+          {/* Add the main screen of the app depending on authentication flow */}
+          {showAppContent && <RootStack.Screen options={MainNavigationOptions} name={TABS_ROUTE_NAME} component={MainNavigation} />}
+          {/*{showAppContent && <RootStack.Screen name="tabs" component={TestComp} />}*/}
+
+          {/**
+           * Add root modules that belongs to the framework here
+           * navigationKey is useful here to get the user out of these screens if it is logged out in them
+           * @see https://reactnavigation.org/docs/auth-flow/#removing-shared-screens-when-auth-state-changes
+           */}
+          <RootStack.Group navigationKey={navigationKey}>
+            {RootModule.allRootModules.map(module =>
+              module.renderScreens ? (
+                <RootStack.Group key={module.name}>
+                  {module.renderScreens(RootStack as ReturnType<typeof createNativeStackNavigator>)}
+                </RootStack.Group>
+              ) : null,
+            )}
+            {modalScreens}
+          </RootStack.Group>
+        </RootStack.Navigator>
       </BottomSheetModalProvider>
     </NavigationContainer>
   );

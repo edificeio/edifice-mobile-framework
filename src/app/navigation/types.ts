@@ -2,15 +2,16 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ModuleNavigationParams, OneModule } from '../module/types';
-
 import type authModule from '~/framework/modules/auth';
 import type mediaModule from '~/framework/modules/media';
 import { KeysOfUnion, ValueFromUnion } from '~/utils/types';
 
+import { ModuleNavigationParams, OneModule } from '../module/types';
+
+import type { TABS_ROUTE_NAME } from '.';
+
 export type NavigationRootParams = {
-  tabs: undefined;
-  guest: undefined;
+  [TABS_ROUTE_NAME]: undefined;
 } & ModuleNavigationParams<typeof authModule> &
   ModuleNavigationParams<typeof mediaModule>;
 
@@ -34,7 +35,7 @@ export type AllModulesNavigationParams = {
 export type NavigationRootScreenProps<T extends keyof NavigationRootParams> = NativeStackScreenProps<NavigationRootParams, T>;
 export type NavigationTabScreenProps<T extends keyof NavigationTabParams> = CompositeScreenProps<
   BottomTabScreenProps<NavigationTabParams, T>,
-  NavigationRootScreenProps<'tabs'>
+  NavigationRootScreenProps<typeof TABS_ROUTE_NAME>
 >;
 
 export type ModuleScreenProps<T extends keyof AllModulesNavigationParams> = NativeStackScreenProps<AllModulesNavigationParams, T>;

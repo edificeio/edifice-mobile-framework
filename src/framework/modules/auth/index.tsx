@@ -1,5 +1,10 @@
 import React from 'react';
 
+import { Action } from 'redux';
+
+import { RootModule } from '~/app/module';
+import type { Platform } from '~/framework/util/appConf';
+
 import reducer from './redux/reducer';
 import { type AuthState } from './redux/types';
 import AuthDiscoveryClassScreen from './screens/discovery-class';
@@ -9,10 +14,6 @@ import AuthLoginWayfScreen from './screens/main-account/login-wayf';
 import AuthPlatformsScreen from './screens/main-account/platforms';
 import AuthOnboardingScreen from './screens/onboarding';
 import { AuthStorageData, storage } from './storage';
-
-import { RootModule } from '~/app/module';
-import type { Platform } from '~/framework/util/appConf';
-import { Action } from 'redux';
 
 export default new RootModule<
   'auth',
@@ -33,6 +34,8 @@ export default new RootModule<
   AuthStorageData
 >(
   {
+    name: 'auth',
+    redux: { reducer },
     scope: [
       'auth',
       'userbook',
@@ -42,9 +45,7 @@ export default new RootModule<
       'portal', // dont know if used somewhere
       'userinfo', // wtf is this thing ?
     ],
-    name: 'auth',
-    redux: { reducer },
-    storage: { namespace: 'auth', device: storage },
+    storage: { device: storage, namespace: 'auth' },
   },
   Stack => (
     <>
