@@ -40,7 +40,8 @@ export const normalizeString = (str: string): string => {
 };
 
 export const toKebabCase = (str: string): string => {
-  return normalizeString(str)
+  const withCamelCase = str.replace(/([a-z0-9])([A-Z])/g, '$1-$2');
+  return normalizeString(withCamelCase)
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
 };
