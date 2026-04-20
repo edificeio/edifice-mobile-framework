@@ -15,5 +15,4 @@ export default new NavigableModuleConfig<'dashboard', IDashboardReduxState>({
   matchEntcoreApp: 'Dashboard',
   name: 'dashboard',
   storageName: 'dashboard',
-  tabDisplayName: 'dashboard-moduleconfig-tabname',
 });
