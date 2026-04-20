@@ -36,7 +36,7 @@ import { Picture, PictureProps } from '~/framework/components/picture';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
-import { buildModuleTabDisplayName } from '~/framework/modules/myapps/reducer/adapter';
+import { getTabModuleDisplayName } from '~/framework/modules/myapps/reducer/adapter';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
@@ -168,7 +168,7 @@ export function TabNavigation() {
     return availableTabModules.map(module => {
       const index = tabModulesCache.findIndex(tm => tm.config.name === module.config.name);
       if (index < 0) return undefined;
-      const tabLabel = buildModuleTabDisplayName(module.config, aggregatedApps);
+      const tabLabel = getTabModuleDisplayName(module.config, aggregatedApps);
       return (
         <Tab.Screen
           key={module.config.routeName}

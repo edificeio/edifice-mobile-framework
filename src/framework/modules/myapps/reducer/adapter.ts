@@ -43,7 +43,7 @@ export const isNavigableModule = (module: AnyModule): module is AnyNavigableModu
 };
 
 export const isMobileApp = (app: IEntcoreApp, modules: AnyNavigableModule[]): boolean => {
-  return modules.some(module => module.config.matchEntcoreApp(app));
+  return modules.some(module => module.config.matchEntcoreApp === app.name);
 };
 
 export const computeNextBookmarks = (bookmarks: string[], appName: string): string[] => {
@@ -111,7 +111,6 @@ export const aggregateApps = (
         testID: config ? toKebabCase(app.name) : '',
       };
     })
-    .filter(app => app.display)
     .sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)))
     .forEach(app => {
       aggregated[app.name] = app;
@@ -152,20 +151,19 @@ export const buildAppNameToTheme = (aggregatedApps: Record<string, AppsInfoAggre
   return themesMap;
 };
 
-export const buildModuleTabDisplayName = (
+export const getTabModuleDisplayName = (
   moduleConfig: AnyNavigableModule['config'],
   aggregatedApps: Record<string, AppsInfoAggregated>,
 ): string => {
-  const matchingApp = aggregatedApps[moduleConfig.name];
-  if (matchingApp) {
-    return matchingApp.displayName;
+  const { matchEntcoreApp, name } = moduleConfig;
+  const i18nKey = `${name}-tabname`;
+  const translated = I18n.get(i18nKey);
+  if (translated !== i18nKey) {
+    return translated;
   }
 
-  if (moduleConfig.tabDisplayName) {
-    return I18n.get(moduleConfig.tabDisplayName);
-  }
-
-  return moduleConfig.name;
+  const matchingApp = matchEntcoreApp ? Object.values(aggregatedApps).find(app => app.name === matchEntcoreApp) : undefined;
+  return matchingApp?.displayName || name;
 };
 
 export const resolveBadgeByAppName = (appName: string, badgesIndex: AppBadgesType): IAppBadgeInfo =>
@@ -213,7 +211,7 @@ export const loadAppsDataFromService = async (
 };
 
 export const applyFilter = (apps: Record<string, AppsInfoAggregated>, filter: MyAppsFilter): AppsInfoAggregated[] => {
-  const appsArray = Object.values(apps);
+  const appsArray = Object.values(apps).filter(app => app.display);
   switch (filter.type) {
     case 'favorites':
       return appsArray.filter(app => app.isFavorite);
