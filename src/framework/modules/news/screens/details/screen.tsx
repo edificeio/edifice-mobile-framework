@@ -2,15 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, Keyboard, Platform, RefreshControl, View } from 'react-native';
 
 import { HeaderBackButton } from '@react-navigation/elements';
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import styles from './styles';
-import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -54,6 +51,9 @@ import { isEmpty } from '~/framework/util/object';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { commentsString } from '~/framework/util/string';
 import HtmlContentView from '~/ui/HtmlContentView';
+
+import styles from './styles';
+import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -476,7 +476,6 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         headerLeft: renderLeftHeader,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -541,7 +540,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     [navigation, infoComment],
   );
 
-  UNSTABLE_usePreventRemove(infoComment.changed, handlePreventRemove);
+  usePreventRemove(infoComment.changed, handlePreventRemove);
 
   return (
     <PageComponent {...Platform.select({ android: {}, ios: { safeArea: !hasPermissionComment } })}>
