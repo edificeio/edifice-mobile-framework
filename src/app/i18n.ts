@@ -198,7 +198,6 @@ export namespace I18n {
             backends: [backendPhrase, backendFallback],
           },
           compatibilityJSON: 'v3',
-          debug: __DEV__,
           fallbackLng,
           interpolation: {
             escapeValue: false,
@@ -209,7 +208,6 @@ export namespace I18n {
     } else {
       await i18n.use(initReactI18next).init({
         compatibilityJSON: 'v3',
-        debug: __DEV__,
         fallbackLng,
         interpolation: {
           escapeValue: false,
