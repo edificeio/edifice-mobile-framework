@@ -1,4 +1,3 @@
-import { I18n } from '~/app/i18n';
 import AllModules from '~/app/modules';
 import theme from '~/app/theme';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
@@ -157,11 +156,6 @@ export const getTabModuleDisplayName = (
   aggregatedApps: Record<string, AppsInfoAggregated>,
 ): string => {
   const { matchEntcoreApp, name } = moduleConfig;
-  const i18nKey = `${name}-tabname`;
-  const translated = I18n.get(i18nKey);
-  if (translated !== i18nKey) {
-    return translated;
-  }
 
   const matchingApp = matchEntcoreApp ? Object.values(aggregatedApps).find(app => app.name === matchEntcoreApp) : undefined;
   return matchingApp?.displayName || name;

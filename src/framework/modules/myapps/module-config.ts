@@ -9,7 +9,7 @@ export default new NavigableModuleConfig<'myapps', AppsInfoState>({
   displayPictureFocus: { name: 'icon-apps-on', type: 'Icon' },
   entcoreScope: [],
   hasRight: () => true,
-  matchEntcoreApp: 'myapps',
+  matchEntcoreApp: 'Portal',
   matchEntcoreWidget: () => false,
   name: 'myapps',
   storageName: 'myapps',
