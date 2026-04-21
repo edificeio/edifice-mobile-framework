@@ -1,21 +1,31 @@
-import { CommonActions } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+/**
+ * Auth Navigation
+ *
+ * Exposes logic about navigation between the auth screen & relation between redux state and navigation screens
+ */
 
-import type { AuthActiveAccount, AuthSavedAccount } from './model';
+import type { NavigationState, PartialState } from '@react-navigation/native';
 
-import type authModule from '.';
-
-import { ModuleNavigationParams } from '~/app/module/types';
+import { NavigationRootParams } from '~/app/navigation/types';
 import appConf, { type Platform } from '~/framework/util/appConf';
+
+import {
+  accountIsActive,
+  AuthActiveAccount,
+  AuthActiveAccountWithCredentials,
+  AuthActiveAccountWithSaml,
+  AuthPendingRedirection,
+  AuthRequirement,
+  AuthSavedAccount,
+} from './model';
+import { AuthState } from './redux/types';
 
 /**
  * Return the navigation action to be performed when leaving the onboarding screen, depending on number of platforms available.
  * @returns
  */
-export const getNavActionForOnboarding = <RouteName extends keyof ModuleNavigationParams<typeof authModule>>(
-  _navigation: NativeStackScreenProps<ModuleNavigationParams<typeof authModule>, RouteName>['navigation'],
-): Parameters<typeof _navigation.dispatch>[0] => {
-  return appConf.hasMultiplePlatform ? CommonActions.navigate('auth/platforms') : CommonActions.navigate('auth/login');
+export const getRouteForOnboarding = () => {
+  return appConf.hasMultiplePlatform ? ({ name: 'auth/platforms' } as const) : ({ name: 'auth/login' } as const);
 };
 
 /**
@@ -24,11 +34,8 @@ export const getNavActionForOnboarding = <RouteName extends keyof ModuleNavigati
  * @param platform
  * @returns
  */
-export const getNavActionForPlatformSelect = <RouteName extends keyof ModuleNavigationParams<typeof authModule>>(
-  _navigation: NativeStackScreenProps<ModuleNavigationParams<typeof authModule>, RouteName>['navigation'],
-  platform: Platform,
-): Parameters<typeof _navigation.dispatch>[0] => {
-  return getNavActionsForLoginRedirection(_navigation, platform);
+export const getRouteForPlatformSelect = (platform: Platform) => {
+  return getRouteForLoginRedirection(platform);
 };
 
 /**
@@ -39,20 +46,164 @@ export const getNavActionForPlatformSelect = <RouteName extends keyof ModuleNavi
  * @param loginUsed When account is not provided, given loginUsed will be passed to the screen as a param.
  * @returns
  */
-export const getNavActionsForLoginRedirection = <RouteName extends keyof ModuleNavigationParams<typeof authModule>>(
-  _navigation: NativeStackScreenProps<ModuleNavigationParams<typeof authModule>, RouteName>['navigation'],
+export const getRouteForLoginRedirection = (
   platform: Platform,
   account?: Pick<AuthSavedAccount | AuthActiveAccount, 'method'> & {
     user: Pick<(AuthSavedAccount | AuthActiveAccount)['user'], 'id'>;
   },
   loginUsed?: string,
-): Parameters<typeof _navigation.dispatch>[0] => {
-  if (platform.redirect) return CommonActions.navigate('auth/login/redirect', { platform });
-  else if (platform.wayf) return CommonActions.navigate('auth/login/wayf', { platform });
+) => {
+  if (platform.redirect) return { name: 'auth/login/redirect', params: { platform } } as const;
+  else if (platform.wayf) return { name: 'auth/login/wayf', params: { platform } } as const;
   else
-    return CommonActions.navigate('auth/login/credentials', {
-      accountId: account?.user.id,
-      loginUsed: account === undefined ? loginUsed : undefined,
-      platform,
-    });
+    return {
+      name: 'auth/login/credentials',
+      params: {
+        accountId: account?.user.id,
+        loginUsed: account === undefined ? loginUsed : undefined,
+        platform,
+      },
+    } as const;
+};
+
+/**
+ * Return the navigation action to be performed when login requirement is recieved.
+ * @param requirement
+ * @returns
+ */
+export const getRouteForRequirement = (
+  account: AuthActiveAccountWithCredentials | AuthActiveAccountWithSaml,
+  requirement: AuthRequirement,
+) => {
+  switch (requirement) {
+    case AuthRequirement.MUST_CHANGE_PASSWORD:
+      return {
+        name: 'auth/change-password',
+        params: {
+          forceChange: true,
+        },
+      } as const;
+    case AuthRequirement.MUST_VALIDATE_TERMS:
+    case AuthRequirement.MUST_REVALIDATE_TERMS:
+      return {
+        name: 'auth/revalidate-terms',
+      } as const;
+    case AuthRequirement.MUST_VERIFY_MOBILE:
+      return {
+        name: 'auth/change-mobile',
+        params: {
+          defaultMobile: account.user.mobile,
+          platform: account.platform,
+        },
+      } as const;
+    case AuthRequirement.MUST_VERIFY_EMAIL:
+      return {
+        name: 'auth/change-email',
+        params: {
+          defaultEmail: account.user.email,
+          platform: account.platform,
+        },
+      } as const;
+  }
+};
+
+export const getRouteForRedirect = (platform: Platform, pending: AuthState['pending'] | undefined) => {
+  switch (pending?.redirect) {
+    case AuthPendingRedirection.ACTIVATE:
+      return {
+        name: 'auth/activation',
+        params: {
+          credentials: {
+            password: pending.code,
+            username: pending.loginUsed,
+          },
+          platform,
+        },
+      } as const;
+    case AuthPendingRedirection.RENEW_PASSWORD:
+      return {
+        name: 'auth/change-password',
+        params: {
+          credentials: {
+            password: pending.code,
+            username: pending.loginUsed,
+          },
+          platform,
+          replaceAccountId: pending.accountId,
+          replaceAccountTimestamp: pending.accountTimestamp,
+          useResetCode: true,
+        },
+      } as const;
+  }
+};
+
+/**
+ * get navigation state from redux data.
+ * If newly returned state differs from the previous one, it must be reset into navigation container
+ * This methods returns the new navigationState + a navigationKey which tells if the navigation state must be reset
+ */
+export const getAuthReduxNavigationState = ({
+  accounts,
+  lastDeletedAccount,
+  pending,
+  requirement,
+  showOnboarding,
+}: Pick<AuthState, 'accounts' | 'lastDeletedAccount' | 'pending' | 'requirement' | 'showOnboarding'>): PartialState<
+  NavigationState<NavigationRootParams>
+> => {
+  let state: PartialState<NavigationState<NavigationRootParams>> = { routes: [], stale: true };
+
+  /**
+   * 0. Gather all useful info
+   */
+  const allPlatforms = appConf.platforms;
+  const loginUsed = pending?.loginUsed;
+  const pendingAccountId = pending && pending.redirect === undefined ? pending.account : undefined;
+  const currentAccountId = Object.keys(accounts).length === 1 ? Object.keys(accounts)[0] : undefined;
+  const accountId = currentAccountId || pendingAccountId;
+  const platformRaw = !appConf.hasMultiplePlatform ? allPlatforms[0] : accountId ? accounts[accountId].platform : undefined;
+  const platform = platformRaw ? appConf.getExpandedPlatform(platformRaw) : undefined;
+  const account = accountId ? accounts[accountId] : undefined;
+
+  /**
+   * 1. Onboarding shows only once before loging
+   */
+  if (showOnboarding) {
+    state.routes.push({ name: 'auth/onboarding' });
+    return state;
+  }
+
+  /**
+   * 2. Selectors (platform endpoints / multi-account)
+   */
+  const nbAccounts = Object.values(accounts).length;
+
+  if (nbAccounts > 0 && nbAccounts + (lastDeletedAccount ? 1 : 0) > 1) {
+    state.routes.push({ name: 'auth/accounts' });
+  } else if (appConf.hasMultiplePlatform) {
+    state.routes.push({ name: 'auth/platforms' });
+  } else {
+    // zero or one account & only one platform -> no screen
+  }
+
+  /**
+   * 3. Login screen
+   */
+
+  if (platform && account) {
+    state.routes.push(getRouteForLoginRedirection(platform, account, loginUsed));
+  }
+
+  /**
+   * 4. Requirements
+   */
+  if (account && accountIsActive(account) && requirement) {
+    const route = getRouteForRequirement(account, requirement);
+    if (route) state = { routes: [route], stale: true };
+  } else if (platform && pending?.redirect !== undefined) {
+    const route = getRouteForRedirect(platform, pending);
+    if (route) state = { routes: [route], stale: true };
+  }
+
+  return state;
 };

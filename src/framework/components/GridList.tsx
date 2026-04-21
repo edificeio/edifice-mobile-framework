@@ -4,13 +4,14 @@
  * use `gap` and `gapOutside` props to manage spaces around the items. Give number or [horizontal, vertical].
  */
 import * as React from 'react';
-import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, FlatList as RNFlatList, StyleProp, View, ViewStyle } from 'react-native';
 
 import FlatList from './list/flat-list';
 
 export interface GridListProps<ItemT> extends FlatListProps<ItemT> {
   gap?: number | [number, number]; // distance BETWEEN each item
   gapOutside?: number | [number, number]; // distance around the list in every direction
+  ref?: React.Ref<RNFlatList<ItemT>>;
 }
 
 const gridListItemWrapperStyleBase = {
@@ -18,8 +19,8 @@ const gridListItemWrapperStyleBase = {
   flexShrink: 0,
 };
 
-export default React.forwardRef(function GridList<ItemT>(props: GridListProps<ItemT>, ref: React.ForwardedRef<FlatList<ItemT>>) {
-  const { columnWrapperStyle, gap, gapOutside, numColumns, renderItem, ...otherProps } = props;
+export default function GridList<ItemT>(props: GridListProps<ItemT>) {
+  const { columnWrapperStyle, gap, gapOutside, numColumns, ref, renderItem, ...otherProps } = props;
   const realNumColumns = numColumns ?? 2;
   const realGap = gap ?? 0,
     realGapHV = React.useMemo(() => (typeof realGap === 'number' ? [realGap, realGap] : realGap), [realGap]);
@@ -63,4 +64,4 @@ export default React.forwardRef(function GridList<ItemT>(props: GridListProps<It
       {...otherProps}
     />
   );
-});
+}

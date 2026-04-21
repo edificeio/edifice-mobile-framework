@@ -2,11 +2,7 @@ import * as React from 'react';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import styles from './styles';
-import type { AuthPlatformsScreenProps } from './types';
-
 import { I18n } from '~/app/i18n';
-import { navigationDispatchMultiple } from '~/app/navigation';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
 import GridList from '~/framework/components/GridList';
@@ -14,12 +10,12 @@ import { HeadingSText, SmallText } from '~/framework/components/text';
 import { DebugOptions } from '~/framework/modules/debug';
 import appConf, { Platform } from '~/framework/util/appConf';
 
+import styles from './styles';
+import type { AuthPlatformsScreenProps } from './types';
+
 export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
   const { getNextRoute, navigation } = props;
-  const onOpenItem = React.useCallback(
-    (item: Platform) => navigationDispatchMultiple(navigation, getNextRoute(navigation, item)),
-    [getNextRoute, navigation],
-  );
+  const onOpenItem = React.useCallback((item: Platform) => navigation.navigate(getNextRoute(item)), [getNextRoute, navigation]);
   return (
     <GridList
       data={appConf.platforms}

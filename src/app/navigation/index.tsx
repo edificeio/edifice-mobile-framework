@@ -18,6 +18,7 @@ import {
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
+import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import modalScreens from '~/framework/navigation/modals/navigator';
 
@@ -55,9 +56,13 @@ export function AppNavigation() {
   }, []);
 
   const session = useSelector(selectors.session);
+  const accounts = useSelector(selectors.accounts);
   const requirement = useSelector(selectors.requirement);
+  const pending = useSelector(selectors.pending);
+  const showOnboarding = useSelector(selectors.showOnboarding);
+  const lastDeletedAccount = useSelector(selectors.lastDeletedAccount);
   const showAppContent = session && !requirement;
-  const navigationKey = showAppContent ? session.logTimestamp.toString() : 'guest';
+  // const navigationKey = showAppContent ? session.logTimestamp.toString() : 'guest';
 
   // ToDo : screen tracking
   // ToDo : deep linking
@@ -67,21 +72,35 @@ export function AppNavigation() {
    */
   useAvailableModules(session);
 
-  /**
-   * Note on initialState prop :
-   * Providing this prop overrides the default behaviour of deep linking of react-navigation.
-   * We need set up initialState to open the app tot he right state regarding to authentication state.
-   * In the future, make sure deep linking will be handled in addition to this behaviour.
-   * @see https://reactnavigation.org/docs/navigation-container#initialstate
-   */
-  const navigationState = React.useMemo<NonNullable<NavigationContainerProps['initialState']>>(
-    () => (showAppContent ? { routes: [{ name: TABS_ROUTE_NAME }] } : { routes: [] }),
-    [showAppContent],
+  const navigationState = React.useMemo(
+    () =>
+      showAppContent
+        ? { routes: [{ name: TABS_ROUTE_NAME }] }
+        : getAuthReduxNavigationState({
+            accounts,
+            lastDeletedAccount,
+            pending,
+            requirement,
+            showOnboarding,
+          }),
+    [accounts, lastDeletedAccount, pending, requirement, showAppContent, showOnboarding],
   );
-  React.useLayoutEffect(() => {
-    if (!navigationRef.isReady()) return;
-    navigationRef.reset(navigationState);
-  }, [navigationRef, navigationState]);
+  const navigationKey = React.useMemo(() => JSON.stringify(navigationState), [navigationState]);
+  const previousNavigationKeyRef = React.useRef(navigationKey);
+  const [navState, setNavState] = React.useState(navigationState);
+  if (previousNavigationKeyRef.current !== navigationKey) {
+    previousNavigationKeyRef.current = navigationKey;
+    setNavState(navigationState);
+  }
+
+  /**
+   * Below handing redux-based navigation state.
+   * `navigationState` depends on redux data, and this is used as `initialState` for navigation.
+   * However, `initialState` is used once at the app startup. After that, we have to manually reset the state when needed (login/logout).
+   */
+  React.useEffect(() => {
+    navigationRef.isReady() && navigationRef.reset(navState);
+  }, [navigationRef, navState]);
 
   return (
     <NavigationContainer
@@ -89,6 +108,13 @@ export function AppNavigation() {
       onReady={onReady}
       onUnhandledAction={onUnhandledAction}
       onStateChange={onStateChange}
+      /**
+       * Note on initialState prop :
+       * Providing this prop overrides the default behaviour of deep linking of react-navigation.
+       * We need set up initialState to open the app tot he right state regarding to authentication state.
+       * In the future, make sure deep linking will be handled in addition to this behaviour.
+       * @see https://reactnavigation.org/docs/navigation-container#initialstate
+       */
       initialState={navigationState}>
       <BottomSheetModalProvider>
         <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>

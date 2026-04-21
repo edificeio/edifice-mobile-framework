@@ -1,11 +1,11 @@
 import * as React from 'react';
 
 import { screenOptions } from '~/app/navigation/util';
-import { getNavActionForPlatformSelect } from '~/framework/modules/auth/new-navigation';
+import { getRouteForPlatformSelect } from '~/framework/modules/auth/new-navigation';
 import AuthPlatformsScreenTemplate, { AuthPlatformsScreenProps } from '~/framework/modules/auth/templates/platforms';
 
 export default function AuthPlatformsScreen(props: Omit<AuthPlatformsScreenProps, 'getNextRoute'>) {
-  return <AuthPlatformsScreenTemplate {...props} getNextRoute={getNavActionForPlatformSelect} />;
+  return <AuthPlatformsScreenTemplate {...props} getNextRoute={getRouteForPlatformSelect} />;
 }
 AuthPlatformsScreen.options = screenOptions(() => ({
   headerShown: false,

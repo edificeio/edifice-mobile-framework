@@ -1,6 +1,3 @@
-import { ActionPayloads, actionTypes, ERASE_ALL_ACCOUNTS } from './actions';
-import { AuthPendingRestore, AuthState } from './types';
-
 import { getStore, IGlobalState } from '~/app/store';
 import {
   accountIsActive,
@@ -16,6 +13,9 @@ import {
 import moduleConfig from '~/framework/modules/auth/module-config';
 import appConf, { Platform } from '~/framework/util/appConf';
 import createReducer from '~/framework/util/redux/reducerFactory';
+
+import { ActionPayloads, actionTypes, ERASE_ALL_ACCOUNTS } from './actions';
+import { AuthPendingRestore, AuthState } from './types';
 
 export const initialState: AuthState = {
   accounts: {},
@@ -373,6 +373,11 @@ const reducer = createReducer(initialState, {
 export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as AuthState;
 
 export const selectors = {
+  accounts: (state: IGlobalState) => getState(state).accounts,
+  connected: (state: IGlobalState) => getState(state).connected,
+  lastAddAccount: (state: IGlobalState) => getState(state).lastAddAccount,
+  lastDeletedAccount: (state: IGlobalState) => getState(state).lastDeletedAccount,
+  pending: (state: IGlobalState) => getState(state).pending,
   requirement: (state: IGlobalState) => {
     const authState = getState(state);
     return authState.requirement;
@@ -381,6 +386,7 @@ export const selectors = {
     const authState = getState(state);
     return authState.connected ? (authState.accounts as AuthLoggedAccountMap)[authState.connected] : undefined;
   },
+  showOnboarding: (state: IGlobalState) => getState(state).showOnboarding,
 };
 
 /**
