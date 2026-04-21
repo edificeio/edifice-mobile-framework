@@ -6,7 +6,7 @@
  * To add an SVG in the app, add its path to the "imports" list below.
  * ToDo: make this list compute automatically.
  */
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 
 import type { Svg as RNSvg, SvgProps as RNSvgProps } from 'react-native-svg';
@@ -101,6 +101,8 @@ const imports = {
   'gepi': async () => import('ASSETS/icons/moduleIcons/gepi.svg'),
   'glpi': async () => import('ASSETS/icons/moduleIcons/glpi.svg'),
   'hiboutheque': async () => import('ASSETS/icons/moduleIcons/hiboutheque.svg'),
+  'home-fill': async () => import('ASSETS/icons/moduleIcons/home-fill.svg'),
+  'home-outline': async () => import('ASSETS/icons/moduleIcons/home-outline.svg'),
   'homework-assistance-home': async () => import('ASSETS/images/homework-assistance-home.svg'),
   'homework1D': async () => import('ASSETS/icons/moduleIcons/homework1D.svg'),
   'homework2D': async () => import('ASSETS/icons/moduleIcons/homework2D.svg'),
