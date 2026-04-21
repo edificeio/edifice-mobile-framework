@@ -12,6 +12,7 @@ import AuthLoginCredentialsScreen, { AuthLoginCredentialsScreenOptions } from '.
 import AuthLoginRedirectScreen from './screens/main-account/login-redirect';
 import AuthLoginWayfScreen from './screens/main-account/login-wayf';
 import AuthPlatformsScreen from './screens/main-account/platforms';
+import { AuthWayfScreen, AuthWayfScreenOptions } from './screens/main-account/wayf';
 import AuthOnboardingScreen from './screens/onboarding';
 import { AuthStorageData, storage } from './storage';
 
@@ -21,13 +22,14 @@ export default new RootModule<
     'auth/onboarding': undefined;
     'auth/platforms': undefined;
     'auth/discovery-class': undefined;
-    'auth/login/redirect': { platform: Platform };
-    'auth/login/wayf': { platform: Platform; accountId?: string };
     'auth/login/credentials': {
       platform: Platform;
       accountId?: string;
       loginUsed?: string;
     };
+    'auth/login/redirect': { platform: Platform };
+    'auth/login/wayf': { platform: Platform; accountId?: string };
+    'auth/wayf': { platform: Platform; accountId?: string };
   },
   AuthState,
   Action,
@@ -52,13 +54,14 @@ export default new RootModule<
       <Stack.Screen name="auth/onboarding" component={AuthOnboardingScreen} options={AuthOnboardingScreen.options} />
       <Stack.Screen name="auth/discovery-class" component={AuthDiscoveryClassScreen} options={AuthDiscoveryClassScreen.options} />
       <Stack.Screen name="auth/platforms" component={AuthPlatformsScreen} options={AuthPlatformsScreen.options} />
-      <Stack.Screen name="auth/login/redirect" component={AuthLoginRedirectScreen} options={AuthLoginRedirectScreen.options} />
-      <Stack.Screen name="auth/login/wayf" component={AuthLoginWayfScreen} options={AuthLoginWayfScreen.options} />
       <Stack.Screen
         name="auth/login/credentials"
         component={AuthLoginCredentialsScreen}
         options={AuthLoginCredentialsScreenOptions}
       />
+      <Stack.Screen name="auth/login/redirect" component={AuthLoginRedirectScreen} options={AuthLoginRedirectScreen.options} />
+      <Stack.Screen name="auth/login/wayf" component={AuthLoginWayfScreen} options={AuthLoginWayfScreen.options} />
+      <Stack.Screen name="auth/wayf" component={AuthWayfScreen} options={AuthWayfScreenOptions} />
     </>
   ),
 );

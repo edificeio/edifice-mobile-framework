@@ -1,34 +1,23 @@
 import * as React from 'react';
 
 import { StackActions } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { AuthWayfScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { screenOptions } from '~/app/navigation/util';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/redux/reducer';
-import WayfScreen, { WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';
+import WayfScreen, { IWayfScreenProps, WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';
 import { buildLoginFederationActionReplaceAccount, loginFederationActionAddFirstAccount } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.wayf>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-wayf-main-title'),
-  }),
-});
+export const AuthWayfScreenOptions = screenOptions(() => ({
+  title: I18n.get('auth-wayf-main-title'),
+}));
 
-export default connect(
+export const AuthWayfScreen = connect(
   (state: any) => {
     return {
       auth: getAuthState(state),
@@ -49,10 +38,10 @@ export default connect(
       },
       dispatch,
     ),
-)(function AuthWayfScreen(props: AuthWayfScreenPrivateProps) {
+)(function AuthWayfScreen(props: Omit<IWayfScreenProps, 'loginCredentialsNavAction'>) {
   return (
     <WayfScreen
-      loginCredentialsNavAction={StackActions.replace(authRouteNames.loginCredentials, {
+      loginCredentialsNavAction={StackActions.replace('auth/login/credentials', {
         accountId: props.route.params.accountId,
         platform: props.route.params.platform,
       })}
