@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Keyboard } from 'react-native';
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
@@ -90,15 +91,26 @@ export function useMyAppsHomeController() {
     }, []),
   );
 
+  const handleDismissSearch = React.useCallback(() => {
+    Keyboard.dismiss();
+    if (filter.type === 'search') setFilter({ type: 'category', value: 'toutes' });
+  }, [filter]);
+
   const openBottomSheet = React.useCallback(
     (mode: BottomSheetMode, app?: AppsInfoAggregated) => {
+      handleDismissSearch();
       setSelectedApp(app ?? null);
       setBottomSheetMode(mode);
       navigation.setParams({ tabBarVisible: false });
       setIsBottomSheetVisible(true);
     },
-    [navigation],
+    [handleDismissSearch, navigation],
   );
+
+  const handleOpenOnboarding = React.useCallback(() => {
+    handleDismissSearch();
+    modalRef.current?.doShowModal();
+  }, [handleDismissSearch]);
 
   const closeBottomSheet = React.useCallback(() => {
     setSelectedApp(null);
@@ -190,6 +202,7 @@ export function useMyAppsHomeController() {
     completeOnboarding,
     filter,
     handleDismiss,
+    handleOpenOnboarding,
     hasSeenOnboarding,
     isAllAppsTab,
     isBottomSheetVisible,

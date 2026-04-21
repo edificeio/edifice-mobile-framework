@@ -13,6 +13,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
+import { getAppTestID } from '~/framework/modules/myapps/utils';
 import { Image } from '~/framework/util/media/components/image';
 
 const LetterFallback = ({ label }: { label: string }) => {
@@ -45,7 +46,7 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
 
     switch (appIcon.type) {
       case 'svg':
-        return <Svg name={appIcon.name} width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} fill="white" />;
+        return <Svg cached name={appIcon.name} width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} fill="white" />;
 
       case 'svg-uri':
         return (
@@ -78,7 +79,8 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
     <Pressable
       onPress={onPress}
       onLongPress={onLongPress}
-      style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}>
+      style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}
+      testID={getAppTestID(app)}>
       <View style={styles.contentContainer}>
         <View style={styles.card}>
           {renderFavoriteBadge()}

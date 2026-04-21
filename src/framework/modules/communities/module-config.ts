@@ -12,5 +12,4 @@ export default new NavigableModuleConfig<'communities', CommunitiesStore>({
   matchEntcoreApp: 'Community',
   name: 'communities',
   storageName: 'communities',
-  tabDisplayName: 'communities-tabname',
 });

@@ -6,7 +6,7 @@ export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', {{modul
     entcoreScope: [
     /* @scaffolder add there entcore scope list that be required for your module */
   ],
-  matchEntcoreApp: entcoreApp => true, // @scaffolder Replace this with a function that returns boolean regarding of the given entcoreApp
+  matchEntcoreApp: null, // @scaffolder Replace this with a function that returns boolean regarding of the given entcoreApp
   storageName: '{{moduleName | toCamelCase}}',
   displayOrder: 0,
 });

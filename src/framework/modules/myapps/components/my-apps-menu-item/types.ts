@@ -3,4 +3,5 @@ export interface MyAppsMenuItemProps {
   onPress?: () => void;
   label: string;
   isPressable?: boolean;
+  testID?: string;
 }

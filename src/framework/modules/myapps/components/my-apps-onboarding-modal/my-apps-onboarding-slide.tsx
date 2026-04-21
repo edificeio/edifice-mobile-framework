@@ -27,7 +27,7 @@ export const MyAppsOnboardingSlide: React.FC<MAOSProps> = ({ description, illust
       </View>
 
       <View style={styles.illustrationWrapper}>
-        {illustration.type === 'svg' && <Svg name={illustration.name} width="100%" height="100%" />}
+        {illustration.type === 'svg' && <Svg cached name={illustration.name} width="100%" height="100%" />}
         {illustration.type === 'animated' && (
           <LottieView
             ref={animationRef}

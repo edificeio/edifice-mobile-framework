@@ -76,14 +76,14 @@ interface IModuleConfigBase<Name extends string> {
   apiName?: string; // prefix for api calls
 }
 interface IModuleConfigRights {
-  matchEntcoreApp: (entcoreApp: IEntcoreApp) => boolean;
+  matchEntcoreApp: string | null; // Name of the app matched by this module to be displayed.
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
   hasRight: (params: { matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[]; session: AuthActiveAccount }) => boolean;
   getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
   getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
 interface IModuleConfigDeclarationRights {
-  matchEntcoreApp: string;
+  matchEntcoreApp: string | null;
   matchEntcoreWidget?: IModuleConfigRights['matchEntcoreWidget'];
   hasRight?: IModuleConfigRights['hasRight'];
 }
@@ -180,10 +180,10 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.entcoreScope = entcoreScope;
     this.apiName = apiName ?? name;
     // Rights
-    this.matchEntcoreApp = (entcoreApp: IEntcoreApp) => entcoreApp.name === matchEntcoreApp;
+    this.matchEntcoreApp = matchEntcoreApp;
     this.matchEntcoreWidget = matchEntcoreWidget ?? (() => false);
     this.hasRight = hasRight ?? (({ matchingApps }) => matchingApps.length > 0);
-    this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => this.matchEntcoreApp(app));
+    this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => app.name === this.matchEntcoreApp);
     this.getMatchingEntcoreWidgets = allEntcoreWidgets =>
       allEntcoreWidgets.filter(wig => this.matchEntcoreWidget(wig, allEntcoreWidgets));
     // Redux
@@ -371,7 +371,6 @@ interface INavigableModuleConfigDisplay {
   displayPictureBlur?: PictureProps; // Picture used to show the module acces link/button when its inactive
   displayPictureFocus?: PictureProps; // Picture used to show the module acces link/button when its active
   displayBadges?: IAppBadgesInfoDeclaration; // Updates to app badges
-  tabDisplayName?: string; // Custom display name for tab labels (fallback when not using aggregatedApps)
   routeName: string; // Technical route name of the module. Must be unique (by default, same as the module name).
 }
 interface IModuleConfigDeclarationDisplay {
@@ -390,9 +389,6 @@ interface IModuleConfigDeclarationDisplay {
   displayBadges?:
     | INavigableModuleConfigDisplay['displayBadges']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
-  tabDisplayName?:
-    | INavigableModuleConfigDisplay['tabDisplayName']
-    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['tabDisplayName']);
   routeName?: INavigableModuleConfigDisplay['routeName'];
   testID?: string;
 }
@@ -426,8 +422,6 @@ export class NavigableModuleConfig<Name extends string, State>
 
   #_displayBadges?: INavigableModuleConfigDeclaration<Name>['displayBadges'];
 
-  #_tabDisplayName: INavigableModuleConfigDeclaration<Name>['tabDisplayName'];
-
   // computed values after init
 
   #displayAs?: INavigableModuleConfig<Name, State>['displayAs'];
@@ -440,18 +434,14 @@ export class NavigableModuleConfig<Name extends string, State>
 
   #displayBadges?: INavigableModuleConfig<Name, State>['displayBadges'];
 
-  #tabDisplayName?: INavigableModuleConfig<Name, State>['tabDisplayName'];
-
   constructor(decl: INavigableModuleConfigDeclaration<Name>) {
-    const { displayAs, displayBadges, displayOrder, displayPictureBlur, displayPictureFocus, routeName, tabDisplayName, ...rest } =
-      decl;
+    const { displayAs, displayBadges, displayOrder, displayPictureBlur, displayPictureFocus, routeName, ...rest } = decl;
     super(rest);
     this.#_displayAs = displayAs;
     this.#_displayOrder = displayOrder ?? 0;
     this.#_displayPictureBlur = displayPictureBlur;
     this.#_displayPictureFocus = displayPictureFocus;
     this.#_displayBadges = displayBadges;
-    this.#_tabDisplayName = tabDisplayName;
     this.routeName = routeName ?? this.name;
   }
 
@@ -469,8 +459,6 @@ export class NavigableModuleConfig<Name extends string, State>
         : this.#_displayPictureFocus;
     this.#displayBadges =
       typeof this.#_displayBadges === 'function' ? this.#_displayBadges(matchingApps, matchingWidgets) : this.#_displayBadges;
-    this.#tabDisplayName =
-      typeof this.#_tabDisplayName === 'function' ? this.#_tabDisplayName(matchingApps, matchingWidgets) : this.#_tabDisplayName;
   }
 
   get displayAs() {
@@ -505,21 +493,14 @@ export class NavigableModuleConfig<Name extends string, State>
     return this.#displayBadges;
   }
 
-  get tabDisplayName() {
-    if (!this.isReady) return undefined;
-    return this.#tabDisplayName;
-  }
-
   assignValues(values: Partial<INavigableModuleConfigDeclaration<any>>) {
-    const { displayAs, displayBadges, displayOrder, displayPictureBlur, displayPictureFocus, routeName, tabDisplayName, ...rest } =
-      values;
+    const { displayAs, displayBadges, displayOrder, displayPictureBlur, displayPictureFocus, routeName, ...rest } = values;
     super.assignValues(rest);
     if (displayAs) this.#_displayAs = displayAs;
     if (displayBadges) this.#_displayBadges = displayBadges;
     if (displayOrder) this.#_displayOrder = displayOrder;
     if (displayPictureBlur) this.#_displayPictureBlur = displayPictureBlur;
     if (displayPictureFocus) this.#_displayPictureFocus = displayPictureFocus;
-    if (tabDisplayName) this.#_tabDisplayName = tabDisplayName;
     if (routeName) this.routeName = routeName;
   }
 }
