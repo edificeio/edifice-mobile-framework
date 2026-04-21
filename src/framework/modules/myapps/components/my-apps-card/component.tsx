@@ -46,7 +46,7 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
 
     switch (appIcon.type) {
       case 'svg':
-        return <Svg name={appIcon.name} width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} fill="white" />;
+        return <Svg cached name={appIcon.name} width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} fill="white" />;
 
       case 'svg-uri':
         return (

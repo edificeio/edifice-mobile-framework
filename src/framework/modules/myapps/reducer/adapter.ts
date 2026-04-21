@@ -12,7 +12,7 @@ import {
   MyAppsCategories,
   MyAppsFilter,
 } from '~/framework/modules/myapps/types';
-import { getAppName, getModuleRouteName, normalizeString, toKebabCase } from '~/framework/modules/myapps/utils';
+import { getAppName, getModuleRouteName, normalizeIconName, normalizeString, toKebabCase } from '~/framework/modules/myapps/utils';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
 
@@ -105,6 +105,7 @@ export const aggregateApps = (
         color: config?.color,
         displayName: getAppName(app),
         help: config?.help,
+        icon: normalizeIconName(app.icon),
         isFavorite,
         isLibrary,
         libraries: config?.libraries,
@@ -121,7 +122,7 @@ export const aggregateApps = (
 
 const USERBOOK_BADGE: IAppBadgeInfo = {
   color: theme.palette.complementary.green?.regular,
-  icon: 'userbook-large',
+  icon: 'userbook',
 };
 
 const FALLBACK_BADGE: IAppBadgeInfo = {
