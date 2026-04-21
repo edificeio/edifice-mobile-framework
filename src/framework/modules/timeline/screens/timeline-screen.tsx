@@ -186,7 +186,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   renderChipsNavigation(widgets: NavigableModuleArray) {
-    return <WidgetChip widgets={widgets} navigation={this.props.navigation} />;
+    const entcoreWidgets = this.props.session.rights.widgets || [];
+    return <WidgetChip widgets={widgets} entcoreWidgets={entcoreWidgets} navigation={this.props.navigation} />;
   }
 
   renderSelectedContent() {

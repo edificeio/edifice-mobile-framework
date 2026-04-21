@@ -135,6 +135,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
               scrollToItem(index);
               onFilterChange(filterItem.filter);
             }}
+            testID={filterItem.testID}
           />
         );
       }}

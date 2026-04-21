@@ -123,7 +123,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
   );
 
   const renderContent = () => (
-    <View>
+    <View style={styles.contentHeader}>
       {dropdownItemsStructures.length > 1 && (
         <DropdownPicker
           open={isOpen}
@@ -212,11 +212,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
 
     // Show empty screen if no data is cached
     // This handles both truly empty results, errors, and cases where we haven't fetched yet
-    return (
-      <View>
-        <EmptyScreen svgImage="empty-search" title={I18n.get('widget-cantine-home-empty-title')} />
-      </View>
-    );
+    return <EmptyScreen svgImage="empty-search" title={I18n.get('widget-cantine-home-empty-title')} />;
   };
 
   const inner = (

@@ -10,7 +10,9 @@ export default StyleSheet.create({
   contentContainer: {
     padding: UI_SIZES.spacing.medium,
   },
-  // DropDownPicker styles
+  contentHeader: {
+    zIndex: 10,
+  },
   dropdownContainer: {
     marginBottom: UI_SIZES.spacing.small,
   },
@@ -40,5 +42,6 @@ export default StyleSheet.create({
   },
   menuWrapper: {
     flex: 1,
+    zIndex: 1,
   },
 });

@@ -66,6 +66,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   const isAppsEmpty = apps.length === 0;
   const isAggregatedAppsEmpty = !aggregatedApps || Object.keys(aggregatedApps).length === 0;
+  const isFavoritesFilter = filter.type === 'favorites';
 
   const slides: MAOSProps[] = [
     {
@@ -107,8 +108,15 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
             icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
             onPress={handleOpenOnboarding}
             disabled={isAppsEmpty}
+            testID={hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif'}
           />,
-          <NavBarAction key="options" icon="ui-options" onPress={() => openBottomSheet('home_menu')} disabled={isAppsEmpty} />,
+          <NavBarAction
+            key="options"
+            icon="ui-options"
+            onPress={() => openBottomSheet('home_menu')}
+            disabled={isAppsEmpty}
+            testID="myapps-navbar-context-menu"
+          />,
         ]}
       />
     ),
@@ -128,7 +136,16 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     ),
     [],
   );
-  const isFavoritesFilter = filter.type === 'favorites';
+
+  const handleToggleFavorite = React.useCallback(() => {
+    closeBottomSheet();
+    setTimeout(() => navigateToFavorites(), 300);
+  }, [closeBottomSheet, navigateToFavorites]);
+
+  const onAppInfoPress = React.useCallback(() => {
+    closeBottomSheet();
+    openHelpLink(selectedApp?.help);
+  }, [closeBottomSheet, selectedApp]);
 
   const renderBottomSheetContent = React.useCallback(() => {
     switch (bottomSheetMode) {
@@ -136,12 +153,10 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         return (
           <React.Fragment>
             <MyAppsMenuItem
-              onPress={() => {
-                closeBottomSheet();
-                setTimeout(() => navigateToFavorites(), 300);
-              }}
+              onPress={handleToggleFavorite}
               leftElement={renderMenuIcon('ui-star-outline')}
               label={getLang('myapp-bottomsheet-handle-favorites')}
+              testID="myapps-menu-manage-favorites"
             />
 
             {!isFavoritesFilter && (
@@ -149,7 +164,13 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
                 <View style={styles.separatorLine} />
                 <MyAppsMenuItem
                   isPressable={false}
-                  leftElement={<Toggle checked={areAppsShowed} onChange={onToggleAllApps} />}
+                  leftElement={
+                    <Toggle
+                      checked={areAppsShowed}
+                      onChange={onToggleAllApps}
+                      testID={areAppsShowed ? 'myapps-all-showed' : 'myapps-all-hidden'}
+                    />
+                  }
                   label={getLang('myapp-bottomsheet-render-all-favorites')}
                 />
                 <MyAppsMenuItem
@@ -175,6 +196,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
               }
               leftElement={renderMenuIcon('ui-star-outline')}
               onPress={() => onToggleFavorite(selectedApp.name)}
+              testID="myapps-toggle-favorite"
             />
 
             <View style={styles.separatorLine} />
@@ -182,10 +204,8 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
             <MyAppsMenuItem
               leftElement={renderMenuIcon('ui-infoCircle')}
               label={getLang('myapp-bottomsheet-app-info')}
-              onPress={() => {
-                closeBottomSheet();
-                openHelpLink(selectedApp.help);
-              }}
+              onPress={onAppInfoPress}
+              testID="myapps-app-info"
             />
           </>
         );
@@ -193,9 +213,9 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   }, [
     areAppsShowed,
     bottomSheetMode,
-    closeBottomSheet,
+    handleToggleFavorite,
     isFavoritesFilter,
-    navigateToFavorites,
+    onAppInfoPress,
     onToggleAllApps,
     onToggleFavorite,
     renderMenuIcon,
@@ -250,10 +270,19 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
           text={I18n.get('myapp-empty-screen-home-text')}
           svgImage="empty-content"
           buttonIcon="ui-refresh"
+          testID="myapps-empty-screen"
         />
       </View>
     ),
     [],
+  );
+
+  const onCardLongPress = React.useCallback(
+    (app: AppsInfoAggregated) => {
+      Feedback.tabPressed(); //make a better feedback for long press
+      openBottomSheet('app_actions', app);
+    },
+    [openBottomSheet],
   );
 
   const renderMainContent = React.useMemo(() => {
@@ -268,24 +297,21 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         isAllAppsFilter={isAllAppsTab}
         onPressApp={onPressApp}
         onRefresh={onRefresh}
-        onLongPressApp={(app: AppsInfoAggregated) => {
-          Feedback.tabPressed();
-          openBottomSheet('app_actions', app);
-        }}
+        onLongPressApp={onCardLongPress}
         refreshing={refreshing}
       />
     );
   }, [
-    apps,
-    filter,
-    appsListRef,
-    isAllAppsTab,
     isAggregatedAppsEmpty,
-    onPressApp,
-    onRefresh,
-    openBottomSheet,
     refreshing,
     renderEmptyScreen,
+    appsListRef,
+    apps,
+    filter,
+    isAllAppsTab,
+    onPressApp,
+    onRefresh,
+    onCardLongPress,
   ]);
 
   return (

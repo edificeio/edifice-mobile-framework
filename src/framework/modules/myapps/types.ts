@@ -60,6 +60,7 @@ export interface AppsInfoAggregated extends AppsInfo {
   color?: string;
   help?: Record<string, string | null>;
   libraries?: string;
+  testID: string;
 }
 
 export interface ApplicationsListResponse {

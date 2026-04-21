@@ -17,7 +17,7 @@ export default new ModuleConfig<'auth', AuthState>({
   ],
   // Auth always included
   hasRight: () => true,
-  matchEntcoreApp: () => false,
+  matchEntcoreApp: null,
   name: 'auth',
   storageName: 'auth',
   trackingName: 'Authentification',

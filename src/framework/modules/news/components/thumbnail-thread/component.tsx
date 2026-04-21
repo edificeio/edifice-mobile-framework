@@ -13,7 +13,7 @@ import { ThreadItemStatus } from '~/framework/modules/news/components/thread-ite
 import moduleConfig from '~/framework/modules/news/module-config';
 import { Image } from '~/framework/util/media-deprecated';
 
-const rawNewsIconName = 'actualites-large';
+const rawNewsIconName = 'actualites';
 
 type SelectedProps = {
   borderColor: ColorValue;
