@@ -3,18 +3,6 @@ import { ListRenderItemInfo, PixelRatio, TouchableOpacity, TouchableOpacityProps
 
 import { PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './documents-proxy';
-import styles from './styles';
-import {
-  AppBadge,
-  DocumentItem,
-  DocumentItemWorkspace,
-  DocumentItemWorkspaceDocumentMedia,
-  FolderItem,
-  PaginatedDocumentFlashListProps,
-  PaginatedDocumentFlatListProps,
-} from './types';
-
 import { I18n } from '~/app/i18n';
 import { EntAppNameOrSynonym } from '~/app/intents';
 import theme from '~/app/theme';
@@ -26,6 +14,18 @@ import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/frame
 import { useAppBadge, useAppTheme } from '~/framework/modules/myapps/hooks';
 import { toURISource } from '~/framework/util/media';
 import { sessionImageSource } from '~/framework/util/transport';
+
+import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './component';
+import styles from './styles';
+import {
+  AppBadge,
+  DocumentItem,
+  DocumentItemWorkspace,
+  DocumentItemWorkspaceDocumentMedia,
+  FolderItem,
+  PaginatedDocumentFlashListProps,
+  PaginatedDocumentFlatListProps,
+} from './types';
 
 export function buildPictureFromBadge(badge: AppBadge): PictureProps {
   if (!badge?.icon) {

@@ -15,6 +15,7 @@ import { selectors } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
 import { withSession } from '../../auth/util';
 
 // # Props
@@ -70,8 +71,6 @@ export default withSession<BlogExplorerScreen.AllProps>(({ navigation, route, se
       />
     );
   }, [hasBlogCreationRights]);
-
-  console.info('BlogExplorerScreen');
 
   return (
     <ResourceExplorer

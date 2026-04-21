@@ -153,7 +153,7 @@ export const buildAppNameToTheme = (aggregatedApps: Record<string, AppsInfoAggre
 };
 
 export const getTabModuleDisplayName = (
-  moduleConfig: AnyNavigableModule['config'],
+  moduleConfig: Pick<AnyNavigableModule['config'], 'name' | 'matchEntcoreApp'>,
   aggregatedApps: Record<string, AppsInfoAggregated>,
 ): string => {
   const { matchEntcoreApp, name } = moduleConfig;

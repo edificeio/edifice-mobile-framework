@@ -276,12 +276,12 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
   onPageReached,
   pageSize,
   placeholderData: _placeholderData,
+  placeholderNumberOfRows: totalPlaceholderRows = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
+  ref,
   renderItem: _renderItem,
   renderPlaceholderItem,
   viewabilityConfig,
   windowSize,
-  ref,
-  placeholderNumberOfRows: totalPlaceholderRows = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   ...flashListProps
 }: Readonly<PaginatedFlashListProps<TItem, TCustomPlaceholderItem>>) {
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.
@@ -363,8 +363,6 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
 
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(() => loadData(0, true), [loadData]);
 
-  console.info('PaginatedFlashList');
-
   return (
     <ContentLoader
       initialLoadingState={initialLoadingState}
@@ -425,12 +423,12 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
   pageSize,
   placeholderData: _placeholderData,
   placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
+  ref,
   renderItem: _renderItem,
   renderPlaceholderItem,
   stickyHeaderIndices,
   viewabilityConfig,
   windowSize = DEFAULT_WINDOW_SIZE,
-  ref,
   ...flatListProps
 }: PaginatedFlatListProps<TItem, TCustomPlaceholderItem>) {
   // Note: here store a ref to the state because `onViewableItemsChanged` won't be refreshed by state updates.

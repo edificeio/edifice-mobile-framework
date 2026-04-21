@@ -3,8 +3,6 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import type { ResourceExplorerTemplate } from './types';
-
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -16,6 +14,8 @@ import service from '~/framework/modules/explorer/service/index';
 import { emptyFolderData, ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/transport/error';
+
+import type { ResourceExplorerTemplate } from './types';
 
 const estimatedListSize = {
   height: UI_SIZES.getViewHeight(),
@@ -87,8 +87,6 @@ export function ResourceExplorerTemplate({
     },
     [onOpenResource],
   );
-
-  console.info('ResourceExplorerTemplate');
 
   return (
     <PaginatedDocumentFlashList

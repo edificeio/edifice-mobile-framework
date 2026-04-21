@@ -9,6 +9,9 @@ import { ListRenderItemInfo as FlatListRenderItemInfo, StyleSheet, ViewStyle } f
 
 import { ListRenderItemInfo as FlashListRenderItemInfo } from '@shopify/flash-list';
 
+import { EntAppNameOrSynonym } from '~/app/intents';
+import { PaginatedFlashList, PaginatedFlatList } from '~/framework/components/list/paginated-list';
+
 import {
   DocumentListItem,
   DocumentPlaceholderItem,
@@ -25,9 +28,6 @@ import {
   PaginatedDocumentFlatListProps,
   PaginatedDocumentListItem,
 } from './types';
-
-import { EntAppNameOrSynonym } from '~/app/intents';
-import { PaginatedFlashList, PaginatedFlatList } from '~/framework/components/list/paginated-list';
 
 /**
  * Symbol used to represent a spacer ensuring that folders are not on the same line as documents.
@@ -179,8 +179,6 @@ export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym,
       onPressDocument,
       onPressFolder,
     });
-
-  console.info('PaginatedDocumentFlashList');
 
   return (
     <PaginatedFlashList

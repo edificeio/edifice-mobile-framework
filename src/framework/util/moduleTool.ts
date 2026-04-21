@@ -7,9 +7,6 @@ import { ColorValue } from 'react-native';
 
 import type { Action, Reducer } from 'redux';
 
-import type { StorageSlice } from './storage/slice';
-import type { StorageTypeMap } from './storage/types';
-
 import { IGlobalState } from '~/app/store';
 import theme, { type IShades } from '~/app/theme';
 import type { PictureProps } from '~/framework/components/picture';
@@ -17,6 +14,9 @@ import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { registerModuleFileManager } from '~/framework/util/fileHandler/services/fileManagerRegistry';
 import { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
+
+import type { StorageSlice } from './storage/slice';
+import type { StorageTypeMap } from './storage/types';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -76,14 +76,14 @@ interface IModuleConfigBase<Name extends string> {
   apiName?: string; // prefix for api calls
 }
 interface IModuleConfigRights {
-  matchEntcoreApp: string | null; // Name of the app matched by this module to be displayed.
+  matchEntcoreApp?: string | undefined; // Name of the app matched by this module to be displayed.
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
   hasRight: (params: { matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[]; session: AuthActiveAccount }) => boolean;
   getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
   getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
 interface IModuleConfigDeclarationRights {
-  matchEntcoreApp: string | null;
+  matchEntcoreApp?: IModuleConfigRights['matchEntcoreApp'];
   matchEntcoreWidget?: IModuleConfigRights['matchEntcoreWidget'];
   hasRight?: IModuleConfigRights['hasRight'];
 }

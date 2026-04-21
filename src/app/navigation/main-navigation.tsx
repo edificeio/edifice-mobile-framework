@@ -2,11 +2,13 @@ import * as React from 'react';
 
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import { useSelector } from 'react-redux';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
+import { getTabModuleDisplayName, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
@@ -22,6 +24,8 @@ export const MainNavigation = withSession(
   React.memo(function MainNavigation({ session: session }: { session: AuthActiveAccount }) {
     // ToDo: dependency narrowing over apps and not whole session
 
+    const aggregatedApps = useSelector(selectAggregatedApps);
+
     const availableModules = React.useMemo(() => EntModule.getAvailableForAccount(session), [session]);
 
     const availableTabModules = React.useMemo(() => EntModule.filterTabModules(availableModules), [availableModules]);
@@ -31,9 +35,9 @@ export const MainNavigation = withSession(
         availableTabModules.map<BottomTabNavigationOptions>(m => ({
           tabBarButtonTestID: m.tab.testId,
           tabBarIcon: ({ color, focused, size }) => <TabIcon module={m} focused={focused} size={size} color={color} />,
-          tabBarLabel: m.name,
+          tabBarLabel: getTabModuleDisplayName(m, aggregatedApps),
         })),
-      [availableTabModules],
+      [aggregatedApps, availableTabModules],
     );
 
     const tabModulesScreens = React.useMemo(
@@ -110,9 +114,9 @@ export const MainNavigation = withSession(
       return oldTabModules.map<BottomTabNavigationOptions>(m => ({
         tabBarButtonTestID: m.config.testID,
         tabBarIcon: props => createOldTabIcon(m.config, props),
-        tabBarLabel: m.config.tabDisplayName,
+        tabBarLabel: getTabModuleDisplayName(m.config, aggregatedApps),
       }));
-    }, [oldTabModules]);
+    }, [aggregatedApps, oldTabModules]);
 
     return (
       <MainTabs.Navigator screenLayout={TabScreenLayout} screenOptions={defaultTabOptions} detachInactiveScreens>
