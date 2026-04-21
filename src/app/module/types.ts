@@ -6,7 +6,8 @@ import { SvgIconName } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import type { StorageSlice } from '~/framework/util/storage/slice';
 import type { StorageTypeMap } from '~/framework/util/storage/types';
-import { EntModule, Module, RootModule } from '.';
+
+import { EntModule, RootModule } from '.';
 
 /**
  * Entcore data
@@ -154,10 +155,10 @@ export type ModuleNavigationParams<T> = T extends
   : never;
 
 export type ModuleReduxReducer<T> = T extends
-  | RootModule<infer Name, any, infer State, infer Action, any, any>
-  | EntModule<infer Name, any, infer State, infer Action, any, any>
+  | RootModule<infer Name, any, infer State, infer A, any, any>
+  | EntModule<infer Name, any, infer State, infer A, any, any>
   ? Name extends any
-    ? Reducer<State, Action>
+    ? Reducer<State, A>
     : never
   : never;
 

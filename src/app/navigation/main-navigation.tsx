@@ -4,6 +4,7 @@ import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-nav
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
+import { EntModule, EntTabModule } from '~/app/module';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
@@ -13,10 +14,8 @@ import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { AllModulesNavigationParams } from './types';
-import { EntModule } from '../module';
 import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLayout } from './layout';
-import { EntTabModule } from '../module/types';
+import { AllModulesNavigationParams } from './types';
 
 const MainTabs = createBottomTabNavigator();
 

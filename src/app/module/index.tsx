@@ -9,19 +9,21 @@ import { ParamListBase } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Action } from 'redux';
 
+import moduleImports from '~/app/config/modules';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { StorageTypeMap } from '~/framework/util/storage/types';
+
 import {
   AllModules,
   AllModulesReducers,
-  ModuleConfig,
-  StrictNavigationParams,
-  EntTabModule,
-  RootModuleConfig,
   EntModuleConfig,
+  EntTabModule,
+  ModuleConfig,
+  RootModuleConfig,
+  StrictNavigationParams,
 } from './types';
-import moduleImports from '../config/modules';
 
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { StorageTypeMap } from '~/framework/util/storage/types';
+export * from './types';
 
 // ToDo: type Action
 

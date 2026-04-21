@@ -18,16 +18,17 @@ import {
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
+import { RootModule } from '~/app/module';
+import { useAvailableModules } from '~/app/modules';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import modalScreens from '~/framework/navigation/modals/navigator';
 
 import { defaultScreenOptions, StackScreenLayout } from './layout';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
+import { useTrackScreen } from './telemetry';
 import navigationLightTheme from './theme';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
-import { RootModule } from '../module';
-import { useAvailableModules } from '../modules';
 
 // Note: import tabModules register to initialize it
 // remove when all modules will be ported to new module system
@@ -51,9 +52,14 @@ export function AppNavigation() {
   const onUnhandledAction = React.useCallback<NonNullable<NavigationContainerProps['onUnhandledAction']>>(action => {
     __DEV__ && console.error('[Navigation] Unhandled action', action);
   }, []);
-  const onStateChange = React.useCallback<NonNullable<NavigationContainerProps['onStateChange']>>(_action => {
-    // __DEV__ && console.info('[Navigation] onStateChange', action);
-  }, []);
+  const trackScreen = useTrackScreen();
+  const onStateChange = React.useCallback<NonNullable<NavigationContainerProps['onStateChange']>>(
+    state => {
+      // __DEV__ && console.info('[Navigation] onStateChange', action);
+      trackScreen(state);
+    },
+    [trackScreen],
+  );
 
   const session = useSelector(selectors.session);
   const accounts = useSelector(selectors.accounts);

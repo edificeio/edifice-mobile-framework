@@ -1,6 +1,6 @@
-import { CantineState } from './reducer';
-
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+
+import { CantineState } from './reducer';
 
 export default new NavigableModuleConfig<'cantine', CantineState>({
   displayAs: ModuleType.MYAPPS_WIDGET,
