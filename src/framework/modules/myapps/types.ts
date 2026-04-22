@@ -1,15 +1,30 @@
 import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
-export type MyAppsCategories = 'communication' | 'pedagogie' | 'organisation' | 'otherServices' | 'toutes';
+export const MyAppsFilterCategories = {
+  all: 'toutes',
+  communication: 'communication',
+  organisation: 'organisation',
+  otherServices: 'otherServices',
+  pedagogie: 'pedagogie',
+} as const;
+
+export type MyAppsCategory = (typeof MyAppsFilterCategories)[keyof typeof MyAppsFilterCategories];
+
+export const MyAppsFilterTypes = {
+  Category: 'category',
+  Favorites: 'favorites',
+  Libraries: 'libraries',
+  Search: 'search',
+} as const;
 
 export type MyAppsFilter =
-  | { type: 'category'; value: MyAppsCategories }
-  | { type: 'favorites' }
-  | { type: 'libraries' }
-  | { type: 'search'; value: string };
+  | { type: typeof MyAppsFilterTypes.Category; value: MyAppsCategory }
+  | { type: typeof MyAppsFilterTypes.Favorites }
+  | { type: typeof MyAppsFilterTypes.Libraries }
+  | { type: typeof MyAppsFilterTypes.Search; value: string };
 
 export interface AppsInfoWithCategory extends AppsInfoAggregated {
-  resolvedCategory: MyAppsCategories;
+  resolvedCategory: MyAppsCategory;
 }
 
 export interface AppsInfo extends Omit<ApplicationsList, 'casType' | 'scope'>, Partial<Omit<ApplicationsConfig, 'name'>> {

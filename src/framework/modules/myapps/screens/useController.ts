@@ -135,7 +135,7 @@ export function useMyAppsHomeController() {
   );
 
   const onToggleFavorite = React.useCallback(
-    (appName: string) => {
+    (appName: string) => () => {
       pendingToggleRef.current = appName;
 
       closeBottomSheet();
