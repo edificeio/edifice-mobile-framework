@@ -54,6 +54,7 @@ import {
 import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
 import { loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
 import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
+import { buildMyAppsOnboardingAccountKey, resetMyAppsOnboardingForAccount } from '~/framework/modules/myapps/storage';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
@@ -748,6 +749,8 @@ export function removeAccountAction(account: AuthActiveAccount | AuthSavedAccoun
     if (accountIsActive(account)) {
       await dispatch(logoutAction());
     }
+    const platformName = accountIsActive(account) ? account.platform.name : account.platform;
+    resetMyAppsOnboardingForAccount(buildMyAppsOnboardingAccountKey(platformName, account.user.id));
     dispatch(actions.removeAccount(account.user.id));
     storage.writeDeleteAccount(account.user.id);
   };
