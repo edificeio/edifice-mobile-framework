@@ -1,8 +1,8 @@
-import { MyAppsFilter } from '~/framework/modules/myapps/types';
+import { MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 
 /**
  * To add new category we do it here after creating the I18n key
- * and update the @type {MyAppsCategories} in ~/framework/modules/myapps/types
+ * and update the @type {MyAppsFilterCategories} in ~/framework/modules/myapps/types
  * and thats it.
  */
 
@@ -38,43 +38,43 @@ export type MyAppsFilterItem = MyAppsFilterItemFilter | MyAppsFilterItemSeparato
 
 export const MY_APPS_FILTER_CONFIG = {
   all: {
-    filter: { type: 'category', value: 'toutes' } as const,
+    filter: { type: MyAppsFilterTypes.Category, value: MyAppsFilterCategories.all } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.all,
     testID: 'myapps-filter-all',
     type: 'filter' as const,
   },
   communication: {
-    filter: { type: 'category', value: 'communication' } as const,
+    filter: { type: MyAppsFilterTypes.Category, value: MyAppsFilterCategories.communication } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.communication,
     testID: 'myapps-filter-communication',
     type: 'filter' as const,
   },
   favorites: {
-    filter: { type: 'favorites' } as const,
+    filter: { type: MyAppsFilterTypes.Favorites } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.favorites,
     testID: 'myapps-filter-favorites',
     type: 'filter' as const,
   },
   libraries: {
-    filter: { type: 'libraries' } as const,
+    filter: { type: MyAppsFilterTypes.Libraries } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.libraries,
     testID: 'myapps-filter-libraries',
     type: 'filter' as const,
   },
   organisation: {
-    filter: { type: 'category', value: 'organisation' } as const,
+    filter: { type: MyAppsFilterTypes.Category, value: MyAppsFilterCategories.organisation } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.organisation,
     testID: 'myapps-filter-organisation',
     type: 'filter' as const,
   },
   otherServices: {
-    filter: { type: 'category', value: 'otherServices' } as const,
+    filter: { type: MyAppsFilterTypes.Category, value: MyAppsFilterCategories.otherServices } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.otherServices,
     testID: 'myapps-filter-other-services',
     type: 'filter' as const,
   },
   pedagogie: {
-    filter: { type: 'category', value: 'pedagogie' } as const,
+    filter: { type: MyAppsFilterTypes.Category, value: MyAppsFilterCategories.pedagogie } as const,
     labelKey: MY_APPS_FILTER_LABEL_KEYS.pedagogie,
     testID: 'myapps-filter-pedagogie',
     type: 'filter' as const,

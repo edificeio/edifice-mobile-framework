@@ -19,7 +19,7 @@ import { MyAppsFilterCell } from '~/framework/modules/myapps/components';
 import { MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 
 export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersProps) => {
-  const searchQuery = selectedFilter.type === 'search' ? selectedFilter.value : '';
+  const searchQuery = selectedFilter.type === MyAppsFilterTypes.Search ? selectedFilter.value : '';
 
   const [searchActive, setSearchActive] = React.useState(false);
   const [searchFocused, setSearchFocused] = React.useState<boolean>(false);
@@ -48,13 +48,13 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
   }, []);
 
   const clearSearch = React.useCallback(() => {
-    onFilterChange({ type: 'search', value: '' });
+    onFilterChange({ type: MyAppsFilterTypes.Search, value: '' });
   }, [onFilterChange]);
 
   const openSearch = React.useCallback(() => {
     scrollToStart();
     setSearchActive(true);
-    onFilterChange({ type: 'search', value: '' });
+    onFilterChange({ type: MyAppsFilterTypes.Search, value: '' });
     open();
     setTimeout(() => searchRef.current?.focus(), 250);
   }, [onFilterChange, open, scrollToStart]);
@@ -70,7 +70,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
   }, [clearSearch, close, resetCategory, scrollToStart]);
 
   React.useEffect(() => {
-    if (searchActive && selectedFilter.type !== 'search') {
+    if (searchActive && selectedFilter.type !== MyAppsFilterTypes.Search) {
       close();
       setSearchActive(false);
       scrollToStart();
@@ -102,7 +102,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
               clearButtonCustomColor={styles.clearButtonColor.color}
               query={searchQuery}
               placeholder={I18n.get('common-search')}
-              onChangeQuery={value => onFilterChange({ type: 'search', value })}
+              onChangeQuery={value => onFilterChange({ type: MyAppsFilterTypes.Search, value })}
               onClear={clearSearch}
               onFocusChange={setSearchFocused}
               containerStyle={[styles.search, !searchFocused && searchQuery.length === 0 ? styles.searchInactive : undefined]}

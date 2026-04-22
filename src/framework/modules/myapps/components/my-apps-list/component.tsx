@@ -63,6 +63,15 @@ export const MyAppsList = React.forwardRef<FlashList<MyAppsListItem>, MyAppsList
       [isAllAppsFilter, onPressApp, onLongPressApp],
     );
 
+    const renderEmptyComponent = React.useMemo(
+      () => (
+        <View style={styles.emptyContainer}>
+          <EmptyScreen svgImage="empty-search" title={I18n.get(title)} text={I18n.get(text)} testID={testID} />
+        </View>
+      ),
+      [title, text, testID],
+    );
+
     return (
       <FlashList
         ref={appsListRef}
@@ -76,11 +85,7 @@ export const MyAppsList = React.forwardRef<FlashList<MyAppsListItem>, MyAppsList
         contentContainerStyle={styles.content}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <EmptyScreen svgImage="empty-search" title={I18n.get(title)} text={I18n.get(text)} testID={testID} />
-          </View>
-        }
+        ListEmptyComponent={renderEmptyComponent}
       />
     );
   },

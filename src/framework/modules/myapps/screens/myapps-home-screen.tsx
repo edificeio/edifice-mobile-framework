@@ -195,7 +195,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
                   : getLang('myapp-bottomsheet-add-to-favorites')
               }
               leftElement={renderMenuIcon('ui-star-outline')}
-              onPress={() => onToggleFavorite(selectedApp.name)}
+              onPress={onToggleFavorite(selectedApp.name)}
               testID="myapps-toggle-favorite"
             />
 
