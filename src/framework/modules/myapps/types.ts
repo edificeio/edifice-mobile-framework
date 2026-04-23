@@ -1,5 +1,7 @@
 import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
+type MakeUnion<T> = T[keyof T];
+
 export const MyAppsFilterCategories = {
   all: 'toutes',
   communication: 'communication',
@@ -8,7 +10,7 @@ export const MyAppsFilterCategories = {
   pedagogie: 'pedagogie',
 } as const;
 
-export type MyAppsCategory = (typeof MyAppsFilterCategories)[keyof typeof MyAppsFilterCategories];
+export type MyAppsCategory = MakeUnion<typeof MyAppsFilterCategories>;
 
 export const MyAppsFilterTypes = {
   Category: 'category',

@@ -50,11 +50,18 @@ export function useMyAppsHomeController() {
   const appsListRef = React.useRef<FlashList<MyAppsListItem>>(null);
 
   const [filter, setFilter] = React.useState<MyAppsFilter>({ type: MyAppsFilterTypes.Category, value: MyAppsFilterCategories.all });
-  const [onboardingSeen, setOnboardingSeen] = React.useState(0);
   const [selectedApp, setSelectedApp] = React.useState<AppsInfoAggregated | null>(null);
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = React.useState<boolean>(false);
+
+  const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState(() => {
+    const session = getSession();
+    if (!session) return false;
+    const accountKey = buildMyAppsOnboardingAccountKey(session.platform.name, session.user.id);
+    const onboarding = readMyAppsOnboarding(accountKey);
+    return Boolean(onboarding?.seen);
+  });
 
   const areAppsShowed = useSelector(getAllappsShowedState);
   const aggregatedApps = useSelector(selectAggregatedApps);
@@ -84,25 +91,17 @@ export function useMyAppsHomeController() {
     return { accountKey, loginSessionKey };
   }, []);
 
-  const hasSeenOnboarding = React.useMemo(() => {
-    const onboardingKeys = getOnboardingKeys();
-    if (!onboardingKeys) return false;
-
-    const onboarding = readMyAppsOnboarding(onboardingKeys.accountKey);
-    return Boolean(onboarding?.seen);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getOnboardingKeys, onboardingSeen]);
-
   useFocusEffect(
     React.useCallback(() => {
-      setOnboardingSeen(t => t + 1);
-
       const onboardingKeys = getOnboardingKeys();
       if (!onboardingKeys) return;
 
       const onboarding = readMyAppsOnboarding(onboardingKeys.accountKey);
+      const alreadySeen = Boolean(onboarding?.seen);
+      setHasSeenOnboarding(alreadySeen);
+
       const shouldShow =
-        onboarding?.seen !== true &&
+        !alreadySeen &&
         onboarding?.version !== ONBOARDING_VERSION &&
         !autoShownOnboardingSessionKeys.has(onboardingKeys.loginSessionKey);
 
@@ -198,7 +197,7 @@ export function useMyAppsHomeController() {
     if (!onboardingKeys) return;
 
     writeMyAppsOnboardingSeen(ONBOARDING_VERSION, onboardingKeys.accountKey);
-    setOnboardingSeen(t => t + 1);
+    setHasSeenOnboarding(true);
   }, [getOnboardingKeys]);
 
   const onRefresh = React.useCallback(async () => {
@@ -234,7 +233,6 @@ export function useMyAppsHomeController() {
     isBottomSheetVisible,
     modalRef,
     navigateToFavorites: () => navigation.navigate(ModalsRouteNames.FavoritesManagement),
-    onboardingSeen,
     onPressApp,
     onRefresh,
     onToggleAllApps,

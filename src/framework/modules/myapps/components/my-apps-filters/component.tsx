@@ -169,7 +169,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
       contentContainerStyle={styles.container}
       style={styles.list}
       scrollEnabled={!searchActive}
-      keyboardShouldPersistTaps="handled" // fixes keyboard dismiss when tapping on filter while search is active
+      keyboardShouldPersistTaps="handled" // fixes keyboard dismiss when tapping on tab menu item while search is active
       ListHeaderComponent={renderSearchComponent}
       renderItem={renderItem}
     />
