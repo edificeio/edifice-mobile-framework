@@ -1,5 +1,7 @@
 type MakeUnion<T> = T[keyof T];
 
+type MakeUnion<T> = T[keyof T];
+
 export const MyAppsFilterCategories = {
   all: 'toutes',
   communication: 'communication',
