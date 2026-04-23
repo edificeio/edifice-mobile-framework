@@ -20,6 +20,7 @@ import { useSelector } from 'react-redux';
 
 import { RootModule } from '~/app/module';
 import { useAvailableModules } from '~/app/modules';
+import { RootToastContainer } from '~/framework/components/toast';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import modalScreens from '~/framework/navigation/modals/navigator';
@@ -67,6 +68,7 @@ export function AppNavigation() {
   const pending = useSelector(selectors.pending);
   const showOnboarding = useSelector(selectors.showOnboarding);
   const lastDeletedAccount = useSelector(selectors.lastDeletedAccount);
+  const connected = useSelector(selectors.connected);
   const showAppContent = session && !requirement;
   // const navigationKey = showAppContent ? session.logTimestamp.toString() : 'guest';
 
@@ -78,35 +80,39 @@ export function AppNavigation() {
    */
   useAvailableModules(session);
 
+  /**
+   * Below handing redux-based navigation state.
+   * `navigationState` depends on redux data, and this is used as `initialState` for navigation.
+   * However, `initialState` is used once at the app startup. After that, we have to manually reset the state when needed (login/logout).
+   */
   const navigationState = React.useMemo(
     () =>
       showAppContent
         ? { routes: [{ name: TABS_ROUTE_NAME }] }
         : getAuthReduxNavigationState({
             accounts,
+            connected,
             lastDeletedAccount,
             pending,
             requirement,
             showOnboarding,
           }),
-    [accounts, lastDeletedAccount, pending, requirement, showAppContent, showOnboarding],
+    [accounts, connected, lastDeletedAccount, pending, requirement, showAppContent, showOnboarding],
   );
-  const navigationKey = React.useMemo(() => JSON.stringify(navigationState), [navigationState]);
-  const previousNavigationKeyRef = React.useRef(navigationKey);
-  const [navState, setNavState] = React.useState(navigationState);
-  if (previousNavigationKeyRef.current !== navigationKey) {
-    previousNavigationKeyRef.current = navigationKey;
-    setNavState(navigationState);
-  }
 
   /**
-   * Below handing redux-based navigation state.
-   * `navigationState` depends on redux data, and this is used as `initialState` for navigation.
-   * However, `initialState` is used once at the app startup. After that, we have to manually reset the state when needed (login/logout).
+   * Here we handle new navigation state and the need to reset manually.
+   * No reset must be done if this is a the initial render (initialState will handle it).
+   * Else, we must compare nav state chages as string since it will be built with same values sometimes.
    */
-  React.useEffect(() => {
-    navigationRef.isReady() && navigationRef.reset(navState);
-  }, [navigationRef, navState]);
+  const navigationKey = React.useMemo(() => JSON.stringify(navigationState), [navigationState]);
+  const previousNavigationKeyRef = React.useRef(navigationKey);
+  const isMountedRef = React.useRef(false);
+  if (previousNavigationKeyRef.current !== navigationKey) {
+    previousNavigationKeyRef.current = navigationKey;
+    navigationRef.isReady() && navigationRef.reset(navigationState);
+    isMountedRef.current = true;
+  }
 
   return (
     <NavigationContainer
@@ -123,10 +129,20 @@ export function AppNavigation() {
        */
       initialState={navigationState}>
       <BottomSheetModalProvider>
-        <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
-          {/* Add the main screen of the app depending on authentication flow */}
-          {showAppContent && <RootStack.Screen options={MainNavigationOptions} name={TABS_ROUTE_NAME} component={MainNavigation} />}
-          {/*{showAppContent && <RootStack.Screen name="tabs" component={TestComp} />}*/}
+        <RootStack.Navigator
+          screenLayout={StackScreenLayout}
+          screenOptions={defaultScreenOptions}
+          UNSTABLE_routeNamesChangeBehavior="lastUnhandled">
+          {/**
+           * Show main screen depending on session data and requirements.
+           * We can't remove the `tabs` route since react-navigation has to that it exists to navigate to it.
+           * So, we handle this by using another empty render component
+           */}
+          <RootStack.Screen
+            options={MainNavigationOptions}
+            name={TABS_ROUTE_NAME}
+            component={showAppContent ? MainNavigation : MainNavigationEmpty}
+          />
 
           {/**
            * Add root modules that belongs to the framework here
@@ -144,9 +160,14 @@ export function AppNavigation() {
             {modalScreens}
           </RootStack.Group>
         </RootStack.Navigator>
+        <RootToastContainer />
       </BottomSheetModalProvider>
     </NavigationContainer>
   );
+}
+
+function MainNavigationEmpty() {
+  return null;
 }
 
 /**

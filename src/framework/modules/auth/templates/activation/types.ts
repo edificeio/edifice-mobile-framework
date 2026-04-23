@@ -1,42 +1,29 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
-import {
-  IActivationPayload as ActivationPayload,
-  AuthCredentials,
-  LegalUrls,
-  PlatformAuthContext,
-} from '~/framework/modules/auth/model';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { ModuleScreenProps } from '~/app/navigation/types';
+import { IActivationPayload as ActivationPayload, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { activateAccountActionAddFirstAccount } from '~/framework/modules/auth/thunks';
-import { Platform } from '~/framework/util/appConf';
 
 export type IFields = 'login' | 'password' | 'confirmPassword' | 'phone' | 'mail';
 export type MobileState = 'MOBILE_FORMAT_INVALID' | 'PRISTINE' | 'STALE';
 export type EmailState = 'EMAIL_FORMAT_INVALID' | 'PRISTINE';
 
-export interface ActivationScreenNavParams {
-  platform: Platform;
-  credentials: AuthCredentials;
-}
-
-export interface ActivationScreenState extends ActivationPayload {
+export interface AuthActivationScreenState extends ActivationPayload {
   typing: boolean;
   acceptCGU: boolean;
   error?: string;
   activationState: 'IDLE' | 'RUNNING' | 'DONE';
 }
-export interface ActivationPrivateProps {}
-export interface ActivationScreenStoreProps {
+
+export interface AuthActivationScreenStoreProps {
   legalUrls?: LegalUrls;
   context?: PlatformAuthContext;
   validReactionTypes?: string[];
 }
-export interface ActivationScreenDispatchProps {
+
+export interface AuthActivationScreenDispatchProps {
   trySubmit: (
     ...args: Parameters<typeof activateAccountActionAddFirstAccount>
   ) => ReturnType<ReturnType<typeof activateAccountActionAddFirstAccount>>;
 }
-export type ActivationScreenProps = ActivationPrivateProps &
-  ActivationScreenDispatchProps &
-  ActivationScreenStoreProps &
-  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.activation | typeof authRouteNames.addAccountActivation>;
+
+export interface AuthActivationScreenProps
+  extends AuthActivationScreenDispatchProps, AuthActivationScreenStoreProps, ModuleScreenProps<'auth/activation'> {}

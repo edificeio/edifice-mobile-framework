@@ -78,10 +78,7 @@ export const getRouteForRequirement = (
   switch (requirement) {
     case AuthRequirement.MUST_CHANGE_PASSWORD:
       return {
-        name: 'auth/change-password',
-        params: {
-          forceChange: true,
-        },
+        name: 'auth/requirement-reset-password',
       } as const;
     case AuthRequirement.MUST_VALIDATE_TERMS:
     case AuthRequirement.MUST_REVALIDATE_TERMS:
@@ -122,16 +119,15 @@ export const getRouteForRedirect = (platform: Platform, pending: AuthState['pend
       } as const;
     case AuthPendingRedirection.RENEW_PASSWORD:
       return {
-        name: 'auth/change-password',
+        name: 'auth/renew-password',
         params: {
           credentials: {
             password: pending.code,
             username: pending.loginUsed,
           },
-          platform,
-          replaceAccountId: pending.accountId,
-          replaceAccountTimestamp: pending.accountTimestamp,
-          useResetCode: true,
+          host: platform.name,
+          // replaceAccountId: pending.accountId,
+          // replaceAccountTimestamp: pending.accountTimestamp,
         },
       } as const;
   }
@@ -144,11 +140,12 @@ export const getRouteForRedirect = (platform: Platform, pending: AuthState['pend
  */
 export const getAuthReduxNavigationState = ({
   accounts,
+  connected,
   lastDeletedAccount,
   pending,
   requirement,
   showOnboarding,
-}: Pick<AuthState, 'accounts' | 'lastDeletedAccount' | 'pending' | 'requirement' | 'showOnboarding'>): PartialState<
+}: Pick<AuthState, 'connected' | 'accounts' | 'lastDeletedAccount' | 'pending' | 'requirement' | 'showOnboarding'>): PartialState<
   NavigationState<NavigationRootParams>
 > => {
   let state: PartialState<NavigationState<NavigationRootParams>> = { routes: [], stale: true };
@@ -156,14 +153,19 @@ export const getAuthReduxNavigationState = ({
   /**
    * 0. Gather all useful info
    */
-  const allPlatforms = appConf.platforms;
-  const loginUsed = pending?.loginUsed;
-  const pendingAccountId = pending && pending.redirect === undefined ? pending.account : undefined;
-  const currentAccountId = Object.keys(accounts).length === 1 ? Object.keys(accounts)[0] : undefined;
-  const accountId = currentAccountId || pendingAccountId;
-  const platformRaw = !appConf.hasMultiplePlatform ? allPlatforms[0] : accountId ? accounts[accountId].platform : undefined;
-  const platform = platformRaw ? appConf.getExpandedPlatform(platformRaw) : undefined;
-  const account = accountId ? accounts[accountId] : undefined;
+
+  const accountIds = Object.keys(accounts);
+
+  const pendingAccountId = pending && 'account' in pending ? pending.account : undefined;
+  const pendingAccount = pendingAccountId ? accounts[pendingAccountId] : undefined;
+  const pendingLoginUsed = pending?.loginUsed;
+
+  const loadedAccountId = accountIds.length === 1 ? accountIds[0] : undefined;
+  const loadedAccount = loadedAccountId ? accounts[loadedAccountId] : undefined;
+
+  const accountUsed = pendingAccount ?? loadedAccount;
+  const plaformUsedRaw = accountUsed?.platform ?? (appConf.hasMultiplePlatform ? undefined : appConf.platforms[0]);
+  const platformUsed = plaformUsedRaw ? appConf.getExpandedPlatform(plaformUsedRaw) : undefined;
 
   /**
    * 1. Onboarding shows only once before loging
@@ -190,18 +192,21 @@ export const getAuthReduxNavigationState = ({
    * 3. Login screen
    */
 
-  if (platform && account) {
-    state.routes.push(getRouteForLoginRedirection(platform, account, loginUsed));
+  if (platformUsed && accountUsed) {
+    state.routes.push(getRouteForLoginRedirection(platformUsed, accountUsed, pendingLoginUsed));
   }
 
   /**
    * 4. Requirements
    */
-  if (account && accountIsActive(account) && requirement) {
-    const route = getRouteForRequirement(account, requirement);
+
+  const loggedAccount = connected ? accounts[connected] : undefined;
+
+  if (loggedAccount && accountIsActive(loggedAccount) && requirement) {
+    const route = getRouteForRequirement(loggedAccount, requirement);
     if (route) state = { routes: [route], stale: true };
-  } else if (platform && pending?.redirect !== undefined) {
-    const route = getRouteForRedirect(platform, pending);
+  } else if (platformUsed && pending?.redirect !== undefined) {
+    const route = getRouteForRedirect(platformUsed, pending);
     if (route) state = { routes: [route], stale: true };
   }
 

@@ -11,7 +11,7 @@ import { I18n } from '~/app/i18n';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf } from '~/framework/modules/auth/redux/reducer';
 import ChangePasswordScreen from '~/framework/modules/auth/templates/change-password';
-import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
+import { AuthChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
 import { changePasswordActionAddAnotherAccount, logoutAction } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -36,7 +36,7 @@ export default connect(
     };
   },
   (dispatch: ThunkDispatch<any, any, any>, props: AuthChangePasswordScreenOwnProps) => {
-    return bindActionCreators<ChangePasswordScreenDispatchProps>(
+    return bindActionCreators<AuthChangePasswordScreenDispatchProps>(
       {
         tryLogout: tryAction(logoutAction),
         trySubmit: tryAction(

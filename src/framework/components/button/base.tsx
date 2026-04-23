@@ -4,12 +4,12 @@ import { ActivityIndicator, Pressable, PressableProps, Text, useWindowDimensions
 
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
-import styles from './styles';
-import { BaseButtonProps } from './types';
-
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { useLayout } from '~/framework/hooks/layout';
+
+import styles from './styles';
+import { BaseButtonProps } from './types';
 
 export const BaseButton = React.memo(
   React.forwardRef(function BaseButton(

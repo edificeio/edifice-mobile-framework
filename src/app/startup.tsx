@@ -5,8 +5,6 @@ import BootSplash from 'react-native-bootsplash';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import AppNavigation from './navigation';
-
 import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
@@ -14,6 +12,8 @@ import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/t
 import track from '~/framework/modules/auth/tracking';
 import { appReadyAction, getState as getAppStartupState } from '~/framework/navigation/redux';
 import { tryAction } from '~/framework/util/redux/actions';
+
+import AppNavigation from './navigation';
 
 /**
  * Logic code that is run for the app start

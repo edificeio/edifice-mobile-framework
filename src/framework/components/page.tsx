@@ -26,14 +26,14 @@ import { useRoute } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import theme from '~/app/theme';
+import Notifier from '~/framework/util/notifier';
+import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+
 import { UI_SIZES } from './constants';
 import { ScreenView } from './screen';
 import { ScreenViewProps } from './screen/types';
 import { ANDROID_16 } from '../util/permissions';
-
-import theme from '~/app/theme';
-import Notifier from '~/framework/util/notifier';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
@@ -57,7 +57,7 @@ export const getPageGutterStyle = (gutters: PageViewProps['gutters'] = true) => 
 });
 
 export const PageViewStyle = styled.View({
-  backgroundColor: theme.ui.background.page,
+  backgroundColor: theme.ui.background.card,
   flex: 1,
 });
 

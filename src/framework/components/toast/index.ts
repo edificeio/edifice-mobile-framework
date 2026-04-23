@@ -1,10 +1,10 @@
 import ToastMessage, { ToastShowParams } from 'react-native-toast-message';
 
-import { DEFAULTS } from './component';
-import { ToastOptions } from './types';
-
 import { I18n } from '~/app/i18n';
 import Feedback from '~/framework/util/feedback/feedback';
+
+import { DEFAULTS } from './component';
+import { ToastOptions } from './types';
 
 export { ToastContainer, RootToastContainer } from './component';
 

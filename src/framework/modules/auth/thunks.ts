@@ -2,6 +2,23 @@ import DeviceInfo from 'react-native-device-info';
 import { Action } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
+import { IGlobalState } from '~/app/store';
+import { audienceService } from '~/framework/modules/audience/service';
+import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
+import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
+import { loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
+import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
+import { checkAndShowSplashAds } from '~/framework/modules/splashads';
+import appConf, { Platform } from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
+import firebaseService from '~/framework/util/notifications/service';
+import { isTokenExpired, OAuth2Error, OAuth2ErrorCode, refreshTokenForAccount } from '~/framework/util/oauth2';
+import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
+import { Storage } from '~/framework/util/storage';
+import { Trackers } from '~/framework/util/tracker';
+import { platformFetch } from '~/framework/util/transport';
+
 import { callRegisteredActionsAtLogin } from './calls-at-login';
 import {
   accountIsActive,
@@ -28,7 +45,6 @@ import {
 import { actions, ERASE_ALL_ACCOUNTS } from './redux/actions';
 import { assertSession, getState as getAuthState, getSession } from './redux/reducer';
 import { AuthState } from './redux/types';
-import * as authService from './service';
 import {
   assertNotPredeleted,
   fetchUserInfo,
@@ -40,23 +56,8 @@ import {
   UserPersonDataBackend,
   UserPrivateData,
 } from './service';
+import * as authService from './service';
 import * as storage from './storage';
-import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
-import { audienceService } from '~/framework/modules/audience/service';
-import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
-import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
-import { loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
-import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
-import { checkAndShowSplashAds } from '~/framework/modules/splashads';
-import appConf, { Platform } from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
-import firebaseService from '~/framework/util/notifications/service';
-import { isTokenExpired, OAuth2Error, OAuth2ErrorCode, refreshTokenForAccount } from '~/framework/util/oauth2';
-import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
-import { Storage } from '~/framework/util/storage';
-import { Trackers } from '~/framework/util/tracker';
-import { platformFetch } from '~/framework/util/transport';
 
 type AuthDispatch = ThunkDispatch<AuthState, any, Action>;
 
@@ -412,6 +413,7 @@ const performLogin = async (
       await dispatch(loadPlatformLegalUrlsAction(platform));
     }
     await dispatch(deactivateLoggedAccountActionIfApplicable(reduxActions.requirement(accountInfo, requirement, context)));
+    return accountInfo;
   } else {
     await dispatch(deactivateLoggedAccountActionIfApplicable(reduxActions.success(accountInfo)));
   }
@@ -777,8 +779,8 @@ function changePasswordAction(
     try {
       // === 2 - prepare chg pwd payload
       const payload: IChangePasswordSubmitPayload = {
-        oldPassword: p.oldPassword,
-        ...(p?.resetCode ? { resetCode: p?.resetCode } : {}),
+        ...('oldPassword' in p ? { oldPassword: p.oldPassword } : {}),
+        ...('resetCode' in p ? { resetCode: p.resetCode } : {}),
         callback: '',
         confirmPassword: p.confirm,
         login: p.login,

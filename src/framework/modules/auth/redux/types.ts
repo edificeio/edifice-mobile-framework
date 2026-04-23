@@ -7,7 +7,7 @@ export interface AuthState {
   requirement?: AuthRequirement; // Requirement for the current account
   lastDeletedAccount?: keyof AuthState['accounts']; // Last account was deleted
   showOnboarding: AuthStorageData['show-onboarding'];
-  platformContexts: Record<string, PlatformAuthContext>; // Platform contexts by pf name
+  platformContexts: Record<string, PlatformAuthContext | undefined>; // Platform contexts by pf name
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
   validReactionTypes: string[]; // Valid reaction types for audience
 

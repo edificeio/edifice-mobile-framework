@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 
+import theme from '~/app/theme';
+
 import { UI_SIZES } from '../constants';
 import { TextSizeStyle } from '../text';
-
-import theme from '~/app/theme';
 
 export default StyleSheet.create({
   base: {

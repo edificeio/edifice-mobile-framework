@@ -1,34 +1,30 @@
 import * as React from 'react';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import type { AuthActivationScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { screenOptions } from '~/app/navigation/util';
 import { getPlatformContextOf, getPlatformLegalUrlsOf, getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
-import ActivationScreen, { ActivationScreenDispatchProps } from '~/framework/modules/auth/templates/activation';
+import ActivationScreen, {
+  AuthActivationScreenDispatchProps,
+  AuthActivationScreenProps,
+  AuthActivationScreenStoreProps,
+} from '~/framework/modules/auth/templates/activation';
 import { activateAccountActionAddFirstAccount } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.activation>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-navigation-activation-title'),
-  }),
-});
+export const AuthActivationScreenOptions = screenOptions(() => ({
+  title: I18n.get('auth-navigation-activation-title'),
+}));
 
-export default connect(
-  (state, props: AuthActivationScreenPrivateProps) => {
+export const AuthActivationScreen = connect(
+  (
+    state,
+    props: Omit<AuthActivationScreenProps, keyof AuthActivationScreenStoreProps | keyof AuthActivationScreenDispatchProps>,
+  ) => {
     return {
       context: getPlatformContextOf(props.route.params.platform),
       legalUrls: getPlatformLegalUrlsOf(props.route.params.platform),
@@ -36,7 +32,7 @@ export default connect(
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) => {
-    return bindActionCreators<ActivationScreenDispatchProps>(
+    return bindActionCreators<AuthActivationScreenDispatchProps>(
       {
         trySubmit: tryAction(activateAccountActionAddFirstAccount, {
           track: track.activation,
@@ -45,6 +41,6 @@ export default connect(
       dispatch,
     );
   },
-)(function AuthActivationScreen(props: AuthActivationScreenPrivateProps) {
+)(function AuthActivationScreen(props: AuthActivationScreenProps) {
   return <ActivationScreen {...props} />;
 });

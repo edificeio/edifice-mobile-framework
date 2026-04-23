@@ -11,7 +11,7 @@ import {
   getSerializedLoggedOutAccountInfo,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
-import appConf, { Platform } from '~/framework/util/appConf';
+import appConf, { HostId, Platform } from '~/framework/util/appConf';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
 import { ActionPayloads, actionTypes, ERASE_ALL_ACCOUNTS } from './actions';
@@ -375,6 +375,7 @@ export const getState = (state: IGlobalState) => state[moduleConfig.reducerName]
 export const selectors = {
   accounts: (state: IGlobalState) => getState(state).accounts,
   connected: (state: IGlobalState) => getState(state).connected,
+  hostContext: (name: HostId) => (state: IGlobalState) => getState(state).platformContexts[name],
   lastAddAccount: (state: IGlobalState) => getState(state).lastAddAccount,
   lastDeletedAccount: (state: IGlobalState) => getState(state).lastDeletedAccount,
   pending: (state: IGlobalState) => getState(state).pending,

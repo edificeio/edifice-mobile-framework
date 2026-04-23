@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
+import { AuthChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
 
 export interface AuthChangePasswordScreenProps {}
 
@@ -13,4 +13,5 @@ export interface AuthChangePasswordScreenOwnProps
       typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal
     > {}
 
-export interface AuthChangePasswordScreenPrivateProps extends AuthChangePasswordScreenOwnProps, ChangePasswordScreenDispatchProps {}
+export interface AuthChangePasswordScreenPrivateProps
+  extends AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenDispatchProps {}

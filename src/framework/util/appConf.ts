@@ -162,7 +162,14 @@ export class AppConf {
     zendeskUrl?: string;
   };
 
+  // ToDo : store as a Map to avoid use find everytime
   getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
+
+  getHost = (name: string) => {
+    const platform = this.getPlatformByName(name);
+    if (!platform) throw new Error(`No platform with name "${name}".`);
+    return platform;
+  };
 
   getExpandedPlatform = (platform: string | Platform) =>
     typeof platform === 'string' ? this.getPlatformByName(platform) : platform;
@@ -275,6 +282,8 @@ export class AppConf {
       : undefined;
   }
 }
+
+export type HostId = ArrayElement<AppConf['platforms']>['name'];
 
 const appConf = new AppConf(AppConfValues as IAppConfDeclaration);
 export default appConf;

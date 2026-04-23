@@ -5,9 +5,6 @@ import { Country, CountryCode, getFormattedNumber, isMobileNumber, isValidNumber
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { ActivationScreenProps, ActivationScreenState, IFields } from './types';
-
 import { I18n } from '~/app/i18n';
 import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -31,7 +28,10 @@ import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/
 import { Loading } from '~/ui/Loading';
 import { ValidatorBuilder } from '~/utils/form';
 
-const ActivationScreenLoader = (props: ActivationScreenProps) => {
+import styles from './styles';
+import { AuthActivationScreenProps, AuthActivationScreenState, IFields } from './types';
+
+const ActivationScreenLoader = (props: AuthActivationScreenProps) => {
   const { context, legalUrls, route, validReactionTypes } = props;
 
   const platform = route.params.platform;
@@ -56,13 +56,13 @@ export default ActivationScreenLoader;
 const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
 
 export class ActivationScreen extends React.PureComponent<
-  ActivationScreenProps & { context: PlatformAuthContext; legalUrls: LegalUrls },
-  ActivationScreenState
+  AuthActivationScreenProps & { context: PlatformAuthContext; legalUrls: LegalUrls },
+  AuthActivationScreenState
 > {
   private mounted = false;
 
   // fully controller component
-  public state: ActivationScreenState = {
+  public state: AuthActivationScreenState = {
     acceptCGU: false,
     activationCode: this.props.route.params.credentials.password,
     activationState: 'IDLE',
@@ -98,7 +98,7 @@ export class ActivationScreen extends React.PureComponent<
 
   private onFieldChange = (key: IFields) => {
     return (valueChange: ValueChangeArgs<string>) => {
-      const newState: Partial<ActivationScreenState> = {
+      const newState: Partial<AuthActivationScreenState> = {
         [key]: valueChange.value,
         typing: true,
       };

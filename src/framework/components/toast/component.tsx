@@ -6,14 +6,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
-import styles from './styles';
-import { ToastParams, ToastProps } from './types';
-
 import theme, { IShades } from '~/app/theme';
 import AlertCard, { AlertCardProps } from '~/framework/components/alert';
 import { toastConfigColor } from '~/framework/components/alert/model';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
+
+import styles from './styles';
+import { ToastParams, ToastProps } from './types';
 
 // Config constants for Toasts
 
