@@ -10,6 +10,7 @@ import { AppDispatch } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { useFilteredApps } from '~/framework/modules/myapps/hooks';
 import { saveGroupedFavorites, selectAppBookmarks } from '~/framework/modules/myapps/reducer';
+import { MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 import { normalizeString } from '~/framework/modules/myapps/utils';
 
 export const useManageFavoritesController = (navigation: ManageFavoriteScreenProps.ManageFavoritesNavigation['navigation']) => {
@@ -23,7 +24,7 @@ export const useManageFavoritesController = (navigation: ManageFavoriteScreenPro
 
   const initialSelectedRef = React.useRef<Set<string>>(new Set());
 
-  const filter = React.useMemo(() => ({ type: 'category', value: 'toutes' }) as const, []);
+  const filter = React.useMemo(() => ({ type: MyAppsFilterTypes.Category, value: MyAppsFilterCategories.all }) as const, []);
   const allApps = useFilteredApps(filter);
 
   React.useEffect(() => {

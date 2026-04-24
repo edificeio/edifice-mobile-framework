@@ -11,7 +11,7 @@ export const getAppName = (data: AppsInfo): string => {
   }
 
   if (data.displayName) {
-    const displayNameKey = `myapps-app-${data.displayName}`;
+    const displayNameKey = `myapps-app-${normalizeString(data.displayName)}`;
     let name = I18n.get(displayNameKey);
     if (name && name !== displayNameKey) {
       return name;
