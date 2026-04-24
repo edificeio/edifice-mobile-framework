@@ -55,7 +55,6 @@ import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
 import { loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
 import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
 import { buildMyAppsOnboardingAccountKey, resetMyAppsOnboardingForAccount } from '~/framework/modules/myapps/storage';
-import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import firebaseService from '~/framework/util/notifications/service';
@@ -427,9 +426,6 @@ const performLogin = async (
   // Setup push-notifications for the new account
   // No `await` as it is non-blocking for login process
   firebaseService.enablePushNotificationsForAccount(accountInfo);
-
-  // SplashAds
-  checkAndShowSplashAds(platform, user.infos.type!);
 
   // Call registered callbacks at login
   callRegisteredActionsAtLogin();
