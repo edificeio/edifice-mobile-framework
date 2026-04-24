@@ -1,26 +1,28 @@
-import { Platform } from 'react-native';
-
-import { trigger } from 'react-native-haptic-feedback';
+import { HapticFeedbackTypes, trigger } from 'react-native-haptic-feedback';
 
 enum FeedbackType {
   ACTION_DONE,
   ERROR_DISPLAYED,
   TAB_PRESSED,
+  LONG_PRESS,
 }
 
-const HapticFeebackType = {
-  [FeedbackType.ACTION_DONE]: Platform.select({ default: 'impactHeavy', ios: 'impactHeavy' }),
-  [FeedbackType.ERROR_DISPLAYED]: Platform.select({ default: 'notificationError', ios: 'notificationError' }),
-  [FeedbackType.TAB_PRESSED]: Platform.select({ default: 'keyboardTap', ios: 'soft' }),
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: true,
+};
+
+const HapticFeebackType: Record<FeedbackType, HapticFeedbackTypes> = {
+  [FeedbackType.ACTION_DONE]: HapticFeedbackTypes.impactHeavy,
+  [FeedbackType.ERROR_DISPLAYED]: HapticFeedbackTypes.notificationError,
+  [FeedbackType.TAB_PRESSED]: HapticFeedbackTypes.effectClick,
+  [FeedbackType.LONG_PRESS]: HapticFeedbackTypes.longPress,
 };
 
 export default class Feedback {
   private static feedback(type: FeedbackType) {
     // Haptic feedback
-    trigger(HapticFeebackType[type], {
-      enableVibrateFallback: true,
-      ignoreAndroidSystemSettings: true,
-    });
+    trigger(HapticFeebackType[type], options);
   }
 
   static actionDone() {
@@ -37,5 +39,9 @@ export default class Feedback {
 
   static warningDisplayed() {
     this.feedback(FeedbackType.ERROR_DISPLAYED);
+  }
+
+  static longPress() {
+    this.feedback(FeedbackType.LONG_PRESS);
   }
 }

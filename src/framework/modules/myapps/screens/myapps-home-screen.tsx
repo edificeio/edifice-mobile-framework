@@ -278,7 +278,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   const onCardLongPress = React.useCallback(
     (app: AppsInfoAggregated) => {
-      Feedback.tabPressed(); //make a better feedback for long press
+      Feedback.longPress();
       openBottomSheet('app_actions', app);
     },
     [openBottomSheet],
