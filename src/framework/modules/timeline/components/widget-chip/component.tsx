@@ -9,7 +9,7 @@ import { AnyNavigableModule, IEntcoreWidget } from '~/framework/util/moduleTool'
 
 function WidgetChipItem(props: IWidgetChipProps) {
   const { entcoreWidget, onPress, testID, widget } = props;
-  const label = entcoreWidget ? I18n.get(entcoreWidget.name) : widget.config.name;
+  const label = entcoreWidget ? I18n.get(`myapps-app-${entcoreWidget.name}`) : widget.config.name;
   return (
     <Pressable onPress={onPress} style={styles.chipButton} testID={testID}>
       <SmallBoldText style={styles.chipsText}>{label}</SmallBoldText>
