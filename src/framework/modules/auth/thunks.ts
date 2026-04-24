@@ -58,6 +58,7 @@ import {
 } from './service';
 import * as authService from './service';
 import * as storage from './storage';
+import { buildMyAppsOnboardingAccountKey, resetMyAppsOnboardingForAccount } from '../myapps/storage';
 
 type AuthDispatch = ThunkDispatch<AuthState, any, Action>;
 
@@ -423,9 +424,6 @@ const performLogin = async (
   // No `await` as it is non-blocking for login process
   firebaseService.enablePushNotificationsForAccount(accountInfo);
 
-  // SplashAds
-  checkAndShowSplashAds(platform, user.infos.type!);
-
   // Call registered callbacks at login
   callRegisteredActionsAtLogin();
 
@@ -744,6 +742,8 @@ export function removeAccountAction(account: AuthActiveAccount | AuthSavedAccoun
     if (accountIsActive(account)) {
       await dispatch(logoutAction());
     }
+    const platformName = accountIsActive(account) ? account.platform.name : account.platform;
+    resetMyAppsOnboardingForAccount(buildMyAppsOnboardingAccountKey(platformName, account.user.id));
     dispatch(actions.removeAccount(account.user.id));
     storage.writeDeleteAccount(account.user.id);
   };

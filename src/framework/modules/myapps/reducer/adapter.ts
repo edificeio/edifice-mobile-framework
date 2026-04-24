@@ -8,8 +8,10 @@ import {
   ApplicationsConfig,
   AppsInfo,
   AppsInfoAggregated,
-  MyAppsCategories,
+  MyAppsCategory,
   MyAppsFilter,
+  MyAppsFilterCategories,
+  MyAppsFilterTypes,
 } from '~/framework/modules/myapps/types';
 import { getAppName, getModuleRouteName, normalizeIconName, normalizeString, toKebabCase } from '~/framework/modules/myapps/utils';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
@@ -21,21 +23,14 @@ const resolveAppColor = (appColor?: string) =>
 const resolveAppShades = (appColor?: string) =>
   appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor] : theme.palette.grey;
 
-export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategories => {
-  switch (app.category) {
-    case 'communication':
-      return 'communication';
-
-    case 'pedagogy':
-      return 'pedagogie';
-
-    case 'organisation':
-      return 'organisation';
-
-    default:
-      return 'otherServices';
-  }
+const MYAPPS_FILTERS_CATEGORY_MAP: Record<string, MyAppsCategory> = {
+  communication: MyAppsFilterCategories.communication,
+  organisation: MyAppsFilterCategories.organisation,
+  pedagogy: MyAppsFilterCategories.pedagogie,
 };
+
+export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategory =>
+  MYAPPS_FILTERS_CATEGORY_MAP[app.category ?? ''] ?? MyAppsFilterCategories.otherServices;
 
 export const isNavigableModule = (module: AnyModule): module is AnyNavigableModule => {
   return typeof (module as AnyNavigableModule).getRoot === 'function';
@@ -66,8 +61,17 @@ export const checkIfIsConnector = (app: AppsInfo): boolean => {
   return false;
 };
 
-export const appShouldBeAtBottom = (app: AppsInfoAggregated) =>
-  app.isConnector && !app.isMobile && !['communication', 'organisation', 'pedagogy'].includes(app.category ?? '');
+export const appShouldBeAtBottom = (app: AppsInfoAggregated) => {
+  const category = resolveAppCategory(app);
+
+  return (
+    app.isConnector &&
+    !app.isMobile &&
+    category !== MyAppsFilterCategories.communication &&
+    category !== MyAppsFilterCategories.organisation &&
+    category !== MyAppsFilterCategories.pedagogie
+  );
+};
 
 export const enrichAppsWithModuleInfo = (appsInfo: AppsInfo[], modules: AnyNavigableModule[]) =>
   appsInfo.map(app => {
@@ -208,18 +212,18 @@ export const loadAppsDataFromService = async (
 export const applyFilter = (apps: Record<string, AppsInfoAggregated>, filter: MyAppsFilter): AppsInfoAggregated[] => {
   const appsArray = Object.values(apps).filter(app => app.display);
   switch (filter.type) {
-    case 'favorites':
+    case MyAppsFilterTypes.Favorites:
       return appsArray.filter(app => app.isFavorite);
-    case 'category':
-      if (filter.value === 'toutes') return appsArray;
-      if (filter.value === 'otherServices') return appsArray.filter(appShouldBeAtBottom);
+    case MyAppsFilterTypes.Category:
+      if (filter.value === MyAppsFilterCategories.all) return appsArray;
+      if (filter.value === MyAppsFilterCategories.otherServices) return appsArray.filter(appShouldBeAtBottom);
       return appsArray.filter(app => resolveAppCategory(app) === filter.value);
-    case 'search': {
+    case MyAppsFilterTypes.Search: {
       if (!filter.value.trim()) return appsArray;
       const q = normalizeString(filter.value);
       return appsArray.filter(app => normalizeString(app.displayName).includes(q));
     }
-    case 'libraries':
+    case MyAppsFilterTypes.Libraries:
       return appsArray.filter(app => app.isLibrary);
   }
 };

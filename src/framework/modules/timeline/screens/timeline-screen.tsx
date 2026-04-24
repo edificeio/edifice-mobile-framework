@@ -25,6 +25,7 @@ import { HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import {
   dismissFlashMessageAction,
   loadNotificationsPageAction,
@@ -401,6 +402,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   async doInit() {
     try {
       this.setState({ loadingState: TimelineLoadingState.INIT });
+      checkAndShowSplashAds(this.props.session.platform, this.props.session.user.type!);
       await this.props.handleInitTimeline();
     } finally {
       this.setState({ loadingState: TimelineLoadingState.DONE });

@@ -64,7 +64,6 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     setFilter,
   } = useMyAppsHomeController();
 
-  const isAppsEmpty = apps.length === 0;
   const isAggregatedAppsEmpty = !aggregatedApps || Object.keys(aggregatedApps).length === 0;
   const isFavoritesFilter = filter.type === 'favorites';
 
@@ -107,20 +106,20 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
             key="notif"
             icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
             onPress={handleOpenOnboarding}
-            disabled={isAppsEmpty}
+            disabled={isAggregatedAppsEmpty}
             testID={hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif'}
           />,
           <NavBarAction
             key="options"
             icon="ui-options"
             onPress={() => openBottomSheet('home_menu')}
-            disabled={isAppsEmpty}
+            disabled={isAggregatedAppsEmpty}
             testID="myapps-navbar-context-menu"
           />,
         ]}
       />
     ),
-    [hasSeenOnboarding, handleOpenOnboarding, isAppsEmpty, openBottomSheet],
+    [hasSeenOnboarding, handleOpenOnboarding, isAggregatedAppsEmpty, openBottomSheet],
   );
 
   React.useEffect(() => {
@@ -195,7 +194,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
                   : getLang('myapp-bottomsheet-add-to-favorites')
               }
               leftElement={renderMenuIcon('ui-star-outline')}
-              onPress={() => onToggleFavorite(selectedApp.name)}
+              onPress={onToggleFavorite(selectedApp.name)}
               testID="myapps-toggle-favorite"
             />
 
@@ -279,7 +278,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   const onCardLongPress = React.useCallback(
     (app: AppsInfoAggregated) => {
-      Feedback.tabPressed(); //make a better feedback for long press
+      Feedback.longPress();
       openBottomSheet('app_actions', app);
     },
     [openBottomSheet],
