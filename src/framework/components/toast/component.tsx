@@ -173,9 +173,8 @@ const config: ToastConfig = {
 // Toast Containers
 //
 
-export function ToastContainer({ offset, ...props }: ToastProps) {
-  const navBarHeight = useHeaderHeight();
-  return <ToastMessage config={config} topOffset={offset ? DEFAULTS.offset + offset : navBarHeight + DEFAULTS.offset} {...props} />;
+export function ToastContainer({ offset = 0, ...props }: ToastProps) {
+  return <ToastMessage config={config} topOffset={offset + DEFAULTS.offset} {...props} />;
 }
 
 export function RootToastContainer(props: ToastProps) {

@@ -8,9 +8,6 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { navigationDispatchMultiple } from '~/app/navigation';
 import { IGlobalState } from '~/app/store';
@@ -43,7 +40,6 @@ import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screen
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { mfaValidation, platformConfig, requirements } from '~/framework/modules/auth/service';
-import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/thunks';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { DebugOptions } from '~/framework/modules/debug';
@@ -63,6 +59,9 @@ import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
 import { useZendesk } from '~/framework/util/zendesk';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
+
+import styles from './styles';
+import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -197,7 +196,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         const routeNames = {
           [ModificationType.EMAIL]: authRouteNames.changeEmail,
           [ModificationType.MOBILE]: authRouteNames.changeMobile,
-          [ModificationType.PASSWORD]: authRouteNames.changePasswordModal,
+          [ModificationType.PASSWORD]: 'user/change-password',
         };
         let routeName = routeNames[modificationType];
         const params = {
@@ -275,7 +274,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       } catch (error) {
         Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
       }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const openHelpCenter = React.useCallback(async () => {
@@ -408,7 +406,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       session,
       navigation,
       editUserInformation,
-      // openHelpCenter,
+      openHelpCenter,
       splashads,
     ],
   );

@@ -7,8 +7,7 @@ import { useSelector } from 'react-redux';
 import { EntModule, EntTabModule } from '~/app/module';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { withSession } from '~/framework/modules/auth/util';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { getTabModuleDisplayName, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
@@ -18,71 +17,87 @@ import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLa
 import { AllModulesNavigationParams } from './types';
 
 const MainTabs = createBottomTabNavigator();
+const TabStack = createNativeStackNavigator<AllModulesNavigationParams>();
 
-export const MainNavigation = withSession(
-  React.memo(function MainNavigation({ session: session }: { session: AuthActiveAccount }) {
-    // ToDo: dependency narrowing over apps and not whole session
+export const MainNavigation = React.memo(function MainNavigation() {
+  /**
+   * IMPORTANT NOTE
+   *
+   * Due to a react-navigation bug, if MainNavigation re-renders while a native modal is open, screens desynchronises from navigation state,
+   * leaving the app in a undefined state and tab stack not responding to navigation events.
+   *
+   * We cannot fix this issue ourselves, thus we enforce MainNaviagtion (and RootNavigation) to be re-rendered only if stringified data is changed.
+   * Since apps rights are determined by `aggregatedApps` AND `session`, we MUST compte a stable value that determines if rights have changed or not.
+   * This value is called `rightsMemoValue` and serves a memo dependency for everything in the component.
+   */
 
-    const aggregatedApps = useSelector(selectAggregatedApps);
+  // ToDo: dependency narrowing over apps and not whole session
 
-    const availableModules = React.useMemo(() => EntModule.getAvailableForAccount(session), [session]);
+  const session = useSelector(selectors.session);
+  const aggregatedApps = useSelector(selectAggregatedApps);
+  const availableModules = React.useMemo(() => (session ? EntModule.getAvailableForAccount(session) : []), [session]);
+  const availableTabModules = React.useMemo(() => EntModule.filterTabModules(availableModules), [availableModules]);
+  const rightsMemoValue = React.useMemo(
+    () => availableModules.map(module => module.name).toString() + Object.keys(aggregatedApps).join(''),
+    [aggregatedApps, availableModules],
+  );
 
-    const availableTabModules = React.useMemo(() => EntModule.filterTabModules(availableModules), [availableModules]);
+  const tabModulesOptions = React.useMemo(
+    () =>
+      availableTabModules.map<BottomTabNavigationOptions>(m => ({
+        tabBarButtonTestID: m.tab.testId,
+        tabBarIcon: ({ color, focused, size }) => <TabIcon module={m} focused={focused} size={size} color={color} />,
+        tabBarLabel: getTabModuleDisplayName(m, aggregatedApps),
+      })),
 
-    const tabModulesOptions = React.useMemo(
-      () =>
-        availableTabModules.map<BottomTabNavigationOptions>(m => ({
-          tabBarButtonTestID: m.tab.testId,
-          tabBarIcon: ({ color, focused, size }) => <TabIcon module={m} focused={focused} size={size} color={color} />,
-          tabBarLabel: getTabModuleDisplayName(m, aggregatedApps),
-        })),
-      [aggregatedApps, availableTabModules],
-    );
+    [rightsMemoValue],
+  );
 
-    const tabModulesScreens = React.useMemo(
-      () =>
-        availableTabModules.map(tabModule => {
-          const TabStack = createNativeStackNavigator<AllModulesNavigationParams>();
-          return () => (
-            <TabStack.Navigator
-              key={tabModule.name}
-              screenLayout={StackScreenLayout}
-              screenOptions={defaultScreenOptions}
-              initialRouteName={tabModule.tab.route}>
-              {
-                // New Modules screens here
-                availableModules.map(module => (
-                  <TabStack.Group key={module.name}>
-                    {module.renderScreens ? module.renderScreens(TabStack as ReturnType<typeof createNativeStackNavigator>) : null}
-                  </TabStack.Group>
-                ))
-              }
-              {
-                // Old modules screens here
-                ModuleScreens.all
-              }
-            </TabStack.Navigator>
-          );
-        }),
-      [availableModules, availableTabModules],
-    );
+  const tabModulesScreens = React.useMemo(
+    () =>
+      availableTabModules.map(tabModule => {
+        return () => (
+          <TabStack.Navigator
+            key={tabModule.name}
+            screenLayout={StackScreenLayout}
+            screenOptions={defaultScreenOptions}
+            initialRouteName={tabModule.tab.route}>
+            {
+              // New Modules screens here
+              availableModules.map(module => (
+                <TabStack.Group key={module.name}>
+                  {module.renderScreens ? module.renderScreens(TabStack as ReturnType<typeof createNativeStackNavigator>) : null}
+                </TabStack.Group>
+              ))
+            }
+            {
+              // Old modules screens here
+              ModuleScreens.all
+            }
+          </TabStack.Navigator>
+        );
+      }),
+    [rightsMemoValue],
+  );
 
-    /**
-     * @deprecated remove when every module is ported to new module system.
-     */
-    const oldTabModules = React.useMemo(() => {
-      return tabModules
-        .get()
-        .filterAvailables(session)
-        .sort((a, b) => a.config.displayOrder - b.config.displayOrder);
-    }, [session]);
+  /**
+   * @deprecated remove when every module is ported to new module system.
+   */
+  const oldTabModules = React.useMemo(() => {
+    return session
+      ? tabModules
+          .get()
+          .filterAvailables(session)
+          .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
+      : [];
+  }, [rightsMemoValue]);
 
-    /**
-     * @deprecated remove when every module is ported to new module system.
-     */
-    const oldTabModulesScreens = React.useMemo(() => {
-      return oldTabModules.map(tabModule => {
-        const TabStack = createNativeStackNavigator();
+  /**
+   * @deprecated remove when every module is ported to new module system.
+   */
+  const oldTabModulesScreens = React.useMemo(
+    () =>
+      oldTabModules.map(tabModule => {
         return () => (
           <TabStack.Navigator
             key={tabModule.config.name}
@@ -103,21 +118,23 @@ export const MainNavigation = withSession(
             }
           </TabStack.Navigator>
         );
-      });
-    }, [availableModules, oldTabModules]);
+      }),
+    [rightsMemoValue],
+  );
 
-    /**
-     * @deprecated remove when every module is ported to new module system.
-     */
-    const oldTabModulesOptions = React.useMemo(() => {
-      return oldTabModules.map<BottomTabNavigationOptions>(m => ({
-        tabBarButtonTestID: m.config.testID,
-        tabBarIcon: props => createOldTabIcon(m.config, props),
-        tabBarLabel: getTabModuleDisplayName(m.config, aggregatedApps),
-      }));
-    }, [aggregatedApps, oldTabModules]);
+  /**
+   * @deprecated remove when every module is ported to new module system.
+   */
+  const oldTabModulesOptions = React.useMemo(() => {
+    return oldTabModules.map<BottomTabNavigationOptions>(m => ({
+      tabBarButtonTestID: m.config.testID,
+      tabBarIcon: props => createOldTabIcon(m.config, props),
+      tabBarLabel: getTabModuleDisplayName(m.config, aggregatedApps),
+    }));
+  }, [rightsMemoValue]);
 
-    return (
+  return React.useMemo(
+    () => (
       <MainTabs.Navigator screenLayout={TabScreenLayout} screenOptions={defaultTabOptions} detachInactiveScreens>
         {
           // New Modules tabs here
@@ -146,9 +163,10 @@ export const MainNavigation = withSession(
           })
         }
       </MainTabs.Navigator>
-    );
-  }),
-);
+    ),
+    [rightsMemoValue],
+  );
+});
 export const MainNavigationOptions: NativeStackNavigationOptions = { headerShown: false };
 
 function TabIcon({

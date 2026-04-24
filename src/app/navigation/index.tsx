@@ -106,13 +106,18 @@ export function AppNavigation() {
    * Else, we must compare nav state chages as string since it will be built with same values sometimes.
    */
   const navigationKey = React.useMemo(() => JSON.stringify(navigationState), [navigationState]);
+  const navigationStateRef = React.useRef(navigationState);
   const previousNavigationKeyRef = React.useRef(navigationKey);
   const isMountedRef = React.useRef(false);
   if (previousNavigationKeyRef.current !== navigationKey) {
+    __DEV__ && console.info('[Navigation] Reset root navigation state', previousNavigationKeyRef.current, navigationKey);
     previousNavigationKeyRef.current = navigationKey;
+    navigationStateRef.current = navigationState;
     navigationRef.isReady() && navigationRef.reset(navigationState);
     isMountedRef.current = true;
   }
+
+  __DEV__ && console.info('[Navigation] Render root navigation', navigationKey);
 
   return (
     <NavigationContainer
@@ -127,7 +132,7 @@ export function AppNavigation() {
        * In the future, make sure deep linking will be handled in addition to this behaviour.
        * @see https://reactnavigation.org/docs/navigation-container#initialstate
        */
-      initialState={navigationState}>
+      initialState={navigationStateRef.current}>
       <BottomSheetModalProvider>
         <RootStack.Navigator
           screenLayout={StackScreenLayout}

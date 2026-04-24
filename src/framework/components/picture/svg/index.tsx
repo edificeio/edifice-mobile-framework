@@ -413,7 +413,7 @@ export const removeFromCache = (name: string) => {
 };
 
 export interface SvgProps extends RNSvgProps {
-  name: string;
+  name: SvgIconName;
 }
 
 export const Svg = ({ name, ...rest }: SvgProps) => {

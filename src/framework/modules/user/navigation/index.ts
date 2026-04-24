@@ -14,6 +14,7 @@ import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/mo
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 
 export const userRouteNames = {
+  changePassword: `${moduleConfig.routeName}/change-password` as 'change-password',
   editDescription: `${moduleConfig.routeName}/profile/editDescription` as 'editDescription',
   editHobbies: `${moduleConfig.routeName}/profile/editHobbies` as 'editHobbies',
   editMoodMotto: `${moduleConfig.routeName}/profile/editMoodMotto` as 'editMoodMotto',
@@ -38,4 +39,5 @@ export interface UserNavigationParams extends ParamListBase {
   whoAreWe: UserWhoAreWeScreenNavParams;
   legalNotice: UserLegalNoticeScreenNavParams;
   lang: UserLangScreenNavParams;
+  changePassword: undefined;
 }
