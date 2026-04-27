@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import { ModalsRouteNames } from '~/framework/navigation/modals';
+
 import { FileMedia } from '~/framework/util/media/types';
 
 export interface MultimediaCarouselNavParams {
   startIndex: number;
   media: FileMedia[];
+  title?: string;
 }
 
 /**

@@ -81,6 +81,10 @@ export class PDFReader extends React.PureComponent<
   }
 }
 
+/**
+ * @deprecated use the new multimedia carousel instead.
+ * @param navParams
+ */
 export function openPDFReader(navParams: IModalsNavigationParams[ModalsRouteNames.Pdf]) {
   navigate(ModalsRouteNames.Pdf, navParams);
 }

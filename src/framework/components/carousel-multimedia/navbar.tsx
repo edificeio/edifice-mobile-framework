@@ -1,19 +1,18 @@
 import * as React from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-
-import styles from './styles';
 
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
-import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { OldStorageFunctions } from '~/framework/util/storage';
+
+import styles from './styles';
 
 export const NavbarButtons = React.memo(
   ({ disabled = false, onSave, onShare }: { disabled?: boolean; onSave: () => void; onShare: () => void }) => {
@@ -73,10 +72,7 @@ export const NavbarButtons = React.memo(
   },
 );
 
-export function computeNavBar({
-  navigation,
-  route,
-}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.CarouselMultimedia>): NativeStackNavigationOptions {
+export const MultimediaCarouselScreenOptions = modalScreenOptions<'media/carousel'>('fullScreenModal', ({ navigation, route }) => {
   return {
     ...navBarOptions({
       navigation,
@@ -89,10 +85,9 @@ export function computeNavBar({
     }),
     headerBlurEffect: 'dark',
     headerShadowVisible: false,
-    headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
+    headerStyle: { backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.ui.shadowColorTransparent.toString() },
     headerTransparent: true,
-    statusBarStyle: 'dark',
     // statusBarColor: theme.palette.grey.darkness.toString(),
-    presentation: 'fullScreenModal',
+    statusBarStyle: 'light',
   };
-}
+});

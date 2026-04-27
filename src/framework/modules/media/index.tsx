@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { RootModule } from '~/app/module';
 import { Action } from 'redux';
+
+import { RootModule } from '~/app/module';
+import MultimediaCarousel, { MultimediaCarouselScreenOptions } from '~/framework/components/carousel-multimedia/';
 import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
-import MultimediaCarousel, { CarouselMultimediaNavBar } from '~/framework/components/carousel-multimedia/';
 
 export default new RootModule<
   'media',
@@ -18,7 +19,7 @@ export default new RootModule<
   },
   Stack => (
     <>
-      <Stack.Screen name="media/carousel" component={MultimediaCarousel} options={CarouselMultimediaNavBar} />
+      <Stack.Screen name="media/carousel" component={MultimediaCarousel} options={MultimediaCarouselScreenOptions} />
     </>
   ),
 );

@@ -49,17 +49,22 @@ export function modalScreenOptions<T extends keyof AllModulesNavigationParams = 
   >,
   options: ScreenOptions<T>,
 ) {
-  const modalOptions: NativeStackNavigatorProps['screenOptions'] = ({ navigation }) => ({
+  const modalOptions: NativeStackNavigatorProps['screenOptions'] = ({ navigation, theme }) => ({
     presentation,
     unstable_headerLeftItems: () => [
       {
         icon: { name: 'xmark', type: 'sfSymbol' },
+        identifier: 'back',
         label: I18n.get('common-cancel'),
         onPress: navigation.goBack,
+        tintColor: theme.colors.text,
         type: 'button',
       },
     ],
   });
 
-  return (props => ({ ...modalOptions(props), ...options(props) })) as ScreenOptions<T>;
+  return ((props: NativeStackOptionsArgs<AllModulesNavigationParams, T>) => ({
+    ...modalOptions(props),
+    ...options(props),
+  })) as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
 }

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { createContext } from 'react';
 import { Platform, View } from 'react-native';
 
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PanGesture } from 'react-native-gesture-handler';
 import { OrientationLocker, OrientationType } from 'react-native-orientation-locker';
 import { useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
@@ -10,17 +9,17 @@ import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { I18n } from '~/app/i18n';
+import { ModuleScreenProps } from '~/app/navigation/types';
+import { navBarTitle } from '~/framework/navigation/navBar';
+import { FileMedia, isPlayableMedia } from '~/framework/util/media';
+
 import CarouselItem from './component';
 import { useCarouselFileHandler, useCarouselOrientation, useTogglePagination } from './hooks';
-import { computeNavBar, NavbarButtons } from './navbar';
+import { NavbarButtons } from './navbar';
 import CarouselPagination from './pagination/component';
 import styles, { SCREEN_HEIGHT, SCREEN_WIDTH } from './styles';
 import { getSignedMediaSource } from './util';
-
-import { I18n } from '~/app/i18n';
-import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { navBarTitle } from '~/framework/navigation/navBar';
-import { FileMedia, isPlayableMedia } from '~/framework/util/media';
 
 /**
  * Useful things to know about this multimedia carousel screen:
@@ -47,7 +46,7 @@ export const PlayerContext = createContext<{
 }>({ savedStates: new Map() });
 export const PdfContext = createContext<{ disableCarouselSwipe?: () => void; setResetComponent?: () => void }>({});
 
-export default (props: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.CarouselMultimedia>) => {
+export default (props: ModuleScreenProps<'media/carousel'>) => {
   const playerContextValue = React.useRef({ savedStates: new Map<number, { position: number; paused: boolean }>() });
   return (
     <PlayerContext value={playerContextValue.current}>
@@ -58,10 +57,7 @@ export default (props: NativeStackScreenProps<IModalsNavigationParams, ModalsRou
   );
 };
 
-const CarouselScreen = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.CarouselMultimedia>) => {
+const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel'>) => {
   const media = React.useMemo<FileMedia[]>(() => route.params.media ?? [], [route.params.media]);
   const startIndex = route.params.startIndex ?? 0;
   const [currentIndex, setCurrentIndex] = React.useState(startIndex);
@@ -157,13 +153,12 @@ const CarouselScreen = ({
   React.useEffect(() => {
     if (isNavBarVisible) {
       navigation.setOptions({
-        ...computeNavBar({ navigation, route }),
         headerRight: () => <NavbarButtons disabled={isCurrentMediaUnknown} onSave={onSave} onShare={onShare} />,
         headerShown: isAndroid ? true : undefined,
         headerTitle:
           media.length !== 1
             ? navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title)
-            : '',
+            : route.params.title,
       });
     } else {
       navigation.setOptions({
@@ -175,8 +170,7 @@ const CarouselScreen = ({
         headerTitle: '',
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNavBarVisible, media.length, currentIndex, isCurrentMediaUnknown]);
+  }, [isNavBarVisible, media.length, currentIndex, isCurrentMediaUnknown, navigation, route, onSave, onShare]);
 
   React.useEffect(() => {
     mediaLengthShared.value = media.length;

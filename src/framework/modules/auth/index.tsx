@@ -21,6 +21,7 @@ import {
 } from './screens/main-account/requirement-reset-password';
 import { AuthWayfScreen, AuthWayfScreenOptions } from './screens/main-account/wayf';
 import AuthOnboardingScreen from './screens/onboarding';
+import RequirementTermsScreen, { RequirementTermsScreenOptions } from './screens/requirement-terms';
 import { AuthStorageData, storage } from './storage';
 
 export default new RootModule<
@@ -39,7 +40,8 @@ export default new RootModule<
     'auth/wayf': { platform: Platform; accountId?: string };
     'auth/activation': { platform: Platform; credentials: AuthCredentials };
     'auth/renew-password': { host: HostId; credentials: AuthCredentials };
-    'auth/requirement-reset-password': {};
+    'auth/requirement-reset-password': undefined;
+    'auth/requirement-terms': undefined;
   },
   AuthState,
   Action,
@@ -79,6 +81,7 @@ export default new RootModule<
         component={AuthRequirementResetPasswordScreen}
         options={AuthRequirementResetPasswordScreenOptions}
       />
+      <Stack.Screen name="auth/requirement-terms" component={RequirementTermsScreen} options={RequirementTermsScreenOptions} />
     </>
   ),
 );

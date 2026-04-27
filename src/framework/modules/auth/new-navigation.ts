@@ -83,7 +83,7 @@ export const getRouteForRequirement = (
     case AuthRequirement.MUST_VALIDATE_TERMS:
     case AuthRequirement.MUST_REVALIDATE_TERMS:
       return {
-        name: 'auth/revalidate-terms',
+        name: 'auth/requirement-terms',
       } as const;
     case AuthRequirement.MUST_VERIFY_MOBILE:
       return {
