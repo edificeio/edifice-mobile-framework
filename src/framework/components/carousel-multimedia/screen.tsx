@@ -14,10 +14,12 @@ import CarouselItem from './component';
 import { useCarouselFileHandler, useCarouselOrientation, useTogglePagination } from './hooks';
 import { computeNavBar, NavbarButtons } from './navbar';
 import CarouselPagination from './pagination/component';
+import { PAGINATION_COMPONENT_HEIGHT } from './pagination/styles';
 import styles, { SCREEN_HEIGHT, SCREEN_WIDTH } from './styles';
 import { getSignedMediaSource } from './util';
 
 import { I18n } from '~/app/i18n';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import StatusBar from '~/framework/components/status-bar';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
@@ -42,6 +44,8 @@ export const PAGINATION_ANIMATION_DURATION = 300;
 export const PAGINATION_ANIMATION_OFFSET = 200;
 const PAGINATION_ANIMATION_START_INDEX_DELAY = 1000;
 const CAROUSEL_WINDOW_SIZE = 6;
+const SWIPE_GESTURE_DISABLE_AREA_FILLER = UI_SIZES.spacing.big;
+const SWIPE_GESTURE_DISABLE_AREA = PAGINATION_COMPONENT_HEIGHT + SWIPE_GESTURE_DISABLE_AREA_FILLER;
 
 export const PlayerContext = createContext<{
   pauseCurrentPlayingMedia?: () => void;
@@ -92,6 +96,7 @@ const CarouselScreen = ({
     if (isAndroid) {
       panGesture.minDistance(50).failOffsetY([-20, 20]).activeOffsetX([-30, 30]);
     }
+    panGesture.hitSlop({ bottom: -SWIPE_GESTURE_DISABLE_AREA });
   }, []);
 
   const hideNavBar = React.useCallback(() => {
