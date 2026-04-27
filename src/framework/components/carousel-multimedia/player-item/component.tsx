@@ -63,15 +63,7 @@ const PlayerItem = ({ hideNavBar, isCurrentItem, item, itemIndex, onInitialMedia
   const onLoad = React.useCallback(() => {
     setIsMediaLoading(false);
     onInitialMediaLoad?.();
-    // After a Carousel remount (on device orientation change), seek the saved position and resume playing from there
-    const savedState = playerContextValue.savedStates.get(itemIndex);
-    if (savedState?.position) {
-      videoRef.current?.seek(savedState.position);
-      if (savedState.paused === false) {
-        setPaused(false);
-      }
-    }
-  }, [itemIndex, onInitialMediaLoad, playerContextValue.savedStates]);
+  }, [onInitialMediaLoad]);
 
   const onProgress = React.useCallback(
     (data: OnProgressData) => {
