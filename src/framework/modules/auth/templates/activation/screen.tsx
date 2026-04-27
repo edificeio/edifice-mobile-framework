@@ -16,9 +16,9 @@ import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import EmailInput from '~/framework/components/inputs/email/';
 import PasswordInput from '~/framework/components/inputs/password';
 import InputPhone from '~/framework/components/inputs/phone/';
-import { KeyboardPageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Svg } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, SmallActionText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
@@ -52,8 +52,6 @@ const ActivationScreenLoader = (props: AuthActivationScreenProps) => {
 };
 
 export default ActivationScreenLoader;
-
-const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
 
 export class ActivationScreen extends React.PureComponent<
   AuthActivationScreenProps & { context: PlatformAuthContext; legalUrls: LegalUrls },
@@ -208,7 +206,7 @@ export class ActivationScreen extends React.PureComponent<
     );
 
     return (
-      <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
+      <ScrollView style={styles.page}>
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
           <View style={styles.infos}>
             <Svg name="ui-userSearchColor" />
@@ -336,7 +334,7 @@ export class ActivationScreen extends React.PureComponent<
             />
           </View>
         </Pressable>
-      </KeyboardPageView>
+      </ScrollView>
     );
   }
 }

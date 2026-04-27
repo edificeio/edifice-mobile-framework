@@ -148,37 +148,27 @@ export const getAuthReduxNavigationState = ({
 }: Pick<AuthState, 'connected' | 'accounts' | 'lastDeletedAccount' | 'pending' | 'requirement' | 'showOnboarding'>): PartialState<
   NavigationState<NavigationRootParams>
 > => {
-  let state: PartialState<NavigationState<NavigationRootParams>> = { routes: [], stale: true };
-
-  /**
-   * 0. Gather all useful info
-   */
-
-  const accountIds = Object.keys(accounts);
-
-  const pendingAccountId = pending && 'account' in pending ? pending.account : undefined;
-  const pendingAccount = pendingAccountId ? accounts[pendingAccountId] : undefined;
-  const pendingLoginUsed = pending?.loginUsed;
-
-  const loadedAccountId = accountIds.length === 1 ? accountIds[0] : undefined;
-  const loadedAccount = loadedAccountId ? accounts[loadedAccountId] : undefined;
-
-  const accountUsed = pendingAccount ?? loadedAccount;
-  const plaformUsedRaw = accountUsed?.platform ?? (appConf.hasMultiplePlatform ? undefined : appConf.platforms[0]);
-  const platformUsed = plaformUsedRaw ? appConf.getExpandedPlatform(plaformUsedRaw) : undefined;
-
-  /**
-   * 1. Onboarding shows only once before loging
-   */
-  if (showOnboarding) {
-    state.routes.push({ name: 'auth/onboarding' });
-    return state;
+  // A. Activation & Password Renew
+  if (pending) {
+    const routeForLoginRedirection = getRouteForRedirect(appConf.getHost(pending.platform), pending);
+    if (routeForLoginRedirection) return { routes: [routeForLoginRedirection], stale: true };
   }
 
-  /**
-   * 2. Selectors (platform endpoints / multi-account)
-   */
+  // B. Requirements
+  if (requirement && connected && accountIsActive(accounts[connected])) {
+    const routeForRequirement = getRouteForRequirement(accounts[connected], requirement);
+    return { routes: [routeForRequirement], stale: true };
+  }
+
+  // C. Onboarding
+  if (showOnboarding) {
+    return { routes: [{ name: 'auth/onboarding' }], stale: true };
+  }
+
+  // D.1. Platforms / Multi-account selector
+  const accountIds = Object.keys(accounts);
   const nbAccounts = Object.values(accounts).length;
+  const state: PartialState<NavigationState<NavigationRootParams>> = { routes: [], stale: true };
 
   if (nbAccounts > 0 && nbAccounts + (lastDeletedAccount ? 1 : 0) > 1) {
     state.routes.push({ name: 'auth/accounts' });
@@ -188,26 +178,16 @@ export const getAuthReduxNavigationState = ({
     // zero or one account & only one platform -> no screen
   }
 
-  /**
-   * 3. Login screen
-   */
-
-  if (platformUsed && accountUsed) {
-    state.routes.push(getRouteForLoginRedirection(platformUsed, accountUsed, pendingLoginUsed));
-  }
-
-  /**
-   * 4. Requirements
-   */
-
-  const loggedAccount = connected ? accounts[connected] : undefined;
-
-  if (loggedAccount && accountIsActive(loggedAccount) && requirement) {
-    const route = getRouteForRequirement(loggedAccount, requirement);
-    if (route) state = { routes: [route], stale: true };
-  } else if (platformUsed && pending?.redirect !== undefined) {
-    const route = getRouteForRedirect(platformUsed, pending);
-    if (route) state = { routes: [route], stale: true };
+  // D.2. Login screen (Credentials / Wayf)
+  const accountId = accountIds.length === 1 ? accountIds[0] : pending && 'account' in pending ? pending.account : undefined;
+  const account = accountId ? accounts[accountId] : undefined;
+  const hostName = account?.platform
+    ? typeof account.platform === 'string'
+      ? account.platform
+      : account.platform.name
+    : pending?.platform;
+  if (hostName) {
+    state.routes.push(getRouteForLoginRedirection(appConf.getHost(hostName), account, pending?.loginUsed));
   }
 
   return state;
