@@ -23,11 +23,7 @@ import {
   toggleAllApps,
   toggleFavorite,
 } from '~/framework/modules/myapps/reducer';
-import {
-  buildMyAppsOnboardingAccountKey,
-  readMyAppsOnboarding,
-  writeMyAppsOnboardingSeen,
-} from '~/framework/modules/myapps/storage';
+import { readMyAppsOnboarding, writeMyAppsOnboardingSeen } from '~/framework/modules/myapps/storage';
 import { AppsInfoAggregated, MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 import { getModuleRouteName } from '~/framework/modules/myapps/utils';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
@@ -55,11 +51,8 @@ export function useMyAppsHomeController() {
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = React.useState<boolean>(false);
 
-  const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState(() => {
-    const session = getSession();
-    if (!session) return false;
-    const accountKey = buildMyAppsOnboardingAccountKey(session.platform.name, session.user.id);
-    const onboarding = readMyAppsOnboarding(accountKey);
+  const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState<boolean>(() => {
+    const onboarding = readMyAppsOnboarding();
     return Boolean(onboarding?.seen);
   });
 
@@ -81,35 +74,29 @@ export function useMyAppsHomeController() {
     t.type === 'success' ? Toast.showSuccess(t.message) : Toast.showError(t.message);
   }, []);
 
-  const getOnboardingKeys = React.useCallback(() => {
+  const getLoginSessionKey = React.useCallback(() => {
     const session = getSession();
     if (!session) return undefined;
-
-    const accountKey = buildMyAppsOnboardingAccountKey(session.platform.name, session.user.id);
-    const loginSessionKey = `${accountKey}:${session.tokens.access.value}`;
-
-    return { accountKey, loginSessionKey };
+    return `${session.user.id}:${session.tokens.access.value}`;
   }, []);
 
   useFocusEffect(
     React.useCallback(() => {
-      const onboardingKeys = getOnboardingKeys();
-      if (!onboardingKeys) return;
+      const loginSessionKey = getLoginSessionKey();
+      if (!loginSessionKey) return;
 
-      const onboarding = readMyAppsOnboarding(onboardingKeys.accountKey);
+      const onboarding = readMyAppsOnboarding();
       const alreadySeen = Boolean(onboarding?.seen);
       setHasSeenOnboarding(alreadySeen);
 
       const shouldShow =
-        !alreadySeen &&
-        onboarding?.version !== ONBOARDING_VERSION &&
-        !autoShownOnboardingSessionKeys.has(onboardingKeys.loginSessionKey);
+        !alreadySeen && onboarding?.version !== ONBOARDING_VERSION && !autoShownOnboardingSessionKeys.has(loginSessionKey);
 
       if (shouldShow) {
-        autoShownOnboardingSessionKeys.add(onboardingKeys.loginSessionKey);
+        autoShownOnboardingSessionKeys.add(loginSessionKey);
         requestAnimationFrame(() => modalRef.current?.doShowModal());
       }
-    }, [getOnboardingKeys]),
+    }, [getLoginSessionKey]),
   );
 
   const handleDismissSearch = React.useCallback(() => {
@@ -193,12 +180,9 @@ export function useMyAppsHomeController() {
   }, [dispatch]);
 
   const completeOnboarding = React.useCallback(() => {
-    const onboardingKeys = getOnboardingKeys();
-    if (!onboardingKeys) return;
-
-    writeMyAppsOnboardingSeen(ONBOARDING_VERSION, onboardingKeys.accountKey);
+    writeMyAppsOnboardingSeen(ONBOARDING_VERSION);
     setHasSeenOnboarding(true);
-  }, [getOnboardingKeys]);
+  }, []);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);

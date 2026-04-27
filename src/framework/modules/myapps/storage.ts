@@ -12,19 +12,17 @@ export interface MyAppsOnboardingStorageData {
 
 export interface MyAppsStorageData {
   'preferences'?: MyAppsPreferencesStorageData;
-  'onboarding-by-account'?: Record<string, MyAppsOnboardingStorageData>;
+  'onboarding-by-account'?: MyAppsOnboardingStorageData;
   'infobubble-ack'?: boolean;
 }
 
 type MyAppsStorageMap = {
-  myapps: MyAppsStorageData;
+  'myapps-storage-data': MyAppsStorageData;
 };
 
-const STORAGE_KEY: keyof MyAppsStorageMap = 'myapps';
+const STORAGE_KEY: keyof MyAppsStorageMap = 'myapps-storage-data';
 
 const oldStorageKey = 'infoBubbleAck-myAppsScreen.redirect';
-
-export const buildMyAppsOnboardingAccountKey = (platformName: string, userId: string) => `${platformName}:${userId}`;
 
 const myAppsStorage = Storage.preferences<MyAppsStorageMap>(moduleConfig, function () {
   const oldValue = Storage.global.getString(oldStorageKey) as 'true' | 'false' | undefined;
@@ -52,35 +50,19 @@ export const writeShowAllApps = (value: boolean) => {
   });
 };
 
-export const readMyAppsOnboarding = (accountKey: string): MyAppsOnboardingStorageData | undefined => {
+export const readMyAppsOnboarding = (): MyAppsOnboardingStorageData | undefined => {
   const data = myAppsStorage.getJSON(STORAGE_KEY);
-  return data?.['onboarding-by-account']?.[accountKey];
+  return data?.['onboarding-by-account'];
 };
 
-export const writeMyAppsOnboardingSeen = (version: string, accountKey: string) => {
+export const writeMyAppsOnboardingSeen = (version: string) => {
   const data = myAppsStorage.getJSON(STORAGE_KEY);
   myAppsStorage.setJSON(STORAGE_KEY, {
     ...data,
     'onboarding-by-account': {
-      ...data?.['onboarding-by-account'],
-      [accountKey]: {
-        seen: true,
-        version,
-      },
+      seen: true,
+      version,
     },
-  });
-};
-
-export const resetMyAppsOnboardingForAccount = (accountKey: string) => {
-  const data = myAppsStorage.getJSON(STORAGE_KEY);
-  if (!data?.['onboarding-by-account']) return;
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { [accountKey]: _removed, ...remainingOnboarding } = data['onboarding-by-account'];
-
-  myAppsStorage.setJSON(STORAGE_KEY, {
-    ...data,
-    'onboarding-by-account': remainingOnboarding,
   });
 };
 
