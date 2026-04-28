@@ -7,7 +7,8 @@ import { appsInfoActionTypes, FetchSuccessPayload } from '~/framework/modules/my
 import { computeNextBookmarks, loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
 import { selectAppsState } from '~/framework/modules/myapps/reducer/selectors';
 import { myAppsService } from '~/framework/modules/myapps/service';
-import { MyAppsPreferencesStorageData, readMyAppsPreferences, writeShowAllApps } from '~/framework/modules/myapps/storage';
+import { readMyAppsPreferences, writeShowAllApps } from '~/framework/modules/myapps/storage';
+import { MyAppsPreferencesStorageData } from '~/framework/modules/myapps/types';
 
 type ThunkResult = ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction>;
 
@@ -89,6 +90,11 @@ export const saveGroupedFavorites =
   };
 
 export const hydrateMyAppsPreferences = (): ThunkResult => async dispatch => {
-  const prefs = readMyAppsPreferences();
-  dispatch(appInfoActions.hydratePreferences(prefs));
+  const showAllApps = readMyAppsPreferences();
+
+  dispatch(
+    appInfoActions.hydratePreferences({
+      showAllApps,
+    }),
+  );
 };
