@@ -1,36 +1,36 @@
 import moduleConfig from '~/framework/modules/myapps/module-config';
 import { Storage } from '~/framework/util/storage';
 
-export interface MyAppsOnboardingStorageData {
+export interface MyAppsOnboardingData {
   seen: boolean;
   version: string;
 }
 
-type MyAppsStorageMap = {
-  'showAllApps': boolean;
-  'onboarding-storage-data'?: MyAppsOnboardingStorageData;
+type MyAppsPreferencesData = {
+  'show-all-apps': boolean;
+  'onboarding'?: MyAppsOnboardingData;
 };
 
 const oldStorageKey = 'infoBubbleAck-myAppsScreen.redirect';
 
-const myAppsStorage = Storage.preferences<MyAppsStorageMap>(moduleConfig, function () {
+const myAppsStorage = Storage.preferences<MyAppsPreferencesData>(moduleConfig, function () {
   Storage.global.delete(oldStorageKey);
 });
 
-export const readMyAppsPreferences = (): boolean => {
-  return myAppsStorage.getBoolean('showAllApps') ?? false;
+export const readShowAllApps = (): boolean => {
+  return myAppsStorage.getBoolean('show-all-apps') ?? false;
 };
 
 export const writeShowAllApps = (value: boolean) => {
-  myAppsStorage.set('showAllApps', value);
+  myAppsStorage.set('show-all-apps', value);
 };
 
-export const readMyAppsOnboarding = (): MyAppsOnboardingStorageData | undefined => {
-  return myAppsStorage.getJSON('onboarding-storage-data');
+export const readMyAppsOnboardingSeen = (): MyAppsOnboardingData | undefined => {
+  return myAppsStorage.getJSON('onboarding');
 };
 
 export const writeMyAppsOnboardingSeen = (version: string) => {
-  myAppsStorage.setJSON('onboarding-storage-data', {
+  myAppsStorage.setJSON('onboarding', {
     seen: true,
     version,
   });

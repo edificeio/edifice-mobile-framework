@@ -15,15 +15,13 @@ import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { MyAppsListItem } from '~/framework/modules/myapps/components/my-apps-list/types';
 import { useFilteredApps } from '~/framework/modules/myapps/hooks';
+import { isNavigableModule, refreshMyApps, selectAggregatedApps, toggleFavorite } from '~/framework/modules/myapps/reducer';
 import {
-  getAllappsShowedState,
-  isNavigableModule,
-  refreshMyApps,
-  selectAggregatedApps,
-  toggleAllApps,
-  toggleFavorite,
-} from '~/framework/modules/myapps/reducer';
-import { readMyAppsOnboarding, writeMyAppsOnboardingSeen } from '~/framework/modules/myapps/storage';
+  readMyAppsOnboardingSeen,
+  readShowAllApps,
+  writeMyAppsOnboardingSeen,
+  writeShowAllApps,
+} from '~/framework/modules/myapps/storage';
 import { AppsInfoAggregated, MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 import { getModuleRouteName } from '~/framework/modules/myapps/utils';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
@@ -50,13 +48,13 @@ export function useMyAppsHomeController() {
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = React.useState<boolean>(false);
+  const [areAppsShowed, setAreAppsShowed] = React.useState(readShowAllApps());
 
   const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState<boolean>(() => {
-    const onboarding = readMyAppsOnboarding();
+    const onboarding = readMyAppsOnboardingSeen();
     return Boolean(onboarding?.seen);
   });
 
-  const areAppsShowed = useSelector(getAllappsShowedState);
   const aggregatedApps = useSelector(selectAggregatedApps);
   const apps = useFilteredApps(filter);
   const isAllAppsTab = filter.type === MyAppsFilterTypes.Category && filter.value === MyAppsFilterCategories.all;
@@ -85,7 +83,7 @@ export function useMyAppsHomeController() {
       const loginSessionKey = getLoginSessionKey();
       if (!loginSessionKey) return;
 
-      const onboarding = readMyAppsOnboarding();
+      const onboarding = readMyAppsOnboardingSeen();
       const alreadySeen = Boolean(onboarding?.seen);
       setHasSeenOnboarding(alreadySeen);
 
@@ -176,8 +174,12 @@ export function useMyAppsHomeController() {
   }, [dispatch, displayToast, navigation, queueToast]);
 
   const onToggleAllApps = React.useCallback(() => {
-    dispatch(toggleAllApps());
-  }, [dispatch]);
+    setAreAppsShowed(prev => {
+      const newValue = !prev;
+      writeShowAllApps(newValue);
+      return newValue;
+    });
+  }, []);
 
   const completeOnboarding = React.useCallback(() => {
     writeMyAppsOnboardingSeen(ONBOARDING_VERSION);

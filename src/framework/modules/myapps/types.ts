@@ -85,7 +85,3 @@ export interface ApplicationsListResponse {
 }
 
 export type AppBadgesType = Record<string, IAppBadgeInfo>;
-
-export interface MyAppsPreferencesStorageData {
-  showAllApps: boolean;
-}
