@@ -18,6 +18,8 @@ import AuthChangeMobileScreen, {
 } from './screens/change-mobile';
 import AuthDiscoveryClassScreen from './screens/discovery-class';
 import { AuthActivationScreen, AuthActivationScreenOptions } from './screens/main-account/activation';
+import AuthForgotScreen from './screens/main-account/forgot';
+import { AuthForgotScreenOptions } from './screens/main-account/forgot/screen';
 import AuthLoginCredentialsScreen, { AuthLoginCredentialsScreenOptions } from './screens/main-account/login-credentials';
 import AuthLoginRedirectScreen from './screens/main-account/login-redirect';
 import AuthLoginWayfScreen from './screens/main-account/login-wayf';
@@ -32,6 +34,7 @@ import AuthMFAScreen, { AuthMFAScreenNavParams, computeNavBar as mfaNavBar } fro
 import AuthOnboardingScreen from './screens/onboarding';
 import RequirementTermsScreen, { RequirementTermsScreenOptions } from './screens/requirement-terms';
 import { AuthStorageData, storage } from './storage';
+import { ForgotScreenNavParams } from './templates/forgot';
 
 export default new RootModule<
   'auth',
@@ -54,6 +57,7 @@ export default new RootModule<
     'auth/requirement-verify-email': AuthChangeEmailScreenNavParams;
     'auth/requirement-verify-mobile': AuthChangeMobileScreenNavParams;
     'auth/mfa': AuthMFAScreenNavParams;
+    'auth/forgot': ForgotScreenNavParams;
   },
   AuthState,
   Action,
@@ -97,6 +101,7 @@ export default new RootModule<
       <Stack.Screen name="auth/requirement-verify-email" component={AuthChangeEmailScreen} options={authChangeEmailNavBar} />
       <Stack.Screen name="auth/requirement-verify-mobile" component={AuthChangeMobileScreen} options={authChangeMobileNavBar} />
       <Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
+      <Stack.Screen name="auth/forgot" component={AuthForgotScreen} options={AuthForgotScreenOptions} />
     </>
   ),
 );

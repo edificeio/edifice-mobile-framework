@@ -1,5 +1,3 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ModuleScreenProps } from '~/app/navigation/types';
 
-import type { AuthNavigationParams } from '~/framework/modules/auth/navigation';
-
-export type AuthForgotScreenProps = NativeStackScreenProps<AuthNavigationParams, 'forgot'>;
+export type AuthForgotScreenProps = ModuleScreenProps<'auth/forgot'>;
