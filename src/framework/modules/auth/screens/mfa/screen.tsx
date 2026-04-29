@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import { screenOptions } from '~/app/navigation/util';
+import { modalScreenOptions, screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
@@ -54,6 +54,11 @@ const CODE_VALIDATION_DELAY = 500;
 const CODE_REDIRECTION_DELAY = 500;
 
 export const computeNavBar = screenOptions<'auth/mfa'>(({ route: { params } }) => {
+  const title = params.isEmailMFA || params.isMobileMFA ? params.navBarTitle : I18n.get('auth-mfa-title');
+  return { title };
+});
+
+export const computeNavBarModal = modalScreenOptions<'auth/mfa-modal'>(({ route: { params } }) => {
   const title = params.isEmailMFA || params.isMobileMFA ? params.navBarTitle : I18n.get('auth-mfa-title');
   return { title };
 });

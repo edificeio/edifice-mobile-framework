@@ -30,19 +30,20 @@ export const userRouteNames = {
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
 };
 export interface UserNavigationParams extends ParamListBase {
-  home: UserHomeScreenNavParams;
-  notifPrefs: IPushNotifsTopicsListScreenNavigationParams;
-  notifPrefsDetails: IPushNotifsItemsListScreenNavigationParams;
-  profile: ProfileScreenNavigationParams;
-  structures: UserStructuresScreenNavParams;
-  editHobbies: UserEditHobbiesScreenNavParams;
-  editDescription: UserEditDescriptionScreenNavParams;
-  editMoodMotto: UserEditMoodMottoScreenNavParams;
-  whoAreWe: UserWhoAreWeScreenNavParams;
-  legalNotice: UserLegalNoticeScreenNavParams;
-  lang: UserLangScreenNavParams;
-  changePassword: undefined;
-  changeEmail: undefined;
-  changeMobile: undefined;
-  mfa: undefined;
+  'home': UserHomeScreenNavParams;
+  'notifPrefs': IPushNotifsTopicsListScreenNavigationParams;
+  'notifPrefsDetails': IPushNotifsItemsListScreenNavigationParams;
+  'profile': ProfileScreenNavigationParams;
+  'structures': UserStructuresScreenNavParams;
+  'editHobbies': UserEditHobbiesScreenNavParams;
+  'editDescription': UserEditDescriptionScreenNavParams;
+  'editMoodMotto': UserEditMoodMottoScreenNavParams;
+  'whoAreWe': UserWhoAreWeScreenNavParams;
+  'legalNotice': UserLegalNoticeScreenNavParams;
+  'lang': UserLangScreenNavParams;
+  'changePassword': undefined;
+  'changeEmail': undefined;
+  'changeMobile': undefined;
+  'mfa': undefined;
+  'mfa-modal': undefined;
 }

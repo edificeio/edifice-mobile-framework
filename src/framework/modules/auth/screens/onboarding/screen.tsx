@@ -92,4 +92,8 @@ export function AuthOnboardingScreen({ navigation }: AuthOnboardingScreenProps) 
     </>
   );
 }
-AuthOnboardingScreen.options = screenOptions(() => ({ headerShown: false, statusBarStyle: 'dark' }));
+AuthOnboardingScreen.options = screenOptions(() => ({
+  headerShown: false,
+  statusBarStyle: 'dark',
+  title: deviceInfoModule.getApplicationName(),
+}));

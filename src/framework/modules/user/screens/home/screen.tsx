@@ -220,7 +220,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         const routeParams = params[modificationType];
         if (needMfa) {
           (routeParams as AuthMFAScreenNavParams).mfaRedirectionRoute = routeName;
-          routeName = authRouteNames.mfaModal;
+          routeName = 'auth/mfa-modal';
         }
         setCurrentLoadingMenu(undefined);
         if (focusedRef.current) navigation.navigate(routeName, routeParams);
