@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Text } from 'react-native';
 
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
@@ -7,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { EntModule, EntTabModule } from '~/app/module';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
+import { CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { getTabModuleDisplayName, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { ModuleScreens } from '~/framework/navigation/moduleScreens';
@@ -47,7 +49,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
       availableTabModules.map<BottomTabNavigationOptions>(m => ({
         tabBarButtonTestID: m.tab.testId,
         tabBarIcon: ({ color, focused, size }) => <TabIcon module={m} focused={focused} size={size} color={color} />,
-        tabBarLabel: getTabModuleDisplayName(m, aggregatedApps),
+        tabBarLabel: ({ color }) => <CaptionText style={{ color }}>{getTabModuleDisplayName(m, aggregatedApps)}</CaptionText>,
       })),
 
     [rightsMemoValue],
@@ -129,7 +131,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
     return oldTabModules.map<BottomTabNavigationOptions>(m => ({
       tabBarButtonTestID: m.config.testID,
       tabBarIcon: props => createOldTabIcon(m.config, props),
-      tabBarLabel: getTabModuleDisplayName(m.config, aggregatedApps),
+      tabBarLabel: ({ color }) => <CaptionText style={{ color }}>{getTabModuleDisplayName(m.config, aggregatedApps)}</CaptionText>,
     }));
   }, [rightsMemoValue]);
 

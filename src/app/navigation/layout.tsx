@@ -10,7 +10,7 @@ import { StackPresentationTypes } from 'react-native-screens';
 
 import theme from '~/app/theme';
 import ErrorScreenView from '~/framework/components/screen/error';
-import { TextSizeStyle } from '~/framework/components/text';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ToastContainer } from '~/framework/components/toast';
 
 import { AllModulesNavigationParams, AllModulesScreenNames } from './types';
@@ -72,10 +72,8 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ th
   headerShown: false,
   lazy: true,
   popToTopOnBlur: true,
+  tabBarActiveTintColor: theme.palette.primary.regular.toString(),
   tabBarInactiveTintColor: theme.ui.text.light.toString(),
-  tabBarLabelStyle: {
-    fontSize: TextSizeStyle.Small.fontSize,
-  },
   tabBarStyle: {
     backgroundColor: navTheme.colors.background,
     borderTopColor: navTheme.colors.border,

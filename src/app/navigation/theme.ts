@@ -16,10 +16,10 @@ export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(
   },
   dark: false,
   fonts: {
-    bold: { fontFamily: HeadingFontStyle.Bold.fontFamily },
-    heavy: { fontFamily: HeadingFontStyle.Bold.fontFamily },
-    medium: { fontFamily: HeadingFontStyle.Bold.fontFamily },
-    regular: { fontFamily: HeadingFontStyle.Bold.fontFamily },
+    bold: { fontFamily: HeadingFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    heavy: { fontFamily: HeadingFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    medium: { fontFamily: HeadingFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    regular: { fontFamily: HeadingFontStyle.Bold.fontFamily, fontWeight: 'bold' },
   },
 });
 

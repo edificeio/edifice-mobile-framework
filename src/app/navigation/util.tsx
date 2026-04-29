@@ -1,5 +1,9 @@
+import { HeaderBackButton } from '@react-navigation/elements';
 import { NativeStackNavigatorProps, NativeStackOptionsArgs } from '@react-navigation/native-stack';
 import { StackPresentationTypes } from 'react-native-screens';
+
+import { UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
 
 import { AllModulesNavigationParams } from './types';
 import { I18n } from '../i18n';
@@ -25,7 +29,35 @@ export type ScreenOptions<T extends keyof AllModulesNavigationParams = keyof All
 export function screenOptions<T extends keyof AllModulesNavigationParams = keyof AllModulesNavigationParams>(
   options: ScreenOptions<T>,
 ) {
-  return options as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
+  const regularOptions: NativeStackNavigatorProps['screenOptions'] = ({ navigation }) => ({
+    unstable_headerLeftItems: ({ canGoBack, tintColor }) =>
+      canGoBack
+        ? [
+            {
+              element: (
+                <HeaderBackButton
+                  backImage={({ tintColor: fill }) => (
+                    <Svg
+                      name="ui-rafterLeft"
+                      fill={fill}
+                      width={UI_SIZES.elements.navbarIconSize}
+                      height={UI_SIZES.elements.navbarIconSize}
+                    />
+                  )}
+                  tintColor={tintColor}
+                  onPress={navigation.goBack}
+                />
+              ),
+              type: 'custom',
+            },
+          ]
+        : [],
+  });
+  return ((props: NativeStackOptionsArgs<AllModulesNavigationParams, T>) => ({
+    ...regularOptions(props),
+    ...options(props),
+  })) as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
+  // return options as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
 }
 
 /**
@@ -49,16 +81,20 @@ export function modalScreenOptions<T extends keyof AllModulesNavigationParams = 
   >,
   options: ScreenOptions<T>,
 ) {
-  const modalOptions: NativeStackNavigatorProps['screenOptions'] = ({ navigation, theme }) => ({
+  const modalOptions: NativeStackNavigatorProps['screenOptions'] = ({ navigation }) => ({
     presentation,
-    unstable_headerLeftItems: () => [
+    unstable_headerLeftItems: ({ tintColor }) => [
       {
-        icon: { name: 'xmark', type: 'sfSymbol' },
-        identifier: 'back',
-        label: I18n.get('common-cancel'),
-        onPress: navigation.goBack,
-        tintColor: theme.colors.text,
-        type: 'button',
+        element: (
+          <HeaderBackButton
+            backImage={({ tintColor: fill }) => (
+              <Svg name="ui-close" fill={fill} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
+            )}
+            tintColor={tintColor}
+            onPress={navigation.goBack}
+          />
+        ),
+        type: 'custom',
       },
     ],
   });
