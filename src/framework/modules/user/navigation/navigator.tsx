@@ -23,6 +23,10 @@ import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 
+import AuthChangeEmailScreen from '../../auth/screens/change-email';
+import { requirementChangeEmailScreenOptions } from '../../auth/screens/change-email/screen';
+import AuthChangeMobileScreen from '../../auth/screens/change-mobile';
+import AuthMFAScreen, { computeNavBar as mfaNavBar } from '../../auth/screens/mfa';
 import { UserChangePasswordScreen, UserChangePasswordScreenOptions } from '../screens/change-password';
 
 import { UserNavigationParams, userRouteNames } from './';
@@ -81,6 +85,9 @@ export default () =>
         />
       </Stack.Group>
       <Stack.Screen name={'user/change-password'} component={UserChangePasswordScreen} options={UserChangePasswordScreenOptions} />
+      <Stack.Screen name={'user/change-email'} component={AuthChangeEmailScreen} options={requirementChangeEmailScreenOptions} />
+      <Stack.Screen name={'user/change-mobile'} component={AuthChangeMobileScreen} options={requirementChangeEmailScreenOptions} />
+      <Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
     </>
   ));
 

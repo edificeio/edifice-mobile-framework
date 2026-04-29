@@ -87,7 +87,7 @@ export const getRouteForRequirement = (
       } as const;
     case AuthRequirement.MUST_VERIFY_MOBILE:
       return {
-        name: 'auth/change-mobile',
+        name: 'auth/requirement-verify-mobile',
         params: {
           defaultMobile: account.user.mobile,
           platform: account.platform,
@@ -95,7 +95,7 @@ export const getRouteForRequirement = (
       } as const;
     case AuthRequirement.MUST_VERIFY_EMAIL:
       return {
-        name: 'auth/change-email',
+        name: 'auth/requirement-verify-email',
         params: {
           defaultEmail: account.user.email,
           platform: account.platform,

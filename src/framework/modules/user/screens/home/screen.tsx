@@ -194,8 +194,8 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         let needMfa: undefined | boolean;
         if (modificationType !== ModificationType.PASSWORD) needMfa = await fetchMFAValidationInfos();
         const routeNames = {
-          [ModificationType.EMAIL]: authRouteNames.changeEmail,
-          [ModificationType.MOBILE]: authRouteNames.changeMobile,
+          [ModificationType.EMAIL]: 'user/change-email',
+          [ModificationType.MOBILE]: 'user/change-mobile',
           [ModificationType.PASSWORD]: 'user/change-password',
         };
         let routeName = routeNames[modificationType];

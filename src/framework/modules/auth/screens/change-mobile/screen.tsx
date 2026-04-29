@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Platform, View } from 'react-native';
 
 import { RouteProp, useIsFocused } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import PhoneInput, {
   Country,
   CountryCode,
@@ -15,48 +14,37 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
-
 import { I18n } from '~/app/i18n';
+import { AllModulesNavigationParams } from '~/app/navigation/types';
+import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { KeyboardPageView } from '~/framework/components/page';
 import { Picture, Svg } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { mobileValidation, requirements } from '~/framework/modules/auth/service';
 import { logoutAction } from '~/framework/modules/auth/thunks';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 
-const getNavBarTitle = (route: RouteProp<AuthNavigationParams, typeof authRouteNames.changeMobile>) =>
+import styles from './styles';
+import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
+
+const getNavBarTitle = (route: RouteProp<AllModulesNavigationParams, 'auth/requirement-verify-mobile'>) =>
   route.params.navBarTitle || I18n.get('auth-change-mobile-verify');
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changeMobile>): NativeStackNavigationOptions => {
-  return {
-    ...navBarOptions({
-      backButtonTestID: 'phone-back',
-      navigation,
-      route,
-      title: getNavBarTitle(route),
-      titleTestID: 'phone-title',
-    }),
-  };
-};
+export const computeNavBar = screenOptions<'auth/requirement-verify-mobile'>(({ route }) => ({
+  title: getNavBarTitle(route),
+}));
 
 const countryListLanguages = {
   DEFAULT: 'common',
@@ -167,7 +155,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         if (isCheckMobile) {
           setIsSendingCode(true);
           await mobileValidation.requestCode(session, mobileNumberFormatted);
-          navigation.navigate(authRouteNames.mfa, {
+          navigation.navigate('auth/mfa', {
             isMobileMFA: true,
             mobile: mobileNumberFormatted,
             modificationType,
@@ -244,7 +232,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   }, [isMobileEmpty, isScreenFocused, mobileState, refuseMobileVerification]);
 
   return (
-    <KeyboardPageView style={styles.page} scrollable>
+    <ScrollView style={styles.page}>
       {isLoading ? (
         <LoadingIndicator />
       ) : isError ? (
@@ -337,7 +325,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           )}
         </View>
       )}
-    </KeyboardPageView>
+    </ScrollView>
   );
 };
 

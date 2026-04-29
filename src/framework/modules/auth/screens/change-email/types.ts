@@ -1,6 +1,4 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-
-import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { ModuleScreenProps } from '~/app/navigation/types';
 import type { logoutAction } from '~/framework/modules/auth/thunks';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
@@ -22,7 +20,7 @@ export interface AuthChangeEmailScreenStoreProps {}
 
 export interface AuthChangeEmailScreenPrivateProps
   extends
-    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changeEmail>,
+    ModuleScreenProps<'auth/requirement-verify-email'>,
     AuthChangeEmailScreenProps,
     AuthChangeEmailScreenStoreProps,
     AuthChangeEmailScreenDispatchProps {}

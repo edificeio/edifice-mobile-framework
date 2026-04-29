@@ -1,7 +1,5 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-
+import { ModuleScreenProps } from '~/app/navigation/types';
 import { AuthActiveAccount, UpdatableUserInfo } from '~/framework/modules/auth/model';
-import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { refreshRequirementsAction } from '~/framework/modules/auth/thunks';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
@@ -32,11 +30,7 @@ export interface AuthMFAScreenStoreProps {
 }
 
 export interface AuthMFAScreenPrivateProps
-  extends
-    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.mfa | typeof authRouteNames.mfaModal>,
-    AuthMFAScreenProps,
-    AuthMFAScreenStoreProps,
-    AuthMFAScreenDispatchProps {}
+  extends ModuleScreenProps<'auth/mfa'>, AuthMFAScreenProps, AuthMFAScreenStoreProps, AuthMFAScreenDispatchProps {}
 
 export enum CodeState {
   CODE_CORRECT = 'codeCorrect',

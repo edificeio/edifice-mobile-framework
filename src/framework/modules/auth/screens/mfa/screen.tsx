@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import { connect } from 'react-redux';
@@ -9,14 +8,14 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
-import { KeyboardPageView } from '~/framework/components/page';
 import { Picture, Svg } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { assertSession, getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   emailValidation,
@@ -28,9 +27,7 @@ import {
 } from '~/framework/modules/auth/service';
 import { refreshRequirementsAction } from '~/framework/modules/auth/thunks';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
-import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
@@ -56,23 +53,10 @@ const CODE_RESEND_DELAY = 15000;
 const CODE_VALIDATION_DELAY = 500;
 const CODE_REDIRECTION_DELAY = 500;
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<
-  AuthNavigationParams,
-  typeof authRouteNames.mfa | typeof authRouteNames.mfaModal
->): NativeStackNavigationOptions => {
-  const routeParams = route.params;
-  const title = routeParams.isEmailMFA || routeParams.isMobileMFA ? routeParams.navBarTitle : I18n.get('auth-mfa-title');
-  return {
-    ...navBarOptions({
-      navigation,
-      route,
-      title,
-    }),
-  };
-};
+export const computeNavBar = screenOptions<'auth/mfa'>(({ route: { params } }) => {
+  const title = params.isEmailMFA || params.isMobileMFA ? params.navBarTitle : I18n.get('auth-mfa-title');
+  return { title };
+});
 
 const feedbackTexts = {
   mfa: {
@@ -282,7 +266,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     if (isModifyingEmail || isModifyingMobile) {
       try {
         await tryUpdateProfile(isModifyingEmail ? { email } : { mobile });
-        navigation.navigate(userRouteNames.home);
+        navigation.navigate('user', undefined, { pop: true });
         Toast.showSuccess(I18n.get(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'), {
           testID: 'account-notification-message',
         });
@@ -316,7 +300,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const onResendCode = useCallback(() => resendCode(), [resendCode]);
 
   return (
-    <KeyboardPageView style={styles.page} scrollable>
+    <ScrollView style={styles.page}>
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
@@ -419,7 +403,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           </TouchableOpacity>
         </View>
       </View>
-    </KeyboardPageView>
+    </ScrollView>
   );
 };
 

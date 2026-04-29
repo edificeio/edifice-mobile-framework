@@ -8,6 +8,14 @@ import type { HostId, Platform } from '~/framework/util/appConf';
 import { AuthCredentials } from './model';
 import reducer from './redux/reducer';
 import { type AuthState } from './redux/types';
+import AuthChangeEmailScreen, {
+  computeNavBar as authChangeEmailNavBar,
+  AuthChangeEmailScreenNavParams,
+} from './screens/change-email';
+import AuthChangeMobileScreen, {
+  computeNavBar as authChangeMobileNavBar,
+  AuthChangeMobileScreenNavParams,
+} from './screens/change-mobile';
 import AuthDiscoveryClassScreen from './screens/discovery-class';
 import { AuthActivationScreen, AuthActivationScreenOptions } from './screens/main-account/activation';
 import AuthLoginCredentialsScreen, { AuthLoginCredentialsScreenOptions } from './screens/main-account/login-credentials';
@@ -20,6 +28,7 @@ import {
   AuthRequirementResetPasswordScreenOptions,
 } from './screens/main-account/requirement-reset-password';
 import { AuthWayfScreen, AuthWayfScreenOptions } from './screens/main-account/wayf';
+import AuthMFAScreen, { AuthMFAScreenNavParams, computeNavBar as mfaNavBar } from './screens/mfa';
 import AuthOnboardingScreen from './screens/onboarding';
 import RequirementTermsScreen, { RequirementTermsScreenOptions } from './screens/requirement-terms';
 import { AuthStorageData, storage } from './storage';
@@ -42,6 +51,9 @@ export default new RootModule<
     'auth/renew-password': { host: HostId; credentials: AuthCredentials };
     'auth/requirement-reset-password': undefined;
     'auth/requirement-terms': undefined;
+    'auth/requirement-verify-email': AuthChangeEmailScreenNavParams;
+    'auth/requirement-verify-mobile': AuthChangeMobileScreenNavParams;
+    'auth/mfa': AuthMFAScreenNavParams;
   },
   AuthState,
   Action,
@@ -82,6 +94,9 @@ export default new RootModule<
         options={AuthRequirementResetPasswordScreenOptions}
       />
       <Stack.Screen name="auth/requirement-terms" component={RequirementTermsScreen} options={RequirementTermsScreenOptions} />
+      <Stack.Screen name="auth/requirement-verify-email" component={AuthChangeEmailScreen} options={authChangeEmailNavBar} />
+      <Stack.Screen name="auth/requirement-verify-mobile" component={AuthChangeMobileScreen} options={authChangeMobileNavBar} />
+      <Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
     </>
   ),
 );

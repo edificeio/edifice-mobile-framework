@@ -2,50 +2,40 @@ import React, { useCallback, useState } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 
 import { RouteProp, useIsFocused } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
-
 import { I18n } from '~/app/i18n';
+import { AllModulesNavigationParams } from '~/app/navigation/types';
+import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { KeyboardPageView } from '~/framework/components/page';
 import { Picture, Svg } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { emailValidation } from '~/framework/modules/auth/service';
 import { logoutAction } from '~/framework/modules/auth/thunks';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
 
-const getNavBarTitle = (route: RouteProp<AuthNavigationParams, typeof authRouteNames.changeEmail>) =>
+import styles from './styles';
+import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
+
+const getNavBarTitle = (route: RouteProp<AllModulesNavigationParams, 'auth/requirement-verify-email'>) =>
   route.params.navBarTitle || I18n.get('auth-change-email-verify');
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changeEmail>): NativeStackNavigationOptions => {
+export const requirementChangeEmailScreenOptions = screenOptions<'auth/requirement-verify-email'>(({ route }) => {
   return {
-    ...navBarOptions({
-      backButtonTestID: 'email-back',
-      navigation,
-      route,
-      title: getNavBarTitle(route),
-      titleTestID: 'email-title',
-    }),
+    title: getNavBarTitle(route),
   };
-};
+});
 
 const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const { navigation, route, tryLogout } = props;
@@ -92,7 +82,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           }
         }
         await emailValidation.requestCode(session, toVerify);
-        navigation.navigate(authRouteNames.mfa, {
+        navigation.navigate('auth/mfa', {
           email: toVerify,
           isEmailMFA: true,
           modificationType,
@@ -140,7 +130,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const onRefuseEmailVerification = useCallback(() => refuseEmailVerification(), [refuseEmailVerification]);
 
   return (
-    <KeyboardPageView style={styles.page} scrollable>
+    <ScrollView style={styles.page}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Svg name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
@@ -201,7 +191,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           </TouchableOpacity>
         )}
       </View>
-    </KeyboardPageView>
+    </ScrollView>
   );
 };
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {
