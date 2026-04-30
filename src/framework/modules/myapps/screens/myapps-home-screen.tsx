@@ -1,41 +1,29 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import NativeModal from 'react-native-modal';
 
-import { IMyAppsNavigationParams, myAppsRouteNames } from '../navigation';
+import { I18n } from '~/app/i18n';
+import { headerAction, screenOptions } from '~/app/navigation/util';
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/empty-screens';
+import { PageView } from '~/framework/components/page';
+import { Svg, SvgProps } from '~/framework/components/picture';
+import { Toggle } from '~/framework/components/toggle';
+import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingModal } from '~/framework/modules/myapps/components';
+import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
+import Feedback from '~/framework/util/feedback/feedback';
+import { Loading } from '~/ui/Loading';
+
 import { styles } from './styles';
 import { MyAppsHomeScreenProps } from './types';
 import { useMyAppsHomeController } from './useController';
 import { EMPTY_SCREEN_CONFIG, openHelpLink, resolveEmptyScreenKey } from './utils';
 
-import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/empty-screens';
-import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
-import { Svg } from '~/framework/components/picture';
-import { Toggle } from '~/framework/components/toggle';
-import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingModal } from '~/framework/modules/myapps/components';
-import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
-import Feedback from '~/framework/util/feedback/feedback';
-import { Loading } from '~/ui/Loading';
-
-const getLang = I18n.get;
-
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: getLang('myapp-appname'),
-  }),
-});
+export const computeNavBar = screenOptions(() => ({
+  title: I18n.get('myapp-appname'),
+}));
 
 const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   const {
@@ -69,68 +57,58 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   const slides: MAOSProps[] = [
     {
-      description: getLang('myapp-onboarding-favorites-description'),
+      description: I18n.get('myapp-onboarding-favorites-description'),
       illustration: { name: 'ui-myapps-list', type: 'svg' },
       key: 'applist',
-      subtitle: getLang('myapp-onboarding-favorites-subtitle'),
-      title: getLang('myapp-onboarding-favorites-title'),
+      subtitle: I18n.get('myapp-onboarding-favorites-subtitle'),
+      title: I18n.get('myapp-onboarding-favorites-title'),
     },
     {
-      description: getLang('myapp-onboarding-lonpress-description'),
+      description: I18n.get('myapp-onboarding-lonpress-description'),
       illustration: {
         source: require('ASSETS/animations/myapps/myapps-more-actions.json'),
         type: 'animated',
       },
       key: 'longpress',
-      subtitle: getLang('myapp-onboarding-longpress-subtitle'),
-      title: getLang('myapp-onboarding-longpress-title'),
+      subtitle: I18n.get('myapp-onboarding-longpress-subtitle'),
+      title: I18n.get('myapp-onboarding-longpress-title'),
     },
     {
-      description: getLang('myapp-onboarding-favorite-add-description'),
+      description: I18n.get('myapp-onboarding-favorite-add-description'),
       illustration: { name: 'ui-make-favorite', type: 'svg' },
       key: 'add-favorite',
-      subtitle: getLang('myapp-onboarding-favorite-add-subtitle'),
-      title: getLang('myapp-onboarding-favorite-add-title'),
+      subtitle: I18n.get('myapp-onboarding-favorite-add-subtitle'),
+      title: I18n.get('myapp-onboarding-favorite-add-title'),
     },
   ];
 
-  const renderGhostLeftHeader = () => (
-    <NavBarActionsGroup elements={[<NavBarAction key="ghost#1" />, <NavBarAction key="ghost#2" />]} />
-  );
-
-  const renderHeaderRight = React.useCallback(
-    () => (
-      <NavBarActionsGroup
-        elements={[
-          <NavBarAction
-            key="notif"
-            icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
-            onPress={handleOpenOnboarding}
-            disabled={isAggregatedAppsEmpty}
-            testID={hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif'}
-          />,
-          <NavBarAction
-            key="options"
-            icon="ui-options"
-            onPress={() => openBottomSheet('home_menu')}
-            disabled={isAggregatedAppsEmpty}
-            testID="myapps-navbar-context-menu"
-          />,
-        ]}
-      />
-    ),
-    [hasSeenOnboarding, handleOpenOnboarding, isAggregatedAppsEmpty, openBottomSheet],
-  );
-
   React.useEffect(() => {
     navigation.setOptions({
-      headerLeft: renderGhostLeftHeader,
-      headerRight: renderHeaderRight,
+      unstable_headerRightItems: props => [
+        headerAction(
+          {
+            disabled: isAggregatedAppsEmpty,
+            icon: hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif',
+            onPress: handleOpenOnboarding,
+            testID: hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif',
+          },
+          props,
+        ),
+        headerAction(
+          {
+            disabled: isAggregatedAppsEmpty,
+            icon: 'ui-options',
+            onPress: () => openBottomSheet('home_menu'),
+            testID: 'myapps-navbar-context-menu',
+          },
+          props,
+        ),
+      ],
     });
-  }, [navigation, renderHeaderRight]);
+  }, [handleOpenOnboarding, hasSeenOnboarding, isAggregatedAppsEmpty, navigation, openBottomSheet]);
 
   const renderMenuIcon = React.useCallback(
-    (name: string) => (
+    (name: SvgProps['name']) => (
       <Svg name={name} width={UI_SIZES.spacing.big} height={UI_SIZES.spacing.big} fill={theme.palette.grey.black} />
     ),
     [],
@@ -154,7 +132,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
             <MyAppsMenuItem
               onPress={handleToggleFavorite}
               leftElement={renderMenuIcon('ui-star-outline')}
-              label={getLang('myapp-bottomsheet-handle-favorites')}
+              label={I18n.get('myapp-bottomsheet-handle-favorites')}
               testID="myapps-menu-manage-favorites"
             />
 
@@ -170,12 +148,12 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
                       testID={areAppsShowed ? 'myapps-all-showed' : 'myapps-all-hidden'}
                     />
                   }
-                  label={getLang('myapp-bottomsheet-render-all-favorites')}
+                  label={I18n.get('myapp-bottomsheet-render-all-favorites')}
                 />
                 <MyAppsMenuItem
                   isPressable={false}
                   leftElement={renderMenuIcon('ui-infoCircle')}
-                  label={getLang('myapp-bottomsheet-info-message')}
+                  label={I18n.get('myapp-bottomsheet-info-message')}
                 />
               </React.Fragment>
             )}
@@ -190,8 +168,8 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
             <MyAppsMenuItem
               label={
                 selectedApp.isFavorite
-                  ? getLang('myapp-bottomsheet-withdraw-from-favorites')
-                  : getLang('myapp-bottomsheet-add-to-favorites')
+                  ? I18n.get('myapp-bottomsheet-withdraw-from-favorites')
+                  : I18n.get('myapp-bottomsheet-add-to-favorites')
               }
               leftElement={renderMenuIcon('ui-star-outline')}
               onPress={onToggleFavorite(selectedApp.name)}
@@ -202,7 +180,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
             <MyAppsMenuItem
               leftElement={renderMenuIcon('ui-infoCircle')}
-              label={getLang('myapp-bottomsheet-app-info')}
+              label={I18n.get('myapp-bottomsheet-app-info')}
               onPress={onAppInfoPress}
               testID="myapps-app-info"
             />

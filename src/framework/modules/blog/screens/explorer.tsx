@@ -4,17 +4,16 @@
 import React from 'react';
 
 import { useIsFocused } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { sessionScreen } from '~/framework/components/screen';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { selectors } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
-import { navBarOptions } from '~/framework/navigation/navBar';
 
 import { withSession } from '../../auth/util';
 
@@ -29,16 +28,9 @@ export namespace BlogExplorerScreen {
 
 // # NavBar
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogExplorer>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('blog-appname'),
-  }),
-});
+export const computeNavBar = screenOptions(() => ({
+  title: I18n.get('blog-appname'),
+}));
 
 const blogExplorerContext = {
   application: 'blog',
@@ -55,7 +47,7 @@ export default withSession<BlogExplorerScreen.AllProps>(({ navigation, route, se
     r => {
       isFocused && navigation.navigate(blogRouteNames.blogPostList, { blogId: r.resourceEntId });
     },
-    [navigation],
+    [isFocused, navigation],
   );
 
   const emptyComponent = React.useMemo(() => {
