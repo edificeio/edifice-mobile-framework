@@ -1,6 +1,14 @@
 import * as React from 'react';
-// eslint-disable-next-line no-restricted-imports
 import { Image, ImageProps, StyleSheet, View } from 'react-native';
+
+import theme from '~/app/theme';
+import styles, { AvatarSizes } from '~/framework/components/avatar/styles';
+import { UI_SIZES } from '~/framework/components/constants';
+import { AuthActiveAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
+import appConf, { Platform } from '~/framework/util/appConf';
+import { toURISource } from '~/framework/util/media';
+import { platformURISource } from '~/framework/util/transport';
 
 import {
   CommonSingleAvatarProps,
@@ -14,15 +22,6 @@ import {
   SingleSvgAvatarProps,
   SingleUserAvatarSpecificProps,
 } from './types';
-
-import theme from '~/app/theme';
-import styles, { AvatarSizes } from '~/framework/components/avatar/styles';
-import { UI_SIZES } from '~/framework/components/constants';
-import { AuthActiveAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/redux/reducer';
-import appConf, { Platform } from '~/framework/util/appConf';
-import { toURISource } from '~/framework/util/media';
-import { platformURISource } from '~/framework/util/transport';
 
 const useAvatarStyle = ({ border = true, size, style }: Pick<SingleAvatarProps, 'size' | 'style' | 'border'>) => {
   return React.useMemo(
@@ -107,15 +106,14 @@ const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
   React.useMemo(
     () => getAvatarImage(props, error),
     // Here we memo on only specific props that can issue to image changes, without rebuild the object.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       (props as SingleAvatarUnknownSpecificProps).group,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+
       (props as SingleAvatarUnknownSpecificProps).source,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+
       (props as SingleAvatarUnknownSpecificProps).svg,
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+
       (props as SingleAvatarUnknownSpecificProps).userId,
       error,
     ],
@@ -123,7 +121,7 @@ const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
 
 const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatarProps => {
   // Remove props that are for specific avatar types
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const { group, id, source, svg, ...commonProps } = props as SingleAvatarProps &
     SingleSourceAvatarProps &
     SingleSvgAvatarProps &

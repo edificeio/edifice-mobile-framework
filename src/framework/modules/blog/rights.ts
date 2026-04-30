@@ -1,16 +1,15 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { getPublishableBlogListAction } from './actions';
-import { blogRouteNames } from './navigation';
-import { Blog } from './reducer';
-
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
-import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
+
+import { getPublishableBlogListAction } from './actions';
+import { blogRouteNames } from './navigation';
+import { Blog } from './reducer';
 
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
 export const submitBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|submit';
@@ -66,7 +65,7 @@ export const getBlogWorkflowInformation = (session: AuthLoggedAccount) => ({
 });
 
 export default () =>
-  registerTimelineWorkflow(session => {
+  registerTimelineWorkflow((session, navigation) => {
     const wk = getBlogWorkflowInformation(session);
     return (
       wk.blog.create && {
@@ -76,8 +75,8 @@ export default () =>
             const hasOneBlog = blogsData?.length === 1;
 
             if (hasOneBlog) {
-              navigate(blogRouteNames.blogCreatePost, { blog: blogsData[0] });
-            } else navigate(blogRouteNames.home, { blogsData });
+              navigation.navigate(blogRouteNames.blogCreatePost, { blog: blogsData[0] });
+            } else navigation.navigate(blogRouteNames.home, { blogsData });
           } catch {
             Toast.showError(I18n.get('blog-rights-error-text'));
           }

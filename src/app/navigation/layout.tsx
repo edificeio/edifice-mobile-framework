@@ -10,7 +10,6 @@ import { StackPresentationTypes } from 'react-native-screens';
 
 import theme from '~/app/theme';
 import ErrorScreenView from '~/framework/components/screen/error';
-import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ToastContainer } from '~/framework/components/toast';
 
 import { AllModulesNavigationParams, AllModulesScreenNames } from './types';

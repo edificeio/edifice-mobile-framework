@@ -15,7 +15,7 @@ import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
 import { I18n } from '~/app/i18n';
-import { NavigationRootParams, NavigationScreenName } from '~/app/navigation/types';
+import { NavigationRootParams } from '~/app/navigation/types';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -28,7 +28,6 @@ import Toast from '~/framework/components/toast';
 import { markViewAudience } from '~/framework/modules/audience';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
-import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
@@ -310,7 +309,6 @@ export function Carousel(props: ICarouselProps) {
         headerTitle: '',
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indexDisplay, isNavBarVisible, imageState]);
 
   // Audience hook
@@ -333,7 +331,6 @@ export function Carousel(props: ICarouselProps) {
       RNFastImage.clearMemoryCache();
       console.debug('Carousel : Empty RNFast Image on unmount');
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onClick = React.useCallback(() => setNavBarVisible(!isNavBarVisible), [isNavBarVisible]);
@@ -365,7 +362,7 @@ export function Carousel(props: ICarouselProps) {
       />
     ),
     // We want to remove `navigation` and `startIndex` from the dependencies here to avoid re-rendering when navState changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading],
   );
 

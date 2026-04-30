@@ -1,24 +1,24 @@
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, Platform, RefreshControl, View } from 'react-native';
 
+import { HeaderButton } from '@react-navigation/elements';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { NativeStackHeaderItem } from '@react-navigation/native-stack';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
-import { screenOptions } from '~/app/navigation/util';
+import { headerAction, screenOptions } from '~/app/navigation/util';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { SingleAvatar } from '~/framework/components/avatar';
+import { SelfAvatar } from '~/framework/components/avatar/self';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
-import { NavBarActionsGroup } from '~/framework/components/navigation';
-import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
@@ -116,9 +116,21 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
   return ret;
 };
 
-export const TimelineScreenOptions = screenOptions<'timeline'>(() => ({
-  title: I18n.get('timeline-appname'),
-}));
+export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) => {
+  return {
+    title: I18n.get('timeline-appname'),
+    unstable_headerLeftItems: () => [
+      {
+        element: (
+          <HeaderButton testID="timeline-profile-button" onPress={() => navigation.navigate('user')}>
+            <SelfAvatar size={Platform.OS === 'ios' ? 'xsm' : 'sm'} />
+          </HeaderButton>
+        ),
+        type: 'custom',
+      },
+    ],
+  };
+});
 
 // COMPONENT ======================================================================================
 
@@ -352,48 +364,37 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       navigation.setParams({ reloadWithNewSettings: undefined });
     }
 
-    this.props.navigation.setOptions({
-      headerLeft: () => (
-        <NavBarActionsGroup
-          elements={[
-            <TouchableOpacity
-              onPress={() => navigation.navigate(userRouteNames.home)}
-              testID="timeline-profile-button"
-              // Style here is needed to prevent Android autocropping border of avatar
-              style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
-              <SingleAvatar size="sm" userId={session?.user.id || ''} />
-            </TouchableOpacity>,
-            <NavBarAction />,
-          ]}
-        />
-      ),
-    });
-
-    const headerRightItems = [
-      <NavBarAction
-        icon="ui-filter"
-        onPress={() => {
-          this.props.navigation.navigate('timeline/filters');
-        }}
-        testID="timeline-filter-button"
-      />,
-    ];
-
-    const workflows = getTimelineWorkflows(this.props.session);
-    if (workflows.length) {
-      headerRightItems.push(
-        <PopupMenu actions={workflows}>
-          <NavBarAction icon="ui-plus" testID="timeline-add-button" />
-        </PopupMenu>,
-      );
-    }
-
-    if (headerRightItems.length < 2) {
-      headerRightItems.unshift(<NavBarAction />);
-    }
+    const workflows = session ? getTimelineWorkflows(session, navigation) : [];
 
     this.props.navigation.setOptions({
-      headerRight: () => <NavBarActionsGroup elements={headerRightItems} />,
+      unstable_headerRightItems: props => {
+        const ret: NativeStackHeaderItem[] = [
+          headerAction(
+            {
+              icon: 'ui-filter',
+              onPress: () => {
+                this.props.navigation.navigate('timeline/filters');
+              },
+              testID: 'timeline-filter-button',
+            },
+            props,
+          ),
+        ];
+        if (workflows.length > 0) {
+          const action = headerAction(
+            {
+              icon: 'ui-plus',
+              testID: 'timeline-add-button',
+            },
+            props,
+          );
+          ret.push({
+            ...action,
+            element: <PopupMenu actions={workflows}>{action.element}</PopupMenu>,
+          });
+        }
+        return ret;
+      },
     });
   }
 

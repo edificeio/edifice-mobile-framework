@@ -8,12 +8,12 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { addCrossIconBlackOnThisRoute, isModalModeOnThisRoute } from './hideTabBarAndroid';
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
+
+import { addCrossIconBlackOnThisRoute, isModalModeOnThisRoute } from './hideTabBarAndroid';
 
 const NAVBAR_BUTTON_WIDTH = UI_SIZES.elements.navbarIconSize + 2 * UI_SIZES.spacing.tiny;
 
@@ -28,6 +28,9 @@ const styles = StyleSheet.create({
   },
 });
 
+/**
+ * @deprecated use screenOptions() or modalScreenOptions()
+ */
 export const navBarTitle = (
   title?: string,
   style?: TextStyle,
@@ -59,6 +62,10 @@ export const navBarTitle = (
   });
 };
 
+/**
+ * @deprecated use screenOptions() or modalScreenOptions()
+
+ */
 export const navBarOptions: (props: {
   route: RouteProp<ParamListBase, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;

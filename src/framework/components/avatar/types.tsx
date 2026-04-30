@@ -59,7 +59,8 @@ export interface SingleDefaultAvatarProps extends CommonSingleAvatarProps {}
 // Private types
 
 export interface SingleAvatarUnknownSpecificProps
-  extends SingleUserAvatarSpecificProps,
+  extends
+    SingleUserAvatarSpecificProps,
     SingleSourceAvatarSpecificProps,
     SingleSvgAvatarSpecificProps,
     SingleGroupAvatarSpecificProps {}

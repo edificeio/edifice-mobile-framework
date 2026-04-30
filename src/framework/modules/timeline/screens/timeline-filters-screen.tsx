@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
-import { screenOptions } from '~/app/navigation/util';
+import { modalScreenOptions, screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
 import FlatList from '~/framework/components/list/flat-list';
@@ -33,7 +33,9 @@ export interface ITimelineFiltersScreenState {
   selectedFilters: INotifFilterSettings;
 }
 
-export const TimelineFiltersScreenOptions = screenOptions(() => ({ title: I18n.get('timeline-filters-title') }));
+export const TimelineFiltersScreenOptions = modalScreenOptions('fullScreenModal', () => ({
+  title: I18n.get('timeline-filters-title'),
+}));
 
 function PreventBack(props: { onPreventBack: boolean }) {
   usePreventBack({

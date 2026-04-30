@@ -3,18 +3,17 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
-import { fetchHomeworkDiaryList } from './actions/diaryList';
-import { homeworkDiarySelected } from './actions/selectedDiary';
-import { homeworkRouteNames } from './navigation';
-import { IHomeworkDiary } from './reducers/diaryList';
-
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
-import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
+
+import { fetchHomeworkDiaryList } from './actions/diaryList';
+import { homeworkDiarySelected } from './actions/selectedDiary';
+import { homeworkRouteNames } from './navigation';
+import { IHomeworkDiary } from './reducers/diaryList';
 
 export const deleteHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|deleteEntry';
 export const modifyHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|modifyEntry';
@@ -41,7 +40,7 @@ export const getHomeworkWorkflowInformation = (session: AuthLoggedAccount) => {
 };
 
 export default () =>
-  registerTimelineWorkflow(session => {
+  registerTimelineWorkflow((session, navigation) => {
     const wk = getHomeworkWorkflowInformation(session);
     return (
       wk.create && {
@@ -65,8 +64,8 @@ export default () =>
 
             if (hasOneDiary) {
               (getStore().dispatch as ThunkDispatch<any, any, any>)(homeworkDiarySelected(diaryListWithCreationRight[0].id));
-              navigate(homeworkRouteNames.homeworkCreate);
-            } else navigate(homeworkRouteNames.homeworkSelect);
+              navigation.navigate(homeworkRouteNames.homeworkCreate);
+            } else navigation.navigate(homeworkRouteNames.homeworkSelect);
           } catch {
             Toast.showError(I18n.get('homework-rights-error-text'));
           }

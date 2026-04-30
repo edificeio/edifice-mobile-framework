@@ -3,8 +3,6 @@
  */
 import * as React from 'react';
 
-import { AuthNavigationParams, authRouteNames } from '..';
-
 import { I18n } from '~/app/i18n';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
@@ -18,9 +16,6 @@ import AuthActivationScreen, {
 import AuthAddAccountModalScreen, {
   computeNavBar as addAccountModalNavBar,
 } from '~/framework/modules/auth/screens/main-account/add-account-modal';
-import AuthChangePasswordScreen, {
-  computeNavBar as changePasswordNavBar,
-} from '~/framework/modules/auth/screens/main-account/change-password';
 import AuthForgotScreen from '~/framework/modules/auth/screens/main-account/forgot';
 import AuthLoginCredentialsScreen, {
   computeNavBar as loginCredentialsNavBar,
@@ -33,11 +28,17 @@ import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framewo
 import AuthWayfScreen, { computeNavBar as wayfNavBar } from '~/framework/modules/auth/screens/main-account/wayf';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding';
-import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
+import RevalidateTermsScreen from '~/framework/modules/auth/screens/requirement-terms';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 import appConf from '~/framework/util/appConf';
+
+import { AuthNavigationParams, authRouteNames } from '..';
+
+import AuthChangePasswordScreen, {
+  computeNavBar as changePasswordNavBar,
+} from '~/framework/modules/auth/screens/main-account/change-password';
 
 const Stack = getTypedRootStack<AuthNavigationParams>();
 

@@ -1,12 +1,17 @@
-import { HeaderBackButton } from '@react-navigation/elements';
-import { NativeStackNavigatorProps, NativeStackOptionsArgs } from '@react-navigation/native-stack';
+import { HeaderBackButton, HeaderButton } from '@react-navigation/elements';
+import {
+  NativeStackHeaderItem,
+  NativeStackHeaderItemCustom,
+  NativeStackHeaderItemProps,
+  NativeStackNavigatorProps,
+  NativeStackOptionsArgs,
+} from '@react-navigation/native-stack';
 import { StackPresentationTypes } from 'react-native-screens';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
+import { Svg, SvgProps } from '~/framework/components/picture';
 
 import { AllModulesNavigationParams } from './types';
-import { I18n } from '../i18n';
 
 export type ScreenOptions<T extends keyof AllModulesNavigationParams = keyof AllModulesNavigationParams> = (
   props: NativeStackOptionsArgs<AllModulesNavigationParams, T>,
@@ -92,6 +97,7 @@ export function modalScreenOptions<T extends keyof AllModulesNavigationParams = 
             )}
             tintColor={tintColor}
             onPress={navigation.goBack}
+            displayMode="minimal"
           />
         ),
         type: 'custom',
@@ -103,4 +109,31 @@ export function modalScreenOptions<T extends keyof AllModulesNavigationParams = 
     ...modalOptions(props),
     ...options(props),
   })) as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
+}
+
+/**
+ * Generates an action button with custom svg icon
+ */
+export function headerAction(
+  {
+    disabled,
+    icon,
+    onPress,
+    testID,
+  }: {
+    icon: SvgProps['name'];
+    disabled?: boolean;
+    onPress?: () => void;
+    testID?: string;
+  },
+  { tintColor }: NativeStackHeaderItemProps,
+): NativeStackHeaderItemCustom {
+  return {
+    element: (
+      <HeaderButton onPress={onPress} testID={testID} disabled={disabled}>
+        <Svg name={icon} fill={tintColor} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
+      </HeaderButton>
+    ),
+    type: 'custom',
+  };
 }
