@@ -8,10 +8,8 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { styles } from './styles';
-import { BlogPostListScreenProps } from './types';
-
 import { I18n } from '~/app/i18n';
+import { headerAction, screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -23,22 +21,16 @@ import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder
 import { BlogPostPlaceholder } from '~/framework/modules/blog/components/placeholder/list/component';
 import BlogPostResourceCard from '~/framework/modules/blog/components/post-resource-card';
 import moduleConfig from '~/framework/modules/blog/module-config';
-import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
+import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import { actions, Blog, BlogPost, BlogPostWithAudience, countComments, selectors } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight, hasPermissionManager } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarTitle } from '~/framework/navigation/navBar';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogPostList>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('blog-appname'),
-  }),
-});
+import { styles } from './styles';
+import { BlogPostListScreenProps } from './types';
+
+export const computeNavBar = screenOptions(() => ({ title: I18n.get('blog-appname') }));
 
 const BlogPostListItem = ({
   blog,
@@ -103,17 +95,11 @@ const BlogPostListScreenLoaded = ({
 
   React.useEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-        hasBlogPostCreationRights ? (
-          <NavBarAction
-            icon="ui-plus"
-            onPress={() => {
-              onGoToPostCreationScreen();
-            }}
-          />
-        ) : null,
+      title: blog.title ?? I18n.get('blog-appname'),
 
-      headerTitle: navBarTitle(blog.title ?? I18n.get('blog-appname')),
+      unstable_headerRightItems: hasBlogPostCreationRights
+        ? props => [headerAction({ icon: 'ui-plus', onPress: onGoToPostCreationScreen }, props)]
+        : undefined,
     });
   }, [blog.title, hasBlogPostCreationRights, navigation, onGoToPostCreationScreen]);
 

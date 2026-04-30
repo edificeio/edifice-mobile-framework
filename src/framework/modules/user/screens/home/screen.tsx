@@ -3,13 +3,13 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { navigationDispatchMultiple } from '~/app/navigation';
+import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
@@ -51,7 +51,6 @@ import AddAccountButton from '~/framework/modules/user/components/buttons/add-ac
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import BuildInfo from '~/framework/util/build-info';
 import { toURISource } from '~/framework/util/media';
@@ -63,18 +62,10 @@ import Avatar, { Size } from '~/ui/avatars/Avatar';
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('user-profile-myaccount'),
-    titleTestID: 'account-title',
-  }),
+export const computeNavBar = screenOptions(() => ({
   headerShadowVisible: false,
-});
+  title: I18n.get('user-profile-myaccount'),
+}));
 
 /**
  * Setup a fancy navBar decoration feature
