@@ -1,6 +1,5 @@
-import { HeaderBackButton, HeaderButton } from '@react-navigation/elements';
+import { HeaderBackButton, HeaderButton, HeaderTitle } from '@react-navigation/elements';
 import {
-  NativeStackHeaderItem,
   NativeStackHeaderItemCustom,
   NativeStackHeaderItemProps,
   NativeStackNavigatorProps,
@@ -9,13 +8,46 @@ import {
 import { StackPresentationTypes } from 'react-native-screens';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg, SvgProps } from '~/framework/components/picture';
+import { Svg, SvgIconName, SvgProps } from '~/framework/components/picture';
 
 import { AllModulesNavigationParams } from './types';
 
 export type ScreenOptions<T extends keyof AllModulesNavigationParams = keyof AllModulesNavigationParams> = (
   props: NativeStackOptionsArgs<AllModulesNavigationParams, T>,
 ) => Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
+
+const defaultNavBarOptions = (
+  { navigation },
+  icon: SvgIconName,
+  title?: string,
+): ReturnType<Extract<NativeStackNavigatorProps['screenOptions'], Function>> => ({
+  headerTitle: title
+    ? titleProps => (
+        <HeaderTitle {...titleProps} testID="header-title">
+          {title}
+        </HeaderTitle>
+      )
+    : undefined,
+  unstable_headerLeftItems: ({ canGoBack, tintColor }) =>
+    canGoBack
+      ? [
+          {
+            element: (
+              <HeaderBackButton
+                backImage={({ tintColor: fill }) => (
+                  <Svg name={icon} fill={fill} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
+                )}
+                tintColor={tintColor}
+                onPress={navigation.goBack}
+                displayMode="minimal"
+                testID="header-back"
+              />
+            ),
+            type: 'custom',
+          },
+        ]
+      : [],
+});
 
 /**
  * Use this function to declare your screen options.
@@ -32,37 +64,15 @@ export type ScreenOptions<T extends keyof AllModulesNavigationParams = keyof All
  * @returns
  */
 export function screenOptions<T extends keyof AllModulesNavigationParams = keyof AllModulesNavigationParams>(
-  options: ScreenOptions<T>,
+  _options: ScreenOptions<T>,
 ) {
-  const regularOptions: NativeStackNavigatorProps['screenOptions'] = ({ navigation }) => ({
-    unstable_headerLeftItems: ({ canGoBack, tintColor }) =>
-      canGoBack
-        ? [
-            {
-              element: (
-                <HeaderBackButton
-                  backImage={({ tintColor: fill }) => (
-                    <Svg
-                      name="ui-rafterLeft"
-                      fill={fill}
-                      width={UI_SIZES.elements.navbarIconSize}
-                      height={UI_SIZES.elements.navbarIconSize}
-                    />
-                  )}
-                  tintColor={tintColor}
-                  onPress={navigation.goBack}
-                />
-              ),
-              type: 'custom',
-            },
-          ]
-        : [],
-  });
-  return ((props: NativeStackOptionsArgs<AllModulesNavigationParams, T>) => ({
-    ...regularOptions(props),
-    ...options(props),
-  })) as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
-  // return options as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
+  return (props: NativeStackOptionsArgs<AllModulesNavigationParams, T>) => {
+    const { title, ...options } = _options(props);
+    return {
+      ...defaultNavBarOptions(props, 'ui-rafterLeft', title),
+      ...options,
+    } as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
+  };
 }
 
 /**
@@ -84,31 +94,16 @@ export function modalScreenOptions<T extends keyof AllModulesNavigationParams = 
     StackPresentationTypes,
     'modal' | 'transparentModal' | 'containedModal' | 'containedTransparentModal' | 'fullScreenModal' | 'formSheet' | 'pageSheet'
   >,
-  options: ScreenOptions<T>,
+  _options: ScreenOptions<T>,
 ) {
-  const modalOptions: NativeStackNavigatorProps['screenOptions'] = ({ navigation }) => ({
-    presentation,
-    unstable_headerLeftItems: ({ tintColor }) => [
-      {
-        element: (
-          <HeaderBackButton
-            backImage={({ tintColor: fill }) => (
-              <Svg name="ui-close" fill={fill} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
-            )}
-            tintColor={tintColor}
-            onPress={navigation.goBack}
-            displayMode="minimal"
-          />
-        ),
-        type: 'custom',
-      },
-    ],
-  });
-
-  return ((props: NativeStackOptionsArgs<AllModulesNavigationParams, T>) => ({
-    ...modalOptions(props),
-    ...options(props),
-  })) as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
+  return (props: NativeStackOptionsArgs<AllModulesNavigationParams, T>) => {
+    const { title, ...options } = _options(props);
+    return {
+      presentation,
+      ...defaultNavBarOptions(props, 'ui-close', title),
+      ...options,
+    } as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
+  };
 }
 
 /**

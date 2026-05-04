@@ -108,6 +108,7 @@ export function AppNavigation() {
     __DEV__ && console.info('[Navigation] Auth nav key changed ', navigationKey);
     initialNavigationDone.current && navigationRef.isReady() && navigationState && navigationRef.reset(navigationState);
     initialNavigationDone.current = true;
+    // Do not depend on `navigationState` since it can be recreated when session updates while being logged in
   }, [navigationKey, navigationRef]);
 
   return (

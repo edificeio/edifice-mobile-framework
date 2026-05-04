@@ -55,7 +55,7 @@ export const navBarOptions: (props: {
               {...(addCrossIconBlackOnThisRoute(route.name) ? { color: theme.palette.grey.darkness } : {})}
               onPress={navigation.goBack}
               icon="ui-close"
-              testID={backButtonTestID}
+              testID="header-back"
             />
           );
         } else {
@@ -64,7 +64,7 @@ export const navBarOptions: (props: {
               {...props}
               displayMode="minimal"
               style={styles.backbutton}
-              testID={backButtonTestID}
+              testID="header-back"
               onPress={navigation.goBack}
             />
           );
