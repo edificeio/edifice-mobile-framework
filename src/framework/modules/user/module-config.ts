@@ -15,7 +15,7 @@ export default new NavigableModuleConfig<'user', UserState>({
   } as const,
   // There is no corresponding backend app
   hasRight: () => true,
-  matchEntcoreApp: () => false,
+  matchEntcoreApp: 'Directory',
   name: 'user',
   storageName: 'user',
   testID: 'tabbar-account',

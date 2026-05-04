@@ -3,51 +3,50 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  buildAppNameToBadge,
-  buildNotifTypeToBadge,
-  resolveBadgeByAppName,
+  buildAppLookupMap,
+  buildNotifTypeLookupMap,
+  resolveAppBadge,
+  resolveNotifBadge,
   selectAggregatedApps,
 } from '~/framework/modules/myapps/reducer';
-import { AppBadgesType } from '~/framework/modules/myapps/types';
 import { registeredNotificationTypesData } from '~/framework/modules/timeline/reducer/notif-definitions/selectors';
 import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
 /**
- * Get a specific app badge by app/module name
- * Takes app/module name as REQUIRED parameter
- * Returns the badge info (color + icon) for that app/module
+ * Returns the badge for an app from its identifier.
  *
- * @param appName - The app/module name
- * @returns IAppBadgeInfo with color and icon
+ * appName can be a module name or backend app name.
+ * Returns badge color and icon.
+ *
+ * @param appName App identifier
+ * @returns IAppBadgeInfo
  */
 export function useAppBadge(appName: string): IAppBadgeInfo {
   const aggregatedApps = useSelector(selectAggregatedApps);
 
   return React.useMemo(() => {
-    const appBadgesByName = buildAppNameToBadge(aggregatedApps ?? []);
-    return resolveBadgeByAppName(appName, appBadgesByName);
+    const lookupMap = buildAppLookupMap(aggregatedApps ?? {});
+    return resolveAppBadge(appName, lookupMap);
   }, [aggregatedApps, appName]);
 }
 
 /**
- * Get all notification badges indexed by notification type
- * Used to map notification types to badges
+ * Returns the badge for a notification type.
  *
- * @returns AppBadgesType mapping notif.type to IAppBadgeInfo
+ * The notification type is linked to an app,
+ * then the app badge is resolved from aggregated apps.
  *
- * @example
- * const notifBadges = useAllNotificationBadges();
- * const badge = notifBadges['USERBOOK_MOTTO'];
+ * @param notifType Notification type
+ * @returns IAppBadgeInfo or undefined
  */
-export function useAllNotificationBadges(): AppBadgesType {
+export function useNotificationBadge(notifType: string): IAppBadgeInfo | undefined {
   const aggregatedApps = useSelector(selectAggregatedApps);
   const notifTypes = useSelector(registeredNotificationTypesData);
 
-  return React.useMemo(() => {
-    if (!Object.keys(aggregatedApps ?? {}).length || !notifTypes?.length) {
-      return {};
-    }
+  const notifTypeMap = React.useMemo(() => buildNotifTypeLookupMap(notifTypes ?? []), [notifTypes]);
 
-    return buildNotifTypeToBadge(aggregatedApps, notifTypes);
-  }, [aggregatedApps, notifTypes]);
+  return React.useMemo(
+    () => resolveNotifBadge(notifType, notifTypeMap, aggregatedApps ?? {}),
+    [aggregatedApps, notifTypeMap, notifType],
+  );
 }

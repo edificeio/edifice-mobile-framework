@@ -13,6 +13,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { OldStorageFunctions } from '~/framework/util/storage';
 
 import styles from './styles';
+const isAndroid = Platform.OS === 'android';
 
 export const NavbarButtons = React.memo(
   ({ disabled = false, onSave, onShare }: { disabled?: boolean; onSave: () => void; onShare: () => void }) => {
@@ -85,9 +86,8 @@ export const MultimediaCarouselScreenOptions = modalScreenOptions<'media/carouse
     }),
     headerBlurEffect: 'dark',
     headerShadowVisible: false,
-    headerStyle: { backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.ui.shadowColorTransparent.toString() },
+    headerStyle: { backgroundColor: isAndroid ? theme.ui.shadowColorTransparent.toString() : undefined },
     headerTransparent: true,
-    // statusBarColor: theme.palette.grey.darkness.toString(),
     statusBarStyle: 'light',
   };
 });

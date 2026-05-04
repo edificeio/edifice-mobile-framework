@@ -7,23 +7,13 @@ import { appsInfoActionTypes, FetchSuccessPayload } from '~/framework/modules/my
 import { computeNextBookmarks, loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
 import { selectAppsState } from '~/framework/modules/myapps/reducer/selectors';
 import { myAppsService } from '~/framework/modules/myapps/service';
-import { MyAppsPreferencesStorageData, readMyAppsPreferences, writeShowAllApps } from '~/framework/modules/myapps/storage';
 
 type ThunkResult = ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction>;
 
 export const appInfoActions = {
   fetchSuccess: (payload: FetchSuccessPayload) => ({ payload, type: appsInfoActionTypes.fetchSuccess }) as const,
 
-  hydratePreferences: (payload: Partial<MyAppsPreferencesStorageData>) =>
-    ({ payload, type: appsInfoActionTypes.hydratePreferences }) as const,
-
   updateFavorites: (bookmarks: string[]) => ({ bookmarks, type: appsInfoActionTypes.updateFavorites }) as const,
-};
-
-export const toggleAllApps = (): ThunkResult => async (dispatch, getState) => {
-  dispatch({ type: appsInfoActionTypes.toggleAllApps });
-  const { showAllApps } = selectAppsState(getState());
-  writeShowAllApps(showAllApps);
 };
 
 export const refreshMyApps = (): ThunkResult => async (dispatch, _) => {
@@ -87,8 +77,3 @@ export const saveGroupedFavorites =
       onDone?.(false);
     }
   };
-
-export const hydrateMyAppsPreferences = (): ThunkResult => async dispatch => {
-  const prefs = readMyAppsPreferences();
-  dispatch(appInfoActions.hydratePreferences(prefs));
-};

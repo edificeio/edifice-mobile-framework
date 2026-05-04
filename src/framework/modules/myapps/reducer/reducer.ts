@@ -1,4 +1,4 @@
-import { appsInfoActionTypes, FetchSuccessAction, HydratePreferencesAction, UpdateFavoritesAction } from './action-types';
+import { appsInfoActionTypes, FetchSuccessAction, UpdateFavoritesAction } from './action-types';
 
 import { Reducers } from '~/app/store';
 import moduleConfig from '~/framework/modules/myapps/module-config';
@@ -47,17 +47,6 @@ const reducer = createReducer(appsInfoInitialState, {
         ...state.favorites,
         bookmarks,
       },
-    };
-  },
-  [appsInfoActionTypes.toggleAllApps]: state => ({
-    ...state,
-    showAllApps: !state.showAllApps,
-  }),
-  [appsInfoActionTypes.hydratePreferences]: (state, action) => {
-    const { payload } = action as HydratePreferencesAction;
-    return {
-      ...state,
-      showAllApps: payload.showAllApps,
     };
   },
 });

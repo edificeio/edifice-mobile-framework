@@ -17,10 +17,30 @@ function WidgetChipItem(props: IWidgetChipProps) {
   );
 }
 
+const getMatchingWidget = (widget: AnyNavigableModule, entcoreWidgetsByName: Map<string, IEntcoreWidget>) => {
+  return widget.config.entcoreWidgetName ? entcoreWidgetsByName.get(widget.config.entcoreWidgetName) : undefined;
+};
+
+function isContainerProps(props: IWidgetChipProps | IWidgetChipsContainerProps): props is IWidgetChipsContainerProps {
+  return 'widgets' in props && 'navigation' in props;
+}
+
 export function WidgetChip(props: IWidgetChipProps | IWidgetChipsContainerProps): React.ReactElement {
-  // Check if this is a container props (has widgets and navigation)
-  if ('widgets' in props && 'navigation' in props) {
-    const { entcoreWidgets, navigation, widgets } = props as IWidgetChipsContainerProps;
+  const isContainer = isContainerProps(props);
+  const containerProps = isContainer ? props : null;
+
+  const entcoreWidgetsByName = React.useMemo(() => {
+    const map = new Map<string, IEntcoreWidget>();
+    if (!containerProps) return map;
+
+    for (const entcoreWidget of containerProps.entcoreWidgets) {
+      map.set(entcoreWidget.name, entcoreWidget);
+    }
+    return map;
+  }, [containerProps]);
+
+  if (isContainer) {
+    const { navigation, widgets } = props;
 
     return (
       <View style={styles.chipsContainer}>
@@ -32,9 +52,7 @@ export function WidgetChip(props: IWidgetChipProps | IWidgetChipsContainerProps)
           contentContainerStyle={styles.chipsRow}
           keyExtractor={(item: AnyNavigableModule) => item.config.name}
           renderItem={({ item: widget }: { item: AnyNavigableModule }) => {
-            const matchingEntcoreWidget = entcoreWidgets.find((entcoreWidget: IEntcoreWidget) =>
-              widget.config.matchEntcoreWidget(entcoreWidget, entcoreWidgets),
-            );
+            const matchingEntcoreWidget = getMatchingWidget(widget, entcoreWidgetsByName);
             return (
               <WidgetChipItem
                 widget={widget}

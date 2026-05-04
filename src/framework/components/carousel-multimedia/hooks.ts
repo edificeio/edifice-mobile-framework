@@ -12,7 +12,7 @@ import Orientation, {
   OrientationType,
   PORTRAIT,
 } from 'react-native-orientation-locker';
-import { SharedValue, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
+import { SharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import Share from 'react-native-share';
 
 import { PAGINATION_ANIMATION_DURATION, PAGINATION_ANIMATION_OFFSET } from './screen';
@@ -196,18 +196,12 @@ export const useTogglePagination = (
 
 export const useCarouselOrientation = () => {
   const [orientation, setOrientation] = React.useState<OrientationLockerProps['orientation']>(PORTRAIT);
-  const orientationShared = useSharedValue<OrientationLockerProps['orientation']>(PORTRAIT);
 
   const onOrientationChange = React.useCallback((newOrientation: OrientationType) => {
     if (newOrientation === 'PORTRAIT') setOrientation(PORTRAIT);
     else if (newOrientation === 'LANDSCAPE-LEFT') setOrientation(LANDSCAPE_LEFT);
     else if (newOrientation === 'LANDSCAPE-RIGHT') setOrientation(LANDSCAPE_RIGHT);
   }, []);
-
-  // Synchronize state with shared value
-  React.useEffect(() => {
-    orientationShared.value = orientation;
-  }, [orientation, orientationShared]);
 
   // Lock to portrait when leaving carousel
   React.useEffect(() => {
@@ -216,5 +210,5 @@ export const useCarouselOrientation = () => {
     };
   }, []);
 
-  return { onOrientationChange, orientation, orientationShared };
+  return { onOrientationChange, orientation };
 };

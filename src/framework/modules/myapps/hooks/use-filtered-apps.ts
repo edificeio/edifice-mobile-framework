@@ -2,9 +2,11 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
+import { readShowAllApps } from '../storage';
+
 import { addToCache } from '~/framework/components/picture/svg';
 import { applyFilter } from '~/framework/modules/myapps/reducer/adapter';
-import { getAllappsShowedState, selectAggregatedApps } from '~/framework/modules/myapps/reducer/selectors';
+import { selectAggregatedApps } from '~/framework/modules/myapps/reducer/selectors';
 import { MyAppsFilter } from '~/framework/modules/myapps/types';
 
 const precacheSvgIcons = (apps: Record<string, { icon?: string }>) => {
@@ -22,7 +24,7 @@ export const useFilteredApps = (filter: MyAppsFilter) => {
     if (aggregatedApps) precacheSvgIcons(aggregatedApps);
   }, [aggregatedApps]);
 
-  const showAllApps = useSelector(getAllappsShowedState);
+  const showAllApps = readShowAllApps();
 
   return React.useMemo(() => {
     if (!aggregatedApps) return [];
