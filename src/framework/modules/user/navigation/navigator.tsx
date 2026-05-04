@@ -87,8 +87,8 @@ export default () =>
       <Stack.Screen name={'user/change-password'} component={UserChangePasswordScreen} options={UserChangePasswordScreenOptions} />
       <Stack.Screen name={'user/change-email'} component={AuthChangeEmailScreen} options={requirementChangeEmailScreenOptions} />
       <Stack.Screen name={'user/change-mobile'} component={AuthChangeMobileScreen} options={requirementChangeEmailScreenOptions} />
-      <Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
-      <Stack.Screen name="auth/mfa-modal" component={AuthMFAScreen} options={mfaNavBarModal} />
+      {/*<Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
+      <Stack.Screen name="auth/mfa-modal" component={AuthMFAScreen} options={mfaNavBarModal} />*/}
     </>
   ));
 

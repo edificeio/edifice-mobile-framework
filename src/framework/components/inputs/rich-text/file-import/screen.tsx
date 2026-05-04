@@ -3,10 +3,8 @@ import { ActivityIndicator, Alert, View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import styles from './styles';
-import { FileImportScreenProps } from './types';
-
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import IconButton from '~/framework/components/buttons/icon';
@@ -21,11 +19,13 @@ import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
 import { FileManagerUsecase } from '~/framework/util/fileHandler/types';
 import { Image } from '~/framework/util/media-deprecated';
+
+import styles from './styles';
+import { FileImportScreenProps } from './types';
 
 const FILE_IMPORT_DEFAULT_CONFIG: FileManagerUsecase = {
   allow: ['image'],
@@ -37,13 +37,7 @@ const headerTitleStyle = {
   color: theme.palette.grey.darkness.toString(),
 };
 
-export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, route }) => ({
-  presentation: 'modal',
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('import-title'),
-  }),
+export const computeNavBar = modalScreenOptions('formSheet', () => ({
   headerStyle: {
     backgroundColor: theme.ui.background.page.toString(),
     borderBottomWidth: 0,
@@ -56,7 +50,8 @@ export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, 
     zIndex: 100,
   },
   headerTitleStyle,
-});
+  title: I18n.get('import-title'),
+}));
 const formatFileForUpload = (lf: LocalFile) =>
   ({
     error: undefined,
@@ -215,10 +210,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
             }
           />
         ),
-      headerTitle:
-        fileCount === 0
-          ? navBarTitle(I18n.get('import-title_zero'), headerTitleStyle)
-          : navBarTitle(I18n.get('import-title_other', { count: fileCount }), headerTitleStyle),
+      headerTitle: fileCount === 0 ? I18n.get('import-title_zero') : I18n.get('import-title_other', { count: fileCount }),
     });
   }, [navigation, listReady]);
 
@@ -262,7 +254,6 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         },
       );
     }, 350);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const removeFile = React.useCallback(

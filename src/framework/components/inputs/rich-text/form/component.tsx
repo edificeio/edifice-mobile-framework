@@ -9,9 +9,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
-
 import { I18n } from '~/app/i18n';
 import { UI_ANIMATIONS, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
@@ -28,7 +25,10 @@ import { getSession } from '~/framework/modules/auth/redux/reducer';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/thunks';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-import { ANDROID_14, ANDROID_16 } from '~/framework/util/permissions';
+import { ANDROID_16 } from '~/framework/util/permissions';
+
+import styles from './styles';
+import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 

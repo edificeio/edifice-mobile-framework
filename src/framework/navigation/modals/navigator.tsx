@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import { IModalsNavigationParams, ModalsRouteNames } from '.';
-
 import CarouselScreen from '~/framework/components/carousel';
 import MultimediaCarousel, { CarouselMultimediaNavBar } from '~/framework/components/carousel-multimedia/';
 // eslint-disable-next-line import/order
@@ -22,6 +20,8 @@ import {
 import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
+
+import { IModalsNavigationParams, ModalsRouteNames } from '.';
 
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (

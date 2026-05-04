@@ -18,15 +18,14 @@ import {
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
-import { RootModule } from '~/app/module';
 import { useAvailableModules } from '~/app/modules';
 import { RootToastContainer } from '~/framework/components/toast';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
-import modalScreens from '~/framework/navigation/modals/navigator';
 
 import { defaultScreenOptions, StackScreenLayout } from './layout';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
+import { renderRootModulesScreens } from './root-navigation';
 import { useTrackScreen } from './telemetry';
 import navigationLightTheme from './theme';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
@@ -56,7 +55,7 @@ export function AppNavigation() {
   const trackScreen = useTrackScreen();
   const onStateChange = React.useCallback<NonNullable<NavigationContainerProps['onStateChange']>>(
     state => {
-      // __DEV__ && console.info('[Navigation] onStateChange', action);
+      // __DEV__ && console.info('[Navigation] onStateChange', state);
       trackScreen(state);
     },
     [trackScreen],
@@ -154,16 +153,9 @@ export function AppNavigation() {
            * navigationKey is useful here to get the user out of these screens if it is logged out in them
            * @see https://reactnavigation.org/docs/auth-flow/#removing-shared-screens-when-auth-state-changes
            */}
-          <RootStack.Group navigationKey={navigationKey}>
-            {RootModule.allRootModules.map(module =>
-              module.renderScreens ? (
-                <RootStack.Group key={module.name}>
-                  {module.renderScreens(RootStack as ReturnType<typeof createNativeStackNavigator>)}
-                </RootStack.Group>
-              ) : null,
-            )}
-            {modalScreens}
-          </RootStack.Group>
+          {!showAppContent && (
+            <RootStack.Group navigationKey={navigationKey}>{renderRootModulesScreens(RootStack)}</RootStack.Group>
+          )}
         </RootStack.Navigator>
         <RootToastContainer />
       </BottomSheetModalProvider>

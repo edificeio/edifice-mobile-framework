@@ -16,6 +16,7 @@ import { tabModules } from '~/framework/navigation/tabModules';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLayout } from './layout';
+import { renderRootModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
 
 const MainTabs = createBottomTabNavigator();
@@ -76,6 +77,10 @@ export const MainNavigation = React.memo(function MainNavigation() {
               // Old modules screens here
               ModuleScreens.all
             }
+            {
+              // Root modules replica here
+              renderRootModulesScreens(TabStack)
+            }
           </TabStack.Navigator>
         );
       }),
@@ -117,6 +122,10 @@ export const MainNavigation = React.memo(function MainNavigation() {
             {
               // Old modules screens here
               ModuleScreens.all
+            }
+            {
+              // Root modules replica here
+              renderRootModulesScreens(TabStack)
             }
           </TabStack.Navigator>
         );
