@@ -1,6 +1,6 @@
 import crashlytics from '@react-native-firebase/crashlytics';
 import RNFS from 'react-native-fs';
-import { fileAsyncTransport, logger } from 'react-native-logs';
+import { consoleTransport, fileAsyncTransport, logger } from 'react-native-logs';
 import Share from 'react-native-share';
 
 import appConf from '~/framework/util/appConf';
@@ -39,12 +39,17 @@ export namespace Log {
         levels: {
           debug: 0,
           error: 3,
-          fatal: 4,
           info: 1,
           warn: 2,
         },
-        transport: isDebuggable ? [fileAsyncTransport] : [crashlyticsTransport],
+        transport: __DEV__ ? [consoleTransport] : isDebuggable ? [fileAsyncTransport] : [crashlyticsTransport],
         transportOptions: {
+          colors: {
+            debug: 'white',
+            error: 'red',
+            info: 'blue',
+            warn: 'yellow',
+          },
           fileName: logFileName,
           FS: RNFS,
         },

@@ -63,7 +63,6 @@ export const navBarOptions: (props: {
             <HeaderBackButton
               {...props}
               displayMode="minimal"
-              labelVisible={false}
               style={styles.backbutton}
               testID={backButtonTestID}
               onPress={navigation.goBack}

@@ -12,7 +12,7 @@ import theme from '~/app/theme';
 import ErrorScreenView from '~/framework/components/screen/error';
 import { ToastContainer } from '~/framework/components/toast';
 
-import { AllModulesNavigationParams, AllModulesScreenNames } from './types';
+import { AllModulesNavigationParams, AllModulesScreenNames, NavigationRootParams } from './types';
 
 const modalPresentations: (StackPresentationTypes | 'card')[] = [
   'containedModal',
@@ -27,12 +27,19 @@ const modalPresentations: (StackPresentationTypes | 'card')[] = [
 export function StackScreenLayout({
   children,
   options,
-}: ScreenLayoutArgs<
-  AllModulesNavigationParams,
-  AllModulesScreenNames,
-  NativeStackNavigationOptions,
-  NavigationProp<AllModulesNavigationParams>
->) {
+}:
+  | ScreenLayoutArgs<
+      AllModulesNavigationParams,
+      AllModulesScreenNames,
+      NativeStackNavigationOptions,
+      NavigationProp<AllModulesNavigationParams>
+    >
+  | ScreenLayoutArgs<
+      NavigationRootParams,
+      keyof NavigationRootParams,
+      NativeStackNavigationOptions,
+      NavigationProp<NavigationRootParams>
+    >) {
   // ToDo: Track error
   const isModal = options.presentation && modalPresentations.includes(options.presentation);
   const Wrapper = isModal ? BottomSheetModalProvider : React.Fragment;

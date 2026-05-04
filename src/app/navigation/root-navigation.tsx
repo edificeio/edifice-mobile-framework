@@ -9,7 +9,7 @@ export function renderRootModulesScreens<NavigationParams extends ParamListBase>
   RootStack: ReturnType<typeof createNativeStackNavigator<NavigationParams>>,
 ) {
   return (
-    <RootStack.Group>
+    <>
       {RootModule.allRootModules.map(module =>
         module.renderScreens ? (
           <RootStack.Group key={module.name}>
@@ -18,6 +18,6 @@ export function renderRootModulesScreens<NavigationParams extends ParamListBase>
         ) : null,
       )}
       {modalScreens}
-    </RootStack.Group>
+    </>
   );
 }
