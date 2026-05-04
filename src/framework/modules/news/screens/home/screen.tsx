@@ -6,9 +6,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { NewsHomeScreenDataProps, NewsHomeScreenEventProps, NewsHomeScreenProps, NewsThreadItemReduce } from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
@@ -27,6 +24,9 @@ import { getNewsRights } from '~/framework/modules/news/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+
+import styles from './styles';
+import { NewsHomeScreenDataProps, NewsHomeScreenEventProps, NewsHomeScreenProps, NewsThreadItemReduce } from './types';
 
 const convertArrayToObject = (array: NewsThreadItem[], key) => {
   const initialValue = {};
@@ -122,7 +122,6 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
       setShowPlaceholder(false);
       setLoadingState(AsyncPagedLoadingState.INIT_FAILED);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGetNewsItems, handleGetNewsThreads, idThreadSelected]);
 
   useEffect(() => {

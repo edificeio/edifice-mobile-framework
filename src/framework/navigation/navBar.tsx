@@ -33,10 +33,8 @@ export const navBarOptions: (props: {
   route: RouteProp<ParamListBase, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;
   title?: string;
-  titleStyle?: TextStyle;
-  titleTestID?: string;
   backButtonTestID?: string;
-}) => NativeStackNavigationOptions = ({ backButtonTestID, navigation, route, title, titleStyle, titleTestID }) =>
+}) => NativeStackNavigationOptions = ({ backButtonTestID, navigation, route, title }) =>
   ({
     // Since headerLeft replaces native back, we cannot use this.
     freezeOnBlur: true,
@@ -64,6 +62,7 @@ export const navBarOptions: (props: {
           return (
             <HeaderBackButton
               {...props}
+              displayMode="minimal"
               labelVisible={false}
               style={styles.backbutton}
               testID={backButtonTestID}
@@ -73,19 +72,6 @@ export const navBarOptions: (props: {
         }
       } else return null;
     },
-
-    // Since headerLeft replaces native back, we don't want him to show when there's no headerLeft
-    headerShadowVisible: true,
-
-    headerStyle: {
-      backgroundColor: theme.palette.primary.regular,
-    },
-
-    headerTintColor: theme.ui.text.inverse,
-
-    headerTitleAlign: 'center',
-
-    headerTitleStyle: styles.navBarTitleStyle,
 
     title: title,
   }) as NativeStackNavigationOptions;
