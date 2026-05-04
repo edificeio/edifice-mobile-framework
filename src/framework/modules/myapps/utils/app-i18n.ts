@@ -1,26 +1,26 @@
 import { I18n } from '~/app/i18n';
 import { AppsInfo } from '~/framework/modules/myapps/types.ts';
 
+export const getTranslatedAppLabel = (value?: string | null): string | undefined => {
+  if (!value) return undefined;
+
+  const key = `myapps-app-${value}`;
+  const translated = I18n.get(key);
+  return translated !== key ? translated : undefined;
+};
+
 export const getAppName = (data: AppsInfo): string => {
   if (data.prefix) {
-    const prefixKey = `myapps-app-${data.prefix.substring(1)}`;
-    const name = I18n.get(prefixKey);
-    if (name && name !== prefixKey) {
-      return name;
-    }
+    const fromPrefix = getTranslatedAppLabel(data.prefix.substring(1));
+    if (fromPrefix) return fromPrefix;
   }
 
   if (data.displayName) {
-    const displayNameKey = `myapps-app-${normalizeString(data.displayName)}`;
-    let name = I18n.get(displayNameKey);
-    if (name && name !== displayNameKey) {
-      return name;
-    }
+    const fromNormalized = getTranslatedAppLabel(normalizeString(data.displayName));
+    if (fromNormalized) return fromNormalized;
 
-    name = I18n.get(data.displayName);
-    if (name && name !== data.displayName) {
-      return name;
-    }
+    const name = I18n.get(data.displayName);
+    if (name && name !== data.displayName) return name;
 
     return data.displayName;
   }

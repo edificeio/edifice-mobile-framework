@@ -15,18 +15,12 @@ import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { MyAppsListItem } from '~/framework/modules/myapps/components/my-apps-list/types';
 import { useFilteredApps } from '~/framework/modules/myapps/hooks';
+import { isNavigableModule, refreshMyApps, selectAggregatedApps, toggleFavorite } from '~/framework/modules/myapps/reducer';
 import {
-  getAllappsShowedState,
-  isNavigableModule,
-  refreshMyApps,
-  selectAggregatedApps,
-  toggleAllApps,
-  toggleFavorite,
-} from '~/framework/modules/myapps/reducer';
-import {
-  buildMyAppsOnboardingAccountKey,
-  readMyAppsOnboarding,
+  readMyAppsOnboardingSeen,
+  readShowAllApps,
   writeMyAppsOnboardingSeen,
+  writeShowAllApps,
 } from '~/framework/modules/myapps/storage';
 import { AppsInfoAggregated, MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 import { getModuleRouteName } from '~/framework/modules/myapps/utils';
@@ -54,19 +48,23 @@ export function useMyAppsHomeController() {
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = React.useState<boolean>(false);
+  const [areAppsShowed, setAreAppsShowed] = React.useState(readShowAllApps());
 
-  const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState(() => {
-    const session = getSession();
-    if (!session) return false;
-    const accountKey = buildMyAppsOnboardingAccountKey(session.platform.name, session.user.id);
-    const onboarding = readMyAppsOnboarding(accountKey);
+  const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState<boolean>(() => {
+    const onboarding = readMyAppsOnboardingSeen();
     return Boolean(onboarding?.seen);
   });
 
-  const areAppsShowed = useSelector(getAllappsShowedState);
   const aggregatedApps = useSelector(selectAggregatedApps);
   const apps = useFilteredApps(filter);
   const isAllAppsTab = filter.type === MyAppsFilterTypes.Category && filter.value === MyAppsFilterCategories.all;
+
+  const isAggregatedAppsEmpty = React.useMemo(
+    () => !aggregatedApps || !Object.values(aggregatedApps).some(app => app.display),
+    [aggregatedApps],
+  );
+
+  const isFavoritesFilter = React.useMemo(() => filter.type === MyAppsFilterTypes.Favorites, [filter]);
 
   const queueToast = React.useCallback((type: 'success' | 'error', message: string) => {
     pendingToastRef.current = { message, type };
@@ -81,35 +79,29 @@ export function useMyAppsHomeController() {
     t.type === 'success' ? Toast.showSuccess(t.message) : Toast.showError(t.message);
   }, []);
 
-  const getOnboardingKeys = React.useCallback(() => {
+  const getLoginSessionKey = React.useCallback(() => {
     const session = getSession();
     if (!session) return undefined;
-
-    const accountKey = buildMyAppsOnboardingAccountKey(session.platform.name, session.user.id);
-    const loginSessionKey = `${accountKey}:${session.tokens.access.value}`;
-
-    return { accountKey, loginSessionKey };
+    return `${session.user.id}:${session.tokens.access.value}`;
   }, []);
 
   useFocusEffect(
     React.useCallback(() => {
-      const onboardingKeys = getOnboardingKeys();
-      if (!onboardingKeys) return;
+      const loginSessionKey = getLoginSessionKey();
+      if (!loginSessionKey) return;
 
-      const onboarding = readMyAppsOnboarding(onboardingKeys.accountKey);
+      const onboarding = readMyAppsOnboardingSeen();
       const alreadySeen = Boolean(onboarding?.seen);
       setHasSeenOnboarding(alreadySeen);
 
       const shouldShow =
-        !alreadySeen &&
-        onboarding?.version !== ONBOARDING_VERSION &&
-        !autoShownOnboardingSessionKeys.has(onboardingKeys.loginSessionKey);
+        !alreadySeen && onboarding?.version !== ONBOARDING_VERSION && !autoShownOnboardingSessionKeys.has(loginSessionKey);
 
       if (shouldShow) {
-        autoShownOnboardingSessionKeys.add(onboardingKeys.loginSessionKey);
+        autoShownOnboardingSessionKeys.add(loginSessionKey);
         requestAnimationFrame(() => modalRef.current?.doShowModal());
       }
-    }, [getOnboardingKeys]),
+    }, [getLoginSessionKey]),
   );
 
   const handleDismissSearch = React.useCallback(() => {
@@ -189,16 +181,17 @@ export function useMyAppsHomeController() {
   }, [dispatch, displayToast, navigation, queueToast]);
 
   const onToggleAllApps = React.useCallback(() => {
-    dispatch(toggleAllApps());
-  }, [dispatch]);
+    setAreAppsShowed(prev => {
+      const newValue = !prev;
+      writeShowAllApps(newValue);
+      return newValue;
+    });
+  }, []);
 
   const completeOnboarding = React.useCallback(() => {
-    const onboardingKeys = getOnboardingKeys();
-    if (!onboardingKeys) return;
-
-    writeMyAppsOnboardingSeen(ONBOARDING_VERSION, onboardingKeys.accountKey);
+    writeMyAppsOnboardingSeen(ONBOARDING_VERSION);
     setHasSeenOnboarding(true);
-  }, [getOnboardingKeys]);
+  }, []);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -218,7 +211,6 @@ export function useMyAppsHomeController() {
   }, [navigation]);
 
   return {
-    aggregatedApps,
     apps,
     appsListRef,
     areAppsShowed,
@@ -229,8 +221,10 @@ export function useMyAppsHomeController() {
     handleDismiss,
     handleOpenOnboarding,
     hasSeenOnboarding,
+    isAggregatedAppsEmpty,
     isAllAppsTab,
     isBottomSheetVisible,
+    isFavoritesFilter,
     modalRef,
     navigateToFavorites: () => navigation.navigate(ModalsRouteNames.FavoritesManagement),
     onPressApp,

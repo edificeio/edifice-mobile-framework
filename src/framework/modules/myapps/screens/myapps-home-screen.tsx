@@ -39,7 +39,6 @@ export const computeNavBar = ({
 
 const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   const {
-    aggregatedApps,
     apps,
     appsListRef,
     areAppsShowed,
@@ -50,8 +49,10 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     handleDismiss,
     handleOpenOnboarding,
     hasSeenOnboarding,
+    isAggregatedAppsEmpty,
     isAllAppsTab,
     isBottomSheetVisible,
+    isFavoritesFilter,
     modalRef,
     navigateToFavorites,
     onPressApp,
@@ -63,9 +64,6 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     selectedApp,
     setFilter,
   } = useMyAppsHomeController();
-
-  const isAggregatedAppsEmpty = !aggregatedApps || Object.keys(aggregatedApps).length === 0;
-  const isFavoritesFilter = filter.type === 'favorites';
 
   const slides: MAOSProps[] = [
     {

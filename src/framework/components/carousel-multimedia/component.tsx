@@ -25,7 +25,9 @@ const CarouselItem = ({
   toggleNavBarVisibility,
 }: CarouselItemProps) => {
   const [isPdfError, setIsPdfError] = React.useState(false);
+  const [isPlayerError, setIsPlayerError] = React.useState(false);
   const [isPdfLoadTimeout, setIsPdfLoadTimeout] = React.useState(false);
+  const [isPlayerLoadTimeout, setIsPlayerLoadTimeout] = React.useState(false);
 
   if (isCurrentMediaUnknown || !info) {
     return <UnknownItem />;
@@ -52,13 +54,19 @@ const CarouselItem = ({
   }
 
   if (isAudioContent(media) || isVideoContent(media)) {
+    if (isPlayerError || isPlayerLoadTimeout) {
+      return <UnviewableItem file={media} />;
+    }
     return (
       <PlayerItem
         hideNavBar={hideNavBar}
         isCurrentItem={isCurrentItem}
+        isPlayerLoadTimeout={isPlayerLoadTimeout}
         item={media}
         itemIndex={info.index}
         onInitialMediaLoad={onInitialAVMediaLoad}
+        setIsPlayerError={setIsPlayerError}
+        setIsPlayerLoadTimeout={setIsPlayerLoadTimeout}
         showNavBar={showNavBar}
         source={itemSource}
       />

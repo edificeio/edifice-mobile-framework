@@ -77,6 +77,7 @@ interface IModuleConfigBase<Name extends string> {
 }
 interface IModuleConfigRights {
   matchEntcoreApp: string | null; // Name of the app matched by this module to be displayed.
+  entcoreWidgetName?: string;
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
   hasRight: (params: { matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[]; session: AuthActiveAccount }) => boolean;
   getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
@@ -84,6 +85,7 @@ interface IModuleConfigRights {
 }
 interface IModuleConfigDeclarationRights {
   matchEntcoreApp: string | null;
+  entcoreWidgetName?: IModuleConfigRights['entcoreWidgetName'];
   matchEntcoreWidget?: IModuleConfigRights['matchEntcoreWidget'];
   hasRight?: IModuleConfigRights['hasRight'];
 }
@@ -137,6 +139,8 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
 
   matchEntcoreApp: IModuleConfig<Name, State>['matchEntcoreApp'];
 
+  entcoreWidgetName?: IModuleConfig<Name, State>['entcoreWidgetName'];
+
   matchEntcoreWidget: IModuleConfig<Name, State>['matchEntcoreWidget'];
 
   hasRight: IModuleConfig<Name, State>['hasRight'];
@@ -165,6 +169,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
       apiName,
       entcoreScope,
       entcoreTrackingName,
+      entcoreWidgetName,
       fileManager,
       hasRight,
       matchEntcoreApp,
@@ -181,11 +186,14 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.apiName = apiName ?? name;
     // Rights
     this.matchEntcoreApp = matchEntcoreApp;
-    this.matchEntcoreWidget = matchEntcoreWidget ?? (() => false);
+    this.entcoreWidgetName = entcoreWidgetName;
+    this.matchEntcoreWidget = matchEntcoreWidget ?? (entcoreWidget => entcoreWidget.name === entcoreWidgetName);
     this.hasRight = hasRight ?? (({ matchingApps }) => matchingApps.length > 0);
     this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => app.name === this.matchEntcoreApp);
     this.getMatchingEntcoreWidgets = allEntcoreWidgets =>
-      allEntcoreWidgets.filter(wig => this.matchEntcoreWidget(wig, allEntcoreWidgets));
+      this.entcoreWidgetName
+        ? allEntcoreWidgets.filter(wig => wig.name === this.entcoreWidgetName)
+        : allEntcoreWidgets.filter(wig => this.matchEntcoreWidget(wig, allEntcoreWidgets));
     // Redux
     this.actionTypesPrefix = actionTypesPrefix ?? toSnakeCase(this.name).toUpperCase() + '_';
     this.reducerName = reducerName ?? this.name;
@@ -210,7 +218,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.isReady = true;
   }
 
-  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {}
+  handleInit(_params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {}
 
   assignValues(values: Partial<IModuleConfigDeclaration<any>>) {
     Object.assign(this, values);
@@ -315,7 +323,7 @@ export class Module<
     this.handleInit(params);
   }
 
-  handleInit(params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {}
+  handleInit(_params: { session: AuthActiveAccount; matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[] }) {}
 
   get isReady() {
     return true;

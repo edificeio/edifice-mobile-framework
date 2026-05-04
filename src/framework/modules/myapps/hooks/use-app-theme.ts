@@ -2,23 +2,24 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { buildAppNameToTheme, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
+import { buildAppLookupMap, resolveAppTheme, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { IAppThemeInfo } from '~/framework/util/moduleTool';
 
 /**
- * Get the complete theme information for a specific app
- * Takes app moduleName/appName as a required parameter
- * Returns colors (regular, pale, dark,...) and icon
+ * Returns the theme for an app from its identifier.
  *
- * @param appName: Name of the app/module
- * @returns IAppThemeInfo with full color palette and icon
+ * appName can be a module name or backend app name.
+ * Returns app colors and icon, or the default theme if not found.
+ *
+ * @param appName App identifier
+ * @returns IAppThemeInfo
  */
 export function useAppTheme(appName: string): IAppThemeInfo {
   const aggregatedApps = useSelector(selectAggregatedApps);
 
   return React.useMemo(() => {
-    const appThemesByName = buildAppNameToTheme(aggregatedApps ?? []);
-    return appThemesByName[appName.toUpperCase()] ?? getDefaultAppTheme();
+    const lookupMap = buildAppLookupMap(aggregatedApps ?? {});
+    return resolveAppTheme(appName, lookupMap) ?? getDefaultAppTheme();
   }, [aggregatedApps, appName]);
 }
 

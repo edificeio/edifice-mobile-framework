@@ -4,15 +4,14 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import styles from './styles';
 
-import { SCREEN_HEIGHT } from '~/framework/components/carousel-multimedia/styles';
-
-const PaginationBackground = () => {
+const PaginationBackground = ({ height, width }: { height: number; width: number }) => {
   return (
     <Svg
       style={{
         ...styles.paginationGradientSvg,
       }}
-      width={SCREEN_HEIGHT}>
+      width={width}
+      height={height}>
       <Defs>
         <LinearGradient id="paginationGradient" x1="0" y1="0" x2="0" y2="1">
           <Stop offset="0" stopColor="#000000" stopOpacity="0.5" />

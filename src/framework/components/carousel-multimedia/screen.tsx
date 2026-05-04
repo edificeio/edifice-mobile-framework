@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { createContext } from 'react';
-import { Platform } from 'react-native';
+import { Platform, StatusBar as RNStatusBar, useWindowDimensions } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PanGesture } from 'react-native-gesture-handler';
-import { OrientationLocker, OrientationType } from 'react-native-orientation-locker';
+import { OrientationLocker } from 'react-native-orientation-locker';
 import { useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
@@ -14,10 +14,12 @@ import CarouselItem from './component';
 import { useCarouselFileHandler, useCarouselOrientation, useTogglePagination } from './hooks';
 import { computeNavBar, NavbarButtons } from './navbar';
 import CarouselPagination from './pagination/component';
-import styles, { SCREEN_HEIGHT, SCREEN_WIDTH } from './styles';
+import { PAGINATION_COMPONENT_HEIGHT } from './pagination/styles';
+import styles from './styles';
 import { getSignedMediaSource } from './util';
 
 import { I18n } from '~/app/i18n';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import StatusBar from '~/framework/components/status-bar';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
@@ -42,6 +44,8 @@ export const PAGINATION_ANIMATION_DURATION = 300;
 export const PAGINATION_ANIMATION_OFFSET = 200;
 const PAGINATION_ANIMATION_START_INDEX_DELAY = 1000;
 const CAROUSEL_WINDOW_SIZE = 6;
+const SWIPE_GESTURE_DISABLE_AREA_FILLER = UI_SIZES.spacing.big;
+const SWIPE_GESTURE_DISABLE_AREA = PAGINATION_COMPONENT_HEIGHT + SWIPE_GESTURE_DISABLE_AREA_FILLER;
 
 export const PlayerContext = createContext<{
   pauseCurrentPlayingMedia?: () => void;
@@ -74,15 +78,18 @@ const CarouselScreen = ({
   const paginationProgress = useSharedValue<number>(0);
   const paginationTranslateY = useSharedValue(0);
   const mediaLengthShared = useSharedValue(media.length);
-  const { onOrientationChange, orientation, orientationShared } = useCarouselOrientation();
+  const containerWidthShared = useSharedValue(0);
+  const { onOrientationChange, orientation } = useCarouselOrientation();
   const { onSave, onShare } = useCarouselFileHandler(media[currentIndex]);
   const togglePaginationComponent = useTogglePagination(media, paginationTranslateY, setIsPaginationVisible);
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const playerContextValue = React.useContext(PlayerContext);
   const pdfContextValue = React.useContext(PdfContext);
   const insets = useSafeAreaInsets();
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
 
-  const isPortrait = React.useMemo(() => orientation === OrientationType.PORTRAIT, [orientation]);
+  const statusbarHeight = RNStatusBar.currentHeight ?? 0;
+  const androidStatusBarHeight = isAndroid ? statusbarHeight : 0;
 
   const isCurrentMediaUnknown = React.useMemo(() => {
     return !media[currentIndex]?.src;
@@ -92,6 +99,7 @@ const CarouselScreen = ({
     if (isAndroid) {
       panGesture.minDistance(50).failOffsetY([-20, 20]).activeOffsetX([-30, 30]);
     }
+    panGesture.hitSlop({ bottom: -SWIPE_GESTURE_DISABLE_AREA });
   }, []);
 
   const hideNavBar = React.useCallback(() => {
@@ -134,29 +142,39 @@ const CarouselScreen = ({
     }
   }, [isInitialAVMediaLoaded, media, paginationTranslateY, startIndex]);
 
+  const carouselDimensions = React.useMemo(
+    () => ({
+      height: windowHeight - (isAndroid ? insets.top : 0) - (orientation === 'PORTRAIT' ? insets.bottom : 0),
+      width: Math.ceil(windowWidth),
+    }),
+    [insets.bottom, insets.top, windowHeight, windowWidth, orientation],
+  );
+
+  React.useEffect(() => {
+    containerWidthShared.value = carouselDimensions.width;
+  }, [carouselDimensions.width, containerWidthShared]);
+
   const containerStyle = React.useMemo(
     () => [
       styles.container,
       {
-        height: isPortrait ? SCREEN_HEIGHT : SCREEN_WIDTH,
-        paddingBottom: isPortrait ? insets.bottom : 0,
-        paddingTop: isPortrait ? insets.top : 0,
-        width: isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT,
+        height: carouselDimensions.height,
+        paddingBottom: isAndroid ? (insets.bottom ?? 0) : 0,
+        paddingTop: isAndroid ? (insets.top ?? 0) : 0,
+        width: carouselDimensions.width + androidStatusBarHeight,
       },
     ],
-
-    [insets.bottom, insets.top, isPortrait],
+    [androidStatusBarHeight, carouselDimensions.height, carouselDimensions.width, insets.bottom, insets.top],
   );
 
-  const carouselDimensions = React.useMemo(
-    () => ({
-      height: isPortrait ? SCREEN_HEIGHT - insets.top - insets.bottom : SCREEN_WIDTH,
-      width: isPortrait ? SCREEN_WIDTH : SCREEN_HEIGHT,
-    }),
-    [isPortrait, insets.top, insets.bottom],
+  const carouselItemHeight = React.useMemo(
+    () => carouselDimensions.height - (insets.bottom ?? 0),
+    [carouselDimensions.height, insets.bottom],
   );
 
   React.useEffect(() => {
+    const isLandscape = orientation !== 'PORTRAIT';
+
     if (isNavBarVisible) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
@@ -166,6 +184,7 @@ const CarouselScreen = ({
           media.length !== 1
             ? navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title)
             : '',
+        statusBarHidden: isLandscape,
       });
     } else {
       navigation.setOptions({
@@ -175,10 +194,11 @@ const CarouselScreen = ({
         headerShadowVisible: false,
         headerStyle: { backgroundColor: 'transparent' },
         headerTitle: '',
+        statusBarHidden: isLandscape,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNavBarVisible, media.length, currentIndex, isCurrentMediaUnknown]);
+  }, [isNavBarVisible, media.length, currentIndex, isCurrentMediaUnknown, orientation]);
 
   React.useEffect(() => {
     mediaLengthShared.value = media.length;
@@ -189,7 +209,6 @@ const CarouselScreen = ({
       <StatusBar type="dark" />
       <OrientationLocker orientation={'UNLOCK'} onChange={onOrientationChange} />
       <Carousel
-        key={orientation}
         height={carouselDimensions.height}
         width={carouselDimensions.width}
         data={media}
@@ -205,14 +224,14 @@ const CarouselScreen = ({
 
           return (
             <CarouselItem
-              containerHeight={carouselDimensions.height}
+              containerHeight={carouselItemHeight}
               containerWidth={carouselDimensions.width}
               currentIndex={currentIndex}
               hideNavBar={hideNavBar}
               info={info}
-              itemSource={source}
               isCurrentMediaUnknown={isCurrentMediaUnknown}
               isNavBarVisible={isNavBarVisible}
+              itemSource={source}
               onInitialAVMediaLoad={isInitialItem ? onInitialAVMediaLoad : undefined}
               setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
               showNavBar={showNavBar}
@@ -224,16 +243,18 @@ const CarouselScreen = ({
         windowSize={media.length === 1 ? 1 : Math.min(CAROUSEL_WINDOW_SIZE, media.length - 1)}
       />
       <CarouselPagination
+        bottomInset={isAndroid ? (insets.bottom ?? 0) : 0}
+        carouselRef={carouselRef}
+        containerWidth={carouselDimensions.width}
+        containerWidthShared={containerWidthShared}
         media={media}
+        mediaLengthShared={mediaLengthShared}
+        isInitialAVMediaLoaded={isInitialAVMediaLoaded}
         isNavBarVisible={isNavBarVisible}
         isPaginationVisible={isPaginationVisible}
-        isInitialAVMediaLoaded={isInitialAVMediaLoaded}
-        startIndex={startIndex}
         paginationProgress={paginationProgress}
         paginationTranslateY={paginationTranslateY}
-        orientationShared={orientationShared}
-        mediaLengthShared={mediaLengthShared}
-        carouselRef={carouselRef}
+        startIndex={startIndex}
       />
     </PageView>
   );

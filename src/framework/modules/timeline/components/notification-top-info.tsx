@@ -11,7 +11,7 @@ import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card'
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { useAllNotificationBadges } from '~/framework/modules/myapps/hooks';
+import { useNotificationBadge } from '~/framework/modules/myapps/hooks';
 import appConf from '~/framework/util/appConf';
 import {
   getAsNamedResourceNotification,
@@ -22,7 +22,7 @@ import {
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: AuthActiveAccount }) => {
-  const allNotifBadges = useAllNotificationBadges();
+  const badge = useNotificationBadge(notification.type);
   const message = notification && notification.message;
   const date = notification && notification.date;
   const sender = notification && getAsSenderNotification(notification)?.sender;
@@ -48,8 +48,6 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
         `timeline-notiftype-mood-${notification.backupData.params.moodImg}-${degre}`,
       )}`;
   }
-
-  const badge = allNotifBadges[notification.type];
 
   return (
     <ContentCardHeader

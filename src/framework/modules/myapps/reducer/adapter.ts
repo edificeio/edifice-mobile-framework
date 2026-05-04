@@ -3,7 +3,6 @@ import theme from '~/app/theme';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { createMyAppsServiceWithTokenFetch, myAppsService } from '~/framework/modules/myapps/service';
 import {
-  AppBadgesType,
   AppBookmarks,
   ApplicationsConfig,
   AppsInfo,
@@ -13,7 +12,14 @@ import {
   MyAppsFilterCategories,
   MyAppsFilterTypes,
 } from '~/framework/modules/myapps/types';
-import { getAppName, getModuleRouteName, normalizeIconName, normalizeString, toKebabCase } from '~/framework/modules/myapps/utils';
+import {
+  getAppName,
+  getModuleRouteName,
+  getTranslatedAppLabel,
+  normalizeIconName,
+  normalizeString,
+  toKebabCase,
+} from '~/framework/modules/myapps/utils';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
 
@@ -27,6 +33,15 @@ const MYAPPS_FILTERS_CATEGORY_MAP: Record<string, MyAppsCategory> = {
   communication: MyAppsFilterCategories.communication,
   organisation: MyAppsFilterCategories.organisation,
   pedagogy: MyAppsFilterCategories.pedagogie,
+};
+
+const APP_AGGREGATION_OVERRIDES: Record<string, { color?: string; icon?: string }> = {
+  Directory: { color: 'green', icon: 'userbook' },
+};
+
+const FALLBACK_BADGE: IAppBadgeInfo = {
+  color: theme.palette.grey.cloudy,
+  icon: 'ui-infoCircle',
 };
 
 export const resolveAppCategory = (app: AppsInfoAggregated): MyAppsCategory =>
@@ -87,72 +102,80 @@ export const aggregateApps = (
   favorites: AppBookmarks,
 ): Record<string, AppsInfoAggregated> => {
   const configByName = new Map(appsConfig.map(c => [c.name, c]));
+  const favoriteBookmarks = new Set(favorites.bookmarks ?? []);
+  const libraryConfig = configByName.get('library-info');
 
-  const aggregated: Record<string, AppsInfoAggregated> = {};
-
-  appsInfo
+  const sortedApps = appsInfo
     .map(app => {
       let config = configByName.get(app.name);
       const isLibrary = app.address?.includes('library.edifice.io') && !config?.category;
-      const isFavorite = favorites.bookmarks?.includes(app.name);
+      const isFavorite = favoriteBookmarks.has(app.name);
 
-      if (isLibrary) {
-        const libraryConfig = configByName.get('library-info');
-        if (libraryConfig) config = { ...libraryConfig, name: app.name };
+      if (isLibrary && libraryConfig) {
+        config = { ...libraryConfig, name: app.name };
       }
+
+      const override = APP_AGGREGATION_OVERRIDES[app.name];
 
       return {
         ...app,
-        badgeKey: app.displayName.toUpperCase(),
         category: config?.category,
-        color: config?.color,
+        color: override?.color ?? config?.color,
         displayName: getAppName(app),
         help: config?.help,
-        icon: normalizeIconName(app.icon),
+        icon: override?.icon ?? normalizeIconName(app.icon),
         isFavorite,
         isLibrary,
         libraries: config?.libraries,
         testID: config ? toKebabCase(app.name) : '',
       };
     })
-    .sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)))
-    .forEach(app => {
-      aggregated[app.name] = app;
-    });
+    .sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)));
+
+  const aggregated: Record<string, AppsInfoAggregated> = {};
+  for (const app of sortedApps) {
+    aggregated[app.name] = app;
+  }
 
   return aggregated;
 };
 
-const USERBOOK_BADGE: IAppBadgeInfo = {
-  color: theme.palette.complementary.green?.regular,
-  icon: 'userbook',
-};
-
-const FALLBACK_BADGE: IAppBadgeInfo = {
-  color: theme.palette.grey.cloudy,
-  icon: 'ui-infoCircle',
-};
-
-export const buildAppNameToBadge = (aggregatedApps: Record<string, AppsInfoAggregated>): AppBadgesType => {
-  const badgesMap: AppBadgesType = {};
-  for (const app of Object.values(aggregatedApps)) {
-    badgesMap[app.badgeKey] = { color: resolveAppColor(app.color), icon: app.icon };
-  }
-  return badgesMap;
-};
-
 /**
- * Build a map of app names to their complete theme information (all color shades + icon)
+ * Builds a lookup map to resolve app badge or theme.
+ *
+ * matchEntcoreApp links the mobile module to the backend app:
+ * module.config.matchEntcoreApp === app.name
+ *
+ * We store the same app with:
+ * - module.config.name ==> mobile key
+ * - module.config.entcoreScope[] ==> backend keys
+ *
+ * This allows fast lookup from any app identifier.
  */
-export const buildAppNameToTheme = (aggregatedApps: Record<string, AppsInfoAggregated>): Record<string, IAppThemeInfo> => {
-  const themesMap: Record<string, IAppThemeInfo> = {};
-  for (const app of Object.values(aggregatedApps)) {
-    themesMap[app.badgeKey] = {
-      colors: resolveAppShades(app.color),
-      icon: app.icon,
-    };
+
+export const buildAppLookupMap = (aggregatedApps: Record<string, AppsInfoAggregated>): Map<string, AppsInfoAggregated> => {
+  const map = new Map<string, AppsInfoAggregated>();
+  for (const module of AllModules().filter(isNavigableModule)) {
+    if (!module.config.matchEntcoreApp) continue;
+    const app = aggregatedApps[module.config.matchEntcoreApp];
+    if (!app) continue;
+
+    map.set(module.config.name, app);
+    for (const scope of module.config.entcoreScope) {
+      map.set(scope, app);
+    }
   }
-  return themesMap;
+  return map;
+};
+
+export const resolveAppBadge = (appName: string, lookupMap: Map<string, AppsInfoAggregated>): IAppBadgeInfo => {
+  const app = lookupMap.get(appName);
+  return app ? { color: resolveAppColor(app.color), icon: app.icon } : FALLBACK_BADGE;
+};
+
+export const resolveAppTheme = (appName: string, lookupMap: Map<string, AppsInfoAggregated>): IAppThemeInfo | undefined => {
+  const app = lookupMap.get(appName);
+  return app ? { colors: resolveAppShades(app.color), icon: app.icon } : undefined;
 };
 
 export const getTabModuleDisplayName = (
@@ -161,35 +184,44 @@ export const getTabModuleDisplayName = (
 ): string => {
   const { matchEntcoreApp, name } = moduleConfig;
 
-  const matchingApp = matchEntcoreApp ? Object.values(aggregatedApps).find(app => app.name === matchEntcoreApp) : undefined;
-  return matchingApp?.displayName || name;
+  const matchingApp = matchEntcoreApp ? aggregatedApps[matchEntcoreApp] : undefined;
+  if (matchingApp?.displayName) return matchingApp.displayName;
+
+  // will be removed when myapps.module.config.name will be "portal" instead of "myapps"
+  // in /myapps/module-config.ts
+  const aliases: Record<string, string[]> = {
+    myapps: ['portal'],
+  };
+
+  for (const value of [matchingApp?.name, matchEntcoreApp, name, ...(aliases[name] ?? [])]) {
+    const translated = getTranslatedAppLabel(value);
+    if (translated) return translated;
+  }
+
+  return name;
 };
 
-export const resolveBadgeByAppName = (appName: string, badgesIndex: AppBadgesType): IAppBadgeInfo =>
-  badgesIndex[appName.toUpperCase()] ?? FALLBACK_BADGE;
+export const buildNotifTypeLookupMap = (notifTypes: IEntcoreNotificationType[]): Map<string, IEntcoreNotificationType> =>
+  new Map(notifTypes.map(nt => [nt.type, nt]));
 
-export const buildNotifTypeToBadge = (
+/**
+ * Resolve a notification badge from its type using the notification type
+ * definitions which contains `app-name` and the aggregated apps as the single source of truth.
+ */
+export const resolveNotifBadge = (
+  notifType: string,
+  notifTypeMap: Map<string, IEntcoreNotificationType>,
   aggregatedApps: Record<string, AppsInfoAggregated>,
-  notifTypes: IEntcoreNotificationType[],
-): AppBadgesType => {
-  const appNameToInfo = new Map<string, IAppBadgeInfo>();
-  for (const app of Object.values(aggregatedApps)) {
-    appNameToInfo.set(app.name, { color: resolveAppColor(app.color), icon: app.icon });
-  }
-  const badgesMap: AppBadgesType = {};
-  for (const notif of notifTypes) {
-    if (!notif['app-name']) continue;
+): IAppBadgeInfo | undefined => {
+  const appName = notifTypeMap.get(notifType)?.['app-name'];
 
-    if (notif.type.startsWith('USERBOOK')) {
-      badgesMap[notif.type] = { ...USERBOOK_BADGE };
-      continue;
-    }
+  if (!appName) return undefined;
 
-    const info = appNameToInfo.get(notif['app-name']);
-    if (info) badgesMap[notif.type] = info;
-  }
+  const app = aggregatedApps[appName];
 
-  return badgesMap;
+  if (!app) return undefined;
+
+  return { color: resolveAppColor(app.color), icon: app.icon };
 };
 
 export const buildFetchSuccessPayload = (appsInfo: AppsInfo[], appsConfig: ApplicationsConfig[], favorites: AppBookmarks) => {

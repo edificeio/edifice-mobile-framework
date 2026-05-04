@@ -1,17 +1,15 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
-import { PORTRAIT } from 'react-native-orientation-locker';
 import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import { Pagination } from 'react-native-reanimated-carousel';
 
 import PaginationBackground from './pagination-background/component';
 import PaginationItem from './pagination-item/component';
-import styles, { ACTIVE_ITEM_WIDTH, INACTIVE_ITEM_WIDTH, ITEM_GAP } from './styles';
+import styles, { ACTIVE_ITEM_WIDTH, INACTIVE_ITEM_WIDTH, ITEM_GAP, PAGINATION_COMPONENT_HEIGHT } from './styles';
 import { CarouselPaginationProps } from './types';
 
 import { PAGINATION_ANIMATION_OFFSET } from '~/framework/components/carousel-multimedia/screen';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '~/framework/components/carousel-multimedia/styles';
 import { getSignedPosterSource } from '~/framework/components/carousel-multimedia/util';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/util/media';
@@ -19,13 +17,15 @@ import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/util/med
 const MAX_PAGINATION_ITEMS = 12;
 
 const CarouselPagination = ({
+  bottomInset,
   carouselRef,
+  containerWidth,
+  containerWidthShared,
   isInitialAVMediaLoaded,
   isNavBarVisible,
   isPaginationVisible,
   media,
   mediaLengthShared,
-  orientationShared,
   paginationProgress,
   paginationTranslateY,
   startIndex,
@@ -39,6 +39,8 @@ const CarouselPagination = ({
       (!isPlayableMedia(media[startIndex]) || isInitialAVMediaLoaded)
     );
   }, [media, isNavBarVisible, isPaginationVisible, startIndex, isInitialAVMediaLoaded]);
+
+  const paginationContainerStyle = React.useMemo(() => [styles.paginationGradient, { paddingTop: bottomInset / 2 }], [bottomInset]);
 
   const renderPaginationItem = React.useCallback(
     (item: FileMedia, index: number) => {
@@ -79,7 +81,7 @@ const CarouselPagination = ({
         ? paginationProgress.value - mediaLengthShared.value
         : paginationProgress.value;
 
-    const screenCenter = orientationShared.value === PORTRAIT ? SCREEN_WIDTH / 2 : SCREEN_HEIGHT / 2;
+    const screenCenter = containerWidthShared.value / 2;
 
     return {
       transform: [
@@ -93,16 +95,20 @@ const CarouselPagination = ({
         },
       ],
     };
-  });
+  }, [containerWidthShared]);
 
   if (!canShowPagination) {
     return null;
   }
 
   return (
-    <View style={styles.paginationGradient} pointerEvents="box-none">
+    <View style={paginationContainerStyle} pointerEvents="box-none">
       <Animated.View style={paginationContainerAnimatedStyle}>
-        <PaginationBackground />
+        <PaginationBackground
+          key={Platform.OS === 'ios' ? containerWidth : undefined}
+          width={containerWidth}
+          height={PAGINATION_COMPONENT_HEIGHT + bottomInset}
+        />
         <Animated.View style={paginationItemsAnimatedStyle}>
           <Pagination.Custom
             containerStyle={styles.paginationContainer}

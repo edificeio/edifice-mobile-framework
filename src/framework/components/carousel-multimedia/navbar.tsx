@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -14,6 +14,8 @@ import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { OldStorageFunctions } from '~/framework/util/storage';
+
+const isAndroid = Platform.OS === 'android';
 
 export const NavbarButtons = React.memo(
   ({ disabled = false, onSave, onShare }: { disabled?: boolean; onSave: () => void; onShare: () => void }) => {
@@ -89,8 +91,7 @@ export function computeNavBar({
     }),
     headerBlurEffect: 'dark',
     headerShadowVisible: false,
-    headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
+    headerStyle: { backgroundColor: isAndroid ? theme.ui.shadowColorTransparent.toString() : undefined },
     headerTransparent: true,
-    statusBarColor: theme.palette.grey.darkness.toString(),
   };
 }
