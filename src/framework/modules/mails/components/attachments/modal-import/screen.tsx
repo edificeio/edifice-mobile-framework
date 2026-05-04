@@ -3,9 +3,6 @@ import { ActivityIndicator, Alert, View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import styles from './styles';
-import { AttachmentsImportScreenProps, UploadAttachment, UploadAttachmentStatus } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
@@ -28,8 +25,11 @@ import { getSession } from '~/framework/modules/auth/redux/reducer';
 import Thumbnail from '~/framework/modules/mails/components/attachments/thumbnail';
 import moduleConfig from '~/framework/modules/mails/module-config';
 import { mailsService } from '~/framework/modules/mails/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
+
+import styles from './styles';
+import { AttachmentsImportScreenProps, UploadAttachment, UploadAttachmentStatus } from './types';
 
 const headerTitleStyle = {
   color: theme.palette.grey.darkness.toString(),
@@ -239,10 +239,7 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
             }
           />
         ),
-      headerTitle:
-        fileCount === 0
-          ? navBarTitle(I18n.get('import-title_zero'), headerTitleStyle)
-          : navBarTitle(I18n.get('import-title_other', { count: fileCount }), headerTitleStyle),
+      title: fileCount === 0 ? I18n.get('import-title_zero') : I18n.get('import-title_other', { count: fileCount }),
     });
   }, [navigation, listReady]);
 
@@ -311,7 +308,6 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
     }, 350);
 
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const removeFile = React.useCallback(

@@ -43,7 +43,7 @@ import WorkspaceModal, { WorkspaceModalType } from '~/framework/modules/workspac
 import moduleConfig from '~/framework/modules/workspace/module-config';
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -513,7 +513,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   usePreventRemove(isSelectionActive, () => setSelectedFiles([]));
 
   props.navigation.setOptions({
-    headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace-filelist-title')),
+    title: props.route.params.title ?? I18n.get('workspace-filelist-title'),
   });
 
   return <PageView>{renderPage()}</PageView>;

@@ -22,7 +22,6 @@ import { SmallText } from '~/framework/components/text';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/thunks';
 import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
-import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
 import { toURISource } from '~/framework/util/media';
 import { API, OAuth2ErrorCode, OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
@@ -201,9 +200,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     }
     // Update page title
     this.props.navigation.setOptions({
-      headerTitle: navBarTitle(
-        I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'auth-wayf-select-title' : 'auth-wayf-main-title'),
-      ),
+      title: I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'auth-wayf-select-title' : 'auth-wayf-main-title'),
     });
   }
 

@@ -6,9 +6,6 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import moment, { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 
-import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
-import HomeworkTimeline from './HomeworkTimeline';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -29,10 +26,13 @@ import {
   hasPermissionManager,
   modifyHomeworkEntryResourceRight,
 } from '~/framework/modules/homework/rights';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
+
+import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
+import HomeworkTimeline from './HomeworkTimeline';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -223,7 +223,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
 
       headerRight: () => (this.canCreateEntry() ? <NavBarAction icon="ui-plus" onPress={this.addEntry} /> : undefined),
 
-      headerTitle: navBarTitle(diaryInformation?.title),
+      title: diaryInformation?.title,
     });
   }
 

@@ -8,11 +8,6 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { ProfilePageProps } from './types';
-
-import { hobbiesItems, renderEmoji } from '.';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
@@ -39,11 +34,16 @@ import { getShowMottoMoodRight } from '~/framework/modules/user/rights';
 import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import { userService } from '~/framework/modules/user/service';
 import workspaceService from '~/framework/modules/workspace/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
+
+import styles from './styles';
+import { ProfilePageProps } from './types';
+
+import { hobbiesItems, renderEmoji } from '.';
 
 export const computeNavBar = ({
   navigation,
@@ -238,9 +238,8 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   React.useEffect(() => {
     navigation.setOptions({
-      headerTitle: navBarTitle(isMyProfile ? I18n.get('user-profile-appname') : I18n.get('user-profile-appname-externe')),
+      title: isMyProfile ? I18n.get('user-profile-appname') : I18n.get('user-profile-appname-externe'),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderUserCard = () => {

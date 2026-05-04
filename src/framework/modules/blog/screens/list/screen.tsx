@@ -4,7 +4,6 @@
 import React from 'react';
 import { ListRenderItemInfo } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -12,7 +11,6 @@ import { I18n } from '~/app/i18n';
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
-import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { sessionScreen } from '~/framework/components/screen';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { audienceService } from '~/framework/modules/audience/service';
@@ -25,7 +23,6 @@ import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import { actions, Blog, BlogPost, BlogPostWithAudience, countComments, selectors } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight, hasPermissionManager } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
-import { navBarTitle } from '~/framework/navigation/navBar';
 
 import { styles } from './styles';
 import { BlogPostListScreenProps } from './types';

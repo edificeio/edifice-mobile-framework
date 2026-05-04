@@ -4,10 +4,6 @@ import { View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
-import styles from './styles';
-import { type MailsEditScreenPrivateProps } from './types';
-import { useMailsEditController } from './useController';
-
 import { I18n } from '~/app/i18n';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
@@ -25,7 +21,11 @@ import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mail
 import { getNoReplyRight } from '~/framework/modules/mails/rights';
 import { mailsService } from '~/framework/modules/mails/service';
 import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
+
+import styles from './styles';
+import { type MailsEditScreenPrivateProps } from './types';
+import { useMailsEditController } from './useController';
 
 export const computeNavBar = ({
   navigation,
@@ -100,7 +100,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           ]}
         />
       ),
-      headerTitle: navBarTitle('', undefined, undefined, 1, 2),
+      title: '',
     });
   }, [
     draftIdSaved,

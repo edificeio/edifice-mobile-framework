@@ -12,7 +12,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { I18n } from '~/app/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
 import { UI_SIZES } from '~/framework/components/constants';
-import { navBarTitle } from '~/framework/navigation/navBar';
 import { FileMedia, isPlayableMedia } from '~/framework/util/media';
 
 import CarouselItem from './component';
@@ -173,11 +172,11 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
       navigation.setOptions({
         headerRight: () => <NavbarButtons disabled={isCurrentMediaUnknown} onSave={onSave} onShare={onShare} />,
         headerShown: isAndroid ? true : undefined,
-        headerTitle:
-          media.length !== 1
-            ? navBarTitle(I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length }), styles.title)
-            : route.params.title,
         statusBarHidden: isLandscape,
+        title:
+          media.length !== 1
+            ? I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length })
+            : route.params.title,
       });
     } else {
       navigation.setOptions({
@@ -186,8 +185,8 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
         headerRight: undefined,
         headerShadowVisible: false,
         headerStyle: { backgroundColor: 'transparent' },
-        headerTitle: '',
         statusBarHidden: isLandscape,
+        title: '',
       });
     }
   }, [isNavBarVisible, media.length, currentIndex, isCurrentMediaUnknown, navigation, route, onSave, onShare, orientation]);

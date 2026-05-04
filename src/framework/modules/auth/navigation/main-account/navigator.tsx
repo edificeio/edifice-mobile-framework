@@ -30,7 +30,7 @@ import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/a
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/requirement-terms';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 import appConf from '~/framework/util/appConf';
 
@@ -66,14 +66,14 @@ export default function () {
         name={authRouteNames.revalidateTerms}
         component={RevalidateTermsScreen}
         options={{
-          headerTitle: navBarTitle(I18n.get('user-revalidateterms-title')),
+          title: I18n.get('user-revalidateterms-title'),
         }}
       />
       <Stack.Screen
         name={authRouteNames.changePassword}
         component={AuthChangePasswordScreen}
         options={{
-          headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
+          title: I18n.get('user-page-editpassword'),
         }}
       />
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
@@ -108,9 +108,7 @@ export default function () {
           name={authRouteNames.forgot}
           component={AuthForgotScreen}
           options={({ route }) => ({
-            headerTitle: navBarTitle(
-              route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
-            ),
+            title: route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
           })}
         />
       </Stack.Group>

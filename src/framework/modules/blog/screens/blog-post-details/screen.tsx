@@ -7,16 +7,6 @@ import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import {
-  BlogPostCommentLoadingState,
-  BlogPostDetailsLoadingState,
-  BlogPostDetailsScreenDataProps,
-  BlogPostDetailsScreenEventProps,
-  BlogPostDetailsScreenProps,
-  BlogPostDetailsScreenState,
-} from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
@@ -58,8 +48,18 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
 import { blogPostGenerateResourceUriFunction, blogUriCaptureFunction } from '~/framework/modules/blog/service/adapters';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { resourceHasRight } from '~/framework/util/resourceRights';
+
+import styles from './styles';
+import {
+  BlogPostCommentLoadingState,
+  BlogPostDetailsLoadingState,
+  BlogPostDetailsScreenDataProps,
+  BlogPostDetailsScreenEventProps,
+  BlogPostDetailsScreenProps,
+  BlogPostDetailsScreenState,
+} from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -437,7 +437,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         navigation,
         route,
       }),
-      headerTitle: navBarTitle(blogPostData?.title),
+      title: blogPostData?.title,
       ...(menuData.length
         ? {
             headerRight: () =>

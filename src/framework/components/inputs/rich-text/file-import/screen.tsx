@@ -210,7 +210,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
             }
           />
         ),
-      headerTitle: fileCount === 0 ? I18n.get('import-title_zero') : I18n.get('import-title_other', { count: fileCount }),
+      title: fileCount === 0 ? I18n.get('import-title_zero') : I18n.get('import-title_other', { count: fileCount }),
     });
   }, [navigation, listReady]);
 

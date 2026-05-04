@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
-import { styles } from './styles';
-import { HeaderLeftProps, HeaderRightProps, ManageFavoriteScreenProps } from './types';
-import { useManageFavoritesController } from './useController';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -15,6 +11,10 @@ import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { MyAppsList } from '~/framework/modules/myapps/components/my-apps-list';
 import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myapps/screens/utils';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+import { styles } from './styles';
+import { HeaderLeftProps, HeaderRightProps, ManageFavoriteScreenProps } from './types';
+import { useManageFavoritesController } from './useController';
 
 const HeaderLeft = ({ isSaving, onClose }: HeaderLeftProps) => (
   <NavBarAction color={theme.palette.grey.black} icon="ui-close" disabled={isSaving} onPress={onClose} />
@@ -42,10 +42,10 @@ export const computeNavBar: ManageFavoriteScreenProps.NavBarConfig = ({ navigati
     backgroundColor: theme.ui.background.page as string,
     elevation: 0,
   },
-  headerTitle: '',
   statusBarColor: theme.palette.grey.white.toString(),
   statusBarStyle: 'dark',
   statusBarTranslucent: false,
+  title: '',
 });
 export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenProps.AllProps) => {
   const searchRef = React.useRef<SearchBarHandle>(null);

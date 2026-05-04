@@ -2,20 +2,17 @@
  * constants used for the navBar setup accross navigators
  */
 import * as React from 'react';
-import { Platform, StyleSheet, TextStyle } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
-import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
+import { TextFontStyle } from '~/framework/components/text';
 
 import { addCrossIconBlackOnThisRoute, isModalModeOnThisRoute } from './hideTabBarAndroid';
-
-const NAVBAR_BUTTON_WIDTH = UI_SIZES.elements.navbarIconSize + 2 * UI_SIZES.spacing.tiny;
 
 const styles = StyleSheet.create({
   backbutton: {
@@ -27,40 +24,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-/**
- * @deprecated use screenOptions() or modalScreenOptions()
- */
-export const navBarTitle = (
-  title?: string,
-  style?: TextStyle,
-  testID?: string,
-  nbButtonsLeft?: number,
-  nbButtonsRight?: number,
-) => {
-  const maxNbButtons = Math.max(nbButtonsLeft ?? 1, nbButtonsRight ?? 1);
-  return Platform.select({
-    android: () => (
-      <BodyBoldText
-        numberOfLines={1}
-        style={[
-          styles.navBarTitleStyle,
-          {
-            width:
-              UI_SIZES.screen.width -
-              2 * UI_SIZES.elements.navbarMargin -
-              maxNbButtons * 2 * NAVBAR_BUTTON_WIDTH -
-              (maxNbButtons - 1) * UI_SIZES.spacing.tiny,
-          },
-          style ?? {},
-        ]}
-        testID={testID}>
-        {title ?? ''}
-      </BodyBoldText>
-    ),
-    default: title,
-  });
-};
 
 /**
  * @deprecated use screenOptions() or modalScreenOptions()
@@ -120,9 +83,9 @@ export const navBarOptions: (props: {
 
     headerTintColor: theme.ui.text.inverse,
 
-    headerTitle: navBarTitle(title, titleStyle, titleTestID),
-
     headerTitleAlign: 'center',
 
     headerTitleStyle: styles.navBarTitleStyle,
+
+    title: title,
   }) as NativeStackNavigationOptions;

@@ -7,9 +7,6 @@ import { FlatList as GHFlatList } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import styles from './styles';
-import type { MailsListScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -50,8 +47,11 @@ import { mailsService } from '~/framework/modules/mails/service';
 import { defaultUserIdCarbonio } from '~/framework/modules/mails/service/api/carbonio';
 import { readLastCallTimestamp, reloadVisibles } from '~/framework/modules/mails/storage';
 import { flattenFolders, isServiceMethodAvailable, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/transport/error';
+
+import styles from './styles';
+import type { MailsListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -599,7 +599,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       loadMails(MailsDefaultFolders.INBOX);
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -639,19 +638,12 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerTitle: navBarTitle(
-        I18n.get(
-          typeof selectedFolder !== 'object'
-            ? mailsDefaultFoldersInfos[selectedFolder as MailsDefaultFolders].title
-            : selectedFolder.name,
-        ),
-        undefined,
-        undefined,
-        1,
-        2,
+      title: I18n.get(
+        typeof selectedFolder !== 'object'
+          ? mailsDefaultFoldersInfos[selectedFolder as MailsDefaultFolders].title
+          : selectedFolder.name,
       ),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolder, navigation]);
 
   React.useEffect(() => {

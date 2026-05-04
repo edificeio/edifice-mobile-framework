@@ -28,7 +28,7 @@ import Toast from '~/framework/components/toast';
 import { markViewAudience } from '~/framework/modules/audience';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { toURISource } from '~/framework/util/media';
@@ -293,12 +293,10 @@ export function Carousel(props: ICarouselProps) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
         headerRight: () => getButtons(imageState !== 'success'),
-        headerTitle: navBarTitle(
+        title:
           route.params.data.length !== 1
             ? I18n.get('carousel-counter', { current: indexDisplay, total: route.params.data.length })
             : '',
-          styles.title,
-        ),
       });
     } else {
       navigation.setOptions({
@@ -306,7 +304,7 @@ export function Carousel(props: ICarouselProps) {
         headerLeft: undefined,
         headerRight: undefined,
         headerStyle: { backgroundColor: 'transparent' },
-        headerTitle: '',
+        title: '',
       });
     }
   }, [indexDisplay, isNavBarVisible, imageState]);
