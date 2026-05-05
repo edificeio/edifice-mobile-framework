@@ -7,8 +7,6 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { blogUriCaptureFunction } from './service/adapters';
-
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
@@ -19,7 +17,9 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
-const handleBlogPostNotificationAction: NotifHandlerThunkAction = notification => async () => {
+import { blogUriCaptureFunction } from './service/adapters';
+
+const handleBlogPostNotificationAction: NotifHandlerThunkAction = (notification, _, navigation) => async () => {
   try {
     const blogNotif = getAsResourceUriNotification(notification);
     if (!blogNotif) return { managed: 0 };
@@ -36,7 +36,7 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction = notification =
       },
     });
 
-    handleNotificationNavigationAction(navAction);
+    handleNotificationNavigationAction(navAction, navigation);
 
     return {
       managed: 1,
@@ -47,7 +47,7 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction = notification =
   }
 };
 
-const handleBlogNotificationAction: NotifHandlerThunkAction = notification => async () => {
+const handleBlogNotificationAction: NotifHandlerThunkAction = (notification, _, navigation) => async () => {
   try {
     // 0. Get notification data
     const blogNotif = getAsResourceUriNotification(notification);
@@ -66,7 +66,7 @@ const handleBlogNotificationAction: NotifHandlerThunkAction = notification => as
       },
     });
 
-    handleNotificationNavigationAction(navAction);
+    handleNotificationNavigationAction(navAction, navigation);
 
     // 4. Return notif handling result
     return {

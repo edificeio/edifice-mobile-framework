@@ -10,39 +10,40 @@ import { CommonActions } from '@react-navigation/native';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
 import { mediacentreRouteNames } from './navigation';
 
-const handleMediacentreNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  try {
-    const navAction = CommonActions.navigate({
-      name: computeTabRouteName(timelineModuleConfig.routeName),
-      params: {
-        initial: false,
-        screen: mediacentreRouteNames.home,
-      },
-    });
+const handleMediacentreNotificationAction: NotifHandlerThunkAction =
+  (notification, _, navigation) => async (dispatch, getState) => {
+    try {
+      const navAction = CommonActions.navigate({
+        name: computeTabRouteName(timelineModuleConfig.routeName),
+        params: {
+          initial: false,
+          screen: mediacentreRouteNames.home,
+        },
+      });
 
-    handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
-    return {
-      managed: 1,
-      trackInfo: { action: 'Mediacentre', name: `${notification.type}.${notification['event-type']}` },
-    };
-  } catch {
-    return { managed: 0 };
-  }
-};
+      return {
+        managed: 1,
+        trackInfo: { action: 'Mediacentre', name: `${notification.type}.${notification['event-type']}` },
+      };
+    } catch {
+      return { managed: 0 };
+    }
+  };
 
 export default () =>
   registerNotifHandlers([
     {
-      type: 'MEDIACENTRE',
       'event-type': 'PINNED_RESOURCE_NOTIFICATION',
-      notifHandlerAction: handleMediacentreNotificationAction,
+      'notifHandlerAction': handleMediacentreNotificationAction,
+      'type': 'MEDIACENTRE',
     },
   ]);

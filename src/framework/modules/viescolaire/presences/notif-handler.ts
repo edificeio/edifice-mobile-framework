@@ -1,7 +1,5 @@
 import { CommonActions } from '@react-navigation/native';
 
-import { presencesRouteNames } from './navigation';
-
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -10,6 +8,8 @@ import {
   NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
+
+import { presencesRouteNames } from './navigation';
 
 export interface IPresencesNotification extends ITimelineNotification, IResourceUriNotification {}
 
@@ -25,7 +25,7 @@ const handlePresencesEventNotificationAction: NotifHandlerThunkAction<IPresences
         },
       });
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
       return {
         managed: 1,
@@ -40,7 +40,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['EVENT-CREATION', 'EVENT-UPDATE'],
-      notifHandlerAction: handlePresencesEventNotificationAction,
-      type: 'PRESENCES',
+      'notifHandlerAction': handlePresencesEventNotificationAction,
+      'type': 'PRESENCES',
     },
   ]);

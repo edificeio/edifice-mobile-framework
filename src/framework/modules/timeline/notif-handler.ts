@@ -3,15 +3,15 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import moduleConfig from './module-config';
-import { timelineRouteNames } from './navigation';
-
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import {
   handleNotificationNavigationAction,
   NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
+
+import moduleConfig from './module-config';
+import { timelineRouteNames } from './navigation';
 
 const handleFlashMsgNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation) => async (dispatch, getState) => {
@@ -27,7 +27,7 @@ const handleFlashMsgNotificationAction: NotifHandlerThunkAction =
         },
       });
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
       return {
         managed: 1,
@@ -45,7 +45,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': 'SEND-FLASH-MESSAGE-PUSH',
-      notifHandlerAction: handleFlashMsgNotificationAction,
-      type: 'TIMELINE',
+      'notifHandlerAction': handleFlashMsgNotificationAction,
+      'type': 'TIMELINE',
     },
   ]);

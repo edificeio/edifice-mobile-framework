@@ -7,8 +7,6 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { collaborativewallUriParser } from './service';
-
 import { collaborativewallRouteNames } from '~/framework/modules/collaborativewall/navigation';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
@@ -20,35 +18,38 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
-const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  try {
-    const notifData = getAsResourceUriNotification(notification);
-    if (!notifData) return { managed: 0 };
+import { collaborativewallUriParser } from './service';
 
-    const cwallId = collaborativewallUriParser.parse(notifData.resource.uri);
-    if (!cwallId) return { managed: 0 };
+const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction =
+  (notification, _, navigation) => async (dispatch, getState) => {
+    try {
+      const notifData = getAsResourceUriNotification(notification);
+      if (!notifData) return { managed: 0 };
 
-    const navAction = CommonActions.navigate({
-      name: computeTabRouteName(timelineModuleConfig.routeName),
-      params: {
-        initial: false,
+      const cwallId = collaborativewallUriParser.parse(notifData.resource.uri);
+      if (!cwallId) return { managed: 0 };
+
+      const navAction = CommonActions.navigate({
+        name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
-          id: cwallId,
+          initial: false,
+          params: {
+            id: cwallId,
+          },
+          screen: collaborativewallRouteNames.viewer,
         },
-        screen: collaborativewallRouteNames.viewer,
-      },
-    });
+      });
 
-    handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
-    return {
-      managed: 1,
-      trackInfo: { action: 'Mur Collaboratif', name: `${notification.type}.${notification['event-type']}` },
-    };
-  } catch {
-    return { managed: 0 };
-  }
-};
+      return {
+        managed: 1,
+        trackInfo: { action: 'Mur Collaboratif', name: `${notification.type}.${notification['event-type']}` },
+      };
+    } catch {
+      return { managed: 0 };
+    }
+  };
 
 export default () =>
   registerNotifHandlers(
@@ -56,8 +57,8 @@ export default () =>
       ? [
           {
             'event-type': 'SHARE',
-            notifHandlerAction: handleCollaborativeWallNotificationAction,
-            type: 'COLLABORATIVEWALL',
+            'notifHandlerAction': handleCollaborativeWallNotificationAction,
+            'type': 'COLLABORATIVEWALL',
           },
         ]
       : [],

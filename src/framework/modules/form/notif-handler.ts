@@ -2,10 +2,6 @@ import { Alert } from 'react-native';
 
 import { CommonActions } from '@react-navigation/native';
 
-import { DistributionStatus } from './model';
-import { formRouteNames } from './navigation';
-import { formService } from './service';
-
 import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
@@ -16,6 +12,10 @@ import {
   NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
+
+import { DistributionStatus } from './model';
+import { formRouteNames } from './navigation';
+import { formService } from './service';
 
 const handleNewFormNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation) => async (dispatch, getState) => {
@@ -66,7 +66,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
       // 4. Return notif handling result
       return {

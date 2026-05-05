@@ -7,4 +7,4 @@ import { AnyNavigableModule, ModuleRegister, ModuleType, setGlobalRegister } fro
 export const tabModules = new ModuleRegister<AnyNavigableModule>();
 setGlobalRegister(ModuleType.TAB_MODULE, tabModules);
 
-export const computeTabRouteName = (v: string) => `$tab.${v}`;
+export const computeTabRouteName = (v: string) => `tab-${v}`;

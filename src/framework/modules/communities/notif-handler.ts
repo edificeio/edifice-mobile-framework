@@ -1,8 +1,5 @@
 import { InvitationClient, InvitationStatus } from '@edifice.io/community-client-rest-rn';
-import { CommonActions } from '@react-navigation/native';
-
-import moduleConfig from './module-config';
-import { communitiesRouteNames } from './navigation';
+import { CommonActions, NavigationProp, ParamListBase } from '@react-navigation/native';
 
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceIdNotification, getAsResourceUriNotification, IAbstractNotification } from '~/framework/util/notifications';
@@ -12,6 +9,9 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 import { sessionApi } from '~/framework/util/transport';
+
+import moduleConfig from './module-config';
+import { communitiesRouteNames } from './navigation';
 
 const COMMUNITY_ID_REGEX = /\/communities\/id\/([a-f0-9-]+)/i;
 
@@ -31,7 +31,11 @@ const extractCommunityInfoFromId = (notification: IAbstractNotification) => {
   return { communityId: isNaN(communityIdInt) ? undefined : communityIdInt };
 };
 
-const communityTabNavigate = (allowSwitchTab: string | false, { name, params }: { name: string; params?: object }) => {
+const communityTabNavigate = (
+  navigation: NavigationProp<ParamListBase>,
+  allowSwitchTab: string | false,
+  { name, params }: { name: string; params?: object },
+) => {
   handleNotificationNavigationAction(
     CommonActions.navigate(
       allowSwitchTab
@@ -48,15 +52,16 @@ const communityTabNavigate = (allowSwitchTab: string | false, { name, params }: 
             params,
           },
     ),
+    navigation,
   );
 };
 
-const handleCommunityUrlNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab) => async () => {
+const handleCommunityUrlNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab, navigation) => async () => {
   try {
     const { communityId } = extractCommunityInfoFromUrl(notification);
 
     if (communityId === undefined) throw new Error('No communityId in notification data');
-    communityTabNavigate(allowSwitchTab, {
+    communityTabNavigate(navigation, allowSwitchTab, {
       name: communitiesRouteNames.home,
       params: {
         communityId,
@@ -72,55 +77,57 @@ const handleCommunityUrlNotificationAction: NotifHandlerThunkAction = (notificat
   }
 };
 
-const handleCommunityInvitationNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab) => async () => {
-  try {
-    const { communityId } = extractCommunityInfoFromId(notification);
-    let invitationId =
-      notification.backupData['sub-resource'] !== undefined ? parseInt(notification.backupData['sub-resource'], 10) : undefined;
-    if (invitationId !== undefined && isNaN(invitationId)) invitationId = undefined;
+const handleCommunityInvitationNotificationAction: NotifHandlerThunkAction =
+  (notification, allowSwitchTab, navigation) => async () => {
+    try {
+      const { communityId } = extractCommunityInfoFromId(notification);
+      let invitationId =
+        notification.backupData['sub-resource'] !== undefined ? parseInt(notification.backupData['sub-resource'], 10) : undefined;
+      if (invitationId !== undefined && isNaN(invitationId)) invitationId = undefined;
 
-    if (communityId === undefined || invitationId === undefined)
-      throw new Error('No communityId or invitationId in notification data');
+      if (communityId === undefined || invitationId === undefined)
+        throw new Error('No communityId or invitationId in notification data');
 
-    // If community invitation has already been accepted, we must navigate to the home screen of it.
-    const isAccepted = await sessionApi(moduleConfig, InvitationClient)
-      .getInvitationById(invitationId)
-      .then(data => data.status === InvitationStatus.ACCEPTED || data.status === InvitationStatus.REQUEST_ACCEPTED)
-      .catch(() => undefined);
+      // If community invitation has already been accepted, we must navigate to the home screen of it.
+      const isAccepted = await sessionApi(moduleConfig, InvitationClient)
+        .getInvitationById(invitationId)
+        .then(data => data.status === InvitationStatus.ACCEPTED || data.status === InvitationStatus.REQUEST_ACCEPTED)
+        .catch(() => undefined);
 
-    communityTabNavigate(
-      allowSwitchTab,
-      isAccepted === undefined
-        ? {
-            name: communitiesRouteNames.list,
-          }
-        : isAccepted
+      communityTabNavigate(
+        navigation,
+        allowSwitchTab,
+        isAccepted === undefined
           ? {
-              name: communitiesRouteNames.home,
-              params: { communityId, invitationId },
-            }
-          : {
               name: communitiesRouteNames.list,
-              params: { pending: true },
-            },
-    );
+            }
+          : isAccepted
+            ? {
+                name: communitiesRouteNames.home,
+                params: { communityId, invitationId },
+              }
+            : {
+                name: communitiesRouteNames.list,
+                params: { pending: true },
+              },
+      );
 
-    return {
-      managed: 1,
-      trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
-    };
-  } catch (e) {
-    console.error(e);
-    return { managed: 0 };
-  }
-};
+      return {
+        managed: 1,
+        trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
+      };
+    } catch (e) {
+      console.error(e);
+      return { managed: 0 };
+    }
+  };
 
-const handleCommunityIdNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab) => async () => {
+const handleCommunityIdNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab, navigation) => async () => {
   try {
     const { communityId } = extractCommunityInfoFromId(notification);
     if (communityId === undefined) throw new Error('No communityId in notification data');
 
-    communityTabNavigate(allowSwitchTab, {
+    communityTabNavigate(navigation, allowSwitchTab, {
       name: communitiesRouteNames.home,
       params: {
         communityId,

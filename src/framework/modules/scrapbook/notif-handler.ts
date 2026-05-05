@@ -24,7 +24,7 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<IScrapbookNotificati
         },
       });
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
       return {
         managed: 1,
@@ -39,7 +39,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['SHARE', 'MODIFIED'],
-      notifHandlerAction: handleSomeNotificationAction,
-      type: 'SCRAPBOOK',
+      'notifHandlerAction': handleSomeNotificationAction,
+      'type': 'SCRAPBOOK',
     },
   ]);

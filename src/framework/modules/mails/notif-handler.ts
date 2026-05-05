@@ -6,9 +6,6 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import moduleConfig from './module-config';
-import { mailsRouteNames } from './navigation';
-
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceIdNotification } from '~/framework/util/notifications';
 import {
@@ -16,6 +13,9 @@ import {
   NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
+
+import moduleConfig from './module-config';
+import { mailsRouteNames } from './navigation';
 
 const handleConversationNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation, allowSwitchTab) => async (dispatch, getState) => {
@@ -47,7 +47,7 @@ const handleConversationNotificationAction: NotifHandlerThunkAction =
             },
       );
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
       return {
         managed: 1,

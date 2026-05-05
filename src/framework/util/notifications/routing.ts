@@ -6,16 +6,15 @@ import { NavigationAction, NavigationProp, ParamListBase, StackActions } from '@
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { getAsResourceUriNotification, IAbstractNotification } from '.';
-
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { navigate, navigationRef } from '~/framework/navigation/helper';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import { setConfirmQuitAction, setModalCloseAction } from '~/framework/navigation/nextTabJump';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
+
+import { getAsResourceUriNotification, IAbstractNotification } from '.';
 
 // Module Map
 
@@ -37,9 +36,9 @@ export type NotifHandlerThunkAction<NotifType extends IAbstractNotification = IA
 ) => NotifHandlerThunk;
 
 export interface INotifHandlerDefinition<NotifType extends IAbstractNotification = IAbstractNotification> {
-  type: string;
+  'type': string;
   'event-type'?: string | string[];
-  notifHandlerAction: NotifHandlerThunkAction<NotifType>;
+  'notifHandlerAction': NotifHandlerThunkAction<NotifType>;
 }
 
 export type IAnyNotification = IAbstractNotification & any;
@@ -58,7 +57,7 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 
 const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   // Check for all module notif-handler that are registered.
-  moduleRedirection: (n, trackCategory, navigation, allowSwitchTab) => async (dispatch, getState) => {
+  moduleRedirection: (n, trackCategory, navigation, allowSwitchTab) => async dispatch => {
     const rets = await Promise.all(
       registeredNotifHandlers.map(async def => {
         if (n.type !== def.type) return false;
@@ -77,9 +76,9 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   },
 
   // Only redirect to the timeline
-  timelineRedirection: (n, trackCategory) => async (dispatch, getState) => {
+  timelineRedirection: (n, trackCategory, navigation) => async () => {
     if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-    navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+    navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
       initial: true,
       params: {
         notification: n,
@@ -90,14 +89,14 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   },
 
   // Redirect the user to the timeline + go to native browser
-  webRedirection: (n, trackCategory) => async (dispatch, getState) => {
+  webRedirection: (n, trackCategory, navigation) => async () => {
     const notifWithUri = getAsResourceUriNotification(n);
     if (!notifWithUri) {
       return { managed: 0 };
     }
     if (trackCategory) Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
     // We want to navigate on timeline even if this is a web redirection.
-    navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+    navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
       initial: true,
       params: {
         notification: n,
@@ -123,10 +122,12 @@ export const handleNotificationAction =
     trackCategory: false | string = false,
     allowSwitchTab?: boolean,
   ) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  async (dispatch: ThunkDispatch<any, any, any>) => {
+    console.info('HANDLE NOTIFICATION');
+
     let manageCount = 0;
     for (const action of actionStack) {
-      if (manageCount) return;
+      if (manageCount > 0) return;
       const ret = (await dispatch(
         action(notification, trackCategory, navigation, allowSwitchTab),
       )) as unknown as INotifHandlerReturnType;
@@ -154,20 +155,20 @@ const NOTIFICATION_THROTLE_DELAY = 250;
  * Manage dispatch schedule if necessary.
  * @param navAction the navigation action to dispatch in fine
  */
-export const handleNotificationNavigationAction = (navAction: NavigationAction) => {
+export const handleNotificationNavigationAction = (navAction: NavigationAction, navigation: NavigationProp<ParamListBase>) => {
   // 1. Pop to top current stack. This allow to close open modals & trigger preventRemove handlers.
   if (notificationThrotlingEvent) return;
   notificationThrotlingEvent = true;
   let preventMove = false;
-  const navState = navigationRef.getRootState();
+  const navState = navigation.getState();
   let leafState: Pick<typeof navState, 'index' | 'routes'> = navState;
   while (leafState.routes[leafState.index].state !== undefined) {
     leafState = leafState.routes[leafState.index].state as Pick<typeof navState, 'index' | 'routes'>;
   }
   // We try popToTop only if the user is not at the root of its stack.
   if (leafState.index !== undefined && leafState.index !== 0) {
-    navigationRef.dispatch(StackActions.popToTop());
-    const newState = navigationRef.getRootState();
+    navigation.dispatch(StackActions.popToTop());
+    const newState = navigation.getState();
     preventMove = JSON.stringify(navState) === JSON.stringify(newState); // It's ugly but the two states are not the same object even when the content is the same. :/
   }
 
@@ -186,7 +187,7 @@ export const handleNotificationNavigationAction = (navAction: NavigationAction) 
       // We use setTimeout here to ensure native modals are closed before triggering any other action.
       // This seems to be an issue of React Navigation 6 at this time. In the future, we can test by calling directly dispatch function.
       setTimeout(() => {
-        navigationRef.dispatch(navAction);
+        navigation.dispatch(navAction);
         setTimeout(() => {
           notificationThrotlingEvent = false;
         }, NOTIFICATION_THROTLE_DELAY);

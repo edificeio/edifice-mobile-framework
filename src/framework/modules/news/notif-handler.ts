@@ -7,8 +7,6 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { newsRouteNames } from './navigation';
-
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceIdNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -17,6 +15,8 @@ import {
   NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
+
+import { newsRouteNames } from './navigation';
 
 export interface INewsNotification extends ITimelineNotification, IResourceIdNotification {}
 
@@ -32,7 +32,7 @@ const handleNewsPostNotificationAction: NotifHandlerThunkAction<INewsNotificatio
         },
       });
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
       return {
         managed: 1,
@@ -54,7 +54,7 @@ const handleNewsThreadNotificationAction: NotifHandlerThunkAction<INewsNotificat
         },
       });
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation);
 
       return {
         managed: 1,

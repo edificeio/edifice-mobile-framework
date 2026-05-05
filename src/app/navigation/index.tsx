@@ -10,6 +10,7 @@ import * as React from 'react';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import {
+  createNavigationContainerRef,
   NavigationContainerProps,
   NavigationContainerRef,
   NavigationContainer as RNNavigationContainer,
@@ -41,11 +42,18 @@ export const NavigationContainer = React.forwardRef(function NavigationContainer
   return <RNNavigationContainer ref={ref} theme={navigationLightTheme} {...props} />;
 });
 
+/**
+ * PLEASE DO NOT IMPORT THIS TO NAVIGATE OR DISPATCH ACTIONS
+ * Use the navigation prop or hook instead.
+ * Needing to import global navigation ref is a structural issue. Code refactoring needed.
+ */
+export const navigationRef = createNavigationContainerRef<NavigationRootParams>();
+
 export const RootStack = createNativeStackNavigator<NavigationRootParams>();
 export const TABS_ROUTE_NAME = 'tabs' as const;
 
 export function AppNavigation() {
-  const navigationRef = useNavigationContainerRef<NavigationRootParams>();
+  // const navigationRef = useNavigationContainerRef<NavigationRootParams>();
   const onReady = React.useCallback<NonNullable<NavigationContainerProps['onReady']>>(() => {
     __DEV__ && console.info('[Navigation] Ready');
   }, []);

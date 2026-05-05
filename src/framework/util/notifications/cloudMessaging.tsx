@@ -9,14 +9,14 @@ import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { defaultNotificationActionStack, handleNotificationAction } from './routing';
-
-import { IEntcoreTimelineNotification, notificationAdapter } from '.';
-
 import { IGlobalState } from '~/app/store';
 import { accountIsActive } from '~/framework/modules/auth/model';
 import * as selectors from '~/framework/modules/auth/redux/selectors';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
+
+import { defaultNotificationActionStack, handleNotificationAction } from './routing';
+
+import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 
 function AppPushNotificationHandlerComponentUnconnected(
   props: PropsWithChildren<{
