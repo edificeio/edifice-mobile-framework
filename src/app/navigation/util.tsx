@@ -119,7 +119,7 @@ export function headerAction(
     icon: SvgProps['name'];
     disabled?: boolean;
     onPress?: () => void;
-    testID?: string;
+    testID: string;
   },
   { tintColor }: NativeStackHeaderItemProps,
 ): NativeStackHeaderItemCustom {

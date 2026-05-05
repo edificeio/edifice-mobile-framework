@@ -2,13 +2,14 @@ import type { ColorValue, Pressable, PressableProps, TextProps, ViewProps } from
 
 import type { SvgIconName } from '../picture';
 
-export interface BaseButtonCommonProps extends Omit<PressableProps, 'children' | 'style'> {
+export interface BaseButtonCommonProps extends Omit<PressableProps, 'children' | 'style' | 'testID'> {
   loading?: boolean;
   PressableComponent?: typeof Pressable;
   contentColor: ColorValue;
   contentColorActive?: ColorValue;
   textStyle?: TextProps['style'];
   style?: ViewProps['style'];
+  testID: NonNullable<PressableProps['testID']>;
 }
 
 interface BaseTextButtonProps extends BaseButtonCommonProps {

@@ -11,14 +11,14 @@ import {
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useHeaderHeight } from '@react-navigation/elements';
 import DeviceInfo from 'react-native-device-info';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import styles from './styles';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { useSyncRef } from '~/framework/hooks/ref';
+
+import styles from './styles';
 
 function BackdropComponent(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />;
@@ -41,6 +41,7 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
     { additionalTopInset = 0, children: Content, closeButton, gutters = true, header: _header, includeSafeArea = true, ...props },
     ref,
   ) => {
+    const { bottom } = useSafeAreaInsets();
     const viewStyle = React.useMemo(
       () => [
         gutters ? { paddingHorizontal: UI_SIZES.spacing.big } : undefined,
@@ -48,11 +49,10 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         Platform.OS === 'android' && DeviceInfo.getApiLevelSync() <= ANDROID_9_API
           ? { paddingBottom: UI_SIZES.elements.tabbarHeight }
           : undefined,
+        includeSafeArea ? { paddingBottom: bottom } : undefined,
       ],
-      [gutters],
+      [bottom, gutters, includeSafeArea],
     );
-
-    const AreaWrapper = includeSafeArea ? SafeAreaView : React.Fragment;
 
     const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
     const syncRef = useSyncRef(ref, bottomSheetRef);
@@ -82,18 +82,14 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
           <BottomSheetView>
             {header}
             <View style={viewStyle}>
-              <AreaWrapper edges={EDGES}>
-                <Content data={data} />
-              </AreaWrapper>
+              <Content data={data} />
             </View>
           </BottomSheetView>
         )
       ) : (
         <BottomSheetView>
           {header}
-          <View style={viewStyle}>
-            <AreaWrapper edges={EDGES}>{Content}</AreaWrapper>
-          </View>
+          <View style={viewStyle}>{Content}</View>
         </BottomSheetView>
       );
 
