@@ -113,7 +113,10 @@ const fileTransferService = {
       if (found) {
         localFile.setPath(found.path);
         const foundMime = mime.getType(found.path);
-        if (foundMime) localFile.filetype = foundMime;
+        if (foundMime) {
+          file.filetype = foundMime;
+          localFile.filetype = foundMime;
+        }
         return new Promise<{
           jobId: number;
           promise: Promise<SyncedFileType>;
@@ -146,6 +149,7 @@ const fileTransferService = {
       fromUrl: downloadUrl,
       headers,
       progress: callbacks?.onProgress,
+      progressInterval: 100,
       toFile: downloadDest,
     });
     const newJob = {

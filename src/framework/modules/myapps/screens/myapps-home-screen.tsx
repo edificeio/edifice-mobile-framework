@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import NativeModal from 'react-native-modal';
 
 import { IMyAppsNavigationParams, myAppsRouteNames } from '../navigation';
 import { styles } from './styles';
@@ -14,6 +13,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
@@ -64,6 +64,16 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     selectedApp,
     setFilter,
   } = useMyAppsHomeController();
+
+  const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
+
+  React.useEffect(() => {
+    if (isBottomSheetVisible) {
+      bottomSheetRef.current?.present();
+    } else {
+      bottomSheetRef.current?.close();
+    }
+  }, [isBottomSheetVisible, navigation]);
 
   const slides: MAOSProps[] = [
     {
@@ -219,44 +229,23 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     selectedApp,
   ]);
 
-  const bottomSheetCloseButton = React.useMemo(
-    () => (
-      <React.Fragment>
-        <View style={styles.bottomSheetHandle} />
-        <View style={styles.bottomSheetHeader}>
-          <TouchableOpacity onPress={closeBottomSheet}>
-            <Svg
-              name="ui-close"
-              height={UI_SIZES.elements.icon.small}
-              width={UI_SIZES.elements.icon.small}
-              fill={theme.palette.grey.black}
-            />
-          </TouchableOpacity>
-        </View>
-      </React.Fragment>
-    ),
-    [closeBottomSheet],
-  );
+  const handleDismissBottomSheet = React.useCallback(() => {
+    closeBottomSheet();
+    handleDismiss();
+  }, [closeBottomSheet, handleDismiss]);
 
   const renderBottomSheet = React.useCallback(
     () => (
-      <NativeModal
-        isVisible={isBottomSheetVisible}
-        onBackdropPress={closeBottomSheet}
-        onSwipeComplete={closeBottomSheet}
-        onModalHide={handleDismiss}
-        swipeDirection="down"
-        statusBarTranslucent
-        backdropTransitionOutTiming={0}
-        hideModalContentWhileAnimating
-        style={styles.bottomSheetModal}>
-        <View style={styles.bottomSheetContent}>
-          {bottomSheetCloseButton}
-          <View style={styles.bottomSheetContainer}>{renderBottomSheetContent()}</View>
-        </View>
-      </NativeModal>
+      <CustomBottomSheetModal
+        handleIndicatorStyle={styles.bottomSheetHandle}
+        ref={bottomSheetRef}
+        closeButton
+        gutters={false}
+        onDismiss={handleDismissBottomSheet}>
+        <View style={styles.bottomSheetContainer}>{renderBottomSheetContent()}</View>
+      </CustomBottomSheetModal>
     ),
-    [isBottomSheetVisible, closeBottomSheet, handleDismiss, bottomSheetCloseButton, renderBottomSheetContent],
+    [handleDismissBottomSheet, renderBottomSheetContent],
   );
 
   const renderEmptyScreen = React.useCallback(

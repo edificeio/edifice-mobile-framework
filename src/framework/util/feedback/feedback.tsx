@@ -7,11 +7,6 @@ enum FeedbackType {
   LONG_PRESS,
 }
 
-const options = {
-  enableVibrateFallback: true,
-  ignoreAndroidSystemSettings: true,
-};
-
 const HapticFeebackType: Record<FeedbackType, HapticFeedbackTypes> = {
   [FeedbackType.ACTION_DONE]: HapticFeedbackTypes.impactHeavy,
   [FeedbackType.ERROR_DISPLAYED]: HapticFeedbackTypes.notificationError,
@@ -22,7 +17,10 @@ const HapticFeebackType: Record<FeedbackType, HapticFeedbackTypes> = {
 export default class Feedback {
   private static feedback(type: FeedbackType) {
     // Haptic feedback
-    trigger(HapticFeebackType[type], options);
+    trigger(HapticFeebackType[type], {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: true,
+    });
   }
 
   static actionDone() {
@@ -33,15 +31,15 @@ export default class Feedback {
     this.feedback(FeedbackType.ERROR_DISPLAYED);
   }
 
+  static longPress() {
+    this.feedback(FeedbackType.LONG_PRESS);
+  }
+
   static tabPressed() {
     this.feedback(FeedbackType.TAB_PRESSED);
   }
 
   static warningDisplayed() {
     this.feedback(FeedbackType.ERROR_DISPLAYED);
-  }
-
-  static longPress() {
-    this.feedback(FeedbackType.LONG_PRESS);
   }
 }

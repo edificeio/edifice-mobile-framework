@@ -80,7 +80,7 @@ const CarouselScreen = ({
   const mediaLengthShared = useSharedValue(media.length);
   const containerWidthShared = useSharedValue(0);
   const { onOrientationChange, orientation } = useCarouselOrientation();
-  const { onSave, onShare } = useCarouselFileHandler(media[currentIndex]);
+  const { onShare } = useCarouselFileHandler(media[currentIndex]);
   const togglePaginationComponent = useTogglePagination(media, paginationTranslateY, setIsPaginationVisible);
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const playerContextValue = React.useContext(PlayerContext);
@@ -178,7 +178,7 @@ const CarouselScreen = ({
     if (isNavBarVisible) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
-        headerRight: () => <NavbarButtons disabled={isCurrentMediaUnknown} onSave={onSave} onShare={onShare} />,
+        headerRight: () => <NavbarButtons disabled={isCurrentMediaUnknown} media={media[currentIndex]} onShare={onShare} />,
         headerShown: isAndroid ? true : undefined,
         headerTitle:
           media.length !== 1

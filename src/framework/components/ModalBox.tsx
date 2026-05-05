@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StatusBar, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import NativeModal from 'react-native-modal';
 
@@ -63,6 +63,7 @@ export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(
         useNativeDriver={useNativeDriver}
         statusBarTranslucent={translucentStatusBar}
         hideModalContentWhileAnimating
+        deviceHeight={translucentStatusBar ? UI_SIZES.screen.height + (StatusBar.currentHeight ?? 0) : undefined}
         isVisible={showModal}
         onBackdropPress={doDismissModal}
         style={styles.nativeModal}>

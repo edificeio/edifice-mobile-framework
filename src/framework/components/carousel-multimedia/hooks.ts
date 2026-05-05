@@ -4,7 +4,7 @@ import { Alert, Platform } from 'react-native';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import DeviceInfo from 'react-native-device-info';
-import RNFS from 'react-native-fs';
+import RNFS, { DownloadProgressCallbackResult } from 'react-native-fs';
 import Orientation, {
   LANDSCAPE_LEFT,
   LANDSCAPE_RIGHT,
@@ -22,19 +22,49 @@ import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { FileMedia, isImageContent, isPlayableMedia, isVideoContent } from '~/framework/util/media';
+import { FileMedia, isPlayableMedia } from '~/framework/util/media';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
 
 const isAndroid = Platform.OS === 'android';
 
-export const useCarouselFileHandler = (media: FileMedia | undefined) => {
+export const useCarouselFileHandler = (
+  media: FileMedia | undefined,
+  onProgress?: (res: DownloadProgressCallbackResult) => void,
+) => {
+  const jobIdRef = React.useRef<number | null>(null);
+  const isCancelledRef = React.useRef(false);
+
+  const cancelDownload = React.useCallback(() => {
+    if (isCancelledRef.current) return;
+    isCancelledRef.current = true;
+    if (jobIdRef.current !== null && jobIdRef.current !== 0) {
+      RNFS.stopDownload(jobIdRef.current);
+    }
+  }, []);
+
   const downloadFile = React.useCallback(
     async (realUrl: string) => {
       await assertPermissions('gallery.write');
-      const syncedFile = await fileTransferService.downloadFile(assertSession(), { filetype: media!.mime, url: realUrl }, {});
+      try {
+        const job = await fileTransferService.startDownloadFile(
+          assertSession(),
+          { filetype: media!.mime, url: realUrl },
+          {},
+          onProgress ? { onProgress } : undefined,
+        );
+        jobIdRef.current = job.jobId;
+        if (isCancelledRef.current && job.jobId !== 0) {
+          RNFS.stopDownload(job.jobId);
+        }
+        const syncedFile = await job.promise;
 
-      return syncedFile;
+        return syncedFile;
+      } catch (e) {
+        console.error('Error in downloadFile:', e);
+        throw e;
+      }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [media],
   );
 
@@ -58,7 +88,11 @@ export const useCarouselFileHandler = (media: FileMedia | undefined) => {
     try {
       if (!media) throw new Error('[Carousel] no media provided');
       const syncedFile = await getSyncedFile();
-      const isGalleryContent = media.mime && (isImageContent(media) || isVideoContent(media));
+      if (isCancelledRef.current) return;
+      const effectiveMime = syncedFile.filetype || media.mime;
+      const isVideo = effectiveMime?.startsWith('video/');
+      const isImage = effectiveMime?.startsWith('image/');
+      const isGalleryContent = isVideo || isImage;
       const permissionType = isGalleryContent ? 'gallery.write' : 'documents.write';
 
       try {
@@ -84,9 +118,9 @@ export const useCarouselFileHandler = (media: FileMedia | undefined) => {
 
       if (isGalleryContent) {
         if (isAndroid) {
-          await CameraRoll.saveAsset(realFilePath, { album: 'Download', type: isVideoContent(media) ? 'video' : 'photo' });
+          await CameraRoll.saveAsset(realFilePath, { album: 'Download', type: isVideo ? 'video' : 'photo' });
         } else {
-          await CameraRoll.saveAsset(realFilePath, { type: isVideoContent(media) ? 'video' : 'photo' });
+          await CameraRoll.saveAsset(realFilePath, { type: isVideo ? 'video' : 'photo' });
         }
       } else {
         if (isAndroid) {
@@ -108,6 +142,7 @@ export const useCarouselFileHandler = (media: FileMedia | undefined) => {
           ? Toast.showSuccess(I18n.get('carousel-savetodownloads-success'))
           : Toast.showSuccess(I18n.get('carousel-save-success'));
     } catch (e) {
+      if (isCancelledRef.current) return;
       console.error(`Fail saving from Carousel: `, e);
       Toast.showError(I18n.get('carousel-savetocameraroll-error'));
     }
@@ -154,7 +189,7 @@ export const useCarouselFileHandler = (media: FileMedia | undefined) => {
     }
   }, [media, getSyncedFile]);
 
-  return { onSave, onShare };
+  return { cancelDownload, isCancelledRef, onSave, onShare };
 };
 
 const PAGINATION_ANIMATION_DELAY = 300;

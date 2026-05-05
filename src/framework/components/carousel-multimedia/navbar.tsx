@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Alert, Platform } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styles from './styles';
@@ -13,12 +14,15 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { FileMedia } from '~/framework/util/media';
 import { OldStorageFunctions } from '~/framework/util/storage';
 
 const isAndroid = Platform.OS === 'android';
 
 export const NavbarButtons = React.memo(
-  ({ disabled = false, onSave, onShare }: { disabled?: boolean; onSave: () => void; onShare: () => void }) => {
+  ({ disabled = false, media, onShare }: { disabled?: boolean; media: FileMedia; onShare: () => void }) => {
+    const navigation = useNavigation<NavigationProp<IModalsNavigationParams>>();
+
     const showPrivacyAlert = async action => {
       try {
         const getDatePrivacyAlert: string | Temporal.PlainDate | null | undefined =
@@ -55,7 +59,11 @@ export const NavbarButtons = React.memo(
     return (
       <NavBarActionsGroup
         elements={[
-          <NavBarAction disabled={disabled} onPress={() => showPrivacyAlert(() => onSave())} icon="ui-download" />,
+          <NavBarAction
+            disabled={disabled}
+            onPress={() => navigation.navigate(ModalsRouteNames.Download, { media })}
+            icon="ui-download"
+          />,
           <PopupMenu
             actions={[
               {
