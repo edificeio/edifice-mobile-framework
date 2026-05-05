@@ -48,6 +48,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     filter,
     handleDismiss,
     handleOpenOnboarding,
+    hasFetchError,
     hasSeenOnboarding,
     isAggregatedAppsEmpty,
     isAllAppsTab,
@@ -255,12 +256,16 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
           title={I18n.get('myapp-empty-screen-home-title')}
           text={I18n.get('myapp-empty-screen-home-text')}
           svgImage="empty-content"
-          buttonIcon="ui-refresh"
+          {...(hasFetchError && {
+            buttonAction: onRefresh,
+            buttonIcon: 'ui-refresh',
+            buttonText: I18n.get('myapp-retry'),
+          })}
           testID="myapps-empty-screen"
         />
       </View>
     ),
-    [],
+    [hasFetchError, onRefresh],
   );
 
   const onCardLongPress = React.useCallback(

@@ -8,7 +8,7 @@ import { computeNextBookmarks, loadAppsDataFromService } from '~/framework/modul
 import { selectAppsState } from '~/framework/modules/myapps/reducer/selectors';
 import { myAppsService } from '~/framework/modules/myapps/service';
 
-type ThunkResult = ThunkAction<Promise<void>, IGlobalState, unknown, UnknownAction>;
+type ThunkResult<T = void> = ThunkAction<Promise<T>, IGlobalState, unknown, UnknownAction>;
 
 export const appInfoActions = {
   fetchSuccess: (payload: FetchSuccessPayload) => ({ payload, type: appsInfoActionTypes.fetchSuccess }) as const,
@@ -16,15 +16,17 @@ export const appInfoActions = {
   updateFavorites: (bookmarks: string[]) => ({ bookmarks, type: appsInfoActionTypes.updateFavorites }) as const,
 };
 
-export const refreshMyApps = (): ThunkResult => async (dispatch, _) => {
+export const refreshMyApps = (): ThunkResult<boolean> => async (dispatch, _) => {
   const session = getSession();
-  if (!session) return;
+  if (!session) return false;
 
   try {
     const payload = await loadAppsDataFromService(myAppsService, session);
     dispatch(appInfoActions.fetchSuccess(payload));
+    return true;
   } catch (e) {
     console.error('[refreshMyApps] ERROR', e);
+    return false;
   }
 };
 
