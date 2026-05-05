@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-04-30 15:17:44",
-  "notes": "refactor(myapps): COCO-5736 replace displayName based lookups with module/backend mapping\nfeat(myapps):COCO-5722, simplify myapps storage data structure (297)\nfix(myapps): COCO-5613, fix competences icon mapping\nfeat(myapps): COCO-5723,  store widgets in Map to avoid using .find() many times\nfix(myapps): COCO-5623, hide filters when no apps & fix not translated tab names\nfix(carrousel): hide player navbar in onHideControls\nfix(carrousel): COCO-5637 render fallback if media loading exceeds 30s\nfix(carrousel): COCO-5636 adding buffer config for audio & video\nfix(carrousel): make navbar transparent on iOS\nfix(carrousel): COCO-5676 : adding patch to avoid resetting a key on component\nfix(carrousel): COCO-5630 : disable swiping at the bottom of the screen\nfix(myapps): remove redundant per-account onboarding storage handling & some  adjustment on homeworks i18n value\nMerge branch 'dev/1.17.0' into dev/comm\nSquashed commit of the following:\nupdate(stack): yarn cache update\nrelease: 1.17.0-comm.5(1170005)",
-  "version": "1.17.0-comm.6(1170006)",
+  "last": "2026-05-05 15:28:32",
+  "notes": "update(stack): yarn cache update\nMerging dev/comm into dev/1.17.0\nfix(myapps): storage key rerender and remove clean types\nupdate(stack): yarn cache update\nfeat(myapps): IMPULS-5760, show refresh button when atleast one myapps api call fails\nSquashed commit of the following:\nfix(form): AMV2-663 enhance gdpr layout\nfeat(form): handle closing form notification\nfeat(form): AMV2-688 enhance section display on summary\nfeat(form): AMV2-663 add gdpr and description texts\nfeat(form): AMV2-662 display progress bar conditionally\nSquashed commit of the following:",
+  "version": "1.17.0-alpha.1(1170007)",
   "track": "1.17.0"
 }
