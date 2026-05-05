@@ -2,7 +2,7 @@ import { DefaultTheme, Theme } from '@react-navigation/native';
 import deepmerge from 'deepmerge';
 
 import theme from '~/app/theme';
-import { HeadingFontStyle } from '~/framework/components/text';
+import { TextFontStyle } from '~/framework/components/text';
 import { DeepPartial } from '~/utils/types';
 
 export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(DefaultTheme, {
@@ -16,10 +16,10 @@ export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(
   },
   dark: false,
   fonts: {
-    bold: { fontFamily: HeadingFontStyle.Bold.fontFamily, fontWeight: 'bold' },
-    heavy: { fontFamily: HeadingFontStyle.Bold.fontFamily, fontWeight: 'bold' },
-    medium: { fontFamily: HeadingFontStyle.Bold.fontFamily, fontWeight: 'bold' },
-    regular: { fontFamily: HeadingFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    bold: { fontFamily: TextFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    heavy: { fontFamily: TextFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    medium: { fontFamily: TextFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    regular: { fontFamily: TextFontStyle.Bold.fontFamily, fontWeight: 'bold' },
   },
 });
 

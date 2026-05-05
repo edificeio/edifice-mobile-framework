@@ -11,7 +11,7 @@ import {
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useHeaderHeight } from '@react-navigation/elements';
 import DeviceInfo from 'react-native-device-info';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -31,8 +31,6 @@ export interface CustomBottomSheetModalProps extends BottomSheetModalProps {
   closeButton?: boolean;
   header?: React.ReactNode;
 }
-
-const EDGES = ['left', 'right', 'bottom'] as const;
 
 const ANDROID_9_API = 28;
 
