@@ -63,8 +63,10 @@ export const NavbarButtons = React.memo(
             disabled={disabled}
             onPress={() => navigation.navigate(ModalsRouteNames.Download, { media })}
             icon="ui-download"
+            testID="media-navbar-download"
           />,
           <PopupMenu
+            testID="media-navbar-share"
             actions={[
               {
                 action: () => showPrivacyAlert(() => onShare()),
@@ -75,7 +77,7 @@ export const NavbarButtons = React.memo(
                 title: I18n.get('carousel-share'),
               },
             ]}>
-            <NavBarAction disabled={disabled} icon="ui-options" />
+            <NavBarAction disabled={disabled} icon="ui-options" testID="media-navbar-options" />
           </PopupMenu>,
         ]}
       />
@@ -89,6 +91,7 @@ export function computeNavBar({
 }: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.CarouselMultimedia>): NativeStackNavigationOptions {
   return {
     ...navBarOptions({
+      backButtonTestID: 'header-back',
       navigation,
       route,
       title:

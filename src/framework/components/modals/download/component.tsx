@@ -43,12 +43,12 @@ const DownloadModal = (props: DownloadModalProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <BodyBoldText style={styles.title}>{I18n.get('download-modal-inprogress')}</BodyBoldText>
+        <BodyBoldText style={styles.title}>{I18n.get('media-download-inprogress')}</BodyBoldText>
         <View style={styles.progressBarTrack}>
           <View style={[styles.progressBarFill, { width: `${Math.round(progress * 100)}%` }]} />
         </View>
         <View style={styles.separator} />
-        <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
+        <TouchableOpacity onPress={onCancel} style={styles.cancelButton} testID="media-download-cancel">
           <SmallBoldText style={{ color: theme.palette.status.failure.regular }}>{I18n.get('common-cancel')}</SmallBoldText>
         </TouchableOpacity>
       </View>
