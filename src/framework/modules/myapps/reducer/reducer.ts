@@ -13,7 +13,6 @@ export const appsInfoInitialState: AppsInfoState = {
     applications: [],
     bookmarks: [],
   },
-  showAllApps: false,
 };
 
 const reducer = createReducer(appsInfoInitialState, {

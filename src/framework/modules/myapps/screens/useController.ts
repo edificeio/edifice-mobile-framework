@@ -49,7 +49,7 @@ export function useMyAppsHomeController() {
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [hasFetchError, setHasFetchError] = React.useState<boolean>(false);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = React.useState<boolean>(false);
-  const [areAppsShowed, setAreAppsShowed] = React.useState(readShowAllApps());
+  const [areAppsShowed, setAreAppsShowed] = React.useState(() => readShowAllApps());
 
   const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState<boolean>(() => {
     const onboarding = readMyAppsOnboardingSeen();
@@ -57,7 +57,7 @@ export function useMyAppsHomeController() {
   });
 
   const aggregatedApps = useSelector(selectAggregatedApps);
-  const apps = useFilteredApps(filter);
+  const apps = useFilteredApps(filter, areAppsShowed);
   const isAllAppsTab = filter.type === MyAppsFilterTypes.Category && filter.value === MyAppsFilterCategories.all;
 
   const isAggregatedAppsEmpty = React.useMemo(() => {
@@ -189,7 +189,7 @@ export function useMyAppsHomeController() {
       writeShowAllApps(newValue);
       return newValue;
     });
-  }, []);
+  }, [setAreAppsShowed]);
 
   const completeOnboarding = React.useCallback(() => {
     writeMyAppsOnboardingSeen(ONBOARDING_VERSION);
