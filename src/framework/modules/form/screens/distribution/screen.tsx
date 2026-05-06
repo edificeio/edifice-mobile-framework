@@ -79,7 +79,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   const listElements =
     position === 'summary'
       ? formatSummary(props.elements, responses)
-      : typeof position === 'number'
+      : typeof position === 'number' && props.elementsCount > 0
         ? formatElement(props.elements[position])
         : [];
   const isMandatoryAnswerMissing = getIsMandatoryAnswerMissing(listElements, responses);
