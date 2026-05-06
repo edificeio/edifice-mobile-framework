@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-05 15:28:32",
-  "notes": "update(stack): yarn cache update\nMerging dev/comm into dev/1.17.0\nfix(myapps): storage key rerender and remove clean types\nupdate(stack): yarn cache update\nfeat(myapps): IMPULS-5760, show refresh button when atleast one myapps api call fails\nSquashed commit of the following:\nfix(form): AMV2-663 enhance gdpr layout\nfeat(form): handle closing form notification\nfeat(form): AMV2-688 enhance section display on summary\nfeat(form): AMV2-663 add gdpr and description texts\nfeat(form): AMV2-662 display progress bar conditionally\nSquashed commit of the following:",
-  "version": "1.17.0-alpha.1(1170007)",
+  "last": "2026-05-06 18:30:40",
+  "notes": "fix(permissions): COCO-5763 correcting ios gallery permissions\nfix(form): prevent crash on distribution screen due to list formatting\nUpdated translations from Phrase (299)\nMerge branch 'dev/1.17.0' of https://github.com/edificeio/edifice-mobile-framework into dev/1.17.0\nfix(timeline): IMPULS-5622, timeline report icon not showing\nfix(permissions): correcting missing translation keys\nfix(fileHandler): IMPULS-5493, audio or video locale files not reading\nfix(myapps): IMPULS-5597, add myapps- prefix to apps test IDs\nupdate(stack): yarn cache update\nUpdated translations from Phrase (298)\nrelease: 1.17.0-alpha.1(1170007)",
+  "version": "1.17.0-rc.1(1170008)",
   "track": "1.17.0"
 }
