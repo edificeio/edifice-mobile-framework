@@ -39,8 +39,8 @@ const permissionI18nMap: Record<PermissionScenario, { title: string; text: strin
     title: 'gallery-read-permissionblocked-title',
   },
   'gallery.write': {
-    text: 'gallery-write-permissionblocked-text',
-    title: 'gallery-write-permissionblocked-title',
+    text: 'gallery-read-permissionblocked-text',
+    title: 'gallery-read-permissionblocked-title',
   },
 };
 
