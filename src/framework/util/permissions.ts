@@ -75,7 +75,7 @@ const permissionScenarios = {
   })!,
   'gallery.write': Platform.select<PermissionRequirement>({
     android: api < ANDROID_10 ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE : true,
-    ios: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
+    ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
 };
 

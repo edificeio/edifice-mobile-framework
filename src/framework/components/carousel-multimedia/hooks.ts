@@ -44,7 +44,6 @@ export const useCarouselFileHandler = (
 
   const downloadFile = React.useCallback(
     async (realUrl: string) => {
-      await assertPermissions('gallery.write');
       try {
         const job = await fileTransferService.startDownloadFile(
           assertSession(),
