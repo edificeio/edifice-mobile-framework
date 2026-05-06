@@ -1,11 +1,13 @@
 import * as React from 'react';
+import { FlatList } from 'react-native';
+
+import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+
+import CheckboxButton from '~/framework/components/buttons/checkbox';
+import { BodyBoldText, BodyText } from '~/framework/components/text';
 
 import { styles } from './styles';
 import { BaseFilter, FiltersListProps } from './types';
-
-import CheckboxButton from '~/framework/components/buttons/checkbox';
-import FlatList from '~/framework/components/list/flat-list';
-import { BodyBoldText, BodyText } from '~/framework/components/text';
 
 const MERGED_STYLES = {
   active: { ...styles.listItem, ...styles.itemActive },
