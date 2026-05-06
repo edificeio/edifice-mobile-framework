@@ -16,9 +16,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import styles from './styles';
-import type { CommunitiesHomeScreen } from './types';
-
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
@@ -54,6 +51,9 @@ import { communitiesActions, communitiesSelectors } from '~/framework/modules/co
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { toURISource } from '~/framework/util/media';
 import { accountApi, sessionApi } from '~/framework/util/transport';
+
+import styles from './styles';
+import type { CommunitiesHomeScreen } from './types';
 
 const ANNOUNCEMENTS_PAGE_SIZE = 20;
 
@@ -229,7 +229,6 @@ export const CommunitiesHomeScreenLoaded = function ({
 
   return (
     <>
-      {statusBar}
       <DecoratedPaginatedFlatList
         alwaysBounceVertical={false}
         data={announcements}

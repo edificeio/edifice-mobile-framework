@@ -1,9 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import styles from './styles';
-import { AnnouncementListItemProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -11,7 +8,10 @@ import { CaptionItalicText, SmallBoldText } from '~/framework/components/text';
 import PostDetails from '~/framework/modules/communities/components/announcements/post/details';
 import type { PostDetailsProps } from '~/framework/modules/communities/components/announcements/post/details/types';
 
-const PostHeader = ({ author, date }: Readonly<Pick<PostDetailsProps, 'author' | 'date'>>) => {
+import styles from './styles';
+import { AnnouncementListItemProps } from './types';
+
+const PostHeader = ({ author, date }: Readonly<Pick<PostDetailsProps<number>, 'author' | 'date'>>) => {
   const displayedDate = React.useMemo(() => (date ? I18n.date(date) : ''), [date]);
 
   return (
