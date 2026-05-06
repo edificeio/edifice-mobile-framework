@@ -13,12 +13,12 @@ import {
   MyAppsFilterTypes,
 } from '~/framework/modules/myapps/types';
 import {
+  computeTestID,
   getAppName,
   getModuleRouteName,
   getTranslatedAppLabel,
   normalizeIconName,
   normalizeString,
-  toKebabCase,
 } from '~/framework/modules/myapps/utils';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
@@ -127,7 +127,7 @@ export const aggregateApps = (
         isFavorite,
         isLibrary,
         libraries: config?.libraries,
-        testID: config ? toKebabCase(app.name) : '',
+        testID: config ? computeTestID(app) : '',
       };
     })
     .sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)));
