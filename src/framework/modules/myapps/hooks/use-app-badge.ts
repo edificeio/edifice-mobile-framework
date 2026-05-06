@@ -39,14 +39,14 @@ export function useAppBadge(appName: string): IAppBadgeInfo {
  * @param notifType Notification type
  * @returns IAppBadgeInfo or undefined
  */
-export function useNotificationBadge(notifType: string): IAppBadgeInfo | undefined {
+export function useNotificationBadge(notifType: string, eventType: string): IAppBadgeInfo | undefined {
   const aggregatedApps = useSelector(selectAggregatedApps);
   const notifTypes = useSelector(registeredNotificationTypesData);
 
   const notifTypeMap = React.useMemo(() => buildNotifTypeLookupMap(notifTypes ?? []), [notifTypes]);
 
   return React.useMemo(
-    () => resolveNotifBadge(notifType, notifTypeMap, aggregatedApps ?? {}),
-    [aggregatedApps, notifTypeMap, notifType],
+    () => resolveNotifBadge(`${notifType}.${eventType}`, notifTypeMap, aggregatedApps ?? {}),
+    [aggregatedApps, notifTypeMap, notifType, eventType],
   );
 }
