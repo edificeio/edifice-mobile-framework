@@ -34,7 +34,7 @@
   "auth-accountlist-handle-description": "Puedes eliminar cuentas que ya no utilices.",
   "auth-accountlist-handle-title": "Cuentas de administración",
   "auth-accountonboarding-button": "Empecemos",
-  "auth-accountonboarding-description": "Esta función solo está disponible para profesores y personal, para permitirle hacer malabares fácilmente con su cuenta de padres. Por lo tanto, puede registrar un máximo de 2 cuentas.\nLas notificaciones automáticas solo llegan a la cuenta activa.",
+  "auth-accountonboarding-description": "Esta función te permite compatibilizar fácilmente dos cuentas.\nLas notificaciones del móvil solo llegarán a la cuenta activa.",
   "auth-accountonboarding-heading": "¿Sabías?",
   "auth-accountselection-button": "Cuentas de administración",
   "auth-accountselection-description": "Es posible tener 2 cuentas como máximo.",

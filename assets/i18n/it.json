@@ -34,7 +34,7 @@
   "auth-accountlist-handle-description": "È possibile eliminare gli account che non si utilizzano più.",
   "auth-accountlist-handle-title": "Gestire gli account",
   "auth-accountonboarding-button": "Ci siamo!",
-  "auth-accountonboarding-description": "Questa funzione è disponibile solo per insegnanti e personale, quindi puoi destreggiarti facilmente con il tuo account genitore. In questo modo, puoi registrare fino a 2 account.\nLe notifiche push arrivano solo per l'account attivo.",
+  "auth-accountonboarding-description": "Questa funzione consente di gestire facilmente due account.\nLe notifiche mobili arriveranno solo per l'account attivo.",
   "auth-accountonboarding-heading": "Lo sapevi?",
   "auth-accountselection-button": "Gestire gli account",
   "auth-accountselection-description": "E' possibile avere un massimo di 2 account.",
