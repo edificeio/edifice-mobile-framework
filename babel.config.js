@@ -1,22 +1,15 @@
-module.exports = function (api) {
-  if (api.env('production')) {
-    return {
-      plugins: [
-        //'transform-remove-console',
-        '@babel/plugin-transform-flow-strip-types',
-        ['@babel/plugin-transform-private-methods', { loose: true }],
-        'react-native-worklets/plugin',
-      ],
-      presets: ['module:@react-native/babel-preset'],
-    };
-  }
-
-  return {
-    plugins: [
-      '@babel/plugin-transform-flow-strip-types',
-      ['@babel/plugin-transform-private-methods', { loose: true }],
-      'react-native-worklets/plugin',
-    ],
-    presets: ['module:@react-native/babel-preset'],
-  };
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: [
+    // Decorators MUST come first
+    ['@babel/plugin-proposal-decorators', { legacy: true }],
+    // Flow stripping
+    '@babel/plugin-transform-flow-strip-types',
+    // Worklets last
+    'react-native-worklets/plugin',
+  ],
+  assumptions: {
+    setPublicClassFields: true,
+    privateFieldsAsProperties: true,
+  },
 };
