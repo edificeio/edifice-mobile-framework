@@ -26,6 +26,7 @@ import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { usePrevious } from '~/framework/hooks/previous';
 import { audienceService } from '~/framework/modules/audience/service';
 import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
@@ -138,6 +139,13 @@ export const CommunitiesHomeScreenLoaded = function ({
     image,
     title,
   });
+
+  const previousStatusBar = usePrevious(statusBar);
+  if (previousStatusBar !== statusBar) {
+    navigation.setOptions({
+      statusBarStyle: statusBar,
+    });
+  }
 
   const stickyElements = React.useMemo(
     () => [

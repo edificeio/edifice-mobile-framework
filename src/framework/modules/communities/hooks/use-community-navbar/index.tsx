@@ -101,13 +101,7 @@ export default function useCommunityScrollableThumbnail({
 
   return [
     [fixedTitleHeader, banner] as const,
-    <StatusBar
-      key="communitiesScollableThumbnailStatusBar"
-      animated
-      backgroundColor={'transparent'}
-      barStyle={shouldStatusBarDark ? 'dark-content' : 'light-content'}
-      translucent
-    />,
+    shouldStatusBarDark ? 'dark' : 'light',
     {
       contentContainerStyle,
       contentInset,
