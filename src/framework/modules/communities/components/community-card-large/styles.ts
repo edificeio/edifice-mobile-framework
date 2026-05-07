@@ -15,9 +15,6 @@ export const styles = StyleSheet.create({
     // give a border radius to override the one from ModuleImage
     borderRadius: 0,
   },
-  infoBackground: {
-    ...StyleSheet.absoluteFillObject,
-  },
   infoContainer: {
     alignItems: 'stretch',
     gap: UI_SIZES.spacing.medium,

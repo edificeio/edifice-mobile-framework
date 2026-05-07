@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 
-import * as Avatar from './types';
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+
+import * as Avatar from './types';
 
 export const AvatarSizes = {
   [Avatar.Size.xsm]: UI_SIZES.elements.avatar.xsm,
@@ -32,7 +32,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.ui.overlay.light,
     justifyContent: 'center',
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   overlayText: {
     color: theme.ui.text.inverse,

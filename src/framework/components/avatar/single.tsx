@@ -161,7 +161,7 @@ export function SingleAvatar(props: SingleAvatarProps) {
           }
         : {
             borderRadius: AvatarSizes[size] / 2,
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
           },
     ],
     [border, size],
