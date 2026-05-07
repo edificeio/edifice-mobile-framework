@@ -8,22 +8,13 @@
  * - Handle keyboard
  */
 import * as React from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  KeyboardAvoidingViewProps,
-  Platform,
-  ScrollView,
-  ScrollViewProps,
-  StyleSheet,
-  View,
-  ViewProps,
-} from 'react-native';
+import { Keyboard, Platform, ScrollView, ScrollViewProps, StyleSheet, View, ViewProps } from 'react-native';
 
 import styled from '@emotion/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
@@ -123,19 +114,14 @@ export const KeyboardPageView = (
     };
   }, []);
 
-  const keyboardAvoidingViewBehavior = Platform.select({
-    android: undefined,
-    ios: 'padding',
-  }) as KeyboardAvoidingViewProps['behavior'];
   const { children, gutters, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
   const AreaComponent = (props.safeArea ?? true) ? SafeAreaView : View;
-  const headerHeight = useHeaderHeight();
   return (
     <PageView gutters={gutters} {...pageProps}>
       <KeyboardAvoidingView
-        behavior={keyboardAvoidingViewBehavior}
-        keyboardVerticalOffset={headerHeight} // top inset height is included in headerHeight by React Navigation
+        behavior="padding"
+        automaticOffset
         contentContainerStyle={styles.flexGrow1}
         style={React.useMemo(() => [styles.flex1, { paddingBottom: kbHeight }], [kbHeight])}>
         <InnerViewComponent

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
-import styles from './styles';
-import { AuthLoginCredentialsScreenProps, LoginState } from './types';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -21,6 +20,9 @@ import { getAccountById } from '~/framework/modules/auth/redux/reducer';
 import { useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
+
+import styles from './styles';
+import { AuthLoginCredentialsScreenProps, LoginState } from './types';
 
 const AuthLoginCredentialsScreenTemplate = (props: AuthLoginCredentialsScreenProps) => {
   const {
@@ -241,7 +243,7 @@ const AuthLoginCredentialsScreenTemplate = (props: AuthLoginCredentialsScreenPro
   }, [typing, errmsg, errtype, goToWeb, doLogin, isSubmitDisabled, loginState]);
 
   return (
-    <KeyboardAvoidingView>
+    <KeyboardAvoidingView automaticOffset behavior="padding">
       <ScrollView
         keyboardShouldPersistTaps="handled"
         alwaysBounceVertical={false}

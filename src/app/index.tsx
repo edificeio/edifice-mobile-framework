@@ -6,6 +6,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import * as RNLocalize from 'react-native-localize';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Redux from 'react-redux';
@@ -118,11 +119,13 @@ function App() {
   const content = (
     <DeviceTrust>
       <GestureHandlerRootView style={UI_STYLES.flex1}>
-        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <Redux.Provider store={store}>
-            <AppStartupHandler />
-          </Redux.Provider>
-        </SafeAreaProvider>
+        <KeyboardProvider>
+          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <Redux.Provider store={store}>
+              <AppStartupHandler />
+            </Redux.Provider>
+          </SafeAreaProvider>
+        </KeyboardProvider>
       </GestureHandlerRootView>
     </DeviceTrust>
   );

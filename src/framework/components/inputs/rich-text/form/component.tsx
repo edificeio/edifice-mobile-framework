@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Alert, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Alert, Animated, Keyboard, Platform, ScrollView } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -35,7 +36,6 @@ const OPEN_FILE_IMPORT_TIMEOUT = 500;
 const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
   const { bottom } = useSafeAreaInsets();
   const { allowMultimediaUpload = true, ...restProps } = props;
-  const headerHeight = useHeaderHeight();
   const containerStyle = { ...styles.container, marginBottom: bottom };
 
   const navigation = useNavigation();
@@ -330,10 +330,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   return (
     <BottomSheetModalProvider>
       <PageView style={styles.page}>
-        <KeyboardAvoidingView
-          keyboardVerticalOffset={headerHeight}
-          style={[containerStyle, { paddingBottom: kbHeight }]}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <KeyboardAvoidingView automaticOffset style={containerStyle} behavior="padding">
           <ScrollView
             keyboardDismissMode="none"
             keyboardShouldPersistTaps="always"
