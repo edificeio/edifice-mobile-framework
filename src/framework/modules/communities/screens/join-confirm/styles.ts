@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -8,13 +8,10 @@ export default StyleSheet.create({
     gap: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
   },
-  header: {
-    height: UI_SIZES.elements.navbarHeight + Platform.select({ default: UI_SIZES.spacing.small, ios: UI_SIZES.spacing.big }),
-  },
   headerBlur: { backgroundColor: theme.ui.overlay.bar, height: '100%' },
   headerTitle: {
     color: theme.ui.text.regular,
-    paddingVertical: Platform.select({ default: UI_SIZES.spacing.small, ios: UI_SIZES.spacing.big }),
+    paddingVertical: UI_SIZES.spacing.small,
   },
   page: {
     flexShrink: 1,

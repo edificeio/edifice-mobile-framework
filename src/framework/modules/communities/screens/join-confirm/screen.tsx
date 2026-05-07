@@ -3,84 +3,41 @@ import { Platform, ScrollView, View } from 'react-native';
 
 import { InvitationClient, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
-import { Header } from '@react-navigation/elements';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { BlurView } from '@sbaiahmed1/react-native-blur';
 import { Edges, SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
-import styles from './styles';
-import type { CommunitiesJoinConfirmScreen } from './types';
-
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA } from '~/framework/components/list/paginated-list';
-import { NavBarAction } from '~/framework/components/navigation';
 import { Svg } from '~/framework/components/picture';
 import { sessionScreen } from '~/framework/components/screen';
-import { BodyText, HeadingSText, HeadingXSText } from '~/framework/components/text';
+import { BodyText, HeadingXSText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import CommunityCardLarge from '~/framework/modules/communities/components/community-card-large';
 import moduleConfig from '~/framework/modules/communities/module-config';
-import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesSelectors } from '~/framework/modules/communities/store';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
 import { HTTPError } from '~/framework/util/transport/error';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<
-  CommunitiesNavigationParams,
-  typeof communitiesRouteNames.joinConfirm
->): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('communities-join-confirm-title'),
-  }),
-  header: () => {
-    return (
-      <Header
-        headerStyle={styles.header}
-        headerLeft={props => (
-          <NavBarAction
-            {...props}
-            color={theme.palette.grey.darkness}
-            onPress={navigation.goBack}
-            icon="ui-close"
-            testID="close-btn"
-          />
-        )}
-        headerRight={() => <NavBarAction />}
-        headerLeftContainerStyle={{
-          paddingHorizontal: UI_SIZES.spacing.medium,
-        }}
-        headerRightContainerStyle={{
-          paddingHorizontal: UI_SIZES.spacing.medium,
-        }}
-        title=""
-        headerTransparent={Platform.select({ default: false, ios: true })}
-        headerShadowVisible={false}
-        headerTitleAlign="center"
-        headerTitle={() => <HeadingSText style={styles.headerTitle}>{I18n.get('communities-join-confirm-title')}</HeadingSText>}
-        headerBackground={Platform.select({
-          default: undefined,
-          ios: () => <BlurView reducedTransparencyFallbackColor="white" blurType="regular" style={styles.headerBlur} />,
-        })}
-      />
-    );
-  },
-  headerBlurEffect: 'extraLight',
+import styles from './styles';
+import type { CommunitiesJoinConfirmScreen } from './types';
+
+export const computeNavBar = modalScreenOptions('formSheet', () => ({
+  headerBlurEffect: 'regular',
   headerShadowVisible: false,
+  headerTintColor: theme.ui.text.regular.toString(),
   headerTransparent: true,
-});
+  sheetAllowedDetents: 'fitToContents',
+  sheetGrabberVisible: false,
+  title: I18n.get('communities-join-confirm-title'),
+}));
 
 const safeEdges: Edges = {
   bottom: 'additive',
