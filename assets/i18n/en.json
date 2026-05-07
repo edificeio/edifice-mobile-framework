@@ -34,7 +34,7 @@
   "auth-accountlist-handle-description": "You can delete accounts that you no longer use.",
   "auth-accountlist-handle-title": "Manage accounts",
   "auth-accountonboarding-button": "Let's go !",
-  "auth-accountonboarding-description": "This feature is only available for teachers and staff, to allow you to easily juggle your parent account. So, you can register 2 accounts maximum.\nPush notifications only arrive for the active account.",
+  "auth-accountonboarding-description": "This feature lets you easily juggle two accounts.\nMobile notifications arrive only for the active account.",
   "auth-accountonboarding-heading": "Did you know ?",
   "auth-accountselection-button": "Manage accounts",
   "auth-accountselection-description": "It is possible to have 2 accounts maximum.",
