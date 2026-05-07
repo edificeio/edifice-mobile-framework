@@ -6,18 +6,18 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
+import { HeadingXSText } from '~/framework/components/text';
+import { navBarOptions } from '~/framework/navigation/navBar';
+
 import CommunityNavbar from './community-navbar';
 import { CommunityNavbarPlaceholder } from './community-navbar/component';
 import { BANNER_BASE_HEIGHT } from './community-navbar/styles';
 import CommunityScrollViewStickyHeader, { BANNER_ACCELERATION } from './sticky-component';
 import styles, { NAVBAR_RIGHT_BUTTON_STYLE } from './styles';
 import { CommunityThumbnailNavbarScrollableProps } from './types';
-
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
-import { HeadingXSText } from '~/framework/components/text';
-import { navBarOptions } from '~/framework/navigation/navBar';
 
 export { NAVBAR_RIGHT_BUTTON_STYLE } from './styles';
 export type { CommunityThumbnailNavbarScrollableProps } from './types';
@@ -72,7 +72,7 @@ export default function useCommunityScrollableThumbnail({
     () => [
       Platform.select({
         default: undefined,
-        ios: { marginTop: -bannerTotalHeight },
+        // ios: { marginTop: -bannerTotalHeight },
       }),
       _contentContainerStyle,
     ],
@@ -84,8 +84,8 @@ export default function useCommunityScrollableThumbnail({
         default: _contentInset,
         ios: {
           ..._contentInset,
-          bottom: -bannerTotalHeight + (_contentInset?.bottom ?? 0),
-          top: bannerTotalHeight + (_contentInset?.top ?? 0),
+          // bottom: -bannerTotalHeight + (_contentInset?.bottom ?? 0),
+          // top: bannerTotalHeight + (_contentInset?.top ?? 0),
         },
       }),
     [_contentInset, bannerTotalHeight],
@@ -132,7 +132,7 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
   }),
 
   header: () => (
-    <View style={{ marginTop: Platform.select({ android: StatusBar.currentHeight, ios: UI_SIZES.screen.topInset }) }}>
+    <View style={{ marginTop: Platform.select({ android: StatusBar.currentHeight, ios: 0 }) }}>
       <Header
         title=""
         headerRight={
@@ -154,20 +154,18 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
         headerLeft={headerLeftProps => (
           <HeaderBackButton
             {...headerLeftProps}
-            labelVisible={false}
-            style={styles.navBarLeftButton}
+            backImage={({ tintColor: fill }) => (
+              <Svg
+                name="ui-rafterLeft"
+                fill={fill}
+                width={UI_SIZES.elements.navbarIconSize}
+                height={UI_SIZES.elements.navbarIconSize}
+              />
+            )}
             onPress={navigation.goBack}
-            backImage={Platform.select({
-              default: undefined,
-              ios: () => (
-                <Image
-                  style={styles.backButtonImage}
-                  source={require('@react-navigation/elements/src/assets/back-icon.png')}
-                  fadeDuration={0}
-                  testID="back-btn"
-                />
-              ),
-            })}
+            displayMode="minimal"
+            testID="header-back"
+            style={styles.navBarLeftButton}
             tintColor={theme.ui.text.regular.toString()}
           />
         )}

@@ -6,63 +6,80 @@
  */
 
 import * as React from 'react';
-import { cloneElement, useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, LayoutChangeEvent, Platform, StyleSheet } from 'react-native';
+import { cloneElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Platform, StyleSheet } from 'react-native';
+
+// import { isPublicInstance as isFabricPublicInstance } from 'react-native/Libraries/ReactNative/ReactFabricPublicInstance/ReactFabricPublicInstanceUtils';
+import type { LayoutChangeEvent } from 'react-native/Libraries/Types/CoreEventTypes';
+// import useMergeRefs from 'react-native/Libraries/Utilities/useMergeRefs';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 import { useSyncRef } from '~/framework/hooks/ref';
 
-export type ScrollViewStickyHeaderProps = Readonly<{
-  children?: React.ReactNode;
-  nextHeaderLayoutY?: number;
-  onLayout: (event: LayoutChangeEvent) => void;
-  scrollAnimatedValue: Animated.Value;
-  nativeID?: string;
-  index: number;
-}>;
+/**
+ * Below here are custom constants specific to communities navbar & banner.
+ */
+
+export const BANNER_ACCELERATION = 5 / 3;
 
 enum CHILD_INDEX {
   NAVBAR = 0,
   BANNER = 1,
 }
 
-type Instance = React.Ref<typeof Animated.View> & {
-  setNextHeaderY: (value: number) => void;
+/**
+ * Below here a (badly written) Typescript adaptation of the original module.
+ */
+
+export type ScrollViewStickyHeaderProps = Readonly<{
+  children?: React.ReactNode;
+  // nextHeaderLayoutY: number | null;
+  onLayout: (event: LayoutChangeEvent) => void;
+  scrollAnimatedValue: Animated.Value;
+  // Will cause sticky headers to stick at the bottom of the ScrollView instead
+  // of the top.
+  inverted: boolean | null;
+  // The height of the parent ScrollView. Currently only set when inverted.
+  scrollViewHeight: number | null;
+  nativeID?: string;
+  hiddenOnScroll?: boolean | null;
+  index: number;
+}>;
+
+type Instance = typeof Animated.View & {
+  // setNextHeaderY: (value: number) => void;
 };
 
-export const BANNER_ACCELERATION = 5 / 3;
-
-const CommunityScrollViewStickyHeader = React.forwardRef<Instance, ScrollViewStickyHeaderProps>(function ScrollViewStickyHeader(
-  { ...props }: ScrollViewStickyHeaderProps,
-  forwardedRef,
-) {
-  const { index, nextHeaderLayoutY: _nextHeaderLayoutY, scrollAnimatedValue } = props;
+function ScrollViewStickyHeader({
+  ref: _ref,
+  ...props
+}: ScrollViewStickyHeaderProps & {
+  ref?: React.Ref<Instance>;
+}) {
+  const internalRef = React.useRef<Instance>(null);
+  const ref = useSyncRef(_ref, internalRef);
+  const { index, inverted, scrollAnimatedValue, scrollViewHeight } = props;
 
   const [measured, setMeasured] = useState<boolean>(false);
   const [layoutY, setLayoutY] = useState<number>(0);
   const [layoutHeight, setLayoutHeight] = useState<number>(0);
   const [translateY, setTranslateY] = useState<number | null>(null);
-  const [nextHeaderLayoutY, setNextHeaderLayoutY] = useState<number | undefined>(_nextHeaderLayoutY);
+  // const [nextHeaderLayoutY, setNextHeaderLayoutY] = useState<number | null>(_nextHeaderLayoutY);
+  // const [isFabric, setIsFabric] = useState<boolean>(false);
 
-  const callbackRef = useCallback((ref: Instance | null): void => {
-    if (ref == null) {
-      return;
-    }
-    ref.setNextHeaderY = setNextHeaderLayoutY;
-  }, []);
-  const ref: React.Ref<React.ElementRef<typeof Animated.View>> = useSyncRef<Instance>(callbackRef, forwardedRef);
-
-  const [animatedTranslateY, setAnimatedTranslateY] = useState(() => {
+  const [animatedTranslateY, setAnimatedTranslateY] = useState<Animated.AnimatedNode>(() => {
     const inputRange: Array<number> = [-1, 0];
     const outputRange: Array<number> = [0, 0];
     const initialTranslateY = scrollAnimatedValue.interpolate({
       inputRange,
       outputRange,
     });
+
     return initialTranslateY;
   });
 
+  // Edifice : we animate opacity in addition to Y position.
   const [animatedOpacity, setAnimatedOpacity] = useState(() => {
     const inputRange: Array<number> = [-1, 0];
     const outputRange: Array<number> = [1, 1];
@@ -74,7 +91,7 @@ const CommunityScrollViewStickyHeader = React.forwardRef<Instance, ScrollViewSti
   });
 
   const haveReceivedInitialZeroTranslateY = useRef<boolean>(true);
-  const translateYDebounceTimer = useRef<NodeJS.Timeout>();
+  const translateYDebounceTimer = useRef<TimeoutID | null>(null);
 
   useEffect(() => {
     if (translateY !== 0 && translateY != null) {
@@ -111,26 +128,83 @@ const CommunityScrollViewStickyHeader = React.forwardRef<Instance, ScrollViewSti
   }, []);
 
   useEffect(() => {
-    // Position range
     const inputRange: Array<number> = [-1, 0];
-    const outputRange: Array<number> = [-1, 0];
+    const outputRange: Array<number> = [0, 0]; // Edifice: this value replace the original [0, 0]
+
+    // if (measured) {
+    //   if (inverted === true) {
+    //     // The interpolation looks like:
+    //     // - Negative scroll: no translation
+    //     // - `stickStartPoint` is the point at which the header will start sticking.
+    //     //   It is calculated using the ScrollView viewport height so it is a the bottom.
+    //     // - Headers that are in the initial viewport will never stick, `stickStartPoint`
+    //     //   will be negative.
+    //     // - From 0 to `stickStartPoint` no translation. This will cause the header
+    //     //   to scroll normally until it reaches the top of the scroll view.
+    //     // - From `stickStartPoint` to when the next header y hits the bottom edge of the header: translate
+    //     //   equally to scroll. This will cause the header to stay at the top of the scroll view.
+    //     // - Past the collision with the next header y: no more translation. This will cause the
+    //     //   header to continue scrolling up and make room for the next sticky header.
+    //     //   In the case that there is no next header just translate equally to
+    //     //   scroll indefinitely.
+    //     if (scrollViewHeight != null) {
+    //       const stickStartPoint = layoutY + layoutHeight - scrollViewHeight;
+    //       if (stickStartPoint > 0) {
+    //         inputRange.push(stickStartPoint);
+    //         outputRange.push(0);
+    //         inputRange.push(stickStartPoint + 1);
+    //         outputRange.push(1);
+    //         // If the next sticky header has not loaded yet (probably windowing) or is the last
+    //         // we can just keep it sticked forever.
+    //         const collisionPoint = (nextHeaderLayoutY || 0) - layoutHeight - scrollViewHeight;
+    //         if (collisionPoint > stickStartPoint) {
+    //           inputRange.push(collisionPoint, collisionPoint + 1);
+    //           outputRange.push(collisionPoint - stickStartPoint, collisionPoint - stickStartPoint);
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     // The interpolation looks like:
+    //     // - Negative scroll: no translation
+    //     // - From 0 to the y of the header: no translation. This will cause the header
+    //     //   to scroll normally until it reaches the top of the scroll view.
+    //     // - From header y to when the next header y hits the bottom edge of the header: translate
+    //     //   equally to scroll. This will cause the header to stay at the top of the scroll view.
+    //     // - Past the collision with the next header y: no more translation. This will cause the
+    //     //   header to continue scrolling up and make room for the next sticky header.
+    //     //   In the case that there is no next header just translate equally to
+    //     //   scroll indefinitely.
+    //     inputRange.push(layoutY);
+    //     outputRange.push(0);
+    //     // If the next sticky header has not loaded yet (probably windowing) or is the last
+    //     // we can just keep it sticked forever.
+    //     const collisionPoint = (nextHeaderLayoutY || 0) - layoutHeight;
+    //     if (collisionPoint >= layoutY) {
+    //       inputRange.push(collisionPoint, collisionPoint + 1);
+    //       outputRange.push(collisionPoint - layoutY, collisionPoint - layoutY);
+    //     } else {
+    //       inputRange.push(layoutY + 1);
+    //       outputRange.push(1);
+    //     }
+    //   }
+    // }
+    //
+
+    // Y Position range
     if (measured) {
       if (index === CHILD_INDEX.BANNER) {
-        // banner
-        inputRange.push(layoutY);
-        outputRange.push(-1);
-        inputRange.push(layoutY + 1);
-        outputRange.push(-BANNER_ACCELERATION);
-      } else {
-        // navbar
-        inputRange.push(layoutY);
+        inputRange.push(layoutHeight);
+        outputRange.push(-BANNER_ACCELERATION * layoutHeight);
+      } else /* index === CHILD_INDEX.NAVBAR */ {
+        inputRange.push(layoutHeight);
         outputRange.push(0);
-        inputRange.push(layoutY + 1);
+        inputRange.push(layoutHeight + 1);
         outputRange.push(1);
       }
     }
 
-    let newAnimatedTranslateY = scrollAnimatedValue.interpolate({
+    let newAnimatedTranslateY: Animated.AnimatedNode = scrollAnimatedValue.interpolate({
+      extrapolateLeft: 'clamp',
       inputRange,
       outputRange,
     });
@@ -144,14 +218,16 @@ const CommunityScrollViewStickyHeader = React.forwardRef<Instance, ScrollViewSti
     const opacityOutputRange = index === CHILD_INDEX.BANNER ? [1, 1, 0] : [0, 0, 1];
 
     let newOpacityValue = scrollAnimatedValue.interpolate({
+      extrapolate: 'clamp',
       inputRange: opacityInputRange,
       outputRange: opacityOutputRange,
     });
 
     // add the event listener
     let animatedListenerId;
-    // Remove next line if is not fabric
-    animatedListenerId = newAnimatedTranslateY.addListener(animatedValueListener);
+    // if (isFabric) {
+    //   animatedListenerId = newAnimatedTranslateY.addListener(animatedValueListener);
+    // }
 
     setAnimatedTranslateY(newAnimatedTranslateY);
     setAnimatedOpacity(newOpacityValue);
@@ -165,44 +241,54 @@ const CommunityScrollViewStickyHeader = React.forwardRef<Instance, ScrollViewSti
         clearTimeout(translateYDebounceTimer.current);
       }
     };
-  }, [nextHeaderLayoutY, measured, layoutHeight, layoutY, scrollAnimatedValue, animatedValueListener, index]);
+  }, [measured, layoutHeight, layoutY, scrollViewHeight, scrollAnimatedValue, inverted, animatedValueListener, index]);
 
-  const _onLayout = (event: LayoutChangeEvent) => {
-    setLayoutY(event.nativeEvent.layout.y);
-    setLayoutHeight(event.nativeEvent.layout.height);
+  React.useLayoutEffect(() => {
+    const { height, y } = internalRef.current?.getBoundingClientRect();
+    setLayoutY(y);
+    setLayoutHeight(height);
     setMeasured(true);
+  }, [ref]);
 
-    props.onLayout(event);
-    const child = React.Children.only(props.children);
-    if (React.isValidElement(child) && child.props.onLayout) {
-      child.props.onLayout(event);
-    }
-  };
+  // const _onLayout = (event: LayoutChangeEvent) => {
+  //   setLayoutY(event.nativeEvent.layout.y);
+  //   setLayoutHeight(event.nativeEvent.layout.height);
+  //   setMeasured(true);
 
-  const child = React.Children.only(props.children);
+  //   props.onLayout(event);
+  //   const child = React.Children.only<$FlowFixMe>(props.children);
+  //   if (child.props.onLayout) {
+  //     child.props.onLayout(event);
+  //   }
+  // };
+
+  const child = React.Children.only<$FlowFixMe>(props.children);
+
+  // const passthroughAnimatedPropExplicitValues =
+  //   isFabric && translateY != null
+  //     ? {
+  //         style: { transform: [{ translateY }] },
+  //       }
+  //     : null;
 
   return (
     <Animated.View
       collapsable={false}
       nativeID={props.nativeID}
-      onLayout={_onLayout}
+      // onLayout={_onLayout}
       /* $FlowFixMe[prop-missing] passthroughAnimatedPropExplicitValues isn't properly
          included in the Animated.View flow type. */
       ref={ref}
-      style={[
-        React.isValidElement(child) ? child.props.style : undefined,
-        styles.header,
-        { opacity: animatedOpacity, transform: [{ translateY: animatedTranslateY }] },
-      ]}>
-      {React.isValidElement(child) &&
-        cloneElement(child, {
-          // We transfer the child style to the wrapper.
-          onLayout: undefined,
-          style: styles.fill, // we call this manually through our this._onLayout
-        })}
+      style={[child.props.style, styles.header, { opacity: animatedOpacity, transform: [{ translateY: animatedTranslateY }] }]}
+      // passthroughAnimatedPropExplicitValues={passthroughAnimatedPropExplicitValues}
+    >
+      {cloneElement(child, {
+        onLayout: undefined, // we call this manually through our this._onLayout
+        style: styles.fill, // We transfer the child style to the wrapper.
+      })}
     </Animated.View>
   );
-});
+}
 
 const styles = StyleSheet.create({
   fill: {
@@ -213,4 +299,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CommunityScrollViewStickyHeader;
+export default ScrollViewStickyHeader;

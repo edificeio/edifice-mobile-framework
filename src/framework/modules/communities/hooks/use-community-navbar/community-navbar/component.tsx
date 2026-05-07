@@ -4,13 +4,13 @@ import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PlaceholderMedia } from 'rn-placeholder';
 
-import styles, { BANNER_BASE_HEIGHT } from './styles';
-import { CommunityNavbarProps } from './types';
-
 import theme from '~/app/theme';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { Image } from '~/framework/util/media/components/image';
 import { sessionImageSource } from '~/framework/util/transport';
+
+import styles, { BANNER_BASE_HEIGHT } from './styles';
+import { CommunityNavbarProps } from './types';
 
 export const useCommunityBannerHeight = () => {
   const { top: statusBarHeight } = useSafeAreaInsets();
