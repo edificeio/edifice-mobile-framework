@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StatusBar, View } from 'react-native';
+import { View } from 'react-native';
 
 import CookieManager from '@preeternal/react-native-cookie-manager';
 import { ParamListBase, useFocusEffect } from '@react-navigation/native';
@@ -17,9 +17,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { WebResourceViewerPrivateProps } from './types';
-
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
@@ -34,6 +31,9 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { refreshQueryParamTokenAction } from '~/framework/modules/auth/thunks';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
+
+import styles from './styles';
+import { WebResourceViewerPrivateProps } from './types';
 
 export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<ParamListBase>): NativeStackNavigationOptions => ({
   ...navBarOptions({
@@ -172,7 +172,6 @@ export default function WebviewResourceViewer({ fetchResource, navigation, sourc
     () => (
       <PageView style={styles.page}>
         {orientationElement}
-        <StatusBar animated hidden />
         {webviewElement}
         <IconButton
           style={styles.button}

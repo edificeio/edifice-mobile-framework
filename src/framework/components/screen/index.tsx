@@ -4,16 +4,15 @@ import { View } from 'react-native';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useRoute } from '@react-navigation/native';
 
-import ErrorScreenView, { withErrorBoundary } from './error';
-import styles from './styles';
-import { ScreenViewProps } from './types';
-
-import StatusBar from '~/framework/components/status-bar';
 import { ToastContainer } from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import { Trackers } from '~/framework/util/tracker';
+
+import ErrorScreenView, { withErrorBoundary } from './error';
+import styles from './styles';
+import { ScreenViewProps } from './types';
 
 // ToDo manage keyboard
 
@@ -21,13 +20,12 @@ import { Trackers } from '~/framework/util/tracker';
  * @deprecated no need screenView anymore
  */
 export const ScreenView = withErrorBoundary(
-  function ({ children, statusBar = 'primary' }: PropsWithChildren<ScreenViewProps>) {
+  function ({ children }: PropsWithChildren<ScreenViewProps>) {
     const route = useRoute();
     const isModal = isModalModeOnThisRoute(route.name);
 
     const content = (
       <>
-        {/*<StatusBar type={statusBar} />*/}
         <View style={styles.defaultScreenStyle}>{children}</View>
       </>
     );

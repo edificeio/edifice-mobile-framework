@@ -4,9 +4,6 @@ import { PixelRatio } from 'react-native';
 import { MembershipClient, MembershipResponseDto, PaginationQueryDto } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import styles from './styles';
-import type { CommunitiesMembersScreen } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import VisibleItem, { VisibleItemLoader } from '~/framework/components/card/visible-item';
@@ -20,7 +17,6 @@ import {
   staleOrSplice,
 } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
-import StatusBar from '~/framework/components/status-bar';
 import { TextSizeStyle } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import MemberListItem, { MemberListItemLoader } from '~/framework/modules/communities/components/member-list-item';
@@ -29,6 +25,9 @@ import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { sessionApi } from '~/framework/util/transport';
+
+import styles from './styles';
+import type { CommunitiesMembersScreen } from './types';
 
 const ESTIMATED_ITEM_SIZE = TextSizeStyle.Normal.lineHeight * PixelRatio.getFontScale() * 2 + UI_SIZES.spacing.small * 2;
 const ESTIMATED_LIST_SIZE = {
@@ -128,7 +127,6 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
 
   return (
     <>
-      <StatusBar type="primary" />
       {renderMembersCount()}
       <PaginatedFlashList
         data={allMembers.length <= 1 ? [] : allMembers} // render empty screen if no members have been added yet by admin

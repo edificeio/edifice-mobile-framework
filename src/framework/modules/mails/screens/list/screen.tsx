@@ -21,7 +21,6 @@ import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/component
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
-import StatusBar from '~/framework/components/status-bar';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { Toggle } from '~/framework/components/toggle';
@@ -703,7 +702,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     if (!isSelectionMode && !isSearchMode) return;
     return (
       <>
-        <StatusBar type="white" />
         <View
           style={[
             styles.selectMode,
