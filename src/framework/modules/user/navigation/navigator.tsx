@@ -1,5 +1,8 @@
 import * as React from 'react';
 
+import AuthChangeEmailScreen from '~/framework/modules/auth/screens/change-email';
+import { requirementChangeEmailScreenOptions } from '~/framework/modules/auth/screens/change-email/screen';
+import AuthChangeMobileScreen from '~/framework/modules/auth/screens/change-mobile';
 import moduleConfig from '~/framework/modules/user/module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
@@ -23,10 +26,6 @@ import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 
-import AuthChangeEmailScreen from '../../auth/screens/change-email';
-import { requirementChangeEmailScreenOptions } from '../../auth/screens/change-email/screen';
-import AuthChangeMobileScreen from '../../auth/screens/change-mobile';
-import AuthMFAScreen, { computeNavBar as mfaNavBar, computeNavBarModal as mfaNavBarModal } from '../../auth/screens/mfa';
 import { UserChangePasswordScreen, UserChangePasswordScreenOptions } from '../screens/change-password';
 
 import { UserNavigationParams, userRouteNames } from './';

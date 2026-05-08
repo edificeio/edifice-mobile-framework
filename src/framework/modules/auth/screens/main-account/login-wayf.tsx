@@ -4,9 +4,7 @@ import { CommonActions } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
-import { AuthLoginWayfScreenProps } from '~/framework/modules/auth/templates/login-wayf';
-
-import AuthLoginWayfScreenTemplate from '../../templates/login-wayf/screen';
+import AuthLoginWayfScreenTemplate, { AuthLoginWayfScreenProps } from '~/framework/modules/auth/templates/login-wayf';
 
 export default function AuthLoginWayfScreen(
   props: Omit<AuthLoginWayfScreenProps, 'wayfRoute' | 'handleConsumeError' | 'auth' | 'error'>,

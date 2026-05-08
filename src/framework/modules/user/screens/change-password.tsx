@@ -13,9 +13,8 @@ import {
   AuthChangePasswordScreenStoreProps,
 } from '~/framework/modules/auth/templates/change-password/types';
 import { buildChangePasswordActionReplaceAccount } from '~/framework/modules/auth/thunks';
+import { withSession } from '~/framework/modules/auth/util';
 import appConf from '~/framework/util/appConf';
-
-import { withSession } from '../../auth/util';
 
 export const UserChangePasswordScreenOptions = modalScreenOptions('fullScreenModal', () => ({
   title: I18n.get('user-page-editpassword'),

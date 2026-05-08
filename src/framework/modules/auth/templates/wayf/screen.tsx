@@ -19,6 +19,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
+import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/thunks';
 import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
@@ -32,7 +33,6 @@ import { Loading } from '~/ui/Loading';
 
 import styles from './styles';
 import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
-import { AccountErrorCode } from '../../model/error';
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // User selection dropdown items

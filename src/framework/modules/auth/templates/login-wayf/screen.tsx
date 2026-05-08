@@ -5,14 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import {
-  AuthLoginWayfScreenDispatchProps,
-  AuthLoginWayfScreenProps,
-  AuthLoginWayfScreenStoreProps,
-  LoginWayfScreenState,
-} from './types';
-
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { PFLogo } from '~/framework/components/pfLogo';
@@ -21,6 +13,14 @@ import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer
 import { consumeAuthErrorAction } from '~/framework/modules/auth/thunks';
 import { Error } from '~/framework/util/error';
 import { handleAction } from '~/framework/util/redux/actions';
+
+import styles from './styles';
+import {
+  AuthLoginWayfScreenDispatchProps,
+  AuthLoginWayfScreenProps,
+  AuthLoginWayfScreenStoreProps,
+  LoginWayfScreenState,
+} from './types';
 
 export default connect(
   (state: any): AuthLoginWayfScreenStoreProps => {

@@ -17,6 +17,7 @@ import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { IChangePasswordError } from '~/framework/modules/auth/model';
+import { AccountError } from '~/framework/modules/auth/model/error';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { loadAuthContextAction } from '~/framework/modules/auth/thunks';
 import appConf from '~/framework/util/appConf';
@@ -27,7 +28,6 @@ import { ValueChangeArgs } from '~/utils/form';
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';
 import { AuthChangePasswordScreenProps, IFields } from './types';
-import { AccountError } from '../../model/error';
 
 const ChangePasswordScreen = (props: AuthChangePasswordScreenProps) => {
   const { context, FormFooterComponent, FormHeaderComponent, onSubmit, prefill: _oldPassword, prefillLock, prefillType } = props;

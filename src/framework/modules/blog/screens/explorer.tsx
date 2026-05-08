@@ -9,13 +9,12 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import { withSession } from '~/framework/modules/auth/util';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { selectors } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
-
-import { withSession } from '../../auth/util';
 
 // # Props
 

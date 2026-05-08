@@ -10,9 +10,8 @@ import {
 } from '~/framework/components/list/paginated-list';
 import ScrollView from '~/framework/components/scrollView';
 import { LoadingState } from '~/framework/hooks/loader';
+import { DecoratedDocumentListItem } from '~/framework/modules/communities/screens/documents/community-paginated-document-list';
 import { createDecoratedArrayProxy } from '~/framework/modules/communities/screens/documents/proxy';
-
-import { DecoratedDocumentListItem } from '../../screens/documents/community-paginated-document-list';
 
 export interface DecoratedPaginatedFlatListProps<ItemType> extends Omit<
   PaginatedFlatListProps<ItemType | React.ReactElement>,

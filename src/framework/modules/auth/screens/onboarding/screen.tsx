@@ -11,13 +11,13 @@ import { screenOptions } from '~/app/navigation/util';
 import { ButtonGroup, PrimaryButton, SecondaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
+import { getRouteForOnboarding } from '~/framework/modules/auth/new-navigation';
 import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media-deprecated';
 
 import styles from './styles';
 import { AuthOnboardingScreenProps } from './types';
-import { getRouteForOnboarding } from '../../new-navigation';
 
 const onboardingPics = [
   require('ASSETS/images/onboarding/onboarding_0.png'),

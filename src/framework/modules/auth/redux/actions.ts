@@ -1,10 +1,10 @@
-import type { AudienceValidReactionTypes } from '../../audience/types';
+import type { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
+import { Platform } from '~/framework/util/appConf';
+
 import type { AuthActiveAccount, AuthRequirement, AuthTokenSet, LegalUrls, PlatformAuthContext } from '../model';
 import moduleConfig from '../module-config';
 import type { AuthStorageData } from '../storage';
 import type { AuthState } from './types';
-
-import { Platform } from '~/framework/util/appConf';
 
 export const actionTypes = {
   addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
