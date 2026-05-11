@@ -27,6 +27,7 @@ const ImageItem = ({
   hideNavBar,
   isNavBarVisible,
   isShown,
+  setIsImageError,
   showNavBar,
   source,
   toggleNavBarVisibility,
@@ -43,6 +44,11 @@ const ImageItem = ({
   const translateY = useSharedValue(0);
   const savedTranslateX = useSharedValue(0);
   const savedTranslateY = useSharedValue(0);
+
+  const onImageError = React.useCallback(() => {
+    setIsImageLoading(false);
+    setIsImageError(true);
+  }, [setIsImageError]);
 
   // Retrieve the actual size of the image (and not the container's), necessary because of resizeMode="contain"
   React.useEffect(() => {
@@ -265,6 +271,7 @@ const ImageItem = ({
           source={source}
           resizeMode={'contain'}
           style={[styles.img, animatedStyle]}
+          onError={onImageError}
           onLoadEnd={() => setIsImageLoading(false)}
         />
       </GestureDetector>

@@ -71,6 +71,7 @@ const CarouselScreen = ({
   const media = React.useMemo<FileMedia[]>(() => route.params.media ?? [], [route.params.media]);
   const startIndex = route.params.startIndex ?? 0;
   const [currentIndex, setCurrentIndex] = React.useState(startIndex);
+  const [hasMediaError, setHasMediaError] = React.useState(false);
   const [isCarouselSwipeEnabled, setIsCarouselSwipeEnabled] = React.useState(true);
   const [isInitialAVMediaLoaded, setIsInitialAVMediaLoaded] = React.useState(false);
   const [isNavBarVisible, setIsNavBarVisible] = React.useState(true);
@@ -90,10 +91,6 @@ const CarouselScreen = ({
 
   const statusbarHeight = RNStatusBar.currentHeight ?? 0;
   const androidStatusBarHeight = isAndroid ? statusbarHeight : 0;
-
-  const isCurrentMediaUnknown = React.useMemo(() => {
-    return !media[currentIndex]?.src;
-  }, [currentIndex, media]);
 
   const configurePanGesture = React.useCallback((panGesture: PanGesture) => {
     if (isAndroid) {
@@ -178,7 +175,7 @@ const CarouselScreen = ({
     if (isNavBarVisible) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
-        headerRight: () => <NavbarButtons disabled={isCurrentMediaUnknown} media={media[currentIndex]} onShare={onShare} />,
+        headerRight: () => <NavbarButtons disabled={hasMediaError} media={media[currentIndex]} onShare={onShare} />,
         headerShown: isAndroid ? true : undefined,
         headerTitle:
           media.length !== 1
@@ -198,7 +195,7 @@ const CarouselScreen = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNavBarVisible, media.length, currentIndex, isCurrentMediaUnknown, orientation]);
+  }, [isNavBarVisible, media.length, currentIndex, hasMediaError, orientation]);
 
   React.useEffect(() => {
     mediaLengthShared.value = media.length;
@@ -229,10 +226,10 @@ const CarouselScreen = ({
               currentIndex={currentIndex}
               hideNavBar={hideNavBar}
               info={info}
-              isCurrentMediaUnknown={isCurrentMediaUnknown}
               isNavBarVisible={isNavBarVisible}
               itemSource={source}
               onInitialAVMediaLoad={isInitialItem ? onInitialAVMediaLoad : undefined}
+              setHasMediaError={setHasMediaError}
               setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
               showNavBar={showNavBar}
               toggleNavBarVisibility={toggleNavBarVisibility}

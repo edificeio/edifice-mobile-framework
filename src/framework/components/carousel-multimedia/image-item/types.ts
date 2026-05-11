@@ -7,6 +7,7 @@ export interface ImageItemProps {
   hideNavBar: () => void;
   isNavBarVisible: boolean;
   isShown: boolean;
+  setIsImageError: (isError: boolean) => void;
   showNavBar: () => void;
   toggleNavBarVisibility: () => void;
 }
