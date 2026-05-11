@@ -75,18 +75,21 @@ export const convertIFileToFileMedia = (files: IFile[]): FileMedia[] => {
 // For Timeline notifications
 export const convertNotificationToFileMedia = (notificationMedias: INotificationMedia[]): FileMedia[] => {
   return notificationMedias
-    .filter(media => ['image', 'audio', 'video'].includes(media.type))
-    .map(
-      media =>
-        ({
-          mime: media.type === 'image' ? 'image/*' : media.type === 'audio' ? 'audio/*' : 'video/*',
-          name: media.name,
-          poster:
-            media.type === 'video' && media['document-id'] && media['video-resolution']
-              ? computeVideoThumbnail(media['document-id'], extractVideoResolution(media['video-resolution']) || undefined)
-              : undefined,
-          src: normalizeUrl(sessionURISource(toURISource(media.src.toString())).uri || ''),
-          type: media.type,
-        }) as FileMedia,
-    );
+    .filter(media => ['image', 'audio', 'video', 'iframe'].includes(media.type))
+    .map(media => {
+      if (media.type === 'iframe') {
+        const src = typeof media.src === 'string' && media.src.startsWith('//') ? 'https:' + media.src : (media.src as string);
+        return { mime: MediaType.EMBEDDED, name: media.name, src, type: MediaType.EMBEDDED } as unknown as FileMedia;
+      }
+      return {
+        mime: media.type === 'image' ? 'image/*' : media.type === 'audio' ? 'audio/*' : 'video/*',
+        name: media.name,
+        poster:
+          media.type === 'video' && media['document-id'] && media['video-resolution']
+            ? computeVideoThumbnail(media['document-id'], extractVideoResolution(media['video-resolution']) || undefined)
+            : undefined,
+        src: normalizeUrl(sessionURISource(toURISource(media.src.toString())).uri || ''),
+        type: media.type,
+      } as FileMedia;
+    });
 };

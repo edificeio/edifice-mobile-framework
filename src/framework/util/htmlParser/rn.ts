@@ -45,6 +45,7 @@ import {
 import { getSession } from '~/framework/modules/auth/reducer';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { Platform } from '~/framework/util/appConf';
+import { MediaType } from '~/framework/util/media';
 import { formatSource } from '~/framework/util/media-deprecated';
 
 export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
@@ -584,6 +585,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in MediaPlayer, manually add "https" if needed)
     }
     const iframeNugget: IIframeNugget = {
+      mime: MediaType.EMBEDDED,
+      onPress: this.opts.onPress,
       src,
       type: HtmlParserNuggetTypes.Iframe,
     };

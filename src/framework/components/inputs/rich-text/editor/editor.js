@@ -700,6 +700,8 @@ function createHTML(options = {}) {
                 var iframes = document.getElementsByTagName('iframe');
                 for (var i = 0; i < iframes.length; i++) {
                     const iframe = iframes[i];
+                    iframe.setAttribute('tabindex', '-1');
+                    iframe.style.pointerEvents = 'none';
                     iframe.style.width = width + 'px';
                     iframe.style.height = width * 10 / 16 + 'px';
                     setTimeout(() => { Actions.UPDATE_HEIGHT(); }, ${ui.insertElementTimeout});
@@ -738,7 +740,7 @@ function createHTML(options = {}) {
                                 type: 'embed'
                             });
                         }
-                    } /*
+                    }
                     if (tagName === 'iframe') {
                         const src = el.src;
                         if (src) {
@@ -747,7 +749,7 @@ function createHTML(options = {}) {
                                 type: 'iframe'
                             });
                         }
-                    } */
+                    }
                     if (tagName === 'img') {
                         const src = el.src || el.currentSrc;
                         if (src && !src.startsWith('data:')) {
@@ -823,7 +825,7 @@ function createHTML(options = {}) {
                                     src: href,
                                     type: 'audio'
                                 });
-                            }            
+                            }
                         } else {
                             const href = el.getAttribute('href');
                             if (href) {
@@ -846,7 +848,7 @@ function createHTML(options = {}) {
                    const contentType = links[l].getAttribute('data-content-type');
                     if (contentType !== 'application/pdf') {
                         linksUrls.push(links[l].getAttribute('href'));
-                    }                
+                    }
                 }
                 postAction({type: 'LINKS_URLS', data: linksUrls}, true);
             },
@@ -973,13 +975,13 @@ function createHTML(options = {}) {
                 });
                 postAction({type: 'CONTENT_FOCUSED'});
             }
-            function handleBlur (){
+            function handleBlur() {
                 editorFoucs = false;
-                postAction({type: 'SELECTION_CHANGE', data: []});
-                postAction({type: 'CONTENT_BLUR'});
+                postAction({ type: 'SELECTION_CHANGE', data: [] });
+                postAction({ type: 'CONTENT_BLUR' });
             }
             function handleClickElement(event, ele){
-                // _postMessage({type: 'LOG', data: ['TOUCH', ele.nodeName, JSON.stringify(ele)]});
+                //_postMessage({type: 'LOG', data: ['TOUCH', ele.nodeName, ele.className, ele.outerHTML.substring(0, 200)]});
                 if (ele.nodeName === 'INPUT' && ele.type === 'checkbox'){
                     // Set whether the checkbox is selected by default
                     if (ele.checked) ele.setAttribute('checked', '');
@@ -993,9 +995,12 @@ function createHTML(options = {}) {
                     var audioSrc = ele.querySelector('audio').getAttribute('src');
                     postAction({type: 'MEDIA_TOUCHED', data: audioSrc}, true);
                     return false;
-                } else if (ele.nodeName === 'IFRAME' && ele.getAttribute('src')) {
-                    postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('src')}, true);
-                    return false;
+                } else if (ele.classList.contains('iframe-wrapper')) {
+                    const iframe = ele.querySelector('iframe[src]');
+                    if (iframe) {
+                        postAction({ type: 'MEDIA_TOUCHED', data: iframe.getAttribute('src') }, true);
+                        return false;
+                    }
                 } else if (ele.nodeName === 'IMG' && ele.getAttribute('src') && ele.getAttribute('class') !== 'play-button') {
                     postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('src')}, true);
                     return false;

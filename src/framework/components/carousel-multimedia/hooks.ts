@@ -22,7 +22,7 @@ import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { FileMedia, isPlayableMedia } from '~/framework/util/media';
+import { FileMedia, isEmbeddedMedia, isPlayableMedia } from '~/framework/util/media';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
 
 const isAndroid = Platform.OS === 'android';
@@ -201,15 +201,18 @@ export const useTogglePagination = (
   const togglePaginationComponent = React.useCallback(
     (index: number, previousIndex: number) => {
       const currentIsPlayable = isPlayableMedia(media[index]);
-      const previousWasPlayable = isPlayableMedia(media[previousIndex]);
+      const previousIsPlayable = isPlayableMedia(media[previousIndex]);
+      const currentIsEmbedded = isEmbeddedMedia(media[index]) || (media[index].type as string) === 'iframe';
+      const previousIsEmbedded = isEmbeddedMedia(media[previousIndex]) || (media[previousIndex].type as string) === 'iframe';
 
-      if (currentIsPlayable) {
-        if (previousWasPlayable) {
-          // playable to playable
+      const shouldHidePagination = currentIsPlayable || currentIsEmbedded;
+      const previousWasHidden = previousIsPlayable || previousIsEmbedded;
+
+      if (shouldHidePagination) {
+        if (previousWasHidden) {
           paginationTranslateY.value = PAGINATION_ANIMATION_OFFSET;
           setIsPaginationVisible(false);
         } else {
-          // non playable to playable
           paginationTranslateY.value = 0;
           paginationTranslateY.value = withDelay(
             PAGINATION_ANIMATION_DELAY,
