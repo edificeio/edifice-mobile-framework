@@ -1,5 +1,6 @@
 import { AppIcon } from './types';
 
+import { svgExists } from '~/framework/components/picture';
 import { toURISource } from '~/framework/util/media';
 import { sessionImageSource } from '~/framework/util/transport';
 
@@ -19,6 +20,7 @@ export const resolveAppIcon = (icon?: string | null): AppIcon => {
   if (!icon) return { type: 'fallback' };
 
   if (isInternalSvg(icon)) {
+    if (!svgExists(icon)) return { type: 'fallback' };
     return { name: icon, type: 'svg' };
   }
 

@@ -44,7 +44,7 @@ export const useStyles = (app?: AppsInfoAggregated) => {
           width: '100%',
         },
         letterFallbackStyle: {
-          color: theme.palette.grey.black,
+          color: theme.ui.text.inverse,
           fontSize: UI_SIZES.spacing.large,
           includeFontPadding: false,
           lineHeight: UI_SIZES.spacing.large * 1.2,

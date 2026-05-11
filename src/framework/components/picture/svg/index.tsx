@@ -47,6 +47,7 @@ const imports = {
   'days-thursday': async () => import('ASSETS/images/days/thursday.svg'),
   'days-tuesday': async () => import('ASSETS/images/days/tuesday.svg'),
   'days-wednesday': async () => import('ASSETS/images/days/wednesday.svg'),
+  'default-connector': async () => import('ASSETS/icons/uiIcons/default-connector.svg'),
   'diary-fill': async () => import('ASSETS/icons/moduleIcons/diary-fill.svg'),
   'diary-outline': async () => import('ASSETS/icons/moduleIcons/diary-outline.svg'),
   'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),
@@ -384,6 +385,8 @@ const imports = {
   'wiki': async () => import('ASSETS/icons/moduleIcons/wiki.svg'),
   'workspace': async () => import('ASSETS/icons/moduleIcons/files.svg'),
 };
+
+export const svgExists = (name: string): boolean => !!imports[name];
 
 let importsCache = {};
 
