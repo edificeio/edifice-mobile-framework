@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { addToCache } from '~/framework/components/picture/svg';
 import { applyFilter } from '~/framework/modules/myapps/reducer/adapter';
 import { selectAggregatedApps } from '~/framework/modules/myapps/reducer/selectors';
-import { MyAppsFilter } from '~/framework/modules/myapps/types';
+import { MyAppsFilter, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 
 const precacheSvgIcons = (apps: Record<string, { icon?: string }>) => {
   for (const app of Object.values(apps)) {
@@ -25,8 +25,8 @@ export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
   return React.useMemo(() => {
     if (!aggregatedApps) return [];
     const filtered = applyFilter(aggregatedApps, filter) || [];
-    if (showAllApps || filter.type === 'favorites') return filtered;
-    if (filter.type === 'search') {
+    if (showAllApps || filter.type === MyAppsFilterTypes.Favorites) return filtered;
+    if (filter.type === MyAppsFilterTypes.Search) {
       return filtered.filter(app => app.isMobile || app.isFavorite);
     }
     return filtered.filter(app => app.isMobile);

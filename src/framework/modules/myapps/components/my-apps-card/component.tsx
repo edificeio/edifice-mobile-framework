@@ -51,7 +51,15 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
 
     switch (appIcon.type) {
       case 'svg':
-        return <Svg cached name={appIcon.name} width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} fill="white" />;
+        return (
+          <Svg
+            cached
+            name={appIcon.name}
+            width={UI_SIZES.spacing.huge}
+            height={UI_SIZES.spacing.huge}
+            fill={app.isConnector && !app.color ? 'black' : 'white'} // TODO, remove when colors will be correctly handled by the API for connectors
+          />
+        );
 
       case 'svg-uri':
         return (

@@ -3,11 +3,10 @@ import { View } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IMyAppsNavigationParams, myAppsRouteNames } from '../navigation';
 import { styles } from './styles';
 import { MyAppsHomeScreenProps } from './types';
 import { useMyAppsHomeController } from './useController';
-import { EMPTY_SCREEN_CONFIG, openHelpLink, resolveEmptyScreenKey } from './utils';
+import { EMPTY_SCREEN_CONFIG, hasHelpLink, openHelpLink, resolveEmptyScreenKey } from './utils';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -19,6 +18,7 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { Toggle } from '~/framework/components/toggle';
 import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingModal } from '~/framework/modules/myapps/components';
+import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myapps/navigation';
 import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
@@ -195,27 +195,30 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         if (!selectedApp) return null;
 
         return (
-          <>
+          <React.Fragment>
             <MyAppsMenuItem
               label={
                 selectedApp.isFavorite
                   ? getLang('myapp-bottomsheet-withdraw-from-favorites')
                   : getLang('myapp-bottomsheet-add-to-favorites')
               }
-              leftElement={renderMenuIcon('ui-star-outline')}
+              leftElement={renderMenuIcon(selectedApp.isFavorite ? 'ui-star-filled' : 'ui-star-outline')}
               onPress={onToggleFavorite(selectedApp.name)}
               testID="myapps-toggle-favorite"
             />
 
-            <View style={styles.separatorLine} />
-
-            <MyAppsMenuItem
-              leftElement={renderMenuIcon('ui-infoCircle')}
-              label={getLang('myapp-bottomsheet-app-info')}
-              onPress={onAppInfoPress}
-              testID="myapps-app-info"
-            />
-          </>
+            {hasHelpLink(selectedApp?.help) && (
+              <React.Fragment>
+                <View style={styles.separatorLine} />
+                <MyAppsMenuItem
+                  label={getLang('myapp-bottomsheet-app-info')}
+                  leftElement={renderMenuIcon('ui-infoCircle')}
+                  onPress={onAppInfoPress}
+                  testID="myapps-app-info"
+                />
+              </React.Fragment>
+            )}
+          </React.Fragment>
         );
     }
   }, [
