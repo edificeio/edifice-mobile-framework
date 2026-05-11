@@ -61,7 +61,7 @@ export const NavbarButtons = React.memo(
         elements={[
           <NavBarAction
             disabled={disabled}
-            onPress={() => navigation.navigate(ModalsRouteNames.Download, { media })}
+            onPress={() => showPrivacyAlert(() => navigation.navigate(ModalsRouteNames.Download, { media }))}
             icon="ui-download"
             testID="media-navbar-download"
           />,
