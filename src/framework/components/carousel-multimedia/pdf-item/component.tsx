@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 import Pdf from 'react-native-pdf';
 
@@ -28,12 +28,27 @@ const PdfItem = ({
   const scaleRef = React.useRef<number>(MIN_PDF_SCALE);
   const pdfContextValue = React.useContext(PdfContext);
   const [isPdfLoaded, setIsPdfLoaded] = React.useState(false);
+  const isPdfLoadedRef = React.useRef(false);
+  // Suppress carousel locking for 600ms after any dimension change (initial mount or
+  // orientation change) so the PDF re-fit zoomTo() animation can settle without
+  // accidentally locking the carousel via onScaleChanged values above MIN_PDF_SCALE.
+  const suppressZoomLockRef = React.useRef(true);
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+
+  React.useEffect(() => {
+    suppressZoomLockRef.current = true;
+    const timer = setTimeout(() => {
+      suppressZoomLockRef.current = false;
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [windowWidth, windowHeight]);
 
   const onPdfError = React.useCallback(() => {
     setIsPdfError(true);
   }, [setIsPdfError]);
 
   const onPdfLoadComplete = React.useCallback(() => {
+    isPdfLoadedRef.current = true;
     setIsPdfLoaded(true);
   }, []);
 
@@ -41,6 +56,8 @@ const PdfItem = ({
     (scale: number) => {
       scale > MIN_PDF_SCALE && isNavBarVisible && hideNavBar();
       scaleRef.current = scale;
+      // Ignore zoom events while the PDF re-fit animation is settling (initial load or
+      if (!isPdfLoadedRef.current || suppressZoomLockRef.current) return;
       // lock swipe if zoomed
       // use isShown is necessary to get rid of the component duplication effect created by react-native-reanimated-carousel
       if (isShown && scaleRef.current > MIN_PDF_SCALE && pdfContextValue.disableCarouselSwipe === undefined) {
@@ -65,6 +82,9 @@ const PdfItem = ({
 
     if (isShown && !isPdfLoaded && !isPdfLoadTimeout) {
       timeoutId = setTimeout(() => {
+        // Fallback: if onLoadComplete never fired, mark as loaded so zoom events
+        // are no longer suppressed (the initial animation is long over by now).
+        isPdfLoadedRef.current = true;
         setIsPdfLoadTimeout(true);
       }, PDF_LOAD_TIMEOUT);
     }
