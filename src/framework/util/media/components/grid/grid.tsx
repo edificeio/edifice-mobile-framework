@@ -9,13 +9,16 @@ import styles from './styles';
 import { UI_SIZES } from '~/framework/components/constants';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { Media, openMedia, toURISource } from '~/framework/util/media';
+import { NavigationRootParams } from '~/app/navigation/types';
+import { NavigationProp } from '@react-navigation/native';
 
 export interface MediaGridProps {
   media?: Media[];
   audience?: AudienceParameter;
+  navigation: NavigationProp<NavigationRootParams>;
 }
 
-export function MediaGrid({ audience, media = MediaGrid.EMPTY_MEDIA }: Readonly<MediaGridProps>) {
+export function MediaGrid({ navigation, audience, media = MediaGrid.EMPTY_MEDIA }: Readonly<MediaGridProps>) {
   const isSingle = media.length === 1;
   const [itemHeight, setItemHeight] = React.useState(0);
   const onLayout = React.useCallback<NonNullable<ViewProps['onLayout']>>(({ nativeEvent }) => {
@@ -35,7 +38,7 @@ export function MediaGrid({ audience, media = MediaGrid.EMPTY_MEDIA }: Readonly<
               media={item}
               style={itemStyle}
               onPress={() => {
-                openMedia(item, audience);
+                openMedia(navigation, item, audience);
               }}
             />
           ),

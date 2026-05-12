@@ -51,9 +51,9 @@ function UserLegalNoticeScreen(
     (legalItem: string) => {
       const selectedLegalTitle = I18n.get(`user-legalnotice-${legalItem.toLowerCase()}`);
       const selectedLegalUrl = props.legalUrls[legalItem];
-      openPDFReader({ src: selectedLegalUrl, title: selectedLegalTitle });
+      openPDFReader(props.navigation, { src: selectedLegalUrl, title: selectedLegalTitle });
     },
-    [props.legalUrls],
+    [props.legalUrls, props.navigation],
   );
 
   const renderLegalItem = React.useCallback(

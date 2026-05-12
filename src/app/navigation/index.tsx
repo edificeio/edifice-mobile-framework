@@ -20,7 +20,6 @@ import { useSelector } from 'react-redux';
 
 import { useAvailableModules } from '~/app/modules';
 import { RootToastContainer } from '~/framework/components/toast';
-import { usePrevious } from '~/framework/hooks/previous';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 

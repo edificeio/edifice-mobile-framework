@@ -30,10 +30,12 @@ import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import toast from '~/framework/components/toast';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { openUrl } from '~/framework/util/linking';
+import { NavigationProp } from '@react-navigation/native';
+import { NavigationRootParams } from '~/app/navigation/types';
 
 interface MediaIntent<MediaType extends Media> {
   condition: (media: Media) => media is MediaType;
-  exec?: (media: MediaType, audience?: AudienceParameter) => void;
+  exec?: (navigation: NavigationProp<NavigationRootParams>, media: MediaType, audience?: AudienceParameter) => void;
   icon?: (media: MediaType) => IntentIcon | string;
 }
 
@@ -43,7 +45,7 @@ const mediaIntents = [
     condition(media) {
       return isImageMedia(media) || (isAttachmentMedia(media) && mimeCompare(media.mime, 'image/*') === 0);
     },
-    exec(media, audience) {
+    exec(navigation, media, audience) {
       openCarousel({ data: [{ ...media, src: toURISource(media.src), type: 'image' }], referer: audience, startIndex: 0 });
     },
     icon(_) {
@@ -56,7 +58,7 @@ const mediaIntents = [
     condition(media) {
       return isVideoMedia(media) || (isAttachmentMedia(media) && mimeCompare(media.mime, 'video/*') === 0);
     },
-    exec(media, audience) {
+    exec(navigation, media, audience) {
       openMediaPlayer({
         filetype: media.mime,
         referer: audience,
@@ -72,7 +74,7 @@ const mediaIntents = [
   // Audio
   {
     condition: media => isAudioMedia(media) || (isAttachmentMedia(media) && mimeCompare(media.mime, 'audio/*') === 0),
-    exec(media, audience) {
+    exec(navigation, media, audience) {
       openMediaPlayer({
         filetype: media.mime,
         referer: audience,
@@ -88,13 +90,13 @@ const mediaIntents = [
   // PDF
   {
     condition: media => /*isDocumentMedia(media) || */ isAttachmentMedia(media) && mimeCompare(media.mime, 'application/pdf') === 0,
-    exec(media, _) {
+    exec(navigation, media, _) {
       const source = toURISource(media.src);
       if (!source.uri) {
         toast.showError();
         return;
       }
-      openPDFReader({
+      openPDFReader(navigation, {
         src: source.uri!,
         title: media.name || '',
       });
@@ -107,7 +109,7 @@ const mediaIntents = [
   // Embedded ("Iframes")
   {
     condition: media => isEmbeddedMedia(media),
-    exec(media, audience) {
+    exec(navigation, media, audience) {
       openMediaPlayer({
         referer: audience,
         source: toURISource(media.src) as WebViewSourceUri,
@@ -122,7 +124,7 @@ const mediaIntents = [
   // External Link
   {
     condition: media => isLinkMedia(media),
-    exec(media, _) {
+    exec(navigation, media, _) {
       const url = toURISource(media.src).uri;
       url && openUrl(url);
     },
@@ -139,7 +141,7 @@ const mediaIntents = [
   // Unkncown file media
   {
     condition: media => isFileMedia(media),
-    exec(media, _) {
+    exec(navigation, media, _) {
       const url = toURISource(media.src).uri;
       url && openUrl(url);
     },
@@ -151,10 +153,10 @@ const mediaIntents = [
   } as MediaIntent<FileMedia>,
 ] as MediaIntent<FileMedia>[];
 
-export const openMedia = (media: Media, audience?: AudienceParameter) => {
+export const openMedia = (navigation: NavigationProp<NavigationRootParams>, media: Media, audience?: AudienceParameter) => {
   for (const intent of mediaIntents) {
     if (intent.condition(media) && intent.exec) {
-      intent.exec(media, audience);
+      intent.exec(navigation, media, audience);
       return;
     }
   }

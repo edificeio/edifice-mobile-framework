@@ -6,6 +6,7 @@ import Audience from '~/framework/modules/audience/components';
 import { MediaGrid } from '~/framework/util/media/components/grid';
 
 import type { PostDetailsProps } from './types';
+import { useNavigation } from '@react-navigation/native';
 
 const PostDetails = React.memo((props: Readonly<PostDetailsProps<number>>) => {
   const { audience, content, header, media, style } = props;
@@ -18,7 +19,7 @@ const PostDetails = React.memo((props: Readonly<PostDetailsProps<number>>) => {
     <View style={style}>
       {header}
       {richContent}
-      <MediaGrid media={media} />
+      <MediaGrid navigation={useNavigation()} media={media} />
       {audience && (
         <Audience
           infosReactions={audience.infosReactions}

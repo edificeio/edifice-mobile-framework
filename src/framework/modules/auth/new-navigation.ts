@@ -201,23 +201,22 @@ export const getAuthReduxNavigationState = ({
 export const getAuthReduxNavigationStateForNewAccount = ({
   pending,
 }: Pick<AuthState, 'pending'>): PartialState<NavigationState<NavigationRootParams>> => {
-  // A. Activation & Password Renew
-  if (pending) {
-    const routeForLoginRedirection = getRouteForRedirect(appConf.getHost(pending.platform), pending);
-    if (routeForLoginRedirection) return { routes: [routeForLoginRedirection], stale: true };
-  }
-
-  // D.1. Platforms / Multi-account selector
   const state: PartialState<NavigationState<NavigationRootParams>> = { routes: [], stale: true };
 
-  if (appConf.hasMultiplePlatform) {
-    state.routes.push({ name: 'auth/platforms' });
-  }
+  // A. Activation & Password Renew
+  if (pending) {
+    // B.1. Platforms / Multi-account selector
+    if (appConf.hasMultiplePlatform) {
+      state.routes.push({ name: 'auth/add-account/platforms' });
+    }
 
-  // D.2. Login screen (Credentials / Wayf)
-  const hostName = pending?.platform;
-  if (hostName) {
-    state.routes.push(getAddAccountRouteForLoginRedirection(appConf.getHost(hostName), pending?.loginUsed));
+    // B.2. Login screen (Credentials / Wayf)
+    const hostName = pending?.platform;
+    if (hostName) {
+      state.routes.push(getAddAccountRouteForLoginRedirection(appConf.getHost(hostName), pending?.loginUsed));
+    }
+    const routeForLoginRedirection = getAddAccountRouteForRedirect(appConf.getHost(pending.platform), pending);
+    if (routeForLoginRedirection) return { routes: [routeForLoginRedirection], stale: true };
   }
 
   return state;
@@ -262,4 +261,33 @@ export const getAddAccountRouteForLoginRedirection = (platform: Platform, loginU
         platform,
       },
     } as const;
+};
+
+export const getAddAccountRouteForRedirect = (platform: Platform, pending: AuthState['pending'] | undefined) => {
+  switch (pending?.redirect) {
+    case AuthPendingRedirection.ACTIVATE:
+      return {
+        name: 'auth/add-account/activation',
+        params: {
+          credentials: {
+            password: pending.code,
+            username: pending.loginUsed,
+          },
+          platform,
+        },
+      } as const;
+    case AuthPendingRedirection.RENEW_PASSWORD:
+      return {
+        name: 'auth/add-account/renew-password',
+        params: {
+          credentials: {
+            password: pending.code,
+            username: pending.loginUsed,
+          },
+          host: platform.name,
+          // replaceAccountId: pending.accountId,
+          // replaceAccountTimestamp: pending.accountTimestamp,
+        },
+      } as const;
+  }
 };

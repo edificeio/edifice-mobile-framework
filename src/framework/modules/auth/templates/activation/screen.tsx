@@ -126,7 +126,7 @@ export class ActivationScreen extends React.PureComponent<
   };
 
   private doOpenLegalUrls = (title: string, url?: string) => {
-    openPDFReader({ src: url, title });
+    openPDFReader(this.props.navigation, { src: url, title });
   };
 
   private getIsValidMobileNumberForRegion = (toVerify: string) => {

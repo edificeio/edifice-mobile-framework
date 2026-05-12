@@ -19,6 +19,10 @@ export const navigationRef = createNavigationContainerRef<INavigationParams>();
 
 export type RouteStack = Omit<Route<string>, 'key'>[];
 
+/**
+ * @deprecated
+ * DO NOT use this. use the screen navigation prop.
+ */
 export const navigate = navigationRef.navigate;
 
 export const handleRemoveConfirmNavigationEvent = (action: NavigationAction, navigation: NavigationProp<ParamListBase>) => {
