@@ -138,11 +138,12 @@ const handleCommunityIdNotificationAction: NotifHandlerThunkAction = (notificati
 
 export default () =>
   registerNotifHandlers([
-    {
-      'event-type': ['JOIN_REQUEST_NEW', 'JOIN_REQUEST_PENDING', 'JOIN_REQUEST_ACCEPTED', 'JOIN_REQUEST_REJECTED'],
-      'notifHandlerAction': handleCommunityIdNotificationAction,
-      'type': 'COMMUNITIES',
-    },
+    // Note: Until we can accept invitations on mobile, these events are web-redirected.
+    // {
+    //   'event-type': ['JOIN_REQUEST_NEW', 'JOIN_REQUEST_PENDING', 'JOIN_REQUEST_ACCEPTED', 'JOIN_REQUEST_REJECTED'],
+    //   'notifHandlerAction': handleCommunityIdNotificationAction,
+    //   'type': 'COMMUNITIES',
+    // },
     {
       'event-type': ['ADD_MEMBER'],
       'notifHandlerAction': handleCommunityInvitationNotificationAction,
