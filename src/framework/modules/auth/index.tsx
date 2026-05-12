@@ -8,6 +8,7 @@ import type { HostId, Platform } from '~/framework/util/appConf';
 import { AuthCredentials } from './model';
 import reducer from './redux/reducer';
 import { type AuthState } from './redux/types';
+import AuthAddAccountModalScreen, { computeNavBar as AuthAddAccountModalScreenOptions } from './screens/add-account-modal';
 import AuthChangeEmailScreen, {
   computeNavBar as authChangeEmailNavBar,
   AuthChangeEmailScreenNavParams,
@@ -58,6 +59,7 @@ export default new RootModule<
     'auth/requirement-verify-mobile': AuthChangeMobileScreenNavParams;
     'auth/mfa': AuthMFAScreenNavParams;
     'auth/forgot': ForgotScreenNavParams;
+    'auth/add-account': undefined;
   },
   AuthState,
   Action,
@@ -102,6 +104,7 @@ export default new RootModule<
       <Stack.Screen name="auth/requirement-verify-mobile" component={AuthChangeMobileScreen} options={authChangeMobileNavBar} />
       <Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
       <Stack.Screen name="auth/forgot" component={AuthForgotScreen} options={AuthForgotScreenOptions} />
+      <Stack.Screen name="auth/add-account" component={AuthAddAccountModalScreen} options={AuthAddAccountModalScreenOptions} />
     </>
   ),
 );

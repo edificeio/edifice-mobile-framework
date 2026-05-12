@@ -1,24 +1,12 @@
 import * as React from 'react';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
+import AuthLoginRedirectScreenTemplate from '~/framework/modules/auth/templates/login-redirect';
 
 import type { AuthLoginRedirectAddAccountScreenPrivateProps } from './types';
 
-import { I18n } from '~/app/i18n';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import AuthLoginRedirectScreenTemplate from '~/framework/modules/auth/templates/login-redirect';
-import { navBarOptions } from '~/framework/navigation/navBar';
-
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountLoginRedirect>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-wayf-main-title'),
-  }),
-});
+export const computeNavBar = screenOptions(() => ({ title: I18n.get('auth-wayf-main-title') }));
 
 function AuthLoginRedirectAddAccountScreen(props: AuthLoginRedirectAddAccountScreenPrivateProps) {
   return <AuthLoginRedirectScreenTemplate {...props} />;

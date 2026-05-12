@@ -1,8 +1,12 @@
-import { NavigationRoute } from '@react-navigation/native';
+import { PartialRoute, Route } from '@react-navigation/native';
 
-import { ModuleScreenProps, NavigationRootParams } from '~/app/navigation/types';
+import { ModuleScreenProps } from '~/app/navigation/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthPlatformsScreenProps extends ModuleScreenProps<'auth/platforms'> {
-  getNextRoute: (platform: Platform) => NavigationRoute<NavigationRootParams, keyof NavigationRootParams>;
+  getNextRoute: (
+    platform: Platform,
+  ) => PartialRoute<
+    Route<'auth/add-account/login/credentials' | 'auth/add-account/login/redirect' | 'auth/add-account/login/wayf'>
+  >;
 }

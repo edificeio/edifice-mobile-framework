@@ -410,6 +410,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @returns the React Elements of the account button and list
  */
 function useAccountsFeature(
+  navigation: UserHomeScreenPrivateProps['navigation'],
   session: UserHomeScreenPrivateProps['session'],
   accounts: UserHomeScreenPrivateProps['accounts'],
   trySwitch: UserHomeScreenPrivateProps['trySwitch'],
@@ -418,13 +419,12 @@ function useAccountsFeature(
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
   const canManageAccounts = userCanAddAccount(session);
-  const navigation = useNavigation<NavigationProp<UserNavigationParams & AuthNavigationParams>>();
   const showAccountList = React.useCallback(() => {
     trackingAccountEvents.switchAccountPressButton();
     accountListRef.current?.present();
   }, [accountListRef]);
   const addAccount = React.useCallback(() => {
-    navigation.navigate(authRouteNames.addAccountModal, {});
+    navigation.navigate('auth/add-account');
   }, [navigation]);
 
   const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
@@ -609,7 +609,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const [debugVisible, setDebugVisible] = React.useState<boolean>(false);
-  const { accounts, handleLogout, session, tryRemoveAccount, trySwitch } = props;
+  const { accounts, handleLogout, navigation, session, tryRemoveAccount, trySwitch } = props;
 
   const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
@@ -629,7 +629,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountsButton = useAccountsFeature(session, accounts, trySwitch, tryRemoveAccount);
+  const accountsButton = useAccountsFeature(navigation, session, accounts, trySwitch, tryRemoveAccount);
   const logoutButton = useLogoutFeature(handleLogout);
   const versionDetails = useVersionDetailsFeature(session, debugVisible);
   const versionButton = useVersionFeature(setDebugVisible, scrollViewRef);

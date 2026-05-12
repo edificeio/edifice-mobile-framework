@@ -14,13 +14,13 @@ import {
   NavigationContainerProps,
   NavigationContainerRef,
   NavigationContainer as RNNavigationContainer,
-  useNavigationContainerRef,
 } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
 import { useAvailableModules } from '~/app/modules';
 import { RootToastContainer } from '~/framework/components/toast';
+import { usePrevious } from '~/framework/hooks/previous';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
@@ -76,6 +76,7 @@ export function AppNavigation() {
   const showOnboarding = useSelector(selectors.showOnboarding);
   const lastDeletedAccount = useSelector(selectors.lastDeletedAccount);
   const connected = useSelector(selectors.connected);
+  // const previousConnected = React.useRef(connected);
   const userIsCompletelyLoggedIn = session && !requirement;
 
   // ToDo : deep linking
@@ -93,7 +94,7 @@ export function AppNavigation() {
   const navigationState = React.useMemo(
     () =>
       userIsCompletelyLoggedIn
-        ? undefined
+        ? { routes: [{ name: TABS_ROUTE_NAME }] }
         : getAuthReduxNavigationState({
             accounts,
             connected,
@@ -117,7 +118,7 @@ export function AppNavigation() {
     initialNavigationDone.current && navigationRef.isReady() && navigationState && navigationRef.reset(navigationState);
     initialNavigationDone.current = true;
     // Do not depend on `navigationState` since it can be recreated when session updates while being logged in
-  }, [navigationKey, navigationRef]);
+  }, [navigationKey, navigationRef, connected]);
 
   return (
     <NavigationContainer

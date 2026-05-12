@@ -192,3 +192,74 @@ export const getAuthReduxNavigationState = ({
 
   return state;
 };
+
+/**
+ * get navigation state from redux data.
+ * If newly returned state differs from the previous one, it must be reset into navigation container
+ * This methods returns the new navigationState + a navigationKey which tells if the navigation state must be reset
+ */
+export const getAuthReduxNavigationStateForNewAccount = ({
+  pending,
+}: Pick<AuthState, 'pending'>): PartialState<NavigationState<NavigationRootParams>> => {
+  // A. Activation & Password Renew
+  if (pending) {
+    const routeForLoginRedirection = getRouteForRedirect(appConf.getHost(pending.platform), pending);
+    if (routeForLoginRedirection) return { routes: [routeForLoginRedirection], stale: true };
+  }
+
+  // D.1. Platforms / Multi-account selector
+  const state: PartialState<NavigationState<NavigationRootParams>> = { routes: [], stale: true };
+
+  if (appConf.hasMultiplePlatform) {
+    state.routes.push({ name: 'auth/platforms' });
+  }
+
+  // D.2. Login screen (Credentials / Wayf)
+  const hostName = pending?.platform;
+  if (hostName) {
+    state.routes.push(getAddAccountRouteForLoginRedirection(appConf.getHost(hostName), pending?.loginUsed));
+  }
+
+  return state;
+};
+
+/**
+ * Return the navigation action to be performed when leaving the onboarding screen, depending on number of platforms available.
+ * @returns
+ */
+export const getAddAccountRouteForOnboarding = () => {
+  return appConf.hasMultiplePlatform
+    ? ({ name: 'auth/add-account/platforms' } as const)
+    : ({ name: 'auth/add-account/login' } as const);
+};
+
+/**
+ * Return the navigation action to be performed when selecting a platform.
+ * No account information can be provided, as selecting a platform allow any user to log in.
+ * @param platform
+ * @returns
+ */
+export const getAddAccountRouteForPlatformSelect = (platform: Platform) => {
+  return getAddAccountRouteForLoginRedirection(platform);
+};
+
+/**
+ * Return the navigation actions to be performed for returning to the login screen of the given platform.
+ * The result is an array in case multiple actions must be performed
+ * @param platform
+ * @param account Saved account information to skip identification input for the user.
+ * @param loginUsed When account is not provided, given loginUsed will be passed to the screen as a param.
+ * @returns
+ */
+export const getAddAccountRouteForLoginRedirection = (platform: Platform, loginUsed?: string) => {
+  if (platform.redirect) return { name: 'auth/add-account/login/redirect', params: { platform } } as const;
+  else if (platform.wayf) return { name: 'auth/add-account/login/wayf', params: { platform } } as const;
+  else
+    return {
+      name: 'auth/add-account/login/credentials',
+      params: {
+        loginUsed,
+        platform,
+      },
+    } as const;
+};

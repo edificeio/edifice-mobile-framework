@@ -1,34 +1,22 @@
 import * as React from 'react';
 
 import { CommonActions } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import type { AuthLoginWayfAddAccountScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { screenOptions } from '~/app/navigation/util';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import LoginWAYFScreen, {
   AuthLoginWayfScreenDispatchProps,
   AuthLoginWayfScreenStoreProps,
 } from '~/framework/modules/auth/templates/login-wayf';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/thunks';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountLoginWayf>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-wayf-main-title'),
-  }),
-});
+import type { AuthLoginWayfAddAccountScreenPrivateProps } from './types';
 
+export const computeNavBar = screenOptions(() => ({ title: I18n.get('auth-wayf-main-title') }));
 export default connect(
   (state: any): AuthLoginWayfScreenStoreProps => {
     const auth = getAuthState(state);
@@ -48,7 +36,7 @@ export default connect(
   return (
     <LoginWAYFScreen
       wayfRoute={CommonActions.navigate({
-        name: authRouteNames.addAccountWayf,
+        name: 'auth/add-account/wayf',
         params: { platform: props.route.params.platform },
       })}
       {...props}
