@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
-import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
+import { NewsDetailsHeaderProps, NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -66,6 +66,38 @@ export const computeNavBar = ({
   }),
 });
 
+const NewsDetailsHeader = React.memo(({ commentsCount, news, thread }: NewsDetailsHeaderProps) => {
+  return (
+    <ResourceView
+      header={
+        <CardTopContent
+          image={<ThumbnailThread icon={thread.icon} square />}
+          text={thread.title}
+          {...(news.headline ? { statusColor: theme.palette.complementary.orange.regular, statusIcon: 'ui-star-filled' } : null)}
+          style={styles.detailsHeaderTopContent}
+        />
+      }
+      customHeaderStyle={styles.detailsHeader}
+      footer={<CardFooter icon="ui-messageInfo" text={commentsString(commentsCount)} />}
+      style={styles.ressourceView}>
+      <CaptionItalicText style={styles.detailsDate}>
+        {moment(news.modified).isAfter(news.created)
+          ? `${displayDate(news.modified) + I18n.get('news-details-modified')}`
+          : displayDate(news.modified)}
+      </CaptionItalicText>
+      <HeadingSText>{news.title}</HeadingSText>
+      <TextAvatar
+        text={news.owner.displayName}
+        userId={news.owner.id}
+        isHorizontal
+        size={UI_SIZES.elements.icon.default}
+        viewStyle={styles.detailsOwner}
+      />
+      <HtmlContentView html={news.content} />
+    </ResourceView>
+  );
+});
+
 const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const {
     handleDeleteComment,
@@ -84,12 +116,13 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const [news, setNews] = useState<NewsItem>();
   const [thread, setThread] = useState<NewsThreadItemReduce>();
   const [comments, setComments] = useState<NewsCommentItem[]>();
+  const [commentsCount, setCommentsCount] = useState<number>(0);
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
   const [infoComment, setInfoComment] = useState<InfoCommentField>({ changed: false, isPublication: false, type: '', value: '' });
   const [indexEditingComment, setIndexEditingComment] = useState<number | undefined>(undefined);
   const [listHeight, setListHeight] = useState<number>(0);
-  const [audienceViews, setAudienceViews] = useState<AudienceViews | undefined>(undefined);
+  const [_audienceViews, setAudienceViews] = useState<AudienceViews | undefined>(undefined);
   const hasCountedViewRef = useRef<boolean>(false);
 
   const isThreadManager = useMemo(
@@ -124,6 +157,8 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     async (newsInfo: NewsItem) => {
       const newsItemComments = await handleGetNewsItemComments(newsInfo.id);
       setComments(newsItemComments);
+
+      setCommentsCount(newsItemComments?.length ?? 0);
     },
     [handleGetNewsItemComments],
   );
@@ -310,39 +345,9 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   const renderNewsDetails = useCallback(() => {
     if (news && thread) {
-      return (
-        <ResourceView
-          header={
-            <CardTopContent
-              image={<ThumbnailThread icon={thread.icon} square />}
-              text={thread.title}
-              {...(news.headline
-                ? { statusColor: theme.palette.complementary.orange.regular, statusIcon: 'ui-star-filled' }
-                : null)}
-              style={styles.detailsHeaderTopContent}
-            />
-          }
-          customHeaderStyle={styles.detailsHeader}
-          footer={<CardFooter icon="ui-messageInfo" text={commentsString(comments?.length ?? 0)} />}
-          style={styles.ressourceView}>
-          <CaptionItalicText style={styles.detailsDate}>
-            {moment(news.modified).isAfter(news.created)
-              ? `${displayDate(news.modified) + I18n.get('news-details-modified')}`
-              : displayDate(news.modified)}
-          </CaptionItalicText>
-          <HeadingSText>{news.title}</HeadingSText>
-          <TextAvatar
-            text={news.owner.displayName}
-            userId={news.owner.id}
-            isHorizontal
-            size={UI_SIZES.elements.icon.default}
-            viewStyle={styles.detailsOwner}
-          />
-          <HtmlContentView html={news.content} />
-        </ResourceView>
-      );
+      return <NewsDetailsHeader news={news} thread={thread} commentsCount={commentsCount} />;
     }
-  }, [news, thread, comments]);
+  }, [news, thread, commentsCount]);
 
   const handleEditComments = React.useCallback(
     (comment: NewsCommentItem) => () => {
