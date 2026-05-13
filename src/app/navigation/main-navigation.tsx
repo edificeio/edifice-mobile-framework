@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Text } from 'react-native';
 
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
@@ -15,7 +14,7 @@ import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { defaultScreenOptions, defaultTabOptions, StackScreenLayout, TabScreenLayout } from './layout';
+import { defaultScreenOptions, defaultTabOptions, getTabBarIconSize, StackScreenLayout, TabScreenLayout } from './layout';
 import { renderRootModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
 
@@ -49,7 +48,9 @@ export const MainNavigation = React.memo(function MainNavigation() {
     () =>
       availableTabModules.map<BottomTabNavigationOptions>(m => ({
         tabBarButtonTestID: m.tab.testId,
-        tabBarIcon: ({ color, focused, size }) => <TabIcon module={m} focused={focused} size={size} color={color} />,
+        tabBarIcon: ({ color, focused, size }) => (
+          <TabIcon module={m} focused={focused} size={getTabBarIconSize(size)} color={color} />
+        ),
         tabBarLabel: ({ color }) => <CaptionText style={{ color }}>{getTabModuleDisplayName(m, aggregatedApps)}</CaptionText>,
       })),
 
@@ -205,7 +206,7 @@ const createOldTabIcon = (
   props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPictureBlur };
-  props.size = UI_SIZES.elements.tabbarIconSize;
+  props.size = getTabBarIconSize(props.size);
   if (dp.type === 'Image') {
     dp.style = [dp.style, { height: props.size, width: props.size }];
   } else if (dp.type === 'Icon') {

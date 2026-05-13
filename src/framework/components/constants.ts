@@ -150,9 +150,6 @@ export const UI_SIZES = {
     navbarMargin: 16,
     statusbarHeight: Platform.select({ default: 0, ios: 19 }),
     tabbarHeight: 56,
-    tabbarIconSize: Platform.select({ default: 19, ios: 25 }),
-    tabbarLabelMarginBottom: Platform.select({ default: 6, ios: insets.bottom ? 0 : 4 }),
-    tabbarLabelMarginTop: Platform.select({ default: 8, ios: insets.bottom ? 0 : 4 }),
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
     thumbnailFetchSize: {

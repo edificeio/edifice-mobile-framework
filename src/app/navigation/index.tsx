@@ -23,11 +23,10 @@ import { RootToastContainer } from '~/framework/components/toast';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
-import { defaultScreenOptions, StackScreenLayout } from './layout';
+import navigationLightTheme, { defaultScreenOptions, StackScreenLayout } from './layout';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { renderRootModulesScreens } from './root-navigation';
 import { useTrackScreen } from './telemetry';
-import navigationLightTheme from './theme';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
 
 // Note: import tabModules register to initialize it

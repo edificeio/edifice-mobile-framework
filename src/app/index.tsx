@@ -119,7 +119,7 @@ function App() {
   const content = (
     <DeviceTrust>
       <GestureHandlerRootView style={UI_STYLES.flex1}>
-        <KeyboardProvider>
+        <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
           <SafeAreaProvider initialMetrics={initialWindowMetrics}>
             <Redux.Provider store={store}>
               <AppStartupHandler />

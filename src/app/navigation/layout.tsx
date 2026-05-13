@@ -1,16 +1,24 @@
+/**
+ * Everything that custoimize layout and theming for navigation elements.
+ */
+
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Platform } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
-import { NavigationProp, ScreenLayoutArgs } from '@react-navigation/native';
+import { DefaultTheme, NavigationProp, ScreenLayoutArgs, Theme } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
+import deepmerge from 'deepmerge';
 import ErrorBoundary from 'react-native-error-boundary';
 import { StackPresentationTypes } from 'react-native-screens';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import ErrorScreenView from '~/framework/components/screen/error';
+import { TextFontStyle } from '~/framework/components/text';
 import { ToastContainer } from '~/framework/components/toast';
+import { DeepPartial } from '~/utils/types';
 
 import { AllModulesNavigationParams, AllModulesScreenNames, NavigationRootParams } from './types';
 
@@ -23,6 +31,26 @@ const modalPresentations: (StackPresentationTypes | 'card')[] = [
   'pageSheet',
   'transparentModal',
 ];
+
+export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(DefaultTheme, {
+  colors: {
+    background: theme.ui.background.card.toString(),
+    border: theme.palette.grey.cloudy.toString(),
+    card: theme.palette.primary.regular.toString(),
+    notification: theme.palette.primary.regular.toString(),
+    primary: theme.palette.primary.regular.toString(),
+    text: theme.ui.text.inverse.toString(),
+  },
+  dark: false,
+  fonts: {
+    bold: { fontFamily: TextFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    heavy: { fontFamily: TextFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    medium: { fontFamily: TextFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+    regular: { fontFamily: TextFontStyle.Bold.fontFamily, fontWeight: 'bold' },
+  },
+});
+
+export default navigationLightTheme;
 
 export function StackScreenLayout({
   children,
@@ -79,6 +107,13 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ th
   lazy: true,
   popToTopOnBlur: true,
   tabBarActiveTintColor: theme.palette.primary.regular.toString(),
+  tabBarIconStyle: Platform.select({
+    default: {
+      height: UI_SIZES.elements.icon.small,
+      width: UI_SIZES.elements.icon.small,
+    },
+    ios: undefined,
+  }),
   tabBarInactiveTintColor: theme.ui.text.light.toString(),
   tabBarStyle: {
     backgroundColor: navTheme.colors.background,
@@ -86,3 +121,6 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ th
     borderTopWidth: 1,
   },
 });
+
+export const getTabBarIconSize = (defaultSize: number) =>
+  Platform.select({ default: UI_SIZES.elements.icon.small, ios: defaultSize });
