@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { NavigationContainer } from '~/app/navigation';
 import { defaultScreenOptions, StackScreenLayout } from '~/app/navigation/layout';
+import { renderRootModulesScreens } from '~/app/navigation/root-navigation';
 import { modalScreenOptions } from '~/app/navigation/util';
 import { getState } from '~/framework/modules/auth/redux/reducer';
 
@@ -17,8 +18,8 @@ import AuthLoginRedirectAddAccountScreen, { computeNavBar as loginRedirectNavBar
 import AuthLoginWayfAddAccountScreen, { computeNavBar as loginWayfNavBar } from '../add-account/login-wayf';
 import AuthOnboardingAddAccountScreen, { computeNavBar as AuthOnboardingAddAccountScreenOptions } from '../add-account/onboarding';
 import AuthPlatformsAddAccountScreen, { computeNavBar as platformsAddAccountNavBar } from '../add-account/platforms';
+import { AuthRenewPasswordScreen, AuthRenewPasswordScreenOptions } from '../add-account/renew-password';
 import AuthWayfAddAccountScreen, { computeNavBar as wayfNavBar } from '../add-account/wayf';
-import { renderRootModulesScreens } from '~/app/navigation/root-navigation';
 
 export const computeNavBar = modalScreenOptions('modal', () => ({ title: I18n.get('auth-add-account-modal-title') }));
 
@@ -69,11 +70,11 @@ export default function AuthAddAccountModalScreen() {
             component={AuthActivationAddAccountScreen}
             options={authActivationAddAccountNavBar}
           />
-          {/*<Stack.Screen
-        name={authRouteNames.addAccountChangePassword}
-        component={AuthChangePasswordScreen}
-        options={changePasswordNavBar}
-      />*/}
+          <Stack.Screen
+            name="auth/add-account/renew-password"
+            component={AuthRenewPasswordScreen}
+            options={AuthRenewPasswordScreenOptions}
+          />
           {/*<Stack.Screen
         name={authRouteNames.addAccountForgot}
         component={AuthForgotAddAccountScreen}
