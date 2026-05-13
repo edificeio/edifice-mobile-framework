@@ -90,6 +90,7 @@ export const CommunitiesHomeScreenLoaded = function ({
     params: { communityId, invitationId, showWelcome = false },
   },
   session,
+  spotlightedCourseId,
   title,
   totalMembers,
   welcomeNote,
@@ -151,7 +152,7 @@ export const CommunitiesHomeScreenLoaded = function ({
               <DocumentsTile communityId={communityId} navigation={navigation} />
             </View>
             <View style={styles.tilesCol}>
-              <CoursesTile />
+              <CoursesTile navigation={navigation} spotlightedCourseId={spotlightedCourseId} />
               <ConversationTile />
             </View>
           </View>
@@ -159,7 +160,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         <HeadingXSText style={styles.announcementTitle}>{I18n.get('communities-announcements-title')}</HeadingXSText>
       </View>,
     ],
-    [communityId, membersId, navigation, scrollElements, title, totalMembers],
+    [communityId, membersId, navigation, scrollElements, title, totalMembers, spotlightedCourseId],
   );
 
   const audienceReferer = React.useMemo(
@@ -328,6 +329,8 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
     [data],
   );
 
+  const spotlightedCourseId = React.useMemo(() => (data ? data.courseEntId : undefined), [data]);
+
   const renderContent: NonNullable<ContentLoaderProps['renderContent']> = React.useCallback(
     refreshControl =>
       data ? (
@@ -338,11 +341,12 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
           {...data}
           image={image!}
           session={session}
+          spotlightedCourseId={spotlightedCourseId}
         />
       ) : (
         <EmptyContentScreen />
       ),
-    [data, navigation, route, session, image],
+    [data, navigation, route, image, session, spotlightedCourseId],
   );
 
   return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;

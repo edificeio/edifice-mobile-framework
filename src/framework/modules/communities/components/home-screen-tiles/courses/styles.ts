@@ -6,10 +6,18 @@ export default StyleSheet.create({
   tileCaption: {
     ...baseStyles.tileCaption,
   },
+  tileCaptionTextAvailable: {
+    ...baseStyles.tileCaptionTextAvailable,
+  },
   tileCaptionTextUnavailable: {
     ...baseStyles.tileCaptionTextUnavailable,
   },
-  tileCourses: {
+  tileCoursesAvailable: {
+    ...baseStyles.tileBase,
+    ...baseStyles.tileAvailable,
+    justifyContent: 'space-between',
+  },
+  tileCoursesUnavailable: {
     ...baseStyles.tileBase,
     ...baseStyles.tileUnavailable,
   },

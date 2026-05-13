@@ -19,6 +19,7 @@ export namespace CommunitiesHomeScreen {
     membersId: string[];
     session: AuthActiveAccount;
     image: ImageURISource[];
+    spotlightedCourseId?: string;
   };
   export type AllPropsLoaded = CommunitiesHomeScreen.AllProps & RequiredData & Pick<ScrollViewProps, 'refreshControl'>;
 }

@@ -16,7 +16,11 @@ export interface CommunitiesStore {
   pendingCommunities: (InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA)[];
   communitiesDetails: Record<
     number,
-    Pick<CommunityResponseDtoWithThumbnails, 'title' | 'image' | 'mobileThumbnails'> & { totalMembers: number; membersId: string[] }
+    Pick<CommunityResponseDtoWithThumbnails, 'title' | 'image' | 'mobileThumbnails'> & {
+      courseEntId?: string;
+      totalMembers: number;
+      membersId: string[];
+    }
   >;
   communitiesFoldersMeta: Record<number, Record<number, Pick<FolderItem, 'title'>>>;
 }
