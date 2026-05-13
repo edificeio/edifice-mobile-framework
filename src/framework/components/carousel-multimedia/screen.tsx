@@ -24,7 +24,7 @@ import { PageView } from '~/framework/components/page';
 import StatusBar from '~/framework/components/status-bar';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarTitle } from '~/framework/navigation/navBar';
-import { FileMedia, isPlayableMedia } from '~/framework/util/media';
+import { FileMedia, isEmbeddedMedia, isPlayableMedia } from '~/framework/util/media';
 
 /**
  * Useful things to know about this multimedia carousel screen:
@@ -92,6 +92,9 @@ const CarouselScreen = ({
   const statusbarHeight = RNStatusBar.currentHeight ?? 0;
   const androidStatusBarHeight = isAndroid ? statusbarHeight : 0;
 
+  const isCurrentMediaEmbedded = (media[currentIndex]?.type as string) === 'iframe' || isEmbeddedMedia(media[currentIndex]);
+  const isStartMediaEmbedded = (media[startIndex]?.type as string) === 'iframe' || isEmbeddedMedia(media[startIndex]);
+
   const configurePanGesture = React.useCallback((panGesture: PanGesture) => {
     if (isAndroid) {
       panGesture.minDistance(50).failOffsetY([-20, 20]).activeOffsetX([-30, 30]);
@@ -127,17 +130,21 @@ const CarouselScreen = ({
     [currentIndex, playerContextValue, pdfContextValue, showNavBar, togglePaginationComponent],
   );
 
+  const animateInitialPaginationHide = React.useCallback(() => {
+    paginationTranslateY.value = 0;
+    paginationTranslateY.value = withDelay(
+      PAGINATION_ANIMATION_START_INDEX_DELAY,
+      withTiming(PAGINATION_ANIMATION_OFFSET, { duration: PAGINATION_ANIMATION_DURATION }),
+    );
+    setIsPaginationVisible(true);
+  }, [paginationTranslateY]);
+
   const onInitialAVMediaLoad = React.useCallback(() => {
     if (isPlayableMedia(media[startIndex]) && !isInitialAVMediaLoaded) {
-      paginationTranslateY.value = 0;
-      paginationTranslateY.value = withDelay(
-        PAGINATION_ANIMATION_START_INDEX_DELAY,
-        withTiming(PAGINATION_ANIMATION_OFFSET, { duration: PAGINATION_ANIMATION_DURATION }),
-      );
-      setIsPaginationVisible(true);
+      animateInitialPaginationHide();
       setIsInitialAVMediaLoaded(true);
     }
-  }, [isInitialAVMediaLoaded, media, paginationTranslateY, startIndex]);
+  }, [animateInitialPaginationHide, isInitialAVMediaLoaded, media, startIndex]);
 
   const carouselDimensions = React.useMemo(
     () => ({
@@ -175,7 +182,9 @@ const CarouselScreen = ({
     if (isNavBarVisible) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
-        headerRight: () => <NavbarButtons disabled={hasMediaError} media={media[currentIndex]} onShare={onShare} />,
+        headerRight: () => (
+          <NavbarButtons disabled={hasMediaError || isCurrentMediaEmbedded} media={media[currentIndex]} onShare={onShare} />
+        ),
         headerShown: isAndroid ? true : undefined,
         headerTitle:
           media.length !== 1
@@ -200,6 +209,11 @@ const CarouselScreen = ({
   React.useEffect(() => {
     mediaLengthShared.value = media.length;
   }, [media.length, mediaLengthShared]);
+
+  React.useEffect(() => {
+    if (isStartMediaEmbedded) animateInitialPaginationHide();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <PageView style={containerStyle} showNetworkBar={false} showToast={false}>

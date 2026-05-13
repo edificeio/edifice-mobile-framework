@@ -79,7 +79,9 @@ export interface IImagesNugget extends INugget {
 }
 
 export interface IIframeNugget extends INugget {
+  onPress?: (src: string, index?: number) => void;
   src: string;
+  mime?: string;
 }
 
 export interface IAudioNugget extends INugget {
@@ -336,10 +338,15 @@ function renderParseInlineImage(nugget: IInlineImageNugget, key: string, style: 
  * @param key string the traditional React key prop
  * @param style ViewStyle
  */
-function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle = {}): JSX.Element {
+function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle = {}): React.JSX.Element {
   return (
     <View key={key}>
-      <MediaButton type={MediaType.EMBEDDED} source={formatSource(nugget.src)} />
+      <MediaButton
+        type={MediaType.EMBEDDED}
+        source={{ uri: nugget.src }}
+        onPreviewPress={nugget.onPress ? () => nugget.onPress?.(nugget.src) : undefined}
+        referer={undefined}
+      />
     </View>
   );
 }

@@ -7,8 +7,9 @@ import PlayerItem from './player-item/component';
 import { CarouselItemProps } from './types';
 import UnknownItem from './unknown-item/component';
 import UnviewableItem from './unviewable-item/component';
+import WebviewItem from './webview-item/component';
 
-import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
+import { isAudioContent, isEmbeddedMedia, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
 
 const CarouselItem = ({
   containerHeight,
@@ -27,6 +28,7 @@ const CarouselItem = ({
   const [isImageError, setIsImageError] = React.useState(false);
   const [isPdfError, setIsPdfError] = React.useState(false);
   const [isPlayerError, setIsPlayerError] = React.useState(false);
+  const [isWebviewError, setIsWebviewError] = React.useState(false);
   const [isPdfLoadTimeout, setIsPdfLoadTimeout] = React.useState(false);
   const [isPlayerLoadTimeout, setIsPlayerLoadTimeout] = React.useState(false);
   const media = info!.item;
@@ -36,7 +38,15 @@ const CarouselItem = ({
     setHasMediaError(true);
     return <UnknownItem />;
   }
-  if (!media.mime && media.src) return <UnviewableItem file={media} />;
+  if (!media.type && media.src) return <UnviewableItem file={media} />;
+
+  if ((media.type as string) === 'iframe' || isEmbeddedMedia(media)) {
+    if (isWebviewError) return <UnknownItem />;
+
+    return (
+      <WebviewItem isCurrentItem={isCurrentItem} setIsWebviewError={setIsWebviewError} src={(itemSource as ImageURISource).uri!} />
+    );
+  }
 
   if (!media.mime && media.src) return <UnviewableItem file={media} />;
 
