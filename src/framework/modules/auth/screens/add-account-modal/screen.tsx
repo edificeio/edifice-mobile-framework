@@ -13,6 +13,7 @@ import { getState } from '~/framework/modules/auth/redux/reducer';
 
 import { getAuthReduxNavigationStateForNewAccount } from '../../new-navigation';
 import AuthActivationAddAccountScreen, { computeNavBar as authActivationAddAccountNavBar } from '../add-account/activation';
+import AuthForgotAddAccountScreen from '../add-account/forgot';
 import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../add-account/login-credentials';
 import AuthLoginRedirectAddAccountScreen, { computeNavBar as loginRedirectNavBar } from '../add-account/login-redirect';
 import AuthLoginWayfAddAccountScreen, { computeNavBar as loginWayfNavBar } from '../add-account/login-wayf';
@@ -75,13 +76,14 @@ export default function AuthAddAccountModalScreen() {
             component={AuthRenewPasswordScreen}
             options={AuthRenewPasswordScreenOptions}
           />
-          {/*<Stack.Screen
-        name={authRouteNames.addAccountForgot}
-        component={AuthForgotAddAccountScreen}
-        options={({ route }) => ({
-          title: route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
-        })}
-      />*/}
+          <Stack.Screen
+            name="auth/add-account/forgot"
+            component={AuthForgotAddAccountScreen}
+            options={({ route }) => ({
+              title:
+                route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+            })}
+          />
           {renderRootModulesScreens(Stack)}
         </Stack.Navigator>
       </NavigationContainer>
