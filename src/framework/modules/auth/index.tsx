@@ -18,6 +18,8 @@ import AuthChangeMobileScreen, {
   AuthChangeMobileScreenNavParams,
 } from './screens/change-mobile';
 import AuthDiscoveryClassScreen from './screens/discovery-class';
+import AuthAccountSelectionScreen from './screens/main-account/account-selection';
+import { AuthAccountSelectionScreenOptions } from './screens/main-account/account-selection/screen';
 import { AuthActivationScreen, AuthActivationScreenOptions } from './screens/main-account/activation';
 import AuthForgotScreen from './screens/main-account/forgot';
 import { AuthForgotScreenOptions } from './screens/main-account/forgot/screen';
@@ -60,6 +62,7 @@ export default new RootModule<
     'auth/mfa': AuthMFAScreenNavParams;
     'auth/forgot': ForgotScreenNavParams;
     'auth/add-account': undefined;
+    'auth/accounts': undefined;
   },
   AuthState,
   Action,
@@ -105,6 +108,7 @@ export default new RootModule<
       <Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
       <Stack.Screen name="auth/forgot" component={AuthForgotScreen} options={AuthForgotScreenOptions} />
       <Stack.Screen name="auth/add-account" component={AuthAddAccountModalScreen} options={AuthAddAccountModalScreenOptions} />
+      <Stack.Screen name="auth/accounts" component={AuthAccountSelectionScreen} options={AuthAccountSelectionScreenOptions} />
     </>
   ),
 );

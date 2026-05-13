@@ -17,6 +17,8 @@ import {
   AuthPendingRedirection,
   AuthRequirement,
   AuthSavedAccount,
+  AuthSavedLoggedInAccountWithCredentials,
+  InitialAuthenticationMethod,
 } from './model';
 import { AuthState } from './redux/types';
 
@@ -290,4 +292,18 @@ export const getAddAccountRouteForRedirect = (platform: Platform, pending: AuthS
         },
       } as const;
   }
+};
+
+/**
+ * Return the navigation route to be performed when loading an existing account from account selection screen.
+ * @returns
+ */
+export const getRouteForAccountLoad = (account: {
+  id: (AuthSavedAccount | AuthActiveAccount)['user']['id'];
+  platform: Platform | undefined;
+  login: Partial<AuthSavedLoggedInAccountWithCredentials['user']>['loginUsed'];
+  method: InitialAuthenticationMethod | undefined;
+}) => {
+  if (!account.platform) return undefined;
+  return getRouteForLoginRedirection(account.platform, { method: account.method, user: { id: account.id } }, account.login);
 };

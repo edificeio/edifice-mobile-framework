@@ -1,13 +1,11 @@
 import React from 'react';
 import { FlatListProps, TouchableOpacity, View } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
-
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleWidth } from '~/framework/components/constants';
@@ -25,29 +23,19 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getNavActionForAccountLoad, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
+import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
 import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accounts>): NativeStackNavigationOptions => {
-  return {
-    ...navBarOptions({
-      navigation,
-      route,
-      title: I18n.get('auth-accountselection-title'),
-    }),
-  };
-};
+import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
+import { getRouteForAccountLoad } from '../../../new-navigation';
+
+export const AuthAccountSelectionScreenOptions = screenOptions(() => ({ title: I18n.get('auth-accountselection-title') }));
 
 const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) => {
   const { accounts, navigation, tryRemoveAccount, tryRestore } = props;
@@ -75,13 +63,13 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const onItemPress = React.useCallback(
     async (item: (typeof dataforList)[0]) => {
       const redirect = (i: typeof item) => {
-        const navAction = getNavActionForAccountLoad(i);
-        if (!navAction) {
+        const route = getRouteForAccountLoad(i);
+        if (!route) {
           console.warn('AccountSelectionScreen: Missing platform for this account');
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        navigationDispatchMultiple(navigation, navAction);
+        navigation.navigate(route);
       };
       if (loadingState !== LoginState.IDLE) return;
       if (item.isLoggable) {
