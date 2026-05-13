@@ -13,15 +13,17 @@ import {
   MyAppsFilterTypes,
 } from '~/framework/modules/myapps/types';
 import {
+  computeTestID,
   getAppName,
   getModuleRouteName,
   getTranslatedAppLabel,
   normalizeIconName,
   normalizeString,
-  toKebabCase,
 } from '~/framework/modules/myapps/utils';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
+
+type BadgeOverridesType = Record<string, { color?: string; icon?: string }>;
 
 const resolveAppColor = (appColor?: string) =>
   appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
@@ -35,8 +37,12 @@ const MYAPPS_FILTERS_CATEGORY_MAP: Record<string, MyAppsCategory> = {
   pedagogy: MyAppsFilterCategories.pedagogie,
 };
 
-const APP_AGGREGATION_OVERRIDES: Record<string, { color?: string; icon?: string }> = {
+const APP_AGGREGATION_OVERRIDES: BadgeOverridesType = {
   Directory: { color: 'green', icon: 'userbook' },
+};
+
+const NOTIF_TYPE_BADGE_OVERRIDES: BadgeOverridesType = {
+  'TIMELINE.NOTIFY-REPORT': { color: 'yellow', icon: 'report' },
 };
 
 const FALLBACK_BADGE: IAppBadgeInfo = {
@@ -127,7 +133,7 @@ export const aggregateApps = (
         isFavorite,
         isLibrary,
         libraries: config?.libraries,
-        testID: config ? toKebabCase(app.name) : '',
+        testID: config ? computeTestID(app) : '',
       };
     })
     .sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)));
@@ -202,7 +208,7 @@ export const getTabModuleDisplayName = (
 };
 
 export const buildNotifTypeLookupMap = (notifTypes: IEntcoreNotificationType[]): Map<string, IEntcoreNotificationType> =>
-  new Map(notifTypes.map(nt => [nt.type, nt]));
+  new Map(notifTypes.map(nt => [`${nt.type}.${nt['event-type']}`, nt]));
 
 /**
  * Resolve a notification badge from its type using the notification type
@@ -218,10 +224,13 @@ export const resolveNotifBadge = (
   if (!appName) return undefined;
 
   const app = aggregatedApps[appName];
-
   if (!app) return undefined;
 
-  return { color: resolveAppColor(app.color), icon: app.icon };
+  const override = NOTIF_TYPE_BADGE_OVERRIDES[notifType];
+  return {
+    color: resolveAppColor(override?.color ?? app.color),
+    icon: override?.icon ?? app.icon,
+  };
 };
 
 export const buildFetchSuccessPayload = (appsInfo: AppsInfo[], appsConfig: ApplicationsConfig[], favorites: AppBookmarks) => {

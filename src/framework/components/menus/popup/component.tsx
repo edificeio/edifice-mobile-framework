@@ -29,7 +29,7 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
   }
 
   return (
-    <View>
+    <View testID={props.testID}>
       <MenuView
         isAnchoredToRight
         onPressAction={({ nativeEvent }) => {

@@ -39,20 +39,15 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
     const session = assertSession();
     const state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
     if (state.notifications.isFetching) return;
-
     // Load notifications page 0 & flash messages (after reset)
     dispatch(notificationsActions.request());
     dispatch(flashMessagesActions.request());
-
     const page = 0;
     const filters = Object.keys(state.notifSettings.notifFilterSettings.data)
       .filter(filter => state.notifSettings.notifFilterSettings.data[filter])
       .filter(filter => state.notifDefinitions.notifFilters.data.find(nf => nf.type === filter)); // whitelist only authorized filters after settings application
-    const [notifications, flashMessages] = await Promise.all([
-      notificationsService.page(session, page, filters),
-      flashMessagesService.list(session),
-    ]);
-
+    const notifications = await notificationsService.page(session, page, filters);
+    const flashMessages = await flashMessagesService.list(session);
     dispatch(notificationsActions.clear());
     dispatch(flashMessagesActions.clear());
     dispatch(notificationsActions.receipt(notifications, page));

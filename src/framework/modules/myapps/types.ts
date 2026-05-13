@@ -66,7 +66,6 @@ export interface AppsInfoState {
   appsInfo: AppsInfo[];
   appsConfig: ApplicationsConfig[];
   favorites: AppBookmarks;
-  showAllApps: boolean;
 }
 
 export interface AppsInfoAggregated extends AppsInfo {

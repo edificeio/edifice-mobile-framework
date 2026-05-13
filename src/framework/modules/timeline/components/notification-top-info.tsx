@@ -22,7 +22,7 @@ import {
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: AuthActiveAccount }) => {
-  const badge = useNotificationBadge(notification.type);
+  const badge = useNotificationBadge(notification.type, notification['event-type']);
   const message = notification && notification.message;
   const date = notification && notification.date;
   const sender = notification && getAsSenderNotification(notification)?.sender;

@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-04-30 15:17:44",
-  "notes": "refactor(myapps): COCO-5736 replace displayName based lookups with module/backend mapping\nfeat(myapps):COCO-5722, simplify myapps storage data structure (297)\nfix(myapps): COCO-5613, fix competences icon mapping\nfeat(myapps): COCO-5723,  store widgets in Map to avoid using .find() many times\nfix(myapps): COCO-5623, hide filters when no apps & fix not translated tab names\nfix(carrousel): hide player navbar in onHideControls\nfix(carrousel): COCO-5637 render fallback if media loading exceeds 30s\nfix(carrousel): COCO-5636 adding buffer config for audio & video\nfix(carrousel): make navbar transparent on iOS\nfix(carrousel): COCO-5676 : adding patch to avoid resetting a key on component\nfix(carrousel): COCO-5630 : disable swiping at the bottom of the screen\nfix(myapps): remove redundant per-account onboarding storage handling & some  adjustment on homeworks i18n value\nMerge branch 'dev/1.17.0' into dev/comm\nSquashed commit of the following:\nupdate(stack): yarn cache update\nrelease: 1.17.0-comm.5(1170005)",
-  "version": "1.17.0-comm.6(1170006)",
+  "last": "2026-05-12 19:22:50",
+  "notes": "update(stack): yarn cache update\nfix(carousel): IMPULS-5773 fix pdf display on landscape and prevent AlreadyClosed crash\nfix(news): IMPULS-5626 prevent media flash when typing a comment\nfix: restore version number\nchore: yarn cache pdate\nMerge branch 'dev/peda' into dev/1.17.0\nfix(myapps): IMPULS-5607, add missing translation keys\nfix(myapps): IMPULS-5784, hide app info when no help link & some adjustments\nfix(data): ENABLING-707, remove Promise.all and serialize timeline calls\nfix(myapps): IMPULS-5771, add app-card default icon & some potential UI bug fixe\nfix(carousel): IMPULS-5774 carousel item error handling\nfix(carousel): IMPULS-5775 privacy modal on file download\nfix(typo): fix relative imports\nUpdated translations from Phrase (300)\nrelease: 1.17.0-rc.1(1170008)",
+  "version": "1.17.0-rc.2(1170009)",
   "track": "1.17.0"
 }

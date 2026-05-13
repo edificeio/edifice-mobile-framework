@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
-
-import NativeModal from 'react-native-modal';
+import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { Toggle } from '~/framework/components/toggle';
@@ -19,7 +18,7 @@ import { Loading } from '~/ui/Loading';
 import { styles } from './styles';
 import { MyAppsHomeScreenProps } from './types';
 import { useMyAppsHomeController } from './useController';
-import { EMPTY_SCREEN_CONFIG, openHelpLink, resolveEmptyScreenKey } from './utils';
+import { EMPTY_SCREEN_CONFIG, hasHelpLink, openHelpLink, resolveEmptyScreenKey } from './utils';
 
 export const computeNavBar = screenOptions(() => ({
   title: I18n.get('myapp-appname'),
@@ -36,6 +35,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     filter,
     handleDismiss,
     handleOpenOnboarding,
+    hasFetchError,
     hasSeenOnboarding,
     isAggregatedAppsEmpty,
     isAllAppsTab,
@@ -52,6 +52,16 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     selectedApp,
     setFilter,
   } = useMyAppsHomeController();
+
+  const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
+
+  React.useEffect(() => {
+    if (isBottomSheetVisible) {
+      bottomSheetRef.current?.present();
+    } else {
+      bottomSheetRef.current?.close();
+    }
+  }, [isBottomSheetVisible, navigation]);
 
   const slides: MAOSProps[] = [
     {
@@ -162,27 +172,30 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         if (!selectedApp) return null;
 
         return (
-          <>
+          <React.Fragment>
             <MyAppsMenuItem
               label={
                 selectedApp.isFavorite
                   ? I18n.get('myapp-bottomsheet-withdraw-from-favorites')
                   : I18n.get('myapp-bottomsheet-add-to-favorites')
               }
-              leftElement={renderMenuIcon('ui-star-outline')}
+              leftElement={renderMenuIcon(selectedApp.isFavorite ? 'ui-star-filled' : 'ui-star-outline')}
               onPress={onToggleFavorite(selectedApp.name)}
               testID="myapps-toggle-favorite"
             />
 
-            <View style={styles.separatorLine} />
-
-            <MyAppsMenuItem
-              leftElement={renderMenuIcon('ui-infoCircle')}
-              label={I18n.get('myapp-bottomsheet-app-info')}
-              onPress={onAppInfoPress}
-              testID="myapps-app-info"
-            />
-          </>
+            {hasHelpLink(selectedApp?.help) && (
+              <React.Fragment>
+                <View style={styles.separatorLine} />
+                <MyAppsMenuItem
+                  label={I18n.get('myapp-bottomsheet-app-info')}
+                  leftElement={renderMenuIcon('ui-infoCircle')}
+                  onPress={onAppInfoPress}
+                  testID="myapps-app-info"
+                />
+              </React.Fragment>
+            )}
+          </React.Fragment>
         );
     }
   }, [
@@ -197,44 +210,23 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     selectedApp,
   ]);
 
-  const bottomSheetCloseButton = React.useMemo(
-    () => (
-      <React.Fragment>
-        <View style={styles.bottomSheetHandle} />
-        <View style={styles.bottomSheetHeader}>
-          <TouchableOpacity onPress={closeBottomSheet}>
-            <Svg
-              name="ui-close"
-              height={UI_SIZES.elements.icon.small}
-              width={UI_SIZES.elements.icon.small}
-              fill={theme.palette.grey.black}
-            />
-          </TouchableOpacity>
-        </View>
-      </React.Fragment>
-    ),
-    [closeBottomSheet],
-  );
+  const handleDismissBottomSheet = React.useCallback(() => {
+    closeBottomSheet();
+    handleDismiss();
+  }, [closeBottomSheet, handleDismiss]);
 
   const renderBottomSheet = React.useCallback(
     () => (
-      <NativeModal
-        isVisible={isBottomSheetVisible}
-        onBackdropPress={closeBottomSheet}
-        onSwipeComplete={closeBottomSheet}
-        onModalHide={handleDismiss}
-        swipeDirection="down"
-        statusBarTranslucent
-        backdropTransitionOutTiming={0}
-        hideModalContentWhileAnimating
-        style={styles.bottomSheetModal}>
-        <View style={styles.bottomSheetContent}>
-          {bottomSheetCloseButton}
-          <View style={styles.bottomSheetContainer}>{renderBottomSheetContent()}</View>
-        </View>
-      </NativeModal>
+      <CustomBottomSheetModal
+        handleIndicatorStyle={styles.bottomSheetHandle}
+        ref={bottomSheetRef}
+        closeButton
+        gutters={false}
+        onDismiss={handleDismissBottomSheet}>
+        <View style={styles.bottomSheetContainer}>{renderBottomSheetContent()}</View>
+      </CustomBottomSheetModal>
     ),
-    [isBottomSheetVisible, closeBottomSheet, handleDismiss, bottomSheetCloseButton, renderBottomSheetContent],
+    [handleDismissBottomSheet, renderBottomSheetContent],
   );
 
   const renderEmptyScreen = React.useCallback(
@@ -244,12 +236,16 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
           title={I18n.get('myapp-empty-screen-home-title')}
           text={I18n.get('myapp-empty-screen-home-text')}
           svgImage="empty-content"
-          buttonIcon="ui-refresh"
+          {...(hasFetchError && {
+            buttonAction: onRefresh,
+            buttonIcon: 'ui-refresh',
+            buttonText: I18n.get('myapp-retry'),
+          })}
           testID="myapps-empty-screen"
         />
       </View>
     ),
-    [],
+    [hasFetchError, onRefresh],
   );
 
   const onCardLongPress = React.useCallback(

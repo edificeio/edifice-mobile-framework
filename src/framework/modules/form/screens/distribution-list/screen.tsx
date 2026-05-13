@@ -113,11 +113,9 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
     modalBoxRef.current?.doDismissModal();
     setTimeout(() => {
       props.navigation.navigate(formRouteNames.distribution, {
-        editable: form.editable,
-        formId: form.id,
+        form,
         id,
         status,
-        title: form.title,
       });
     }, 500); // prevent freeze due to navigation when modal is not dismissed
   };

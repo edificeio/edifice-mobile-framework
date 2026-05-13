@@ -183,8 +183,10 @@ export const UI_SIZES = {
     small: getScaleWidth(4),
   },
   screen: {
+    // TODO: Remove this workaround once edge-to-edge mode is handled
+    // natively by the framework. revert to default: 0.
     bottomInset: Platform.select({
-      default: 0,
+      default: DeviceInfo.getApiLevelSync() >= 36 ? insets.bottom : 0, // Android 16+ edge-to-edge: add navigation bar height
       ios: DeviceInfo.isTablet() ? 32 : insets.bottom,
     }),
     height: screenDimensions.height,

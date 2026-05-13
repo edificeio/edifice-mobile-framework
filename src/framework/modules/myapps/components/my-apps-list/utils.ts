@@ -15,8 +15,8 @@ export const buildAllAppsCategoryList = (apps: AppsInfoAggregated[]): MyAppsList
 
   const externalConnectors = apps.filter(appShouldBeAtBottom);
 
-  if (!externalConnectors.length) {
-    return mobileAndInternal.map(buildAppItem);
+  if (!externalConnectors.length || !mobileAndInternal.length) {
+    return [...mobileAndInternal, ...externalConnectors].map(buildAppItem);
   }
 
   return [...mobileAndInternal.map(buildAppItem), { type: 'separator' }, ...externalConnectors.map(buildAppItem)];

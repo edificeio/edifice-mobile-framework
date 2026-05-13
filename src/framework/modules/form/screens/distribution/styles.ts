@@ -1,13 +1,21 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+  },
+  introContainer: {
+    flex: 1,
+    marginBottom: pageGutterSize,
+    rowGap: UI_SIZES.spacing.small,
+  },
+  introScrollContainer: {
+    padding: pageGutterSize,
   },
   listContainer: {
     flexGrow: 1,

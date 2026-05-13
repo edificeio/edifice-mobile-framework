@@ -6,4 +6,5 @@ export interface MenuProps {
   actions: MenuAction[];
   children: React.ReactNode;
   disabled?: boolean;
+  testID?: string;
 }

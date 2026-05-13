@@ -51,7 +51,15 @@ const CarouselPagination = ({
             ? getSignedPosterSource(item.poster, UI_SIZES.elements.thumbnailFetchSize.small)
             : undefined;
 
-      return <PaginationItem item={item} thumbnailSrc={thumbnailSrc} index={index} paginationProgress={paginationProgress} />;
+      return (
+        <PaginationItem
+          item={item}
+          thumbnailSrc={thumbnailSrc}
+          index={index}
+          paginationProgress={paginationProgress}
+          testID={`media-pagination-${index}`}
+        />
+      );
     },
     [paginationProgress],
   );

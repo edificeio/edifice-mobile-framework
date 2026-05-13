@@ -39,14 +39,27 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
 
   const canShowWebIcon = !app.isMobile;
 
+  const renderFallbackIcon = () =>
+    app.isConnector ? (
+      <Svg cached name="default-connector" width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} />
+    ) : (
+      <LetterFallback label={app.displayName} />
+    );
+
   const renderIcon = () => {
-    if (isLetterFallback) {
-      return <LetterFallback label={app.displayName} />;
-    }
+    if (isLetterFallback) return renderFallbackIcon();
 
     switch (appIcon.type) {
       case 'svg':
-        return <Svg cached name={appIcon.name} width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} fill="white" />;
+        return (
+          <Svg
+            cached
+            name={appIcon.name}
+            width={UI_SIZES.spacing.huge}
+            height={UI_SIZES.spacing.huge}
+            fill={app.isConnector && !app.color ? 'black' : 'white'} // TODO, remove when colors will be correctly handled by the API for connectors
+          />
+        );
 
       case 'svg-uri':
         return (
@@ -62,7 +75,7 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
         return <Image source={appIcon.source} style={styles.image} onError={() => setIconError(true)} />;
 
       default:
-        return <LetterFallback label={app.displayName} />;
+        return renderFallbackIcon();
     }
   };
 

@@ -15,9 +15,10 @@ interface PaginationItemProps {
   index: number;
   thumbnailSrc?: ImageURISource;
   paginationProgress: SharedValue<number>;
+  testID?: string;
 }
 
-const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: PaginationItemProps) => {
+const PaginationItem = ({ index, item, paginationProgress, testID, thumbnailSrc }: PaginationItemProps) => {
   const iconAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
     const distance = Math.abs(paginationProgress.value - index);
@@ -43,7 +44,7 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
 
   if (item.mime && isImageContent(item)) {
     return (
-      <View style={styles.itemContainer}>
+      <View style={styles.itemContainer} testID={testID}>
         {thumbnailSrc ? (
           <Picture type="Image" source={thumbnailSrc} style={styles.thumbnail} resizeMode="cover" />
         ) : (
@@ -62,7 +63,7 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
 
   if (item.mime && isVideoContent(item)) {
     return (
-      <View style={styles.itemContainer}>
+      <View style={styles.itemContainer} testID={testID}>
         {thumbnailSrc && <Picture type="Image" source={thumbnailSrc} style={styles.thumbnail} resizeMode="cover" />}
         <Animated.View style={[styles.videoIcon, iconAnimatedStyle]}>
           <Svg
@@ -78,7 +79,7 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
 
   if (item.mime && isAudioContent(item)) {
     return (
-      <View style={styles.itemContainer}>
+      <View style={styles.itemContainer} testID={testID}>
         <Animated.View style={[styles.videoIcon, iconAnimatedStyle]}>
           <Svg
             name="ui-audio"
@@ -92,7 +93,7 @@ const PaginationItem = ({ index, item, paginationProgress, thumbnailSrc }: Pagin
   }
 
   return (
-    <View style={styles.itemContainer}>
+    <View style={styles.itemContainer} testID={testID}>
       <Animated.View style={[styles.videoIcon, iconAnimatedStyle]}>
         <Svg
           name="ui-text-page"

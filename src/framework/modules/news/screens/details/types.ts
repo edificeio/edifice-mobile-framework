@@ -31,3 +31,9 @@ export interface NewsDetailsScreenNavParams {
 export type NewsDetailsScreenProps = NewsDetailsScreenDataProps &
   NewsDetailsScreenEventProps &
   NativeStackScreenProps<NewsNavigationParams, typeof newsRouteNames.details>;
+
+export interface NewsDetailsHeaderProps {
+  news: NewsItem;
+  thread: NewsThreadItemReduce;
+  commentsCount: number;
+}

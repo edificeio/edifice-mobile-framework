@@ -28,6 +28,10 @@ export const getAppName = (data: AppsInfo): string => {
   return data.name || '';
 };
 
+export const computeTestID = (app: AppsInfo): string => {
+  return `myapps-${toKebabCase(app.name)}`;
+};
+
 export const getAppTestID = (data: { testID?: string }): string => {
   return data.testID || '';
 };

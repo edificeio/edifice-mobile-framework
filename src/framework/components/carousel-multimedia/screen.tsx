@@ -16,7 +16,7 @@ import { FileMedia, isPlayableMedia } from '~/framework/util/media';
 
 import CarouselItem from './component';
 import { useCarouselFileHandler, useCarouselOrientation, useTogglePagination } from './hooks';
-import { NavbarButtons } from './navbar';
+import { MultimediaCarouselScreenOptions, NavbarButtons } from './navbar';
 import CarouselPagination from './pagination/component';
 import { PAGINATION_COMPONENT_HEIGHT } from './pagination/styles';
 import styles from './styles';
@@ -64,6 +64,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
   const media = React.useMemo<FileMedia[]>(() => route.params.media ?? [], [route.params.media]);
   const startIndex = route.params.startIndex ?? 0;
   const [currentIndex, setCurrentIndex] = React.useState(startIndex);
+  const [hasMediaError, setHasMediaError] = React.useState(false);
   const [isCarouselSwipeEnabled, setIsCarouselSwipeEnabled] = React.useState(true);
   const [isInitialAVMediaLoaded, setIsInitialAVMediaLoaded] = React.useState(false);
   const [isNavBarVisible, setIsNavBarVisible] = React.useState(true);
@@ -73,7 +74,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
   const mediaLengthShared = useSharedValue(media.length);
   const containerWidthShared = useSharedValue(0);
   const { onOrientationChange, orientation } = useCarouselOrientation();
-  const { onSave, onShare } = useCarouselFileHandler(media[currentIndex]);
+  const { onShare } = useCarouselFileHandler(media[currentIndex]);
   const togglePaginationComponent = useTogglePagination(media, paginationTranslateY, setIsPaginationVisible);
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const playerContextValue = React.useContext(PlayerContext);
@@ -83,10 +84,6 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
 
   const statusbarHeight = RNStatusBar.currentHeight ?? 0;
   const androidStatusBarHeight = isAndroid ? statusbarHeight : 0;
-
-  const isCurrentMediaUnknown = React.useMemo(() => {
-    return !media[currentIndex]?.src;
-  }, [currentIndex, media]);
 
   const configurePanGesture = React.useCallback((panGesture: PanGesture) => {
     if (isAndroid) {
@@ -170,7 +167,8 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
 
     if (isNavBarVisible) {
       navigation.setOptions({
-        headerRight: () => <NavbarButtons disabled={isCurrentMediaUnknown} onSave={onSave} onShare={onShare} />,
+        // ...MultimediaCarouselScreenOptions({ navigation, route }),
+        headerRight: () => <NavbarButtons disabled={hasMediaError} media={media[currentIndex]} onShare={onShare} />,
         headerShown: isAndroid ? true : undefined,
         statusBarHidden: isLandscape,
         title:
@@ -189,7 +187,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
         title: '',
       });
     }
-  }, [isNavBarVisible, media.length, currentIndex, isCurrentMediaUnknown, navigation, route, onSave, onShare, orientation]);
+  }, [isNavBarVisible, media.length, currentIndex, hasMediaError, orientation, navigation, media, route.params.title, onShare]);
 
   React.useEffect(() => {
     mediaLengthShared.value = media.length;
@@ -219,10 +217,10 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
               currentIndex={currentIndex}
               hideNavBar={hideNavBar}
               info={info}
-              isCurrentMediaUnknown={isCurrentMediaUnknown}
               isNavBarVisible={isNavBarVisible}
               itemSource={source}
               onInitialAVMediaLoad={isInitialItem ? onInitialAVMediaLoad : undefined}
+              setHasMediaError={setHasMediaError}
               setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
               showNavBar={showNavBar}
               toggleNavBarVisibility={toggleNavBarVisibility}

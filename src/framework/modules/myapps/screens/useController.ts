@@ -47,8 +47,9 @@ export function useMyAppsHomeController() {
   const [selectedApp, setSelectedApp] = React.useState<AppsInfoAggregated | null>(null);
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
+  const [hasFetchError, setHasFetchError] = React.useState<boolean>(false);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = React.useState<boolean>(false);
-  const [areAppsShowed, setAreAppsShowed] = React.useState(readShowAllApps());
+  const [areAppsShowed, setAreAppsShowed] = React.useState(() => readShowAllApps());
 
   const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState<boolean>(() => {
     const onboarding = readMyAppsOnboardingSeen();
@@ -56,13 +57,15 @@ export function useMyAppsHomeController() {
   });
 
   const aggregatedApps = useSelector(selectAggregatedApps);
-  const apps = useFilteredApps(filter);
+  const apps = useFilteredApps(filter, areAppsShowed);
   const isAllAppsTab = filter.type === MyAppsFilterTypes.Category && filter.value === MyAppsFilterCategories.all;
 
-  const isAggregatedAppsEmpty = React.useMemo(
-    () => !aggregatedApps || !Object.values(aggregatedApps).some(app => app.display),
-    [aggregatedApps],
-  );
+  const isAggregatedAppsEmpty = React.useMemo(() => {
+    if (!aggregatedApps) return true;
+    const displayableApps = Object.values(aggregatedApps).filter(app => app.display);
+    if (areAppsShowed) return displayableApps.length === 0;
+    return !displayableApps.some(app => app.isMobile);
+  }, [aggregatedApps, areAppsShowed]);
 
   const isFavoritesFilter = React.useMemo(() => filter.type === MyAppsFilterTypes.Favorites, [filter]);
 
@@ -186,7 +189,7 @@ export function useMyAppsHomeController() {
       writeShowAllApps(newValue);
       return newValue;
     });
-  }, []);
+  }, [setAreAppsShowed]);
 
   const completeOnboarding = React.useCallback(() => {
     writeMyAppsOnboardingSeen(ONBOARDING_VERSION);
@@ -196,7 +199,8 @@ export function useMyAppsHomeController() {
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     try {
-      await dispatch(refreshMyApps());
+      const success = await dispatch(refreshMyApps());
+      setHasFetchError(!success);
     } finally {
       setRefreshing(false);
     }
@@ -220,6 +224,7 @@ export function useMyAppsHomeController() {
     filter,
     handleDismiss,
     handleOpenOnboarding,
+    hasFetchError,
     hasSeenOnboarding,
     isAggregatedAppsEmpty,
     isAllAppsTab,

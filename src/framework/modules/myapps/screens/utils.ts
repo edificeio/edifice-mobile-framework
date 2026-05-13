@@ -1,7 +1,7 @@
 import { MyAppsEmptyScreenConfig } from './types';
 
 import { I18n } from '~/app/i18n';
-import { MyAppsFilter } from '~/framework/modules/myapps/types';
+import { MyAppsFilter, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 import { openUrl } from '~/framework/util/linking';
 
 export const EMPTY_SCREEN_CONFIG: MyAppsEmptyScreenConfig = {
@@ -21,20 +21,27 @@ export const EMPTY_SCREEN_CONFIG: MyAppsEmptyScreenConfig = {
     title: 'myapp-empty-screen-search-title',
   },
 };
+
 export const resolveEmptyScreenKey = (filter: MyAppsFilter): keyof MyAppsEmptyScreenConfig => {
-  switch (filter.type) {
-    case 'favorites':
-      return 'favorites';
-    case 'search':
-      return 'search';
-    default:
-      return 'other';
+  if (filter.type === MyAppsFilterTypes.Favorites) {
+    return MyAppsFilterTypes.Favorites;
   }
+
+  if (filter.type === MyAppsFilterTypes.Search) {
+    return MyAppsFilterTypes.Search;
+  }
+
+  return 'other';
 };
 
 type HelpLinks = Record<string, string | null>;
 
 const FALLBACK_LANG = 'fr';
+
+export const hasHelpLink = (links: HelpLinks | undefined): boolean => {
+  if (!links) return false;
+  return Object.values(links).some(v => v !== null);
+};
 
 export const openHelpLink = (links: HelpLinks | undefined) => {
   if (!links) {
