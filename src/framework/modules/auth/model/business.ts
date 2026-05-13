@@ -2,7 +2,7 @@ import { AccountType, AuthLoggedAccount } from '.';
 
 import { getAccountsNumber } from '~/framework/modules/auth/reducer';
 
-const MULTIPLE_ACCOUNT_ELIGIBLE_TYPES = [AccountType.Teacher, AccountType.Personnel];
+const MULTIPLE_ACCOUNT_ELIGIBLE_TYPES = [AccountType.Teacher, AccountType.Personnel, AccountType.Relative];
 const MAX_ACCOUNTS = 2;
 
 /**

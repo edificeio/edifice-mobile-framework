@@ -6,13 +6,9 @@
  */
 
 import React, { PropsWithChildren } from 'react';
-import { Alert, View } from 'react-native';
 
 import JailMonkey from 'jail-monkey';
-import DeviceInfo from 'react-native-device-info';
 
-import { I18n } from '~/app/i18n';
-import { Loading } from '~/ui/Loading';
 
 export const PrivilegeTrust = React.memo(function PrivilegeTrust({
   children,
@@ -32,19 +28,19 @@ export const PrivilegeTrust = React.memo(function PrivilegeTrust({
         console.debug(`[PrivilegeTrust] Trusted device`);
       } else {
         console.error(`[PrivilegeTrust] UNTRUSTED DEVICE`);
-        Alert.alert(
+        /*Alert.alert(
           I18n.get('device-untrusted-privilege-title'),
           I18n.get('device-untrusted-privilege-description', { name: DeviceInfo.getApplicationName() }),
           [{ isPreferred: true, onPress: onUntrusted, text: I18n.get('device-untrusted-action') }],
           {
             cancelable: false,
           },
-        );
+        );*/
       }
     })();
   }, [isTrustedDevice, onUntrusted]);
 
-  if (isTrustedDevice === undefined) return <Loading />;
+  /*if (isTrustedDevice === undefined) return <Loading />;
   else if (!isTrustedDevice) return <View />;
-  else return children;
+  else */ return children;
 });

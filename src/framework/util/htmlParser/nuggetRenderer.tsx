@@ -66,6 +66,7 @@ export interface IImageComponentAttributes {
   src: string;
   alt: string;
   linkTo?: string;
+  onPress?: (src: string, index?: number) => void;
 }
 
 export interface IInlineImageNugget extends INugget {
@@ -83,12 +84,14 @@ export interface IIframeNugget extends INugget {
 
 export interface IAudioNugget extends INugget {
   src: string;
+  onPress?: (src: string, index?: number) => void;
 }
 
 export interface IVideoNugget extends INugget {
   src: string;
   ratio?: number;
   posterSource?: ImageURISource;
+  onPress?: (src: string, index?: number) => void;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -291,8 +294,21 @@ function renderParseText(
  * @param key the traditional React key prop
  * @param style
  */
-function renderParseImages(nugget: IImagesNugget, key: string, style: ViewStyle = {}): JSX.Element {
-  return <Images images={formatMediaSourceArray(nugget.images)} key={key} style={style} />;
+function renderParseImages(nugget: IImagesNugget, key: string, style: ViewStyle = {}): React.JSX.Element {
+  return (
+    <Images
+      images={formatMediaSourceArray(nugget.images)}
+      key={key}
+      style={style}
+      referer={undefined}
+      onPreviewPress={(selectedSrc, index) => {
+        const selectedImage = index !== undefined ? nugget.images[index] : nugget.images.find(img => img.src === selectedSrc);
+        if (selectedImage?.onPress) {
+          selectedImage.onPress(selectedImage.src, index);
+        }
+      }}
+    />
+  );
 }
 
 /**
@@ -334,7 +350,7 @@ function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle 
  * @param key the traditional React key prop
  * @param style
  */
-function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = {}): JSX.Element {
+function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = {}): React.JSX.Element {
   if (!nugget.src) {
     return (
       <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, padding: UI_SIZES.spacing.small, width: '100%' }}>
@@ -344,7 +360,13 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
   }
   return (
     <View key={key}>
-      <MediaButton type="audio" source={formatSource(nugget.src)} style={style} />
+      <MediaButton
+        type={MediaType.AUDIO}
+        source={formatSource(nugget.src)}
+        style={style}
+        onPreviewPress={nugget.onPress ? () => nugget.onPress?.(nugget.src) : undefined}
+        referer={undefined}
+      />
     </View>
   );
 }
@@ -355,7 +377,7 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
  * @param key the traditional React key prop
  * @param style
  */
-function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = {}): JSX.Element {
+function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = {}): React.JSX.Element {
   if (!nugget.src) {
     return (
       <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, padding: UI_SIZES.spacing.small, width: '100%' }}>
@@ -366,11 +388,13 @@ function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = 
   return (
     <View key={key}>
       <MediaButton
-        type="video"
+        type={MediaType.VIDEO}
         source={formatSource(nugget.src)}
         style={style}
         {...(nugget.ratio ? { ratio: nugget.ratio } : {})}
         {...(nugget.posterSource ? { posterSource: nugget.posterSource } : {})}
+        onPreviewPress={nugget.onPress ? () => nugget.onPress?.(nugget.src) : undefined}
+        referer={undefined}
       />
     </View>
   );

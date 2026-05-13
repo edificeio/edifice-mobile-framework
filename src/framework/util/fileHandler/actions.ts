@@ -176,7 +176,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia, 
     case 'audio':
       openMediaPlayer({
         filetype: document.filetype,
-        source: sessionURISource(toURISource(onlineMedia?.src ?? localFile?.filepath)),
+        source: sessionURISource(toURISource(onlineMedia?.src ?? localFile?._filepathNative)),
         type: MediaType.AUDIO,
       });
       success = true;
@@ -184,7 +184,7 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia, 
     case 'video':
       openMediaPlayer({
         filetype: document.filetype,
-        source: sessionURISource(toURISource(onlineMedia?.src ?? localFile?.filepath)),
+        source: sessionURISource(toURISource(onlineMedia?.src ?? localFile?._filepathNative)),
         type: MediaType.VIDEO,
       });
       success = true;

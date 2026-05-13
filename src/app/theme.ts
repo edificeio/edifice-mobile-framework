@@ -5,8 +5,6 @@ import { ColorValue } from 'react-native';
 
 import deepmerge from 'deepmerge';
 
-import { EntAppName } from './intents';
-
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
 import { MediaType } from '~/framework/util/media';
@@ -44,14 +42,15 @@ export interface ITheme {
     primary: IShades;
     secondary: IShades;
     complementary: {
-      red: IShades;
-      orange: IShades;
-      yellow: IShades;
-      green: IShades;
-      blue: IShades;
-      indigo: IShades;
-      purple: IShades;
-      pink: IShades;
+      'red': IShades;
+      'orange': IShades;
+      'yellow': IShades;
+      'green': IShades;
+      'blue': IShades;
+      'indigo': IShades;
+      'purple': IShades;
+      'pink': IShades;
+      'nabook-color': Pick<IShades, 'regular'>;
     };
     grey: {
       darkness: ColorValue;
@@ -139,7 +138,6 @@ export interface ITheme {
       Guest: ColorValue;
     };
   };
-  apps: { [key in EntAppName]: EntAppTheme };
   media: { [key in MediaType | 'default']: IntentIcon };
   // Legacy values
   legacy: {
@@ -181,156 +179,6 @@ export const defaultTheme: ThemeInitializer = {
       link: { name: 'ui-external-link', type: 'Svg' },
       resource: { name: 'ui-external-link', type: 'Svg' },
       video: { name: 'ui-recordVideo', type: 'Svg' },
-    };
-    (this as Partial<ITheme>).apps = {
-      'appointments': {
-        accentColors: this.palette.complementary.green,
-        icon: { name: 'appointments', type: 'Svg' },
-      },
-      'archive': {
-        accentColors: this.palette.complementary.yellow,
-        icon: { name: 'archives', type: 'Svg' },
-      },
-      'blog': {
-        accentColors: this.palette.complementary.orange,
-        icon: { name: 'blog', type: 'Svg' },
-      },
-      'calendar': {
-        accentColors: this.palette.complementary.yellow,
-        icon: { name: 'calendar', type: 'Svg' },
-      },
-      'collaborativeeditor': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'pad', type: 'Svg' },
-      },
-      'collaborativewall': {
-        accentColors: this.palette.complementary.green,
-        icon: { name: 'collaborativeWall', type: 'Svg' },
-      },
-      'communities': {
-        accentColors: this.palette.complementary.purple,
-        icon: { name: 'communities', type: 'Svg' },
-      },
-      'community': {
-        accentColors: this.palette.complementary.purple,
-        icon: { name: 'community', type: 'Svg' },
-      },
-      'competences': {
-        accentColors: this.palette.complementary.green,
-        icon: { name: 'competences', type: 'Svg' },
-      },
-      'conversation': {
-        accentColors: this.palette.complementary.yellow,
-        icon: { name: 'messages', type: 'Svg' },
-      },
-      'diary': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'diary', type: 'Svg' },
-      },
-      'edt': {
-        accentColors: this.palette.complementary.green,
-        icon: { name: 'edt', type: 'Svg' },
-      },
-      'exercizer': {
-        accentColors: this.palette.complementary.purple,
-        icon: { name: 'exercices', type: 'Svg' },
-      },
-      'external_link': {
-        accentColors: this.palette.primary,
-        icon: { name: 'ui-external-link', type: 'Svg' },
-      },
-      'formulaire': {
-        accentColors: this.palette.complementary.green,
-        icon: { name: 'form', type: 'Svg' },
-      },
-      'forum': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'forum', type: 'Svg' },
-      },
-      'homework-assistance': {
-        accentColors: this.palette.complementary.indigo,
-        icon: { name: 'homeworkAssistance', type: 'Svg' },
-      },
-      'homeworks': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'homework1D', type: 'Svg' },
-      },
-      'magneto': {
-        accentColors: this.palette.complementary.yellow,
-        icon: { name: 'magneto', type: 'Svg' },
-      },
-      'mediacentre': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'mediacentre', type: 'Svg' },
-      },
-      'mindmap': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'siteMap', type: 'Svg' },
-      },
-      'nabook': {
-        accentColors: this.palette.primary,
-        icon: { name: 'nabook', type: 'Svg' },
-      },
-      'news': {
-        accentColors: this.palette.complementary.orange,
-        icon: { name: 'newsFeed', type: 'Svg' },
-      },
-      'pages': {
-        accentColors: this.palette.complementary.red,
-        icon: { name: 'pages', type: 'Svg' },
-      },
-      'poll': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'poll', type: 'Svg' },
-      },
-      'presences': {
-        accentColors: this.palette.complementary.green,
-        icon: { name: 'presences', type: 'Svg' },
-      },
-      'rack': {
-        accentColors: this.palette.complementary.red,
-        icon: { name: 'rack', type: 'Svg' },
-      },
-      'rbs': {
-        accentColors: this.palette.complementary.pink,
-        icon: { name: 'rbs', type: 'Svg' },
-      },
-      'schoolbook': {
-        accentColors: this.palette.complementary.orange,
-        icon: { name: 'homeLiaisonDiary', type: 'Svg' },
-      },
-      'scrapbook': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'scrapbook', type: 'Svg' },
-      },
-      'sharebigfiles': {
-        accentColors: this.palette.complementary.purple,
-        icon: { name: 'share-big-files', type: 'Svg' },
-      },
-      'support': {
-        accentColors: this.palette.complementary.green,
-        icon: { name: 'support', type: 'Svg' },
-      },
-      'timeline': {
-        accentColors: this.palette.complementary.indigo,
-        icon: { name: 'report', type: 'Svg' },
-      },
-      'timelinegenerator': {
-        accentColors: this.palette.complementary.yellow,
-        icon: { name: 'timeLineGenerator', type: 'Svg' },
-      },
-      'userbook': {
-        accentColors: this.palette.complementary.green,
-        icon: { name: 'adressBook', type: 'Svg' },
-      },
-      'wiki': {
-        accentColors: this.palette.complementary.blue,
-        icon: { name: 'wiki', type: 'Svg' },
-      },
-      'workspace': {
-        accentColors: this.palette.complementary.orange,
-        icon: { name: 'files', type: 'Svg' },
-      },
     };
     (this as Partial<ITheme>).ui = {
       background: {
@@ -442,56 +290,59 @@ export const defaultTheme: ThemeInitializer = {
   // Magenta color indicated non-defined values
   palette: {
     complementary: {
-      blue: {
+      'blue': {
         dark: '#1B84AC',
         evil: 'magenta',
         light: '#AADAED',
         pale: '#E4F4FF',
         regular: '#2A9CC8',
       },
-      green: {
+      'green': {
         dark: '#33A797',
         evil: 'magenta',
         light: '#A2E0D8',
         pale: '#E7F5F4',
         regular: '#46BFAF',
       },
-      indigo: {
+      'indigo': {
         dark: '#121982',
         evil: 'magenta',
         light: '#9297E5',
         pale: '#DDE8FD',
         regular: '#1A22A2',
       },
-      orange: {
+      'nabook-color': {
+        regular: '#120d37',
+      },
+      'orange': {
         dark: '#F17A17',
         evil: 'magenta',
         light: '#FFC696',
         pale: '#FFEFE3',
         regular: '#FF8D2E',
       },
-      pink: {
+      'pink': {
         dark: '#9C2288',
         evil: 'magenta',
         light: '#E39CD7',
         pale: '#FFE5FB',
         regular: '#B930A2',
       },
-      purple: {
+      'purple': {
         dark: '#5D1D79',
         evil: 'magenta',
         light: '#B68ACA',
         pale: '#F4EAF9',
         regular: '#763294',
       },
-      red: {
+      'red': {
         dark: '#C82222',
         evil: 'magenta',
         light: '#F48A8A',
         pale: '#FFD9D9',
         regular: '#E13A3A',
       },
-      yellow: {
+      'yellow': {
         dark: '#DAA910',
         evil: 'magenta',
         light: '#F6DE94',

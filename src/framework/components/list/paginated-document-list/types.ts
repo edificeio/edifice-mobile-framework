@@ -7,6 +7,12 @@ import type { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './docum
 import { EntAppNameOrSynonym } from '~/app/intents';
 import type { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
 import { IMedia } from '~/framework/util/media-deprecated';
+import { IAppBadgeInfo } from '~/framework/util/moduleTool';
+
+export type AppBadge = {
+  icon: string | IAppBadgeInfo['icon'];
+  color?: IAppBadgeInfo['color'];
+};
 
 interface DocumentItemBase<IdType> {
   title: string;
@@ -65,14 +71,16 @@ export interface CommonPaginatedDocumentListProps<AppTypes extends EntAppNameOrS
 }
 
 export interface PaginatedDocumentFlashListProps<AppTypes extends EntAppNameOrSynonym, IdType>
-  extends Omit<
+  extends
+    Omit<
       PaginatedFlashListProps<DocumentItem<AppTypes, IdType> | FolderItem<IdType>>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,
     CommonPaginatedDocumentListProps<AppTypes, IdType> {}
 
 export interface PaginatedDocumentFlatListProps<AppTypes extends EntAppNameOrSynonym, IdType>
-  extends Omit<
+  extends
+    Omit<
       PaginatedFlatListProps<PaginatedDocumentListItem<AppTypes, IdType>>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,

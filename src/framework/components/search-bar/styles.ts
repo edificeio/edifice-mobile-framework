@@ -28,6 +28,7 @@ export default StyleSheet.create({
     marginLeft: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
     ...TextSizeStyle.Medium,
+    lineHeight: TextSizeStyle.Medium.fontSize * 1.2,
   },
   textInputIOS: {
     lineHeight: 0, // fixes ios alignment

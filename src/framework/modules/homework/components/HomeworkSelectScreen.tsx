@@ -7,10 +7,10 @@ import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
+import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
 
@@ -50,16 +50,17 @@ export const computeNavBar = ({
   }),
 });
 
-export class HomeworkSelectScreen extends React.PureComponent<HomeworkSelectScreenProps> {
-  onPressDiary = (diary: IHomeworkDiary) => {
-    const { navigation, onSelect } = this.props;
+function HomeworkSelectScreenComponent(props: HomeworkSelectScreenProps) {
+  const appTheme = useAppTheme('homework');
+  const { diaryList, navigation, onRefresh, onSelect, session } = props;
+
+  const onPressDiary = (diary: IHomeworkDiary) => {
     onSelect(diary.id);
-    navigation.navigate(homeworkRouteNames.homeworkCreate);
+    navigation.navigate(homeworkRouteNames.homeworkCreate, {});
     Trackers.trackEvent('Homework', 'SELECT');
   };
 
-  renderEmptyDiaryList = () => {
-    const { session } = this.props;
+  const renderEmptyDiaryList = () => {
     const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
     return (
@@ -74,23 +75,21 @@ export class HomeworkSelectScreen extends React.PureComponent<HomeworkSelectScre
     );
   };
 
-  render() {
-    const { diaryList, onRefresh } = this.props;
-
-    return (
-      <ResourcePicker
-        data={diaryList}
-        emptyComponent={this.renderEmptyDiaryList}
-        onRefresh={onRefresh}
-        onPressItem={this.onPressDiary}
-        defaultThumbnail={{
-          background: moduleConfig.displayColor.pale,
-          fill: moduleConfig.displayColor.regular,
-          name: 'homework1D',
-        }}
-      />
-    );
-  }
+  return (
+    <ResourcePicker
+      data={diaryList}
+      emptyComponent={renderEmptyDiaryList}
+      onRefresh={onRefresh}
+      onPressItem={onPressDiary}
+      defaultThumbnail={{
+        background: appTheme.colors.pale,
+        fill: appTheme.colors.regular,
+        name: 'homework1D',
+      }}
+    />
+  );
 }
+
+export const HomeworkSelectScreen = React.memo(HomeworkSelectScreenComponent);
 
 export default HomeworkSelectScreen;

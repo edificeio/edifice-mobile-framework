@@ -39,8 +39,8 @@ const permissionI18nMap: Record<PermissionScenario, { title: string; text: strin
     title: 'gallery-read-permissionblocked-title',
   },
   'gallery.write': {
-    text: 'gallery-write-permissionblocked-text',
-    title: 'gallery-write-permissionblocked-title',
+    text: 'gallery-read-permissionblocked-text',
+    title: 'gallery-read-permissionblocked-title',
   },
 };
 
@@ -75,7 +75,7 @@ const permissionScenarios = {
   })!,
   'gallery.write': Platform.select<PermissionRequirement>({
     android: api < ANDROID_10 ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE : true,
-    ios: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
+    ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
 };
 

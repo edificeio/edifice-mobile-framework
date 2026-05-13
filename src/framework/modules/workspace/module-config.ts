@@ -1,13 +1,8 @@
 import type { IWorkspaceState } from './reducer';
 
-import theme from '~/app/theme';
-import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'workspace', IWorkspaceState>({
-  displayAs: ModuleType.MYAPPS_MODULE,
-  displayColor: theme.apps.workspace.accentColors,
-  displayI18n: 'workspace-moduleconfig-modulename',
-  displayPicture: theme.apps.workspace.icon,
   entcoreScope: ['workspace'],
   entcoreTrackingName: 'Workspace',
   fileManager: {
@@ -17,7 +12,8 @@ export default new NavigableModuleConfig<'workspace', IWorkspaceState>({
       sources: ['camera', 'gallery', 'documents'],
     },
   } as const,
-  matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('ESPACE DOCUMENTAIRE'),
+  hasRight: ({ matchingApps }) => matchingApps.some(entcoreApp => entcoreApp.name.toUpperCase().includes('ESPACE DOCUMENTAIRE')),
+  matchEntcoreApp: 'Espace documentaire',
   name: 'workspace',
   storageName: 'workspace',
 });

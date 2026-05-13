@@ -1,0 +1,37 @@
+diff --git a/node_modules/react-native-reanimated-carousel/lib/typescript/types.d.ts b/node_modules/react-native-reanimated-carousel/lib/typescript/types.d.ts
+index a47fac7..cfaa067 100644
+--- a/node_modules/react-native-reanimated-carousel/lib/typescript/types.d.ts
++++ b/node_modules/react-native-reanimated-carousel/lib/typescript/types.d.ts
+@@ -1,7 +1,7 @@
+ import type { StyleProp, ViewStyle } from "react-native";
+ import type { PanGesture } from "react-native-gesture-handler";
+-import type { SharedValue, WithSpringConfig, WithTimingConfig } from "react-native-reanimated";
+ import type Animated from "react-native-reanimated";
++import type { SharedValue, WithSpringConfig, WithTimingConfig } from "react-native-reanimated";
+ import type { TParallaxModeProps } from "./layouts/parallax";
+ import type { TStackModeProps } from "./layouts/stack";
+ export type IComputedDirectionTypes<T, VP = {}, HP = {}> = (T & VP & {
+diff --git a/node_modules/react-native-reanimated-carousel/src/components/ItemRenderer.tsx b/node_modules/react-native-reanimated-carousel/src/components/ItemRenderer.tsx
+index deee0c1..80c9cb3 100644
+--- a/node_modules/react-native-reanimated-carousel/src/components/ItemRenderer.tsx
++++ b/node_modules/react-native-reanimated-carousel/src/components/ItemRenderer.tsx
+@@ -1,5 +1,5 @@
+-import React from "react";
+ import type { FC } from "react";
++import React from "react";
+ import type { ViewStyle } from "react-native";
+ import type { SharedValue } from "react-native-reanimated";
+ import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
+diff --git a/node_modules/react-native-reanimated-carousel/src/hooks/useVisibleRanges.tsx b/node_modules/react-native-reanimated-carousel/src/hooks/useVisibleRanges.tsx
+index eb0ee64..37aaf85 100644
+--- a/node_modules/react-native-reanimated-carousel/src/hooks/useVisibleRanges.tsx
++++ b/node_modules/react-native-reanimated-carousel/src/hooks/useVisibleRanges.tsx
+@@ -71,7 +71,7 @@ export function useVisibleRanges(options: {
+ 
+     cachedRanges.current = newRanges;
+     return cachedRanges.current;
+-  }, [loop, total, windowSize, translation]);
++  }, [loop, total, viewSize, windowSize, translation]);
+ 
+   return ranges;
+ }

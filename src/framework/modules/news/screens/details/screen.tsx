@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import styles from './styles';
-import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
+import { NewsDetailsHeaderProps, NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -30,6 +30,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
+import { AudienceViews } from '~/framework/modules/audience/types';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   deleteCommentNewsItemAction,
@@ -37,6 +38,7 @@ import {
   editCommentNewsItemAction,
   getNewsItemAction,
   getNewsItemCommentsAction,
+  newsCountViewsAction,
   publishCommentNewsItemAction,
 } from '~/framework/modules/news/actions';
 import NewsPlaceholderDetails from '~/framework/modules/news/components/placeholder/details';
@@ -64,6 +66,38 @@ export const computeNavBar = ({
   }),
 });
 
+const NewsDetailsHeader = React.memo(({ commentsCount, news, thread }: NewsDetailsHeaderProps) => {
+  return (
+    <ResourceView
+      header={
+        <CardTopContent
+          image={<ThumbnailThread icon={thread.icon} square />}
+          text={thread.title}
+          {...(news.headline ? { statusColor: theme.palette.complementary.orange.regular, statusIcon: 'ui-star-filled' } : null)}
+          style={styles.detailsHeaderTopContent}
+        />
+      }
+      customHeaderStyle={styles.detailsHeader}
+      footer={<CardFooter icon="ui-messageInfo" text={commentsString(commentsCount)} />}
+      style={styles.ressourceView}>
+      <CaptionItalicText style={styles.detailsDate}>
+        {moment(news.modified).isAfter(news.created)
+          ? `${displayDate(news.modified) + I18n.get('news-details-modified')}`
+          : displayDate(news.modified)}
+      </CaptionItalicText>
+      <HeadingSText>{news.title}</HeadingSText>
+      <TextAvatar
+        text={news.owner.displayName}
+        userId={news.owner.id}
+        isHorizontal
+        size={UI_SIZES.elements.icon.default}
+        viewStyle={styles.detailsOwner}
+      />
+      <HtmlContentView html={news.content} />
+    </ResourceView>
+  );
+});
+
 const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const {
     handleDeleteComment,
@@ -72,6 +106,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     handleGetNewsItem,
     handleGetNewsItemComments,
     handlePublishComment,
+    handleViewsCount,
     navigation,
     route,
     session,
@@ -81,19 +116,24 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const [news, setNews] = useState<NewsItem>();
   const [thread, setThread] = useState<NewsThreadItemReduce>();
   const [comments, setComments] = useState<NewsCommentItem[]>();
+  const [commentsCount, setCommentsCount] = useState<number>(0);
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
   const [infoComment, setInfoComment] = useState<InfoCommentField>({ changed: false, isPublication: false, type: '', value: '' });
   const [indexEditingComment, setIndexEditingComment] = useState<number | undefined>(undefined);
   const [listHeight, setListHeight] = useState<number>(0);
+  const [_audienceViews, setAudienceViews] = useState<AudienceViews | undefined>(undefined);
+  const hasCountedViewRef = useRef<boolean>(false);
 
   const isThreadManager = useMemo(
     () => thread?.sharedRights.includes(NewsThreadItemRights.MANAGER) || session!.user.id === thread?.ownerId,
     [thread, session],
   );
+
   const hasPermissionDelete = useMemo(() => {
     return session!.user.id === news?.owner.id || isThreadManager;
   }, [news, session, isThreadManager]);
+
   const hasPermissionComment = useMemo(() => {
     return news?.sharedRights.includes(NewsItemRights.COMMENT) || session!.user.id === news?.owner.id;
   }, [news, session]);
@@ -104,18 +144,21 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
       ios: FlatList,
     })!;
   }, []);
+
   const PageComponent = useMemo(() => {
     return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
   }, []);
 
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
 
-  const commentFieldRefs: any[] = [];
+  const commentFieldRefs = useRef<Record<number, any>>({});
 
   const getComments = useCallback(
     async (newsInfo: NewsItem) => {
       const newsItemComments = await handleGetNewsItemComments(newsInfo.id);
       setComments(newsItemComments);
+
+      setCommentsCount(newsItemComments?.length ?? 0);
     },
     [handleGetNewsItemComments],
   );
@@ -142,8 +185,15 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         setThread(route.params.thread);
         await getComments(route.params.news);
       } else if (notif) {
-        const infoId = newsUriCaptureFunction(notif.resource.uri);
-        await onRefresh(infoId);
+        // Priority to resource.idÒ, fallback to regex for retrocompatibility
+        const infoId = notif.resource?.id ?? newsUriCaptureFunction(notif.resource?.uri);
+        if (!infoId) {
+          console.error('[NewsDetailsScreen] No ID found in Notification', notif);
+          setLoadingState(AsyncPagedLoadingState.INIT_FAILED);
+          setShowPlaceholder(false);
+          return;
+        }
+        await onRefresh(Number(infoId));
       } else {
         setLoadingState(AsyncPagedLoadingState.INIT_FAILED);
         throw new Error();
@@ -161,6 +211,12 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     Alert.alert(I18n.get('news-details-error-title'), I18n.get('news-details-error-text'));
   }, []);
 
+  const onNewInfoDelete = React.useCallback(() => {
+    if (news?.id) {
+      handleDeleteInfo(news.id).then(() => navigation.goBack());
+    }
+  }, [handleDeleteInfo, navigation, news]);
+
   const doDeleteNews = useCallback(() => {
     try {
       Alert.alert(I18n.get('news-details-deletion-title'), I18n.get('news-details-deletion-text'), [
@@ -169,7 +225,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           text: I18n.get('common-cancel'),
         },
         {
-          onPress: () => handleDeleteInfo(news?.threadId, news?.id).then(() => navigation.goBack()),
+          onPress: onNewInfoDelete,
           style: 'destructive',
           text: I18n.get('common-delete'),
         },
@@ -177,7 +233,22 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     } catch {
       showAlertError();
     }
-  }, [handleDeleteInfo, navigation, news, showAlertError]);
+  }, [onNewInfoDelete, showAlertError]);
+
+  const onDeleteComment = React.useCallback(
+    commentId => async () => {
+      try {
+        if (news) {
+          if (indexEditingComment) setIndexEditingComment(undefined);
+          await handleDeleteComment(news?.id, commentId);
+          await getComments(news);
+        }
+      } catch {
+        showAlertError();
+      }
+    },
+    [news, indexEditingComment, handleDeleteComment, getComments, showAlertError],
+  );
 
   const doDeleteComment = useCallback(
     async commentId => {
@@ -187,27 +258,17 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           text: I18n.get('common-cancel'),
         },
         {
-          onPress: async () => {
-            try {
-              if (news) {
-                if (indexEditingComment) setIndexEditingComment(undefined);
-                await handleDeleteComment(news?.id, commentId);
-                await getComments(news);
-              }
-            } catch {
-              showAlertError();
-            }
-          },
+          onPress: onDeleteComment(commentId),
           style: 'destructive',
           text: I18n.get('common-delete'),
         },
       ]);
     },
-    [getComments, handleDeleteComment, indexEditingComment, news, showAlertError],
+    [onDeleteComment],
   );
 
   const doPublishComment = useCallback(
-    async (newsItem, comment) => {
+    newsItem => async (comment: string) => {
       try {
         await handlePublishComment(newsItem?.id, comment);
         await getComments(newsItem);
@@ -237,155 +298,187 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     [getComments, handleEditComment, showAlertError],
   );
 
+  const onInitRefresh = React.useCallback(() => {
+    init();
+  }, [init]);
+
+  const handlePublishEditComment = React.useCallback(
+    (commentValue, commentId) => {
+      doEditComment(news, commentValue, commentId);
+    },
+    [doEditComment, news],
+  );
+
+  const handleChangeInfoComment = React.useCallback(data => {
+    setInfoComment(() => ({ ...data }));
+  }, []);
+
+  const handleCommentFieldRef = React.useCallback(
+    commentId => element => {
+      commentFieldRefs.current[commentId] = element;
+    },
+    [],
+  );
+
+  const onExtractKey = React.useCallback(item => item.id.toString(), []);
+
   const renderError = useCallback(() => {
     return (
       <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => init()} />}>
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={onInitRefresh} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
-  }, [init, loadingState]);
+  }, [onInitRefresh, loadingState]);
 
   const renderFooter = useCallback(() => {
     return hasPermissionComment && isEmpty(indexEditingComment) ? (
       <BottomEditorSheet
-        onPublishComment={commentValue => doPublishComment(news, commentValue)}
+        onPublishComment={doPublishComment(news)}
         isPublishingComment={false}
-        onChangeText={data => setInfoComment(() => ({ ...data }))}
+        onChangeText={handleChangeInfoComment}
       />
     ) : (
       <View />
     );
-  }, [doPublishComment, hasPermissionComment, indexEditingComment, news]);
+  }, [doPublishComment, handleChangeInfoComment, hasPermissionComment, indexEditingComment, news]);
 
   const renderNewsDetails = useCallback(() => {
     if (news && thread) {
-      return (
-        <ResourceView
-          header={
-            <CardTopContent
-              image={<ThumbnailThread icon={thread.icon} square />}
-              text={thread.title}
-              {...(news.headline
-                ? { statusColor: theme.palette.complementary.orange.regular, statusIcon: 'ui-star-filled' }
-                : null)}
-              style={styles.detailsHeaderTopContent}
-            />
-          }
-          customHeaderStyle={styles.detailsHeader}
-          footer={<CardFooter icon="ui-messageInfo" text={commentsString(comments?.length)} />}
-          style={styles.ressourceView}>
-          <CaptionItalicText style={styles.detailsDate}>
-            {moment(news.modified).isAfter(news.created)
-              ? `${displayDate(news.modified) + I18n.get('news-details-modified')}`
-              : displayDate(news.modified)}
-          </CaptionItalicText>
-          <HeadingSText>{news.title}</HeadingSText>
-          <TextAvatar
-            text={news.owner.displayName}
-            userId={news.owner.id}
-            isHorizontal
-            size={UI_SIZES.elements.icon.default}
-            viewStyle={styles.detailsOwner}
-          />
-          <HtmlContentView html={news.content} />
-        </ResourceView>
-      );
+      return <NewsDetailsHeader news={news} thread={thread} commentsCount={commentsCount} />;
     }
-  }, [news, thread, comments]);
+  }, [news, thread, commentsCount]);
+
+  const handleEditComments = React.useCallback(
+    (comment: NewsCommentItem) => () => {
+      const otherComments = comments?.filter(commentItem => commentItem.id !== comment.id);
+      otherComments?.forEach(otherBlogPostComment => {
+        commentFieldRefs.current[otherBlogPostComment.id]?.setIsEditingFalse();
+      });
+      const commentIndex = comments?.findIndex(c => c.id === comment.id);
+
+      if (Platform.OS !== 'ios') {
+        setTimeout(() => {
+          flatListRef.current?.scrollToIndex({
+            index: commentIndex,
+            viewPosition: 1,
+          });
+        }, 100);
+      }
+
+      setIndexEditingComment(commentIndex);
+    },
+    [comments],
+  );
 
   const renderComment = useCallback(
-    (comment: NewsCommentItem) => {
+    ({ item }: { item: NewsCommentItem }) => {
       return (
         <CommentField
-          ref={element => (commentFieldRefs[comment.id] = element)}
-          index={comment.id}
+          ref={handleCommentFieldRef(item.id)}
+          index={item.id}
           isPublishingComment={false}
-          onPublishComment={(commentValue, commentId) => doEditComment(news, commentValue, commentId)}
-          onDeleteComment={commentId => doDeleteComment(commentId)}
-          onChangeText={data => setInfoComment(() => ({ ...data }))}
-          editCommentCallback={() => {
-            const otherComments = comments?.filter(commentItem => commentItem.id !== comment.id);
-            otherComments?.forEach(otherBlogPostComment => {
-              commentFieldRefs[otherBlogPostComment.id]?.setIsEditingFalse();
-            });
-            const commentIndex = comments?.findIndex(c => c.id === comment.id);
-
-            if (Platform.OS !== 'ios') {
-              setTimeout(() => {
-                flatListRef.current?.scrollToIndex({
-                  index: commentIndex,
-                  viewPosition: 1,
-                });
-              }, 100);
-            }
-
-            setIndexEditingComment(commentIndex);
-          }}
-          comment={comment.comment}
-          commentId={comment.id}
-          commentAuthorId={comment.owner}
-          commentAuthor={comment.username}
-          commentDate={comment.created}
+          onPublishComment={handlePublishEditComment}
+          onDeleteComment={doDeleteComment}
+          onChangeText={handleChangeInfoComment}
+          editCommentCallback={handleEditComments(item)}
+          comment={item.comment}
+          commentId={item.id}
+          commentAuthorId={item.owner}
+          commentAuthor={item.username}
+          commentDate={item.created}
           isManager={isThreadManager}
         />
       );
     },
-    [commentFieldRefs, comments, doDeleteComment, doEditComment, isThreadManager, news],
+    [
+      doDeleteComment,
+      handleChangeInfoComment,
+      handleCommentFieldRef,
+      handleEditComments,
+      handlePublishEditComment,
+      isThreadManager,
+    ],
   );
+
+  const handleRefresh = React.useCallback(() => {
+    if (news?.id === undefined) return;
+    onRefresh(news.id);
+  }, [news, onRefresh]);
 
   const renderPage = useCallback(() => {
     if (
-      loadingState === (AsyncPagedLoadingState.INIT_FAILED || AsyncPagedLoadingState.REFRESH_FAILED) ||
+      loadingState === AsyncPagedLoadingState.INIT_FAILED ||
+      loadingState === AsyncPagedLoadingState.REFRESH_FAILED ||
       (news?.expirationDate && today().isAfter(news.expirationDate))
-    )
+    ) {
       return renderError();
+    }
+
     return (
       <>
         <ListComponent
           ref={flatListRef}
-          initialNumToRender={comments?.length}
+          initialNumToRender={comments ? comments.length : 0}
           keyboardShouldPersistTaps="handled"
-          keyExtractor={(item: NewsCommentItem) => item.id.toString()}
+          keyExtractor={onExtractKey}
           data={comments}
           ListHeaderComponent={renderNewsDetails}
           removeClippedSubviews={false}
-          renderItem={({ index, item }) => renderComment(item)}
-          onContentSizeChange={(width, height) => setListHeight(height)}
-          refreshControl={
-            <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => onRefresh(news?.id)} />
-          }
+          renderItem={renderComment}
+          onContentSizeChange={(_width, height) => setListHeight(height)}
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={handleRefresh} />}
           scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
           {...Platform.select({ android: { stickyFooter: renderFooter() }, ios: {} })}
         />
         {Platform.select({ android: null, ios: renderFooter() })}
       </>
     );
-  }, [ListComponent, comments, loadingState, news, onRefresh, renderComment, renderError, renderFooter, renderNewsDetails]);
+  }, [
+    ListComponent,
+    comments,
+    onExtractKey,
+    handleRefresh,
+    renderComment,
+    loadingState,
+    news,
+    renderError,
+    renderFooter,
+    renderNewsDetails,
+  ]);
+
+  const renderRightHeader = React.useCallback(
+    () => (
+      <PopupMenu actions={[deleteAction({ action: doDeleteNews })]}>
+        <NavBarAction icon="ui-options" />
+      </PopupMenu>
+    ),
+    [doDeleteNews],
+  );
+
+  const onNavigateHome = React.useCallback(
+    () => navigation.navigate(newsRouteNames.home, { page: route.params.page }),
+    [navigation, route],
+  );
+
+  const renderLeftHeader = React.useCallback(
+    () => <HeaderBackButton labelVisible={false} tintColor={theme.palette.grey.white as string} onPress={onNavigateHome} />,
+    [onNavigateHome],
+  );
 
   useEffect(() => {
     if (hasPermissionDelete) {
       navigation.setOptions({
-        headerRight: () => (
-          <PopupMenu actions={[deleteAction({ action: doDeleteNews })]}>
-            <NavBarAction icon="ui-options" />
-          </PopupMenu>
-        ),
+        headerRight: renderRightHeader,
       });
     }
-  }, [doDeleteNews, hasPermissionDelete, navigation]);
+  }, [renderRightHeader, hasPermissionDelete, navigation]);
 
   useEffect(() => {
     init();
     if (route.params.page) {
       navigation.setOptions({
-        headerLeft: () => (
-          <HeaderBackButton
-            labelVisible={false}
-            tintColor={theme.palette.grey.white as string}
-            onPress={() => navigation.navigate(newsRouteNames.home, { page: route.params.page })}
-          />
-        ),
+        headerLeft: renderLeftHeader,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -393,7 +486,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      const keyboardSubscription = Keyboard.addListener('keyboardDidShow', event => {
+      const keyboardSubscription = Keyboard.addListener('keyboardDidShow', _event => {
         setTimeout(() => {
           if (indexEditingComment !== undefined && indexEditingComment > -1) {
             flatListRef.current?.scrollToIndex({
@@ -407,34 +500,53 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     }
   }, [indexEditingComment]);
 
-  UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
-    Alert.alert(
-      I18n.get(
-        infoComment.isPublication
-          ? 'news-details-confirmation-unsaved-publication'
-          : 'news-details-confirmation-unsaved-modification',
-      ),
-      I18n.get(
-        `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
-      ),
-      [
-        {
-          onPress: () => {
-            handleRemoveConfirmNavigationEvent(data.action, navigation);
+  useEffect(() => {
+    if (!news) return;
+
+    if (loadingState !== AsyncPagedLoadingState.DONE) return;
+
+    if (news.expirationDate && today().isAfter(news.expirationDate)) return;
+
+    if (hasCountedViewRef.current) return;
+    hasCountedViewRef.current = true;
+
+    handleViewsCount({ module: 'actualites', resourceId: String(news.id) })
+      .then(setAudienceViews)
+      .catch(error => {
+        //for now donno what to put here
+        console.error('[Audience] View count failed', error);
+      });
+  }, [news, loadingState, handleViewsCount]);
+
+  const handlePreventRemove = React.useCallback(
+    ({ data }) => {
+      Alert.alert(
+        I18n.get(
+          infoComment.isPublication
+            ? 'news-details-confirmation-unsaved-publication'
+            : 'news-details-confirmation-unsaved-modification',
+        ),
+        I18n.get(
+          `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
+        ),
+        [
+          {
+            onPress: () => handleRemoveConfirmNavigationEvent(data.action, navigation),
+            style: 'destructive',
+            text: I18n.get('common-quit'),
           },
-          style: 'destructive',
-          text: I18n.get('common-quit'),
-        },
-        {
-          onPress: () => {
-            clearConfirmNavigationEvent();
+          {
+            onPress: clearConfirmNavigationEvent,
+            style: 'default',
+            text: I18n.get('common-continue'),
           },
-          style: 'default',
-          text: I18n.get('common-continue'),
-        },
-      ],
-    );
-  });
+        ],
+      );
+    },
+    [navigation, infoComment],
+  );
+
+  UNSTABLE_usePreventRemove(infoComment.changed, handlePreventRemove);
 
   return (
     <PageComponent {...Platform.select({ android: {}, ios: { safeArea: !hasPermissionComment } })}>
@@ -443,19 +555,19 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   );
 };
 
-const mapStateToProps: (s: IGlobalState) => NewsDetailsScreenDataProps = s => ({
+const mapStateToProps: (_s: IGlobalState) => NewsDetailsScreenDataProps = _s => ({
   session: getSession(),
 });
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => NewsDetailsScreenEventProps = (
   dispatch,
-  getState,
+  _getState,
 ) => ({
   handleDeleteComment: async (infoId, commentId) => {
     return (await dispatch(deleteCommentNewsItemAction(infoId, commentId))) as unknown as number | undefined;
   },
-  handleDeleteInfo: async (threadId, infoId) => {
-    return (await dispatch(deleteNewsItemAction(threadId, infoId))) as unknown as number | undefined;
+  handleDeleteInfo: async infoId => {
+    return (await dispatch(deleteNewsItemAction(infoId))) as unknown as number | undefined;
   },
   handleEditComment: async (infoId: number, comment: string, commentId: number) => {
     return (await dispatch(editCommentNewsItemAction(infoId, comment, commentId))) as unknown as number | undefined;
@@ -468,6 +580,9 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   },
   handlePublishComment: async (infoId: number, comment: string) => {
     return (await dispatch(publishCommentNewsItemAction(infoId, comment))) as unknown as number | undefined;
+  },
+  handleViewsCount: async ({ module, resourceId }) => {
+    return (await dispatch(newsCountViewsAction({ module, resourceId }))) as AudienceViews;
   },
 });
 

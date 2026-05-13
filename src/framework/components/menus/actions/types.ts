@@ -21,6 +21,7 @@ export interface MenuAction {
     android: string;
   };
   destructive?: boolean;
+  testID?: string;
 }
 
 export interface MenuActionProps {

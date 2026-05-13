@@ -98,23 +98,28 @@ export const useDocumentPagination = <
       const itemStyle = getItemStyle(info);
       if (info.item === FOLDER_SPACER_ITEM_DATA) return <FolderSpacerListItem {...info} style={itemStyle} />;
       if (info.item === DOCUMENT_SPACER_ITEM_DATA) return <DocumentSpacerListItem {...info} style={itemStyle} />;
-      return isIndexForFolderOrSpacerItem(info.index) ? (
-        <FolderListItem
-          {...(info as FlatListRenderItemInfo<FolderItem<IdType>>)}
-          onPress={e => onPressFolder?.((info as FlatListRenderItemInfo<FolderItem<IdType>>).item, e)}
-          style={itemStyle}
-        />
-      ) : (
-        <DocumentListItem
-          {...(info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>)}
-          onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>).item, e)}
-          style={itemStyle}
-          testID={'document-item'}
-          alwaysShowAppIcon={alwaysShowAppIcon}
-        />
-      );
+      if (isIndexForFolderOrSpacerItem(info.index)) {
+        return (
+          <FolderListItem
+            {...(info as FlatListRenderItemInfo<FolderItem<IdType>>)}
+            onPress={e => onPressFolder?.((info as FlatListRenderItemInfo<FolderItem<IdType>>).item, e)}
+            style={itemStyle}
+          />
+        );
+      } else {
+        const documentInfo = info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>;
+        return (
+          <DocumentListItem
+            {...documentInfo}
+            onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>).item, e)}
+            style={itemStyle}
+            testID={'document-item'}
+            alwaysShowAppIcon={alwaysShowAppIcon}
+          />
+        );
+      }
     },
-    [getItemStyle, isIndexForFolderOrSpacerItem, onPressDocument, onPressFolder, alwaysShowAppIcon],
+    [getItemStyle, isIndexForFolderOrSpacerItem, alwaysShowAppIcon, onPressFolder, onPressDocument],
   );
 
   const renderPlaceholderItem = React.useCallback<(info: Pick<InfoType, 'index'>) => React.ReactElement>(

@@ -30,23 +30,23 @@ export const checkAndShowSplashAds = async (platform: Platform, userType: Accoun
     const source = `${platform.splashads}/${userType}/${getSplashadsLocale()}/`.toLocaleLowerCase();
     try {
       const response = await Promise.race([timeoutPromise, fetch(source)]);
-
-      if (response && response.status === 200) {
+      console.debug(`[Splashads]: Fetch done ${JSON.stringify(response)}`);
+      if (response?.status === 200) {
         writeSplashadsData(platform.name, moment().startOf('day'), source);
         showSplashads({ resourceUri: source });
       } else {
-        console.error('[Splashads]: Failed to fetch splashads: ', response.status);
+        console.error(`[Splashads]: Failed to fetch splashads: ${response.status}`);
       }
     } catch (error) {
-      console.error('[Splashads]: Failed to fetch splashads: ', error.message);
+      console.error(`[Splashads]: Failed to fetch splashads: ${error.message}`);
     }
   };
   if (platform.splashads) {
     const splashads = readSplashadsData();
     const today = moment().startOf('day');
     const splashadsDay = splashads[platform.name];
-
     if (!splashadsDay || today.isAfter(moment(splashadsDay.date).clone()) || platform.splashads.includes('test')) fetchSplashads();
+    else console.debug(`[Splashads]: Splash still shown for today`);
   }
 };
 

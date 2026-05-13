@@ -51,14 +51,13 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
       if (!isLoaded) {
         setIsTimeout(true);
       }
-    }, 20000);
+    }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [isLoaded]);
 
   const onShouldStartLoadWithRequest = React.useCallback<NonNullable<WebViewProps['onShouldStartLoadWithRequest']>>(request => {
     if (firstLoadRef.current) return true;
-
     openUrl(request.url);
     return false;
   }, []);

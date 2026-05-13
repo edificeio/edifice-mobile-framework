@@ -21,6 +21,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initialWindowMetrics, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 
 import { handleCloseModalActions } from './helper';
 import { getTabBarStyleForNavState } from './hideTabBarAndroid';
@@ -29,12 +30,13 @@ import { ModuleScreens } from './moduleScreens';
 import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { assertSession } from '~/framework/modules/auth/reducer';
+import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
+import { getTabModuleDisplayName } from '~/framework/modules/myapps/reducer/adapter';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
@@ -65,12 +67,12 @@ const createTabIcon = (
   return <Picture {...dp} />;
 };
 
-const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
+const createTabOptions = (moduleConfig: AnyNavigableModuleConfig, tabLabel: string) => {
   return {
     tabBarIcon: props => {
       return createTabIcon(moduleConfig, props);
     },
-    tabBarLabel: I18n.get(moduleConfig.displayI18n),
+    tabBarLabel: tabLabel,
     tabBarTestID: moduleConfig.testID ?? '',
   } as BottomTabNavigationOptions;
 };
@@ -143,6 +145,7 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
 
 export function TabNavigation() {
   const session = assertSession();
+  const aggregatedApps = useSelector(selectAggregatedApps);
   // Note: the following tabModules.get() reintanciates return value every time. We need to memoize it to avoid re-renders
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const tabModulesCache = React.useMemo(() => tabModules.get(), [session]);
@@ -165,18 +168,18 @@ export function TabNavigation() {
     return availableTabModules.map(module => {
       const index = tabModulesCache.findIndex(tm => tm.config.name === module.config.name);
       if (index < 0) return undefined;
-
+      const tabLabel = getTabModuleDisplayName(module.config, aggregatedApps);
       return (
         <Tab.Screen
           key={module.config.routeName}
           name={computeTabRouteName(module.config.routeName)}
-          options={createTabOptions(module.config)}
+          options={createTabOptions(module.config, tabLabel)}
           listeners={tabListeners}>
           {moduleTabStackGetterCache[index]}
         </Tab.Screen>
       );
     });
-  }, [availableTabModules, tabModulesCache, moduleTabStackGetterCache]);
+  }, [availableTabModules, tabModulesCache, moduleTabStackGetterCache, aggregatedApps]);
 
   // Avoid bug when launching app after first push
   const initialBottomInset = initialWindowMetrics?.insets.bottom ?? UI_SIZES.screen.bottomInset;
@@ -188,7 +191,7 @@ export function TabNavigation() {
 
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(
-      ({ navigation, route }) => {
+      ({ _route, navigation }) => {
         return {
           // Prevent navBar flickering with this option
           freezeOnBlur: true,

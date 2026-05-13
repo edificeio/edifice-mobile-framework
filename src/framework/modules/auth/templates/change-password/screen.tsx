@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';
 import { ChangePasswordScreenPrivateProps, ChangePasswordScreenProps, ChangePasswordScreenStoreProps, IFields } from './types';
-import { AccountError } from '../../model/error';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -37,6 +36,7 @@ import {
   IChangePasswordPayload,
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
+import { AccountError } from '~/framework/modules/auth/model/error';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
 import { OAuth2Error } from '~/framework/util/oauth2';
