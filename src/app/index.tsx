@@ -5,7 +5,6 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import * as RNLocalize from 'react-native-localize';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Redux from 'react-redux';
 
@@ -20,32 +19,24 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import appConf from '~/framework/util/appConf';
-import { isEmpty } from '~/framework/util/object';
 import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { ZendeskProvider } from '~/framework/util/zendesk';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
 function useAppState() {
-  const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
   const currentState = React.useRef<AppStateStatus>(AppState.currentState);
 
-  const handleAppStateChange = React.useCallback(
-    (nextAppState: AppStateStatus) => {
-      currentState.current = nextAppState;
-      if (nextAppState === 'active') {
-        // Track foreground state
-        Trackers.trackDebugEvent('Application', 'DISPLAY');
-        // Change locale if needed
-        const locales = RNLocalize.getLocales();
-        const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
-        I18n.setLanguage().then(lng => {
-          if (newLocale !== currentLocale) setCurrentLocale(lng as I18n.SupportedLocales);
-        });
-      }
-    },
-    [currentLocale],
-  );
+  const handleAppStateChange = React.useCallback((nextAppState: AppStateStatus) => {
+    currentState.current = nextAppState;
+    if (nextAppState === 'active') {
+      // Track foreground state
+      Trackers.trackDebugEvent('Application', 'DISPLAY');
+      // check if the system language has changed
+      // while in background, and restart if needed.
+      I18n.refreshLanguageIfChanged();
+    }
+  }, []);
 
   React.useEffect(() => {
     const appStateListener = AppState.addEventListener('change', handleAppStateChange);

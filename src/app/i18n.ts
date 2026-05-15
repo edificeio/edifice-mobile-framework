@@ -123,26 +123,36 @@ export namespace I18n {
     return values as string[];
   }
 
-  // Get current language
   export function getLanguage(): I18n.SupportedLocales {
     return i18n.language as I18n.SupportedLocales;
   }
 
-  // Set language to device one
   export async function setLanguage() {
-    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(supportedLanguages) as {
-      languageTag: string;
-      isRTL: boolean;
-    };
+    // getLocales() is always up to date.
+    const locales = RNLocalize.getLocales();
     const lang = await OldStorageFunctions.getItemJson(I18N_APP_LANG);
+    let newLang: string;
     if (isEmpty(lang)) {
-      const newLang = bestAvailableLanguage?.languageTag ?? fallbackLng;
-      i18n.language = newLang;
+      // in auto mode, pick the selected system language only if the app supports it.
+      const langTag = locales[0]?.languageCode;
+      newLang = langTag && (supportedLanguages as readonly string[]).includes(langTag) ? langTag : fallbackLng;
     } else {
-      i18n.language = (lang as string) ?? fallbackLng;
+      // in manual mode, respect the user's choice.
+      newLang = (lang as string) ?? fallbackLng;
     }
-    moment.locale(momentLocales[i18n.language?.split('-')[0]] ?? momentLocales.default);
-    return i18n.language;
+    i18n.language = newLang;
+    moment.locale(momentLocales[newLang.split('-')[0]] ?? momentLocales.default);
+    return newLang;
+  }
+
+  // Called when back to the foreground.
+  // If the system language changed while in background, restart to apply it.
+  export async function refreshLanguageIfChanged(): Promise<void> {
+    const previousLang = i18n.language;
+    const newLang = await setLanguage();
+    if (newLang !== previousLang) {
+      RNRestart.restart();
+    }
   }
 
   export const changeLanguage = async (lang: SupportedLocales | 'auto') => {
@@ -152,7 +162,6 @@ export namespace I18n {
     RNRestart.restart();
   };
 
-  // Toggle i18n Keys (dev && alpha only)
   // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
   export const toggleShowKeys = async () => {
     if (canShowKeys) {
