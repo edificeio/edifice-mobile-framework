@@ -13,6 +13,5 @@ export interface MultimediaCarouselNavParams {
  * @param props
  */
 export function openMultimediaCarousel(props: MultimediaCarouselNavParams) {
-  console.info('hook', useNavigation());
   useNavigation().navigate('media/carousel', props);
 }

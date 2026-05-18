@@ -21,6 +21,22 @@ const defaultNavBarOptions = (
   icon: SvgIconName,
   title?: string,
 ): ReturnType<Extract<NativeStackNavigatorProps['screenOptions'], Function>> => ({
+  headerLeft: ({ canGoBack, tintColor }) =>
+    canGoBack ? (
+      <>
+        <HeaderBackButton
+          backImage={({ tintColor: fill }) => (
+            <Svg name={icon} fill={fill} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
+          )}
+          tintColor={tintColor}
+          onPress={navigation.goBack}
+          displayMode="minimal"
+          testID="header-back"
+        />
+      </>
+    ) : (
+      <></>
+    ),
   headerTitle: title
     ? titleProps => (
         <HeaderTitle {...titleProps} testID="header-title">

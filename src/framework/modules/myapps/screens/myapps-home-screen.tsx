@@ -92,6 +92,32 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
 
   React.useEffect(() => {
     navigation.setOptions({
+      headerRight: props => (
+        <>
+          {
+            headerAction(
+              {
+                disabled: isAggregatedAppsEmpty,
+                icon: hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif',
+                onPress: handleOpenOnboarding,
+                testID: hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif',
+              },
+              props,
+            ).element
+          }
+          {
+            headerAction(
+              {
+                disabled: isAggregatedAppsEmpty,
+                icon: 'ui-options',
+                onPress: () => openBottomSheet('home_menu'),
+                testID: 'myapps-navbar-context-menu',
+              },
+              props,
+            ).element
+          }
+        </>
+      ),
       unstable_headerRightItems: props => [
         headerAction(
           {

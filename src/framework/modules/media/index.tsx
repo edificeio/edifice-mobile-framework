@@ -5,6 +5,7 @@ import { Action } from 'redux';
 import { RootModule } from '~/app/module';
 import MultimediaCarousel, { MultimediaCarouselScreenOptions } from '~/framework/components/carousel-multimedia/';
 import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 
 export default new RootModule<
   'media',
@@ -23,3 +24,5 @@ export default new RootModule<
     </>
   ),
 );
+
+setModalModeForRoutes(['media/carousel']);

@@ -118,6 +118,11 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
 
 export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) => {
   return {
+    headerLeft: () => (
+      <HeaderButton testID="timeline-profile-button" onPress={() => navigation.navigate('user')}>
+        <SelfAvatar size={Platform.OS === 'ios' ? 'xsm' : 'sm'} />
+      </HeaderButton>
+    ),
     title: I18n.get('timeline-appname'),
     unstable_headerLeftItems: () => [
       {
@@ -367,6 +372,31 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     const workflows = session ? getTimelineWorkflows(session, navigation) : [];
 
     this.props.navigation.setOptions({
+      headerRight: props => {
+        const ret: React.ReactNode[] = [
+          headerAction(
+            {
+              icon: 'ui-filter',
+              onPress: () => {
+                this.props.navigation.navigate('timeline/filters');
+              },
+              testID: 'timeline-filter-button',
+            },
+            props,
+          ).element,
+        ];
+        if (workflows.length > 0) {
+          const action = headerAction(
+            {
+              icon: 'ui-plus',
+              testID: 'timeline-add-button',
+            },
+            props,
+          );
+          ret.push(<PopupMenu actions={workflows}>{action.element}</PopupMenu>);
+        }
+        return ret;
+      },
       unstable_headerRightItems: props => {
         const ret: NativeStackHeaderItem[] = [
           headerAction(

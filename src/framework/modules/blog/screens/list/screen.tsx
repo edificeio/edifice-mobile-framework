@@ -92,10 +92,13 @@ const BlogPostListScreenLoaded = ({
 
   React.useEffect(() => {
     navigation.setOptions({
-      title: blog.title ?? I18n.get('blog-appname'),
+      headerRight: hasBlogPostCreationRights
+        ? props => headerAction({ icon: 'ui-plus', onPress: onGoToPostCreationScreen, testID: 'header-post-create' }, props).element
+        : undefined,
 
+      title: blog.title ?? I18n.get('blog-appname'),
       unstable_headerRightItems: hasBlogPostCreationRights
-        ? props => [headerAction({ icon: 'ui-plus', onPress: onGoToPostCreationScreen }, props)]
+        ? props => [headerAction({ icon: 'ui-plus', onPress: onGoToPostCreationScreen, testID: 'header-post-create' }, props)]
         : undefined,
     });
   }, [blog.title, hasBlogPostCreationRights, navigation, onGoToPostCreationScreen]);
