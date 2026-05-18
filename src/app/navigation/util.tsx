@@ -116,6 +116,7 @@ export function modalScreenOptions<T extends keyof AllModulesNavigationParams = 
     const { title, ...options } = _options(props);
     return {
       presentation,
+      tabBarVisible: false,
       ...defaultNavBarOptions(props, 'ui-close', title),
       ...options,
     } as Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;

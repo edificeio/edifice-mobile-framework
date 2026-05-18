@@ -18,6 +18,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import ErrorScreenView from '~/framework/components/screen/error';
 import { TextFontStyle } from '~/framework/components/text';
 import { ToastContainer } from '~/framework/components/toast';
+import { getTabBarStyleForNavState } from '~/framework/navigation/hideTabBarAndroid';
 import { DeepPartial } from '~/utils/types';
 
 import { AllModulesNavigationParams, AllModulesScreenNames, NavigationRootParams } from './types';
@@ -101,26 +102,29 @@ export function TabScreenLayout({
   return <StackScreenLayout {...props}>{children}</StackScreenLayout>;
 }
 
-export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ theme: navTheme }) => ({
-  freezeOnBlur: true,
-  headerShown: false,
-  lazy: true,
-  popToTopOnBlur: true,
-  tabBarActiveTintColor: theme.palette.primary.regular.toString(),
-  tabBarIconStyle: Platform.select({
-    default: {
-      height: UI_SIZES.elements.icon.small,
-      width: UI_SIZES.elements.icon.small,
+export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ navigation, theme: navTheme }) => {
+  return {
+    freezeOnBlur: true,
+    headerShown: false,
+    lazy: true,
+    popToTopOnBlur: true,
+    tabBarActiveTintColor: theme.palette.primary.regular.toString(),
+    tabBarIconStyle: Platform.select({
+      default: {
+        height: UI_SIZES.elements.icon.small,
+        width: UI_SIZES.elements.icon.small,
+      },
+      ios: undefined,
+    }),
+    tabBarInactiveTintColor: theme.ui.text.light.toString(),
+    tabBarStyle: {
+      backgroundColor: navTheme.colors.background,
+      borderTopColor: navTheme.colors.border,
+      borderTopWidth: 1,
+      ...getTabBarStyleForNavState(navigation.getState()),
     },
-    ios: undefined,
-  }),
-  tabBarInactiveTintColor: theme.ui.text.light.toString(),
-  tabBarStyle: {
-    backgroundColor: navTheme.colors.background,
-    borderTopColor: navTheme.colors.border,
-    borderTopWidth: 1,
-  },
-});
+  };
+};
 
 export const getTabBarIconSize = (defaultSize: number) =>
   Platform.select({ default: UI_SIZES.elements.icon.small, ios: defaultSize });
