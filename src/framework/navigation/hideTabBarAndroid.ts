@@ -30,7 +30,7 @@ export const getTabBarStyleForNavState = (navState: NavigationState) => {
   const currentTab = navState.routes[navState.index];
   const currentScreen =
     currentTab?.state && currentTab.state.index !== undefined ? currentTab.state.routes[currentTab.state.index] : undefined;
-  if (currentScreen?.params?.tabBarVisible === false) return { display: 'none' };
+  if (currentScreen?.params?.tabBarVisible === false) return { display: 'none' as const };
   if (Platform.OS !== 'android') return undefined;
   const hideTabBar = currentScreen?.name && isModalModeOnThisRoute(currentScreen?.name);
   return hideTabBar ? { display: 'none' as const } : undefined;
