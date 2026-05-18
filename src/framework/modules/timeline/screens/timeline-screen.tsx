@@ -120,7 +120,9 @@ export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) 
   return {
     headerLeft: () => (
       <HeaderButton testID="timeline-profile-button" onPress={() => navigation.navigate('user')}>
-        <SelfAvatar size={Platform.OS === 'ios' ? 'xsm' : 'sm'} />
+        <View style={{ padding: UI_SIZES.border.small }}>
+          <SelfAvatar size="sm" />
+        </View>
       </HeaderButton>
     ),
     title: I18n.get('timeline-appname'),
@@ -128,7 +130,9 @@ export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) 
       {
         element: (
           <HeaderButton testID="timeline-profile-button" onPress={() => navigation.navigate('user')}>
-            <SelfAvatar size={Platform.OS === 'ios' ? 'xsm' : 'sm'} />
+            <View style={{ padding: UI_SIZES.border.small }}>
+              <SelfAvatar size="sm" />
+            </View>
           </HeaderButton>
         ),
         type: 'custom',
