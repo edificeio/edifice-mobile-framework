@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Platform, ScrollViewProps, StatusBar, TouchableOpacity, View } from 'react-native';
+import { Platform, ScrollViewProps, StatusBar, TouchableOpacity, View } from 'react-native';
 
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase } from '@react-navigation/native';
@@ -10,7 +10,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { HeadingXSText } from '~/framework/components/text';
-import { navBarOptions } from '~/framework/navigation/navBar';
 
 import CommunityNavbar from './community-navbar';
 import { CommunityNavbarPlaceholder } from './community-navbar/component';
@@ -116,17 +115,11 @@ export default function useCommunityScrollableThumbnail({
 useCommunityScrollableThumbnail.stickyHeaderIndices = [0, 1];
 
 export const communityNavBar = <NavigationParams extends ParamListBase, RouteName extends string & keyof NavigationParams>(
-  { navigation, route }: NativeStackScreenProps<NavigationParams, RouteName>,
+  { navigation }: NativeStackScreenProps<NavigationParams, RouteName>,
   onInfoButton?: () => void,
 ): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: '',
-  }),
-
   header: () => (
-    <View style={{ marginTop: Platform.select({ android: StatusBar.currentHeight, ios: 0 }) }}>
+    <View>
       <Header
         title=""
         headerRight={
