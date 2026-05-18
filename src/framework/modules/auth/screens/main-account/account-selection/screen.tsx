@@ -23,7 +23,6 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
-import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
 import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
@@ -105,7 +104,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
     [accounts, tryRemoveAccount],
   );
 
-  const onAddAccount = React.useCallback(async () => navigation.navigate(authRouteNames.addAccountModal, {}), [navigation]);
+  const onAddAccount = React.useCallback(async () => navigation.navigate('auth/add-account', {}), [navigation]);
 
   const keyExtractor: FlatListProps<(typeof dataforList)[0]>['keyExtractor'] = React.useCallback(
     (item: (typeof dataforList)[0]) => item.id,

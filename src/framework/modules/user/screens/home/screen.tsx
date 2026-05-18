@@ -32,7 +32,6 @@ import {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getNavActionForAccountSwitch } from '~/framework/modules/auth/navigation/main-account/router';
 import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/redux/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
