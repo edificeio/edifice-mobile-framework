@@ -41,7 +41,13 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
 
   const renderFallbackIcon = () =>
     app.isConnector ? (
-      <Svg cached name="default-connector" width={UI_SIZES.spacing.huge} height={UI_SIZES.spacing.huge} />
+      <Svg
+        cached
+        name="default-connector"
+        width={UI_SIZES.spacing.huge}
+        height={UI_SIZES.spacing.huge}
+        fill={app.color ? 'white' : 'black'}
+      />
     ) : (
       <LetterFallback label={app.displayName} />
     );
@@ -57,7 +63,7 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
             name={appIcon.name}
             width={UI_SIZES.spacing.huge}
             height={UI_SIZES.spacing.huge}
-            fill={app.isConnector && !app.color ? 'black' : 'white'} // TODO, remove when colors will be correctly handled by the API for connectors
+            fill={app.color ? 'white' : 'black'}
           />
         );
 
