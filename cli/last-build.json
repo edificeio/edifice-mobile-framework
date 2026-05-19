@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-19 14:53:37",
-  "notes": "update(stack): yarn cache update\nupdate(stack): yarn cache update\nfix(myapps): IMPULS-5807, add icon mapping & missing icon\nUpdated translations from Phrase (302)\nfix(i18n): myapps-app-communities key translations addition\nfix(widget): corecting  timeline widget availability detection\nfix(myapps): pick the right  new communities app\nfix(myapps): add new key for missing translated app communities\nfix(splashads): restore 20s timeout on splashads display\nrelease: 1.17.1(1170100)\nfix(timeline-filters): IMPULS-5728, add bottom inset for ApiLevel 36\nrelease: 1.17.0-rc.2(1170009)",
-  "version": "1.17.1-rc.1(1170101)",
-  "track": "1.17.1"
+  "last": "2026-05-19 18:33:39",
+  "notes": "chore: ENABLING-767 rm async-storage + minor upgrades\nchore: yarn cache update\n Conflicts: \t.yarn/cache/flow-parser-npm-0.314.0-04e842b3a5-4d494c3b84.zip \tandroid/app/build.gradle \tcli/prepare-build.json \tios/appe/Info.plist \tpackage.json\nfix: sync require of modules\nfix add account from deleted account\nfix: community navBar position\nfix: timeline avatar crop issue\nfix: small type issue\nfix: hide tabBar on modals on android\nfix: android buttons in header\nrelease: 1.17.1-rc.1(1170101)",
+  "version": "1.17.2-alpha.1(1170201)",
+  "track": "1.17.2"
 }
