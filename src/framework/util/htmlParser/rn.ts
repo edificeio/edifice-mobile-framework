@@ -662,6 +662,12 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    * @param nugget
    */
   protected insertNewTextNugget(nugget: ITextNugget | string) {
+    // inject pending space into the parent before opening a styled nugget,
+    // to avoid rendering a styled leading space (underline, bold, etc...)
+    if (typeof nugget === 'object' && this.hasToInsertSpace && this.currentTextNugget) {
+      this.currentTextNugget.children.push(' ');
+      this.hasToInsertSpace = false;
+    }
     if (this.currentTextNugget) {
       // If we're already in a text nugget, append the given one as a child.
       this.currentTextNugget.children.push(nugget);
