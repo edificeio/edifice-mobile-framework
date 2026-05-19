@@ -5,7 +5,6 @@ import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react
 import { useSelector } from 'react-redux';
 
 import { EntModule, EntTabModule } from '~/app/module';
-import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -15,7 +14,7 @@ import { tabModules } from '~/framework/navigation/tabModules';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { defaultScreenOptions, defaultTabOptions, getTabBarIconSize, StackScreenLayout, TabScreenLayout } from './layout';
-import { renderRootModulesScreens } from './root-navigation';
+import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
 
 const MainTabs = createBottomTabNavigator();
@@ -80,7 +79,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
             }
             {
               // Root modules replica here
-              renderRootModulesScreens(TabStack)
+              renderCoreModulesScreens(TabStack)
             }
           </TabStack.Navigator>
         );
@@ -126,7 +125,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
             }
             {
               // Root modules replica here
-              renderRootModulesScreens(TabStack)
+              renderCoreModulesScreens(TabStack)
             }
           </TabStack.Navigator>
         );

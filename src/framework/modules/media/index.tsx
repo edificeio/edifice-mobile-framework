@@ -2,12 +2,12 @@ import React from 'react';
 
 import { Action } from 'redux';
 
-import { RootModule } from '~/app/module';
+import { CoreModule } from '~/app/module';
 import MultimediaCarousel, { MultimediaCarouselScreenOptions } from '~/framework/components/carousel-multimedia/';
 import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 
-export default new RootModule<
+export default new CoreModule<
   'media',
   {
     'media/carousel': MultimediaCarouselNavParams;

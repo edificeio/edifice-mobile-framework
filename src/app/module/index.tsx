@@ -9,19 +9,11 @@ import { ParamListBase } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Action } from 'redux';
 
-import moduleImports from '~/app/config/modules';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { StorageTypeMap } from '~/framework/util/storage/types';
 
-import {
-  AllModules,
-  AllModulesReducers,
-  EntModuleConfig,
-  EntTabModule,
-  ModuleConfig,
-  RootModuleConfig,
-  StrictNavigationParams,
-} from './types';
+import { Modules } from './all';
+import { AllModules, CoreModuleConfig, EntModuleConfig, EntTabModule, ModuleConfig, StrictNavigationParams } from './types';
 
 export * from './types';
 
@@ -54,42 +46,9 @@ export abstract class Module<
     this.storage = config.storage;
     this.renderScreens = screens;
   }
-
-  static _allModules?: AllModules = undefined;
-  static async loadModules() {
-    if (Module._allModules) {
-      console.warn('[Module] Module.loadModules: loadModules should be called only once. Check when this method is called.');
-    }
-    __DEV__ && console.info(`[Module] Loading ${moduleImports.length} modules...`);
-    const loadedModules = (await Promise.all(moduleImports)).map(m => {
-      __DEV__ && console.info(`[Module] Loaded module ${m.default.name}.`);
-      return m.default;
-    });
-    // Compute once for all both variants of the modules list (map by name & tuple)
-    Module._allModules = loadedModules as AllModules;
-  }
-
-  static get allModules() {
-    if (!Module._allModules) throw new Error('[Module] Module.allModulesAsTuple: modules are not loaded yet');
-    return Module._allModules as unknown as Readonly<AllModules>;
-  }
-
-  static getAllModulesReducers() {
-    return Object.fromEntries(Module.allModules.map(module => [module.name, module.redux?.reducer])) as AllModulesReducers;
-  }
-
-  static getAllModulesScopes() {
-    const scopesByModules = Module.allModules.map(m => m.scope);
-    const set = new Set<string>();
-    for (const scopes of scopesByModules) {
-      if (!scopes) continue;
-      for (const scope of scopes) set.add(scope);
-    }
-    return set;
-  }
 }
 
-export class RootModule<
+export class CoreModule<
   Name extends string,
   NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams> = {},
   ReduxState = undefined,
@@ -98,12 +57,7 @@ export class RootModule<
   PreferencesType extends StorageTypeMap = object,
 >
   extends Module<Name, NavigationParams, ReduxState, ReduxAction, StorageType, PreferencesType>
-  implements RootModuleConfig<Name, ReduxState, ReduxAction, StorageType, PreferencesType>
-{
-  static get allRootModules() {
-    return Module.allModules.filter(m => m instanceof RootModule);
-  }
-}
+  implements CoreModuleConfig<Name, ReduxState, ReduxAction, StorageType, PreferencesType> {}
 
 export class EntModule<
   Name extends string,
@@ -146,14 +100,10 @@ export class EntModule<
     this.tab = config.tab;
   }
 
-  static get allEntModules() {
-    return Module.allModules.filter(m => m instanceof EntModule);
-  }
-
   static getAvailableForAccount(_session: AuthActiveAccount) {
     // ToDo: write predicate to filter with modules that are available to the user
     const predicate = () => true;
-    return EntModule.allEntModules.filter(predicate);
+    return Modules.getAllOfType(EntModule).filter(predicate);
   }
 
   private static isTabModule<N extends string, Np extends ParamListBase & StrictNavigationParams<N, Np>>(

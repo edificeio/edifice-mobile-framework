@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { NavigationContainer } from '~/app/navigation';
 import { defaultScreenOptions, StackScreenLayout } from '~/app/navigation/layout';
-import { renderRootModulesScreens } from '~/app/navigation/root-navigation';
+import { renderCoreModulesScreens } from '~/app/navigation/root-navigation';
 import { modalScreenOptions } from '~/app/navigation/util';
 import { getState } from '~/framework/modules/auth/redux/reducer';
 
@@ -84,7 +84,7 @@ export default function AuthAddAccountModalScreen() {
                 route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
             })}
           />
-          {renderRootModulesScreens(Stack)}
+          {renderCoreModulesScreens(Stack)}
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>

@@ -102,20 +102,15 @@ const useCoreDependencies = () => {
   });
 };
 
-const modulesPromises = ModuleCompat.loadModules();
-
 function App() {
   useCoreDependencies();
-  React.use(modulesPromises);
+  useConstructor(ModuleCompat.loadModules);
   const [store, setStore] = React.useState<Store<unknown, Action<string>, unknown> | null>(null);
   if (!store) setStore(configureStore());
-
   useAppState();
   useTrackers();
   useNotificationEvent();
-
   if (!store) return null;
-
   const content = (
     <DeviceTrust>
       <GestureHandlerRootView style={UI_STYLES.flex1}>

@@ -3,14 +3,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import modalScreens from '~/framework/navigation/modals/navigator';
 
-import { RootModule } from '../module';
+import { CoreModule } from '../module';
+import { Modules } from '../module/all';
 
-export function renderRootModulesScreens<NavigationParams extends ParamListBase>(
+export function renderCoreModulesScreens<NavigationParams extends ParamListBase>(
   RootStack: ReturnType<typeof createNativeStackNavigator<NavigationParams>>,
 ) {
   return (
     <>
-      {RootModule.allRootModules.map(module =>
+      {Modules.getAllOfType(CoreModule).map(module =>
         module.renderScreens ? (
           <RootStack.Group key={module.name}>
             {module.renderScreens(RootStack as ReturnType<typeof createNativeStackNavigator>)}

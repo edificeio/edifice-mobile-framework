@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Action } from 'redux';
 
-import { RootModule } from '~/app/module';
+import { CoreModule } from '~/app/module';
 import type { HostId, Platform } from '~/framework/util/appConf';
 
 import { AuthCredentials } from './model';
@@ -39,7 +39,7 @@ import RequirementTermsScreen, { RequirementTermsScreenOptions } from './screens
 import { AuthStorageData, storage } from './storage';
 import { ForgotScreenNavParams } from './templates/forgot';
 
-export default new RootModule<
+export default new CoreModule<
   'auth',
   {
     'auth/onboarding': undefined;

@@ -7,7 +7,7 @@ import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import type { StorageSlice } from '~/framework/util/storage/slice';
 import type { StorageTypeMap } from '~/framework/util/storage/types';
 
-import { EntModule, RootModule } from '.';
+import { CoreModule, EntModule } from '.';
 
 /**
  * Entcore data
@@ -107,7 +107,7 @@ export interface ModuleConfig<
   storage?: ConfigForStorage<ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>;
 }
 
-export interface RootModuleConfig<
+export interface CoreModuleConfig<
   Name extends string,
   State = never,
   ActionType extends Action = never,
@@ -147,7 +147,7 @@ export type EntTabModule<
  */
 
 export type ModuleNavigationParams<T> = T extends
-  | RootModule<infer Name, infer NavParams, any, any, any, any>
+  | CoreModule<infer Name, infer NavParams, any, any, any, any>
   | EntModule<infer Name, infer NavParams, any, any, any, any>
   ? Name extends any
     ? NavParams
@@ -155,7 +155,7 @@ export type ModuleNavigationParams<T> = T extends
   : never;
 
 export type ModuleReduxReducer<T> = T extends
-  | RootModule<infer Name, any, infer State, infer A, any, any>
+  | CoreModule<infer Name, any, infer State, infer A, any, any>
   | EntModule<infer Name, any, infer State, infer A, any, any>
   ? Name extends any
     ? Reducer<State, A>
@@ -163,7 +163,7 @@ export type ModuleReduxReducer<T> = T extends
   : never;
 
 export type ModuleReduxState<T> = T extends
-  | RootModule<infer Name, any, infer State, any, any, any>
+  | CoreModule<infer Name, any, infer State, any, any, any>
   | EntModule<infer Name, any, infer State, any, any, any>
   ? Name extends any
     ? State
@@ -187,7 +187,7 @@ export type AllModulesNames = OneModule['name'];
 export type AllModulesByName = {
   [name in AllModulesNames]: Extract<
     OneModule,
-    RootModule<name, any, any, any, any, any> | EntModule<name, any, any, any, any, any>
+    CoreModule<name, any, any, any, any, any> | EntModule<name, any, any, any, any, any>
   >;
 };
 

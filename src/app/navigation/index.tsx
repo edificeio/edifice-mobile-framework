@@ -25,7 +25,7 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 
 import navigationLightTheme, { defaultScreenOptions, StackScreenLayout } from './layout';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
-import { renderRootModulesScreens } from './root-navigation';
+import { renderCoreModulesScreens } from './root-navigation';
 import { useTrackScreen } from './telemetry';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
 
@@ -142,7 +142,7 @@ export function AppNavigation() {
           {userIsCompletelyLoggedIn ? (
             <RootStack.Screen options={MainNavigationOptions} name={TABS_ROUTE_NAME} component={MainNavigation} />
           ) : (
-            <RootStack.Group navigationKey={navigationKey}>{renderRootModulesScreens(RootStack)}</RootStack.Group>
+            <RootStack.Group navigationKey={navigationKey}>{renderCoreModulesScreens(RootStack)}</RootStack.Group>
           )}
         </RootStack.Navigator>
         <RootToastContainer />

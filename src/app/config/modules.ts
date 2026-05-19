@@ -1,5 +1,5 @@
 export default [
-  import('~/framework/modules/auth'),
-  import('~/framework/modules/media'),
-  import('~/framework/modules/timeline'),
+  require('~/framework/modules/auth'),
+  require('~/framework/modules/media'),
+  require('~/framework/modules/timeline'),
 ] as const;
