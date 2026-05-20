@@ -41,6 +41,14 @@ const APP_AGGREGATION_OVERRIDES: BadgeOverridesType = {
   Directory: { color: 'green', icon: 'userbook' },
 };
 
+/**
+ * Maps normalized backend icon names to mobile icon names where they differ.
+ * Use this when the backend `icon` field doesn't match any available mobile icon asset.
+ */
+const ICON_NAME_MAP: Record<string, string> = {
+  viescolaire: 'parametrage',
+};
+
 const NOTIF_TYPE_BADGE_OVERRIDES: BadgeOverridesType = {
   'TIMELINE.NOTIFY-REPORT': { color: 'yellow', icon: 'report' },
 };
@@ -122,6 +130,7 @@ export const aggregateApps = (
       }
 
       const override = APP_AGGREGATION_OVERRIDES[app.name];
+      const normalizedIcon = normalizeIconName(app.icon);
 
       return {
         ...app,
@@ -129,7 +138,7 @@ export const aggregateApps = (
         color: override?.color ?? config?.color,
         displayName: getAppName(app),
         help: config?.help,
-        icon: override?.icon ?? normalizeIconName(app.icon),
+        icon: override?.icon ?? ICON_NAME_MAP[normalizedIcon] ?? normalizedIcon,
         isFavorite,
         isLibrary,
         libraries: config?.libraries,

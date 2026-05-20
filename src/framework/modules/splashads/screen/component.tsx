@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import WebView, { WebViewProps } from 'react-native-webview';
-import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
+import { WebViewErrorEvent, WebViewHttpErrorEvent, WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import styles from './styles';
 import { SplashadsScreenProps } from './types';
@@ -26,7 +26,6 @@ export const computeNavBar = ({
     navigation,
     route,
     title: '',
-    backButtonTestID: 'spalsh-ads-close',
   }),
   headerShadowVisible: false,
   headerStyle: {
@@ -47,13 +46,13 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
     firstLoadRef.current = false;
   }, []);
 
+  // Manage a 20s timeout for SplashAds loading
   React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (!isLoaded) {
         setIsTimeout(true);
       }
-    }, 500);
-
+    }, 20000);
     return () => clearTimeout(timeoutId);
   }, [isLoaded]);
 
@@ -65,6 +64,15 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
 
   const onLoadEnd = () => {
     setIsLoaded(true);
+  };
+
+  const onError = ({ nativeEvent }: WebViewErrorEvent) => {
+    console.error('SplashAds::onError => ', nativeEvent);
+    setIsTimeout(true);
+  };
+
+  const onHttpError = ({ nativeEvent }: WebViewHttpErrorEvent) => {
+    console.error('SplashAds::onHttpError => ', nativeEvent.statusCode);
   };
 
   return isTimeout || !session ? (
@@ -84,8 +92,8 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
       bounces={false}
       onLoad={onLoad}
       incognito
-      onHttpError={() => setIsTimeout(true)}
-      onError={() => setIsTimeout(true)}
+      onHttpError={onHttpError}
+      onError={onError}
       testID="splash-ads-view"
     />
   );

@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-20 08:37:59",
-  "notes": "update(stack): yarn cache update\nfix(timeline-filters): IMPULS-5728, add bottom inset for ApiLevel 36\nrelease: 1.17.0-rc.2(1170009)",
-  "version": "1.17.0-rc.3(1170010)",
-  "track": "1.17.0"
+  "last": "2026-05-20 09:32:31",
+  "notes": "update(stack): yarn\nrelease: 1.17.1-rc.1(1170101)",
+  "version": "1.17.1-rc.2(1170102)",
+  "track": "1.17.1"
 }
