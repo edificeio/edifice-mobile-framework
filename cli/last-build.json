@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-12 19:22:50",
-  "notes": "update(stack): yarn cache update\nfix(carousel): IMPULS-5773 fix pdf display on landscape and prevent AlreadyClosed crash\nfix(news): IMPULS-5626 prevent media flash when typing a comment\nfix: restore version number\nchore: yarn cache pdate\nMerge branch 'dev/peda' into dev/1.17.0\nfix(myapps): IMPULS-5607, add missing translation keys\nfix(myapps): IMPULS-5784, hide app info when no help link & some adjustments\nfix(data): ENABLING-707, remove Promise.all and serialize timeline calls\nfix(myapps): IMPULS-5771, add app-card default icon & some potential UI bug fixe\nfix(carousel): IMPULS-5774 carousel item error handling\nfix(carousel): IMPULS-5775 privacy modal on file download\nfix(typo): fix relative imports\nUpdated translations from Phrase (300)\nrelease: 1.17.0-rc.1(1170008)",
-  "version": "1.17.0-rc.2(1170009)",
+  "last": "2026-05-20 08:37:59",
+  "notes": "update(stack): yarn cache update\nfix(timeline-filters): IMPULS-5728, add bottom inset for ApiLevel 36\nrelease: 1.17.0-rc.2(1170009)",
+  "version": "1.17.0-rc.3(1170010)",
   "track": "1.17.0"
 }
