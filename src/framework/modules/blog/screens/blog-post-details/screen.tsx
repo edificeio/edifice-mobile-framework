@@ -3,7 +3,6 @@ import { Alert, EmitterSubscription, Keyboard, Platform, RefreshControl, View } 
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
-import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -13,13 +12,13 @@ import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction } from '~/framework/components/navigation';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { KeyboardPageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
@@ -88,11 +87,6 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   return null;
 }
 
-const ListComponent = Platform.select<React.ComponentType<any>>({
-  android: KeyboardAvoidingFlatList,
-  ios: FlatList,
-})!;
-
 const PAGE_SIZE = 20;
 
 function BlogPostDetailsFlatList(props: {
@@ -116,7 +110,7 @@ function BlogPostDetailsFlatList(props: {
   return (
     <Viewport.Tracker>
       <>
-        <ListComponent
+        <FlatList
           ref={props.contentSetRef}
           // initialNumToRender={props.initialNumToRender}
           keyboardShouldPersistTaps="handled"
@@ -141,16 +135,15 @@ function BlogPostDetailsFlatList(props: {
           onLayout={props.onLayout}
           onEndReached={() => setCommentsMax(commentsMax + PAGE_SIZE)}
           onEndReachedThreshold={1}
-          {...React.useMemo(() => Platform.select({ android: { stickyFooter: props.footer }, ios: {} }), [props.footer])}
         />
-        {React.useMemo(() => Platform.select({ android: null, ios: props.footer }), [props.footer])}
+        {props.footer}
       </>
     </Viewport.Tracker>
   );
 }
 
 export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsScreenProps, BlogPostDetailsScreenState> {
-  flatListRef = React.createRef<FlatList | typeof KeyboardAvoidingFlatList | null>();
+  flatListRef = React.createRef<FlatList | null>();
 
   commentFieldRefs = [];
 
@@ -710,25 +703,20 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   }
 
   render() {
-    const { route, session } = this.props;
+    const { route } = this.props;
     const { blogInfos, blogPostData, errorState, loadingState } = this.state;
 
     const blogId = blogInfos?.id;
-    const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
-    const isBottomSheetVisible =
-      (blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight) || blogPostData?.state === 'SUBMITTED';
     const notification = (route.params.useNotification ?? true) && route.params.notification;
     let resourceUri = notification && notification?.resource.uri;
     if (!resourceUri && blogPostData && blogId) {
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
 
-    const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
-
     return (
       <>
         <PreventBack infoComment={this.state.infoComment} />
-        <PageComponent {...Platform.select({ android: {}, ios: { safeArea: !isBottomSheetVisible } })}>
+        <KeyboardPageView safeArea={false}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState)
             ? null
             : errorState
@@ -738,7 +726,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           <View ref={this.loaderRef} style={styles.loader}>
             <BlogPlaceholderDetails />
           </View>
-        </PageComponent>
+        </KeyboardPageView>
       </>
     );
   }
