@@ -87,20 +87,15 @@ export const NavbarButtons = React.memo(
 
 export const MultimediaCarouselScreenOptions = modalScreenOptions<'media/carousel'>('fullScreenModal', ({ navigation, route }) => {
   return {
-    ...navBarOptions({
-      backButtonTestID: 'header-back',
-      navigation,
-      route,
-      title:
-        route.params.media.length !== 1
-          ? I18n.get('carousel-counter', { current: route.params.startIndex ?? 1, total: route.params.media.length })
-          : '',
-      titleStyle: styles.title,
-    }),
     headerBlurEffect: 'dark',
     headerShadowVisible: false,
     headerStyle: { backgroundColor: isAndroid ? theme.ui.shadowColorTransparent.toString() : undefined },
     headerTransparent: true,
     statusBarStyle: 'light',
+    // Note: ENABLING-769 for some reason title declared here cannot be overriden in the screen itself with setOptions.
+    // title:
+    //   route.params.media.length !== 1
+    //     ? I18n.get('carousel-counter', { current: (route.params.startIndex ?? 0) + 1, total: route.params.media.length })
+    //     : route.params.title,
   };
 });

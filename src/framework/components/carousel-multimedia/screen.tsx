@@ -16,7 +16,7 @@ import { FileMedia, isPlayableMedia } from '~/framework/util/media';
 
 import CarouselItem from './component';
 import { useCarouselFileHandler, useCarouselOrientation, useTogglePagination } from './hooks';
-import { MultimediaCarouselScreenOptions, NavbarButtons } from './navbar';
+import { NavbarButtons } from './navbar';
 import CarouselPagination from './pagination/component';
 import { PAGINATION_COMPONENT_HEIGHT } from './pagination/styles';
 import styles from './styles';
