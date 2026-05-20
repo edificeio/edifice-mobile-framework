@@ -109,13 +109,10 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ na
     lazy: true,
     popToTopOnBlur: true,
     tabBarActiveTintColor: theme.palette.primary.regular.toString(),
-    tabBarIconStyle: Platform.select({
-      default: {
-        height: UI_SIZES.elements.icon.small,
-        width: UI_SIZES.elements.icon.small,
-      },
-      ios: undefined,
-    }),
+    tabBarIconStyle: {
+      height: UI_SIZES.elements.icon.small,
+      width: UI_SIZES.elements.icon.small,
+    },
     tabBarInactiveTintColor: theme.ui.text.light.toString(),
     tabBarStyle: {
       backgroundColor: navTheme.colors.background,
@@ -126,5 +123,4 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ na
   };
 };
 
-export const getTabBarIconSize = (defaultSize: number) =>
-  Platform.select({ default: UI_SIZES.elements.icon.small, ios: defaultSize });
+export const getTabBarIconSize = () => UI_SIZES.elements.icon.small;
