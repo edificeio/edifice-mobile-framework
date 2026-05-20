@@ -2,20 +2,15 @@ import React, { useRef, useState } from 'react';
 import { Platform, TextInput, TouchableOpacity } from 'react-native';
 
 import styles from './styles';
-import { SearchBarProps } from './types';
+import { SearchBarHandle, SearchBarPropsWithFocus } from './types';
 
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { Svg } from '~/framework/components/picture';
 
-export const SearchBar = (props: SearchBarProps) => {
+export const SearchBar = React.forwardRef<SearchBarHandle, SearchBarPropsWithFocus>((props, ref) => {
   const inputRef = useRef<TextInput>(null);
   const [isFocused, setFocused] = useState(false);
-  const borderColor = isFocused
-    ? theme.palette.secondary.light
-    : props.query
-      ? theme.palette.grey.stone
-      : theme.palette.grey.cloudy;
 
   const focusInput = () => inputRef.current?.focus();
 
@@ -24,9 +19,32 @@ export const SearchBar = (props: SearchBarProps) => {
     props.onClear?.();
   };
 
-  const handleFocus = () => setFocused(true);
+  const handleFocus = () => {
+    setFocused(true);
+    props.onFocusChange?.(true);
+  };
 
-  const handleBlur = () => setFocused(false);
+  const handleBlur = () => {
+    setFocused(false);
+    props.onFocusChange?.(false);
+  };
+
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      blur: () => inputRef.current?.blur(),
+      clear: () => inputRef.current?.clear(),
+      focus: () => inputRef.current?.focus(),
+      isFocused: () => !!inputRef.current?.isFocused?.(),
+    }),
+    [],
+  );
+
+  const effectiveFocused = props.forceUnfocusedStyle ? false : isFocused;
+
+  const borderColor = React.useMemo(() => {
+    return effectiveFocused ? theme.palette.secondary.light : props.query ? theme.palette.grey.stone : theme.palette.grey.cloudy;
+  }, [effectiveFocused, props.query]);
 
   return (
     <TouchableOpacity onPress={focusInput} activeOpacity={1} style={[styles.container, { borderColor }, props.containerStyle]}>
@@ -46,7 +64,9 @@ export const SearchBar = (props: SearchBarProps) => {
         returnKeyType="search"
         style={[styles.textInput, Platform.OS === 'ios' && styles.textInputIOS]}
       />
-      {props.query.length ? <IconButton icon="ui-close" action={handleClear} style={styles.clearButton} /> : null}
+      {props.query.length ? (
+        <IconButton color={props.clearButtonCustomColor} icon="ui-close" action={handleClear} style={styles.clearButton} />
+      ) : null}
     </TouchableOpacity>
   );
-};
+});

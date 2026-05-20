@@ -1,14 +1,9 @@
 import type { IHomeworkAssistanceReduxState } from './reducer';
 import { getHomeworkAssistanceWorkflowInformation } from './rights';
 
-import theme from '~/app/theme';
-import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'homeworkAssistance', IHomeworkAssistanceReduxState>({
-  displayAs: ModuleType.MYAPPS_SECONDARY_MODULE,
-  displayColor: theme.apps['homework-assistance'].accentColors,
-  displayI18n: 'homeworkassistance-appname',
-  displayPicture: theme.apps['homework-assistance'].icon,
   entcoreScope: ['homework-assistance'],
   entcoreTrackingName: 'HomeworkAssistance',
 

@@ -37,6 +37,7 @@ import {
   IChangePasswordPayload,
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
+import { AccountError } from '~/framework/modules/auth/model/error';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
 import { OAuth2Error } from '~/framework/util/oauth2';

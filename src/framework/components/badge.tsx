@@ -24,26 +24,36 @@ const styles = StyleSheet.create({
   badgePicture: { height: 16, width: 16 },
 });
 
-export const Badge = ({ color, content }: IBadgeProps) => {
-  const picture = React.useMemo(() => {
-    if (typeof content !== 'number' && !content) {
-      return null;
-    } else if (typeof content === 'number') {
-      return <CaptionBoldText style={{ color: theme.ui.text.inverse }}>{content > 99 ? '99+' : content}</CaptionBoldText>;
-    } else if (typeof content === 'string') {
-      return <Svg height={12} width={12} color={theme.ui.text.inverse} name={content} />;
-    } else {
-      if (content.type === 'Icon') {
-        return <Picture {...content} size={12} color={theme.ui.text.inverse} />;
-      } else if (content.type === 'Svg') {
-        return <Picture fill={theme.ui.text.inverse} {...content} style={[styles.badgePicture, content.style as object]} />;
-      } else {
-        return <Picture {...content} style={[styles.badgePicture, content.style as object]} />;
-      }
-    }
-  }, [content]);
-  if (typeof content !== 'number' && !content) {
-    return null;
+const isNumber = (value: unknown): value is number => typeof value === 'number';
+
+const isString = (value: unknown): value is string => typeof value === 'string';
+
+const isPicture = (value: unknown): value is PictureProps => typeof value === 'object' && value !== null && 'type' in value;
+
+const BadgePicture = (content: IBadgeProps['content']) => {
+  if (content == null) return null;
+
+  if (isNumber(content)) {
+    return <CaptionBoldText style={{ color: theme.ui.text.inverse }}>{content > 99 ? '99+' : content}</CaptionBoldText>;
   }
-  return <View style={[styles.badge, { backgroundColor: color || theme.ui.text.light }]}>{picture}</View>;
+
+  if (isString(content)) {
+    return <Svg height={16} width={16} fill={theme.palette.grey.white} name={content} />;
+  }
+
+  if (isPicture(content)) {
+    if (content.type === 'Icon') {
+      return <Picture {...content} size={12} color={theme.ui.text.inverse} />;
+    }
+
+    return <Picture {...content} style={[styles.badgePicture, content.style as object]} />;
+  }
+
+  return null;
+};
+
+export const Badge = ({ color, content }: IBadgeProps) => {
+  const picture = React.useMemo(() => BadgePicture(content), [content]);
+
+  return <View style={[styles.badge, { backgroundColor: color ?? theme.ui.text.light }]}>{picture}</View>;
 };

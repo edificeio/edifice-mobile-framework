@@ -155,6 +155,11 @@ export const UI_SIZES = {
     tabbarLabelMarginTop: Platform.select({ default: 8, ios: insets.bottom ? 0 : 4 }),
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
+    thumbnailFetchSize: {
+      medium: '150x150',
+      small: '100x100',
+    },
+    videoThumbnail: 200,
   },
   getViewHeight: (parms: { withoutNavbar?: boolean; withoutTabbar?: boolean } = { withoutNavbar: true, withoutTabbar: true }) => {
     const { withoutNavbar, withoutTabbar } = parms;
@@ -181,8 +186,10 @@ export const UI_SIZES = {
     small: getScaleWidth(4),
   },
   screen: {
+    // TODO: Remove this workaround once edge-to-edge mode is handled
+    // natively by the framework. revert to default: 0.
     bottomInset: Platform.select({
-      default: 0,
+      default: DeviceInfo.getApiLevelSync() >= 36 ? insets.bottom : 0, // Android 16+ edge-to-edge: add navigation bar height
       ios: DeviceInfo.isTablet() ? 32 : insets.bottom,
     }),
     height: screenDimensions.height,

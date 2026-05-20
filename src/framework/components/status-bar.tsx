@@ -9,7 +9,7 @@ export interface StatusBarProps {
 
 const statusBarConfig = {
   'dark': {
-    backgroundColor: theme.palette.grey.black,
+    backgroundColor: theme.palette.grey.darkness,
     barStyle: 'light-content' as const,
     hidden: false,
     translucent: false,

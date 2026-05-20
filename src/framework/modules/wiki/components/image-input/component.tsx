@@ -91,7 +91,7 @@ const ImageInput: React.FC<ImageInputProps> = ({ moduleConfig, moduleImageStyle,
       <View style={styles.imageInputContainer}>
         <TouchableOpacity onPress={showChoosePicsMenu}>
           <ModuleImage
-            moduleConfig={moduleConfig}
+            appName={moduleConfig.name}
             style={mergedModuleImageStyle}
             source={value}
             fallbackIcon={MODULE_IMAGE_FALLBACK_ICON}

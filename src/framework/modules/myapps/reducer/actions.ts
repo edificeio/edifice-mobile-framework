@@ -1,0 +1,81 @@
+import { UnknownAction } from 'redux';
+import { ThunkAction } from 'redux-thunk';
+
+import { IGlobalState } from '~/app/store';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { appsInfoActionTypes, FetchSuccessPayload } from '~/framework/modules/myapps/reducer/action-types';
+import { computeNextBookmarks, loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
+import { selectAppsState } from '~/framework/modules/myapps/reducer/selectors';
+import { myAppsService } from '~/framework/modules/myapps/service';
+
+type ThunkResult<T = void> = ThunkAction<Promise<T>, IGlobalState, unknown, UnknownAction>;
+
+export const appInfoActions = {
+  fetchSuccess: (payload: FetchSuccessPayload) => ({ payload, type: appsInfoActionTypes.fetchSuccess }) as const,
+
+  updateFavorites: (bookmarks: string[]) => ({ bookmarks, type: appsInfoActionTypes.updateFavorites }) as const,
+};
+
+export const refreshMyApps = (): ThunkResult<boolean> => async (dispatch, _) => {
+  const session = getSession();
+  if (!session) return false;
+
+  try {
+    const payload = await loadAppsDataFromService(myAppsService, session);
+    dispatch(appInfoActions.fetchSuccess(payload));
+    return true;
+  } catch (e) {
+    console.error('[refreshMyApps] ERROR', e);
+    return false;
+  }
+};
+
+export const toggleFavorite =
+  (appName: string, onDone?: (ok: boolean) => void): ThunkResult =>
+  async (dispatch, getState: () => IGlobalState) => {
+    const session = getSession();
+    if (!session) return;
+
+    const { favorites } = selectAppsState(getState());
+    const computedNextBookmarks = computeNextBookmarks(favorites.bookmarks, appName);
+    const nextBookmarks =
+      favorites.applications?.length > 0
+        ? computedNextBookmarks.filter(name => favorites.applications.includes(name) || name === appName)
+        : computedNextBookmarks;
+
+    try {
+      await myAppsService.updateBookmarks({
+        applications: favorites.applications,
+        bookmarks: nextBookmarks,
+      });
+
+      // Only update state AFTER successful API call
+      dispatch(appInfoActions.updateFavorites(nextBookmarks));
+      onDone?.(true);
+    } catch (e) {
+      console.error('Error updating favorites:', e);
+      onDone?.(false);
+    }
+  };
+
+export const saveGroupedFavorites =
+  (bookmarks: string[], onDone?: (ok: boolean) => void): ThunkResult =>
+  async (dispatch, getState) => {
+    const session = getSession();
+    if (!session) return;
+
+    const { favorites } = selectAppsState(getState());
+
+    dispatch(appInfoActions.updateFavorites(bookmarks));
+
+    try {
+      await myAppsService.updateBookmarks({ applications: favorites.applications, bookmarks });
+
+      dispatch(appInfoActions.updateFavorites(bookmarks));
+      onDone?.(true);
+    } catch (e) {
+      console.error('[saveGroupedFavorites] ERROR', e);
+      dispatch(appInfoActions.updateFavorites(favorites.bookmarks));
+      onDone?.(false);
+    }
+  };

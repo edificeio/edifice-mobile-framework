@@ -112,13 +112,20 @@ const StretchImage = (props: ImageProps & { big?: boolean }) => {
 class Images extends React.Component<
   {
     images: { src: ImageURISource; alt?: string; linkTo?: string }[];
+    onPreviewPress?: (src?: string, index?: number) => void;
     style?: ViewStyle;
     referer: AudienceParameter;
   },
   any
 > {
   public openImage(startIndex: any) {
-    const { images } = this.props;
+    const { images, onPreviewPress } = this.props;
+    if (onPreviewPress) {
+      const selectedImageSrc = images[startIndex]?.src;
+      const srcString = typeof selectedImageSrc === 'string' ? selectedImageSrc : selectedImageSrc?.uri;
+      onPreviewPress(srcString, startIndex);
+      return;
+    }
     const data = images.map(img => ({
       src: img.src,
       type: 'image' as const,

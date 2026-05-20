@@ -4,12 +4,11 @@ import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'cantine', CantineState>({
   displayAs: ModuleType.MYAPPS_WIDGET,
-  displayI18n: 'widget-cantine-title',
   entcoreScope: ['appregistry'],
   entcoreTrackingName: 'Cantine',
+  entcoreWidgetName: 'cantine-widget',
   hasRight: param => param.matchingWidgets.length > 0,
-  matchEntcoreApp: () => true,
-  matchEntcoreWidget: entcoreWidget => entcoreWidget.name === 'cantine-widget',
+  matchEntcoreApp: 'Cantine',
   name: 'cantine',
   storageName: 'cantine',
 });

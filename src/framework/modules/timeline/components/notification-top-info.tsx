@@ -9,9 +9,9 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { APPBADGES } from '~/framework/modules/timeline/app-badges';
+import { useNotificationBadge } from '~/framework/modules/myapps/hooks';
 import appConf from '~/framework/util/appConf';
 import {
   getAsNamedResourceNotification,
@@ -21,9 +21,9 @@ import {
 } from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
 
-const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: AuthLoggedAccount }) => {
+const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: AuthActiveAccount }) => {
+  const badge = useNotificationBadge(notification.type, notification['event-type']);
   const message = notification && notification.message;
-  const type = notification && notification.type;
   const date = notification && notification.date;
   const sender = notification && getAsSenderNotification(notification)?.sender;
   const resource =
@@ -49,14 +49,9 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
       )}`;
   }
 
-  const badgeInfo = {
-    color: APPBADGES[type] && APPBADGES[type].color,
-    icon: APPBADGES[type] && APPBADGES[type].icon,
-  };
-
   return (
     <ContentCardHeader
-      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/school-avatar.png')]} badge={badgeInfo} />}
+      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/school-avatar.png')]} badge={badge} />}
       date={date}
       text={
         <HtmlContentView
@@ -84,7 +79,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
   );
 };
 
-const mapStateToProps = (s: IGlobalState) => {
+const mapStateToProps = (_s: IGlobalState) => {
   const session = getSession();
   if (!session) throw new Error('[NotificationTopInfo] session not provided');
   return {

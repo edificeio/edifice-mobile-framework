@@ -10,6 +10,7 @@ export type IPlayerProps = (
   | { type: MediaType.AUDIO | MediaType.VIDEO; source: ReactVideoSourceProperties }
   | { type: MediaType.EMBEDDED; source: WebViewSourceUri }
 ) & {
+  onPreviewPress?: () => void;
   posterSource?: ImageURISource;
   ratio?: number;
   style?: ViewStyle;

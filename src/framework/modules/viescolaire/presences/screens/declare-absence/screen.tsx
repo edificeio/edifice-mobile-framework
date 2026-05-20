@@ -11,6 +11,7 @@ import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import { Attachment } from '~/framework/components/attachment';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_STYLES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
@@ -30,7 +31,6 @@ import AbsenceDatesSelector from '~/framework/modules/viescolaire/presences/comp
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
-import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { Trackers } from '~/framework/util/tracker';
@@ -58,6 +58,10 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
     const files = att as LocalFile[];
     const file = files[0];
     setAttachment(file);
+  };
+
+  const handleRemoveAttachment = () => {
+    setAttachment(undefined);
   };
 
   const createAbsence = async () => {
@@ -117,7 +121,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
           }
         />
         {attachment ? (
-          <Attachment name={attachment.filename} type={attachment.filetype} onRemove={() => setAttachment(undefined)} />
+          <Attachment name={attachment.filename} type={attachment.filetype} onRemove={handleRemoveAttachment} />
         ) : (
           <BottomMenu
             title={I18n.get('presences-declareabsence-attachment')}

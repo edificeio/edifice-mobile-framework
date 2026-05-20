@@ -55,11 +55,9 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
             : {
                 initial: false,
                 params: {
-                  editable: form.editable,
-                  formId: form.id,
+                  form: form,
                   id: distributions[0].id,
                   status: distributions[0].status,
-                  title: form.title,
                 },
                 screen: formRouteNames.distribution,
               },
@@ -92,7 +90,7 @@ const handleFormResponseNotificationAction: NotifHandlerThunkAction = notificati
 export default () =>
   registerNotifHandlers([
     {
-      'event-type': 'NEW_FORM_NOTIFICATION',
+      'event-type': ['NEW_FORM_NOTIFICATION', 'CLOSING_FORM_NOTIFICATION'],
       'notifHandlerAction': handleNewFormNotificationAction,
       'type': 'FORMULAIRE',
     },

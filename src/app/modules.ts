@@ -28,13 +28,11 @@ export default () => {
       require('~/framework/modules/timeline'),
       require('~/framework/modules/audience').default,
       require('~/framework/modules/explorer').default,
-
+      require('~/framework/modules/myapps'),
       // Included modules from override
       ...(IncludedModules || []),
 
       // Built-in modules that depends on other
-      // CAUTION ! Modules that depends on other (ex myAppMenu) must be listed at the end !
-      require('~/framework/modules/myAppMenu'),
     ];
     AllModules = loadModules(moduleDeclarations);
     return AllModules;

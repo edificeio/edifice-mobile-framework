@@ -9,7 +9,6 @@
  */
 import { ImageURISource } from 'react-native';
 
-import mime from 'mime';
 import path from 'path';
 import RNFS, {
   DownloadBeginCallbackResult,
@@ -20,7 +19,7 @@ import RNFS, {
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
-import { toURISource } from '~/framework/util/media';
+import { mime, toURISource } from '~/framework/util/media';
 import { assertPermissions } from '~/framework/util/permissions';
 import { getSafeFileName } from '~/framework/util/string';
 import { sessionURISource } from '~/framework/util/transport';
@@ -47,12 +46,6 @@ export interface IDownloadCallbaks {
   onBegin?: (response: DownloadBeginCallbackResult) => void;
   onProgress?: (Response: DownloadProgressCallbackResult) => void;
 }
-
-// All these non-standard mime types (left) needs to be replaced by the standard values (right).
-const mimeAliases = {
-  'image/jpg': 'image/jpeg',
-  'image/tif': 'image/tiff',
-};
 
 const fileTransferService = {
   /** Download a file that exists in the server. */
@@ -120,7 +113,10 @@ const fileTransferService = {
       if (found) {
         localFile.setPath(found.path);
         const foundMime = mime.getType(found.path);
-        if (foundMime) localFile.filetype = foundMime;
+        if (foundMime) {
+          file.filetype = foundMime;
+          localFile.filetype = foundMime;
+        }
         return new Promise<{
           jobId: number;
           promise: Promise<SyncedFileType>;
@@ -136,7 +132,7 @@ const fileTransferService = {
     await assertPermissions('documents.write');
     // Create destination folder if needed
     // RNFS Automatically creates parents and does not throw if already exists (works like Linux mkdir -p)
-    RNFS.mkdir(folderDest, { NSURLIsExcludedFromBackupKey: true });
+    await RNFS.mkdir(folderDest, { NSURLIsExcludedFromBackupKey: true });
     // Download file now!
     const job = RNFS.downloadFile({
       begin: res => {
@@ -144,7 +140,7 @@ const fileTransferService = {
           file.filesize = res.contentLength;
         }
         if (res?.headers['Content-Type']) {
-          const foundType = mimeAliases[res?.headers['Content-Type']] ?? res?.headers['Content-Type'];
+          const foundType = res?.headers['Content-Type'];
           file.filetype = foundType;
           localFile.filetype = foundType;
         }
@@ -153,21 +149,21 @@ const fileTransferService = {
       fromUrl: downloadUrl,
       headers,
       progress: callbacks?.onProgress,
+      progressInterval: 100,
       toFile: downloadDest,
     });
     const newJob = {
       jobId: job.jobId,
       promise: job.promise
-        .then(res => {
+        .then(async res => {
           if (res.statusCode < 200 || res.statusCode > 299) throw new Error('Download failed: server error ' + JSON.stringify(res));
           // rename local file if file name has no extension and file type is known
           if (localFile.filename.indexOf('.') === -1) {
-            // const ext = localFile.filetype.split('/').pop()!;
             const ext = mime.getExtension(localFile.filetype);
             const toMove = localFile.filepath;
             if (ext) {
               localFile.setExtension(ext);
-              RNFS.moveFile(toMove, localFile.filepath);
+              await RNFS.moveFile(toMove, localFile.filepath);
             }
           }
           // return

@@ -15,11 +15,15 @@ import { AttachmentGroup } from './AttachmentGroup';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
+import { convertNotificationToFileMedia } from '~/framework/components/carousel-multimedia/util';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
+import { FileMedia } from '~/framework/util/media';
 import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 
@@ -47,6 +51,7 @@ interface IHtmlContentViewState {
   error?: boolean; // Has loading ressource failed?
   html?: string; // Loaded html
   attachments: IRemoteAttachment[]; // Attachments in html
+  fileMedia?: FileMedia[];
   jsx?: JSX.Element; // Computed jsx
 }
 
@@ -127,13 +132,32 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
       } else this.setState({ html: responseHtml });
     } else if (!jsx) {
       // Else, if there is not JSX, try to compute it
+
+      // Extract media and create carousel callback
+      const notificationMedia = extractMediaFromHtml(html);
+      const fileMedia = convertNotificationToFileMedia(notificationMedia || []);
+
+      const createMediaPressHandler = (src: string) => {
+        const selectedIndex = fileMedia.findIndex(m => {
+          return m.src === src;
+        });
+        openMultimediaCarousel({
+          media: fileMedia,
+          startIndex: selectedIndex !== -1 ? selectedIndex : 0,
+        });
+      };
+
       if (hasAttachments) {
         this.generateAttachments(html);
       } else {
-        const htmlParser = new HtmlParserRN(opts);
+        const htmlParser = new HtmlParserRN({
+          ...opts,
+          onPress: createMediaPressHandler,
+        });
         this.setState({
           done: true,
-          jsx: htmlParser.parse(html) as JSX.Element,
+          fileMedia: fileMedia,
+          jsx: htmlParser.parse(html) as React.JSX.Element,
         });
       }
     }
