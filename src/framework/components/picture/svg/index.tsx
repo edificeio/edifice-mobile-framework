@@ -48,6 +48,7 @@ const imports = {
   'days-tuesday': async () => import('ASSETS/images/days/tuesday.svg'),
   'days-wednesday': async () => import('ASSETS/images/days/wednesday.svg'),
   'default-connector': async () => import('ASSETS/icons/uiIcons/default-connector.svg'),
+  'diary': async () => import('ASSETS/icons/moduleIcons/diary.svg'),
   'diary-fill': async () => import('ASSETS/icons/moduleIcons/diary-fill.svg'),
   'diary-outline': async () => import('ASSETS/icons/moduleIcons/diary-outline.svg'),
   'edt': async () => import('ASSETS/icons/moduleIcons/edt.svg'),

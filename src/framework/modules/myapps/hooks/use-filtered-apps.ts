@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { addToCache } from '~/framework/components/picture/svg';
-import { applyFilter } from '~/framework/modules/myapps/reducer/adapter';
+import { applyFilter, appShouldBeAtBottom } from '~/framework/modules/myapps/reducer/adapter';
 import { selectAggregatedApps } from '~/framework/modules/myapps/reducer/selectors';
 import { MyAppsFilter, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 
@@ -24,11 +24,24 @@ export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
 
   return React.useMemo(() => {
     if (!aggregatedApps) return [];
-    const filtered = applyFilter(aggregatedApps, filter) || [];
-    if (showAllApps || filter.type === MyAppsFilterTypes.Favorites) return filtered;
-    if (filter.type === MyAppsFilterTypes.Search) {
-      return filtered.filter(app => app.isMobile || app.isFavorite);
+
+    const allApps = Object.values(aggregatedApps).filter(app => app.display);
+    const bottomApps = allApps.filter(appShouldBeAtBottom);
+
+    const filtered = applyFilter(aggregatedApps, filter) ?? [];
+    const filteredTopApps = filtered.filter(app => !appShouldBeAtBottom(app));
+
+    let baseResult: typeof filteredTopApps;
+    if (filter.type === MyAppsFilterTypes.Favorites) {
+      return filtered;
+    } else if (showAllApps) {
+      baseResult = filteredTopApps;
+    } else if (filter.type === MyAppsFilterTypes.Search) {
+      baseResult = filteredTopApps.filter(app => app.isMobile || app.isFavorite);
+    } else {
+      baseResult = filteredTopApps.filter(app => app.isMobile);
     }
-    return filtered.filter(app => app.isMobile);
+
+    return [...baseResult, ...bottomApps];
   }, [aggregatedApps, filter, showAllApps]);
 };
