@@ -2,9 +2,6 @@ import * as React from 'react';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import styles from './styles';
-import type { UserEditDescriptionScreenProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
@@ -17,6 +14,9 @@ import usePreventBack from '~/framework/hooks/prevent-back';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+import styles from './styles';
+import type { UserEditDescriptionScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -50,13 +50,17 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
       const body = JSON.stringify({ health: description?.trim() });
       await userService.person.put(userId, body);
       await userService.person.editHealthVisibility(newVisibility);
-      navigation.navigate(userRouteNames.profile, {
-        newDescription: description?.trim(),
-        newDescriptionVisibility: visibility,
-        newHobbies: hobbies,
-        newMood: mood,
-        newMotto: motto,
-      });
+      navigation.navigate(
+        userRouteNames.profile,
+        {
+          newDescription: description?.trim(),
+          newDescriptionVisibility: visibility,
+          newHobbies: hobbies,
+          newMood: mood,
+          newMotto: motto,
+        },
+        { pop: true },
+      );
       Toast.showSuccess(I18n.get('user-profile-toast-editAboutSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
@@ -79,7 +83,6 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
 
   React.useEffect(() => {
     setDescription(route.params.description);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
