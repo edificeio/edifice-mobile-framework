@@ -17,6 +17,7 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: UI_SIZES.spacing.small,
   },
+  bottomSheet: { alignItems: 'flex-start', paddingTop: UI_SIZES.spacing.minor },
   emptyFamily: {
     alignItems: 'center',
     flexDirection: 'row',

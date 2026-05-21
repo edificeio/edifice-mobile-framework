@@ -10,11 +10,13 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import { TerciaryButton } from '~/framework/components/button';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { MenuAction } from '~/framework/components/menus/actions';
+import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/components/text';
@@ -82,23 +84,6 @@ const renderTextIcon = ({
       showArrow={showArrow}
     />
   );
-};
-
-const showBottomMenu = (actions: MenuAction[]) => {
-  actions.push({ action: () => {}, title: I18n.get('common-cancel') });
-  // BottomSheet.showBottomSheetWithOptions(
-  //   {
-  //     cancelButtonIndex: actions.length - 1,
-  //     options: [
-  //       ...actions.map(action => {
-  //         return action.title;
-  //       }),
-  //     ],
-  //   },
-  //   index => {
-  //     actions[index].action();
-  //   },
-  // );
 };
 
 const callPhoneNumber = tel => {
@@ -555,6 +540,18 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     );
   };
 
+  const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
+  const [bottomSheetItems, setBottomSheetItems] = React.useState<MenuAction[]>([]);
+
+  const showBottomMenu = React.useCallback((actions: MenuAction[]) => {
+    actions.push({
+      action: () => {},
+      title: I18n.get('common-cancel'),
+    });
+    setBottomSheetItems(actions);
+    bottomSheetRef.current?.present();
+  }, []);
+
   const renderPage = () => {
     return (
       <ScrollView style={styles.page}>
@@ -571,12 +568,31 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   return (
-    <ContentLoader
-      loadContent={init}
-      renderContent={renderPage}
-      renderError={() => <EmptyConnectionScreen />}
-      renderLoading={() => <UserPlaceholderProfile />}
-    />
+    <>
+      <ContentLoader
+        loadContent={init}
+        renderContent={renderPage}
+        renderError={() => <EmptyConnectionScreen />}
+        renderLoading={() => <UserPlaceholderProfile />}
+      />
+      <CustomBottomSheetModal ref={bottomSheetRef}>
+        <View style={styles.bottomSheet}>
+          {bottomSheetItems.map(action => (
+            <TerciaryButton
+              text={action.title}
+              icon={action.icon?.[Platform.OS]}
+              onPress={() => {
+                action.action();
+                bottomSheetRef.current?.dismiss();
+              }}
+              disabled={action.disabled}
+              testID={action.testID ?? 'button'}
+              key={action.title}
+            />
+          ))}
+        </View>
+      </CustomBottomSheetModal>
+    </>
   );
 };
 
