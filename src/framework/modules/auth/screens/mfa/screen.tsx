@@ -58,7 +58,7 @@ export const computeNavBar = screenOptions<'auth/mfa'>(({ route: { params } }) =
   return { title };
 });
 
-export const computeNavBarModal = modalScreenOptions<'auth/mfa-modal'>(({ route: { params } }) => {
+export const computeNavBarModal = modalScreenOptions<'auth/mfa-modal'>('fullScreenModal', ({ route: { params } }) => {
   const title = params.isEmailMFA || params.isMobileMFA ? params.navBarTitle : I18n.get('auth-mfa-title');
   return { title };
 });

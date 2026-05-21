@@ -3,6 +3,7 @@ import * as React from 'react';
 import AuthChangeEmailScreen from '~/framework/modules/auth/screens/change-email';
 import { requirementChangeEmailScreenOptions } from '~/framework/modules/auth/screens/change-email/screen';
 import AuthChangeMobileScreen from '~/framework/modules/auth/screens/change-mobile';
+import AuthMFAScreen, { computeNavBarModal as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import moduleConfig from '~/framework/modules/user/module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
@@ -86,8 +87,7 @@ export default () =>
       <Stack.Screen name={'user/change-password'} component={UserChangePasswordScreen} options={UserChangePasswordScreenOptions} />
       <Stack.Screen name={'user/change-email'} component={AuthChangeEmailScreen} options={requirementChangeEmailScreenOptions} />
       <Stack.Screen name={'user/change-mobile'} component={AuthChangeMobileScreen} options={requirementChangeEmailScreenOptions} />
-      {/*<Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
-      <Stack.Screen name="auth/mfa-modal" component={AuthMFAScreen} options={mfaNavBarModal} />*/}
+      <Stack.Screen name="auth/mfa-modal" component={AuthMFAScreen} options={mfaNavBar} />
     </>
   ));
 
