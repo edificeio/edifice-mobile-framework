@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { addToCache } from '~/framework/components/picture/svg';
 import { applyFilter, appShouldBeAtBottom } from '~/framework/modules/myapps/reducer/adapter';
 import { selectAggregatedApps } from '~/framework/modules/myapps/reducer/selectors';
-import { MyAppsFilter, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
+import { MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 
 const precacheSvgIcons = (apps: Record<string, { icon?: string }>) => {
   for (const app of Object.values(apps)) {
@@ -31,10 +31,16 @@ export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
     const filtered = applyFilter(aggregatedApps, filter) ?? [];
     const filteredTopApps = filtered.filter(app => !appShouldBeAtBottom(app));
 
-    let baseResult: typeof filteredTopApps;
+    const shouldShowBottomApps =
+      filter.type === MyAppsFilterTypes.Category &&
+      (filter.value === MyAppsFilterCategories.all || filter.value === MyAppsFilterCategories.otherServices);
+
     if (filter.type === MyAppsFilterTypes.Favorites) {
       return filtered;
-    } else if (showAllApps) {
+    }
+
+    let baseResult: typeof filteredTopApps;
+    if (showAllApps) {
       baseResult = filteredTopApps;
     } else if (filter.type === MyAppsFilterTypes.Search) {
       baseResult = filteredTopApps.filter(app => app.isMobile || app.isFavorite);
@@ -42,6 +48,6 @@ export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
       baseResult = filteredTopApps.filter(app => app.isMobile);
     }
 
-    return [...baseResult, ...bottomApps];
+    return shouldShowBottomApps ? [...baseResult, ...bottomApps] : baseResult;
   }, [aggregatedApps, filter, showAllApps]);
 };
