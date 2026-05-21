@@ -11,11 +11,8 @@ import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { IModalsNavigationParams } from '~/framework/navigation/modals';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { FileMedia } from '~/framework/util/media';
 import { OldStorageFunctions } from '~/framework/util/storage';
-
-import styles from './styles';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -61,7 +58,7 @@ export const NavbarButtons = React.memo(
         elements={[
           <NavBarAction
             disabled={disabled}
-            onPress={() => showPrivacyAlert(() => navigation.navigate(ModalsRouteNames.Download, { media }))}
+            onPress={() => showPrivacyAlert(() => navigation.navigate('media/download', { media }))}
             icon="ui-download"
             testID="media-navbar-download"
           />,
@@ -69,7 +66,7 @@ export const NavbarButtons = React.memo(
             testID="media-navbar-share"
             actions={[
               {
-                action: () => showPrivacyAlert(() => onShare()),
+                action: () => showPrivacyAlert(onShare),
                 icon: {
                   android: 'ic_share',
                   ios: 'square.and.arrow.up',

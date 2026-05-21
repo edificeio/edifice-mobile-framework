@@ -3,15 +3,18 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import styles from './styles';
-
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { useCarouselFileHandler } from '~/framework/components/carousel-multimedia/hooks';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
+import styles from './styles';
+
 export interface DownloadModalProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Download> {}
+
+export const DownloadModalScreenOptions = modalScreenOptions('transparentModal', () => ({ headerShown: false }));
 
 const DownloadModal = (props: DownloadModalProps) => {
   const { navigation, route } = props;
@@ -32,7 +35,6 @@ const DownloadModal = (props: DownloadModalProps) => {
     return () => {
       cancelDownload();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onCancel = React.useCallback(() => {
