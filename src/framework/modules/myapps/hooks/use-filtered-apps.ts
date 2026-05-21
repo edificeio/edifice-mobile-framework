@@ -2,25 +2,12 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { addToCache } from '~/framework/components/picture/svg';
 import { applyFilter, appShouldBeAtBottom } from '~/framework/modules/myapps/reducer/adapter';
 import { selectAggregatedApps } from '~/framework/modules/myapps/reducer/selectors';
 import { MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 
-const precacheSvgIcons = (apps: Record<string, { icon?: string }>) => {
-  for (const app of Object.values(apps)) {
-    if (app.icon && !app.icon.includes('/') && !app.icon.includes('.')) {
-      addToCache(app.icon);
-    }
-  }
-};
-
 export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
   const aggregatedApps = useSelector(selectAggregatedApps);
-
-  React.useEffect(() => {
-    if (aggregatedApps) precacheSvgIcons(aggregatedApps);
-  }, [aggregatedApps]);
 
   return React.useMemo(() => {
     if (!aggregatedApps) return [];
