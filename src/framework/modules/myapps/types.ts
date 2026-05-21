@@ -71,7 +71,6 @@ export interface AppsInfoState {
 }
 
 export interface AppsInfoAggregated extends AppsInfo {
-  badgeKey: string;
   category?: string;
   color?: keyof typeof theme.palette.complementary;
   help?: Record<string, string | null>;
