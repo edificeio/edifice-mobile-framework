@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-21 09:09:26",
-  "notes": "update(stack): yarn cache update\nchore(i18n): remove duplicates\npostmep(i18n): change phrase sync branch\nUpdated translations from Phrase (303)\nfix(myapps): IMPULS-5818, always display bottom-separator connectors regardless of active filter\nfix(myapps): IMPULS-5825, redirect connectors through /auth/redirect to preserve CAS token\nrelease: 1.17.2(1170200)\nrelease: 1.17.1-rc.2(1170102)",
-  "version": "1.17.2-rc.1(1170201)",
+  "last": "2026-05-21 11:20:25",
+  "notes": "fix(widgets): ENABLING-792, dissociate carnet-de-bord widget from Pronote connectors type\nfix(myapps): IMPULS-5818, connectors filtering\nrelease: 1.17.2-rc.1(1170201)",
+  "version": "1.17.2-rc.2(1170202)",
   "track": "1.17.2"
 }
