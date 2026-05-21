@@ -5,8 +5,6 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { BottomSheetMode } from './types';
-
 import { I18n } from '~/app/i18n';
 import AllModules from '~/app/modules';
 import { AppDispatch } from '~/app/store';
@@ -27,6 +25,8 @@ import { getModuleRouteName } from '~/framework/modules/myapps/utils';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { openUrl } from '~/framework/util/linking';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
+
+import { BottomSheetMode } from './types';
 
 /**
  * gonna allow us to display again modal if we made updates or wana show it again

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import Audience from '~/framework/modules/audience/components';
 import { MediaGrid } from '~/framework/util/media/components/grid';
 
 import type { PostDetailsProps } from './types';
-import { useNavigation } from '@react-navigation/native';
 
 const PostDetails = React.memo((props: Readonly<PostDetailsProps<number>>) => {
   const { audience, content, header, media, style } = props;

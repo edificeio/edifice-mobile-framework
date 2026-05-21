@@ -1,5 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
-
+import { navigationRef } from '~/app/navigation';
 import { FileMedia } from '~/framework/util/media/types';
 
 export interface MultimediaCarouselNavParams {
@@ -13,5 +12,5 @@ export interface MultimediaCarouselNavParams {
  * @param props
  */
 export function openMultimediaCarousel(props: MultimediaCarouselNavParams) {
-  useNavigation().navigate('media/carousel', props);
+  navigationRef.navigate('media/carousel', props);
 }

@@ -51,6 +51,7 @@ export const RootStack = createNativeStackNavigator<NavigationRootParams>();
 export const TABS_ROUTE_NAME = 'tabs' as const;
 
 export function AppNavigation() {
+  // ToDo: refoactoring needed. Navigation Ref should not be accessible directly from random functions.
   // const navigationRef = useNavigationContainerRef<NavigationRootParams>();
   const onReady = React.useCallback<NonNullable<NavigationContainerProps['onReady']>>(() => {
     __DEV__ && console.info('[Navigation] Ready');

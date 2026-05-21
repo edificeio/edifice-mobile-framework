@@ -10,7 +10,6 @@ import type { PostDetailsProps } from '~/framework/modules/communities/component
 
 import styles from './styles';
 import { AnnouncementListItemProps } from './types';
-import { useNavigation } from '@react-navigation/native';
 
 const PostHeader = ({ author, date }: Readonly<Pick<PostDetailsProps<number>, 'author' | 'date'>>) => {
   const displayedDate = React.useMemo(() => (date ? I18n.date(date) : ''), [date]);

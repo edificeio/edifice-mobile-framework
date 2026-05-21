@@ -174,7 +174,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
         title:
           media.length !== 1
             ? I18n.get('carousel-counter', { current: currentIndex + 1, total: media.length })
-            : route.params.title,
+            : (route.params.title ?? ''),
       });
     } else {
       navigation.setOptions({
