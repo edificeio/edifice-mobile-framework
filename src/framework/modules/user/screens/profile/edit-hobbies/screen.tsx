@@ -133,7 +133,9 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
         },
         { pop: true },
       );
-      Toast.showSuccess(I18n.get('user-profile-toast-editHobbiesSuccess'));
+      requestAnimationFrame(() => {
+        Toast.showSuccess(I18n.get('user-profile-toast-editHobbiesSuccess'));
+      });
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
     } finally {

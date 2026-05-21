@@ -61,7 +61,9 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
         },
         { pop: true },
       );
-      Toast.showSuccess(I18n.get('user-profile-toast-editAboutSuccess'));
+      requestAnimationFrame(() => {
+        Toast.showSuccess(I18n.get('user-profile-toast-editAboutSuccess'));
+      });
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
     } finally {

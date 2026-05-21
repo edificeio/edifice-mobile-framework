@@ -67,7 +67,9 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
         },
         { pop: true },
       );
-      Toast.showSuccess(I18n.get('user-profile-toast-editMoodMottoSuccess'));
+      requestAnimationFrame(() => {
+        Toast.showSuccess(I18n.get('user-profile-toast-editMoodMottoSuccess'));
+      });
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
     } finally {
