@@ -3,18 +3,14 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
+export const bottomSheetTopMargin = UI_SIZES.spacing.medium;
+
 export default StyleSheet.create({
-  bottomSheet: {
-    paddingBottom: 0,
-  },
   defaultFolders: {
     rowGap: UI_SIZES.spacing.minor,
   },
   emptyscreen: {
     backgroundColor: theme.palette.grey.white,
-  },
-  flatListBottomSheet: {
-    paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.spacing.small,
   },
   newFolderButton: {
     alignSelf: 'baseline',

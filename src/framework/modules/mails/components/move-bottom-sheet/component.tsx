@@ -3,9 +3,6 @@ import { View } from 'react-native';
 
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 
-import styles from './styles';
-import { MailsMoveBottomSheetProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { getScaleWidth } from '~/framework/components/constants';
@@ -16,18 +13,16 @@ import MailsFolderItem from '~/framework/modules/mails/components/folder-item/in
 import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import { MailsFolderInfo } from '~/framework/modules/mails/model';
 
+import styles from './styles';
+import { MailsMoveBottomSheetProps } from './types';
+
 const EMPTY_SVG_SIZE = getScaleWidth(150);
 
 const MailsMoveBottomSheet = (props: MailsMoveBottomSheetProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<MailsFolderInfo>();
 
   return (
-    <ScrollView
-      keyboardDismissMode="none"
-      keyboardShouldPersistTaps="always"
-      nestedScrollEnabled
-      showsVerticalScrollIndicator={false}
-      bounces={false}>
+    <View style={[props.style, props.contentContainerStyle]}>
       <View style={styles.contentBottomSheet}>
         <HeaderBottomSheetModal
           title={I18n.get('mails-details-move')}
@@ -37,7 +32,7 @@ const MailsMoveBottomSheet = (props: MailsMoveBottomSheetProps) => {
         />
         <FlatList
           data={props.folders}
-          contentContainerStyle={[stylesFolders.containerFolders, props.folders?.length === 0 ? styles.nofoldersContainer : {}]}
+          style={[stylesFolders.containerFolders, props.folders?.length === 0 ? styles.nofoldersContainer : {}]}
           renderItem={({ item }) => (
             <MailsFolderItem
               key={item.id}
@@ -58,7 +53,7 @@ const MailsMoveBottomSheet = (props: MailsMoveBottomSheetProps) => {
           }
         />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
