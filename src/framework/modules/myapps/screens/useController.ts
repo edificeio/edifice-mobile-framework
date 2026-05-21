@@ -145,7 +145,9 @@ export function useMyAppsHomeController() {
           navigation.navigate(routeName);
         }
       } else {
-        openUrl(app.address);
+        const url = app.isConnector ? `/auth/redirect?url=${encodeURIComponent(app.address)}` : app.address;
+
+        openUrl(url);
       }
     },
     [navigation],

@@ -6,8 +6,7 @@ export default new NavigableModuleConfig<'carnet-de-bord', ReturnType<typeof red
   displayAs: ModuleType.MYAPPS_WIDGET,
   entcoreScope: ['pronote', 'sso'],
   entcoreWidgetName: 'carnet-de-bord',
-  hasRight: ({ matchingWidgets, session }) =>
-    matchingWidgets.length > 0 && session.rights.apps.some(app => app.casType === 'PronoteRegisteredService'),
+  hasRight: ({ matchingWidgets }) => matchingWidgets.length > 0,
   matchEntcoreApp: 'Pronote',
   name: 'carnet-de-bord',
   storageName: 'pronote',
