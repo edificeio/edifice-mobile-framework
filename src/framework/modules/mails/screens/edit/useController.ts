@@ -3,8 +3,6 @@ import { Alert, Keyboard, ScrollView } from 'react-native';
 
 import moment from 'moment';
 
-import { MailsEditType, NavPayload, SendMailResponse, UseMailsEditControllerParams } from './types';
-
 import { I18n } from '~/app/i18n';
 import { RichEditor } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
@@ -24,6 +22,8 @@ import {
 } from '~/framework/modules/mails/util';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { IDistantFileWithId } from '~/framework/util/fileHandler/models';
+
+import { MailsEditType, NavPayload, SendMailResponse, UseMailsEditControllerParams } from './types';
 
 /**
  * Always returns a ref which "".current" is the latest value.
@@ -114,18 +114,26 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   });
 
   const handleCloseInactiveUserModal = React.useCallback(() => {
-    navigation.navigate(mailsRouteNames.home, {
-      from: fromFolder,
-      reload: !(fromFolder === MailsDefaultFolders.TRASH),
-    });
+    navigation.navigate(
+      mailsRouteNames.home,
+      {
+        from: fromFolder,
+        reload: !(fromFolder === MailsDefaultFolders.TRASH),
+      },
+      { pop: true },
+    );
   }, [navigation, fromFolder]);
 
   const handleNavigateToDrafts = React.useCallback(
     () =>
-      navigation.navigate(mailsRouteNames.home, {
-        from: fromFolder,
-        reload: fromFolder === MailsDefaultFolders.DRAFTS,
-      }),
+      navigation.navigate(
+        mailsRouteNames.home,
+        {
+          from: fromFolder,
+          reload: fromFolder === MailsDefaultFolders.DRAFTS,
+        },
+        { pop: true },
+      ),
     [navigation, fromFolder],
   );
 
@@ -203,7 +211,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
             setIsSending(true);
             if (!draftIdSaved) {
               isDeletingRef.current = true;
-              navigation.navigate(mailsRouteNames.home, { from: fromFolder });
+              navigation.navigate(mailsRouteNames.home, { from: fromFolder }, { pop: true });
               return;
             }
             await mailsService.mail.moveToTrash({ ids: [draftIdSaved] });
@@ -569,7 +577,6 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     });
 
     return () => unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation, onSendDraft]);
 
   return {
