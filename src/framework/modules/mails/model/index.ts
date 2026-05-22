@@ -135,9 +135,9 @@ export interface MailsVisible {
 
 export interface MailsConversationPayload {
   body: string;
-  to: string[];
-  cc: string[];
-  cci: string[];
+  to?: string[];
+  cc?: string[];
+  cci?: string[];
   subject: string;
   noReply?: boolean;
 }

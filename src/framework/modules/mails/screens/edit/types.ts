@@ -32,6 +32,7 @@ export interface MailsEditScreenNavParams {
   type?: MailsEditType;
   fromFolder: MailsDefaultFolders | MailsFolderInfo;
   importAttachmentsResult?: UploadedAttachment[];
+  goBackOnSuccess?: boolean;
 }
 
 export interface UseMailsEditControllerParams {

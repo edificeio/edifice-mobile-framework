@@ -42,7 +42,7 @@ const convertDraftRecipients = (recipients: MailsRecipients): MailsVisible[] => 
 };
 
 export const useMailsEditController = ({ navigation, route }: UseMailsEditControllerParams) => {
-  const { draftId, fromFolder, initialMailInfo, type } = route.params;
+  const { draftId, fromFolder, goBackOnSuccess, initialMailInfo, type } = route.params;
 
   // States
   const [initialContentHTML, setInitialContentHTML] = React.useState('');
@@ -114,11 +114,15 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   });
 
   const handleCloseInactiveUserModal = React.useCallback(() => {
-    navigation.navigate(mailsRouteNames.home, {
-      from: fromFolder,
-      reload: !(fromFolder === MailsDefaultFolders.TRASH),
-    });
-  }, [navigation, fromFolder]);
+    if (goBackOnSuccess) {
+      navigation.goBack();
+    } else {
+      navigation.navigate(mailsRouteNames.home, {
+        from: fromFolder,
+        reload: !(fromFolder === MailsDefaultFolders.TRASH),
+      });
+    }
+  }, [navigation, fromFolder, goBackOnSuccess]);
 
   const handleNavigateToDrafts = React.useCallback(
     () =>
@@ -271,6 +275,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   }, [initialMailInfo?.id, latestStateRef]);
 
   const onSend = React.useCallback(async () => {
+    const currentDraftId = draftIdRef.current;
     const {
       bodyContent: currentBody,
       cc: currentCc,
@@ -289,9 +294,16 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       const cciIds = currentCci.map(recipient => recipient.id);
       const bodyToSave = currentIsHistoryOpen ? currentBody : `${currentBody}${currentHistory}`;
 
+      if (currentDraftId) {
+        await mailsService.mail.updateDraft(
+          { draftId: currentDraftId },
+          { body: bodyToSave, cc: ccIds, cci: cciIds, noReply: currentNoReply, subject: currentSubject, to: toIds },
+        );
+      }
+
       const response = (await mailsService.mail.send(
-        { draftId: draftIdSaved, inReplyTo: initialMailInfo?.id ?? undefined },
-        { body: bodyToSave, cc: ccIds, cci: cciIds, noReply: currentNoReply, subject: currentSubject, to: toIds },
+        { draftId: currentDraftId, inReplyTo: initialMailInfo?.id ?? undefined },
+        { body: bodyToSave, noReply: currentNoReply, subject: currentSubject },
       )) as SendMailResponse;
 
       let shouldNavigate = true;
@@ -314,9 +326,9 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
       if (shouldNavigate) {
         handleCloseInactiveUserModal();
-        requestAnimationFrame(() => {
+        setTimeout(() => {
           toast.showSuccess(I18n.get('mails-edit-toastsuccesssend'));
-        });
+        }, 100);
       }
 
       setIsSending(false);
@@ -325,7 +337,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       toast.showError();
       setIsSending(false);
     }
-  }, [draftIdSaved, initialMailInfo?.id, handleCloseInactiveUserModal, latestStateRef]);
+  }, [initialMailInfo?.id, handleCloseInactiveUserModal, latestStateRef]);
 
   const onCheckSend = React.useCallback(() => {
     const { bodyContent: currentBody, subject: currentSubject } = latestStateRef.current;
@@ -508,7 +520,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
           setDraftIdSaved(newDraftId);
         }
       } catch (err) {
-        console.error('[MAILS_EDIT] Failed to create initial draft', err);
+        console.error(err);
         toast.showError(I18n.get('mails-edit-error-createdraft'));
       }
     };
