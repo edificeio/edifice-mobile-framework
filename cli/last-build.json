@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-20 09:32:31",
-  "notes": "update(stack): yarn\nrelease: 1.17.1-rc.1(1170101)",
-  "version": "1.17.1-rc.2(1170102)",
-  "track": "1.17.1"
+  "last": "2026-05-22 10:19:15",
+  "notes": "update(stack): yarn cache update\nrelease: 1.17.2-rc.2(1170202)",
+  "version": "1.17.2-rc.3(1170203)",
+  "track": "1.17.2"
 }
