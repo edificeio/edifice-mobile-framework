@@ -40,7 +40,8 @@ export default function AuthAddAccountModalScreen() {
   }, [navigationKey, navigationRef]);
   return (
     <NavigationIndependentTree>
-      <NavigationContainer ref={navigationRef} initialState={navigationState}>
+      <NavigationContainer ref={navigationRef}>
+        {/* NO initial state since we WANT to start always on boarding */}
         <Stack.Navigator screenLayout={StackScreenLayout} screenOptions={{ ...defaultScreenOptions, headerShown: false }}>
           <Stack.Screen
             name="auth/add-account/onboarding"
