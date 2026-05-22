@@ -303,34 +303,10 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
     [topForm],
   );
 
-  /**
-   * KeyboardAvoidingView does not work with Android 16+ (api level 36)
-   * So we manually add the padding from the Keyboard event.
-   *
-   * Fixme: Use react-native-keyboard-controller instead of this fix.
-   */
-  const [kbHeight, setKbHeight] = React.useState(0);
-  React.useEffect(() => {
-    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', e => {
-      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
-      setKbHeight(e.endCoordinates.height);
-    });
-
-    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', e => {
-      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
-      setKbHeight(0);
-    });
-
-    return () => {
-      keyboardShowListener.remove();
-      keyboardHideListener.remove();
-    };
-  }, []);
-
   return (
     <BottomSheetModalProvider>
       <PageView style={styles.page}>
-        <KeyboardAvoidingView automaticOffset style={containerStyle} behavior="padding">
+        <KeyboardAvoidingView automaticOffset behavior="padding" style={UI_STYLES.flex1}>
           <ScrollView
             keyboardDismissMode="none"
             keyboardShouldPersistTaps="always"
