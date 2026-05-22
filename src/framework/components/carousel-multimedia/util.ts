@@ -3,6 +3,7 @@ import { ImageURISource } from 'react-native';
 import { Source } from 'react-native-pdf';
 import { ReactVideoSourceProperties } from 'react-native-video';
 
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { IFile } from '~/framework/modules/workspace/reducer';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { extractVideoResolution } from '~/framework/util/htmlParser/content';
@@ -31,6 +32,9 @@ export const getSignedMediaSource = (item: FileMedia | FileMedia['src']): Signed
     uriSource = src as ImageURISource;
   }
 
+  // Note: carousel may be invoked when non-logged.
+  // ToDo: carrousel does NEVER sign anything. Signing sources is the responsibility of the previous screen.
+  if (!getSession()) return uriSource;
   return sessionURISource(uriSource);
 };
 

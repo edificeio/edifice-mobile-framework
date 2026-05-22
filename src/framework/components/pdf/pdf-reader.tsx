@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
+import { NavigationProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Pdf, { PdfProps } from 'react-native-pdf';
 
+import { NavigationRootParams } from '~/app/navigation/types';
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -15,8 +17,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { MediaType, toURISource } from '~/framework/util/media';
 import { accountURISource } from '~/framework/util/transport';
-import { NavigationProp } from '@react-navigation/native';
-import { NavigationRootParams } from '~/app/navigation/types';
 
 export interface PDFReaderState {
   error: boolean;
@@ -87,7 +87,13 @@ export class PDFReader extends React.PureComponent<
  * @deprecated use the new multimedia carousel directly instead.
  * @param navParams
  */
-export function openPDFReader(navigation: NavigationProp<NavigationRootParams>, navParams: IModalsNavigationParams[ModalsRouteNames.Pdf]) {
-  navigation.navigate('media/carousel', {title: navParams.title, media: [{type: MediaType.ATTACHMENT, src: navParams.src, mime: 'application/pdf'}]})
+export function openPDFReader(
+  navigation: NavigationProp<NavigationRootParams>,
+  navParams: IModalsNavigationParams[ModalsRouteNames.Pdf],
+) {
+  navigation.navigate('media/carousel', {
+    media: [{ mime: 'application/pdf', src: navParams.src, type: MediaType.ATTACHMENT }],
+    title: navParams.title,
+  });
   // navigation.navigate(ModalsRouteNames.Pdf, navParams);
 }

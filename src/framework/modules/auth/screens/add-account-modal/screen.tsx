@@ -42,49 +42,51 @@ export default function AuthAddAccountModalScreen() {
     <NavigationIndependentTree>
       <NavigationContainer ref={navigationRef}>
         {/* NO initial state since we WANT to start always on boarding */}
-        <Stack.Navigator screenLayout={StackScreenLayout} screenOptions={{ ...defaultScreenOptions, headerShown: false }}>
-          <Stack.Screen
-            name="auth/add-account/onboarding"
-            component={AuthOnboardingAddAccountScreen}
-            options={AuthOnboardingAddAccountScreenOptions}
-          />
-          <Stack.Screen
-            name="auth/add-account/platforms"
-            component={AuthPlatformsAddAccountScreen}
-            options={platformsAddAccountNavBar}
-          />
-          <Stack.Screen
-            name="auth/add-account/login/credentials"
-            component={AuthLoginCredentialsScreen}
-            options={loginCredentialsNavBar}
-          />
+        <Stack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
+          <Stack.Group screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+              name="auth/add-account/onboarding"
+              component={AuthOnboardingAddAccountScreen}
+              options={AuthOnboardingAddAccountScreenOptions}
+            />
+            <Stack.Screen
+              name="auth/add-account/platforms"
+              component={AuthPlatformsAddAccountScreen}
+              options={platformsAddAccountNavBar}
+            />
+            <Stack.Screen
+              name="auth/add-account/login/credentials"
+              component={AuthLoginCredentialsScreen}
+              options={loginCredentialsNavBar}
+            />
 
-          <Stack.Screen name="auth/add-account/login/wayf" component={AuthLoginWayfAddAccountScreen} options={loginWayfNavBar} />
-          <Stack.Screen
-            name="auth/add-account/login/redirect"
-            component={AuthLoginRedirectAddAccountScreen}
-            options={loginRedirectNavBar}
-          />
-          <Stack.Screen name="auth/add-account/wayf" component={AuthWayfAddAccountScreen} options={wayfNavBar} />
+            <Stack.Screen name="auth/add-account/login/wayf" component={AuthLoginWayfAddAccountScreen} options={loginWayfNavBar} />
+            <Stack.Screen
+              name="auth/add-account/login/redirect"
+              component={AuthLoginRedirectAddAccountScreen}
+              options={loginRedirectNavBar}
+            />
+            <Stack.Screen name="auth/add-account/wayf" component={AuthWayfAddAccountScreen} options={wayfNavBar} />
 
-          <Stack.Screen
-            name="auth/add-account/activation"
-            component={AuthActivationAddAccountScreen}
-            options={authActivationAddAccountNavBar}
-          />
-          <Stack.Screen
-            name="auth/add-account/renew-password"
-            component={AuthRenewPasswordScreen}
-            options={AuthRenewPasswordScreenOptions}
-          />
-          <Stack.Screen
-            name="auth/add-account/forgot"
-            component={AuthForgotAddAccountScreen}
-            options={({ route }) => ({
-              title:
-                route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
-            })}
-          />
+            <Stack.Screen
+              name="auth/add-account/activation"
+              component={AuthActivationAddAccountScreen}
+              options={authActivationAddAccountNavBar}
+            />
+            <Stack.Screen
+              name="auth/add-account/renew-password"
+              component={AuthRenewPasswordScreen}
+              options={AuthRenewPasswordScreenOptions}
+            />
+            <Stack.Screen
+              name="auth/add-account/forgot"
+              component={AuthForgotAddAccountScreen}
+              options={({ route }) => ({
+                title:
+                  route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+              })}
+            />
+          </Stack.Group>
           {renderCoreModulesScreens(Stack)}
         </Stack.Navigator>
       </NavigationContainer>
