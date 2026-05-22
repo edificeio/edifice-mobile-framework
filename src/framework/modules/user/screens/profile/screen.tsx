@@ -173,7 +173,10 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     ];
 
     const baseParams = {
-      fromFolder: MailsDefaultFolders.INBOX,
+      // Note: fromTimeline make sending just go back to the actuel profile screen.
+      // It is somehow hard to close the modal + switch tab to mail (also not really user-friendly)
+      // fromFolder: MailsDefaultFolders.INBOX,
+      fromTimeline: true,
     };
 
     if (userInfo?.type === AccountType.Student && !isEmpty(family) && session?.user.type !== AccountType.Student) {

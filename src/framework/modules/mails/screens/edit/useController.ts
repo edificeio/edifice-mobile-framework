@@ -42,7 +42,7 @@ const convertDraftRecipients = (recipients: MailsRecipients): MailsVisible[] => 
 };
 
 export const useMailsEditController = ({ navigation, route }: UseMailsEditControllerParams) => {
-  const { draftId, fromFolder, initialMailInfo, type } = route.params;
+  const { draftId, fromFolder, fromTimeline, initialMailInfo, type } = route.params;
 
   // States
   const [initialContentHTML, setInitialContentHTML] = React.useState('');
@@ -114,15 +114,18 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   });
 
   const handleCloseInactiveUserModal = React.useCallback(() => {
-    navigation.navigate(
-      mailsRouteNames.home,
-      {
-        from: fromFolder,
-        reload: !(fromFolder === MailsDefaultFolders.TRASH),
-      },
-      { pop: true },
-    );
-  }, [navigation, fromFolder]);
+    if (fromTimeline) {
+      navigation.goBack();
+    } else
+      navigation.navigate(
+        mailsRouteNames.home,
+        {
+          from: fromFolder,
+          reload: !(fromFolder === MailsDefaultFolders.TRASH),
+        },
+        { pop: true },
+      );
+  }, [fromTimeline, navigation, fromFolder]);
 
   const handleNavigateToDrafts = React.useCallback(
     () =>

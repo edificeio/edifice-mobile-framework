@@ -7,9 +7,6 @@ import moment from 'moment';
 import { ScrollView as GHScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
-import styles from './styles';
-import type { MailsDetailsScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
@@ -64,6 +61,9 @@ import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import { openUrl } from '~/framework/util/linking';
+
+import styles from './styles';
+import type { MailsDetailsScreenPrivateProps } from './types';
 
 const isDateOlderThan60Minutes = (date: moment.Moment) => {
   const now = moment();
@@ -138,11 +138,15 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
       to = [...users, ...groups];
     }
-    props.navigation.navigate(mailsRouteNames.edit, {
-      fromFolder,
-      initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
-      type: MailsEditType.REPLY,
-    });
+    props.navigation.navigate(
+      mailsRouteNames.edit,
+      {
+        fromFolder,
+        initialMailInfo: { body: mail?.body, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
+        type: MailsEditType.REPLY,
+      },
+      { pop: true },
+    );
   }, [fromFolder, mail, currentUserId, props]);
 
   const onReplyAll = React.useCallback(() => {
@@ -170,11 +174,24 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       ...mail!.cci.groups.map(group => convertRecipientGroupInfoToVisible(group)),
     ];
 
-    props.navigation.navigate(mailsRouteNames.edit, {
-      fromFolder,
-      initialMailInfo: { body: mail?.body, cc, cci, date: mail?.date, from: mail?.from, id: mail!.id, subject: mail?.subject, to },
-      type: MailsEditType.REPLY,
-    });
+    props.navigation.navigate(
+      mailsRouteNames.edit,
+      {
+        fromFolder,
+        initialMailInfo: {
+          body: mail?.body,
+          cc,
+          cci,
+          date: mail?.date,
+          from: mail?.from,
+          id: mail!.id,
+          subject: mail?.subject,
+          to,
+        },
+        type: MailsEditType.REPLY,
+      },
+      { pop: true },
+    );
   }, [fromFolder, mail, currentUserId, props]);
 
   const onForward = React.useCallback(async () => {
@@ -188,20 +205,24 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       let groups = mail!.to.groups.map(group => convertRecipientGroupInfoToVisible(group));
       const to: MailsVisible[] = [...users, ...groups];
 
-      props.navigation.navigate(mailsRouteNames.edit, {
-        draftId,
-        fromFolder,
-        initialMailInfo: {
-          attachments: convertedAttachments,
-          body: mail?.body,
-          date: mail?.date,
-          from: mail?.from,
-          id: mail!.id,
-          subject: mail?.subject,
-          to,
+      props.navigation.navigate(
+        mailsRouteNames.edit,
+        {
+          draftId,
+          fromFolder,
+          initialMailInfo: {
+            attachments: convertedAttachments,
+            body: mail?.body,
+            date: mail?.date,
+            from: mail?.from,
+            id: mail!.id,
+            subject: mail?.subject,
+            to,
+          },
+          type: MailsEditType.FORWARD,
         },
-        type: MailsEditType.FORWARD,
-      });
+        { pop: true },
+      );
     } catch (e) {
       console.error('Failed to forward mail', e);
       toast.showError();
@@ -217,7 +238,11 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       try {
         const folderId = await mailsService.folder.create({ name: valueNewFolder });
         await mailsService.mail.moveToFolder({ folderId: folderId }, { ids: [id] });
-        props.navigation.navigate(mailsRouteNames.home, { from: { id: folderId, name: valueNewFolder }, reload: true });
+        props.navigation.navigate(
+          mailsRouteNames.home,
+          { from: { id: folderId, name: valueNewFolder }, reload: true },
+          { pop: true },
+        );
         Toast.showSuccess(I18n.get('mails-toastsuccessmove'));
       } catch (e) {
         console.error(e);
@@ -239,7 +264,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
               ? { idMailToRecall: id }
               : { idMailToRemove: id }),
         };
-        props.navigation.navigate(mailsRouteNames.home, navigationParams);
+        props.navigation.navigate(mailsRouteNames.home, navigationParams, { pop: true });
       } catch (e) {
         console.error(e);
         toast.showError();
@@ -487,7 +512,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
           labelVisible={false}
           tintColor={theme.palette.grey.white as string}
           onPress={() =>
-            fromTimeline ? props.navigation.goBack() : props.navigation.navigate(mailsRouteNames.home, { from: fromFolder })
+            fromTimeline
+              ? props.navigation.goBack()
+              : props.navigation.navigate(mailsRouteNames.home, { from: fromFolder }, { pop: true })
           }
         />
       ),
@@ -578,7 +605,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const renderOriginalContent = React.useCallback(() => {
     const navigateToOriginalContent = () => {
-      props.navigation.navigate(mailsRouteNames.originalContent, { id });
+      props.navigation.navigate(mailsRouteNames.originalContent, { id }, { pop: true });
     };
 
     if (!mail?.original_format_exists) return;
