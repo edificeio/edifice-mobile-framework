@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-21 11:20:25",
-  "notes": "fix(widgets): ENABLING-792, dissociate carnet-de-bord widget from Pronote connectors type\nfix(myapps): IMPULS-5818, connectors filtering\nrelease: 1.17.2-rc.1(1170201)",
-  "version": "1.17.2-rc.2(1170202)",
+  "last": "2026-05-22 10:19:15",
+  "notes": "update(stack): yarn cache update\nrelease: 1.17.2-rc.2(1170202)",
+  "version": "1.17.2-rc.3(1170203)",
   "track": "1.17.2"
 }
