@@ -1,3 +1,6 @@
+import appConf from '~/framework/util/appConf';
+import { Storage } from '~/framework/util/storage';
+
 import {
   accountIsLoggable,
   AuthActiveAccount,
@@ -8,9 +11,6 @@ import {
 import moduleConfig from './module-config';
 import { ERASE_ALL_ACCOUNTS } from './redux/actions';
 import { AuthState } from './redux/types';
-
-import appConf from '~/framework/util/appConf';
-import { Storage } from '~/framework/util/storage';
 
 export interface Pre_1_12_OAuthToken {
   access_token: string;

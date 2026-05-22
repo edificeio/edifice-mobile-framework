@@ -243,6 +243,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
 
   async _trackView(path: string[]) {
     const session = getSession();
+    const sessionId = session?.tokens?.access?.value;
     const platform = session?.platform;
     const moduleAccessMap = ConcreteEntcoreTracker.moduleAccessMap;
     const moduleName = (
@@ -253,11 +254,16 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       const module = moduleAccessMap[moduleName];
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
-          body: JSON.stringify({ ...ConcreteEntcoreTracker.defaultPayload, module, platformName: session?.platform?.displayName }),
+          body: JSON.stringify({
+            ...ConcreteEntcoreTracker.defaultPayload,
+            module,
+            platformName: session?.platform?.displayName,
+            sessionId: sessionId,
+          }),
           method: 'POST',
         }),
       );
-      console.debug(`[EntcoreTracker] Report queued: ${module}`);
+      console.debug(`[EntcoreTracker] Report queued: ${module} for sessionId ${sessionId}`);
       this.lastModulename = moduleName;
     }
     this.sendReportQueue();
