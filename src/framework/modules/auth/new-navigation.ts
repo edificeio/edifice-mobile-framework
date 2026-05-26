@@ -180,8 +180,6 @@ export const getAuthReduxNavigationState = ({
     // zero or one account & only one platform -> no screen
   }
 
-  console.info('lastDeletedAccount', lastDeletedAccount);
-
   // D.2. Login screen (Credentials / Wayf)
   const accountId = accountIds.length === 1 ? accountIds[0] : pending && 'account' in pending ? pending.account : undefined;
   const account = accountId ? accounts[accountId] : undefined;
@@ -277,6 +275,7 @@ export const getAddAccountRouteForRedirect = (platform: Platform, pending: AuthS
             password: pending.code,
             username: pending.loginUsed,
           },
+          key: Math.random().toString(), // Hack to have an different navState everytime
           platform,
         },
       } as const;
@@ -289,6 +288,7 @@ export const getAddAccountRouteForRedirect = (platform: Platform, pending: AuthS
             username: pending.loginUsed,
           },
           host: platform.name,
+          key: Math.random().toString(), // Hack to have an different navState everytime
           // replaceAccountId: pending.accountId,
           // replaceAccountTimestamp: pending.accountTimestamp,
         },
