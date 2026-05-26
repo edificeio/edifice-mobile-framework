@@ -46,10 +46,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- <activity android:name="zendesk.support.guide.HelpCenterActivity"
+        <activity android:name="zendesk.support.guide.HelpCenterActivity"
             android:theme="@style/HelpCenterTheme" />
         <activity android:name="zendesk.support.guide.ViewArticleActivity"
-            android:theme="@style/HelpCenterTheme" /> -->
+            android:theme="@style/HelpCenterTheme" />
     </application>
     <queries>
         <intent>
