@@ -4,8 +4,8 @@ import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   addFilesResults: {
-    padding: UI_SIZES.spacing.medium,
     paddingBottom: UI_SIZES.screen.bottomInset,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   addFilesResultsFile: {
     flex: 1,

@@ -4,6 +4,7 @@ import { ActivityIndicator, Alert, View } from 'react-native';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -25,36 +26,29 @@ import { getSession } from '~/framework/modules/auth/redux/reducer';
 import Thumbnail from '~/framework/modules/mails/components/attachments/thumbnail';
 import moduleConfig from '~/framework/modules/mails/module-config';
 import { mailsService } from '~/framework/modules/mails/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 
 import styles from './styles';
 import { AttachmentsImportScreenProps, UploadAttachment, UploadAttachmentStatus } from './types';
 
-const headerTitleStyle = {
-  color: theme.palette.grey.darkness.toString(),
-};
-
-export const computeNavBar: AttachmentsImportScreenProps.NavBarConfig = ({ navigation, route }) => ({
-  presentation: 'modal',
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('import-title'),
-  }),
-  headerStyle: {
-    backgroundColor: theme.ui.background.page.toString(),
-    borderBottomWidth: 0,
-    elevation: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    shadowOpacity: 0,
-    top: 0,
-    zIndex: 100,
+export const computeNavBar = modalScreenOptions('modal', ({ navigation, route }) => ({
+  // headerStyle: {
+  //   backgroundColor: theme.ui.background.page.toString(),
+  //   borderBottomWidth: 0,
+  //   elevation: 0,
+  //   left: 0,
+  //   position: 'absolute',
+  //   right: 0,
+  //   shadowOpacity: 0,
+  //   top: 0,
+  //   zIndex: 100,
+  // },
+  headerTintColor: theme.palette.grey.darkness.toString(),
+  headerTitleStyle: {
+    color: theme.palette.grey.darkness.toString(),
   },
-  headerTitleStyle,
-});
+  title: I18n.get('import-title'),
+}));
 
 const formatFile = (pic: ImagePicked | DocumentPicked) =>
   ({
@@ -214,7 +208,6 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
     const fileCount = filesRef.current.length;
     navigation.setOptions({
       // navigation.setOptions() requires to define the component on demand.
-
       headerRight: () =>
         filesRef.current.some(upload => upload.status === UploadAttachmentStatus.PENDING) ? (
           <ActivityIndicator size={UI_SIZES.elements.navbarIconSize} color={theme.palette.grey.black} />

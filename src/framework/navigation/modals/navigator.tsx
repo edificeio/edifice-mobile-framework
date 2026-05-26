@@ -27,6 +27,12 @@ import { IModalsNavigationParams, ModalsRouteNames } from '.';
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (
   <>
+    <RootStack.Screen
+      name={ModalsRouteNames.AttachmentsImport}
+      options={AttachmentsImportAddNavBar}
+      component={AttachmentsImportScreen}
+      initialParams={{}}
+    />
     <RootStack.Group
       screenOptions={{
         presentation: 'modal',
@@ -48,12 +54,6 @@ export default (
       screenOptions={{
         presentation: 'fullScreenModal',
       }}>
-      <RootStack.Screen
-        name={ModalsRouteNames.AttachmentsImport}
-        options={AttachmentsImportAddNavBar}
-        component={AttachmentsImportScreen}
-        initialParams={{}}
-      />
       <RootStack.Screen
         name={ModalsRouteNames.CarouselMultimedia}
         options={CarouselMultimediaNavBar}
