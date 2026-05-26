@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
-import { NavigationContainer } from '~/app/navigation';
+import { NavigationContainer, navigationRef as parentNavigationRef } from '~/app/navigation';
 import { defaultScreenOptions, StackScreenLayout } from '~/app/navigation/layout';
 import { renderCoreModulesScreens } from '~/app/navigation/root-navigation';
 import { modalScreenOptions } from '~/app/navigation/util';
@@ -40,7 +40,11 @@ export default function AuthAddAccountModalScreen() {
   }, [navigationKey, navigationRef]);
   return (
     <NavigationIndependentTree>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer
+        ref={navigationRef}
+        onUnhandledAction={action => {
+          parentNavigationRef.dispatch(action);
+        }}>
         {/* NO initial state since we WANT to start always on boarding */}
         <Stack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
           <Stack.Group screenOptions={{ headerShown: false }}>
@@ -87,7 +91,7 @@ export default function AuthAddAccountModalScreen() {
               })}
             />
           </Stack.Group>
-          {renderCoreModulesScreens(Stack)}
+          {/*{renderCoreModulesScreens(Stack)}*/}
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>

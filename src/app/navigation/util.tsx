@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { HeaderBackButton, HeaderButton, HeaderTitle } from '@react-navigation/elements';
 import {
   NativeStackHeaderItemCustom,
@@ -16,39 +18,16 @@ export type ScreenOptions<T extends keyof AllModulesNavigationParams = keyof All
   props: NativeStackOptionsArgs<AllModulesNavigationParams, T>,
 ) => Exclude<NativeStackNavigatorProps['screenOptions'], Function | undefined>;
 
-const defaultNavBarOptions = (
-  { navigation },
+const defaultNavBarOptions = <T extends keyof AllModulesNavigationParams = keyof AllModulesNavigationParams>(
+  { navigation }: NativeStackOptionsArgs<AllModulesNavigationParams, T>,
   icon: SvgIconName,
   title?: string,
 ): ReturnType<Extract<NativeStackNavigatorProps['screenOptions'], Function>> => ({
-  headerLeft: ({ canGoBack, tintColor }) =>
-    canGoBack ? (
-      <>
-        <HeaderBackButton
-          backImage={({ tintColor: fill }) => (
-            <Svg name={icon} fill={fill} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
-          )}
-          tintColor={tintColor}
-          onPress={navigation.goBack}
-          displayMode="minimal"
-          testID="header-back"
-        />
-      </>
-    ) : (
-      <></>
-    ),
-  headerTitle: title
-    ? titleProps => (
-        <HeaderTitle {...titleProps} testID="header-title">
-          {title}
-        </HeaderTitle>
-      )
-    : undefined,
-  unstable_headerLeftItems: ({ canGoBack, tintColor }) =>
-    canGoBack
-      ? [
-          {
-            element: (
+  headerLeft:
+    Platform.OS === 'android'
+      ? ({ canGoBack, tintColor }) =>
+          canGoBack ? (
+            <>
               <HeaderBackButton
                 backImage={({ tintColor: fill }) => (
                   <Svg name={icon} fill={fill} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
@@ -58,11 +37,45 @@ const defaultNavBarOptions = (
                 displayMode="minimal"
                 testID="header-back"
               />
-            ),
-            type: 'custom',
-          },
-        ]
-      : [],
+            </>
+          ) : (
+            <></>
+          )
+      : undefined,
+  headerTitle: title
+    ? titleProps => (
+        <HeaderTitle {...titleProps} testID="header-title">
+          {title}
+        </HeaderTitle>
+      )
+    : undefined,
+  unstable_headerLeftItems:
+    Platform.OS === 'ios'
+      ? ({ canGoBack, tintColor }) =>
+          canGoBack
+            ? [
+                {
+                  element: (
+                    <HeaderBackButton
+                      backImage={({ tintColor: fill }) => (
+                        <Svg
+                          name={icon}
+                          fill={fill}
+                          width={UI_SIZES.elements.navbarIconSize}
+                          height={UI_SIZES.elements.navbarIconSize}
+                        />
+                      )}
+                      tintColor={tintColor}
+                      onPress={navigation.goBack}
+                      displayMode="minimal"
+                      testID="header-back"
+                    />
+                  ),
+                  type: 'custom',
+                },
+              ]
+            : []
+      : undefined,
 });
 
 /**

@@ -16,7 +16,7 @@ import { FileMedia, isPlayableMedia } from '~/framework/util/media';
 
 import CarouselItem from './component';
 import { useCarouselFileHandler, useCarouselOrientation, useTogglePagination } from './hooks';
-import { NavbarButtons } from './navbar';
+import { MultimediaCarouselScreenOptions, NavbarButtons } from './navbar';
 import CarouselPagination from './pagination/component';
 import { PAGINATION_COMPONENT_HEIGHT } from './pagination/styles';
 import styles from './styles';
@@ -167,7 +167,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
 
     if (isNavBarVisible) {
       navigation.setOptions({
-        // ...MultimediaCarouselScreenOptions({ navigation, route }),
+        ...MultimediaCarouselScreenOptions({ navigation, route }),
         headerRight: () => <NavbarButtons disabled={hasMediaError} media={media[currentIndex]} onShare={onShare} />,
         headerShown: isAndroid ? true : undefined,
         statusBarHidden: isLandscape,
