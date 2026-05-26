@@ -1,12 +1,15 @@
-import { CarouselParams } from './screen';
+import { navigationRef } from '~/app/navigation';
+import { convertToMedia } from '~/framework/util/media-deprecated';
 
-import { navigate } from '~/framework/navigation/helper';
-import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { CarouselParams } from './screen';
+import { MultimediaCarouselNavParams } from '../carousel-multimedia/openCarousel';
 
 /**
  * @deprecated Use new carousel
  * @param props
  */
 export function openCarousel(props: CarouselParams) {
-  navigate(ModalsRouteNames.Carousel, props);
+  const params: MultimediaCarouselNavParams = { media: convertToMedia(props.data), startIndex: props.startIndex ?? 0 };
+  navigationRef.navigate('media/carousel', params);
+  // navigate(ModalsRouteNames.Carousel, props);
 }

@@ -25,7 +25,7 @@ export const getSignedMediaSource = (item: FileMedia | FileMedia['src']): Signed
   } else if (src instanceof URL) {
     uriSource = { uri: src.toString() };
   } else if (type === MediaType.VIDEO || type === MediaType.AUDIO) {
-    uriSource = { uri: src } as ReactVideoSourceProperties;
+    uriSource = { uri: typeof src === 'string' ? src : src.uri } as ReactVideoSourceProperties;
   } else if (isFullMedia && type === MediaType.ATTACHMENT && isPdfContent(item as FileMedia)) {
     uriSource = src as Source;
   } else {

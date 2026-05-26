@@ -6,7 +6,6 @@
  */
 
 import * as React from 'react';
-// eslint-disable-next-line no-restricted-imports
 import { ImageURISource, Image as RNImage, ImageProps as RNImageProps, StyleSheet, View } from 'react-native';
 
 import { FastImageProps, default as RNFastImage, Source } from '@d11/react-native-fast-image';
@@ -16,6 +15,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 
+import { EmbeddedMedia, FileMedia, MediaType } from './media';
 import { sessionImageSource } from './transport';
 
 interface IMediaCommonAttributes {
@@ -121,3 +121,19 @@ export const enum ImageLoadingState {
   Success,
   Error,
 }
+
+export const typeConvertMap: Record<IMedia['type'], (FileMedia | EmbeddedMedia)['type']> = {
+  audio: MediaType.AUDIO,
+  document: MediaType.ATTACHMENT,
+  image: MediaType.IMAGE,
+  link: MediaType.EMBEDDED,
+  video: MediaType.VIDEO,
+};
+
+export const convertToMedia = (data: IMedia[]): (FileMedia | EmbeddedMedia)[] =>
+  data.map(item => ({
+    alt: item.alt,
+    mime: item.mime ?? 'application/octet-stream',
+    src: item.src,
+    type: typeConvertMap[item.type],
+  }));

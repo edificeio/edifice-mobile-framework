@@ -1,8 +1,19 @@
-import type { MediaPlayerParams } from './types';
+import { navigationRef } from '~/app/navigation';
 
-import { navigate } from '~/framework/navigation/helper';
-import { ModalsRouteNames } from '~/framework/navigation/modals';
+import type { MediaPlayerParams } from './types';
+import { MultimediaCarouselNavParams } from '../../carousel-multimedia/openCarousel';
 
 export function openMediaPlayer(props: MediaPlayerParams) {
-  navigate(ModalsRouteNames.MediaPlayer, props);
+  const params: MultimediaCarouselNavParams = {
+    media: [
+      {
+        mime: props.filetype ?? 'application/octet-stream',
+        src: props.source,
+        type: props.type,
+      },
+    ],
+    startIndex: 0,
+  };
+  navigationRef.navigate('media/carousel', params);
+  // navigate(ModalsRouteNames.MediaPlayer, props);
 }
