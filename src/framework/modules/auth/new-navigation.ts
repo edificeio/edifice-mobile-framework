@@ -180,6 +180,8 @@ export const getAuthReduxNavigationState = ({
     // zero or one account & only one platform -> no screen
   }
 
+  console.info('lastDeletedAccount', lastDeletedAccount);
+
   // D.2. Login screen (Credentials / Wayf)
   const accountId = accountIds.length === 1 ? accountIds[0] : pending && 'account' in pending ? pending.account : undefined;
   const account = accountId ? accounts[accountId] : undefined;
@@ -188,7 +190,7 @@ export const getAuthReduxNavigationState = ({
       ? account.platform
       : account.platform.name
     : pending?.platform;
-  if (hostName) {
+  if (hostName && !lastDeletedAccount) {
     state.routes.push(getRouteForLoginRedirection(appConf.getHost(hostName), account, pending?.loginUsed));
   }
 

@@ -93,6 +93,7 @@ const reducer = createReducer(initialState, {
       accounts: { ...state.accounts, [account.user.id]: account },
       connected: account.user.id,
       lastAddAccount: Date.now(),
+      lastDeletedAccount: undefined,
       requirement: undefined,
       showOnboarding: false,
     };
@@ -105,6 +106,7 @@ const reducer = createReducer(initialState, {
       accounts: { ...state.accounts, [account.user.id]: account },
       connected: account.user.id,
       lastAddAccount: Date.now(),
+      lastDeletedAccount: undefined,
       platformContexts: { ...state.platformContexts, [account.platform.name]: context },
       requirement,
       showOnboarding: false,
@@ -131,6 +133,7 @@ const reducer = createReducer(initialState, {
       ...state,
       accounts: { ...newAccounts, [account.user.id]: account },
       connected: account.user.id,
+      lastDeletedAccount: undefined,
       requirement: undefined,
       showOnboarding: false,
     };
@@ -144,6 +147,7 @@ const reducer = createReducer(initialState, {
       ...state,
       accounts: { ...newAccounts, [account.user.id]: account },
       connected: account.user.id,
+      lastDeletedAccount: undefined,
       platformContexts: { ...state.platformContexts, [account.platform.name]: context },
       requirement,
       showOnboarding: false,

@@ -23,7 +23,6 @@ import type { AuthLoginCredentialsScreenPrivateProps } from './types';
 export const computeNavBar = screenOptions(() => ({ title: I18n.get('auth-login-title') }));
 
 function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProps) {
-  console.info('AuthLoginCredentialsScreen', props);
   return (
     <AuthLoginCredentialsScreenTemplate
       {...props}
