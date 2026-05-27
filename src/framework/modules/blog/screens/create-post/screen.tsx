@@ -5,9 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -30,6 +27,9 @@ import { startLoadNotificationsAction } from '~/framework/modules/timeline/actio
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
+
+import styles from './styles';
+import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -91,10 +91,14 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
 
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
       await handleInitTimeline();
-      navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
-        ...(route.params.referrer ? { blogId: route.params.blog.id } : {}),
-        forceReload: true,
-      });
+      navigation.navigate(
+        route.params.referrer ?? timelineRouteNames.Home,
+        {
+          ...(route.params.referrer ? { blogId: route.params.blog.id } : {}),
+          forceReload: true,
+        },
+        { pop: true },
+      );
       Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {
@@ -134,7 +138,6 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         />
       ),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, loadingState, content]);
 
   const topForm = React.useCallback(
