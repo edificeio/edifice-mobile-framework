@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-27 13:28:12",
-  "notes": "update(stack): packages minor updates\nfix: ENABLING-770 better keyboard handling\nupdate(stack): yarn cache update\nrelease: 1.17.3-alpha.2(1170302)",
-  "version": "1.17.3-alpha.3(1170303)",
+  "last": "2026-05-27 13:58:00",
+  "notes": "release: 1.17.3-alpha.3(1170303)",
+  "version": "1.17.3-alpha.4(1170304)",
   "track": "1.17.3"
 }
