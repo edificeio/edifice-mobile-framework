@@ -22,6 +22,7 @@ import { useAvailableModules } from '~/app/modules';
 import { RootToastContainer } from '~/framework/components/toast';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
+import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 
 import navigationLightTheme, { defaultScreenOptions, StackScreenLayout } from './layout';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
@@ -133,21 +134,23 @@ export function AppNavigation() {
        * @see https://reactnavigation.org/docs/navigation-container#initialstate
        */
       initialState={navigationState}>
-      <BottomSheetModalProvider>
-        <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
-          {/**
-           * Show main screen depending on session data and requirements.
-           * We can't remove the `tabs` route since react-navigation has to that it exists to navigate to it.
-           * So, we handle this by using another empty render component
-           */}
-          {userIsCompletelyLoggedIn ? (
-            <RootStack.Screen options={MainNavigationOptions} name={TABS_ROUTE_NAME} component={MainNavigation} />
-          ) : (
-            <RootStack.Group navigationKey={navigationKey}>{renderCoreModulesScreens(RootStack)}</RootStack.Group>
-          )}
-        </RootStack.Navigator>
-        <RootToastContainer />
-      </BottomSheetModalProvider>
+      <AppPushNotificationHandlerComponent>
+        <BottomSheetModalProvider>
+          <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
+            {/**
+             * Show main screen depending on session data and requirements.
+             * We can't remove the `tabs` route since react-navigation has to that it exists to navigate to it.
+             * So, we handle this by using another empty render component
+             */}
+            {userIsCompletelyLoggedIn ? (
+              <RootStack.Screen options={MainNavigationOptions} name={TABS_ROUTE_NAME} component={MainNavigation} />
+            ) : (
+              <RootStack.Group navigationKey={navigationKey}>{renderCoreModulesScreens(RootStack)}</RootStack.Group>
+            )}
+          </RootStack.Navigator>
+          <RootToastContainer />
+        </BottomSheetModalProvider>
+      </AppPushNotificationHandlerComponent>
     </NavigationContainer>
   );
 }
