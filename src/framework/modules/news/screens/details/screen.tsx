@@ -5,7 +5,6 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import { usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -23,7 +22,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction } from '~/framework/components/navigation';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { KeyboardPageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
@@ -137,17 +136,6 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const hasPermissionComment = useMemo(() => {
     return news?.sharedRights.includes(NewsItemRights.COMMENT) || session!.user.id === news?.owner.id;
   }, [news, session]);
-
-  const ListComponent = useMemo(() => {
-    return Platform.select<React.ComponentType<any>>({
-      android: KeyboardAvoidingFlatList,
-      ios: FlatList,
-    })!;
-  }, []);
-
-  const PageComponent = useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
-  }, []);
 
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
 
@@ -417,7 +405,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
     return (
       <>
-        <ListComponent
+        <FlatList
           ref={flatListRef}
           initialNumToRender={comments ? comments.length : 0}
           keyboardShouldPersistTaps="handled"
@@ -428,24 +416,11 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           renderItem={renderComment}
           onContentSizeChange={(_width, height) => setListHeight(height)}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={handleRefresh} />}
-          scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-          {...Platform.select({ android: { stickyFooter: renderFooter() }, ios: {} })}
         />
-        {Platform.select({ android: null, ios: renderFooter() })}
+        {renderFooter()}
       </>
     );
-  }, [
-    ListComponent,
-    comments,
-    onExtractKey,
-    handleRefresh,
-    renderComment,
-    loadingState,
-    news,
-    renderError,
-    renderFooter,
-    renderNewsDetails,
-  ]);
+  }, [comments, onExtractKey, handleRefresh, renderComment, loadingState, news, renderError, renderFooter, renderNewsDetails]);
 
   const renderRightHeader = React.useCallback(
     () => (
@@ -547,11 +522,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   usePreventRemove(infoComment.changed, handlePreventRemove);
 
-  return (
-    <PageComponent {...Platform.select({ android: {}, ios: { safeArea: !hasPermissionComment } })}>
-      {showPlaceholder ? <NewsPlaceholderDetails /> : renderPage()}
-    </PageComponent>
-  );
+  return <KeyboardPageView safeArea={false}>{showPlaceholder ? <NewsPlaceholderDetails /> : renderPage()}</KeyboardPageView>;
 };
 
 const mapStateToProps: (_s: IGlobalState) => NewsDetailsScreenDataProps = _s => ({

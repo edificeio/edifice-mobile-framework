@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Keyboard, ScrollView, View } from 'react-native';
 
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -11,9 +11,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
 import TextInput from '~/framework/components/inputs/text';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Svg } from '~/framework/components/picture';
-import { BodyText, HeadingXSText } from '~/framework/components/text';
+import { BodyText, HeadingXSText, TextSizeStyle } from '~/framework/components/text';
 import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredentials } from '~/framework/modules/auth/model';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import { getAccountById } from '~/framework/modules/auth/redux/reducer';
@@ -242,15 +243,28 @@ const AuthLoginCredentialsScreenTemplate = (props: AuthLoginCredentialsScreenPro
     }
   }, [typing, errmsg, errtype, goToWeb, doLogin, isSubmitDisabled, loginState]);
 
+  const insets = useSafeAreaInsets();
+
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  React.useEffect(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollTo(styles.platformLogo.height + styles.platform.paddingTop);
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
-    <KeyboardAvoidingView automaticOffset behavior="padding">
+    <KeyboardAvoidingView>
       <ScrollView
+        ref={scrollViewRef}
         keyboardShouldPersistTaps="handled"
         alwaysBounceVertical={false}
         overScrollMode="never"
-        contentContainerStyle={styles.scrollview}>
+        contentContainerStyle={React.useMemo(() => [styles.scrollview, { paddingBottom: insets.bottom }], [insets])}>
+        {renderPlatform()}
         <View style={styles.form}>
-          {renderPlatform()}
           {renderInputs()}
           {renderError()}
           <View style={styles.boxButtons}>

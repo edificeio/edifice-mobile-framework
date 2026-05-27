@@ -185,6 +185,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
         headerStyle: { backgroundColor: 'transparent' },
         statusBarHidden: isLandscape,
         title: '',
+        unstable_headerLeftItems: undefined,
       });
     }
   }, [isNavBarVisible, media.length, currentIndex, hasMediaError, orientation, navigation, media, route.params.title, onShare]);

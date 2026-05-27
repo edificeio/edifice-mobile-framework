@@ -8,23 +8,20 @@
  * - Handle keyboard
  */
 import * as React from 'react';
-import { Keyboard, Platform, ScrollView, ScrollViewProps, StyleSheet, View, ViewProps } from 'react-native';
+import { ScrollView, ScrollViewProps, StyleSheet, View, ViewProps } from 'react-native';
 
 import styled from '@emotion/native';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
-import DeviceInfo from 'react-native-device-info';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 import { UI_SIZES } from './constants';
 import { ScreenView } from './screen';
 import { ScreenViewProps } from './screen/types';
-import { ANDROID_16 } from '../util/permissions';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
@@ -96,34 +93,12 @@ export const KeyboardPageView = (
     }
   >,
 ) => {
-  const [kbHeight, setKbHeight] = React.useState(0);
-  React.useEffect(() => {
-    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', e => {
-      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
-      setKbHeight(e.endCoordinates.height);
-    });
-
-    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', e => {
-      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
-      setKbHeight(0);
-    });
-
-    return () => {
-      keyboardShowListener.remove();
-      keyboardHideListener.remove();
-    };
-  }, []);
-
   const { children, gutters, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
   const AreaComponent = (props.safeArea ?? true) ? SafeAreaView : View;
   return (
     <PageView gutters={gutters} {...pageProps}>
-      <KeyboardAvoidingView
-        behavior="padding"
-        automaticOffset
-        contentContainerStyle={styles.flexGrow1}
-        style={React.useMemo(() => [styles.flex1, { paddingBottom: kbHeight }], [kbHeight])}>
+      <KeyboardAvoidingView>
         <InnerViewComponent
           style={styles.flex1}
           contentContainerStyle={styles.flexGrow1}

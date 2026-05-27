@@ -30,7 +30,7 @@ export default StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     padding: UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.spacing.large,
+    paddingTop: 0,
   },
   inputCheckbox: {
     alignSelf: 'flex-end',
@@ -47,6 +47,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: UI_SIZES.spacing.large,
+    paddingTop: UI_SIZES.spacing.large,
     width: '100%',
   },
   platformLogo: {

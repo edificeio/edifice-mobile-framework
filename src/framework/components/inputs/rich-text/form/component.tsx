@@ -1,11 +1,8 @@
 import * as React from 'react';
-import { Alert, Animated, Keyboard, Platform, ScrollView } from 'react-native';
+import { Alert, Animated, ScrollView } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import DeviceInfo from 'react-native-device-info';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -15,6 +12,7 @@ import { UI_ANIMATIONS, UI_SIZES, UI_STYLES } from '~/framework/components/const
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import ActionButtonBottomSheetModal from '~/framework/components/modals/bottom-sheet/action-button';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
@@ -26,7 +24,6 @@ import { getSession } from '~/framework/modules/auth/redux/reducer';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/thunks';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-import { ANDROID_16 } from '~/framework/util/permissions';
 
 import styles from './styles';
 import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
@@ -306,7 +303,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
   return (
     <BottomSheetModalProvider>
       <PageView style={styles.page}>
-        <KeyboardAvoidingView automaticOffset behavior="padding" style={UI_STYLES.flex1}>
+        <KeyboardAvoidingView>
           <ScrollView
             keyboardDismissMode="none"
             keyboardShouldPersistTaps="always"

@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
   },
   page: {
     backgroundColor: theme.palette.grey.white,
+    flex: 1,
   },
   richEditor: {
     flexGrow: 1,
