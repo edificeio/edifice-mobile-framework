@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabNavigationOptions, BottomTabNavigatorProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { CommonActions, StackActions } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
@@ -11,11 +12,13 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { getTabModuleDisplayName, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
+import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { defaultScreenOptions, defaultTabOptions, getTabBarIconSize, StackScreenLayout, TabScreenLayout } from './layout';
 import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
+import { ConfirmRemoveContext, useConfirmChangeTab } from './use-confirm-remove';
 
 const MainTabs = createBottomTabNavigator();
 const TabStack = createNativeStackNavigator<AllModulesNavigationParams>();
@@ -144,9 +147,22 @@ export const MainNavigation = React.memo(function MainNavigation() {
     }));
   }, [rightsMemoValue]);
 
+  const confirmChangeTabListeners = useConfirmChangeTab();
+  const tabListeners: NonNullable<BottomTabNavigatorProps['screenListeners']> = props => ({
+    ...confirmChangeTabListeners(props),
+    tabPress: event => {
+      Feedback.tabPressed();
+      confirmChangeTabListeners(props).tabPress?.(event);
+    },
+  });
+
   return React.useMemo(
     () => (
-      <MainTabs.Navigator screenLayout={TabScreenLayout} screenOptions={defaultTabOptions} detachInactiveScreens>
+      <MainTabs.Navigator
+        screenLayout={TabScreenLayout}
+        screenOptions={defaultTabOptions}
+        detachInactiveScreens
+        screenListeners={tabListeners}>
         {
           // New Modules tabs here
           availableTabModules.map((tabModule, index) => {

@@ -1,10 +1,8 @@
-import { Alert } from 'react-native';
+import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 
-import { NavigationProp, ParamListBase, useNavigation, usePreventRemove } from '@react-navigation/native';
-
-import { I18n } from '~/app/i18n';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
-
+/**
+ * @deprecated use useConfirmRemove instead.
+ */
 function usePreventBack({
   actionOnBack,
   showAlert,
@@ -16,27 +14,29 @@ function usePreventBack({
   showAlert: boolean;
   actionOnBack?: () => void;
 }) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  useConfirmRemove(showAlert, { onConfirm: actionOnBack, text, title });
 
-  usePreventRemove(showAlert, ({ data }) => {
-    Alert.alert(title, text, [
-      {
-        onPress: () => {
-          if (actionOnBack) actionOnBack();
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-        style: 'destructive',
-        text: I18n.get('common-quit'),
-      },
-      {
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-        style: 'default',
-        text: I18n.get('common-continue'),
-      },
-    ]);
-  });
+  // const navigation = useNavigation<NavigationProp<ParamListBase>>();
+
+  // usePreventRemove(showAlert, ({ data }) => {
+  //   Alert.alert(title, text, [
+  //     {
+  //       onPress: () => {
+  //         if (actionOnBack) actionOnBack();
+  //         handleRemoveConfirmNavigationEvent(data.action, navigation);
+  //       },
+  //       style: 'destructive',
+  //       text: I18n.get('common-quit'),
+  //     },
+  //     {
+  //       onPress: () => {
+  //         clearConfirmNavigationEvent();
+  //       },
+  //       style: 'default',
+  //       text: I18n.get('common-continue'),
+  //     },
+  //   ]);
+  // });
 }
 
 export default usePreventBack;

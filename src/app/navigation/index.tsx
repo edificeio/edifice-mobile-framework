@@ -27,12 +27,13 @@ import { AppPushNotificationHandlerComponent } from '~/framework/util/notificati
 import navigationLightTheme, { defaultScreenOptions, StackScreenLayout } from './layout';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { renderCoreModulesScreens } from './root-navigation';
-import { useTrackScreen } from './telemetry';
+import { useScreenTelemetry } from './telemetry';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
 
 // Note: import tabModules register to initialize it
 // remove when all modules will be ported to new module system
 import '~/framework/navigation/tabModules';
+import { ConfirmRemoveProvider } from './use-confirm-remove';
 
 export const NavigationContainer = React.forwardRef(function NavigationContainer(
   { theme: _, ...props }: NavigationContainerProps,
@@ -60,14 +61,7 @@ export function AppNavigation() {
   const onUnhandledAction = React.useCallback<NonNullable<NavigationContainerProps['onUnhandledAction']>>(action => {
     __DEV__ && console.error('[Navigation] Unhandled action', action);
   }, []);
-  const trackScreen = useTrackScreen();
-  const onStateChange = React.useCallback<NonNullable<NavigationContainerProps['onStateChange']>>(
-    state => {
-      // __DEV__ && console.info('[Navigation] onStateChange', state);
-      trackScreen(state);
-    },
-    [trackScreen],
-  );
+  const trackScreenChange = useScreenTelemetry();
 
   const session = useSelector(selectors.session);
   const accounts = useSelector(selectors.accounts);
@@ -125,7 +119,7 @@ export function AppNavigation() {
       ref={navigationRef}
       onReady={onReady}
       onUnhandledAction={onUnhandledAction}
-      onStateChange={onStateChange}
+      onStateChange={trackScreenChange}
       /**
        * Note on initialState prop :
        * Providing this prop overrides the default behaviour of deep linking of react-navigation.
@@ -134,23 +128,25 @@ export function AppNavigation() {
        * @see https://reactnavigation.org/docs/navigation-container#initialstate
        */
       initialState={navigationState}>
-      <AppPushNotificationHandlerComponent>
-        <BottomSheetModalProvider>
-          <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
-            {/**
-             * Show main screen depending on session data and requirements.
-             * We can't remove the `tabs` route since react-navigation has to that it exists to navigate to it.
-             * So, we handle this by using another empty render component
-             */}
-            {userIsCompletelyLoggedIn ? (
-              <RootStack.Screen options={MainNavigationOptions} name={TABS_ROUTE_NAME} component={MainNavigation} />
-            ) : (
-              <RootStack.Group navigationKey={navigationKey}>{renderCoreModulesScreens(RootStack)}</RootStack.Group>
-            )}
-          </RootStack.Navigator>
-          <RootToastContainer />
-        </BottomSheetModalProvider>
-      </AppPushNotificationHandlerComponent>
+      <ConfirmRemoveProvider>
+        <AppPushNotificationHandlerComponent>
+          <BottomSheetModalProvider>
+            <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
+              {/**
+               * Show main screen depending on session data and requirements.
+               * We can't remove the `tabs` route since react-navigation has to that it exists to navigate to it.
+               * So, we handle this by using another empty render component
+               */}
+              {userIsCompletelyLoggedIn ? (
+                <RootStack.Screen options={MainNavigationOptions} name={TABS_ROUTE_NAME} component={MainNavigation} />
+              ) : (
+                <RootStack.Group navigationKey={navigationKey}>{renderCoreModulesScreens(RootStack)}</RootStack.Group>
+              )}
+            </RootStack.Navigator>
+            <RootToastContainer />
+          </BottomSheetModalProvider>
+        </AppPushNotificationHandlerComponent>
+      </ConfirmRemoveProvider>
     </NavigationContainer>
   );
 }
