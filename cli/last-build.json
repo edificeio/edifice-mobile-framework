@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-26 21:59:51",
-  "notes": "update(stack): yarn cache update\nfix(zendesk): enable zendesk\nfix: old openDocument compatibility\nfix(import): ENABLING-803 header was not showing on android\nfix: ENABLING-810, ENABLING-804 emulate action sheet in presences\nfix(auth): ENABLING-817 enforce new navigation state on activation redirect\nfix: ENABLING-813 fix carousel show in android\nfix(auth): ENABLING-809 fix after deleting account\nupdate(stack): packages minor updates\nfeat(data): ENABLING-798, add sessionId to /infra/event/mobile/store API calls\nfix(editor): ENABLING-812 fix toolbar position\nfix(android): enable edge to edge\nfix(android): set status bar color nativaly\nfix: ENABLING-813 handle pdf carousel when non-logged + in add account modal\nfix(mails): ENABLING-801 back after sending mail fixed\nfix(auth): ENABLING-817 fix add-account canceling activation\nchore(i18n): change phrase sync branch\nrelease: 1.17.3-alpha.1(1170301)",
-  "version": "1.17.3-alpha.2(1170302)",
+  "last": "2026-05-27 13:28:12",
+  "notes": "update(stack): packages minor updates\nfix: ENABLING-770 better keyboard handling\nupdate(stack): yarn cache update\nrelease: 1.17.3-alpha.2(1170302)",
+  "version": "1.17.3-alpha.3(1170303)",
   "track": "1.17.3"
 }
