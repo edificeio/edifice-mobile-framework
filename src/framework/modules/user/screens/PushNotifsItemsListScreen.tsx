@@ -126,8 +126,12 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
           onPress={() => {
             this.setState({ loadingState: PushNotifsItemsListLoadingState.UPDATE });
             this.props.handleUpdatePushNotifSettings(this.state.pendingPrefsChanges).then(() => {
-              this.setState({ loadingState: PushNotifsItemsListLoadingState.DONE, pendingPrefsChanges: {} });
-              this.props.navigation.dispatch(CommonActions.goBack());
+              this.setState({
+                arePrefsUnchanged: true,
+                loadingState: PushNotifsItemsListLoadingState.DONE,
+                pendingPrefsChanges: {},
+              });
+              setTimeout(() => this.props.navigation.dispatch(CommonActions.goBack()));
             });
           }}
         />
