@@ -14,7 +14,7 @@ import TextInput from '~/framework/components/inputs/text';
 import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Svg } from '~/framework/components/picture';
-import { BodyText, HeadingXSText, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredentials } from '~/framework/modules/auth/model';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import { getAccountById } from '~/framework/modules/auth/redux/reducer';

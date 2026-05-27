@@ -2,7 +2,7 @@
  * Schoolbook word details
  */
 import React from 'react';
-import { Alert, Platform, RefreshControl, ScrollView } from 'react-native';
+import { Alert, RefreshControl, ScrollView } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
@@ -11,11 +11,11 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { InfoCommentField } from '~/framework/components/commentField';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -325,11 +325,9 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     }
   };
 
-  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
-
   return (
     <>
-      <PageComponent safeArea={false}>{renderPage()}</PageComponent>
+      <KeyboardAvoidingView>{renderPage()}</KeyboardAvoidingView>
     </>
   );
 };

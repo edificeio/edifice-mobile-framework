@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { EmitterSubscription, Keyboard, Platform, TouchableOpacity, View } from 'react-native';
 
-import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
-
-import CardTopContentCategory from './cardtopcontent-category';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
@@ -32,6 +28,8 @@ import {
 } from '~/framework/modules/schoolbook/reducer';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 import HtmlContentView from '~/ui/HtmlContentView';
+
+import CardTopContentCategory from './cardtopcontent-category';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.get(ackNumber === 1 ? 'schoolbook-worddetails-acknowledgement' : 'schoolbook-worddetails-acknowledgements').toLowerCase()}`;
@@ -322,11 +320,6 @@ const SchoolbookWordDetailsCard = (
     ],
   );
 
-  const ListComponent = Platform.select<typeof FlatList | typeof KeyboardAvoidingFlatList>({
-    android: KeyboardAvoidingFlatList,
-    ios: FlatList,
-  })!;
-
   const refSetup = React.useCallback(listComponentRef => {
     flatListRef.current = listComponentRef;
   }, []);
@@ -396,7 +389,7 @@ const SchoolbookWordDetailsCard = (
 
   return (
     <>
-      <ListComponent
+      <FlatList
         ref={refSetup}
         onContentSizeChange={onContentSizeChange}
         removeClippedSubviews={false}
@@ -406,7 +399,7 @@ const SchoolbookWordDetailsCard = (
         ListHeaderComponent={resourceView}
         onLayout={onLayout}
         keyboardShouldPersistTaps="handled"
-        bottomInset={!isBottomSheetVisible}
+        // bottomInset={!isBottomSheetVisible}
         style={style}
         scrollIndicatorInsets={scrollIndicatorInsets}
       />
