@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-05-27 14:56:42",
-  "notes": "release: 1.17.3-alpha.5(1170305)",
-  "version": "1.17.3-alpha.6(1170306)",
+  "last": "2026-05-28 20:49:14",
+  "notes": "chore: yarn cache update\nfix(android): ENABLING-816 image component didn't sign sources\nfix: platform logo issue\nfix: ENABLING-833 handle push-notifs when app killed correctly\nfix(notifications): ENABLING-833 handle push-notifs in background state\nfix(imports): relatives imports removal\nupdate(stack): packages minor updates\nfix: ENABLING-839, ENABLING-811 reimplement usePreventRemove\nfix: handle push-notifications\nfix: handle back after filters correctfly\nfix(nav): ENABLING-772, delay goBack() call\nfix(blog): ENABLING-772 navigate back after create post\nfix(form): ENABLING-838 confirmation button was not showing\nfix: ENABLING-770 better (really !) keyboard handling\nrelease: 1.17.3-alpha.6(1170306)",
+  "version": "1.17.3-alpha.7(1170307)",
   "track": "1.17.3"
 }
