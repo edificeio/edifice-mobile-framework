@@ -9,6 +9,7 @@ import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { navigationRef } from '~/app/navigation';
 import { useNavigationRedirectionDispatch } from '~/app/navigation/use-confirm-remove';
 import { IGlobalState } from '~/app/store';
 import { accountIsActive } from '~/framework/modules/auth/model';
@@ -19,19 +20,29 @@ import { defaultNotificationActionStack, handleNotificationAction } from './rout
 
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 
+export const PushNotificationContext = React.createContext<
+  [FirebaseMessagingTypes.RemoteMessage | undefined, (v: FirebaseMessagingTypes.RemoteMessage | undefined) => void]
+>([undefined, () => {}]);
+
+export function PushNotificationContextProvider({ children }: React.PropsWithChildren) {
+  const a = useState<FirebaseMessagingTypes.RemoteMessage | undefined>(undefined);
+  return <PushNotificationContext value={a}>{children}</PushNotificationContext>;
+}
+
 function AppPushNotificationHandlerComponentUnconnected(
   props: PropsWithChildren<{
     isLoggedIn: boolean;
     dispatch: ThunkDispatch<any, any, any>;
   }>,
 ) {
-  const [notification, setNotification] = useState<FirebaseMessagingTypes.RemoteMessage | undefined>(undefined);
-
+  const [notification, setNotification] = React.useContext(PushNotificationContext);
+  const isInitialRef = React.useRef(true);
   useEffect(() => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
 
     messaging().onNotificationOpenedApp(remoteMessage => {
       setNotification(remoteMessage);
+      isInitialRef.current = false;
     });
 
     // Check whether an initial notification is available
@@ -45,7 +56,7 @@ function AppPushNotificationHandlerComponentUnconnected(
   }, []);
 
   const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
-  const navDispatch = useNavigationRedirectionDispatch(navigation);
+  const navDispatch = useNavigationRedirectionDispatch(isInitialRef.current ? navigation : navigationRef);
   const { dispatch, isLoggedIn } = props;
   useEffect(() => {
     if (notification && isLoggedIn) {
@@ -55,13 +66,21 @@ function AppPushNotificationHandlerComponentUnconnected(
           params: notification.data.params && JSON.parse(notification.data.params),
         } as IEntcoreTimelineNotification;
         const n = notificationAdapter(notificationData);
-
         dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
-        dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, navDispatch, 'Push Notification', true));
+        dispatch(
+          handleNotificationAction(
+            n,
+            defaultNotificationActionStack,
+            isInitialRef.current ? navigation : navigationRef,
+            navDispatch,
+            'Push Notification',
+            true,
+          ),
+        );
         setNotification(undefined);
       }
     }
-  }, [dispatch, isLoggedIn, navDispatch, navigation, notification]);
+  }, [dispatch, isLoggedIn, navDispatch, navigation, notification, setNotification]);
 
   return <>{props.children}</>;
 }
