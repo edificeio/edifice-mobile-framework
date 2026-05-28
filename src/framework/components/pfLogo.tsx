@@ -21,6 +21,6 @@ export const PFLogo = ({ pf }: { pf: Platform }) => {
   return pf.logoType === 'Svg' ? (
     <Picture type="Svg" name={pf.logo} height={logoSize.height} width={logoSize.width} />
   ) : (
-    <ImageLogo source={pf.logo} />
+    <ImageLogo source={pf.logo} resizeMode="contain" />
   );
 };
