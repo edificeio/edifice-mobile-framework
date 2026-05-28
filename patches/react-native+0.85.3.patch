@@ -1,3 +1,7 @@
+diff --git a/node_modules/react-native/Libraries/.DS_Store b/node_modules/react-native/Libraries/.DS_Store
+new file mode 100644
+index 0000000..20b261c
+Binary files /dev/null and b/node_modules/react-native/Libraries/.DS_Store differ
 diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
 index bd9f153..64a5c86 100644
 --- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
@@ -65,3 +69,46 @@ index 72a2498..1660055 100644
  }>;
  
  interface Instance extends React.ElementRef<typeof Animated.View> {
+diff --git a/node_modules/react-native/Libraries/Image/Image.android.js b/node_modules/react-native/Libraries/Image/Image.android.js
+index b30c90d..0779b66 100644
+--- a/node_modules/react-native/Libraries/Image/Image.android.js
++++ b/node_modules/react-native/Libraries/Image/Image.android.js
+@@ -196,7 +196,11 @@ let BaseImage: AbstractImageAndroid = ({
+     );
+   }
+ 
+-  let style_: ImageStyleProp;
++  const nativeProps = restProps as {
++    ...React.PropsOf<ImageViewNativeComponent>,
++  };
++
++        let style_: ImageStyleProp;
+   let sources_;
+   let headers_: ?ImageSourceHeaders;
+   if (Array.isArray(source_)) {
+@@ -218,10 +222,13 @@ let BaseImage: AbstractImageAndroid = ({
+     }
+     sources_ = source_;
+   } else {
+-    const {uri, width: sourceWidth, height: sourceHeight} = source_;
++    const {uri, width: sourceWidth, height: sourceHeight, headers: sourceHeaders} = source_;
+     if (uri === '') {
+       console.warn('source.uri should not be an empty string');
+     }
++    if (sourceHeaders != null) {
++      nativeProps.headers = sourceHeaders;
++    }
+     style_ = [
+       {width: sourceWidth ?? width, height: sourceHeight ?? height},
+       styles.base,
+@@ -230,10 +237,6 @@ let BaseImage: AbstractImageAndroid = ({
+     sources_ = [source_];
+   }
+ 
+-  const nativeProps = restProps as {
+-    ...React.PropsOf<ImageViewNativeComponent>,
+-  };
+-
+   // Both iOS and C++ sides expect to have "source" prop, whereas on Android it's "src"
+   // (for historical reasons). So in the latter case we populate both "src" and "source",
+   // in order to have a better alignment between platforms in the future.
