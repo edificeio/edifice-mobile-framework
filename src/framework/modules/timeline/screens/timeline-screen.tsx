@@ -555,7 +555,9 @@ const mapDispatchToProps: (
     fallback: NotifHandlerThunkAction,
     navigation: NavigationProp<ParamListBase, keyof ParamListBase, string>,
   ) => {
-    dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Timeline Notification', false));
+    dispatch(
+      handleNotificationAction(n, defaultNotificationActionStack, navigation, navigation.dispatch, 'Timeline Notification', false),
+    );
   },
 });
 

@@ -33,6 +33,7 @@ const extractCommunityInfoFromId = (notification: IAbstractNotification) => {
 
 const communityTabNavigate = (
   navigation: NavigationProp<ParamListBase>,
+  dispatch: NavigationProp<ParamListBase>['dispatch'],
   allowSwitchTab: string | false,
   { name, params }: { name: string; params?: object },
 ) => {
@@ -53,6 +54,7 @@ const communityTabNavigate = (
           },
     ),
     navigation,
+    dispatch,
   );
 };
 
@@ -61,7 +63,7 @@ const handleCommunityUrlNotificationAction: NotifHandlerThunkAction = (notificat
     const { communityId } = extractCommunityInfoFromUrl(notification);
 
     if (communityId === undefined) throw new Error('No communityId in notification data');
-    communityTabNavigate(navigation, allowSwitchTab, {
+    communityTabNavigate(navigation, dispatch, allowSwitchTab, {
       name: communitiesRouteNames.home,
       params: {
         communityId,
@@ -78,7 +80,7 @@ const handleCommunityUrlNotificationAction: NotifHandlerThunkAction = (notificat
 };
 
 const handleCommunityInvitationNotificationAction: NotifHandlerThunkAction =
-  (notification, allowSwitchTab, navigation) => async () => {
+  (notification, allowSwitchTab, navigation, dispatch) => async () => {
     try {
       const { communityId } = extractCommunityInfoFromId(notification);
       let invitationId =
@@ -96,6 +98,7 @@ const handleCommunityInvitationNotificationAction: NotifHandlerThunkAction =
 
       communityTabNavigate(
         navigation,
+        dispatch,
         allowSwitchTab,
         isAccepted === undefined
           ? {
@@ -122,26 +125,27 @@ const handleCommunityInvitationNotificationAction: NotifHandlerThunkAction =
     }
   };
 
-const handleCommunityIdNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab, navigation) => async () => {
-  try {
-    const { communityId } = extractCommunityInfoFromId(notification);
-    if (communityId === undefined) throw new Error('No communityId in notification data');
+const handleCommunityIdNotificationAction: NotifHandlerThunkAction =
+  (notification, allowSwitchTab, navigation, dispatch) => async () => {
+    try {
+      const { communityId } = extractCommunityInfoFromId(notification);
+      if (communityId === undefined) throw new Error('No communityId in notification data');
 
-    communityTabNavigate(navigation, allowSwitchTab, {
-      name: communitiesRouteNames.home,
-      params: {
-        communityId,
-      },
-    });
+      communityTabNavigate(navigation, dispatch, allowSwitchTab, {
+        name: communitiesRouteNames.home,
+        params: {
+          communityId,
+        },
+      });
 
-    return {
-      managed: 1,
-      trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
-    };
-  } catch {
-    return { managed: 0 };
-  }
-};
+      return {
+        managed: 1,
+        trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
+      };
+    } catch {
+      return { managed: 0 };
+    }
+  };
 
 export default () =>
   registerNotifHandlers([

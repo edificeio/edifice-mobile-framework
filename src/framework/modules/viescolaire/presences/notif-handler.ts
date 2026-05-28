@@ -14,7 +14,7 @@ import { presencesRouteNames } from './navigation';
 export interface IPresencesNotification extends ITimelineNotification, IResourceUriNotification {}
 
 const handlePresencesEventNotificationAction: NotifHandlerThunkAction<IPresencesNotification> =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       const navAction = CommonActions.navigate({
         name: computeTabRouteName(timelineModuleConfig.routeName),
@@ -25,7 +25,7 @@ const handlePresencesEventNotificationAction: NotifHandlerThunkAction<IPresences
         },
       });
 
-      handleNotificationNavigationAction(navAction, navigation);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       return {
         managed: 1,

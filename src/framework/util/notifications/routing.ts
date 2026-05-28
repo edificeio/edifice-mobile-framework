@@ -32,6 +32,7 @@ export type NotifHandlerThunkAction<NotifType extends IAbstractNotification = IA
   notification: NotifType,
   trackCategory: false | string,
   navigation: NavigationProp<ParamListBase>,
+  dispatch: NavigationProp<ParamListBase>['dispatch'],
   allowSwitchTab?: boolean,
 ) => NotifHandlerThunk;
 
@@ -57,13 +58,13 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 
 const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   // Check for all module notif-handler that are registered.
-  moduleRedirection: (n, trackCategory, navigation, allowSwitchTab) => async dispatch => {
+  moduleRedirection: (n, trackCategory, navigation, navDispatch, allowSwitchTab) => async dispatch => {
     const rets = await Promise.all(
       registeredNotifHandlers.map(async def => {
         if (n.type !== def.type) return false;
         const eventTypeArray = typeof def['event-type'] === 'string' ? [def['event-type']] : def['event-type'];
         if (eventTypeArray !== undefined && !eventTypeArray.includes(n['event-type'])) return false;
-        const thunkAction = def.notifHandlerAction(n, trackCategory, navigation, allowSwitchTab);
+        const thunkAction = def.notifHandlerAction(n, trackCategory, navigation, navDispatch, allowSwitchTab);
         const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
         if (trackCategory && ret.trackInfo)
           Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n['event-type']}`, ret.trackInfo.value);
@@ -119,17 +120,16 @@ export const handleNotificationAction =
     notification: IAbstractNotification,
     actionStack: NotifHandlerThunkAction[],
     navigation: NavigationProp<ParamListBase>,
+    navDispatch: NavigationProp<ParamListBase>['dispatch'],
     trackCategory: false | string = false,
     allowSwitchTab?: boolean,
   ) =>
   async (dispatch: ThunkDispatch<any, any, any>) => {
-    console.info('HANDLE NOTIFICATION');
-
     let manageCount = 0;
     for (const action of actionStack) {
       if (manageCount > 0) return;
       const ret = (await dispatch(
-        action(notification, trackCategory, navigation, allowSwitchTab),
+        action(notification, trackCategory, navigation, navDispatch, allowSwitchTab),
       )) as unknown as INotifHandlerReturnType;
       manageCount += ret.managed;
       if (ret.trackInfo && trackCategory)
@@ -147,51 +147,60 @@ export interface NotificationHandlerFactory<S, E, A extends Action> {
   (dispatch: ThunkDispatch<S, E, A>, getState: () => S): NotificationHandler;
 }
 
-let notificationThrotlingEvent = false;
-const NOTIFICATION_THROTLE_DELAY = 250;
+// let notificationThrotlingEvent = false;
+// const NOTIFICATION_THROTLE_DELAY = 250;
 
 /**
  * Handles every action that must be dispatched, then dispatch the given navigation action.
  * Manage dispatch schedule if necessary.
  * @param navAction the navigation action to dispatch in fine
  */
-export const handleNotificationNavigationAction = (navAction: NavigationAction, navigation: NavigationProp<ParamListBase>) => {
-  // 1. Pop to top current stack. This allow to close open modals & trigger preventRemove handlers.
-  if (notificationThrotlingEvent) return;
-  notificationThrotlingEvent = true;
-  let preventMove = false;
-  const navState = navigation.getState();
-  let leafState: Pick<typeof navState, 'index' | 'routes'> = navState;
-  while (leafState.routes[leafState.index].state !== undefined) {
-    leafState = leafState.routes[leafState.index].state as Pick<typeof navState, 'index' | 'routes'>;
-  }
-  // We try popToTop only if the user is not at the root of its stack.
-  if (leafState.index !== undefined && leafState.index !== 0) {
-    navigation.dispatch(StackActions.popToTop());
-    const newState = navigation.getState();
-    preventMove = JSON.stringify(navState) === JSON.stringify(newState); // It's ugly but the two states are not the same object even when the content is the same. :/
-  }
+export const handleNotificationNavigationAction = (
+  navAction: NavigationAction,
+  navigation: NavigationProp<ParamListBase>,
+  dispatch: NavigationProp<ParamListBase>['dispatch'],
+) => {
+  // const previousNavState = navigation.getState();
+  // const previousRoute = previousNavState.routes[previousNavState.index];
+  dispatch(navAction);
+  // 1. popToTop to trigger any preventRemove in screens.
 
-  // 2. Call / schedule given nav action. If there was preventRemove, we must include popToTop again in the scheduled actions to close the modal.
-  if (preventMove) {
-    // We set the `delayed` argument to true to ensure native modals are closed before triggering any other action.
-    // This seems to be an issue of React Navigation 6 at this time. In the future, we can test with `false` to not use setTimeout to delay each nav action.
-    setConfirmQuitAction([StackActions.popToTop(), navAction], true);
-    notificationThrotlingEvent = false;
-  } else {
-    // If current route is modal, we'll need to wait until it closes.
-    if (isModalModeOnThisRoute(leafState.routes[leafState.index].name)) {
-      setModalCloseAction([navAction], true);
-      notificationThrotlingEvent = false;
-    } else {
-      // We use setTimeout here to ensure native modals are closed before triggering any other action.
-      // This seems to be an issue of React Navigation 6 at this time. In the future, we can test by calling directly dispatch function.
-      setTimeout(() => {
-        navigation.dispatch(navAction);
-        setTimeout(() => {
-          notificationThrotlingEvent = false;
-        }, NOTIFICATION_THROTLE_DELAY);
-      });
-    }
-  }
+  // // 1. Pop to top current stack. This allow to close open modals & trigger preventRemove handlers.
+  // if (notificationThrotlingEvent) return;
+  // notificationThrotlingEvent = true;
+  // let preventMove = false;
+  // const navState = navigation.getState();
+  // let leafState: Pick<typeof navState, 'index' | 'routes'> = navState;
+  // while (leafState.routes[leafState.index].state !== undefined) {
+  //   leafState = leafState.routes[leafState.index].state as Pick<typeof navState, 'index' | 'routes'>;
+  // }
+  // // We try popToTop only if the user is not at the root of its stack.
+  // if (leafState.index !== undefined && leafState.index !== 0) {
+  //   navigation.dispatch(StackActions.popToTop());
+  //   const newState = navigation.getState();
+  //   preventMove = JSON.stringify(navState) === JSON.stringify(newState); // It's ugly but the two states are not the same object even when the content is the same. :/
+  // }
+
+  // // 2. Call / schedule given nav action. If there was preventRemove, we must include popToTop again in the scheduled actions to close the modal.
+  // if (preventMove) {
+  //   // We set the `delayed` argument to true to ensure native modals are closed before triggering any other action.
+  //   // This seems to be an issue of React Navigation 6 at this time. In the future, we can test with `false` to not use setTimeout to delay each nav action.
+  //   setConfirmQuitAction([StackActions.popToTop(), navAction], true);
+  //   notificationThrotlingEvent = false;
+  // } else {
+  //   // If current route is modal, we'll need to wait until it closes.
+  //   if (isModalModeOnThisRoute(leafState.routes[leafState.index].name)) {
+  //     setModalCloseAction([navAction], true);
+  //     notificationThrotlingEvent = false;
+  //   } else {
+  //     // We use setTimeout here to ensure native modals are closed before triggering any other action.
+  //     // This seems to be an issue of React Navigation 6 at this time. In the future, we can test by calling directly dispatch function.
+  //     setTimeout(() => {
+  //       navigation.dispatch(navAction);
+  //       setTimeout(() => {
+  //         notificationThrotlingEvent = false;
+  //       }, NOTIFICATION_THROTLE_DELAY);
+  //     });
+  //   }
+  // }
 };

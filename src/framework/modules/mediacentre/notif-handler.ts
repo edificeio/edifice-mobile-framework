@@ -17,27 +17,26 @@ import {
 
 import { mediacentreRouteNames } from './navigation';
 
-const handleMediacentreNotificationAction: NotifHandlerThunkAction =
-  (notification, _, navigation) => async (dispatch, getState) => {
-    try {
-      const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
-        params: {
-          initial: false,
-          screen: mediacentreRouteNames.home,
-        },
-      });
+const handleMediacentreNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
+  try {
+    const navAction = CommonActions.navigate({
+      name: computeTabRouteName(timelineModuleConfig.routeName),
+      params: {
+        initial: false,
+        screen: mediacentreRouteNames.home,
+      },
+    });
 
-      handleNotificationNavigationAction(navAction, navigation);
+    handleNotificationNavigationAction(navAction, navigation, dispatch);
 
-      return {
-        managed: 1,
-        trackInfo: { action: 'Mediacentre', name: `${notification.type}.${notification['event-type']}` },
-      };
-    } catch {
-      return { managed: 0 };
-    }
-  };
+    return {
+      managed: 1,
+      trackInfo: { action: 'Mediacentre', name: `${notification.type}.${notification['event-type']}` },
+    };
+  } catch {
+    return { managed: 0 };
+  }
+};
 
 export default () =>
   registerNotifHandlers([

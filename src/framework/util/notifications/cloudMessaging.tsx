@@ -9,6 +9,7 @@ import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { useNavigationRedirectionDispatch } from '~/app/navigation/use-confirm-remove';
 import { IGlobalState } from '~/app/store';
 import { accountIsActive } from '~/framework/modules/auth/model';
 import * as selectors from '~/framework/modules/auth/redux/selectors';
@@ -44,6 +45,7 @@ function AppPushNotificationHandlerComponentUnconnected(
   }, []);
 
   const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
+  const navDispatch = useNavigationRedirectionDispatch(navigation);
   const { dispatch, isLoggedIn } = props;
   useEffect(() => {
     if (notification && isLoggedIn) {
@@ -55,11 +57,11 @@ function AppPushNotificationHandlerComponentUnconnected(
         const n = notificationAdapter(notificationData);
 
         dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
-        dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Push Notification', true));
+        dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, navDispatch, 'Push Notification', true));
         setNotification(undefined);
       }
     }
-  }, [dispatch, isLoggedIn, navigation, notification]);
+  }, [dispatch, isLoggedIn, navDispatch, navigation, notification]);
 
   return <>{props.children}</>;
 }

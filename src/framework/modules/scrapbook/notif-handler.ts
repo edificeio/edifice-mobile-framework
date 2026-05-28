@@ -13,7 +13,7 @@ import {
 export interface IScrapbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
 const handleSomeNotificationAction: NotifHandlerThunkAction<IScrapbookNotification> =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       const navAction = CommonActions.navigate({
         name: computeTabRouteName(timelineModuleConfig.routeName),
@@ -24,7 +24,7 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<IScrapbookNotificati
         },
       });
 
-      handleNotificationNavigationAction(navAction, navigation);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       return {
         managed: 1,

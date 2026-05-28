@@ -19,7 +19,7 @@ import {
 
 import { blogUriCaptureFunction } from './service/adapters';
 
-const handleBlogPostNotificationAction: NotifHandlerThunkAction = (notification, _, navigation) => async () => {
+const handleBlogPostNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
   try {
     const blogNotif = getAsResourceUriNotification(notification);
     if (!blogNotif) return { managed: 0 };
@@ -36,7 +36,7 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction = (notification,
       },
     });
 
-    handleNotificationNavigationAction(navAction, navigation);
+    handleNotificationNavigationAction(navAction, navigation, dispatch);
 
     return {
       managed: 1,
@@ -47,7 +47,7 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction = (notification,
   }
 };
 
-const handleBlogNotificationAction: NotifHandlerThunkAction = (notification, _, navigation) => async () => {
+const handleBlogNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
   try {
     // 0. Get notification data
     const blogNotif = getAsResourceUriNotification(notification);
@@ -66,7 +66,7 @@ const handleBlogNotificationAction: NotifHandlerThunkAction = (notification, _, 
       },
     });
 
-    handleNotificationNavigationAction(navAction, navigation);
+    handleNotificationNavigationAction(navAction, navigation, dispatch);
 
     // 4. Return notif handling result
     return {

@@ -57,7 +57,11 @@ export async function openUrl(
     try {
       if (isUrlInternal && url.endsWith('nabook')) {
         // ToDo : get the navigation here ??????
-        handleNotificationNavigationAction(CommonActions.navigate({ name: nabookRouteNames.home }), navigationRef);
+        handleNotificationNavigationAction(
+          CommonActions.navigate({ name: nabookRouteNames.home }),
+          navigationRef,
+          navigationRef.dispatch,
+        );
         return;
       }
     } catch (error) {

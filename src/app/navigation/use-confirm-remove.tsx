@@ -5,6 +5,7 @@ import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
 import {
   NavigationAction,
   NavigationProp,
+  NavigationState,
   ParamListBase,
   StackActions,
   TabActions,
@@ -68,33 +69,75 @@ export function useConfirmRemove(
   });
 }
 
-export function useConfirmChangeTab() {
+/**
+ * Expose a navigation dispatch function that triggers any usePreventDefault in current screens, then dispatch the given action.
+ */
+export function useNavigationRedirectionDispatch<ParamList extends ParamListBase, State extends NavigationState = NavigationState>(
+  navigation: NavigationProp<ParamList, keyof ParamList, string | undefined, State>,
+): typeof navigation.dispatch {
   const storedActionsRef = React.useContext(ConfirmRemoveContext);
-  const tabListeners: NonNullable<BottomTabNavigatorProps['screenListeners']> = ({ navigation, route: nextRoute }) => ({
-    tabPress: ({ preventDefault }) => {
-      // complex logic to handle usePreventRemove correctly when switching tabs
-      const previousNavState = navigation.getState();
-      const previousActiveTabState = previousNavState.routes[previousNavState.index].state;
+  return React.useCallback(
+    (_action: NavigationAction) => {
+      const previousNavState = navigation.getState(); // root nav state
+      const action: NavigationAction = { ..._action, source: previousNavState.key };
+      const previousActiveRootState = previousNavState.routes[previousNavState.index].state;
+      const previousActiveTabState =
+        previousActiveRootState && previousActiveRootState.index !== undefined
+          ? previousActiveRootState.routes[previousActiveRootState.index].state
+          : undefined;
       const previousRoute = previousNavState.routes[previousNavState.index];
 
-      if (previousRoute.key !== nextRoute.key) /* if next tab is different than the current one */ {
-        preventDefault(); // Action is canceled and be re-dispatched if usePreventRemove isn't triggered
-        // Note: only tab-changing actions must be canceled to let scrollToTop be triggered when the active tab is pressed
-
-        if (previousActiveTabState && previousActiveTabState.index && previousActiveTabState.index > 0) {
-          // If not on the home screen of the tab stack, we try to popToTop to see if some usePreventRemove triggers
-          navigation.dispatch({ ...StackActions.popToTop(), source: previousRoute.key, target: previousActiveTabState.key });
-          const newNavState = navigation.getState();
-          if (newNavState === previousNavState) /* same state -> usePreventRemove WAS triggered */ {
-            storedActionsRef.current.push(TabActions.jumpTo(nextRoute.name, nextRoute.params));
-          } else /* different state -> usePreventRemove was NOT triggered */ {
-            navigation.navigate(nextRoute.name, nextRoute.params);
-          }
-        } else {
-          navigation.navigate(nextRoute.name, nextRoute.params);
+      if (previousActiveTabState && previousActiveTabState.index && previousActiveTabState.index > 0) {
+        // If not on the home screen of the tab stack, we try to popToTop to see if some usePreventRemove triggers
+        navigation.dispatch({ ...StackActions.popToTop(), source: previousRoute.key, target: previousActiveTabState.key });
+        const newNavState = navigation.getState();
+        if (newNavState === previousNavState) /* same state -> usePreventRemove WAS triggered */ {
+          storedActionsRef.current.push(action);
+        } else /* different state -> usePreventRemove was NOT triggered */ {
+          navigation.dispatch(action);
         }
+      } else {
+        navigation.dispatch(action);
       }
     },
-  });
+    [navigation, storedActionsRef],
+  );
+}
+
+/**
+ * @todo factorise with useNavigationRedirectionDispatch
+ */
+export function useConfirmChangeTab() {
+  const storedActionsRef = React.useContext(ConfirmRemoveContext);
+  const tabListeners: NonNullable<BottomTabNavigatorProps['screenListeners']> = React.useCallback(
+    ({ navigation, route: nextRoute }) => ({
+      tabPress: ({ preventDefault }) => {
+        const action = TabActions.jumpTo(nextRoute.name, nextRoute.params);
+        // complex logic to handle usePreventRemove correctly when switching tabs
+        const previousNavState = navigation.getState();
+        const previousActiveTabState = previousNavState.routes[previousNavState.index].state;
+        const previousRoute = previousNavState.routes[previousNavState.index];
+
+        if (previousRoute.key !== nextRoute.key) /* if next tab is different than the current one */ {
+          preventDefault(); // Action is canceled and be re-dispatched if usePreventRemove isn't triggered
+          // Note: only tab-changing actions must be canceled to let scrollToTop be triggered when the active tab is pressed
+
+          if (previousActiveTabState && previousActiveTabState.index && previousActiveTabState.index > 0) {
+            // If not on the home screen of the tab stack, we try to popToTop to see if some usePreventRemove triggers
+            navigation.dispatch({ ...StackActions.popToTop(), source: previousRoute.key, target: previousActiveTabState.key });
+            const newNavState = navigation.getState();
+            if (newNavState === previousNavState) /* same state -> usePreventRemove WAS triggered */ {
+              storedActionsRef.current.push(action);
+            } else /* different state -> usePreventRemove was NOT triggered */ {
+              navigation.dispatch(action);
+            }
+          } else {
+            navigation.dispatch(action);
+          }
+        }
+      },
+    }),
+    [storedActionsRef],
+  );
   return tabListeners;
 }

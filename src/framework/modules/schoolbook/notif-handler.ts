@@ -22,7 +22,7 @@ import { schoolbookRouteNames } from './navigation';
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
 const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       // 1. Get notification data
       const userType = assertSession().user.type;
@@ -46,7 +46,7 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction, navigation);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       // 4. Return notif handling result
       return {

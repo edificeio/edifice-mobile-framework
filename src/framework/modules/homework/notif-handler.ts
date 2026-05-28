@@ -13,7 +13,7 @@ import homeworkDiarySelected from './actions/selectedDiary';
 import { homeworkRouteNames } from './navigation';
 
 const homeworkNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, navDispatch) => async (dispatch, getState) => {
     try {
       const notif = getAsResourceUriNotification(notification);
       if (!notif) return { managed: 0 };
@@ -35,7 +35,7 @@ const homeworkNotificationAction: NotifHandlerThunkAction =
         },
       });
 
-      handleNotificationNavigationAction(navAction, navigation);
+      handleNotificationNavigationAction(navAction, navigation, navDispatch);
 
       return {
         managed: 1,

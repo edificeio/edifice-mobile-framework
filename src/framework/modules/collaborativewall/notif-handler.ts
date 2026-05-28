@@ -20,36 +20,35 @@ import {
 
 import { collaborativewallUriParser } from './service';
 
-const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction =
-  (notification, _, navigation) => async (dispatch, getState) => {
-    try {
-      const notifData = getAsResourceUriNotification(notification);
-      if (!notifData) return { managed: 0 };
+const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
+  try {
+    const notifData = getAsResourceUriNotification(notification);
+    if (!notifData) return { managed: 0 };
 
-      const cwallId = collaborativewallUriParser.parse(notifData.resource.uri);
-      if (!cwallId) return { managed: 0 };
+    const cwallId = collaborativewallUriParser.parse(notifData.resource.uri);
+    if (!cwallId) return { managed: 0 };
 
-      const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+    const navAction = CommonActions.navigate({
+      name: computeTabRouteName(timelineModuleConfig.routeName),
+      params: {
+        initial: false,
         params: {
-          initial: false,
-          params: {
-            id: cwallId,
-          },
-          screen: collaborativewallRouteNames.viewer,
+          id: cwallId,
         },
-      });
+        screen: collaborativewallRouteNames.viewer,
+      },
+    });
 
-      handleNotificationNavigationAction(navAction, navigation);
+    handleNotificationNavigationAction(navAction, navigation, dispatch);
 
-      return {
-        managed: 1,
-        trackInfo: { action: 'Mur Collaboratif', name: `${notification.type}.${notification['event-type']}` },
-      };
-    } catch {
-      return { managed: 0 };
-    }
-  };
+    return {
+      managed: 1,
+      trackInfo: { action: 'Mur Collaboratif', name: `${notification.type}.${notification['event-type']}` },
+    };
+  } catch {
+    return { managed: 0 };
+  }
+};
 
 export default () =>
   registerNotifHandlers(

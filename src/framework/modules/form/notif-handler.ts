@@ -18,7 +18,7 @@ import { formRouteNames } from './navigation';
 import { formService } from './service';
 
 const handleNewFormNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       // 1. Get notification data
       let formUri = notification.backupData.params.formUri;
@@ -64,7 +64,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction, navigation);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       // 4. Return notif handling result
       return {
@@ -76,7 +76,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
     }
   };
 
-const handleFormResponseNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
+const handleFormResponseNotificationAction: NotifHandlerThunkAction = notification => async () => {
   const uri: string = notification.backupData.params.formResultsUri;
 
   if (!uri) return { managed: 0 };

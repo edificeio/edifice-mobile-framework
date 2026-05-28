@@ -16,7 +16,7 @@ import { workspaceRouteNames } from './navigation';
 import { Filter } from './reducer';
 
 const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       // 1. Get notification data
       const resourceUri = notification.backupData.params.resourceUri;
@@ -40,7 +40,7 @@ const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction, navigation);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       // 4. Return notif handling result
       return {
@@ -53,7 +53,7 @@ const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
   };
 
 const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       // 1. Get notification data
       const folderUri = notification.backupData.params.resourceFolderUri;
@@ -80,7 +80,7 @@ const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction, navigation);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       // 4. Return notif handling result
       return {

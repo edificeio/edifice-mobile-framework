@@ -13,7 +13,7 @@ import {
 const WIKI_ID_REGEX = /\/wiki\/id\/([a-f0-9\-]+)/i;
 const PAGE_ID_REGEX = /\/page\/([a-f0-9\-]+)/i;
 
-const handleWikiNotificationAction: NotifHandlerThunkAction = (notification, _, navigation) => async (dispatch, getState) => {
+const handleWikiNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
   try {
     const wikiNotif = getAsResourceUriNotification(notification);
     if (!wikiNotif) return { managed: 0 };
@@ -34,7 +34,7 @@ const handleWikiNotificationAction: NotifHandlerThunkAction = (notification, _, 
       },
     });
 
-    handleNotificationNavigationAction(navAction, navigation);
+    handleNotificationNavigationAction(navAction, navigation, dispatch);
 
     return {
       managed: 1,
@@ -45,7 +45,7 @@ const handleWikiNotificationAction: NotifHandlerThunkAction = (notification, _, 
   }
 };
 
-const handlePageNotificationAction: NotifHandlerThunkAction = (notification, _, navigation) => async (dispatch, getState) => {
+const handlePageNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
   try {
     const wikiNotif = getAsResourceUriNotification(notification);
     if (!wikiNotif) return { managed: 0 };
@@ -70,7 +70,7 @@ const handlePageNotificationAction: NotifHandlerThunkAction = (notification, _, 
       },
     });
 
-    handleNotificationNavigationAction(navAction, navigation);
+    handleNotificationNavigationAction(navAction, navigation, dispatch);
 
     return {
       managed: 1,
