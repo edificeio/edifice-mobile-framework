@@ -23,6 +23,7 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
+import { getRouteForAccountLoad } from '~/framework/modules/auth/new-navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
 import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
@@ -32,7 +33,6 @@ import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
 
 import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
-import { getRouteForAccountLoad } from '../../../new-navigation';
 
 export const AuthAccountSelectionScreenOptions = screenOptions(() => ({ title: I18n.get('auth-accountselection-title') }));
 

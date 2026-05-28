@@ -7,11 +7,10 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { NavigationContainer, navigationRef as parentNavigationRef } from '~/app/navigation';
 import { defaultScreenOptions, StackScreenLayout } from '~/app/navigation/layout';
-import { renderCoreModulesScreens } from '~/app/navigation/root-navigation';
 import { modalScreenOptions } from '~/app/navigation/util';
+import { getAuthReduxNavigationStateForNewAccount } from '~/framework/modules/auth/new-navigation';
 import { getState } from '~/framework/modules/auth/redux/reducer';
 
-import { getAuthReduxNavigationStateForNewAccount } from '../../new-navigation';
 import AuthActivationAddAccountScreen, { computeNavBar as authActivationAddAccountNavBar } from '../add-account/activation';
 import AuthForgotAddAccountScreen from '../add-account/forgot';
 import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../add-account/login-credentials';

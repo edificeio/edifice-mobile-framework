@@ -1,7 +1,7 @@
 import { navigationRef } from '~/app/navigation';
+import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
 
 import type { MediaPlayerParams } from './types';
-import { MultimediaCarouselNavParams } from '../../carousel-multimedia/openCarousel';
 
 export function openMediaPlayer(props: MediaPlayerParams) {
   const params: MultimediaCarouselNavParams = {

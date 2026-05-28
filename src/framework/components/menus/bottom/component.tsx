@@ -4,12 +4,11 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 // import BottomSheet from 'react-native-bottomsheet';
 
 import { I18n } from '~/app/i18n';
+import { TerciaryButton } from '~/framework/components/button';
+import { UI_SIZES } from '~/framework/components/constants';
 import { MenuAction } from '~/framework/components/menus/actions';
 import { MenuProps } from '~/framework/components/menus/types/types';
-
-import { TerciaryButton } from '../../button';
-import { UI_SIZES } from '../../constants';
-import CustomBottomSheetModal, { BottomSheetModalMethods } from '../../modals/bottom-sheet';
+import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 
 const styles = StyleSheet.create({
   bottomSheet: { alignItems: 'flex-start', paddingTop: UI_SIZES.spacing.minor },
