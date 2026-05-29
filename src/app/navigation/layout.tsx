@@ -84,12 +84,13 @@ export function StackScreenLayout({
   );
 }
 
-export const defaultScreenOptions: NativeStackNavigatorProps['screenOptions'] = ({ theme: navTheme }) => ({
-  headerBackButtonDisplayMode: 'minimal',
-  headerTintColor: navTheme.colors.text,
-  headerTitleAlign: 'center',
-  statusBarStyle: 'light',
-});
+export const defaultScreenOptions = ({ theme: navTheme }) =>
+  ({
+    headerBackButtonDisplayMode: 'minimal',
+    headerTintColor: navTheme.colors.text,
+    headerTitleAlign: 'center',
+    statusBarStyle: 'light',
+  }) satisfies NativeStackNavigatorProps['screenOptions'];
 
 export function TabScreenLayout({
   children,

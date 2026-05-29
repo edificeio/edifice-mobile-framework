@@ -4,6 +4,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  androidHeaderStyle: { backgroundColor: 'transparent' },
   container: {
     gap: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
@@ -14,7 +15,7 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
   },
   page: {
-    flexShrink: 1,
+    flex: 1,
   },
   welcomeNote: {
     backgroundColor: theme.palette.primary.pale,
