@@ -5,7 +5,7 @@ import { Action } from 'redux';
 import { EntModule } from '~/app/module';
 
 import reducer, { type TimelineState } from './reducer';
-import TimelineFiltersScreen, { TimelineFiltersScreenOptions } from './screens/timeline-filters-screen';
+import { TimelineFiltersScreen, TimelineFiltersScreenOptions } from './screens/timeline-filters-screen';
 import TimelineScreen, { TimelineScreenOptions } from './screens/timeline-screen';
 import { preferences, storage, TimelinePreferencesData, TimelineStorageData } from './storage';
 
