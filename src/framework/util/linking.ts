@@ -4,7 +4,7 @@
  */
 import { Alert, Linking } from 'react-native';
 
-import { CommonActions, NavigationProp, ParamListBase } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import { decode } from 'html-entities';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -28,9 +28,11 @@ export interface OpenUrlCustomLabels {
 
 const verifyAndOpenUrl = async (finalUrl: string) => {
   try {
+    console.debug(`[openUrl] - try to open ${finalUrl}`);
     await Linking.openURL(finalUrl);
-  } catch {
-    throw new Error('openUrl : url provided is not supported');
+  } catch (e) {
+    console.error(`[openUrl] - error opening ${finalUrl}: `, (e as Error).message);
+    throw new Error('[openUrl] - provided url is not supported');
   }
 };
 
@@ -65,7 +67,7 @@ export async function openUrl(
         return;
       }
     } catch (error) {
-      console.error('Error navigating to nabook home:', error);
+      console.error('[openUrl] - Error navigating to nabook home:', error);
     }
 
     if (autoLogin && isUrlInternal) {
@@ -77,7 +79,7 @@ export async function openUrl(
           url = urlObj.href;
         }
       } catch (e) {
-        console.error('Error getting query param token: ', e);
+        console.error('[openUrl] - Error getting query param token: ', e);
       }
     }
 

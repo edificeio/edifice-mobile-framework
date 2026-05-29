@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Keyboard } from 'react-native';
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { FlashList } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -145,9 +144,8 @@ export function useMyAppsHomeController() {
           navigation.navigate(routeName);
         }
       } else {
-        const url = app.isConnector ? `/auth/redirect?url=${encodeURIComponent(app.address)}` : app.address;
-
-        openUrl(url);
+        const finalUrl = app.isConnector ? `/auth/redirect?url=${encodeURIComponent(app.address.trim())}` : app.address;
+        openUrl(finalUrl);
       }
     },
     [navigation],
