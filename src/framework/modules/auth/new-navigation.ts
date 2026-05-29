@@ -27,7 +27,7 @@ import { AuthState } from './redux/types';
  * @returns
  */
 export const getRouteForOnboarding = () => {
-  return appConf.hasMultiplePlatform ? ({ name: 'auth/platforms' } as const) : ({ name: 'auth/login' } as const);
+  return appConf.hasMultiplePlatform ? ({ name: 'auth/platforms' } as const) : getRouteForPlatformSelect(appConf.platforms[0]);
 };
 
 /**
