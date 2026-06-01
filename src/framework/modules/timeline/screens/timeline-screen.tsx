@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, Platform, RefreshControl, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
 
 import { HeaderButton } from '@react-navigation/elements';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
