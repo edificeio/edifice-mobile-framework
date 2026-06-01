@@ -362,6 +362,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   componentDidMount() {
     this.doInit();
+    checkAndShowSplashAds(this.props.session.platform, this.props.session.user.type!);
   }
 
   componentDidUpdate(prevProps: ITimelineScreenProps, _prevState: ITimelineScreenState) {
@@ -437,7 +438,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   async doInit() {
     try {
       this.setState({ loadingState: TimelineLoadingState.INIT });
-      checkAndShowSplashAds(this.props.session.platform, this.props.session.user.type!);
       await this.props.handleInitTimeline();
     } finally {
       this.setState({ loadingState: TimelineLoadingState.DONE });

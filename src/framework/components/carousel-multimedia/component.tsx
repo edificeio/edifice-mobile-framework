@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { ImageURISource } from 'react-native';
 
+import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
+
 import ImageItem from './image-item/component';
 import PdfItem from './pdf-item/component';
 import PlayerItem from './player-item/component';
 import { CarouselItemProps } from './types';
 import UnknownItem from './unknown-item/component';
 import UnviewableItem from './unviewable-item/component';
-
-import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
 
 const CarouselItem = ({
   containerHeight,
