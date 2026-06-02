@@ -823,7 +823,7 @@ function createHTML(options = {}) {
                                     src: href,
                                     type: 'audio'
                                 });
-                            }            
+                            }
                         } else {
                             const href = el.getAttribute('href');
                             if (href) {
@@ -846,7 +846,7 @@ function createHTML(options = {}) {
                    const contentType = links[l].getAttribute('data-content-type');
                     if (contentType !== 'application/pdf') {
                         linksUrls.push(links[l].getAttribute('href'));
-                    }                
+                    }
                 }
                 postAction({type: 'LINKS_URLS', data: linksUrls}, true);
             },

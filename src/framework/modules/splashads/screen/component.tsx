@@ -4,10 +4,10 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import WebView, { WebViewProps } from 'react-native-webview';
 import { WebViewErrorEvent, WebViewHttpErrorEvent, WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
+import { navigationRef } from '~/app/navigation';
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
@@ -102,5 +102,5 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
 export default SplashadsScreen;
 
 export function showSplashads(navParams: IModalsNavigationParams[ModalsRouteNames.SplashAds]) {
-  setTimeout(() => navigate(ModalsRouteNames.SplashAds, navParams), 2000);
+  setTimeout(() => navigationRef.navigate(ModalsRouteNames.SplashAds, navParams), 2000);
 }
