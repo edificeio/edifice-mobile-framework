@@ -58,26 +58,27 @@ const communityTabNavigate = (
   );
 };
 
-const handleCommunityUrlNotificationAction: NotifHandlerThunkAction = (notification, allowSwitchTab, navigation) => async () => {
-  try {
-    const { communityId } = extractCommunityInfoFromUrl(notification);
+const handleCommunityUrlNotificationAction: NotifHandlerThunkAction =
+  (notification, allowSwitchTab, navigation, dispatch) => async () => {
+    try {
+      const { communityId } = extractCommunityInfoFromUrl(notification);
 
-    if (communityId === undefined) throw new Error('No communityId in notification data');
-    communityTabNavigate(navigation, dispatch, allowSwitchTab, {
-      name: communitiesRouteNames.home,
-      params: {
-        communityId,
-      },
-    });
-    return {
-      managed: 1,
-      trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
-    };
-  } catch (e) {
-    console.error(e);
-    return { managed: 0 };
-  }
-};
+      if (communityId === undefined) throw new Error('No communityId in notification data');
+      communityTabNavigate(navigation, dispatch, allowSwitchTab, {
+        name: communitiesRouteNames.home,
+        params: {
+          communityId,
+        },
+      });
+      return {
+        managed: 1,
+        trackInfo: { action: 'Communities', name: `${notification.type}.${notification['event-type']}` },
+      };
+    } catch (e) {
+      console.error(e);
+      return { managed: 0 };
+    }
+  };
 
 const handleCommunityInvitationNotificationAction: NotifHandlerThunkAction =
   (notification, allowSwitchTab, navigation, dispatch) => async () => {
