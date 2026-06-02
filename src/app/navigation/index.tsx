@@ -19,7 +19,7 @@ import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navig
 import { useSelector } from 'react-redux';
 
 import { useAvailableModules } from '~/app/modules';
-import { RootToastContainer } from '~/framework/components/toast';
+import { ToastContainer } from '~/framework/components/toast';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { PushNotificationContextProvider } from '~/framework/util/notifications/cloudMessaging';
@@ -143,7 +143,7 @@ export function AppNavigation() {
                 <RootStack.Group navigationKey={navigationKey}>{renderCoreModulesScreens(RootStack)}</RootStack.Group>
               )}
             </RootStack.Navigator>
-            <RootToastContainer />
+            <ToastContainer />
           </BottomSheetModalProvider>
         </PushNotificationContextProvider>
       </ConfirmRemoveProvider>
