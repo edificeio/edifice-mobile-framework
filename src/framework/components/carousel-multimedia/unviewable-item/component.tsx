@@ -1,21 +1,29 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import styles from './styles';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { useCarouselFileHandler } from '~/framework/components/carousel-multimedia/hooks';
+import { showPrivacyAlert } from '~/framework/components/carousel-multimedia/util';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { IModalsNavigationParams } from '~/framework/navigation/modals';
 import { FileMedia } from '~/framework/util/media';
+
+import styles from './styles';
 
 const ICON_SIZE = 95;
 
-const UnviewableItem = ({ file }: { file: FileMedia }) => {
-  const { onSave } = useCarouselFileHandler(file);
-  const fileName = file.name?.trim() ?? '';
+const UnviewableItem = React.memo(({ media }: { media: FileMedia }) => {
+  const navigation = useNavigation<NavigationProp<IModalsNavigationParams>>();
+  const fileName = media.name?.trim() ?? '';
+
+  const onDownload = React.useCallback(
+    () => showPrivacyAlert(() => navigation.navigate('media/download', { media })),
+    [media, navigation],
+  );
 
   return (
     <View style={styles.container}>
@@ -27,11 +35,11 @@ const UnviewableItem = ({ file }: { file: FileMedia }) => {
       <PrimaryButton
         iconLeft="ui-download"
         text={I18n.get('carousel-filepreview-download')}
-        action={onSave}
+        action={onDownload}
         style={styles.downloadButton}
       />
     </View>
   );
-};
+});
 
 export default UnviewableItem;

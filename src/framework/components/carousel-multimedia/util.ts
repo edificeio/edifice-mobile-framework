@@ -1,15 +1,45 @@
-import { ImageURISource } from 'react-native';
+import { Alert, ImageURISource } from 'react-native';
 
+import { Temporal } from '@js-temporal/polyfill';
 import { Source } from 'react-native-pdf';
 import { ReactVideoSourceProperties } from 'react-native-video';
 
+import { I18n } from '~/app/i18n';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { IFile } from '~/framework/modules/workspace/reducer';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { extractVideoResolution } from '~/framework/util/htmlParser/content';
 import { FileMedia, isPdfContent, MediaType, toURISource } from '~/framework/util/media';
 import { INotificationMedia } from '~/framework/util/notifications';
+import { OldStorageFunctions } from '~/framework/util/storage';
 import { sessionURISource } from '~/framework/util/transport/source';
+
+export const showPrivacyAlert = async (action: () => void) => {
+  try {
+    const getDatePrivacyAlert: string | Temporal.PlainDate | null | undefined =
+      await OldStorageFunctions.getItemJson('privacyAlert');
+    const today = Temporal.Now.plainDateISO();
+
+    if (!getDatePrivacyAlert) {
+      Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
+        { onPress: action, text: I18n.get('carousel-privacy-button') },
+      ]);
+      await OldStorageFunctions.setItemJson('privacyAlert', today.toString());
+    } else {
+      const lastAlertDate = Temporal.PlainDate.from(getDatePrivacyAlert);
+      if (Temporal.PlainDate.compare(today, lastAlertDate) > 0) {
+        Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
+          { onPress: action, text: I18n.get('carousel-privacy-button') },
+        ]);
+        await OldStorageFunctions.setItemJson('privacyAlert', today.toString());
+      } else {
+        action();
+      }
+    }
+  } catch {
+    throw new Error();
+  }
+};
 
 export type SignedMediaSource = ImageURISource | ReactVideoSourceProperties | Source;
 
