@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
-import { Temporal } from '@js-temporal/polyfill';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
@@ -12,46 +11,14 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { IModalsNavigationParams } from '~/framework/navigation/modals';
 import { FileMedia } from '~/framework/util/media';
-import { OldStorageFunctions } from '~/framework/util/storage';
+
+import { showPrivacyAlert } from './util';
 
 const isAndroid = Platform.OS === 'android';
 
 export const NavbarButtons = React.memo(
   ({ disabled = false, media, onShare }: { disabled?: boolean; media: FileMedia; onShare: () => void }) => {
     const navigation = useNavigation<NavigationProp<IModalsNavigationParams>>();
-
-    const showPrivacyAlert = async action => {
-      try {
-        const getDatePrivacyAlert: string | Temporal.PlainDate | null | undefined =
-          await OldStorageFunctions.getItemJson('privacyAlert');
-        const today = Temporal.Now.plainDateISO();
-
-        if (!getDatePrivacyAlert) {
-          Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
-            {
-              onPress: action,
-              text: I18n.get('carousel-privacy-button'),
-            },
-          ]);
-          await OldStorageFunctions.setItemJson('privacyAlert', today.toString());
-        } else {
-          const lastAlertDate = Temporal.PlainDate.from(getDatePrivacyAlert);
-          if (Temporal.PlainDate.compare(today, lastAlertDate) > 0) {
-            Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
-              {
-                onPress: action,
-                text: I18n.get('carousel-privacy-button'),
-              },
-            ]);
-            await OldStorageFunctions.setItemJson('privacyAlert', today.toString());
-          } else {
-            action();
-          }
-        }
-      } catch {
-        throw new Error();
-      }
-    };
 
     return (
       <NavBarActionsGroup

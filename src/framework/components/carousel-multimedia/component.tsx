@@ -36,7 +36,7 @@ const CarouselItem = ({
     setHasMediaError(true);
     return <UnknownItem />;
   }
-  if (!media.mime && media.src) return <UnviewableItem file={media} />;
+  if (!media.mime && media.src) return <UnviewableItem media={media} />;
 
   if (isImageContent(media)) {
     return (
@@ -56,7 +56,7 @@ const CarouselItem = ({
 
   if (isAudioContent(media) || isVideoContent(media)) {
     if (isPlayerLoadTimeout) {
-      return <UnviewableItem file={media} />;
+      return <UnviewableItem media={media} />;
     }
     return (
       <PlayerItem
@@ -76,7 +76,7 @@ const CarouselItem = ({
 
   if (isPdfContent(media)) {
     if (isPdfLoadTimeout) {
-      return <UnviewableItem file={media} />;
+      return <UnviewableItem media={media} />;
     }
     return (
       <PdfItem
@@ -93,7 +93,7 @@ const CarouselItem = ({
     );
   }
 
-  return <UnviewableItem file={media} />;
+  return <UnviewableItem media={media} />;
 };
 
 export default React.memo(CarouselItem);
