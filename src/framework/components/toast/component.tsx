@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Animated, Easing, LayoutChangeEvent } from 'react-native';
+import { Animated, Easing, LayoutChangeEvent, useWindowDimensions } from 'react-native';
 
-import { useHeaderHeight } from '@react-navigation/elements';
+import { getDefaultHeaderHeight, useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
@@ -169,15 +169,12 @@ const config: ToastConfig = {
   warning: props => <ToastCard {...props} />,
 };
 
-//
-// Toast Containers
-//
-
-export function ToastContainer({ offset = 0, ...props }: ToastProps) {
-  return <ToastMessage config={config} topOffset={offset + DEFAULTS.offset} {...props} />;
-}
-
-export function RootToastContainer(props: ToastProps) {
+export function ToastContainer({ offset, ...props }: ToastProps) {
+  // useHeaderHeight is not usable outside screen components, so ToastContainer must not rely on it.
+  // we use getDefaultHeaderHeight as a replacement to get base header height fo the device.
+  // For every screen with custom header height, it must include a `<ToastContainer offset={value}>` where `value` is the replacement distance from to the screen.
   const { top } = useSafeAreaInsets();
-  return <ToastMessage config={config} topOffset={DEFAULTS.offset + top + UI_SIZES.elements.navbarHeight} {...props} />;
+  const frame = useWindowDimensions();
+  const headerHeight = getDefaultHeaderHeight(frame, false, top);
+  return <ToastMessage config={config} topOffset={DEFAULTS.offset + (offset ?? headerHeight)} {...props} />;
 }

@@ -110,6 +110,7 @@ const PdfItem = ({
         source={source}
         style={styles.flex1}
         trustAllCerts={false}
+        enableDoubleTapZoom
       />
       {!isPdfLoaded && <LoaderItem />}
     </View>
