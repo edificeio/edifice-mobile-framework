@@ -2,13 +2,13 @@ import { Platform } from 'react-native';
 
 import RNFS from 'react-native-fs';
 
-import { ui } from './const';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+
+import { ui } from './const';
 
 const base64Type = {
   FONT: 'fonts',
@@ -783,7 +783,7 @@ function createHTML(options = {}) {
                     }
                     if (tagName === 'a') {
                         const contentType = el.getAttribute('data-content-type');
-                        if (contentType === 'application/pdf') {
+                        if (contentType && contentType === 'application/pdf') {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -793,7 +793,7 @@ function createHTML(options = {}) {
                                     type: 'attachment'
                                 });
                             }
-                        } else if (contentType.startsWith('image/')) {
+                        } else if (contentType && contentType.startsWith('image/')) {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -803,7 +803,7 @@ function createHTML(options = {}) {
                                     type: 'image'
                                 });
                             }
-                        } else if (contentType.startsWith('video/')) {
+                        } else if (contentType && contentType.startsWith('video/')) {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -814,7 +814,7 @@ function createHTML(options = {}) {
                                     type: 'video'
                                 });
                             }
-                        } else if (contentType.startsWith('audio/')) {
+                        } else if (contentType && contentType.startsWith('audio/')) {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -823,8 +823,8 @@ function createHTML(options = {}) {
                                     src: href,
                                     type: 'audio'
                                 });
-                            }
-                        } else {
+                            }            
+                        } else if (contentType) {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -987,7 +987,11 @@ function createHTML(options = {}) {
                     return false;
                 } else if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     const contentType = ele.getAttribute('data-content-type');
-                    postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('href')}, true);
+                    if (contentType) {
+                        postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('href')}, true);
+                    } else {
+                        postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
+                    }
                     return false;
                 } else if (ele.getAttribute('class') === 'audio-wrapper') {
                     var audioSrc = ele.querySelector('audio').getAttribute('src');
