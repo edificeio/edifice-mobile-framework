@@ -536,10 +536,18 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     });
   }, [mail, isRecall, onReply, popupActionsMenu, props, fromFolder, fromTimeline, isLoading]);
 
-  const renderContentViewer = React.useCallback(() => {
+  const renderContentViewer = React.useCallback(async () => {
     if (isContentEmpty) return;
-    return <RichEditorViewer content={mailContent} />;
-  }, [isContentEmpty, mailContent]);
+    // Carbonio: pass onOpenCarbonioContent to redirect to web instead of carousel
+    let onOpenCarbonioContent: (() => Promise<void>) | undefined;
+    if (isServiceMethodAvailable(mailsService.mail.rederictToWebview) && !mailsService.attachments.supportViewAttachments) {
+      onOpenCarbonioContent = async () => {
+        const url = await mailsService.mail.rederictToWebview!({ folderId: mail?.folder_id ?? '', id });
+        openUrl(url);
+      };
+    }
+    return <RichEditorViewer content={mailContent} onOpenCarbonioContent={onOpenCarbonioContent} />;
+  }, [id, isContentEmpty, mail?.folder_id, mailContent]);
 
   const renderRecipients = React.useCallback(() => {
     return (
