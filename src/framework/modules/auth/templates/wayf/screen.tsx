@@ -17,6 +17,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
@@ -171,6 +172,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           style={styles.webview}
           userAgent={`X-APP=mobile-${Platform.OS}`}
           webviewDebuggingEnabled={__DEV__}
+          contentInsetAdjustmentBehavior="automatic"
         />
       );
     },
@@ -385,9 +387,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   public render() {
     const { dropdownOpened, mode } = this.state;
     return (
-      <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.safeView}>
+      <KeyboardAvoidingView>
+        {/*<SafeAreaView edges={['bottom', 'left', 'right']} style={styles.safeView}>*/}
         {this.contentComponents[mode](dropdownOpened)}
-      </SafeAreaView>
+        {/*</SafeAreaView>*/}
+      </KeyboardAvoidingView>
     );
   }
 }
