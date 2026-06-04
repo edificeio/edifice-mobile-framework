@@ -179,7 +179,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
     } else {
       navigation.setOptions({
         headerBlurEffect: undefined,
-        headerLeft: undefined,
+        headerLeft: () => <React.Fragment />,
         headerRight: undefined,
         headerShadowVisible: false,
         headerStyle: { backgroundColor: 'transparent' },
@@ -188,7 +188,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
         unstable_headerLeftItems: undefined,
       });
     }
-  }, [isNavBarVisible, media.length, currentIndex, hasMediaError, orientation, navigation, media, route.params.title, onShare]);
+  }, [isNavBarVisible, media.length, currentIndex, hasMediaError, orientation, navigation, media, onShare, route]);
 
   React.useEffect(() => {
     mediaLengthShared.value = media.length;
