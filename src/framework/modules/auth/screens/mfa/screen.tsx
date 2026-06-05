@@ -3,6 +3,7 @@ import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } f
 
 import LottieView from 'lottie-react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -305,7 +306,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const onResendCode = useCallback(() => resendCode(), [resendCode]);
 
   return (
-    <ScrollView style={styles.page}>
+    <KeyboardAwareScrollView style={styles.page}>
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
@@ -408,7 +409,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           </TouchableOpacity>
         </View>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 
