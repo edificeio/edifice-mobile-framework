@@ -133,6 +133,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     testID,
     testIDCaption,
     testIDToggle,
+    TextInputComponent = RNTextInput,
     toggleIconOff,
     toggleIconOn,
     value,
@@ -198,7 +199,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
   return (
     <View>
       <View style={styles.viewInput}>
-        <RNTextInput
+        <TextInputComponent
           {...props}
           maxLength={maxLength}
           onFocus={handleFocus}
