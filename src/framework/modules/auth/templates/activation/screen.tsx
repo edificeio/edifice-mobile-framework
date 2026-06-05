@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Country, CountryCode, getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-phone-number-input';
+import { EdgeInsets, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -18,7 +20,6 @@ import PasswordInput from '~/framework/components/inputs/password';
 import InputPhone from '~/framework/components/inputs/phone/';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Svg } from '~/framework/components/picture';
-import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, SmallActionText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
@@ -46,15 +47,17 @@ const ActivationScreenLoader = (props: AuthActivationScreenProps) => {
     }
   });
 
+  const insets = useSafeAreaInsets();
+
   if (!platform) return <EmptyConnectionScreen />;
   if (!context || !legalUrls || !validReactionTypes) return <Loading />;
-  else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} />;
+  else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} insets={insets} />;
 };
 
 export default ActivationScreenLoader;
 
 export class ActivationScreen extends React.PureComponent<
-  AuthActivationScreenProps & { context: PlatformAuthContext; legalUrls: LegalUrls },
+  AuthActivationScreenProps & { context: PlatformAuthContext; legalUrls: LegalUrls; insets: EdgeInsets },
   AuthActivationScreenState
 > {
   private mounted = false;
@@ -206,8 +209,8 @@ export class ActivationScreen extends React.PureComponent<
     );
 
     return (
-      <ScrollView style={styles.page}>
-        <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
+      <KeyboardAwareScrollView style={styles.page} contentContainerStyle={{ paddingBottom: this.props.insets.bottom }}>
+        <Pressable onPress={formModel.blur} style={styles.pressable}>
           <View style={styles.infos}>
             <Svg name="ui-userSearchColor" />
             <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome')}</HeadingSText>
@@ -334,7 +337,7 @@ export class ActivationScreen extends React.PureComponent<
             />
           </View>
         </Pressable>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     );
   }
 }

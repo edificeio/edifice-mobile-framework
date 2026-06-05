@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Keyboard, ScrollView, View } from 'react-native';
 
+import { KeyboardAwareScrollView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
@@ -11,7 +12,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
 import TextInput from '~/framework/components/inputs/text';
-import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
@@ -245,7 +245,7 @@ const AuthLoginCredentialsScreenTemplate = (props: AuthLoginCredentialsScreenPro
 
   const insets = useSafeAreaInsets();
 
-  const scrollViewRef = React.useRef<ScrollView>(null);
+  const scrollViewRef = React.useRef<KeyboardAwareScrollViewRef>(null);
   React.useEffect(() => {
     const listener = Keyboard.addListener('keyboardDidShow', () => {
       scrollViewRef.current?.scrollTo(styles.platformLogo.height + styles.platform.paddingTop);
@@ -256,38 +256,36 @@ const AuthLoginCredentialsScreenTemplate = (props: AuthLoginCredentialsScreenPro
   }, []);
 
   return (
-    <KeyboardAvoidingView>
-      <ScrollView
-        ref={scrollViewRef}
-        keyboardShouldPersistTaps="handled"
-        alwaysBounceVertical={false}
-        overScrollMode="never"
-        contentContainerStyle={React.useMemo(() => [styles.scrollview, { paddingBottom: insets.bottom }], [insets])}>
-        {renderPlatform()}
-        <View style={styles.form}>
-          {renderInputs()}
-          {renderError()}
-          <View style={styles.boxButtons}>
-            {renderLoginButton()}
-            <View style={styles.boxTextForgot}>
+    <KeyboardAwareScrollView
+      ref={scrollViewRef}
+      keyboardShouldPersistTaps="handled"
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+      contentContainerStyle={React.useMemo(() => [styles.scrollview, { paddingBottom: insets.bottom }], [insets])}>
+      {renderPlatform()}
+      <View style={styles.form}>
+        {renderInputs()}
+        {renderError()}
+        <View style={styles.boxButtons}>
+          {renderLoginButton()}
+          <View style={styles.boxTextForgot}>
+            <DefaultButton
+              text={I18n.get('auth-login-forgot-password')}
+              action={() => navigation.dispatch(forgotPasswordRoute(login))}
+              testID="login-forgot-password"
+              style={styles.forgotPasswordButton}
+            />
+            {!lockLogin ? (
               <DefaultButton
-                text={I18n.get('auth-login-forgot-password')}
-                action={() => navigation.dispatch(forgotPasswordRoute(login))}
-                testID="login-forgot-password"
-                style={styles.forgotPasswordButton}
+                text={I18n.get('auth-login-forgot-id')}
+                action={() => navigation.dispatch(forgotIdRoute)}
+                testID="login-forgot-identifier"
               />
-              {!lockLogin ? (
-                <DefaultButton
-                  text={I18n.get('auth-login-forgot-id')}
-                  action={() => navigation.dispatch(forgotIdRoute)}
-                  testID="login-forgot-identifier"
-                />
-              ) : null}
-            </View>
+            ) : null}
           </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </View>
+    </KeyboardAwareScrollView>
   );
 };
 
