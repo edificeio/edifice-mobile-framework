@@ -11,7 +11,7 @@ import { I18n } from '~/app/i18n';
 import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Checkbox } from '~/framework/components/checkbox';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
@@ -209,7 +209,10 @@ export class ActivationScreen extends React.PureComponent<
     );
 
     return (
-      <KeyboardAwareScrollView style={styles.page} contentContainerStyle={{ paddingBottom: this.props.insets.bottom }}>
+      <KeyboardAwareScrollView
+        style={styles.page}
+        contentContainerStyle={{ paddingBottom: this.props.insets.bottom }}
+        bottomOffset={this.props.insets.bottom + UI_SIZES.spacing.medium}>
         <Pressable onPress={formModel.blur} style={styles.pressable}>
           <View style={styles.infos}>
             <Svg name="ui-userSearchColor" />
