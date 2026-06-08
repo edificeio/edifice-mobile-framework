@@ -1,4 +1,3 @@
-import { InvitationClient, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { CommonActions, NavigationProp, ParamListBase } from '@react-navigation/native';
 
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
@@ -8,7 +7,6 @@ import {
   NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
-import { sessionApi } from '~/framework/util/transport';
 
 import moduleConfig from './module-config';
 import { communitiesRouteNames } from './navigation';
@@ -83,38 +81,9 @@ const handleCommunityUrlNotificationAction: NotifHandlerThunkAction =
 const handleCommunityInvitationNotificationAction: NotifHandlerThunkAction =
   (notification, allowSwitchTab, navigation, dispatch) => async () => {
     try {
-      const { communityId } = extractCommunityInfoFromId(notification);
-      let invitationId =
-        notification.backupData['sub-resource'] !== undefined ? parseInt(notification.backupData['sub-resource'], 10) : undefined;
-      if (invitationId !== undefined && isNaN(invitationId)) invitationId = undefined;
-
-      if (communityId === undefined || invitationId === undefined)
-        throw new Error('No communityId or invitationId in notification data');
-
-      // If community invitation has already been accepted, we must navigate to the home screen of it.
-      const isAccepted = await sessionApi(moduleConfig, InvitationClient)
-        .getInvitationById(invitationId)
-        .then(data => data.status === InvitationStatus.ACCEPTED || data.status === InvitationStatus.REQUEST_ACCEPTED)
-        .catch(() => undefined);
-
-      communityTabNavigate(
-        navigation,
-        dispatch,
-        allowSwitchTab,
-        isAccepted === undefined
-          ? {
-              name: communitiesRouteNames.list,
-            }
-          : isAccepted
-            ? {
-                name: communitiesRouteNames.home,
-                params: { communityId, invitationId },
-              }
-            : {
-                name: communitiesRouteNames.list,
-                params: { pending: true },
-              },
-      );
+      communityTabNavigate(navigation, dispatch, allowSwitchTab, {
+        name: communitiesRouteNames.list,
+      });
 
       return {
         managed: 1,
