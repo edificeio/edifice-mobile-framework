@@ -23,13 +23,11 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { today } from '~/framework/util/date';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { uppercaseFirstLetter } from '~/framework/util/string';
-import { ConnectionTrackerState } from '~/infra/reducers/connectionTracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 
 export interface HomeworkCreateScreenDataProps {
   diaryId?: string;
-  connectionTrackerState: ConnectionTrackerState;
 }
 
 export interface HomeworkCreateScreenEventProps {
@@ -127,26 +125,13 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
 
   async createEntry() {
     try {
-      const {
-        connectionTrackerState,
-        diaryId,
-        handleCreateDiaryEntry,
-        handleGetHomeworkTasks,
-        handleUploadEntryImages,
-        navigation,
-        route,
-      } = this.props;
+      const { diaryId, handleCreateDiaryEntry, handleGetHomeworkTasks, handleUploadEntryImages, navigation, route } = this.props;
       const { date, description, images, subject } = this.state;
 
       this.setState({ isCreatingEntry: true });
 
       if (!diaryId) {
         throw new Error('No diary id');
-      }
-
-      if (!connectionTrackerState?.connected) {
-        Toast.showError(I18n.get('homework-create-error-offline'));
-        throw new Error('Offline');
       }
 
       // Upload images (if added)

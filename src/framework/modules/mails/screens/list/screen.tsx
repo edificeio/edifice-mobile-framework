@@ -19,7 +19,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
+import { NavBarAction } from '~/framework/components/navigation';
 import Separator from '~/framework/components/separator';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
@@ -1078,19 +1078,21 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         {isLoading ? (
           renderPlaceholder()
         ) : (
-          <FlatList
-            ref={flatListRef}
-            data={mails}
-            renderItem={mail => renderMailPreview(mail.item)}
-            ListFooterComponent={renderFooter}
-            ListEmptyComponent={renderEmpty()}
-            refreshControl={refreshControl}
-            onEndReached={loadNextMails}
-            keyExtractor={item => `item#${item.id}`}
-            onEndReachedThreshold={0.5}
-            getItemLayout={(_, index) => getItemLayout(index)}
-            disableVirtualization={Platform.OS === 'android'}
-          />
+          <>
+            <FlatList
+              ref={flatListRef}
+              data={mails}
+              renderItem={mail => renderMailPreview(mail.item)}
+              ListFooterComponent={renderFooter}
+              ListEmptyComponent={renderEmpty()}
+              refreshControl={refreshControl}
+              onEndReached={loadNextMails}
+              keyExtractor={item => `item#${item.id}`}
+              onEndReachedThreshold={0.5}
+              getItemLayout={(_, index) => getItemLayout(index)}
+              disableVirtualization={Platform.OS === 'android'}
+            />
+          </>
         )}
         {renderBottomMode()}
         {renderBottomSheetFolders()}

@@ -1,12 +1,11 @@
 import * as React from 'react';
 
 import { NavigationIndependentTree, useNavigationContainerRef } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { NavigationContainer, navigationRef as parentNavigationRef } from '~/app/navigation';
-import { defaultScreenOptions, StackScreenLayout } from '~/app/navigation/layout';
+import { createLeafStackNavigator } from '~/app/navigation/leaf-stack';
 import { modalScreenOptions } from '~/app/navigation/util';
 import { getAuthReduxNavigationStateForNewAccount } from '~/framework/modules/auth/new-navigation';
 import { getState } from '~/framework/modules/auth/redux/reducer';
@@ -23,7 +22,7 @@ import AuthWayfAddAccountScreen, { computeNavBar as wayfNavBar } from '../add-ac
 
 export const computeNavBar = modalScreenOptions('modal', () => ({ title: I18n.get('auth-add-account-modal-title') }));
 
-const Stack = createNativeStackNavigator();
+const LeafStack = createLeafStackNavigator();
 
 export default function AuthAddAccountModalScreen() {
   const pending = useSelector(state => getState(state).pendingAddAccount);
@@ -40,58 +39,59 @@ export default function AuthAddAccountModalScreen() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer
+        // NO initial state since we WANT to start always on boarding
         ref={navigationRef}
         onUnhandledAction={action => {
           parentNavigationRef.dispatch(action);
         }}>
-        {/* NO initial state since we WANT to start always on boarding */}
-        <Stack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
-          <Stack.Group screenOptions={{ headerShown: false }}>
-            <Stack.Screen
-              name="auth/add-account/onboarding"
-              component={AuthOnboardingAddAccountScreen}
-              options={AuthOnboardingAddAccountScreenOptions}
-            />
-            <Stack.Screen
-              name="auth/add-account/platforms"
-              component={AuthPlatformsAddAccountScreen}
-              options={platformsAddAccountNavBar}
-            />
-            <Stack.Screen
-              name="auth/add-account/login/credentials"
-              component={AuthLoginCredentialsScreen}
-              options={loginCredentialsNavBar}
-            />
+        <LeafStack.Navigator screenOptions={{ headerShown: false }}>
+          <LeafStack.Screen
+            name="auth/add-account/onboarding"
+            component={AuthOnboardingAddAccountScreen}
+            options={AuthOnboardingAddAccountScreenOptions}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/platforms"
+            component={AuthPlatformsAddAccountScreen}
+            options={platformsAddAccountNavBar}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/login/credentials"
+            component={AuthLoginCredentialsScreen}
+            options={loginCredentialsNavBar}
+          />
 
-            <Stack.Screen name="auth/add-account/login/wayf" component={AuthLoginWayfAddAccountScreen} options={loginWayfNavBar} />
-            <Stack.Screen
-              name="auth/add-account/login/redirect"
-              component={AuthLoginRedirectAddAccountScreen}
-              options={loginRedirectNavBar}
-            />
-            <Stack.Screen name="auth/add-account/wayf" component={AuthWayfAddAccountScreen} options={wayfNavBar} />
+          <LeafStack.Screen
+            name="auth/add-account/login/wayf"
+            component={AuthLoginWayfAddAccountScreen}
+            options={loginWayfNavBar}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/login/redirect"
+            component={AuthLoginRedirectAddAccountScreen}
+            options={loginRedirectNavBar}
+          />
+          <LeafStack.Screen name="auth/add-account/wayf" component={AuthWayfAddAccountScreen} options={wayfNavBar} />
 
-            <Stack.Screen
-              name="auth/add-account/activation"
-              component={AuthActivationAddAccountScreen}
-              options={authActivationAddAccountNavBar}
-            />
-            <Stack.Screen
-              name="auth/add-account/renew-password"
-              component={AuthRenewPasswordScreen}
-              options={AuthRenewPasswordScreenOptions}
-            />
-            <Stack.Screen
-              name="auth/add-account/forgot"
-              component={AuthForgotAddAccountScreen}
-              options={({ route }) => ({
-                title:
-                  route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
-              })}
-            />
-          </Stack.Group>
-          {/*{renderCoreModulesScreens(Stack)}*/}
-        </Stack.Navigator>
+          <LeafStack.Screen
+            name="auth/add-account/activation"
+            component={AuthActivationAddAccountScreen}
+            options={authActivationAddAccountNavBar}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/renew-password"
+            component={AuthRenewPasswordScreen}
+            options={AuthRenewPasswordScreenOptions}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/forgot"
+            component={AuthForgotAddAccountScreen}
+            options={({ route }) => ({
+              title:
+                route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+            })}
+          />
+        </LeafStack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>
   );

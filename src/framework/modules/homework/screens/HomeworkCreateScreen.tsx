@@ -14,7 +14,6 @@ import {
 } from '~/framework/modules/homework/components/HomeworkCreateScreen';
 import { homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
-import { getState as getConnectionTrackerState } from '~/infra/reducers/connectionTracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 
 const mapStateToProps: (state: any) => HomeworkCreateScreenDataProps = state => {
@@ -22,7 +21,6 @@ const mapStateToProps: (state: any) => HomeworkCreateScreenDataProps = state => 
   const selectedDiaryId = localState.selectedDiary;
 
   return {
-    connectionTrackerState: getConnectionTrackerState(state),
     diaryId: selectedDiaryId,
   };
 };

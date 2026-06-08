@@ -3,6 +3,7 @@ import React from 'react';
 import { Action } from 'redux';
 
 import { CoreModule } from '~/app/module';
+import { BaseStackScreenLayout } from '~/app/navigation/layout';
 import type { HostId, Platform } from '~/framework/util/appConf';
 
 import { AuthCredentials } from './model';
@@ -107,7 +108,9 @@ export default new CoreModule<
       <Stack.Screen name="auth/requirement-verify-mobile" component={AuthChangeMobileScreen} options={authChangeMobileNavBar} />
       <Stack.Screen name="auth/mfa" component={AuthMFAScreen} options={mfaNavBar} />
       <Stack.Screen name="auth/forgot" component={AuthForgotScreen} options={AuthForgotScreenOptions} />
-      <Stack.Screen name="auth/add-account" component={AuthAddAccountModalScreen} options={AuthAddAccountModalScreenOptions} />
+      <Stack.Group screenLayout={BaseStackScreenLayout}>
+        <Stack.Screen name="auth/add-account" component={AuthAddAccountModalScreen} options={AuthAddAccountModalScreenOptions} />
+      </Stack.Group>
       <Stack.Screen name="auth/accounts" component={AuthAccountSelectionScreen} options={AuthAccountSelectionScreenOptions} />
     </>
   ),

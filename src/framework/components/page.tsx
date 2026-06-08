@@ -17,7 +17,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import theme from '~/app/theme';
 import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import Notifier from '~/framework/util/notifier';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 import { UI_SIZES } from './constants';
 import { ScreenView } from './screen';
@@ -55,9 +54,8 @@ export const PageViewStyle = styled.View({
  * @returns
  */
 export const PageView = (props: PageViewProps) => {
-  const { children, gutters, showNetworkBar = true, statusBar, ...viewProps } = props;
+  const { children, gutters, statusBar, ...viewProps } = props;
   const route = useRoute();
-
   const gutterStyle = React.useMemo(
     () => ({
       flex: 1,
@@ -65,17 +63,14 @@ export const PageView = (props: PageViewProps) => {
     }),
     [gutters],
   );
-
   const page = (
     <PageViewStyle {...viewProps}>
       <>
-        {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
       </>
     </PageViewStyle>
   );
-
   return <ScreenView statusBar={statusBar}>{page}</ScreenView>;
 };
 
