@@ -6,6 +6,7 @@ import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react
 import { useSelector } from 'react-redux';
 
 import { EntModule, EntTabModule } from '~/app/module';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -50,10 +51,13 @@ export const MainNavigation = React.memo(function MainNavigation() {
     () =>
       availableTabModules.map<BottomTabNavigationOptions>(m => ({
         tabBarButtonTestID: m.tab.testId,
-        tabBarIcon: ({ color, focused, size }) => (
-          <TabIcon module={m} focused={focused} size={getTabBarIconSize(size)} color={color} />
+        tabBarIcon: ({ color, focused }) => <TabIcon module={m} focused={focused} size={getTabBarIconSize()} color={color} />,
+        tabBarLabel: ({ color }) => (
+          // negative marginHorizontal is necessary to prevent text wrapping
+          <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
+            {getTabModuleDisplayName(m, aggregatedApps)}
+          </CaptionText>
         ),
-        tabBarLabel: ({ color }) => <CaptionText style={{ color }}>{getTabModuleDisplayName(m, aggregatedApps)}</CaptionText>,
       })),
 
     [rightsMemoValue],
@@ -143,7 +147,12 @@ export const MainNavigation = React.memo(function MainNavigation() {
     return oldTabModules.map<BottomTabNavigationOptions>(m => ({
       tabBarButtonTestID: m.config.testID,
       tabBarIcon: props => createOldTabIcon(m.config, props),
-      tabBarLabel: ({ color }) => <CaptionText style={{ color }}>{getTabModuleDisplayName(m.config, aggregatedApps)}</CaptionText>,
+      tabBarLabel: ({ color }) => (
+        // negative marginHorizontal is necessary to prevent text wrapping
+        <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
+          {getTabModuleDisplayName(m.config, aggregatedApps)}
+        </CaptionText>
+      ),
     }));
   }, [rightsMemoValue]);
 
