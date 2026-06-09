@@ -3,8 +3,6 @@ import { Alert } from 'react-native';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ManageFavoriteScreenProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { AppDispatch } from '~/app/store';
 import Toast from '~/framework/components/toast';
@@ -13,6 +11,8 @@ import { saveGroupedFavorites, selectAppBookmarks } from '~/framework/modules/my
 import { readShowAllApps } from '~/framework/modules/myapps/storage';
 import { MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 import { normalizeString } from '~/framework/modules/myapps/utils';
+
+import { ManageFavoriteScreenProps } from './types';
 
 export const useManageFavoritesController = (navigation: ManageFavoriteScreenProps.ManageFavoritesNavigation['navigation']) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -74,10 +74,7 @@ export const useManageFavoritesController = (navigation: ManageFavoriteScreenPro
         setTimeout(() => {
           setIsSaving(false);
           navigation.goBack();
-
-          setTimeout(() => {
-            Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
-          }, 300);
+          Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
         }, 400);
       }),
     );

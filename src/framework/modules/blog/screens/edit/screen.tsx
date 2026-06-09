@@ -5,9 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPostScreenProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -23,6 +20,9 @@ import { Blog } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+import styles from './styles';
+import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPostScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -65,10 +65,8 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       const htmlContent = content.replace(/\n/g, '<br>').trim();
       // console.debug(`SAVED HTML CONTENT:\r\n${htmlContent}`);
       await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent, postState);
-      setTimeout(() => {
-        navigation.goBack();
-        Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
-      });
+      navigation.goBack();
+      Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
     } catch {
       Toast.showError(I18n.get('blog-editpost-edit-errortext'));
     }

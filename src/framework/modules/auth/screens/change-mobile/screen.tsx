@@ -167,10 +167,8 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           setIsSendingCode(false);
           setMobileState(MobileState.PRISTINE);
           await props.trySaveNewMobile({ mobile: mobileNumberFormatted });
-          setTimeout(() => {
-            props.navigation.goBack();
-            Toast.showSuccess(I18n.get('auth-change-mobile-edit-toast'));
-          });
+          props.navigation.goBack();
+          Toast.showSuccess(I18n.get('auth-change-mobile-edit-toast'));
         }
       } catch {
         Toast.showError(I18n.get('auth-change-mobile-error-text'));
