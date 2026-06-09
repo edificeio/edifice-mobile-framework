@@ -214,131 +214,133 @@ export class ActivationScreen extends React.PureComponent<
         contentContainerStyle={{ paddingBottom: this.props.insets.bottom }}
         bottomOffset={this.props.insets.bottom + UI_SIZES.spacing.medium}>
         <Pressable onPress={formModel.blur} style={styles.pressable}>
-          <View style={styles.infos}>
-            <Svg name="ui-userSearchColor" />
-            <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome')}</HeadingSText>
-            <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-form-infos')}</SmallText>
-          </View>
-          {passwordRules}
-          <InputContainer
-            label={{
-              icon: 'ui-lock',
-              indicator: LabelIndicator.REQUIRED,
-              text: I18n.get('auth-activation-password'),
-            }}
-            input={
-              <PasswordInput
-                annotation={formModel.showPasswordError(password) ? errorText : ''}
-                onChangeText={formModel.password.changeCallback(this.onFieldChange('password'))}
-                placeholder={I18n.get('auth-activation-password-placeholder')}
-                showError={formModel.showPasswordError(password)}
-                showStatusIcon
-                testID="activation-password"
-                testIDToggle="activation-see-password"
-                value={password}
-              />
-            }
-          />
-
-          <InputContainer
-            style={styles.inputContainer}
-            label={{
-              icon: 'ui-lock',
-              indicator: LabelIndicator.REQUIRED,
-              text: I18n.get('auth-activation-password-confirmation'),
-            }}
-            input={
-              <PasswordInput
-                annotation={formModel.showConfirmError(confirmPassword) ? errorText : ''}
-                onChangeText={formModel.confirm.changeCallback(this.onFieldChange('confirmPassword'))}
-                placeholder={I18n.get('auth-activation-password-placeholder')}
-                showError={formModel.showConfirmError(confirmPassword)}
-                showStatusIcon
-                testID="activation-confirmed-password"
-                testIDToggle="activation-see-confirmed-password"
-                value={confirmPassword}
-              />
-            }
-          />
-
-          <InputContainer
-            label={{
-              icon: 'ui-mail',
-              indicator: isEmailRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
-              text: I18n.get('auth-activation-email-address'),
-            }}
-            input={
-              <EmailInput
-                annotation={
-                  isEmailStatePristine || !formModel.showEmailError(mail)
-                    ? I18n.get('common-space')
-                    : I18n.get('auth-activation-email-error-invalid')
-                }
-                onBlur={this.onMailInputBlur}
-                onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
-                placeholder={I18n.get('auth-activation-email-placeholder')}
-                showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
-                showStatusIcon
-                testID="activation-email"
-                value={mail}
-              />
-            }
-          />
-
-          <InputContainer
-            style={styles.phoneInputContainer}
-            label={{
-              icon: 'ui-smartphone',
-              indicator: isPhoneRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
-              text: I18n.get('auth-activation-mobile'),
-            }}
-            input={
-              <InputPhone
-                defaultCode={this.state.phoneCountry}
-                isMobileStateClean={isMobileStateClean}
-                onChangeText={formModel.phone.changeCallback(this.onFieldChange('phone'))}
-                onPhoneInputBlur={this.onPhoneInputBlur}
-                onChangeCountry={this.onSetCountry}
-                phoneNumber={phone}
-                placeholder={I18n.get('auth-activation-mobile-placeholder')}
-                testID="activation-phone"
-                testIDCountryWithCode="phone-new-country"
-              />
-            }
-          />
-          <View style={styles.cguWrapper}>
-            <Checkbox
-              checked={acceptCGU}
-              onPress={this.onCheckBoxPress}
-              customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
-              testID="activation-accept-legal-condition"
-            />
-            <View style={styles.cguText} testID="activation-legal-condition">
-              <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
-              <SmallActionText
-                onPress={() => this.doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}
-                testID="activation-user-charter">
-                {I18n.get('auth-activation-usercharter')}
-              </SmallActionText>
-              <SmallText>{I18n.get('auth-activation-cgu-accept-and')}</SmallText>
-              <SmallActionText
-                onPress={() => this.doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}
-                testID="activation-cgu">
-                {I18n.get('auth-activation-cgu')}
-              </SmallActionText>
+          <SafeAreaView edges={['bottom']}>
+            <View style={styles.infos}>
+              <Svg name="ui-userSearchColor" />
+              <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome')}</HeadingSText>
+              <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-form-infos')}</SmallText>
             </View>
-          </View>
-          <SmallText style={styles.errorMsg}>
-            {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
-          </SmallText>
-          <View style={styles.buttonWrapper} testID="activation-activate">
-            <PrimaryButton
-              action={() => this.doActivation()}
-              disabled={isNotValid}
-              text={I18n.get('auth-activation-activate')}
-              loading={isSubmitLoading}
+            {passwordRules}
+            <InputContainer
+              label={{
+                icon: 'ui-lock',
+                indicator: LabelIndicator.REQUIRED,
+                text: I18n.get('auth-activation-password'),
+              }}
+              input={
+                <PasswordInput
+                  annotation={formModel.showPasswordError(password) ? errorText : ''}
+                  onChangeText={formModel.password.changeCallback(this.onFieldChange('password'))}
+                  placeholder={I18n.get('auth-activation-password-placeholder')}
+                  showError={formModel.showPasswordError(password)}
+                  showStatusIcon
+                  testID="activation-password"
+                  testIDToggle="activation-see-password"
+                  value={password}
+                />
+              }
             />
-          </View>
+
+            <InputContainer
+              style={styles.inputContainer}
+              label={{
+                icon: 'ui-lock',
+                indicator: LabelIndicator.REQUIRED,
+                text: I18n.get('auth-activation-password-confirmation'),
+              }}
+              input={
+                <PasswordInput
+                  annotation={formModel.showConfirmError(confirmPassword) ? errorText : ''}
+                  onChangeText={formModel.confirm.changeCallback(this.onFieldChange('confirmPassword'))}
+                  placeholder={I18n.get('auth-activation-password-placeholder')}
+                  showError={formModel.showConfirmError(confirmPassword)}
+                  showStatusIcon
+                  testID="activation-confirmed-password"
+                  testIDToggle="activation-see-confirmed-password"
+                  value={confirmPassword}
+                />
+              }
+            />
+
+            <InputContainer
+              label={{
+                icon: 'ui-mail',
+                indicator: isEmailRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
+                text: I18n.get('auth-activation-email-address'),
+              }}
+              input={
+                <EmailInput
+                  annotation={
+                    isEmailStatePristine || !formModel.showEmailError(mail)
+                      ? I18n.get('common-space')
+                      : I18n.get('auth-activation-email-error-invalid')
+                  }
+                  onBlur={this.onMailInputBlur}
+                  onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
+                  placeholder={I18n.get('auth-activation-email-placeholder')}
+                  showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
+                  showStatusIcon
+                  testID="activation-email"
+                  value={mail}
+                />
+              }
+            />
+
+            <InputContainer
+              style={styles.phoneInputContainer}
+              label={{
+                icon: 'ui-smartphone',
+                indicator: isPhoneRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
+                text: I18n.get('auth-activation-mobile'),
+              }}
+              input={
+                <InputPhone
+                  defaultCode={this.state.phoneCountry}
+                  isMobileStateClean={isMobileStateClean}
+                  onChangeText={formModel.phone.changeCallback(this.onFieldChange('phone'))}
+                  onPhoneInputBlur={this.onPhoneInputBlur}
+                  onChangeCountry={this.onSetCountry}
+                  phoneNumber={phone}
+                  placeholder={I18n.get('auth-activation-mobile-placeholder')}
+                  testID="activation-phone"
+                  testIDCountryWithCode="phone-new-country"
+                />
+              }
+            />
+            <View style={styles.cguWrapper}>
+              <Checkbox
+                checked={acceptCGU}
+                onPress={this.onCheckBoxPress}
+                customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
+                testID="activation-accept-legal-condition"
+              />
+              <View style={styles.cguText} testID="activation-legal-condition">
+                <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
+                <SmallActionText
+                  onPress={() => this.doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}
+                  testID="activation-user-charter">
+                  {I18n.get('auth-activation-usercharter')}
+                </SmallActionText>
+                <SmallText>{I18n.get('auth-activation-cgu-accept-and')}</SmallText>
+                <SmallActionText
+                  onPress={() => this.doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}
+                  testID="activation-cgu">
+                  {I18n.get('auth-activation-cgu')}
+                </SmallActionText>
+              </View>
+            </View>
+            <SmallText style={styles.errorMsg}>
+              {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
+            </SmallText>
+            <View style={styles.buttonWrapper} testID="activation-activate">
+              <PrimaryButton
+                action={() => this.doActivation()}
+                disabled={isNotValid}
+                text={I18n.get('auth-activation-activate')}
+                loading={isSubmitLoading}
+              />
+            </View>
+          </SafeAreaView>
         </Pressable>
       </KeyboardAwareScrollView>
     );
