@@ -3,6 +3,7 @@ import React from 'react';
 import { Action } from 'redux';
 
 import { EntModule } from '~/app/module';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 
 import reducer, { type TimelineState } from './reducer';
 import { TimelineFiltersScreen, TimelineFiltersScreenOptions } from './screens/timeline-filters-screen';
@@ -39,3 +40,5 @@ export default new EntModule<
     </>
   ),
 );
+
+setModalModeForRoutes(['timeline/filters']);
