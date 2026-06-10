@@ -12,6 +12,7 @@ import { StackPresentationTypes } from 'react-native-screens';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg, SvgIconName, SvgProps } from '~/framework/components/picture';
 
+import { styles } from './layout';
 import { AllModulesNavigationParams } from './types';
 
 export type ScreenOptions<T extends keyof AllModulesNavigationParams = keyof AllModulesNavigationParams> = (
@@ -36,6 +37,7 @@ const defaultNavBarOptions = <T extends keyof AllModulesNavigationParams = keyof
                 onPress={navigation.goBack}
                 displayMode="minimal"
                 testID="header-back"
+                style={styles.headerBackButton}
               />
             </>
           ) : (
@@ -69,6 +71,7 @@ const defaultNavBarOptions = <T extends keyof AllModulesNavigationParams = keyof
                       onPress={navigation.goBack}
                       displayMode="minimal"
                       testID="header-back"
+                      style={styles.headerBackButton}
                     />
                   ),
                   type: 'custom',
@@ -155,7 +158,7 @@ export function headerAction(
 ): NativeStackHeaderItemCustom {
   return {
     element: (
-      <HeaderButton onPress={onPress} testID={testID} disabled={disabled}>
+      <HeaderButton onPress={onPress} testID={testID} disabled={disabled} style={styles.headerButton}>
         <Svg name={icon} fill={tintColor} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
       </HeaderButton>
     ),

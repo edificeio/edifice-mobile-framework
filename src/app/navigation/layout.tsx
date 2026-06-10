@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { ActivityIndicator, Platform } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
@@ -130,3 +130,20 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ na
 };
 
 export const getTabBarIconSize = () => UI_SIZES.elements.icon.small;
+
+export const styles = StyleSheet.create({
+  headerBackButton: {
+    // Override items padding because react-navigation's styling is broken
+    marginLeft: 0,
+    marginRight: 0,
+    paddingHorizontal: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
+  headerButton: {
+    // Override items padding because react-navigation's styling is broken
+    marginLeft: 0,
+    marginRight: 0,
+    paddingHorizontal: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
+});
