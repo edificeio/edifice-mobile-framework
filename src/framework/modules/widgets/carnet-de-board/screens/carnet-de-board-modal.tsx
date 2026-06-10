@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { defaultScreenOptions, StackScreenLayout } from '~/app/navigation/layout';
 import { PageView } from '~/framework/components/page';
 import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import PronoteCarnetDeBordScreen, {
@@ -16,7 +17,7 @@ export default function CarnetDeBoardModalScreen() {
 
   return (
     <PageView>
-      <RootStack.Navigator>
+      <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
         <Stack.Screen
           key={pronoteRouteNames.carnetDeBord}
           name={pronoteRouteNames.carnetDeBord}
