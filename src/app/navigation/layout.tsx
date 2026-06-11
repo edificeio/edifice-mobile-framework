@@ -7,6 +7,7 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
+import { PlatformPressable } from '@react-navigation/elements';
 import { DefaultTheme, NavigationProp, ScreenLayoutArgs, Theme } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
 import deepmerge from 'deepmerge';
@@ -115,6 +116,7 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ na
     lazy: true,
     popToTopOnBlur: true,
     tabBarActiveTintColor: theme.palette.primary.regular.toString(),
+    tabBarButton: props => <PlatformPressable {...props} pressColor="transparent" />,
     tabBarIconStyle: {
       height: UI_SIZES.elements.icon.small,
       width: UI_SIZES.elements.icon.small,

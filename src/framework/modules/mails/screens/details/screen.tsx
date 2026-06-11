@@ -511,6 +511,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
         <HeaderBackButton
           labelVisible={false}
           tintColor={theme.palette.grey.white as string}
+          pressColor="transparent"
           onPress={() =>
             fromTimeline
               ? props.navigation.goBack()

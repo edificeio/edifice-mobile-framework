@@ -121,7 +121,11 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
 export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) => {
   return {
     headerLeft: () => (
-      <HeaderButton style={styles.avatarHeaderButton} testID="timeline-profile-button" onPress={() => navigation.navigate('user')}>
+      <HeaderButton
+        style={styles.avatarHeaderButton}
+        testID="timeline-profile-button"
+        onPress={() => navigation.navigate('user')}
+        pressColor="transparent">
         <View style={{ padding: UI_SIZES.border.small }}>
           <SelfAvatar size="sm" />
         </View>

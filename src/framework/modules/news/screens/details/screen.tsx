@@ -437,7 +437,14 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   );
 
   const renderLeftHeader = React.useCallback(
-    () => <HeaderBackButton labelVisible={false} tintColor={theme.palette.grey.white as string} onPress={onNavigateHome} />,
+    () => (
+      <HeaderBackButton
+        labelVisible={false}
+        tintColor={theme.palette.grey.white as string}
+        onPress={onNavigateHome}
+        pressColor="transparent"
+      />
+    ),
     [onNavigateHome],
   );
 

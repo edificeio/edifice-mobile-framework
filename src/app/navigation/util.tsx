@@ -36,6 +36,7 @@ const defaultNavBarOptions = <T extends keyof AllModulesNavigationParams = keyof
                 tintColor={tintColor}
                 onPress={navigation.goBack}
                 displayMode="minimal"
+                pressColor="transparent"
                 testID="header-back"
                 style={styles.headerBackButton}
               />
@@ -158,7 +159,7 @@ export function headerAction(
 ): NativeStackHeaderItemCustom {
   return {
     element: (
-      <HeaderButton onPress={onPress} testID={testID} disabled={disabled} style={styles.headerButton}>
+      <HeaderButton onPress={onPress} testID={testID} disabled={disabled} style={styles.headerButton} pressColor={'transparent'}>
         <Svg name={icon} fill={tintColor} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
       </HeaderButton>
     ),

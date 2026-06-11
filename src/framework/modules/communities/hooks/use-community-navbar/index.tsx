@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, ScrollViewProps, StatusBar, TouchableOpacity, View } from 'react-native';
+import { Platform, ScrollViewProps, TouchableOpacity, View } from 'react-native';
 
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase } from '@react-navigation/native';
@@ -151,6 +151,7 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
             )}
             onPress={navigation.goBack}
             displayMode="minimal"
+            pressColor="transparent"
             testID="header-back"
             style={styles.navBarLeftButton}
             tintColor={theme.ui.text.regular.toString()}
