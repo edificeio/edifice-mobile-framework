@@ -4,7 +4,6 @@ import { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import { createHomeworkDiaryEntry, uploadHomeworkDiaryEntryImages } from '~/framework/modules/homework/actions/createEntry';
 import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';
 import {
@@ -14,8 +13,9 @@ import {
   IHomeworkCreateScreenProps,
 } from '~/framework/modules/homework/components/HomeworkCreateScreen';
 import { homeworkRouteNames } from '~/framework/modules/homework/navigation';
-import { SyncedFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { getState as getConnectionTrackerState } from '~/infra/reducers/connectionTracker';
+import { ILocalAttachment } from '~/ui/Attachment';
 
 const mapStateToProps: (state: any) => HomeworkCreateScreenDataProps = state => {
   const localState = state.homework;
@@ -43,8 +43,11 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkCr
   handleGetHomeworkTasks: diaryId => {
     return dispatch(fetchHomeworkTasks(diaryId));
   },
-  handleUploadEntryImages: async (images: ImagePicked[]) => {
-    const localFiles = images.map(img => imagePickedToLocalFile(img));
+  handleUploadEntryImages: async (images: ILocalAttachment[]) => {
+    const localFiles = images.map(
+      img => new LocalFile({ filename: img.name, filepath: img.uri, filetype: img.mime }, { _needIOSReleaseSecureAccess: false }),
+    );
+
     return dispatch(uploadHomeworkDiaryEntryImages(localFiles)) as unknown as Promise<SyncedFile[]>;
   },
 });
