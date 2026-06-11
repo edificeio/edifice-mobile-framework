@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Platform, View } from 'react-native';
+import { Alert, Keyboard, Platform, ScrollView as RNScrollView, View } from 'react-native';
 
 import { RouteProp, useIsFocused } from '@react-navigation/native';
 import PhoneInput, {
@@ -22,6 +22,7 @@ import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Picture, Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
@@ -229,101 +230,113 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   }, [isMobileEmpty, isScreenFocused, mobileState, refuseMobileVerification]);
 
+  const scrollViewRef = React.useRef<RNScrollView>(null);
+  React.useEffect(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollToEnd();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
-    <ScrollView style={styles.page}>
-      {isLoading ? (
-        <LoadingIndicator />
-      ) : isError ? (
-        <EmptyConnectionScreen />
-      ) : (
-        <View style={styles.container}>
-          <View style={styles.imageContainer}>
-            <Svg name="user-smartphone" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
-          </View>
-          <HeadingSText style={styles.title} testID="phone-new-title">
-            {texts.title}
-          </HeadingSText>
-          <SmallText style={styles.content} testID="phone-new-subtitle">
-            {texts.message}
-          </SmallText>
-          <View style={styles.inputTitleContainer} testID="phone-new-label">
-            <Picture
-              type="Svg"
-              name="pictos-smartphone"
-              fill={theme.palette.grey.black}
-              width={UI_SIZES.dimensions.width.mediumPlus}
-              height={UI_SIZES.dimensions.height.mediumPlus}
+    <KeyboardAvoidingView>
+      <ScrollView ref={scrollViewRef} style={styles.page}>
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : isError ? (
+          <EmptyConnectionScreen />
+        ) : (
+          <View style={styles.container}>
+            <View style={styles.imageContainer}>
+              <Svg name="user-smartphone" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
+            </View>
+            <HeadingSText style={styles.title} testID="phone-new-title">
+              {texts.title}
+            </HeadingSText>
+            <SmallText style={styles.content} testID="phone-new-subtitle">
+              {texts.message}
+            </SmallText>
+            <View style={styles.inputTitleContainer} testID="phone-new-label">
+              <Picture
+                type="Svg"
+                name="pictos-smartphone"
+                fill={theme.palette.grey.black}
+                width={UI_SIZES.dimensions.width.mediumPlus}
+                height={UI_SIZES.dimensions.height.mediumPlus}
+              />
+              <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
+            </View>
+            <PhoneInput
+              placeholder={I18n.get('auth-change-mobile-placeholder')}
+              ref={phoneInputRef}
+              value={mobile}
+              defaultCode={region}
+              layout="third"
+              onChangeFormattedText={onChangeMobile}
+              onChangeCountry={onSetRegion}
+              containerStyle={[
+                { borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
+                styles.input,
+              ]}
+              flagButtonStyle={styles.flagButton}
+              codeTextStyle={styles.flagCode}
+              textContainerStyle={[
+                styles.inputTextContainer,
+                {
+                  borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
+                },
+              ]}
+              textInputStyle={styles.inputTextInput}
+              flagSize={Platform.select({ android: UI_SIZES.dimensions.width.medium, ios: UI_SIZES.dimensions.width.larger })}
+              drowDownImage={
+                <Svg style={styles.dropDownArrow} name="ui-rafterDown" fill={theme.ui.text.regular} width={12} height={12} />
+              }
+              countryPickerProps={{
+                filterProps: {
+                  autoFocus: true,
+                  placeholder: I18n.get('auth-change-mobile-country-placeholder'),
+                },
+                language: countryListLanguages[I18n.getLanguage()] ?? countryListLanguages.DEFAULT,
+              }}
+              testIDCountryWithCode="phone-new-country"
+              textInputProps={{
+                hitSlop: {
+                  bottom: -UI_SIZES.spacing.big,
+                  left: 0,
+                  right: 0,
+                  top: -UI_SIZES.spacing.big,
+                },
+                inputMode: 'tel',
+                keyboardType: 'phone-pad',
+                placeholderTextColor: theme.palette.grey.stone,
+                testID: 'phone-new-field',
+              }}
             />
-            <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
-          </View>
-          <PhoneInput
-            placeholder={I18n.get('auth-change-mobile-placeholder')}
-            ref={phoneInputRef}
-            value={mobile}
-            defaultCode={region}
-            layout="third"
-            onChangeFormattedText={onChangeMobile}
-            onChangeCountry={onSetRegion}
-            containerStyle={[
-              { borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
-              styles.input,
-            ]}
-            flagButtonStyle={styles.flagButton}
-            codeTextStyle={styles.flagCode}
-            textContainerStyle={[
-              styles.inputTextContainer,
-              {
-                borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
-              },
-            ]}
-            textInputStyle={styles.inputTextInput}
-            flagSize={Platform.select({ android: UI_SIZES.dimensions.width.medium, ios: UI_SIZES.dimensions.width.larger })}
-            drowDownImage={
-              <Svg style={styles.dropDownArrow} name="ui-rafterDown" fill={theme.ui.text.regular} width={12} height={12} />
-            }
-            countryPickerProps={{
-              filterProps: {
-                autoFocus: true,
-                placeholder: I18n.get('auth-change-mobile-country-placeholder'),
-              },
-              language: countryListLanguages[I18n.getLanguage()] ?? countryListLanguages.DEFAULT,
-            }}
-            testIDCountryWithCode="phone-new-country"
-            textInputProps={{
-              hitSlop: {
-                bottom: -UI_SIZES.spacing.big,
-                left: 0,
-                right: 0,
-                top: -UI_SIZES.spacing.big,
-              },
-              inputMode: 'tel',
-              keyboardType: 'phone-pad',
-              placeholderTextColor: theme.palette.grey.stone,
-              testID: 'phone-new-field',
-            }}
-          />
-          <CaptionItalicText style={styles.errorText} testID="phone-new-error">
-            {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
-          </CaptionItalicText>
-          <PrimaryButton
-            style={styles.sendButton}
-            text={texts.button}
-            disabled={isMobileEmpty}
-            loading={isSendingCode}
-            action={onSendSMS}
-            testID="phone-change"
-          />
-          {isModifyingMobile ? null : (
-            <DefaultButton
-              style={styles.logoutButton}
-              text={I18n.get('auth-change-mobile-verify-disconnect')}
-              contentColor={theme.palette.status.failure.regular}
-              action={onRefuseMobileVerification}
+            <CaptionItalicText style={styles.errorText} testID="phone-new-error">
+              {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
+            </CaptionItalicText>
+            <PrimaryButton
+              style={styles.sendButton}
+              text={texts.button}
+              disabled={isMobileEmpty}
+              loading={isSendingCode}
+              action={onSendSMS}
+              testID="phone-change"
             />
-          )}
-        </View>
-      )}
-    </ScrollView>
+            {isModifyingMobile ? null : (
+              <DefaultButton
+                style={styles.logoutButton}
+                text={I18n.get('auth-change-mobile-verify-disconnect')}
+                contentColor={theme.palette.status.failure.regular}
+                action={onRefuseMobileVerification}
+              />
+            )}
+          </View>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

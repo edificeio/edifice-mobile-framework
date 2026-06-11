@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard, ScrollView as RNScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { RouteProp, useIsFocused } from '@react-navigation/native';
 import { connect } from 'react-redux';
@@ -12,6 +12,7 @@ import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { Picture, Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -129,69 +130,81 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const onSendEmail = useCallback(() => sendEmail(), [sendEmail]);
   const onRefuseEmailVerification = useCallback(() => refuseEmailVerification(), [refuseEmailVerification]);
 
+  const scrollViewRef = React.useRef<RNScrollView>(null);
+  React.useEffect(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollToEnd();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
-    <ScrollView style={styles.page}>
-      <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Svg name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
-        </View>
-        <HeadingSText style={styles.title} testID="email-change-title">
-          {texts.title}
-        </HeadingSText>
-        <SmallText style={styles.content} testID="email-change-subtitle">
-          {texts.message}
-        </SmallText>
-        <View style={styles.inputTitleContainer} testID="email-field-label">
-          <Picture
-            type="Svg"
-            name="pictos-mail"
-            fill={theme.palette.grey.black}
-            width={UI_SIZES.dimensions.width.mediumPlus}
-            height={UI_SIZES.dimensions.height.mediumPlus}
+    <KeyboardAvoidingView>
+      <ScrollView ref={scrollViewRef} style={styles.page}>
+        <View style={styles.container}>
+          <View style={styles.imageContainer}>
+            <Svg name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
+          </View>
+          <HeadingSText style={styles.title} testID="email-change-title">
+            {texts.title}
+          </HeadingSText>
+          <SmallText style={styles.content} testID="email-change-subtitle">
+            {texts.message}
+          </SmallText>
+          <View style={styles.inputTitleContainer} testID="email-field-label">
+            <Picture
+              type="Svg"
+              name="pictos-mail"
+              fill={theme.palette.grey.black}
+              width={UI_SIZES.dimensions.width.mediumPlus}
+              height={UI_SIZES.dimensions.height.mediumPlus}
+            />
+            <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
+          </View>
+          <View
+            style={[
+              styles.inputWrapper,
+              { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
+            ]}>
+            <TextInput
+              autoCorrect={false}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholder={I18n.get('auth-change-email-placeholder')}
+              placeholderTextColor={theme.palette.grey.graphite}
+              style={styles.input}
+              value={email}
+              onChangeText={onChangeEmail}
+              returnKeyType="send"
+              {...(!isEmailEmpty ? { onSubmitEditing: onSendEmail } : {})}
+              testID="email-field"
+            />
+          </View>
+          <CaptionItalicText style={styles.errorText} testID="email-field-error">
+            {isEmailStatePristine
+              ? I18n.get('common-space')
+              : emailState === EmailState.EMAIL_ALREADY_VERIFIED
+                ? I18n.get('auth-change-email-error-same')
+                : I18n.get('auth-change-email-error-invalid')}
+          </CaptionItalicText>
+          <PrimaryButton
+            style={styles.sendButton}
+            text={texts.button}
+            disabled={isEmailEmpty}
+            loading={isSendingCode}
+            action={onSendEmail}
+            testID="email-check"
           />
-          <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
+          {isModifyingEmail ? null : (
+            <TouchableOpacity style={styles.logoutButton} onPress={onRefuseEmailVerification}>
+              <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-email-verify-disconnect')}</SmallBoldText>
+            </TouchableOpacity>
+          )}
         </View>
-        <View
-          style={[
-            styles.inputWrapper,
-            { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
-          ]}>
-          <TextInput
-            autoCorrect={false}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder={I18n.get('auth-change-email-placeholder')}
-            placeholderTextColor={theme.palette.grey.graphite}
-            style={styles.input}
-            value={email}
-            onChangeText={onChangeEmail}
-            returnKeyType="send"
-            {...(!isEmailEmpty ? { onSubmitEditing: onSendEmail } : {})}
-            testID="email-field"
-          />
-        </View>
-        <CaptionItalicText style={styles.errorText} testID="email-field-error">
-          {isEmailStatePristine
-            ? I18n.get('common-space')
-            : emailState === EmailState.EMAIL_ALREADY_VERIFIED
-              ? I18n.get('auth-change-email-error-same')
-              : I18n.get('auth-change-email-error-invalid')}
-        </CaptionItalicText>
-        <PrimaryButton
-          style={styles.sendButton}
-          text={texts.button}
-          disabled={isEmailEmpty}
-          loading={isSendingCode}
-          action={onSendEmail}
-          testID="email-check"
-        />
-        {isModifyingEmail ? null : (
-          <TouchableOpacity style={styles.logoutButton} onPress={onRefuseEmailVerification}>
-            <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-email-verify-disconnect')}</SmallBoldText>
-          </TouchableOpacity>
-        )}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {
