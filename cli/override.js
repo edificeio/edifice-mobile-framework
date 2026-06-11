@@ -276,26 +276,27 @@ let _git_repoUri;
 function _git_getRepoUri(uri, username, password) {
   if (_git_repoUri) return _git_repoUri;
 
-  // 1. Check uri
   const isHttp = uri.startsWith('http://');
   const isHttps = uri.startsWith('https://');
-  if (!isHttp && !isHttps) {
-    console.error('The git URI should use HTTP(S) protocol');
-    process.exit(1);
-  }
-  // 2. Get full access uri
-  const protocol = isHttp ? 'http://' : 'https://';
-  let fullUri = uri;
-  if (username) {
-    const uriWithoutProtocol = uri.replace(protocol, '');
-    if (password) {
-      fullUri = protocol + username + ':' + password + '@' + uriWithoutProtocol;
-    } else {
-      fullUri = protocol + username + '@' + uriWithoutProtocol;
+  if (isHttp || isHttps) {
+    // For http(s) access
+    const protocol = isHttp ? 'http://' : 'https://';
+    let fullUri = uri;
+    if (username) {
+      const uriWithoutProtocol = uri.replace(protocol, '');
+      if (password) {
+        fullUri = protocol + username + ':' + password + '@' + uriWithoutProtocol;
+      } else {
+        fullUri = protocol + username + '@' + uriWithoutProtocol;
+      }
     }
+    _git_repoUri = fullUri;
+    return fullUri;
+  } else {
+    // For ssh access
+    _git_repoUri = uri;
+    return uri;
   }
-  _git_repoUri = fullUri;
-  return fullUri;
 }
 
 const _git_refPrefix = 'refs/heads/';
@@ -994,7 +995,8 @@ const main = async () => {
         opts = argv;
         await _override_performClean();
       },
-    ).parseAsync();
+    )
+    .parseAsync();
 };
 
 // Init local repo values
