@@ -19,6 +19,7 @@ export default new EntModule<
   TimelinePreferencesData
 >(
   {
+    entTrackingName: 'Timeline',
     matchEntcoreApp: 'Timeline',
     name: 'timeline',
     preferences,

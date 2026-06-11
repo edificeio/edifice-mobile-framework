@@ -125,6 +125,7 @@ export interface EntModuleConfig<
 >
   extends ModuleConfig<Name, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>, ConfigForRights {
   tab?: ConfigForTab<Name, NavigationParams>;
+  entTrackingName?: string;
 }
 
 export type EntTabModule<
@@ -177,8 +178,8 @@ export type ModuleReduxState<T> = T extends
 export type ResolvedModule<T> = T extends Promise<infer M> ? M : never;
 
 export type AllModules = {
-  [I in keyof typeof modules as I extends `${number}` ? I : never]: ResolvedModule<(typeof modules)[I]>['default'];
-} & Omit<Array<ResolvedModule<(typeof modules)[keyof typeof modules]>['default']>, number>;
+  [I in keyof typeof modules as I extends `${number}` ? I : never]: ResolvedModule<(typeof modules)[I]>;
+} & Omit<Array<ResolvedModule<(typeof modules)[keyof typeof modules]>>, number>;
 
 export type OneModule = AllModules[Extract<keyof AllModules, `${number}`>];
 
