@@ -227,6 +227,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
                   numberOfLines={4}
                   onChangeText={text => this.setState({ description: text })}
                   value={description}
+                  scrollEnabled={true}
                 />
               }
             />

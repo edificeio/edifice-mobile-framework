@@ -114,6 +114,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
               )}
               tintColor={tintColor}
               onPress={navigation.goBack}
+              pressColor="transparent"
               displayMode="minimal"
               testID="header-back"
             />

@@ -134,10 +134,10 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
 
   const carouselDimensions = React.useMemo(
     () => ({
-      height: windowHeight - (isAndroid ? insets.top : 0) - (orientation === 'PORTRAIT' ? insets.bottom : 0),
+      height: windowHeight - (isAndroid ? insets.top : 0) - insets.bottom,
       width: Math.ceil(windowWidth),
     }),
-    [insets.bottom, insets.top, windowHeight, windowWidth, orientation],
+    [insets.bottom, insets.top, windowHeight, windowWidth],
   );
 
   React.useEffect(() => {
@@ -157,11 +157,6 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
     [androidStatusBarHeight, carouselDimensions.height, carouselDimensions.width, insets.bottom, insets.top],
   );
 
-  const carouselItemHeight = React.useMemo(
-    () => carouselDimensions.height - (insets.bottom ?? 0),
-    [carouselDimensions.height, insets.bottom],
-  );
-
   React.useEffect(() => {
     const isLandscape = orientation !== 'PORTRAIT';
 
@@ -179,7 +174,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
     } else {
       navigation.setOptions({
         headerBlurEffect: undefined,
-        headerLeft: undefined,
+        headerLeft: () => <React.Fragment />,
         headerRight: undefined,
         headerShadowVisible: false,
         headerStyle: { backgroundColor: 'transparent' },
@@ -188,7 +183,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
         unstable_headerLeftItems: undefined,
       });
     }
-  }, [isNavBarVisible, media.length, currentIndex, hasMediaError, orientation, navigation, media, route.params.title, onShare]);
+  }, [isNavBarVisible, media.length, currentIndex, hasMediaError, orientation, navigation, media, onShare, route]);
 
   React.useEffect(() => {
     mediaLengthShared.value = media.length;
@@ -213,7 +208,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
 
           return (
             <CarouselItem
-              containerHeight={carouselItemHeight}
+              containerHeight={carouselDimensions.height}
               containerWidth={carouselDimensions.width}
               currentIndex={currentIndex}
               hideNavBar={hideNavBar}

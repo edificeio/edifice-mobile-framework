@@ -2,7 +2,7 @@
  * constants used for the navBar setup accross navigators
  */
 import * as React from 'react';
-import { StyleSheet, TextStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
@@ -66,6 +66,7 @@ export const navBarOptions: (props: {
               style={styles.backbutton}
               testID="header-back"
               onPress={navigation.goBack}
+              pressColor="transparent"
             />
           );
         }

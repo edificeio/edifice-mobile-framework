@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Keyboard, Platform } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -10,7 +9,7 @@ import InputContainer from '~/framework/components/inputs/container';
 import TextInput from '~/framework/components/inputs/text';
 import FlatList from '~/framework/components/list/flat-list';
 import { NavBarAction } from '~/framework/components/navigation';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { KeyboardPageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { HobbieVisibility } from '~/framework/modules/user/model';
@@ -133,9 +132,7 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
         },
         { pop: true },
       );
-      requestAnimationFrame(() => {
-        Toast.showSuccess(I18n.get('user-profile-toast-editHobbiesSuccess'));
-      });
+      Toast.showSuccess(I18n.get('user-profile-toast-editHobbiesSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
     } finally {

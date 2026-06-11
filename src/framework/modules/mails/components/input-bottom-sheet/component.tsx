@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
 
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { I18n } from '~/app/i18n';
@@ -53,6 +54,7 @@ const MailsInputBottomSheet = (props: React.PropsWithChildren<MailsInputBottomSh
           label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: props.inputLabel }}
           input={
             <TextInput
+              TextInputComponent={BottomSheetTextInput}
               placeholder={props.inputPlaceholder}
               onChangeText={onChangeText}
               value={value}

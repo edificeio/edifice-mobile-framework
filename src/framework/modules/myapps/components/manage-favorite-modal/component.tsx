@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
@@ -10,7 +11,6 @@ import SearchBar from '~/framework/components/search-bar';
 import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { MyAppsList } from '~/framework/modules/myapps/components/my-apps-list';
 import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myapps/screens/utils';
-import { navBarOptions } from '~/framework/navigation/navBar';
 
 import { styles } from './styles';
 import { HeaderLeftProps, HeaderRightProps, ManageFavoriteScreenProps } from './types';
@@ -32,21 +32,14 @@ const HeaderRight = ({ hasUnsavedChanges, isSaving, onValidate }: HeaderRightPro
   />
 );
 
-export const computeNavBar: ManageFavoriteScreenProps.NavBarConfig = ({ navigation, route }) => ({
-  presentation: 'modal',
-  ...navBarOptions({
-    navigation,
-    route,
-  }),
+export const computeNavBar = modalScreenOptions('modal', () => ({
   headerStyle: {
     backgroundColor: theme.ui.background.page as string,
     elevation: 0,
   },
-  statusBarColor: theme.palette.grey.white.toString(),
+  headerTitle: () => null,
   statusBarStyle: 'dark',
-  statusBarTranslucent: false,
-  title: '',
-});
+}));
 export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenProps.AllProps) => {
   const searchRef = React.useRef<SearchBarHandle>(null);
   const [searchFocused, setSearchFocused] = React.useState<boolean>(false);

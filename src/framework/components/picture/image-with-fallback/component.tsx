@@ -1,15 +1,16 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import { useRecyclingState } from '@shopify/flash-list';
 import ErrorBoundary from 'react-native-error-boundary';
 import { Fade, Placeholder, PlaceholderMedia } from 'rn-placeholder';
-
-import styles from './styles';
-import { ImageWithFallbackProps } from './types';
 
 import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
 import { Image, ImageLoadingState, ImageProps } from '~/framework/util/media-deprecated';
+
+import styles from './styles';
+import { ImageWithFallbackProps } from './types';
 
 const DEFAULT_ICON_SIZE = '58%';
 
@@ -43,13 +44,16 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   Fallback = DefaultImageFallback,
   onError,
   onLoad,
-  onLoadStart,
   onPartialLoad,
   ...props
 }) => {
-  const isSourceEmpty = !props.source && !props.src && !props.srcSet;
-  const [imageLoadingState, setImageLoadingState] = React.useState<ImageLoadingState>(
-    isSourceEmpty ? ImageLoadingState.Error : ImageLoadingState.Loading,
+  const realSource = props.srcSet ?? props.src ?? props.source;
+  const isSourceEmpty = !realSource;
+  const [imageLoadingState, setImageLoadingState] = useRecyclingState(
+    () => (isSourceEmpty ? ImageLoadingState.Error : ImageLoadingState.Loading),
+    // Note: even when source object differs, fi url is the same, onLoad won't be called on iOS.
+    // So, we must check if the url(s) have changed since the previous update. Serialize data is the simplest way to do this (but not the most effective).
+    [JSON.stringify(realSource)],
   );
 
   const onImageLoadSuccess = React.useCallback<NonNullable<ImageProps['onLoad']>>(
@@ -57,23 +61,20 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       setImageLoadingState(ImageLoadingState.Success);
       onLoad?.(e);
     },
-    [onLoad],
+    [onLoad, setImageLoadingState],
   );
   const onImageLoadError = React.useCallback<NonNullable<ImageProps['onError']>>(
     e => {
       setImageLoadingState(ImageLoadingState.Error);
       onError?.(e);
     },
-    [onError],
+    [onError, setImageLoadingState],
   );
-  const onImageLoadStart = React.useCallback<NonNullable<ImageProps['onLoadStart']>>(() => {
-    setImageLoadingState(ImageLoadingState.Loading);
-    onLoadStart?.();
-  }, [onLoadStart]);
+
   const onImagePartialLoad = React.useCallback<NonNullable<ImageProps['onPartialLoad']>>(() => {
     setImageLoadingState(ImageLoadingState.Success);
     onPartialLoad?.();
-  }, [onPartialLoad]);
+  }, [onPartialLoad, setImageLoadingState]);
 
   const FallbackComponent = React.useCallback(() => {
     return React.isValidElement<any>(Fallback) ? Fallback : <Fallback {...props} />;
@@ -84,13 +85,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   ) : (
     <ErrorBoundary FallbackComponent={FallbackComponent}>
       <>
-        <Image
-          {...props}
-          onPartialLoad={onImagePartialLoad}
-          onLoadStart={onImageLoadStart}
-          onLoad={onImageLoadSuccess}
-          onError={onImageLoadError}
-        />
+        <Image {...props} onPartialLoad={onImagePartialLoad} onLoad={onImageLoadSuccess} onError={onImageLoadError} />
         {imageLoadingState === ImageLoadingState.Loading && <ImageLoader {...props} />}
       </>
     </ErrorBoundary>

@@ -3,7 +3,12 @@ import { Platform, View, ViewStyle } from 'react-native';
 
 import { MenuView } from '@react-native-menu/menu';
 
+import theme from '~/app/theme';
 import { MenuProps } from '~/framework/components/menus/types/types';
+
+// We have to explicitly set the icon color on iOS, otherwise react-native-menu doesn't render it
+const ICON_COLOR = Platform.OS === 'ios' ? '#000000' : theme.palette.grey.black;
+const ICON_COLOR_DESTRUCTIVE = Platform.OS === 'ios' ? '#FF3B30' : theme.palette.status.failure.regular;
 
 const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
   let id = -1;
@@ -16,6 +21,7 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
       },
       id: id.toString(),
       image: action.icon ? action.icon[Platform.OS] : '',
+      imageColor: action.destructive ? ICON_COLOR_DESTRUCTIVE : ICON_COLOR,
       title: action.title,
     };
   });

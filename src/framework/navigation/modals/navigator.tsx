@@ -100,6 +100,7 @@ setModalModeForRoutes([
   ModalsRouteNames.Pdf,
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.SplashAds,
+  ModalsRouteNames.FavoritesManagement,
 ]);
 
 setCrossIconBlackForRoutes([ModalsRouteNames.AttachmentsImport, ModalsRouteNames.FileImport, ModalsRouteNames.SplashAds]);

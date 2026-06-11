@@ -3,7 +3,8 @@ import { ColorValue, TextInputProps as RNTextInputProps, TextStyle } from 'react
 export type TextInputStatusIconProps = Pick<TextInputProps, 'showError' | 'toggleIconOn' | 'toggleIconOff'>;
 
 export interface TextInputCustomToggleIconProps
-  extends Pick<TextInputProps, 'onToggle' | 'disabled' | 'testIDToggle'>,
+  extends
+    Pick<TextInputProps, 'onToggle' | 'disabled' | 'testIDToggle'>,
     Required<Pick<TextInputProps, 'toggleIconOn' | 'toggleIconOff'>> {
   colorStatus?: ColorValue;
 }
@@ -28,4 +29,5 @@ export interface TextInputProps extends RNTextInputProps {
   testIDToggle?: string;
   testIDCaption?: string;
   onToggle?: () => void;
+  TextInputComponent?: (props: RNTextInputProps) => React.ReactNode;
 }

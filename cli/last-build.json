@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-06-03 08:41:40",
-  "notes": "fix(carousel): ENABLING-843, enable double tap zoom for pdf items\nfix: ENABLING-800 fix toast position\nfix(communities): ENABLING-854 communities notifications were not redirected\nfix: ENABLING-866 fix testId handling in TextInput\nupdate(stack): packages minor updates\nfix(presences): bad import\nfix(carbonio): ENABLING-860 bad import\nfix(splashads): ENABLING-849, change navigate methode with new one and move spalshads check\nupdate(stack): packages minor updates\nfix(communities): ENABLING-853 better join-confirm layout & header & no more crash\nfix: ENABLING-852 notif-filters is function component + crash fix\nupdate(stack): packages minor updates\nfix: cannot log when there is only one endpoint\nfix(myapps): ENABLING-827, trim connector url to remove whitespaces if any\nUpdated translations from Phrase (304)\nupdate(stack): packages minor updates\nrelease: 1.17.3-alpha.7(1170307)",
-  "version": "1.17.3-alpha.8(1170308)",
+  "last": "2026-06-10 18:32:41",
+  "notes": "fix: ENABLING-851 patch to fix RN Pressable issue on Android + fix in myApps\nfix(audience): ENABLING-842 reaction animation on long press\nupdate(stack): packages minor updates\nfix(pronote): ENABLING-818 center title in navbar\nfix: header buttons hitSlop + padding\nfix(Toast): ENABLING-805, ENABLING-847 : wrapping toasts in requestAnimationFrame\nfix: ENABLING-794 fix image loader with recycling on iOS\nfix(native icons): ENABLING-771 native icons in PopupMenu, both os\nfix: bottom inset handling in activation screen\nfix: ENABLING-879 hide tabs in myapps-favorites & timeline-filters\nfix: ENABLING-777 prevent text-wrapping in tab bar\nfix(mfa): ENABLING-822 fix mfa keyboard handling\nfix(communities): ENABLING-854 redirect invitation notification to communties list screen\nrelease: 1.17.3-alpha.9(1170309)",
+  "version": "1.17.3-alpha.10(1170310)",
   "track": "1.17.3"
 }

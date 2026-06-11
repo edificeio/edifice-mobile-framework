@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, StyleSheet, View } from 'react-native';
 
 import { HeaderButton } from '@react-navigation/elements';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
@@ -99,6 +99,8 @@ export interface ITimelineItem {
 const NOTIFICATION_THROTLE_DELAY = 250;
 let notificationOpenThrottle = true;
 
+const styles = StyleSheet.create({ avatarHeaderButton: { marginLeft: 0 } });
+
 // UTILS ==========================================================================================
 
 const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: NotificationsState) => {
@@ -119,7 +121,11 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
 export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) => {
   return {
     headerLeft: () => (
-      <HeaderButton testID="timeline-profile-button" onPress={() => navigation.navigate('user')}>
+      <HeaderButton
+        style={styles.avatarHeaderButton}
+        testID="timeline-profile-button"
+        onPress={() => navigation.navigate('user')}
+        pressColor="transparent">
         <View style={{ padding: UI_SIZES.border.small }}>
           <SelfAvatar size="sm" />
         </View>
@@ -129,7 +135,10 @@ export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) 
     unstable_headerLeftItems: () => [
       {
         element: (
-          <HeaderButton testID="timeline-profile-button" onPress={() => navigation.navigate('user')}>
+          <HeaderButton
+            style={styles.avatarHeaderButton}
+            testID="timeline-profile-button"
+            onPress={() => navigation.navigate('user')}>
             <View style={{ padding: UI_SIZES.border.small }}>
               <SelfAvatar size="sm" />
             </View>

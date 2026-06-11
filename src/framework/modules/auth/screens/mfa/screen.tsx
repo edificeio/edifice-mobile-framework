@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Keyboard,
+  ScrollView as RNScrollView,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 import LottieView from 'lottie-react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
@@ -12,6 +19,7 @@ import { modalScreenOptions, screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { Picture, Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
@@ -304,9 +312,19 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const onResetCode = useCallback(() => resetCode(), [resetCode]);
   const onResendCode = useCallback(() => resendCode(), [resendCode]);
 
+  const scrollViewRef = React.useRef<RNScrollView>(null);
+  React.useEffect(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollToEnd();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
-    <ScrollView style={styles.page}>
-      <View style={styles.container}>
+    <KeyboardAvoidingView>
+      <ScrollView ref={scrollViewRef} style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
             {isEmailOrMobileMFA ? (
@@ -407,8 +425,8 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
             <BodyBoldText style={styles.resendText}>{I18n.get('auth-mfa-resend')}</BodyBoldText>
           </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

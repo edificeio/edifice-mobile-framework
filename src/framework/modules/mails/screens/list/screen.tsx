@@ -1,17 +1,6 @@
 import * as React from 'react';
-import {
-  Alert,
-  BackHandler,
-  Dimensions,
-  FlatListProps,
-  Platform,
-  ScrollViewProps,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, BackHandler, FlatListProps, Platform, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { BottomSheetFlatList, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -31,7 +20,6 @@ import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
@@ -80,7 +68,7 @@ const TIMEOUT_DURATION = 300;
 const ITEM_HEIGHT = 100;
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const flatListRef = React.useRef<typeof BottomSheetFlatList<IMailsMailPreview>>(null);
+  const flatListRef = React.useRef<typeof GHFlatList<IMailsMailPreview>>(null);
   const searchInputRef = React.useRef<TextInput>(null);
   //TODO: créer un wrapper
   const { top: statusBarHeight } = useSafeAreaInsets();
@@ -924,7 +912,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
                 <Toggle checked={isSubfolder} onChange={onToggleSubfolders} />
               </View>
               {isSubfolder ? (
-                <BottomSheetFlatList
+                <GHFlatList
                   data={onlyParentFolders}
                   contentContainerStyle={[stylesFolders.containerFolders]}
                   renderItem={({ item }) => (
@@ -1091,7 +1079,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderContent = React.useCallback(
     (refreshControl: ScrollViewProps['refreshControl']) => (
-      <PageView style={styles.page}>
+      <>
         {renderTopMode()}
         {isLoading ? (
           renderPlaceholder()
@@ -1112,7 +1100,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         )}
         {renderBottomMode()}
         {renderBottomSheetFolders()}
-      </PageView>
+      </>
     ),
     [
       isLoading,

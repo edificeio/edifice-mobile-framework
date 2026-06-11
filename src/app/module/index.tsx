@@ -88,6 +88,14 @@ export class EntModule<
   >['matchEntcoreWidget'];
   hasRight: EntModuleConfig<Name, NavigationParams, ReduxState, ReduxAction, StorageType, PreferencesType>['hasRight'];
   tab: EntModuleConfig<Name, NavigationParams, ReduxState, ReduxAction, StorageType, PreferencesType>['tab'];
+  entTrackingName: EntModuleConfig<
+    Name,
+    NavigationParams,
+    ReduxState,
+    ReduxAction,
+    StorageType,
+    PreferencesType
+  >['entTrackingName'];
 
   constructor(
     config: EntModuleConfig<Name, NavigationParams, ReduxState, ReduxAction, StorageType, PreferencesType>,
@@ -98,6 +106,7 @@ export class EntModule<
     this.matchEntcoreWidget = config.matchEntcoreWidget;
     this.hasRight = config.hasRight;
     this.tab = config.tab;
+    this.entTrackingName = config.entTrackingName;
   }
 
   static getAvailableForAccount(_session: AuthActiveAccount) {
