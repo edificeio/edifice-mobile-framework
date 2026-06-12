@@ -3,12 +3,12 @@ import { Alert, BackHandler, FlatListProps, Platform, ScrollViewProps, TextInput
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList as GHFlatList } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
+import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { Checkbox } from '~/framework/components/checkbox';
@@ -40,28 +40,18 @@ import {
   MailsListTypeModal,
   MailsMailStatePreview,
 } from '~/framework/modules/mails/model';
-import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { getMailCarbonioRight } from '~/framework/modules/mails/rights';
 import { mailsService } from '~/framework/modules/mails/service';
 import { defaultUserIdCarbonio } from '~/framework/modules/mails/service/api/carbonio';
 import { readLastCallTimestamp, reloadVisibles } from '~/framework/modules/mails/storage';
 import { flattenFolders, isServiceMethodAvailable, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/transport/error';
 
 import styles, { bottomSheetTopMargin } from './styles';
-import type { MailsListScreenPrivateProps } from './types';
+import { MailsListScreenPrivateProps } from './types';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<MailsNavigationParams, typeof mailsRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: '',
-  }),
-});
+export const computeNavBar = screenOptions(() => ({ title: '' }));
 
 const PAGE_SIZE = 25;
 const TIMEOUT_DURATION = 300;
@@ -605,35 +595,39 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, []);
 
   React.useEffect(() => {
-    props.navigation.setOptions({
-      headerLeft: () => (
-        <NavBarAction
-          disabled={isContentLoading}
-          icon="ui-burgerMenu"
-          onPress={() => {
-            bottomSheetModalRef.current?.present();
-          }}
-        />
-      ),
-      headerRight: () => (
-        <NavBarActionsGroup
-          elements={[
-            <NavBarAction
-              disabled={isContentLoading}
-              icon="ui-edit"
-              onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })}
-            />,
-            <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
-              <NavBarAction disabled={isContentLoading} icon="ui-options" />
-            </PopupMenu>,
-          ]}
-        />
-      ),
+    navigation.setOptions({
+      headerLeft: p =>
+        headerAction(
+          {
+            disabled: isContentLoading,
+            icon: 'ui-burgerMenu',
+            onPress: () => {
+              bottomSheetModalRef.current?.present();
+            },
+            testID: 'mails-header-folders',
+          },
+          p,
+        ).element,
+
+      headerRight: p => [
+        headerAction(
+          {
+            disabled: isContentLoading,
+            icon: 'ui-edit',
+            onPress: () => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder }),
+            testID: 'mails-header-new',
+          },
+          p,
+        ).element,
+        <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
+          <NavBarAction disabled={isContentLoading} icon="ui-options" />
+        </PopupMenu>,
+      ],
     });
-  }, [selectedFolder, navigation, props.navigation, isContentLoading, allPopupActionsMenu]);
+  }, [selectedFolder, navigation, isContentLoading, allPopupActionsMenu]);
 
   React.useEffect(() => {
-    props.navigation.setOptions({
+    navigation.setOptions({
       title: I18n.get(
         typeof selectedFolder !== 'object'
           ? mailsDefaultFoldersInfos[selectedFolder as MailsDefaultFolders].title
