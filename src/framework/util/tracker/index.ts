@@ -3,7 +3,7 @@ import CookieManager from '@preeternal/react-native-cookie-manager';
 import crashlytics from '@react-native-firebase/crashlytics';
 import DeviceInfo from 'react-native-device-info';
 
-import { EntModule, Module } from '~/app/module';
+import { EntModule } from '~/app/module';
 import { Modules } from '~/app/module/all';
 import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
@@ -217,7 +217,6 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
           ConcreteEntcoreTracker.moduleAccessMap[config.name] = config.entcoreTrackingName;
         }
       });
-
     Modules.getAllOfType(EntModule).forEach(module => {
       if (module.entTrackingName) {
         ConcreteEntcoreTracker.moduleAccessMap[module.name] = module.entTrackingName;
