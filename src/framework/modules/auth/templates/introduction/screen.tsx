@@ -40,7 +40,7 @@ export default function AuthIntroductionScreen(props: AuthIntroductionScreenPriv
           iconRight="ui-arrowRight"
           style={styles.button}
           action={() => {
-            props.navigation.navigate(props.nextScreenAction.name);
+            props.navigation.dispatch(props.nextScreenAction);
           }}
         />
       </View>
