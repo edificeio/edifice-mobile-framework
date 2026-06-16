@@ -623,6 +623,20 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           <NavBarAction disabled={isContentLoading} icon="ui-options" />
         </PopupMenu>,
       ],
+
+      unstable_headerLeftItems: p => [
+        headerAction(
+          {
+            disabled: isContentLoading,
+            icon: 'ui-burgerMenu',
+            onPress: () => {
+              bottomSheetModalRef.current?.present();
+            },
+            testID: 'mails-header-folders',
+          },
+          p,
+        ),
+      ],
     });
   }, [selectedFolder, navigation, isContentLoading, allPopupActionsMenu]);
 
