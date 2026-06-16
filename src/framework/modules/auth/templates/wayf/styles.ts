@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -34,5 +34,5 @@ export default StyleSheet.create({
     zIndex: -1,
   },
   text: { textAlign: 'center' },
-  webview: { flex: 1 },
+  webview: { flex: 1, marginBottom: Platform.OS === 'android' ? 36 : 0 },
 });
