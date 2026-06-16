@@ -1,23 +1,24 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { FlashList, ListRenderItem } from '@shopify/flash-list';
-
-import { styles } from './styles';
-import { MyAppsListItem, MyAppsListProps } from './types';
-import { buildAllAppsCategoryList, buildAppItem, isSeparator } from './utils';
+import { FlashList, FlashListRef, ListRenderItem } from '@shopify/flash-list';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { SmallBoldText } from '~/framework/components/text';
 import { MyAppsCard } from '~/framework/modules/myapps/components';
 
+import { styles } from './styles';
+import { MyAppsListItem, MyAppsListProps } from './types';
+import { buildAllAppsCategoryList, buildAppItem, isSeparator } from './utils';
+
 const NUM_COLUMNS = 2;
 
-export const MyAppsList = React.forwardRef<FlashList<MyAppsListItem>, MyAppsListProps>(
+export const MyAppsList = React.forwardRef<FlashListRef<MyAppsListItem>, MyAppsListProps>(
   ({ apps, emptyScreenConfig, isAllAppsFilter, onLongPressApp, onPressApp, onRefresh, refreshing }, forwardedRef) => {
-    const localRef = React.useRef<FlashList<MyAppsListItem>>(null);
-    const appsListRef = forwardedRef || localRef;
+    const localRef = React.useRef<FlashListRef<MyAppsListItem>>(null);
+
+    React.useImperativeHandle(forwardedRef, () => localRef.current as FlashListRef<MyAppsListItem>);
     const { testID, text, title } = emptyScreenConfig;
 
     const data: MyAppsListItem[] = React.useMemo(() => {
@@ -74,10 +75,9 @@ export const MyAppsList = React.forwardRef<FlashList<MyAppsListItem>, MyAppsList
 
     return (
       <FlashList
-        ref={appsListRef}
+        ref={localRef}
         data={data}
         numColumns={NUM_COLUMNS}
-        estimatedItemSize={120}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         getItemType={getItemType}
