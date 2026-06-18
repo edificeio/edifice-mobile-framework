@@ -7,7 +7,6 @@ import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-import * as RNLocalize from 'react-native-localize';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Redux from 'react-redux';
 import { Action, Store } from 'redux';
@@ -16,7 +15,7 @@ import { AppStartupHandler } from '~/app/startup';
 import { UI_STYLES } from '~/framework/components/constants';
 import { useConstructor } from '~/framework/hooks/constructor';
 import appConf from '~/framework/util/appConf';
-import { isEmpty } from '~/framework/util/object';
+import { NetworkMonitorProvider } from '~/framework/util/monitoring/network';
 import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { ZendeskProvider } from '~/framework/util/zendesk';
@@ -25,28 +24,17 @@ import { DeviceTrust } from './device-trust';
 import { I18n } from './i18n';
 import { ModuleCompat } from './module/compat';
 import configureStore from './store';
-import { NetworkMonitorProvider } from '~/framework/util/monitoring/network';
 
 function useAppState() {
-  const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
   const currentState = React.useRef<AppStateStatus>(AppState.currentState);
 
-  const handleAppStateChange = React.useCallback(
-    (nextAppState: AppStateStatus) => {
-      currentState.current = nextAppState;
-      if (nextAppState === 'active') {
-        // Track foreground state
-        Trackers.trackDebugEvent('Application', 'DISPLAY');
-        // Change locale if needed
-        const locales = RNLocalize.getLocales();
-        const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
-        I18n.setLanguage().then(lng => {
-          if (newLocale !== currentLocale) setCurrentLocale(lng as I18n.SupportedLocales);
-        });
-      }
-    },
-    [currentLocale],
-  );
+  const handleAppStateChange = React.useCallback((nextAppState: AppStateStatus) => {
+    currentState.current = nextAppState;
+
+    if (nextAppState === 'active') {
+      I18n.refreshLanguageIfChanged();
+    }
+  }, []);
 
   React.useEffect(() => {
     const appStateListener = AppState.addEventListener('change', handleAppStateChange);

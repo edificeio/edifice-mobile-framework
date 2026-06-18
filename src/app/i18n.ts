@@ -127,21 +127,33 @@ export namespace I18n {
     return i18n.language as I18n.SupportedLocales;
   }
 
+  export async function getExpectedLanguage() {
+    const storedLang = await OldStorageFunctions.getItemJson(I18N_APP_LANG);
+
+    //dertnimes if language is manually set or system language is used
+    if (!isEmpty(storedLang)) {
+      return storedLang as string;
+    }
+
+    const locales = RNLocalize.getLocales();
+
+    const firstSupportedLocale = locales.find(locale => supportedLanguages.includes(locale.languageCode as I18n.SupportedLocales));
+
+    const lang = firstSupportedLocale?.languageCode ?? fallbackLng;
+
+    return lang;
+  }
+
   // Set language to device one
   export async function setLanguage() {
-    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(supportedLanguages) as {
-      languageTag: string;
-      isRTL: boolean;
-    };
-    const lang = await OldStorageFunctions.getItemJson(I18N_APP_LANG);
-    if (isEmpty(lang)) {
-      const newLang = bestAvailableLanguage?.languageTag ?? fallbackLng;
-      i18n.language = newLang;
-    } else {
-      i18n.language = (lang as string) ?? fallbackLng;
-    }
-    moment.locale(momentLocales[i18n.language?.split('-')[0]] ?? momentLocales.default);
-    return i18n.language as I18n.SupportedLocales;
+    // Get expected language (either stored or system one)
+    const newLang = await getExpectedLanguage();
+
+    i18n.language = newLang;
+
+    moment.locale(momentLocales[newLang.split('-')[0]] ?? momentLocales.default);
+
+    return newLang;
   }
 
   export const changeLanguage = async (lang: SupportedLocales | 'auto') => {
@@ -151,6 +163,15 @@ export namespace I18n {
     RNRestart.restart();
   };
 
+  export async function refreshLanguageIfChanged() {
+    const currentLang = i18n.language;
+
+    const expectedLang = await getExpectedLanguage();
+
+    if (currentLang !== expectedLang) {
+      RNRestart.restart();
+    }
+  }
   // Toggle i18n Keys (dev && alpha only)
   // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
   export const toggleShowKeys = async () => {
