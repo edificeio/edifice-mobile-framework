@@ -32,6 +32,8 @@ function useAppState() {
     currentState.current = nextAppState;
 
     if (nextAppState === 'active') {
+      // Track foreground state
+      Trackers.trackDebugEvent('Application', 'DISPLAY');
       I18n.refreshLanguageIfChanged();
     }
   }, []);
