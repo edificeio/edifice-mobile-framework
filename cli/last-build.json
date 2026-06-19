@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-06-19 17:03:05",
-  "notes": "feat(wayf-v2): ENABLING-921, add 'REDIRECT' message to wayf's bridge\nrelease: 1.17.4(1170400)\nupdate(stack): yarn cache update\nfix(ionboarding): ENABLING-914, remove OTA stuff causing i18n init errors\nfix: ENABLING-915 multiline text inputs were not scrollable\nfix(wayf+splashads): ENABLING-910, add android navbar height as bottom margin\nfix(myapps): ENABLING-923 favorites navbar styling\nfix(myapps): dissociate filter scroll from main list scroll\nfix(myapps):ENABLING-925, icon re-render issue\nfix(myapps): ENABLING-922 fix tabbar unresponsive after show favorite modal\nfix(mails): ENABLING-918 bring back burger menu when accessed from my apps\nfix(auth): ENABLING-912 add-account when only 1 endpoint\nfix: ENABLING-856 reimplement network status bar in navigation layout\nrelease: 1.17.3-rc.1(1170311)",
-  "version": "1.17.4-alpha.1(1170401)",
+  "last": "2026-06-19 18:03:37",
+  "notes": "release: 1.17.4-alpha.1(1170401)",
+  "version": "1.17.4-alpha.2(1170402)",
   "track": "1.17.4"
 }
