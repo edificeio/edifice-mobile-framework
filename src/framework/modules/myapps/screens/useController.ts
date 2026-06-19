@@ -121,7 +121,7 @@ export function useMyAppsHomeController() {
       // navigation.setParams({ tabBarVisible: false });
       setIsBottomSheetVisible(true);
     },
-    [handleDismissSearch, navigation],
+    [handleDismissSearch],
   );
 
   const handleOpenOnboarding = React.useCallback(() => {
@@ -133,7 +133,7 @@ export function useMyAppsHomeController() {
     setSelectedApp(null);
     // navigation.setParams({ tabBarVisible: true });
     setIsBottomSheetVisible(false);
-  }, [navigation]);
+  }, []);
 
   const onPressApp = React.useCallback(
     (app: AppsInfoAggregated) => {
@@ -182,7 +182,7 @@ export function useMyAppsHomeController() {
         displayToast();
       }),
     );
-  }, [dispatch, displayToast, navigation, queueToast]);
+  }, [dispatch, displayToast, queueToast]);
 
   const onToggleAllApps = React.useCallback(() => {
     setAreAppsShowed(prev => {
@@ -209,7 +209,7 @@ export function useMyAppsHomeController() {
 
   //Listens to tab press to scroll to top of the list
   React.useEffect(() => {
-    const unsubscribe = navigation.getParent('tabs')?.addListener('tabPress', () => {
+    const unsubscribe = navigation.getParent()?.addListener('tabPress', () => {
       appsListRef.current?.scrollToOffset({ animated: true, offset: 0 });
     });
     return unsubscribe;
