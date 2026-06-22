@@ -54,7 +54,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
 
   const renderSelectIcon = React.useCallback(() => {
     if (!isSelectMode) return null;
-    return <Checkbox checked={isSelected} onPress={onCheck} customContainerStyle={styles.checkbox} />;
+    return <Checkbox checked={isSelected} onPress={onCheck} onLongPress={onCheck} customContainerStyle={styles.checkbox} />;
   }, [isSelectMode, isSelected, onCheck]);
 
   const renderAttachmentIcon = React.useCallback(() => {
@@ -185,7 +185,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         <TouchableOpacity
           style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
           onPress={isSelectMode ? onCheck : onPress}
-          onLongPress={isSelectMode ? () => {} : props.onLongPress}>
+          onLongPress={isSelectMode ? onCheck : props.onLongPress}>
           {renderSelectIcon()}
           {renderAvatar()}
           {renderDefaultFolder()}

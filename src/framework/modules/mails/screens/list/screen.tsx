@@ -494,13 +494,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     [handleMailAction],
   );
 
-  const onSelectMail = React.useCallback(
-    (id: string) => {
-      if (selectedMails.includes(id)) setSelectedMails(prev => prev.filter(mailId => mailId !== id));
-      else setSelectedMails(prev => [...prev, id]);
-    },
-    [selectedMails],
-  );
+  const onSelectMail = React.useCallback((id: string) => {
+    setSelectedMails(oldSelected =>
+      oldSelected.includes(id) ? oldSelected.filter(mailId => mailId !== id) : [...oldSelected, id],
+    );
+  }, []);
 
   const onSelectAll = React.useCallback(() => {
     if (selectedMails.length === mails.length) setSelectedMails([]);
