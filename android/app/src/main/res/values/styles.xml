@@ -4,8 +4,10 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:statusBarColor">#2A9CC8</item>
     </style>
-    <style name="SplashScreenTheme">
-        <item name="android:background">@drawable/launch_screen</item>
+    <style name="SplashScreenTheme" parent="Theme.BootSplash">
+        <item name="bootSplashBackground">#2A9CC8</item>
+        <item name="bootSplashLogo">@drawable/logo</item>
+        <item name="postBootSplashTheme">@style/AppTheme</item>
     </style>
     <!-- Zendesk Help Center -->
     <style name="HelpCenterTheme" parent="Theme.AppCompat">
