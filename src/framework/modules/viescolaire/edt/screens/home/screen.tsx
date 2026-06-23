@@ -345,7 +345,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   };
 
   return (
-    <PageView>
+    <>
       <View style={styles.header}>
         {props.userType === AccountType.Teacher ? <StructurePicker /> : null}
         {props.userType === AccountType.Relative ? (
@@ -353,7 +353,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
         ) : null}
       </View>
       {renderPage()}
-    </PageView>
+    </>
   );
 };
 
