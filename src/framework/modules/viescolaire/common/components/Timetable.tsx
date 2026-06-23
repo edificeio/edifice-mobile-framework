@@ -38,6 +38,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: TIME_COLUMN_WIDTH,
   },
+  background: {
+    backgroundColor: theme.palette.grey.fog,
+  },
 });
 
 export const minutes = (m: Moment): number => {
@@ -240,16 +243,14 @@ export default <CourseType extends ITimetableCourse>({
 
   const contentContainerStyle = React.useMemo(
     () => ({
-      backgroundColor: theme.palette.grey.fog,
       height: endTime.diff(startTime, 'hour') * SLOT_HOUR_HEIGHT + LINE_HEIGHT,
-      position: 'relative' as const,
-      top: -(minutes(startTime) / 60) * SLOT_HOUR_HEIGHT,
+      transform: [{ translateY: -(minutes(startTime) / 60) * SLOT_HOUR_HEIGHT }],
     }),
     [endTime, startTime],
   );
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={contentContainerStyle}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={contentContainerStyle} style={styles.background}>
       {slotLines.map((slot, index) => (
         <TimeSlotLine key={index} {...slot} />
       ))}
