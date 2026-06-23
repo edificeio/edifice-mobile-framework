@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { BottomTabNavigationOptions, BottomTabNavigatorProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { CommonActions, StackActions } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
@@ -16,13 +15,14 @@ import { tabModules } from '~/framework/navigation/tabModules';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { defaultScreenOptions, defaultTabOptions, getTabBarIconSize, StackScreenLayout, TabScreenLayout } from './layout';
+import { defaultTabOptions, tabBarIconSize, TabScreenLayout } from './layout';
+import { createLeafStackNavigator } from './leaf-stack';
 import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
-import { ConfirmRemoveContext, useConfirmChangeTab } from './use-confirm-remove';
+import { useConfirmChangeTab } from './use-confirm-remove';
 
 const MainTabs = createBottomTabNavigator();
-const TabStack = createNativeStackNavigator<AllModulesNavigationParams>();
+const LeafStack = createLeafStackNavigator<AllModulesNavigationParams>();
 
 export const MainNavigation = React.memo(function MainNavigation() {
   /**
@@ -51,7 +51,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
     () =>
       availableTabModules.map<BottomTabNavigationOptions>(m => ({
         tabBarButtonTestID: m.tab.testId,
-        tabBarIcon: ({ color, focused }) => <TabIcon module={m} focused={focused} size={getTabBarIconSize()} color={color} />,
+        tabBarIcon: ({ color, focused }) => <TabIcon module={m} focused={focused} size={tabBarIconSize} color={color} />,
         tabBarLabel: ({ color }) => (
           // negative marginHorizontal is necessary to prevent text wrapping
           <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
@@ -67,17 +67,13 @@ export const MainNavigation = React.memo(function MainNavigation() {
     () =>
       availableTabModules.map(tabModule => {
         return () => (
-          <TabStack.Navigator
-            key={tabModule.name}
-            screenLayout={StackScreenLayout}
-            screenOptions={defaultScreenOptions}
-            initialRouteName={tabModule.tab.route}>
+          <LeafStack.Navigator key={tabModule.name} initialRouteName={tabModule.tab.route}>
             {
               // New Modules screens here
               availableModules.map(module => (
-                <TabStack.Group key={module.name}>
-                  {module.renderScreens ? module.renderScreens(TabStack as ReturnType<typeof createNativeStackNavigator>) : null}
-                </TabStack.Group>
+                <LeafStack.Group key={module.name}>
+                  {module.renderScreens ? module.renderScreens(LeafStack as ReturnType<typeof createNativeStackNavigator>) : null}
+                </LeafStack.Group>
               ))
             }
             {
@@ -86,9 +82,9 @@ export const MainNavigation = React.memo(function MainNavigation() {
             }
             {
               // Root modules replica here
-              renderCoreModulesScreens(TabStack)
+              renderCoreModulesScreens(LeafStack)
             }
-          </TabStack.Navigator>
+          </LeafStack.Navigator>
         );
       }),
     [rightsMemoValue],
@@ -113,17 +109,13 @@ export const MainNavigation = React.memo(function MainNavigation() {
     () =>
       oldTabModules.map(tabModule => {
         return () => (
-          <TabStack.Navigator
-            key={tabModule.config.name}
-            screenLayout={StackScreenLayout}
-            screenOptions={defaultScreenOptions}
-            initialRouteName={tabModule.config.routeName}>
+          <LeafStack.Navigator key={tabModule.config.name} initialRouteName={tabModule.config.routeName}>
             {
               // New Modules screens here
               availableModules.map(module => (
-                <TabStack.Group key={module.name}>
-                  {module.renderScreens ? module.renderScreens(TabStack as ReturnType<typeof createNativeStackNavigator>) : null}
-                </TabStack.Group>
+                <LeafStack.Group key={module.name}>
+                  {module.renderScreens ? module.renderScreens(LeafStack as ReturnType<typeof createNativeStackNavigator>) : null}
+                </LeafStack.Group>
               ))
             }
             {
@@ -132,9 +124,9 @@ export const MainNavigation = React.memo(function MainNavigation() {
             }
             {
               // Root modules replica here
-              renderCoreModulesScreens(TabStack)
+              renderCoreModulesScreens(LeafStack)
             }
-          </TabStack.Navigator>
+          </LeafStack.Navigator>
         );
       }),
     [rightsMemoValue],
@@ -230,7 +222,7 @@ const createOldTabIcon = (
   props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPictureBlur };
-  props.size = getTabBarIconSize(props.size);
+  props.size = tabBarIconSize;
   if (dp.type === 'Image') {
     dp.style = [dp.style, { height: props.size, width: props.size }];
   } else if (dp.type === 'Icon') {

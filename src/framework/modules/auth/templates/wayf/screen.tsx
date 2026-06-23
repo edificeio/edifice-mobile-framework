@@ -3,7 +3,6 @@ import { ActivityIndicator, Platform, TouchableWithoutFeedback, View } from 'rea
 
 import CookieManager from '@preeternal/react-native-cookie-manager';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
   WebViewErrorEvent,

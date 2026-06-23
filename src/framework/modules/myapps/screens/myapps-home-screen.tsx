@@ -312,12 +312,12 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
   ]);
 
   return (
-    <PageView>
+    <>
       {!isAggregatedAppsEmpty && <MyAppsFilters selectedFilter={filter} onFilterChange={setFilter} />}
       {renderMainContent}
       {!isAggregatedAppsEmpty && <MyAppsOnboardingModal ref={modalRef} slides={slides} onComplete={completeOnboarding} />}
       {renderBottomSheet()}
-    </PageView>
+    </>
   );
 };
 

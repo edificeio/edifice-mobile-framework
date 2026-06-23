@@ -38,7 +38,8 @@
             android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTask"
             android:exported="true"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="LockedOrientationActivity"
+            android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -5,11 +5,8 @@
 
 import OldModules from '~/app/modules';
 import { Reducers } from '~/app/store';
-import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
 import { Modules } from './all';
-
-Reducers.register('connectionTracker', connectionTrackerReducer);
 
 export const ModuleCompat = {
   getAllModulesReducers: () => {

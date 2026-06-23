@@ -2,7 +2,6 @@ import * as React from 'react';
 import { AppState, BackHandler, Platform, StatusBar, View } from 'react-native';
 
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LottieView from 'lottie-react-native';
 import { getBundleId } from 'react-native-device-info';
 import VideoPlayer, { VideoPlayerProps } from 'react-native-media-console';
@@ -10,9 +9,7 @@ import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } fr
 import WebView, { WebViewProps } from 'react-native-webview';
 import { connect } from 'react-redux';
 
-import styles from './styles';
-import { MediaPlayerEmbeddedParams, MediaPlayerPlayableParams, MediaPlayerProps } from './types';
-
+import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -23,6 +20,9 @@ import { markViewAudience } from '~/framework/modules/audience';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { MediaType } from '~/framework/util/media';
 import { sessionURISource } from '~/framework/util/transport';
+
+import styles from './styles';
+import { MediaPlayerEmbeddedParams, MediaPlayerPlayableParams, MediaPlayerProps } from './types';
 
 const ERRORS_I18N = {
   'AVFoundationErrorDomain': ['mediaplayer-error-notsupported-title', 'mediaplayer-error-notsupported-text'],
@@ -301,6 +301,5 @@ function MediaPlayer(props: MediaPlayerProps) {
 }
 
 export default connect((state: any) => ({
-  connected: !!state.connectionTracker.connected,
   session: getSession(),
 }))(MediaPlayer);

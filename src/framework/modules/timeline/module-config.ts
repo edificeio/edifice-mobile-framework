@@ -1,6 +1,6 @@
-import type { TimelineState } from './reducer';
-
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+
+import type { TimelineState } from './reducer';
 
 export default new NavigableModuleConfig<'timeline', TimelineState>({
   displayAs: ModuleType.TAB_MODULE,
@@ -8,6 +8,7 @@ export default new NavigableModuleConfig<'timeline', TimelineState>({
   displayPictureBlur: { name: 'nouveautes-off', type: 'Icon' },
   displayPictureFocus: { name: 'nouveautes-on', type: 'Icon' },
   entcoreScope: ['timeline', 'userbook'],
+  entcoreTrackingName: 'Timeline',
   hasRight: () => true,
   matchEntcoreApp: 'Timeline',
   name: 'timeline',

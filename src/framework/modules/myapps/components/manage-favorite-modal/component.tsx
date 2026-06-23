@@ -6,7 +6,6 @@ import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
 import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { MyAppsList } from '~/framework/modules/myapps/components/my-apps-list';
@@ -33,11 +32,12 @@ const HeaderRight = ({ hasUnsavedChanges, isSaving, onValidate }: HeaderRightPro
 );
 
 export const computeNavBar = modalScreenOptions('modal', () => ({
+  headerShadowVisible: false,
   headerStyle: {
-    backgroundColor: theme.ui.background.page as string,
-    elevation: 0,
+    backgroundColor: theme.ui.background.card.toString(),
   },
-  headerTitle: () => null,
+  headerTintColor: theme.ui.text.regular.toString(),
+  headerTitle: '',
   statusBarStyle: 'dark',
 }));
 export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenProps.AllProps) => {
@@ -65,7 +65,7 @@ export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenP
   }, [navigation, isSaving, hasUnsavedChanges, onValidate, handleGoBack, renderHeaderLeft, renderHeaderRight]);
 
   return (
-    <PageView>
+    <>
       <View style={styles.searchContainer}>
         <SearchBar
           ref={searchRef}
@@ -87,7 +87,7 @@ export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenP
           onPressApp={app => onToggle(app.name)}
         />
       </View>
-    </PageView>
+    </>
   );
 };
 

@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Platform } from 'react-native';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebView, { WebViewProps } from 'react-native-webview';
 import { WebViewErrorEvent, WebViewHttpErrorEvent, WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
@@ -41,6 +43,9 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
   const [isTimeout, setIsTimeout] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
   const firstLoadRef = React.useRef(true);
+
+  const insets = useSafeAreaInsets();
+  const bottomStyle = { marginBottom: Platform.OS === 'android' ? insets.bottom : 0 };
 
   const onLoad = React.useCallback(() => {
     firstLoadRef.current = false;
@@ -85,7 +90,7 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
       showsHorizontalScrollIndicator={false}
       source={platformURISource(session.platform, toURISource<WebViewSourceUri>(source))}
       startInLoadingState
-      style={styles.splashads}
+      style={[styles.splashads, bottomStyle]}
       webviewDebuggingEnabled={__DEV__}
       onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       onLoadEnd={onLoadEnd}

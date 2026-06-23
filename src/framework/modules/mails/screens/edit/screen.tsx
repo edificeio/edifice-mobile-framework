@@ -26,6 +26,8 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import styles from './styles';
 import { type MailsEditScreenPrivateProps } from './types';
 import { useMailsEditController } from './useController';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export const computeNavBar = ({
   navigation,
@@ -162,9 +164,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     onChangeSubject,
   ]);
 
+  const { bottom } = useSafeAreaInsets();
+
   const renderBottomForm = React.useCallback(
     () => (
-      <View style={styles.bottomForm}>
+      <View style={[styles.bottomForm, { paddingBottom: Math.max(bottom, UI_SIZES.spacing.minor) }]}>
         {history !== '' && !isHistoryOpen ? <MailsHistoryButton content={history} onPress={onOpenHistory} /> : null}
         {isServiceMethodAvailable(mailsService.attachments.remove) && isServiceMethodAvailable(mailsService.attachments.add) ? (
           <Attachments
@@ -181,10 +185,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       </View>
     ),
     [
+      bottom,
       history,
       isHistoryOpen,
-      session,
       onOpenHistory,
+      session,
       attachments,
       onRemoveAttachment,
       draftIdSaved,

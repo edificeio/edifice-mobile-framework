@@ -25,6 +25,7 @@ import { DeviceTrust } from './device-trust';
 import { I18n } from './i18n';
 import { ModuleCompat } from './module/compat';
 import configureStore from './store';
+import { NetworkMonitorProvider } from '~/framework/util/monitoring/network';
 
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
@@ -113,15 +114,17 @@ function App() {
   if (!store) return null;
   const content = (
     <DeviceTrust>
-      <GestureHandlerRootView style={UI_STYLES.flex1}>
-        <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
-          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-            <Redux.Provider store={store}>
-              <AppStartupHandler />
-            </Redux.Provider>
-          </SafeAreaProvider>
-        </KeyboardProvider>
-      </GestureHandlerRootView>
+      <NetworkMonitorProvider>
+        <GestureHandlerRootView style={UI_STYLES.flex1}>
+          <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
+            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+              <Redux.Provider store={store}>
+                <AppStartupHandler />
+              </Redux.Provider>
+            </SafeAreaProvider>
+          </KeyboardProvider>
+        </GestureHandlerRootView>
+      </NetworkMonitorProvider>
     </DeviceTrust>
   );
   return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;

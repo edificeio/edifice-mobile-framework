@@ -231,7 +231,7 @@ export const getAuthReduxNavigationStateForNewAccount = ({
 export const getAddAccountRouteForOnboarding = () => {
   return appConf.hasMultiplePlatform
     ? ({ name: 'auth/add-account/platforms' } as const)
-    : ({ name: 'auth/add-account/login' } as const);
+    : getAddAccountRouteForPlatformSelect(appConf.platforms[0]);
 };
 
 /**

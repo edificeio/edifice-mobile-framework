@@ -1,10 +1,10 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 
+import { SmallBoldText } from '~/framework/components/text';
+
 import { styles } from './styles';
 import { MyAppsFilterCellProps } from './types';
-
-import { SmallBoldText } from '~/framework/components/text';
 
 export const MyAppsFilterCell = ({ label, onPress, selected, testID }: MyAppsFilterCellProps) => {
   return (

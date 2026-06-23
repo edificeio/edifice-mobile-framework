@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Keyboard } from 'react-native';
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { FlashListRef } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -40,7 +41,7 @@ export function useMyAppsHomeController() {
   const modalRef = React.useRef<ModalBoxHandle>(null);
   const pendingToastRef = React.useRef<null | { type: 'success' | 'error'; message: string }>(null);
   const pendingToggleRef = React.useRef<string | null>(null);
-  const appsListRef = React.useRef<FlashList<MyAppsListItem>>(null);
+  const appsListRef = React.useRef<FlashListRef<MyAppsListItem>>(null);
 
   const [filter, setFilter] = React.useState<MyAppsFilter>({ type: MyAppsFilterTypes.Category, value: MyAppsFilterCategories.all });
   const [selectedApp, setSelectedApp] = React.useState<AppsInfoAggregated | null>(null);
@@ -117,7 +118,7 @@ export function useMyAppsHomeController() {
       handleDismissSearch();
       setSelectedApp(app ?? null);
       setBottomSheetMode(mode);
-      navigation.setParams({ tabBarVisible: false });
+      // navigation.setParams({ tabBarVisible: false });
       setIsBottomSheetVisible(true);
     },
     [handleDismissSearch, navigation],
@@ -130,7 +131,7 @@ export function useMyAppsHomeController() {
 
   const closeBottomSheet = React.useCallback(() => {
     setSelectedApp(null);
-    navigation.setParams({ tabBarVisible: true });
+    // navigation.setParams({ tabBarVisible: true });
     setIsBottomSheetVisible(false);
   }, [navigation]);
 
@@ -161,7 +162,7 @@ export function useMyAppsHomeController() {
   );
 
   const handleDismiss = React.useCallback(() => {
-    navigation.setParams({ tabBarVisible: true });
+    // navigation.setParams({ tabBarVisible: true });
     const appName = pendingToggleRef.current;
 
     if (!appName) {

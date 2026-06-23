@@ -11,7 +11,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { FastImage } from '~/framework/util/media-deprecated';
-import { Connection } from '~/infra/Connection';
 
 const getSelfAvatarUniqueKey = () => Date.now();
 let selfAvatarUniqueKey = getSelfAvatarUniqueKey();
@@ -385,7 +384,7 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
       return this.renderIsGroup(width);
     }
 
-    if (this.state.status == 'failed' || !Connection.isOnline) {
+    if (this.state.status === 'failed') {
       return this.renderNoAvatar(width);
     }
     // TODO we could use react native fast image if we need to make some cache: https://www.npmjs.com/package/react-native-fast-image

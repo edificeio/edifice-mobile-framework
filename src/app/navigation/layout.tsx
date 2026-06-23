@@ -23,7 +23,7 @@ import { getTabBarStyleForNavState } from '~/framework/navigation/hideTabBarAndr
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { DeepPartial } from '~/utils/types';
 
-import { AllModulesNavigationParams, AllModulesScreenNames, NavigationRootParams } from './types';
+import { AllModulesNavigationParams, AllModulesScreenNames } from './types';
 
 const modalPresentations: (StackPresentationTypes | 'card')[] = [
   'containedModal',
@@ -55,22 +55,10 @@ export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(
 
 export default navigationLightTheme;
 
-export function StackScreenLayout({
+export function BaseStackScreenLayout({
   children,
   options,
-}:
-  | ScreenLayoutArgs<
-      AllModulesNavigationParams,
-      AllModulesScreenNames,
-      NativeStackNavigationOptions,
-      NavigationProp<AllModulesNavigationParams>
-    >
-  | ScreenLayoutArgs<
-      NavigationRootParams,
-      keyof NavigationRootParams,
-      NativeStackNavigationOptions,
-      NavigationProp<NavigationRootParams>
-    >) {
+}: Parameters<NonNullable<NativeStackNavigatorProps['screenLayout']>>[0]) {
   // ToDo: Track error
   const isModal = options.presentation && modalPresentations.includes(options.presentation);
   const Wrapper = isModal ? BottomSheetModalProvider : React.Fragment;
@@ -87,6 +75,7 @@ export function StackScreenLayout({
 
 export const defaultScreenOptions = ({ theme: navTheme }) =>
   ({
+    // ToDo: change this options for a minimal stack (no header). Use LeafStack for stack navigator that shows header.
     headerBackButtonDisplayMode: 'minimal',
     headerTintColor: navTheme.colors.text,
     headerTitleAlign: 'center',
@@ -104,7 +93,7 @@ export function TabScreenLayout({
 >) {
   return (
     <AppPushNotificationHandlerComponent>
-      <StackScreenLayout {...props}>{children}</StackScreenLayout>
+      <BaseStackScreenLayout {...props}>{children}</BaseStackScreenLayout>
     </AppPushNotificationHandlerComponent>
   );
 }
@@ -118,8 +107,8 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ na
     tabBarActiveTintColor: theme.palette.primary.regular.toString(),
     tabBarButton: props => <PlatformPressable {...props} pressColor="transparent" />,
     tabBarIconStyle: {
-      height: UI_SIZES.elements.icon.small,
-      width: UI_SIZES.elements.icon.small,
+      height: tabBarIconSize,
+      width: tabBarIconSize,
     },
     tabBarInactiveTintColor: theme.ui.text.light.toString(),
     tabBarStyle: {
@@ -131,7 +120,7 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ na
   };
 };
 
-export const getTabBarIconSize = () => UI_SIZES.elements.icon.small;
+export const tabBarIconSize = UI_SIZES.elements.icon.small;
 
 export const styles = StyleSheet.create({
   headerBackButton: {

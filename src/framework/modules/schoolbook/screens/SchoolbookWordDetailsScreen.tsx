@@ -119,15 +119,18 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     [session],
   );
 
-  const refreshSilent = React.useCallback(() => {
+  const refreshSilent = React.useCallback(async () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    return getSchoolbookWordIds()
-      .then(wordId => fetchSchoolbookWord(wordId))
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+    try {
+      const wordId = await getSchoolbookWordIds();
+      await fetchSchoolbookWord(wordId);
+      return setLoadingState(AsyncPagedLoadingState.DONE);
+    } catch {
+      return setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED);
+    }
   }, [fetchSchoolbookWord, getSchoolbookWordIds]);
 
-  const acknowledgeSchoolbookWord = async () => {
+  const acknowledgeSchoolbookWord = React.useCallback(async () => {
     try {
       setIsAcknowledgingWord(true);
       if (!session) throw new Error('missing session');
@@ -137,30 +140,33 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       setIsAcknowledgingWord(false);
       Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
     }
-  };
+  }, [refreshSilent, schoolbookWordId, session, studentId]);
 
-  const replyToSchoolbookWord = async (comment: string, commentId?: string) => {
-    try {
-      setIsPublishingReply(true);
-      if (!session) throw new Error('missing session');
-      if (commentId) {
-        await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment);
-        // detailsCardRef?.current?.cardSelectedCommentFieldRef()?.setIsEditingFalse();
-      } else {
-        await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
+  const replyToSchoolbookWord = React.useCallback(
+    async (comment: string, commentId?: string) => {
+      try {
+        setIsPublishingReply(true);
+        if (!session) throw new Error('missing session');
+        if (commentId) {
+          await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment);
+          // detailsCardRef?.current?.cardSelectedCommentFieldRef()?.setIsEditingFalse();
+        } else {
+          await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
+        }
+        await refreshSilent();
+        if (!commentId) {
+          // Note #1: setTimeout is used to wait for the ScrollView height to update (after a response is added).
+          // Note #2: scrollToEnd seems to become less precise once there is lots of data.
+          setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
+        }
+      } catch {
+        Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
+      } finally {
+        setIsPublishingReply(false);
       }
-      await refreshSilent();
-      if (!commentId) {
-        // Note #1: setTimeout is used to wait for the ScrollView height to update (after a response is added).
-        // Note #2: scrollToEnd seems to become less precise once there is lots of data.
-        setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
-      }
-    } catch {
-      Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
-    } finally {
-      setIsPublishingReply(false);
-    }
-  };
+    },
+    [refreshSilent, schoolbookWordId, session, studentId],
+  );
 
   const openSchoolbookWordReport = () =>
     props.navigation.navigate(schoolbookRouteNames.report, {
@@ -264,14 +270,14 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 
   // ERROR ========================================================================================
 
-  const renderError = () => {
+  const renderError = React.useCallback(() => {
     return (
       <ScrollView
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
-  };
+  }, [loadingState, reload]);
 
   // SCHOOLBOOK WORD DETAILS =========================================================================
 
@@ -291,7 +297,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     [acknowledgeSchoolbookWord, isParent, isTeacher, openSchoolbookWordReport],
   );
 
-  const renderSchoolbookWordDetails = () => {
+  const renderSchoolbookWordDetails = React.useCallback(() => {
     return (
       <SchoolbookWordDetailsCard
         ref={detailsCardRef}
@@ -306,11 +312,11 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         onEditComment={onEditComment}
       />
     );
-  };
+  }, [action, isAcknowledgingWord, isPublishingReply, onEditComment, onPublishReply, schoolbookWord, studentId, userId, userType]);
 
   // RENDER =======================================================================================
 
-  const renderPage = () => {
+  const renderPage = React.useCallback(() => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
       case AsyncPagedLoadingState.REFRESH_SILENT:
@@ -323,7 +329,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       case AsyncPagedLoadingState.RETRY:
         return renderError();
     }
-  };
+  }, [loadingState, renderError, renderSchoolbookWordDetails]);
 
   return (
     <>

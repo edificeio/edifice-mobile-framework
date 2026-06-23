@@ -24,16 +24,17 @@ import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-naviga
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { PushNotificationContextProvider } from '~/framework/util/notifications/cloudMessaging';
 
-import navigationLightTheme, { defaultScreenOptions, StackScreenLayout } from './layout';
+import navigationLightTheme, { BaseStackScreenLayout, defaultScreenOptions } from './layout';
+import { LeafStackScreenLayout } from './leaf-stack';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { renderCoreModulesScreens } from './root-navigation';
 import { useScreenTelemetry } from './telemetry';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
+import { ConfirmRemoveProvider } from './use-confirm-remove';
 
 // Note: import tabModules register to initialize it
 // remove when all modules will be ported to new module system
 import '~/framework/navigation/tabModules';
-import { ConfirmRemoveProvider } from './use-confirm-remove';
 
 export const NavigationContainer = React.forwardRef(function NavigationContainer(
   { theme: _, ...props }: NavigationContainerProps,
@@ -131,7 +132,7 @@ export function AppNavigation() {
       <ConfirmRemoveProvider>
         <PushNotificationContextProvider>
           <BottomSheetModalProvider>
-            <RootStack.Navigator screenLayout={StackScreenLayout} screenOptions={defaultScreenOptions}>
+            <RootStack.Navigator screenLayout={BaseStackScreenLayout} screenOptions={defaultScreenOptions}>
               {/**
                * Show main screen depending on session data and requirements.
                * We can't remove the `tabs` route since react-navigation has to that it exists to navigate to it.
@@ -140,7 +141,9 @@ export function AppNavigation() {
               {userIsCompletelyLoggedIn ? (
                 <RootStack.Screen options={MainNavigationOptions} name={TABS_ROUTE_NAME} component={MainNavigation} />
               ) : (
-                <RootStack.Group navigationKey={navigationKey}>{renderCoreModulesScreens(RootStack)}</RootStack.Group>
+                <RootStack.Group screenLayout={LeafStackScreenLayout} navigationKey={navigationKey}>
+                  {renderCoreModulesScreens(RootStack)}
+                </RootStack.Group>
               )}
             </RootStack.Navigator>
             <ToastContainer />

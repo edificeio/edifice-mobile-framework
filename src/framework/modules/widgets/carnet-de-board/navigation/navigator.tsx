@@ -1,12 +1,13 @@
 import * as React from 'react';
 
-import { PronoteNavigationParams, pronoteRouteNames } from '.';
-
+import { BaseStackScreenLayout } from '~/app/navigation/layout';
 import moduleConfig from '~/framework/modules/widgets/carnet-de-board/module-config';
 import CarnetDeBoardModalScreen from '~/framework/modules/widgets/carnet-de-board/screens/carnet-de-board-modal';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { AnyNavigableModule } from '~/framework/util/moduleTool';
+
+import { PronoteNavigationParams, pronoteRouteNames } from '.';
 
 export default (() =>
   createModuleNavigator<PronoteNavigationParams>(moduleConfig.name, Stack => {
@@ -18,7 +19,7 @@ export default (() =>
 
     // If widgets are available, the module shows Carnet de Bord as home
     screens.push(
-      <Stack.Group key="modal" screenOptions={{ presentation: 'modal' }}>
+      <Stack.Group key="modal" screenLayout={BaseStackScreenLayout} screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen
           key={pronoteRouteNames.carnetDeBordModal}
           name={pronoteRouteNames.carnetDeBordModal}

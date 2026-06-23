@@ -1,3 +1,5 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
 def node_require(script)
   require Pod::Executable.execute_command('node', ['-p',
     "require.resolve(

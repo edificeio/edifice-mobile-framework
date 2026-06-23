@@ -1,7 +1,7 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-06-10 18:32:41",
-  "notes": "fix: ENABLING-851 patch to fix RN Pressable issue on Android + fix in myApps\nfix(audience): ENABLING-842 reaction animation on long press\nupdate(stack): packages minor updates\nfix(pronote): ENABLING-818 center title in navbar\nfix: header buttons hitSlop + padding\nfix(Toast): ENABLING-805, ENABLING-847 : wrapping toasts in requestAnimationFrame\nfix: ENABLING-794 fix image loader with recycling on iOS\nfix(native icons): ENABLING-771 native icons in PopupMenu, both os\nfix: bottom inset handling in activation screen\nfix: ENABLING-879 hide tabs in myapps-favorites & timeline-filters\nfix: ENABLING-777 prevent text-wrapping in tab bar\nfix(mfa): ENABLING-822 fix mfa keyboard handling\nfix(communities): ENABLING-854 redirect invitation notification to communties list screen\nrelease: 1.17.3-alpha.9(1170309)",
-  "version": "1.17.3-alpha.10(1170310)",
+  "last": "2026-06-15 08:42:15",
+  "notes": "update(stack): packages minor updates\nfeat(data): ENABLING-900, add access tracking for timeline && my apps\nfix(mails): ENABLING-851 fix mails header buttons\nchore: allow ssh remote for override\nfix(CDT1D): ENABLING-894 : image upload method\nfix: missing entTrackingName handling in new module system\nfix: ENABLING-822 fix keyboard scrolling in change-email & change-password\nfix(buttons): ENABLING-807 android : removing ripple on press\nupdate(stack): packages minor updates\nfix(homeworks): ENABLING-890 fix scrolling textInput\nrelease: 1.17.3-alpha.10(1170310)",
+  "version": "1.17.3-rc.1(1170311)",
   "track": "1.17.3"
 }

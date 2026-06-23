@@ -7,6 +7,7 @@ import { Svg } from '~/framework/components/picture';
 
 export interface CheckboxProps {
   onPress: () => void;
+  onLongPress: () => void;
   checked: boolean;
   partialyChecked?: boolean;
   customContainerStyle?: ViewStyle;
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Checkbox = ({ checked, customContainerStyle, onPress, partialyChecked, testID }: CheckboxProps) => {
+export const Checkbox = ({ checked, customContainerStyle, onPress, onLongPress, partialyChecked, testID }: CheckboxProps) => {
   const checkedContainerStyle = {
     backgroundColor: checked ? theme.palette.primary.regular : theme.ui.background.card,
     borderColor: checked || partialyChecked ? theme.palette.primary.regular : theme.palette.grey.graphite,
@@ -53,7 +54,11 @@ export const Checkbox = ({ checked, customContainerStyle, onPress, partialyCheck
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, checkedContainerStyle, customContainerStyle]} testID={testID}>
+    <TouchableOpacity
+      onLongPress={onLongPress}
+      onPress={onPress}
+      style={[styles.container, checkedContainerStyle, customContainerStyle]}
+      testID={testID}>
       {renderStatus()}
     </TouchableOpacity>
   );

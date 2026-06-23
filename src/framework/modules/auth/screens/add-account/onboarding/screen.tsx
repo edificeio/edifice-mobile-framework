@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { CommonActions } from '@react-navigation/native';
+
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getAddAccountRouteForOnboarding } from '~/framework/modules/auth/new-navigation';
@@ -15,7 +17,7 @@ export default function AuthOnboardingAddAccountScreen(props: AuthOnboardingAddA
   return (
     <AuthIntroductionScreen
       {...props}
-      nextScreenAction={getAddAccountRouteForOnboarding()}
+      nextScreenAction={CommonActions.navigate(getAddAccountRouteForOnboarding())}
       svgName="multi-account"
       title={I18n.get('auth-accountonboarding-heading')}
       description={I18n.get('auth-accountonboarding-description')}

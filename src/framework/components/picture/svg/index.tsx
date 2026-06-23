@@ -9,9 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 
-import type { Svg as RNSvg, SvgProps as RNSvgProps } from 'react-native-svg';
-
-import { usePrevious } from '~/framework/hooks/previous';
+import type { SvgProps as RNSvgProps } from 'react-native-svg';
 
 const imports = {
   'account': async () => import('ASSETS/icons/moduleIcons/account.svg'),
@@ -393,6 +391,7 @@ const imports = {
 
 export type SvgIconName = keyof typeof imports;
 export const svgExists = (name: string): boolean => !!imports[name];
+type ImportedSvgComponent = React.FC<RNSvgProps>;
 
 let importsCache = {};
 
@@ -420,34 +419,48 @@ export interface SvgProps extends RNSvgProps {
 }
 
 export const Svg = ({ name, ...rest }: SvgProps) => {
-  const previousName = usePrevious(name);
-  const [ImportedSVG, setImportedSvg] = useState<typeof RNSvg | undefined>(() => importsCache[name]); // Need a function because imported is a callable object.
+  const [ImportedSVG, setImportedSvg] = useState<ImportedSvgComponent | undefined>(() => importsCache[name]);
   const [loading, setLoading] = React.useState(!importsCache[name]);
-  if (previousName !== name) {
-    setImportedSvg(() => importsCache[name]); // Need a function because imported is a callable object.
-    setLoading(!importsCache[name]);
-  }
+
   const fallbackStyle = React.useMemo(
     () => ({ height: Number(rest.height), width: Number(rest.width) }),
     [rest.width, rest.height],
   );
 
-  const loadSvg = React.useCallback(async () => {
-    try {
-      if (importsCache[name]) return importsCache[name];
-      setLoading(true);
-      if (__DEV__ && !imports[name]) console.error(`[Svg] Icon not found : ${name}`);
-      const imported = (await imports[name]()).default;
-      setImportedSvg(() => imported); // Need a function because imported is a callable object.
-      importsCache[name] = imported;
-    } finally {
-      setLoading(false);
-    }
-  }, [name]);
+  useEffect(() => {
+    let isCurrent = true;
 
-  useEffect((): void => {
+    if (importsCache[name]) {
+      setImportedSvg(() => importsCache[name]);
+      setLoading(false);
+      return;
+    }
+
+    setImportedSvg(undefined);
+    setLoading(true);
+
+    const loadSvg = async () => {
+      try {
+        const importFn = imports[name];
+        if (!importFn) {
+          if (__DEV__) console.error(`[Svg] Icon not found : ${name}`);
+          return;
+        }
+        const imported = (await importFn()).default;
+        importsCache[name] = imported;
+        if (isCurrent) {
+          setImportedSvg(() => imported);
+        }
+      } finally {
+        if (isCurrent) setLoading(false);
+      }
+    };
     loadSvg();
-  }, [loadSvg]);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [name]);
 
   return !loading && ImportedSVG ? <ImportedSVG {...rest} /> : <View style={fallbackStyle} />;
 };

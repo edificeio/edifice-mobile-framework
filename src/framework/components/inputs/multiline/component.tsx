@@ -18,15 +18,7 @@ const MultilineTextInput = forwardRef<RNTextInput, MultilineTextInputProps>((pro
       stylesTextInput.input.fontSize * TEXTINPUT_LINE_HEIGHT * PixelRatio.getFontScale() * numberOfLines,
   });
 
-  return (
-    <TextInput
-      scrollEnabled={false}
-      {...props}
-      multiline
-      style={[styles.multilineInput, { minHeight: initialHeight }, props.style]}
-      ref={ref}
-    />
-  );
+  return <TextInput {...props} multiline style={[styles.multilineInput, { minHeight: initialHeight }, props.style]} ref={ref} />;
 });
 
 export default MultilineTextInput;
