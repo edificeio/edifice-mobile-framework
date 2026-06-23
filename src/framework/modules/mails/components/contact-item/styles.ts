@@ -43,7 +43,6 @@ export default StyleSheet.create({
     flexShrink: 1,
   },
   textContainer: {
-    flex: 1,
     flexShrink: 1,
   },
 });

@@ -3,8 +3,6 @@ import { Animated, Keyboard, Platform, TextInput as RNTextInput, TouchableOpacit
 
 import debounce from 'lodash.debounce';
 
-import { MailsContactFieldProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -22,6 +20,8 @@ import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework
 import { mailsService } from '~/framework/modules/mails/service';
 import { readVisibles } from '~/framework/modules/mails/storage';
 import { isServiceMethodAvailable, MailsRecipientPrefixsI18n } from '~/framework/modules/mails/util';
+
+import { MailsContactFieldProps } from './types';
 
 function removeAccents(text: string): string {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -43,7 +43,6 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [ccCciPressed, setCcCciPressed] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [selectedRecipients, setSelectedRecipients] = React.useState<MailsVisible[]>(props.recipients ?? []);
   const [filteredUsers, setFilteredUsers] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
@@ -127,7 +126,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
         setHeightToRemoveList(containerLayout.height - heightInputToSave + INITIAL_HEIGHT_INPUT);
       }, 100);
     }
-  }, [containerLayout.height, containerLayout.y, heightInputToSave, selectedRecipients, topPositionResults]);
+  }, [containerLayout.height, containerLayout.y, heightInputToSave, props.recipients, topPositionResults]);
 
   const scrollToInput = React.useCallback(() => {
     if (viewContainerRef.current) {
@@ -151,27 +150,44 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     }
   }, [containerLayout, isOpen, scrollToInput, showList, inputFocused]);
 
-  const onOpen = () => {
+  const onOpen = React.useCallback(() => {
     setFocused(true);
     setIsOpen(true);
-  };
 
-  const onFocus = () => {
+    props.onFocus(props.type);
+  }, [props]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  const onFocus = React.useCallback(() => {
     setInputFocused(true);
     if (!isOpen) setIsOpen(true);
     props.onFocus(props.type);
-  };
+  }, [isOpen, props]);
 
-  const onBlur = () => {
+  const onBlur = React.useCallback(() => {
     setInputFocused(false);
-  };
+    setFocused(false);
 
-  const onRemoveContentAndExitInput = () => {
+    if (search === '') {
+      setIsOpen(false);
+    }
+  }, [search]);
+
+  const onRemoveContentAndExitInput = React.useCallback(() => {
     setSearch('');
     lastManualQuery.current = '';
     if (filteredUsers.length) setFilteredUsers([]);
     if (showList) toggleShowList();
-  };
+  }, [filteredUsers.length, showList, toggleShowList]);
 
   const onSearch = (query: string) => {
     let testDisplayNames: string[] = [],
@@ -250,40 +266,54 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     }
   };
 
-  const addUser = (items: MailsVisible[]) => {
-    items = items.filter(item => !selectedRecipients.some(selectedRecipient => selectedRecipient.id === item.id));
-    const newSelectedRecipients = [...selectedRecipients, ...items];
-    setSelectedRecipients(newSelectedRecipients);
-    props.onChangeRecipient(newSelectedRecipients, props.type);
-  };
+  const addUser = React.useCallback(
+    (items: MailsVisible[]) => {
+      const newSelectedRecipients = [...props.recipients, ...items.filter(item => !props.recipients.some(r => r.id === item.id))];
 
-  const removeUser = (user: MailsVisible) => {
-    const newSelectedRecipients = selectedRecipients.filter(selectedRecipient => selectedRecipient.id !== user.id);
-    setSelectedRecipients(newSelectedRecipients);
-    props.onChangeRecipient(newSelectedRecipients, props.type);
-  };
+      props.onChangeRecipient(newSelectedRecipients, props.type);
+      onRemoveContentAndExitInput();
+    },
+    [props, onRemoveContentAndExitInput],
+  );
 
-  const onOpenMoreRecipientsFields = () => {
+  const removeUser = React.useCallback(
+    (user: MailsVisible) => {
+      props.onChangeRecipient(
+        props.recipients.filter(r => r.id !== user.id),
+        props.type,
+      );
+    },
+    [props],
+  );
+
+  const onOpenMoreRecipientsFields = React.useCallback(() => {
     setCcCciPressed(true);
-    if (props.onOpenMoreRecipientsFields) props.onOpenMoreRecipientsFields();
-  };
+    if (props.onOpenMoreRecipientsFields) {
+      props.onOpenMoreRecipientsFields();
+      onFocus();
+    }
+  }, [onFocus, props]);
 
-  const renderRecipients = () => {
-    if (isOpen || selectedRecipients.length <= 2) {
-      return selectedRecipients.map(recipient => (
-        <MailsContactItem key={recipient.id} user={recipient} isEditing={isOpen} onDelete={removeUser} />
+  const isInputReallyFocused = React.useMemo(() => isOpen, [isOpen]);
+  const renderRecipients = React.useCallback(() => {
+    if (isInputReallyFocused || props.recipients.length <= 2) {
+      return props.recipients.map(recipient => (
+        <MailsContactItem key={recipient.id} user={recipient} isEditing={isInputReallyFocused} onDelete={removeUser} />
       ));
     }
+
+    const [first, second, ...remaining] = props.recipients;
+
     return (
       <>
-        <MailsContactItem key={selectedRecipients[0].id} user={selectedRecipients[0]} isEditing={isOpen} onDelete={removeUser} />
-        <MailsContactItem key={selectedRecipients[1].id} user={selectedRecipients[1]} isEditing={isOpen} onDelete={removeUser} />
+        <MailsContactItem key={first.id} user={first} isEditing={isInputReallyFocused} onDelete={removeUser} />
+        <MailsContactItem key={second.id} user={second} isEditing={isInputReallyFocused} onDelete={removeUser} />
         <View style={[stylesContactItem.container, stylesContactItem.containerNumber]}>
-          <SmallBoldText>+{selectedRecipients.length - 2}</SmallBoldText>
+          <SmallBoldText>+{remaining.length}</SmallBoldText>
         </View>
       </>
     );
-  };
+  }, [isInputReallyFocused, props.recipients, removeUser]);
 
   const renderInfoInInput = () => {
     if (search.length > 0)
@@ -310,10 +340,12 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     return filteredUsers.length * HEIGHT_RECIPIENT_CONTAINER + HEIGHT_HEADER_RESULTS + UI_SIZES.spacing.small * 2 + 170;
   }, [filteredUsers]);
 
+  const conRenderRecipients = React.useMemo(() => props.recipients.length === 0 || isOpen, [props.recipients.length, isOpen]);
+
   return (
     <>
       <View
-        style={[styles.container, selectedRecipients.length === 0 ? styles.containerEmpty : {}]}
+        style={[styles.container, props.recipients.length === 0 ? styles.containerEmpty : {}]}
         ref={viewContainerRef}
         onLayout={e => {
           const { height, width, x, y } = e.nativeEvent.layout;
@@ -321,13 +353,9 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
         }}>
         <BodyText style={styles.prefix}>{I18n.get(MailsRecipientPrefixsI18n[props.type].name)}</BodyText>
         <View style={[styles.containerInput, isOpen ? styles.containerIsEditing : {}]}>
-          <TouchableOpacity
-            activeOpacity={1}
-            disabled={isOpen || selectedRecipients.length === 0}
-            style={styles.middlePart}
-            onPress={onOpen}>
-            {selectedRecipients.length > 0 ? <View style={styles.recipientsList}>{renderRecipients()}</View> : null}
-            {isOpen || selectedRecipients.length === 0 ? (
+          <TouchableOpacity activeOpacity={1} disabled={conRenderRecipients} style={styles.middlePart} onPress={onOpen}>
+            {props.recipients.length > 0 ? <View style={styles.recipientsList}>{renderRecipients()}</View> : null}
+            {conRenderRecipients ? (
               <RNTextInput
                 ref={inputRef}
                 onFocus={onFocus}
@@ -394,7 +422,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               }
               renderItem={({ item }) => {
                 const Component = item.type === MailsVisibleType.USER ? MailsRecipientUserItem : MailsRecipientGroupItem;
-                const isSelected = selectedRecipients.some(selectedRecipient => selectedRecipient.id === item.id);
+                const isSelected = props.recipients.some(selectedRecipient => selectedRecipient.id === item.id);
                 return (
                   <Component
                     item={item}
