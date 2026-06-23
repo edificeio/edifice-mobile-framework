@@ -2,9 +2,6 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { MailsContactItemProps } from './types';
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
@@ -14,6 +11,9 @@ import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-re
 import { MailsVisibleType } from '~/framework/modules/mails/model';
 import { getExternalInitials } from '~/framework/modules/mails/util';
 import { accountTypeInfos } from '~/framework/util/accountType';
+
+import styles from './styles';
+import { MailsContactItemProps } from './types';
 
 export const MailsContactItem = (props: MailsContactItemProps) => {
   const { displayName, id, profile } = props.user;
