@@ -1,59 +1,26 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import styles from './styles';
-import { ResourceHeaderProps } from './types';
-
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
+import { useCurvedNavBarFeature } from '~/framework/hooks/curved-navbar';
 import ResourceDescription from '~/framework/modules/wiki/components/resource-description';
 import ResourceHeaderLoader from '~/framework/modules/wiki/components/resource-header-loader';
 import ResourceThumbnail from '~/framework/modules/wiki/components/resource-thumbnail';
 
-// height of the svg file we need to withdraw from the view but still needed in positionning calculation
-// depends on the original dimensions and content of the svg file
-const HEADER_SVG_TOP_OFFSET = -524;
-
-/**
- * Setup a fancy navBar decoration feature
- * That consists of adding a svg as a background that scroll with the page content
- * @returns the React Element of the decoration
- */
-function useCurvedNavBarFeature() {
-  // SVG size management
-  const svgDisplayWidth = UI_SIZES.screen.width;
-  const svgDisplayHeight = Math.ceil(
-    svgDisplayWidth * (useCurvedNavBarFeature.svgOriginalHeight / useCurvedNavBarFeature.svgOriginalWidth),
-  );
-  const svgDisplayTopOffset = HEADER_SVG_TOP_OFFSET * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth);
-  // Math.ceil(navBarHeight * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth)) -
-  // svgDisplayHeight +
-  // UI_SIZES.elements.statusbarHeight;
-  // SVG size management
-
-  return React.useMemo(() => {
-    return (
-      <Svg
-        width={svgDisplayWidth}
-        height={svgDisplayHeight}
-        style={[styles.navBarSvgDecoration, { top: svgDisplayTopOffset }]}
-        fill={theme.palette.primary.regular}
-        name="ui-wiki-list-header"
-      />
-    );
-  }, [svgDisplayHeight, svgDisplayTopOffset, svgDisplayWidth]);
-}
-
-useCurvedNavBarFeature.svgOriginalWidth = 375;
-useCurvedNavBarFeature.svgOriginalHeight = 575;
-useCurvedNavBarFeature.svgDisplayTopOffsetTolerance = 2;
+import styles from './styles';
+import { ResourceHeaderProps } from './types';
 
 const ResourceHeader: React.FC<ResourceHeaderProps> = ({ canAddDescription = false, description, image }) => {
   const [isCardExpanded, setIsCardExpanded] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
-  const navBarDecoration = useCurvedNavBarFeature();
-
+  const navBarDecoration = useCurvedNavBarFeature({
+    height: 575,
+    name: 'ui-wiki-list-header',
+    topOffset: -524,
+    width: 375,
+  });
   const headerContainerStyle = React.useMemo(() => {
     return [
       styles.resourceHeaderContainer,

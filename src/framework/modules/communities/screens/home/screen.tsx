@@ -108,6 +108,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   const { role, sentBy } = invitation || {};
   const { displayName: senderName, entId: senderId } = sentBy || {};
   const canShowInfoModal = role && senderId && senderName;
+  const platformUrl = session.platform.url;
 
   const infoModalRef = React.useRef<BottomSheetModalMethods>(null);
 
@@ -160,7 +161,13 @@ export const CommunitiesHomeScreenLoaded = function ({
               <DocumentsTile communityId={communityId} navigation={navigation} />
             </View>
             <View style={styles.tilesCol}>
-              <CoursesTile navigation={navigation} spotlightedCourseId={spotlightedCourseId} />
+              <CoursesTile
+                communityId={communityId}
+                navigation={navigation}
+                platformUrl={platformUrl}
+                spotlightedCourseId={spotlightedCourseId}
+                userRole={role}
+              />
               <ConversationTile />
             </View>
           </View>
@@ -168,7 +175,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         <HeadingXSText style={styles.announcementTitle}>{I18n.get('communities-announcements-title')}</HeadingXSText>
       </View>,
     ],
-    [communityId, membersId, navigation, scrollElements, title, totalMembers, spotlightedCourseId],
+    [scrollElements, title, communityId, navigation, membersId, totalMembers, platformUrl, spotlightedCourseId, role],
   );
 
   const audienceReferer = React.useMemo(

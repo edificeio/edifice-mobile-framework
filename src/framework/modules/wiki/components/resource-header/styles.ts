@@ -7,9 +7,6 @@ const SVG_SHAPE_RIGHT_POSITION_TOP = getScaleWidth(104);
 const SVG_SHAPE_LEFT_POSITION_TOP = getScaleWidth(61);
 
 const styles = StyleSheet.create({
-  navBarSvgDecoration: {
-    position: 'absolute',
-  },
   resourceHeaderContainer: {
     position: 'relative',
   },

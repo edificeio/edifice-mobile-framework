@@ -15,7 +15,7 @@ export default StyleSheet.create({
   tileCoursesAvailable: {
     ...baseStyles.tileBase,
     ...baseStyles.tileAvailable,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   tileCoursesUnavailable: {
     ...baseStyles.tileBase,
