@@ -3,10 +3,10 @@ import { StatusBar, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } f
 
 import NativeModal from 'react-native-modal';
 
+import theme from '~/app/theme';
+
 import { UI_SIZES } from './constants';
 import { Picture } from './picture';
-
-import theme from '~/app/theme';
 
 const styles = StyleSheet.create({
   innerView: {
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
 });
 
 export interface ModalBoxProps {
+  testID?: string;
   content: React.JSX.Element;
   contentContainerStyle?: StyleProp<ViewStyle>;
   useNativeDriver?: boolean;
@@ -51,7 +52,7 @@ export interface ModalBoxHandle {
 }
 
 export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(
-  ({ content, contentContainerStyle, translucentStatusBar, useNativeDriver }, ref) => {
+  ({ content, contentContainerStyle, testID, translucentStatusBar, useNativeDriver }, ref) => {
     const [showModal, setShowModal] = React.useState(false);
     const doDismissModal = React.useCallback(() => setShowModal(false), []);
     const doShowModal = React.useCallback(() => setShowModal(true), []);
@@ -59,6 +60,7 @@ export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(
 
     return (
       <NativeModal
+        testID={testID}
         backdropTransitionOutTiming={0}
         useNativeDriver={useNativeDriver}
         statusBarTranslucent={translucentStatusBar}
@@ -70,7 +72,7 @@ export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(
         <View style={[styles.outerView, contentContainerStyle]}>
           {content}
           <View style={styles.innerView}>
-            <TouchableOpacity onPress={doDismissModal}>
+            <TouchableOpacity testID={testID ? `${testID}-close` : undefined} onPress={doDismissModal}>
               <Picture
                 type="Svg"
                 name="ui-close"

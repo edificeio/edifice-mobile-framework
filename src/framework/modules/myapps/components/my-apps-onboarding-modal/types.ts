@@ -1,4 +1,6 @@
-type Illustration = { type: 'svg'; name: string } | { type: 'animated'; source: any };
+import { SvgIconName } from '~/framework/components/picture';
+
+type Illustration = { type: 'svg'; name: SvgIconName } | { type: 'animated'; source: any };
 export type MAOSProps = {
   key: string;
   title: string;
