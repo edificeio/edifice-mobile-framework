@@ -45,6 +45,10 @@ export async function openUrl(
 ): Promise<void> {
   try {
     let url = decode(_url);
+
+    // Special Youtube handling
+    url = normalizeYoutubeUrl(url);
+
     const session = getSession();
     // Note: openUrl must work also with relative urls.
     // This is NOT a good practice. Developer should use platformURISource or sessionURISource instead.
@@ -110,3 +114,33 @@ export async function openUrl(
     if (generateException) throw e;
   }
 }
+
+const normalizeYoutubeUrl = (url: string) => {
+  try {
+    const urlObj = new URL(url);
+
+    const hostname = urlObj.hostname.toLowerCase();
+    const isYoutubeDomain = hostname.includes('youtube.com') || hostname.includes('youtu.be');
+
+    if (!isYoutubeDomain) {
+      return url;
+    }
+
+    // Extract video ID (/embed/BLvzDXtn-bo)
+    const videoId = urlObj.pathname.split('/embed/')[1];
+    if (!videoId) return url;
+
+    // Extract timestamp if provided
+    const startTime = urlObj.searchParams.get('start') || urlObj.searchParams.get('t');
+
+    // Build watch url
+    const watchUrl = new URL(`https://www.youtube.com/watch?v=${videoId}`);
+    if (startTime) {
+      watchUrl.searchParams.append('start', startTime);
+    }
+
+    return watchUrl.toString();
+  } catch {
+    return url;
+  }
+};
