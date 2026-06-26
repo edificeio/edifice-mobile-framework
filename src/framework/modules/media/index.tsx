@@ -29,4 +29,4 @@ export default new CoreModule<
   ),
 );
 
-setModalModeForRoutes(['media/carousel']);
+setModalModeForRoutes(['media/carousel', 'media/download']);
