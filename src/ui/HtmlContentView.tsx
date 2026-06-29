@@ -139,7 +139,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
       const fileMedia = convertNotificationToFileMedia(notificationMedia || []);
 
       const createMediaPressHandler = (src: string) => {
-        const pressedMedia = notificationMedia?.find(m => m.src === src);
+        const pressedMedia = notificationMedia?.find(m => m.src === src || m.src === src.replace('https:', '')); // Detect cases where src starts with '//' (without url scheme)
         if (pressedMedia?.type === 'iframe') {
           openUrl(src);
           return;

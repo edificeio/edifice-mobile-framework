@@ -176,8 +176,8 @@ export const getAuthReduxNavigationState = ({
     state.routes.push({ name: 'auth/accounts' });
   } else if (appConf.hasMultiplePlatform) {
     state.routes.push({ name: 'auth/platforms' });
-  } else {
-    // zero or one account & only one platform -> no screen
+  } else if (nbAccounts === 0) {
+    state.routes.push(getRouteForLoginRedirection(appConf.platforms[0]));
   }
 
   // D.2. Login screen (Credentials / Wayf)

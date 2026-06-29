@@ -80,7 +80,7 @@ export function useNavigationRedirectionDispatch<ParamList extends ParamListBase
     (_action: NavigationAction) => {
       const previousNavState = navigation.getState(); // root nav state
       const action: NavigationAction = { ..._action, source: previousNavState.key };
-      const previousActiveRootState = previousNavState.routes[previousNavState.index].state;
+      const previousActiveRootState = previousNavState.routes[previousNavState.index ?? 0]?.state;
       const previousActiveTabState =
         previousActiveRootState && previousActiveRootState.index !== undefined
           ? previousActiveRootState.routes[previousActiveRootState.index].state

@@ -14,7 +14,9 @@ import styles from './styles';
 
 export interface DownloadModalProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Download> {}
 
-export const DownloadModalScreenOptions = modalScreenOptions('transparentModal', () => ({ headerShown: false }));
+export const DownloadModalScreenOptions = modalScreenOptions('transparentModal', () => ({
+  headerShown: false,
+}));
 
 const DownloadModal = (props: DownloadModalProps) => {
   const { navigation, route } = props;
