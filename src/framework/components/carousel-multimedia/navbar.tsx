@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
-import { modalScreenOptions } from '~/app/navigation/util';
+import { headerAction, modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -13,8 +13,64 @@ import { IModalsNavigationParams } from '~/framework/navigation/modals';
 import { FileMedia } from '~/framework/util/media';
 
 import { showPrivacyAlert } from './util';
+import { NativeStackHeaderBackProps, NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const isAndroid = Platform.OS === 'android';
+
+export const getNavActions = ({
+  isError,
+  media,
+  navigation,
+  onShare,
+  route,
+}: {
+  isError: boolean;
+  media: FileMedia;
+  onShare: () => Promise<void>;
+} & NativeStackScreenProps<ParamListBase>): Partial<NativeStackNavigationOptions> => {
+  const getDownloadAction = (props: NativeStackHeaderBackProps) =>
+    headerAction(
+      {
+        disabled: isError,
+        icon: 'ui-download',
+        onPress: () => showPrivacyAlert(() => navigation.navigate('media/download', { media })),
+        testID: 'media-navbar-download',
+      },
+      props,
+    );
+  const getOptionsActions = (props: NativeStackHeaderBackProps) => {
+    const action = headerAction(
+      {
+        disabled: isError,
+        icon: 'ui-options',
+        testID: 'media-navbar-options',
+      },
+      props,
+    );
+    action.element = (
+      <PopupMenu
+        testID="media-navbar-share"
+        actions={[
+          {
+            action: () => showPrivacyAlert(onShare),
+            icon: {
+              android: 'ic_share',
+              ios: 'square.and.arrow.up',
+            },
+            title: I18n.get('carousel-share'),
+          },
+        ]}>
+        {action.element}
+      </PopupMenu>
+    );
+    return action;
+  };
+
+  return {
+    headerRight: props => [getDownloadAction(props).element, getOptionsActions(props).element],
+    unstable_headerRightItems: props => [getDownloadAction(props), getOptionsActions(props)],
+  };
+};
 
 export const NavbarButtons = React.memo(
   ({ disabled = false, media, onShare }: { disabled?: boolean; media: FileMedia; onShare: () => void }) => {

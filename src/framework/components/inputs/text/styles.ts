@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: UI_SIZES.radius.input,
     borderWidth: UI_SIZES.border.thin,
     color: theme.ui.text.regular,
-    lineHeight: Platform.select({ android: TextSizeStyle.Small.lineHeight, default: undefined }),
+    lineHeight: undefined,
     // Computing of vertical alignment of the content.
     // TextInput sizing logic depends on the OS. On Android, we need to compensate the line-height included to the padding-bottom.
     paddingBottom:
