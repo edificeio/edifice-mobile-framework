@@ -31,7 +31,7 @@ export default new EntModule<
       iconInactive: 'home-outline',
       order: 0,
       route: 'timeline',
-      testId: 'tabbar-news',
+      testId: 'tabbar-timeline',
     },
   },
   Stack => (
