@@ -1,16 +1,16 @@
 import * as React from 'react';
 
-import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LottieView from 'lottie-react-native';
 import VideoPlayer from 'react-native-media-console';
 import { BufferConfig, BufferingStrategyType, OnProgressData, VideoRef } from 'react-native-video';
 
-import styles from './styles';
-import { PlayerItemProps } from './types';
-
+import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LoaderItem from '~/framework/components/carousel-multimedia/loader-item/component';
 import { PlayerContext } from '~/framework/components/carousel-multimedia/screen';
 import { isAudioContent } from '~/framework/util/media';
+
+import styles from './styles';
+import { PlayerItemProps } from './types';
 
 const CONTROLS_TIMEOUT_DELAY = 60000;
 const REWIND_TIME = 10;
@@ -59,10 +59,11 @@ const PlayerItem = ({
   }, []);
 
   const pause = React.useCallback(() => {
+    showNavBar();
     setPaused(true);
     const animRef = audioPosterRefs.current.get(itemIndex);
     animRef?.pause();
-  }, [itemIndex]);
+  }, [itemIndex, showNavBar]);
 
   const onPlay = React.useCallback(() => {
     hideNavBar();
@@ -147,8 +148,6 @@ const PlayerItem = ({
         disableBack
         disableFullscreen
         disableVolume
-        onHideControls={isCurrentItem ? hideNavBar : undefined}
-        onShowControls={isCurrentItem ? showNavBar : undefined}
         onLoad={onLoad}
         onProgress={onProgress}
         onEnd={onEnd}
