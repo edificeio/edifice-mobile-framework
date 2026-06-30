@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { NativeStackHeaderBackProps, NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
 import { headerAction, modalScreenOptions } from '~/app/navigation/util';
@@ -13,7 +14,6 @@ import { IModalsNavigationParams } from '~/framework/navigation/modals';
 import { FileMedia } from '~/framework/util/media';
 
 import { showPrivacyAlert } from './util';
-import { NativeStackHeaderBackProps, NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -50,6 +50,7 @@ export const getNavActions = ({
     action.element = (
       <PopupMenu
         testID="media-navbar-share"
+        disabled={isError}
         actions={[
           {
             action: () => showPrivacyAlert(onShare),

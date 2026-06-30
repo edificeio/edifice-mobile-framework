@@ -33,7 +33,7 @@ const CarouselItem = ({
   const isCurrentItem = info!.index === currentIndex;
 
   if (!info || isImageError || isPdfError || isPlayerError) {
-    setHasMediaError(true);
+    setHasMediaError(info!.index);
     return <UnknownItem />;
   }
   if (!media.mime && media.src) return <UnviewableItem media={media} />;
