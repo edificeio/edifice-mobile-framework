@@ -94,7 +94,9 @@ export function useNavigationRedirectionDispatch<ParamList extends ParamListBase
         if (newNavState === previousNavState) /* same state -> usePreventRemove WAS triggered */ {
           storedActionsRef.current.push(action);
         } else /* different state -> usePreventRemove was NOT triggered */ {
-          navigation.dispatch(action);
+          requestAnimationFrame(() => {
+            navigation.dispatch(action);
+          });
         }
       } else {
         navigation.dispatch(action);

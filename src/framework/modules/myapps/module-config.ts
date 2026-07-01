@@ -14,5 +14,5 @@ export default new NavigableModuleConfig<'myapps', AppsInfoState>({
   matchEntcoreWidget: () => false,
   name: 'myapps',
   storageName: 'myapps',
-  testID: 'myapps-home',
+  testID: 'tabbar-myapps',
 });
