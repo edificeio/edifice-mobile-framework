@@ -22,7 +22,7 @@ import { useAvailableModules } from '~/app/modules';
 import { ToastContainer } from '~/framework/components/toast';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
-import { PushNotificationContextProvider } from '~/framework/util/notifications/cloudMessaging';
+import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMessaging';
 
 import navigationLightTheme, { BaseStackScreenLayout, defaultScreenOptions } from './layout';
 import { LeafStackScreenLayout } from './leaf-stack';
@@ -130,7 +130,7 @@ export function AppNavigation() {
        */
       initialState={navigationState}>
       <ConfirmRemoveProvider>
-        <PushNotificationContextProvider>
+        <CloudMessagingProvider>
           <BottomSheetModalProvider>
             <RootStack.Navigator screenLayout={BaseStackScreenLayout} screenOptions={defaultScreenOptions}>
               {/**
@@ -148,7 +148,7 @@ export function AppNavigation() {
             </RootStack.Navigator>
             <ToastContainer />
           </BottomSheetModalProvider>
-        </PushNotificationContextProvider>
+        </CloudMessagingProvider>
       </ConfirmRemoveProvider>
     </NavigationContainer>
   );

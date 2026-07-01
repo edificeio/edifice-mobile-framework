@@ -16,6 +16,7 @@ import { AppStartupHandler } from '~/app/startup';
 import { UI_STYLES } from '~/framework/components/constants';
 import { useConstructor } from '~/framework/hooks/constructor';
 import appConf from '~/framework/util/appConf';
+import { NetworkMonitorProvider } from '~/framework/util/monitoring/network';
 import { isEmpty } from '~/framework/util/object';
 import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
@@ -25,7 +26,6 @@ import { DeviceTrust } from './device-trust';
 import { I18n } from './i18n';
 import { ModuleCompat } from './module/compat';
 import configureStore from './store';
-import { NetworkMonitorProvider } from '~/framework/util/monitoring/network';
 
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
