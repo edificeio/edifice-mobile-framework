@@ -20,7 +20,7 @@ import ErrorScreenView from '~/framework/components/screen/error';
 import { TextFontStyle } from '~/framework/components/text';
 import { ToastContainer } from '~/framework/components/toast';
 import { getTabBarStyleForNavState } from '~/framework/navigation/hideTabBarAndroid';
-import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
+import { CloudMessagingNavigationHandler } from '~/framework/util/notifications/cloudMessaging';
 import { DeepPartial } from '~/utils/types';
 
 import { AllModulesNavigationParams, AllModulesScreenNames } from './types';
@@ -91,10 +91,12 @@ export function TabScreenLayout({
   NativeStackNavigationOptions,
   NavigationProp<AllModulesNavigationParams>
 >) {
+  // Redirect push notification when tab screens is mounted. We know we are logged at this time.
   return (
-    <AppPushNotificationHandlerComponent>
+    <>
+      <CloudMessagingNavigationHandler />
       <BaseStackScreenLayout {...props}>{children}</BaseStackScreenLayout>
-    </AppPushNotificationHandlerComponent>
+    </>
   );
 }
 

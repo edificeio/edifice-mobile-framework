@@ -12,4 +12,5 @@ export default new NavigableModuleConfig<'communities', CommunitiesStore>({
   matchEntcoreApp: 'Communities',
   name: 'communities',
   storageName: 'communities',
+  testID: 'tabbar-communities',
 });
