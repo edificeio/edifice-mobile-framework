@@ -3,9 +3,6 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { InvitationStatus } from '@edifice.io/community-client-rest-rn';
 
-import { getCardStyle, styles } from './styles';
-import { CommunityCardSmallProps } from './types';
-
 import { BodyBoldText } from '~/framework/components/text';
 import { COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE } from '~/framework/modules/communities/adapter';
 import CommunityInvitationBadge from '~/framework/modules/communities/components/community-invitation-badge';
@@ -15,14 +12,18 @@ import { injectImageSource } from '~/framework/util/media';
 import { Image } from '~/framework/util/media/components/image';
 import { sessionImageSource } from '~/framework/util/transport';
 
-export const CommunityCardSmall = ({
+import { getCardStyle, styles } from './styles';
+import { CommunityCardSmallProps } from './types';
+
+const CommunityCardSmallComponent = <ItemT,>({
   image,
   invitationStatus,
+  item,
   itemSeparatorStyle,
   membersCount,
   onPress,
   title,
-}: Readonly<CommunityCardSmallProps>) => {
+}: Readonly<CommunityCardSmallProps<ItemT>>) => {
   const appTheme = useAppTheme('communities');
   const imageSource = React.useMemo(
     () => (image ? sessionImageSource(injectImageSource(image, COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE)) : undefined),
@@ -34,10 +35,12 @@ export const CommunityCardSmall = ({
     [invitationStatus, itemSeparatorStyle],
   );
 
+  const handlePress = React.useCallback(() => onPress(item), [onPress, item]);
+
   return (
-    <TouchableOpacity style={cardStyle} onPress={onPress} testID="community-card-small">
+    <TouchableOpacity style={cardStyle} onPress={handlePress} testID="community-card-small">
       <Image
-        fallback={{ icon: appTheme.icon, accentColors: appTheme.colors } as any}
+        fallback={{ accentColors: appTheme.colors, icon: appTheme.icon } as any}
         source={imageSource}
         style={styles.imgContainer}
       />
@@ -51,3 +54,5 @@ export const CommunityCardSmall = ({
     </TouchableOpacity>
   );
 };
+
+export const CommunityCardSmall = React.memo(CommunityCardSmallComponent) as typeof CommunityCardSmallComponent;

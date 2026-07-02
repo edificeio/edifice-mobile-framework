@@ -2,13 +2,19 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import {
+  CommunityClient,
+  CommunityFields,
   CommunityType,
   InvitationClient,
   InvitationFields,
   InvitationStatus,
+  SearchCommunityRequestDto,
   SearchInvitationDto,
 } from '@edifice.io/community-client-rest-rn';
-import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
+import {
+  CommunityResponseDtoWithThumbnails,
+  InvitationResponseDtoWithThumbnails,
+} from '@edifice.io/community-client-rest-rn/utils';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { FlashListRef } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +23,12 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
+import {
+  isLoadedItem,
+  LOADING_ITEM_DATA,
+  PaginatedFlashList,
+  PaginatedFlashListProps,
+} from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { sessionScreen } from '~/framework/components/screen';
 import { SegmentedControlLoader } from '~/framework/components/segmented-control';
@@ -44,7 +55,10 @@ import type { CommunitiesListScreen } from './types';
 
 export const AVAILABLE_FILTERS = [CommunityType.CLASS, CommunityType.FREE];
 const INVITATION_FIELDS: InvitationFields[] = ['stats', 'community'];
+const COMMUNITY_FIELDS: CommunityFields[] = ['stats'];
 const PAGE_SIZE = 48;
+type CommunityListItem = CommunityResponseDtoWithThumbnails | InvitationResponseDtoWithThumbnails;
+const isInvitation = (item: CommunityListItem): item is InvitationResponseDtoWithThumbnails => 'status' in item;
 
 export const computeNavBar = ({
   navigation,
@@ -67,7 +81,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
   },
   session,
 }) {
-  const allCommunities = useSelector(communitiesSelectors.getAllCommunities);
+  const acceptedCommunities = useSelector(communitiesSelectors.getAllCommunities);
   const pendingCommunities = useSelector(communitiesSelectors.getPendingCommunities);
   const dispatch =
     useDispatch<
@@ -82,10 +96,18 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
   const [totalPendingInvitations, setTotalPendingInvitations] = React.useState<number>(pendingCommunities.length);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
-  const paginatedListRef = React.useRef<FlashListRef<InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA>>(null);
+  const paginatedListRef = React.useRef<FlashListRef<CommunityListItem | typeof LOADING_ITEM_DATA>>(null);
   const filtersListBottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
 
   const activeFiltersCount = filters.length;
+
+  const allCommunities = React.useMemo(() => {
+    const getTitle = (item: CommunityListItem) => (isInvitation(item) ? item.community?.title : item.title) ?? '';
+
+    return [...acceptedCommunities, ...pendingCommunities]
+      .filter(isLoadedItem)
+      .sort((a, b) => getTitle(a).localeCompare(getTitle(b)));
+  }, [acceptedCommunities, pendingCommunities]);
 
   const displayedCommunities = pending ? pendingCommunities : allCommunities;
 
@@ -105,19 +127,25 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
 
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
-      const baseQueryParams: SearchInvitationDto = {
+      const invitationBaseQueryParams: SearchInvitationDto = {
         fields: INVITATION_FIELDS,
         page: page + 1,
         size: PAGE_SIZE,
       };
 
+      const communityBaseQueryParams: SearchCommunityRequestDto = {
+        fields: COMMUNITY_FIELDS,
+        page: page + 1,
+        size: PAGE_SIZE,
+      };
+
       const [allRes, pendingRes, totalPending] = await Promise.all([
-        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
-          ...baseQueryParams,
-          communityType: filters.length === 1 ? filters[0] : undefined,
+        accountApi(session, moduleConfig, CommunityClient).getCommunities({
+          ...communityBaseQueryParams,
+          type: filters.length === 1 ? filters[0] : undefined,
         }),
         accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
-          ...baseQueryParams,
+          ...invitationBaseQueryParams,
           communityType: filters.length === 1 ? filters[0] : undefined,
           status: InvitationStatus.PENDING,
         }),
@@ -159,37 +187,45 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
     filtersListBottomSheetRef.current?.present();
   }, []);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<InvitationResponseDtoWithThumbnails>['keyExtractor']>>(
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlashListProps<CommunityListItem>['keyExtractor']>>(
     item => item.id.toString(),
     [],
   );
 
+  const handleItemPress = React.useCallback(
+    (item: CommunityListItem) => {
+      if (isInvitation(item)) {
+        navigation.navigate(communitiesRouteNames.joinConfirm, { communityId: item.communityId, invitationId: item.id });
+      } else {
+        navigation.navigate(communitiesRouteNames.home, { communityId: item.id });
+      }
+    },
+    [navigation],
+  );
+
   const renderItem = React.useCallback(
-    ({ index, item }: { item: InvitationResponseDtoWithThumbnails; index: number }) => {
-      if (!item.community) return null;
+    ({ index, item }: { item: CommunityListItem; index: number }) => {
       const itemSeparator = getItemSeparatorStyle(index, displayedCommunities.length, styles.itemSeparator);
 
-      const image = item.community.mobileThumbnails?.length ? item.community.mobileThumbnails : toURISource(item.community.image!);
+      const community = isInvitation(item) ? item.community : item;
+      if (!community) return null;
+
+      const image = community.mobileThumbnails?.length ? community.mobileThumbnails : toURISource(community.image!);
 
       return (
         <CommunityCardSmall
-          key={item.id}
-          title={item.community.title}
           image={image}
-          invitationStatus={item.status}
+          invitationStatus={isInvitation(item) ? item.status : undefined}
+          item={item}
           itemSeparatorStyle={itemSeparator}
-          membersCount={item.communityStats?.totalMembers}
-          onPress={() => {
-            if (item.status === InvitationStatus.ACCEPTED || item.status === InvitationStatus.REQUEST_ACCEPTED) {
-              navigation.navigate(communitiesRouteNames.home, { communityId: item.communityId, invitationId: item.id });
-            } else {
-              navigation.navigate(communitiesRouteNames.joinConfirm, { communityId: item.communityId, invitationId: item.id });
-            }
-          }}
+          key={item.id}
+          membersCount={isInvitation(item) ? item.communityStats?.totalMembers : item.stats?.totalMembers}
+          title={community.title}
+          onPress={handleItemPress}
         />
       );
     },
-    [displayedCommunities.length, navigation],
+    [displayedCommunities.length, handleItemPress],
   );
 
   const renderPlaceholderItem = React.useCallback(
@@ -228,7 +264,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
           pendingInvitationsCount={totalPendingInvitations}
         />
       )}
-      <PaginatedFlashList
+      <PaginatedFlashList<CommunityListItem, never>
         ref={paginatedListRef}
         contentContainerStyle={styles.listPadding}
         data={displayedCommunities}

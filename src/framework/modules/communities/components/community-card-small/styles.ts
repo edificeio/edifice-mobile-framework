@@ -19,7 +19,7 @@ const IMAGE_HEIGHT = getScaleWidth(80);
 const LOADER_HEIGHT =
   TextSizeStyle.Medium.lineHeight * PixelRatio.getFontScale() + IMAGE_HEIGHT + 2 * (UI_SIZES.border.small + UI_SIZES.spacing.small);
 
-export const getCardStyle = (invitationStatus: InvitationStatus) => {
+export const getCardStyle = (invitationStatus?: InvitationStatus) => {
   switch (invitationStatus) {
     case InvitationStatus.PENDING:
       return styles.cardPending;

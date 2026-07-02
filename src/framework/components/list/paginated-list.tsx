@@ -11,6 +11,7 @@ import { FlashList, FlashListProps, FlashListRef, ListRenderItemInfo as SHListRe
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 
 export const LOADING_ITEM_DATA = Symbol('LOADING_ITEM_DATA');
+export const isLoadedItem = <TItem,>(item: TItem | typeof LOADING_ITEM_DATA): item is TItem => item !== LOADING_ITEM_DATA;
 
 const DEFAULT_WINDOW_SIZE = 3;
 

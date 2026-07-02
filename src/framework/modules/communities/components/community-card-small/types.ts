@@ -2,12 +2,13 @@ import { ImageSourcePropType, ViewStyle } from 'react-native';
 
 import { InvitationStatus } from '@edifice.io/community-client-rest-rn';
 
-export interface CommunityCardSmallProps {
+export interface CommunityCardSmallProps<ItemT = unknown> {
   hasNewContent?: boolean;
   image?: ImageSourcePropType;
-  invitationStatus: InvitationStatus;
+  invitationStatus?: InvitationStatus;
+  item: ItemT;
   itemSeparatorStyle?: ViewStyle;
   membersCount?: number;
-  onPress: () => void;
+  onPress: (item: ItemT) => void;
   title?: string;
 }
