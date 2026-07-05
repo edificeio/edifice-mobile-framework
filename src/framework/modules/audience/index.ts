@@ -1,9 +1,13 @@
-import config from './module-config';
-import { audienceService } from './service';
-import { AudienceParameter, AudienceReferer } from './types';
+import React from 'react';
+
+import { useFocusEffect } from '@react-navigation/native';
 
 import { blogUriCaptureFunction } from '~/framework/modules/blog/service/adapters';
 import { Module } from '~/framework/util/moduleTool';
+
+import config from './module-config';
+import { audienceService } from './service';
+import { AudienceParameter, AudienceReferer } from './types';
 
 export default new Module({ config, reducer: () => null });
 
@@ -26,4 +30,27 @@ export function markViewAudience(referer: AudienceParameter) {
       : referer
     : undefined;
   if (realReferer) return audienceService.view.post(realReferer.module, realReferer.resourceType, realReferer.resourceId);
+}
+
+/**
+ * The main hook to use audience features.
+ * Currently this handles only marking views as seen.
+ * @param referer
+ * @returns
+ */
+export function useAudience(referer: AudienceReferer) {
+  const viewMarked = React.useRef(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      viewMarked.current = false;
+    }, []),
+  );
+
+  return {
+    markView: async () => {
+      if (viewMarked.current === false) await audienceService.view.post(referer.module, referer.resourceType, referer.resourceId);
+      viewMarked.current = true;
+    },
+  };
 }

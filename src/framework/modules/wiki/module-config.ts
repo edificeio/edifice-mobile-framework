@@ -1,6 +1,7 @@
-import type { WikiStore } from './store';
-
+import type { AudienceReferer } from '~/framework/modules/audience/types';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+
+import type { WikiStore } from './store';
 
 export default new NavigableModuleConfig<'wiki', WikiStore>({
   displayOrder: 0,
@@ -17,3 +18,5 @@ export default new NavigableModuleConfig<'wiki', WikiStore>({
   name: 'wiki',
   storageName: 'wiki',
 });
+
+export const wikiAudienceConfig: Pick<AudienceReferer, 'module' | 'resourceType'> = { module: 'wiki', resourceType: 'page' };

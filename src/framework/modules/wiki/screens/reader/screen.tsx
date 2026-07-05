@@ -7,9 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import styles from './styles';
-import type { WikiReaderScreen } from './types';
-
 import { I18n } from '~/app/i18n';
 import { getStore, IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
@@ -31,6 +28,11 @@ import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/n
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+import styles from './styles';
+import type { WikiReaderScreen } from './types';
+import { markViewAudience, useAudience } from '~/framework/modules/audience';
+import { wikiAudienceConfig } from '../../module-config';
 
 export const computeNavBar = ({
   navigation,
@@ -216,6 +218,8 @@ export default function WikiReaderScreen({
   const pageData = useSelector(selectors.page(pageId));
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction | WikiPageAction>>();
 
+  const { markView } = useAudience({ ...wikiAudienceConfig, resourceId: pageId });
+
   const switchToPage = React.useCallback(
     (id: WikiPage['id'], reverse?: boolean) => {
       navigation.replace(wikiRouteNames.reader, { pageId: id, resourceId, reverseAnimation: reverse });
@@ -229,7 +233,8 @@ export default function WikiReaderScreen({
     dispatch(actions.loadWiki(newWikiData));
     dispatch(actions.loadPage(resourceId, newPageData));
     navigation.setOptions({ title: newPageData.title });
-  }, [resourceId, pageId, dispatch, navigation]);
+    markView();
+  }, [resourceId, pageId, dispatch, navigation, markView]);
 
   const renderLoading = React.useCallback(
     () => (
@@ -276,8 +281,8 @@ export default function WikiReaderScreen({
   );
 
   return (
-    <PageView style={styles.page}>
+    <View style={styles.page}>
       <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={renderLoading} />
-    </PageView>
+    </View>
   );
 }
