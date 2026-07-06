@@ -1,6 +1,6 @@
 import { ImageURISource, ScrollViewProps } from 'react-native';
 
-import { CommunityResponseDto } from '@edifice.io/community-client-rest-rn';
+import { CommunityResponseDto, MembershipRole } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
@@ -20,6 +20,9 @@ export namespace CommunitiesHomeScreen {
     session: AuthActiveAccount;
     image: ImageURISource[];
     spotlightedCourseId?: string;
+    role?: MembershipRole;
+    senderId?: string;
+    senderName?: string;
   };
   export type AllPropsLoaded = CommunitiesHomeScreen.AllProps & RequiredData & Pick<ScrollViewProps, 'refreshControl'>;
 }

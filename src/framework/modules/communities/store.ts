@@ -1,4 +1,4 @@
-import { InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
+import { InvitationResponseDto, MembershipRole } from '@edifice.io/community-client-rest-rn';
 import {
   CommunityResponseDtoWithThumbnails,
   InvitationResponseDtoWithThumbnails,
@@ -20,6 +20,9 @@ export interface CommunitiesStore {
       courseEntId?: string;
       totalMembers: number;
       membersId: string[];
+      role?: MembershipRole;
+      senderId?: string;
+      senderName?: string;
     }
   >;
   communitiesFoldersMeta: Record<number, Record<number, Pick<FolderItem, 'title'>>>;

@@ -5,7 +5,7 @@ import {
   AnnouncementClient,
   CommunityClient,
   CommunitySection,
-  InvitationResponseDto,
+  InvitationClient,
   MembershipClient,
   SearchAnnouncementDto,
 } from '@edifice.io/community-client-rest-rn';
@@ -86,10 +86,13 @@ export const CommunitiesHomeScreenLoaded = function ({
   image,
   membersId,
   navigation,
+  role,
   route,
   route: {
     params: { communityId, invitationId, showWelcome = false },
   },
+  senderId,
+  senderName,
   session,
   spotlightedCourseId,
   title,
@@ -101,12 +104,6 @@ export const CommunitiesHomeScreenLoaded = function ({
     (showWelcome && invitationId !== undefined ? welcomeModalRef.current?.present : welcomeModalRef.current?.dismiss)?.();
   }, [showWelcome, invitationId]);
 
-  const invitation = useSelector(communitiesSelectors.getAllCommunities).find(
-    item => item !== LOADING_ITEM_DATA && item.id === invitationId,
-  ) as InvitationResponseDto | undefined;
-
-  const { role, sentBy } = invitation || {};
-  const { displayName: senderName, entId: senderId } = sentBy || {};
   const canShowInfoModal = role && senderId && senderName;
 
   const infoModalRef = React.useRef<BottomSheetModalMethods>(null);
@@ -258,7 +255,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         decorations={stickyElements}
         {...scrollViewProps}
       />
-      {invitation?.role && <CommunityWelcomeBottomSheetModal role={invitation?.role} title={title} ref={welcomeModalRef} />}
+      {role && <CommunityWelcomeBottomSheetModal role={role} title={title} ref={welcomeModalRef} />}
       {canShowInfoModal ? (
         <CommunityInfoBottomSheet
           ref={infoModalRef}
@@ -302,7 +299,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
   navigation,
   route,
   route: {
-    params: { communityId },
+    params: { communityId, invitationId },
   },
   session,
 }) {
@@ -315,16 +312,42 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
   );
 
   const loadContent = React.useCallback(async () => {
-    const [community, invitations] = await Promise.all([
+    const [community, members, membership, invitation] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
+      // call pour les avatars (membersId) de la tile + le nb total de membres
       accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 20 }),
+      // Call pour le role
+      accountApi(session, moduleConfig, MembershipClient).getMemberByEntId(communityId, session.user.id),
+      // Cas d'une invitation a peine acceptée : infos de l'inviteur
+      invitationId !== undefined
+        ? accountApi(session, moduleConfig, InvitationClient).getInvitationById(invitationId)
+        : Promise.resolve(undefined),
     ]);
+
+    console.log(
+      'fetcheddd commusxxxxxx',
+      community,
+      'memberooos',
+      members,
+      'membershipoooo',
+      membership,
+      'invitatiooooo',
+      invitation,
+    );
+    const inviterId = membership?.inviter?.id;
+    // Récupérer les infos de l'inviteur depuis Membership client
+    const inviterFromMembers =
+      inviterId !== undefined ? members.items.find(member => member.user.id === inviterId)?.user : undefined;
+    const sender = invitation?.sentBy ?? inviterFromMembers;
     setData({
       ...community,
-      membersId: invitations.items.map(item => item.user.entId),
-      totalMembers: invitations.meta.totalItems,
+      membersId: members.items.map(item => item.user.entId),
+      role: membership?.role ?? invitation?.role,
+      senderId: sender?.entId,
+      senderName: sender?.displayName,
+      totalMembers: members.meta.totalItems,
     });
-  }, [communityId, session, setData]);
+  }, [communityId, invitationId, session, setData]);
 
   const image = React.useMemo(
     () =>
