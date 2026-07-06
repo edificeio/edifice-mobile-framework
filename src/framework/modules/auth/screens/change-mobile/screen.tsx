@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Platform, View } from 'react-native';
+import { Alert, Keyboard, Platform, ScrollView as RNScrollView, View } from 'react-native';
 
 import { RouteProp, useIsFocused } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import PhoneInput, {
   Country,
   CountryCode,
@@ -15,48 +14,38 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
-
 import { I18n } from '~/app/i18n';
+import { AllModulesNavigationParams } from '~/app/navigation/types';
+import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { KeyboardPageView } from '~/framework/components/page';
 import { Picture, Svg } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { logoutAction } from '~/framework/modules/auth/actions';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { mobileValidation, requirements } from '~/framework/modules/auth/service';
+import { logoutAction } from '~/framework/modules/auth/thunks';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 
-const getNavBarTitle = (route: RouteProp<AuthNavigationParams, typeof authRouteNames.changeMobile>) =>
+import styles from './styles';
+import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
+
+const getNavBarTitle = (route: RouteProp<AllModulesNavigationParams, 'auth/requirement-verify-mobile'>) =>
   route.params.navBarTitle || I18n.get('auth-change-mobile-verify');
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changeMobile>): NativeStackNavigationOptions => {
-  return {
-    ...navBarOptions({
-      backButtonTestID: 'phone-back',
-      navigation,
-      route,
-      title: getNavBarTitle(route),
-      titleTestID: 'phone-title',
-    }),
-  };
-};
+export const computeNavBar = screenOptions<'auth/requirement-verify-mobile'>(({ route }) => ({
+  title: getNavBarTitle(route),
+}));
 
 const countryListLanguages = {
   DEFAULT: 'common',
@@ -167,7 +156,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         if (isCheckMobile) {
           setIsSendingCode(true);
           await mobileValidation.requestCode(session, mobileNumberFormatted);
-          navigation.navigate(authRouteNames.mfa, {
+          navigation.navigate('auth/mfa', {
             isMobileMFA: true,
             mobile: mobileNumberFormatted,
             modificationType,
@@ -179,10 +168,8 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           setIsSendingCode(false);
           setMobileState(MobileState.PRISTINE);
           await props.trySaveNewMobile({ mobile: mobileNumberFormatted });
-          setTimeout(() => {
-            props.navigation.goBack();
-            Toast.showSuccess(I18n.get('auth-change-mobile-edit-toast'));
-          });
+          props.navigation.goBack();
+          Toast.showSuccess(I18n.get('auth-change-mobile-edit-toast'));
         }
       } catch {
         Toast.showError(I18n.get('auth-change-mobile-error-text'));
@@ -243,101 +230,113 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   }, [isMobileEmpty, isScreenFocused, mobileState, refuseMobileVerification]);
 
+  const scrollViewRef = React.useRef<RNScrollView>(null);
+  React.useEffect(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollToEnd();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
-    <KeyboardPageView style={styles.page} scrollable>
-      {isLoading ? (
-        <LoadingIndicator />
-      ) : isError ? (
-        <EmptyConnectionScreen />
-      ) : (
-        <View style={styles.container}>
-          <View style={styles.imageContainer}>
-            <Svg name="user-smartphone" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
-          </View>
-          <HeadingSText style={styles.title} testID="phone-new-title">
-            {texts.title}
-          </HeadingSText>
-          <SmallText style={styles.content} testID="phone-new-subtitle">
-            {texts.message}
-          </SmallText>
-          <View style={styles.inputTitleContainer} testID="phone-new-label">
-            <Picture
-              type="Svg"
-              name="pictos-smartphone"
-              fill={theme.palette.grey.black}
-              width={UI_SIZES.dimensions.width.mediumPlus}
-              height={UI_SIZES.dimensions.height.mediumPlus}
+    <KeyboardAvoidingView>
+      <ScrollView ref={scrollViewRef} style={styles.page}>
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : isError ? (
+          <EmptyConnectionScreen />
+        ) : (
+          <View style={styles.container}>
+            <View style={styles.imageContainer}>
+              <Svg name="user-smartphone" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
+            </View>
+            <HeadingSText style={styles.title} testID="phone-new-title">
+              {texts.title}
+            </HeadingSText>
+            <SmallText style={styles.content} testID="phone-new-subtitle">
+              {texts.message}
+            </SmallText>
+            <View style={styles.inputTitleContainer} testID="phone-new-label">
+              <Picture
+                type="Svg"
+                name="pictos-smartphone"
+                fill={theme.palette.grey.black}
+                width={UI_SIZES.dimensions.width.mediumPlus}
+                height={UI_SIZES.dimensions.height.mediumPlus}
+              />
+              <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
+            </View>
+            <PhoneInput
+              placeholder={I18n.get('auth-change-mobile-placeholder')}
+              ref={phoneInputRef}
+              value={mobile}
+              defaultCode={region}
+              layout="third"
+              onChangeFormattedText={onChangeMobile}
+              onChangeCountry={onSetRegion}
+              containerStyle={[
+                { borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
+                styles.input,
+              ]}
+              flagButtonStyle={styles.flagButton}
+              codeTextStyle={styles.flagCode}
+              textContainerStyle={[
+                styles.inputTextContainer,
+                {
+                  borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
+                },
+              ]}
+              textInputStyle={styles.inputTextInput}
+              flagSize={Platform.select({ android: UI_SIZES.dimensions.width.medium, ios: UI_SIZES.dimensions.width.larger })}
+              drowDownImage={
+                <Svg style={styles.dropDownArrow} name="ui-rafterDown" fill={theme.ui.text.regular} width={12} height={12} />
+              }
+              countryPickerProps={{
+                filterProps: {
+                  autoFocus: true,
+                  placeholder: I18n.get('auth-change-mobile-country-placeholder'),
+                },
+                language: countryListLanguages[I18n.getLanguage()] ?? countryListLanguages.DEFAULT,
+              }}
+              testIDCountryWithCode="phone-new-country"
+              textInputProps={{
+                hitSlop: {
+                  bottom: -UI_SIZES.spacing.big,
+                  left: 0,
+                  right: 0,
+                  top: -UI_SIZES.spacing.big,
+                },
+                inputMode: 'tel',
+                keyboardType: 'phone-pad',
+                placeholderTextColor: theme.palette.grey.stone,
+                testID: 'phone-new-field',
+              }}
             />
-            <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
-          </View>
-          <PhoneInput
-            placeholder={I18n.get('auth-change-mobile-placeholder')}
-            ref={phoneInputRef}
-            value={mobile}
-            defaultCode={region}
-            layout="third"
-            onChangeFormattedText={onChangeMobile}
-            onChangeCountry={onSetRegion}
-            containerStyle={[
-              { borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
-              styles.input,
-            ]}
-            flagButtonStyle={styles.flagButton}
-            codeTextStyle={styles.flagCode}
-            textContainerStyle={[
-              styles.inputTextContainer,
-              {
-                borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
-              },
-            ]}
-            textInputStyle={styles.inputTextInput}
-            flagSize={Platform.select({ android: UI_SIZES.dimensions.width.medium, ios: UI_SIZES.dimensions.width.larger })}
-            drowDownImage={
-              <Svg style={styles.dropDownArrow} name="ui-rafterDown" fill={theme.ui.text.regular} width={12} height={12} />
-            }
-            countryPickerProps={{
-              filterProps: {
-                autoFocus: true,
-                placeholder: I18n.get('auth-change-mobile-country-placeholder'),
-              },
-              language: countryListLanguages[I18n.getLanguage()] ?? countryListLanguages.DEFAULT,
-            }}
-            testIDCountryWithCode="phone-new-country"
-            textInputProps={{
-              hitSlop: {
-                bottom: -UI_SIZES.spacing.big,
-                left: 0,
-                right: 0,
-                top: -UI_SIZES.spacing.big,
-              },
-              inputMode: 'tel',
-              keyboardType: 'phone-pad',
-              placeholderTextColor: theme.palette.grey.stone,
-              testID: 'phone-new-field',
-            }}
-          />
-          <CaptionItalicText style={styles.errorText} testID="phone-new-error">
-            {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
-          </CaptionItalicText>
-          <PrimaryButton
-            style={styles.sendButton}
-            text={texts.button}
-            disabled={isMobileEmpty}
-            loading={isSendingCode}
-            action={onSendSMS}
-            testID="phone-change"
-          />
-          {isModifyingMobile ? null : (
-            <DefaultButton
-              style={styles.logoutButton}
-              text={I18n.get('auth-change-mobile-verify-disconnect')}
-              contentColor={theme.palette.status.failure.regular}
-              action={onRefuseMobileVerification}
+            <CaptionItalicText style={styles.errorText} testID="phone-new-error">
+              {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
+            </CaptionItalicText>
+            <PrimaryButton
+              style={styles.sendButton}
+              text={texts.button}
+              disabled={isMobileEmpty}
+              loading={isSendingCode}
+              action={onSendSMS}
+              testID="phone-change"
             />
-          )}
-        </View>
-      )}
-    </KeyboardPageView>
+            {isModifyingMobile ? null : (
+              <DefaultButton
+                style={styles.logoutButton}
+                text={I18n.get('auth-change-mobile-verify-disconnect')}
+                contentColor={theme.palette.status.failure.regular}
+                action={onRefuseMobileVerification}
+              />
+            )}
+          </View>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

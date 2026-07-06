@@ -1,35 +1,31 @@
 import * as React from 'react';
-import { Alert, BackHandler, Dimensions, Platform, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, BackHandler, FlatListProps, Platform, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList as GHFlatList } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
-import styles from './styles';
-import type { MailsListScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
+import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { Checkbox } from '~/framework/components/checkbox';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import SearchInput from '~/framework/components/inputs/search';
 import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
+import { NavBarAction } from '~/framework/components/navigation';
 import Separator from '~/framework/components/separator';
-import StatusBar from '~/framework/components/status-bar';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { Toggle } from '~/framework/components/toggle';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import MailsFolderItem from '~/framework/modules/mails/components/folder-item';
 import stylesFolders from '~/framework/modules/mails/components/folder-item/styles';
 import MailsInputBottomSheet from '~/framework/modules/mails/components/input-bottom-sheet';
@@ -44,32 +40,25 @@ import {
   MailsListTypeModal,
   MailsMailStatePreview,
 } from '~/framework/modules/mails/model';
-import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
+import { mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { getMailCarbonioRight } from '~/framework/modules/mails/rights';
 import { mailsService } from '~/framework/modules/mails/service';
 import { defaultUserIdCarbonio } from '~/framework/modules/mails/service/api/carbonio';
 import { readLastCallTimestamp, reloadVisibles } from '~/framework/modules/mails/storage';
 import { flattenFolders, isServiceMethodAvailable, mailsDefaultFoldersInfos } from '~/framework/modules/mails/util';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { HTTPError } from '~/framework/util/transport/error';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<MailsNavigationParams, typeof mailsRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: '',
-  }),
-});
+import styles, { bottomSheetTopMargin } from './styles';
+import { MailsListScreenPrivateProps } from './types';
+
+export const computeNavBar = screenOptions(() => ({ title: '' }));
 
 const PAGE_SIZE = 25;
 const TIMEOUT_DURATION = 300;
 const ITEM_HEIGHT = 100;
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const flatListRef = React.useRef<GHFlatList<IMailsMailPreview>>(null);
+  const flatListRef = React.useRef<typeof GHFlatList<IMailsMailPreview>>(null);
   const searchInputRef = React.useRef<TextInput>(null);
   //TODO: créer un wrapper
   const { top: statusBarHeight } = useSafeAreaInsets();
@@ -183,31 +172,31 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }
   }, [loadMails, selectedFolder, search, loadFolders]);
 
-  const onDismissBottomSheet = React.useCallback(() => {
+  const closeBottomSheet = React.useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
-    setTimeout(
-      () => {
-        if (typeModal) setTypeModal(undefined);
-        if (isSubfolder) setIsSubfolder(false);
-        if (idParentFolder) setIdParentFolder(undefined);
-        if (onErrorCreateFolder) setOnErrorCreateFolder(false);
-      },
-      Platform.OS === 'android' ? 300 : 0,
-    );
+  }, []);
+
+  const onBottomSheetDismissed = React.useCallback(() => {
+    requestAnimationFrame(() => {
+      if (typeModal) setTypeModal(undefined);
+      if (isSubfolder) setIsSubfolder(false);
+      if (idParentFolder) setIdParentFolder(undefined);
+      if (onErrorCreateFolder) setOnErrorCreateFolder(false);
+    });
   }, [typeModal, isSubfolder, idParentFolder, onErrorCreateFolder]);
 
   const switchFolder = React.useCallback(
     async (folder: MailsDefaultFolders | MailsFolderInfo) => {
       try {
         setSelectedFolder(folder);
-        onDismissBottomSheet();
+        closeBottomSheet();
         await loadMails(folder);
         flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
       } catch (e) {
         console.error(e);
       }
     },
-    [loadMails, onDismissBottomSheet],
+    [loadMails, closeBottomSheet],
   );
 
   const onPressItem = React.useCallback(
@@ -273,14 +262,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           });
         }
 
-        setTimeout(
-          () => {
-            loadFolders();
-            onDismissBottomSheet();
-            toast.showSuccess(successMessage);
-          },
-          Platform.OS === 'android' ? 300 : 0,
-        );
+        requestAnimationFrame(() => {
+          loadFolders();
+          closeBottomSheet();
+          toast.showSuccess(successMessage);
+        });
       } catch (e) {
         const error = e instanceof HTTPError ? await e.json() : e;
         if (error instanceof Error) {
@@ -296,8 +282,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     },
     [
       onErrorCreateFolder,
-      loadFolders,
-      onDismissBottomSheet,
       idParentFolder,
       isSelectionMode,
       switchFolder,
@@ -305,6 +289,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       onMove,
       selectedMails,
       selectedFolder,
+      loadFolders,
+      closeBottomSheet,
     ],
   );
 
@@ -508,13 +494,11 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     [handleMailAction],
   );
 
-  const onSelectMail = React.useCallback(
-    (id: string) => {
-      if (selectedMails.includes(id)) setSelectedMails(prev => prev.filter(mailId => mailId !== id));
-      else setSelectedMails(prev => [...prev, id]);
-    },
-    [selectedMails],
-  );
+  const onSelectMail = React.useCallback((id: string) => {
+    setSelectedMails(oldSelected =>
+      oldSelected.includes(id) ? oldSelected.filter(mailId => mailId !== id) : [...oldSelected, id],
+    );
+  }, []);
 
   const onSelectAll = React.useCallback(() => {
     if (selectedMails.length === mails.length) setSelectedMails([]);
@@ -599,7 +583,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       loadMails(MailsDefaultFolders.INBOX);
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -610,48 +593,59 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, []);
 
   React.useEffect(() => {
-    props.navigation.setOptions({
-      headerLeft: () => (
-        <NavBarAction
-          disabled={isContentLoading}
-          icon="ui-burgerMenu"
-          onPress={() => {
-            bottomSheetModalRef.current?.present();
-          }}
-        />
-      ),
-      headerRight: () => (
-        <NavBarActionsGroup
-          elements={[
-            <NavBarAction
-              disabled={isContentLoading}
-              icon="ui-edit"
-              onPress={() => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder })}
-            />,
-            <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
-              <NavBarAction disabled={isContentLoading} icon="ui-options" />
-            </PopupMenu>,
-          ]}
-        />
-      ),
+    navigation.setOptions({
+      headerLeft: p =>
+        headerAction(
+          {
+            disabled: isContentLoading,
+            icon: 'ui-burgerMenu',
+            onPress: () => {
+              bottomSheetModalRef.current?.present();
+            },
+            testID: 'mails-header-folders',
+          },
+          p,
+        ).element,
+
+      headerRight: p => [
+        headerAction(
+          {
+            disabled: isContentLoading,
+            icon: 'ui-edit',
+            onPress: () => navigation.navigate(mailsRouteNames.edit, { fromFolder: selectedFolder }),
+            testID: 'mails-header-new',
+          },
+          p,
+        ).element,
+        <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
+          <NavBarAction disabled={isContentLoading} icon="ui-options" />
+        </PopupMenu>,
+      ],
+
+      unstable_headerLeftItems: p => [
+        headerAction(
+          {
+            disabled: isContentLoading,
+            icon: 'ui-burgerMenu',
+            onPress: () => {
+              bottomSheetModalRef.current?.present();
+            },
+            testID: 'mails-header-folders',
+          },
+          p,
+        ),
+      ],
     });
-  }, [selectedFolder, navigation, props.navigation, isContentLoading, allPopupActionsMenu]);
+  }, [selectedFolder, navigation, isContentLoading, allPopupActionsMenu]);
 
   React.useEffect(() => {
-    props.navigation.setOptions({
-      headerTitle: navBarTitle(
-        I18n.get(
-          typeof selectedFolder !== 'object'
-            ? mailsDefaultFoldersInfos[selectedFolder as MailsDefaultFolders].title
-            : selectedFolder.name,
-        ),
-        undefined,
-        undefined,
-        1,
-        2,
+    navigation.setOptions({
+      title: I18n.get(
+        typeof selectedFolder !== 'object'
+          ? mailsDefaultFoldersInfos[selectedFolder as MailsDefaultFolders].title
+          : selectedFolder.name,
       ),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolder, navigation]);
 
   React.useEffect(() => {
@@ -711,7 +705,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     if (!isSelectionMode && !isSearchMode) return;
     return (
       <>
-        <StatusBar type="white" />
         <View
           style={[
             styles.selectMode,
@@ -849,159 +842,176 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     onRestore,
     currentUserId,
     onToggleUnread,
-    props.session?.user.id,
     selectedFolder,
     selectedMails,
   ]);
 
-  const renderFolders = React.useCallback(() => {
-    return (
-      <GHFlatList
-        data={folders}
-        contentContainerStyle={styles.flatListBottomSheet}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        ItemSeparatorComponent={() => <View style={styles.spacingFolder} />}
-        ListHeaderComponent={
-          <>
-            <View style={styles.defaultFolders}>
-              {Object.keys(mailsDefaultFoldersInfos).map(folder => (
-                <MailsFolderItem
-                  key={folder}
-                  icon={mailsDefaultFoldersInfos[folder].icon}
-                  name={I18n.get(mailsDefaultFoldersInfos[folder].title)}
-                  selected={selectedFolder === folder}
-                  onPress={() => switchFolder(folder as MailsDefaultFolders)}
-                  nbUnread={folderCounts ? folderCounts[folder] : 0}
-                />
-              ))}
-            </View>
-            <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.medium} />
-          </>
-        }
-        ListFooterComponent={
-          isServiceMethodAvailable(mailsService.folder.create) ? (
-            <TertiaryButton
-              style={styles.newFolderButton}
-              iconLeft="ui-plus"
-              text={I18n.get('mails-list-newfolder')}
-              action={() => setTypeModal(MailsListTypeModal.CREATE)}
-            />
-          ) : null
-        }
-        renderItem={({ item }) => (
-          <MailsFolderItem
-            key={item.id}
-            icon="ui-folder"
-            name={item.name}
-            selected={typeof selectedFolder === 'object' && selectedFolder.id === item.id}
-            onPress={() => switchFolder({ id: item.id, name: item.name })}
-            nbUnread={item.nbUnread}
-            depth={item.depth}
-          />
-        )}
-      />
-    );
-  }, [folders, selectedFolder, switchFolder, folderCounts]);
-
-  const renderCreateNewFolder = React.useCallback(() => {
-    const onlyParentFolders = folders.filter(folder => folder.depth === 1);
-    return (
-      <MailsInputBottomSheet
-        title={I18n.get('mails-list-newfolder')}
-        inputLabel={I18n.get('mails-list-newfolderlabel')}
-        inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
-        onError={onErrorCreateFolder}
-        onSend={onCreateFolderAction}
-        disabledAction={(isSubfolder && !idParentFolder) || isLoadingCreateNewFolder}
-        initialInputValue="">
-        {folders.length > 0 ? (
-          <>
-            <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
-            <View style={styles.selectFolderTitle}>
-              <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
-              <Toggle checked={isSubfolder} onChange={onToggleSubfolders} />
-            </View>
-            {isSubfolder ? (
-              <GHFlatList
-                data={onlyParentFolders}
-                contentContainerStyle={[stylesFolders.containerFolders]}
-                renderItem={({ item }) => (
+  const renderFolders = React.useCallback(
+    (listProps: Pick<FlatListProps<any>, 'style' | 'contentContainerStyle'>) => {
+      return (
+        <GHFlatList
+          data={folders}
+          {...listProps}
+          ItemSeparatorComponent={FolderSeparator}
+          ListHeaderComponent={
+            <>
+              <View style={styles.defaultFolders}>
+                {Object.keys(mailsDefaultFoldersInfos).map(folder => (
                   <MailsFolderItem
-                    key={item.id}
-                    icon="ui-folder"
-                    name={item.name}
-                    selected={idParentFolder === item.id}
-                    onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
+                    key={folder}
+                    icon={mailsDefaultFoldersInfos[folder].icon}
+                    name={I18n.get(mailsDefaultFoldersInfos[folder].title)}
+                    selected={selectedFolder === folder}
+                    onPress={() => switchFolder(folder as MailsDefaultFolders)}
+                    nbUnread={folderCounts ? folderCounts[folder] : 0}
                   />
-                )}
+                ))}
+              </View>
+              <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.medium} />
+            </>
+          }
+          ListFooterComponent={
+            isServiceMethodAvailable(mailsService.folder.create) ? (
+              <TertiaryButton
+                style={styles.newFolderButton}
+                iconLeft="ui-plus"
+                text={I18n.get('mails-list-newfolder')}
+                action={() => setTypeModal(MailsListTypeModal.CREATE)}
               />
-            ) : null}
-          </>
-        ) : null}
-      </MailsInputBottomSheet>
-    );
-  }, [
-    folders,
-    onErrorCreateFolder,
-    isLoadingCreateNewFolder,
-    isSubfolder,
-    idParentFolder,
-    onCreateFolderAction,
-    onToggleSubfolders,
-  ]);
+            ) : null
+          }
+          renderItem={({ item }) => (
+            <MailsFolderItem
+              key={item.id}
+              icon="ui-folder"
+              name={item.name}
+              selected={typeof selectedFolder === 'object' && selectedFolder.id === item.id}
+              onPress={() => switchFolder({ id: item.id, name: item.name })}
+              nbUnread={item.nbUnread}
+              depth={item.depth}
+            />
+          )}
+        />
+      );
+    },
+    [folders, selectedFolder, switchFolder, folderCounts],
+  );
 
-  const renderRenameFolder = React.useCallback(() => {
-    return (
-      <MailsInputBottomSheet
-        title={I18n.get('mails-list-rename')}
-        inputLabel={I18n.get('mails-list-renamefolderlabel')}
-        inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
-        onError={onErrorCreateFolder}
-        onSend={onRenameFolderAction}
-        disabledAction={isLoadingCreateNewFolder}
-        initialInputValue={(selectedFolder as MailsFolderInfo).name ?? ''}
-      />
-    );
-  }, [selectedFolder, onRenameFolderAction, isLoadingCreateNewFolder, onErrorCreateFolder]);
+  const renderCreateNewFolder = React.useCallback(
+    (listProps: Pick<FlatListProps<any>, 'style' | 'contentContainerStyle'>) => {
+      const onlyParentFolders = folders.filter(folder => folder.depth === 1);
+      return (
+        <MailsInputBottomSheet
+          title={I18n.get('mails-list-newfolder')}
+          inputLabel={I18n.get('mails-list-newfolderlabel')}
+          inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
+          onError={onErrorCreateFolder}
+          onSend={onCreateFolderAction}
+          disabledAction={(isSubfolder && !idParentFolder) || isLoadingCreateNewFolder}
+          initialInputValue=""
+          {...listProps}>
+          {folders.length > 0 ? (
+            <>
+              <Separator marginVertical={UI_SIZES.spacing.medium} marginHorizontal={UI_SIZES.spacing.small} />
+              <View style={styles.selectFolderTitle}>
+                <BodyText>{I18n.get('mails-list-newfoldersubtitle')}</BodyText>
+                <Toggle checked={isSubfolder} onChange={onToggleSubfolders} />
+              </View>
+              {isSubfolder ? (
+                <GHFlatList
+                  data={onlyParentFolders}
+                  contentContainerStyle={[stylesFolders.containerFolders]}
+                  renderItem={({ item }) => (
+                    <MailsFolderItem
+                      key={item.id}
+                      icon="ui-folder"
+                      name={item.name}
+                      selected={idParentFolder === item.id}
+                      onPress={() => (idParentFolder !== item.id ? setIdParentFolder(item.id) : {})}
+                    />
+                  )}
+                />
+              ) : null}
+            </>
+          ) : null}
+        </MailsInputBottomSheet>
+      );
+    },
+    [folders, onErrorCreateFolder, isLoadingCreateNewFolder, isSubfolder, idParentFolder, onCreateFolderAction, onToggleSubfolders],
+  );
 
-  const renderMove = React.useCallback(() => {
-    return (
-      <MailsMoveBottomSheet
-        onMove={folderId => onActionMultiple(() => onMove(selectedMails, folderId))}
-        folders={folders}
-        mailFolderId={selectedFolder.id ?? null}
-        onPressCreateFolderButton={() => setTypeModal(MailsListTypeModal.CREATE)}
-      />
-    );
-  }, [folders, selectedFolder, onActionMultiple, onMove, selectedMails]);
+  const renderRenameFolder = React.useCallback(
+    (listProps: Pick<FlatListProps<any>, 'style' | 'contentContainerStyle'>) => {
+      return (
+        <MailsInputBottomSheet
+          title={I18n.get('mails-list-rename')}
+          inputLabel={I18n.get('mails-list-renamefolderlabel')}
+          inputPlaceholder={I18n.get('mails-list-newfolderplaceholder')}
+          onError={onErrorCreateFolder}
+          onSend={onRenameFolderAction}
+          disabledAction={isLoadingCreateNewFolder}
+          initialInputValue={(selectedFolder as MailsFolderInfo).name ?? ''}
+          {...listProps}
+        />
+      );
+    },
+    [selectedFolder, onRenameFolderAction, isLoadingCreateNewFolder, onErrorCreateFolder],
+  );
 
-  const renderContentBottomSheet = React.useCallback(() => {
-    switch (typeModal) {
-      case MailsListTypeModal.CREATE:
-        return renderCreateNewFolder();
-      case MailsListTypeModal.RENAME:
-        return renderRenameFolder();
-      case MailsListTypeModal.MOVE:
-        return renderMove();
-      default:
-        return renderFolders();
-    }
-  }, [typeModal, renderCreateNewFolder, renderRenameFolder, renderMove, renderFolders]);
+  const renderMove = React.useCallback(
+    (listProps: Pick<FlatListProps<any>, 'style' | 'contentContainerStyle'>) => {
+      return (
+        <MailsMoveBottomSheet
+          onMove={folderId => onActionMultiple(() => onMove(selectedMails, folderId))}
+          folders={folders}
+          mailFolderId={selectedFolder.id ?? null}
+          onPressCreateFolderButton={() => setTypeModal(MailsListTypeModal.CREATE)}
+          {...listProps}
+        />
+      );
+    },
+    [folders, selectedFolder, onActionMultiple, onMove, selectedMails],
+  );
+
+  const renderContentBottomSheet = React.useCallback(
+    (listProps: Pick<FlatListProps<any>, 'style' | 'contentContainerStyle'>) => {
+      switch (typeModal) {
+        case MailsListTypeModal.CREATE:
+          return renderCreateNewFolder(listProps);
+        case MailsListTypeModal.RENAME:
+          return renderRenameFolder(listProps);
+        case MailsListTypeModal.MOVE:
+          return renderMove(listProps);
+        default:
+          return renderFolders(listProps);
+      }
+    },
+    [typeModal, renderCreateNewFolder, renderRenameFolder, renderMove, renderFolders],
+  );
+
+  const headerHeight = useHeaderHeight();
 
   const renderBottomSheetFolders = React.useCallback(() => {
+    const maxHeight = UI_SIZES.screen.height - headerHeight - bottomSheetTopMargin;
     return (
       <BottomSheetModal
         ref={bottomSheetModalRef}
-        onDismiss={onDismissBottomSheet}
-        snapPoints={['90%']}
-        maxDynamicContentSize={(Dimensions.get('window').height - UI_SIZES.elements.navbarHeight) * 0.9}
-        enableDynamicSizing={typeModal ? false : true}
-        containerStyle={styles.bottomSheet}>
-        {renderContentBottomSheet()}
+        onDismiss={onBottomSheetDismissed}
+        enablePanDownToClose
+        enableDynamicSizing
+        maxDynamicContentSize={maxHeight}
+        gutters={false}
+        includeSafeArea={false}
+        snapPoints={[maxHeight]}>
+        <View style={{ maxHeight: maxHeight - 24 - bottom }}>
+          {renderContentBottomSheet({
+            contentContainerStyle: { marginHorizontal: UI_SIZES.spacing.medium, paddingBottom: bottom },
+            style: UI_STYLES.flexShrink1,
+          })}
+        </View>
       </BottomSheetModal>
     );
-  }, [onDismissBottomSheet, typeModal, renderContentBottomSheet]);
+  }, [bottom, headerHeight, onBottomSheetDismissed, renderContentBottomSheet]);
 
   const renderEmpty = React.useCallback(() => {
     let svgImage = 'empty-conversation';
@@ -1075,28 +1085,30 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderContent = React.useCallback(
     (refreshControl: ScrollViewProps['refreshControl']) => (
-      <PageView style={styles.page}>
+      <>
         {renderTopMode()}
         {isLoading ? (
           renderPlaceholder()
         ) : (
-          <FlatList
-            ref={flatListRef}
-            data={mails}
-            renderItem={mail => renderMailPreview(mail.item)}
-            ListFooterComponent={renderFooter}
-            ListEmptyComponent={renderEmpty()}
-            refreshControl={refreshControl}
-            onEndReached={loadNextMails}
-            keyExtractor={item => `item#${item.id}`}
-            onEndReachedThreshold={0.5}
-            getItemLayout={(_, index) => getItemLayout(index)}
-            disableVirtualization={Platform.OS === 'android'}
-          />
+          <>
+            <FlatList
+              ref={flatListRef}
+              data={mails}
+              renderItem={mail => renderMailPreview(mail.item)}
+              ListFooterComponent={renderFooter}
+              ListEmptyComponent={renderEmpty()}
+              refreshControl={refreshControl}
+              onEndReached={loadNextMails}
+              keyExtractor={item => `item#${item.id}`}
+              onEndReachedThreshold={0.5}
+              getItemLayout={(_, index) => getItemLayout(index)}
+              disableVirtualization={Platform.OS === 'android'}
+            />
+          </>
         )}
         {renderBottomMode()}
         {renderBottomSheetFolders()}
-      </PageView>
+      </>
     ),
     [
       isLoading,
@@ -1119,3 +1131,5 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 export default connect(() => ({
   session: getSession(),
 }))(MailsListScreen);
+
+const FolderSeparator = () => <View style={styles.spacingFolder} />;

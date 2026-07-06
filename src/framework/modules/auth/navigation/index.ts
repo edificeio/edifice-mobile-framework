@@ -12,9 +12,9 @@ import type { AuthAccountSelectionScreenNavParams } from '~/framework/modules/au
 import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/main-account/add-account-modal';
 import { AuthLoginRedirectScreenNavParams } from '~/framework/modules/auth/screens/main-account/login-redirect';
 import type { AuthLoginWayfScreenNavParams } from '~/framework/modules/auth/screens/main-account/login-wayf';
-import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
 import type { AuthPlatformsScreenNavParams } from '~/framework/modules/auth/screens/main-account/platforms';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
+import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/onboarding';
 import type { ActivationScreenNavParams } from '~/framework/modules/auth/templates/activation';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import type { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
@@ -22,7 +22,10 @@ import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/t
 import type { StackNavigationAction } from '~/framework/navigation/types';
 import type { Platform } from '~/framework/util/appConf';
 
-// We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
+/**
+ * We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
+ * @deprecated use new module system
+ */
 export const authRouteNames = {
   accounts: `${moduleConfig.name}/accounts` as 'accounts',
 

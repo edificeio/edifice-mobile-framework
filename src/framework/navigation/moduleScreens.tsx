@@ -7,6 +7,9 @@ import type { ParamListBase } from '@react-navigation/native';
 
 import { getTypedRootStack, TypedNativeStackNavigator } from './navigators';
 
+/**
+ * @deprecated use new module system instead
+ */
 export class ModuleScreens {
   static $items: { [key: string]: React.ReactNode } = {};
 

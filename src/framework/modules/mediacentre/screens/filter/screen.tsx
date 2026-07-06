@@ -10,7 +10,7 @@ import CheckboxButton from '~/framework/components/buttons/checkbox';
 import FlatList from '~/framework/components/list/flat-list';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { ResourceFilter } from '~/framework/modules/mediacentre/model';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';

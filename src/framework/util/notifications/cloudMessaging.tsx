@@ -2,79 +2,90 @@
  * CloudMessgaging
  * All tools to manage push-notifications opening
  */
-import React, { PropsWithChildren, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 
-import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import messaging, { RemoteMessage } from '@react-native-firebase/messaging';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import { navigationRef } from '~/app/navigation';
+import { useNavigationRedirectionDispatch } from '~/app/navigation/use-confirm-remove';
+import { IGlobalState } from '~/app/store';
+import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 
 import { defaultNotificationActionStack, handleNotificationAction } from './routing';
 
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 
-import { IGlobalState } from '~/app/store';
-import { accountIsActive } from '~/framework/modules/auth/model';
-import * as selectors from '~/framework/modules/auth/redux/selectors';
-import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
+const CloudMessagingContext = React.createContext<() => void>(() => {});
 
-function AppPushNotificationHandlerComponentUnconnected(
-  props: PropsWithChildren<{
-    isLoggedIn: boolean;
-    dispatch: ThunkDispatch<any, any, any>;
-  }>,
-) {
-  const [notification, setNotification] = useState<FirebaseMessagingTypes.RemoteMessage | undefined>(undefined);
+export function CloudMessagingProvider({ children }: PropsWithChildren) {
+  const [remoteMessage, setRemoteMessage] = useState<RemoteMessage | null>(null);
+  const isInitialRef = React.useRef(true);
+  const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, Action>>();
+  const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
+  const navDispatch = useNavigationRedirectionDispatch(isInitialRef.current ? navigation : navigationRef);
 
-  useEffect(() => {
-    // Assume a message-notification contains a "type" property in the data payload of the screen to open
-
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      setNotification(remoteMessage);
-    });
-
+  React.useEffect(() => {
     // Check whether an initial notification is available
     messaging()
       .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          setNotification(remoteMessage);
-        }
+      .then(message => {
+        setRemoteMessage(message);
       });
+
+    // Listen to notification opening
+    const unsubscribe = messaging().onNotificationOpenedApp(message => {
+      setRemoteMessage(message);
+      isInitialRef.current = false;
+    });
+
+    // Clear listener
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
-  const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
-  const { dispatch, isLoggedIn } = props;
-  useEffect(() => {
-    if (notification && isLoggedIn) {
-      if (notification.data) {
-        const notificationData = {
-          ...notification.data,
-          params: notification.data.params && JSON.parse(notification.data.params),
-        } as IEntcoreTimelineNotification;
-        const n = notificationAdapter(notificationData);
+  const handleNotification = React.useCallback(() => {
+    try {
+      if (!remoteMessage || !remoteMessage.data) return;
 
-        dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
-        dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Push Notification', true));
-        setNotification(undefined);
-      }
+      // 1. Parse remoteMessage data
+      const notificationData = {
+        ...remoteMessage.data,
+        params:
+          remoteMessage.data.params &&
+          (typeof remoteMessage.data.params === 'string' ? JSON.parse(remoteMessage.data.params) : remoteMessage.data.params),
+      } as IEntcoreTimelineNotification;
+      const notification = notificationAdapter(notificationData);
+
+      // 2. Handle notification
+      dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
+      dispatch(
+        handleNotificationAction(
+          notification,
+          defaultNotificationActionStack,
+          isInitialRef.current ? navigation : navigationRef,
+          navDispatch,
+          'Push Notification',
+          true,
+        ),
+      );
+      setRemoteMessage(null);
+    } catch {
+      // ToDo: error in handling parsing notification
     }
-  }, [dispatch, isLoggedIn, navigation, notification]);
+  }, [dispatch, navDispatch, navigation, remoteMessage]);
 
-  return <>{props.children}</>;
+  return <CloudMessagingContext.Provider value={handleNotification}>{children}</CloudMessagingContext.Provider>;
 }
 
-const mapStateToProps = (s: IGlobalState) => {
-  return {
-    isLoggedIn: accountIsActive(selectors.session(s)),
-  };
-};
-
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>) => ({
-  dispatch,
-});
-
-export const AppPushNotificationHandlerComponent = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AppPushNotificationHandlerComponentUnconnected);
+export function CloudMessagingNavigationHandler() {
+  const handleNotification = React.useContext(CloudMessagingContext);
+  React.useEffect(() => {
+    handleNotification();
+  }, [handleNotification]);
+  return null;
+}

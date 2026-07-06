@@ -1,8 +1,5 @@
 import { CommonActions } from '@react-navigation/native';
 
-import homeworkDiarySelected from './actions/selectedDiary';
-import { homeworkRouteNames } from './navigation';
-
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
@@ -12,8 +9,11 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
+import homeworkDiarySelected from './actions/selectedDiary';
+import { homeworkRouteNames } from './navigation';
+
 const homeworkNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, navDispatch) => async (dispatch, getState) => {
     try {
       const notif = getAsResourceUriNotification(notification);
       if (!notif) return { managed: 0 };
@@ -35,7 +35,7 @@ const homeworkNotificationAction: NotifHandlerThunkAction =
         },
       });
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation, navDispatch);
 
       return {
         managed: 1,
@@ -50,7 +50,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['SHARE', 'ENTRIES.MODIFIED'],
-      notifHandlerAction: homeworkNotificationAction,
-      type: 'HOMEWORKS',
+      'notifHandlerAction': homeworkNotificationAction,
+      'type': 'HOMEWORKS',
     },
   ]);

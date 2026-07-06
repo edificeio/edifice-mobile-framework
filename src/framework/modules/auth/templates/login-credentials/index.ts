@@ -1,6 +1,5 @@
-import LoginCredentialsScreen from './screen';
-import type { LoginCredentialsScreenNavParams, LoginCredentialsScreenProps } from './types';
+import AuthLoginCredentialsScreenTemplate from './screen';
 
-export default LoginCredentialsScreen;
-export * from './screen';
-export { LoginCredentialsScreenNavParams, LoginCredentialsScreenProps };
+export type { AuthLoginCredentialsScreenProps } from './types';
+
+export default AuthLoginCredentialsScreenTemplate;

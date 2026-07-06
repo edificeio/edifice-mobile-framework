@@ -3,12 +3,12 @@ import { View } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 
-import styles from './styles';
-
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import { HeadingSText } from '~/framework/components/text';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import appConf from '~/framework/util/appConf';
+
+import styles from './styles';
 
 export function DebugOptions() {
   const navigation = useNavigation();

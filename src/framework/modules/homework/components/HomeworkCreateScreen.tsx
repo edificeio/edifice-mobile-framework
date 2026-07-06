@@ -12,7 +12,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
 import TextInput from '~/framework/components/inputs/text';
-import { KeyboardPageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import { defaultSelectedDate } from '~/framework/components/pickers/day/component';
 import Toast from '~/framework/components/toast';
@@ -23,13 +22,13 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { today } from '~/framework/util/date';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { uppercaseFirstLetter } from '~/framework/util/string';
-import { ConnectionTrackerState } from '~/infra/reducers/connectionTracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
+import { KeyboardAwareScrollView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import { TextSizeStyle } from '~/framework/components/text';
 
 export interface HomeworkCreateScreenDataProps {
   diaryId?: string;
-  connectionTrackerState: ConnectionTrackerState;
 }
 
 export interface HomeworkCreateScreenEventProps {
@@ -127,26 +126,13 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
 
   async createEntry() {
     try {
-      const {
-        connectionTrackerState,
-        diaryId,
-        handleCreateDiaryEntry,
-        handleGetHomeworkTasks,
-        handleUploadEntryImages,
-        navigation,
-        route,
-      } = this.props;
+      const { diaryId, handleCreateDiaryEntry, handleGetHomeworkTasks, handleUploadEntryImages, navigation, route } = this.props;
       const { date, description, images, subject } = this.state;
 
       this.setState({ isCreatingEntry: true });
 
       if (!diaryId) {
         throw new Error('No diary id');
-      }
-
-      if (!connectionTrackerState?.connected) {
-        Toast.showError(I18n.get('homework-create-error-offline'));
-        throw new Error('Offline');
       }
 
       // Upload images (if added)
@@ -184,6 +170,8 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     }
   }
 
+  scrollViewRef = React.createRef<KeyboardAwareScrollViewRef>();
+
   render() {
     const { date, description, images, isCreatingEntry, subject } = this.state;
     const isDefaultDateSelected = date?.isSame(defaultSelectedDate);
@@ -194,61 +182,63 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     return (
       <>
         <PreventBack showAlert={isEditing && !isCreatingEntry} />
-        <KeyboardPageView style={styles.page}>
-          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollView}>
-            <InputContainer
-              label={{ icon: 'ui-calendarLight', text: I18n.get('homework-create-date-title') }}
-              input={
-                <DayPicker onDateChange={selectedDate => this.setState({ date: selectedDate })} style={styles.dayPickerContainer} />
-              }
-            />
-            <InputContainer
-              style={styles.inputContainer}
-              label={{ icon: 'ui-book', text: I18n.get('homework-create-subject-title') }}
-              input={
-                <TextInput
-                  placeholder={I18n.get('homework-create-subject-placeholder')}
-                  onChangeText={text => this.setState({ subject: text })}
-                  value={subject}
-                  maxLength={64}
-                  returnKeyType="next"
-                  onSubmitEditing={() => descriptionFieldRef?.current?.focus()}
-                  blurOnSubmit={false}
-                />
-              }
-            />
-            <InputContainer
-              style={styles.inputContainer}
-              label={{ icon: 'ui-text-page', text: I18n.get('homework-create-description-title') }}
-              input={
-                <MultilineTextInput
-                  ref={descriptionFieldRef}
-                  placeholder={I18n.get('homework-create-description-placeholder')}
-                  numberOfLines={4}
-                  onChangeText={text => this.setState({ description: text })}
-                  value={description}
-                />
-              }
-            />
-            <View style={styles.inputContainer}>
-              <AttachmentPicker
-                onlyImages
-                pickerInfo={{ modulename: moduleConfig.name, useCase: 'attachments' }}
-                notifierId={uppercaseFirstLetter(moduleConfig.name)}
-                onAttachmentAdded={img => this.setState(prevState => ({ images: [...prevState.images, ...img] }))}
-                onAttachmentRemoved={selectedImages => this.setState({ images: selectedImages })}
-                attachments={attachments}
+        <KeyboardAwareScrollView
+          ref={this.scrollViewRef}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollView}
+          bottomOffset={4 * TextSizeStyle.Small.lineHeight}>
+          <InputContainer
+            label={{ icon: 'ui-calendarLight', text: I18n.get('homework-create-date-title') }}
+            input={
+              <DayPicker onDateChange={selectedDate => this.setState({ date: selectedDate })} style={styles.dayPickerContainer} />
+            }
+          />
+          <InputContainer
+            style={styles.inputContainer}
+            label={{ icon: 'ui-book', text: I18n.get('homework-create-subject-title') }}
+            input={
+              <TextInput
+                placeholder={I18n.get('homework-create-subject-placeholder')}
+                onChangeText={text => this.setState({ subject: text })}
+                value={subject}
+                maxLength={64}
+                returnKeyType="next"
+                onSubmitEditing={() => descriptionFieldRef?.current?.focus()}
+                blurOnSubmit={false}
               />
-            </View>
-            <PrimaryButton
-              text={I18n.get('homework-create-addhomework')}
-              action={this.verifyDate}
-              disabled={isRequiredFieldEmpty}
-              loading={isCreatingEntry}
-              style={styles.button}
+            }
+          />
+          <InputContainer
+            style={styles.inputContainer}
+            label={{ icon: 'ui-text-page', text: I18n.get('homework-create-description-title') }}
+            input={
+              <MultilineTextInput
+                ref={descriptionFieldRef}
+                placeholder={I18n.get('homework-create-description-placeholder')}
+                numberOfLines={4}
+                onChangeText={text => this.setState({ description: text })}
+                value={description}
+              />
+            }
+          />
+          <View style={styles.inputContainer}>
+            <AttachmentPicker
+              onlyImages
+              pickerInfo={{ modulename: moduleConfig.name, useCase: 'attachments' }}
+              notifierId={uppercaseFirstLetter(moduleConfig.name)}
+              onAttachmentAdded={img => this.setState(prevState => ({ images: [...prevState.images, ...img] }))}
+              onAttachmentRemoved={selectedImages => this.setState({ images: selectedImages })}
+              attachments={attachments}
             />
-          </ScrollView>
-        </KeyboardPageView>
+          </View>
+          <PrimaryButton
+            text={I18n.get('homework-create-addhomework')}
+            action={this.verifyDate}
+            disabled={isRequiredFieldEmpty}
+            loading={isCreatingEntry}
+            style={styles.button}
+          />
+        </KeyboardAwareScrollView>
       </>
     );
   }

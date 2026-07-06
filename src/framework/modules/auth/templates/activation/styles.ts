@@ -10,7 +10,7 @@ export default StyleSheet.create({
     marginTop: UI_SIZES.spacing.tiny,
   },
   buttonWrapper: {
-    marginBottom: UI_SIZES.spacing.big,
+    // marginBottom: UI_SIZES.spacing.big,
   },
   cguText: {
     alignItems: 'baseline',
@@ -56,8 +56,6 @@ export default StyleSheet.create({
   },
 
   page: {
-    backgroundColor: theme.palette.grey.white,
-    paddingBottom: -UI_SIZES.elements.tabbarHeight,
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingTop: UI_SIZES.spacing.big,
   },
@@ -68,5 +66,5 @@ export default StyleSheet.create({
   },
 
   pressable: { flexGrow: 1 },
-  safeArea: { backgroundColor: theme.ui.background.card, flex: 1 },
+  safeArea: { flex: 1 },
 });

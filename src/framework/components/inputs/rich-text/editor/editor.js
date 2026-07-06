@@ -2,13 +2,13 @@ import { Platform } from 'react-native';
 
 import RNFS from 'react-native-fs';
 
-import { ui } from './const';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
+
+import { ui } from './const';
 
 const base64Type = {
   FONT: 'fonts',
@@ -700,6 +700,8 @@ function createHTML(options = {}) {
                 var iframes = document.getElementsByTagName('iframe');
                 for (var i = 0; i < iframes.length; i++) {
                     const iframe = iframes[i];
+                    iframe.setAttribute('tabindex', '-1');
+                    iframe.style.pointerEvents = 'none';
                     iframe.style.width = width + 'px';
                     iframe.style.height = width * 10 / 16 + 'px';
                     setTimeout(() => { Actions.UPDATE_HEIGHT(); }, ${ui.insertElementTimeout});
@@ -783,7 +785,7 @@ function createHTML(options = {}) {
                     }
                     if (tagName === 'a') {
                         const contentType = el.getAttribute('data-content-type');
-                        if (contentType === 'application/pdf') {
+                        if (contentType && contentType === 'application/pdf') {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -793,7 +795,7 @@ function createHTML(options = {}) {
                                     type: 'attachment'
                                 });
                             }
-                        } else if (contentType.startsWith('image/')) {
+                        } else if (contentType && contentType.startsWith('image/')) {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -803,7 +805,7 @@ function createHTML(options = {}) {
                                     type: 'image'
                                 });
                             }
-                        } else if (contentType.startsWith('video/')) {
+                        } else if (contentType && contentType.startsWith('video/')) {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -814,7 +816,7 @@ function createHTML(options = {}) {
                                     type: 'video'
                                 });
                             }
-                        } else if (contentType.startsWith('audio/')) {
+                        } else if (contentType && contentType.startsWith('audio/')) {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -824,7 +826,7 @@ function createHTML(options = {}) {
                                     type: 'audio'
                                 });
                             }            
-                        } else {
+                        } else if (contentType) {
                             const href = el.getAttribute('href');
                             if (href) {
                                 medias.push({
@@ -846,7 +848,14 @@ function createHTML(options = {}) {
                    const contentType = links[l].getAttribute('data-content-type');
                     if (contentType !== 'application/pdf') {
                         linksUrls.push(links[l].getAttribute('href'));
-                    }                
+                    }
+                }
+                var iframes = document.getElementsByTagName('iframe');
+                for (var i = 0; i < iframes.length; i++) {
+                    const src = iframes[i].getAttribute('src');
+                    if (src) {
+                        linksUrls.push(src);
+                    }
                 }
                 postAction({type: 'LINKS_URLS', data: linksUrls}, true);
             },
@@ -987,15 +996,22 @@ function createHTML(options = {}) {
                     return false;
                 } else if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     const contentType = ele.getAttribute('data-content-type');
-                    postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('href')}, true);
+                    if (contentType) {
+                        postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('href')}, true);
+                    } else {
+                        postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
+                    }
                     return false;
                 } else if (ele.getAttribute('class') === 'audio-wrapper') {
                     var audioSrc = ele.querySelector('audio').getAttribute('src');
                     postAction({type: 'MEDIA_TOUCHED', data: audioSrc}, true);
                     return false;
-                } else if (ele.nodeName === 'IFRAME' && ele.getAttribute('src')) {
-                    postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('src')}, true);
-                    return false;
+                } else if (ele.classList.contains('iframe-wrapper')) {
+                    const iframe = ele.querySelector('iframe[src]');
+                    if (iframe) {
+                        postAction({ type: 'LINK_TOUCHED', data: iframe.getAttribute('src') }, true);
+                        return false;
+                    }
                 } else if (ele.nodeName === 'IMG' && ele.getAttribute('src') && ele.getAttribute('class') !== 'play-button') {
                     postAction({type: 'MEDIA_TOUCHED', data: ele.getAttribute('src')}, true);
                     return false;

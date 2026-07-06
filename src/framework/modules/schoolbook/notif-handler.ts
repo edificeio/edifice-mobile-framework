@@ -6,10 +6,8 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { schoolbookRouteNames } from './navigation';
-
 import { AccountType } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -19,10 +17,12 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
+import { schoolbookRouteNames } from './navigation';
+
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
 const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       // 1. Get notification data
       const userType = assertSession().user.type;
@@ -46,7 +46,7 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       // 4. Return notif handling result
       return {
@@ -62,7 +62,7 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['PUBLISH', 'WORD-SHARED', 'WORD-RESEND', 'ACKNOWLEDGE', 'RESPONSE', 'MODIFYRESPONSE'],
-      notifHandlerAction: handleSchoolbookNotificationAction,
-      type: 'SCHOOLBOOK',
+      'notifHandlerAction': handleSchoolbookNotificationAction,
+      'type': 'SCHOOLBOOK',
     },
   ]);

@@ -5,7 +5,7 @@ import { ParamListBase } from '@react-navigation/native';
 
 import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
 // eslint-disable-next-line import/order
-import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
+// import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
 import type { MediaPlayerParams } from '~/framework/components/media/player/types';
@@ -35,7 +35,7 @@ export enum ModalsRouteNames {
 
 export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.Pdf]: { title: string; src?: string };
-  [ModalsRouteNames.Carousel]: ICarouselNavParams;
+  // [ModalsRouteNames.Carousel]: ICarouselNavParams;
   [ModalsRouteNames.CarouselMultimedia]: MultimediaCarouselNavParams;
   [ModalsRouteNames.Download]: DownloadModalNavParams;
   [ModalsRouteNames.MediaPlayer]: MediaPlayerParams;

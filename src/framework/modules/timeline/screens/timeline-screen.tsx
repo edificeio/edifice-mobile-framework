@@ -1,29 +1,30 @@
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, StyleSheet, View } from 'react-native';
 
+import { HeaderButton } from '@react-navigation/elements';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackHeaderItem } from '@react-navigation/native-stack';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { ModuleScreenProps } from '~/app/navigation/types';
+import { headerAction, screenOptions } from '~/app/navigation/util';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { SingleAvatar } from '~/framework/components/avatar';
+import { SelfAvatar } from '~/framework/components/avatar/self';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
-import { NavBarActionsGroup } from '~/framework/components/navigation';
-import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { pageGutterSize, PageView } from '~/framework/components/page';
+import { pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import {
   dismissFlashMessageAction,
@@ -35,15 +36,12 @@ import TimelineSpace from '~/framework/modules/timeline/components/space';
 import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
 import { WidgetChip } from '~/framework/modules/timeline/components/widget-chip';
 import moduleConfig from '~/framework/modules/timeline/module-config';
-import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { NotificationsState } from '~/framework/modules/timeline/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';
 import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
-import { navigate } from '~/framework/navigation/helper';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { NavigableModuleArray } from '~/framework/util/moduleTool';
 import {
@@ -63,7 +61,7 @@ import {
 export interface ITimelineScreenDataProps {
   flashMessages: FlashMessagesStateData;
   notifications: NotificationsState;
-  session: AuthActiveAccount;
+  session?: AuthActiveAccount;
 }
 export interface ITimelineScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
@@ -76,9 +74,7 @@ export interface ITimelineScreenEventProps {
     navigation: NavigationProp<ParamListBase>,
   ): Promise<void>;
 }
-export type ITimelineScreenProps = ITimelineScreenDataProps &
-  ITimelineScreenEventProps &
-  NativeStackScreenProps<ITimelineNavigationParams, 'Home'>;
+export type ITimelineScreenProps = ITimelineScreenDataProps & ITimelineScreenEventProps & ModuleScreenProps<'timeline'>;
 
 export enum TimelineLoadingState {
   PRISTINE,
@@ -103,6 +99,8 @@ export interface ITimelineItem {
 const NOTIFICATION_THROTLE_DELAY = 250;
 let notificationOpenThrottle = true;
 
+const styles = StyleSheet.create({ avatarHeaderButton: { marginLeft: 0 } });
+
 // UTILS ==========================================================================================
 
 const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: NotificationsState) => {
@@ -120,16 +118,36 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
   return ret;
 };
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<ITimelineNavigationParams, typeof timelineRouteNames.Home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
+export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) => {
+  return {
+    headerLeft: () => (
+      <HeaderButton
+        style={styles.avatarHeaderButton}
+        testID="timeline-profile-button"
+        onPress={() => navigation.navigate('user')}
+        pressColor="transparent">
+        <View style={{ padding: UI_SIZES.border.small }}>
+          <SelfAvatar size="sm" />
+        </View>
+      </HeaderButton>
+    ),
     title: I18n.get('timeline-appname'),
-    titleTestID: 'timeline-title',
-  }),
+    unstable_headerLeftItems: () => [
+      {
+        element: (
+          <HeaderButton
+            style={styles.avatarHeaderButton}
+            testID="timeline-profile-button"
+            onPress={() => navigation.navigate('user')}>
+            <View style={{ padding: UI_SIZES.border.small }}>
+              <SelfAvatar size="sm" />
+            </View>
+          </HeaderButton>
+        ),
+        type: 'custom',
+      },
+    ],
+  };
 });
 
 // COMPONENT ======================================================================================
@@ -154,7 +172,7 @@ function NotificationItem({
       return undefined;
     },
     // Since notifications are immutable, we can memoize them only by id safely.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [notification.id, doOpenNotification],
   );
   return (
@@ -173,18 +191,20 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     loadingState: TimelineLoadingState.PRISTINE,
   };
 
-  rights = getTimelineWorkflowInformation(this.props.session);
+  rights = this.props.session ? getTimelineWorkflowInformation(this.props.session) : undefined;
 
   // Get available widgets for the current session
   getAvailableWidgets(): NavigableModuleArray {
-    return new NavigableModuleArray(...timelineWidgets.get().filterAvailables(this.props.session));
+    return this.props.session
+      ? new NavigableModuleArray(...timelineWidgets.get().filterAvailables(this.props.session))
+      : new NavigableModuleArray([]);
   }
 
   // RENDER =======================================================================================
 
   render() {
     return (
-      <PageView>
+      <>
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
           <LoadingIndicator />
         ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
@@ -192,7 +212,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         ) : (
           this.renderList()
         )}
-      </PageView>
+      </>
     );
   }
 
@@ -351,6 +371,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   componentDidMount() {
     this.doInit();
+    checkAndShowSplashAds(this.props.session.platform, this.props.session.user.type!);
   }
 
   componentDidUpdate(prevProps: ITimelineScreenProps, _prevState: ITimelineScreenState) {
@@ -362,48 +383,62 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       navigation.setParams({ reloadWithNewSettings: undefined });
     }
 
-    this.props.navigation.setOptions({
-      headerLeft: () => (
-        <NavBarActionsGroup
-          elements={[
-            <TouchableOpacity
-              onPress={() => navigation.navigate(userRouteNames.home)}
-              testID="timeline-profile-button"
-              // Style here is needed to prevent Android autocropping border of avatar
-              style={{ margin: -UI_SIZES.border.small, padding: UI_SIZES.border.small }}>
-              <SingleAvatar size="sm" userId={session?.user.id || ''} />
-            </TouchableOpacity>,
-            <NavBarAction />,
-          ]}
-        />
-      ),
-    });
-
-    const headerRightItems = [
-      <NavBarAction
-        icon="ui-filter"
-        onPress={() => {
-          navigate(timelineRouteNames.Filters);
-        }}
-        testID="timeline-filter-button"
-      />,
-    ];
-
-    const workflows = getTimelineWorkflows(this.props.session);
-    if (workflows.length) {
-      headerRightItems.push(
-        <PopupMenu actions={workflows}>
-          <NavBarAction icon="ui-plus" testID="timeline-add-button" />
-        </PopupMenu>,
-      );
-    }
-
-    if (headerRightItems.length < 2) {
-      headerRightItems.unshift(<NavBarAction />);
-    }
+    const workflows = session ? getTimelineWorkflows(session, navigation) : [];
 
     this.props.navigation.setOptions({
-      headerRight: () => <NavBarActionsGroup elements={headerRightItems} />,
+      headerRight: props => {
+        const ret: React.ReactNode[] = [
+          headerAction(
+            {
+              icon: 'ui-filter',
+              onPress: () => {
+                this.props.navigation.navigate('timeline/filters');
+              },
+              testID: 'timeline-filter-button',
+            },
+            props,
+          ).element,
+        ];
+        if (workflows.length > 0) {
+          const action = headerAction(
+            {
+              icon: 'ui-plus',
+              testID: 'timeline-add-button',
+            },
+            props,
+          );
+          ret.push(<PopupMenu actions={workflows}>{action.element}</PopupMenu>);
+        }
+        return ret;
+      },
+      unstable_headerRightItems: props => {
+        const ret: NativeStackHeaderItem[] = [
+          headerAction(
+            {
+              icon: 'ui-filter',
+              onPress: () => {
+                this.props.navigation.navigate('timeline/filters');
+              },
+              testID: 'timeline-filter-button',
+            },
+            props,
+          ),
+        ];
+        if (workflows.length > 0) {
+          const action = headerAction(
+            {
+              icon: 'ui-plus',
+              testID: 'timeline-add-button',
+            },
+            props,
+          );
+          ret.push({
+            ...action,
+            element: <PopupMenu actions={workflows}>{action.element}</PopupMenu>,
+          });
+        }
+        return ret;
+      },
     });
   }
 
@@ -412,7 +447,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   async doInit() {
     try {
       this.setState({ loadingState: TimelineLoadingState.INIT });
-      checkAndShowSplashAds(this.props.session.platform, this.props.session.user.type!);
       await this.props.handleInitTimeline();
     } finally {
       this.setState({ loadingState: TimelineLoadingState.DONE });
@@ -463,11 +497,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     await this.props.handleDismissFlashMessage(flashMessageId);
   }
 
-  goToFilters() {
-    // this.listRef.current?.recenter();
-    this.props.navigation.navigate(timelineRouteNames.Filters);
-  }
-
   doReportConfirm(notif: ITimelineNotification) {
     return new Promise<boolean>((resolve, reject) => {
       if (!this.rights.notification.report) reject(this.rights.notification.report);
@@ -503,7 +532,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
   const ts = moduleConfig.getState(s);
   const session = getSession();
-  if (session === undefined) throw new Error('TimelineScreen : session not defined');
   return {
     flashMessages: ts.flashMessages.data,
     notifications: ts.notifications,
@@ -536,7 +564,9 @@ const mapDispatchToProps: (
     fallback: NotifHandlerThunkAction,
     navigation: NavigationProp<ParamListBase, keyof ParamListBase, string>,
   ) => {
-    dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Timeline Notification', false));
+    dispatch(
+      handleNotificationAction(n, defaultNotificationActionStack, navigation, navigation.dispatch, 'Timeline Notification', false),
+    );
   },
 });
 

@@ -3,7 +3,7 @@
  */
 import { ThunkAction } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import {
   IDistribution,
   IForm,

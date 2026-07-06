@@ -3,23 +3,20 @@ import { Linking, Platform, TouchableOpacity, View } from 'react-native';
 
 import Clipboard from '@react-native-clipboard/clipboard';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import BottomSheet from 'react-native-bottomsheet';
+// import BottomSheet from 'react-native-bottomsheet';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { ProfilePageProps } from './types';
-
-import { hobbiesItems, renderEmoji } from '.';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import { TerciaryButton } from '~/framework/components/button';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { MenuAction } from '~/framework/components/menus/actions';
+import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/components/text';
@@ -27,7 +24,7 @@ import { TextAvatar } from '~/framework/components/textAvatar';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { assertSession, getSession } from '~/framework/modules/auth/redux/reducer';
 import { MailsDefaultFolders, MailsVisibleType } from '~/framework/modules/mails/model';
 import { mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
@@ -39,11 +36,16 @@ import { getShowMottoMoodRight } from '~/framework/modules/user/rights';
 import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import { userService } from '~/framework/modules/user/service';
 import workspaceService from '~/framework/modules/workspace/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
+
+import styles from './styles';
+import { ProfilePageProps } from './types';
+
+import { hobbiesItems, renderEmoji } from '.';
 
 export const computeNavBar = ({
   navigation,
@@ -81,23 +83,6 @@ const renderTextIcon = ({
       {...(isEmpty(text) ? { textStyle: styles.textEmpty } : null)}
       showArrow={showArrow}
     />
-  );
-};
-
-const showBottomMenu = (actions: MenuAction[]) => {
-  actions.push({ action: () => {}, title: I18n.get('common-cancel') });
-  BottomSheet.showBottomSheetWithOptions(
-    {
-      cancelButtonIndex: actions.length - 1,
-      options: [
-        ...actions.map(action => {
-          return action.title;
-        }),
-      ],
-    },
-    index => {
-      actions[index].action();
-    },
   );
 };
 
@@ -188,7 +173,10 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     ];
 
     const baseParams = {
-      fromFolder: MailsDefaultFolders.INBOX,
+      // Note: fromTimeline make sending just go back to the actuel profile screen.
+      // It is somehow hard to close the modal + switch tab to mail (also not really user-friendly)
+      // fromFolder: MailsDefaultFolders.INBOX,
+      fromTimeline: true,
     };
 
     if (userInfo?.type === AccountType.Student && !isEmpty(family) && session?.user.type !== AccountType.Student) {
@@ -238,9 +226,8 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   React.useEffect(() => {
     navigation.setOptions({
-      headerTitle: navBarTitle(isMyProfile ? I18n.get('user-profile-appname') : I18n.get('user-profile-appname-externe')),
+      title: isMyProfile ? I18n.get('user-profile-appname') : I18n.get('user-profile-appname-externe'),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderUserCard = () => {
@@ -556,6 +543,18 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     );
   };
 
+  const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
+  const [bottomSheetItems, setBottomSheetItems] = React.useState<MenuAction[]>([]);
+
+  const showBottomMenu = React.useCallback((actions: MenuAction[]) => {
+    actions.push({
+      action: () => {},
+      title: I18n.get('common-cancel'),
+    });
+    setBottomSheetItems(actions);
+    bottomSheetRef.current?.present();
+  }, []);
+
   const renderPage = () => {
     return (
       <ScrollView style={styles.page}>
@@ -572,12 +571,31 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   return (
-    <ContentLoader
-      loadContent={init}
-      renderContent={renderPage}
-      renderError={() => <EmptyConnectionScreen />}
-      renderLoading={() => <UserPlaceholderProfile />}
-    />
+    <>
+      <ContentLoader
+        loadContent={init}
+        renderContent={renderPage}
+        renderError={() => <EmptyConnectionScreen />}
+        renderLoading={() => <UserPlaceholderProfile />}
+      />
+      <CustomBottomSheetModal ref={bottomSheetRef}>
+        <View style={styles.bottomSheet}>
+          {bottomSheetItems.map(action => (
+            <TerciaryButton
+              text={action.title}
+              icon={action.icon?.[Platform.OS]}
+              onPress={() => {
+                action.action();
+                bottomSheetRef.current?.dismiss();
+              }}
+              disabled={action.disabled}
+              testID={action.testID ?? 'button'}
+              key={action.title}
+            />
+          ))}
+        </View>
+      </CustomBottomSheetModal>
+    </>
   );
 };
 

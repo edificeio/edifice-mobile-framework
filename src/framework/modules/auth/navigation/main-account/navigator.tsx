@@ -3,8 +3,6 @@
  */
 import * as React from 'react';
 
-import { AuthNavigationParams, authRouteNames } from '..';
-
 import { I18n } from '~/app/i18n';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
@@ -18,9 +16,6 @@ import AuthActivationScreen, {
 import AuthAddAccountModalScreen, {
   computeNavBar as addAccountModalNavBar,
 } from '~/framework/modules/auth/screens/main-account/add-account-modal';
-import AuthChangePasswordScreen, {
-  computeNavBar as changePasswordNavBar,
-} from '~/framework/modules/auth/screens/main-account/change-password';
 import AuthForgotScreen from '~/framework/modules/auth/screens/main-account/forgot';
 import AuthLoginCredentialsScreen, {
   computeNavBar as loginCredentialsNavBar,
@@ -29,15 +24,21 @@ import AuthLoginRedirectScreen, {
   computeNavBar as loginRedirectNavBar,
 } from '~/framework/modules/auth/screens/main-account/login-redirect';
 import AuthLoginWayfScreen, { computeNavBar as loginWayfNavBar } from '~/framework/modules/auth/screens/main-account/login-wayf';
-import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/main-account/onboarding';
 import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/main-account/platforms';
 import AuthWayfScreen, { computeNavBar as wayfNavBar } from '~/framework/modules/auth/screens/main-account/wayf';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
-import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
+import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding';
+import RevalidateTermsScreen from '~/framework/modules/auth/screens/requirement-terms';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 import appConf from '~/framework/util/appConf';
+
+import { AuthNavigationParams, authRouteNames } from '..';
+
+import AuthChangePasswordScreen, {
+  computeNavBar as changePasswordNavBar,
+} from '~/framework/modules/auth/screens/main-account/change-password';
 
 const Stack = getTypedRootStack<AuthNavigationParams>();
 
@@ -65,14 +66,14 @@ export default function () {
         name={authRouteNames.revalidateTerms}
         component={RevalidateTermsScreen}
         options={{
-          headerTitle: navBarTitle(I18n.get('user-revalidateterms-title')),
+          title: I18n.get('user-revalidateterms-title'),
         }}
       />
       <Stack.Screen
         name={authRouteNames.changePassword}
         component={AuthChangePasswordScreen}
         options={{
-          headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
+          title: I18n.get('user-page-editpassword'),
         }}
       />
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
@@ -107,9 +108,7 @@ export default function () {
           name={authRouteNames.forgot}
           component={AuthForgotScreen}
           options={({ route }) => ({
-            headerTitle: navBarTitle(
-              route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
-            ),
+            title: route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
           })}
         />
       </Stack.Group>

@@ -5,9 +5,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import { ForgotScreenEventProps, ForgotScreenLoadingState, ForgotScreenPrivateProps, ForgotScreenStructure } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
@@ -20,13 +17,14 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Svg } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
-import { forgotAction } from '~/framework/modules/auth/actions';
 import { API } from '~/framework/modules/auth/service.ts';
+import { forgotAction } from '~/framework/modules/auth/thunks';
 import { containsKey } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
 
-const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
+import styles from './styles';
+import { ForgotScreenEventProps, ForgotScreenLoadingState, ForgotScreenPrivateProps, ForgotScreenStructure } from './types';
 
 const iconRafterDownComponent = () => <Svg name="ui-rafterDown" fill={theme.palette.grey.black} style={styles.dropDownArrow} />;
 const iconRafterUpComponent = () => <Svg name="ui-rafterUp" fill={theme.palette.grey.black} style={styles.dropDownArrow} />;
@@ -328,7 +326,7 @@ export const ForgotPage: React.FC<ForgotScreenPrivateProps> = props => {
   );
 
   return (
-    <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
+    <KeyboardPageView scrollable safeArea style={styles.page}>
       <View style={styles.infos}>
         {renderPlatform()}
         {renderInstructions()}

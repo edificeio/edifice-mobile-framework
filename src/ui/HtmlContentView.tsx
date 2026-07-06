@@ -10,9 +10,6 @@ import { View, ViewProps } from 'react-native';
 
 import { connect } from 'react-redux';
 
-import { IRemoteAttachment } from './Attachment';
-import { AttachmentGroup } from './AttachmentGroup';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
@@ -20,12 +17,16 @@ import { convertNotificationToFileMedia } from '~/framework/components/carousel-
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
+import { openUrl } from '~/framework/util/linking';
 import { FileMedia } from '~/framework/util/media';
 import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
+
+import { IRemoteAttachment } from './Attachment';
+import { AttachmentGroup } from './AttachmentGroup';
 
 export interface IHtmlContentViewProps extends ViewProps {
   session?: AuthLoggedAccount;
@@ -138,9 +139,16 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
       const fileMedia = convertNotificationToFileMedia(notificationMedia || []);
 
       const createMediaPressHandler = (src: string) => {
+        const pressedMedia = notificationMedia?.find(m => m.src === src || m.src === src.replace('https:', '')); // Detect cases where src starts with '//' (without url scheme)
+        if (pressedMedia?.type === 'iframe') {
+          openUrl(src);
+          return;
+        }
+
         const selectedIndex = fileMedia.findIndex(m => {
           return m.src === src;
         });
+
         openMultimediaCarousel({
           media: fileMedia,
           startIndex: selectedIndex !== -1 ? selectedIndex : 0,

@@ -31,6 +31,4 @@ export const appReadyAction = () => {
   };
 };
 
-Reducers.register('startup', reducer);
-
 export const getState = (state: IGlobalState) => state.startup as StartupState;

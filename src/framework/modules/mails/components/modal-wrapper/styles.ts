@@ -22,6 +22,6 @@ export default StyleSheet.create({
     position: 'relative',
   },
   touchableOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
 });

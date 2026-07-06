@@ -6,7 +6,8 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
-import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
+import { actions as authActions } from '~/framework/modules/auth/redux/actions';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { sessionFetch } from '~/framework/util/transport';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 

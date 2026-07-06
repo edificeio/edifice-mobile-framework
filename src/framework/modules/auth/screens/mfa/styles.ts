@@ -32,7 +32,7 @@ export default StyleSheet.create({
   feedbackContainer: { alignItems: 'center', marginTop: UI_SIZES.spacing.medium },
   imageContainer: { alignSelf: 'center', paddingTop: UI_SIZES.spacing.medium },
   issueText: { textAlign: 'center' },
-  page: { backgroundColor: theme.ui.background.card },
+  page: {},
   resendButton: {
     alignItems: 'center',
     alignSelf: 'center',

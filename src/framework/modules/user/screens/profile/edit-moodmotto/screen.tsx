@@ -1,13 +1,7 @@
 import * as React from 'react';
-// eslint-disable-next-line no-restricted-imports
 import { Alert, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-
-import styles from './styles';
-import type { UserEditMoodMottoScreenProps } from './types';
-
-import { renderMoodPicture } from '.';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -22,6 +16,11 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+
+import styles from './styles';
+import type { UserEditMoodMottoScreenProps } from './types';
+
+import { renderMoodPicture } from '.';
 
 export const computeNavBar = ({
   navigation,
@@ -57,13 +56,17 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
 
       const body = JSON.stringify({ mood, motto: motto?.trim() });
       await userService.person.put(userId, body);
-      navigation.navigate(userRouteNames.profile, {
-        newDescription: description,
-        newDescriptionVisibility: descriptionVisibility,
-        newHobbies: hobbies,
-        newMood: mood,
-        newMotto: motto?.trim(),
-      });
+      navigation.navigate(
+        userRouteNames.profile,
+        {
+          newDescription: description,
+          newDescriptionVisibility: descriptionVisibility,
+          newHobbies: hobbies,
+          newMood: mood,
+          newMotto: motto?.trim(),
+        },
+        { pop: true },
+      );
       Toast.showSuccess(I18n.get('user-profile-toast-editMoodMottoSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));

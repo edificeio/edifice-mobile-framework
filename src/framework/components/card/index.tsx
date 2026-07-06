@@ -65,7 +65,6 @@ const FooterFlexView = styled.View({
   // ...cardPaddingSmall,
 });
 const ContentCardBase = (props: IContentCardPropsBase) => {
-  const CC = props.cardComponent ?? CardWithoutPadding;
   const {
     cardComponent,
     children,
@@ -77,26 +76,32 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
     withoutPadding,
     ...viewProps
   } = props;
-  const HeaderFlexViewWithPadding = styled(HeaderFlexView)(
-    cardPadding,
-    withoutPadding && { paddingHorizontal: 0 },
-    customHeaderStyle,
+  const CC = cardComponent ?? CardWithoutPadding;
+  const HeaderFlexViewWithPadding = React.useMemo(
+    () => styled(HeaderFlexView)(cardPadding, withoutPadding && { paddingHorizontal: 0 }, customHeaderStyle),
+    [customHeaderStyle, withoutPadding],
   );
-  const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
-  const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });
+  const ContentFlexViewWithPadding = React.useMemo(
+    () => styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 }),
+    [withoutPadding],
+  );
+  const FooterFlexViewWithPadding = React.useMemo(
+    () => styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 }),
+    [withoutPadding],
+  );
   return (
     <CC {...viewProps}>
       {header ? (
         <HeaderFlexViewWithPadding>
-          <View style={UI_STYLES.flex1}>{props.header ?? null}</View>
-          <View style={[UI_STYLES.flex0, props.customHeaderIndicatorStyle]}>{props.headerIndicator ?? null}</View>
+          <View style={UI_STYLES.flex1}>{header ?? null}</View>
+          <View style={[UI_STYLES.flex0, customHeaderIndicatorStyle]}>{headerIndicator ?? null}</View>
         </HeaderFlexViewWithPadding>
       ) : null}
-      {props.children ? <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding> : null}
-      {props.footer ? (
+      {children ? <ContentFlexViewWithPadding>{children}</ContentFlexViewWithPadding> : null}
+      {footer ? (
         <>
           <FooterSeparator />
-          <FooterFlexViewWithPadding>{props.footer}</FooterFlexViewWithPadding>
+          <FooterFlexViewWithPadding>{footer}</FooterFlexViewWithPadding>
         </>
       ) : null}
     </CC>
@@ -128,7 +133,7 @@ export const ContentView = (props: IContentCardProps) => {
 /** Pre-configured title for ContentCard */
 export const ContentCardTitle = (props: TextProps) => {
   const { style, ...otherProps } = props;
-  const Comp = styled(BodyText)({ color: theme.palette.primary.regular });
+  const Comp = React.useMemo(() => styled(BodyText)({ color: theme.palette.primary.regular }), []);
   return <Comp numberOfLines={2} ellipsizeMode="tail" {...otherProps} style={style} />;
 };
 
@@ -144,9 +149,10 @@ export interface IContentCardIconProps {
 }
 /** A Header layout for ContentCard */
 export const ContentCardHeader = (props: IContentCardHeaderProps) => {
+  const iconStyle = React.useMemo(() => [UI_STYLES.flex0, { marginRight: UI_SIZES.spacing.small }], []);
   return (
-    <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-      {props.icon ? <View style={[UI_STYLES.flex0, { marginRight: UI_SIZES.spacing.small }]}>{props.icon}</View> : null}
+    <View style={React.useMemo(() => ({ alignItems: 'center', flexDirection: 'row' }), [])}>
+      {props.icon ? <View style={iconStyle}>{props.icon}</View> : null}
       <View style={UI_STYLES.flex1}>
         {props.text ? typeof props.text === 'string' ? <SmallText>{props.text}</SmallText> : props.text : null}
         {props.date ? (
@@ -320,7 +326,6 @@ export function TouchableOverviewCard(props: OverviewCardProps & TouchableOpacit
           height={UI_SIZES.dimensions.width.larger} // width again to ensure it's a square !
           name="ui-rafterRight"
           fill={theme.palette.primary.regular}
-          cached
         />
       }
       {...props}

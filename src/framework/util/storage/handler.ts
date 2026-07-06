@@ -91,8 +91,8 @@ export class StorageHandler {
     return this.storage.contains(key);
   }
 
-  delete(key: StorageKey): void {
-    return this.storage.delete(key);
+  remove(key: StorageKey): void {
+    return this.storage.remove(key);
   }
 
   getBoolean(key: StorageKey): boolean | undefined {

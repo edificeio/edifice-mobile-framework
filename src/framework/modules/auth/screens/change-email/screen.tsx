@@ -1,51 +1,42 @@
 import React, { useCallback, useState } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard, ScrollView as RNScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { RouteProp, useIsFocused } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
-
 import { I18n } from '~/app/i18n';
+import { AllModulesNavigationParams } from '~/app/navigation/types';
+import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { KeyboardPageView } from '~/framework/components/page';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { Picture, Svg } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { logoutAction } from '~/framework/modules/auth/actions';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { emailValidation } from '~/framework/modules/auth/service';
+import { logoutAction } from '~/framework/modules/auth/thunks';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
 
-const getNavBarTitle = (route: RouteProp<AuthNavigationParams, typeof authRouteNames.changeEmail>) =>
+import styles from './styles';
+import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
+
+const getNavBarTitle = (route: RouteProp<AllModulesNavigationParams, 'auth/requirement-verify-email'>) =>
   route.params.navBarTitle || I18n.get('auth-change-email-verify');
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changeEmail>): NativeStackNavigationOptions => {
+export const requirementChangeEmailScreenOptions = screenOptions<'auth/requirement-verify-email'>(({ route }) => {
   return {
-    ...navBarOptions({
-      backButtonTestID: 'email-back',
-      navigation,
-      route,
-      title: getNavBarTitle(route),
-      titleTestID: 'email-title',
-    }),
+    title: getNavBarTitle(route),
   };
-};
+});
 
 const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const { navigation, route, tryLogout } = props;
@@ -92,7 +83,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           }
         }
         await emailValidation.requestCode(session, toVerify);
-        navigation.navigate(authRouteNames.mfa, {
+        navigation.navigate('auth/mfa', {
           email: toVerify,
           isEmailMFA: true,
           modificationType,
@@ -139,69 +130,81 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const onSendEmail = useCallback(() => sendEmail(), [sendEmail]);
   const onRefuseEmailVerification = useCallback(() => refuseEmailVerification(), [refuseEmailVerification]);
 
+  const scrollViewRef = React.useRef<RNScrollView>(null);
+  React.useEffect(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollToEnd();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
-    <KeyboardPageView style={styles.page} scrollable>
-      <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Svg name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
-        </View>
-        <HeadingSText style={styles.title} testID="email-change-title">
-          {texts.title}
-        </HeadingSText>
-        <SmallText style={styles.content} testID="email-change-subtitle">
-          {texts.message}
-        </SmallText>
-        <View style={styles.inputTitleContainer} testID="email-field-label">
-          <Picture
-            type="Svg"
-            name="pictos-mail"
-            fill={theme.palette.grey.black}
-            width={UI_SIZES.dimensions.width.mediumPlus}
-            height={UI_SIZES.dimensions.height.mediumPlus}
+    <KeyboardAvoidingView>
+      <ScrollView ref={scrollViewRef} style={styles.page}>
+        <View style={styles.container}>
+          <View style={styles.imageContainer}>
+            <Svg name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
+          </View>
+          <HeadingSText style={styles.title} testID="email-change-title">
+            {texts.title}
+          </HeadingSText>
+          <SmallText style={styles.content} testID="email-change-subtitle">
+            {texts.message}
+          </SmallText>
+          <View style={styles.inputTitleContainer} testID="email-field-label">
+            <Picture
+              type="Svg"
+              name="pictos-mail"
+              fill={theme.palette.grey.black}
+              width={UI_SIZES.dimensions.width.mediumPlus}
+              height={UI_SIZES.dimensions.height.mediumPlus}
+            />
+            <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
+          </View>
+          <View
+            style={[
+              styles.inputWrapper,
+              { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
+            ]}>
+            <TextInput
+              autoCorrect={false}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholder={I18n.get('auth-change-email-placeholder')}
+              placeholderTextColor={theme.palette.grey.graphite}
+              style={styles.input}
+              value={email}
+              onChangeText={onChangeEmail}
+              returnKeyType="send"
+              {...(!isEmailEmpty ? { onSubmitEditing: onSendEmail } : {})}
+              testID="email-field"
+            />
+          </View>
+          <CaptionItalicText style={styles.errorText} testID="email-field-error">
+            {isEmailStatePristine
+              ? I18n.get('common-space')
+              : emailState === EmailState.EMAIL_ALREADY_VERIFIED
+                ? I18n.get('auth-change-email-error-same')
+                : I18n.get('auth-change-email-error-invalid')}
+          </CaptionItalicText>
+          <PrimaryButton
+            style={styles.sendButton}
+            text={texts.button}
+            disabled={isEmailEmpty}
+            loading={isSendingCode}
+            action={onSendEmail}
+            testID="email-check"
           />
-          <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
+          {isModifyingEmail ? null : (
+            <TouchableOpacity style={styles.logoutButton} onPress={onRefuseEmailVerification}>
+              <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-email-verify-disconnect')}</SmallBoldText>
+            </TouchableOpacity>
+          )}
         </View>
-        <View
-          style={[
-            styles.inputWrapper,
-            { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
-          ]}>
-          <TextInput
-            autoCorrect={false}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder={I18n.get('auth-change-email-placeholder')}
-            placeholderTextColor={theme.palette.grey.graphite}
-            style={styles.input}
-            value={email}
-            onChangeText={onChangeEmail}
-            returnKeyType="send"
-            {...(!isEmailEmpty ? { onSubmitEditing: onSendEmail } : {})}
-            testID="email-field"
-          />
-        </View>
-        <CaptionItalicText style={styles.errorText} testID="email-field-error">
-          {isEmailStatePristine
-            ? I18n.get('common-space')
-            : emailState === EmailState.EMAIL_ALREADY_VERIFIED
-              ? I18n.get('auth-change-email-error-same')
-              : I18n.get('auth-change-email-error-invalid')}
-        </CaptionItalicText>
-        <PrimaryButton
-          style={styles.sendButton}
-          text={texts.button}
-          disabled={isEmailEmpty}
-          loading={isSendingCode}
-          action={onSendEmail}
-          testID="email-check"
-        />
-        {isModifyingEmail ? null : (
-          <TouchableOpacity style={styles.logoutButton} onPress={onRefuseEmailVerification}>
-            <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-email-verify-disconnect')}</SmallBoldText>
-          </TouchableOpacity>
-        )}
-      </View>
-    </KeyboardPageView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {

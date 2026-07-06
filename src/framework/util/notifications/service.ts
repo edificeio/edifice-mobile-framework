@@ -5,7 +5,7 @@ import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { Storage } from '~/framework/util/storage';
 import { accountFetch } from '~/framework/util/transport';
 
@@ -155,7 +155,7 @@ class FirebaseCloudMessagingService {
       }
       await accountFetch(account, `/timeline/pushNotif/fcmToken?fcmToken=${token}`, { method: 'DELETE' });
       console.debug('[FirebaseMessagingService] deleteTokenForAccount - OK -', account.user.displayName, '-', token);
-      storageForAccount.delete('last-known-firebase-token');
+      storageForAccount.remove('last-known-firebase-token');
     } catch (e) {
       /* When the token cannot be unregistered, we should not throw an error, as it is not a blocking operation.
        * Instead, we should log the error and try to unregister the token again later.

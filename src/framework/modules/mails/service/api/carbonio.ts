@@ -1,12 +1,7 @@
-import {
-  carbonioMessageToMailContentBackend,
-  carbonioMessageToMailPreviewBackend,
-  normalizeFromMobileToWeb,
-} from '../adapters/carbonio';
-
 import { getStore } from '~/app/store';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { actions as authActions, getSession } from '~/framework/modules/auth/reducer';
+import { actions as authActions } from '~/framework/modules/auth/redux/actions';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { MailsConversationPayload } from '~/framework/modules/mails/model';
 import {
   mailContentAdapter,
@@ -15,6 +10,12 @@ import {
   mailVisibleAdapter,
 } from '~/framework/modules/mails/service/adapters/mails';
 import { sessionFetch } from '~/framework/util/transport';
+
+import {
+  carbonioMessageToMailContentBackend,
+  carbonioMessageToMailPreviewBackend,
+  normalizeFromMobileToWeb,
+} from '../adapters/carbonio';
 
 // Carbonio SOAP API base URL
 const CARBONIO_SOAP_BASE_URL = 'https://mail.lyceeconnecte.fr/service/soap';

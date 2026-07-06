@@ -18,7 +18,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {

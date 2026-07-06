@@ -8,12 +8,14 @@ import { useSyncRef } from '~/framework/hooks/ref';
 
 export interface FlatListProps<ItemT> extends RNFlatListProps<ItemT> {
   bottomInset?: boolean;
+  enableScrollToTop?: boolean;
 }
 
 const SCROLL_INDICATOR_INSETS = { right: 0.001 };
+const NULL_REF = { current: null };
 
 export default React.forwardRef<RNFlatList, FlatListProps<any>>((props, ref) => {
-  const { bottomInset = true, ListFooterComponent, scrollIndicatorInsets, ...otherProps } = props;
+  const { bottomInset = true, enableScrollToTop = true, ListFooterComponent, scrollIndicatorInsets, ...otherProps } = props;
 
   const realListFooterComponent = React.useMemo(() => {
     const footer =
@@ -33,7 +35,7 @@ export default React.forwardRef<RNFlatList, FlatListProps<any>>((props, ref) => 
 
   const listRef = React.useRef(null);
   const syncRef = useSyncRef(ref, listRef);
-  useScrollToTop(listRef);
+  useScrollToTop(enableScrollToTop ? listRef : NULL_REF);
 
   return (
     <RNFlatList

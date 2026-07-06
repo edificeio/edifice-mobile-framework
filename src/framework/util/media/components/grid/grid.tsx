@@ -1,21 +1,24 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import { NavigationProp } from '@react-navigation/native';
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
-import { MediaItem } from './item';
-import styles from './styles';
-
+import { NavigationRootParams } from '~/app/navigation/types';
 import { UI_SIZES } from '~/framework/components/constants';
 import { AudienceParameter } from '~/framework/modules/audience/types';
 import { Media, openMedia, toURISource } from '~/framework/util/media';
 
+import { MediaItem } from './item';
+import styles from './styles';
+
 export interface MediaGridProps {
   media?: Media[];
   audience?: AudienceParameter;
+  navigation: NavigationProp<NavigationRootParams>;
 }
 
-export function MediaGrid({ audience, media = MediaGrid.EMPTY_MEDIA }: Readonly<MediaGridProps>) {
+export function MediaGrid({ audience, media = MediaGrid.EMPTY_MEDIA, navigation }: Readonly<MediaGridProps>) {
   const isSingle = media.length === 1;
   const [itemHeight, setItemHeight] = React.useState(0);
   const onLayout = React.useCallback<NonNullable<ViewProps['onLayout']>>(({ nativeEvent }) => {
@@ -29,17 +32,17 @@ export function MediaGrid({ audience, media = MediaGrid.EMPTY_MEDIA }: Readonly<
     <View style={styles.grid} onLayout={onLayout}>
       {media.map(
         React.useCallback(
-          item => (
+          (item, index) => (
             <MediaItem
               key={toURISource(item.src).uri}
               media={item}
               style={itemStyle}
               onPress={() => {
-                openMedia(item, audience);
+                openMedia(navigation, media, index, audience);
               }}
             />
           ),
-          [audience, itemStyle],
+          [audience, itemStyle, media, navigation],
         ),
       )}
       {!isSingle && <View style={styles.item} />}

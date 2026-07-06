@@ -6,7 +6,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 export default StyleSheet.create({
   boxButtons: {
     alignItems: 'center',
-    flexGrow: 2,
     justifyContent: 'flex-start',
   },
   boxError: {
@@ -29,8 +28,7 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    padding: UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.big,
   },
   inputCheckbox: {
     alignSelf: 'flex-end',
@@ -47,6 +45,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: UI_SIZES.spacing.large,
+    paddingTop: UI_SIZES.spacing.large,
     width: '100%',
   },
   platformLogo: {

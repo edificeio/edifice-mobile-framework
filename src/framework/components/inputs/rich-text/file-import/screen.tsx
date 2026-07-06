@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { ActivityIndicator, Alert, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, View } from 'react-native';
 
+import { useHeaderHeight } from '@react-navigation/elements';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import styles from './styles';
-import { FileImportScreenProps } from './types';
-
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import IconButton from '~/framework/components/buttons/icon';
@@ -19,13 +18,19 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { FileManager } from '~/framework/util/fileHandler/services/fileManagerService';
 import { FileManagerUsecase } from '~/framework/util/fileHandler/types';
 import { Image } from '~/framework/util/media-deprecated';
+
+import styles from './styles';
+import { FileImportScreenProps } from './types';
+
+/**
+ * ToDo : PLEASE IS THIS SCREEN DEAD CODE ?
+ */
 
 const FILE_IMPORT_DEFAULT_CONFIG: FileManagerUsecase = {
   allow: ['image'],
@@ -33,30 +38,21 @@ const FILE_IMPORT_DEFAULT_CONFIG: FileManagerUsecase = {
   sources: ['camera', 'gallery'],
 };
 
-const headerTitleStyle = {
-  color: theme.palette.grey.darkness.toString(),
-};
-
-export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, route }) => ({
-  presentation: 'modal',
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('import-title'),
-  }),
-  headerStyle: {
-    backgroundColor: theme.ui.background.page.toString(),
-    borderBottomWidth: 0,
-    elevation: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    shadowOpacity: 0,
-    top: 0,
-    zIndex: 100,
+export const computeNavBar = modalScreenOptions('modal', () => ({
+  headerBlurEffect: 'regular',
+  headerStyle:
+    Platform.OS === 'android'
+      ? {
+          backgroundColor: theme.ui.background.card.toString(),
+        }
+      : {},
+  headerTintColor: theme.palette.grey.darkness.toString(),
+  headerTitleStyle: {
+    color: theme.palette.grey.darkness.toString(),
   },
-  headerTitleStyle,
-});
+  headerTransparent: true,
+  title: I18n.get('import-title'),
+}));
 const formatFileForUpload = (lf: LocalFile) =>
   ({
     error: undefined,
@@ -215,10 +211,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
             }
           />
         ),
-      headerTitle:
-        fileCount === 0
-          ? navBarTitle(I18n.get('import-title_zero'), headerTitleStyle)
-          : navBarTitle(I18n.get('import-title_other', { count: fileCount }), headerTitleStyle),
+      title: fileCount === 0 ? I18n.get('import-title_zero') : I18n.get('import-title_other', { count: fileCount }),
     });
   }, [navigation, listReady]);
 
@@ -262,7 +255,6 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         },
       );
     }, 350);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const removeFile = React.useCallback(
@@ -338,16 +330,29 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
     );
   };
 
+  const headerHeight = useHeaderHeight();
+
+  const listStyle = React.useMemo(
+    () => [styles.addFilesResults, { paddingTop: UI_SIZES.spacing.medium + headerHeight }],
+    [headerHeight],
+  );
+  const placeholderStyle = React.useMemo(
+    () => ({
+      paddingTop: UI_SIZES.spacing.medium + headerHeight,
+    }),
+    [headerHeight],
+  );
+
   if (!session) return <EmptyContentScreen />;
 
   return (
     <PageView>
       {!listReady ? (
-        renderPlaceholder()
+        <View style={placeholderStyle}>{renderPlaceholder()}</View>
       ) : (
         <FlatList
           data={filesRef.current}
-          contentContainerStyle={styles.addFilesResults}
+          contentContainerStyle={listStyle}
           ListHeaderComponent={<AlertCard type="info" text={I18n.get('import-order-by-info')} />}
           ListHeaderComponentStyle={styles.infoBubble}
           alwaysBounceVertical={false}

@@ -1,4 +1,4 @@
-import LoginRedirectPage from './screen';
+import AuthLoginRedirectScreenTemplate from './screen';
 
-export default LoginRedirectPage;
+export default AuthLoginRedirectScreenTemplate;
 export * from './types';

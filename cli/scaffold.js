@@ -154,16 +154,16 @@ function notificationsCommandYargs(command, help) {
  * Main script.
  * Parse command args & execute
  */
-const main = () => {
+const main = async () => {
   // eslint-disable-next-line no-unused-expressions, @typescript-eslint/no-unused-expressions
-  require('yargs')
+  require('yargs/yargs')(process.argv.slice(2))
     .showHelpOnFail(true, 'Specify --help for available options')
     .scriptName('scaffold')
     .command(...moduleCommandYargs('module', 'Generates module <module-name> that will be displyed in My Apps screen.'))
     .command(...screenCommandYargs('screen', 'Generates screen <screen-name> in module <module-name>.'))
     .command(...notificationsCommandYargs('notifications', 'Generates notif-handler in module <module-name>.'))
     .help()
-    .demandCommand().argv;
+    .demandCommand().parseAsync();
 };
 
 main();

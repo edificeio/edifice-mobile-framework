@@ -12,6 +12,7 @@ export type PermissionRequirement = SinglePermissionRequirement | Permission[];
 export const ANDROID_10 = 29;
 export const ANDROID_13 = 33;
 export const ANDROID_14 = 34;
+export const ANDROID_15 = 35;
 export const ANDROID_16 = 36;
 
 const isAndroid = Platform.OS === 'android';

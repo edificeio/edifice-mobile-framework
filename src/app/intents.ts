@@ -1,5 +1,6 @@
-import { navigationRef } from '~/framework/navigation/helper';
 import { openUrl } from '~/framework/util/linking';
+
+import { navigationRef } from './navigation';
 
 export type EntAppName =
   | 'appointments'

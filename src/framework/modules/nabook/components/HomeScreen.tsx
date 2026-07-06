@@ -2,8 +2,8 @@ import * as React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { ActivityIndicator, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import FastImage from '@d11/react-native-fast-image';
 import Clipboard from '@react-native-clipboard/clipboard';
-import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { I18n } from '~/app/i18n';

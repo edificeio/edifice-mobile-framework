@@ -7,7 +7,6 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { flatten, unflatten } from 'flat';
 import i18n, { TOptions } from 'i18next';
-import ChainedBackend from 'i18next-chained-backend';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -142,7 +141,7 @@ export namespace I18n {
       i18n.language = (lang as string) ?? fallbackLng;
     }
     moment.locale(momentLocales[i18n.language?.split('-')[0]] ?? momentLocales.default);
-    return i18n.language;
+    return i18n.language as I18n.SupportedLocales;
   }
 
   export const changeLanguage = async (lang: SupportedLocales | 'auto') => {
@@ -189,7 +188,7 @@ export namespace I18n {
     // Initalize language
     await setLanguage();
     // Initialize i18n depending on i18n OTA enabled or not
-    if (appConf.i18nOTAEnabled) {
+    /*if (appConf.i18nOTAEnabled) {
       await i18n
         .use(ChainedBackend)
         .use(initReactI18next)
@@ -198,7 +197,6 @@ export namespace I18n {
             backends: [backendPhrase, backendFallback],
           },
           compatibilityJSON: 'v3',
-          debug: __DEV__,
           fallbackLng,
           interpolation: {
             escapeValue: false,
@@ -206,19 +204,18 @@ export namespace I18n {
           lng: i18n.language,
           returnObjects: true,
         });
-    } else {
-      await i18n.use(initReactI18next).init({
-        compatibilityJSON: 'v3',
-        debug: __DEV__,
-        fallbackLng,
-        interpolation: {
-          escapeValue: false,
-        },
-        lng: i18n.language,
-        resources: localResources,
-        returnObjects: true,
-      });
-    }
+    } else {*/
+    await i18n.use(initReactI18next).init({
+      compatibilityJSON: 'v3',
+      fallbackLng,
+      interpolation: {
+        escapeValue: false,
+      },
+      lng: i18n.language,
+      resources: localResources,
+      returnObjects: true,
+    });
+    //}
     computeLangDisplayNames();
   }
 

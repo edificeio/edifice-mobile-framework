@@ -1,28 +1,30 @@
 import ToastMessage, { ToastShowParams } from 'react-native-toast-message';
 
-import { DEFAULTS } from './component';
-import { ToastOptions } from './types';
-
 import { I18n } from '~/app/i18n';
 import Feedback from '~/framework/util/feedback/feedback';
 
-export { ToastContainer, RootToastContainer } from './component';
+import { DEFAULTS } from './component';
+import { ToastOptions } from './types';
+
+export { ToastContainer } from './component';
 
 function showToastGeneric(type: string, text: string, options: ToastOptions & ToastShowParams = {}) {
-  ToastMessage.show({
-    autoHide: options.autoHide,
-    position: 'top',
-    props: {
-      duration: options.autoHide ? options.visibilityTime : 0,
-      onLabelPress: options.onLabelPress,
-      picture: options.icon,
-      testID: options.testID,
-      toastId: Math.random(),
-    },
-    text1: text,
-    text2: options.label,
-    type,
-    visibilityTime: options.visibilityTime,
+  requestAnimationFrame(() => {
+    ToastMessage.show({
+      autoHide: options.autoHide,
+      position: 'top',
+      props: {
+        duration: options.autoHide ? options.visibilityTime : 0,
+        onLabelPress: options.onLabelPress,
+        picture: options.icon,
+        testID: options.testID,
+        toastId: Math.random(),
+      },
+      text1: text,
+      text2: options.label,
+      type,
+      visibilityTime: options.visibilityTime,
+    });
   });
 }
 

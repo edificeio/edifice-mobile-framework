@@ -21,7 +21,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { updatePushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import {
@@ -126,8 +126,12 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
           onPress={() => {
             this.setState({ loadingState: PushNotifsItemsListLoadingState.UPDATE });
             this.props.handleUpdatePushNotifSettings(this.state.pendingPrefsChanges).then(() => {
-              this.setState({ loadingState: PushNotifsItemsListLoadingState.DONE, pendingPrefsChanges: {} });
-              this.props.navigation.dispatch(CommonActions.goBack());
+              this.setState({
+                arePrefsUnchanged: true,
+                loadingState: PushNotifsItemsListLoadingState.DONE,
+                pendingPrefsChanges: {},
+              });
+              setTimeout(() => this.props.navigation.dispatch(CommonActions.goBack()));
             });
           }}
         />

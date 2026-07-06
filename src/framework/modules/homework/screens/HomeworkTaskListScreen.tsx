@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';
 import HomeworkTaskListScreen, {
   IHomeworkTaskListScreenDataProps,

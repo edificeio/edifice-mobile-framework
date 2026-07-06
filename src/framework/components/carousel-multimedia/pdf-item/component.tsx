@@ -3,11 +3,11 @@ import { useWindowDimensions, View } from 'react-native';
 
 import Pdf from 'react-native-pdf';
 
-import styles from './styles';
-import { PdfItemProps } from './types';
-
 import LoaderItem from '~/framework/components/carousel-multimedia/loader-item/component';
 import { PdfContext } from '~/framework/components/carousel-multimedia/screen';
+
+import styles from './styles';
+import { PdfItemProps } from './types';
 
 const MIN_PDF_SCALE = 1;
 const MAX_PDF_SCALE = 5;
@@ -110,6 +110,7 @@ const PdfItem = ({
         source={source}
         style={styles.flex1}
         trustAllCerts={false}
+        enableDoubleTapZoom
       />
       {!isPdfLoaded && <LoaderItem />}
     </View>

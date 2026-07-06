@@ -1,0 +1,14 @@
+diff --git a/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js b/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
+index 6d0c9e6..fbddd5b 100644
+--- a/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
++++ b/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
+@@ -2,7 +2,8 @@
+ 
+ import { useTheme } from '@react-navigation/native';
+ import * as React from 'react';
+-import { Animated, Easing, Platform, Pressable } from 'react-native';
++import { Animated, Easing, Platform } from 'react-native';
++import { Pressable } from 'react-native-gesture-handler';
+ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+ const ANDROID_VERSION_LOLLIPOP = 21;

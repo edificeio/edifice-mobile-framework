@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import { Action } from 'redux';
@@ -12,12 +13,13 @@ import { sessionScreen } from '~/framework/components/screen';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { createResourceExplorerNavBar } from '~/framework/modules/explorer/templates/resource-explorer/screen';
 import homeworkDiarySelected from '~/framework/modules/homework/actions/selectedDiary';
-import { HomeworkExplorerScreen } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
 import moduleConfig from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { selectors } from '~/framework/modules/homework/reducers';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { Trackers } from '~/framework/util/tracker';
+
+import { HomeworkExplorerScreen } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
 
 // # Props
 
@@ -48,12 +50,14 @@ export default sessionScreen<HomeworkExplorerScreen.AllProps>(({ navigation, rou
     navigation.setOptions(computeNavBar({ navigation, route }));
   }, [navigation, route]);
 
+  const isFocused = useIsFocused();
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
+      if (!isFocused) return;
       dispatch(homeworkDiarySelected(r.resourceEntId));
       navigation.navigate(homeworkRouteNames.homeworkTaskList, {});
     },
-    [dispatch, navigation],
+    [dispatch, isFocused, navigation],
   );
 
   const emptyComponent = React.useMemo(() => {

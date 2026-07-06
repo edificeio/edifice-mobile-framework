@@ -1,9 +1,8 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { loginFederationActionAddFirstAccount } from '~/framework/modules/auth/actions';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { IAuthState } from '~/framework/modules/auth/reducer';
+import { ModuleScreenProps } from '~/app/navigation/types';
+import { AuthState } from '~/framework/modules/auth/redux/types';
+import { loginFederationActionAddFirstAccount } from '~/framework/modules/auth/thunks';
 import { StackNavigationAction } from '~/framework/navigation/types';
 
 export enum WAYFPageMode {
@@ -21,11 +20,10 @@ export interface WAYFScreenDispatchProps {
 }
 
 export interface WAYFScreenStoreProps {
-  auth: IAuthState;
+  auth: AuthState;
 }
 
-export interface IWayfScreenProps
-  extends WAYFScreenDispatchProps, WAYFScreenStoreProps, NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.wayf> {
+export interface IWayfScreenProps extends WAYFScreenDispatchProps, WAYFScreenStoreProps, ModuleScreenProps<'auth/wayf'> {
   dispatch: ThunkDispatch<any, any, any>;
   loginCredentialsNavAction: StackNavigationAction;
 }

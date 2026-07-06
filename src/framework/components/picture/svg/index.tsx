@@ -6,8 +6,8 @@
  * To add an SVG in the app, add its path to the "imports" list below.
  * ToDo: make this list compute automatically.
  */
-import React, { useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Platform, View } from 'react-native';
 
 import type { SvgProps as RNSvgProps } from 'react-native-svg';
 
@@ -101,6 +101,8 @@ const imports = {
   'gepi': async () => import('ASSETS/icons/moduleIcons/gepi.svg'),
   'glpi': async () => import('ASSETS/icons/moduleIcons/glpi.svg'),
   'hiboutheque': async () => import('ASSETS/icons/moduleIcons/hiboutheque.svg'),
+  'home-fill': async () => import('ASSETS/icons/moduleIcons/home-fill.svg'),
+  'home-outline': async () => import('ASSETS/icons/moduleIcons/home-outline.svg'),
   'homework-assistance-home': async () => import('ASSETS/images/homework-assistance-home.svg'),
   'homework1D': async () => import('ASSETS/icons/moduleIcons/homework1D.svg'),
   'homework2D': async () => import('ASSETS/icons/moduleIcons/homework2D.svg'),
@@ -387,7 +389,9 @@ const imports = {
   'workspace': async () => import('ASSETS/icons/moduleIcons/files.svg'),
 };
 
+export type SvgIconName = keyof typeof imports;
 export const svgExists = (name: string): boolean => !!imports[name];
+type ImportedSvgComponent = React.FC<RNSvgProps>;
 
 let importsCache = {};
 
@@ -411,42 +415,52 @@ export const removeFromCache = (name: string) => {
 };
 
 export interface SvgProps extends RNSvgProps {
-  name: string;
-  cached?: boolean;
+  name: SvgIconName;
 }
 
-export const Svg = ({ cached, name, ...rest }: SvgProps): React.JSX.Element | null => {
-  const ImportedSVGRef = useRef<any>(importsCache[name]);
-  const [loading, setLoading] = React.useState(false);
+export const Svg = ({ name, ...rest }: SvgProps) => {
+  const [ImportedSVG, setImportedSvg] = useState<ImportedSvgComponent | undefined>(() => importsCache[name]);
+  const [loading, setLoading] = React.useState(!importsCache[name]);
 
-  // Sync ref with cache when name changes (like in FlashList recycling)
-  if (importsCache[name] && ImportedSVGRef.current !== importsCache[name]) {
-    ImportedSVGRef.current = importsCache[name];
-  }
+  const fallbackStyle = React.useMemo(
+    () => ({ height: Number(rest.height), width: Number(rest.width) }),
+    [rest.width, rest.height],
+  );
 
-  useEffect((): void => {
-    if (!importsCache[name]) {
-      // We use the cached item even if props.cached === false, if it has already been cached in another context.
-      setLoading(true);
-      const importSVG = async (): Promise<void> => {
-        try {
-          if (__DEV__ && !imports[name]) console.error(`[Svg] Icon not found : ${name}`);
-          ImportedSVGRef.current = (await imports[name]()).default;
-          if (cached) {
-            importsCache[name] = ImportedSVGRef.current;
-          }
-        } finally {
-          setLoading(false);
-        }
-      };
-      importSVG();
+  useEffect(() => {
+    let isCurrent = true;
+
+    if (importsCache[name]) {
+      setImportedSvg(() => importsCache[name]);
+      setLoading(false);
+      return;
     }
-  }, [cached, name]);
-  if (!loading && ImportedSVGRef.current) {
-    const { current: ImportedSVG } = ImportedSVGRef;
-    return <ImportedSVG {...rest} />;
-  }
-  return null;
-};
 
-export default Svg;
+    setImportedSvg(undefined);
+    setLoading(true);
+
+    const loadSvg = async () => {
+      try {
+        const importFn = imports[name];
+        if (!importFn) {
+          if (__DEV__) console.error(`[Svg] Icon not found : ${name}`);
+          return;
+        }
+        const imported = (await importFn()).default;
+        importsCache[name] = imported;
+        if (isCurrent) {
+          setImportedSvg(() => imported);
+        }
+      } finally {
+        if (isCurrent) setLoading(false);
+      }
+    };
+    loadSvg();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [name]);
+
+  return !loading && ImportedSVG ? <ImportedSVG {...rest} /> : <View style={fallbackStyle} />;
+};

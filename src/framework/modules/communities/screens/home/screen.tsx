@@ -16,9 +16,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import styles from './styles';
-import type { CommunitiesHomeScreen } from './types';
-
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
@@ -29,6 +26,7 @@ import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { usePrevious } from '~/framework/hooks/previous';
 import { audienceService } from '~/framework/modules/audience/service';
 import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
@@ -54,6 +52,9 @@ import { communitiesActions, communitiesSelectors } from '~/framework/modules/co
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { toURISource } from '~/framework/util/media';
 import { accountApi, sessionApi } from '~/framework/util/transport';
+
+import styles from './styles';
+import type { CommunitiesHomeScreen } from './types';
 
 const ANNOUNCEMENTS_PAGE_SIZE = 20;
 
@@ -138,6 +139,13 @@ export const CommunitiesHomeScreenLoaded = function ({
     image,
     title,
   });
+
+  const previousStatusBar = usePrevious(statusBar);
+  if (previousStatusBar !== statusBar) {
+    navigation.setOptions({
+      statusBarStyle: statusBar,
+    });
+  }
 
   const stickyElements = React.useMemo(
     () => [
@@ -229,7 +237,6 @@ export const CommunitiesHomeScreenLoaded = function ({
 
   return (
     <>
-      {statusBar}
       <DecoratedPaginatedFlatList
         alwaysBounceVertical={false}
         data={announcements}

@@ -1,5 +1,3 @@
-import { InteractionManager } from 'react-native';
-
 import crashlytics from '@react-native-firebase/crashlytics';
 import RNFS from 'react-native-fs';
 import { consoleTransport, fileAsyncTransport, logger } from 'react-native-logs';
@@ -38,11 +36,9 @@ export namespace Log {
       // initialize logger
       log = logger.createLogger({
         async: true,
-        asyncFunc: InteractionManager.runAfterInteractions,
         levels: {
           debug: 0,
           error: 3,
-          fatal: 4,
           info: 1,
           warn: 2,
         },
@@ -51,7 +47,6 @@ export namespace Log {
           colors: {
             debug: 'white',
             error: 'red',
-            fatal: 'redBright',
             info: 'blue',
             warn: 'yellow',
           },

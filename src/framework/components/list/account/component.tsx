@@ -10,7 +10,7 @@ import { AccountListProps } from '~/framework/components/list/account/types';
 import BottomSheetModal from '~/framework/components/modals/bottom-sheet';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { ArrayElement } from '~/utils/types';
 
 const ItemSeparator = () => (

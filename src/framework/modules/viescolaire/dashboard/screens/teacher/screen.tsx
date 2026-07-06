@@ -20,7 +20,7 @@ import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { loadStoredStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import { ModuleButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleButton';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';

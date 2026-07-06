@@ -1,6 +1,8 @@
 import React from 'react';
 import RN from 'react-native';
 
+import { usePrevious } from '~/framework/hooks/previous';
+
 import { ImageFallback } from './fallback';
 import { ImagePlaceholder } from './placeholder';
 import { ImageLoadingState, ImageProps } from './types';
@@ -16,7 +18,6 @@ export const Image = ({
   iconSize,
   onError: _onError,
   onLoad: _onLoad,
-  onLoadStart: _onLoadStart,
   source,
   // ToDo: use thumbnail to inject searchParamns in source
   thumbnail: _thumbnail,
@@ -33,10 +34,7 @@ export const Image = ({
     },
     [_onLoad],
   );
-  const onLoadStart = React.useCallback<NonNullable<ImageProps['onLoadStart']>>(() => {
-    setLoadingState(ImageLoadingState.Loading);
-    _onLoadStart?.();
-  }, [_onLoadStart]);
+
   const onError = React.useCallback<NonNullable<ImageProps['onError']>>(
     e => {
       setLoadingState(ImageLoadingState.Error);
@@ -45,12 +43,17 @@ export const Image = ({
     [_onError],
   );
 
+  const previousSource = usePrevious(source);
+  if (previousSource !== source) {
+    setLoadingState(ImageLoadingState.Loading);
+  }
+
   try {
     if (loadingState === ImageLoadingState.Error) throw loadingState;
     else
       return (
         <>
-          <RN.Image {...props} source={source} onLoad={onLoad} onError={onError} onLoadStart={onLoadStart} />
+          <RN.Image {...props} source={source} onLoad={onLoad} onError={onError} />
           {loadingState === ImageLoadingState.Loading && <ImagePlaceholder {...props} />}
         </>
       );

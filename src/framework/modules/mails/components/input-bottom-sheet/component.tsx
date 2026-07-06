@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
 
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ScrollView } from 'react-native-gesture-handler';
-
-import styles from './styles';
-import { MailsInputBottomSheetProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
+
+import styles from './styles';
+import { MailsInputBottomSheetProps } from './types';
 
 const MailsInputBottomSheet = (props: React.PropsWithChildren<MailsInputBottomSheetProps>) => {
   const [value, setValue] = React.useState<string>(props.initialInputValue ?? '');
@@ -39,7 +40,9 @@ const MailsInputBottomSheet = (props: React.PropsWithChildren<MailsInputBottomSh
       keyboardShouldPersistTaps="always"
       nestedScrollEnabled
       showsVerticalScrollIndicator={false}
-      bounces={false}>
+      bounces={false}
+      style={props.style}
+      contentContainerStyle={props.contentContainerStyle}>
       <View style={styles.scrollViewBottomSheet}>
         <HeaderBottomSheetModal
           title={props.title}
@@ -51,6 +54,7 @@ const MailsInputBottomSheet = (props: React.PropsWithChildren<MailsInputBottomSh
           label={{ icon: 'ui-folder', indicator: LabelIndicator.REQUIRED, text: props.inputLabel }}
           input={
             <TextInput
+              TextInputComponent={BottomSheetTextInput}
               placeholder={props.inputPlaceholder}
               onChangeText={onChangeText}
               value={value}

@@ -3,16 +3,13 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
+import { navigationDispatchMultiple } from '~/app/navigation';
+import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
@@ -25,7 +22,6 @@ import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
-import { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
   accountIsLoggable,
   AccountType,
@@ -36,15 +32,14 @@ import {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getNavActionForAccountSwitch, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
-import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
+import { getNavActionForAccountSwitch } from '~/framework/modules/auth/navigation/main-account/router';
+import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/redux/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { mfaValidation, platformConfig, requirements } from '~/framework/modules/auth/service';
-import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
+import { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/thunks';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { DebugOptions } from '~/framework/modules/debug';
 import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
@@ -55,26 +50,21 @@ import AddAccountButton from '~/framework/modules/user/components/buttons/add-ac
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+import BuildInfo from '~/framework/util/build-info';
 import { toURISource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
 import { useZendesk } from '~/framework/util/zendesk';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('user-profile-myaccount'),
-    titleTestID: 'account-title',
-  }),
+import styles from './styles';
+import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
+
+export const computeNavBar = screenOptions(() => ({
   headerShadowVisible: false,
-});
+  title: I18n.get('user-profile-myaccount'),
+}));
 
 /**
  * Setup a fancy navBar decoration feature
@@ -194,9 +184,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         let needMfa: undefined | boolean;
         if (modificationType !== ModificationType.PASSWORD) needMfa = await fetchMFAValidationInfos();
         const routeNames = {
-          [ModificationType.EMAIL]: authRouteNames.changeEmail,
-          [ModificationType.MOBILE]: authRouteNames.changeMobile,
-          [ModificationType.PASSWORD]: authRouteNames.changePasswordModal,
+          [ModificationType.EMAIL]: 'user/change-email',
+          [ModificationType.MOBILE]: 'user/change-mobile',
+          [ModificationType.PASSWORD]: 'user/change-password',
         };
         let routeName = routeNames[modificationType];
         const params = {
@@ -220,7 +210,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         const routeParams = params[modificationType];
         if (needMfa) {
           (routeParams as AuthMFAScreenNavParams).mfaRedirectionRoute = routeName;
-          routeName = authRouteNames.mfaModal;
+          routeName = 'auth/mfa-modal';
         }
         setCurrentLoadingMenu(undefined);
         if (focusedRef.current) navigation.navigate(routeName, routeParams);
@@ -245,6 +235,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const showWhoAreWe = appConf.whoAreWeEnabled;
 
   const splashads = readSplashadsData();
+
   //
   // Zendesk stuff
   //
@@ -273,7 +264,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       } catch (error) {
         Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
       }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const openHelpCenter = React.useCallback(async () => {
@@ -419,6 +409,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @returns the React Elements of the account button and list
  */
 function useAccountsFeature(
+  navigation: UserHomeScreenPrivateProps['navigation'],
   session: UserHomeScreenPrivateProps['session'],
   accounts: UserHomeScreenPrivateProps['accounts'],
   trySwitch: UserHomeScreenPrivateProps['trySwitch'],
@@ -427,13 +418,12 @@ function useAccountsFeature(
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
   const canManageAccounts = userCanAddAccount(session);
-  const navigation = useNavigation<NavigationProp<UserNavigationParams & AuthNavigationParams>>();
   const showAccountList = React.useCallback(() => {
     trackingAccountEvents.switchAccountPressButton();
     accountListRef.current?.present();
   }, [accountListRef]);
   const addAccount = React.useCallback(() => {
-    navigation.navigate(authRouteNames.addAccountModal, {});
+    navigation.navigate('auth/add-account');
   }, [navigation]);
 
   const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
@@ -607,8 +597,8 @@ useVersionDetailsFeature.buildNumber = DeviceInfo.getBuildNumber();
 useVersionDetailsFeature.deviceModel = DeviceInfo.getModel();
 useVersionDetailsFeature.os = DeviceInfo.getSystemName();
 useVersionDetailsFeature.osVersion = DeviceInfo.getSystemVersion();
-useVersionDetailsFeature.versionType = RNConfigReader.BundleVersionType as string;
-useVersionDetailsFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
+useVersionDetailsFeature.versionType = BuildInfo.BundleVersionType;
+useVersionDetailsFeature.versionOverride = BuildInfo.BundleVersionOverride;
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
 
 /**
@@ -618,7 +608,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const [debugVisible, setDebugVisible] = React.useState<boolean>(false);
-  const { accounts, handleLogout, session, tryRemoveAccount, trySwitch } = props;
+  const { accounts, handleLogout, navigation, session, tryRemoveAccount, trySwitch } = props;
 
   const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
@@ -638,7 +628,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountsButton = useAccountsFeature(session, accounts, trySwitch, tryRemoveAccount);
+  const accountsButton = useAccountsFeature(navigation, session, accounts, trySwitch, tryRemoveAccount);
   const logoutButton = useLogoutFeature(handleLogout);
   const versionDetails = useVersionDetailsFeature(session, debugVisible);
   const versionButton = useVersionFeature(setDebugVisible, scrollViewRef);

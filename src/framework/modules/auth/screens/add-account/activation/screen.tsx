@@ -1,32 +1,23 @@
 import * as React from 'react';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import type { AuthActivationAddAccountScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
-import { activateAccountActionAddAnotherAccount } from '~/framework/modules/auth/actions';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getPlatformContextOf, getPlatformLegalUrlsOf, getValidReactionTypes } from '~/framework/modules/auth/reducer';
+import { screenOptions } from '~/app/navigation/util';
+import { getPlatformContextOf, getPlatformLegalUrlsOf, getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import ActivationScreen from '~/framework/modules/auth/templates/activation';
-import { ActivationScreenDispatchProps } from '~/framework/modules/auth/templates/activation/types';
+import { AuthActivationScreenDispatchProps } from '~/framework/modules/auth/templates/activation/types';
+import { activateAccountActionAddAnotherAccount } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountActivation>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-navigation-activation-title'),
-  }),
-});
+import type { AuthActivationAddAccountScreenPrivateProps } from './types';
+
+export const computeNavBar = screenOptions(() => ({
+  title: I18n.get('auth-navigation-activation-title'),
+}));
 export default connect(
   (state, props: AuthActivationAddAccountScreenPrivateProps) => {
     return {
@@ -36,7 +27,7 @@ export default connect(
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) => {
-    return bindActionCreators<ActivationScreenDispatchProps>(
+    return bindActionCreators<AuthActivationScreenDispatchProps>(
       {
         trySubmit: tryAction(activateAccountActionAddAnotherAccount, {
           track: track.activation,

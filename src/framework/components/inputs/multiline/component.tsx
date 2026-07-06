@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react';
 import { PixelRatio, Platform, TextInput as RNTextInput } from 'react-native';
 
-import styles from './styles';
-import { MultilineTextInputProps } from './types';
-
 import TextInput from '~/framework/components/inputs/text';
 import stylesTextInput, { TEXTINPUT_LINE_HEIGHT } from '~/framework/components/inputs/text/styles';
+
+import styles from './styles';
+import { MultilineTextInputProps } from './types';
 
 const MultilineTextInput = forwardRef<RNTextInput, MultilineTextInputProps>((props: MultilineTextInputProps, ref) => {
   const { numberOfLines } = props;
@@ -18,15 +18,7 @@ const MultilineTextInput = forwardRef<RNTextInput, MultilineTextInputProps>((pro
       stylesTextInput.input.fontSize * TEXTINPUT_LINE_HEIGHT * PixelRatio.getFontScale() * numberOfLines,
   });
 
-  return (
-    <TextInput
-      {...props}
-      scrollEnabled={false}
-      multiline
-      style={[styles.multilineInput, { minHeight: initialHeight }, props.style]}
-      ref={ref}
-    />
-  );
+  return <TextInput {...props} multiline style={[styles.multilineInput, { minHeight: initialHeight }, props.style]} ref={ref} />;
 });
 
 export default MultilineTextInput;

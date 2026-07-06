@@ -1,37 +1,38 @@
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Country, CountryCode, getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-phone-number-input';
+import { EdgeInsets, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import styles from './styles';
-import { ActivationScreenProps, ActivationScreenState, IFields } from './types';
 
 import { I18n } from '~/app/i18n';
 import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Checkbox } from '~/framework/components/checkbox';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import EmailInput from '~/framework/components/inputs/email/';
 import PasswordInput from '~/framework/components/inputs/password';
 import InputPhone from '~/framework/components/inputs/phone/';
-import { KeyboardPageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallActionText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
 import { ActivationFormModel, ValueChangeArgs } from '~/framework/modules/auth/components/ActivationForm';
 import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
+import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/thunks';
 import { Loading } from '~/ui/Loading';
 import { ValidatorBuilder } from '~/utils/form';
 
-const ActivationScreenLoader = (props: ActivationScreenProps) => {
+import styles from './styles';
+import { AuthActivationScreenProps, AuthActivationScreenState, IFields } from './types';
+
+const ActivationScreenLoader = (props: AuthActivationScreenProps) => {
   const { context, legalUrls, route, validReactionTypes } = props;
 
   const platform = route.params.platform;
@@ -46,23 +47,23 @@ const ActivationScreenLoader = (props: ActivationScreenProps) => {
     }
   });
 
+  const insets = useSafeAreaInsets();
+
   if (!platform) return <EmptyConnectionScreen />;
   if (!context || !legalUrls || !validReactionTypes) return <Loading />;
-  else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} />;
+  else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} insets={insets} />;
 };
 
 export default ActivationScreenLoader;
 
-const keyboardPageViewScrollViewProps = { bounces: false, showsVerticalScrollIndicator: false };
-
 export class ActivationScreen extends React.PureComponent<
-  ActivationScreenProps & { context: PlatformAuthContext; legalUrls: LegalUrls },
-  ActivationScreenState
+  AuthActivationScreenProps & { context: PlatformAuthContext; legalUrls: LegalUrls; insets: EdgeInsets },
+  AuthActivationScreenState
 > {
   private mounted = false;
 
   // fully controller component
-  public state: ActivationScreenState = {
+  public state: AuthActivationScreenState = {
     acceptCGU: false,
     activationCode: this.props.route.params.credentials.password,
     activationState: 'IDLE',
@@ -98,7 +99,7 @@ export class ActivationScreen extends React.PureComponent<
 
   private onFieldChange = (key: IFields) => {
     return (valueChange: ValueChangeArgs<string>) => {
-      const newState: Partial<ActivationScreenState> = {
+      const newState: Partial<AuthActivationScreenState> = {
         [key]: valueChange.value,
         typing: true,
       };
@@ -128,7 +129,7 @@ export class ActivationScreen extends React.PureComponent<
   };
 
   private doOpenLegalUrls = (title: string, url?: string) => {
-    openPDFReader({ src: url, title });
+    openPDFReader(this.props.navigation, { src: url, title });
   };
 
   private getIsValidMobileNumberForRegion = (toVerify: string) => {
@@ -208,135 +209,140 @@ export class ActivationScreen extends React.PureComponent<
     );
 
     return (
-      <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
-        <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
-          <View style={styles.infos}>
-            <Svg name="ui-userSearchColor" />
-            <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome')}</HeadingSText>
-            <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-form-infos')}</SmallText>
-          </View>
-          {passwordRules}
-          <InputContainer
-            label={{
-              icon: 'ui-lock',
-              indicator: LabelIndicator.REQUIRED,
-              text: I18n.get('auth-activation-password'),
-            }}
-            input={
-              <PasswordInput
-                annotation={formModel.showPasswordError(password) ? errorText : ''}
-                onChangeText={formModel.password.changeCallback(this.onFieldChange('password'))}
-                placeholder={I18n.get('auth-activation-password-placeholder')}
-                showError={formModel.showPasswordError(password)}
-                showStatusIcon
-                testID="activation-password"
-                testIDToggle="activation-see-password"
-                value={password}
-              />
-            }
-          />
-
-          <InputContainer
-            style={styles.inputContainer}
-            label={{
-              icon: 'ui-lock',
-              indicator: LabelIndicator.REQUIRED,
-              text: I18n.get('auth-activation-password-confirmation'),
-            }}
-            input={
-              <PasswordInput
-                annotation={formModel.showConfirmError(confirmPassword) ? errorText : ''}
-                onChangeText={formModel.confirm.changeCallback(this.onFieldChange('confirmPassword'))}
-                placeholder={I18n.get('auth-activation-password-placeholder')}
-                showError={formModel.showConfirmError(confirmPassword)}
-                showStatusIcon
-                testID="activation-confirmed-password"
-                testIDToggle="activation-see-confirmed-password"
-                value={confirmPassword}
-              />
-            }
-          />
-
-          <InputContainer
-            label={{
-              icon: 'ui-mail',
-              indicator: isEmailRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
-              text: I18n.get('auth-activation-email-address'),
-            }}
-            input={
-              <EmailInput
-                annotation={
-                  isEmailStatePristine || !formModel.showEmailError(mail)
-                    ? I18n.get('common-space')
-                    : I18n.get('auth-activation-email-error-invalid')
-                }
-                onBlur={this.onMailInputBlur}
-                onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
-                placeholder={I18n.get('auth-activation-email-placeholder')}
-                showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
-                showStatusIcon
-                testID="activation-email"
-                value={mail}
-              />
-            }
-          />
-
-          <InputContainer
-            style={styles.phoneInputContainer}
-            label={{
-              icon: 'ui-smartphone',
-              indicator: isPhoneRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
-              text: I18n.get('auth-activation-mobile'),
-            }}
-            input={
-              <InputPhone
-                defaultCode={this.state.phoneCountry}
-                isMobileStateClean={isMobileStateClean}
-                onChangeText={formModel.phone.changeCallback(this.onFieldChange('phone'))}
-                onPhoneInputBlur={this.onPhoneInputBlur}
-                onChangeCountry={this.onSetCountry}
-                phoneNumber={phone}
-                placeholder={I18n.get('auth-activation-mobile-placeholder')}
-                testID="activation-phone"
-                testIDCountryWithCode="phone-new-country"
-              />
-            }
-          />
-          <View style={styles.cguWrapper}>
-            <Checkbox
-              checked={acceptCGU}
-              onPress={this.onCheckBoxPress}
-              customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
-              testID="activation-accept-legal-condition"
-            />
-            <View style={styles.cguText} testID="activation-legal-condition">
-              <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
-              <SmallActionText
-                onPress={() => this.doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}
-                testID="activation-user-charter">
-                {I18n.get('auth-activation-usercharter')}
-              </SmallActionText>
-              <SmallText>{I18n.get('auth-activation-cgu-accept-and')}</SmallText>
-              <SmallActionText
-                onPress={() => this.doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}
-                testID="activation-cgu">
-                {I18n.get('auth-activation-cgu')}
-              </SmallActionText>
+      <KeyboardAwareScrollView
+        style={styles.page}
+        contentContainerStyle={{ paddingBottom: this.props.insets.bottom }}
+        bottomOffset={this.props.insets.bottom + UI_SIZES.spacing.medium}>
+        <Pressable onPress={formModel.blur} style={styles.pressable}>
+          <SafeAreaView edges={['bottom']}>
+            <View style={styles.infos}>
+              <Svg name="ui-userSearchColor" />
+              <HeadingSText style={styles.infosText}>{I18n.get('auth-activation-welcome')}</HeadingSText>
+              <SmallText style={styles.infosSubText}>{I18n.get('auth-activation-form-infos')}</SmallText>
             </View>
-          </View>
-          <SmallText style={styles.errorMsg}>
-            {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
-          </SmallText>
-          <View style={styles.buttonWrapper} testID="activation-activate">
-            <PrimaryButton
-              action={() => this.doActivation()}
-              disabled={isNotValid}
-              text={I18n.get('auth-activation-activate')}
-              loading={isSubmitLoading}
+            {passwordRules}
+            <InputContainer
+              label={{
+                icon: 'ui-lock',
+                indicator: LabelIndicator.REQUIRED,
+                text: I18n.get('auth-activation-password'),
+              }}
+              input={
+                <PasswordInput
+                  annotation={formModel.showPasswordError(password) ? errorText : ''}
+                  onChangeText={formModel.password.changeCallback(this.onFieldChange('password'))}
+                  placeholder={I18n.get('auth-activation-password-placeholder')}
+                  showError={formModel.showPasswordError(password)}
+                  showStatusIcon
+                  testID="activation-password"
+                  testIDToggle="activation-see-password"
+                  value={password}
+                />
+              }
             />
-          </View>
+
+            <InputContainer
+              style={styles.inputContainer}
+              label={{
+                icon: 'ui-lock',
+                indicator: LabelIndicator.REQUIRED,
+                text: I18n.get('auth-activation-password-confirmation'),
+              }}
+              input={
+                <PasswordInput
+                  annotation={formModel.showConfirmError(confirmPassword) ? errorText : ''}
+                  onChangeText={formModel.confirm.changeCallback(this.onFieldChange('confirmPassword'))}
+                  placeholder={I18n.get('auth-activation-password-placeholder')}
+                  showError={formModel.showConfirmError(confirmPassword)}
+                  showStatusIcon
+                  testID="activation-confirmed-password"
+                  testIDToggle="activation-see-confirmed-password"
+                  value={confirmPassword}
+                />
+              }
+            />
+
+            <InputContainer
+              label={{
+                icon: 'ui-mail',
+                indicator: isEmailRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
+                text: I18n.get('auth-activation-email-address'),
+              }}
+              input={
+                <EmailInput
+                  annotation={
+                    isEmailStatePristine || !formModel.showEmailError(mail)
+                      ? I18n.get('common-space')
+                      : I18n.get('auth-activation-email-error-invalid')
+                  }
+                  onBlur={this.onMailInputBlur}
+                  onChangeText={formModel.email.changeCallback(this.onFieldChange('mail'))}
+                  placeholder={I18n.get('auth-activation-email-placeholder')}
+                  showError={isEmailStatePristine ? undefined : formModel.showEmailError(mail)}
+                  showStatusIcon
+                  testID="activation-email"
+                  value={mail}
+                />
+              }
+            />
+
+            <InputContainer
+              style={styles.phoneInputContainer}
+              label={{
+                icon: 'ui-smartphone',
+                indicator: isPhoneRequired ? LabelIndicator.REQUIRED : LabelIndicator.OPTIONAL,
+                text: I18n.get('auth-activation-mobile'),
+              }}
+              input={
+                <InputPhone
+                  defaultCode={this.state.phoneCountry}
+                  isMobileStateClean={isMobileStateClean}
+                  onChangeText={formModel.phone.changeCallback(this.onFieldChange('phone'))}
+                  onPhoneInputBlur={this.onPhoneInputBlur}
+                  onChangeCountry={this.onSetCountry}
+                  phoneNumber={phone}
+                  placeholder={I18n.get('auth-activation-mobile-placeholder')}
+                  testID="activation-phone"
+                  testIDCountryWithCode="phone-new-country"
+                />
+              }
+            />
+            <View style={styles.cguWrapper}>
+              <Checkbox
+                checked={acceptCGU}
+                onPress={this.onCheckBoxPress}
+                customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
+                testID="activation-accept-legal-condition"
+              />
+              <View style={styles.cguText} testID="activation-legal-condition">
+                <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
+                <SmallActionText
+                  onPress={() => this.doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}
+                  testID="activation-user-charter">
+                  {I18n.get('auth-activation-usercharter')}
+                </SmallActionText>
+                <SmallText>{I18n.get('auth-activation-cgu-accept-and')}</SmallText>
+                <SmallActionText
+                  onPress={() => this.doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}
+                  testID="activation-cgu">
+                  {I18n.get('auth-activation-cgu')}
+                </SmallActionText>
+              </View>
+            </View>
+            <SmallText style={styles.errorMsg}>
+              {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
+            </SmallText>
+            <View style={styles.buttonWrapper} testID="activation-activate">
+              <PrimaryButton
+                action={() => this.doActivation()}
+                disabled={isNotValid}
+                text={I18n.get('auth-activation-activate')}
+                loading={isSubmitLoading}
+              />
+            </View>
+          </SafeAreaView>
         </Pressable>
-      </KeyboardPageView>
+      </KeyboardAwareScrollView>
     );
   }
 }

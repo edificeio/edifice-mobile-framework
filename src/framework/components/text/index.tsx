@@ -222,6 +222,10 @@ export const SmallInverseText = styled(SmallText)({
   color: theme.ui.text.inverse,
 });
 
+export const SmallInverseBoldText = styled(SmallBoldText)({
+  color: theme.ui.text.inverse,
+});
+
 export const SmallActionText = styled(SmallText)({
   color: theme.palette.primary.regular,
 });

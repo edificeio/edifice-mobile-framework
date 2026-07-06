@@ -4,9 +4,9 @@ import android.content.Intent
 import android.util.Log
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.module.annotations.ReactModule
 import com.zendesk.logger.Logger
 import zendesk.answerbot.AnswerBot
 import zendesk.answerbot.AnswerBotEngine
@@ -26,410 +26,189 @@ import zendesk.support.request.RequestActivity
 import zendesk.support.requestlist.RequestListActivity
 import java.util.Locale
 
-
+@ReactModule(name = ZendeskUnifiedModule.NAME)
 class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
-  ReactContextBaseJavaModule(reactContext) {
+  NativeZendeskUnifiedSpec(reactContext) {
 
-  private val context = this.reactApplicationContext
+  private val context = reactApplicationContext
 
-  override fun getName(): String {
-    return NAME
-  }
+  override fun getName() = NAME
 
   companion object {
     const val NAME = "ZendeskUnified"
   }
 
   @ReactMethod
-  fun healthCheck(promise: Promise) {
-    try {
-      promise.resolve("Module compiling and working")
-    } catch (error: Exception) {
-      promise.reject("health_check_error", error)
-    }
+  override fun healthCheck(promise: Promise) {
+    promise.resolve("Module compiling and working")
   }
 
   @ReactMethod
-  fun initialize(
-    config: ReadableMap,
-    promise: Promise
-  ) {
-    val appId = config.getString("appId")
-    val clientId = config.getString("clientId")
-    val zendeskUrl = config.getString("zendeskUrl")
+  override fun initialize(config: ReadableMap, promise: Promise) {
+    val appId = config.getString("appId") ?: run { promise.reject("initialize_error", "appId required"); return }
+    val clientId = config.getString("clientId") ?: run { promise.reject("initialize_error", "clientId required"); return }
+    val zendeskUrl = config.getString("zendeskUrl") ?: run { promise.reject("initialize_error", "zendeskUrl required"); return }
     val accountKey = config.getString("accountKey")
-    if (appId == null || clientId == null || zendeskUrl == null) {
-      return
-    }
-    initializeZendesk(appId, clientId, zendeskUrl)
-    if (accountKey != null) {
-      initializeChat(accountKey)
-    }
-    if (BuildConfig.DEBUG) {
-        Logger.setLoggable(true);
-     }
-  }
-
-  @ReactMethod
-  fun setAnonymousIdentity(
-    options: ReadableMap,
-    promise: Promise
-  ) {
-    try {
-      val email = options.getString("email")
-      val name = options.getString("name")
-
-      setAnonymousIdentity(email, name)
-
-      promise.resolve(true)
-    } catch (error: Exception) {
-      promise.reject("set_anonymous_identity_error", error)
-    }
-  }
-
-  @ReactMethod
-  fun setIdentity(
-    jwt: String,
-    promise: Promise
-  ) {
-    try {
-      setIdentity(jwt)
-
-      promise.resolve(true)
-    } catch (error: Exception) {
-      promise.reject("set_identity_error", error)
-    }
-  }
-
-  @ReactMethod
-  fun openHelpCenter(
-    options: ReadableMap,
-    promise: Promise
-  ) {
-    val labels = options.getArray("labels")?.toArrayList()?.toList() as List<String>
-    val groupType = options?.getString("groupType")
-    var groupIds = (options?.getArray("groupIds")?.toArrayList()?.toList() as List<Double>)?.map {it.toLong()}
-    val showContactOptions = options?.getBoolean("showContactOptions")
-
-    if (groupIds == null) groupIds = listOf<Long>()
-
-    openHelpCenter(
-      labels,
-      groupType,
-      groupIds,
-      showContactOptions
-    )
-  }
-
-  @ReactMethod
-  fun openTicket(
-    ticketId: String,
-    promise: Promise
-  ) {
-    openTicket(ticketId)
-  }
-
-  @ReactMethod
-  fun openNewTicket(
-    options: ReadableMap?,
-    promise: Promise
-  ) {
-    val subject = options?.getString("subject")
-    val tags = options?.getArray("tags")
-    val customFields = options?.getMap("customFields")
-
-    val convertedTags: MutableList<String> = mutableListOf()
-    tags?.toArrayList()?.forEach {
-      if (it is String) convertedTags.add(it)
-    }
-
-    val convertedCustomFields: MutableList<CustomField> = mutableListOf()
-    customFields?.toHashMap()?.forEach {
-      if (it.value is String) {
-        convertedCustomFields.add(CustomField(it.key.toLong(), it.value as String))
-      }
-    }
-
-    openNewTicket(subject, convertedTags, convertedCustomFields)
-  }
-
-  @ReactMethod
-  fun listTickets(
-    promise: Promise
-  ) {
-    listTickets()
-  }
-
-  @ReactMethod
-  fun openArticle(
-    articleId: Int,
-    promise: Promise
-  ) {
-    val longArticleId: Long = articleId.toLong()
-    openArticle(longArticleId)
-  }
-
-  @ReactMethod
-  fun setHelpCenterLocaleOverride(
-    locale: String,
-    promise: Promise
-  ) {
-    setHelpCenterLocaleOverride(locale)
-  }
-
-  @ReactMethod
-  fun changeTheme(
-    color: String,
-    promise: Promise
-  ) {
-    Log.d("ZendeskUnifiedLogger", "changeTheme is not supported on Android.")
-  }
-
-  @ReactMethod
-  fun initializeChat(
-    accountKey: String,
-    promise: Promise
-  ) {
-    initializeChat(accountKey)
-  }
-
-  @ReactMethod
-  fun startChat(
-    options: ReadableMap?,
-    promise: Promise
-  ) {
-    val botName = options?.getString("botName")
-    val multilineResponseOptionsEnabled = options?.getBoolean("multilineResponseOptionsEnabled")
-    val agentAvailabilityEnabled = options?.getBoolean("agentAvailabilityEnabled")
-    val transcriptEnabled = options?.getBoolean("transcriptEnabled")
-    val offlineFormsEnabled = options?.getBoolean("offlineFormsEnabled")
-    val preChatFormEnabled = options?.getBoolean("preChatFormEnabled")
-    val preChatFormFieldsStatus = options?.getMap("preChatFormFieldsStatus")
-
-    val convertedPreChatFormFieldsStatus: MutableMap<String, String> = mutableMapOf()
-    preChatFormFieldsStatus?.toHashMap()?.forEach {
-      if (it.value is String) convertedPreChatFormFieldsStatus[it.key] = it.value as String
-    }
-
-    startChat(
-      botName,
-      multilineResponseOptionsEnabled,
-      agentAvailabilityEnabled,
-      transcriptEnabled,
-      offlineFormsEnabled,
-      preChatFormEnabled,
-      convertedPreChatFormFieldsStatus
-    )
-  }
-
-  @ReactMethod
-  fun startAnswerBot(
-    promise: Promise
-  ) {
-    startAnswerBot()
-  }
-
-  private fun initializeZendesk(appId: String, clientId: String, zendeskUrl: String) {
     Zendesk.INSTANCE.init(context, zendeskUrl, appId, clientId)
     Support.INSTANCE.init(Zendesk.INSTANCE)
-    AnswerBot.INSTANCE.init(Zendesk.INSTANCE, Support.INSTANCE);
+    AnswerBot.INSTANCE.init(Zendesk.INSTANCE, Support.INSTANCE)
+    if (accountKey != null) Chat.INSTANCE.init(context, accountKey)
+    if (BuildConfig.DEBUG) Logger.setLoggable(true)
+    promise.resolve(true)
   }
 
-  private fun setAnonymousIdentity(email: String?, name: String?) {
-    val builder = AnonymousIdentity.Builder()
-
-    if (email != null) {
-      builder.withEmailIdentifier(email)
+  @ReactMethod
+  override fun setAnonymousIdentity(options: ReadableMap, promise: Promise) {
+    try {
+      val builder = AnonymousIdentity.Builder()
+      options.getString("email")?.let { builder.withEmailIdentifier(it) }
+      options.getString("name")?.let  { builder.withNameIdentifier(it) }
+      Zendesk.INSTANCE.setIdentity(builder.build())
+      promise.resolve(true)
+    } catch (e: Exception) {
+      promise.reject("set_anonymous_identity_error", e)
     }
-
-    if (name != null) {
-      builder.withNameIdentifier(name)
-    }
-
-    Zendesk.INSTANCE.setIdentity(builder.build())
   }
 
-  private fun setIdentity(jwt: String) {
-    Zendesk.INSTANCE.setIdentity(JwtIdentity(jwt))
+  @ReactMethod
+  override fun setIdentity(jwt: String, promise: Promise) {
+    try {
+      Zendesk.INSTANCE.setIdentity(JwtIdentity(jwt))
+      promise.resolve(true)
+    } catch (e: Exception) {
+      promise.reject("set_identity_error", e)
+    }
   }
 
-  private fun openHelpCenter(labels: List<String>, groupType: String?, groupIds: List<Long>, showContactOptions: Boolean?) {
-    val helpCenterConfig = HelpCenterActivity.builder()
-
-    val articleConfig = ViewArticleActivity.builder()
-
-    if (labels.isNotEmpty()) {
-      helpCenterConfig.withLabelNames(labels)
-    }
-
+  @ReactMethod
+  override fun openHelpCenter(options: ReadableMap, promise: Promise) {
+    @Suppress("UNCHECKED_CAST")
+    val labels = options.getArray("labels")?.toArrayList()?.filterIsInstance<String>() ?: emptyList()
+    val groupType = options.getString("groupType")
+    @Suppress("UNCHECKED_CAST")
+    val groupIds = (options.getArray("groupIds")?.toArrayList()?.filterIsInstance<Double>()) ?.map { it.toLong() } ?: emptyList()
+    val showContact = runCatching { options.getBoolean("showContactOptions") }.getOrNull()
+    val helpCenter  = HelpCenterActivity.builder()
+    val articleView = ViewArticleActivity.builder()
+    if (labels.isNotEmpty()) helpCenter.withLabelNames(labels)
     if (groupType != null && groupIds.isNotEmpty()) {
-      if (groupType == "category") {
-        helpCenterConfig.withArticlesForCategoryIds(groupIds)
-      } else if (groupType == "section") {
-        helpCenterConfig.withArticlesForSectionIds(groupIds)
-      }
+      if (groupType == "category")
+          helpCenter.withArticlesForCategoryIds(groupIds)
+      else
+          helpCenter.withArticlesForSectionIds(groupIds)
     }
-
-    if (showContactOptions != null) {
-      articleConfig.withContactUsButtonVisible(showContactOptions)
-      helpCenterConfig.withContactUsButtonVisible(showContactOptions)
-      helpCenterConfig.withShowConversationsMenuButton(showContactOptions)
+    if (showContact != null) {
+      articleView.withContactUsButtonVisible(showContact)
+      helpCenter.withContactUsButtonVisible(showContact)
+      helpCenter.withShowConversationsMenuButton(showContact)
     }
-
-    val helpCenterActivity = HelpCenterActivity.builder()
-    helpCenterActivity.show(context.currentActivity!!, articleConfig.config(), helpCenterConfig.config())
+    helpCenter.show(context.currentActivity!!, articleView.config(), helpCenter.config())
+    promise.resolve(null)
   }
 
-  private fun openTicket(ticketId: String) {
-    var requestConfig = RequestActivity.builder()
-
-    requestConfig.withRequestId(ticketId)
-
-    val intent: Intent = requestConfig.intent(context)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-    context.startActivity(intent)
+  @ReactMethod
+  override fun openTicket(ticketId: String, promise: Promise) {
+    context.startActivity(
+      RequestActivity.builder().withRequestId(ticketId).intent(context)
+        .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK }
+    )
+    promise.resolve(null)
   }
 
-  private fun openNewTicket(subject: String?, tags: List<String>?, customFields: List<CustomField>?) {
-    var requestConfig = RequestActivity.builder()
-
-    if (subject != null) {
-      requestConfig.withRequestSubject(subject)
+  @ReactMethod
+  override fun openNewTicket(options: ReadableMap, promise: Promise) {
+    val subject = options.getString("subject")
+    val tags = mutableListOf<String>().also { list ->
+      options.getArray("tags")?.toArrayList()?.forEach { if (it is String) list.add(it) }
     }
-
-    if (tags != null && tags.isNotEmpty()) {
-      requestConfig.withTags(tags)
-    }
-
-    if (customFields != null && customFields.isNotEmpty()) {
-      requestConfig.withCustomFields(customFields)
-    }
-
-    val intent: Intent = requestConfig.intent(context)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    context.startActivity(intent)
+    val builder = RequestActivity.builder()
+    if (subject != null) builder.withRequestSubject(subject)
+    if (tags.isNotEmpty()) builder.withTags(tags)
+    context.startActivity(builder.intent(context).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
+    promise.resolve(null)
   }
 
-  private fun listTickets() {
-    var requestListConfig = RequestListActivity.builder()
-
-    val intent: Intent = requestListConfig.intent(context)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-    context.startActivity(intent)
+  @ReactMethod
+  override fun listTickets(promise: Promise) {
+    context.startActivity(
+      RequestListActivity.builder().intent(context)
+        .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK }
+    )
+    promise.resolve(null)
   }
 
-  private fun openArticle(articleId: Long) {
-    var viewArticleConfig = ViewArticleActivity.builder(articleId)
-
-    val intent: Intent = viewArticleConfig.intent(context)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-    context.startActivity(intent)
+  @ReactMethod
+  override fun openArticle(articleId: String, promise: Promise) {
+    context.startActivity(
+      ViewArticleActivity.builder(articleId.toLong()).intent(context)
+        .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK }
+    )
+    promise.resolve(null)
   }
 
-  private fun setHelpCenterLocaleOverride(locale: String) {
-    val userLocale = Locale(locale)
-
-    Support.INSTANCE.setHelpCenterLocaleOverride(userLocale)
+  @ReactMethod
+  override fun setHelpCenterLocaleOverride(locale: String, promise: Promise) {
+    Support.INSTANCE.setHelpCenterLocaleOverride(Locale(locale))
+    promise.resolve(null)
   }
 
-  // Chat functions
-  private fun initializeChat(accountKey: String) {
+  @ReactMethod
+  override fun changeTheme(color: String, promise: Promise) {
+    Log.d("ZendeskUnifiedLogger", "changeTheme is not supported on Android.")
+    promise.resolve(null)
+  }
+
+  @ReactMethod
+  override fun initializeChat(accountKey: String, promise: Promise) {
     Chat.INSTANCE.init(context, accountKey)
+    promise.resolve(null)
   }
 
-  private fun startChat(
-    botName: String?,
-    multilineResponseOptionsEnabled: Boolean?,
-    agentAvailabilityEnabled: Boolean?,
-    transcriptEnabled: Boolean?,
-    offlineFormsEnabled: Boolean?,
-    preChatFormEnabled: Boolean?,
-    preChatFormOptions: Map<String, String>?
-    ) {
-    val messagingConfiguration = MessagingActivity.builder()
+  @ReactMethod
+  override fun startChat(options: ReadableMap, promise: Promise) {
+    val botName = options.getString("botName")
+    val multilineResponseOptionsEnabled = runCatching { options.getBoolean("multilineResponseOptionsEnabled") }.getOrNull()
+    val agentAvailabilityEnabled = runCatching { options.getBoolean("agentAvailabilityEnabled") }.getOrNull()
+    val transcriptEnabled = runCatching { options.getBoolean("transcriptEnabled") }.getOrNull()
+    val offlineFormsEnabled = runCatching { options.getBoolean("offlineFormsEnabled") }.getOrNull()
+    val preChatFormEnabled = runCatching { options.getBoolean("preChatFormEnabled") }.getOrNull()
+    val preChatFormFieldsStatus = mutableMapOf<String, String>().also { map ->
+      options.getMap("preChatFormFieldsStatus")?.toHashMap()?.forEach { (k, v) ->
+        if (v is String) map[k] = v
+      }
+    }
+    val messaging = MessagingActivity.builder()
     val chatEngine = ChatEngine.engine()
-    val chatConfiguration = ChatConfiguration.builder()
-
-    if (botName != null) {
-      messagingConfiguration.withBotLabelString(botName)
-    }
-
-    if (multilineResponseOptionsEnabled != null) {
-      messagingConfiguration.withMultilineResponseOptionsEnabled(multilineResponseOptionsEnabled)
-    }
-
-    if (agentAvailabilityEnabled != null) {
-      chatConfiguration.withAgentAvailabilityEnabled(agentAvailabilityEnabled)
-    }
-
-    if (transcriptEnabled != null) {
-      chatConfiguration.withTranscriptEnabled(transcriptEnabled)
-    }
-
-    if (offlineFormsEnabled != null) {
-      chatConfiguration.withOfflineFormEnabled(offlineFormsEnabled)
-    }
-
-    if (preChatFormEnabled != null) {
-      chatConfiguration.withPreChatFormEnabled(preChatFormEnabled)
-    }
-
-    if (preChatFormOptions != null) {
-      if (preChatFormOptions.containsKey("nameFieldStatus")) {
-        chatConfiguration.withNameFieldStatus(
-          getPreChatFormFieldStatus(preChatFormOptions["nameFieldStatus"]!!)
-        )
-      }
-
-      if (preChatFormOptions.containsKey("emailFieldStatus")) {
-        chatConfiguration.withEmailFieldStatus(
-          getPreChatFormFieldStatus(preChatFormOptions["emailFieldStatus"]!!)
-        )
-      }
-
-      if (preChatFormOptions.containsKey("phoneFieldStatus")) {
-        chatConfiguration.withPhoneFieldStatus(
-          getPreChatFormFieldStatus(preChatFormOptions["phoneFieldStatus"]!!)
-        )
-      }
-
-      if (preChatFormOptions.containsKey("departmentFieldStatus")) {
-        chatConfiguration.withDepartmentFieldStatus(
-          getPreChatFormFieldStatus(preChatFormOptions["departmentFieldStatus"]!!)
-        )
-      }
-    }
-
-    val intent: Intent = messagingConfiguration
-      .withEngines(chatEngine)
-      .intent(context, chatConfiguration.build())
-
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-    context.startActivity(intent)
+    val chatConfig = ChatConfiguration.builder()
+    if (botName != null) messaging.withBotLabelString(botName)
+    if (multilineResponseOptionsEnabled != null) messaging.withMultilineResponseOptionsEnabled(multilineResponseOptionsEnabled)
+    if (agentAvailabilityEnabled != null) chatConfig.withAgentAvailabilityEnabled(agentAvailabilityEnabled)
+    if (transcriptEnabled != null) chatConfig.withTranscriptEnabled(transcriptEnabled)
+    if (offlineFormsEnabled != null) chatConfig.withOfflineFormEnabled(offlineFormsEnabled)
+    if (preChatFormEnabled != null) chatConfig.withPreChatFormEnabled(preChatFormEnabled)
+    preChatFormFieldsStatus["nameFieldStatus"]?.let { chatConfig.withNameFieldStatus(preChatFormFieldStatus(it)) }
+    preChatFormFieldsStatus["emailFieldStatus"]?.let { chatConfig.withEmailFieldStatus(preChatFormFieldStatus(it)) }
+    preChatFormFieldsStatus["phoneFieldStatus"]?.let { chatConfig.withPhoneFieldStatus(preChatFormFieldStatus(it)) }
+    preChatFormFieldsStatus["departmentFieldStatus"]?.let { chatConfig.withDepartmentFieldStatus(preChatFormFieldStatus(it)) }
+    context.startActivity(
+      messaging.withEngines(chatEngine).intent(context, chatConfig.build())
+        .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK }
+    )
+    promise.resolve(null)
   }
 
-  private fun getPreChatFormFieldStatus(status: String): PreChatFormFieldStatus {
-    return when (status) {
-      "required" -> PreChatFormFieldStatus.REQUIRED
-      "optional" -> PreChatFormFieldStatus.OPTIONAL
-      "hidden" -> PreChatFormFieldStatus.HIDDEN
-      else -> PreChatFormFieldStatus.HIDDEN
-    }
+  @ReactMethod
+  override fun startAnswerBot(promise: Promise) {
+    context.startActivity(
+      MessagingActivity.builder().withEngines(AnswerBotEngine.engine()).intent(context)
+        .apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK }
+    )
+    promise.resolve(null)
   }
 
-  private fun startAnswerBot() {
-    val answerBotEngine = AnswerBotEngine.engine()
-    val messagingConfiguration = MessagingActivity.builder()
-
-    messagingConfiguration.withEngines(answerBotEngine)
-
-    val intent: Intent = messagingConfiguration.intent(context)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-    context.startActivity(intent)
+  private fun preChatFormFieldStatus(status: String): PreChatFormFieldStatus = when (status) {
+    "required" -> PreChatFormFieldStatus.REQUIRED
+    "optional" -> PreChatFormFieldStatus.OPTIONAL
+    else       -> PreChatFormFieldStatus.HIDDEN
   }
 }

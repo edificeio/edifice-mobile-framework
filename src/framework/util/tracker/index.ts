@@ -1,11 +1,13 @@
-import CookieManager from '@react-native-cookies/cookies';
+import CookieManager from '@preeternal/react-native-cookie-manager';
 //import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
-import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 
+import { EntModule } from '~/app/module';
+import { Modules } from '~/app/module/all';
 import AllModules from '~/app/modules';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
+import BuildInfo from '~/framework/util/build-info';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';
 
@@ -196,7 +198,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
 
   private static defaultPayload = {
     appName: DeviceInfo.getBundleId(),
-    appVersion: `${DeviceInfo.getVersion()}-${RNConfigReader.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
+    appVersion: `${DeviceInfo.getVersion()}-${BuildInfo.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
     deviceName: DeviceInfo.getModel(),
     osName: DeviceInfo.getSystemName(),
     osVersion: DeviceInfo.getSystemVersion(),
@@ -215,6 +217,11 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
           ConcreteEntcoreTracker.moduleAccessMap[config.name] = config.entcoreTrackingName;
         }
       });
+    Modules.getAllOfType(EntModule).forEach(module => {
+      if (module.entTrackingName) {
+        ConcreteEntcoreTracker.moduleAccessMap[module.name] = module.entTrackingName;
+      }
+    });
   }
 
   async sendReportQueue() {
@@ -243,6 +250,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
 
   async _trackView(path: string[]) {
     const session = getSession();
+    const sessionId = session?.tokens?.access?.value;
     const platform = session?.platform;
     const moduleAccessMap = ConcreteEntcoreTracker.moduleAccessMap;
     const moduleName = (
@@ -253,11 +261,16 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       const module = moduleAccessMap[moduleName];
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
-          body: JSON.stringify({ ...ConcreteEntcoreTracker.defaultPayload, module, platformName: session?.platform?.displayName }),
+          body: JSON.stringify({
+            ...ConcreteEntcoreTracker.defaultPayload,
+            module,
+            platformName: session?.platform?.displayName,
+            sessionId: sessionId,
+          }),
           method: 'POST',
         }),
       );
-      console.debug(`[EntcoreTracker] Report queued: ${module}`);
+      console.debug(`[EntcoreTracker] Report queued: ${module} for sessionId ${sessionId}`);
       this.lastModulename = moduleName;
     }
     this.sendReportQueue();

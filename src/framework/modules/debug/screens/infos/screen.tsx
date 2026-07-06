@@ -1,16 +1,16 @@
 import * as React from 'react';
 
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 
 import styles from './styles';
 
 import { PageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import BuildInfo from '~/framework/util/build-info';
 
 export function infosNavBar({
   navigation,
@@ -28,11 +28,11 @@ export function infosNavBar({
 export function InfosScreen() {
   const infos = {
     buildNumber: DeviceInfo.getBuildNumber(),
-    buildType: RNConfigReader.BundleVersionType,
+    buildType: BuildInfo.BundleVersionType,
     deviceModel: DeviceInfo.getModel(),
     os: DeviceInfo.getSystemName(),
     osVersion: DeviceInfo.getSystemVersion(),
-    override: RNConfigReader.BundleVersionOverride,
+    override: BuildInfo.BundleVersionOverride,
     version: DeviceInfo.getVersion(),
   };
   const session = getSession();

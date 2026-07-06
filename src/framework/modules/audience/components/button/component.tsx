@@ -1,29 +1,32 @@
 import * as React from 'react';
-import { Animated, Modal, PanResponder, TouchableOpacity, View } from 'react-native';
+import { Animated, Modal, PanResponder, Platform, TouchableOpacity, View } from 'react-native';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
-
-import styles from './styles';
-import { AudienceReactButtonAllProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText } from '~/framework/components/text';
-import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
+import { getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import Feedback from '~/framework/util/feedback/feedback';
+
+import styles from './styles';
+import { AudienceReactButtonAllProps } from './types';
 
 const REACTION_ICON_SIZE = 30;
 const HEIGHT_VIEW_REACTIONS = REACTION_ICON_SIZE + styles.reactionsIcon.paddingVertical * 2 + styles.reactions.borderWidth * 2;
 const WIDTH_ONE_REACTION = REACTION_ICON_SIZE + styles.reactionsIcon.paddingHorizontal * 2;
 const WIDTH_VIEW_REACTIONS = WIDTH_ONE_REACTION * 4 + styles.reactions.borderWidth * 2;
+const isAndroid = Platform.OS === 'android';
 
 const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const { userReaction } = props;
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [itemSelected, setItemSelected] = React.useState<null | string>(null);
   const [longPressTimeout, setLongPressTimeout] = React.useState(null);
+  const topInset = useSafeAreaInsets().top;
 
   let component = React.useRef(null);
   const [cPageX, setPageX] = React.useState<number>(0);
@@ -222,7 +225,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     onPanResponderMove: (evt, gestureState) => {
       if (
         gestureState.moveY >= cPageY &&
-        gestureState.moveY <= cPageY + HEIGHT_VIEW_REACTIONS &&
+        gestureState.moveY <= cPageY + HEIGHT_VIEW_REACTIONS + (isAndroid ? topInset : 0) &&
         gestureState.moveX >= cPageX &&
         gestureState.moveX <= cPageX + WIDTH_VIEW_REACTIONS
       ) {
@@ -252,7 +255,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     if (isOpen) return;
     component.measure((x, y, width, height, pageX, pageY) => {
       setPageX(pageX);
-      setPageY(pageY - HEIGHT_VIEW_REACTIONS);
+      setPageY(pageY - (HEIGHT_VIEW_REACTIONS + (isAndroid ? topInset : 0)));
     });
     const timerLongTouch = setTimeout(() => {
       openReactions();

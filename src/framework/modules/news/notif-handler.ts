@@ -7,8 +7,6 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { newsRouteNames } from './navigation';
-
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceIdNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -18,10 +16,12 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
+import { newsRouteNames } from './navigation';
+
 export interface INewsNotification extends ITimelineNotification, IResourceIdNotification {}
 
 const handleNewsPostNotificationAction: NotifHandlerThunkAction<INewsNotification> =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       const navAction = CommonActions.navigate({
         name: computeTabRouteName(timelineModuleConfig.routeName),
@@ -32,7 +32,7 @@ const handleNewsPostNotificationAction: NotifHandlerThunkAction<INewsNotificatio
         },
       });
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       return {
         managed: 1,
@@ -44,7 +44,7 @@ const handleNewsPostNotificationAction: NotifHandlerThunkAction<INewsNotificatio
   };
 
 const handleNewsThreadNotificationAction: NotifHandlerThunkAction<INewsNotification> =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       const navAction = CommonActions.navigate({
         name: computeTabRouteName(timelineModuleConfig.routeName),
@@ -54,7 +54,7 @@ const handleNewsThreadNotificationAction: NotifHandlerThunkAction<INewsNotificat
         },
       });
 
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       return {
         managed: 1,

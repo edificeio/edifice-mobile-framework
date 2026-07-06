@@ -3,11 +3,6 @@ import { Keyboard, ListRenderItem, Pressable, View } from 'react-native';
 
 import Animated from 'react-native-reanimated';
 
-import { MY_APPS_FILTERS, MyAppsFilterItem } from './filter-config';
-import { styles } from './styles';
-import { MyAppsFilterItemFilter, MyAppsFiltersProps } from './types';
-import { useAnimatedSearchStyles } from './useAnimatedSearchStyles';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import FlatList from '~/framework/components/list/flat-list';
@@ -17,6 +12,11 @@ import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { SmallActionText } from '~/framework/components/text';
 import { MyAppsFilterCell } from '~/framework/modules/myapps/components';
 import { MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
+
+import { MY_APPS_FILTERS, MyAppsFilterItem } from './filter-config';
+import { styles } from './styles';
+import { MyAppsFilterItemFilter, MyAppsFiltersProps } from './types';
+import { useAnimatedSearchStyles } from './useAnimatedSearchStyles';
 
 export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersProps) => {
   const searchQuery = selectedFilter.type === MyAppsFilterTypes.Search ? selectedFilter.value : '';
@@ -163,6 +163,7 @@ export const MyAppsFilters = ({ onFilterChange, selectedFilter }: MyAppsFiltersP
     <FlatList
       ref={listRef}
       horizontal
+      enableScrollToTop={false}
       data={MY_APPS_FILTERS}
       keyExtractor={keyExtractor}
       showsHorizontalScrollIndicator={false}

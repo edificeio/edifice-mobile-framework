@@ -2,14 +2,11 @@ import * as React from 'react';
 import { Alert, Platform, RefreshControl, View } from 'react-native';
 
 import { HeaderBackButton } from '@react-navigation/elements';
-import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import styles from './styles';
-import { IWorkspaceFileListScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -27,7 +24,7 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import SwipeableList from '~/framework/components/swipeableList';
 import { BodyBoldText } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   copyWorkspaceFilesAction,
   deleteWorkspaceFilesAction,
@@ -46,10 +43,13 @@ import WorkspaceModal, { WorkspaceModalType } from '~/framework/modules/workspac
 import moduleConfig from '~/framework/modules/workspace/module-config';
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+
+import styles from './styles';
+import { IWorkspaceFileListScreenProps } from './types';
 
 const emptyTextsFolder = {
   [Filter.OWNER]: {
@@ -144,7 +144,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
   const openModal = (type: WorkspaceModalType) => {
@@ -366,7 +365,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
             labelVisible={false}
             style={{ marginLeft: -UI_SIZES.spacing.minor }}
             tintColor={tintColor}
-            onPress={() => props.navigation.dispatch(CommonActions.goBack())}
+            onPress={props.navigation.goBack}
+            pressColor="transparent"
           />
           {isSelectionActive ? <BodyBoldText style={styles.navBarCountText}>{selectedFiles.length}</BodyBoldText> : null}
         </>
@@ -511,10 +511,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
-  UNSTABLE_usePreventRemove(isSelectionActive, () => setSelectedFiles([]));
+  usePreventRemove(isSelectionActive, () => setSelectedFiles([]));
 
   props.navigation.setOptions({
-    headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace-filelist-title')),
+    title: props.route.params.title ?? I18n.get('workspace-filelist-title'),
   });
 
   return <PageView>{renderPage()}</PageView>;

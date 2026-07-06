@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
+import { NavigationProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Pdf, { PdfProps } from 'react-native-pdf';
 
+import { NavigationRootParams } from '~/app/navigation/types';
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { toURISource } from '~/framework/util/media';
+import { MediaType, toURISource } from '~/framework/util/media';
 import { accountURISource } from '~/framework/util/transport';
 
 export interface PDFReaderState {
@@ -81,6 +83,17 @@ export class PDFReader extends React.PureComponent<
   }
 }
 
-export function openPDFReader(navParams: IModalsNavigationParams[ModalsRouteNames.Pdf]) {
-  navigate(ModalsRouteNames.Pdf, navParams);
+/**
+ * @deprecated use the new multimedia carousel directly instead.
+ * @param navParams
+ */
+export function openPDFReader(
+  navigation: NavigationProp<NavigationRootParams>,
+  navParams: IModalsNavigationParams[ModalsRouteNames.Pdf],
+) {
+  navigation.navigate('media/carousel', {
+    media: [{ mime: 'application/pdf', src: navParams.src, type: MediaType.ATTACHMENT }],
+    title: navParams.title,
+  });
+  // navigation.navigate(ModalsRouteNames.Pdf, navParams);
 }

@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import { getFlattenedChildren, ILoggedUser } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/widgets/carnet-de-board/module-config';
 import { actions as carnetDeBordAsyncActions } from '~/framework/modules/widgets/carnet-de-board/reducer/carnet-de-bord';
 import carnetDeBordService from '~/framework/modules/widgets/carnet-de-board/service/carnet-de-bord';

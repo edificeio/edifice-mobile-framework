@@ -2,15 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, Keyboard, Platform, RefreshControl, View } from 'react-native';
 
 import { HeaderBackButton } from '@react-navigation/elements';
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import styles from './styles';
-import { NewsDetailsHeaderProps, NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -26,12 +22,12 @@ import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction } from '~/framework/components/navigation';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { KeyboardPageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import { AudienceViews } from '~/framework/modules/audience/types';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   deleteCommentNewsItemAction,
   deleteNewsItemAction,
@@ -54,6 +50,9 @@ import { isEmpty } from '~/framework/util/object';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { commentsString } from '~/framework/util/string';
 import HtmlContentView from '~/ui/HtmlContentView';
+
+import styles from './styles';
+import { NewsDetailsHeaderProps, NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -137,17 +136,6 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const hasPermissionComment = useMemo(() => {
     return news?.sharedRights.includes(NewsItemRights.COMMENT) || session!.user.id === news?.owner.id;
   }, [news, session]);
-
-  const ListComponent = useMemo(() => {
-    return Platform.select<React.ComponentType<any>>({
-      android: KeyboardAvoidingFlatList,
-      ios: FlatList,
-    })!;
-  }, []);
-
-  const PageComponent = useMemo(() => {
-    return Platform.select<typeof KeyboardPageView | typeof PageView>({ android: PageView, ios: KeyboardPageView })!;
-  }, []);
 
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
 
@@ -417,7 +405,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
     return (
       <>
-        <ListComponent
+        <FlatList
           ref={flatListRef}
           initialNumToRender={comments ? comments.length : 0}
           keyboardShouldPersistTaps="handled"
@@ -428,24 +416,11 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           renderItem={renderComment}
           onContentSizeChange={(_width, height) => setListHeight(height)}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={handleRefresh} />}
-          scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-          {...Platform.select({ android: { stickyFooter: renderFooter() }, ios: {} })}
         />
-        {Platform.select({ android: null, ios: renderFooter() })}
+        {renderFooter()}
       </>
     );
-  }, [
-    ListComponent,
-    comments,
-    onExtractKey,
-    handleRefresh,
-    renderComment,
-    loadingState,
-    news,
-    renderError,
-    renderFooter,
-    renderNewsDetails,
-  ]);
+  }, [comments, onExtractKey, handleRefresh, renderComment, loadingState, news, renderError, renderFooter, renderNewsDetails]);
 
   const renderRightHeader = React.useCallback(
     () => (
@@ -462,7 +437,14 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   );
 
   const renderLeftHeader = React.useCallback(
-    () => <HeaderBackButton labelVisible={false} tintColor={theme.palette.grey.white as string} onPress={onNavigateHome} />,
+    () => (
+      <HeaderBackButton
+        labelVisible={false}
+        tintColor={theme.palette.grey.white as string}
+        onPress={onNavigateHome}
+        pressColor="transparent"
+      />
+    ),
     [onNavigateHome],
   );
 
@@ -481,7 +463,6 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         headerLeft: renderLeftHeader,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -546,13 +527,9 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     [navigation, infoComment],
   );
 
-  UNSTABLE_usePreventRemove(infoComment.changed, handlePreventRemove);
+  usePreventRemove(infoComment.changed, handlePreventRemove);
 
-  return (
-    <PageComponent {...Platform.select({ android: {}, ios: { safeArea: !hasPermissionComment } })}>
-      {showPlaceholder ? <NewsPlaceholderDetails /> : renderPage()}
-    </PageComponent>
-  );
+  return <KeyboardPageView safeArea={false}>{showPlaceholder ? <NewsPlaceholderDetails /> : renderPage()}</KeyboardPageView>;
 };
 
 const mapStateToProps: (_s: IGlobalState) => NewsDetailsScreenDataProps = _s => ({

@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import RNSvg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-
-import { styles } from './styles';
-import { CommunityCardLargeProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -18,6 +15,9 @@ import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { injectImageSource } from '~/framework/util/media';
 import { Image } from '~/framework/util/media/components/image';
 import { sessionImageSource } from '~/framework/util/transport';
+
+import { styles } from './styles';
+import { CommunityCardLargeProps } from './types';
 
 export const CommunityCardLarge = ({
   image,
@@ -36,12 +36,12 @@ export const CommunityCardLarge = ({
     <View style={styles.card}>
       {membersCount && <CommunityMembersPill membersCount={membersCount} />}
       <Image
-        fallback={{ icon: appTheme.icon, accentColors: appTheme.colors } as any}
+        fallback={{ accentColors: appTheme.colors, icon: appTheme.icon } as any}
         source={imageSource}
         style={styles.imgContainer}
       />
       <View>
-        <RNSvg style={styles.infoBackground}>
+        <RNSvg style={StyleSheet.absoluteFill}>
           <Defs>
             <LinearGradient id="backgroundGradient" x1={0} y1={0} x2={1} y2={1}>
               <Stop offset="0" stopColor={theme.palette.primary.dark} />

@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { LayoutAnimation, TouchableOpacity, View } from 'react-native';
+import { LayoutAnimation, View } from 'react-native';
 
 import moment from 'moment';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
-
-import styles from './styles';
-import { MailsMailPreviewProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -18,6 +16,9 @@ import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-re
 import { MailsMailStatePreview } from '~/framework/modules/mails/model';
 import { mailsFormatRecipients, renderSubject } from '~/framework/modules/mails/util';
 import { displayPastDate } from '~/framework/util/date';
+
+import styles from './styles';
+import { MailsMailPreviewProps } from './types';
 
 export const MailsMailPreview = (props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, id, response, state, subject, to, unread } = props.data;
@@ -53,7 +54,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
 
   const renderSelectIcon = React.useCallback(() => {
     if (!isSelectMode) return null;
-    return <Checkbox checked={isSelected} onPress={onCheck} customContainerStyle={styles.checkbox} />;
+    return <Checkbox checked={isSelected} onPress={onCheck} onLongPress={onCheck} customContainerStyle={styles.checkbox} />;
   }, [isSelectMode, isSelected, onCheck]);
 
   const renderAttachmentIcon = React.useCallback(() => {
@@ -184,7 +185,7 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
         <TouchableOpacity
           style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
           onPress={isSelectMode ? onCheck : onPress}
-          onLongPress={isSelectMode ? () => {} : props.onLongPress}>
+          onLongPress={isSelectMode ? onCheck : props.onLongPress}>
           {renderSelectIcon()}
           {renderAvatar()}
           {renderDefaultFolder()}

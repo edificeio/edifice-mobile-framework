@@ -7,8 +7,6 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { collaborativewallUriParser } from './service';
-
 import { collaborativewallRouteNames } from '~/framework/modules/collaborativewall/navigation';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
@@ -20,7 +18,9 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
-const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
+import { collaborativewallUriParser } from './service';
+
+const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
   try {
     const notifData = getAsResourceUriNotification(notification);
     if (!notifData) return { managed: 0 };
@@ -39,7 +39,7 @@ const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = notif
       },
     });
 
-    handleNotificationNavigationAction(navAction);
+    handleNotificationNavigationAction(navAction, navigation, dispatch);
 
     return {
       managed: 1,
@@ -56,8 +56,8 @@ export default () =>
       ? [
           {
             'event-type': 'SHARE',
-            notifHandlerAction: handleCollaborativeWallNotificationAction,
-            type: 'COLLABORATIVEWALL',
+            'notifHandlerAction': handleCollaborativeWallNotificationAction,
+            'type': 'COLLABORATIVEWALL',
           },
         ]
       : [],

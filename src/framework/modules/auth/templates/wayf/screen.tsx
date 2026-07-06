@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { ActivityIndicator, Platform, TouchableWithoutFeedback, View } from 'react-native';
 
-import CookieManager from '@react-native-cookies/cookies';
+import CookieManager from '@preeternal/react-native-cookie-manager';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
   WebViewErrorEvent,
@@ -13,23 +12,17 @@ import {
   WebViewSourceUri,
 } from 'react-native-webview/lib/WebViewTypes';
 
-import styles from './styles';
-import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
-import { AccountErrorCode } from '../../model/error';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { PageView } from '~/framework/components/page';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
-import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import moduleConfig from '~/framework/modules/auth/module-config';
-import { authRouteNames } from '~/framework/modules/auth/navigation';
+import { consumeAuthErrorAction } from '~/framework/modules/auth/thunks';
 import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
-import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
 import { toURISource } from '~/framework/util/media';
 import { API, OAuth2ErrorCode, OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
@@ -37,6 +30,9 @@ import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { deviceURISource } from '~/framework/util/transport';
 import { FetchErrorCode } from '~/framework/util/transport/error';
 import { Loading } from '~/ui/Loading';
+
+import styles from './styles';
+import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // User selection dropdown items
@@ -65,11 +61,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private backActions = [
     // WAYFPageMode.EMPTY: Go to top of wayf navigation stack
     () => {
-      this.props.navigation.navigate(authRouteNames.loginWayf, { platform: this.props.route.params.platform });
+      this.props.navigation.navigate('auth/login/wayf', { platform: this.props.route.params.platform });
     },
     // WAYFPageMode.ERROR: Go to top of wayf navigation stack
     () => {
-      this.props.navigation.navigate(authRouteNames.loginWayf, { platform: this.props.route.params.platform });
+      this.props.navigation.navigate('auth/login/wayf', { platform: this.props.route.params.platform });
     },
     // WAYFPageMode.LOADING: Nothing to do
     () => {},
@@ -175,6 +171,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           style={styles.webview}
           userAgent={`X-APP=mobile-${Platform.OS}`}
           webviewDebuggingEnabled={__DEV__}
+          contentInsetAdjustmentBehavior="automatic"
         />
       );
     },
@@ -204,9 +201,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     }
     // Update page title
     this.props.navigation.setOptions({
-      headerTitle: navBarTitle(
-        I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'auth-wayf-select-title' : 'auth-wayf-main-title'),
-      ),
+      title: I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'auth-wayf-select-title' : 'auth-wayf-main-title'),
     });
   }
 
@@ -221,7 +216,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         callback();
       })
       .catch(_error => {
-        navigation.navigate(authRouteNames.loginWayf, { platform: this.props.route.params.platform });
+        navigation.navigate('auth/login/wayf', { platform: this.props.route.params.platform });
       });
   }
 
@@ -391,9 +386,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   public render() {
     const { dropdownOpened, mode } = this.state;
     return (
-      <PageView>
-        <SafeAreaView style={styles.safeView}>{this.contentComponents[mode](dropdownOpened)}</SafeAreaView>
-      </PageView>
+      <KeyboardAvoidingView>
+        {/*<SafeAreaView edges={['bottom', 'left', 'right']} style={styles.safeView}>*/}
+        {this.contentComponents[mode](dropdownOpened)}
+        {/*</SafeAreaView>*/}
+      </KeyboardAvoidingView>
     );
   }
 }

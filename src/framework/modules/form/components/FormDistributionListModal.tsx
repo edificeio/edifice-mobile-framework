@@ -9,7 +9,7 @@ import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { DistributionStatus, IDistribution, IForm } from '~/framework/modules/form/model';
 import { formService } from '~/framework/modules/form/service';
 

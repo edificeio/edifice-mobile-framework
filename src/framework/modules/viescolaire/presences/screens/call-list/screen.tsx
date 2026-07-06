@@ -19,7 +19,7 @@ import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   fetchPresencesCallAction,
   fetchPresencesCoursesAction,

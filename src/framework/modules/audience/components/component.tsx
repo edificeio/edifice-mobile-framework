@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { audienceService } from '~/framework/modules/audience/service';
-import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
+import { getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { isEmpty } from '~/framework/util/object';
 
@@ -110,7 +110,6 @@ const Audience = (props: AudienceAllProps) => {
                   height={UI_SIZES.elements.icon.default}
                   width={UI_SIZES.elements.icon.default}
                   style={styles.statsReactionsItem}
-                  cached
                 />
               ))
             ) : (
@@ -132,7 +131,6 @@ const Audience = (props: AudienceAllProps) => {
               fill={theme.palette.grey.graphite}
               height={UI_SIZES.elements.icon.small}
               width={UI_SIZES.elements.icon.small}
-              cached
             />
           </Component>
         ) : null}
@@ -144,7 +142,6 @@ const Audience = (props: AudienceAllProps) => {
               fill={theme.palette.grey.graphite}
               height={UI_SIZES.elements.icon.small}
               width={UI_SIZES.elements.icon.small}
-              cached
             />
           </View>
         )}

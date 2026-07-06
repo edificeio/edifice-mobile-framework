@@ -25,7 +25,7 @@ import { BodyText, SmallActionText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import AbsenceDatesSelector from '~/framework/modules/viescolaire/presences/components/absence-dates-selector';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';

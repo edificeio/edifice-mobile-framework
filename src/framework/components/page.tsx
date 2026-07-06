@@ -8,32 +8,19 @@
  * - Handle keyboard
  */
 import * as React from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  KeyboardAvoidingViewProps,
-  Platform,
-  ScrollView,
-  ScrollViewProps,
-  StyleSheet,
-  View,
-  ViewProps,
-} from 'react-native';
+import { ScrollView, ScrollViewProps, StyleSheet, View, ViewProps } from 'react-native';
 
 import styled from '@emotion/native';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
-import DeviceInfo from 'react-native-device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import theme from '~/app/theme';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
+import Notifier from '~/framework/util/notifier';
 
 import { UI_SIZES } from './constants';
 import { ScreenView } from './screen';
 import { ScreenViewProps } from './screen/types';
-import { ANDROID_16 } from '../util/permissions';
-
-import theme from '~/app/theme';
-import Notifier from '~/framework/util/notifier';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
@@ -57,13 +44,18 @@ export const getPageGutterStyle = (gutters: PageViewProps['gutters'] = true) => 
 });
 
 export const PageViewStyle = styled.View({
-  backgroundColor: theme.ui.background.page,
+  backgroundColor: theme.ui.background.card,
   flex: 1,
 });
-export const PageView = (props: PageViewProps) => {
-  const { children, gutters, showNetworkBar = true, statusBar, ...viewProps } = props;
-  const route = useRoute();
 
+/**
+ * @deprecated
+ * @param props
+ * @returns
+ */
+export const PageView = (props: PageViewProps) => {
+  const { children, gutters, statusBar, ...viewProps } = props;
+  const route = useRoute();
   const gutterStyle = React.useMemo(
     () => ({
       flex: 1,
@@ -71,20 +63,22 @@ export const PageView = (props: PageViewProps) => {
     }),
     [gutters],
   );
-
   const page = (
     <PageViewStyle {...viewProps}>
       <>
-        {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
       </>
     </PageViewStyle>
   );
-
   return <ScreenView statusBar={statusBar}>{page}</ScreenView>;
 };
 
+/**
+ * @deprecated
+ * @param props
+ * @returns
+ */
 export const KeyboardPageView = (
   props: React.PropsWithChildren<
     PageViewProps & {
@@ -94,39 +88,12 @@ export const KeyboardPageView = (
     }
   >,
 ) => {
-  const [kbHeight, setKbHeight] = React.useState(0);
-  React.useEffect(() => {
-    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', e => {
-      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
-      setKbHeight(e.endCoordinates.height);
-    });
-
-    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', e => {
-      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
-      setKbHeight(0);
-    });
-
-    return () => {
-      keyboardShowListener.remove();
-      keyboardHideListener.remove();
-    };
-  }, []);
-
-  const keyboardAvoidingViewBehavior = Platform.select({
-    android: undefined,
-    ios: 'padding',
-  }) as KeyboardAvoidingViewProps['behavior'];
   const { children, gutters, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
   const AreaComponent = (props.safeArea ?? true) ? SafeAreaView : View;
-  const headerHeight = useHeaderHeight();
   return (
     <PageView gutters={gutters} {...pageProps}>
-      <KeyboardAvoidingView
-        behavior={keyboardAvoidingViewBehavior}
-        keyboardVerticalOffset={headerHeight} // top inset height is included in headerHeight by React Navigation
-        contentContainerStyle={styles.flexGrow1}
-        style={React.useMemo(() => [styles.flex1, { paddingBottom: kbHeight }], [kbHeight])}>
+      <KeyboardAvoidingView>
         <InnerViewComponent
           style={styles.flex1}
           contentContainerStyle={styles.flexGrow1}

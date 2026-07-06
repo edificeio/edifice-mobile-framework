@@ -4,7 +4,7 @@
 import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { IClassGroups, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
 import {

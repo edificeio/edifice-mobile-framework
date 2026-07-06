@@ -12,7 +12,7 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   CarnetDeBordSection,
   formatCarnetDeBordCompetencesValue,

@@ -27,7 +27,7 @@ const fs = require('fs');
 const path = require('path');
 const prompts = require('prompts');
 const util = require('util');
-const yargs = require('yargs');
+const yargs = require('yargs/yargs')(process.argv.slice(2));
 const exec = util.promisify(require('child_process').exec);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -276,26 +276,27 @@ let _git_repoUri;
 function _git_getRepoUri(uri, username, password) {
   if (_git_repoUri) return _git_repoUri;
 
-  // 1. Check uri
   const isHttp = uri.startsWith('http://');
   const isHttps = uri.startsWith('https://');
-  if (!isHttp && !isHttps) {
-    console.error('The git URI should use HTTP(S) protocol');
-    process.exit(1);
-  }
-  // 2. Get full access uri
-  const protocol = isHttp ? 'http://' : 'https://';
-  let fullUri = uri;
-  if (username) {
-    const uriWithoutProtocol = uri.replace(protocol, '');
-    if (password) {
-      fullUri = protocol + username + ':' + password + '@' + uriWithoutProtocol;
-    } else {
-      fullUri = protocol + username + '@' + uriWithoutProtocol;
+  if (isHttp || isHttps) {
+    // For http(s) access
+    const protocol = isHttp ? 'http://' : 'https://';
+    let fullUri = uri;
+    if (username) {
+      const uriWithoutProtocol = uri.replace(protocol, '');
+      if (password) {
+        fullUri = protocol + username + ':' + password + '@' + uriWithoutProtocol;
+      } else {
+        fullUri = protocol + username + '@' + uriWithoutProtocol;
+      }
     }
+    _git_repoUri = fullUri;
+    return fullUri;
+  } else {
+    // For ssh access
+    _git_repoUri = uri;
+    return uri;
   }
-  _git_repoUri = fullUri;
-  return fullUri;
 }
 
 const _git_refPrefix = 'refs/heads/';
@@ -450,10 +451,10 @@ async function _override_computeCopyMergeList(overridesPathAbsolute, overrideNam
           const toPath = path.join(_projectPathAbsolute, to);
           return [[path.relative(_projectPathAbsolute, fromAbs), path.relative(_projectPathAbsolute, toPath)]];
         } else {
-          //console.warn(`${fromAbs} is nor a file or a directory`);
+          opts.verbose &&console.warn(`${fromAbs} is nor a file or a directory`);
         }
       } else {
-        // console.log(`${fromAbs} does not exist`);
+        opts.verbose &&console.log(`${fromAbs} does not exist`);
       }
     })
     .filter(i => !!i)
@@ -542,7 +543,7 @@ async function _override_computeLockedFiles() {
 async function _override_performCopyMerge(overridesPathAbsolute, overrideName) {
   // 1. Compute copy-list
   const copyFiles = await _override_computeCopyMergeList(overridesPathAbsolute, overrideName);
-
+  opts.verbose && console.info('Copy/Merge list :\r', copyFiles);
   // 2. Execute copy-list
   copyFiles.forEach(cp => {
     fs.mkdirSync(path.dirname(cp[1]), { recursive: true });
@@ -809,13 +810,13 @@ async function _override_performApply(overrideNames, given_uri, given_branch, gi
  * Main script.
  * Parse command args & execute
  */
-const main = () => {
+const main = async () => {
   yargs
     .showHelpOnFail(false, 'Specify --help for available options')
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .fail(function (msg, err, _yargs) {
+    .fail((msg, err) => {
       msg && console.error(msg);
-      console.error(err);
+      err && console.error(err);
       process.exit(1);
     })
     .command(
@@ -884,7 +885,7 @@ const main = () => {
             default: true,
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
         if (argv.overrides && argv.overrides.length === 1) {
           if (argv.overrides[0] === 'restore') return _override_performRestoreCurrent();
@@ -912,9 +913,9 @@ const main = () => {
             alias: 'q',
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performRestoreCurrent();
+        await _override_performRestoreCurrent();
       },
     )
     .command(
@@ -938,9 +939,9 @@ const main = () => {
             alias: 'm',
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performStashCurrent(argv.message);
+        await _override_performStashCurrent(argv.message);
       },
     )
     .command(
@@ -959,9 +960,9 @@ const main = () => {
             alias: 'q',
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performLock();
+        await _override_performLock();
       },
     )
     .command(
@@ -980,9 +981,9 @@ const main = () => {
             alias: 'q',
           });
       },
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performUnlock();
+        await _override_performUnlock();
       },
     )
     .command(
@@ -990,11 +991,12 @@ const main = () => {
       'Remove overrides cache',
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       yargs => {},
-      argv => {
+      async argv => {
         opts = argv;
-        _override_performClean();
+        await _override_performClean();
       },
-    ).argv;
+    )
+    .parseAsync();
 };
 
 // Init local repo values

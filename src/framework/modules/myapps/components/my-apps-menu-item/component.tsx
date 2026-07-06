@@ -1,10 +1,12 @@
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Pressable } from 'react-native-gesture-handler';
+
+import { BodyText } from '~/framework/components/text';
 
 import { styles } from './styles';
 import { MyAppsMenuItemProps } from './types';
-
-import { BodyText } from '~/framework/components/text';
 
 export const MyAppsMenuItem: React.FC<MyAppsMenuItemProps> = ({ isPressable = true, label, leftElement, onPress, testID }) => {
   if (!isPressable) {

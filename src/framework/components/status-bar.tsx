@@ -52,6 +52,9 @@ const statusBarConfig = {
   },
 };
 
+/**
+ * @deprecated Set status bar with navigation options instead.
+ */
 export const StatusBar = ({ type }: StatusBarProps) => {
   const { backgroundColor, barStyle, hidden, translucent } = statusBarConfig[type];
 

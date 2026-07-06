@@ -1,3 +1,6 @@
+import appConf from '~/framework/util/appConf';
+import { Storage } from '~/framework/util/storage';
+
 import {
   accountIsLoggable,
   AuthActiveAccount,
@@ -6,10 +9,8 @@ import {
   getSerializedLoggedInAccountInfo,
 } from './model';
 import moduleConfig from './module-config';
-import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
-
-import appConf from '~/framework/util/appConf';
-import { Storage } from '~/framework/util/storage';
+import { ERASE_ALL_ACCOUNTS } from './redux/actions';
+import { AuthState } from './redux/types';
 
 export interface Pre_1_12_OAuthToken {
   access_token: string;
@@ -132,14 +133,14 @@ export const writeLogout = (account: AuthActiveAccount) => {
   // Remove token for loegged out account
   writeRemoveToken(account);
   // Remove account id in startup object
-  storage.delete('startup');
+  storage.remove('startup');
 };
 
 /**
  * Delete the given account information in the storage
  * @param account
  */
-export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
+export const writeDeleteAccount = (id: keyof AuthState['accounts']) => {
   const savedAccounts = readSavedAccounts();
   delete savedAccounts[id];
   storage.setJSON('accounts', savedAccounts);

@@ -5,7 +5,13 @@
 -keep class com.facebook.hermes.unicode.** { *; }
 -keep class com.facebook.jni.** { *; }
 
-# react-native-fast-image
+# React Native New Architecture (Bridgeless / RN 0.76+)
+-keep class com.facebook.react.devsupport.** { *; }
+-keep class com.facebook.react.soloader.** { *; }
+-keep class com.facebook.react.runtime.** { *; }
+-keep class com.facebook.react.** { *; }
+
+# @d11/react-native-fast-image
 -keep public class com.dylanvann.fastimage.* {*;}
 -keep public class com.dylanvann.fastimage.** {*;}
 -keep public class * implements com.bumptech.glide.module.GlideModule

@@ -10,14 +10,14 @@ import { CommonActions } from '@react-navigation/native';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import {
-  NotifHandlerThunkAction,
   handleNotificationNavigationAction,
+  NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
 import { mediacentreRouteNames } from './navigation';
 
-const handleMediacentreNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
+const handleMediacentreNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
   try {
     const navAction = CommonActions.navigate({
       name: computeTabRouteName(timelineModuleConfig.routeName),
@@ -27,7 +27,7 @@ const handleMediacentreNotificationAction: NotifHandlerThunkAction = notificatio
       },
     });
 
-    handleNotificationNavigationAction(navAction);
+    handleNotificationNavigationAction(navAction, navigation, dispatch);
 
     return {
       managed: 1,
@@ -41,8 +41,8 @@ const handleMediacentreNotificationAction: NotifHandlerThunkAction = notificatio
 export default () =>
   registerNotifHandlers([
     {
-      type: 'MEDIACENTRE',
       'event-type': 'PINNED_RESOURCE_NOTIFICATION',
-      notifHandlerAction: handleMediacentreNotificationAction,
+      'notifHandlerAction': handleMediacentreNotificationAction,
+      'type': 'MEDIACENTRE',
     },
   ]);

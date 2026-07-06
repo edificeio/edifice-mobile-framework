@@ -4,17 +4,13 @@ import { View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
-import styles from './styles';
-import { type MailsEditScreenPrivateProps } from './types';
-import { useMailsEditController } from './useController';
-
 import { I18n } from '~/app/i18n';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import Attachments from '~/framework/modules/mails/components/attachments';
 import { MailsContactField, MailsSubjectField } from '~/framework/modules/mails/components/fields';
 import MailsHistoryButton from '~/framework/modules/mails/components/history-button';
@@ -25,7 +21,13 @@ import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mail
 import { getNoReplyRight } from '~/framework/modules/mails/rights';
 import { mailsService } from '~/framework/modules/mails/service';
 import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
+
+import styles from './styles';
+import { type MailsEditScreenPrivateProps } from './types';
+import { useMailsEditController } from './useController';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export const computeNavBar = ({
   navigation,
@@ -100,7 +102,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           ]}
         />
       ),
-      headerTitle: navBarTitle('', undefined, undefined, 1, 2),
+      title: '',
     });
   }, [
     draftIdSaved,
@@ -162,9 +164,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     onChangeSubject,
   ]);
 
+  const { bottom } = useSafeAreaInsets();
+
   const renderBottomForm = React.useCallback(
     () => (
-      <View style={styles.bottomForm}>
+      <View style={[styles.bottomForm, { paddingBottom: Math.max(bottom, UI_SIZES.spacing.minor) }]}>
         {history !== '' && !isHistoryOpen ? <MailsHistoryButton content={history} onPress={onOpenHistory} /> : null}
         {isServiceMethodAvailable(mailsService.attachments.remove) && isServiceMethodAvailable(mailsService.attachments.add) ? (
           <Attachments
@@ -181,10 +185,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       </View>
     ),
     [
+      bottom,
       history,
       isHistoryOpen,
-      session,
       onOpenHistory,
+      session,
       attachments,
       onRemoveAttachment,
       draftIdSaved,

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Keyboard, ScrollView, View } from 'react-native';
 
-import styles from './styles';
-import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
+import { KeyboardAwareScrollView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -12,18 +12,20 @@ import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
 import TextInput from '~/framework/components/inputs/text';
-import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredentials } from '~/framework/modules/auth/model';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
-import { getAccountById } from '~/framework/modules/auth/reducer';
+import { getAccountById } from '~/framework/modules/auth/redux/reducer';
 import { useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 
-const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
+import styles from './styles';
+import { AuthLoginCredentialsScreenProps, LoginState } from './types';
+
+const AuthLoginCredentialsScreenTemplate = (props: AuthLoginCredentialsScreenProps) => {
   const {
     error,
     forgotIdRoute,
@@ -241,51 +243,50 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     }
   }, [typing, errmsg, errtype, goToWeb, doLogin, isSubmitDisabled, loginState]);
 
-  const renderPage = React.useCallback(() => {
-    return (
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        alwaysBounceVertical={false}
-        overScrollMode="never"
-        contentContainerStyle={styles.scrollview}>
-        <View style={styles.form}>
-          {renderPlatform()}
-          {renderInputs()}
-          {renderError()}
-          <View style={styles.boxButtons}>
-            {renderLoginButton()}
-            <View style={styles.boxTextForgot}>
+  const insets = useSafeAreaInsets();
+
+  const scrollViewRef = React.useRef<KeyboardAwareScrollViewRef>(null);
+  React.useEffect(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollTo(styles.platformLogo.height + styles.platform.paddingTop);
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
+  return (
+    <KeyboardAwareScrollView
+      ref={scrollViewRef}
+      keyboardShouldPersistTaps="handled"
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+      contentContainerStyle={React.useMemo(() => [styles.scrollview, { paddingBottom: insets.bottom }], [insets])}>
+      {renderPlatform()}
+      <View style={styles.form}>
+        {renderInputs()}
+        {renderError()}
+        <View style={styles.boxButtons}>
+          {renderLoginButton()}
+          <View style={styles.boxTextForgot}>
+            <DefaultButton
+              text={I18n.get('auth-login-forgot-password')}
+              action={() => navigation.dispatch(forgotPasswordRoute(login))}
+              testID="login-forgot-password"
+              style={styles.forgotPasswordButton}
+            />
+            {!lockLogin ? (
               <DefaultButton
-                text={I18n.get('auth-login-forgot-password')}
-                action={() => navigation.dispatch(forgotPasswordRoute(login))}
-                testID="login-forgot-password"
-                style={styles.forgotPasswordButton}
+                text={I18n.get('auth-login-forgot-id')}
+                action={() => navigation.dispatch(forgotIdRoute)}
+                testID="login-forgot-identifier"
               />
-              {!lockLogin ? (
-                <DefaultButton
-                  text={I18n.get('auth-login-forgot-id')}
-                  action={() => navigation.dispatch(forgotIdRoute)}
-                  testID="login-forgot-identifier"
-                />
-              ) : null}
-            </View>
+            ) : null}
           </View>
         </View>
-      </ScrollView>
-    );
-  }, [
-    renderPlatform,
-    renderInputs,
-    renderError,
-    renderLoginButton,
-    lockLogin,
-    navigation,
-    forgotPasswordRoute,
-    login,
-    forgotIdRoute,
-  ]);
-
-  return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
+      </View>
+    </KeyboardAwareScrollView>
+  );
 };
 
-export default LoginCredentialsScreen;
+export default AuthLoginCredentialsScreenTemplate;

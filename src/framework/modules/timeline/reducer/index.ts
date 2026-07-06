@@ -1,4 +1,7 @@
-import { CombinedState, combineReducers } from 'redux';
+import { combineReducers } from 'redux';
+
+import { IGlobalState, Reducers } from '~/app/store';
+import moduleConfig from '~/framework/modules/timeline/module-config';
 
 import flashMessages, { FlashMessagesState } from './flash-messages';
 import notifDefinitions, { NotifDefinitionsState } from './notif-definitions';
@@ -7,17 +10,15 @@ import notifSettings, { NotifSettingsState } from './notif-settings';
 import { IPushNotifsSettings } from './notif-settings/push-notifs-settings';
 import notifications, { NotificationsState } from './notifications';
 
-import { IGlobalState, Reducers } from '~/app/store';
-import moduleConfig from '~/framework/modules/timeline/module-config';
-
 // State
 
-export type TimelineState = CombinedState<{
+// ToDo: fix reducer type
+export type TimelineState = {
   notifDefinitions: NotifDefinitionsState;
   notifSettings: NotifSettingsState;
   notifications: NotificationsState;
   flashMessages: FlashMessagesState;
-}>;
+};
 
 export interface INotificationFilterWithSetting extends NotificationFilter {
   setting: boolean;

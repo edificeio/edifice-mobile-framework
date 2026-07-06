@@ -1,6 +1,6 @@
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { actionTypes, IFolder } from '~/framework/modules/workspace/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';

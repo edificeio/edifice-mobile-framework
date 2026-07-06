@@ -34,7 +34,7 @@ const trackViewIfNeeded = async (
 };
 
 export const useNavigationTracker = () => {
-  const routeNameRef = React.useRef<string>();
+  const routeNameRef = React.useRef<string>('');
   return React.useCallback(
     (navState: InitialState | undefined) =>
       trackViewIfNeeded(routeNameRef, navState ? findFocusedRoute(navState) : undefined /*, navigationRef.getCurrentRoute()*/),

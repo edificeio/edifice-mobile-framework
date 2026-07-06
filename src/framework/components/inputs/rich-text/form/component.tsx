@@ -1,22 +1,18 @@
 import * as React from 'react';
-import { Alert, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Alert, Animated, ScrollView } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import DeviceInfo from 'react-native-device-info';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import styles from './styles';
-import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 import { I18n } from '~/app/i18n';
 import { UI_ANIMATIONS, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import ActionButtonBottomSheetModal from '~/framework/components/modals/bottom-sheet/action-button';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
@@ -24,21 +20,22 @@ import { PageView } from '~/framework/components/page';
 import Separator from '~/framework/components/separator';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { useSyncRef } from '~/framework/hooks/ref';
-import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/actions';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
+import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/thunks';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
-import { ANDROID_14, ANDROID_16 } from '~/framework/util/permissions';
+
+import styles from './styles';
+import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 const OPEN_FILE_IMPORT_TIMEOUT = 500;
 
 const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((props, ref) => {
   const { bottom } = useSafeAreaInsets();
   const { allowMultimediaUpload = true, ...restProps } = props;
-  const headerHeight = useHeaderHeight();
   const containerStyle = { ...styles.container, marginBottom: bottom };
 
-  const navigation = useNavigation() as any;
+  const navigation = useNavigation();
   const route = useRoute();
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -303,37 +300,10 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
     [topForm],
   );
 
-  /**
-   * KeyboardAvoidingView does not work with Android 16+ (api level 36)
-   * So we manually add the padding from the Keyboard event.
-   *
-   * Fixme: Use react-native-keyboard-controller instead of this fix.
-   */
-  const [kbHeight, setKbHeight] = React.useState(0);
-  React.useEffect(() => {
-    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', e => {
-      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
-      setKbHeight(e.endCoordinates.height);
-    });
-
-    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', e => {
-      if (Platform.OS !== 'android' || DeviceInfo.getApiLevelSync() < ANDROID_16) return;
-      setKbHeight(0);
-    });
-
-    return () => {
-      keyboardShowListener.remove();
-      keyboardHideListener.remove();
-    };
-  }, []);
-
   return (
     <BottomSheetModalProvider>
       <PageView style={styles.page}>
-        <KeyboardAvoidingView
-          keyboardVerticalOffset={headerHeight}
-          style={[containerStyle, { paddingBottom: kbHeight }]}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <KeyboardAvoidingView>
           <ScrollView
             keyboardDismissMode="none"
             keyboardShouldPersistTaps="always"
@@ -346,6 +316,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
             {...restProps}>
             {realTopForm}
             <RichEditor
+              navigation={navigation}
               disabled={false}
               enterKeyHint="enter"
               editorStyle={containerStyle}

@@ -462,13 +462,17 @@ export interface IForgotPayload {
   structureId?: string;
 }
 
-export interface IChangePasswordPayload {
-  login: string;
-  oldPassword?: string;
+export type IChangePasswordFormData = {
+  oldPassword: string;
   newPassword: string;
   confirm: string;
-  resetCode?: string;
-}
+};
+
+export type IChangePasswordPayload = {
+  login: string;
+  newPassword: string;
+  confirm: string;
+} & ({ oldPassword: string } | { resetCode: string });
 
 export interface IChangePasswordError extends Error {
   name: 'ECHANGEPWD';

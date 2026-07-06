@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PixelRatio, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   CommunityType,
@@ -10,12 +10,9 @@ import {
 } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FlashList } from '@shopify/flash-list';
+import type { FlashListRef } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import styles from './styles';
-import type { CommunitiesListScreen } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -24,11 +21,9 @@ import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { sessionScreen } from '~/framework/components/screen';
 import { SegmentedControlLoader } from '~/framework/components/segmented-control';
-import { TextSizeStyle } from '~/framework/components/text';
-import CommunityCardSmall, { styles as cardStyle } from '~/framework/modules/communities/components/community-card-small';
+import CommunityCardSmall from '~/framework/modules/communities/components/community-card-small';
 import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small/community-card-small-loader';
-import CommunityListFilters from '~/framework/modules/communities/components/community-list-filters';
-import { styles as filtersStyles } from '~/framework/modules/communities/components/community-list-filters/';
+import CommunityListFilters, { styles as filtersStyles } from '~/framework/modules/communities/components/community-list-filters';
 import { CommunityListFilterButtonLoader } from '~/framework/modules/communities/components/community-list-filters/community-list-filter-button';
 import ListFiltersBottomSheet from '~/framework/modules/communities/components/community-list-filters/list-filters-bottom-sheet';
 import moduleConfig from '~/framework/modules/communities/module-config';
@@ -39,19 +34,17 @@ import {
   communitiesActionTypes,
   communitiesSelectors,
 } from '~/framework/modules/communities/store';
-import { ESTIMATED_LIST_SIZE, getItemSeparatorStyle } from '~/framework/modules/communities/utils';
+import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
 
+import styles from './styles';
+import type { CommunitiesListScreen } from './types';
+
 export const AVAILABLE_FILTERS = [CommunityType.CLASS, CommunityType.FREE];
 const INVITATION_FIELDS: InvitationFields[] = ['stats', 'community'];
 const PAGE_SIZE = 48;
-
-const ESTIMATED_ITEM_SIZE =
-  TextSizeStyle.Medium.lineHeight * PixelRatio.getFontScale() +
-  cardStyle.imgContainer.height +
-  2 * (cardStyle.cardPending.borderWidth + cardStyle.titleContainer.padding);
 
 export const computeNavBar = ({
   navigation,
@@ -89,7 +82,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
   const [totalPendingInvitations, setTotalPendingInvitations] = React.useState<number>(pendingCommunities.length);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
-  const paginatedListRef = React.useRef<FlashList<InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA>>(null);
+  const paginatedListRef = React.useRef<FlashListRef<InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA>>(null);
   const filtersListBottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
 
   const activeFiltersCount = filters.length;
@@ -239,8 +232,6 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
         ref={paginatedListRef}
         contentContainerStyle={styles.listPadding}
         data={displayedCommunities}
-        estimatedItemSize={ESTIMATED_ITEM_SIZE}
-        estimatedListSize={ESTIMATED_LIST_SIZE}
         keyExtractor={keyExtractor}
         ListEmptyComponent={
           <EmptyScreen

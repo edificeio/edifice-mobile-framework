@@ -15,15 +15,15 @@ import Orientation, {
 import { SharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import Share from 'react-native-share';
 
-import { PAGINATION_ANIMATION_DURATION, PAGINATION_ANIMATION_OFFSET } from './screen';
-
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FileMedia, isPlayableMedia } from '~/framework/util/media';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
+
+import { PAGINATION_ANIMATION_DURATION, PAGINATION_ANIMATION_OFFSET } from './screen';
 
 const isAndroid = Platform.OS === 'android';
 

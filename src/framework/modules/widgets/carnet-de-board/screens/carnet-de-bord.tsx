@@ -20,7 +20,7 @@ import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/t
 import UserList, { IUserListItem } from '~/framework/components/UserList';
 import { ContentLoader } from '~/framework/hooks/loader';
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { loadCarnetDeBordAction } from '~/framework/modules/widgets/carnet-de-board/actions/carnet-de-bord';
 import {
   CarnetDeBordSection,
@@ -207,7 +207,6 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-cahierdetextes-title')}
               picture={{
-                cached: true,
                 name: 'ui-calendar',
                 type: 'Svg',
               }}
@@ -235,7 +234,6 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-transcript-title')}
               picture={{
-                cached: true,
                 name: 'ui-success',
                 type: 'Svg',
               }}
@@ -258,7 +256,6 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-skills-title')}
               picture={{
-                cached: true,
                 name: 'ui-skills',
                 type: 'Svg',
               }}
@@ -279,7 +276,6 @@ CarnetDeBordScreen.getRenderContent =
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-viescolaire-title')}
               picture={{
-                cached: true,
                 name: 'ui-flag',
                 type: 'Svg',
               }}

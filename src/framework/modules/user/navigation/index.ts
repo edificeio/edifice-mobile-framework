@@ -14,6 +14,9 @@ import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/mo
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 
 export const userRouteNames = {
+  changeEmail: `${moduleConfig.routeName}/change-email` as 'change-email',
+  changeMobile: `${moduleConfig.routeName}/change-mobile` as 'change-mobile',
+  changePassword: `${moduleConfig.routeName}/change-password` as 'change-password',
   editDescription: `${moduleConfig.routeName}/profile/editDescription` as 'editDescription',
   editHobbies: `${moduleConfig.routeName}/profile/editHobbies` as 'editHobbies',
   editMoodMotto: `${moduleConfig.routeName}/profile/editMoodMotto` as 'editMoodMotto',
@@ -27,15 +30,20 @@ export const userRouteNames = {
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
 };
 export interface UserNavigationParams extends ParamListBase {
-  home: UserHomeScreenNavParams;
-  notifPrefs: IPushNotifsTopicsListScreenNavigationParams;
-  notifPrefsDetails: IPushNotifsItemsListScreenNavigationParams;
-  profile: ProfileScreenNavigationParams;
-  structures: UserStructuresScreenNavParams;
-  editHobbies: UserEditHobbiesScreenNavParams;
-  editDescription: UserEditDescriptionScreenNavParams;
-  editMoodMotto: UserEditMoodMottoScreenNavParams;
-  whoAreWe: UserWhoAreWeScreenNavParams;
-  legalNotice: UserLegalNoticeScreenNavParams;
-  lang: UserLangScreenNavParams;
+  'home': UserHomeScreenNavParams;
+  'notifPrefs': IPushNotifsTopicsListScreenNavigationParams;
+  'notifPrefsDetails': IPushNotifsItemsListScreenNavigationParams;
+  'profile': ProfileScreenNavigationParams;
+  'structures': UserStructuresScreenNavParams;
+  'editHobbies': UserEditHobbiesScreenNavParams;
+  'editDescription': UserEditDescriptionScreenNavParams;
+  'editMoodMotto': UserEditMoodMottoScreenNavParams;
+  'whoAreWe': UserWhoAreWeScreenNavParams;
+  'legalNotice': UserLegalNoticeScreenNavParams;
+  'lang': UserLangScreenNavParams;
+  'changePassword': undefined;
+  'changeEmail': undefined;
+  'changeMobile': undefined;
+  'mfa': undefined;
+  'mfa-modal': undefined;
 }

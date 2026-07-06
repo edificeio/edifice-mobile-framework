@@ -15,7 +15,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { fetchFormDistributionsAction, fetchFormsReceivedAction } from '~/framework/modules/form/actions';
 import { FormDistributionCard } from '~/framework/modules/form/components/FormDistributionCard';
 import FormDistributionListModal from '~/framework/modules/form/components/FormDistributionListModal';

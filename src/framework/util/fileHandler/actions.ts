@@ -5,7 +5,7 @@ import FileViewer from 'react-native-file-viewer';
 
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { openMediaPlayer } from '~/framework/components/media/player';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
 import fileTransferService, {
   IDownloadCallbaks,

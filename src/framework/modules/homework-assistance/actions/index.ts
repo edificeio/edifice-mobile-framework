@@ -5,7 +5,7 @@ import { Moment } from 'moment';
 import { ThunkAction } from 'redux-thunk';
 
 import { UserChild } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { ModuleParameters, Resource, Service } from '~/framework/modules/homework-assistance/model';
 import { actionTypes } from '~/framework/modules/homework-assistance/reducer';
 import { homeworkAssistanceService } from '~/framework/modules/homework-assistance/service';

@@ -6,17 +6,14 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import type { PresencesStatisticsScreenDispatchProps, PresencesStatisticsScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountType } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
   fetchPresencesSchoolYearAction,
@@ -31,6 +28,9 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+
+import styles from './styles';
+import type { PresencesStatisticsScreenDispatchProps, PresencesStatisticsScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -51,12 +51,12 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
     try {
       const { classes, session, userId, userType } = props;
       const structureId =
-        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(props.route.params.studentId);
-      const studentId = userType === UserType.Student ? userId : props.route.params.studentId;
+        userType === AccountType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(props.route.params.studentId);
+      const studentId = userType === AccountType.Student ? userId : props.route.params.studentId;
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
       let groupId = classes?.[0];
-      if (userType === UserType.Relative) {
+      if (userType === AccountType.Relative) {
         const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }

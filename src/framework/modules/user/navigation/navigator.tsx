@@ -1,7 +1,9 @@
 import * as React from 'react';
 
-import { UserNavigationParams, userRouteNames } from './';
-
+import AuthChangeEmailScreen from '~/framework/modules/auth/screens/change-email';
+import { requirementChangeEmailScreenOptions } from '~/framework/modules/auth/screens/change-email/screen';
+import AuthChangeMobileScreen from '~/framework/modules/auth/screens/change-mobile';
+import AuthMFAScreen, { computeNavBarModal as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import moduleConfig from '~/framework/modules/user/module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
@@ -24,6 +26,10 @@ import PushNotifsTopicsListScreen, {
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
+
+import { UserChangePasswordScreen, UserChangePasswordScreenOptions } from '../screens/change-password';
+
+import { UserNavigationParams, userRouteNames } from './';
 
 export default () =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
@@ -78,6 +84,10 @@ export default () =>
           initialParams={{}}
         />
       </Stack.Group>
+      <Stack.Screen name={'user/change-password'} component={UserChangePasswordScreen} options={UserChangePasswordScreenOptions} />
+      <Stack.Screen name={'user/change-email'} component={AuthChangeEmailScreen} options={requirementChangeEmailScreenOptions} />
+      <Stack.Screen name={'user/change-mobile'} component={AuthChangeMobileScreen} options={requirementChangeEmailScreenOptions} />
+      <Stack.Screen name="auth/mfa-modal" component={AuthMFAScreen} options={mfaNavBar} />
     </>
   ));
 

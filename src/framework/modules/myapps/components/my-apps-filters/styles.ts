@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     flexGrow: 0,
     flexShrink: 0,
   },
-  // eslint-disable-next-line react-native/no-color-literals
+
   search: {
     backgroundColor: 'transparent',
     borderRadius: UI_SIZES.radius.extraLarge,
@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     borderColor: theme.palette.grey.cloudy,
   },
   searchOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
   },
   selectedButton: {

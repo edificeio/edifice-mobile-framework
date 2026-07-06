@@ -3,9 +3,6 @@ import { View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import styles from './styles';
-import type { AuthIntroductionScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { getScaleWidth } from '~/framework/components/constants';
@@ -14,6 +11,9 @@ import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+import styles from './styles';
+import type { AuthIntroductionScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

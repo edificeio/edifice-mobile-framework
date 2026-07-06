@@ -2,12 +2,8 @@ import { Alert } from 'react-native';
 
 import { CommonActions } from '@react-navigation/native';
 
-import { DistributionStatus } from './model';
-import { formRouteNames } from './navigation';
-import { formService } from './service';
-
 import { I18n } from '~/app/i18n';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
@@ -17,8 +13,12 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
+import { DistributionStatus } from './model';
+import { formRouteNames } from './navigation';
+import { formService } from './service';
+
 const handleNewFormNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       // 1. Get notification data
       let formUri = notification.backupData.params.formUri;
@@ -64,7 +64,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       // 4. Return notif handling result
       return {
@@ -76,7 +76,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
     }
   };
 
-const handleFormResponseNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
+const handleFormResponseNotificationAction: NotifHandlerThunkAction = notification => async () => {
   const uri: string = notification.backupData.params.formResultsUri;
 
   if (!uri) return { managed: 0 };

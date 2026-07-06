@@ -3,13 +3,12 @@ import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 
 import { WebView } from 'react-native-webview';
 
+import theme from '~/app/theme';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { openUrl } from '~/framework/util/linking';
+
 import { actions, messages } from './const';
 import { createHTML } from './editor';
-
-import theme from '~/app/theme';
-import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
-import { getSession } from '~/framework/modules/auth/reducer';
-import { openUrl } from '~/framework/util/linking';
 
 const PlatformIOS = Platform.OS === 'ios';
 
@@ -40,6 +39,7 @@ export default class RichEditor extends Component {
     initialHeight: 0,
     oneSessionId: undefined,
     onLoad: undefined,
+    onOpenCarbonioContent: undefined,
     pasteAsPlainText: false,
     placeholder: '',
     style: {},
@@ -185,11 +185,14 @@ export default class RichEditor extends Component {
   _onMediaTouched(url, medias) {
     const { disabled } = this.props;
     if (disabled) {
+      // Carbonio : redirect to web instead of opening carousel
       const startIndex = medias.findIndex(item => item.src === url);
-      openMultimediaCarousel({
-        media: medias,
-        startIndex: startIndex !== -1 ? startIndex : 0,
-      });
+      this.props.onOpenCarbonioContent !== undefined
+        ? this.props.onOpenCarbonioContent?.()
+        : this.props.navigation?.navigate('media/carousel', {
+            media: medias,
+            startIndex: startIndex !== -1 ? startIndex : 0,
+          });
     }
   }
 
@@ -325,7 +328,7 @@ export default class RichEditor extends Component {
           ref={that.setRef}
           onMessage={that.onMessage}
           originWhitelist={['*']}
-          dataDetectorTypes="none"
+          dataDetectorTypes={Platform.OS === 'ios' ? 'none' : undefined}
           domStorageEnabled={false}
           bounces={false}
           javaScriptEnabled

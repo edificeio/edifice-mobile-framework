@@ -30,14 +30,14 @@ import {
 } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import UserList from '~/framework/components/UserList';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import { getStudentsByAcknowledgementForTeacher, IAcknowledgment, IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasResendRight } from '~/framework/modules/schoolbook/rights';
 import styles from '~/framework/modules/schoolbook/screens/word-report/styles';
 import { SchoolbookWordReportScreenProps } from '~/framework/modules/schoolbook/screens/word-report/types';
 import { schoolbookService } from '~/framework/modules/schoolbook/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
@@ -116,7 +116,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
         .then(wordId => fetchSchoolbookWord(wordId))
         .then(() =>
           props.navigation.setOptions({
-            headerTitle: navBarTitle(schoolbookWord?.word?.title || I18n.get('schoolbook-wordreport-appname')),
+            title: schoolbookWord?.word?.title || I18n.get('schoolbook-wordreport-appname'),
           }),
         )
         .then(() => setLoadingState(AsyncPagedLoadingState.DONE))

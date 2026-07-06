@@ -20,7 +20,7 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { AccountType, getFlattenedChildren } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';

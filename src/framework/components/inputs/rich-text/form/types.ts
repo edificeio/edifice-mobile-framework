@@ -34,7 +34,8 @@ export interface RichEditorFormReduxNavParams {
 }
 
 export interface RichEditorFormAllProps
-  extends RichEditorFormProps,
+  extends
+    RichEditorFormProps,
     RichEditorFormReduxProps,
     NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.RichTextEditor> {}
 

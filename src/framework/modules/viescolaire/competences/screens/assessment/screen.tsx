@@ -15,7 +15,7 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
   fetchCompetencesAction,

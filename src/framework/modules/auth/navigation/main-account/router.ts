@@ -10,7 +10,8 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   InitialAuthenticationMethod,
 } from '~/framework/modules/auth/model';
-import { AuthPendingRestore, getPlatform, getSession, IAuthState } from '~/framework/modules/auth/reducer';
+import { getPlatform, getSession } from '~/framework/modules/auth/redux/reducer';
+import { AuthPendingRestore, AuthState } from '~/framework/modules/auth/redux/types';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -144,24 +145,6 @@ export const getNavActionForAccountLoad = (account: {
 };
 
 /**
- * Dispatch given actions, can work with multiple actions as an array.
- * @param navigation
- * @param actions
- */
-export const navigationDispatchMultiple = (
-  navigation: NavigationProp<ParamListBase>,
-  actions: (CommonActions.Action | StackNavigationAction)[] | CommonActions.Action | StackNavigationAction,
-) => {
-  if (Array.isArray(actions)) {
-    actions.forEach(a => {
-      navigation.dispatch(a);
-    });
-  } else {
-    navigation.dispatch(actions);
-  }
-};
-
-/**
  * Return the navigation action to be performed when login requirement is recieved.
  * @param requirement
  * @returns
@@ -213,7 +196,7 @@ export const getNavActionForRequirement = (requirement: AuthRequirement) => {
       });
   }
 };
-export const getNavActionForRedirect = (platform: Platform, pending: IAuthState['pending'] | undefined) => {
+export const getNavActionForRedirect = (platform: Platform, pending: AuthState['pending'] | undefined) => {
   switch (pending?.redirect) {
     case AuthPendingRedirection.ACTIVATE:
       return StackActions.push(authRouteNames.activation, {
@@ -245,11 +228,11 @@ export const getNavActionForRedirect = (platform: Platform, pending: IAuthState[
  * @returns
  */
 export const getAuthNavigationState = (
-  accounts: IAuthState['accounts'],
-  pending: IAuthState['pending'],
-  showOnboarding: IAuthState['showOnboarding'],
-  requirement: IAuthState['requirement'],
-  lastDeletedAccount: IAuthState['lastDeletedAccount'],
+  accounts: AuthState['accounts'],
+  pending: AuthState['pending'],
+  showOnboarding: AuthState['showOnboarding'],
+  requirement: AuthState['requirement'],
+  lastDeletedAccount: AuthState['lastDeletedAccount'],
 ) => {
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;
@@ -274,7 +257,7 @@ export const getAuthNavigationState = (
   // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
   let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
   let loginWithoutAccountId: string | undefined;
-  let accountId: keyof IAuthState['accounts'] | undefined;
+  let accountId: keyof AuthState['accounts'] | undefined;
 
   if (pending) {
     foundPlatform = pending.platform;

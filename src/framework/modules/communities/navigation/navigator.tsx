@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 
-import { CommunitiesNavigationParams, communitiesRouteNames } from '.';
-
 import moduleConfig from '~/framework/modules/communities/module-config';
 import CommunitiesDocumentsScreen, { computeNavBar as documentsNavBar } from '~/framework/modules/communities/screens/documents';
 import CommunitiesHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/communities/screens/home';
@@ -13,6 +11,8 @@ import CommunitiesListScreen, { computeNavBar as listNavBar } from '~/framework/
 import CommunitiesMembersScreen, { computeNavBar as membersNavBar } from '~/framework/modules/communities/screens/members';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
+
+import { CommunitiesNavigationParams, communitiesRouteNames } from '.';
 
 export default () =>
   createModuleNavigator<CommunitiesNavigationParams>(moduleConfig.name, Stack => (
@@ -35,7 +35,7 @@ export default () =>
         screenOptions={{
           animation: 'slide_from_bottom',
           gestureDirection: 'vertical',
-          presentation: Platform.select({ android: 'modal', ios: 'formSheet' }),
+          // presentation: Platform.select({ android: 'modal', ios: 'formSheet' }),
           sheetGrabberVisible: true,
         }}>
         <Stack.Screen

@@ -7,9 +7,6 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
 
-import styles from './styles';
-import { SwipeDirection } from './types';
-
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
@@ -17,7 +14,7 @@ import DayPicker from '~/framework/components/pickers/day';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
 import { CantineData } from '~/framework/modules/widgets/cantine/model';
 import { CantineNavigationParams, cantineRouteNames } from '~/framework/modules/widgets/cantine/navigation';
@@ -25,6 +22,9 @@ import { actions, getCacheKey, getCantineData, shouldRetryCantineData } from '~/
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
+
+import styles from './styles';
+import { SwipeDirection } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -112,7 +112,6 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     }
     setSelectedMeal('lunch');
     getCantineInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, selectedStructureValue]);
 
   const onStructureChange = React.useCallback(

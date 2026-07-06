@@ -1,12 +1,42 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Keyboard,
+  ScrollView as RNScrollView,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+import { I18n } from '~/app/i18n';
+import { modalScreenOptions, screenOptions } from '~/app/navigation/util';
+import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
+import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
+import { Picture, Svg } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
+import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
+import { assertSession, getSession } from '~/framework/modules/auth/redux/reducer';
+import {
+  emailValidation,
+  IEntcoreEmailValidationState,
+  IEntcoreMFAValidationState,
+  IEntcoreMobileValidationState,
+  mfaValidation,
+  mobileValidation,
+} from '~/framework/modules/auth/service';
+import { refreshRequirementsAction } from '~/framework/modules/auth/thunks';
+import { profileUpdateAction } from '~/framework/modules/user/actions';
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
+import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
 import {
@@ -18,31 +48,6 @@ import {
   PageTexts,
   ResendResponse,
 } from './types';
-
-import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
-import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
-import { KeyboardPageView } from '~/framework/components/page';
-import { Picture, Svg } from '~/framework/components/picture';
-import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
-import Toast from '~/framework/components/toast';
-import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import {
-  emailValidation,
-  IEntcoreEmailValidationState,
-  IEntcoreMFAValidationState,
-  IEntcoreMobileValidationState,
-  mfaValidation,
-  mobileValidation,
-} from '~/framework/modules/auth/service';
-import { profileUpdateAction } from '~/framework/modules/user/actions';
-import { userRouteNames } from '~/framework/modules/user/navigation';
-import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
 
 const animationSources = {
   [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
@@ -56,23 +61,15 @@ const CODE_RESEND_DELAY = 15000;
 const CODE_VALIDATION_DELAY = 500;
 const CODE_REDIRECTION_DELAY = 500;
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<
-  AuthNavigationParams,
-  typeof authRouteNames.mfa | typeof authRouteNames.mfaModal
->): NativeStackNavigationOptions => {
-  const routeParams = route.params;
-  const title = routeParams.isEmailMFA || routeParams.isMobileMFA ? routeParams.navBarTitle : I18n.get('auth-mfa-title');
-  return {
-    ...navBarOptions({
-      navigation,
-      route,
-      title,
-    }),
-  };
-};
+export const computeNavBar = screenOptions<'auth/mfa'>(({ route: { params } }) => {
+  const title = params.isEmailMFA || params.isMobileMFA ? params.navBarTitle : I18n.get('auth-mfa-title');
+  return { title };
+});
+
+export const computeNavBarModal = modalScreenOptions<'auth/mfa-modal'>('fullScreenModal', ({ route: { params } }) => {
+  const title = params.isEmailMFA || params.isMobileMFA ? params.navBarTitle : I18n.get('auth-mfa-title');
+  return { title };
+});
 
 const feedbackTexts = {
   mfa: {
@@ -282,7 +279,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     if (isModifyingEmail || isModifyingMobile) {
       try {
         await tryUpdateProfile(isModifyingEmail ? { email } : { mobile });
-        navigation.navigate(userRouteNames.home);
+        navigation.navigate('user', undefined, { pop: true });
         Toast.showSuccess(I18n.get(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'), {
           testID: 'account-notification-message',
         });
@@ -315,9 +312,19 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const onResetCode = useCallback(() => resetCode(), [resetCode]);
   const onResendCode = useCallback(() => resendCode(), [resendCode]);
 
+  const scrollViewRef = React.useRef<RNScrollView>(null);
+  React.useEffect(() => {
+    const listener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollViewRef.current?.scrollToEnd();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
-    <KeyboardPageView style={styles.page} scrollable>
-      <View style={styles.container}>
+    <KeyboardAvoidingView>
+      <ScrollView ref={scrollViewRef} style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
             {isEmailOrMobileMFA ? (
@@ -418,8 +425,8 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
             <BodyBoldText style={styles.resendText}>{I18n.get('auth-mfa-resend')}</BodyBoldText>
           </TouchableOpacity>
         </View>
-      </View>
-    </KeyboardPageView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

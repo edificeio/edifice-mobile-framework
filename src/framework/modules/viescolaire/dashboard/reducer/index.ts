@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
-import { ActionPayloads, actionTypes as authActionTypes } from '~/framework/modules/auth/reducer';
+import { ActionPayloads, actionTypes as authActionTypes } from '~/framework/modules/auth/redux/actions';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { OldStorageFunctions } from '~/framework/util/storage';

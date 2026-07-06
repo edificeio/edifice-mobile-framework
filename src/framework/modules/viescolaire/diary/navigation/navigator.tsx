@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DiaryNavigationParams, diaryRouteNames } from '.';
 
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import DiaryHomeworkScreen, { computeNavBar as homeworkNavBar } from '~/framework/modules/viescolaire/diary/screens/homework';
 import DiaryHomeworkListScreen, {

@@ -6,8 +6,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 export const CARD_UNEXPANDED_MARGIN_TOP = -UI_SIZES.cardSpacing.major;
 export const CARD_EXPANDED_MARGIN_TOP = -UI_SIZES.cardSpacing.small;
 export const CARD_EXPANDED_MARGIN_BOTTOM = UI_SIZES.spacing.large;
+export const CARD_UNEXPANDED_MARGIN_BOTTOM = 0;
 const EXPAND_BUTTON_BASE_STYLE: ViewStyle = {
   alignItems: 'center',
+  alignSelf: 'flex-end',
   flexDirection: 'row',
 };
 
@@ -30,10 +32,7 @@ export const styles = StyleSheet.create({
     color: theme.palette.grey.graphite,
     marginHorizontal: UI_SIZES.spacing.tiny,
   },
-  expandedButton: {
-    ...EXPAND_BUTTON_BASE_STYLE,
-    justifyContent: 'flex-end',
-  },
+  expandedButton: EXPAND_BUTTON_BASE_STYLE,
   unexpandedButton: {
     ...EXPAND_BUTTON_BASE_STYLE,
     bottom: 0,

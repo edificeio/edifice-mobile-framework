@@ -1,6 +1,9 @@
 /**
  * A specific moduleMap that exists inside timeline
  */
+import { NavigationProp } from '@react-navigation/native';
+
+import { AllModulesNavigationParams } from '~/app/navigation/types';
 import { MenuAction } from '~/framework/components/menus/actions';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { ModuleRegister, ModuleType, setGlobalRegister, UnknownNavigableModule } from '~/framework/util/moduleTool';
@@ -10,7 +13,7 @@ import { ModuleRegister, ModuleType, setGlobalRegister, UnknownNavigableModule }
 export const timelineWidgets = new ModuleRegister<UnknownNavigableModule>();
 
 export interface ITimelineWorkflowDefinition {
-  (session: AuthActiveAccount): undefined | false | MenuAction;
+  (session: AuthActiveAccount, navigation: NavigationProp<AllModulesNavigationParams>): undefined | false | MenuAction;
 }
 const registeredTimelineWorkflows: ITimelineWorkflowDefinition[] = [];
 export const registerTimelineWorkflow = (def: ITimelineWorkflowDefinition) => {
@@ -22,9 +25,9 @@ export const registerTimelineWorkflows = (def: ITimelineWorkflowDefinition[]) =>
 };
 export const getRegisteredTimelineWorkflow = () => registeredTimelineWorkflows;
 
-export const getTimelineWorkflows = (session: AuthActiveAccount) =>
+export const getTimelineWorkflows = (session: AuthActiveAccount, navigation: NavigationProp<AllModulesNavigationParams>) =>
   registeredTimelineWorkflows.reduce((acc, current) => {
-    const action = current(session);
+    const action = current(session, navigation);
     if (action) {
       acc.push(action);
     }

@@ -1,16 +1,16 @@
-import { CombinedState, combineReducers } from 'redux';
+import { combineReducers } from 'redux';
+
+import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 import notifFilters, { NotifFiltersState, NotificationFilter } from './notif-filters';
 import notifTypes, { IEntcoreNotificationType, NotifTypesState } from './notif-types';
 
-import { IEntcoreApp } from '~/framework/util/moduleTool';
-
 // State
 
-export type NotifDefinitionsState = CombinedState<{
+export type NotifDefinitionsState = {
   notifTypes: NotifTypesState;
   notifFilters: NotifFiltersState;
-}>;
+};
 
 // Reducer
 
@@ -32,8 +32,8 @@ const getFilterDetail = (filter: string, notifTypesToFilter: IEntcoreNotificatio
     ? {
         'app-address': matchingNotifType['app-address'],
         'app-name': matchingNotifType['app-name'],
-        i18n: `timeline-apptype-${filter}`.toLowerCase().replaceAll('_', '-'),
-        type: filter,
+        'i18n': `timeline-apptype-${filter}`.toLowerCase().replaceAll('_', '-'),
+        'type': filter,
       }
     : undefined;
 };

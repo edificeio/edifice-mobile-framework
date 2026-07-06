@@ -1,18 +1,19 @@
 import React from 'react';
 
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
-import SplashScreen from 'react-native-splash-screen';
+import BootSplash from 'react-native-bootsplash';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
+import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
 import { appReadyAction, getState as getAppStartupState } from '~/framework/navigation/redux';
-import { RootNavigator } from '~/framework/navigation/root-navigation';
 import { tryAction } from '~/framework/util/redux/actions';
+
+import AppNavigation from './navigation';
 
 /**
  * Logic code that is run for the app start
@@ -32,14 +33,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
     } finally {
       initEditor().finally(null);
       dispatch(appReadyAction());
-
-      /**
-       * Hide the splash screen only after the app startup is fully finished.
-       * Doing it earlier caused issues on Android when the app was put on foreground again.
-       * sometimes freezing/crasshing the app (android.view.WindowLeaked: Activity com.ode.appe.MainActivity has leaked window...).
-       */
-
-      SplashScreen.hide();
+      BootSplash.hide({ fade: true });
       inAppMessaging().setMessagesDisplaySuppressed(false).finally();
     }
   });
@@ -49,5 +43,5 @@ export function AppStartupHandler() {
   useAppStartup(useDispatch());
   const isAppReady = useSelector(getAppStartupState).isReady;
 
-  return isAppReady ? <RootNavigator /> : null;
+  return isAppReady ? <AppNavigation /> : null;
 }

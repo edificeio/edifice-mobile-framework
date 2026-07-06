@@ -2,7 +2,7 @@ import { UnknownAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { appsInfoActionTypes, FetchSuccessPayload } from '~/framework/modules/myapps/reducer/action-types';
 import { computeNextBookmarks, loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
 import { selectAppsState } from '~/framework/modules/myapps/reducer/selectors';

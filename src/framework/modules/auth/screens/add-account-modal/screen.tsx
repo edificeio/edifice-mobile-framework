@@ -1,97 +1,98 @@
 import * as React from 'react';
 
-import { CommonActions, StackActionType } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NavigationIndependentTree, useNavigationContainerRef } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
-import { AuthNavigationParams, authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
-import useAuthNavigation from '~/framework/modules/auth/navigation/add-account/navigator';
-import {
-  getAddAccountLoginNextScreen,
-  getAddAccountNavActionForRedirect,
-} from '~/framework/modules/auth/navigation/add-account/router';
-import { getState, IAuthState } from '~/framework/modules/auth/reducer';
-import { RouteStack } from '~/framework/navigation/helper';
-import { navBarOptions } from '~/framework/navigation/navBar';
-import { getTypedRootStack } from '~/framework/navigation/navigators';
-import appConf, { Platform } from '~/framework/util/appConf';
+import { NavigationContainer, navigationRef as parentNavigationRef } from '~/app/navigation';
+import { createLeafStackNavigator } from '~/app/navigation/leaf-stack';
+import { modalScreenOptions } from '~/app/navigation/util';
+import { getAuthReduxNavigationStateForNewAccount } from '~/framework/modules/auth/new-navigation';
+import { getState } from '~/framework/modules/auth/redux/reducer';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountModal>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-add-account-modal-title'),
-  }),
-});
+import AuthActivationAddAccountScreen, { computeNavBar as authActivationAddAccountNavBar } from '../add-account/activation';
+import AuthForgotAddAccountScreen from '../add-account/forgot';
+import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../add-account/login-credentials';
+import AuthLoginRedirectAddAccountScreen, { computeNavBar as loginRedirectNavBar } from '../add-account/login-redirect';
+import AuthLoginWayfAddAccountScreen, { computeNavBar as loginWayfNavBar } from '../add-account/login-wayf';
+import AuthOnboardingAddAccountScreen, { computeNavBar as AuthOnboardingAddAccountScreenOptions } from '../add-account/onboarding';
+import AuthPlatformsAddAccountScreen, { computeNavBar as platformsAddAccountNavBar } from '../add-account/platforms';
+import { AuthRenewPasswordScreen, AuthRenewPasswordScreenOptions } from '../add-account/renew-password';
+import AuthWayfAddAccountScreen, { computeNavBar as wayfNavBar } from '../add-account/wayf';
 
-const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
-  const routes = [] as RouteStack;
-  const allPlatforms = appConf.platforms;
+export const computeNavBar = modalScreenOptions('modal', () => ({ title: I18n.get('auth-add-account-modal-title') }));
 
-  routes.push({ name: authRouteNames.addAccountOnboarding });
-
-  // 4 – Requirement & login redirections
-
-  // 4.1 – Get corresponding nav action action
-  let navRedirection: CommonActions.Action | StackActionType | undefined;
-  if (pending?.redirect !== undefined) {
-    // 2 - Platform Select / Account Select
-
-    if (appConf.hasMultiplePlatform) {
-      routes.push({ name: authRouteNames.platforms });
-    } // if single account && single platform, do not push any routes
-
-    // 3 - Login Screen
-
-    // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
-    let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
-    // let login: string | undefined;
-    if (pending) {
-      foundPlatform = pending.platform;
-      if (pending.redirect !== undefined) {
-        // Activation && password renew
-        // login = pending.loginUsed;
-      }
-    }
-
-    // 3.2 – Get the actual platform object to be loaded
-    const platform: Platform | undefined = appConf.hasMultiplePlatform
-      ? foundPlatform
-        ? typeof foundPlatform === 'string'
-          ? allPlatforms.find(item => item.name === foundPlatform)
-          : foundPlatform
-        : undefined // Silenty go to the select page if the platform name has no correspondance.
-      : allPlatforms[0];
-
-    // 3.3 – Put the platform route into the stack
-    if (platform && !routes.length) routes.push(getAddAccountLoginNextScreen(platform, pending));
-    if (platform) navRedirection = getAddAccountNavActionForRedirect(platform, pending);
-  }
-
-  // 4.2 – Apply redirection
-  // We must add `stale = false` into the resulting state to make React Navigation reinterpret and rehydrate this state if necessary.
-  // @see https://reactnavigation.org/docs/navigation-state/#partial-state-objects
-  if (navRedirection) {
-    return { ...simulateNavAction(navRedirection, { routes }), stale: true as const };
-  } else {
-    return { index: routes.length - 1, routes, stale: true as const };
-  }
-};
+const LeafStack = createLeafStackNavigator();
 
 export default function AuthAddAccountModalScreen() {
-  const RootStack = getTypedRootStack();
-  const authNavigation = useAuthNavigation();
-  const pending = useSelector(state => getState(state).pending);
-  const navigationState = React.useMemo(() => getAddAccountNavigationState(pending), [pending]);
+  const pending = useSelector(state => getState(state).pendingAddAccount);
+  const navigationState = React.useMemo(() => getAuthReduxNavigationStateForNewAccount({ pending }), [pending]);
+  const navigationRef = useNavigationContainerRef();
+  const navigationKey = React.useMemo(() => JSON.stringify(navigationState), [navigationState]);
+  const initialNavigationDone = React.useRef(false);
+  React.useEffect(() => {
+    __DEV__ && console.info('[Navigation] Auth nav key changed ', navigationKey);
+    initialNavigationDone.current && navigationRef.isReady() && navigationState && navigationRef.reset(navigationState);
+    initialNavigationDone.current = true;
+    // Do not depend on `navigationState` since it can be recreated when session updates while being logged in
+  }, [navigationKey, navigationRef]);
   return (
-    <RootStack.Navigator
-      initialRouteName={navigationState.routes[navigationState.routes.length - 1].name}
-      screenOptions={{ headerShown: false }}>
-      {authNavigation}
-    </RootStack.Navigator>
+    <NavigationIndependentTree>
+      <NavigationContainer
+        // NO initial state since we WANT to start always on boarding
+        ref={navigationRef}
+        onUnhandledAction={action => {
+          parentNavigationRef.dispatch(action);
+        }}>
+        <LeafStack.Navigator screenOptions={{ headerShown: false }}>
+          <LeafStack.Screen
+            name="auth/add-account/onboarding"
+            component={AuthOnboardingAddAccountScreen}
+            options={AuthOnboardingAddAccountScreenOptions}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/platforms"
+            component={AuthPlatformsAddAccountScreen}
+            options={platformsAddAccountNavBar}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/login/credentials"
+            component={AuthLoginCredentialsScreen}
+            options={loginCredentialsNavBar}
+          />
+
+          <LeafStack.Screen
+            name="auth/add-account/login/wayf"
+            component={AuthLoginWayfAddAccountScreen}
+            options={loginWayfNavBar}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/login/redirect"
+            component={AuthLoginRedirectAddAccountScreen}
+            options={loginRedirectNavBar}
+          />
+          <LeafStack.Screen name="auth/add-account/wayf" component={AuthWayfAddAccountScreen} options={wayfNavBar} />
+
+          <LeafStack.Screen
+            name="auth/add-account/activation"
+            component={AuthActivationAddAccountScreen}
+            options={authActivationAddAccountNavBar}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/renew-password"
+            component={AuthRenewPasswordScreen}
+            options={AuthRenewPasswordScreenOptions}
+          />
+          <LeafStack.Screen
+            name="auth/add-account/forgot"
+            component={AuthForgotAddAccountScreen}
+            options={({ route }) => ({
+              title:
+                route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+            })}
+          />
+        </LeafStack.Navigator>
+      </NavigationContainer>
+    </NavigationIndependentTree>
   );
 }

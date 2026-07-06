@@ -2,7 +2,7 @@ import * as React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { StyleSheet, Text, View } from 'react-native';
 
-import FastImage from 'react-native-fast-image';
+import FastImage from '@d11/react-native-fast-image';
 
 import { I18n } from '~/app/i18n';
 import { getScaleWidth } from '~/framework/components/constants';

@@ -1,13 +1,11 @@
 import React from 'react';
 import { FlatListProps, TouchableOpacity, View } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
-
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleWidth } from '~/framework/components/constants';
@@ -16,7 +14,6 @@ import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import {
@@ -26,28 +23,18 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getNavActionForAccountLoad, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { getRouteForAccountLoad } from '~/framework/modules/auth/new-navigation';
+import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
+import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accounts>): NativeStackNavigationOptions => {
-  return {
-    ...navBarOptions({
-      navigation,
-      route,
-      title: I18n.get('auth-accountselection-title'),
-    }),
-  };
-};
+import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
+
+export const AuthAccountSelectionScreenOptions = screenOptions(() => ({ title: I18n.get('auth-accountselection-title') }));
 
 const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) => {
   const { accounts, navigation, tryRemoveAccount, tryRestore } = props;
@@ -75,13 +62,13 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const onItemPress = React.useCallback(
     async (item: (typeof dataforList)[0]) => {
       const redirect = (i: typeof item) => {
-        const navAction = getNavActionForAccountLoad(i);
-        if (!navAction) {
+        const route = getRouteForAccountLoad(i);
+        if (!route) {
           console.warn('AccountSelectionScreen: Missing platform for this account');
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        navigationDispatchMultiple(navigation, navAction);
+        navigation.navigate(route);
       };
       if (loadingState !== LoginState.IDLE) return;
       if (item.isLoggable) {
@@ -117,7 +104,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
     [accounts, tryRemoveAccount],
   );
 
-  const onAddAccount = React.useCallback(async () => navigation.navigate(authRouteNames.addAccountModal, {}), [navigation]);
+  const onAddAccount = React.useCallback(async () => navigation.navigate('auth/add-account', {}), [navigation]);
 
   const keyExtractor: FlatListProps<(typeof dataforList)[0]>['keyExtractor'] = React.useCallback(
     (item: (typeof dataforList)[0]) => item.id,

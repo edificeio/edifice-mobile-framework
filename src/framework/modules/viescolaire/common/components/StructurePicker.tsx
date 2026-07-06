@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { loadStoredStructureAction, selectStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';

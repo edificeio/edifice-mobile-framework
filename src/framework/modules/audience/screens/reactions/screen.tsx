@@ -22,7 +22,7 @@ import { BodyText, CaptionBoldText, SmallBoldText, SmallText } from '~/framework
 import { ContentLoader } from '~/framework/hooks/loader';
 import { audienceService } from '~/framework/modules/audience/service';
 import { AudienceReactions, AudienceUserReaction } from '~/framework/modules/audience/types';
-import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
+import { getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { accountTypeInfos } from '~/framework/util/accountType';

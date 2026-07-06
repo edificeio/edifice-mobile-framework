@@ -4,20 +4,18 @@
 import * as React from 'react';
 import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 
+import RNFastImage, { FastImageProps } from '@d11/react-native-fast-image';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import DeviceInfo from 'react-native-device-info';
-import RNFastImage, { FastImageProps } from 'react-native-fast-image';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
-import { IImageSize } from './image-viewer/image-viewer.type';
-
 import { I18n } from '~/app/i18n';
+import { NavigationRootParams } from '~/app/navigation/types';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -27,12 +25,10 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { DEFAULTS, ToastContainer } from '~/framework/components/toast/component';
 import { markViewAudience } from '~/framework/modules/audience';
 import { AudienceParameter } from '~/framework/modules/audience/types';
-import { assertSession } from '~/framework/modules/auth/reducer';
-import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { toURISource } from '~/framework/util/media';
@@ -43,16 +39,17 @@ import { OldStorageFunctions } from '~/framework/util/storage';
 import { sessionURISource } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 
-export interface ICarouselNavParams {
+import { IImageSize } from './image-viewer/image-viewer.type';
+
+export interface CarouselParams {
   data: IMedia[];
   startIndex?: number;
   referer: AudienceParameter; // used for audience tracking
 }
 
-export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
+export interface ICarouselProps extends NativeStackScreenProps<NavigationRootParams, 'carousel'> {}
 
 const styles = StyleSheet.create({
-  // eslint-disable-next-line react-native/no-color-literals
   errorScreen: {
     backgroundColor: 'transparent',
     height: UI_SIZES.screen.height,
@@ -114,7 +111,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
 export function computeNavBar({
   navigation,
   route,
-}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel>): NativeStackNavigationOptions {
+}: NativeStackScreenProps<NavigationRootParams, 'carousel'>): NativeStackNavigationOptions {
   return {
     ...navBarOptions({
       navigation,
@@ -296,12 +293,10 @@ export function Carousel(props: ICarouselProps) {
       navigation.setOptions({
         ...computeNavBar({ navigation, route }),
         headerRight: () => getButtons(imageState !== 'success'),
-        headerTitle: navBarTitle(
+        title:
           route.params.data.length !== 1
             ? I18n.get('carousel-counter', { current: indexDisplay, total: route.params.data.length })
             : '',
-          styles.title,
-        ),
       });
     } else {
       navigation.setOptions({
@@ -309,10 +304,9 @@ export function Carousel(props: ICarouselProps) {
         headerLeft: undefined,
         headerRight: undefined,
         headerStyle: { backgroundColor: 'transparent' },
-        headerTitle: '',
+        title: '',
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indexDisplay, isNavBarVisible, imageState]);
 
   // Audience hook
@@ -335,7 +329,6 @@ export function Carousel(props: ICarouselProps) {
       RNFastImage.clearMemoryCache();
       console.debug('Carousel : Empty RNFast Image on unmount');
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onClick = React.useCallback(() => setNavBarVisible(!isNavBarVisible), [isNavBarVisible]);
@@ -367,7 +360,7 @@ export function Carousel(props: ICarouselProps) {
       />
     ),
     // We want to remove `navigation` and `startIndex` from the dependencies here to avoid re-rendering when navState changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading],
   );
 

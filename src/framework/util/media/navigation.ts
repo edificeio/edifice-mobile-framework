@@ -1,4 +1,10 @@
-import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
+import { NavigationProp } from '@react-navigation/native';
+
+import { NavigationRootParams } from '~/app/navigation/types';
+import theme, { IntentIcon } from '~/app/theme';
+import toast from '~/framework/components/toast';
+import { AudienceParameter } from '~/framework/modules/audience/types';
+import { openUrl } from '~/framework/util/linking';
 
 import { mime, mimeCompare } from './mime';
 import { toURISource } from './source';
@@ -19,21 +25,12 @@ import {
   isVideoMedia,
   LinkMedia,
   Media,
-  MediaType,
   VideoMedia,
 } from './types';
 
-import theme, { IntentIcon } from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { openMediaPlayer } from '~/framework/components/media/player/navigation';
-import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
-import toast from '~/framework/components/toast';
-import { AudienceParameter } from '~/framework/modules/audience/types';
-import { openUrl } from '~/framework/util/linking';
-
 interface MediaIntent<MediaType extends Media> {
   condition: (media: Media) => media is MediaType;
-  exec?: (media: MediaType, audience?: AudienceParameter) => void;
+  exec?: (navigation: NavigationProp<NavigationRootParams>, media: MediaType, audience?: AudienceParameter) => void;
   icon?: (media: MediaType) => IntentIcon | string;
 }
 
@@ -42,9 +39,6 @@ const mediaIntents = [
   {
     condition(media) {
       return isImageMedia(media) || (isAttachmentMedia(media) && mimeCompare(media.mime, 'image/*') === 0);
-    },
-    exec(media, audience) {
-      openCarousel({ data: [{ ...media, src: toURISource(media.src), type: 'image' }], referer: audience, startIndex: 0 });
     },
     icon(_) {
       return theme.media.image;
@@ -56,14 +50,6 @@ const mediaIntents = [
     condition(media) {
       return isVideoMedia(media) || (isAttachmentMedia(media) && mimeCompare(media.mime, 'video/*') === 0);
     },
-    exec(media, audience) {
-      openMediaPlayer({
-        filetype: media.mime,
-        referer: audience,
-        source: toURISource(media.src),
-        type: MediaType.VIDEO,
-      });
-    },
     icon(_) {
       return theme.media.video;
     },
@@ -72,14 +58,6 @@ const mediaIntents = [
   // Audio
   {
     condition: media => isAudioMedia(media) || (isAttachmentMedia(media) && mimeCompare(media.mime, 'audio/*') === 0),
-    exec(media, audience) {
-      openMediaPlayer({
-        filetype: media.mime,
-        referer: audience,
-        source: toURISource(media.src),
-        type: MediaType.AUDIO,
-      });
-    },
     icon(_) {
       return theme.media.audio;
     },
@@ -88,17 +66,6 @@ const mediaIntents = [
   // PDF
   {
     condition: media => /*isDocumentMedia(media) || */ isAttachmentMedia(media) && mimeCompare(media.mime, 'application/pdf') === 0,
-    exec(media, _) {
-      const source = toURISource(media.src);
-      if (!source.uri) {
-        toast.showError();
-        return;
-      }
-      openPDFReader({
-        src: source.uri!,
-        title: media.name || '',
-      });
-    },
     icon(_) {
       return 'PDF';
     },
@@ -107,12 +74,9 @@ const mediaIntents = [
   // Embedded ("Iframes")
   {
     condition: media => isEmbeddedMedia(media),
-    exec(media, audience) {
-      openMediaPlayer({
-        referer: audience,
-        source: toURISource(media.src) as WebViewSourceUri,
-        type: MediaType.EMBEDDED,
-      });
+    exec(navigation, media, _) {
+      const url = toURISource(media.src).uri;
+      url && openUrl(url);
     },
     icon(_) {
       return theme.media.embedded;
@@ -122,7 +86,7 @@ const mediaIntents = [
   // External Link
   {
     condition: media => isLinkMedia(media),
-    exec(media, _) {
+    exec(navigation, media, _) {
       const url = toURISource(media.src).uri;
       url && openUrl(url);
     },
@@ -139,10 +103,6 @@ const mediaIntents = [
   // Unkncown file media
   {
     condition: media => isFileMedia(media),
-    exec(media, _) {
-      const url = toURISource(media.src).uri;
-      url && openUrl(url);
-    },
     icon(media) {
       const extension = mime.getExtension(media.mime);
       console.debug('EXTENSIONS', media.type, extension);
@@ -151,10 +111,33 @@ const mediaIntents = [
   } as MediaIntent<FileMedia>,
 ] as MediaIntent<FileMedia>[];
 
-export const openMedia = (media: Media, audience?: AudienceParameter) => {
+export const openMedia = (
+  navigation: NavigationProp<NavigationRootParams>,
+  media: Media[],
+  index: number,
+  audience?: AudienceParameter,
+) => {
+  const touchedMedia = media[index];
+  if (!touchedMedia) {
+    toast.showError();
+    return;
+  }
+
+  // Any fileMedia opens the carousel
+  if (isFileMedia(touchedMedia)) {
+    const carouselMedia = media.filter(isFileMedia);
+    const startIndex = carouselMedia.indexOf(touchedMedia);
+    navigation.navigate('media/carousel', {
+      media: carouselMedia,
+      startIndex: startIndex !== -1 ? startIndex : 0,
+    });
+    return;
+  }
+
+  // iframes & links = openUrl
   for (const intent of mediaIntents) {
-    if (intent.condition(media) && intent.exec) {
-      intent.exec(media, audience);
+    if (intent.condition(touchedMedia) && intent.exec) {
+      intent.exec(navigation, touchedMedia, audience);
       return;
     }
   }

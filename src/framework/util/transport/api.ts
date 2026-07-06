@@ -5,7 +5,7 @@ import { ApiClientOptions, BaseApiClient } from '@edifice.io/community-client-re
 import { getAccountFetch } from './fetch';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf from '~/framework/util/appConf';
 import { IUnkownModuleConfig } from '~/framework/util/moduleTool';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';

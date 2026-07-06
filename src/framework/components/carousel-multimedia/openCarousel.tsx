@@ -1,12 +1,16 @@
-import { navigate } from '~/framework/navigation/helper';
-import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { navigationRef } from '~/app/navigation';
 import { FileMedia } from '~/framework/util/media/types';
 
 export interface MultimediaCarouselNavParams {
   startIndex: number;
   media: FileMedia[];
+  title?: string;
 }
 
+/**
+ * @deprecated navigate directly (screens are now strongly typed)
+ * @param props
+ */
 export function openMultimediaCarousel(props: MultimediaCarouselNavParams) {
-  navigate(ModalsRouteNames.CarouselMultimedia, props);
+  navigationRef.navigate('media/carousel', props);
 }

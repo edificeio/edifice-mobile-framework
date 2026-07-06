@@ -2,10 +2,6 @@ import * as React from 'react';
 import { Keyboard, Platform } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
-
-import styles from './styles';
-import type { ObjectHobbies, UserEditHobbiesScreenProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -13,13 +9,16 @@ import InputContainer from '~/framework/components/inputs/container';
 import TextInput from '~/framework/components/inputs/text';
 import FlatList from '~/framework/components/list/flat-list';
 import { NavBarAction } from '~/framework/components/navigation';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { KeyboardPageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { HobbieVisibility } from '~/framework/modules/user/model';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+import styles from './styles';
+import type { ObjectHobbies, UserEditHobbiesScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -122,13 +121,17 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
       }));
       const body = JSON.stringify({ hobbies: arrayHobbies });
       await userService.person.put(userId, body);
-      navigation.navigate(userRouteNames.profile, {
-        newDescription: description,
-        newDescriptionVisibility: descriptionVisibility,
-        newHobbies: arrayHobbies,
-        newMood: mood,
-        newMotto: motto,
-      });
+      navigation.navigate(
+        userRouteNames.profile,
+        {
+          newDescription: description,
+          newDescriptionVisibility: descriptionVisibility,
+          newHobbies: arrayHobbies,
+          newMood: mood,
+          newMotto: motto,
+        },
+        { pop: true },
+      );
       Toast.showSuccess(I18n.get('user-profile-toast-editHobbiesSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));

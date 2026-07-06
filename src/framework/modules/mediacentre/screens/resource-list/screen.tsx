@@ -15,7 +15,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { addFavoriteAction, removeFavoriteAction, searchResourcesAction } from '~/framework/modules/mediacentre/actions';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
 import ResourceFilterList from '~/framework/modules/mediacentre/components/resource-filter-list';

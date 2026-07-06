@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const useSyncRef = <T extends any>(...refs: React.Ref<T>[]) => {
+export const useSyncRef = <T extends any>(...refs: (React.Ref<T> | undefined)[]) => {
   return React.useCallback(
     node => {
       refs.forEach(ref => {

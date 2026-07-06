@@ -75,13 +75,11 @@ class HomeworkInitialScreenContainer extends React.PureComponent<HomeworkInitial
     const hasOneDiary = diaryList?.length === 1;
 
     return isPristine || isFetching ? (
-      <PageView>
-        <Loading />
-      </PageView>
+      <Loading />
     ) : hasOneDiary ? (
       <HomeworkTaskListScreen {...this.props} />
     ) : (
-      <HomeworkExplorerScreen navigation={this.props.navigation} route={{ ...this.props.route, params: {} }} />
+      <HomeworkExplorerScreen navigation={this.props.navigation} route={this.props.route} />
     );
   }
 

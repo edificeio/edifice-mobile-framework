@@ -19,13 +19,16 @@ import {
 // The singleton pattern guarantee AllModules will be computed once.
 let AllModules: ModuleArray<AnyModule> | undefined;
 
+/**
+ * @deprecated use new module system
+ */
 export default () => {
   if (AllModules) return AllModules;
   else {
     const moduleDeclarations = [
       // Built-in modules
-      require('~/framework/modules/auth'),
-      require('~/framework/modules/timeline'),
+      // require('~/framework/modules/auth'),
+      // require('~/framework/modules/timeline'),
       require('~/framework/modules/audience').default,
       require('~/framework/modules/explorer').default,
       require('~/framework/modules/myapps'),
@@ -43,7 +46,6 @@ export default () => {
  * Call this function when all modules have been loaded to init them and register them.
  */
 export const setUpModulesAccess = (sessionIfExists?: AuthActiveAccount) => {
-  console.info('[BOB] setUpModulesAccess', sessionIfExists, AllModules);
   if (AllModules) {
     if (!sessionIfExists) return [];
     AllModules.initModuleConfigs(sessionIfExists);
@@ -56,10 +58,15 @@ export const setUpModulesAccess = (sessionIfExists?: AuthActiveAccount) => {
   }
 };
 
+/**
+ * @deprecated use new module system
+ * @param session
+ * @returns
+ */
 export const useAvailableModules = (session?: AuthActiveAccount) =>
   React.useMemo(() => {
+    console.info(`[App] Init modules for session: ${session?.user.id} (${session?.user.login})`);
     if (!session) return;
-    console.info(`[App] Init modules for session: ${session.user.id} (${session.user.login})`);
     if (AllModules) {
       AllModules.initModuleConfigs(session);
       dynamiclyRegisterModules(AllModules.filter(m => m instanceof NavigableModule) as NavigableModuleArray);

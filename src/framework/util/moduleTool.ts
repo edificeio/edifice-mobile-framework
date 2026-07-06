@@ -7,9 +7,6 @@ import { ColorValue } from 'react-native';
 
 import type { Action, Reducer } from 'redux';
 
-import type { StorageSlice } from './storage/slice';
-import type { StorageTypeMap } from './storage/types';
-
 import { IGlobalState } from '~/app/store';
 import theme, { type IShades } from '~/app/theme';
 import type { PictureProps } from '~/framework/components/picture';
@@ -17,6 +14,9 @@ import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { registerModuleFileManager } from '~/framework/util/fileHandler/services/fileManagerRegistry';
 import { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import { toCamelCase, toSnakeCase } from '~/framework/util/string';
+
+import type { StorageSlice } from './storage/slice';
+import type { StorageTypeMap } from './storage/types';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -76,7 +76,7 @@ interface IModuleConfigBase<Name extends string> {
   apiName?: string; // prefix for api calls
 }
 interface IModuleConfigRights {
-  matchEntcoreApp: string | null; // Name of the app matched by this module to be displayed.
+  matchEntcoreApp?: string | undefined; // Name of the app matched by this module to be displayed.
   entcoreWidgetName?: string;
   matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
   hasRight: (params: { matchingApps: IEntcoreApp[]; matchingWidgets: IEntcoreWidget[]; session: AuthActiveAccount }) => boolean;
@@ -84,7 +84,7 @@ interface IModuleConfigRights {
   getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
 interface IModuleConfigDeclarationRights {
-  matchEntcoreApp: string | null;
+  matchEntcoreApp?: IModuleConfigRights['matchEntcoreApp'];
   entcoreWidgetName?: IModuleConfigRights['entcoreWidgetName'];
   matchEntcoreWidget?: IModuleConfigRights['matchEntcoreWidget'];
   hasRight?: IModuleConfigRights['hasRight'];
@@ -742,7 +742,7 @@ export class NavigableModuleArray<
  * @returns
  */
 export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(moduleInclusions: ModuleInclusion<ModuleType>[]) => {
-  console.info(`[App] Load ${moduleInclusions.length} modules...`);
+  console.info(`[Modules (legacy)] Load ${moduleInclusions.length} legacy modules...`);
   const moduleMap: { [key: string]: ModuleType } = {};
   moduleInclusions.forEach(moduleInc => {
     // 1. Load module in the map
@@ -851,6 +851,9 @@ export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule =
   modules.forEach(module => {
     if (module.config.displayAs) {
       console.info(`Register module "${module.config.name}" into ${module.config.displayAs}`);
+      if (!getGlobalRegister(module.config.displayAs)) {
+        console.warn(`No register named ${module.config.displayAs}`);
+      }
       getGlobalRegister(module.config.displayAs)?.register(module, module.config.displayOrder);
     }
   });

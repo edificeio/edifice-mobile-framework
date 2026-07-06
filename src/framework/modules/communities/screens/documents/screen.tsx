@@ -17,10 +17,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
-import { DecoratedDocumentFlatList } from './community-paginated-document-list';
-import styles from './styles';
-import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
-
 import { I18n } from '~/app/i18n';
 import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -28,6 +24,7 @@ import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framewo
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { HeadingXSText } from '~/framework/components/text';
+import { usePrevious } from '~/framework/hooks/previous';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
@@ -36,6 +33,10 @@ import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.
 import { toURISource } from '~/framework/util/media';
 import { IMedia } from '~/framework/util/media-deprecated';
 import { accountApi } from '~/framework/util/transport';
+
+import { DecoratedDocumentFlatList } from './community-paginated-document-list';
+import styles from './styles';
+import type { CommunitiesDocumentItem, CommunitiesDocumentsScreen } from './types';
 
 export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>,
@@ -178,6 +179,13 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     title: currentFolderMeta?.title ?? I18n.get('communities-documents-title'),
   });
 
+  const previousStatusBar = usePrevious(statusBar);
+  if (previousStatusBar !== statusBar) {
+    navigation.setOptions({
+      statusBarStyle: statusBar,
+    });
+  }
+
   const stickyPlaceholderElements = React.useMemo(
     () => [placeholderBanner, <PlaceholderLine width={60} noMargin style={styles.titlePlaceholder} />],
     [placeholderBanner],
@@ -195,7 +203,6 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
 
   return (
     <>
-      {statusBar}
       <DecoratedDocumentFlatList
         numColumns={2}
         pageSize={PAGE_SIZE}

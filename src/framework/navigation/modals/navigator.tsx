@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import { IModalsNavigationParams, ModalsRouteNames } from '.';
-
 import CarouselScreen from '~/framework/components/carousel';
 import MultimediaCarousel, { CarouselMultimediaNavBar } from '~/framework/components/carousel-multimedia/';
 // eslint-disable-next-line import/order
@@ -24,9 +22,17 @@ import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/m
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
+import { IModalsNavigationParams, ModalsRouteNames } from '.';
+
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (
   <>
+    <RootStack.Screen
+      name={ModalsRouteNames.AttachmentsImport}
+      options={AttachmentsImportAddNavBar}
+      component={AttachmentsImportScreen}
+      initialParams={{}}
+    />
     <RootStack.Group
       screenOptions={{
         presentation: 'modal',
@@ -48,12 +54,6 @@ export default (
       screenOptions={{
         presentation: 'fullScreenModal',
       }}>
-      <RootStack.Screen
-        name={ModalsRouteNames.AttachmentsImport}
-        options={AttachmentsImportAddNavBar}
-        component={AttachmentsImportScreen}
-        initialParams={{}}
-      />
       <RootStack.Screen
         name={ModalsRouteNames.CarouselMultimedia}
         options={CarouselMultimediaNavBar}
@@ -100,6 +100,7 @@ setModalModeForRoutes([
   ModalsRouteNames.Pdf,
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.SplashAds,
+  ModalsRouteNames.FavoritesManagement,
 ]);
 
 setCrossIconBlackForRoutes([ModalsRouteNames.AttachmentsImport, ModalsRouteNames.FileImport, ModalsRouteNames.SplashAds]);

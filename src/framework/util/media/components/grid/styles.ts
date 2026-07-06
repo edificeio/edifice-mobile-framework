@@ -37,7 +37,7 @@ export default StyleSheet.create({
     width: '100%',
   },
   mediaVideoOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     backgroundColor: theme.ui.overlay.light,
     borderRadius: UI_SIZES.radius.medium,

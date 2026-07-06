@@ -1,8 +1,11 @@
-import type { IAuthState } from './reducer';
+import type { AuthState } from './redux/types';
 
 import { ModuleConfig } from '~/framework/util/moduleTool';
 
-export default new ModuleConfig<'auth', IAuthState>({
+/**
+ * @deprecated use new module system
+ */
+export default new ModuleConfig<'auth', AuthState>({
   entcoreScope: [
     'auth',
     'userbook',

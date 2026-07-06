@@ -6,8 +6,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 export default StyleSheet.create({
   bottomForm: {
     paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.minor,
-    zIndex: -1,
+    paddingTop: UI_SIZES.spacing.minor,
   },
   bottomSheet: {
     // minHeight: 600,

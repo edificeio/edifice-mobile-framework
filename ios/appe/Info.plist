@@ -3,17 +3,19 @@
 <plist version="1.0">
 <dict>
 	<key>BundleVersionOverride</key>
-	<string>dev/default</string>
+	<string>empty</string>
 	<key>BundleVersionType</key>
-	<string>rc.3</string>
+	<string>rc.4</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr_FR</string>
 	<key>CFBundleDisplayName</key>
-	<string>Dev Pocket</string>
+	<string>Édifice mobile</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.ode.mobile</string>
+	<string>com.ode.appe</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -21,11 +23,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.17.2</string>
+	<string>1.17.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1170203</string>
+	<string>1170314</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>http</string>
@@ -54,13 +56,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>L'appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
+	<string>L&apos;appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>RCTNewArchEnabled</key>
-	<false/>
+	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>icomoon.ttf</string>
@@ -84,12 +86,14 @@
 	<key>UIDesignRequiresCompatibility</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-	<string>SplashScreen.xib</string>
+	<string>LaunchScreen.storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
 	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
@@ -100,6 +104,6 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<true/>
 </dict>
 </plist>

@@ -5,8 +5,9 @@ import { InfoCommentField } from '~/framework/components/commentField';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogPost, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
-import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import { IResourceUriNotification } from '~/framework/util/notifications';
+
+import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 
 export interface BlogPostDetailsScreenDataProps {
   session?: AuthLoggedAccount;

@@ -1,8 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import { AuthMixedAccountMap } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
 
 export enum LoginState {
   IDLE = 'IDLE',
@@ -22,6 +22,7 @@ export interface AuthAccountSelectionScreenDispatchProps {
 }
 
 export interface AuthAccountSelectionScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accounts>,
+  extends
+    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accounts>,
     AuthAccountSelectionScreenProps,
     AuthAccountSelectionScreenDispatchProps {}

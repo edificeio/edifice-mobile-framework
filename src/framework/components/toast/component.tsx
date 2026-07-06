@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { Animated, Easing, LayoutChangeEvent } from 'react-native';
+import { Animated, Easing, LayoutChangeEvent, useWindowDimensions } from 'react-native';
 
-import { useHeaderHeight } from '@react-navigation/elements';
+import { getDefaultHeaderHeight, useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-
-import styles from './styles';
-import { ToastParams, ToastProps } from './types';
 
 import theme, { IShades } from '~/app/theme';
 import AlertCard, { AlertCardProps } from '~/framework/components/alert';
 import { toastConfigColor } from '~/framework/components/alert/model';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
+
+import styles from './styles';
+import { ToastParams, ToastProps } from './types';
 
 // Config constants for Toasts
 
@@ -169,16 +169,12 @@ const config: ToastConfig = {
   warning: props => <ToastCard {...props} />,
 };
 
-//
-// Toast Containers
-//
-
 export function ToastContainer({ offset, ...props }: ToastProps) {
-  const navBarHeight = useHeaderHeight();
-  return <ToastMessage config={config} topOffset={offset ? DEFAULTS.offset + offset : navBarHeight + DEFAULTS.offset} {...props} />;
-}
-
-export function RootToastContainer(props: ToastProps) {
+  // useHeaderHeight is not usable outside screen components, so ToastContainer must not rely on it.
+  // we use getDefaultHeaderHeight as a replacement to get base header height fo the device.
+  // For every screen with custom header height, it must include a `<ToastContainer offset={value}>` where `value` is the replacement distance from to the screen.
   const { top } = useSafeAreaInsets();
-  return <ToastMessage config={config} topOffset={DEFAULTS.offset + top + UI_SIZES.elements.navbarHeight} {...props} />;
+  const frame = useWindowDimensions();
+  const headerHeight = getDefaultHeaderHeight(frame, false, top);
+  return <ToastMessage config={config} topOffset={DEFAULTS.offset + (offset ?? headerHeight)} {...props} />;
 }

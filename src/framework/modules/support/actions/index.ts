@@ -1,6 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { actionTypes } from '~/framework/modules/support/reducer';
 import { supportService } from '~/framework/modules/support/service';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';

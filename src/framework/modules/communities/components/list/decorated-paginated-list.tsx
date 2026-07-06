@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RefreshControl } from 'react-native';
 
 import {
-  DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
+  DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   LOADING_ITEM_DATA,
   PaginatedFlatList,
   PaginatedFlatListProps,
@@ -10,10 +10,13 @@ import {
 } from '~/framework/components/list/paginated-list';
 import ScrollView from '~/framework/components/scrollView';
 import { LoadingState } from '~/framework/hooks/loader';
+import { DecoratedDocumentListItem } from '~/framework/modules/communities/screens/documents/community-paginated-document-list';
 import { createDecoratedArrayProxy } from '~/framework/modules/communities/screens/documents/proxy';
 
-export interface DecoratedPaginatedFlatListProps<ItemType>
-  extends Omit<PaginatedFlatListProps<ItemType | React.ReactElement>, 'keyExtractor' | 'renderItem' | 'renderPlaceholderItem'> {
+export interface DecoratedPaginatedFlatListProps<ItemType> extends Omit<
+  PaginatedFlatListProps<ItemType | React.ReactElement>,
+  'keyExtractor' | 'renderItem' | 'renderPlaceholderItem'
+> {
   keyExtractor: NonNullable<PaginatedFlatListProps<ItemType>['keyExtractor']>;
   renderItem: NonNullable<PaginatedFlatListProps<ItemType>['renderItem']>;
   renderPlaceholderItem: NonNullable<PaginatedFlatListProps<ItemType>['renderPlaceholderItem']>;
@@ -32,7 +35,7 @@ export function DecoratedPaginatedFlatList<ItemType>({
   placeholderDecorations = decorations,
   placeholderData: _placeholderData,
   numColumns,
-  placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_COUNT,
+  placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   ...paginatedListProps
 }: Readonly<DecoratedPaginatedFlatListProps<ItemType>>) {
   const [loadingState, setLoadingState] = React.useState<LoadingState>(LoadingState.PRISTINE);

@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import { HomeworkNavigationParams, homeworkRouteNames } from '.';
-
 import { I18n } from '~/app/i18n';
 import { computeNavBar as homeworkCreateNavBar } from '~/framework/modules/homework/components/HomeworkCreateScreen';
 import { computeNavBar as homeworkSelectNavBar } from '~/framework/modules/homework/components/HomeworkSelectScreen';
@@ -15,7 +13,8 @@ import HomeworkTaskDetailsScreen from '~/framework/modules/homework/screens/Home
 import HomeworkTaskListScreen from '~/framework/modules/homework/screens/HomeworkTaskListScreen';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
-import { navBarTitle } from '~/framework/navigation/navBar';
+
+import { HomeworkNavigationParams, homeworkRouteNames } from '.';
 
 export default () =>
   createModuleNavigator<HomeworkNavigationParams>(moduleConfig.name, Stack => (
@@ -36,7 +35,7 @@ export default () =>
       <Stack.Screen
         name={homeworkRouteNames.homeworkTaskDetails}
         component={HomeworkTaskDetailsScreen}
-        options={{ headerTitle: navBarTitle(I18n.get('homework')) }}
+        options={{ title: I18n.get('homework') }}
         initialParams={{}}
       />
       <Stack.Screen

@@ -3,9 +3,6 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { workspaceRouteNames } from './navigation';
-import { Filter } from './reducer';
-
 import { I18n } from '~/app/i18n';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
@@ -15,8 +12,11 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
+import { workspaceRouteNames } from './navigation';
+import { Filter } from './reducer';
+
 const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       // 1. Get notification data
       const resourceUri = notification.backupData.params.resourceUri;
@@ -40,7 +40,7 @@ const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       // 4. Return notif handling result
       return {
@@ -53,7 +53,7 @@ const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
   };
 
 const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       // 1. Get notification data
       const folderUri = notification.backupData.params.resourceFolderUri;
@@ -80,7 +80,7 @@ const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
       });
 
       // 3. Go !
-      handleNotificationNavigationAction(navAction);
+      handleNotificationNavigationAction(navAction, navigation, dispatch);
 
       // 4. Return notif handling result
       return {
@@ -96,12 +96,12 @@ export default () =>
   registerNotifHandlers([
     {
       'event-type': ['SHARE-FOLDER', 'CONTRIB-FOLDER'],
-      notifHandlerAction: handleWorkspaceShareFolderNotificationAction,
-      type: 'WORKSPACE',
+      'notifHandlerAction': handleWorkspaceShareFolderNotificationAction,
+      'type': 'WORKSPACE',
     },
     {
       'event-type': 'SHARE',
-      notifHandlerAction: handleWorkspaceShareNotificationAction,
-      type: 'WORKSPACE',
+      'notifHandlerAction': handleWorkspaceShareNotificationAction,
+      'type': 'WORKSPACE',
     },
   ]);

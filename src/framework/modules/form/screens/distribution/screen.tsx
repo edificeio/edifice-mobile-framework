@@ -1,14 +1,11 @@
 import React from 'react';
 import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
 
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import styles from './styles';
-import { FormDistributionScreenDispatchProps, FormDistributionScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -20,7 +17,7 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { BodyText, HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import {
   fetchDistributionResponsesAction,
   fetchFormContentAction,
@@ -53,6 +50,9 @@ import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from 
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+
+import styles from './styles';
+import { FormDistributionScreenDispatchProps, FormDistributionScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -133,7 +133,6 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
   React.useEffect(() => {
@@ -464,7 +463,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
   };
 
-  UNSTABLE_usePreventRemove(
+  usePreventRemove(
     status !== DistributionStatus.FINISHED && loadingState === AsyncPagedLoadingState.DONE && !isSubmitting,
     ({ data }) => {
       Alert.alert(I18n.get('form-distribution-leavealert-title'), I18n.get('form-distribution-leavealert-message'), [

@@ -57,13 +57,6 @@ import { SmallText } from './text';
 
 import theme from '~/app/theme';
 
-// Redecalare forwardRef @see https://fettblog.eu/typescript-react-generic-forward-refs/#option-3%3A-augment-forwardref
-declare module 'react' {
-  function forwardRef<T, P = object>(
-    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null,
-  ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
-}
-
 export interface ISwipeAction<ItemT extends { key: string }> {
   action: (row: RowMap<ItemT>, e: GestureResponderEvent) => void;
   actionIcon?: string;
@@ -177,8 +170,9 @@ const SwipeAction = <ItemT extends { key: string }>(
   );
 };
 
-export interface SwipeableListProps<ItemT extends { key: string }>
-  extends Partial<Omit<IPropsSwipeListView<ItemT>, 'renderHiddenItem'>> {
+export interface SwipeableListProps<ItemT extends { key: string }> extends Partial<
+  Omit<IPropsSwipeListView<ItemT>, 'renderHiddenItem'>
+> {
   bottomInset?: boolean;
   hiddenRowStyle?: ViewStyle;
   hiddenItemStyle?: ViewStyle;

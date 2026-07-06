@@ -10,9 +10,10 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { navigationRef } from '~/app/navigation';
 import { getStore, IGlobalState } from '~/app/store';
-import { refreshQueryParamTokenAction } from '~/framework/modules/auth/actions';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { refreshQueryParamTokenAction } from '~/framework/modules/auth/thunks';
 import { nabookRouteNames } from '~/framework/modules/nabook/navigation/';
 import { handleNotificationNavigationAction } from '~/framework/util/notifications/routing';
 
@@ -27,9 +28,11 @@ export interface OpenUrlCustomLabels {
 
 const verifyAndOpenUrl = async (finalUrl: string) => {
   try {
+    console.debug(`[openUrl] - try to open ${finalUrl}`);
     await Linking.openURL(finalUrl);
-  } catch {
-    throw new Error('openUrl : url provided is not supported');
+  } catch (e) {
+    console.error(`[openUrl] - error opening ${finalUrl}: `, (e as Error).message);
+    throw new Error('[openUrl] - provided url is not supported');
   }
 };
 
@@ -42,6 +45,10 @@ export async function openUrl(
 ): Promise<void> {
   try {
     let url = decode(_url);
+
+    // Special Youtube handling
+    url = normalizeYoutubeUrl(url);
+
     const session = getSession();
     // Note: openUrl must work also with relative urls.
     // This is NOT a good practice. Developer should use platformURISource or sessionURISource instead.
@@ -55,11 +62,16 @@ export async function openUrl(
     // Special case for nabook: Do not redirect to responsive but open nabook module
     try {
       if (isUrlInternal && url.endsWith('nabook')) {
-        handleNotificationNavigationAction(CommonActions.navigate({ name: nabookRouteNames.home }));
+        // ToDo : get the navigation here ??????
+        handleNotificationNavigationAction(
+          CommonActions.navigate({ name: nabookRouteNames.home }),
+          navigationRef,
+          navigationRef.dispatch,
+        );
         return;
       }
     } catch (error) {
-      console.error('Error navigating to nabook home:', error);
+      console.error('[openUrl] - Error navigating to nabook home:', error);
     }
 
     if (autoLogin && isUrlInternal) {
@@ -71,7 +83,7 @@ export async function openUrl(
           url = urlObj.href;
         }
       } catch (e) {
-        console.error('Error getting query param token: ', e);
+        console.error('[openUrl] - Error getting query param token: ', e);
       }
     }
 
@@ -102,3 +114,33 @@ export async function openUrl(
     if (generateException) throw e;
   }
 }
+
+const normalizeYoutubeUrl = (url: string) => {
+  try {
+    const urlObj = new URL(url);
+
+    const hostname = urlObj.hostname.toLowerCase();
+    const isYoutubeDomain = hostname.includes('youtube.com') || hostname.includes('youtu.be');
+
+    if (!isYoutubeDomain) {
+      return url;
+    }
+
+    // Extract video ID (/embed/BLvzDXtn-bo)
+    const videoId = urlObj.pathname.split('/embed/')[1];
+    if (!videoId) return url;
+
+    // Extract timestamp if provided
+    const startTime = urlObj.searchParams.get('start') || urlObj.searchParams.get('t');
+
+    // Build watch url
+    const watchUrl = new URL(`https://www.youtube.com/watch?v=${videoId}`);
+    if (startTime) {
+      watchUrl.searchParams.append('start', startTime);
+    }
+
+    return watchUrl.toString();
+  } catch {
+    return url;
+  }
+};

@@ -21,6 +21,6 @@ export default new NavigableModuleConfig<'mails', null>({
   matchEntcoreApp: 'Messagerie',
   name: 'mails',
   storageName: 'mails',
-  testID: 'tabbar-messages',
+  testID: 'tabbar-mails',
   trackingName: 'Mails',
 });

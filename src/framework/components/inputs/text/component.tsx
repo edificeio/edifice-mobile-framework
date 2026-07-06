@@ -9,6 +9,11 @@ import {
   View,
 } from 'react-native';
 
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
+import { CaptionItalicText, TextSizeStyle } from '~/framework/components/text';
+
 import styles, { TEXTINPUT_LINE_HEIGHT } from './styles';
 import {
   TextInputAnnotationProps,
@@ -17,11 +22,6 @@ import {
   TextInputProps,
   TextInputStatusIconProps,
 } from './types';
-
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
-import { CaptionItalicText, TextSizeStyle } from '~/framework/components/text';
 
 export const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
 export type TextInputType = RNTextInput;
@@ -133,6 +133,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
     testID,
     testIDCaption,
     testIDToggle,
+    TextInputComponent = RNTextInput,
     toggleIconOff,
     toggleIconOn,
     value,
@@ -197,8 +198,8 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
   return (
     <View>
-      <View style={styles.viewInput} testID={testID ?? ''}>
-        <RNTextInput
+      <View style={styles.viewInput}>
+        <TextInputComponent
           {...props}
           maxLength={maxLength}
           onFocus={handleFocus}

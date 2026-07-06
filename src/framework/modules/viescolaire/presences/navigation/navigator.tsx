@@ -3,7 +3,7 @@ import * as React from 'react';
 import { PresencesNavigationParams, presencesRouteNames } from '.';
 
 import { AccountType } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import PresencesCallScreen, { computeNavBar as callNavBar } from '~/framework/modules/viescolaire/presences/screens/call';
 import PresencesCallListScreen, {

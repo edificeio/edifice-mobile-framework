@@ -67,7 +67,7 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
               textStyle={styles.dropdownText}
             />
           ) : null}
-          <View style={{ zIndex: -1 }}>
+          <View>
             <SmallText style={styles.topMargin}>
               {I18n.get(
                 props.status === DistributionStatus.ON_CHANGE

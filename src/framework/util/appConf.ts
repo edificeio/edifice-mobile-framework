@@ -4,13 +4,12 @@
  */
 import type { ImageStyle, PlatformOSType } from 'react-native';
 
-import RNConfigReader from 'react-native-config-reader';
-
 import AppConfValues from '~/app/appconf';
 import { I18n } from '~/app/i18n';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AccountType } from '~/framework/modules/auth/model';
 import { WhoAreWellustrationType, WhoAreWeQuoteType } from '~/framework/modules/user/screens/who-are-we';
+import BuildInfo from '~/framework/util/build-info';
 
 // Platforms ======================================================================================
 
@@ -163,7 +162,14 @@ export class AppConf {
     zendeskUrl?: string;
   };
 
+  // ToDo : store as a Map to avoid use find everytime
   getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
+
+  getHost = (name: string) => {
+    const platform = this.getPlatformByName(name);
+    if (!platform) throw new Error(`No platform with name "${name}".`);
+    return platform;
+  };
 
   getExpandedPlatform = (platform: string | Platform) =>
     typeof platform === 'string' ? this.getPlatformByName(platform) : platform;
@@ -198,7 +204,7 @@ export class AppConf {
   }
 
   get isDevOrAlpha() {
-    return __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
+    return __DEV__ || BuildInfo.BundleVersionType.toLowerCase().startsWith('alpha');
   }
 
   get splashadsEnabled() {
@@ -276,6 +282,8 @@ export class AppConf {
       : undefined;
   }
 }
+
+export type HostId = ArrayElement<AppConf['platforms']>['name'];
 
 const appConf = new AppConf(AppConfValues as IAppConfDeclaration);
 export default appConf;

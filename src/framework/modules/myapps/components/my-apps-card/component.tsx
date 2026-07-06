@@ -4,17 +4,17 @@ import { Pressable, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { SvgUri } from 'react-native-svg';
 
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Svg, SvgProps } from '~/framework/components/picture';
+import { BodyBoldText, BodyText } from '~/framework/components/text';
+import { getAppTestID } from '~/framework/modules/myapps/utils';
+import { Image } from '~/framework/util/media/components/image';
+
 import { MyAppsCardProps } from './types';
 import { useController } from './useController';
 import { useStyles } from './useStyles';
 import { resolveAppIcon } from './utils';
-
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
-import { BodyBoldText, BodyText } from '~/framework/components/text';
-import { getAppTestID } from '~/framework/modules/myapps/utils';
-import { Image } from '~/framework/util/media/components/image';
 
 const LetterFallback = ({ label }: { label: string }) => {
   const letter = label?.trim()?.charAt(0)?.toUpperCase() ?? '?';
@@ -42,7 +42,6 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
   const renderFallbackIcon = () =>
     app.isConnector ? (
       <Svg
-        cached
         name="default-connector"
         width={UI_SIZES.spacing.huge}
         height={UI_SIZES.spacing.huge}
@@ -59,8 +58,7 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
       case 'svg':
         return (
           <Svg
-            cached
-            name={appIcon.name}
+            name={appIcon.name as SvgProps['name']}
             width={UI_SIZES.spacing.huge}
             height={UI_SIZES.spacing.huge}
             fill={app.color ? 'white' : 'black'}

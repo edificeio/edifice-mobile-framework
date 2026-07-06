@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { ImageURISource } from 'react-native';
 
+import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
+
 import ImageItem from './image-item/component';
 import PdfItem from './pdf-item/component';
 import PlayerItem from './player-item/component';
 import { CarouselItemProps } from './types';
 import UnknownItem from './unknown-item/component';
 import UnviewableItem from './unviewable-item/component';
-
-import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
 
 const CarouselItem = ({
   containerHeight,
@@ -36,7 +36,7 @@ const CarouselItem = ({
     setHasMediaError(true);
     return <UnknownItem />;
   }
-  if (!media.mime && media.src) return <UnviewableItem file={media} />;
+  if (!media.mime && media.src) return <UnviewableItem media={media} />;
 
   if (isImageContent(media)) {
     return (
@@ -56,7 +56,7 @@ const CarouselItem = ({
 
   if (isAudioContent(media) || isVideoContent(media)) {
     if (isPlayerLoadTimeout) {
-      return <UnviewableItem file={media} />;
+      return <UnviewableItem media={media} />;
     }
     return (
       <PlayerItem
@@ -76,7 +76,7 @@ const CarouselItem = ({
 
   if (isPdfContent(media)) {
     if (isPdfLoadTimeout) {
-      return <UnviewableItem file={media} />;
+      return <UnviewableItem media={media} />;
     }
     return (
       <PdfItem
@@ -93,7 +93,7 @@ const CarouselItem = ({
     );
   }
 
-  return <UnviewableItem file={media} />;
+  return <UnviewableItem media={media} />;
 };
 
 export default React.memo(CarouselItem);

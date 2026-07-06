@@ -2,20 +2,17 @@
  * constants used for the navBar setup accross navigators
  */
 import * as React from 'react';
-import { Platform, StyleSheet, TextStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { addCrossIconBlackOnThisRoute, isModalModeOnThisRoute } from './hideTabBarAndroid';
-
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
-import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
+import { TextFontStyle } from '~/framework/components/text';
 
-const NAVBAR_BUTTON_WIDTH = UI_SIZES.elements.navbarIconSize + 2 * UI_SIZES.spacing.tiny;
+import { addCrossIconBlackOnThisRoute, isModalModeOnThisRoute } from './hideTabBarAndroid';
 
 const styles = StyleSheet.create({
   backbutton: {
@@ -28,45 +25,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export const navBarTitle = (
-  title?: string,
-  style?: TextStyle,
-  testID?: string,
-  nbButtonsLeft?: number,
-  nbButtonsRight?: number,
-) => {
-  const maxNbButtons = Math.max(nbButtonsLeft ?? 1, nbButtonsRight ?? 1);
-  return Platform.select({
-    android: () => (
-      <BodyBoldText
-        numberOfLines={1}
-        style={[
-          styles.navBarTitleStyle,
-          {
-            width:
-              UI_SIZES.screen.width -
-              2 * UI_SIZES.elements.navbarMargin -
-              maxNbButtons * 2 * NAVBAR_BUTTON_WIDTH -
-              (maxNbButtons - 1) * UI_SIZES.spacing.tiny,
-          },
-          style ?? {},
-        ]}
-        testID={testID}>
-        {title ?? ''}
-      </BodyBoldText>
-    ),
-    default: title,
-  });
-};
+/**
+ * @deprecated use screenOptions() or modalScreenOptions()
 
+ */
 export const navBarOptions: (props: {
   route: RouteProp<ParamListBase, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;
   title?: string;
-  titleStyle?: TextStyle;
-  titleTestID?: string;
   backButtonTestID?: string;
-}) => NativeStackNavigationOptions = ({ backButtonTestID, navigation, route, title, titleStyle, titleTestID }) =>
+}) => NativeStackNavigationOptions = ({ backButtonTestID, navigation, route, title }) =>
   ({
     // Since headerLeft replaces native back, we cannot use this.
     freezeOnBlur: true,
@@ -87,35 +55,23 @@ export const navBarOptions: (props: {
               {...(addCrossIconBlackOnThisRoute(route.name) ? { color: theme.palette.grey.darkness } : {})}
               onPress={navigation.goBack}
               icon="ui-close"
-              testID={backButtonTestID}
+              testID="header-back"
             />
           );
         } else {
           return (
             <HeaderBackButton
               {...props}
-              labelVisible={false}
+              displayMode="minimal"
               style={styles.backbutton}
-              testID={backButtonTestID}
+              testID="header-back"
               onPress={navigation.goBack}
+              pressColor="transparent"
             />
           );
         }
       } else return null;
     },
 
-    // Since headerLeft replaces native back, we don't want him to show when there's no headerLeft
-    headerShadowVisible: true,
-
-    headerStyle: {
-      backgroundColor: theme.palette.primary.regular,
-    },
-
-    headerTintColor: theme.ui.text.inverse,
-
-    headerTitle: navBarTitle(title, titleStyle, titleTestID),
-
-    headerTitleAlign: 'center',
-
-    headerTitleStyle: styles.navBarTitleStyle,
+    title: title,
   }) as NativeStackNavigationOptions;

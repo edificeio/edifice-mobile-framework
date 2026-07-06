@@ -20,7 +20,6 @@ export const CardTopContentCategory = (props: CardTopContentCategoryProps) => {
           <Svg
             width={UI_SIZES.dimensions.width.medium}
             height={UI_SIZES.dimensions.height.medium}
-            cached
             name={`schoolbook-${category}`}
           />
         </View>

@@ -1,8 +1,8 @@
-import { AppIcon } from './types';
-
 import { svgExists } from '~/framework/components/picture';
 import { toURISource } from '~/framework/util/media';
 import { sessionImageSource } from '~/framework/util/transport';
+
+import { AppIcon } from './types';
 
 const HTTP_REGEX = /^https?:\/\//i;
 

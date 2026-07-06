@@ -1,20 +1,19 @@
 import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
-import { styles } from './styles';
-import { HeaderLeftProps, HeaderRightProps, ManageFavoriteScreenProps } from './types';
-import { useManageFavoritesController } from './useController';
-
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
 import SearchBar from '~/framework/components/search-bar';
 import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { MyAppsList } from '~/framework/modules/myapps/components/my-apps-list';
 import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myapps/screens/utils';
-import { navBarOptions } from '~/framework/navigation/navBar';
+
+import { styles } from './styles';
+import { HeaderLeftProps, HeaderRightProps, ManageFavoriteScreenProps } from './types';
+import { useManageFavoritesController } from './useController';
 
 const HeaderLeft = ({ isSaving, onClose }: HeaderLeftProps) => (
   <NavBarAction color={theme.palette.grey.black} icon="ui-close" disabled={isSaving} onPress={onClose} />
@@ -32,21 +31,15 @@ const HeaderRight = ({ hasUnsavedChanges, isSaving, onValidate }: HeaderRightPro
   />
 );
 
-export const computeNavBar: ManageFavoriteScreenProps.NavBarConfig = ({ navigation, route }) => ({
-  presentation: 'modal',
-  ...navBarOptions({
-    navigation,
-    route,
-  }),
+export const computeNavBar = modalScreenOptions('modal', () => ({
+  headerShadowVisible: false,
   headerStyle: {
-    backgroundColor: theme.ui.background.page as string,
-    elevation: 0,
+    backgroundColor: theme.ui.background.card.toString(),
   },
+  headerTintColor: theme.ui.text.regular.toString(),
   headerTitle: '',
-  statusBarColor: theme.palette.grey.white.toString(),
   statusBarStyle: 'dark',
-  statusBarTranslucent: false,
-});
+}));
 export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenProps.AllProps) => {
   const searchRef = React.useRef<SearchBarHandle>(null);
   const [searchFocused, setSearchFocused] = React.useState<boolean>(false);
@@ -72,7 +65,7 @@ export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenP
   }, [navigation, isSaving, hasUnsavedChanges, onValidate, handleGoBack, renderHeaderLeft, renderHeaderRight]);
 
   return (
-    <PageView>
+    <>
       <View style={styles.searchContainer}>
         <SearchBar
           ref={searchRef}
@@ -94,7 +87,7 @@ export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenP
           onPressApp={app => onToggle(app.name)}
         />
       </View>
-    </PageView>
+    </>
   );
 };
 
