@@ -1,14 +1,17 @@
 diff --git a/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js b/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
-index 6d0c9e6..fbddd5b 100644
+index 6d0c9e6..a721b43 100644
 --- a/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
 +++ b/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
-@@ -2,7 +2,8 @@
+@@ -2,9 +2,10 @@
  
  import { useTheme } from '@react-navigation/native';
  import * as React from 'react';
 -import { Animated, Easing, Platform, Pressable } from 'react-native';
-+import { Animated, Easing, Platform } from 'react-native';
-+import { Pressable } from 'react-native-gesture-handler';
++import { Animated, Easing, Platform, Pressable as PressableIOS } from 'react-native';
++import { Pressable as PressableAndroid } from 'react-native-gesture-handler';
  import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
- const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
++const AnimatedPressable = Animated.createAnimatedComponent(Platform.select({ios: PressableIOS, default: PressableAndroid}));
  const ANDROID_VERSION_LOLLIPOP = 21;
+ const ANDROID_SUPPORTS_RIPPLE = Platform.OS === 'android' && Platform.Version >= ANDROID_VERSION_LOLLIPOP;
+ const useNativeDriver = Platform.OS !== 'web';
