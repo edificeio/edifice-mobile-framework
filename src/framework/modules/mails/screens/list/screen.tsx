@@ -1,10 +1,23 @@
 import * as React from 'react';
-import { Alert, BackHandler, FlatListProps, Platform, ScrollViewProps, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  BackHandler,
+  FlatListProps,
+  ListRenderItemInfo,
+  Platform,
+  ScrollViewProps,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { ParamListBase } from '@react-navigation/core';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
 import { FlatList as GHFlatList } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -15,12 +28,12 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import SearchInput from '~/framework/components/inputs/search';
-import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { NavBarAction } from '~/framework/components/navigation';
 import Separator from '~/framework/components/separator';
+import SwipeableList, { ISwipeAction, ISwipeActionProps } from '~/framework/components/swipeableList';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { Toggle } from '~/framework/components/toggle';
@@ -55,10 +68,12 @@ export const computeNavBar = screenOptions(() => ({ title: '' }));
 
 const PAGE_SIZE = 25;
 const TIMEOUT_DURATION = 300;
-const ITEM_HEIGHT = 100;
+
+type MailWithKey = IMailsMailPreview & { key: string };
+
 const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const flatListRef = React.useRef<typeof GHFlatList<IMailsMailPreview>>(null);
+  const listRef = React.useRef<SwipeListView<{ key: string }> | null>(null);
   const searchInputRef = React.useRef<TextInput>(null);
   //TODO: créer un wrapper
   const { top: statusBarHeight } = useSafeAreaInsets();
@@ -84,6 +99,15 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isDeletingFolder, setIsDeletingFolder] = React.useState<boolean>(false);
   const mailsRef = React.useRef<IMailsMailPreview[]>(mails);
   mailsRef.current = mails;
+  const hasOpenSwipeRowRef = React.useRef(false);
+  const onOpenRowsChange = React.useCallback((hasOpenRows: boolean) => {
+    hasOpenSwipeRowRef.current = hasOpenRows;
+  }, []);
+  const closeOpenSwipeRows = React.useCallback(() => {
+    listRef.current?.closeAllOpenRows?.();
+    hasOpenSwipeRowRef.current = false;
+  }, []);
+  const mailsWithKey = React.useMemo<MailWithKey[]>(() => mails.map(mail => ({ ...mail, key: mail.id })), [mails]);
 
   const isContentLoading = React.useMemo(() => isDeletingFolder || isLoading, [isDeletingFolder, isLoading]);
 
@@ -191,7 +215,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         setSelectedFolder(folder);
         closeBottomSheet();
         await loadMails(folder);
-        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+        listRef.current?.scrollToTop();
       } catch (e) {
         console.error(e);
       }
@@ -201,12 +225,21 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const onPressItem = React.useCallback(
     (id: string, unread: boolean, state: MailsMailStatePreview) => {
-      if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH)
-        return navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder });
+      if (hasOpenSwipeRowRef.current) {
+        closeOpenSwipeRows();
+        return;
+      }
+
+      closeOpenSwipeRows();
+      const navigateDetails = () => navigation.navigate(mailsRouteNames.details, { folders, fromFolder: selectedFolder, id });
+      if (state === MailsMailStatePreview.DRAFT && selectedFolder !== MailsDefaultFolders.TRASH) {
+        setTimeout(() => navigation.navigate(mailsRouteNames.edit, { draftId: id, fromFolder: selectedFolder }), 160);
+        return;
+      }
       if (unread) setMails(prevMails => prevMails.map(mail => (mail.id === id ? { ...mail, unread: false } : mail)));
-      return navigation.navigate(mailsRouteNames.details, { folders, fromFolder: selectedFolder, id });
+      setTimeout(navigateDetails, 160);
     },
-    [selectedFolder, navigation, setMails, folders],
+    [selectedFolder, navigation, setMails, folders, closeOpenSwipeRows],
   );
 
   const onToggleSubfolders = React.useCallback(() => {
@@ -225,6 +258,60 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       }
     },
     [setSelectedMails, setIsSelectionMode],
+  );
+
+  const handleMailAction = React.useCallback(
+    async ({
+      action,
+      idsToRemove,
+      successMessage,
+      updateMails,
+    }: {
+      action: () => Promise<void>;
+      idsToRemove?: string[];
+      successMessage: string;
+      updateMails?: () => void;
+    }) => {
+      try {
+        await action();
+        if (idsToRemove?.length && Platform.OS === 'android') {
+          const filtered = mailsRef.current.filter(mail => !idsToRemove.includes(mail.id));
+
+          setTimeout(() => {
+            setMails([]);
+            setMails(filtered);
+            loadFolders();
+            toast.showSuccess(I18n.get(successMessage));
+          }, 50);
+        } else {
+          if (updateMails) updateMails();
+          loadFolders();
+          toast.showSuccess(I18n.get(successMessage));
+        }
+      } catch (e) {
+        console.error(e);
+        toast.showError();
+      }
+    },
+    [loadFolders],
+  );
+
+  const onMove = React.useCallback(
+    async (ids: string[], folderId: string) => {
+      const moveToFolder = mailsService.mail.moveToFolder;
+      if (!isServiceMethodAvailable(moveToFolder)) {
+        toast.showError();
+        return;
+      }
+      bottomSheetModalRef.current?.dismiss();
+      await handleMailAction({
+        action: () => moveToFolder({ folderId }, { ids }),
+        idsToRemove: ids,
+        successMessage: 'mails-toastsuccessmove',
+        updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
+      });
+    },
+    [handleMailAction],
   );
 
   const handleFolderOperation = React.useCallback(
@@ -328,15 +415,24 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }, TIMEOUT_DURATION);
   }, [loadMails, selectedFolder]);
 
-  const onActiveSelectMode = React.useCallback((mailId: string) => {
-    if (mailId) setSelectedMails([mailId]);
-    setIsSelectionMode(true);
-  }, []);
+  const onActiveSelectMode = React.useCallback(
+    (mailId?: string) => {
+      if (hasOpenSwipeRowRef.current) {
+        closeOpenSwipeRows();
+      }
+      if (mailId) setSelectedMails([mailId]);
+      setIsSelectionMode(true);
+    },
+    [closeOpenSwipeRows],
+  );
 
   const onDisableSelectMode = React.useCallback(() => {
+    if (hasOpenSwipeRowRef.current) {
+      closeOpenSwipeRows();
+    }
     setIsSelectionMode(false);
     if (selectedMails.length) setSelectedMails([]);
-  }, [selectedMails]);
+  }, [closeOpenSwipeRows, selectedMails]);
 
   const onConfigureSignature = React.useCallback(async () => {
     navigation.navigate(mailsRouteNames.signature, {});
@@ -373,42 +469,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       },
     ]);
   }, [loadFolders, selectedFolder, switchFolder]);
-
-  const handleMailAction = React.useCallback(
-    async ({
-      action,
-      idsToRemove,
-      successMessage,
-      updateMails,
-    }: {
-      action: () => Promise<void>;
-      idsToRemove?: string[];
-      successMessage: string;
-      updateMails?: () => void;
-    }) => {
-      try {
-        await action();
-        if (idsToRemove?.length && Platform.OS === 'android') {
-          const filtered = mailsRef.current.filter(mail => !idsToRemove.includes(mail.id));
-
-          setTimeout(() => {
-            setMails([]);
-            setMails(filtered);
-            loadFolders();
-            toast.showSuccess(I18n.get(successMessage));
-          }, 50);
-        } else {
-          if (updateMails) updateMails();
-          loadFolders();
-          toast.showSuccess(I18n.get(successMessage));
-        }
-      } catch (e) {
-        console.error(e);
-        toast.showError();
-      }
-    },
-    [loadFolders],
-  );
 
   const onDelete = React.useCallback(
     async (ids: string[], permanently?: boolean) => {
@@ -454,24 +514,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         action: () => restore({ ids }),
         idsToRemove: ids,
         successMessage: 'mails-toastsuccessrestore',
-        updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
-      });
-    },
-    [handleMailAction],
-  );
-
-  const onMove = React.useCallback(
-    async (ids: string[], folderId: string) => {
-      const moveToFolder = mailsService.mail.moveToFolder;
-      if (!isServiceMethodAvailable(moveToFolder)) {
-        toast.showError();
-        return;
-      }
-      bottomSheetModalRef.current?.dismiss();
-      await handleMailAction({
-        action: () => moveToFolder({ folderId }, { ids }),
-        idsToRemove: ids,
-        successMessage: 'mails-toastsuccessmove',
         updateMails: () => setMails(prevMails => prevMails.filter(mail => !ids.includes(mail.id))),
       });
     },
@@ -577,12 +619,25 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }, [handleHardwareBack]),
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      closeOpenSwipeRows();
+
+      return () => {
+        closeOpenSwipeRows();
+      };
+    }, [closeOpenSwipeRows]),
+  );
+
   React.useEffect(() => {
-    const unsubscribe = props.navigation.getParent('tabs')?.addListener('tabPress', () => {
+    const parentNavigation = props.navigation.getParent<BottomTabNavigationProp<ParamListBase>>();
+    const unsubscribe = parentNavigation?.addListener('tabPress', () => {
       setSelectedFolder(MailsDefaultFolders.INBOX);
       loadMails(MailsDefaultFolders.INBOX);
     });
+
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -617,7 +672,8 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           },
           p,
         ).element,
-        <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
+        <PopupMenu
+          actions={typeof selectedFolder === 'object' && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
           <NavBarAction disabled={isContentLoading} icon="ui-options" />
         </PopupMenu>,
       ],
@@ -693,6 +749,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       <TouchableOpacity onPress={onSelectAll} style={styles.selectModeTopText}>
         <Checkbox
           onPress={onSelectAll}
+          // onLongPress={onSelectAll}
           checked={mails.length === selectedMails.length}
           partialyChecked={selectedMails.length > 0 && mails.length !== selectedMails.length}
         />
@@ -964,7 +1021,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         <MailsMoveBottomSheet
           onMove={folderId => onActionMultiple(() => onMove(selectedMails, folderId))}
           folders={folders}
-          mailFolderId={selectedFolder.id ?? null}
+          mailFolderId={typeof selectedFolder === 'object' ? selectedFolder.id : null}
           onPressCreateFolderButton={() => setTypeModal(MailsListTypeModal.CREATE)}
           {...listProps}
         />
@@ -1041,10 +1098,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
 
   const renderFooter = React.useCallback(() => (isLoadingNextPage ? <MailsPlaceholderLittleList /> : null), [isLoadingNextPage]);
 
-  const renderMailPreview = React.useCallback(
-    (mail: IMailsMailPreview) => {
+  const renderMailItem = React.useCallback(
+    (info: ListRenderItemInfo<{ key: string }>, _rowMap?: unknown) => {
+      const mail = info.item as MailWithKey;
       const isSender = currentUserId === mail.from?.id && selectedFolder !== MailsDefaultFolders.INBOX;
-      const isDraft = mail.state === MailsMailStatePreview.DRAFT;
       const isTrashed = selectedFolder === MailsDefaultFolders.TRASH;
       return (
         <MailsMailPreview
@@ -1057,30 +1114,79 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           isSelected={selectedMails.includes(mail.id)}
           isTrashed={isTrashed}
           onSelect={onSelectMail}
-          onDelete={() => onDelete([mail.id], isTrashed ? true : false)}
-          onToggleUnread={
-            !isDraft && !isSender && !isTrashed && isServiceMethodAvailable(mailsService.mail.toggleUnread)
-              ? () => onToggleUnread([mail.id], mail.unread)
-              : undefined
-          }
-          onRestore={isTrashed && isServiceMethodAvailable(mailsService.mail.restore) ? () => onRestore([mail.id]) : undefined}
         />
       );
     },
-    [
-      isSelectionMode,
-      onDelete,
-      onPressItem,
-      onRestore,
-      onActiveSelectMode,
-      onSelectMail,
-      onToggleUnread,
-      currentUserId,
-      selectedFolder,
-      selectedMails,
-    ],
+    [isSelectionMode, onPressItem, onActiveSelectMode, onSelectMail, currentUserId, selectedFolder, selectedMails],
   );
-  const getItemLayout = React.useCallback((index: number) => ({ index, length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index }), []);
+
+  const listSwipeActions = React.useCallback(
+    (info: ListRenderItemInfo<{ key: string }>): ISwipeActionProps<{ key: string }> | null => {
+      if (isSelectionMode) return null;
+
+      const mail = info.item as MailWithKey;
+      const isSender = currentUserId === mail.from?.id && selectedFolder !== MailsDefaultFolders.INBOX;
+      const isDraft = mail.state === MailsMailStatePreview.DRAFT;
+      const isTrashed = selectedFolder === MailsDefaultFolders.TRASH;
+
+      const defaultActionProps = {
+        actionColor: theme.palette.grey.white,
+        actionIconSize: UI_SIZES.elements.icon.default,
+        style: styles.swipeAction,
+      };
+
+      const secondaryAction: ISwipeAction<{ key: string }> | null = isTrashed
+        ? isServiceMethodAvailable(mailsService.mail.restore)
+          ? {
+              action: row => {
+                onRestore([mail.id]);
+                row[mail.key]?.closeRow();
+              },
+              ...defaultActionProps,
+              actionIcon: 'ui-restore',
+              backgroundColor: theme.palette.status.warning.regular,
+            }
+          : null
+        : !isDraft && !isSender && isServiceMethodAvailable(mailsService.mail.toggleUnread)
+          ? {
+              action: row => {
+                onToggleUnread([mail.id], mail.unread);
+                row[mail.key]?.closeRow();
+              },
+              ...defaultActionProps,
+              actionIcon: mail.unread ? 'ui-mailRead' : 'ui-mailUnread',
+              backgroundColor: theme.palette.status.warning.regular,
+            }
+          : null;
+
+      const swipeDeleteAction: ISwipeAction<{ key: string }> = {
+        action: row => {
+          onDelete([mail.id], isTrashed);
+          row[mail.key]?.closeRow();
+        },
+        ...defaultActionProps,
+        actionIcon: 'ui-delete',
+        backgroundColor: theme.palette.status.failure.regular,
+      };
+
+      return {
+        right: [secondaryAction, swipeDeleteAction].filter((a): a is ISwipeAction<{ key: string }> => !!a),
+      };
+    },
+    [currentUserId, isSelectionMode, selectedFolder, onDelete, onRestore, onToggleUnread],
+  );
+
+  const swipeListExtraData = React.useMemo(
+    () => ({
+      currentUserId,
+      isSelectionMode,
+      selectedFolderId: typeof selectedFolder === 'object' ? selectedFolder.id : selectedFolder,
+    }),
+    [currentUserId, isSelectionMode, selectedFolder],
+  );
+
+  const keyExtractor = (item: { key: string }, _index: number) => item.key;
+
   const renderPlaceholder = React.useCallback(() => <MailsPlaceholderList />, []);
 
   const renderContent = React.useCallback(
@@ -1090,38 +1196,44 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         {isLoading ? (
           renderPlaceholder()
         ) : (
-          <>
-            <FlatList
-              ref={flatListRef}
-              data={mails}
-              renderItem={mail => renderMailPreview(mail.item)}
-              ListFooterComponent={renderFooter}
-              ListEmptyComponent={renderEmpty()}
-              refreshControl={refreshControl}
-              onEndReached={loadNextMails}
-              keyExtractor={item => `item#${item.id}`}
-              onEndReachedThreshold={0.5}
-              getItemLayout={(_, index) => getItemLayout(index)}
-              disableVirtualization={Platform.OS === 'android'}
-            />
-          </>
+          <SwipeableList
+            ref={listRef}
+            data={mailsWithKey}
+            extraData={swipeListExtraData}
+            renderItem={renderMailItem}
+            itemSwipeActionProps={!isSelectionMode ? listSwipeActions : undefined}
+            onOpenRowsChange={onOpenRowsChange}
+            swipeActionWidth={80}
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={renderEmpty()}
+            refreshControl={refreshControl}
+            onEndReached={loadNextMails}
+            onEndReachedThreshold={0.5}
+            keyExtractor={keyExtractor}
+            contentContainerStyle={mailsWithKey.length === 0 ? UI_STYLES.flex1 : undefined}
+            hiddenItemStyle={UI_STYLES.justifyEnd}
+            removeClippedSubviews={false}
+          />
         )}
         {renderBottomMode()}
         {renderBottomSheetFolders()}
       </>
     ),
     [
+      renderTopMode,
       isLoading,
       renderPlaceholder,
-      renderTopMode,
-      mails,
+      mailsWithKey,
+      swipeListExtraData,
+      isSelectionMode,
+      renderMailItem,
+      listSwipeActions,
+      onOpenRowsChange,
       renderFooter,
-      getItemLayout,
       renderEmpty,
       loadNextMails,
       renderBottomMode,
       renderBottomSheetFolders,
-      renderMailPreview,
     ],
   );
 
