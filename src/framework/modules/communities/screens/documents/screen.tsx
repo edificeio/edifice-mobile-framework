@@ -105,7 +105,7 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     async (page: number, reloadAll?: boolean) => {
       const [community, members, newData, folders] = await Promise.all([
         accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
-        accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 16 }),
+        accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { includePending: true, page: 1, size: 16 }),
         accountApi(session, moduleConfig, ResourceClient).getResources(communityId, { folderId, page: page + 1, size: PAGE_SIZE }),
         accountApi(session, moduleConfig, FolderClient).getFolders(communityId, { parentId: folderId }).then(formatFolders),
       ]);

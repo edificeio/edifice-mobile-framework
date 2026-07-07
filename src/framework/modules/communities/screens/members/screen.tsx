@@ -61,6 +61,7 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
     async (page: number, reloadAll?: boolean) => {
       try {
         const baseQueryParams: PaginationQueryDto = {
+          includePending: true,
           page: page + 1,
           size: PAGE_SIZE,
         };
