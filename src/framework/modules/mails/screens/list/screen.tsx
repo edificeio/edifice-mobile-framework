@@ -674,6 +674,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           p,
         ).element,
         <PopupMenu
+          key="popup-menu"
           actions={typeof selectedFolder === 'object' && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
           <NavBarAction disabled={isContentLoading} icon="ui-options" />
         </PopupMenu>,
