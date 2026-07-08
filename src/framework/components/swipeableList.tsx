@@ -228,7 +228,7 @@ const SwipeableList = React.forwardRef(
     } = props;
     const animatedRefs = React.useRef<{ [key: string]: Animated.Value }>({});
     const preventTouchRefs = React.useRef<{ [key: string]: boolean }>({});
-    const openRowKeys = React.useRef<Set<string>>(new Set());
+    const openRowKey = React.useRef<string | null>(null);
     const rowMapRef = React.useRef<RowMap<ItemT> | undefined>(undefined);
     const rowTouchableViewRefs = React.useRef<{ [key: string]: View | null }>({});
     const innerSwipeListRef = React.useRef<SwipeListView<ItemT> | null>(null);
@@ -249,18 +249,17 @@ const SwipeableList = React.forwardRef(
     const closeAllOpenRows = React.useCallback(() => {
       if (innerSwipeListRef.current?.closeAllOpenRows) {
         innerSwipeListRef.current.closeAllOpenRows();
-      } else {
-        openRowKeys.current.forEach(rowKey => {
-          rowMapRef.current?.[rowKey]?.closeRow();
-        });
+      } else if (openRowKey.current) {
+        rowMapRef.current?.[openRowKey.current]?.closeRow();
       }
-      openRowKeys.current.clear();
+
+      openRowKey.current = null;
       onOpenRowsChange?.(false);
     }, [onOpenRowsChange]);
 
     React.useEffect(() => {
       if (previousItemSwipeActionProps.current !== itemSwipeActionProps && itemSwipeActionProps === undefined) {
-        if (openRowKeys.current.size > 0) {
+        if (openRowKey.current !== null) {
           closeAllOpenRows();
         }
       }
@@ -334,18 +333,16 @@ const SwipeableList = React.forwardRef(
       }
 
       // Keep only one opened row at a time to avoid stacked visible actions.
-      openRowKeys.current.forEach(openKey => {
-        if (openKey !== rowKey) {
-          rowMap[openKey]?.closeRow();
-        }
-      });
+      if (openRowKey.current && openRowKey.current !== rowKey) {
+        rowMap[openRowKey.current]?.closeRow();
+      }
 
       if (preventTouchRefs.current) {
         preventTouchRefs.current[rowKey] = true;
         rowTouchableViewRefs.current[rowKey]?.setNativeProps({ style: getTouchPreventerStyle(true) });
       }
       rowMapRef.current = rowMap;
-      openRowKeys.current.add(rowKey);
+      openRowKey.current = rowKey;
       onOpenRowsChange?.(true);
     };
     const onRowClose = (rowKey: string, _rowMap: RowMap<ItemT>) => {
@@ -353,8 +350,10 @@ const SwipeableList = React.forwardRef(
         preventTouchRefs.current[rowKey] = false;
         rowTouchableViewRefs.current[rowKey]?.setNativeProps({ style: getTouchPreventerStyle(false) });
       }
-      openRowKeys.current.delete(rowKey);
-      onOpenRowsChange?.(openRowKeys.current.size > 0);
+      if (openRowKey.current === rowKey) {
+        openRowKey.current = null;
+      }
+      onOpenRowsChange?.(openRowKey.current !== null);
     };
 
     const closeCurrentRow = (rowKey: string) => {
