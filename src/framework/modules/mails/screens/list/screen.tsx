@@ -11,8 +11,6 @@ import {
   View,
 } from 'react-native';
 
-import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import type { ParamListBase } from '@react-navigation/core';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
 import { FlatList as GHFlatList } from 'react-native-gesture-handler';
@@ -629,16 +627,19 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }, [closeOpenSwipeRows]),
   );
 
-  React.useEffect(() => {
-    const parentNavigation = props.navigation.getParent<BottomTabNavigationProp<ParamListBase>>();
-    const unsubscribe = parentNavigation?.addListener('tabPress', () => {
-      setSelectedFolder(MailsDefaultFolders.INBOX);
-      loadMails(MailsDefaultFolders.INBOX);
-    });
+  const hasLeftScreenRef = React.useRef(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (hasLeftScreenRef.current) {
+        setSelectedFolder(MailsDefaultFolders.INBOX);
+        loadMails(MailsDefaultFolders.INBOX);
+      }
 
-    return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      return () => {
+        hasLeftScreenRef.current = true;
+      };
+    }, [loadMails]),
+  );
 
   React.useEffect(() => {
     const lastCall = readLastCallTimestamp();
@@ -1135,29 +1136,34 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         style: styles.swipeAction,
       };
 
-      const secondaryAction: ISwipeAction<{ key: string }> | null = isTrashed
-        ? isServiceMethodAvailable(mailsService.mail.restore)
-          ? {
-              action: row => {
-                onRestore([mail.id]);
-                row[mail.key]?.closeRow();
-              },
-              ...defaultActionProps,
-              actionIcon: 'ui-restore',
-              backgroundColor: theme.palette.status.warning.regular,
-            }
-          : null
-        : !isDraft && !isSender && isServiceMethodAvailable(mailsService.mail.toggleUnread)
-          ? {
-              action: row => {
-                onToggleUnread([mail.id], mail.unread);
-                row[mail.key]?.closeRow();
-              },
-              ...defaultActionProps,
-              actionIcon: mail.unread ? 'ui-mailRead' : 'ui-mailUnread',
-              backgroundColor: theme.palette.status.warning.regular,
-            }
-          : null;
+      const getSecondaryAction = (): ISwipeAction<{ key: string }> | null => {
+        if (isTrashed) {
+          if (!isServiceMethodAvailable(mailsService.mail.restore)) return null;
+          return {
+            action: row => {
+              onRestore([mail.id]);
+              row[mail.key]?.closeRow();
+            },
+            ...defaultActionProps,
+            actionIcon: 'ui-restore',
+            backgroundColor: theme.palette.status.warning.regular,
+          };
+        }
+
+        if (isDraft || isSender || !isServiceMethodAvailable(mailsService.mail.toggleUnread)) return null;
+
+        return {
+          action: row => {
+            onToggleUnread([mail.id], mail.unread);
+            row[mail.key]?.closeRow();
+          },
+          ...defaultActionProps,
+          actionIcon: mail.unread ? 'ui-mailRead' : 'ui-mailUnread',
+          backgroundColor: theme.palette.status.warning.regular,
+        };
+      };
+
+      const secondaryAction = getSecondaryAction();
 
       const swipeDeleteAction: ISwipeAction<{ key: string }> = {
         action: row => {

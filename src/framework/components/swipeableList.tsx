@@ -269,7 +269,15 @@ const SwipeableList = React.forwardRef(
 
     const realListFooterComponent = React.useMemo(() => {
       const footer = ListFooterComponent;
-      const renderedFooter = !footer ? null : React.isValidElement(footer) ? footer : React.createElement(footer);
+
+      const getFooter = () => {
+        if (!footer) return null;
+        if (React.isValidElement(footer)) return footer;
+        return React.createElement(footer);
+      };
+
+      const renderedFooter = getFooter();
+
       if (!bottomInset) return renderedFooter;
       return <View style={styles.footer}>{renderedFooter}</View>;
     }, [bottomInset, ListFooterComponent]);
@@ -379,17 +387,21 @@ const SwipeableList = React.forwardRef(
         }
 
         const animatedValue = animatedRefs.current[info.item.key];
+        const getTranslateX = () => {
+          if (leftActionsWidth > 0 && rightActionsWidth > 0) {
+            return animatedValue.interpolate({
+              extrapolate: 'clamp',
+              inputRange: [-rightActionsWidth, 0, leftActionsWidth],
+              outputRange: [0, rightActionsWidth, 0],
+            });
+          }
+          if (rightActionsWidth > 0) {
+            return Animated.add(animatedValue, rightActionsWidth);
+          }
+          return 0;
+        };
 
-        const translateX =
-          leftActionsWidth > 0 && rightActionsWidth > 0
-            ? animatedValue.interpolate({
-                extrapolate: 'clamp',
-                inputRange: [-rightActionsWidth, 0, leftActionsWidth],
-                outputRange: [0, rightActionsWidth, 0],
-              })
-            : rightActionsWidth > 0
-              ? Animated.add(animatedValue, rightActionsWidth)
-              : 0;
+        const translateX = getTranslateX();
 
         const translateStyle = [animatedValue ? { transform: [{ translateX }] } : {}];
         const setRowViewRef = (rowref: View) => {
