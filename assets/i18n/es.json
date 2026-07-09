@@ -899,7 +899,7 @@
   "mails-details-recallsubject": "Este mensaje ha sido recuperado",
   "mails-details-recalltext": "Los destinatarios ya no podrán ver el contenido del mensaje, pero verán que has recuperado un mensaje. ¿Estás seguro de que quieres recuperar el mensaje?",
   "mails-details-recalltitle": "¿Recuerdas el mensaje?",
-  "mails-details-redirecttowebview": "Para ver archivos adjuntos y contenido multimedia,",
+  "mails-details-redirecttowebview": "¿Algún problema con la visualización de este mensaje?",
   "mails-details-removefromfolder": "Eliminar de la carpeta",
   "mails-details-reply": "Responder",
   "mails-details-replyall": "Responder a todos",
