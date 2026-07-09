@@ -1,8 +1,16 @@
 import * as React from 'react';
+import { Platform } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 import VideoPlayer from 'react-native-media-console';
-import { BufferConfig, BufferingStrategyType, OnProgressData, VideoRef } from 'react-native-video';
+import {
+  BufferConfig,
+  BufferingStrategyType,
+  OnBufferData,
+  OnPlaybackStateChangedData,
+  OnProgressData,
+  VideoRef,
+} from 'react-native-video';
 
 import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LoaderItem from '~/framework/components/carousel-multimedia/loader-item/component';
@@ -24,6 +32,8 @@ const ANDROID_BUFFER_CONFIG: BufferConfig = {
   minBufferMs: 2500,
 };
 const IOS_MAX_BUFFER_DURATION = 10;
+const IOS_BUFFERING_DEBOUNCE = 500;
+const ON_BUFFERING_SHOW_NAVBAR_TIMEOUT = 10000;
 
 const PlayerItem = ({
   hideNavBar,
@@ -39,7 +49,8 @@ const PlayerItem = ({
 }: PlayerItemProps) => {
   const audioPosterRefs = React.useRef<Map<number, LottieView | null>>(new Map());
   const playerContextValue = React.useContext(PlayerContext);
-  const [isMediaLoading, setIsMediaLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isBuffering, setIsBuffering] = React.useState(false);
   const [paused, setPaused] = React.useState(() => {
     const savedState = playerContextValue.savedStates.get(itemIndex);
     // Start paused when there is a position to restore (otherwise content flashes back to the beginning before resuming to saved position)
@@ -47,6 +58,9 @@ const PlayerItem = ({
     return savedState?.paused ?? true;
   });
   const videoRef = React.useRef<VideoRef>(null);
+  const hasBeenReadyRef = React.useRef(false);
+  const pausedRef = React.useRef(paused);
+  const bufferingTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getAudioPosterRef = React.useCallback((idx: number) => {
     return (audioAnimationRef: LottieView | null) => {
@@ -60,6 +74,7 @@ const PlayerItem = ({
 
   const pause = React.useCallback(() => {
     showNavBar();
+    pausedRef.current = true;
     setPaused(true);
     const animRef = audioPosterRefs.current.get(itemIndex);
     animRef?.pause();
@@ -67,6 +82,7 @@ const PlayerItem = ({
 
   const onPlay = React.useCallback(() => {
     hideNavBar();
+    pausedRef.current = false;
     setPaused(false);
     const animRef = audioPosterRefs.current.get(itemIndex);
     animRef?.resume();
@@ -87,16 +103,69 @@ const PlayerItem = ({
     setIsPlayerError(true);
   }, [setIsPlayerError]);
 
-  const onLoad = React.useCallback(() => {
-    setIsMediaLoading(false);
-    onInitialMediaLoad?.();
-  }, [onInitialMediaLoad]);
-
   const onProgress = React.useCallback(
     (data: OnProgressData) => {
       playerContextValue.savedStates.set(itemIndex, { paused, position: data.currentTime });
     },
     [itemIndex, paused, playerContextValue.savedStates],
+  );
+
+  // When the first video frame is ready
+  const onReadyForDisplay = React.useCallback(() => {
+    hasBeenReadyRef.current = true;
+    setIsLoading(false);
+    setIsBuffering(false);
+  }, []);
+
+  // Audio has no video frames so we fire onReadyForDisplay once it's loaded to switch from Loader to Player
+  const onLoad = React.useCallback(() => {
+    if (isAudioContent(item)) onReadyForDisplay();
+    onInitialMediaLoad?.();
+  }, [item, onInitialMediaLoad, onReadyForDisplay]);
+
+  /**
+   * Only works on Android
+   * Renders the ActivityIndicator if the video/audio buffers AFTER the first load (isLoading ≠ isBuffering)
+   */
+  const onBuffer = React.useCallback(
+    ({ isBuffering: buffering }: OnBufferData) => {
+      if (buffering) {
+        if (hasBeenReadyRef.current) {
+          setIsBuffering(true);
+          videoRef.current?.hideControls?.();
+        }
+      } else {
+        onReadyForDisplay();
+      }
+    },
+    [onReadyForDisplay],
+  );
+
+  const clearBufferingTimeout = React.useCallback(() => {
+    if (bufferingTimeoutRef.current) {
+      clearTimeout(bufferingTimeoutRef.current);
+      bufferingTimeoutRef.current = null;
+    }
+  }, []);
+
+  /**
+   * iOS fallback for onBuffer, we infer a stall from the play state
+   * when tapping an unbuffered zone on the seekbar
+   */
+  const onPlaybackStateChanged = React.useCallback(
+    ({ isPlaying }: OnPlaybackStateChangedData) => {
+      if (Platform.OS !== 'ios' || !hasBeenReadyRef.current) return;
+      clearBufferingTimeout();
+      if (isPlaying || pausedRef.current) {
+        setIsBuffering(false);
+      } else {
+        bufferingTimeoutRef.current = setTimeout(() => {
+          setIsBuffering(true);
+          videoRef.current?.hideControls?.();
+        }, IOS_BUFFERING_DEBOUNCE);
+      }
+    },
+    [clearBufferingTimeout],
   );
 
   const renderLoader = React.useCallback(() => <LoaderItem />, []);
@@ -120,15 +189,24 @@ const PlayerItem = ({
   }, [paused, pause, playerContextValue]);
 
   React.useEffect(() => {
-    if (isCurrentItem && videoRef.current?.showControls && !isMediaLoading) {
+    if (isCurrentItem && videoRef.current?.showControls && !isLoading) {
       videoRef.current.showControls();
     }
-  }, [isCurrentItem, isMediaLoading]);
+  }, [isCurrentItem, isLoading]);
+
+  React.useEffect(() => clearBufferingTimeout, [clearBufferingTimeout]);
+
+  // If buffering is too long, bring the navbar back so the user isn't trapped in the carousel without an exit.
+  React.useEffect(() => {
+    if (!isBuffering) return undefined;
+    const timeoutId = setTimeout(showNavBar, ON_BUFFERING_SHOW_NAVBAR_TIMEOUT);
+    return () => clearTimeout(timeoutId);
+  }, [isBuffering, showNavBar]);
 
   React.useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null;
 
-    if (isMediaLoading && !isPlayerLoadTimeout) {
+    if (isLoading && !isPlayerLoadTimeout && !hasBeenReadyRef.current) {
       timeoutId = setTimeout(() => {
         setIsPlayerLoadTimeout(true);
       }, MEDIA_LOAD_TIMEOUT);
@@ -139,7 +217,7 @@ const PlayerItem = ({
         clearTimeout(timeoutId);
       }
     };
-  }, [isMediaLoading, isPlayerLoadTimeout, setIsPlayerLoadTimeout]);
+  }, [isLoading, isPlayerLoadTimeout, setIsPlayerLoadTimeout]);
 
   return (
     <>
@@ -149,6 +227,9 @@ const PlayerItem = ({
         disableFullscreen
         disableVolume
         onLoad={onLoad}
+        onReadyForDisplay={onReadyForDisplay}
+        onBuffer={onBuffer}
+        onPlaybackStateChanged={onPlaybackStateChanged}
         onProgress={onProgress}
         onEnd={onEnd}
         onError={onPlayerError}
@@ -174,7 +255,8 @@ const PlayerItem = ({
             }
           : {})}
       />
-      {isMediaLoading && <LoaderItem />}
+      {isLoading && <LoaderItem />}
+      {isBuffering && <LoaderItem transparent />}
     </>
   );
 };
