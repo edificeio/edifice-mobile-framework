@@ -234,7 +234,7 @@
     "eslint-plugin-react-native": "5.0.0",
     "eslint-plugin-sort-destructure-keys": "3.0.0",
     "eslint-plugin-sort-keys-fix": "1.1.2",
-    "globals": "17.6.0",
+    "globals": "17.7.0",
     "husky": "9.1.7",
     "jest": "30.4.2",
     "lint-staged": "17.0.8",
