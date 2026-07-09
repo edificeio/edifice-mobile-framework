@@ -899,7 +899,7 @@
   "mails-details-recallsubject": "Ce message a été rappelé",
   "mails-details-recalltext": "Les destinataires ne pourrons plus voir le contenu du mail, mais ils verront que vous avez rappelé un message. Êtes vous sur de vouloir rappeler le message ?",
   "mails-details-recalltitle": "Rappeler le message ?",
-  "mails-details-redirecttowebview": "Pour voir les pièces jointes et le contenu multimédia,",
+  "mails-details-redirecttowebview": "Un souci avec l'affichage de ce message ?",
   "mails-details-removefromfolder": "Retirer du dossier",
   "mails-details-reply": "Répondre",
   "mails-details-replyall": "Répondre à tous",
