@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Linking, Platform, TouchableOpacity, View } from 'react-native';
 
 import Clipboard from '@react-native-clipboard/clipboard';
+import { StackActions } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 // import BottomSheet from 'react-native-bottomsheet';
 import { connect } from 'react-redux';
@@ -175,9 +176,12 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     const baseParams = {
       // Note: fromTimeline make sending just go back to the actuel profile screen.
       // It is somehow hard to close the modal + switch tab to mail (also not really user-friendly)
-      // fromFolder: MailsDefaultFolders.INBOX,
+      fromFolder: MailsDefaultFolders.INBOX,
       fromTimeline: true,
     };
+
+    const navigateToEdit = (to: typeof user) =>
+      navigation.dispatch(StackActions.push(mailsRouteNames.edit, { ...baseParams, initialMailInfo: { to } }));
 
     if (userInfo?.type === AccountType.Student && !isEmpty(family) && session?.user.type !== AccountType.Student) {
       const familyUser =
@@ -189,45 +193,21 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         })) ?? [];
 
       showBottomMenu([
-        {
-          action: () =>
-            navigation.navigate(mailsRouteNames.edit, {
-              ...baseParams,
-              initialMailInfo: { to: user },
-            }),
-          title: I18n.get('user-profile-sendMessage-student'),
-        },
-        {
-          action: () =>
-            navigation.navigate(mailsRouteNames.edit, {
-              ...baseParams,
-              initialMailInfo: { to: familyUser },
-            }),
-          title: I18n.get('user-profile-sendMessage-relatives'),
-        },
-        {
-          action: () =>
-            navigation.navigate(mailsRouteNames.edit, {
-              ...baseParams,
-              initialMailInfo: { to: user.concat(familyUser) },
-            }),
-          title: I18n.get('user-profile-sendMessage-relatives&student'),
-        },
+        { action: () => navigateToEdit(user), title: I18n.get('user-profile-sendMessage-student') },
+        { action: () => navigateToEdit(familyUser), title: I18n.get('user-profile-sendMessage-relatives') },
+        { action: () => navigateToEdit(user.concat(familyUser)), title: I18n.get('user-profile-sendMessage-relatives&student') },
       ]);
-
       return;
     }
 
-    return navigation.navigate(mailsRouteNames.edit, {
-      ...baseParams,
-      initialMailInfo: { to: user },
-    });
+    return navigateToEdit(user);
   };
 
   React.useEffect(() => {
     navigation.setOptions({
       title: isMyProfile ? I18n.get('user-profile-appname') : I18n.get('user-profile-appname-externe'),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderUserCard = () => {
