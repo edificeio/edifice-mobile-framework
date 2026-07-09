@@ -72,4 +72,10 @@ export default StyleSheet.create({
   spacingFolder: {
     height: UI_SIZES.spacing.tiny,
   },
+  swipeAction: {
+    alignItems: 'center',
+    height: '100%',
+    justifyContent: 'center',
+    width: 80,
+  },
 });

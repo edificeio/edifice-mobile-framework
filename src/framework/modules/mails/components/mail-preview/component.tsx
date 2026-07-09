@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { LayoutAnimation, View } from 'react-native';
+import { GestureResponderEvent, Pressable, View } from 'react-native';
 
 import moment from 'moment';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -20,33 +17,14 @@ import { displayPastDate } from '~/framework/util/date';
 import styles from './styles';
 import { MailsMailPreviewProps } from './types';
 
-export const MailsMailPreview = (props: MailsMailPreviewProps) => {
+export const MailsMailPreview = React.memo((props: MailsMailPreviewProps) => {
   const { cc, cci, date, from, hasAttachment, id, response, state, subject, to, unread } = props.data;
-  const {
-    isInPersonalFolder,
-    isSelected,
-    isSelectMode,
-    isSender,
-    isTrashed,
-    onDelete,
-    onPress,
-    onRestore,
-    onSelect,
-    onToggleUnread,
-  } = props;
+  const { isInPersonalFolder, isSelected, isSelectMode, isSender, isTrashed, onLongPress, onPress, onSelect } = props;
 
   const isUnread = unread && state !== MailsMailStatePreview.DRAFT;
   const isDraft = state === MailsMailStatePreview.DRAFT;
   const TextComponent = isUnread ? SmallBoldText : SmallText;
-  const has2SwipeActions = onToggleUnread || onRestore;
-  let infosRecipients: { text: string; ids: string[] } = mailsFormatRecipients(to, cc, cci);
-  const refSwipeable = React.useRef<SwipeableMethods>(null);
-
-  React.useEffect(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    // No LayoutAnimation on unmount: batch removal (multi-delete) causes Android
-    // "Trying to remove a view index above child count" with ReanimatedSwipeable.
-  }, []);
+  const infosRecipients: { text: string; ids: string[] } = React.useMemo(() => mailsFormatRecipients(to, cc, cci), [to, cc, cci]);
 
   const onCheck = React.useCallback(() => {
     onSelect(id);
@@ -124,86 +102,51 @@ export const MailsMailPreview = (props: MailsMailPreviewProps) => {
     );
   }, [TextComponent, from?.displayName, infosRecipients.text, isDraft, isSender]);
 
-  const renderIconSwipeAction = React.useCallback(() => {
-    let iconName = 'ui-mailUnread';
-    if (unread === true) iconName = 'ui-mailRead';
-    if (!onToggleUnread) iconName = 'ui-restore';
+  const displayDate = React.useMemo(() => displayPastDate(moment(date)), [date]);
 
-    return (
-      <Svg
-        name={iconName}
-        fill={theme.palette.grey.white}
-        width={UI_SIZES.elements.icon.default}
-        height={UI_SIZES.elements.icon.default}
-      />
-    );
-  }, [onToggleUnread, unread]);
+  const handleInteraction = React.useCallback(
+    (e: GestureResponderEvent, type: 'press' | 'longPress') => {
+      e.stopPropagation();
 
-  const swipeRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
-    const styleAnimation = useAnimatedStyle(() => {
-      const widthDrag = has2SwipeActions ? 160 : 80;
-      return {
-        flexDirection: 'row',
-        transform: [{ translateX: drag.value + widthDrag }],
-      };
-    });
+      if (isSelectMode) {
+        onCheck();
+        return;
+      }
 
-    const onPressOtherAction = () => {
-      if (onToggleUnread) onToggleUnread(id);
-      else onRestore!(id);
-      refSwipeable.current?.close();
-    };
-
-    if (isSelectMode) return;
-    return (
-      <Reanimated.View style={styleAnimation}>
-        {has2SwipeActions ? (
-          <TouchableOpacity onPress={onPressOtherAction} style={[styles.swipeAction, styles.swipeOtherAction]}>
-            {renderIconSwipeAction()}
-          </TouchableOpacity>
-        ) : null}
-        <TouchableOpacity onPress={() => onDelete(id)} style={[styles.swipeAction, styles.swipeDeleteAction]}>
-          <Svg
-            name="ui-delete"
-            fill={theme.palette.grey.white}
-            width={UI_SIZES.elements.icon.default}
-            height={UI_SIZES.elements.icon.default}
-          />
-        </TouchableOpacity>
-      </Reanimated.View>
-    );
-  };
-
-  return (
-    <ReanimatedSwipeable
-      ref={refSwipeable}
-      friction={1}
-      enableTrackpadTwoFingerGesture
-      overshootFriction={8}
-      renderRightActions={swipeRightAction}>
-      <View>
-        <TouchableOpacity
-          style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
-          onPress={isSelectMode ? onCheck : onPress}
-          onLongPress={isSelectMode ? onCheck : props.onLongPress}>
-          {renderSelectIcon()}
-          {renderAvatar()}
-          {renderDefaultFolder()}
-          {renderIcon()}
-          <View style={styles.texts}>
-            <View style={styles.line}>
-              {renderFirstText()}
-              <CaptionBoldText style={styles.date}>{displayPastDate(moment(date))}</CaptionBoldText>
-            </View>
-            <View style={styles.line}>
-              <TextComponent numberOfLines={1} style={styles.firstText}>
-                {renderSubject(subject, state === MailsMailStatePreview.RECALL)}
-              </TextComponent>
-              {renderAttachmentIcon()}
-            </View>
-          </View>
-        </TouchableOpacity>
-      </View>
-    </ReanimatedSwipeable>
+      if (type === 'press') {
+        onPress();
+      } else {
+        onLongPress?.();
+      }
+    },
+    [isSelectMode, onCheck, onPress, onLongPress],
   );
-};
+
+  const handlePress = React.useCallback((e: GestureResponderEvent) => handleInteraction(e, 'press'), [handleInteraction]);
+
+  const handleLongPress = React.useCallback((e: GestureResponderEvent) => handleInteraction(e, 'longPress'), [handleInteraction]);
+  return (
+    <Pressable
+      style={[styles.container, isSelected ? styles.containerChecked : isUnread ? styles.containerUnread : {}]}
+      onPress={handlePress}
+      onLongPress={handleLongPress}
+      delayLongPress={150}>
+      {renderSelectIcon()}
+      {renderAvatar()}
+      {renderDefaultFolder()}
+      {renderIcon()}
+      <View style={styles.texts}>
+        <View style={styles.line}>
+          {renderFirstText()}
+          <CaptionBoldText style={styles.date}>{displayDate}</CaptionBoldText>
+        </View>
+        <View style={styles.line}>
+          <TextComponent numberOfLines={1} style={styles.firstText}>
+            {renderSubject(subject, state === MailsMailStatePreview.RECALL)}
+          </TextComponent>
+          {renderAttachmentIcon()}
+        </View>
+      </View>
+    </Pressable>
+  );
+});
