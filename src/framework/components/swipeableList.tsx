@@ -41,6 +41,7 @@ import {
   FlatListProps,
   GestureResponderEvent,
   ListRenderItemInfo,
+  StyleProp,
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -49,23 +50,23 @@ import {
 } from 'react-native';
 
 import { useScrollToTop } from '@react-navigation/native';
-import { IPropsSwipeListView, RowMap, SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
-
-import { UI_SIZES, UI_STYLES } from './constants';
-import { Svg } from './picture';
-import { SmallText } from './text';
+import { IPropsSwipeListView, IPropsSwipeRow, RowMap, SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 
 import theme from '~/app/theme';
 
+import { UI_SIZES, UI_STYLES } from './constants';
+import { Svg, SvgIconName } from './picture';
+import { SmallText } from './text';
+
 export interface ISwipeAction<ItemT extends { key: string }> {
   action: (row: RowMap<ItemT>, e: GestureResponderEvent) => void;
-  actionIcon?: string;
+  actionIcon?: SvgIconName;
   actionIconSize?: number;
   actionColor?: ColorValue;
   actionText?: string;
   backgroundColor?: ColorValue;
   isFirstAction?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export interface ISwipeActionProps<ItemT extends { key: string }> {
@@ -74,6 +75,12 @@ export interface ISwipeActionProps<ItemT extends { key: string }> {
 }
 
 const styles = StyleSheet.create({
+  footer: {
+    width: '100%',
+  },
+  hiddenRow: {
+    overflow: 'hidden',
+  },
   swipeAction: {
     alignItems: 'center',
     flex: 0,
@@ -87,6 +94,11 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
   },
+  swipeActionWrapperOverlap: {
+    bottom: 0,
+    position: 'absolute',
+    top: 0,
+  },
 });
 
 const defaultSwipeActionWidth = 100;
@@ -95,31 +107,26 @@ let isScrollingWhileTouchSwipeAction = false;
 
 const SwipeAction = <ItemT extends { key: string }>(
   props: ISwipeAction<ItemT> & {
-    rowMap: RowMap<ItemT>;
-    animatedRefs?: { [key: string]: Animated.Value };
-    swipeActionWidth: number;
     direction: 'left' | 'right';
+    rowMap: RowMap<ItemT>;
+    swipeActionWidth: number;
   },
 ) => {
   const wrapperStyle = [styles.swipeActionWrapper];
   const widthStyle = React.useMemo(() => ({ width: props.swipeActionWidth }), [props.swipeActionWidth]);
-  const overlapWidth = React.useMemo(() => UI_SIZES.screen.width - props.swipeActionWidth, [props.swipeActionWidth]);
+  const overlapWidth = React.useMemo(() => Math.max(UI_SIZES.screen.width - props.swipeActionWidth, 0), [props.swipeActionWidth]);
+  const overlapPositionStyle = React.useMemo(
+    () => (props.direction === 'left' ? { left: -overlapWidth } : { right: -overlapWidth }),
+    [props.direction, overlapWidth],
+  );
+  const overlapColorStyle = React.useMemo(() => ({ backgroundColor: props.backgroundColor }), [props.backgroundColor]);
+  const overlapWidthStyle = React.useMemo(() => ({ width: overlapWidth }), [overlapWidth]);
   const overlapElement = React.useMemo(
     () =>
       props.backgroundColor && props.isFirstAction ? (
-        <View
-          // eslint-disable-next-line react-native/no-inline-styles
-          style={{
-            backgroundColor: props.backgroundColor,
-            bottom: 0,
-            position: 'absolute',
-            top: 0,
-            width: overlapWidth,
-            ...(props.direction === 'left' ? { left: -overlapWidth } : { right: -overlapWidth }),
-          }}
-        />
+        <View style={[styles.swipeActionWrapperOverlap, overlapColorStyle, overlapWidthStyle, overlapPositionStyle]} />
       ) : null,
-    [overlapWidth, props.backgroundColor, props.direction, props.isFirstAction],
+    [overlapColorStyle, overlapPositionStyle, overlapWidthStyle, props.backgroundColor, props.isFirstAction],
   );
   return (
     <View style={wrapperStyle}>
@@ -178,9 +185,10 @@ export interface SwipeableListProps<ItemT extends { key: string }> extends Parti
   hiddenItemStyle?: ViewStyle;
   swipeActionWidth?: number;
   itemSwipeActionProps?: (info: ListRenderItemInfo<ItemT>) => ISwipeActionProps<ItemT> | null;
+  onOpenRowsChange?: (hasOpenRows: boolean) => void;
 }
 
-export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<SwipeListView<any>> }) => {
+export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<SwipeListView<unknown>> }) => {
   useScrollToTop(
     React.useRef({
       scrollToTop: () => {
@@ -191,10 +199,18 @@ export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<Swipe
   return null;
 };
 
-export default React.forwardRef(
+type SwipeableListType = <ItemT extends { key: string }>(
+  props: SwipeableListProps<ItemT> & FlatListProps<ItemT> & { ref?: React.Ref<SwipeListView<ItemT> | null> },
+) => React.ReactElement | null;
+
+type SwipeRowWithChildrenProps<ItemT extends { key: string }> = Partial<IPropsSwipeRow<ItemT>> & {
+  children?: React.ReactNode;
+};
+
+const SwipeableList = React.forwardRef(
   <ItemT extends { key: string }>( // need to write "extends" because we're in a tsx file
     props: SwipeableListProps<ItemT> & FlatListProps<ItemT>,
-    ref: React.Ref<SwipeListView<ItemT>>,
+    ref: React.Ref<SwipeListView<ItemT> | null>,
   ) => {
     const {
       bottomInset,
@@ -203,6 +219,7 @@ export default React.forwardRef(
       hiddenRowStyle,
       itemSwipeActionProps,
       ListFooterComponent,
+      onOpenRowsChange,
       onScrollBeginDrag,
       renderItem,
       scrollIndicatorInsets,
@@ -211,19 +228,61 @@ export default React.forwardRef(
     } = props;
     const animatedRefs = React.useRef<{ [key: string]: Animated.Value }>({});
     const preventTouchRefs = React.useRef<{ [key: string]: boolean }>({});
-    const rowMapRef = React.useRef<RowMap<ItemT>>();
+    const openRowKey = React.useRef<string | null>(null);
+    const rowMapRef = React.useRef<RowMap<ItemT> | undefined>(undefined);
     const rowTouchableViewRefs = React.useRef<{ [key: string]: View | null }>({});
+    const innerSwipeListRef = React.useRef<SwipeListView<ItemT> | null>(null);
+    const previousItemSwipeActionProps = React.useRef(itemSwipeActionProps);
+
+    const setInnerSwipeListRef = React.useCallback(
+      (node: SwipeListView<ItemT> | null) => {
+        innerSwipeListRef.current = node;
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref && typeof ref !== 'function') {
+          (ref as React.RefObject<SwipeListView<ItemT> | null>).current = node;
+        }
+      },
+      [ref],
+    );
+
+    const closeAllOpenRows = React.useCallback(() => {
+      if (innerSwipeListRef.current?.closeAllOpenRows) {
+        innerSwipeListRef.current.closeAllOpenRows();
+      } else if (openRowKey.current) {
+        rowMapRef.current?.[openRowKey.current]?.closeRow();
+      }
+
+      openRowKey.current = null;
+      onOpenRowsChange?.(false);
+    }, [onOpenRowsChange]);
+
+    React.useEffect(() => {
+      if (previousItemSwipeActionProps.current !== itemSwipeActionProps && itemSwipeActionProps === undefined) {
+        if (openRowKey.current !== null) {
+          closeAllOpenRows();
+        }
+      }
+      previousItemSwipeActionProps.current = itemSwipeActionProps;
+    }, [itemSwipeActionProps, closeAllOpenRows]);
+
     const realListFooterComponent = React.useMemo(() => {
-      return bottomInset ? (
-        <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }}>{ListFooterComponent}</View>
-      ) : (
-        ListFooterComponent
-      );
+      const footer = ListFooterComponent;
+
+      const getFooter = () => {
+        if (!footer) return null;
+        if (React.isValidElement(footer)) return footer;
+        return React.createElement(footer);
+      };
+
+      const renderedFooter = getFooter();
+
+      if (!bottomInset) return renderedFooter;
+      return <View style={styles.footer}>{renderedFooter}</View>;
     }, [bottomInset, ListFooterComponent]);
 
     const renderHiddenItem = React.useCallback(
-      (info: ListRenderItemInfo<ItemT>, rowmap: RowMap<ItemT>) => {
-        const actions = itemSwipeActionProps?.(info);
+      (info: ListRenderItemInfo<ItemT>, rowmap: RowMap<ItemT>, actions: ISwipeActionProps<ItemT> | null | undefined) => {
         if (!actions || (!actions.left && !actions.right)) return null;
         return (
           <View style={[UI_STYLES.rowStretch, hiddenRowStyle]}>
@@ -231,20 +290,11 @@ export default React.forwardRef(
               <SwipeAction
                 {...p}
                 key={index}
-                style={
-                  [
-                    hiddenItemStyle,
-                    p.style,
-                    {
-                      transform: [{ translateX: -2 * (props.swipeActionWidth ?? 0) }],
-                    },
-                  ] as ViewStyle
-                }
+                style={[hiddenItemStyle, p.style] as StyleProp<ViewStyle>}
                 rowMap={rowmap}
-                animatedRefs={animatedRefs.current}
                 swipeActionWidth={swipeActionWidth ?? defaultSwipeActionWidth}
                 direction="left"
-                isFirstAction={!index}
+                isFirstAction={index === 0}
               />
             ))}
             <View style={UI_STYLES.flex1} />
@@ -252,18 +302,17 @@ export default React.forwardRef(
               <SwipeAction
                 {...p}
                 key={index}
-                style={[hiddenItemStyle, p.style] as ViewStyle}
+                style={[hiddenItemStyle, p.style] as StyleProp<ViewStyle>}
                 rowMap={rowmap}
-                animatedRefs={animatedRefs.current}
                 swipeActionWidth={swipeActionWidth ?? defaultSwipeActionWidth}
                 direction="right"
-                isFirstAction={!index}
+                isFirstAction={index === (actions.right?.length ?? 0) - 1}
               />
             ))}
           </View>
         );
       },
-      [hiddenItemStyle, hiddenRowStyle, itemSwipeActionProps, props.swipeActionWidth, swipeActionWidth],
+      [hiddenItemStyle, hiddenRowStyle, swipeActionWidth],
     );
 
     const getTouchPreventerStyle = (active: boolean) =>
@@ -277,17 +326,34 @@ export default React.forwardRef(
       }) as ViewStyle;
 
     const onRowOpen = (rowKey: string, rowMap: RowMap<ItemT>) => {
+      if (!itemSwipeActionProps) {
+        rowMap[rowKey]?.closeRow();
+        onOpenRowsChange?.(false);
+        return;
+      }
+
+      // Keep only one opened row at a time to avoid stacked visible actions.
+      if (openRowKey.current && openRowKey.current !== rowKey) {
+        rowMap[openRowKey.current]?.closeRow();
+      }
+
       if (preventTouchRefs.current) {
         preventTouchRefs.current[rowKey] = true;
         rowTouchableViewRefs.current[rowKey]?.setNativeProps({ style: getTouchPreventerStyle(true) });
       }
       rowMapRef.current = rowMap;
+      openRowKey.current = rowKey;
+      onOpenRowsChange?.(true);
     };
-    const onRowClose = (rowKey: string, rowMap: RowMap<ItemT>) => {
+    const onRowClose = (rowKey: string, _rowMap: RowMap<ItemT>) => {
       if (preventTouchRefs.current) {
         preventTouchRefs.current[rowKey] = false;
         rowTouchableViewRefs.current[rowKey]?.setNativeProps({ style: getTouchPreventerStyle(false) });
       }
+      if (openRowKey.current === rowKey) {
+        openRowKey.current = null;
+      }
+      onOpenRowsChange?.(openRowKey.current !== null);
     };
 
     const closeCurrentRow = (rowKey: string) => {
@@ -301,36 +367,54 @@ export default React.forwardRef(
       },
       [onScrollBeginDrag],
     );
-
     const realRenderItem = React.useCallback(
-      (info, rowMap) => {
+      (info: ListRenderItemInfo<ItemT>, rowMap: RowMap<ItemT>) => {
         if (!renderItem) {
           console.error('[swipeableList] renderItem not provided.');
           return null;
         }
+        const actions = itemSwipeActionProps?.(info);
+        const actionWidth = swipeActionWidth ?? defaultSwipeActionWidth;
+        const leftActionsWidth = (actions?.left?.length ?? 0) * actionWidth;
+        const rightActionsWidth = (actions?.right?.length ?? 0) * actionWidth;
         const onSwipeValueChange = (swipeData: { key: string; value: number; direction: 'left' | 'right'; isOpen: boolean }) => {
           animatedRefs.current?.[info.item.key]?.setValue(swipeData.value);
         };
-        const actions = itemSwipeActionProps?.(info);
-        if (animatedRefs && animatedRefs.current?.[info.item.key] === undefined) {
+
+        if (animatedRefs.current?.[info.item.key] === undefined) {
           animatedRefs.current[info.item.key] = new Animated.Value(0);
-          animatedRefs.current[info.item.key].setOffset(props.swipeActionWidth ?? 0);
         }
-        const translateStyle = [
-          animatedRefs.current?.[info.item.key] ? { transform: [{ translateX: animatedRefs.current?.[info.item.key] }] } : {},
-        ];
+
+        const animatedValue = animatedRefs.current[info.item.key];
+        const getTranslateX = () => {
+          if (leftActionsWidth > 0 && rightActionsWidth > 0) {
+            return animatedValue.interpolate({
+              extrapolate: 'clamp',
+              inputRange: [-rightActionsWidth, 0, leftActionsWidth],
+              outputRange: [0, rightActionsWidth, 0],
+            });
+          }
+          if (rightActionsWidth > 0) {
+            return Animated.add(animatedValue, rightActionsWidth);
+          }
+          return 0;
+        };
+
+        const translateX = getTranslateX();
+
+        const translateStyle = [animatedValue ? { transform: [{ translateX }] } : {}];
         const setRowViewRef = (rowref: View) => {
           if (rowTouchableViewRefs.current) rowTouchableViewRefs.current[info.item.key] = rowref;
         };
+        const SwipeRowComponent = SwipeRow as React.ComponentType<SwipeRowWithChildrenProps<ItemT>>;
         const row = (
-          <SwipeRow
-            key={info.item.key}
+          <SwipeRowComponent
             disableRightSwipe={(actions?.left?.length ?? 0) === 0}
             disableLeftSwipe={(actions?.right?.length ?? 0) === 0}
-            rightOpenValue={(actions?.right?.length ?? 0) * -(swipeActionWidth ?? 0)}
-            leftOpenValue={(actions?.left?.length ?? 0) * (swipeActionWidth ?? 0)}
+            rightOpenValue={(actions?.right?.length ?? 0) * -actionWidth}
+            leftOpenValue={(actions?.left?.length ?? 0) * actionWidth}
             onSwipeValueChange={onSwipeValueChange}>
-            <Animated.View style={translateStyle}>{renderHiddenItem(info, rowMap)}</Animated.View>
+            <Animated.View style={translateStyle}>{renderHiddenItem(info, rowMap, actions)}</Animated.View>
             <View>
               <TouchableWithoutFeedback
                 onPress={() => {
@@ -340,11 +424,11 @@ export default React.forwardRef(
               </TouchableWithoutFeedback>
               {renderItem(info, rowMap)}
             </View>
-          </SwipeRow>
+          </SwipeRowComponent>
         );
         return row;
       },
-      [itemSwipeActionProps, props.swipeActionWidth, renderHiddenItem, renderItem, swipeActionWidth],
+      [itemSwipeActionProps, renderHiddenItem, renderItem, swipeActionWidth],
     );
 
     if (!renderItem) {
@@ -357,7 +441,10 @@ export default React.forwardRef(
         <SwipeListView
           {...otherListProps}
           data={data}
-          ref={ref}
+          ref={setInnerSwipeListRef}
+          closeOnRowOpen
+          closeOnRowBeginSwipe
+          closeOnRowPress
           // onSwipeValueChange={onSwipeValueChange}
           renderItem={realRenderItem}
           onRowOpen={onRowOpen}
@@ -366,8 +453,10 @@ export default React.forwardRef(
           scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
           onScrollBeginDrag={setIsScrollingWhileTouchSwipeAction}
         />
-        <ScrollToTopHandler listRef={ref as React.RefObject<SwipeListView<any>>} />
+        <ScrollToTopHandler listRef={innerSwipeListRef as React.RefObject<SwipeListView<unknown>>} />
       </>
     );
   },
-);
+) as SwipeableListType;
+
+export default SwipeableList;
