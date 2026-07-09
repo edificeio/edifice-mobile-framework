@@ -107,7 +107,7 @@
     "lodash.debounce": "4.0.8",
     "lottie-ios": "4.6.0",
     "lottie-react-native": "7.3.8",
-    "metro-config": "0.84.4",
+    "metro-config": "0.86.0",
     "mime": "4.1.0",
     "moment": "2.30.1",
     "pager-rn": "0.0.2",
