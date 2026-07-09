@@ -239,7 +239,7 @@
     "jest": "30.4.2",
     "lint-staged": "17.0.8",
     "patch-package": "8.0.1",
-    "prettier": "3.8.4",
+    "prettier": "3.9.5",
     "pretty-quick": "4.2.2",
     "react-native-typescript-transformer": "1.2.13",
     "react-test-renderer": "19.2.7",
