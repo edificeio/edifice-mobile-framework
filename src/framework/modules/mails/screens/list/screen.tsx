@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect } from '@react-navigation/native';
 import { FlatList as GHFlatList } from 'react-native-gesture-handler';
@@ -19,6 +20,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
+import type { NavigationTabParams } from '~/app/navigation/types';
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -73,6 +75,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const listRef = React.useRef<SwipeListView<{ key: string }> | null>(null);
   const searchInputRef = React.useRef<TextInput>(null);
+
+  // allows us to track the tab when we leave it
+  const mailsTabKeyRef = React.useRef<string | undefined>(undefined);
+  const shouldResetToInboxRef = React.useRef<boolean>(false);
   //TODO: créer un wrapper
   const { top: statusBarHeight } = useSafeAreaInsets();
   const navigation = props.navigation;
@@ -627,20 +633,6 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }, [closeOpenSwipeRows]),
   );
 
-  const hasLeftScreenRef = React.useRef(false);
-  useFocusEffect(
-    React.useCallback(() => {
-      if (hasLeftScreenRef.current) {
-        setSelectedFolder(MailsDefaultFolders.INBOX);
-        loadMails(MailsDefaultFolders.INBOX);
-      }
-
-      return () => {
-        hasLeftScreenRef.current = true;
-      };
-    }, [loadMails]),
-  );
-
   React.useEffect(() => {
     const lastCall = readLastCallTimestamp();
     const now = Date.now();
@@ -713,9 +705,48 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     props.navigation.setParams({ tabBarVisible: !isSelectionMode });
   }, [isSearchMode, isSelectionMode, props.navigation]);
 
+  React.useEffect(() => {
+    const parentNavigation = props.navigation.getParent<BottomTabNavigationProp<NavigationTabParams>>();
+    if (!parentNavigation) return;
+
+    const unsubscribeTabPress = parentNavigation.addListener('tabPress', () => {
+      if (props.navigation.isFocused()) listRef.current?.scrollToTop();
+    });
+
+    const checkTabFocus = () => {
+      const state = parentNavigation.getState();
+      const focusedTabKey = state.routes[state.index]?.key;
+      if (props.navigation.isFocused()) {
+        // in mails tab
+        mailsTabKeyRef.current = focusedTabKey;
+      } else if (mailsTabKeyRef.current !== undefined && focusedTabKey !== mailsTabKeyRef.current) {
+        // no longer in mils tab
+        shouldResetToInboxRef.current = true;
+      }
+    };
+    checkTabFocus();
+    const unsubscribeState = parentNavigation.addListener('state', checkTabFocus);
+
+    return () => {
+      unsubscribeTabPress();
+      unsubscribeState();
+    };
+  }, [props.navigation]);
+
   useFocusEffect(
     React.useCallback(() => {
       const { params } = props.route;
+      // reset to MailsDefaultFolders.INBOX if we left the mails tab and came bac
+      if (shouldResetToInboxRef.current) {
+        shouldResetToInboxRef.current = false;
+        setSelectedFolder(MailsDefaultFolders.INBOX);
+        setSearch('');
+        loadMails(MailsDefaultFolders.INBOX, '');
+        loadFolders();
+        listRef.current?.scrollToTop();
+        if (params.from) props.navigation.setParams({ from: undefined });
+        return;
+      }
       if (params.from && (params.reload || params.idMailToRemove || params.idMailToMarkUnread || params.idMailToRecall)) {
         if (params.reload) loadMails(params.from);
         if (params.idMailToRemove) setMails(prevMails => prevMails.filter(mail => mail.id !== params.idMailToRemove));
