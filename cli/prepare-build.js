@@ -97,7 +97,7 @@ try {
     .padStart(2, '0')}`;
   versionNumber = `${major}.${minor}.${rev}`;
   fullVersion = `${versionNumber}${type}(${buildNumber})`;
-  console.info(`==> Version will be ${fullVersion})`);
+  console.info(`==> Version will be ${fullVersion}`);
 } catch (error) {
   console.error('!!! Unable to compute build number !!!');
   console.error(error);
