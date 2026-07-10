@@ -17,6 +17,8 @@ export default StyleSheet.create({
     borderColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.input,
     borderWidth: UI_SIZES.border.thin,
+    flexGrow: 1,
+    flexShrink: 0,
     padding: UI_SIZES.spacing.minor,
     rowGap: UI_SIZES.spacing.tiny,
   },

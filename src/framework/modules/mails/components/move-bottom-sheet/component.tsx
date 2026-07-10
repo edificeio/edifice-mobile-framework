@@ -21,18 +21,32 @@ const EMPTY_SVG_SIZE = getScaleWidth(150);
 const MailsMoveBottomSheet = (props: MailsMoveBottomSheetProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<MailsFolderInfo>();
 
+  const headerRef = React.useRef<View>(null);
+  const [headerHeight, setHeaderHeight] = React.useState(0);
+  React.useLayoutEffect(() => {
+    headerRef.current?.measure((x, y, width, height) => {
+      setHeaderHeight(height);
+    });
+  }, []);
+
   return (
     <View style={[props.style, props.contentContainerStyle]}>
       <View style={styles.contentBottomSheet}>
-        <HeaderBottomSheetModal
-          title={I18n.get('mails-details-move')}
-          iconRight="ui-check"
-          iconRightDisabled={!selectedFolder}
-          onPressRight={() => props.onMove(selectedFolder!.id)}
-        />
+        <View ref={headerRef}>
+          <HeaderBottomSheetModal
+            title={I18n.get('mails-details-move')}
+            iconRight="ui-check"
+            iconRightDisabled={!selectedFolder}
+            onPressRight={() => props.onMove(selectedFolder!.id)}
+          />
+        </View>
         <FlatList
           data={props.folders}
-          style={[stylesFolders.containerFolders, props.folders?.length === 0 ? styles.nofoldersContainer : {}]}
+          style={[
+            stylesFolders.containerFolders,
+            props.folders?.length === 0 ? styles.nofoldersContainer : {},
+            { marginBottom: headerHeight * 3 }, // Really I don't know what to put here... Need to compensate header height but somehow ideal value is around 120
+          ]}
           renderItem={({ item }) => (
             <MailsFolderItem
               key={item.id}

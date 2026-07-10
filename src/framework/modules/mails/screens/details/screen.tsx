@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert, TouchableOpacity, View } from 'react-native';
 
-import { HeaderBackButton } from '@react-navigation/elements';
+import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { ScrollView as GHScrollView } from 'react-native-gesture-handler';
@@ -64,6 +64,7 @@ import { openUrl } from '~/framework/util/linking';
 
 import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const isDateOlderThan60Minutes = (date: moment.Moment) => {
   const now = moment();
@@ -738,18 +739,22 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
     }
   }, [typeModal, renderCreateFolder, renderMoveFolder, renderDetailsRecipients]);
 
+  const headerHeight = useHeaderHeight();
+  const bottomSheetTopMargin = UI_SIZES.spacing.medium;
+  const { bottom } = useSafeAreaInsets();
+
   const renderBottomSheet = React.useCallback(() => {
+    const maxHeight = UI_SIZES.screen.height - headerHeight - bottomSheetTopMargin;
     return (
       <BottomSheetModal
         ref={bottomSheetModalRef}
         onDismiss={onDismissBottomSheet}
-        snapPoints={['90%']}
-        enableDynamicSizing={typeModal ? false : true}
-        containerStyle={styles.bottomSheet}>
-        {renderContentBottomSheet()}
+        maxDynamicContentSize={maxHeight}
+        snapPoints={[maxHeight]}>
+        <View style={{ maxHeight: maxHeight - 24 - bottom }}>{renderContentBottomSheet()}</View>
       </BottomSheetModal>
     );
-  }, [onDismissBottomSheet, renderContentBottomSheet, typeModal]);
+  }, [bottom, bottomSheetTopMargin, headerHeight, onDismissBottomSheet, renderContentBottomSheet]);
 
   const renderRederictToWebview = React.useCallback(() => {
     if (!isServiceMethodAvailable(mailsService.mail.rederictToWebview)) return null;

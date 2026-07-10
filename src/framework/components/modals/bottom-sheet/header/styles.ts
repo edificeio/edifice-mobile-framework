@@ -9,6 +9,7 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     columnGap: UI_SIZES.spacing.minor,
     marginBottom: UI_SIZES.spacing.medium,
+    flex: 0,
   },
   icon: {
     width: CONTAINER_ICON_SIZE,
