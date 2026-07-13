@@ -16,23 +16,30 @@ export type PictureCardProps = {
 
 type PictureCardComponent = typeof Card | typeof CardWithoutPadding | typeof TouchCard;
 
+type PictureCardTextProps = Readonly<Pick<PictureCardProps, 'text' | 'textStyle'>>;
+
+function PictureCardText({ text, textStyle }: PictureCardTextProps) {
+  if (!text) return null;
+  if (typeof text === 'string') {
+    return (
+      <View style={styles.textWrapper}>
+        <SmallText numberOfLines={1} style={[styles.text, textStyle]}>
+          {text}
+        </SmallText>
+      </View>
+    );
+  }
+  return text;
+}
+
 function PictureCard_Base(props: PictureCardProps & { cardComponent?: PictureCardComponent }) {
   const { cardComponent, picture, style, text, textStyle, ...viewProps } = props;
   const CC = cardComponent ?? CardWithoutPadding;
+
   return (
     <CC {...(viewProps as ViewProps & TouchableOpacityProps)} style={[styles.cardContainer, style]}>
       <Picture {...picture} />
-      {text ? (
-        typeof text === 'string' && text.length > 0 ? (
-          <View style={styles.textWrapper}>
-            <SmallText numberOfLines={2} style={[styles.text, textStyle]}>
-              {text}
-            </SmallText>
-          </View>
-        ) : (
-          text
-        )
-      ) : null}
+      <PictureCardText text={text} textStyle={textStyle} />
     </CC>
   );
 }
