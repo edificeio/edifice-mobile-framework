@@ -1,12 +1,11 @@
 import React from 'react';
-import { TextStyle, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
-
-import { Card, CardWithoutPadding, TouchCard } from './base';
+import { StyleSheet, TextStyle, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
 
 import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-
 import { SmallText } from '~/framework/components/text';
+
+import { Card, CardWithoutPadding, TouchCard } from './base';
 
 export type PictureCardProps = {
   text?: string | React.ReactElement;
@@ -15,30 +14,18 @@ export type PictureCardProps = {
   pictureStyle?: ViewStyle;
 } & ViewProps;
 
-function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
+type PictureCardComponent = typeof Card | typeof CardWithoutPadding | typeof TouchCard;
+
+function PictureCard_Base(props: PictureCardProps & { cardComponent?: PictureCardComponent }) {
   const { cardComponent, picture, style, text, textStyle, ...viewProps } = props;
   const CC = cardComponent ?? CardWithoutPadding;
   return (
-    <CC {...viewProps} style={[{ alignItems: 'center', justifyContent: 'center' }, style]}>
+    <CC {...(viewProps as ViewProps & TouchableOpacityProps)} style={[styles.cardContainer, style]}>
       <Picture {...picture} />
       {text ? (
-        typeof text === 'string' ? (
-          <View
-            style={{
-              alignItems: 'center',
-              height: getScaleHeight(20) * 2,
-              justifyContent: 'center',
-              marginTop: UI_SIZES.spacing.minor,
-            }}>
-            <SmallText
-              numberOfLines={2}
-              style={[
-                {
-                  lineHeight: undefined,
-                  textAlign: 'center',
-                },
-                textStyle,
-              ]}>
+        typeof text === 'string' && text.length > 0 ? (
+          <View style={styles.textWrapper}>
+            <SmallText numberOfLines={2} style={[styles.text, textStyle]}>
               {text}
             </SmallText>
           </View>
@@ -56,13 +43,14 @@ export function TouchablePictureCard(props: PictureCardProps & TouchableOpacityP
   return <PictureCard_Base cardComponent={TouchCard} {...props} />;
 }
 
-function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
-  const { picture, pictureStyle, style, ...rest } = props;
+function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: PictureCardComponent }) {
+  const { cardComponent, picture, pictureStyle, style, ...rest } = props;
   picture.style = { maxWidth: '100%', ...pictureStyle };
-  picture.resizeMode = 'contain';
+  if (picture.type === 'Image') picture.resizeMode = 'contain';
   return (
-    <PictureCard
-      style={[{ paddingHorizontal: UI_SIZES.spacing.medium, paddingVertical: UI_SIZES.spacing.medium }, style]}
+    <PictureCard_Base
+      cardComponent={cardComponent ?? Card}
+      style={[styles.selectorCardPadding, style]}
       picture={picture}
       {...rest}
     />
@@ -81,3 +69,23 @@ export type OverviewCardProps = {
   pictureStyle?: PictureProps['style'];
   pictureWrapperStyle?: ViewStyle;
 } & ViewProps;
+
+const styles = StyleSheet.create({
+  cardContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectorCardPadding: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+  },
+  text: {
+    lineHeight: undefined,
+    textAlign: 'center',
+  },
+  textWrapper: {
+    alignItems: 'center',
+    height: getScaleHeight(20) * 1.5,
+    justifyContent: 'center',
+    marginTop: UI_SIZES.spacing.tiny,
+  },
+});

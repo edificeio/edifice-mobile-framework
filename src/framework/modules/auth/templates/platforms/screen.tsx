@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
@@ -15,7 +15,9 @@ import type { AuthPlatformsScreenProps } from './types';
 
 export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
   const { getNextRoute, navigation } = props;
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const onOpenItem = React.useCallback((item: Platform) => navigation.navigate(getNextRoute(item)), [getNextRoute, navigation]);
+
   return (
     <GridList
       data={appConf.platforms}
@@ -24,6 +26,7 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
           picture={item.logoType === 'Image' ? { source: item.logo, type: 'Image' } : { name: item.logo, type: item.logoType }}
           pictureStyle={styles.picture}
           text={item.displayName}
+          style={styles.cardStyle}
           onPress={() => onOpenItem(item)}
           testID={`network-${item.name}`}
         />
@@ -34,12 +37,14 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
           <HeadingSText style={styles.heading} testID="network-welcome-title">
             {I18n.get('auth-platformselect-welcome')}
           </HeadingSText>
+          {/*  don't forget to add new i18n label translation */}
           <SmallText style={styles.lightP} testID="network-welcome-subtitle">
             {I18n.get('auth-platformselect-select')}
           </SmallText>
         </SafeAreaView>
       }
       alwaysBounceVertical={false}
+      contentContainerStyle={{ paddingBottom: bottomInset }}
       overScrollMode="never"
       ListFooterComponent={<DebugOptions />}
       gap={UI_SIZES.spacing.big}
