@@ -1,31 +1,19 @@
 import React from 'react';
-import { StyleSheet, TextStyle, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
+import { TouchableOpacityProps, View, ViewProps } from 'react-native';
 
-import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
-import { Picture, PictureProps } from '~/framework/components/picture';
+import { Card, CardWithoutPadding, TouchCard } from '~/framework/components/card/base';
+import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 
-import { Card, CardWithoutPadding, TouchCard } from './base';
-
-export type PictureCardProps = {
-  text?: string | React.ReactElement;
-  textStyle?: TextStyle;
-  picture: PictureProps;
-  pictureStyle?: ViewStyle;
-} & ViewProps;
-
-type PictureCardComponent = typeof Card | typeof CardWithoutPadding | typeof TouchCard;
-
-type PictureCardTextProps = Readonly<Pick<PictureCardProps, 'text' | 'textStyle'>>;
+import { styles } from './styles';
+import type { PictureCardComponent, PictureCardProps, PictureCardTextProps } from './types';
 
 function PictureCardText({ text, textStyle }: PictureCardTextProps) {
   if (!text) return null;
   if (typeof text === 'string') {
     return (
       <View style={styles.textWrapper}>
-        <SmallText numberOfLines={1} style={[styles.text, textStyle]}>
-          {text}
-        </SmallText>
+        <SmallText style={[styles.text, textStyle]}>{text}</SmallText>
       </View>
     );
   }
@@ -69,30 +57,3 @@ export function SelectorPictureCard(props: PictureCardProps) {
 export function TouchableSelectorPictureCard(props: PictureCardProps & TouchableOpacityProps) {
   return <SelectorPictureCard_Base cardComponent={TouchCard} {...props} />;
 }
-
-export type OverviewCardProps = {
-  title?: string | React.ReactElement;
-  picture?: PictureProps;
-  pictureStyle?: PictureProps['style'];
-  pictureWrapperStyle?: ViewStyle;
-} & ViewProps;
-
-const styles = StyleSheet.create({
-  cardContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  selectorCardPadding: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
-  text: {
-    lineHeight: undefined,
-    textAlign: 'center',
-  },
-  textWrapper: {
-    alignItems: 'center',
-    height: getScaleHeight(20) * 1.5,
-    justifyContent: 'center',
-    marginTop: UI_SIZES.spacing.tiny,
-  },
-});
