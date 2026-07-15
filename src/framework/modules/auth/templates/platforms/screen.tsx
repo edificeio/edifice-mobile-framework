@@ -17,7 +17,7 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
   const { getNextRoute, navigation } = props;
   const { bottom: bottomInset } = useSafeAreaInsets();
   const onOpenItem = React.useCallback((item: Platform) => navigation.navigate(getNextRoute(item)), [getNextRoute, navigation]);
-
+  const contentContainerStyle = React.useMemo(() => ({ paddingBottom: bottomInset }), [bottomInset]);
   return (
     <GridList
       data={appConf.platforms}
@@ -44,7 +44,7 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
         </SafeAreaView>
       }
       alwaysBounceVertical={false}
-      contentContainerStyle={{ paddingBottom: bottomInset }}
+      contentContainerStyle={contentContainerStyle}
       overScrollMode="never"
       ListFooterComponent={<DebugOptions />}
       gap={UI_SIZES.spacing.big}
