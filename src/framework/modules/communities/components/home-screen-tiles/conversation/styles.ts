@@ -19,7 +19,7 @@ export default StyleSheet.create({
   },
   tileConversationUnavailable: {
     ...baseStyles.tileBase,
-    ...baseStyles.tileUnavailable,
+    ...baseStyles.tileAvailable,
   },
   tileLoader: {
     ...baseStyles.tileUnavailableLoader,

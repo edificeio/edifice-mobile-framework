@@ -46,7 +46,11 @@ import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-co
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { AnnouncementDetails, getAnnouncementsDetails } from '~/framework/modules/communities/service/announcements';
-import { hasDiscussions as fetchHasDiscussions } from '~/framework/modules/communities/service/conversations';
+import {
+  DiscussionsSummary,
+  hasDiscussions as fetchHasDiscussions,
+  getDiscussionsSummary,
+} from '~/framework/modules/communities/service/conversations';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { toURISource } from '~/framework/modules/media';
@@ -56,6 +60,7 @@ import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
 
 const ANNOUNCEMENTS_PAGE_SIZE = 20;
+const EMPTY_DISCUSSIONS_SUMMARY: DiscussionsSummary = { hasUnreadMessages: false, totalDiscussions: 0 };
 
 const SCROLL_INDICATOR_INSETS = {
   bottom: 0,
@@ -82,6 +87,7 @@ export const computeNavBar = (
 ): NativeStackNavigationOptions => communityNavBar(props, () => {});
 
 export const CommunitiesHomeScreenLoaded = function ({
+  discussionsSummary,
   hasDiscussions,
   image,
   membersId,
@@ -172,7 +178,14 @@ export const CommunitiesHomeScreenLoaded = function ({
                 spotlightedCourseId={spotlightedCourseId}
                 userRole={role}
               />
-              <ConversationTile communityId={communityId} hasDiscussions={hasDiscussions} platformUrl={platformUrl} />
+              <ConversationTile
+                communityId={communityId}
+                navigation={navigation}
+                hasDiscussions={hasDiscussions}
+                platformUrl={platformUrl}
+                hasUnreadMessages={discussionsSummary.hasUnreadMessages}
+                totalDiscussions={discussionsSummary.totalDiscussions}
+              />
             </View>
           </View>
         </View>
@@ -190,6 +203,7 @@ export const CommunitiesHomeScreenLoaded = function ({
       spotlightedCourseId,
       role,
       hasDiscussions,
+      discussionsSummary,
     ],
   );
 
@@ -303,9 +317,10 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
   );
   const [invitationId, setInvitationId] = React.useState<number | undefined>(undefined);
   const [communityHasDiscussions, setCommunityHasDiscussions] = React.useState(false);
+  const [discussionsSummary, setDiscussionsSummary] = React.useState<DiscussionsSummary>(EMPTY_DISCUSSIONS_SUMMARY);
 
   const loadContent = React.useCallback(async () => {
-    const [community, invitations, userInvitation, communityDiscussions] = await Promise.all([
+    const [community, invitations, userInvitation, communityDiscussions, fetchedDiscussionsSummary] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
       accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { includePending: true, page: 1, size: 20 }),
       accountApi(session, moduleConfig, InvitationClient).getUserInvitations({ communityId }),
@@ -313,6 +328,10 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       fetchHasDiscussions(communityId).catch(e => {
         console.error('Error while checking community discussions', e);
         return false;
+      }),
+      getDiscussionsSummary(session, communityId).catch(e => {
+        console.error('Error while loading community discussions summary', e);
+        return EMPTY_DISCUSSIONS_SUMMARY;
       }),
     ]);
 
@@ -323,6 +342,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
     });
     setInvitationId(userInvitation.items.at(0)?.id);
     setCommunityHasDiscussions(communityDiscussions);
+    setDiscussionsSummary(fetchedDiscussionsSummary);
   }, [communityId, session, setData]);
 
   const image = React.useMemo(
@@ -348,6 +368,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
           refreshControl={refreshControl}
           {...data}
           hasDiscussions={communityHasDiscussions}
+          discussionsSummary={discussionsSummary}
           image={image!}
           session={session}
           spotlightedCourseId={spotlightedCourseId}
@@ -355,7 +376,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       ) : (
         <EmptyContentScreen />
       ),
-    [data, navigation, realRoute, communityHasDiscussions, image, session, spotlightedCourseId],
+    [data, navigation, realRoute, communityHasDiscussions, discussionsSummary, image, session, spotlightedCourseId],
   );
 
   return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;
