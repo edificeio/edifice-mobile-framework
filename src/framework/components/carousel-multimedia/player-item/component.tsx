@@ -57,6 +57,10 @@ const PlayerItem = ({
     if (savedState?.position) return true;
     return savedState?.paused ?? true;
   });
+  const [hasValidDuration, setHasValidDuration] = React.useState(true);
+  // Fix for AAC files on Android, cf PEDAGO-4048
+  const isValidDuration = (duration: number): boolean => Number.isFinite(duration) && duration > 0;
+  const hasValidDurationRef = React.useRef(true);
   const videoRef = React.useRef<VideoRef>(null);
   const hasBeenReadyRef = React.useRef(false);
   const pausedRef = React.useRef(paused);
@@ -118,10 +122,16 @@ const PlayerItem = ({
   }, []);
 
   // Audio has no video frames so we fire onReadyForDisplay once it's loaded to switch from Loader to Player
-  const onLoad = React.useCallback(() => {
-    if (isAudioContent(item)) onReadyForDisplay();
-    onInitialMediaLoad?.();
-  }, [item, onInitialMediaLoad, onReadyForDisplay]);
+  const onLoad = React.useCallback(
+    data => {
+      const valid = isValidDuration(data.duration);
+      hasValidDurationRef.current = valid;
+      setHasValidDuration(valid);
+      if (isAudioContent(item)) onReadyForDisplay();
+      onInitialMediaLoad?.();
+    },
+    [item, onInitialMediaLoad, onReadyForDisplay],
+  );
 
   /**
    * Only works on Android
@@ -132,7 +142,7 @@ const PlayerItem = ({
       if (buffering) {
         if (hasBeenReadyRef.current) {
           setIsBuffering(true);
-          videoRef.current?.hideControls?.();
+          if (hasValidDurationRef.current) videoRef.current?.hideControls?.();
         }
       } else {
         onReadyForDisplay();
@@ -226,6 +236,9 @@ const PlayerItem = ({
         disableBack
         disableFullscreen
         disableVolume
+        disableSeekButtons={!hasValidDuration}
+        disableSeekbar={!hasValidDuration}
+        disableTimer={!hasValidDuration}
         onLoad={onLoad}
         onReadyForDisplay={onReadyForDisplay}
         onBuffer={onBuffer}
@@ -240,7 +253,7 @@ const PlayerItem = ({
         renderLoader={renderLoader}
         resizeMode="contain"
         rewindTime={REWIND_TIME}
-        showDuration
+        showDuration={hasValidDuration}
         bufferingStrategy={BufferingStrategyType.DEPENDING_ON_MEMORY}
         source={{
           ...source,
