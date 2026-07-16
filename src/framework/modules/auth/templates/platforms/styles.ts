@@ -5,8 +5,7 @@ import { getScaleHeight, getScaleWidth, UI_SIZES } from '~/framework/components/
 
 export default StyleSheet.create({
   cardStyle: {
-    paddingBottom: UI_SIZES.spacing.tiny,
-    paddingTop: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   heading: {
     color: theme.ui.text.regular,
