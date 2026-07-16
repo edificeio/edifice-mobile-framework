@@ -186,10 +186,10 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   }, [typeModal, isSubfolder, idParentFolder, onErrorCreateFolder]);
 
   const switchFolder = React.useCallback(
-    async (folder: MailsDefaultFolders | MailsFolderInfo) => {
+    async (folder: MailsDefaultFolders | MailsFolderInfo, needCloseBottomSheet: boolean) => {
       try {
         setSelectedFolder(folder);
-        closeBottomSheet();
+        needCloseBottomSheet && closeBottomSheet();
         await loadMails(folder);
         flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
       } catch (e) {
@@ -242,7 +242,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
             name: valueFolderName,
             parentId: idParentFolder ?? '',
           });
-          if (!isSelectionMode) switchFolder({ id: dataNewFolder, name: valueFolderName });
+          if (!isSelectionMode) switchFolder({ id: dataNewFolder, name: valueFolderName }, true);
           else {
             await onActionMultiple(async () => {
               if (isServiceMethodAvailable(mailsService.mail.moveToFolder)) {
@@ -358,7 +358,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           try {
             setIsDeletingFolder(true);
             await deleteFolder({ id: (selectedFolder as MailsFolderInfo).id });
-            switchFolder(MailsDefaultFolders.INBOX);
+            switchFolder(MailsDefaultFolders.INBOX, false);
             loadFolders();
             toast.showSuccess(I18n.get('mails-list-toastsuccessdeletefolder'));
           } catch (e) {
@@ -862,7 +862,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
                     icon={mailsDefaultFoldersInfos[folder].icon}
                     name={I18n.get(mailsDefaultFoldersInfos[folder].title)}
                     selected={selectedFolder === folder}
-                    onPress={() => switchFolder(folder as MailsDefaultFolders)}
+                    onPress={() => switchFolder(folder as MailsDefaultFolders, true)}
                     nbUnread={folderCounts ? folderCounts[folder] : 0}
                   />
                 ))}
@@ -886,7 +886,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
               icon="ui-folder"
               name={item.name}
               selected={typeof selectedFolder === 'object' && selectedFolder.id === item.id}
-              onPress={() => switchFolder({ id: item.id, name: item.name })}
+              onPress={() => switchFolder({ id: item.id, name: item.name }, true)}
               nbUnread={item.nbUnread}
               depth={item.depth}
             />
