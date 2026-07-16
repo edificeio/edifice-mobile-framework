@@ -9,7 +9,8 @@ export default StyleSheet.create({
     lineHeight: getScaleFontSize(20),
   },
   cardStyle: {
-    paddingVertical: UI_SIZES.spacing.minor,
+    paddingBottom: UI_SIZES.spacing.tiny,
+    paddingTop: UI_SIZES.spacing.minor,
   },
   heading: {
     color: theme.ui.text.regular,
