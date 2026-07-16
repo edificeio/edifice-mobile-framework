@@ -3,6 +3,7 @@ import * as React from 'react';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import TouchableSelectorPictureCard from '~/framework/components/card/picture';
 import { UI_SIZES } from '~/framework/components/constants';
 import GridList from '~/framework/components/GridList';
@@ -17,7 +18,10 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
   const { getNextRoute, navigation } = props;
   const { bottom: bottomInset } = useSafeAreaInsets();
   const onOpenItem = React.useCallback((item: Platform) => navigation.navigate(getNextRoute(item)), [getNextRoute, navigation]);
-  const contentContainerStyle = React.useMemo(() => ({ paddingBottom: bottomInset }), [bottomInset]);
+  const contentContainerStyle = React.useMemo(
+    () => ({ backgroundColor: theme.ui.background.page, paddingBottom: bottomInset }),
+    [bottomInset],
+  );
   return (
     <GridList
       data={appConf.platforms}
@@ -47,7 +51,7 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
       contentContainerStyle={contentContainerStyle}
       overScrollMode="never"
       ListFooterComponent={<DebugOptions />}
-      gap={UI_SIZES.spacing.big}
+      gap={[UI_SIZES.spacing.big, UI_SIZES.spacing.small]}
       gapOutside={UI_SIZES.spacing.big}
     />
   );
