@@ -1082,6 +1082,7 @@
   "myapp-add-favorite-error-message": "Une erreur est survenue lors de la mise à jour des favoris",
   "myapp-add-favorite-success-message": "Vos modifications ont bien été enregistrées",
   "myapp-appname": "Mes Applis",
+  "myapp-bottomsheet-access-by-browser": "Accèder aux applis sur mon navigateur",
   "myapp-bottomsheet-add-to-favorites": "Ajouter l'appli aux favoris",
   "myapp-bottomsheet-app-info": "Infos sur l'application",
   "myapp-bottomsheet-handle-favorites": "Gérer mes favoris",
