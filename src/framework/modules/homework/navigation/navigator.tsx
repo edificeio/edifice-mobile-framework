@@ -9,7 +9,9 @@ import HomeworkExplorerScreen, { computeNavBar as homeworkExplorerNavBar } from 
 import HomeworkCreateScreen from '~/framework/modules/homework/screens/HomeworkCreateScreen';
 import HomeworkInitialScreen from '~/framework/modules/homework/screens/HomeworkInitialScreen';
 import HomeworkSelectScreen from '~/framework/modules/homework/screens/HomeworkSelectScreen';
-import HomeworkTaskDetailsScreen from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';
+import HomeworkTaskDetailsScreen, {
+  HomeworkTaskDetailsScreenOptions,
+} from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';
 import HomeworkTaskListScreen from '~/framework/modules/homework/screens/HomeworkTaskListScreen';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
@@ -35,7 +37,7 @@ export default () =>
       <Stack.Screen
         name={homeworkRouteNames.homeworkTaskDetails}
         component={HomeworkTaskDetailsScreen}
-        options={{ title: I18n.get('homework') }}
+        options={HomeworkTaskDetailsScreenOptions}
         initialParams={{}}
       />
       <Stack.Screen
