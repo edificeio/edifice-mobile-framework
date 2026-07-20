@@ -69,11 +69,18 @@ export const useCarouselFileHandler = (
 
   const getSyncedFile = React.useCallback(async () => {
     let syncedFile;
-    const stringSrc = media!.src.toString();
+    // media.src can be URL, string, or an object with a `uri` property (ImageURISource / ReactVideoSource).
+    // Using .toString() on an object gives '[object Object]', so extract the URI string explicitly.
+    const rawSrc = media!.src;
+    const stringSrc =
+      rawSrc instanceof URL ? rawSrc.href : typeof rawSrc === 'string' ? rawSrc : (rawSrc as { uri?: string }).uri ?? '';
 
     if (stringSrc.indexOf('file://') > -1) {
       syncedFile = new SyncedFile(
-        new LocalFile({ filepath: media!.src, filetype: media!.mime }, { _needIOSReleaseSecureAccess: false }),
+        new LocalFile(
+          { filename: stringSrc.split('/').pop() ?? '', filepath: stringSrc, filetype: media!.mime },
+          { _needIOSReleaseSecureAccess: false },
+        ),
         { url: stringSrc },
       );
     } else {

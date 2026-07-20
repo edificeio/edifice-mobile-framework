@@ -39,7 +39,6 @@ export default class RichEditor extends Component {
     initialHeight: 0,
     oneSessionId: undefined,
     onLoad: undefined,
-    onOpenCarbonioContent: undefined,
     pasteAsPlainText: false,
     placeholder: '',
     style: {},
@@ -185,14 +184,11 @@ export default class RichEditor extends Component {
   _onMediaTouched(url, medias) {
     const { disabled } = this.props;
     if (disabled) {
-      // Carbonio : redirect to web instead of opening carousel
       const startIndex = medias.findIndex(item => item.src === url);
-      this.props.onOpenCarbonioContent !== undefined
-        ? this.props.onOpenCarbonioContent?.()
-        : this.props.navigation?.navigate('media/carousel', {
-            media: medias,
-            startIndex: startIndex !== -1 ? startIndex : 0,
-          });
+      this.props.navigation?.navigate('media/carousel', {
+        media: medias,
+        startIndex: startIndex !== -1 ? startIndex : 0,
+      });
     }
   }
 

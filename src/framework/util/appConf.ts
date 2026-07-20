@@ -22,6 +22,8 @@ export type IPlatformAccessDeclaration = {
   logoType?: PictureProps['type']; // The logo type
   name: string; // unique name of the access point
   oauth: [string, string]; // oAuth2 configuration as [clientId, clientSecret]
+  carbonioEmailDomain?: string; // Carbonio email domain (ex: lyceeconnecte.fr)
+  carbonioUrl?: string; // Carbonio mail server URL (ex: https://mail.lyceeconnecte.fr)
   redirect?: string; // Redirect url to redirect in external browser
   showVieScolaireDashboard?: boolean; // To show or not the VieScolaire dashboard
   splashads?: string; // splashads url
@@ -41,6 +43,8 @@ export class Platform {
   logoType: Required<IPlatformAccessDeclaration>['logoType'];
   name!: IPlatformAccessDeclaration['name'];
   _oauth!: IPlatformAccessDeclaration['oauth'];
+  carbonioEmailDomain: IPlatformAccessDeclaration['carbonioEmailDomain'];
+  carbonioUrl: IPlatformAccessDeclaration['carbonioUrl'];
   url!: IPlatformAccessDeclaration['url'];
   wayf: IPlatformAccessDeclaration['wayf'];
   redirect: IPlatformAccessDeclaration['redirect'];
@@ -58,6 +62,8 @@ export class Platform {
     this.logoType = pf.logoType ?? 'Image';
     this.name = pf.name;
     this._oauth = pf.oauth;
+    this.carbonioEmailDomain = pf.carbonioEmailDomain;
+    this.carbonioUrl = pf.carbonioUrl;
     this.url = pf.url;
     this.wayf = pf.wayf;
     this.redirect = pf.redirect;

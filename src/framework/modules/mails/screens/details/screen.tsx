@@ -49,7 +49,6 @@ import { MailsEditType } from '~/framework/modules/mails/screens/edit';
 import { mailsService } from '~/framework/modules/mails/service';
 import { defaultUserIdCarbonio } from '~/framework/modules/mails/service/api/carbonio';
 import {
-  convertAttachmentToDistantFile,
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
   isServiceMethodAvailable,
@@ -104,7 +103,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const isContentEmpty = React.useMemo(() => mailContent === '' || mailContent === '<p></p>', [mailContent]);
 
   const convertedAttachments = React.useMemo(
-    () => mail?.attachments.map(attachment => convertAttachmentToDistantFile(attachment, id)),
+    () => mail?.attachments.map(attachment => mailsService.attachments.getDistantFile(attachment, id)),
     [mail, id],
   );
 
@@ -540,15 +539,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
 
   const renderContentViewer = React.useCallback(async () => {
     if (isContentEmpty) return;
-    // Carbonio: pass onOpenCarbonioContent to redirect to web instead of carousel
-    let onOpenCarbonioContent: (() => Promise<void>) | undefined;
-    if (isServiceMethodAvailable(mailsService.mail.rederictToWebview) && !mailsService.attachments.supportViewAttachments) {
-      onOpenCarbonioContent = async () => {
-        const url = await mailsService.mail.rederictToWebview!({ folderId: mail?.folder_id ?? '', id });
-        openUrl(url);
-      };
-    }
-    return <RichEditorViewer content={mailContent} onOpenCarbonioContent={onOpenCarbonioContent} />;
+    return <RichEditorViewer content={mailContent} />;
   }, [id, isContentEmpty, mail?.folder_id, mailContent]);
 
   const renderRecipients = React.useCallback(() => {
@@ -587,9 +578,9 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   const renderAttachments = React.useCallback(() => {
     if (mail!.attachments.length <= 0) return;
     // Carbonio: open attachments in web instead of using the base Attachments component
-    if (isServiceMethodAvailable(mailsService.mail.rederictToWebview) && !mailsService.attachments.supportViewAttachments) {
+    if (isServiceMethodAvailable(mailsService.mail.redirectToWebview) && !mailsService.attachments.supportViewAttachments) {
       const onOpenWeb = async () => {
-        const url = await mailsService.mail.rederictToWebview!({ folderId: mail?.folder_id ?? '', id });
+        const url = await mailsService.mail.redirectToWebview!({ folderId: mail?.folder_id ?? '', id });
         openUrl(url);
       };
       return (
@@ -757,9 +748,10 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   }, [bottom, bottomSheetTopMargin, headerHeight, onDismissBottomSheet, renderContentBottomSheet]);
 
   const renderRederictToWebview = React.useCallback(() => {
-    if (!isServiceMethodAvailable(mailsService.mail.rederictToWebview)) return null;
+    if (!isServiceMethodAvailable(mailsService.mail.redirectToWebview))
+      return null;
     const onRedirect = async () => {
-      const url = await mailsService.mail.rederictToWebview!({ folderId: mail?.folder_id ?? '', id });
+      const url = await mailsService.mail.redirectToWebview!({ folderId: mail?.folder_id ?? '', id });
       openUrl(url);
     };
     return (

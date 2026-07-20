@@ -13,7 +13,9 @@ export namespace FileImportScreenProps {
   export interface NavParams {
     files: LocalFile[];
     uploadParams: IWorkspaceUploadParams;
-    onImportResult?: (result: Array<{ status: UploadStatus; workspaceID: string | undefined }>) => void;
+    onImportResult?: (result: Array<{ status: UploadStatus; workspaceID: string | undefined; fileUrl?: string }>) => void;
+    /** Optional override: called instead of workspace upload. Must resolve to the URL to embed. */
+    onUploadFile?: (localFile: LocalFile) => Promise<string>;
     redirectTo: Route<string, ParamListBase>;
     source: FileSource;
   }

@@ -1,7 +1,12 @@
-import { MailsMailContentBackend, MailsMailPreviewBackend } from './mails';
-
-import { I18n } from '~/app/i18n';
 import { AccountType } from '~/framework/modules/auth/model';
+import {
+  buildCarbonioAttachmentUrl,
+  getCarbonioBaseUrl,
+  getCarbonioTokenFromStore,
+  normalizeCid,
+} from '~/framework/modules/mails/service/carbonio-helpers';
+
+import { MailsMailContentBackend, MailsMailPreviewBackend } from './mails';
 
 /**
  * Normalize content from Carbonio part (content can be string or { _content: string })
@@ -9,18 +14,20 @@ import { AccountType } from '~/framework/modules/auth/model';
 function partContent(part: any): string {
   if (!part) return '';
   const c = part.content;
+  if (c?.truncated) console.warn(`Carbonio: message part ${part.part} content is truncated`);
   if (typeof c === 'string') return c;
   if (c && typeof c._content === 'string') return c._content;
   return '';
 }
 
 /**
- * Recursively find the HTML body part in a MIME tree (handles multipart/mixed -> multipart/alternative -> text/html when there are attachments).
+ * Recursively find the HTML body part in a MIME tree.
  */
 function findHtmlBodyInParts(parts: any[]): string {
   if (!parts || parts.length === 0) return '';
+  // First pass: prefer text/html over any other body part (e.g. text/plain in multipart/alternative)
   for (const part of parts) {
-    if (part.body || part.ct === 'text/html') {
+    if (part.ct === 'text/html') {
       const content = partContent(part);
       if (content) return content;
     }
@@ -29,48 +36,177 @@ function findHtmlBodyInParts(parts: any[]): string {
       if (nested) return nested;
     }
   }
+  // Fallback: accept any part with body=1 (text/plain when no HTML available)
+  for (const part of parts) {
+    if (part.body) {
+      const content = partContent(part);
+      if (content) return content;
+    }
+  }
   return '';
 }
 
 /**
  * Extract HTML body content from Carbonio message multipart structure.
- * Handles flat mp[], one level of nesting (mp[0].mp[]), and deep nesting (e.g. multipart/mixed -> multipart/alternative -> text/html when there are attachments).
  */
-function extractBodyFromCarbonioMessage(carbonioMessage: any): string {
+export function extractBodyFromCarbonioMessage(carbonioMessage: any): string {
+  if (!carbonioMessage) return '';
   const mp = carbonioMessage.mp;
   if (!mp || mp.length === 0) return '';
   return findHtmlBodyInParts(mp) || '';
 }
 
 /**
- * Extract attachments from Carbonio message multipart structure
+ * Determine whether a MIME part is a file attachment (not body, not container).
  */
-function extractAttachmentsFromCarbonioMessage(carbonioMessage: any): MailsMailContentBackend['attachments'] {
-  return (
-    carbonioMessage.mp
-      ?.flatMap((mp: any) => {
-        if (mp.mp) {
-          return mp.mp.filter((part: any) => {
-            const ct = part.ct || '';
-            return ct && !ct.startsWith('text/') && !ct.startsWith('multipart/');
-          });
-        }
-        const ct = mp.ct || '';
-        if (ct && !ct.startsWith('text/') && !ct.startsWith('multipart/')) {
-          return [mp];
-        }
-        return [];
-      })
-      .map((mp: any) => ({
-        charset: mp.charset || 'utf-8',
-        contentTransferEncoding: mp.ci || 'base64',
-        contentType: mp.ct || 'application/octet-stream',
-        filename: mp.filename || mp.part || '',
-        id: mp.part || mp.id || '',
-        name: mp.filename || mp.part || '',
-        size: mp.s || 0,
-      })) || []
-  );
+function isAttachmentPart(mp: any): boolean {
+  const ct = mp.ct || '';
+  if (ct.startsWith('multipart/')) return false;
+  if (mp.body) return false;
+  if (mp.cd === 'attachment') return true;
+  // Some senders (Gmail, confirmed via a real repro) set a Content-ID even on genuine
+  // attachments, not just on inline-embedded images — only treat `ci` as "inline, not an
+  // attachment" once an explicit attachment Content-Disposition has been ruled out
+  // (see INTEG-2130).
+  if (mp.ci) return false;
+  return !!(mp.filename && mp.filename.trim());
+}
+
+/**
+ * Recursively collect all attachment parts from the MIME tree.
+ */
+export function collectAttachmentParts(mp: any[]): any[] {
+  if (!mp) return [];
+  const results: any[] = [];
+  for (const part of mp) {
+    if (isAttachmentPart(part)) {
+      results.push(part);
+    } else if (part.mp && part.mp.length > 0) {
+      results.push(...collectAttachmentParts(part.mp));
+    }
+  }
+  return results;
+}
+
+/**
+ * Recursively collect all inline image parts from the MIME tree.
+ * These are parts with a Content-ID (ci) field — i.e. images embedded in the body.
+ */
+export function collectInlineParts(mp: any[]): any[] {
+  if (!mp) return [];
+  const results: any[] = [];
+  for (const part of mp) {
+    if (part.ci && !part.ct?.startsWith('multipart/')) {
+      results.push(part);
+    } else if (part.mp && part.mp.length > 0) {
+      results.push(...collectInlineParts(part.mp));
+    }
+  }
+  return results;
+}
+
+/**
+ * Extract attachments from Carbonio message multipart structure.
+ */
+export function extractAttachmentsFromCarbonioMessage(carbonioMessage: any): MailsMailContentBackend['attachments'] {
+  const parts = collectAttachmentParts(carbonioMessage.mp || []);
+  return parts.map((part: any) => ({
+    charset: part.charset || 'utf-8',
+    contentTransferEncoding: part.cte || 'base64',
+    contentType: part.ct || 'application/octet-stream',
+    filename: part.filename || part.part || '',
+    id: part.part || part.id || '',
+    name: part.filename || part.part || '',
+    size: part.s || 0,
+  }));
+}
+
+/**
+ * Build a map from Content-ID values (without angle brackets) to MIME part numbers.
+ * Used to resolve cid: image references to Carbonio REST download URLs.
+ */
+function buildCidToPartMap(mp: any[]): Record<string, string> {
+  const map: Record<string, string> = {};
+  if (!mp) return map;
+  for (const part of mp) {
+    if (part.ci && part.part) {
+      const cid = normalizeCid(part.ci);
+      if (cid) map[cid] = part.part;
+    }
+    if (part.mp && part.mp.length > 0) {
+      Object.assign(map, buildCidToPartMap(part.mp));
+    }
+  }
+  return map;
+}
+
+/** Extract content-id from img src="cid:...". HTML may encode @ as &#64;. */
+function contentIdFromSrc(src: string): string {
+  if (!src || !src.toLowerCase().startsWith('cid:')) return '';
+  return normalizeCid(src.slice(4).trim()).replace(/&#64;/g, '@');
+}
+
+function addCarbonioAuth(src: string, token: string): string {
+  const decoded = src.replace(/&amp;/g, '&');
+  let cleanUrl = decoded.replace(/[?&]auth=[^&]*/g, '').replace(/[?&]zauthtoken=[^&]*/g, '');
+  // When the removed param was first (right after ?), a dangling & is left in the path.
+  // e.g. "https://host/path&foo=bar" → "https://host/path?foo=bar"
+  cleanUrl = cleanUrl.replace(/^(https?:\/\/[^?&#]*)&/, '$1?');
+  cleanUrl = cleanUrl.replace(/\?&/, '?').replace(/&&/g, '&').replace(/[?&]$/, '');
+  const separator = cleanUrl.includes('?') ? '&' : '?';
+  return `${cleanUrl}${separator}auth=qp&zauthtoken=${encodeURIComponent(token)}`;
+}
+
+/**
+ * Replace img tags in the HTML body with authenticated Carbonio REST URLs so that
+ * images render natively without requiring a webview redirect:
+ *
+ * - cid:XXXX            → Carbonio REST inline URL via CID→part map
+ * - /service/home/ URLs → relative Carbonio REST URL returned by GetMsgRequest; made absolute + authed
+ * - lyceeconnecte.fr    → absolute Carbonio URL; auth token refreshed
+ * - data:               → kept as-is (already embedded)
+ * - anything else       → kept as-is
+ */
+function replaceImagesWithAuthenticatedUrls(html: string, msgId: string, cidToPartMap: Record<string, string>): string {
+  if (!html) return html;
+  const token = getCarbonioTokenFromStore();
+  return html.replace(/<img\s[^>]*>/gi, tag => {
+    const srcMatch = tag.match(/\bsrc\s*=\s*["']([^"']*)["']/i);
+    if (!srcMatch) return tag;
+    const src = srcMatch[1].trim();
+
+    if (!src || src.startsWith('data:')) return tag;
+
+    if (src.toLowerCase().startsWith('cid:')) {
+      const cid = contentIdFromSrc(src);
+      const part = cidToPartMap[cid];
+      if (part) {
+        const authUrl = buildCarbonioAttachmentUrl(msgId, part, 'i', cid);
+        return tag.replace(srcMatch[0], `src="${authUrl}"`);
+      }
+      return tag;
+    }
+
+    // Carbonio's GetMsgRequest returns relative /service/home/~/?id=X&part=Y URLs for inline images.
+    // The mobile WebView cannot load these without an absolute URL and auth token.
+    if (src.startsWith('/service/home/')) {
+      if (token) {
+        const authUrl = addCarbonioAuth(`${getCarbonioBaseUrl()}${src}`, token);
+        return tag.replace(srcMatch[0], `src="${authUrl}"`);
+      }
+      return tag;
+    }
+
+    const carbonioBase = getCarbonioBaseUrl();
+    if (carbonioBase && src.startsWith(carbonioBase)) {
+      if (token) {
+        const authUrl = addCarbonioAuth(src, token);
+        return tag.replace(srcMatch[0], `src="${authUrl}"`);
+      }
+    }
+
+    return tag;
+  });
 }
 
 /**
@@ -110,59 +246,15 @@ function subjectString(su: any): string {
   return su._content ?? '';
 }
 
-function isImageToReplace(src: string): boolean {
-  if (!src || typeof src !== 'string' || src.trim() === '') return true;
-  const s = src.trim();
-  if (s.startsWith('cid:') || s.startsWith('data:')) return true;
-  return s.startsWith('https://mon.lyceeconnecte.fr') || s.startsWith('https://mail.lyceeconnecte.fr');
-}
-
-/** Extract content-id from img src (e.g. "cid:foo" or "cid:<foo>"). HTML may have &#64; for @. */
-function contentIdFromSrc(src: string): string {
-  if (!src || !src.toLowerCase().startsWith('cid:')) return '';
-  const value = src.slice(4).trim().replace(/^<|>$/g, '').replace(/&#64;/g, '@');
-  return value;
-}
-
-/**
- * Replaces each <img> in html whose src is invalid (not a URL or lyceeconnecte host)
- * with a link to the web version of the mail. Each replacement has data-message-id, data-part, data-ci for reuse.
- */
-function replaceInvalidImagesWithWebViewLink(html: string, webViewUrl: string): string {
-  if (!html || !webViewUrl) return html;
-  const safeUrl = webViewUrl.replace(/"/g, '&quot;');
-  return html.replace(/<img\s[^>]*>/gi, tag => {
-    const srcMatch = tag.match(/src\s*=\s*["']([^"']*)["']/i);
-    const src = srcMatch ? srcMatch[1].trim() : '';
-    if (!isImageToReplace(src)) return tag;
-    const ci = contentIdFromSrc(src) || src;
-    const safeCi = (ci || '').replace(/"/g, '&quot;');
-    return `<p style="margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;" data-image-replacement data-ci="${safeCi}">
-  <a href="${safeUrl}" target="_blank" rel="noopener noreferrer"
-     style="display:inline-flex; align-items:center; gap:10px; padding:4px 8px;
-            border:1px dashed #d1d5db; border-radius:12px; text-decoration:none; color:#111827;
-            background:#fafafa;">
-    <span aria-hidden="true">🖼️</span>
-    <span style="font-size:12px;font-style:italic;">
-    ${I18n.get('mails-details-editorriche-openimageinweb')}
-    </span>
-  </a>
-</p>`;
-  });
-}
-
 /**
  * Adapt a single Carbonio message (GetMsgResponse or SearchResponse hit) to MailsMailContentBackend.
- * No conversation history: only the message body.
  */
 export function carbonioMessageToMailContentBackend(message: any, messageId: string): MailsMailContentBackend {
   const recipients = message.e || [];
+  const resolvedMsgId = message.id ?? messageId;
+  const cidToPartMap = buildCidToPartMap(message.mp || []);
   let body = extractBodyFromCarbonioMessage(message);
-  const folderId = message.l ?? '';
-  const webViewUrl = `/auth/carbonio/preauth?callback=${encodeURIComponent(
-    `https://mail.lyceeconnecte.fr/carbonio/focus-mode/mail-view/folder/${folderId}/message/${message.id ?? messageId}`,
-  )}`;
-  body = replaceInvalidImagesWithWebViewLink(body, webViewUrl);
+  body = replaceImagesWithAuthenticatedUrls(body, resolvedMsgId, cidToPartMap);
   const attachments = extractAttachmentsFromCarbonioMessage(message);
 
   return {
@@ -173,14 +265,14 @@ export function carbonioMessageToMailContentBackend(message: any, messageId: str
     date: message.d ?? message.sd ?? Date.now(),
     folder_id: message.l ?? null,
     from: findRecipient(recipients, 'f'),
-    id: message.id ?? messageId,
+    id: resolvedMsgId,
     language: 'fr',
     noReply: false,
     original_format_exists: false,
     parent_id: message.cid ?? null,
     state: (message.f ?? '').includes('d') ? 'DRAFT' : 'SENT',
     subject: subjectString(message.su),
-    thread_id: message.cid ?? message.id ?? messageId,
+    thread_id: message.cid ?? resolvedMsgId,
     to: { groups: [], users: extractRecipients(recipients, 't') },
     trashed: message.l === '3',
     unread: (message.f ?? '').includes('u'),
@@ -218,26 +310,54 @@ export function carbonioMessageToMailPreviewBackend(carbonioMessage: any): Mails
   };
 }
 
-/**
- * Replaces each data-image-replacement block (the placeholder <p> with data-message-id, data-part, data-ci)
- * with an <img> that loads the inline image via the service URL.
- */
-/** Insert newline and horizontal line before conversation-history block. */
 const CONVERSATION_HISTORY_START = '<div class="conversation-history">';
 const SEPARATOR_BEFORE_HISTORY = '\n<hr id="zwchr">\n';
 
+/**
+ * Normalize HTML body before sending/saving draft:
+ * insert <hr id="zwchr"> before conversation-history block so Carbonio threads correctly.
+ */
 export function normalizeFromMobileToWeb(html: string): string {
   if (!html) return html;
-  const blockRegex = /<p\s[^>]*data-image-replacement[^>]*>[\s\S]*?<\/p>/gi;
-  let result = html.replace(blockRegex, block => {
-    const ciMatch = block.match(/data-ci=["']([^"']*)["']/i);
-    const ci = (ciMatch?.[1] ?? '').replace(/&quot;/g, '"');
-    const safeCi = ci.replace(/"/g, '&quot;');
-    return `<img src="cid:${safeCi}" data-src="cid:${safeCi}">`;
-  });
-  const historyIndex = result.indexOf(CONVERSATION_HISTORY_START);
+  const historyIndex = html.indexOf(CONVERSATION_HISTORY_START);
   if (historyIndex !== -1) {
-    result = result.slice(0, historyIndex).trimEnd() + SEPARATOR_BEFORE_HISTORY + result.slice(historyIndex);
+    return html.slice(0, historyIndex).trimEnd() + SEPARATOR_BEFORE_HISTORY + html.slice(historyIndex);
+  }
+  return html;
+}
+
+/**
+ * In the HTML body, replace Carbonio part download URLs for inline images with cid: references.
+ * This converts the preview URL embedded in the compose WebView back to the standard email
+ * format that is stored in the draft/sent message so recipients receive valid CID references.
+ */
+export function replaceInlineUrlsWithCids(html: string, inlineParts: any[]): string {
+  if (!html || !inlineParts.length) return html;
+  // Pre-compile regexes and build replacement map before iterating the HTML string
+  const replacements = inlineParts
+    .filter(part => part.ci && part.part)
+    .map(part => {
+      const cid = normalizeCid(part.ci);
+      return {
+        cid,
+
+        // Match by cid= URL parameter: images from original message in forward/reply (encoded by buildCarbonioAttachmentUrl)
+        cidRegex: new RegExp(
+          `src=["'][^"']*(?:[?&]|&amp;)cid=${encodeURIComponent(cid).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^"']*["']`,
+          'gi',
+        ),
+
+        // Match by part number: inline images added by user during composition
+        partRegex: new RegExp(
+          `src=["'][^"']*(?:[?&]|&amp;)part=${part.part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^"']*["']`,
+          'gi',
+        ),
+      };
+    });
+  let result = html;
+  for (const { cid, cidRegex, partRegex } of replacements) {
+    result = result.replace(partRegex, `src="cid:${cid}"`);
+    result = result.replace(cidRegex, `src="cid:${cid}"`);
   }
   return result;
 }
