@@ -12,16 +12,6 @@ import Animated, { runOnJS, useAnimatedScrollHandler, useAnimatedStyle, useShare
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
-import styles from './styles';
-import {
-  CommentItem,
-  ITEM_COMMENT,
-  ITEM_RESPONSE,
-  ResponseItem,
-  type SocialResourceViewer,
-  type SocialResourceViewerItemType,
-} from './types';
-
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -32,7 +22,17 @@ import { FlatListProps } from '~/framework/components/list/flat-list';
 import { BodyBoldText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
-import { selectors } from '~/framework/modules/auth/reducer';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
+
+import styles from './styles';
+import {
+  CommentItem,
+  ITEM_COMMENT,
+  ITEM_RESPONSE,
+  ResponseItem,
+  type SocialResourceViewer,
+  type SocialResourceViewerItemType,
+} from './types';
 
 /**
  * Note: FlashList v1 contains a bug that duplicates sticky elements. FlatList handles it correctly.
