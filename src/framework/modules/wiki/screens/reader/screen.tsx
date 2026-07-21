@@ -67,7 +67,6 @@ export const computeNavBar = ({
       navigation,
       route,
       title: wikiPageData?.title ?? '',
-      titleTestID: 'wiki-title',
     }),
     animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
   };
@@ -242,11 +241,8 @@ export function WikiReaderScreenLoaded({
     params: { pageId, resourceId },
   },
 }: WikiReaderScreen.AllProps) {
-  const wikiData = useSelector(selectors.wiki(resourceId));
-  const pageData = useSelector(selectors.page(pageId));
-  const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction | WikiPageAction>>();
-
-  const { markView } = useAudience({ ...wikiAudienceConfig, resourceId: pageId });
+  const wiki = useSelector(selectors.wiki(resourceId));
+  const page = useSelector(selectors.page(pageId));
 
   const switchToPage = React.useCallback(
     (id: WikiPage['id'], reverse?: boolean) => {
@@ -289,6 +285,8 @@ export default function WikiReaderScreen({
 }: WikiReaderScreen.AllProps) {
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction | WikiPageAction>>();
 
+  const { markView } = useAudience({ ...wikiAudienceConfig, resourceId: pageId });
+
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {
     const newWikiData = await service.wiki.get({ id: resourceId });
     const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
@@ -303,9 +301,5 @@ export default function WikiReaderScreen({
     [navigation, props, route],
   );
 
-  return (
-    <View style={styles.page}>
-      <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={renderLoading} />
-    </View>
-  );
+  return <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={WikiReaderScreenPlaceholder} />;
 }
