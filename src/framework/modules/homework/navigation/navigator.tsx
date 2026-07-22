@@ -1,12 +1,10 @@
 import * as React from 'react';
 
-import { I18n } from '~/app/i18n';
-import { computeNavBar as homeworkCreateNavBar } from '~/framework/modules/homework/components/HomeworkCreateScreen';
 import { computeNavBar as homeworkSelectNavBar } from '~/framework/modules/homework/components/HomeworkSelectScreen';
 import { computeNavBar as homeworkTaskListNavBar } from '~/framework/modules/homework/components/HomeworkTaskListScreen';
 import moduleConfig from '~/framework/modules/homework/module-config';
+import { HomeworkCreateScreen, HomeworkCreateScreenOptions } from '~/framework/modules/homework/screens/create';
 import HomeworkExplorerScreen, { computeNavBar as homeworkExplorerNavBar } from '~/framework/modules/homework/screens/explorer';
-import HomeworkCreateScreen from '~/framework/modules/homework/screens/HomeworkCreateScreen';
 import HomeworkInitialScreen from '~/framework/modules/homework/screens/HomeworkInitialScreen';
 import HomeworkSelectScreen from '~/framework/modules/homework/screens/HomeworkSelectScreen';
 import HomeworkTaskDetailsScreen, {
@@ -50,7 +48,7 @@ export default () =>
         <Stack.Screen
           name={homeworkRouteNames.homeworkCreate}
           component={HomeworkCreateScreen}
-          options={homeworkCreateNavBar}
+          options={HomeworkCreateScreenOptions}
           initialParams={{}}
         />
       </Stack.Group>
