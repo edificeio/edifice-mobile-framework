@@ -22,7 +22,6 @@ export const RichEditorViewer = connect(state => ({
       initialContentHTML={props.content}
       oneSessionId={props.oneSessionId}
       onLoad={props.onLoad}
-      onOpenCarbonioContent={props.onOpenCarbonioContent}
     />
   );
 });

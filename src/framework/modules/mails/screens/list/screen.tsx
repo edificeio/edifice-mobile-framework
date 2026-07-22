@@ -269,12 +269,16 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
         });
       } catch (e) {
         const error = e instanceof HTTPError ? await e.json() : e;
+        // Carbonio surfaces a duplicate name as an HTTP error whose JSON body is the raw SOAP
+        // envelope (Body.Fault.Detail.Error.Code); Classic surfaces it as a flat `{error}` body.
+        const carbonioFaultCode = error?.Body?.Fault?.Detail?.Error?.Code ?? error?.code;
+        if (carbonioFaultCode === 'mail.ALREADY_EXISTS' || error?.error === 'conversation.error.duplicate.folder') {
+          setOnErrorCreateFolder(true);
+          return;
+        }
         if (error instanceof Error) {
           toast.showError();
           return;
-        }
-        if (error?.error === 'conversation.error.duplicate.folder') {
-          setOnErrorCreateFolder(true);
         }
       } finally {
         setIsLoadingCreateNewFolder(false);
@@ -536,7 +540,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       });
     }
 
-    if (isServiceMethodAvailable(mailsService.folder.rename)) {
+    if (isServiceMethodAvailable(mailsService.folder.rename) && typeof selectedFolder === 'object') {
       actions.push({
         action: onRenameFolder,
         icon: {
@@ -547,7 +551,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
       });
     }
 
-    if (isServiceMethodAvailable(mailsService.folder.delete)) {
+    if (isServiceMethodAvailable(mailsService.folder.delete) && typeof selectedFolder === 'object') {
       actions.push(
         deleteAction({
           action: onDeleteFolder,
@@ -557,7 +561,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
     }
 
     return actions;
-  }, [onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder]);
+  }, [selectedFolder, onActiveSelectMode, onActiveSearchMode, onConfigureSignature, onRenameFolder, onDeleteFolder]);
 
   const handleHardwareBack = React.useCallback(() => {
     if (isSelectionMode) onDisableSelectMode();
@@ -617,7 +621,7 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
           },
           p,
         ).element,
-        <PopupMenu actions={selectedFolder && selectedFolder.id ? allPopupActionsMenu : allPopupActionsMenu.slice(0, 3)}>
+        <PopupMenu actions={allPopupActionsMenu}>
           <NavBarAction disabled={isContentLoading} icon="ui-options" />
         </PopupMenu>,
       ],

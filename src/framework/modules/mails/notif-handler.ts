@@ -21,7 +21,7 @@ const handleConversationNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation, dispatch, allowSwitchTab) => async () => {
     try {
       const notif = getAsResourceIdNotification(notification);
-      // As conversation & zimbra use same type & event-type
+      // As conversation & carbonio use same type & event-type
       // We must redirect only conversation ones
       if (!notif || notif?.resource.uri.indexOf('conversation') === -1) return { managed: 0 };
 

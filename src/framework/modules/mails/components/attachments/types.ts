@@ -1,4 +1,5 @@
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { IMailsMailAttachment } from '~/framework/modules/mails/model';
 import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 
 export interface AttachmentsProps {
@@ -9,5 +10,9 @@ export interface AttachmentsProps {
   addAttachmentAction?: (attachment: IDistantFileWithId) => Promise<SyncedFileWithId>;
   removeAttachmentAction?: (attachment: IDistantFileWithId) => Promise<void>;
   onPressAddAttachments?: () => void;
-  onImportAttachmentsResult?: (result: Array<{ filename: string; id: string | undefined; url: string | undefined }>) => void;
+  onImportAttachmentsResult?: (
+    result: Array<{ filename: string; id: string | undefined; url: string | undefined }>,
+    inlinePartMapping?: Record<string, string>,
+    attachments?: IMailsMailAttachment[],
+  ) => void;
 }

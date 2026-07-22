@@ -58,6 +58,7 @@ const imports = {
   'edumedia': async () => import('ASSETS/icons/moduleIcons/edumedia.svg'),
   'edumoov': async () => import('ASSETS/icons/moduleIcons/edumoov.svg'),
   'edutheque': async () => import('ASSETS/icons/moduleIcons/edutheque.svg'),
+  'elea': async () => import('ASSETS/icons/moduleIcons/elea.svg'),
   'electron': async () => import('ASSETS/icons/moduleIcons/electron.svg'),
   'element': async () => import('ASSETS/icons/moduleIcons/element.svg'),
   'elyceepicardie': async () => import('ASSETS/icons/moduleIcons/elyceepicardie.svg'),

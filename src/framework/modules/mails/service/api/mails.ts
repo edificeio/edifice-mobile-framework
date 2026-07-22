@@ -1,6 +1,7 @@
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import {
   IMailsFolder,
+  IMailsMailAttachment,
   IMailsSignaturePreferences,
   MailsConversationPayload,
   MailsFolderCount,
@@ -16,6 +17,8 @@ import {
   mailUserBookmarkAdapter,
   mailVisibleAdapter,
 } from '~/framework/modules/mails/service/adapters/mails';
+import { convertAttachmentToDistantFile } from '~/framework/modules/mails/util';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import { sessionFetch } from '~/framework/util/transport';
@@ -43,14 +46,17 @@ export const mailsApi = {
         {},
         SyncedFileWithId,
       );
-      return uploadedFile;
+      return { attachment: uploadedFile, inlinePartMapping: {} as Record<string, string> };
     },
     allowMultimediaUpload: true,
+    getDistantFile: (attachment: IMailsMailAttachment, mailId: string): IDistantFileWithId =>
+      convertAttachmentToDistantFile(attachment, mailId),
     remove: async (params: { draftId: string; attachmentId: string }) => {
       const api = `/conversation/message/${params.draftId}/attachment/${params.attachmentId}`;
       await sessionFetch.json(api, { method: 'DELETE' });
     },
     supportViewAttachments: true,
+    uploadInlineImage: null,
   },
   bookmark: {
     getById: async (params: { id: string }) => {
@@ -133,7 +139,7 @@ export const mailsApi = {
       const api = `/conversation/api/messages/${params.id}/recall`;
       await sessionFetch(api, { method: 'POST' });
     },
-    rederictToWebview: null,
+    redirectToWebview: null,
     removeFromFolder: async (params: { ids: string[] }) => {
       params.ids.forEach(async id => {
         const api = `/conversation/move/root?id=${id}`;
