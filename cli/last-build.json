@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-07-21 14:31:53",
-  "notes": "release: 1.17.4-comm.2(1170405)",
-  "version": "1.17.4-comm.3(1170406)",
+  "last": "2026-07-22 14:31:50",
+  "notes": "chore(stack): clean yarn caches\nfix(mails): IMPULS-6037, skip SwipeRow when no actions to fix unreliable row taps (in selection mode) in SwipeListView and let MalPreview handle selection\nrelease: 1.17.4-comm.3(1170406)",
+  "version": "1.17.4-comm.4(1170407)",
   "track": "1.17.4",
-  "order": "comm.3"
+  "order": "comm.4"
 }
