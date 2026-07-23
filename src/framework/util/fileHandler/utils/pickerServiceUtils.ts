@@ -57,7 +57,11 @@ export async function processImage(asset: RNImageAsset): Promise<Asset | null> {
       IMAGE_MAX_QUALITY,
     );
 
-    const filename = `${moment().format('YYYYMMDD-HHmmss')}.jpg`;
+    // Second-precision alone isn't unique enough: picking several images from the gallery at
+    // once resizes them concurrently, and images finishing within the same second would get the
+    // identical name — Carbonio's attachment upload disambiguates same-named uploads by matching
+    // filename, so a collision here causes the wrong image to be resolved for an attachment
+    const filename = `${moment().format('YYYYMMDD-HHmmss')}-${Math.random().toString(36).slice(2, 8)}.jpg`;
 
     return {
       ...resized,
