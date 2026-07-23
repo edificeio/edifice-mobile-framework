@@ -10,14 +10,14 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
-import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
+import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, TextSizeStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import HomeworkDayCheckpoint from '~/framework/modules/homework/components/HomeworkDayCheckpoint';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
@@ -28,6 +28,8 @@ import {
 } from '~/framework/modules/homework/rights';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import Feedback from '~/framework/util/feedback/feedback';
+import { Trackers } from '~/framework/util/tracker';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 const dayImages = {
   friday: 'days-friday',
@@ -40,6 +42,7 @@ const dayImages = {
 
 export interface HomeworkTaskDetailsScreenDataProps {
   diaryInformation?: IHomeworkDiary;
+  session?: AuthLoggedAccount;
 }
 
 export interface HomeworkTaskDetailsScreenEventProps {
@@ -51,7 +54,7 @@ export interface HomeworkTaskDetailsScreenEventProps {
 
 export type IHomeworkTaskDetailsScreenProps = HomeworkTaskDetailsScreenDataProps &
   HomeworkTaskDetailsScreenEventProps &
-  NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkTaskDetails> & { session: AuthActiveAccount };
+  NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkTaskDetails>;
 
 const styles = StyleSheet.create({
   banner: {
@@ -85,6 +88,9 @@ const styles = StyleSheet.create({
   dayImage: {
     aspectRatio: 1,
     height: '100%',
+  },
+  page: {
+    backgroundColor: theme.ui.background.card,
   },
 });
 
@@ -134,8 +140,9 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
   updateNavBarTitle() {
     const { diaryInformation, navigation, route, session } = this.props;
     const hasDeletionRight =
-      hasPermissionManager(diaryInformation!, deleteHomeworkEntryResourceRight, session) ||
-      diaryInformation?.owner.userId === session.user.id;
+      session &&
+      (hasPermissionManager(diaryInformation!, deleteHomeworkEntryResourceRight, session) ||
+        diaryInformation?.owner.userId === session.user.id);
     const diaryId = route.params.diaryId;
     const task = route.params.task;
     const taskId = task.taskId;
@@ -182,11 +189,11 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     const dayColor = theme.color.homework.days[dayOfTheWeek].background;
     const opacity = 80;
     const bannerColor = `${dayColor}${opacity}`;
-    const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
+    const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCheckHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.check;
     const animationSource = require('ASSETS/animations/homework/done.json');
     return (
-      <>
+      <PageView style={styles.page}>
         <View style={[styles.banner, { backgroundColor: bannerColor }]}>
           <View>
             <HomeworkDayCheckpoint date={date} />
@@ -194,8 +201,17 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
           <Svg name={dayImages[dayOfTheWeek]} style={styles.dayImage} />
         </View>
         <ScrollView contentContainerStyle={styles.contentContainer}>
-          {title && <HeadingSText>{title}</HeadingSText>}
-          {content && <RichEditorViewer content={content} />}
+          {title ? <HeadingSText>{title}</HeadingSText> : null}
+          {content ? (
+            <HtmlContentView
+              html={content}
+              opts={{ globalTextStyle: styles.content }}
+              onDownload={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT', 'Read mode')}
+              onError={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
+              onDownloadAll={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
+              onOpen={() => Trackers.trackEvent('Homeworks', 'OPEN ATTACHMENT', 'Read mode')}
+            />
+          ) : null}
 
           {hasCheckHomeworkResourceRight ? (
             <View style={styles.checkboxButtonContainer}>
@@ -219,7 +235,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
             </View>
           ) : null}
         </ScrollView>
-      </>
+      </PageView>
     );
   }
 }

@@ -4,9 +4,7 @@ import { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
-import { screenOptions } from '~/app/navigation/util';
-import { withSession } from '~/framework/modules/auth/util';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { deleteHomeworkDiaryEntry } from '~/framework/modules/homework/actions/deleteEntry';
 import { toggleHomeworkDiaryEntryStatus } from '~/framework/modules/homework/actions/entryStatus';
 import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';
@@ -18,12 +16,14 @@ import {
 } from '~/framework/modules/homework/components/HomeworkTaskDetailsScreen';
 
 const mapStateToProps: (state: any) => HomeworkTaskDetailsScreenDataProps = state => {
+  const session = getSession();
   const localState = state.homework;
   const selectedDiaryId = localState.selectedDiary;
   const diaryListData = localState.diaryList.data;
   const diaryInformation = diaryListData[selectedDiaryId];
   return {
     diaryInformation,
+    session,
   };
 };
 
@@ -59,6 +59,4 @@ class HomeworkTaskDetailsScreenContainer extends React.PureComponent<IHomeworkTa
   }
 }
 
-export const HomeworkTaskDetailsScreenOptions = screenOptions(() => ({ title: I18n.get('homework') }));
-
-export default withSession(connect(mapStateToProps, mapDispatchToProps)(HomeworkTaskDetailsScreenContainer));
+export default connect(mapStateToProps, mapDispatchToProps)(HomeworkTaskDetailsScreenContainer);
