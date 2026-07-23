@@ -19,6 +19,10 @@ export default StyleSheet.create({
   navBarSvgDecoration: {
     position: 'absolute',
   },
+  notificationsAlert: {
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.large,
+  },
   page: {
     backgroundColor: theme.palette.grey.white,
   },

@@ -19,8 +19,9 @@ export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
     const filteredTopApps = filtered.filter(app => !appShouldBeAtBottom(app));
 
     const shouldShowBottomApps =
-      filter.type === MyAppsFilterTypes.Category &&
-      (filter.value === MyAppsFilterCategories.all || filter.value === MyAppsFilterCategories.otherServices);
+      filter.type === MyAppsFilterTypes.Search ||
+      (filter.type === MyAppsFilterTypes.Category &&
+        (filter.value === MyAppsFilterCategories.all || filter.value === MyAppsFilterCategories.otherServices));
 
     if (filter.type === MyAppsFilterTypes.Favorites) {
       return filtered;
@@ -35,6 +36,7 @@ export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
       baseResult = filteredTopApps.filter(app => app.isMobile);
     }
 
-    return shouldShowBottomApps ? [...baseResult, ...bottomApps] : baseResult;
+    const bottomAppsToShow = filter.type === MyAppsFilterTypes.Search ? filtered.filter(appShouldBeAtBottom) : bottomApps;
+    return shouldShowBottomApps ? [...baseResult, ...bottomAppsToShow] : baseResult;
   }, [aggregatedApps, filter, showAllApps]);
 };

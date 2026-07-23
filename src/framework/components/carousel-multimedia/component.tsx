@@ -40,6 +40,8 @@ const CarouselItem = ({
   if (isImageError || isPdfError || isPlayerError || isPlayerLoadTimeout || isPdfLoadTimeout || !media.mime)
     return <UnviewableItem media={media} />;
 
+  if (!media.mime && media.src) return <UnviewableItem file={media} />;
+
   if (isImageContent(media)) {
     return (
       <ImageItem

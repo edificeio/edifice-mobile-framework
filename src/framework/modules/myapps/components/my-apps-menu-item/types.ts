@@ -1,7 +1,12 @@
-export interface MyAppsMenuItemProps {
-  leftElement?: React.ReactNode;
-  onPress?: () => void;
+import { PressableProps, StyleProp, ViewProps, ViewStyle } from 'react-native';
+
+type CommonProps = {
   label: string;
+  leftElement?: React.ReactNode;
   isPressable?: boolean;
-  testID?: string;
-}
+  containerStyle?: StyleProp<ViewStyle>;
+};
+
+export type MyAppsMenuItemProps =
+  | (CommonProps & PressableProps & { isPressable?: true })
+  | (CommonProps & ViewProps & { isPressable: false });

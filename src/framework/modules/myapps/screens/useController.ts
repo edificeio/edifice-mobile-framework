@@ -10,7 +10,7 @@ import AllModules from '~/app/modules';
 import { AppDispatch } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { MyAppsListItem } from '~/framework/modules/myapps/components/my-apps-list/types';
 import { useFilteredApps } from '~/framework/modules/myapps/hooks';
 import { isNavigableModule, refreshMyApps, selectAggregatedApps, toggleFavorite } from '~/framework/modules/myapps/reducer';
@@ -55,6 +55,7 @@ export function useMyAppsHomeController() {
     const onboarding = readMyAppsOnboardingSeen();
     return Boolean(onboarding?.seen);
   });
+  const [loadingMenuItem, setLoadingMenuItem] = React.useState<boolean>(false);
 
   const aggregatedApps = useSelector(selectAggregatedApps);
   const apps = useFilteredApps(filter, areAppsShowed);
@@ -83,7 +84,7 @@ export function useMyAppsHomeController() {
   }, []);
 
   const getLoginSessionKey = React.useCallback(() => {
-    const session = getSession();
+    const session = assertSession();
     if (!session) return undefined;
     return `${session.user.id}:${session.tokens.access.value}`;
   }, []);
@@ -121,7 +122,7 @@ export function useMyAppsHomeController() {
       // navigation.setParams({ tabBarVisible: false });
       setIsBottomSheetVisible(true);
     },
-    [handleDismissSearch, navigation],
+    [handleDismissSearch],
   );
 
   const handleOpenOnboarding = React.useCallback(() => {
@@ -133,12 +134,12 @@ export function useMyAppsHomeController() {
     setSelectedApp(null);
     // navigation.setParams({ tabBarVisible: true });
     setIsBottomSheetVisible(false);
-  }, [navigation]);
+  }, []);
 
   const onPressApp = React.useCallback(
     (app: AppsInfoAggregated) => {
       if (app.routeName) {
-        const session = getSession();
+        const session = assertSession();
         const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
         const routeName = getModuleRouteName(app as IEntcoreApp, modules);
         if (routeName) {
@@ -161,6 +162,21 @@ export function useMyAppsHomeController() {
     [closeBottomSheet],
   );
 
+  const onExternalLinkPress = React.useCallback(
+    (url?: string) => async () => {
+      try {
+        if (!url) throw new Error('DefaultButton: no url to open');
+        setLoadingMenuItem(true);
+        await openUrl(url);
+      } catch {
+        Toast.showError(I18n.get('toast-error-text'));
+      } finally {
+        setLoadingMenuItem(false);
+        closeBottomSheet();
+      }
+    },
+    [closeBottomSheet],
+  );
   const handleDismiss = React.useCallback(() => {
     // navigation.setParams({ tabBarVisible: true });
     const appName = pendingToggleRef.current;
@@ -182,7 +198,7 @@ export function useMyAppsHomeController() {
         displayToast();
       }),
     );
-  }, [dispatch, displayToast, navigation, queueToast]);
+  }, [dispatch, displayToast, queueToast]);
 
   const onToggleAllApps = React.useCallback(() => {
     setAreAppsShowed(prev => {
@@ -209,7 +225,7 @@ export function useMyAppsHomeController() {
 
   //Listens to tab press to scroll to top of the list
   React.useEffect(() => {
-    const unsubscribe = navigation.getParent('tabs')?.addListener('tabPress', () => {
+    const unsubscribe = navigation.getParent()?.addListener('tabPress', () => {
       appsListRef.current?.scrollToOffset({ animated: true, offset: 0 });
     });
     return unsubscribe;
@@ -231,8 +247,10 @@ export function useMyAppsHomeController() {
     isAllAppsTab,
     isBottomSheetVisible,
     isFavoritesFilter,
+    loadingMenuItem,
     modalRef,
     navigateToFavorites: () => navigation.navigate(ModalsRouteNames.FavoritesManagement),
+    onExternalLinkPress,
     onPressApp,
     onRefresh,
     onToggleAllApps,

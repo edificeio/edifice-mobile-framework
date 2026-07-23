@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-07-20 19:00:50",
-  "notes": "chore(build): add extra infos for firebase app distribution\nfix(debug): avoid undefined as platform name in app infos\nrelease: 1.17.4-alpha.3(1170403)",
-  "order": "alpha.4",
-  "version": "1.17.4-alpha.4(1170404)",
-  "track": "1.17.4"
+  "last": "2026-07-22 14:31:50",
+  "notes": "chore(stack): clean yarn caches\nfix(mails): IMPULS-6037, skip SwipeRow when no actions to fix unreliable row taps (in selection mode) in SwipeListView and let MalPreview handle selection\nrelease: 1.17.4-comm.3(1170406)",
+  "version": "1.17.4-comm.4(1170407)",
+  "track": "1.17.4",
+  "order": "comm.4"
 }

@@ -39,6 +39,16 @@ interface BackendPerson {
   result: BackendInfoPerson[];
 }
 
+export interface UserQuietHoursPreferences {
+  enabled: boolean;
+  managedBy: string;
+  schedule: number[][];
+}
+
+export interface UserPreferences {
+  quietHours?: UserQuietHoursPreferences;
+}
+
 export const infoPersonAdapter = (n: BackendInfoPerson) => {
   const orderedHobbies: HobbieItem[] = [];
   hobbiesItems.forEach(hobbie => {
@@ -68,7 +78,7 @@ export const infoPersonAdapter = (n: BackendInfoPerson) => {
     userId: n.userId,
     visibleInfos: n.visibleInfos,
   };
-  return ret as InfoPerson;
+  return ret as unknown as InfoPerson;
 };
 
 export const userService = {
@@ -84,6 +94,10 @@ export const userService = {
 
       const person = backendPerson.result.map(p => infoPersonAdapter(p));
       return person as InfoPerson[];
+    },
+    getUserPreferences: async () => {
+      const api = `/userbook/api/preferences`;
+      return sessionFetch.json<UserPreferences>(api);
     },
     put: async (userId: string, body) => {
       const api = `/directory/userbook/${userId}`;

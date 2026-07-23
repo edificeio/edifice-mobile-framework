@@ -32,6 +32,11 @@ export const styles = StyleSheet.create({
     margin: 0,
   },
   emptyScreen: { flex: 1, justifyContent: 'center' },
+  infoMessageItem: {
+    backgroundColor: theme.palette.complementary.blue.pale,
+    marginLeft: getScaleWidth(34) + UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
   separatorLine: {
     backgroundColor: theme.palette.grey.cloudy,
     height: 1,

@@ -12,6 +12,7 @@ import { navigationDispatchMultiple } from '~/app/navigation';
 import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import AlertCard from '~/framework/components/alert';
 import DefaultButton from '~/framework/components/buttons/default';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import SecondaryButton from '~/framework/components/buttons/secondary';
@@ -49,6 +50,7 @@ import BottomRoundDecoration from '~/framework/modules/user/components/bottom-ro
 import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { UserPreferences, userService } from '~/framework/modules/user/service';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import appConf from '~/framework/util/appConf';
 import BuildInfo from '~/framework/util/build-info';
@@ -608,6 +610,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const [debugVisible, setDebugVisible] = React.useState<boolean>(false);
+  const [userPreferences, setUserPreferences] = React.useState<UserPreferences | null>(null);
   const { accounts, handleLogout, navigation, session, tryRemoveAccount, trySwitch } = props;
 
   const scrollViewRef = React.useRef(null);
@@ -624,6 +627,33 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
     }, []),
   );
 
+  React.useEffect(() => {
+    let cancelled = false;
+
+    const loadUserPreferences = async () => {
+      try {
+        const preferences = await userService.person.getUserPreferences();
+        if (!cancelled) setUserPreferences(preferences);
+      } catch {
+        if (!cancelled) setUserPreferences(null);
+      }
+    };
+
+    if (!session) {
+      setUserPreferences(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setUserPreferences(null);
+    loadUserPreferences();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
   const navBarDecoration = useCurvedNavBarFeature();
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
@@ -632,6 +662,18 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const logoutButton = useLogoutFeature(handleLogout);
   const versionDetails = useVersionDetailsFeature(session, debugVisible);
   const versionButton = useVersionFeature(setDebugVisible, scrollViewRef);
+  const showQuietHoursAlert = userPreferences?.quietHours?.enabled === true;
+  const quietHoursAlert = React.useMemo(() => {
+    if (!showQuietHoursAlert) return null;
+    return (
+      <AlertCard
+        type="info"
+        text={I18n.get('user-page-quiet-hours-alert')}
+        style={styles.notificationsAlert}
+        testID="account-push-notifications-alert"
+      />
+    );
+  }, [showQuietHoursAlert]);
 
   return (
     <PageView style={styles.page} showNetworkBar={false}>
@@ -645,6 +687,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
           {navBarDecoration}
           {avatarButton}
           {profileMenu}
+          {quietHoursAlert}
         </View>
         {accountMenu}
         <View style={styles.sectionBottom}>

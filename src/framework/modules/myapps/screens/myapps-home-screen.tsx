@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { headerAction, screenOptions } from '~/app/navigation/util';
@@ -7,7 +7,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import { PageView } from '~/framework/components/page';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { Toggle } from '~/framework/components/toggle';
 import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingModal } from '~/framework/modules/myapps/components';
@@ -41,8 +40,10 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     isAllAppsTab,
     isBottomSheetVisible,
     isFavoritesFilter,
+    loadingMenuItem,
     modalRef,
     navigateToFavorites,
+    onExternalLinkPress,
     onPressApp,
     onRefresh,
     onToggleAllApps,
@@ -174,6 +175,14 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
               <React.Fragment>
                 <View style={styles.separatorLine} />
                 <MyAppsMenuItem
+                  leftElement={loadingMenuItem ? <ActivityIndicator size="small" /> : renderMenuIcon('ui-external-link')}
+                  label={I18n.get('myapp-bottomsheet-access-by-browser')}
+                  onPress={onExternalLinkPress('/welcome')}
+                  disabled={loadingMenuItem}
+                  testID="myapps-menu-access-by-browser"
+                />
+                <View style={styles.separatorLine} />
+                <MyAppsMenuItem
                   isPressable={false}
                   leftElement={
                     <Toggle
@@ -185,6 +194,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
                   label={I18n.get('myapp-bottomsheet-render-all-favorites')}
                 />
                 <MyAppsMenuItem
+                  containerStyle={styles.infoMessageItem}
                   isPressable={false}
                   leftElement={renderMenuIcon('ui-infoCircle')}
                   label={I18n.get('myapp-bottomsheet-info-message')}
@@ -234,6 +244,8 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
     onToggleFavorite,
     renderMenuIcon,
     selectedApp,
+    loadingMenuItem,
+    onExternalLinkPress,
   ]);
 
   const handleDismissBottomSheet = React.useCallback(() => {

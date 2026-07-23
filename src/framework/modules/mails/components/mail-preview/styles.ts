@@ -9,6 +9,7 @@ export default StyleSheet.create({
   },
   container: {
     alignItems: 'center',
+    backgroundColor: theme.palette.grey.white,
     flexDirection: 'row',
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
@@ -40,18 +41,6 @@ export default StyleSheet.create({
   },
   responseIcon: {
     marginLeft: UI_SIZES.spacing.small,
-  },
-  swipeAction: {
-    alignItems: 'center',
-    height: '100%',
-    justifyContent: 'center',
-    width: 80,
-  },
-  swipeDeleteAction: {
-    backgroundColor: theme.palette.status.failure.regular,
-  },
-  swipeOtherAction: {
-    backgroundColor: theme.palette.status.warning.regular,
   },
   texts: {
     flex: 1,
