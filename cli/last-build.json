@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-07-22 14:31:50",
-  "notes": "chore(stack): clean yarn caches\nfix(mails): IMPULS-6037, skip SwipeRow when no actions to fix unreliable row taps (in selection mode) in SwipeListView and let MalPreview handle selection\nrelease: 1.17.4-comm.3(1170406)",
-  "version": "1.17.4-comm.4(1170407)",
+  "last": "2026-07-23 13:31:31",
+  "notes": "Updated translations from Phrase (322)\nupdate(stack): yarn cache update\nUpdated translations from Phrase (321)\nfix(fileHandler): INTEG-2134 make picked-image filenames unique to fix duplicated gallery attachments on Android\nSquashed commit of the following:\nRevert feat(homework): PEDAGO-3990 new editor reader\nMerge branch 'dev/1.17.4' into dev/peda",
+  "version": "1.17.4-alpha.4(1170408)",
   "track": "1.17.4",
-  "order": "comm.4"
+  "order": "alpha.4"
 }
