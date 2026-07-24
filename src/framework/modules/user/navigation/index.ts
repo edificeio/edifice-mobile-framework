@@ -11,6 +11,7 @@ import type { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
 import type { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import type { UserThemeScreenNavParams } from '~/framework/modules/user/screens/theme/types';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 
 export const userRouteNames = {
@@ -27,6 +28,7 @@ export const userRouteNames = {
   notifPrefsDetails: `${moduleConfig.routeName}/notifPrefs/details` as 'notifPrefsDetails',
   profile: `${moduleConfig.routeName}/profile` as 'profile',
   structures: `${moduleConfig.routeName}/profile/structures` as 'structures',
+  theme: `${moduleConfig.routeName}/theme` as 'theme',
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
 };
 export interface UserNavigationParams extends ParamListBase {
@@ -41,6 +43,7 @@ export interface UserNavigationParams extends ParamListBase {
   'whoAreWe': UserWhoAreWeScreenNavParams;
   'legalNotice': UserLegalNoticeScreenNavParams;
   'lang': UserLangScreenNavParams;
+  'theme': UserThemeScreenNavParams;
   'changePassword': undefined;
   'changeEmail': undefined;
   'changeMobile': undefined;
