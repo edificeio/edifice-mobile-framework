@@ -1,14 +1,16 @@
 /**
  * Theme declaration and overloading system.
  */
-import { ColorValue } from 'react-native';
+import { ColorValue, DevSettings } from 'react-native';
 
 import deepmerge from 'deepmerge';
+import RNRestart from 'react-native-restart';
 
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
 import { MediaType } from '~/framework/modules/media';
 import type { ImageProps } from '~/framework/util/media-deprecated';
+import { mmkvHandler } from '~/framework/util/storage/mmkv';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -155,6 +157,20 @@ export interface ITheme {
 
 type ThemeInitializer = Pick<ITheme, 'palette' | 'legacy'> & {
   init(): ITheme;
+};
+
+export type ThemeLevel = '1D' | '2D';
+
+export interface INamedTheme extends ITheme {
+  level: ThemeLevel;
+  displayName: string;
+}
+
+export type OverrideThemeDef = {
+  level: ThemeLevel;
+  displayName: string;
+  palette?: Partial<ITheme['palette']>;
+  color?: Partial<ITheme['color']>;
 };
 
 export const defaultTheme: ThemeInitializer = {
@@ -411,20 +427,79 @@ type CustomThemeOverride = {
   legacy?: Partial<ITheme['legacy']>;
   color?: Partial<ITheme['color']>;
   init?: () => ITheme;
+  // A mixte apps declares several themes here; other apps declare none.
+  themes?: OverrideThemeDef[];
 };
 
 const { init, ...customThemeRest } = customTheme as CustomThemeOverride;
 
-const totalTheme: ITheme = {
-  ...defaultTheme,
-  palette: deepmerge(defaultTheme.palette, customThemeRest.palette || {}),
-}.init();
+//merge palettes & legacy befor init()
+function buildTheme(paletteOverride?: Partial<ITheme['palette']>, colorOverride?: Partial<ITheme['color']>): ITheme {
+  const built: ITheme = {
+    ...defaultTheme,
+    palette: deepmerge(deepmerge(defaultTheme.palette, customThemeRest.palette || {}), paletteOverride || {}),
+  }.init();
 
-// applying override color after init
-if (customThemeRest.color) {
-  totalTheme.color = deepmerge(totalTheme.color, customThemeRest.color);
+  // applying override color after init
+  built.color = deepmerge(deepmerge(built.color, customThemeRest.color || {}), colorOverride || {});
+
+  if (init) init.call(built);
+
+  return built;
 }
 
-if (init) init.call(totalTheme);
+//  88888888888 888                                   d8b
+//      888     888                                   Y8P
+//      888     888
+//      888     88888b.   .d88b.  88888b.d88b.   .d88b.  .d8888b
+//      888     888 "88b d8P  Y8b 888 "888 "88b d8P  Y8b 88K
+//      888     888  888 88888888 888  888  888 88888888 "Y8888b.
+//      888     888  888 Y8b.     888  888  888 Y8b.          X88
+//      888     888  888  "Y8888  888  888  888  "Y8888   88888P'
+//
 
-export default totalTheme;
+// Themes come from the build-time override: a list if provided, else a single theme.
+const overrideThemes = (customTheme as CustomThemeOverride).themes;
+
+export const themes: INamedTheme[] =
+  overrideThemes && overrideThemes.length
+    ? overrideThemes.map(t => Object.assign(buildTheme(t.palette, t.color), { displayName: t.displayName, level: t.level }))
+    : [Object.assign(buildTheme(), { displayName: 'Thème', level: '2D' as ThemeLevel })];
+
+const THEME_STORAGE_KEY = 'app-theme-level';
+
+function readInitialThemeIndex(): number {
+  try {
+    const storedLevel = mmkvHandler.getString(THEME_STORAGE_KEY);
+    const idx = themes.findIndex(t => t.level === storedLevel);
+    return idx >= 0 ? idx : 0;
+  } catch {
+    return 0;
+  }
+}
+
+let currentIndex = readInitialThemeIndex();
+
+const theme = themes[currentIndex] as INamedTheme;
+
+export const getThemes = (): INamedTheme[] => themes;
+export const getCurrentThemeIndex = (): number => currentIndex;
+export const getCurrentThemeLevel = (): ThemeLevel => themes[currentIndex].level;
+export const getThemesInfos = (): { displayName: string; level: ThemeLevel }[] =>
+  themes.map(t => ({ displayName: t.displayName, level: t.level }));
+
+// persist the choice then reload app
+export async function setTheme(index: number): Promise<void> {
+  if (index < 0 || index >= themes.length || index === currentIndex) return;
+  currentIndex = index;
+  mmkvHandler.set(THEME_STORAGE_KEY, themes[index].level);
+  await new Promise<void>(resolve => setTimeout(resolve, 150));
+
+  if (__DEV__ && typeof DevSettings?.reload === 'function') {
+    DevSettings.reload();
+  } else {
+    RNRestart.restart();
+  }
+}
+
+export default theme;
