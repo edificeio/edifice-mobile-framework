@@ -11,7 +11,7 @@ import { I18n } from '~/app/i18n';
 import { navigationDispatchMultiple } from '~/app/navigation';
 import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
+import theme, { getThemes } from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import DefaultButton from '~/framework/components/buttons/default';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
@@ -51,6 +51,7 @@ import BottomRoundDecoration from '~/framework/modules/user/components/bottom-ro
 import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { getSwitchThemeRight } from '~/framework/modules/user/rights';
 import { UserPreferences, userService } from '~/framework/modules/user/service';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import appConf from '~/framework/util/appConf';
@@ -165,7 +166,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<PlatformAuthContext | undefined>(undefined);
-
+  const availableThemes = getThemes();
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await platformConfig.context(session.platform);
@@ -252,6 +253,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       Toast.showError(`Zendesk health check error: ${(error as Error).message}`);
     }
   }, [zendesk]);
+  console.debug('canSEE_THEME', getSwitchThemeRight(session!));
 
   React.useEffect(() => {
     if (showHelpCenter)
@@ -267,7 +269,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
       }
   }, []);
-
   const openHelpCenter = React.useCallback(async () => {
     if (showHelpCenter)
       try {
@@ -339,6 +340,15 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               icon="ui-globe"
               testID="account-change-language"
             />
+            {availableThemes?.length > 1 && getSwitchThemeRight(session!) && (
+              <LineButton
+                disabled={!!currentLoadingMenu}
+                title={I18n.get('user-page-edittheme')}
+                onPress={() => navigation.navigate(userRouteNames.theme, {})}
+                icon="ui-image"
+                testID="account-change-theme"
+              />
+            )}
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
@@ -390,6 +400,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       </>
     ),
     [
+      availableThemes,
       isFederated,
       currentLoadingMenu,
       canEditPersonalInfo,
