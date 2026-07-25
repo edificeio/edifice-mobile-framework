@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-07-23 13:31:31",
-  "notes": "Updated translations from Phrase (322)\nupdate(stack): yarn cache update\nUpdated translations from Phrase (321)\nfix(fileHandler): INTEG-2134 make picked-image filenames unique to fix duplicated gallery attachments on Android\nSquashed commit of the following:\nRevert feat(homework): PEDAGO-3990 new editor reader\nMerge branch 'dev/1.17.4' into dev/peda",
-  "version": "1.17.4-alpha.4(1170408)",
+  "last": "2026-07-25 12:44:52",
+  "notes": "update(stack): yarn cache update\nfix(communities): PEDAGO-4222 get invitationId when coming from notification\nrelease: 1.17.4-alpha.4(1170408)",
+  "version": "1.17.4-rc.1(1170409)",
   "track": "1.17.4",
-  "order": "alpha.4"
+  "order": "rc.1"
 }
