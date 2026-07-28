@@ -1,7 +1,7 @@
 /**
  * Theme declaration and overloading system.
  */
-import { ColorValue, DevSettings } from 'react-native';
+import { ColorValue } from 'react-native';
 
 import deepmerge from 'deepmerge';
 import RNRestart from 'react-native-restart';
@@ -9,8 +9,9 @@ import RNRestart from 'react-native-restart';
 import customTheme from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
 import { MediaType } from '~/framework/modules/media';
+import { preferences as userPreferences } from '~/framework/modules/user/storage';
 import type { ImageProps } from '~/framework/util/media-deprecated';
-import { mmkvHandler } from '~/framework/util/storage/mmkv';
+import { Storage } from '~/framework/util/storage';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -38,8 +39,12 @@ export interface EntAppTheme {
   accentColors: IShades;
   icon: IntentIcon;
 }
+export type ThemeLevel = '1D' | '2D';
 
 export interface ITheme {
+  // Theme identity, declared by the override
+  level: ThemeLevel;
+  displayName: string;
   // Color palette used globally
   palette: {
     primary: IShades;
@@ -159,14 +164,7 @@ type ThemeInitializer = Pick<ITheme, 'palette' | 'legacy'> & {
   init(): ITheme;
 };
 
-export type ThemeLevel = '1D' | '2D';
-
-export interface INamedTheme extends ITheme {
-  level: ThemeLevel;
-  displayName: string;
-}
-
-export type OverrideThemeDef = {
+type OverrideThemeDef = {
   level: ThemeLevel;
   displayName: string;
   palette?: Partial<ITheme['palette']>;
@@ -427,7 +425,7 @@ type CustomThemeOverride = {
   legacy?: Partial<ITheme['legacy']>;
   color?: Partial<ITheme['color']>;
   init?: () => ITheme;
-  // A mixte apps declares several themes here; other apps declare none.
+  // A mixte app declares several themes here; other apps declare none.
   themes?: OverrideThemeDef[];
 };
 
@@ -458,48 +456,43 @@ function buildTheme(paletteOverride?: Partial<ITheme['palette']>, colorOverride?
 //      888     888  888  "Y8888  888  888  888  "Y8888   88888P'
 //
 
-// Themes come from the build-time override: a list if provided, else a single theme.
+// Themes come from the build-time override.
+// TODO: drop the single-theme fallback once every override declares `themes`.
 const overrideThemes = (customTheme as CustomThemeOverride).themes;
 
-export const themes: INamedTheme[] =
-  overrideThemes && overrideThemes.length
-    ? overrideThemes.map(t => Object.assign(buildTheme(t.palette, t.color), { displayName: t.displayName, level: t.level }))
-    : [Object.assign(buildTheme(), { displayName: 'Thème', level: '2D' as ThemeLevel })];
+const themes: ITheme[] = overrideThemes?.length
+  ? overrideThemes.map(t => Object.assign(buildTheme(t.palette, t.color), { displayName: t.displayName, level: t.level }))
+  : [Object.assign(buildTheme(), { displayName: 'Thème', level: '2D' as ThemeLevel })];
 
-const THEME_STORAGE_KEY = 'app-theme-level';
+const THEME_STORAGE_KEY = 'theme';
+
+const isValidThemeIndex = (index?: number): index is number => index !== undefined && index >= 0 && index < themes.length;
 
 function readInitialThemeIndex(): number {
   try {
-    const storedLevel = mmkvHandler.getString(THEME_STORAGE_KEY);
-    const idx = themes.findIndex(t => t.level === storedLevel);
-    return idx >= 0 ? idx : 0;
+    const stored = Storage.global.getNumber(THEME_STORAGE_KEY);
+    if (isValidThemeIndex(stored)) return stored;
   } catch {
-    return 0;
+    //fall back to the default theme
   }
+  return 0;
 }
 
 let currentIndex = readInitialThemeIndex();
 
-const theme = themes[currentIndex] as INamedTheme;
+const theme = themes[currentIndex];
 
-export const getThemes = (): INamedTheme[] => themes;
-export const getCurrentThemeIndex = (): number => currentIndex;
-export const getCurrentThemeLevel = (): ThemeLevel => themes[currentIndex].level;
-export const getThemesInfos = (): { displayName: string; level: ThemeLevel }[] =>
+export const getThemes = (): { displayName: string; level: ThemeLevel }[] =>
   themes.map(t => ({ displayName: t.displayName, level: t.level }));
 
-// persist the choice then reload app
-export async function setTheme(index: number): Promise<void> {
-  if (index < 0 || index >= themes.length || index === currentIndex) return;
+export function setTheme(index: number): void {
+  if (!isValidThemeIndex(index) || index === currentIndex) return;
   currentIndex = index;
-  mmkvHandler.set(THEME_STORAGE_KEY, themes[index].level);
-  await new Promise<void>(resolve => setTimeout(resolve, 150));
 
-  if (__DEV__ && typeof DevSettings?.reload === 'function') {
-    DevSettings.reload();
-  } else {
-    RNRestart.restart();
-  }
+  Storage.global.set(THEME_STORAGE_KEY, index);
+  userPreferences.set(THEME_STORAGE_KEY, index);
+
+  RNRestart.restart();
 }
 
 export default theme;
