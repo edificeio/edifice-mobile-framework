@@ -7,3 +7,8 @@ export interface UserThemeScreenProps {}
 export interface UserThemeScreenNavParams {}
 
 export interface UserThemeScreenPrivateProps extends NativeStackScreenProps<UserNavigationParams, 'theme'>, UserThemeScreenProps {}
+
+export interface IThemeSelectItem {
+  label: string;
+  value: number;
+}
