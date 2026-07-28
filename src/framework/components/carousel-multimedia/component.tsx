@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ImageURISource } from 'react-native';
 
-import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/util/media';
+import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/modules/media';
 
 import ImageItem from './image-item/component';
 import PdfItem from './pdf-item/component';
@@ -40,7 +40,7 @@ const CarouselItem = ({
   if (isImageError || isPdfError || isPlayerError || isPlayerLoadTimeout || isPdfLoadTimeout || !media.mime)
     return <UnviewableItem media={media} />;
 
-  if (!media.mime && media.src) return <UnviewableItem file={media} />;
+  if (!media.mime && media.src) return <UnviewableItem media={media} />;
 
   if (isImageContent(media)) {
     return (

@@ -1,5 +1,5 @@
 import { navigationRef } from '~/app/navigation';
-import { FileMedia } from '~/framework/util/media/types';
+import { FileMedia } from '~/framework/modules/media/types';
 
 export interface MultimediaCarouselNavParams {
   startIndex: number;

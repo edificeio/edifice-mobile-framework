@@ -31,3 +31,5 @@ export const mimeCompare = (a: string, b: string) => {
   if (a2 === '*' || b2 === '*') return 0;
   return a2.localeCompare(b2);
 };
+
+export const UNKNOWN_MIME_TYPE = '*/*';

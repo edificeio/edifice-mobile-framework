@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import Audience from '~/framework/modules/audience/components';
-import { MediaGrid } from '~/framework/util/media/components/grid';
+import { MediaGrid } from '~/framework/modules/media/components/grid';
 
 import type { PostDetailsProps } from './types';
 

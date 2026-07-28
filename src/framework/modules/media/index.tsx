@@ -30,3 +30,9 @@ export default new CoreModule<
 );
 
 setModalModeForRoutes(['media/carousel', 'media/download']);
+
+export * from './components';
+export * from './mime';
+export * from './hooks';
+export * from './types';
+export * from './util';

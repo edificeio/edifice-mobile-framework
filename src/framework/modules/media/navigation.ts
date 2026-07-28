@@ -7,26 +7,26 @@ import { AudienceParameter } from '~/framework/modules/audience/types';
 import { openUrl } from '~/framework/util/linking';
 
 import { mime, mimeCompare } from './mime';
-import { toURISource } from './source';
 import {
   AttachmentMedia,
   AudioMedia,
-  // DocumentMedia,
   EmbeddedMedia,
   FileMedia,
   ImageMedia,
   isAttachmentMedia,
   isAudioMedia,
-  // isDocumentMedia,
   isEmbeddedMedia,
   isFileMedia,
   isImageMedia,
   isLinkMedia,
+  isResourceMedia,
   isVideoMedia,
   LinkMedia,
   Media,
+  ResourceMedia,
   VideoMedia,
 } from './types';
+import { toURISource } from './util';
 
 interface MediaIntent<MediaType extends Media> {
   condition: (media: Media) => media is MediaType;
@@ -100,12 +100,22 @@ const mediaIntents = [
     },
   } as MediaIntent<LinkMedia>,
 
+  // Resource
+  {
+    condition: media => isResourceMedia(media),
+    exec(navigation, media, _) {
+      // ToDo
+    },
+    icon(media) {
+      return theme.media.embedded;
+    },
+  } as MediaIntent<ResourceMedia>,
+
   // Unkncown file media
   {
     condition: media => isFileMedia(media),
     icon(media) {
       const extension = mime.getExtension(media.mime);
-      console.debug('EXTENSIONS', media.type, extension);
       return extension?.toLocaleUpperCase() ?? theme.media.default;
     },
   } as MediaIntent<FileMedia>,

@@ -11,11 +11,11 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { MediaType, toURISource } from '~/framework/modules/media';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { MediaType, toURISource } from '~/framework/util/media';
 import { accountURISource } from '~/framework/util/transport';
 
 export interface PDFReaderState {

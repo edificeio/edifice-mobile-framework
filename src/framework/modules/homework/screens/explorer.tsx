@@ -19,8 +19,6 @@ import { selectors } from '~/framework/modules/homework/reducers';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { Trackers } from '~/framework/util/tracker';
 
-import { HomeworkExplorerScreen } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
-
 // # Props
 
 export namespace HomeworkExplorerScreen {
@@ -54,7 +52,7 @@ export default sessionScreen<HomeworkExplorerScreen.AllProps>(({ navigation, rou
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
       if (!isFocused) return;
-      dispatch(homeworkDiarySelected(r.resourceEntId));
+      dispatch(homeworkDiarySelected(r.resourceId));
       navigation.navigate(homeworkRouteNames.homeworkTaskList, {});
     },
     [dispatch, isFocused, navigation],

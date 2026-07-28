@@ -5,6 +5,7 @@ import {
   AnnouncementClient,
   CommunityClient,
   CommunitySection,
+  InformationAnnouncementDto,
   InvitationClient,
   InvitationResponseDto,
   MembershipClient,
@@ -51,7 +52,7 @@ import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
-import { toURISource } from '~/framework/util/media';
+import { toURISource } from '~/framework/modules/media';
 import { accountApi, sessionApi } from '~/framework/util/transport';
 
 import styles from './styles';
@@ -199,28 +200,31 @@ export const CommunitiesHomeScreenLoaded = function ({
         const itemsIds = items.items.map(i => i.id.toString());
         const reactions = await audienceService.reaction.getSummary(audienceReferer.module, audienceReferer.resourceType, itemsIds);
 
-        const newAnnouncements: PostDetailsProps<number>[] = items.items.map(e => ({
-          audience: {
-            infosReactions: {
-              total: reactions.reactionsByResource[e.id].totalReactionsCounter,
-              types: reactions.reactionsByResource[e.id].reactionTypes,
-              userReaction: reactions.reactionsByResource[e.id].userReaction,
+        const newAnnouncements: PostDetailsProps<number>[] = items.items.map(e => {
+          const ret: PostDetailsProps<number> = {
+            audience: {
+              infosReactions: {
+                total: reactions.reactionsByResource[e.id].totalReactionsCounter,
+                types: reactions.reactionsByResource[e.id].reactionTypes,
+                userReaction: reactions.reactionsByResource[e.id].userReaction,
+              },
+              referer: {
+                ...audienceReferer,
+                resourceId: e.id.toString(),
+              },
+              session,
             },
-            referer: {
-              ...audienceReferer,
-              resourceId: e.id.toString(),
+            author: {
+              userId: e.author.entId,
+              username: e.author.displayName,
             },
-            session,
-          },
-          author: {
-            userId: e.author.entId,
-            username: e.author.displayName,
-          },
-          content: e.content,
-          date: Temporal.Instant.from((e.modificationDate ?? e.publicationDate) as unknown as string),
-          media: e.media && e.media.map(toMedia),
-          resourceId: e.id,
-        }));
+            content: (e as Partial<InformationAnnouncementDto>).content ?? '',
+            date: Temporal.Instant.from((e.modificationDate ?? e.publicationDate) as unknown as string),
+            media: ((e as Partial<InformationAnnouncementDto>).media && (e as InformationAnnouncementDto).media.map(toMedia)) ?? [],
+            resourceId: e.id,
+          };
+          return ret;
+        });
 
         setAnnouncements(prevData => {
           return staleOrSplice({

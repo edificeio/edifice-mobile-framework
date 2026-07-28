@@ -4,7 +4,7 @@ import { ReactVideoSourceProperties } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { AudienceParameter } from '~/framework/modules/audience/types';
-import { MediaType } from '~/framework/util/media';
+import { MediaType } from '~/framework/modules/media';
 
 export type IPlayerProps = (
   | { type: MediaType.AUDIO | MediaType.VIDEO; source: ReactVideoSourceProperties }

@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { IAttachmentProps } from './types';
-
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Icon, Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { mimeCompare } from '~/framework/util/media/mime';
+
+import styles from './styles';
+import { IAttachmentProps } from './types';
+
+import { mimeCompare } from '~/framework/modules/media/mime';
 
 const fileIconPatterns = [
   { icon: 'picture', pattern: 'image/*' },

@@ -4,105 +4,55 @@ import { ListRenderItemInfo, PixelRatio, TouchableOpacity, TouchableOpacityProps
 import { PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
-import { EntAppNameOrSynonym } from '~/app/intents';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
-import { Picture, PictureProps, Svg } from '~/framework/components/picture';
+import { Picture, Svg } from '~/framework/components/picture';
 import ImageWithFallback from '~/framework/components/picture/image-with-fallback';
-import { CaptionText, HeadingSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
-import { useAppBadge, useAppTheme } from '~/framework/modules/myapps/hooks';
-import { toURISource } from '~/framework/util/media';
+import { CaptionText, HeadingSText, HeadingXXSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
+import { Media } from '~/framework/modules/media';
+import { useMediaDisplay } from '~/framework/modules/media/hooks';
 import { sessionImageSource } from '~/framework/util/transport';
 
 import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './component';
 import styles from './styles';
-import {
-  AppBadge,
-  DocumentItem,
-  DocumentItemWorkspace,
-  DocumentItemWorkspaceDocumentMedia,
-  FolderItem,
-  PaginatedDocumentFlashListProps,
-  PaginatedDocumentFlatListProps,
-} from './types';
+import { DocumentItem, FolderItem, PaginatedDocumentFlashListProps, PaginatedDocumentFlatListProps } from './types';
 
-export function buildPictureFromBadge(badge: AppBadge): PictureProps {
-  if (!badge?.icon) {
-    return { name: 'information', type: 'Svg' };
-  }
-
-  if (typeof badge.icon !== 'string') {
-    return badge.icon;
-  }
-
-  const iconString = badge.icon;
-  const isImage = iconString.startsWith('/');
-
-  if (isImage) {
-    return {
-      source: { uri: iconString },
-      type: 'Image',
-    };
-  }
-
-  return {
-    fill: badge.color,
-    name: iconString,
-    type: 'Svg',
-  };
-}
-
-const isItemWorkspaceResource = <AppTypes extends EntAppNameOrSynonym, IdType>(
-  item: DocumentItem<AppTypes, IdType>,
-): item is DocumentItemWorkspace<IdType> => item.appName === 'workspace';
-
-const isItemWorkspaceDocumentMedia = <IdType,>(
-  item: DocumentItemWorkspace<IdType>,
-): item is DocumentItemWorkspaceDocumentMedia<IdType> => item.type === 'document';
-
-function renderSizedPicture(props: PictureProps, size: number) {
-  if (props.type === 'Icon') {
-    return <Picture {...props} size={size} />;
-  }
-
-  return <Picture {...props} width={size} height={size} />;
-}
-
-export function DocumentListItemIcon<AppTypes extends EntAppNameOrSynonym, IdType>({
-  badge,
-  item,
+export function DocumentListItemIcon({
+  color,
+  icon,
   size,
-}: Readonly<
-  Pick<
-    Parameters<
-      (PaginatedFlashListProps<DocumentItem<AppTypes, IdType>> &
-        PaginatedFlatListProps<DocumentItem<AppTypes, IdType>>)['renderItem']
-    >[0],
-    'item'
-  >
-> & { badge: AppBadge } & { size: 'large' | 'small' }) {
+}: { size: 'large' | 'small' } & Pick<ReturnType<typeof useMediaDisplay>, 'color' | 'icon'>) {
   const iconSize = size === 'large' ? UI_SIZES.elements.icon.xxlarge : UI_SIZES.elements.icon.default;
-  const pictureProps = buildPictureFromBadge(badge);
 
-  if (isItemWorkspaceResource(item)) {
-    if (size === 'large') {
-      return isItemWorkspaceDocumentMedia(item) && item.extension ? (
-        <HeadingSText numberOfLines={1} style={{ color: badge?.color }}>
-          {item.extension.toLocaleUpperCase()}
-        </HeadingSText>
-      ) : (
-        <View style={styles.documentLargeIconMediaWrapper}>{renderSizedPicture(pictureProps, iconSize / 2)}</View>
-      );
-    } else {
-      return renderSizedPicture(pictureProps, iconSize);
-    }
+  if (size === 'large') {
+    return icon.type === 'Text' ? (
+      <HeadingSText numberOfLines={1} style={{ color: color.regular }}>
+        {icon.text}
+      </HeadingSText>
+    ) : icon.type === 'Image' ? (
+      <View style={styles.documentLargeIconMediaWrapper}>
+        <Picture {...icon} width={iconSize / 2} height={iconSize / 2} />
+      </View>
+    ) : (
+      <View style={styles.documentLargeIconMediaWrapper}>
+        <Picture {...icon} width={iconSize / 2} height={iconSize / 2} fill={color.regular} />
+      </View>
+    );
+  } else /* size === 'small' */ {
+    return icon.type === 'Text' ? (
+      <HeadingXXSText numberOfLines={1} style={{ color: color.regular }}>
+        {icon.text}
+      </HeadingXXSText>
+    ) : icon.type === 'Image' ? (
+      <Picture {...icon} width={iconSize} height={iconSize} />
+    ) : (
+      <Picture {...icon} width={iconSize} height={iconSize} fill={color.regular} />
+    );
   }
-
-  return renderSizedPicture(pictureProps, iconSize);
 }
 
-export function DocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType>({
+export function DocumentListItem<IdType, MediaT extends Media>({
   alwaysShowAppIcon,
   item,
   onPress,
@@ -111,45 +61,43 @@ export function DocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType>({
 }: Readonly<
   Pick<
     Parameters<
-      (PaginatedFlashListProps<DocumentItem<AppTypes, IdType>> &
-        PaginatedFlatListProps<DocumentItem<AppTypes, IdType>>)['renderItem']
+      (PaginatedFlashListProps<DocumentItem<IdType, MediaT>> & PaginatedFlatListProps<DocumentItem<IdType, MediaT>>)['renderItem']
     >[0],
     'index' | 'item'
   >
 > &
   Pick<TouchableOpacityProps, 'onPress' | 'style' | 'testID'> &
-  Pick<PaginatedDocumentFlashListProps<AppTypes, IdType> & PaginatedDocumentFlatListProps<AppTypes, IdType>, 'alwaysShowAppIcon'>) {
+  Pick<PaginatedDocumentFlashListProps<IdType, MediaT> & PaginatedDocumentFlatListProps<IdType, MediaT>, 'alwaysShowAppIcon'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
-  const appBadge = useAppBadge(item.appName);
-  const appTheme = useAppTheme(item.appName);
+  const { color, icon, thumbnail } = useMediaDisplay(item);
 
-  const thumbnail = React.useMemo(() => {
-    if (item.thumbnail)
+  const thumbnailElement = React.useMemo(() => {
+    if (thumbnail)
       return (
         <View style={styles.documentThumbnail}>
-          <ImageWithFallback source={sessionImageSource(toURISource(item.thumbnail))} style={styles.documentImage} />
+          <ImageWithFallback source={sessionImageSource(thumbnail)} style={styles.documentImage} />
           {alwaysShowAppIcon && (
             <View style={styles.documentThumbnailFloatingIconWrapper}>
-              <DocumentListItemIcon badge={appBadge} size="small" item={item} />
+              <DocumentListItemIcon color={color} size="small" icon={icon} />
             </View>
           )}
         </View>
       );
     return (
-      <View style={[styles.documentThumbnail, { backgroundColor: appTheme.colors.pale }]}>
-        <DocumentListItemIcon badge={appBadge} size="large" item={item} />
+      <View style={[styles.documentThumbnail, { backgroundColor: color.pale }]}>
+        <DocumentListItemIcon color={color} size="large" icon={icon} />
       </View>
     );
-  }, [alwaysShowAppIcon, appBadge, item, appTheme]);
+  }, [thumbnail, alwaysShowAppIcon, color, icon]);
   return (
     <WrapperComponent style={[styles.item, styles.itemDocument, style]} onPress={onPress} testID={testID}>
-      {thumbnail}
+      {thumbnailElement}
       <View style={styles.documentMetadata}>
         <SmallBoldText style={styles.documentMetadataTitle} numberOfLines={1}>
-          {item.title}
+          {item.name ?? ''}
         </SmallBoldText>
         <CaptionText style={styles.documentMetadataDate} numberOfLines={1}>
-          {I18n.date(item.date)}
+          {item.date ? I18n.date(item.date) : ''}
         </CaptionText>
       </View>
     </WrapperComponent>

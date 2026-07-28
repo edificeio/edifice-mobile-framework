@@ -9,6 +9,12 @@ export function isRequireSource(input: ImageSourcePropType): input is ImageRequi
   return typeof input === 'number';
 }
 
+/**
+ * Convert any source information to a shiny well-formated URISource object.
+ * Use type parameter to narrow what type of URISource you expect to get.
+ * @param src
+ * @returns
+ */
 export const toURISource = <SourceType extends ImageURISource | ReactVideoSourceProperties | WebViewSourceUri>(
   src: Media['src'],
 ): typeof src extends undefined ? undefined : Pick<SourceType, 'uri'> =>

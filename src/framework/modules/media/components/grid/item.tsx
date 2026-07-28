@@ -10,7 +10,6 @@ import { Picture } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import {
   FileMedia,
-  getMediaIcon,
   ImageMedia,
   isFileMedia,
   isImageMedia,
@@ -20,7 +19,8 @@ import {
   Media,
   toURISource,
   VideoMedia,
-} from '~/framework/util/media';
+} from '~/framework/modules/media';
+import { getMediaIcon } from '~/framework/modules/media/navigation';
 import { Image } from '~/framework/util/media-deprecated';
 import { sessionImageSource, sessionURISource } from '~/framework/util/transport';
 

@@ -1,10 +1,11 @@
 import { Temporal } from '@js-temporal/polyfill';
 
-import type { API } from './types';
-
-import type { EntAppNameOrSynonym } from '~/app/intents';
+import { newEntAppNameFromOldMap } from '~/app/intents';
 import type { ExplorerPageData } from '~/framework/modules/explorer/model/types';
 import { sessionFetch } from '~/framework/util/transport';
+
+import type { API } from './types';
+import { MediaType } from '../../media';
 
 const hydrateFolder = (data: ArrayElement<API.Explorer.ResourcesPageOK['folders']>): ArrayElement<ExplorerPageData['folders']> => ({
   id: data.id,
@@ -12,16 +13,19 @@ const hydrateFolder = (data: ArrayElement<API.Explorer.ResourcesPageOK['folders'
 });
 
 const hydrateResource = (
-  data: ArrayElement<API.Explorer.ResourcesPageOK['resources']>,
-): ArrayElement<ExplorerPageData['resources']> => ({
-  appName: data.application as Exclude<EntAppNameOrSynonym, 'workspace'>,
-  date: Temporal.Instant.fromEpochMilliseconds(data.updatedAt),
-  id: data.id,
-  resourceEntId: data.assetId,
-  thumbnail: data.thumbnail,
-  title: data.name,
-  url: '', // ToDo
-});
+  item: ArrayElement<API.Explorer.ResourcesPageOK['resources']>,
+): ArrayElement<ExplorerPageData['resources']> => {
+  return {
+    appName: newEntAppNameFromOldMap[item.application], // ugly, but API son't send new app names as intented
+    date: Temporal.Instant.fromEpochMilliseconds(item.updatedAt),
+    id: item.id,
+    name: item.name,
+    resourceId: item.assetId,
+    src: '', // No src provided
+    thumbnail: item.thumbnail,
+    type: MediaType.RESOURCE,
+  };
+};
 
 const hydrateResources = (data: API.Explorer.ResourcesPageOK): ExplorerPageData => ({
   folders: data.folders.map(hydrateFolder),

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Image, View } from 'react-native';
 
-import styles from './styles';
-import { FallbackIconTheme, ImageFallbackProps } from './types';
-
 import theme from '~/app/theme';
 import { PictureProps, Svg } from '~/framework/components/picture';
+
+import styles from './styles';
+import { FallbackIconTheme, ImageFallbackProps } from './types';
 
 const DEFAULT_FALLBACK = {
   accentColors: {

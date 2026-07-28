@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import { getAppTestID } from '~/framework/modules/myapps/utils';
-import { Image } from '~/framework/util/media/components/image';
+import { Image } from '~/framework/modules/media/components/image';
 
 import { MyAppsCardProps } from './types';
 import { useController } from './useController';

@@ -1,18 +1,17 @@
 import type { ImageURISource } from 'react-native';
 
+import { Temporal } from '@js-temporal/polyfill';
 import { ReactVideoSource } from 'react-native-video';
 
 import { mimeCompare } from './mime';
 
-import type { EntAppNameOrSynonym } from '~/app/intents';
-
 export enum MediaType {
   // File medias
-  ATTACHMENT = 'attachment', // Unknown file. Use provided mime type to handle correctly.
-  AUDIO = 'audio', // Audio file that can be displayed in a thumbnail & player
-  // DOCUMENT = 'document', // Printable documents like text / pdf / office / etc
-  IMAGE = 'image', // Image file that can be displayed in a thumbnail
-  VIDEO = 'video', // Video file that can be displayed in a thumbnail & player
+  AUDIO = 'audio', // File added as audio content
+  IMAGE = 'image', // File added as image content
+  VIDEO = 'video', // File added as video content
+  OFFICE = 'office', // File added as interactive office content (for now displayed in OnlyOffice)
+  ATTACHMENT = 'attachment', // File content without further information.
   // Redirected medias
   LINK = 'link', // HTTP link to any web location
   EMBEDDED = 'embedded', // HTTP link to any web location, displayed in a Webview component
@@ -23,18 +22,18 @@ export enum MediaType {
 export interface Media {
   type: MediaType;
   src: URL | Pick<ImageURISource, 'uri'> | string | ReactVideoSource;
+  date?: Temporal.Instant;
+  name?: string;
 }
 
 export interface FileMedia extends Media {
-  type: MediaType.IMAGE | MediaType.VIDEO | MediaType.AUDIO | /*MediaType.DOCUMENT |*/ MediaType.ATTACHMENT;
-  alt?: string;
+  type: MediaType.IMAGE | MediaType.VIDEO | MediaType.AUDIO | MediaType.OFFICE | MediaType.ATTACHMENT;
   mime: string;
-  name?: string;
   size?: number;
 }
 
 export const isFileMedia = (media: Media): media is FileMedia =>
-  [MediaType.IMAGE, MediaType.VIDEO, MediaType.AUDIO, /* MediaType.DOCUMENT, */ MediaType.ATTACHMENT].includes(media.type);
+  [MediaType.IMAGE, MediaType.VIDEO, MediaType.AUDIO, MediaType.OFFICE, MediaType.ATTACHMENT].includes(media.type);
 
 export interface PlayableMedia extends FileMedia {
   type: MediaType.VIDEO | MediaType.AUDIO;
@@ -56,11 +55,11 @@ export interface AudioMedia extends PlayableMedia {
 
 export const isAudioMedia = (media: Media): media is AudioMedia => media.type === MediaType.AUDIO;
 
-// export interface DocumentMedia extends FileMedia {
-//   type: MediaType.DOCUMENT;
-// }
+export interface OfficeMedia extends FileMedia {
+  type: MediaType.OFFICE;
+}
 
-// export const isDocumentMedia = (media: Media): media is DocumentMedia => media.type === MediaType.DOCUMENT;
+export const isOfficeMedia = (media: Media): media is OfficeMedia => media.type === MediaType.OFFICE;
 
 export const isAudioContent = (item: FileMedia) => {
   return isAudioMedia(item) || (isAttachmentMedia(item) && mimeCompare(item.mime, 'audio/*') === 0);
@@ -102,14 +101,13 @@ export interface EmbeddedMedia extends Media {
 export const isEmbeddedMedia = (media: Media): media is EmbeddedMedia => media.type === MediaType.EMBEDDED;
 
 export interface ResourceMedia extends Media {
-  appName: Exclude<EntAppNameOrSynonym, 'workspace'>;
+  appName: string;
   resourceId: string;
-  title: string;
   thumbnail?: Media['src'];
 }
 
-export const isPdfContent = (item: FileMedia) => {
+export const isResourceMedia = (media: Media): media is ResourceMedia => media.type === MediaType.RESOURCE;
+
+export const isPdfContent = (item: FileMedia): item is AttachmentMedia => {
   return isAttachmentMedia(item) && mimeCompare(item.mime, 'application/pdf') === 0;
 };
-
-export const isResourceMedia = (media: Media): media is ResourceMedia => media.type === MediaType.RESOURCE;

@@ -1,6 +1,6 @@
 import { ReactVideoSourceProperties } from 'react-native-video';
 
-import { FileMedia } from '~/framework/util/media';
+import { FileMedia } from '~/framework/modules/media';
 
 export interface PlayerItemProps {
   hideNavBar: () => void;

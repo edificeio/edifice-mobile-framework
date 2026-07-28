@@ -6,19 +6,17 @@ import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
 import { NavigationRootParams } from '~/app/navigation/types';
 import { UI_SIZES } from '~/framework/components/constants';
-import { AudienceParameter } from '~/framework/modules/audience/types';
-import { Media, openMedia, toURISource } from '~/framework/util/media';
+import { Media, openMedias, toURISource } from '~/framework/modules/media';
 
 import { MediaItem } from './item';
 import styles from './styles';
 
 export interface MediaGridProps {
   media?: Media[];
-  audience?: AudienceParameter;
   navigation: NavigationProp<NavigationRootParams>;
 }
 
-export function MediaGrid({ audience, media = MediaGrid.EMPTY_MEDIA, navigation }: Readonly<MediaGridProps>) {
+export function MediaGrid({ media = MediaGrid.EMPTY_MEDIA, navigation }: Readonly<MediaGridProps>) {
   const isSingle = media.length === 1;
   const [itemHeight, setItemHeight] = React.useState(0);
   const onLayout = React.useCallback<NonNullable<ViewProps['onLayout']>>(({ nativeEvent }) => {
@@ -38,11 +36,11 @@ export function MediaGrid({ audience, media = MediaGrid.EMPTY_MEDIA, navigation 
               media={item}
               style={itemStyle}
               onPress={() => {
-                openMedia(navigation, media, index, audience);
+                openMedias(navigation, media, index);
               }}
             />
           ),
-          [audience, itemStyle, media, navigation],
+          [itemStyle, media, navigation],
         ),
       )}
       {!isSingle && <View style={styles.item} />}

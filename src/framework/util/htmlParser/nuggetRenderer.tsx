@@ -20,8 +20,8 @@ import {
   SmallItalicText,
   SmallText,
 } from '~/framework/components/text';
+import { MediaType } from '~/framework/modules/media';
 import { openUrl } from '~/framework/util/linking';
-import { MediaType } from '~/framework/util/media';
 import { formatMediaSourceArray, formatSource, Image } from '~/framework/util/media-deprecated';
 import Images from '~/ui/Images';
 

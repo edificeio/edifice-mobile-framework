@@ -18,9 +18,9 @@ import Share from 'react-native-share';
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
+import { FileMedia, isEmbeddedMedia, isPlayableMedia } from '~/framework/modules/media';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { FileMedia, isEmbeddedMedia, isPlayableMedia } from '~/framework/util/media';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
 
 import { PAGINATION_ANIMATION_DURATION, PAGINATION_ANIMATION_OFFSET } from './screen';
@@ -73,7 +73,7 @@ export const useCarouselFileHandler = (
     // Using .toString() on an object gives '[object Object]', so extract the URI string explicitly.
     const rawSrc = media!.src;
     const stringSrc =
-      rawSrc instanceof URL ? rawSrc.href : typeof rawSrc === 'string' ? rawSrc : (rawSrc as { uri?: string }).uri ?? '';
+      rawSrc instanceof URL ? rawSrc.href : typeof rawSrc === 'string' ? rawSrc : ((rawSrc as { uri?: string }).uri ?? '');
 
     if (stringSrc.indexOf('file://') > -1) {
       syncedFile = new SyncedFile(

@@ -3,9 +3,7 @@ import { ViewProps } from 'react-native';
 import { Temporal } from '@js-temporal/polyfill';
 
 import { AudienceProps } from '~/framework/modules/audience/components/types';
-import { Media } from '~/framework/util/media';
-import { NavigationProp } from '@react-navigation/native';
-import { NavigationRootParams } from '~/app/navigation/types';
+import { Media } from '~/framework/modules/media';
 
 export interface PostDetailsProps<IdType extends string | number> {
   audience?: AudienceProps;

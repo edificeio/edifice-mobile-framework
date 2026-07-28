@@ -11,9 +11,8 @@ import { BodyBoldText, BodyText, NestedBoldText, SmallText } from '~/framework/c
 import { COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE } from '~/framework/modules/communities/adapter';
 import CommunityMembersPill from '~/framework/modules/communities/components/community-members-pill/';
 import { rolesI18n } from '~/framework/modules/communities/model';
+import { Image, injectImageSource } from '~/framework/modules/media';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
-import { injectImageSource } from '~/framework/util/media';
-import { Image } from '~/framework/util/media/components/image';
 import { sessionImageSource } from '~/framework/util/transport';
 
 import { styles } from './styles';

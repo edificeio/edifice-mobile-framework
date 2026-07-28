@@ -2,11 +2,11 @@ import RN, { DimensionValue } from 'react-native';
 
 import { NumberProp } from 'react-native-svg';
 
-import { EntAppTheme } from '~/app/theme';
+import { EntAppTheme, IShades } from '~/app/theme';
 import { PictureProps } from '~/framework/components/picture';
 
 export type FallbackIconTheme = Omit<EntAppTheme, 'accentColors'> & {
-  accentColors: Pick<EntAppTheme['accentColors'], 'regular' | 'pale'>;
+  accentColors: Pick<IShades, 'regular' | 'pale'>;
 };
 
 export interface ImageProps extends Omit<RN.ImageProps, 'src' | 'srcSet'> {

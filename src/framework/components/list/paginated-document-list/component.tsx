@@ -9,8 +9,8 @@ import { ListRenderItemInfo as FlatListRenderItemInfo, StyleSheet, ViewStyle } f
 
 import { ListRenderItemInfo as FlashListRenderItemInfo } from '@shopify/flash-list';
 
-import { EntAppNameOrSynonym } from '~/app/intents';
 import { PaginatedFlashList, PaginatedFlatList } from '~/framework/components/list/paginated-list';
+import { Media } from '~/framework/modules/media';
 
 import {
   DocumentListItem,
@@ -40,11 +40,11 @@ export const FOLDER_SPACER_ITEM_DATA = Symbol('FOLDER_SPACER_ITEM_DATA');
 export const DOCUMENT_SPACER_ITEM_DATA = Symbol('DOCUMENT_SPACER_ITEM_DATA');
 
 export const useDocumentPagination = <
-  AppTypes extends EntAppNameOrSynonym,
   IdType,
+  MediaT extends Media,
   InfoType extends
-    | FlatListRenderItemInfo<PaginatedDocumentListItem<AppTypes, IdType>>
-    | FlashListRenderItemInfo<PaginatedDocumentListItem<AppTypes, IdType>>,
+    | FlatListRenderItemInfo<PaginatedDocumentListItem<IdType, MediaT>>
+    | FlashListRenderItemInfo<PaginatedDocumentListItem<IdType, MediaT>>,
 >({
   alwaysShowAppIcon,
   documents,
@@ -53,12 +53,12 @@ export const useDocumentPagination = <
   onPressDocument,
   onPressFolder,
 }: {
-  documents: CommonPaginatedDocumentListProps<AppTypes, IdType>['documents'];
-  folders: CommonPaginatedDocumentListProps<AppTypes, IdType>['folders'];
-  onPressFolder: CommonPaginatedDocumentListProps<AppTypes, IdType>['onPressFolder'];
-  onPressDocument: CommonPaginatedDocumentListProps<AppTypes, IdType>['onPressDocument'];
+  documents: CommonPaginatedDocumentListProps<IdType, MediaT>['documents'];
+  folders: CommonPaginatedDocumentListProps<IdType, MediaT>['folders'];
+  onPressFolder: CommonPaginatedDocumentListProps<IdType, MediaT>['onPressFolder'];
+  onPressDocument: CommonPaginatedDocumentListProps<IdType, MediaT>['onPressDocument'];
   numColumns?: number;
-  alwaysShowAppIcon: CommonPaginatedDocumentListProps<AppTypes, IdType>['alwaysShowAppIcon'];
+  alwaysShowAppIcon: CommonPaginatedDocumentListProps<IdType, MediaT>['alwaysShowAppIcon'];
 }) => {
   const { data, documentsIndexStart } = React.useMemo(() => {
     const folderSpacers = (numColumns - ((folders?.length ?? 0) % numColumns)) % numColumns;
@@ -78,7 +78,7 @@ export const useDocumentPagination = <
 
   // getItemType exists only in FlashList so no need to use the generic type
   const getItemType = React.useCallback(
-    (item: PaginatedDocumentListItem<AppTypes, IdType>, index: number) => {
+    (item: PaginatedDocumentListItem<IdType, MediaT>, index: number) => {
       if (item === FOLDER_SPACER_ITEM_DATA) return 'spacer';
       return isIndexForFolderOrSpacerItem(index) ? 'folder' : 'document';
     },
@@ -86,7 +86,7 @@ export const useDocumentPagination = <
   );
 
   const keyExtractor = React.useCallback(
-    (item: PaginatedDocumentListItem<AppTypes, IdType>, index: number) => {
+    (item: PaginatedDocumentListItem<IdType, MediaT>, index: number) => {
       if (item === FOLDER_SPACER_ITEM_DATA || item === DOCUMENT_SPACER_ITEM_DATA) return 'spacer' + index.toString();
       return (getItemType(item, index) ?? '')?.toString() + item.id;
     },
@@ -125,11 +125,11 @@ export const useDocumentPagination = <
           />
         );
       } else {
-        const documentInfo = info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>;
+        const documentInfo = info as FlatListRenderItemInfo<DocumentItem<IdType, MediaT>>;
         return (
           <DocumentListItem
             {...documentInfo}
-            onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem<AppTypes, IdType>>).item, e)}
+            onPress={e => onPressDocument?.((info as FlatListRenderItemInfo<DocumentItem<IdType, MediaT>>).item, e)}
             style={itemStyle}
             testID={'document-item'}
             alwaysShowAppIcon={alwaysShowAppIcon}
@@ -161,7 +161,7 @@ export const useDocumentPagination = <
   };
 };
 
-export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym, IdType>({
+export function PaginatedDocumentFlashList<IdType, MediaT extends Media = Media>({
   alwaysShowAppIcon = true,
   contentContainerStyle: _contentContainerStyle,
   documents,
@@ -169,7 +169,7 @@ export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym,
   onPressDocument,
   onPressFolder,
   ...paginatedListProps
-}: Readonly<PaginatedDocumentFlashListProps<AppTypes, IdType>>) {
+}: Readonly<PaginatedDocumentFlashListProps<IdType, MediaT>>) {
   const { contentContainerStyle, data, getItemType, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } =
     useDocumentPagination({
       alwaysShowAppIcon,
@@ -197,7 +197,7 @@ export function PaginatedDocumentFlashList<AppTypes extends EntAppNameOrSynonym,
   );
 }
 
-export function PaginatedDocumentFlatList<AppTypes extends EntAppNameOrSynonym, IdType>({
+export function PaginatedDocumentFlatList<IdType, MediaT extends Media = Media>({
   alwaysShowAppIcon = true,
   contentContainerStyle: _contentContainerStyle,
   documents,
@@ -205,7 +205,7 @@ export function PaginatedDocumentFlatList<AppTypes extends EntAppNameOrSynonym, 
   onPressDocument,
   onPressFolder,
   ...paginatedListProps
-}: Readonly<PaginatedDocumentFlatListProps<AppTypes, IdType>>) {
+}: Readonly<PaginatedDocumentFlatListProps<IdType, MediaT>>) {
   const { contentContainerStyle, data, getVisibleItemIndex, keyExtractor, renderItem, renderPlaceholderItem } =
     useDocumentPagination({
       alwaysShowAppIcon,

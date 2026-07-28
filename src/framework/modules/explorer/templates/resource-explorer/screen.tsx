@@ -8,10 +8,11 @@ import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getStore } from '~/app/store';
 import { PaginatedDocumentFlashList } from '~/framework/components/list/paginated-document-list/component';
-import { DocumentItemEntApp, PaginatedDocumentFlashListProps } from '~/framework/components/list/paginated-document-list/types';
-import { ExplorerAppTypes, ExplorerResourceIdType, RootFolderId } from '~/framework/modules/explorer/model/types';
+import { PaginatedDocumentFlashListProps } from '~/framework/components/list/paginated-document-list/types';
+import { ExplorerResourceIdType, RootFolderId } from '~/framework/modules/explorer/model/types';
 import service from '~/framework/modules/explorer/service/index';
 import { emptyFolderData, ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
+import { ResourceMedia } from '~/framework/modules/media';
 import { HTTPError } from '~/framework/util/transport/error';
 
 import type { ResourceExplorerTemplate } from './types';
@@ -38,6 +39,7 @@ export function ResourceExplorerTemplate({
   const content = folder?.content ?? emptyFolderData;
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();
   const actions = useExplorerActions(moduleConfig);
+  const isFocused = useIsFocused();
 
   const loadPage = React.useCallback(
     async (start_idx: number, nb: number, reloadAll: boolean = false) => {
@@ -62,14 +64,14 @@ export function ResourceExplorerTemplate({
     [context, folderId, dispatch, actions],
   );
   const onPressFolder = React.useCallback<
-    NonNullable<PaginatedDocumentFlashListProps<ExplorerAppTypes, ExplorerResourceIdType>['onPressFolder']>
-  >(f => navigation.push(route.name, { folderId: f.id }), [navigation, route.name]);
+    NonNullable<PaginatedDocumentFlashListProps<ExplorerResourceIdType, ResourceMedia>['onPressFolder']>
+  >(f => isFocused && navigation.push(route.name, { folderId: f.id }), [isFocused, navigation, route.name]);
 
   const onPressDocument = React.useCallback<
-    NonNullable<PaginatedDocumentFlashListProps<ExplorerAppTypes, ExplorerResourceIdType>['onPressDocument']>
+    NonNullable<PaginatedDocumentFlashListProps<ExplorerResourceIdType, ResourceMedia>['onPressDocument']>
   >(
     document => {
-      onOpenResource?.(document as DocumentItemEntApp<ExplorerAppTypes, string>);
+      onOpenResource?.(document);
     },
     [onOpenResource],
   );

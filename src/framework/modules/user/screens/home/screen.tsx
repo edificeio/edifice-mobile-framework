@@ -43,6 +43,7 @@ import { mfaValidation, platformConfig, requirements } from '~/framework/modules
 import { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/thunks';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { DebugOptions } from '~/framework/modules/debug';
+import { toURISource } from '~/framework/modules/media';
 import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
 import { readSplashadsData } from '~/framework/modules/splashads/storage';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
@@ -54,7 +55,6 @@ import { UserPreferences, userService } from '~/framework/modules/user/service';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import appConf from '~/framework/util/appConf';
 import BuildInfo from '~/framework/util/build-info';
-import { toURISource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
 import { useZendesk } from '~/framework/util/zendesk';

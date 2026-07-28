@@ -3,13 +3,13 @@ import * as React from 'react';
 import {
   CommunityClient,
   CommunitySection,
+  EnrichedResourceDto,
   FolderClient,
   FolderDto,
   getResourceUrl,
   MembershipClient,
+  MobileMediaType,
   ResourceClient,
-  ResourceDto,
-  ResourceType,
 } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
@@ -18,9 +18,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
-import { EntAppName, INTENT_TYPE, openIntent } from '~/app/intents';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { DocumentItemEntApp, DocumentItemWorkspace, FolderItem } from '~/framework/components/list/paginated-document-list/types';
+import { FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { HeadingXSText } from '~/framework/components/text';
@@ -29,9 +28,8 @@ import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/mo
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
-import { openDocument as openMedia } from '~/framework/util/fileHandler/actions.ts';
-import { toURISource } from '~/framework/util/media';
-import { IMedia } from '~/framework/util/media-deprecated';
+import { isFileMedia, isResourceMedia, MediaType, mime, toURISource, UNKNOWN_MIME_TYPE } from '~/framework/modules/media';
+import { openMedia } from '~/framework/modules/media/hooks';
 import { accountApi } from '~/framework/util/transport';
 
 import { DecoratedDocumentFlatList } from './community-paginated-document-list';
@@ -42,29 +40,36 @@ export const computeNavBar = (
   props: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.documents>,
 ): NativeStackNavigationOptions => communityNavBar(props);
 
-const documentTypeMap: Record<ResourceType, DocumentItemWorkspace<number>['type'] | undefined> = {
-  [ResourceType.IMAGE]: 'image',
-  [ResourceType.SOUND]: 'audio',
-  [ResourceType.VIDEO]: 'video',
-  [ResourceType.EXTERNAL_LINK]: 'link',
-  [ResourceType.FILE]: 'document',
-  [ResourceType.ENT]: undefined,
+const documentTypeMap: Record<EnrichedResourceDto['mobileMediaType'], MediaType> = {
+  [MobileMediaType.IMAGE]: MediaType.IMAGE,
+  [MobileMediaType.AUDIO]: MediaType.AUDIO,
+  [MobileMediaType.VIDEO]: MediaType.VIDEO,
+  [MobileMediaType.ATTACHMENT]: MediaType.ATTACHMENT,
+  [MobileMediaType.LINK]: MediaType.LINK,
+  [MobileMediaType.OFFICE]: MediaType.VIDEO,
+  [MobileMediaType.RESOURCE]: MediaType.RESOURCE,
 };
 
-const formatDocuments = (data: ResourceDto[]): CommunitiesDocumentItem[] =>
-  data.map(({ type, ...item }) =>
-    item.appName === 'workspace'
-      ? ({
-          ...item,
-          date: Temporal.Instant.from(item.updatedAt as unknown as string),
-          extension: item.title.includes('.') ? item.title.split('.').at(-1) : undefined,
-          type: documentTypeMap[type],
-        } as DocumentItemWorkspace<number>)
-      : ({
-          ...item,
-          date: Temporal.Instant.from(item.updatedAt as unknown as string),
-        } as Exclude<DocumentItemEntApp<ResourceDto['appName'], number>, 'workspace'>),
-  );
+const formatDocuments = (data: EnrichedResourceDto[]): CommunitiesDocumentItem[] =>
+  data.map(item => {
+    const media: CommunitiesDocumentItem = {
+      date: Temporal.Instant.from(item.updatedAt as unknown as string),
+      id: item.id,
+      name: item.title,
+      src: getResourceUrl(item) ?? '',
+      type: documentTypeMap[item.mobileMediaType],
+    };
+    if (isFileMedia(media)) {
+      const ext = item.title.includes('.') ? item.title.split('.').at(-1) : undefined;
+      media.mime = (ext && mime.getType(ext)) || UNKNOWN_MIME_TYPE;
+    }
+    if (isResourceMedia(media)) {
+      media.appName = item.mobileAppName;
+      media.resourceId = item.resourceEntId;
+      media.thumbnail = item.thumbnail;
+    }
+    return media;
+  });
 
 export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function CommunitiesDocumentsScreen({
   navigation,
@@ -142,20 +147,12 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     }, [communityId, session]),
   );
 
-  const openDocument = React.useCallback(async (doc: CommunitiesDocumentItem) => {
-    const url = getResourceUrl(doc); // ToDo : patch package to narrow type required
-    if (!url) return;
-    const openInBrowser = () => openIntent(doc.appName as EntAppName, INTENT_TYPE.OPEN_RESOURCE, { id: doc.resourceEntId, url });
-    if (doc.appName === 'workspace') {
-      const opener = {
-        src: url,
-        type: doc.type,
-      } as IMedia;
-      await openMedia(opener, openInBrowser);
-    } else {
-      openInBrowser();
-    }
-  }, []);
+  const openDocument = React.useCallback(
+    async (doc: CommunitiesDocumentItem) => {
+      openMedia(navigation, doc);
+    },
+    [navigation],
+  );
 
   const isFocused = useIsFocused();
   const openFolder = React.useCallback(

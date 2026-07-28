@@ -3,13 +3,13 @@ import { ImageSourcePropType, ImageURISource } from 'react-native';
 import { ReactVideoSourceProperties } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
-import { getAuthenticationHeaderForAccount, getDeviceHeaders, getUrlWithBase } from './common';
-
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { isRequireSource } from '~/framework/modules/media';
 import appConf, { Platform } from '~/framework/util/appConf';
-import { isRequireSource } from '~/framework/util/media';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
+
+import { getAuthenticationHeaderForAccount, getDeviceHeaders, getUrlWithBase } from './common';
 
 // # DEVICE FETCH
 
