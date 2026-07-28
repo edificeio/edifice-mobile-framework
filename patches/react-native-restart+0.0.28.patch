@@ -1,0 +1,49 @@
+diff --git a/node_modules/react-native-restart/android/src/main/java/com/reactnativerestart/RestartModule.java b/node_modules/react-native-restart/android/src/main/java/com/reactnativerestart/RestartModule.java
+index 6bc58df..433b76c 100644
+--- a/node_modules/react-native-restart/android/src/main/java/com/reactnativerestart/RestartModule.java
++++ b/node_modules/react-native-restart/android/src/main/java/com/reactnativerestart/RestartModule.java
+@@ -1,9 +1,11 @@
+ package com.reactnativerestart;
+ 
+ import android.app.Activity;
++import android.content.Context;
+ import android.os.Handler;
+ import android.os.Looper;
+ import com.facebook.react.ReactApplication;
++import com.facebook.react.ReactHost;
+ import com.facebook.react.ReactInstanceManager;
+ import com.facebook.react.bridge.LifecycleEventListener;
+ import com.facebook.react.bridge.ReactApplicationContext;
+@@ -39,8 +41,32 @@ public class RestartModule extends ReactContextBaseJavaModule {
+         });
+     }
+ 
++    /**
++     * New Architecture (bridgeless): the app exposes a ReactHost instead of a ReactNativeHost.
++     * See https://github.com/avishayil/react-native-restart/issues/300
++     */
++    private ReactHost resolveReactHost() {
++        Context ctx = getReactApplicationContext().getApplicationContext();
++        return (ctx instanceof ReactApplication) ? ((ReactApplication) ctx).getReactHost() : null;
++    }
++
+     private void loadBundle() {
+         clearLifecycleEventListener();
++
++        // On bridgeless, ReactApplication.getReactNativeHost() throws, so the legacy path below
++        // silently degrades to Activity.recreate(), which keeps the JS runtime alive (modules are
++        // never re-evaluated). ReactHost.reload() recreates the JS runtime, as intended.
++        final ReactHost reactHost = resolveReactHost();
++        if (reactHost != null) {
++            new Handler(Looper.getMainLooper()).post(new Runnable() {
++                @Override
++                public void run() {
++                    reactHost.reload(restartReason != null ? restartReason : "RNRestart");
++                }
++            });
++            return;
++        }
++
+         try {
+             final ReactInstanceManager instanceManager = resolveInstanceManager();
+             if (instanceManager == null) {
