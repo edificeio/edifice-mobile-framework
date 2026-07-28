@@ -1,21 +1,12 @@
 import { ViewProps } from 'react-native';
 
-import { Temporal } from '@js-temporal/polyfill';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { AnnouncementDetails } from '~/framework/modules/communities/service/announcements';
 
-import { AudienceProps } from '~/framework/modules/audience/components/types';
-import { Media } from '~/framework/modules/media';
-
-export interface PostDetailsProps<IdType extends string | number> {
-  audience?: AudienceProps;
-  author: {
-    userId: string;
-    username: string;
-  };
-  content: string;
-  date?: Temporal.Instant;
+interface PostDetailsDisplayProps {
   header?: React.ReactElement;
-  media?: Media[];
-  resourceId: IdType;
+  session: AuthActiveAccount;
   style?: ViewProps['style'];
-  title?: string;
 }
+
+export type PostDetailsProps<IdType extends string | number> = AnnouncementDetails<IdType> & PostDetailsDisplayProps;

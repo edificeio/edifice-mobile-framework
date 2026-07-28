@@ -1,17 +1,20 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import { AnnouncementType } from '@edifice.io/community-client-rest-rn';
+
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { UI_STYLES } from '~/framework/components/constants';
 import { CaptionItalicText, SmallBoldText } from '~/framework/components/text';
+import CollectionItem from '~/framework/modules/communities/components/announcements/list/item/collection';
 import PostDetails from '~/framework/modules/communities/components/announcements/post/details';
-import type { PostDetailsProps } from '~/framework/modules/communities/components/announcements/post/details/types';
+import type { AnnouncementDetails } from '~/framework/modules/communities/service/announcements';
 
 import styles from './styles';
 import { AnnouncementListItemProps } from './types';
 
-const PostHeader = ({ author, date }: Readonly<Pick<PostDetailsProps<number>, 'author' | 'date'>>) => {
+const InfoHeader = ({ author, date }: Readonly<Pick<AnnouncementDetails<number>, 'author' | 'date'>>) => {
   const displayedDate = React.useMemo(() => (date ? I18n.date(date) : ''), [date]);
 
   return (
@@ -28,9 +31,18 @@ const PostHeader = ({ author, date }: Readonly<Pick<PostDetailsProps<number>, 'a
   );
 };
 
-const AnnouncementListItem = ({ announcement, style }: Readonly<AnnouncementListItemProps>) => {
+const AnnouncementListItem = ({ announcement, session, style, userRole }: Readonly<AnnouncementListItemProps>) => {
+  if (announcement.type === AnnouncementType.COLLECT) {
+    return <CollectionItem announcement={announcement} style={style} userRole={userRole} />;
+  }
+
   return (
-    <PostDetails {...announcement} header={<PostHeader author={announcement.author} date={announcement.date} />} style={style} />
+    <PostDetails
+      {...announcement}
+      header={<InfoHeader author={announcement.author} date={announcement.date} />}
+      session={session}
+      style={style}
+    />
   );
 };
 

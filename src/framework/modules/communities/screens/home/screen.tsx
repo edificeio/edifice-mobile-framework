@@ -2,16 +2,13 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import {
-  AnnouncementClient,
+  AnnouncementType,
   CommunityClient,
   CommunitySection,
-  InformationAnnouncementDto,
   InvitationClient,
   InvitationResponseDto,
   MembershipClient,
-  SearchAnnouncementDto,
 } from '@edifice.io/community-client-rest-rn';
-import { Temporal } from '@js-temporal/polyfill';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,11 +26,9 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { usePrevious } from '~/framework/hooks/previous';
-import { audienceService } from '~/framework/modules/audience/service';
-import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
+import { getCollectionStatus } from '~/framework/modules/communities/components/announcements/list/item/collection';
 import PostDetailsLoader from '~/framework/modules/communities/components/announcements/post/details/loader';
-import { PostDetailsProps } from '~/framework/modules/communities/components/announcements/post/details/types';
 import CommunityInfoBottomSheet from '~/framework/modules/communities/components/community-info-bottom-sheet';
 import CommunityWelcomeBottomSheetModal from '~/framework/modules/communities/components/community-welcome-bottomsheet';
 import ConversationTile, {
@@ -50,6 +45,7 @@ import {
 import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-community-navbar/community-navbar/styles';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { AnnouncementDetails, getAnnouncementsDetails } from '~/framework/modules/communities/service/announcements';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { toURISource } from '~/framework/modules/media';
@@ -122,21 +118,25 @@ export const CommunitiesHomeScreenLoaded = function ({
     navigation.setOptions(communityNavBar({ navigation, route }, openInfoModal));
   }, [navigation, openInfoModal, route]);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<PostDetailsProps<number>>['keyExtractor']>>(
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<AnnouncementDetails<number>>['keyExtractor']>>(
     item => item.resourceId.toString(),
     [],
   );
 
-  const [announcements, setAnnouncements] = React.useState<(PostDetailsProps<number> | typeof LOADING_ITEM_DATA)[]>([]);
+  const [announcements, setAnnouncements] = React.useState<(AnnouncementDetails<number> | typeof LOADING_ITEM_DATA)[]>([]);
 
   const renderItem = React.useCallback(
-    ({ index, item }: { index: number; item: PostDetailsProps<number> }) => {
+    ({ index, item }: { index: number; item: AnnouncementDetails<number> }) => {
       const itemSeparator = getItemSeparatorStyle(index, announcements.length, styles.itemSeparator);
-      const itemStyle = [styles.itemContainer, itemSeparator];
+      const separatorColor =
+        itemSeparator && item.type === AnnouncementType.COLLECT
+          ? { borderBottomColor: getCollectionStatus(item, role).colors.light }
+          : undefined;
+      const itemStyle = [styles.itemContainer, itemSeparator, separatorColor];
 
-      return <AnnouncementListItem announcement={item} style={itemStyle} />;
+      return <AnnouncementListItem announcement={item} session={session} style={itemStyle} userRole={role} />;
     },
-    [announcements.length],
+    [announcements.length, role, session],
   );
 
   const [scrollElements, statusBar, scrollViewProps] = useCommunityScrollableThumbnail({
@@ -180,51 +180,14 @@ export const CommunitiesHomeScreenLoaded = function ({
     [scrollElements, title, communityId, navigation, membersId, totalMembers, platformUrl, spotlightedCourseId, role],
   );
 
-  const audienceReferer = React.useMemo(
-    () => ({
-      module: moduleConfig.name,
-      resourceType: 'announcement',
-    }),
-    [],
-  );
-
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       try {
-        const baseQueryParams: SearchAnnouncementDto = {
-          page: page + 1,
-          size: ANNOUNCEMENTS_PAGE_SIZE,
-        };
-
-        const items = await sessionApi(moduleConfig, AnnouncementClient).getAnnouncements(communityId, baseQueryParams);
-        const itemsIds = items.items.map(i => i.id.toString());
-        const reactions = await audienceService.reaction.getSummary(audienceReferer.module, audienceReferer.resourceType, itemsIds);
-
-        const newAnnouncements: PostDetailsProps<number>[] = items.items.map(e => {
-          const ret: PostDetailsProps<number> = {
-            audience: {
-              infosReactions: {
-                total: reactions.reactionsByResource[e.id].totalReactionsCounter,
-                types: reactions.reactionsByResource[e.id].reactionTypes,
-                userReaction: reactions.reactionsByResource[e.id].userReaction,
-              },
-              referer: {
-                ...audienceReferer,
-                resourceId: e.id.toString(),
-              },
-              session,
-            },
-            author: {
-              userId: e.author.entId,
-              username: e.author.displayName,
-            },
-            content: (e as Partial<InformationAnnouncementDto>).content ?? '',
-            date: Temporal.Instant.from((e.modificationDate ?? e.publicationDate) as unknown as string),
-            media: ((e as Partial<InformationAnnouncementDto>).media && (e as InformationAnnouncementDto).media.map(toMedia)) ?? [],
-            resourceId: e.id,
-          };
-          return ret;
-        });
+        const { announcements: newAnnouncements, total } = await getAnnouncementsDetails(
+          communityId,
+          page,
+          ANNOUNCEMENTS_PAGE_SIZE,
+        );
 
         setAnnouncements(prevData => {
           return staleOrSplice({
@@ -232,14 +195,14 @@ export const CommunitiesHomeScreenLoaded = function ({
             previousData: prevData,
             reloadAll,
             start: page * ANNOUNCEMENTS_PAGE_SIZE,
-            total: items.meta.totalItems,
+            total,
           });
         });
       } catch (e) {
-        console.error('Error while loading community members list', e);
+        console.error('Error while loading community announcements list', e);
       }
     },
-    [audienceReferer, communityId, session],
+    [communityId],
   );
 
   useFocusEffect(
