@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.17.4",
+  "version": "1.17.5",
   "private": true,
   "codegenConfig": {
     "name": "AppSpecs",
