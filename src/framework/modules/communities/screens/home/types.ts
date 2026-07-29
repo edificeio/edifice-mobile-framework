@@ -15,6 +15,7 @@ export namespace CommunitiesHomeScreen {
   export type NavigationProps = NativeStackScreenProps<CommunitiesNavigationParams, 'home'>;
   export type AllProps = CommunitiesHomeScreen.NavigationProps;
   export type RequiredData = Pick<CommunityResponseDto, 'title' | 'welcomeNote'> & {
+    hasDiscussions: boolean;
     totalMembers: number;
     membersId: string[];
     session: AuthActiveAccount;

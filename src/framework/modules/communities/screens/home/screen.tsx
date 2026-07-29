@@ -46,6 +46,7 @@ import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-co
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { AnnouncementDetails, getAnnouncementsDetails } from '~/framework/modules/communities/service/announcements';
+import { hasDiscussions as fetchHasDiscussions } from '~/framework/modules/communities/service/conversations';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { toURISource } from '~/framework/modules/media';
@@ -81,6 +82,7 @@ export const computeNavBar = (
 ): NativeStackNavigationOptions => communityNavBar(props, () => {});
 
 export const CommunitiesHomeScreenLoaded = function ({
+  hasDiscussions,
   image,
   membersId,
   navigation,
@@ -170,14 +172,25 @@ export const CommunitiesHomeScreenLoaded = function ({
                 spotlightedCourseId={spotlightedCourseId}
                 userRole={role}
               />
-              <ConversationTile />
+              <ConversationTile communityId={communityId} hasDiscussions={hasDiscussions} platformUrl={platformUrl} />
             </View>
           </View>
         </View>
         <HeadingXSText style={styles.announcementTitle}>{I18n.get('communities-announcements-title')}</HeadingXSText>
       </View>,
     ],
-    [scrollElements, title, communityId, navigation, membersId, totalMembers, platformUrl, spotlightedCourseId, role],
+    [
+      scrollElements,
+      title,
+      communityId,
+      navigation,
+      membersId,
+      totalMembers,
+      platformUrl,
+      spotlightedCourseId,
+      role,
+      hasDiscussions,
+    ],
   );
 
   const loadData = React.useCallback(
@@ -289,12 +302,18 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
     [dispatch, communityId],
   );
   const [invitationId, setInvitationId] = React.useState<number | undefined>(undefined);
+  const [communityHasDiscussions, setCommunityHasDiscussions] = React.useState(false);
 
   const loadContent = React.useCallback(async () => {
-    const [community, invitations, userInvitation] = await Promise.all([
+    const [community, invitations, userInvitation, communityDiscussions] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
       accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { includePending: true, page: 1, size: 20 }),
       accountApi(session, moduleConfig, InvitationClient).getUserInvitations({ communityId }),
+      // Temporary check to allow web redirection if user has at least one discussion
+      fetchHasDiscussions(communityId).catch(e => {
+        console.error('Error while checking community discussions', e);
+        return false;
+      }),
     ]);
 
     setData({
@@ -303,6 +322,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       totalMembers: invitations.meta.totalItems,
     });
     setInvitationId(userInvitation.items.at(0)?.id);
+    setCommunityHasDiscussions(communityDiscussions);
   }, [communityId, session, setData]);
 
   const image = React.useMemo(
@@ -327,6 +347,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
           route={realRoute}
           refreshControl={refreshControl}
           {...data}
+          hasDiscussions={communityHasDiscussions}
           image={image!}
           session={session}
           spotlightedCourseId={spotlightedCourseId}
@@ -334,7 +355,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       ) : (
         <EmptyContentScreen />
       ),
-    [data, navigation, realRoute, image, session, spotlightedCourseId],
+    [data, navigation, realRoute, communityHasDiscussions, image, session, spotlightedCourseId],
   );
 
   return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;

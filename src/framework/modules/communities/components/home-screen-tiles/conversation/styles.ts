@@ -6,10 +6,18 @@ export default StyleSheet.create({
   tileCaption: {
     ...baseStyles.tileCaption,
   },
+  tileCaptionTextAvailable: {
+    ...baseStyles.tileCaptionTextAvailable,
+  },
   tileCaptionTextUnavailable: {
     ...baseStyles.tileCaptionTextUnavailable,
   },
-  tileConversation: {
+  tileConversationAvailable: {
+    ...baseStyles.tileBase,
+    ...baseStyles.tileAvailable,
+    justifyContent: 'center',
+  },
+  tileConversationUnavailable: {
     ...baseStyles.tileBase,
     ...baseStyles.tileUnavailable,
   },
