@@ -41,20 +41,17 @@ import type { WikiReaderScreen } from './types';
 import { markViewAudience, useAudience } from '~/framework/modules/audience';
 import { wikiAudienceConfig } from '../../module-config';
 
-const DEBUG_LIST_DATA: SocialResourceViewerTypes.Props['comments'] = [
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '1', type: ITEM_COMMENT, value: '1' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '2', type: ITEM_COMMENT, value: '2' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '3', type: ITEM_COMMENT, value: '3' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '4', type: ITEM_COMMENT, value: '4' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '5', type: ITEM_COMMENT, value: '5' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '6', type: ITEM_COMMENT, value: '6' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '7', type: ITEM_COMMENT, value: '7' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '8', type: ITEM_COMMENT, value: '8' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '9', type: ITEM_COMMENT, value: '9' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '10', type: ITEM_COMMENT, value: '10' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '11', type: ITEM_COMMENT, value: '11' },
-  { authorId: '', authorName: 'Moi', date: Temporal.Now.instant(), id: '12', type: ITEM_COMMENT, value: '12' },
-];
+const DEBUG_LIST_DATA: SocialResourceViewerTypes.Props['comments'] = [];
+for (let i = 1; i <= 20; ++i) {
+  DEBUG_LIST_DATA.push({
+    authorId: '',
+    authorName: 'Moi',
+    date: Temporal.Now.instant(),
+    id: i.toString(),
+    type: ITEM_COMMENT,
+    value: i.toString(),
+  });
+}
 
 export const computeNavBar = ({
   navigation,
