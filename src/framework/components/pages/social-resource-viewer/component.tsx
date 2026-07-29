@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
+import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { SingleAvatar } from '~/framework/components/avatar';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
@@ -20,11 +21,10 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import { FlatListProps } from '~/framework/components/list/flat-list';
 import { BodyBoldText } from '~/framework/components/text';
-import usePreventBack from '~/framework/hooks/prevent-back';
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
-import styles from './styles';
+import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
 import {
   CommentItem,
   ITEM_COMMENT,
@@ -147,8 +147,7 @@ export function SocialResourceViewer({
     [newCommentInputState.height, jsKeyboardHeight],
   );
 
-  usePreventBack({
-    showAlert: newCommentInputState.value.length > 0,
+  useConfirmRemove(newCommentInputState.value.length > 0, {
     text: I18n.get('comment-preventback-alert-text'),
     title: I18n.get('comment-preventback-alert-title'),
   });
@@ -191,6 +190,15 @@ export const SocialResourceViewerAddCommentForm = ({
   const inputDispatch = React.useContext(NewCommentInputDispatchContext);
   const navBarHeight = useHeaderHeight();
   const { bottom, top } = useSafeAreaInsets();
+  const stickyViewOffset = React.useMemo(
+    () => ({
+      closed: 0,
+      opened:
+        navBarHeight +
+        (Platform.OS === 'android' ? bottom - top : -styles.stickyCommentWrapper.paddingBottom + COMMENT_FORM_OVERSCROLL_SIZE),
+    }),
+    [bottom, navBarHeight, top],
+  );
   return (
     <Animated.View
       style={style}
@@ -206,7 +214,7 @@ export const SocialResourceViewerAddCommentForm = ({
          * on Android, edge-to-edge compatibility for react-native-keyboard-controller force us to make Status bar transparent and take insets into account here.
          * When edge-to-edge will be implemented at project-level, this would be no more necessary.
          */
-        offset={{ closed: 0, opened: navBarHeight + (Platform.OS === 'android' ? bottom - top : 0) }}>
+        offset={stickyViewOffset}>
         <SingleAvatar size="md" userId={session.user.id} />
         <ChatTextArea
           maxLength={80}
