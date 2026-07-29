@@ -55,37 +55,39 @@ export function SocialResourceViewer({
   children,
   comments,
 }: SocialResourceViewer.Props) {
+  // User data
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
 
+  // Screen layout
+  const navBarHeight = useHeaderHeight();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+
+  // Component layout
   const listRef = React.useRef<Animated.FlatList<SocialResourceViewerItemType>>(null);
+  const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
+  const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
+
+  // Input state
   const [newCommentInputState, newCommentInputDispatch] = React.useState({ height: 0, value: '' });
   const [isNewCommentFocused, setNewCommentIsFocused] = React.useState(false);
   const alwaysShowNewCommentForm = alwaysShowCommentField || isNewCommentFocused || newCommentInputState.value.length > 0;
 
-  const navBarHeight = useHeaderHeight();
-  const { bottom: bottomInset } = useSafeAreaInsets();
-
-  const renderScrollComponent = React.useCallback<
-    NonNullable<FlatListProps<SocialResourceViewerItemType>['renderScrollComponent']>
-  >(props => <KeyboardAwareScrollView {...props} extraKeyboardSpace={-navBarHeight} />, [navBarHeight]);
-
-  const scrollOffset = useSharedValue(0);
+  // Scroll animation values
+  const { height: animatedKeyboardHeight } = useReanimatedKeyboardAnimation();
+  const animatedScrollOffset = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler(event => {
-    scrollOffset.value = event.contentOffset.y;
+    animatedScrollOffset.value = event.contentOffset.y;
   });
-  const [resourceHeight, setResourceHeight] = React.useState(0);
-  const [listHeight, setListHeight] = React.useState(0);
-  const { height: keyboardHeight } = useReanimatedKeyboardAnimation();
   const { isVisible: isKeyboardVisible } = useKeyboardState();
 
   const inputStyle = useAnimatedStyle(() => {
     const translateValue =
-      -scrollOffset.value -
-      listHeight +
-      resourceHeight +
+      -animatedScrollOffset.value -
+      measuredListHeight +
+      measuredResourceHeight +
       newCommentInputState.height +
-      Math.max(-keyboardHeight.value, bottomInset + UI_SIZES.elements.tabbarHeight) -
+      Math.max(-animatedKeyboardHeight.value, bottomInset + UI_SIZES.elements.tabbarHeight) -
       bottomInset -
       UI_SIZES.elements.tabbarHeight;
     return {
@@ -99,7 +101,7 @@ export function SocialResourceViewer({
         },
       ],
     };
-  }, [listHeight, resourceHeight, newCommentInputState.height, alwaysShowNewCommentForm, bottomInset]);
+  }, [measuredListHeight, measuredResourceHeight, newCommentInputState.height, alwaysShowNewCommentForm, bottomInset]);
 
   const scrollToOffset = React.useCallback((offset: number) => {
     listRef.current?.scrollToOffset({
@@ -113,13 +115,17 @@ export function SocialResourceViewer({
       onStart: e => {
         'worklet';
         if (e.progress !== 1 || alwaysShowNewCommentForm) return;
-        const destination = resourceHeight - e.height;
-        if (scrollOffset.value >= destination) return;
+        const destination = measuredResourceHeight - e.height;
+        if (animatedScrollOffset.value >= destination) return;
         scheduleOnRN(scrollToOffset, destination);
       },
     },
-    [resourceHeight, listRef, alwaysShowNewCommentForm],
+    [measuredResourceHeight, listRef, alwaysShowNewCommentForm],
   );
+
+  const renderScrollComponent = React.useCallback<
+    NonNullable<FlatListProps<SocialResourceViewerItemType>['renderScrollComponent']>
+  >(props => <KeyboardAwareScrollView {...props} extraKeyboardSpace={-navBarHeight} />, [navBarHeight]);
 
   const renderResource = React.useCallback(() => {
     return (
@@ -129,7 +135,7 @@ export function SocialResourceViewer({
             layout: { height },
           },
         }) => {
-          setResourceHeight(height);
+          setMeasuredResourceHeight(height);
         }}>
         {children}
       </View>
@@ -143,7 +149,7 @@ export function SocialResourceViewer({
     setNewCommentIsFocused(false);
   }, []);
   const onLayout = React.useCallback(({ nativeEvent: { layout } }) => {
-    setListHeight(layout.height);
+    setMeasuredListHeight(layout.height);
   }, []);
   const scrollIndicatorInsets = React.useMemo(
     () => ({
@@ -171,7 +177,9 @@ export function SocialResourceViewer({
           data={comments}
           renderItem={SocialResourceViewerItem}
           ListHeaderComponent={renderResource}
-          ListFooterComponent={<View style={{ height: newCommentInputState.height }} />}
+          ListFooterComponent={
+            <View style={React.useMemo(() => ({ height: newCommentInputState.height }), [newCommentInputState.height])} />
+          }
           scrollIndicatorInsets={scrollIndicatorInsets}
         />
         {canAddComment && (
