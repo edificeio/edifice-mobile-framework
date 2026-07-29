@@ -21,7 +21,7 @@ import { BaseTextAreaProps, BaseTextInputProps } from './types';
  * This value compensates this strange behaviour and has been found
  * by measuring on screen the difference between <TextInput/> and <Text/> components with the same lineHeight value.
  */
-export const IOS_TEXT_INPUT_LINE_HEIGHT_RATIO = 1.1475;
+export const IOS_TEXT_INPUT_LINE_HEIGHT_RATIO = 1.25;
 
 /**
  * Neutral component for one-line text input.
@@ -121,15 +121,15 @@ export const BaseTextArea = ({
   const borderWidth = wrapperStyle.borderWidth ?? 0;
   const aimHeight = _aimHeight - borderWidth * 2;
   const paddingVertical = (aimHeight - fontScale * lineHeight * IOS_TEXT_INPUT_LINE_HEIGHT_RATIO) / 2;
-  const minHeight = paddingVertical * 2 + lineHeight * fontScale * minLines;
-  const maxHeight = paddingVertical * 2 + lineHeight * fontScale * maxLines;
+  const minHeight = paddingVertical * 2 + lineHeight * IOS_TEXT_INPUT_LINE_HEIGHT_RATIO * fontScale * minLines;
+  const maxHeight = paddingVertical * 2 + lineHeight * IOS_TEXT_INPUT_LINE_HEIGHT_RATIO * fontScale * maxLines;
 
   const inputStyle = React.useMemo(() => {
     return [
       intermediate,
       {
         fontSize,
-        lineHeight: lineHeight * IOS_TEXT_INPUT_LINE_HEIGHT_RATIO,
+        lineHeight,
         maxHeight,
         minHeight,
         paddingVertical,

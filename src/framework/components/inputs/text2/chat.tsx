@@ -2,12 +2,12 @@ import React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { PixelRatio, StyleSheet, Text } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
+
 import { BaseTextArea } from './base';
 import { useMaxLength } from './base.common';
 import { chat } from './style';
 import { ChatTextAreaProps } from './types';
-
-import { UI_SIZES } from '~/framework/components/constants';
 
 /**
  * Multi-line text edit stylized as a chat bubble.
