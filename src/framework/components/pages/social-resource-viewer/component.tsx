@@ -6,9 +6,10 @@ import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
   useKeyboardHandler,
+  useKeyboardState,
   useReanimatedKeyboardAnimation,
 } from 'react-native-keyboard-controller';
-import Animated, { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, { AnimatedStyle, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 import { useSelector } from 'react-redux';
@@ -60,10 +61,11 @@ export function SocialResourceViewer({
   const listRef = React.useRef<Animated.FlatList<SocialResourceViewerItemType>>(null);
   const [newCommentInputState, newCommentInputDispatch] = React.useState({ height: 0, value: '' });
   const [isNewCommentFocused, setNewCommentIsFocused] = React.useState(false);
-  const [jsKeyboardHeight, setJsKeyboardHeight] = React.useState(0);
   const alwaysShowNewCommentForm = alwaysShowCommentField || isNewCommentFocused || newCommentInputState.value.length > 0;
 
   const navBarHeight = useHeaderHeight();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+
   const renderScrollComponent = React.useCallback<
     NonNullable<FlatListProps<SocialResourceViewerItemType>['renderScrollComponent']>
   >(props => <KeyboardAwareScrollView {...props} extraKeyboardSpace={-navBarHeight} />, [navBarHeight]);
@@ -75,7 +77,8 @@ export function SocialResourceViewer({
   const [resourceHeight, setResourceHeight] = React.useState(0);
   const [listHeight, setListHeight] = React.useState(0);
   const { height: keyboardHeight } = useReanimatedKeyboardAnimation();
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const { isVisible: isKeyboardVisible } = useKeyboardState();
+
   const inputStyle = useAnimatedStyle(() => {
     const translateValue =
       -scrollOffset.value -
@@ -109,7 +112,6 @@ export function SocialResourceViewer({
     {
       onStart: e => {
         'worklet';
-        scheduleOnRN(setJsKeyboardHeight, e.height - e.progress * (UI_SIZES.elements.tabbarHeight + bottomInset));
         if (e.progress !== 1 || alwaysShowNewCommentForm) return;
         const destination = resourceHeight - e.height;
         if (scrollOffset.value >= destination) return;
@@ -144,8 +146,12 @@ export function SocialResourceViewer({
     setListHeight(layout.height);
   }, []);
   const scrollIndicatorInsets = React.useMemo(
-    () => ({ bottom: newCommentInputState.height + jsKeyboardHeight }),
-    [newCommentInputState.height, jsKeyboardHeight],
+    () => ({
+      bottom:
+        newCommentInputState.height +
+        (isKeyboardVisible ? 1 : 0) * (styles.stickyCommentWrapper.paddingBottom - COMMENT_FORM_OVERSCROLL_SIZE),
+    }),
+    [isKeyboardVisible, newCommentInputState.height],
   );
 
   useConfirmRemove(newCommentInputState.value.length > 0, {
@@ -182,7 +188,7 @@ export const SocialResourceViewerAddCommentForm = ({
   session,
   style,
 }: {
-  style: ViewStyle;
+  style: AnimatedStyle<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
   session: AuthActiveAccount | AuthSavedLoggedInAccount;
