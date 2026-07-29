@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { ListRenderItemInfo, Platform, View, ViewStyle } from 'react-native';
+import { Platform, View, ViewStyle } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
+import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
@@ -36,13 +37,7 @@ import {
   type SocialResourceViewerItemType,
 } from './types';
 
-/**
- * Note: FlashList v1 contains a bug that duplicates sticky elements. FlatList handles it correctly.
- *  That causes to lose focus on input chen scroll past to sticky position.
- * @see https://github.com/Shopify/flash-list/issues/739
- *
- * ToDo: test if FlashListv2 fixes the bug. Until then, we use FlatList.
- */
+const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerItemType>);
 
 export const NewCommentInputContext = React.createContext<{ height: number; value: string }>({ height: 0, value: '' });
 export const NewCommentInputDispatchContext = React.createContext<
@@ -64,7 +59,7 @@ export function SocialResourceViewer({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   // Component layout
-  const listRef = React.useRef<Animated.FlatList<SocialResourceViewerItemType>>(null);
+  const listRef = React.useRef<FlashListRef<SocialResourceViewerItemType>>(null);
   const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
 
@@ -168,7 +163,7 @@ export function SocialResourceViewer({
   return (
     <NewCommentInputContext value={newCommentInputState}>
       <NewCommentInputDispatchContext value={newCommentInputDispatch}>
-        <Animated.FlatList<SocialResourceViewerItemType>
+        <AnimatedFlashList
           ref={listRef}
           onLayout={onLayout}
           keyboardDismissMode="interactive"
