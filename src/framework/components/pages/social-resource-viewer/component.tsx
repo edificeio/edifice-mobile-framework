@@ -233,7 +233,7 @@ export const SocialResourceViewerAddCommentForm = ({
         <SingleAvatar size="md" userId={session.user.id} />
         <ChatTextArea
           maxLength={80}
-          wrapperStyle={[UI_STYLES.flexGrow1]}
+          wrapperStyle={[UI_STYLES.flex1]}
           value={inputState.value}
           onChangeText={React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
             text => {
