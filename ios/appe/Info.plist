@@ -5,7 +5,7 @@
 	<key>BundleVersionOverride</key>
 	<string>empty</string>
 	<key>BundleVersionType</key>
-	<string>comm.4</string>
+	<string></string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -23,11 +23,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.17.4</string>
+	<string>1.17.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1170407</string>
+	<string>1170500</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>http</string>
