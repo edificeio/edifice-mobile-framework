@@ -8,8 +8,9 @@ import {
   useKeyboardHandler,
   useReanimatedKeyboardAnimation,
 } from 'react-native-keyboard-controller';
-import Animated, { runOnJS, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { scheduleOnRN } from 'react-native-worklets';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -108,11 +109,11 @@ export function SocialResourceViewer({
     {
       onStart: e => {
         'worklet';
-        runOnJS(setJsKeyboardHeight)(e.height - e.progress * (UI_SIZES.elements.tabbarHeight + bottomInset));
+        scheduleOnRN(setJsKeyboardHeight, e.height - e.progress * (UI_SIZES.elements.tabbarHeight + bottomInset));
         if (e.progress !== 1 || alwaysShowNewCommentForm) return;
         const destination = resourceHeight - e.height;
         if (scrollOffset.value >= destination) return;
-        runOnJS(scrollToOffset)(destination);
+        scheduleOnRN(scrollToOffset, destination);
       },
     },
     [resourceHeight, listRef, alwaysShowNewCommentForm],
