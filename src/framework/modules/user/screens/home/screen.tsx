@@ -251,7 +251,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       Toast.showError(`Zendesk health check error: ${(error as Error).message}`);
     }
   }, [zendesk]);
-  console.debug('canSEE_THEME', getSwitchThemeRight(session!));
 
   React.useEffect(() => {
     if (showHelpCenter)
