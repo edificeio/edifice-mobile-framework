@@ -3,16 +3,9 @@ import { Platform, View, ViewStyle } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
-import {
-  KeyboardAwareScrollView,
-  KeyboardStickyView,
-  useKeyboardHandler,
-  useKeyboardState,
-  useReanimatedKeyboardAnimation,
-} from 'react-native-keyboard-controller';
+import { KeyboardAwareScrollView, KeyboardStickyView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { scheduleOnRN } from 'react-native-worklets';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -64,9 +57,9 @@ export function SocialResourceViewer({
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
 
   // Input state
-  const [newCommentInputState, newCommentInputDispatch] = React.useState({ height: 0, value: '' });
+  const [newCommentFormState, newCommentFormDispatch] = React.useState({ height: 0, value: '' });
   const [isNewCommentFocused, setNewCommentIsFocused] = React.useState(false);
-  const alwaysShowNewCommentForm = alwaysShowCommentField || isNewCommentFocused || newCommentInputState.value.length > 0;
+  const alwaysShowNewCommentForm = alwaysShowCommentField || isNewCommentFocused || newCommentFormState.value.length > 0;
 
   // Scroll animation values
   const { height: animatedKeyboardHeight } = useReanimatedKeyboardAnimation();
@@ -74,14 +67,13 @@ export function SocialResourceViewer({
   const scrollHandler = useAnimatedScrollHandler(event => {
     animatedScrollOffset.value = event.contentOffset.y;
   });
-  const { isVisible: isKeyboardVisible } = useKeyboardState();
 
   const inputStyle = useAnimatedStyle(() => {
     const translateValue =
       -animatedScrollOffset.value -
       measuredListHeight +
       measuredResourceHeight +
-      newCommentInputState.height +
+      newCommentFormState.height +
       Math.max(-animatedKeyboardHeight.value, bottomInset + UI_SIZES.elements.tabbarHeight) -
       bottomInset -
       UI_SIZES.elements.tabbarHeight;
@@ -96,31 +88,24 @@ export function SocialResourceViewer({
         },
       ],
     };
-  }, [measuredListHeight, measuredResourceHeight, newCommentInputState.height, alwaysShowNewCommentForm, bottomInset]);
-
-  const scrollToOffset = React.useCallback((offset: number) => {
-    listRef.current?.scrollToOffset({
-      animated: true,
-      offset,
-    });
-  }, []);
-
-  useKeyboardHandler(
-    {
-      onStart: e => {
-        'worklet';
-        if (e.progress !== 1 || alwaysShowNewCommentForm) return;
-        const destination = measuredResourceHeight - e.height;
-        if (animatedScrollOffset.value >= destination) return;
-        scheduleOnRN(scrollToOffset, destination);
-      },
-    },
-    [measuredResourceHeight, listRef, alwaysShowNewCommentForm],
-  );
+  }, [measuredListHeight, measuredResourceHeight, newCommentFormState.height, alwaysShowNewCommentForm, bottomInset]);
 
   const renderScrollComponent = React.useCallback<
     NonNullable<FlatListProps<SocialResourceViewerItemType>['renderScrollComponent']>
-  >(props => <KeyboardAwareScrollView {...props} extraKeyboardSpace={-navBarHeight} />, [navBarHeight]);
+  >(
+    props => (
+      <KeyboardAwareScrollView
+        {...props}
+        extraKeyboardSpace={
+          -navBarHeight +
+          styles.stickyCommentWrapper.paddingBottom -
+          COMMENT_FORM_OVERSCROLL_SIZE +
+          (Platform.OS === 'android' ? bottomInset : 0)
+        }
+      />
+    ),
+    [bottomInset, navBarHeight],
+  );
 
   const renderResource = React.useCallback(() => {
     return (
@@ -148,21 +133,26 @@ export function SocialResourceViewer({
   }, []);
   const scrollIndicatorInsets = React.useMemo(
     () => ({
-      bottom:
-        newCommentInputState.height +
-        (isKeyboardVisible ? 1 : 0) * (styles.stickyCommentWrapper.paddingBottom - COMMENT_FORM_OVERSCROLL_SIZE),
+      bottom: newCommentFormState.height,
     }),
-    [isKeyboardVisible, newCommentInputState.height],
+    [newCommentFormState.height],
   );
 
-  useConfirmRemove(newCommentInputState.value.length > 0, {
+  useConfirmRemove(newCommentFormState.value.length > 0, {
     text: I18n.get('comment-preventback-alert-text'),
     title: I18n.get('comment-preventback-alert-title'),
   });
 
+  const listFooterStyle = React.useMemo(
+    () => ({
+      height: newCommentFormState.height,
+    }),
+    [newCommentFormState.height],
+  );
+
   return (
-    <NewCommentInputContext value={newCommentInputState}>
-      <NewCommentInputDispatchContext value={newCommentInputDispatch}>
+    <NewCommentInputContext value={newCommentFormState}>
+      <NewCommentInputDispatchContext value={newCommentFormDispatch}>
         <AnimatedFlashList
           ref={listRef}
           onLayout={onLayout}
@@ -172,9 +162,7 @@ export function SocialResourceViewer({
           data={comments}
           renderItem={SocialResourceViewerItem}
           ListHeaderComponent={renderResource}
-          ListFooterComponent={
-            <View style={React.useMemo(() => ({ height: newCommentInputState.height }), [newCommentInputState.height])} />
-          }
+          ListFooterComponent={<View style={listFooterStyle} />}
           scrollIndicatorInsets={scrollIndicatorInsets}
         />
         {canAddComment && (
@@ -199,15 +187,17 @@ export const SocialResourceViewerAddCommentForm = ({
   const inputState = React.useContext(NewCommentInputContext);
   const inputDispatch = React.useContext(NewCommentInputDispatchContext);
   const navBarHeight = useHeaderHeight();
-  const { bottom, top } = useSafeAreaInsets();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const stickyViewOffset = React.useMemo(
     () => ({
       closed: 0,
       opened:
-        navBarHeight +
-        (Platform.OS === 'android' ? bottom - top : -styles.stickyCommentWrapper.paddingBottom + COMMENT_FORM_OVERSCROLL_SIZE),
+        navBarHeight -
+        styles.stickyCommentWrapper.paddingBottom +
+        COMMENT_FORM_OVERSCROLL_SIZE -
+        (Platform.OS === 'android' ? bottomInset : 0),
     }),
-    [bottom, navBarHeight, top],
+    [bottomInset, navBarHeight],
   );
   return (
     <Animated.View
@@ -218,36 +208,32 @@ export const SocialResourceViewerAddCommentForm = ({
         },
         [inputDispatch],
       )}>
-      <KeyboardStickyView
-        style={styles.stickyCommentWrapper}
-        /**
-         * on Android, edge-to-edge compatibility for react-native-keyboard-controller force us to make Status bar transparent and take insets into account here.
-         * When edge-to-edge will be implemented at project-level, this would be no more necessary.
-         */
-        offset={stickyViewOffset}>
-        <SingleAvatar size="md" userId={session.user.id} />
-        <ChatTextArea
-          maxLength={80}
-          wrapperStyle={[UI_STYLES.flex1]}
-          value={inputState.value}
-          onChangeText={React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
-            text => {
-              inputDispatch(state => ({ ...state, value: text }));
-            },
-            [inputDispatch],
-          )}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          placeholder="Ajouter un commentaire"
-        />
-        <PrimaryButton disabled={!inputState.value.length} iconLeft="ui-send" round />
+      <KeyboardStickyView offset={stickyViewOffset}>
+        <View style={styles.stickyCommentWrapper}>
+          <SingleAvatar size="md" userId={session.user.id} />
+          <ChatTextArea
+            maxLength={80}
+            wrapperStyle={[UI_STYLES.flex1]}
+            value={inputState.value}
+            onChangeText={React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
+              text => {
+                inputDispatch(state => ({ ...state, value: text }));
+              },
+              [inputDispatch],
+            )}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            placeholder="Ajouter un commentaire"
+          />
+          <PrimaryButton disabled={!inputState.value.length} iconLeft="ui-send" round />
+        </View>
       </KeyboardStickyView>
     </Animated.View>
   );
 };
 
 export const SocialResourceViewerCommentItem = (info: ListRenderItemInfo<CommentItem>) => {
-  const itemStyle = React.useMemo(() => ({ padding: 16 }), []);
+  const itemStyle = React.useMemo(() => ({ padding: 16, borderWidth: 1, borderRadius: 24 }), []);
   return <BodyBoldText style={itemStyle}>Commentaire {info.item.value.toString()}</BodyBoldText>;
 };
 
