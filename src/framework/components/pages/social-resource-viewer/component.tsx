@@ -3,7 +3,7 @@ import { Platform, View, ViewStyle } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
-import { KeyboardAwareScrollView, KeyboardStickyView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
+import { KeyboardChatScrollView, KeyboardStickyView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -94,12 +94,12 @@ export function SocialResourceViewer({
     NonNullable<FlatListProps<SocialResourceViewerItemType>['renderScrollComponent']>
   >(
     props => (
-      <KeyboardAwareScrollView
+      <KeyboardChatScrollView
         {...props}
-        extraKeyboardSpace={
-          -navBarHeight +
-          styles.stickyCommentWrapper.paddingBottom -
-          COMMENT_FORM_OVERSCROLL_SIZE +
+        offset={
+          navBarHeight -
+          styles.stickyCommentWrapper.paddingBottom +
+          COMMENT_FORM_OVERSCROLL_SIZE -
           (Platform.OS === 'android' ? bottomInset : 0)
         }
       />
