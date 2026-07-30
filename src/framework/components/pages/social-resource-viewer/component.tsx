@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Platform, View, ViewStyle } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
-import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
+import { FlashList, FlashListRef } from '@shopify/flash-list';
 import { KeyboardChatScrollView, KeyboardStickyView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,19 +16,12 @@ import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import { FlatListProps } from '~/framework/components/list/flat-list';
-import { BodyBoldText } from '~/framework/components/text';
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
+import { SocialResourceViewerItem } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
-import {
-  CommentItem,
-  ITEM_COMMENT,
-  ITEM_RESPONSE,
-  ResponseItem,
-  type SocialResourceViewer,
-  type SocialResourceViewerItemType,
-} from './types';
+import { type SocialResourceViewer, type SocialResourceViewerItemType } from './types';
 
 const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerItemType>);
 
@@ -230,26 +223,6 @@ export const SocialResourceViewerAddCommentForm = ({
       </KeyboardStickyView>
     </Animated.View>
   );
-};
-
-export const SocialResourceViewerCommentItem = (info: ListRenderItemInfo<CommentItem>) => {
-  const itemStyle = React.useMemo(() => ({ padding: 16, borderWidth: 1, borderRadius: 24 }), []);
-  return <BodyBoldText style={itemStyle}>Commentaire {info.item.value.toString()}</BodyBoldText>;
-};
-
-export const SocialResourceViewerResponseItem = (info: ListRenderItemInfo<ResponseItem>) => {
-  const itemStyle = React.useMemo(() => ({ padding: 16 }), []);
-  return <BodyBoldText style={itemStyle}>Réponse {info.item.value.toString()}</BodyBoldText>;
-};
-
-export const SocialResourceViewerItem = (info: ListRenderItemInfo<SocialResourceViewerItemType>) => {
-  if (info.item.type === ITEM_COMMENT) {
-    return <SocialResourceViewerCommentItem {...(info as ListRenderItemInfo<CommentItem>)} />;
-  } else if (info.item.type === ITEM_RESPONSE) {
-    return <SocialResourceViewerResponseItem {...(info as ListRenderItemInfo<ResponseItem>)} />;
-  } else {
-    return <BodyBoldText>ITEM INCONNU {info.item.value.toString()}</BodyBoldText>;
-  }
 };
 
 export const SocialResourceViewerError = () => <EmptyContentScreen />;
