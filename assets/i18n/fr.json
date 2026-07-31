@@ -1979,6 +1979,8 @@
   "user-structures-title": "Établissement(s) et classe(s)",
   "user-theme-alerttext": "L'application va redémarrer pour appliquer le nouveau thème.",
   "user-theme-alerttitle": "Changer de thème",
+  "user-theme-displayname-1d": "Thème primaire",
+  "user-theme-displayname-2d": "Thème secondaire",
   "user-theme-text": "Choisissez le thème visuel de l'application.",
   "user-theme-title": "Changer le thème",
   "user-theme-toptitle": "Thème de l'interface",
