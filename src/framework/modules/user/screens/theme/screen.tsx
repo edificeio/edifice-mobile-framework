@@ -19,7 +19,7 @@ export default sessionScreen<UserThemeScreenPrivateProps>(function UserThemeScre
   const [isDropdownOpen, setIsDropdownOpen] = React.useState<boolean>(false);
   const [selected, setSelected] = React.useState<number>(themes.findIndex(t => t.level === theme.level));
 
-  const values: IThemeSelectItem[] = themes.map((t, index) => ({ label: t.displayName, value: index }));
+  const values: IThemeSelectItem[] = themes.map((t, index) => ({ label: I18n.get(t.displayName), value: index }));
 
   const onChangeTheme = React.useCallback(
     item => {
