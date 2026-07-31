@@ -46,11 +46,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [filteredUsers, setFilteredUsers] = React.useState<MailsVisible[]>([]);
   const [showList, setShowList] = React.useState<boolean>(false);
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
-  const [heightInputToSave, setHeightInputToSave] = React.useState(0);
-  const [heightToRemoveList, setHeightToRemoveList] = React.useState(INITIAL_HEIGHT_INPUT);
   const [focused, setFocused] = React.useState(false);
   const [inputFocused, setInputFocused] = React.useState(false);
   const [containerLayout, setContainerLayout] = React.useState({ height: 0, width: 0, x: 0, y: 0 });
+  // field bottom in window coordinates.
+  const [fieldBottomY, setFieldBottomY] = React.useState(0);
 
   const users: MailsVisible[] = React.useMemo(() => readVisibles(), []);
 
@@ -59,11 +59,56 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const viewContainerRef = React.useRef<View>(null);
   const inputRef = React.useRef<TextInputType>(null);
   const lastManualQuery = React.useRef<string>('');
+  const measureTimeoutsRef = React.useRef<Array<ReturnType<typeof setTimeout>>>([]);
 
   const resultsHeight = React.useMemo(
-    () => UI_SIZES.getViewHeight({ withoutTabbar: false }) - keyboardHeight - heightToRemoveList,
-    [heightToRemoveList, keyboardHeight],
+    () =>
+      Math.max(
+        // Avoid double-subtracting bottom inset when keyboard is visible.
+        UI_SIZES.screen.height - fieldBottomY - keyboardHeight - (keyboardHeight > 0 ? 0 : UI_SIZES.screen.bottomInset),
+        UI_SIZES.screen.height / 4,
+      ),
+    [fieldBottomY, keyboardHeight],
   );
+
+  const measureFieldBottom = React.useCallback(() => {
+    viewContainerRef.current?.measureInWindow((_x, y, _width, height) => {
+      if (height > 0) setFieldBottomY(y + height);
+    });
+  }, []);
+
+  const clearPendingMeasures = React.useCallback(() => {
+    measureTimeoutsRef.current.forEach(clearTimeout);
+    measureTimeoutsRef.current = [];
+  }, []);
+
+  const scheduleMeasureFieldBottom = React.useCallback(() => {
+    clearPendingMeasures();
+    const measureDelays = Platform.OS === 'android' ? [0, 60, 140, 260] : [0, 60, 140];
+    measureDelays.forEach(delay => {
+      const timer = setTimeout(measureFieldBottom, delay);
+      measureTimeoutsRef.current.push(timer);
+    });
+  }, [clearPendingMeasures, measureFieldBottom]);
+
+  // re-measure after layout/keyboard changes.
+  React.useEffect(() => {
+    if (!showList) return;
+    scheduleMeasureFieldBottom();
+  }, [
+    showList,
+    keyboardHeight,
+    containerLayout.height,
+    containerLayout.y,
+    inputFocused,
+    props.recipients,
+    scheduleMeasureFieldBottom,
+  ]);
+
+  React.useEffect(() => {
+    return () => clearPendingMeasures();
+  }, [clearPendingMeasures]);
+
   const onSubmitManualSearch = () => {
     const normalized = removeAccents(search).toLowerCase();
 
@@ -85,17 +130,19 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   React.useEffect(() => {
     const keyboardWillShow = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', e => {
       setKeyboardHeight(e.endCoordinates.height);
+      if (showList) scheduleMeasureFieldBottom();
     });
 
     const keyboardWillHide = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => {
       setKeyboardHeight(0);
+      if (showList) scheduleMeasureFieldBottom();
     });
 
     return () => {
       keyboardWillShow.remove();
       keyboardWillHide.remove();
     };
-  }, []);
+  }, [scheduleMeasureFieldBottom, showList]);
 
   React.useEffect(() => {
     if (props.isStartScroll && showList && search === '') {
@@ -123,24 +170,22 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           toValue: containerLayout.y + containerLayout.height,
           useNativeDriver: true,
         }).start();
-        setHeightToRemoveList(containerLayout.height - heightInputToSave + INITIAL_HEIGHT_INPUT);
       }, 100);
     }
-  }, [containerLayout.height, containerLayout.y, heightInputToSave, props.recipients, topPositionResults]);
+  }, [containerLayout.height, containerLayout.y, props.recipients, topPositionResults]);
 
   const scrollToInput = React.useCallback(() => {
     if (viewContainerRef.current) {
       setTimeout(() => {
-        setHeightToRemoveList(INITIAL_HEIGHT_INPUT);
-        setHeightInputToSave(containerLayout.height);
         topPositionResults.setValue(containerLayout.y + containerLayout.height);
         props.scrollViewRef.current?.scrollTo({
           animated: true,
           y: containerLayout.y + containerLayout.height - INITIAL_HEIGHT_INPUT,
         });
+        scheduleMeasureFieldBottom();
       }, 200);
     }
-  }, [containerLayout, props.scrollViewRef, topPositionResults]);
+  }, [containerLayout, props.scrollViewRef, scheduleMeasureFieldBottom, topPositionResults]);
 
   React.useEffect(() => {
     if (containerLayout.height > 0 && inputFocused) {
@@ -171,7 +216,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     setInputFocused(true);
     if (!isOpen) setIsOpen(true);
     props.onFocus(props.type);
-  }, [isOpen, props]);
+    if (showList) scheduleMeasureFieldBottom();
+  }, [isOpen, props, scheduleMeasureFieldBottom, showList]);
 
   const onBlur = React.useCallback(() => {
     setInputFocused(false);
@@ -388,6 +434,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               height: resultsHeight,
               minHeight: resultsHeight,
               transform: [{ translateY: topPositionResults }],
+              // keep overlay above underlying fields on android.
+              ...(Platform.OS === 'android' ? { elevation: 8 } : null),
             },
           ]}>
           {loading ? (
@@ -406,11 +454,12 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               // keyboardDismissMode="on-drag" // if active dismisses keyboard on auto search when scrolling list
               showsVerticalScrollIndicator={false}
               bounces={false}
+              nestedScrollEnabled
               data={filteredUsers}
               contentContainerStyle={[
                 styles.results,
                 {
-                  height: heightResults,
+                  minHeight: heightResults,
                 },
               ]}
               ListHeaderComponent={
