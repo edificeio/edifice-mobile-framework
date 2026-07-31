@@ -456,13 +456,14 @@ function buildTheme(paletteOverride?: Partial<ITheme['palette']>, colorOverride?
 //      888     888  888  "Y8888  888  888  888  "Y8888   88888P'
 //
 
-// Themes come from the build-time override.
-// TODO: drop the single-theme fallback once every override declares `themes`.
+// themes come from the build-time override.
+// an override declaring none gets a single
+// theme built from defaultTheme.
 const overrideThemes = (customTheme as CustomThemeOverride).themes;
 
 const themes: ITheme[] = overrideThemes?.length
   ? overrideThemes.map(t => Object.assign(buildTheme(t.palette, t.color), { displayName: t.displayName, level: t.level }))
-  : [Object.assign(buildTheme(), { displayName: 'Thème', level: '2D' as ThemeLevel })];
+  : [Object.assign(buildTheme(), { displayName: 'user-theme-displayname-2d', level: '2D' as ThemeLevel })];
 
 const THEME_STORAGE_KEY = 'theme';
 
