@@ -6,7 +6,7 @@ import { ColorValue } from 'react-native';
 import deepmerge from 'deepmerge';
 import RNRestart from 'react-native-restart';
 
-import customTheme from '~/app/override/theme';
+import themeOverrides from '~/app/override/theme';
 import type { SvgProps } from '~/framework/components/picture';
 import { MediaType } from '~/framework/modules/media';
 import { preferences as userPreferences } from '~/framework/modules/user/storage';
@@ -23,7 +23,6 @@ import { Storage } from '~/framework/util/storage';
 //  8888888 888  888  "Y888  "Y8888  888     888    "Y888888  "Y8888P  "Y8888
 
 export interface IShades {
-  evil: ColorValue;
   dark: ColorValue;
   regular: ColorValue;
   light: ColorValue;
@@ -160,29 +159,12 @@ export interface ITheme {
   };
 }
 
-type ThemeInitializer = Pick<ITheme, 'palette' | 'legacy'> & {
+type ThemeInitializer = Omit<ITheme, 'ui' | 'color' | 'media'> & {
   init(): ITheme;
 };
 
-type OverrideThemeDef = {
-  level: ThemeLevel;
-  displayName: string;
-  palette?: Partial<ITheme['palette']>;
-  color?: Partial<ITheme['color']>;
-};
-
 export const defaultTheme: ThemeInitializer = {
-  //  888     888
-  //  888     888
-  //  888     888
-  //  888     888 .d8888b   8888b.   .d88b.   .d88b.  .d8888b
-  //  888     888 88K          "88b d88P"88b d8P  Y8b 88K
-  //  888     888 "Y8888b. .d888888 888  888 88888888 "Y8888b.
-  //  Y88b. .d88P      X88 888  888 Y88b 888 Y8b.          X88
-  //   "Y88888P"   88888P' "Y888888  "Y88888  "Y8888   88888P'
-  //                                     888
-  //                                Y8b d88P
-  //                                 "Y88P"
+  displayName: 'user-theme-displayname-2d',
   init() {
     (this as Partial<ITheme>).media = {
       attachment: { name: 'ui-attachment', type: 'Svg' },
@@ -294,34 +276,24 @@ export const defaultTheme: ThemeInitializer = {
     },
   },
 
-  //  888     888          888
-  //  888     888          888
-  //  888     888          888
-  //  Y88b   d88P  8888b.  888 888  888  .d88b.  .d8888b
-  //   Y88b d88P      "88b 888 888  888 d8P  Y8b 88K
-  //    Y88o88P   .d888888 888 888  888 88888888 "Y8888b.
-  //     Y888P    888  888 888 Y88b 888 Y8b.          X88
-  //      Y8P     "Y888888 888  "Y88888  "Y8888   88888P'
-  // Magenta color indicated non-defined values
+  level: '2D',
+
   palette: {
     complementary: {
       'blue': {
         dark: '#1B84AC',
-        evil: 'magenta',
         light: '#AADAED',
         pale: '#E4F4FF',
         regular: '#2A9CC8',
       },
       'green': {
         dark: '#33A797',
-        evil: 'magenta',
         light: '#A2E0D8',
         pale: '#E7F5F4',
         regular: '#46BFAF',
       },
       'indigo': {
         dark: '#121982',
-        evil: 'magenta',
         light: '#9297E5',
         pale: '#DDE8FD',
         regular: '#1A22A2',
@@ -331,35 +303,30 @@ export const defaultTheme: ThemeInitializer = {
       },
       'orange': {
         dark: '#F17A17',
-        evil: 'magenta',
         light: '#FFC696',
         pale: '#FFEFE3',
         regular: '#FF8D2E',
       },
       'pink': {
         dark: '#9C2288',
-        evil: 'magenta',
         light: '#E39CD7',
         pale: '#FFE5FB',
         regular: '#B930A2',
       },
       'purple': {
         dark: '#5D1D79',
-        evil: 'magenta',
         light: '#B68ACA',
         pale: '#F4EAF9',
         regular: '#763294',
       },
       'red': {
         dark: '#C82222',
-        evil: 'magenta',
         light: '#F48A8A',
         pale: '#FFD9D9',
         regular: '#E13A3A',
       },
       'yellow': {
         dark: '#DAA910',
-        evil: 'magenta',
         light: '#F6DE94',
         pale: '#FFF4D1',
         regular: '#ECBE30',
@@ -385,23 +352,21 @@ export const defaultTheme: ThemeInitializer = {
     },
     primary: {
       dark: '#1B84AC',
-      evil: 'magenta',
       light: '#AADAED',
       pale: '#E4F4FF',
       regular: '#2A9CC8',
     },
     secondary: {
       dark: '#F17A17',
-      evil: 'magenta',
       light: '#FFC696',
       pale: '#FFEFE3',
       regular: '#FF8D2E',
     },
     status: {
-      failure: { dark: '#D12A2A', evil: 'magenta', light: '#F3A6A6', pale: '#FFE9E9', regular: '#e13a3a' },
-      info: { dark: '#3499BF', evil: 'magenta', light: '#ACD6E6', pale: '#D7E8EE', regular: '#4bafd5' },
-      success: { dark: '#70A977', evil: 'magenta', light: '#BBE1BF', pale: '#DAF1DD', regular: '#7dbf85' },
-      warning: { dark: '#E58D00', evil: 'magenta', light: '#F2C987', pale: '#FDECD2', regular: '#f59700' },
+      failure: { dark: '#D12A2A', light: '#F3A6A6', pale: '#FFE9E9', regular: '#e13a3a' },
+      info: { dark: '#3499BF', light: '#ACD6E6', pale: '#D7E8EE', regular: '#4bafd5' },
+      success: { dark: '#70A977', light: '#BBE1BF', pale: '#DAF1DD', regular: '#7dbf85' },
+      warning: { dark: '#E58D00', light: '#F2C987', pale: '#FDECD2', regular: '#f59700' },
     },
   },
 };
@@ -420,50 +385,21 @@ export const defaultTheme: ThemeInitializer = {
 
 // Compute once (Singleton)
 
-type CustomThemeOverride = {
-  palette?: Partial<ITheme['palette']>;
-  legacy?: Partial<ITheme['legacy']>;
-  color?: Partial<ITheme['color']>;
-  init?: () => ITheme;
-  // A mixte app declares several themes here; other apps declare none.
-  themes?: OverrideThemeDef[];
-};
+type DeepPartial<T> = T extends object ? { [K in keyof T]?: DeepPartial<T[K]> } : T;
 
-const { init, ...customThemeRest } = customTheme as CustomThemeOverride;
-
-//merge palettes & legacy befor init()
-function buildTheme(paletteOverride?: Partial<ITheme['palette']>, colorOverride?: Partial<ITheme['color']>): ITheme {
-  const built: ITheme = {
-    ...defaultTheme,
-    palette: deepmerge(deepmerge(defaultTheme.palette, customThemeRest.palette || {}), paletteOverride || {}),
-  }.init();
-
-  // applying override color after init
-  built.color = deepmerge(deepmerge(built.color, customThemeRest.color || {}), colorOverride || {});
-
-  if (init) init.call(built);
-
-  return built;
-}
-
-//  88888888888 888                                   d8b
-//      888     888                                   Y8P
-//      888     888
-//      888     88888b.   .d88b.  88888b.d88b.   .d88b.  .d8888b
-//      888     888 "88b d8P  Y8b 888 "888 "88b d8P  Y8b 88K
-//      888     888  888 88888888 888  888  888 88888888 "Y8888b.
-//      888     888  888 Y8b.     888  888  888 Y8b.          X88
-//      888     888  888  "Y8888  888  888  888  "Y8888   88888P'
-//
+type CustomThemeOverride = DeepPartial<Pick<ITheme, 'color' | 'palette' | 'ui' | 'legacy'>> & Pick<ITheme, 'displayName' | 'level'>;
+type AllThemesOverrides = { themes: CustomThemeOverride[] };
 
 // themes come from the build-time override.
 // an override declaring none gets a single
 // theme built from defaultTheme.
-const overrideThemes = (customTheme as CustomThemeOverride).themes;
-
-const themes: ITheme[] = overrideThemes?.length
-  ? overrideThemes.map(t => Object.assign(buildTheme(t.palette, t.color), { displayName: t.displayName, level: t.level }))
-  : [Object.assign(buildTheme(), { displayName: 'user-theme-displayname-2d', level: '2D' as ThemeLevel })];
+type AllThemes = ITheme[];
+export const themes: AllThemes = (themeOverrides as AllThemesOverrides).themes.map(override =>
+  deepmerge<ITheme, CustomThemeOverride>(deepmerge<ThemeInitializer, CustomThemeOverride>(defaultTheme, override).init(), override),
+);
+if (themes.length === 0) {
+  themes.push(defaultTheme.init());
+}
 
 const THEME_STORAGE_KEY = 'theme';
 
@@ -479,21 +415,28 @@ function readInitialThemeIndex(): number {
   return 0;
 }
 
-let currentIndex = readInitialThemeIndex();
-
-const theme = themes[currentIndex];
+/**
+ * All these values are constqnts because theme is changed by restarting the app after set new theme index in MMKV.
+ */
+const currentIndex = readInitialThemeIndex();
+const currentTheme = themes[currentIndex];
 
 export const getThemes = (): { displayName: string; level: ThemeLevel }[] =>
   themes.map(t => ({ displayName: t.displayName, level: t.level }));
 
 export function setTheme(index: number): void {
   if (!isValidThemeIndex(index) || index === currentIndex) return;
-  currentIndex = index;
-
-  Storage.global.set(THEME_STORAGE_KEY, index);
-  userPreferences.set(THEME_STORAGE_KEY, index);
-
-  RNRestart.restart();
+  try {
+    Storage.global.set(THEME_STORAGE_KEY, index);
+    userPreferences.set(THEME_STORAGE_KEY, index);
+    RNRestart.restart();
+  } catch {
+    // ToDo : what here ?
+  }
 }
 
-export default theme;
+export function setThemeAfterLogin() {
+  setTheme(userPreferences.getNumber('theme') ?? 0);
+}
+
+export default currentTheme;
