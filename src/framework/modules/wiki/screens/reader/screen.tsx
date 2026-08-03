@@ -22,9 +22,10 @@ import {
   ITEM_COMMENT,
   type SocialResourceViewer as SocialResourceViewerTypes,
 } from '~/framework/components/pages/social-resource-viewer/types';
-import { ScreenView } from '~/framework/components/screen';
 import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { useAudience } from '~/framework/modules/audience';
+import { AccountType } from '~/framework/modules/auth/model';
 import PageHeader from '~/framework/modules/wiki/components/page-header';
 import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
@@ -38,15 +39,16 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import type { WikiReaderScreen } from './types';
-import { markViewAudience, useAudience } from '~/framework/modules/audience';
 import { wikiAudienceConfig } from '../../module-config';
 
 const DEBUG_LIST_DATA: SocialResourceViewerTypes.Props['comments'] = [];
 for (let i = 1; i <= 20; ++i) {
   DEBUG_LIST_DATA.push({
+    authorAccountType: AccountType.Personnel,
     authorId: '',
-    authorName: 'Moi',
-    date: Temporal.Now.instant(),
+    authorName: i % 2 === 0 ? 'Myster Mask le détective canard' : 'Petit Prince',
+    date: Temporal.Now.instant().subtract({ hours: (i - 1) * 8 }),
+    hasResponses: i % 2 === 0,
     id: i.toString(),
     type: ITEM_COMMENT,
     value: i.toString(),

@@ -1,8 +1,12 @@
+import React from 'react';
+
+import { Temporal } from '@js-temporal/polyfill';
 import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
-import { uppercaseFirstLetter } from './string';
-
 import { I18n } from '~/app/i18n';
+
+import { uppercaseFirstLetter } from './string';
+import { NestedText } from '../components/text';
 
 export enum DayOfTheWeek {
   MONDAY = 'monday',
@@ -129,4 +133,111 @@ export const displayWeekRange = (date: Moment) => {
             startDate: startDateShort,
             year: isEndOfDateWeekCurrentYear ? '' : endDateYear,
           });
+};
+
+const BASE_INSTANT_FORMATS = {
+  'date-small': {
+    day: 'numeric',
+    month: 'short',
+  },
+  'time-small': {
+    hour: '2-digit',
+    minute: '2-digit',
+  },
+} satisfies Record<`date-${string}` | `time-${string}` | `datetime-${string}`, globalThis.Intl.DateTimeFormatOptions>;
+
+export type DateFormat = keyof typeof BASE_INSTANT_FORMATS & `date-${string}`;
+export type TimeFormat = keyof typeof BASE_INSTANT_FORMATS & `time-${string}`;
+export type DateTimeFormat = keyof typeof BASE_INSTANT_FORMATS & `datetime-${string}`;
+
+/**
+ * Print a Temporal PlainDate or Instant as date Text Component.
+ */
+export const TemporalDateText = ({
+  format = 'date-small',
+  instant,
+  relative,
+  TextComponent = NestedText,
+}: {
+  format?: DateFormat | globalThis.Intl.DateTimeFormatOptions;
+  instant: Temporal.PlainDate | Temporal.Instant;
+  relative?: boolean;
+  TextComponent?: typeof NestedText;
+}) => {
+  const language = I18n.getLanguage();
+
+  if (relative) {
+    if (instant instanceof Temporal.Instant) {
+      const untilNow = Temporal.Now.instant().since(instant, { smallestUnit: 'minute' });
+      if (Math.abs(untilNow.minutes) < 1) return <TextComponent>{I18n.get('date-now')}</TextComponent>;
+    }
+    const instantAsDate =
+      instant instanceof Temporal.Instant ? instant.toZonedDateTimeISO(Temporal.Now.timeZoneId()).toPlainDate() : instant;
+    const daysUntil = instantAsDate.until(Temporal.Now.plainDateISO()).days;
+    if (daysUntil === -1) return <TextComponent>{I18n.get('date-tomorrow')}</TextComponent>;
+    if (daysUntil === 0) return <TextComponent>{I18n.get('date-today')}</TextComponent>;
+    if (daysUntil === 1) return <TextComponent>{I18n.get('date-yesterday')}</TextComponent>;
+  }
+
+  return (
+    <TextComponent>
+      {instant.toLocaleString(language, typeof format === 'string' ? BASE_INSTANT_FORMATS[format] : format)}
+    </TextComponent>
+  );
+};
+
+/**
+ * Print a Temporal PlainDate or Instant as time Text Component.
+ * Fallback to TemporalDateText if given instant is not the same date as today.
+ */
+export const TemporalTimeText = ({
+  dateFormat = 'date-small',
+  instant,
+  relative,
+  TextComponent = NestedText,
+  timeFormat = 'time-small',
+}: {
+  timeFormat?: TimeFormat | globalThis.Intl.DateTimeFormatOptions;
+  dateFormat?: DateFormat | globalThis.Intl.DateTimeFormatOptions;
+  instant: Temporal.Instant;
+  relative?: boolean;
+  TextComponent?: typeof NestedText;
+}) => {
+  const language = I18n.getLanguage();
+
+  if (relative) {
+    const untilNow = Temporal.Now.instant().since(instant, { smallestUnit: 'minute' });
+    if (Math.abs(untilNow.minutes) < 1) return <TextComponent>{I18n.get('date-now')}</TextComponent>;
+    const instantAsDate =
+      instant instanceof Temporal.Instant ? instant.toZonedDateTimeISO(Temporal.Now.timeZoneId()).toPlainDate() : instant;
+    const daysUntil = instantAsDate.until(Temporal.Now.plainDateISO()).days;
+    if (daysUntil === -1)
+      return (
+        <TextComponent>
+          {I18n.get('date-tomorrow')}
+          {I18n.get('common-space')}
+          {instant.toLocaleString(language, typeof timeFormat === 'string' ? BASE_INSTANT_FORMATS[timeFormat] : timeFormat)}
+        </TextComponent>
+      );
+    if (daysUntil === 0)
+      return (
+        <TextComponent>
+          {instant.toLocaleString(language, typeof timeFormat === 'string' ? BASE_INSTANT_FORMATS[timeFormat] : timeFormat)}
+        </TextComponent>
+      );
+    if (daysUntil === 1)
+      return (
+        <TextComponent>
+          {I18n.get('date-yesterday')}
+          {I18n.get('common-space')}
+          {instant.toLocaleString(language, typeof timeFormat === 'string' ? BASE_INSTANT_FORMATS[timeFormat] : timeFormat)}
+        </TextComponent>
+      );
+  }
+
+  return (
+    <TextComponent>
+      {instant.toLocaleString(language, typeof dateFormat === 'string' ? BASE_INSTANT_FORMATS[dateFormat] : dateFormat)}
+    </TextComponent>
+  );
 };

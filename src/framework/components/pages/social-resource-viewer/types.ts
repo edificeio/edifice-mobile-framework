@@ -4,6 +4,8 @@ import { Temporal } from '@js-temporal/polyfill';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { AccountType } from '~/framework/modules/auth/model';
+
 export namespace SocialResourceViewer {
   export interface Props extends Pick<NativeStackScreenProps<ParamListBase>, 'navigation'>, React.PropsWithChildren {
     canAddComment: boolean;
@@ -25,11 +27,13 @@ interface CommentData {
   id: string;
   authorId: string;
   authorName: string;
+  authorAccountType: AccountType;
   date: Temporal.Instant;
 }
 
 export interface CommentItem extends CommentData {
   type: typeof ITEM_COMMENT;
+  hasResponses: boolean;
 }
 
 export interface ResponseItem extends CommentData {
