@@ -1,3 +1,4 @@
+import theme from '~/app/theme';
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { CommunitiesStore } from './store';
@@ -5,7 +6,7 @@ import { CommunitiesStore } from './store';
 export const COLLECT_API = { apiName: 'collect/api' };
 
 export default new NavigableModuleConfig<'communities', CommunitiesStore>({
-  displayAs: ModuleType.TAB_MODULE,
+  displayAs: () => (theme.level === '2D' ? ModuleType.TAB_MODULE : undefined),
   displayOrder: 2,
   displayPictureBlur: { name: 'communities-outline', type: 'Svg' },
   displayPictureFocus: { name: 'communities-fill', type: 'Svg' },
