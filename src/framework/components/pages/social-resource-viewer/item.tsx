@@ -12,7 +12,8 @@ import { TemporalTimeText } from '~/framework/util/date';
 import styles from './styles';
 import { CommentItem, ITEM_COMMENT, ITEM_RESPONSE, ResponseItem, SocialResourceViewerItemType } from './types';
 
-export const SocialResourceViewerCommentItem = ({ item }: ListRenderItemInfo<CommentItem>) => {
+export const SocialResourceViewerCommentItem = (info: ListRenderItemInfo<CommentItem>) => {
+  const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
 
@@ -22,29 +23,55 @@ export const SocialResourceViewerCommentItem = ({ item }: ListRenderItemInfo<Com
         <SingleAvatar size="xsm" userId={item.authorId} />
         {item.hasResponses && <View style={styles.itemTreeDecoStraight} />}
       </View>
-      <View style={styles.itemContentWrapper}>
-        <View style={styles.itemUserHeader}>
-          <BodyBoldText numberOfLines={1} style={styles.itemAuthor}>
-            {item.authorName}
-            {I18n.get('common-separator-dash')}
-          </BodyBoldText>
-          <AccountTypeText type={item.authorAccountType} TextComponent={BodyBoldText} />
-          <CaptionItalicText numberOfLines={1} style={styles.itemDate}>
-            <TemporalTimeText instant={item.date} timeFormat="time-small" dateFormat="date-small" relative />
-          </CaptionItalicText>
-        </View>
-        <View>
-          <SmallText style={styles.itemContentText}>{item.value}</SmallText>
-          <View style={styles.itemContentButtons} />
-        </View>
+      <View style={styles.itemCommentContentWrapper}>
+        <SocialResourceViewerContentItem {...info} />
       </View>
     </View>
   );
 };
 
 export const SocialResourceViewerResponseItem = (info: ListRenderItemInfo<ResponseItem>) => {
-  const itemStyle = React.useMemo(() => ({ padding: 16 }), []);
-  return <BodyBoldText style={itemStyle}>Réponse {info.item.value.toString()}</BodyBoldText>;
+  const { item } = info;
+  const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
+  const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
+  const itemAvatarStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemResponseAvatar], []);
+
+  return (
+    <View style={itemStyle}>
+      <View style={itemTreeStyle}>
+        <View style={styles.itemTreeDecoCurve} />
+        {item.hasResponses && <View style={styles.itemTreeDecoStraight} />}
+      </View>
+      <View style={itemAvatarStyle}>
+        <SingleAvatar size="xsm" userId={item.authorId} />
+      </View>
+      <View style={styles.itemResponseContentWrapper}>
+        <SocialResourceViewerContentItem {...info} />
+      </View>
+    </View>
+  );
+};
+
+export const SocialResourceViewerContentItem = (info: ListRenderItemInfo<CommentItem | ResponseItem>) => {
+  const { item } = info;
+  return (
+    <>
+      <View style={styles.itemUserHeader}>
+        <BodyBoldText numberOfLines={1} style={styles.itemAuthor}>
+          {item.authorName}
+          {I18n.get('common-separator-dash')}
+        </BodyBoldText>
+        <AccountTypeText type={item.authorAccountType} TextComponent={BodyBoldText} />
+        <CaptionItalicText numberOfLines={1} style={styles.itemDate}>
+          <TemporalTimeText instant={item.date} timeFormat="time-small" dateFormat="date-small" relative />
+        </CaptionItalicText>
+      </View>
+      <View>
+        <SmallText style={styles.itemContentText}>{item.value}</SmallText>
+        <View style={styles.itemContentButtons} />
+      </View>
+    </>
+  );
 };
 
 export const SocialResourceViewerItem = (info: ListRenderItemInfo<SocialResourceViewerItemType>) => {
