@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
@@ -16,6 +16,7 @@ import { StackPresentationTypes } from 'react-native-screens';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { NavBarLine } from '~/framework/components/navigation';
 import ErrorScreenView from '~/framework/components/screen/error';
 import { TextFontStyle } from '~/framework/components/text';
 import { ToastContainer } from '~/framework/components/toast';
@@ -77,10 +78,9 @@ export const defaultScreenOptions = ({ theme: navTheme }) =>
   ({
     // ToDo: change this options for a minimal stack (no header). Use LeafStack for stack navigator that shows header.
     headerBackButtonDisplayMode: 'minimal',
+
+    headerBackground: () => <NavBarLine />,
     headerShadowVisible: false,
-    headerBackground: () => {
-      return <View style={{ backgroundColor: 'red', height: 3, position: 'absolute', bottom: 0, width: '100%' }}></View>;
-    },
     headerTintColor: navTheme.colors.text,
     headerTitleAlign: 'center',
     statusBarStyle: 'light',
