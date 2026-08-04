@@ -387,18 +387,21 @@ export const defaultTheme: ThemeInitializer = {
 // Compute once (Singleton)
 
 type CustomThemeOverride = DeepPartial<Pick<ITheme, 'color' | 'palette' | 'ui' | 'legacy'>> & Pick<ITheme, 'displayName' | 'level'>;
-type AllThemesOverrides = { themes: CustomThemeOverride[] };
+type AllThemesOverrides = { themes?: CustomThemeOverride[] };
 
 // themes come from the build-time override.
 // an override declaring none gets a single
 // theme built from defaultTheme.
 type AllThemes = ITheme[];
-export const themes: AllThemes = (themeOverrides as AllThemesOverrides).themes.map(override =>
-  deepmerge<ITheme, CustomThemeOverride>(deepmerge<ThemeInitializer, CustomThemeOverride>(defaultTheme, override).init(), override),
-);
-if (themes.length === 0) {
-  themes.push(defaultTheme.init());
-}
+const themeList = (themeOverrides as AllThemesOverrides).themes ?? [];
+export const themes: AllThemes = themeList.length
+  ? themeList.map(override =>
+      deepmerge<ITheme, CustomThemeOverride>(
+        deepmerge<ThemeInitializer, CustomThemeOverride>(defaultTheme, override).init(),
+        override,
+      ),
+    )
+  : [deepmerge<ThemeInitializer, object>(defaultTheme, {}).init()];
 
 const THEME_STORAGE_KEY = 'theme';
 
