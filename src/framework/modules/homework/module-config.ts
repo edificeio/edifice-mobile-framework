@@ -1,8 +1,11 @@
+import theme from '~/app/theme';
+import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
+
 import type reducer from './reducers';
 
-import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-
 export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>({
+  displayAs: () => (theme.level === '1D' ? ModuleType.TAB_MODULE : undefined),
+  displayOrder: 2,
   displayPictureBlur: { name: 'diary-outline', type: 'Svg' },
   displayPictureFocus: { name: 'diary-fill', type: 'Svg' },
   entcoreScope: ['homeworks'],
