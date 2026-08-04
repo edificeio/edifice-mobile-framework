@@ -12,6 +12,7 @@ import { MediaType } from '~/framework/modules/media';
 import { preferences as userPreferences } from '~/framework/modules/user/storage';
 import type { ImageProps } from '~/framework/util/media-deprecated';
 import { Storage } from '~/framework/util/storage';
+import { DeepPartial } from '~/utils/types';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -385,8 +386,6 @@ export const defaultTheme: ThemeInitializer = {
 
 // Compute once (Singleton)
 
-type DeepPartial<T> = T extends object ? { [K in keyof T]?: DeepPartial<T[K]> } : T;
-
 type CustomThemeOverride = DeepPartial<Pick<ITheme, 'color' | 'palette' | 'ui' | 'legacy'>> & Pick<ITheme, 'displayName' | 'level'>;
 type AllThemesOverrides = { themes: CustomThemeOverride[] };
 
@@ -436,7 +435,7 @@ export function setTheme(index: number): void {
 }
 
 export function setThemeAfterLogin() {
-  setTheme(userPreferences.getNumber('theme') ?? 0);
+  setTheme(userPreferences.getNumber(THEME_STORAGE_KEY) ?? 0);
 }
 
 export default currentTheme;
