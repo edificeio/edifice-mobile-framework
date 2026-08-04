@@ -20,6 +20,7 @@ import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sh
 import SocialResourceViewer from '~/framework/components/pages/social-resource-viewer';
 import {
   ITEM_COMMENT,
+  ITEM_RESPONSE,
   type SocialResourceViewer as SocialResourceViewerTypes,
 } from '~/framework/components/pages/social-resource-viewer/types';
 import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framework/components/text';
@@ -48,11 +49,26 @@ for (let i = 1; i <= 20; ++i) {
     authorId: '',
     authorName: i % 2 === 0 ? 'Myster Mask le détective canard' : 'Petit Prince',
     date: Temporal.Now.instant().subtract({ hours: (i - 1) * 8 }),
-    hasResponses: i % 2 === 0,
+    hasResponses: i % 3 !== 0,
     id: i.toString(),
     type: ITEM_COMMENT,
     value: i.toString(),
   });
+  for (let j = 1; j <= i % 3; ++j) {
+    DEBUG_LIST_DATA.push({
+      authorAccountType: AccountType.Relative,
+      authorId: '',
+      authorName: i % 2 === 0 ? 'Super connard' : 'Uvuvwevwevwe Onyetenyevwe Ugwemuhwem Osas',
+      date: Temporal.Now.instant()
+        .subtract({ hours: (i - 1) * 8 })
+        .subtract({ minutes: (i - 1) * 12 }),
+      hasResponses: j !== i % 3,
+      id: i.toString() + '-' + j.toString(),
+      inReplyTo: i.toString(),
+      type: ITEM_RESPONSE,
+      value: i.toString() + '-' + j.toString(),
+    });
+  }
 }
 
 export const computeNavBar = ({

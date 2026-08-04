@@ -39,6 +39,7 @@ export interface CommentItem extends CommentData {
 export interface ResponseItem extends CommentData {
   type: typeof ITEM_RESPONSE;
   inReplyTo: CommentItem['id'];
+  hasResponses: boolean;
 }
 
 export interface AddResponseItem {
