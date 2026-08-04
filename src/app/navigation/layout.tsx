@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
@@ -39,10 +39,10 @@ export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(
   colors: {
     background: theme.ui.background.card.toString(),
     border: theme.palette.grey.cloudy.toString(),
-    card: theme.palette.primary.regular.toString(),
+    card: theme.ui.background.card.toString(),
     notification: theme.palette.primary.regular.toString(),
     primary: theme.palette.primary.regular.toString(),
-    text: theme.ui.text.inverse.toString(),
+    text: theme.ui.text.regular.toString(),
   },
   dark: false,
   fonts: {
@@ -77,6 +77,10 @@ export const defaultScreenOptions = ({ theme: navTheme }) =>
   ({
     // ToDo: change this options for a minimal stack (no header). Use LeafStack for stack navigator that shows header.
     headerBackButtonDisplayMode: 'minimal',
+    headerShadowVisible: false,
+    headerBackground: () => {
+      return <View style={{ backgroundColor: 'red', height: 3, position: 'absolute', bottom: 0, width: '100%' }}></View>;
+    },
     headerTintColor: navTheme.colors.text,
     headerTitleAlign: 'center',
     statusBarStyle: 'light',
