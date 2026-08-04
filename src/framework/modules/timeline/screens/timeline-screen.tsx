@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, RefreshControl, StyleSheet, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
 
-import { HeaderButton } from '@react-navigation/elements';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackHeaderItem } from '@react-navigation/native-stack';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -13,12 +12,12 @@ import { ModuleScreenProps } from '~/app/navigation/types';
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { SelfAvatar } from '~/framework/components/avatar/self';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
+import { NavBarProfileButton } from '~/framework/components/navigation';
 import { pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
@@ -99,8 +98,6 @@ export interface ITimelineItem {
 const NOTIFICATION_THROTLE_DELAY = 250;
 let notificationOpenThrottle = true;
 
-const styles = StyleSheet.create({ avatarHeaderButton: { marginLeft: 0 } });
-
 // UTILS ==========================================================================================
 
 const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: NotificationsState) => {
@@ -120,30 +117,11 @@ const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: 
 
 export const TimelineScreenOptions = screenOptions<'timeline'>(({ navigation }) => {
   return {
-    headerLeft: () => (
-      <HeaderButton
-        style={styles.avatarHeaderButton}
-        testID="timeline-profile-button"
-        onPress={() => navigation.navigate('user')}
-        pressColor="transparent">
-        <View style={{ padding: UI_SIZES.border.small }}>
-          <SelfAvatar size="sm" />
-        </View>
-      </HeaderButton>
-    ),
+    headerLeft: () => <NavBarProfileButton onPress={() => navigation.navigate('user')} />,
     title: I18n.get('timeline-appname'),
     unstable_headerLeftItems: () => [
       {
-        element: (
-          <HeaderButton
-            style={styles.avatarHeaderButton}
-            testID="timeline-profile-button"
-            onPress={() => navigation.navigate('user')}>
-            <View style={{ padding: UI_SIZES.border.small }}>
-              <SelfAvatar size="sm" />
-            </View>
-          </HeaderButton>
-        ),
+        element: <NavBarProfileButton onPress={() => navigation.navigate('user')} />,
         type: 'custom',
       },
     ],
