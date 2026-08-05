@@ -2,15 +2,11 @@
  * Notification routing
  * Router operations on opeening a notification
  */
-import { NavigationAction, NavigationProp, ParamListBase, StackActions } from '@react-navigation/native';
+import { NavigationAction, NavigationProp, ParamListBase } from '@react-navigation/native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
-import { setConfirmQuitAction, setModalCloseAction } from '~/framework/navigation/nextTabJump';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTarget } from '~/framework/navigation/homeTarget';
 import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
 
@@ -56,6 +52,15 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 
 // Notif Handler Action
 
+const navigateToHome = (notification: IAbstractNotification, navigation: NavigationProp<ParamListBase>) => {
+  const home = getHomeTarget();
+  navigation.navigate(home.tab, {
+    initial: true,
+    params: { notification },
+    screen: home.screen,
+  });
+};
+
 const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   // Check for all module notif-handler that are registered.
   moduleRedirection: (n, trackCategory, navigation, navDispatch, allowSwitchTab) => async dispatch => {
@@ -76,34 +81,22 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     };
   },
 
-  // Only redirect to the timeline
+  // Only redirect to the home
   timelineRedirection: (n, trackCategory, navigation) => async () => {
     if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-    navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
-      initial: true,
-      params: {
-        notification: n,
-      },
-      screen: timelineRouteNames.Home,
-    });
+    navigateToHome(n, navigation);
     return { managed: 1 };
   },
 
-  // Redirect the user to the timeline + go to native browser
+  // Redirect the user to the home + go to native browser
   webRedirection: (n, trackCategory, navigation) => async () => {
     const notifWithUri = getAsResourceUriNotification(n);
     if (!notifWithUri) {
       return { managed: 0 };
     }
     if (trackCategory) Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
-    // We want to navigate on timeline even if this is a web redirection.
-    navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
-      initial: true,
-      params: {
-        notification: n,
-      },
-      screen: timelineRouteNames.Home,
-    });
+    // We want to navigate on home even if this is a web redirection.
+    navigateToHome(n, navigation);
     openUrl(notifWithUri.resource.uri);
     return { managed: 1 };
   },

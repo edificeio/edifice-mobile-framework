@@ -7,8 +7,7 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import type { IResourceIdNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
@@ -24,7 +23,7 @@ const handleNewsPostNotificationAction: NotifHandlerThunkAction<INewsNotificatio
   (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+        name: getHomeTabRouteName(),
         params: {
           initial: false,
           params: { notification },
@@ -47,7 +46,7 @@ const handleNewsThreadNotificationAction: NotifHandlerThunkAction<INewsNotificat
   (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+        name: getHomeTabRouteName(),
         params: {
           initial: false,
           screen: newsRouteNames.home,

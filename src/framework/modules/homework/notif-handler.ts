@@ -1,7 +1,6 @@
 import { CommonActions } from '@react-navigation/native';
 
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
@@ -27,7 +26,7 @@ const homeworkNotificationAction: NotifHandlerThunkAction =
       dispatch(homeworkDiarySelected(diaryId));
 
       const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+        name: getHomeTabRouteName(),
         params: {
           initial: false,
           params: {},
