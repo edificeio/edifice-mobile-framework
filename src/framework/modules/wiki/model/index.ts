@@ -2,6 +2,9 @@
  * Data model for the module wiki
  */
 
+import { Temporal } from '@js-temporal/polyfill';
+
+import { SocialResourceViewer } from '~/framework/components/pages/social-resource-viewer/types';
 import { Resource, ResourceHistory } from '~/framework/modules/explorer/model/types';
 
 export type WikiResourceMetadata = Pick<
@@ -23,9 +26,11 @@ export interface WikiPageMetaData {
   depth: number;
   parentId?: WikiPageMetaData['id'];
   childrenIds: WikiPageMetaData['id'][];
+  createdAt: Temporal.Instant;
 }
 
-export interface WikiPage extends Pick<WikiPageMetaData, 'id' | 'isVisible' | 'title'>, ResourceHistory {
+export interface WikiPage extends Pick<WikiPageMetaData, 'id' | 'isVisible' | 'title' | 'createdAt'>, ResourceHistory {
   content: string;
   contentVersion: number;
+  comments: SocialResourceViewer.Props['comments'];
 }

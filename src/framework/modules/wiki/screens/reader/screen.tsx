@@ -259,6 +259,8 @@ export function WikiReaderScreenLoaded({
   const wiki = useSelector(selectors.wiki(resourceId));
   const page = useSelector(selectors.page(pageId));
 
+  console.info('PAGE COMMENTS', page.comments);
+
   const switchToPage = React.useCallback(
     (id: WikiPage['id'], reverse?: boolean) => {
       navigation.replace(wikiRouteNames.reader, { pageId: id, resourceId, reverseAnimation: reverse });
