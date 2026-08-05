@@ -65,10 +65,30 @@ export namespace API {
       isVisible: boolean;
       parentId: string | null;
       position: number;
+      comments: (GetPageComment | GetPageCommentResponse | GetPageCommentDeleted | GetPageCommentResponseDeleted)[];
       jsonContent: {
         type: 'doc';
         content: object[]; // Not typed but not used in the mobile app
       };
+    }
+    export interface GetPageComment {
+      _id: string;
+      author: string;
+      authorName: string;
+      comment: string;
+      created: { $date: string };
+      modified?: { $date: string };
+    }
+    export interface GetPageCommentDeleted {
+      _id: string;
+      deleted: true;
+      created: { $date: string };
+    }
+    export interface GetPageCommentResponse extends GetPageComment {
+      replyTo: GetPageComment['_id'];
+    }
+    export interface GetPageCommentResponseDeleted extends GetPageCommentDeleted {
+      replyTo: GetPageCommentDeleted['_id'];
     }
   }
 }

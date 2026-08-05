@@ -11,7 +11,7 @@ export namespace SocialResourceViewer {
     canAddComment: boolean;
     alwaysShowCommentField?: boolean;
     style?: StyleProp<ViewStyle>;
-    comments: (CommentItem | ResponseItem)[];
+    comments: (CommentItem | ResponseItem | CommentItemDeleted | ResponseItemDeleted)[];
     onSubmit?: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
@@ -21,6 +21,8 @@ export namespace SocialResourceViewer {
 export const ITEM_ADD_RESPONSE = Symbol('ITEM_ADD_RESPONSE');
 export const ITEM_COMMENT = Symbol('ITEM_COMMENT');
 export const ITEM_RESPONSE = Symbol('ITEM_RESPONSE');
+export const ITEM_COMMENT_DELETED = Symbol('ITEM_COMMENT_DELETED');
+export const ITEM_RESPONSE_DELETED = Symbol('ITEM_RESPONSE_DELETED');
 
 interface CommentData {
   value: string;
@@ -29,17 +31,24 @@ interface CommentData {
   authorName: string;
   authorAccountType: AccountType;
   date: Temporal.Instant;
+  hasResponses: boolean;
 }
 
 export interface CommentItem extends CommentData {
   type: typeof ITEM_COMMENT;
-  hasResponses: boolean;
 }
 
 export interface ResponseItem extends CommentData {
   type: typeof ITEM_RESPONSE;
   inReplyTo: CommentItem['id'];
-  hasResponses: boolean;
+}
+
+export interface CommentItemDeleted extends Pick<CommentItem, 'id' | 'date' | 'hasResponses'> {
+  type: typeof ITEM_COMMENT_DELETED;
+}
+
+export interface ResponseItemDeleted extends Pick<ResponseItem, 'id' | 'date' | 'hasResponses' | 'inReplyTo'> {
+  type: typeof ITEM_RESPONSE_DELETED;
 }
 
 export interface AddResponseItem {
@@ -48,4 +57,4 @@ export interface AddResponseItem {
   inReplyTo: CommentItem['id'];
 }
 
-export type SocialResourceViewerItemType = CommentItem | ResponseItem | AddResponseItem;
+export type SocialResourceViewerItemType = CommentItem | ResponseItem | CommentItemDeleted | ResponseItemDeleted | AddResponseItem;
