@@ -4,8 +4,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import {
   handleNotificationNavigationAction,
   NotifHandlerThunkAction,
@@ -27,7 +26,7 @@ const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
 
       // 2. actual navigation action
       const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+        name: getHomeTabRouteName(),
         params: {
           initial: false,
           params: {
@@ -67,7 +66,7 @@ const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
 
       // 2. actual navigation action
       const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+        name: getHomeTabRouteName(),
         params: {
           initial: false,
           params: {
