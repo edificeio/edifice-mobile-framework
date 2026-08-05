@@ -53,6 +53,15 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 
 // Notif Handler Action
 
+const navigateToHome = (notification: IAbstractNotification, navigation: NavigationProp<ParamListBase>) => {
+  const home = getHomeTarget();
+  navigation.navigate(home.tab, {
+    initial: true,
+    params: { notification },
+    screen: home.screen,
+  });
+};
+
 const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   // Check for all module notif-handler that are registered.
   moduleRedirection: (n, trackCategory, navigation, navDispatch, allowSwitchTab) => async dispatch => {
@@ -71,7 +80,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     };
   },
 
-  // Only redirect to the timeline
+  // Only redirect to the home
   timelineRedirection: (n, trackCategory, navigation) => async () => {
     navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
       initial: true,
@@ -83,7 +92,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     return { managed: 1 };
   },
 
-  // Redirect the user to the timeline + go to native browser
+  // Redirect the user to the home + go to native browser
   webRedirection: (n, trackCategory, navigation) => async () => {
     const notifWithUri = getAsResourceUriNotification(n);
     if (!notifWithUri) {
