@@ -7,8 +7,7 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import {
   handleNotificationNavigationAction,
   NotifHandlerThunkAction,
@@ -20,7 +19,7 @@ import { mediacentreRouteNames } from './navigation';
 const handleMediacentreNotificationAction: NotifHandlerThunkAction = (notification, _, navigation, dispatch) => async () => {
   try {
     const navAction = CommonActions.navigate({
-      name: computeTabRouteName(timelineModuleConfig.routeName),
+      name: getHomeTabRouteName(),
       params: {
         initial: false,
         screen: mediacentreRouteNames.home,
