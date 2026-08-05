@@ -8,8 +8,7 @@ import { CommonActions } from '@react-navigation/native';
 
 import { AccountType } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
@@ -30,7 +29,7 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
 
       // 2. actual navigation action
       const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+        name: getHomeTabRouteName(),
         params: isParent
           ? {
               initial: false,
