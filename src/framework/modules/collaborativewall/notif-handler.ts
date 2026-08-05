@@ -8,8 +8,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { collaborativewallRouteNames } from '~/framework/modules/collaborativewall/navigation';
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import appConf from '~/framework/util/appConf';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
@@ -29,7 +28,7 @@ const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = (noti
     if (!cwallId) return { managed: 0 };
 
     const navAction = CommonActions.navigate({
-      name: computeTabRouteName(timelineModuleConfig.routeName),
+      name: getHomeTabRouteName(),
       params: {
         initial: false,
         params: {
