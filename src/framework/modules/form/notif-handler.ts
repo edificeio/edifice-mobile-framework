@@ -4,8 +4,7 @@ import { CommonActions } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import { openUrl } from '~/framework/util/linking';
 import {
   handleNotificationNavigationAction,
@@ -42,7 +41,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
 
       // 2. Compute nav action
       const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+        name: getHomeTabRouteName(),
         params:
           form.multiple && (distributions.length > 1 || distributions[0]?.status !== DistributionStatus.TO_DO)
             ? {
