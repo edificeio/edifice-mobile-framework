@@ -36,14 +36,16 @@ const modalPresentations: (StackPresentationTypes | 'card')[] = [
   'transparentModal',
 ];
 
+export const is2DTheme = theme.level === '2D';
+
 export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(DefaultTheme, {
   colors: {
     background: theme.ui.background.card.toString(),
     border: theme.palette.grey.cloudy.toString(),
-    card: theme.ui.background.card.toString(),
+    card: (is2DTheme ? theme.ui.background.card : theme.palette.primary.regular).toString(),
     notification: theme.palette.primary.regular.toString(),
     primary: theme.palette.primary.regular.toString(),
-    text: theme.ui.text.regular.toString(),
+    text: (is2DTheme ? theme.ui.text.regular : theme.ui.text.inverse).toString(),
   },
   dark: false,
   fonts: {
@@ -78,9 +80,7 @@ export const defaultScreenOptions = ({ theme: navTheme }) =>
   ({
     // ToDo: change this options for a minimal stack (no header). Use LeafStack for stack navigator that shows header.
     headerBackButtonDisplayMode: 'minimal',
-
-    headerBackground: () => <NavBarLine />,
-    headerShadowVisible: false,
+    ...(is2DTheme && { headerBackground: () => <NavBarLine />, headerShadowVisible: false }),
     headerTintColor: navTheme.colors.text,
     headerTitleAlign: 'center',
     statusBarStyle: 'light',
@@ -110,13 +110,15 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ na
     headerShown: false,
     lazy: true,
     popToTopOnBlur: true,
-    tabBarActiveTintColor: theme.palette.secondary.dark.toString(),
+    tabBarActiveTintColor: (is2DTheme ? theme.palette.secondary.dark : theme.palette.primary.regular).toString(),
     tabBarButton: props => <PlatformPressable {...props} pressColor="transparent" />,
     tabBarIconStyle: {
       height: tabBarIconSize,
+      // Icon-font tabs (mails, myapps) render a glyph in a Text whose advance width is wider than
+      // its fontSize, so a width of exactly `tabBarIconSize` clips them on the right.
       width: tabBarIconSize + UI_SIZES.spacing.minor,
     },
-    tabBarInactiveTintColor: theme.palette.grey.black.toString(),
+    tabBarInactiveTintColor: (is2DTheme ? theme.palette.grey.black : theme.ui.text.light).toString(),
     tabBarStyle: {
       backgroundColor: navTheme.colors.background,
       borderTopColor: navTheme.colors.border,
