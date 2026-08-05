@@ -1,8 +1,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
@@ -16,7 +15,7 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<IScrapbookNotificati
   (notification, trackCategory, navigation, dispatch) => async () => {
     try {
       const navAction = CommonActions.navigate({
-        name: computeTabRouteName(timelineModuleConfig.routeName),
+        name: getHomeTabRouteName(),
         params: {
           initial: false,
           params: { resourceUri: notification.resource.uri },
