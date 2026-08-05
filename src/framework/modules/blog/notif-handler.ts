@@ -8,8 +8,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
@@ -25,7 +24,7 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction = (notification,
     if (!blogNotif) return { managed: 0 };
 
     const navAction = CommonActions.navigate({
-      name: computeTabRouteName(timelineModuleConfig.routeName),
+      name: getHomeTabRouteName(),
       params: {
         initial: false,
         params: {
@@ -56,7 +55,7 @@ const handleBlogNotificationAction: NotifHandlerThunkAction = (notification, _, 
     if (!blogId) return { managed: 0 };
 
     const navAction = CommonActions.navigate({
-      name: computeTabRouteName(timelineModuleConfig.routeName),
+      name: getHomeTabRouteName(),
       params: {
         initial: false,
         params: {
