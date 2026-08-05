@@ -3,6 +3,7 @@ import React from 'react';
 import { Action } from 'redux';
 
 import { EntModule } from '~/app/module';
+import theme from '~/app/theme';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 
 import reducer, { type TimelineState } from './reducer';
@@ -20,6 +21,7 @@ export default new EntModule<
 >(
   {
     entTrackingName: 'Timeline',
+    hasRight: () => theme.level === '1D',
     matchEntcoreApp: 'Timeline',
     name: 'timeline',
     preferences,
