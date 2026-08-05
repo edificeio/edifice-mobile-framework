@@ -109,10 +109,9 @@ export class EntModule<
     this.entTrackingName = config.entTrackingName;
   }
 
-  static getAvailableForAccount(_session: AuthActiveAccount) {
-    // ToDo: write predicate to filter with modules that are available to the user
-    const predicate = () => true;
-    return Modules.getAllOfType(EntModule).filter(predicate);
+  static getAvailableForAccount(session: AuthActiveAccount) {
+    // Todo: also filter on matchEntcoreApp & matchEntcoreWidget as the old module system?!
+    return Modules.getAllOfType(EntModule).filter(module => module.hasRight?.(session) ?? true);
   }
 
   private static isTabModule<N extends string, Np extends ParamListBase & StrictNavigationParams<N, Np>>(
