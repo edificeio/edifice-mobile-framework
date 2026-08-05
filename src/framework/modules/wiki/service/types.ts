@@ -65,7 +65,7 @@ export namespace API {
       isVisible: boolean;
       parentId: string | null;
       position: number;
-      comments: (GetPageComment | GetPageCommentResponse | GetPageCommentDeleted | GetPageCommentResponseDeleted)[];
+      comments?: (GetPageComment | GetPageCommentResponse | GetPageCommentDeleted | GetPageCommentResponseDeleted)[];
       jsonContent: {
         type: 'doc';
         content: object[]; // Not typed but not used in the mobile app

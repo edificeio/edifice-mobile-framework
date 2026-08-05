@@ -119,7 +119,7 @@ const hydrateWikiPageData = (data: API.Wiki.GetPageResponse): WikiPage => ({
 type ParsingCommentOrResponse = Partial<ArrayElement<SocialResourceViewer.Props['comments']>> &
   Pick<ArrayElement<SocialResourceViewer.Props['comments']>, 'id' | 'date' | 'type'>;
 
-const hydratePageComments = (data: API.Wiki.GetPageResponse['comments']): SocialResourceViewer.Props['comments'] => {
+const hydratePageComments = (data: API.Wiki.GetPageResponse['comments'] = []): SocialResourceViewer.Props['comments'] => {
   const parsedComments: [
     (CommentItem | CommentItemDeleted | ResponseItem | ResponseItemDeleted)['id'],
     (CommentItem | CommentItemDeleted | ResponseItem | ResponseItemDeleted)[],

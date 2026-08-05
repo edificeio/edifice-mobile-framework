@@ -10,7 +10,15 @@ import { AccountTypeText } from '~/framework/modules/auth/components/account-typ
 import { TemporalTimeText } from '~/framework/util/date';
 
 import styles from './styles';
-import { CommentItem, ITEM_COMMENT, ITEM_RESPONSE, ResponseItem, SocialResourceViewerItemType } from './types';
+import {
+  CommentItem,
+  ITEM_COMMENT,
+  ITEM_COMMENT_DELETED,
+  ITEM_RESPONSE,
+  ITEM_RESPONSE_DELETED,
+  ResponseItem,
+  SocialResourceViewerItemType,
+} from './types';
 
 export const SocialResourceViewerCommentItem = (info: ListRenderItemInfo<CommentItem>) => {
   const { item } = info;
@@ -79,7 +87,12 @@ export const SocialResourceViewerItem = (info: ListRenderItemInfo<SocialResource
     return <SocialResourceViewerCommentItem {...(info as ListRenderItemInfo<CommentItem>)} />;
   } else if (info.item.type === ITEM_RESPONSE) {
     return <SocialResourceViewerResponseItem {...(info as ListRenderItemInfo<ResponseItem>)} />;
+  } else if (info.item.type === ITEM_COMMENT_DELETED) {
+    // BUGFIX: deleted items don't show up
+    return <BodyBoldText>ITEM_COMMENT_DELETED {info.item.id}</BodyBoldText>;
+  } else if (info.item.type === ITEM_RESPONSE_DELETED) {
+    return <BodyBoldText>ITEM_RESPONSE_DELETED {info.item.id}</BodyBoldText>;
   } else {
-    return <BodyBoldText>ITEM INCONNU {info.item.value.toString()}</BodyBoldText>;
+    return <BodyBoldText>ITEM INCONNU</BodyBoldText>;
   }
 };
