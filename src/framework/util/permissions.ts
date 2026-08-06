@@ -18,6 +18,7 @@ export type SinglePermissionRequirement = true | Permission;
 export type PermissionRequirement = SinglePermissionRequirement | Permission[];
 
 export const ANDROID_10 = 29;
+export const ANDROID_12L = 32;
 export const ANDROID_13 = 33;
 export const ANDROID_14 = 34;
 export const ANDROID_15 = 35;
@@ -79,20 +80,11 @@ const permissionScenarios = {
     ios: true,
   })!,
   'gallery.read': Platform.select<PermissionRequirement>({
-    android:
-      api >= ANDROID_14
-        ? [
-            PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
-            PERMISSIONS.ANDROID.READ_MEDIA_VIDEO,
-            PERMISSIONS.ANDROID.READ_MEDIA_VISUAL_USER_SELECTED,
-          ]
-        : api >= ANDROID_13
-          ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
-          : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    android: api <= ANDROID_12L ? [PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE] : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
   'gallery.write': Platform.select<PermissionRequirement>({
-    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE : true,
+    android: api <= ANDROID_12L ? [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE] : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
 };

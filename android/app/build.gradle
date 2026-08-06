@@ -45,8 +45,8 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1170501
-        versionName "1.17.5"
+        versionCode 1170600
+        versionName "1.17.6"
         manifestPlaceholders.applicationName = APPNAME
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
         buildConfigField "String", "BundleVersionType", "\"peda.1\""
