@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-07-30 10:54:41",
-  "notes": "update(stack): yarn cache clean\nfeat(communities): PEDAGO-4206 adding web redirection for discussions\nfeat(communities): PEDAGO-4060, PEDAGO-4061 adding collection list and component\nMerge remote-tracking branch 'origin/dev/1.17.5' into dev/peda\nfix(media): PEDAGO-4220 use ent app naming as key for ResourceMedia\nrelease: 1.17.5(1170500)\nfeat(homework): PEDAGO-4209 new editor\nfeat(homework): PEDAGO-3990 new editor reader\nrelease: 1.17.4-rc.1(1170409)",
-  "version": "1.17.5-peda.1(1170501)",
+  "last": "2026-08-06 13:27:05",
+  "notes": "chore: yarn cache update\nrelease: 1.17.5(1170500)\nUpdated translations from Phrase (323)\nfix: android permissions for google validation\nchore: yarn cache update\nchore: yarn cache update\nrelease: 1.17.4-rc.1(1170409)",
+  "version": "1.17.5-rc.1(1170501)",
   "track": "1.17.5",
-  "order": "peda.1"
+  "order": "rc.1"
 }
