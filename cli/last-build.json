@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-07-25 12:44:52",
-  "notes": "update(stack): yarn cache update\nfix(communities): PEDAGO-4222 get invitationId when coming from notification\nrelease: 1.17.4-alpha.4(1170408)",
-  "version": "1.17.4-rc.1(1170409)",
-  "track": "1.17.4",
+  "last": "2026-08-06 13:27:05",
+  "notes": "chore: yarn cache update\nrelease: 1.17.5(1170500)\nUpdated translations from Phrase (323)\nfix: android permissions for google validation\nchore: yarn cache update\nchore: yarn cache update\nrelease: 1.17.4-rc.1(1170409)",
+  "version": "1.17.5-rc.1(1170501)",
+  "track": "1.17.5",
   "order": "rc.1"
 }
