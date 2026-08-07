@@ -129,7 +129,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
           elements={[
             {
               ...(loadingState ? (
-                <LoadingIndicator small customColor={theme.ui.text.inverse} />
+                <LoadingIndicator small customColor={theme.ui.navigation.navBar.tint} />
               ) : (
                 <NavBarAction icon="ui-send" disabled={title.trim().length === 0 || content.trim().length === 0} onPress={doSend} />
               )),
