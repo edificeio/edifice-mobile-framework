@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
-import { Badge } from '~/framework/components/badge';
 import { SmallBoldText } from '~/framework/components/text';
 
 import styles from './styles';
@@ -11,17 +8,25 @@ import { HomeTopTabBarProps } from './types';
 
 const focusedIndicatorStyle = [styles.indicator, styles.indicatorFocused];
 
-export function HomeTopTabBar({ jumpTo, navigationState }: HomeTopTabBarProps) {
+export function HomeTopTabBar({ descriptors, navigation, state }: HomeTopTabBarProps) {
   return (
     <View style={styles.container}>
-      {navigationState.routes.map((route, index) => {
-        const focused = index === navigationState.index;
+      {state.routes.map((route, index) => {
+        const focused = index === state.index;
+        const { options } = descriptors[route.key];
+        const label = typeof options.tabBarLabel === 'string' ? options.tabBarLabel : (options.title ?? route.name);
 
         return (
-          <TouchableOpacity key={route.key} activeOpacity={0.7} onPress={() => jumpTo(route.key)} style={styles.tab}>
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="tab"
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate(route.name)}
+            style={styles.tab}
+            testID={options.tabBarButtonTestID}>
             <View style={styles.labelContainer}>
-              <SmallBoldText style={styles.labelFocused}>{I18n.get(route.title)}</SmallBoldText>
-              {route.badge ? <Badge content={route.badge} color={theme.palette.complementary.red.regular} /> : null}
+              <SmallBoldText style={styles.label}>{label}</SmallBoldText>
+              {options.tabBarBadge?.()}
             </View>
             <View style={focused ? focusedIndicatorStyle : styles.indicator} />
           </TouchableOpacity>
