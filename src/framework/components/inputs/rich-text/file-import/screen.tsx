@@ -5,6 +5,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
+import { transparentHeaderOptions } from '~/app/navigation/layout';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
@@ -50,7 +51,7 @@ export const computeNavBar = modalScreenOptions('modal', () => ({
   headerTitleStyle: {
     color: theme.palette.grey.darkness.toString(),
   },
-  headerTransparent: true,
+  ...transparentHeaderOptions,
   title: I18n.get('import-title'),
 }));
 const formatFileForUpload = (lf: LocalFile) =>
