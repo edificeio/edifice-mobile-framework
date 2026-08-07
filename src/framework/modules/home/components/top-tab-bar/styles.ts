@@ -5,22 +5,22 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    backgroundColor: theme.palette.grey.white.toString(),
+    backgroundColor: theme.ui.background.card.toString(),
     flexDirection: 'row',
   },
-  // Always rendered, transparent when inactive, so switching tabs doesn't shift the layout.
+  // Drawn under every tab, so switching tabs doesn't shift the layout. Focus only changes its color.
   indicator: {
     backgroundColor: theme.palette.primary.light.toString(),
     borderTopLeftRadius: UI_SIZES.radius.small,
     borderTopRightRadius: UI_SIZES.radius.small,
-    height: UI_SIZES.border.normal,
+    height: UI_SIZES.border.small,
     width: '100%',
   },
   indicatorFocused: {
     backgroundColor: theme.palette.primary.regular.toString(),
   },
   label: {
-    color: theme.ui.text.light.toString(),
+    color: theme.ui.text.regular.toString(),
   },
   labelContainer: {
     alignItems: 'center',
@@ -29,9 +29,6 @@ export default StyleSheet.create({
     paddingBottom: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingTop: UI_SIZES.spacing.minor,
-  },
-  labelFocused: {
-    color: theme.ui.text.regular.toString(),
   },
   tab: {
     alignItems: 'center',
