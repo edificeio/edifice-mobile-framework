@@ -1,11 +1,3 @@
-import type { NavigationState, Route, SceneRendererProps } from 'react-native-tab-view';
+import type { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
 
-export interface HomeTabRoute extends Route {
-  title: string;
-  // number displayed in a badge next to the label.
-  badge?: number;
-}
-
-export type HomeTopTabBarProps = SceneRendererProps & {
-  navigationState: NavigationState<HomeTabRoute>;
-};
+export type HomeTopTabBarProps = MaterialTopTabBarProps;

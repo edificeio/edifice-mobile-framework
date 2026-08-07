@@ -1,40 +1,36 @@
-import React from 'react';
+import * as React from 'react';
 import { View } from 'react-native';
 
-import { TabView } from 'react-native-tab-view';
+import { createMaterialTopTabNavigator, MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
-import { NavBarProfileButton } from '~/framework/components/navigation';
+import { Badge } from '~/framework/components/badge';
+import { BarLine, NavBarProfileButton } from '~/framework/components/navigation';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { withSession } from '~/framework/modules/auth/util';
-import { HomeTabRoute, HomeTopTabBar, HomeTopTabBarProps } from '~/framework/modules/home/components';
+import { HomeTopTabBar, HomeTopTabBarProps } from '~/framework/modules/home/components';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
 import { styles } from './styles';
-import { HomeScreenProps } from './types';
+import { HomeScreenProps, HomeTabsParamList } from './types';
 
-export const HomeScreenOptions = screenOptions(({ navigation }) => ({
-  // the navbar line is inherited from `defaultScreenOptions`.
-  // override it here the day the home
-  // needs its own, once Design provides the SVG:
-  // headerBackground: () => <Svg name={dynamicName} />,
-  headerLeft: () => <NavBarProfileButton onPress={() => navigation.navigate('user')} />,
-  headerShadowVisible: false,
-  headerStyle: styles.headerStyle,
-  headerTintColor: theme.palette.grey.black.toString(),
-  headerTitle: HomeScreenNavBarTitle,
-  unstable_headerLeftItems: () => [
-    {
-      element: <NavBarProfileButton onPress={() => navigation.navigate('user')} />,
-      type: 'custom',
-    },
-  ],
-}));
+export const HomeScreenOptions = screenOptions(({ navigation }) => {
+  const profileButton = <NavBarProfileButton onPress={() => navigation.navigate('user')} />;
+
+  return {
+    // background has to be painted here. colors still come from `theme.ui.navigation.navBar`.
+    headerBackground: () => <BarLine bar="navBar" background={theme.ui.navigation.navBar.background} />,
+    headerLeft: () => profileButton,
+    headerShadowVisible: false,
+    headerTitle: HomeScreenNavBarTitle,
+    unstable_headerLeftItems: () => [{ element: profileButton, type: 'custom' }],
+  };
+});
 
 export const HomeScreenNavBarTitle = function () {
   const session = useSelector(selectors.session);
@@ -42,38 +38,50 @@ export const HomeScreenNavBarTitle = function () {
 
   return (
     <View style={styles.navBarTitle}>
-      <BodyBoldText numberOfLines={1}>{session?.user.displayName}</BodyBoldText>
-      {accountType ? <CaptionText numberOfLines={1}>{accountTypeInfos[accountType].text}</CaptionText> : null}
+      <BodyBoldText numberOfLines={1} style={styles.navBarTitleName}>
+        {session?.user.displayName}
+      </BodyBoldText>
+      {accountType ? (
+        <CaptionText numberOfLines={1} style={styles.navBarTitleType}>
+          {accountTypeInfos[accountType].text}
+        </CaptionText>
+      ) : null}
     </View>
   );
 };
 
-const HomeTabScene = ({ route }: { route: HomeTabRoute }) => (
+// todo: replace by the real tab contents.
+const HomeTabPlaceholder = ({ i18nKey }: { i18nKey: string }) => (
   <ScrollView contentContainerStyle={styles.scene}>
-    <CaptionText>{I18n.get(route.title)}</CaptionText>
+    <CaptionText>{I18n.get(i18nKey)}</CaptionText>
   </ScrollView>
 );
 
+const HomeOverviewTab = () => <HomeTabPlaceholder i18nKey="home-overview-title" />;
+
+const HomeNotificationsTab = () => <HomeTabPlaceholder i18nKey="home-notifications-title" />;
+
+const overviewOptions = (): MaterialTopTabNavigationOptions => ({
+  tabBarButtonTestID: 'home-tab-overview',
+  title: I18n.get('home-overview-title'),
+});
+
+const notificationsOptions = (): MaterialTopTabNavigationOptions => ({
+  // ToDo: get the unread count of the notifications from the store.
+  tabBarBadge: () => <Badge content={2} color={theme.palette.status.failure.regular} />,
+  tabBarButtonTestID: 'home-tab-notifications',
+  title: I18n.get('home-notifications-title'),
+});
+
 const renderTabBar = (props: HomeTopTabBarProps) => <HomeTopTabBar {...props} />;
 
-const renderScene = ({ route }: { route: HomeTabRoute }) => <HomeTabScene route={route} />;
+const HomeTabs = createMaterialTopTabNavigator<HomeTabsParamList>();
 
 export const HomeScreen = withSession(function ({}: HomeScreenProps) {
-  const [index, setIndex] = React.useState<number>(0);
-
-  // ToDo: get the unread count of the news feed from the store.
-  const routes = React.useMemo<HomeTabRoute[]>(
-    () => [
-      { key: 'home', title: 'home-tab-home' },
-      { badge: 2, key: 'news', title: 'home-tab-news' },
-    ],
-    [],
-  );
-  const navigationState = React.useMemo(() => ({ index, routes }), [index, routes]);
-
   return (
-    <View style={styles.page}>
-      <TabView navigationState={navigationState} onIndexChange={setIndex} renderScene={renderScene} renderTabBar={renderTabBar} />
-    </View>
+    <HomeTabs.Navigator style={styles.page} tabBar={renderTabBar}>
+      <HomeTabs.Screen name="home/overview" component={HomeOverviewTab} options={overviewOptions} />
+      <HomeTabs.Screen name="home/notifications" component={HomeNotificationsTab} options={notificationsOptions} />
+    </HomeTabs.Navigator>
   );
 });
