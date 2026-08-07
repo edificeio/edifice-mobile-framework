@@ -92,7 +92,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
           elements={[
             {
               ...(loadingState ? (
-                <LoadingIndicator small customColor={theme.ui.text.inverse} />
+                <LoadingIndicator small customColor={theme.ui.navigation.navBar.tint} />
               ) : (
                 <NavBarAction icon="ui-save" onPress={doEdit} disabled={title.trim().length === 0 || content.trim().length === 0} />
               )),
