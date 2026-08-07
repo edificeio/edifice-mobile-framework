@@ -15,6 +15,7 @@ import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
 import { I18n } from '~/app/i18n';
+import { transparentHeaderOptions } from '~/app/navigation/layout';
 import { NavigationRootParams } from '~/app/navigation/types';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
@@ -124,7 +125,10 @@ export function computeNavBar({
     }),
     headerBlurEffect: 'dark',
     headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
-    headerTransparent: true,
+    // Declared, not inherited: this bar sits on the dark carousel background, whatever the theme
+    // does to `navBar.tint`.
+    headerTintColor: theme.palette.grey.white.toString(),
+    ...transparentHeaderOptions,
   };
 }
 
