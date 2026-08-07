@@ -16,7 +16,7 @@ import { tabModules } from '~/framework/navigation/tabModules';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { defaultTabOptions, is2DTheme, styles as layoutStyles, tabBarIconSize, TabScreenLayout } from './layout';
+import { defaultTabOptions, hasActiveTabHighlight, styles as layoutStyles, tabBarIconSize, TabScreenLayout } from './layout';
 import { createLeafStackNavigator } from './leaf-stack';
 import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
@@ -54,7 +54,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
         tabBarButtonTestID: m.tab.testId,
         tabBarIcon: ({ color, focused }) => <TabIcon module={m} focused={focused} size={tabBarIconSize} color={color} />,
         tabBarLabel: ({ color, focused }) => {
-          const LabelText = is2DTheme && focused ? CaptionBoldText : CaptionText;
+          const LabelText = hasActiveTabHighlight && focused ? CaptionBoldText : CaptionText;
           return (
             // negative marginHorizontal is necessary to prevent text wrapping
             <LabelText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
@@ -144,7 +144,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
       tabBarButtonTestID: m.config.testID,
       tabBarIcon: props => createOldTabIcon(m.config, props),
       tabBarLabel: ({ color, focused }) => {
-        const LabelText = is2DTheme && focused ? CaptionBoldText : CaptionText;
+        const LabelText = hasActiveTabHighlight && focused ? CaptionBoldText : CaptionText;
         return (
           // negative marginHorizontal is necessary to prevent text wrapping
           <LabelText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
@@ -206,12 +206,13 @@ export const MainNavigationOptions: NativeStackNavigationOptions = { headerShown
 
 /**
  * Wraps a tab icon to give the active one its rounded background.
- * 2D only: 1D tabs keep their urrent look, so the icon is rendered as it is.
+ * Themes that declare no highlight render the icon as it is,
+ * without the extra container.
  */
 function TabIconWrapper({ children, focused }: React.PropsWithChildren<{ focused: boolean }>) {
   const style = React.useMemo(() => [layoutStyles.tabIcon, focused && layoutStyles.activeTabIcon], [focused]);
 
-  if (!is2DTheme) return <>{children}</>;
+  if (!hasActiveTabHighlight) return <>{children}</>;
   return <View style={style}>{children}</View>;
 }
 
@@ -251,6 +252,7 @@ const createOldTabIcon = (
     dp.size = dp.size ?? props.size;
     dp.color = dp.color ?? props.color;
     dp.name = dp.name ?? 'more_vert';
+    dp.style = [dp.style, layoutStyles.tabIconFont];
   } else if (dp.type === 'Svg') {
     dp.name = dp.name ?? 'ui-options';
     dp.height = props.size;

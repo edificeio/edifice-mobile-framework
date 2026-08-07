@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
   navBarTitleStyle: {
     ...TextFontStyle.Bold,
-    color: theme.ui.text.inverse,
+    color: theme.ui.navigation.navBar.tint,
     textAlign: 'center',
   },
 });

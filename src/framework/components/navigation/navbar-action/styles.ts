@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
@@ -12,6 +13,9 @@ export default StyleSheet.create({
   navBarActionText: {
     marginHorizontal: -UI_SIZES.spacing.tiny,
     padding: UI_SIZES.spacing.tiny,
+  },
+  navBarActionTitle: {
+    color: theme.ui.navigation.navBar.tint.toString(),
   },
   navBarActionWrapper: {
     alignItems: 'center',
