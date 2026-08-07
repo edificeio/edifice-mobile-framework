@@ -9,7 +9,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
-import { defaultScreenOptions } from '~/app/navigation/layout';
+import { defaultScreenOptions, transparentHeaderOptions } from '~/app/navigation/layout';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -36,7 +36,9 @@ export const computeNavBar = modalScreenOptions('formSheet', () => ({
   headerBlurEffect: 'regular',
   headerShadowVisible: false,
   headerTintColor: theme.ui.text.regular.toString(),
-  headerTransparent: Platform.select({ default: false, ios: true }), // formSheet + headerTransparent causes crash on android
+  // formSheet + headerTransparent causes crash on android, hence iOS only. See
+  // `transparentHeaderOptions` for why the inherited `headerBackground` has to go with it.
+  ...(Platform.OS === 'ios' ? transparentHeaderOptions : {}),
   sheetAllowedDetents: 'fitToContents',
   sheetCornerRadius: Platform.select({ default: UI_SIZES.radius.mediumPlus, ios: undefined }),
   sheetGrabberVisible: false,
