@@ -440,7 +440,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     () => (
       <HeaderBackButton
         labelVisible={false}
-        tintColor={theme.palette.grey.white as string}
+        tintColor={theme.ui.navigation.navBar.tint.toString()}
         onPress={onNavigateHome}
         pressColor="transparent"
       />

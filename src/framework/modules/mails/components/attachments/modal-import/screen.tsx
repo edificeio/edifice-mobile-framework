@@ -44,9 +44,9 @@ export const computeNavBar = modalScreenOptions('modal', ({ navigation, route })
   //   top: 0,
   //   zIndex: 100,
   // },
-  headerTintColor: theme.palette.grey.darkness.toString(),
+  headerTintColor: theme.ui.navigation.navBar.tint.toString(),
   headerTitleStyle: {
-    color: theme.palette.grey.darkness.toString(),
+    color: theme.ui.navigation.navBar.tint.toString(),
   },
   title: I18n.get('import-title'),
 }));
@@ -166,7 +166,12 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
           if (respAttachments) {
             attachmentsSnapshotRef.current = respAttachments;
           }
-          updateFileStatusAndID({ file, id: resp.attachment.df.id, status: UploadAttachmentStatus.OK, url: resp.attachment.df.url });
+          updateFileStatusAndID({
+            file,
+            id: resp.attachment.df.id,
+            status: UploadAttachmentStatus.OK,
+            url: resp.attachment.df.url,
+          });
         })
         .catch(error => {
           console.error(`Import Attachment Upload Failed: ${error}`);
@@ -224,13 +229,12 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
       // navigation.setOptions() requires to define the component on demand.
       headerRight: () =>
         filesRef.current.some(upload => upload.status === UploadAttachmentStatus.PENDING) ? (
-          <ActivityIndicator size={UI_SIZES.elements.navbarIconSize} color={theme.palette.grey.black} />
+          <ActivityIndicator size={UI_SIZES.elements.navbarIconSize} color={theme.ui.navigation.navBar.tint} />
         ) : (
           <NavBarAction
             title={I18n.get('import-confirm-button', {
               count: filesRef.current.filter(f => f.status === UploadAttachmentStatus.OK).length,
             })}
-            titleStyle={{ color: theme.palette.grey.darkness }}
             onPress={() => {
               setValidateImport(true);
             }}
