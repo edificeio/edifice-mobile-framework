@@ -5,6 +5,7 @@ import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { ScrollView as GHScrollView } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -63,7 +64,6 @@ import { openUrl } from '~/framework/util/linking';
 
 import styles from './styles';
 import type { MailsDetailsScreenPrivateProps } from './types';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const isDateOlderThan60Minutes = (date: moment.Moment) => {
   const now = moment();
@@ -510,7 +510,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       headerLeft: () => (
         <HeaderBackButton
           labelVisible={false}
-          tintColor={theme.palette.grey.white as string}
+          tintColor={theme.ui.navigation.navBar.tint.toString()}
           pressColor="transparent"
           onPress={() =>
             fromTimeline
@@ -748,8 +748,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
   }, [bottom, bottomSheetTopMargin, headerHeight, onDismissBottomSheet, renderContentBottomSheet]);
 
   const renderRederictToWebview = React.useCallback(() => {
-    if (!isServiceMethodAvailable(mailsService.mail.redirectToWebview))
-      return null;
+    if (!isServiceMethodAvailable(mailsService.mail.redirectToWebview)) return null;
     const onRedirect = async () => {
       const url = await mailsService.mail.redirectToWebview!({ folderId: mail?.folder_id ?? '', id });
       openUrl(url);
@@ -767,6 +766,7 @@ const MailsDetailsScreen = (props: MailsDetailsScreenPrivateProps) => {
       />
     );
   }, [id, mail]);
+
   const renderContent = React.useCallback(() => {
     if (error) return <EmptyContentScreen />;
     return (
