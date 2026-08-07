@@ -99,6 +99,20 @@ export interface ITheme {
       listItem: ColorValue;
       input: ColorValue;
     };
+    navigation: {
+      // will be SvgIconName when design provide svgs
+      line?: ColorValue[];
+      navBar: {
+        tint: ColorValue;
+        background: ColorValue;
+      };
+      tabBar: {
+        tintFocus: ColorValue;
+        tintBlur: ColorValue;
+        background: ColorValue;
+        highlight?: ColorValue;
+      };
+    };
     text: {
       regular: ColorValue;
       light: ColorValue;
@@ -187,6 +201,17 @@ export const defaultTheme: ThemeInitializer = {
       border: {
         input: this.palette.grey.cloudy,
         listItem: this.palette.grey.cloudy,
+      },
+      navigation: {
+        navBar: {
+          background: this.palette.primary.regular,
+          tint: this.palette.grey.white,
+        },
+        tabBar: {
+          background: this.palette.grey.white,
+          tintBlur: this.palette.grey.graphite,
+          tintFocus: this.palette.primary.regular,
+        },
       },
       notificationBadge: this.palette.complementary.red.regular,
       overlay: {
