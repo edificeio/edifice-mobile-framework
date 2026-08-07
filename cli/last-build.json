@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-07-25 12:44:52",
-  "notes": "update(stack): yarn cache update\nfix(communities): PEDAGO-4222 get invitationId when coming from notification\nrelease: 1.17.4-alpha.4(1170408)",
-  "version": "1.17.4-rc.1(1170409)",
+  "last": "2026-08-07 19:02:08",
+  "notes": "release: 1.17.4-rc.1(1170409)",
+  "version": "1.17.4-rc.2(1170410)",
   "track": "1.17.4",
-  "order": "rc.1"
+  "order": "rc.2"
 }
