@@ -5,7 +5,7 @@ import { Action } from 'redux';
 import { EntModule } from '~/app/module';
 import theme from '~/app/theme';
 
-import HomeScreen, { HomeScreenOptions } from './screens';
+import { HomeScreen, HomeScreenOptions } from './screens';
 
 export default new EntModule<
   'home',
@@ -29,9 +29,5 @@ export default new EntModule<
       testId: 'tabbar-timeline',
     },
   },
-  Stack => (
-    <>
-      <Stack.Screen name="home" component={HomeScreen} options={HomeScreenOptions} />
-    </>
-  ),
+  Stack => <Stack.Screen name="home" component={HomeScreen} options={HomeScreenOptions} />,
 );
