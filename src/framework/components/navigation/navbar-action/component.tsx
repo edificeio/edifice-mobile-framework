@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { ColorValue, StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { useTheme } from '@react-navigation/native';
-
+import theme from '~/app/theme';
 import { genericHitSlop, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { SmallInverseText } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 
 import styles from './styles';
 
@@ -21,7 +20,6 @@ export default function NavBarAction(
     style?: StyleProp<ViewStyle>;
   }>,
 ) {
-  const { colors } = useTheme();
   const opacityIconStyle = React.useMemo(() => (props.disabled ? styles.navBarActionDisabled : undefined), [props.disabled]);
   const opacityTextStyle = React.useMemo(
     () => (props.disabled ? [styles.navBarActionText, styles.navBarActionDisabled] : styles.navBarActionText),
@@ -45,13 +43,15 @@ export default function NavBarAction(
       {props.icon ? (
         <Svg
           name={props.icon}
-          fill={props.color ?? colors.text}
+          fill={props.color ?? theme.ui.navigation.navBar.tint}
           width={UI_SIZES.elements.navbarIconSize}
           height={UI_SIZES.elements.navbarIconSize}
           style={[opacityIconStyle, styles.navBarActionIcon]}
         />
       ) : null}
-      {props.title ? <SmallInverseText style={[props.titleStyle, opacityTextStyle]}>{props.title}</SmallInverseText> : null}
+      {props.title ? (
+        <SmallText style={[styles.navBarActionTitle, props.titleStyle, opacityTextStyle]}>{props.title}</SmallText>
+      ) : null}
     </Component>
   );
 }
