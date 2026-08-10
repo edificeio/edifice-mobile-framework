@@ -12,7 +12,7 @@ import { MediaType } from '~/framework/modules/media';
 import { preferences as userPreferences } from '~/framework/modules/user/storage';
 import type { ImageProps } from '~/framework/util/media-deprecated';
 import { Storage } from '~/framework/util/storage';
-import { DeepPartial } from '~/utils/types';
+import { DeepPartial, ValueOf } from '~/utils/types';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -39,7 +39,13 @@ export interface EntAppTheme {
   accentColors: IShades;
   icon: IntentIcon;
 }
-export type ThemeLevel = '1D' | '2D';
+
+export const THEME_LEVEL = {
+  FIRST_DEGREE: '1D',
+  SECOND_DEGREE: '2D',
+} as const;
+
+export type ThemeLevel = ValueOf<typeof THEME_LEVEL>;
 
 export interface ITheme {
   // Theme identity, declared by the override
@@ -302,7 +308,7 @@ export const defaultTheme: ThemeInitializer = {
     },
   },
 
-  level: '2D',
+  level: THEME_LEVEL.SECOND_DEGREE,
 
   palette: {
     complementary: {
