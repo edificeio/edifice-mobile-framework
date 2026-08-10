@@ -1,6 +1,5 @@
 import theme from '~/app/theme';
-
-type MakeUnion<T> = T[keyof T];
+import { ValueOf } from '~/utils/types';
 
 export const MyAppsFilterCategories = {
   all: 'toutes',
@@ -10,7 +9,7 @@ export const MyAppsFilterCategories = {
   pedagogie: 'pedagogie',
 } as const;
 
-export type MyAppsCategory = MakeUnion<typeof MyAppsFilterCategories>;
+export type MyAppsCategory = ValueOf<typeof MyAppsFilterCategories>;
 
 export const MyAppsFilterTypes = {
   Category: 'category',
