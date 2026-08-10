@@ -432,8 +432,8 @@ const performLogin = async (
   // Refresh oneSessionId token
   await dispatch(refreshSessionIdForAccountAction(accountInfo));
 
-  // Apply the theme chosen by this user
-  setThemeAfterLogin();
+  // Apply the theme chosen by this user, or the one of its level on its first login
+  setThemeAfterLogin(accountInfo.user.structuresLevels);
 
   return accountInfo;
 };
