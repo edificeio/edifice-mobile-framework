@@ -1,8 +1,8 @@
-import theme from '~/app/theme';
+import theme, { THEME_LEVEL } from '~/app/theme';
 
 import { computeTabRouteName } from './tabModules';
 
-const getHomeModuleName = () => (theme.level === '2D' ? 'home' : 'timeline');
+const getHomeModuleName = () => (theme.level === THEME_LEVEL.SECOND_DEGREE ? 'home' : 'timeline');
 
 /**
  * route name of the home tab, notif handlers use it as the host tab of the screen they open,
