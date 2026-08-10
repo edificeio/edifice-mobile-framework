@@ -8,11 +8,8 @@ export default StyleSheet.create({
     backgroundColor: theme.ui.background.card.toString(),
     flexDirection: 'row',
   },
-  // Drawn under every tab, so switching tabs doesn't shift the layout. Focus only changes its color.
   indicator: {
     backgroundColor: theme.palette.primary.light.toString(),
-    borderTopLeftRadius: UI_SIZES.radius.small,
-    borderTopRightRadius: UI_SIZES.radius.small,
     height: UI_SIZES.border.small,
     width: '100%',
   },
