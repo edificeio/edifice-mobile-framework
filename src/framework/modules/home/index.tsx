@@ -3,7 +3,7 @@ import React from 'react';
 import { Action } from 'redux';
 
 import { EntModule } from '~/app/module';
-import theme from '~/app/theme';
+import theme, { THEME_LEVEL } from '~/app/theme';
 
 import { HomeScreen, HomeScreenOptions } from './screens/home';
 
@@ -17,7 +17,7 @@ export default new EntModule<
 >(
   {
     entTrackingName: 'Timeline',
-    hasRight: () => theme.level === '2D',
+    hasRight: () => theme.level === THEME_LEVEL.SECOND_DEGREE,
     matchEntcoreApp: 'Timeline',
     name: 'home',
     scope: ['timeline', 'userbook'],
