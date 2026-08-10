@@ -14,12 +14,12 @@ const GRADIENT_ID = 'bar-line';
  * transparent as soon as one of these options is given.
  * ToDo: draw the SVG provided by design instead of the gradient once available.
  */
-export function BarLine({ background, bar, line, onLayout }: BarLineProps) {
+export function BarLine({ background, bar, line }: BarLineProps) {
   const backgroundStyle = React.useMemo(() => [styles.background, { backgroundColor: background }], [background]);
   const lineStyle = React.useMemo(() => [styles.line, bar === 'tabBar' ? styles.lineTabBar : styles.lineNavBar], [bar]);
 
   return (
-    <View style={backgroundStyle} onLayout={onLayout}>
+    <View style={backgroundStyle}>
       {line?.length ? (
         <RNSvg style={lineStyle}>
           <Defs>

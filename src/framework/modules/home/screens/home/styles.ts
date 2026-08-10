@@ -7,8 +7,6 @@ export const styles = StyleSheet.create({
   navBarTitle: {
     alignItems: 'center',
     gap: UI_SIZES.spacing.tinyExtra,
-    height: UI_SIZES.elements.navbarHeight,
-    justifyContent: 'center',
   },
   navBarTitleName: {
     color: theme.ui.navigation.navBar.tint.toString(),

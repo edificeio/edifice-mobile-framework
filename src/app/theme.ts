@@ -468,8 +468,19 @@ export function setTheme(index: number): void {
   }
 }
 
-export function setThemeAfterLogin() {
-  setTheme(userPreferences.getNumber(THEME_STORAGE_KEY) ?? 0);
+const SECOND_DEGREE = 2;
+
+const resolveLevel = (structuresLevels?: number[]): ThemeLevel =>
+  Array.isArray(structuresLevels) && structuresLevels.length > 0 && !structuresLevels.some(level => Number(level) === SECOND_DEGREE)
+    ? THEME_LEVEL.FIRST_DEGREE
+    : THEME_LEVEL.SECOND_DEGREE;
+
+export function setThemeAfterLogin(structuresLevels?: number[]) {
+  const chosenIndex = userPreferences.getNumber(THEME_STORAGE_KEY);
+  if (isValidThemeIndex(chosenIndex)) return setTheme(chosenIndex);
+
+  const levelIndex = themes.findIndex(t => t.level === resolveLevel(structuresLevels));
+  setTheme(isValidThemeIndex(levelIndex) ? levelIndex : currentIndex);
 }
 
 export default currentTheme;
