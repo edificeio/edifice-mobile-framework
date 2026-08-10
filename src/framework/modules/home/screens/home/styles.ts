@@ -22,7 +22,4 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.ui.background.page.toString(),
     flex: 1,
   },
-  scene: {
-    padding: UI_SIZES.spacing.medium,
-  },
 });
