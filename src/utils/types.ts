@@ -8,4 +8,6 @@ export type DeepPartial<T> = T extends object
 
 export type KeysOfUnion<T> = T extends T ? keyof T : never;
 
+export type ValueOf<T> = T[keyof T];
+
 export type ValueFromUnion<T, K extends KeysOfUnion<T>> = T extends Record<K, unknown> ? T[K] : never;
