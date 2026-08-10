@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { createMaterialTopTabNavigator, MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
-import { Badge } from '~/framework/components/badge';
 import { BarLine, NavBarProfileButton } from '~/framework/components/navigation';
-import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { withSession } from '~/framework/modules/auth/util';
 import { HomeTopTabBar, HomeTopTabBarProps } from '~/framework/modules/home/components';
+import { HomeNotificationsScreen, HomeNotificationsScreenOptions } from '~/framework/modules/home/screens/notifications';
+import { HomeOverviewScreen, HomeOverviewScreenOptions } from '~/framework/modules/home/screens/overview';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
 import { styles } from './styles';
@@ -50,29 +49,6 @@ export const HomeScreenNavBarTitle = function () {
   );
 };
 
-// todo: replace by the real tab contents.
-const HomeTabPlaceholder = ({ i18nKey }: { i18nKey: string }) => (
-  <ScrollView contentContainerStyle={styles.scene}>
-    <CaptionText>{I18n.get(i18nKey)}</CaptionText>
-  </ScrollView>
-);
-
-const HomeOverviewTab = () => <HomeTabPlaceholder i18nKey="home-overview-title" />;
-
-const HomeNotificationsTab = () => <HomeTabPlaceholder i18nKey="home-notifications-title" />;
-
-const overviewOptions = (): MaterialTopTabNavigationOptions => ({
-  tabBarButtonTestID: 'home-tab-overview',
-  title: I18n.get('home-overview-title'),
-});
-
-const notificationsOptions = (): MaterialTopTabNavigationOptions => ({
-  // ToDo: get the unread count of the notifications from the store.
-  tabBarBadge: () => <Badge content={2} color={theme.palette.status.failure.regular} />,
-  tabBarButtonTestID: 'home-tab-notifications',
-  title: I18n.get('home-notifications-title'),
-});
-
 const renderTabBar = (props: HomeTopTabBarProps) => <HomeTopTabBar {...props} />;
 
 const HomeTabs = createMaterialTopTabNavigator<HomeTabsParamList>();
@@ -80,8 +56,8 @@ const HomeTabs = createMaterialTopTabNavigator<HomeTabsParamList>();
 export const HomeScreen = withSession(function ({}: HomeScreenProps) {
   return (
     <HomeTabs.Navigator style={styles.page} tabBar={renderTabBar}>
-      <HomeTabs.Screen name="home/overview" component={HomeOverviewTab} options={overviewOptions} />
-      <HomeTabs.Screen name="home/notifications" component={HomeNotificationsTab} options={notificationsOptions} />
+      <HomeTabs.Screen name="home/overview" component={HomeOverviewScreen} options={HomeOverviewScreenOptions} />
+      <HomeTabs.Screen name="home/notifications" component={HomeNotificationsScreen} options={HomeNotificationsScreenOptions} />
     </HomeTabs.Navigator>
   );
 });
