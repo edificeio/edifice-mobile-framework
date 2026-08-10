@@ -134,6 +134,7 @@ interface AuthActiveUserInfoCommon extends UpdatableUserInfo {
   homePhone?: string;
   login: string; // May be same as loginUsed if real login was used to log in.
   structures?: UserStructureWithClasses[];
+  structuresLevels?: number[];
   uniqueId?: string;
   isAdml?: boolean;
 }
