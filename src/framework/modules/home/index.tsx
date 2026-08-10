@@ -5,7 +5,7 @@ import { Action } from 'redux';
 import { EntModule } from '~/app/module';
 import theme from '~/app/theme';
 
-import { HomeScreen, HomeScreenOptions } from './screens';
+import { HomeScreen, HomeScreenOptions } from './screens/home';
 
 export default new EntModule<
   'home',
