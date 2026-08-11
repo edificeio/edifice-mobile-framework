@@ -7,15 +7,14 @@ export default StyleSheet.create({
     flex: 1,
   },
   line: {
+    height: UI_SIZES.border.small,
     position: 'absolute',
     width: '100%',
   },
   lineNavBar: {
     bottom: 0,
-    height: UI_SIZES.border.thin,
   },
   lineTabBar: {
-    height: UI_SIZES.border.small,
     top: 0,
   },
 });
