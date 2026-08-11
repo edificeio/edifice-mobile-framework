@@ -1,8 +1,9 @@
 import type { ColorValue } from 'react-native';
 
+import type { SvgIconName } from '~/framework/components/picture';
+
 export interface BarLineProps {
   bar: 'navBar' | 'tabBar';
   background: ColorValue;
-  //don't forget to change the type when design provides svgs
-  line?: ColorValue[];
+  line?: SvgIconName;
 }

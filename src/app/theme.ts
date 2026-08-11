@@ -7,7 +7,7 @@ import deepmerge from 'deepmerge';
 import RNRestart from 'react-native-restart';
 
 import themeOverrides from '~/app/override/theme';
-import type { SvgProps } from '~/framework/components/picture';
+import type { SvgIconName, SvgProps } from '~/framework/components/picture';
 import { MediaType } from '~/framework/modules/media';
 import { preferences as userPreferences } from '~/framework/modules/user/storage';
 import type { ImageProps } from '~/framework/util/media-deprecated';
@@ -106,8 +106,7 @@ export interface ITheme {
       input: ColorValue;
     };
     navigation: {
-      // will be SvgIconName when design provide svgs
-      line?: ColorValue[];
+      line?: SvgIconName;
       navBar: {
         tint: ColorValue;
         background: ColorValue;
