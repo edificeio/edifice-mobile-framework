@@ -304,6 +304,7 @@ const imports = {
   'ui-move': async () => import('ASSETS/icons/uiIcons/move.svg'),
   'ui-multimedia': async () => import('ASSETS/icons/uiIcons/multimedia.svg'),
   'ui-myapps-list': async () => import('ASSETS/images/myapps/apps-list.svg'),
+  'ui-navigation-line': async () => import('ASSETS/icons/uiIcons/navigation-line.svg'),
   'ui-no-preview': async () => import('ASSETS/icons/uiIcons/no-preview.svg'),
   'ui-notes': async () => import('ASSETS/icons/uiIcons/notes.svg'),
   'ui-notif': async () => import('ASSETS/icons/uiIcons/notif.svg'),
