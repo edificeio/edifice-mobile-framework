@@ -37,7 +37,7 @@ const modalPresentations: (StackPresentationTypes | 'card')[] = [
   'transparentModal',
 ];
 
-export const hasNavigationLine = !!theme.ui.navigation.line?.length;
+export const hasNavigationLine = !!theme.ui.navigation.line;
 
 export const hasActiveTabHighlight = !!theme.ui.navigation.tabBar.highlight;
 
