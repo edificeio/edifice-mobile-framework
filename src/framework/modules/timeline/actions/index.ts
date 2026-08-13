@@ -88,6 +88,19 @@ export const loadNotificationsPageAction =
   };
 
 /**
+ * Load the flash messages alone, for a screen that shows them without the notifications.
+ */
+export const loadFlashMessagesAction = () => async (dispatch: ThunkDispatch<any, any, any>) => {
+  try {
+    const session = assertSession();
+    dispatch(flashMessagesActions.request());
+    dispatch(flashMessagesActions.receipt(await flashMessagesService.list(session)));
+  } catch (e) {
+    dispatch(flashMessagesActions.error(e as Error));
+  }
+};
+
+/**
  * Dismiss a given flash message by marking it as read.
  */
 export const dismissFlashMessageAction =
