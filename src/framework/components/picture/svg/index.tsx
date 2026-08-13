@@ -265,6 +265,7 @@ const imports = {
   'ui-favorite': async () => import('ASSETS/icons/uiIcons/favorite.svg'),
   'ui-filter': async () => import('ASSETS/icons/uiIcons/filter.svg'),
   'ui-flag': async () => import('ASSETS/icons/uiIcons/flag.svg'),
+  'ui-flash-message-arc': async () => import('ASSETS/icons/uiIcons/flash-message-arc.svg'),
   'ui-folder': async () => import('ASSETS/icons/uiIcons/folder.svg'),
   'ui-folderMove': async () => import('ASSETS/icons/uiIcons/folderMove.svg'),
   'ui-forgoing': async () => import('ASSETS/icons/uiIcons/forgoing.svg'),
