@@ -10,7 +10,7 @@ import { BarLine, NavBarProfileButton } from '~/framework/components/navigation'
 import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { withSession } from '~/framework/modules/auth/util';
-import { HomeTopTabBar, HomeTopTabBarProps } from '~/framework/modules/home/components';
+import { TopTabBar, TopTabBarProps } from '~/framework/modules/home/components';
 import { HomeNotificationsScreen, HomeNotificationsScreenOptions } from '~/framework/modules/home/screens/notifications';
 import { HomeOverviewScreen, HomeOverviewScreenOptions } from '~/framework/modules/home/screens/overview';
 import { accountTypeInfos } from '~/framework/util/accountType';
@@ -49,7 +49,7 @@ export const HomeScreenNavBarTitle = function () {
   );
 };
 
-const renderTabBar = (props: HomeTopTabBarProps) => <HomeTopTabBar {...props} />;
+const renderTabBar = (props: TopTabBarProps) => <TopTabBar {...props} />;
 
 const HomeTabs = createMaterialTopTabNavigator<HomeTabsParamList>();
 
