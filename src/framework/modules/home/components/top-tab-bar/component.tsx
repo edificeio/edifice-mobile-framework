@@ -6,9 +6,9 @@ import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 
 import styles from './styles';
-import { HomeTopTabBarProps } from './types';
+import { TopTabBarProps } from './types';
 
-export function HomeTopTabBar({ descriptors, navigation, state }: HomeTopTabBarProps) {
+export function TopTabBar({ descriptors, navigation, state }: TopTabBarProps) {
   const line = theme.ui.navigation.line;
 
   return (
