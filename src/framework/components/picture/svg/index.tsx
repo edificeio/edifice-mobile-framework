@@ -79,6 +79,7 @@ const imports = {
   'empty-light': async () => import('ASSETS/images/empty-screen/empty-light.svg'),
   'empty-mediacentre': async () => import('ASSETS/images/empty-screen/empty-mediacentre.svg'),
   'empty-news': async () => import('ASSETS/images/empty-screen/empty-news.svg'),
+  'empty-news-small': async () => import('ASSETS/images/empty-screen/empty-news-small.svg'),
   'empty-nofolders': async () => import('ASSETS/images/empty-screen/nofolders.svg'),
   'empty-presences': async () => import('ASSETS/images/empty-screen/empty-presences.svg'),
   'empty-pronote-uri': async () => import('ASSETS/images/empty-screen/pronote-error-uri.svg'),
