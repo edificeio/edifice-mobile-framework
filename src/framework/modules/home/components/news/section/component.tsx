@@ -8,6 +8,7 @@ import { HeadingSText } from '~/framework/components/text';
 import { NewsCard } from '~/framework/modules/home/components/news/card';
 import { Carousel, useTabSwipeLock } from '~/framework/modules/home/components/news/carousel';
 import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
+import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
 
 import styles from './styles';
@@ -15,7 +16,7 @@ import { NewsSectionProps } from './types';
 
 const keyExtractor = (item: HomeNewsItem) => String(item.news.id);
 
-export const NewsSection = React.memo(({ news, onPressItem, onSeeMore }: NewsSectionProps) => {
+export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore }: NewsSectionProps) => {
   const tabSwipeLock = useTabSwipeLock();
 
   const renderItem = React.useCallback(
@@ -34,7 +35,13 @@ export const NewsSection = React.memo(({ news, onPressItem, onSeeMore }: NewsSec
           action={onSeeMore}
         />
       </View>
-      {news.length ? <Carousel {...tabSwipeLock} data={news} keyExtractor={keyExtractor} renderItem={renderItem} /> : <NewsEmpty />}
+      {loading ? (
+        <NewsPlaceholder />
+      ) : news.length ? (
+        <Carousel {...tabSwipeLock} data={news} keyExtractor={keyExtractor} renderItem={renderItem} />
+      ) : (
+        <NewsEmpty />
+      )}
     </View>
   );
 });
