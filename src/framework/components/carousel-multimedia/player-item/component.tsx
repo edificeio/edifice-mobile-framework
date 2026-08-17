@@ -15,7 +15,7 @@ import {
 import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
 import LoaderItem from '~/framework/components/carousel-multimedia/loader-item/component';
 import { PlayerContext } from '~/framework/components/carousel-multimedia/screen';
-import { isAudioContent } from '~/framework/util/media';
+import { isAudioContent } from '~/framework/modules/media';
 
 import styles from './styles';
 import { PlayerItemProps } from './types';

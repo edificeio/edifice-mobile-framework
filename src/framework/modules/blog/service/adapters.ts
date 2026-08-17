@@ -1,9 +1,9 @@
 import moment from 'moment';
 
-import { IEntcoreBlog, IEntcoreBlogFolder, IEntcoreBlogPost, IEntcoreBlogPostBaseAuthor, IEntcoreBlogPostComments } from './types';
-
 import { Blog, BlogFolder, BlogPost, BlogPostComment, BlogPostComments } from '~/framework/modules/blog/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
+
+import { IEntcoreBlog, IEntcoreBlogFolder, IEntcoreBlogPost, IEntcoreBlogPostBaseAuthor, IEntcoreBlogPostComments } from './types';
 
 const mapBlogPostAuthor = (author: IEntcoreBlogPostBaseAuthor) => ({
   login: author.login,

@@ -35,8 +35,8 @@ import {
   communitiesSelectors,
 } from '~/framework/modules/communities/store';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
+import { toURISource } from '~/framework/modules/media';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { toURISource } from '~/framework/util/media';
 import { accountApi } from '~/framework/util/transport';
 
 import styles from './styles';

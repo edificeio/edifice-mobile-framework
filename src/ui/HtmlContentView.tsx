@@ -18,10 +18,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { FileMedia } from '~/framework/modules/media';
 import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { openUrl } from '~/framework/util/linking';
-import { FileMedia } from '~/framework/util/media';
 import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 

@@ -10,8 +10,8 @@ import theme from '~/app/theme';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
+import { FileMedia } from '~/framework/modules/media';
 import { IModalsNavigationParams } from '~/framework/navigation/modals';
-import { FileMedia } from '~/framework/util/media';
 
 import { showPrivacyAlert } from './util';
 

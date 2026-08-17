@@ -18,8 +18,8 @@ import RNFS, {
 } from 'react-native-fs';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { mime, toURISource } from '~/framework/modules/media';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
-import { mime, toURISource } from '~/framework/util/media';
 import { assertPermissions } from '~/framework/util/permissions';
 import { getSafeFileName } from '~/framework/util/string';
 import { sessionURISource } from '~/framework/util/transport';

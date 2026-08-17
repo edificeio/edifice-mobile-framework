@@ -6,6 +6,7 @@ import { ThunkAction } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
+import { toURISource } from '~/framework/modules/media';
 import { actionTypes, Filter, IFile } from '~/framework/modules/workspace/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { factoryRootFolder } from '~/framework/modules/workspace/service/adapters';
@@ -14,7 +15,6 @@ import { IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandle
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import type { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { toURISource } from '~/framework/util/media';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { sessionURISource } from '~/framework/util/transport';
 

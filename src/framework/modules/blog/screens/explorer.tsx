@@ -44,7 +44,7 @@ export default withSession<BlogExplorerScreen.AllProps>(({ navigation, route, se
   const isFocused = useIsFocused();
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
-      isFocused && navigation.navigate(blogRouteNames.blogPostList, { blogId: r.resourceEntId });
+      isFocused && navigation.navigate(blogRouteNames.blogPostList, { blogId: r.resourceId });
     },
     [isFocused, navigation],
   );

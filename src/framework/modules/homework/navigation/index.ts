@@ -1,8 +1,8 @@
 import { ParamListBase } from '@react-navigation/native';
 
 import moduleConfig from '~/framework/modules/homework/module-config';
+import { HomeworkCreateScreenNavigationParams } from '~/framework/modules/homework/screens/create';
 import { HomeworkExplorerScreen } from '~/framework/modules/homework/screens/explorer';
-import { HomeworkCreateScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkCreateScreen';
 import { HomeworkInitialScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkInitialScreen';
 import { HomeworkSelectScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkSelectScreen';
 import { IHomeworkTaskDetailsScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';

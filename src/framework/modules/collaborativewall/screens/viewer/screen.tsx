@@ -7,7 +7,7 @@ import type { CollaborativewallViewerScreenPrivateProps } from './types';
 import { computeWebResourceViewerNavbar, WebResourceViewer } from '~/framework/components/pages/web-resource-viewer';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { collaborativewallService, collaborativewallUriParser } from '~/framework/modules/collaborativewall/service';
-import { toURISource } from '~/framework/util/media';
+import { toURISource } from '~/framework/modules/media';
 import { platformURISource } from '~/framework/util/transport';
 
 export const computeNavBar = computeWebResourceViewerNavbar;

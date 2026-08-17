@@ -1,3 +1,5 @@
+import theme from '~/app/theme';
+
 type MakeUnion<T> = T[keyof T];
 
 export const MyAppsFilterCategories = {
@@ -70,7 +72,7 @@ export interface AppsInfoState {
 
 export interface AppsInfoAggregated extends AppsInfo {
   category?: string;
-  color?: string;
+  color?: keyof typeof theme.palette.complementary;
   help?: Record<string, string | null>;
   libraries?: string;
   testID: string;

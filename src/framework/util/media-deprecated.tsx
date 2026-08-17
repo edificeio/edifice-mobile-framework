@@ -14,8 +14,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { EmbeddedMedia, FileMedia, MediaType } from '~/framework/modules/media';
 
-import { EmbeddedMedia, FileMedia, MediaType } from './media';
 import { sessionImageSource } from './transport';
 
 interface IMediaCommonAttributes {

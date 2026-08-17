@@ -25,7 +25,7 @@ import CommunityCardLarge from '~/framework/modules/communities/components/commu
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesSelectors } from '~/framework/modules/communities/store';
-import { toURISource } from '~/framework/util/media';
+import { toURISource } from '~/framework/modules/media';
 import { accountApi } from '~/framework/util/transport';
 import { HTTPError } from '~/framework/util/transport/error';
 
