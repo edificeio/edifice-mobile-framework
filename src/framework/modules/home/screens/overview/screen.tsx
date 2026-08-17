@@ -7,7 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import ScrollView from '~/framework/components/scrollView';
-import { FlashMessageList, NewsSection } from '~/framework/modules/home/components';
+import { FlashMessageList, FlashMessagePlaceholder, NewsSection } from '~/framework/modules/home/components';
 import { NEWS_COUNT } from '~/framework/modules/home/components/news/constants';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
 import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/news/actions';
@@ -30,6 +30,11 @@ export function HomeOverviewScreen() {
   // Flash messages still belongs to the timeline module, which owns their service and their store.
   const flashMessages = useSelector(state => timelineConfig.getState(state).flashMessages.data);
 
+  const flashMessagesLoading = useSelector(state => {
+    const { isFetching, isPristine } = timelineConfig.getState(state).flashMessages;
+    return isPristine || isFetching;
+  });
+
   React.useEffect(() => {
     dispatch(loadFlashMessagesAction());
   }, [dispatch]);
@@ -38,8 +43,8 @@ export function HomeOverviewScreen() {
 
   const visibleFlashMessages = React.useMemo(() => flashMessages.filter(flashMessage => !flashMessage.dismiss), [flashMessages]);
 
-  // The news module has no store, so its data is held here, the same way its own home screen does.
   const [news, setNews] = React.useState<HomeNewsItem[]>([]);
+  const [newsLoading, setNewsLoading] = React.useState(true);
 
   React.useEffect(() => {
     const loadNews = async () => {
@@ -63,7 +68,7 @@ export function HomeOverviewScreen() {
       );
     };
 
-    loadNews();
+    loadNews().finally(() => setNewsLoading(false));
   }, [dispatch]);
 
   const onSeeMorePress = React.useCallback(() => navigation.navigate(newsRouteNames.home, {}), [navigation]);
@@ -75,8 +80,12 @@ export function HomeOverviewScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <FlashMessageList flashMessages={visibleFlashMessages} onDismiss={onDismiss} />
-      <NewsSection news={news} onPressItem={onOpenNews} onSeeMore={onSeeMorePress} />
+      {flashMessagesLoading ? (
+        <FlashMessagePlaceholder />
+      ) : (
+        <FlashMessageList flashMessages={visibleFlashMessages} onDismiss={onDismiss} />
+      )}
+      <NewsSection loading={newsLoading} news={news} onPressItem={onOpenNews} onSeeMore={onSeeMorePress} />
     </ScrollView>
   );
 }
