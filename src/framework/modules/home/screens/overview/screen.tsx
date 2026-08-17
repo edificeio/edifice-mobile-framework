@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { RefreshControl } from 'react-native';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -35,9 +36,11 @@ export function HomeOverviewScreen() {
     return isPristine || isFetching;
   });
 
+  const loadFlashMessages = React.useCallback(() => dispatch(loadFlashMessagesAction()), [dispatch]);
+
   React.useEffect(() => {
-    dispatch(loadFlashMessagesAction());
-  }, [dispatch]);
+    loadFlashMessages();
+  }, [loadFlashMessages]);
 
   const onDismiss = React.useCallback((id: number) => dispatch(dismissFlashMessageAction(id)), [dispatch]);
 
@@ -46,30 +49,48 @@ export function HomeOverviewScreen() {
   const [news, setNews] = React.useState<HomeNewsItem[]>([]);
   const [newsLoading, setNewsLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    const loadNews = async () => {
-      // The list gives a `threadId` only, so the threads are needed to show the icon and its name.
-      const [threads, items] = await Promise.all([
-        dispatch(getNewsThreadsAction()) as unknown as Promise<NewsThreadItem[]>,
-        dispatch(getNewsItemsAction(0)) as unknown as Promise<NewsItem[]>,
-      ]);
-      const threadsById = new Map(threads.map(thread => [thread.id, thread]));
+  const loadNews = React.useCallback(async () => {
+    // The list gives a `threadId` only, so the threads are needed to show the icon and its name.
+    const [threads, items] = await Promise.all([
+      dispatch(getNewsThreadsAction()) as unknown as Promise<NewsThreadItem[]>,
+      dispatch(getNewsItemsAction(0)) as unknown as Promise<NewsItem[]>,
+    ]);
+    const threadsById = new Map(threads.map(thread => [thread.id, thread]));
 
-      setNews(
-        items.slice(0, NEWS_COUNT).reduce<HomeNewsItem[]>((acc, item) => {
-          const thread = threadsById.get(item.threadId);
-          if (thread)
-            acc.push({
-              news: item,
-              thread: { icon: thread.icon, ownerId: thread.owner.id, sharedRights: thread.sharedRights, title: thread.title },
-            });
-          return acc;
-        }, []),
-      );
-    };
-
-    loadNews().finally(() => setNewsLoading(false));
+    setNews(
+      items.slice(0, NEWS_COUNT).reduce<HomeNewsItem[]>((acc, item) => {
+        const thread = threadsById.get(item.threadId);
+        if (thread)
+          acc.push({
+            news: item,
+            thread: { icon: thread.icon, ownerId: thread.owner.id, sharedRights: thread.sharedRights, title: thread.title },
+          });
+        return acc;
+      }, []),
+    );
   }, [dispatch]);
+
+  React.useEffect(() => {
+    loadNews().finally(() => setNewsLoading(false));
+  }, [loadNews]);
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    setNewsLoading(true);
+    try {
+      await Promise.all([loadFlashMessages(), loadNews()]);
+    } finally {
+      setRefreshing(false);
+      setNewsLoading(false);
+    }
+  }, [loadFlashMessages, loadNews]);
+
+  const refreshControl = React.useMemo(
+    () => <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
+    [onRefresh, refreshing],
+  );
 
   const onSeeMorePress = React.useCallback(() => navigation.navigate(newsRouteNames.home, {}), [navigation]);
 
@@ -79,7 +100,7 @@ export function HomeOverviewScreen() {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <ScrollView contentContainerStyle={styles.content} refreshControl={refreshControl}>
       {flashMessagesLoading ? (
         <FlashMessagePlaceholder />
       ) : (
